@@ -102,7 +102,7 @@ class Establishment extends CommonObject
 	 *
 	 * @param	DoliDB		$db		Database handler
 	 */
-	function __construct($db)
+	public function __construct($db)
 	{
 		$this->db = $db;
 
@@ -116,7 +116,7 @@ class Establishment extends CommonObject
 	 *	@param		User	$user   User making creation
 	 *	@return 	int				<0 if KO, >0 if OK
 	 */
-	function create($user)
+	public function create($user)
 	{
 		global $conf, $langs;
 
@@ -187,7 +187,7 @@ class Establishment extends CommonObject
 	 *	@param	User	$user		User making update
 	 *	@return	int					<0 if KO, >0 if OK
 	 */
-	function update($user)
+	public function update($user)
 	{
 		global $langs;
 
@@ -228,7 +228,7 @@ class Establishment extends CommonObject
 	* @param	int		$id		Id of record to load
 	* @return	int				<0 if KO, >0 if OK
 	*/
-	function fetch($id)
+	public function fetch($id)
 	{
 		$sql = "SELECT e.rowid, e.name, e.address, e.zip, e.town, e.status, e.fk_country as country_id,";
 		$sql.= ' c.code as country_code, c.label as country';
@@ -269,7 +269,7 @@ class Establishment extends CommonObject
 	*	@param	int		$id		Id of record to delete
 	*	@return	int				<0 if KO, >0 if OK
 	*/
-	function delete($id)
+	public function delete($id)
 	{
 		$this->db->begin();
 
@@ -296,7 +296,7 @@ class Establishment extends CommonObject
 	 * @param	int		$mode   	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
 	 * @return  string   		   	Label
 	 */
-	function getLibStatut($mode = 0)
+	public function getLibStatut($mode = 0)
 	{
 		return $this->LibStatut($this->status, $mode);
 	}
@@ -309,7 +309,7 @@ class Establishment extends CommonObject
 	 *  @param  int		$mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
 	 *  @return string      		Label
 	 */
-	function LibStatut($status, $mode = 0)
+	public function LibStatut($status, $mode = 0)
 	{
         // phpcs:enable
 		global $langs;
@@ -350,7 +350,7 @@ class Establishment extends CommonObject
 	 * @param	int		$id      Id of record
 	 * @return	void
 	 */
-	function info($id)
+	public function info($id)
 	{
 		$sql = 'SELECT e.rowid, e.datec, e.fk_user_author, e.tms, e.fk_user_mod';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'establishment as e';
@@ -396,7 +396,7 @@ class Establishment extends CommonObject
      *  @param      int     $withpicto      0=No picto, 1=Include picto into link, 2=Only picto
      *  @return     string                  String with URL
      */
-    function getNomUrl($withpicto = 0)
+    public function getNomUrl($withpicto = 0)
     {
         global $langs;
 
@@ -420,7 +420,7 @@ class Establishment extends CommonObject
      *
      *	@return		string		country code
      */
-    function getCountryCode()
+    public function getCountryCode()
     {
         global $mysoc;
 

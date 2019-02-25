@@ -43,7 +43,7 @@ class Documents extends DolibarrApi
 	/**
 	 * Constructor
 	 */
-	function __construct()
+	public function __construct()
 	{
 		global $db;
 		$this->db = $db;
@@ -67,7 +67,7 @@ class Documents extends DolibarrApi
 	 *
 	 * @url GET /download
 	 */
-	public function index($module_part, $original_file='')
+	public function index($module_part, $original_file = '')
 	{
 		global $conf, $langs;
 
@@ -82,12 +82,11 @@ class Documents extends DolibarrApi
 		$entity=$conf->entity;
 
 		$check_access = dol_check_secure_access_document($module_part, $original_file, $entity, DolibarrApiAccess::$user, '', 'read');
-		$accessallowed              = $check_access['accessallowed'];
+		$accessallowed = $check_access['accessallowed'];
 		$sqlprotectagainstexternals = $check_access['sqlprotectagainstexternals'];
-		$original_file              = $check_access['original_file'];
+		$original_file = $check_access['original_file'];
 
-		if (preg_match('/\.\./',$original_file) || preg_match('/[<>|]/',$original_file))
-		{
+		if (preg_match('/\.\./', $original_file) || preg_match('/[<>|]/', $original_file)) {
 			throw new RestException(401);
 		}
 		if (!$accessallowed) {
@@ -127,7 +126,7 @@ class Documents extends DolibarrApi
 	 *
 	 * @url PUT /builddoc
 	 */
-	public function builddoc($module_part, $original_file='', $doctemplate='', $langcode='')
+	public function builddoc($module_part, $original_file = '', $doctemplate = '', $langcode = '')
 	{
 		global $conf, $langs;
 
@@ -153,7 +152,7 @@ class Documents extends DolibarrApi
 		$sqlprotectagainstexternals = $check_access['sqlprotectagainstexternals'];
 		$original_file              = $check_access['original_file'];
 
-		if (preg_match('/\.\./',$original_file) || preg_match('/[<>|]/',$original_file)) {
+		if (preg_match('/\.\./', $original_file) || preg_match('/[<>|]/', $original_file)) {
 			throw new RestException(401);
 		}
 		if (!$accessallowed) {
@@ -245,7 +244,7 @@ class Documents extends DolibarrApi
 	 *
 	 * @url GET /
 	 */
-	function getDocumentsListByElement($modulepart, $id=0, $ref='', $sortfield='', $sortorder='')
+	public function getDocumentsListByElement($modulepart, $id = 0, $ref = '', $sortfield = '', $sortorder = '')
 	{
 		global $conf;
 
@@ -376,7 +375,7 @@ class Documents extends DolibarrApi
 			throw new RestException(500, 'Modulepart '.$modulepart.' not implemented yet.');
 		}
 
-		$filearray=dol_dir_list($upload_dir,"files",0,'','(\.meta|_preview.*\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
+		$filearray=dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC), 1);
 		if (empty($filearray)) {
 			throw new RestException(404, 'Search for modulepart '.$modulepart.' with Id '.$object->id.(! empty($object->Ref)?' or Ref '.$object->ref:'').' does not return any document.');
 		}
@@ -412,6 +411,7 @@ class Documents extends DolibarrApi
 	 * @param   string  $filecontent        File content (string with file content. An empty file will be created if this parameter is not provided)
 	 * @param   string  $fileencoding       File encoding (''=no encoding, 'base64'=Base 64) {@example '' or 'base64'}
 	 * @param   int 	$overwriteifexists  Overwrite file if exists (1 by default)
+     * @return  string
 	 *
 	 * @throws 200
 	 * @throws 400
@@ -421,7 +421,7 @@ class Documents extends DolibarrApi
 	 *
 	 * @url POST /upload
 	 */
-	public function post($filename, $modulepart, $ref='', $subdir='', $filecontent='', $fileencoding='', $overwriteifexists=0)
+	public function post($filename, $modulepart, $ref = '', $subdir = '', $filecontent = '', $fileencoding = '', $overwriteifexists = 0)
 	{
 		global $db, $conf;
 
@@ -501,7 +501,7 @@ class Documents extends DolibarrApi
 				if($result == 0)
 				{
 					throw new RestException(404, "Object with ref '".$ref."' was not found.");
-			}
+			    }
 				elseif ($result < 0)
 				{
 					throw new RestException(500, 'Error while fetching object.');
@@ -576,6 +576,7 @@ class Documents extends DolibarrApi
 		return dol_basename($destfile);
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName
 	/**
 	 * Validate fields before create or update object
 	 *
@@ -583,7 +584,8 @@ class Documents extends DolibarrApi
 	 * @return  array
 	 * @throws  RestException
 	 */
-	function _validate_file($data) {
+	private function _validate_file($data) {
+        // phpcs:enable
 		$result = array();
 		foreach (Documents::$DOCUMENT_FIELDS as $field) {
 			if (!isset($data[$field]))

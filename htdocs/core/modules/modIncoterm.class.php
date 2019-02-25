@@ -38,8 +38,8 @@ class modIncoterm extends DolibarrModules
 	 *
 	 *   @param      DoliDB		$db      Database handler
 	 */
-	function __construct($db)
-	{
+    public function __construct($db)
+    {
         global $langs,$conf;
 
         $this->db = $db;

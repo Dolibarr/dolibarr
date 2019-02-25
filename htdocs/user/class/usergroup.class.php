@@ -1,5 +1,5 @@
 <?php
-/* Copyright (c) 2005		Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (c) 2005       Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (c) 2005-2018	Laurent Destailleur	 <eldy@users.sourceforge.net>
  * Copyright (c) 2005-2018	Regis Houssin		 <regis.houssin@inodbox.com>
  * Copyright (C) 2012		Florian Henry		 <florian.henry@open-concept.pro>
@@ -91,8 +91,8 @@ class UserGroup extends CommonObject
      *    Constructor de la classe
      *
      *    @param   DoliDb  $db     Database handler
-	 */
-	function __construct($db)
+     */
+    public function __construct($db)
 	{
 		$this->db = $db;
 		$this->nb_rights = 0;
@@ -100,14 +100,14 @@ class UserGroup extends CommonObject
 
 
 	/**
-	 *	Charge un objet group avec toutes ces caracteristiques (except ->members array)
+	 *  Charge un objet group avec toutes ces caracteristiques (except ->members array)
 	 *
 	 *	@param      int		$id				Id of group to load
 	 *	@param      string	$groupname		Name of group to load
 	 *  @param		boolean	$load_members	Load all members of the group
 	 *	@return		int						<0 if KO, >0 if OK
 	 */
-	function fetch($id = '', $groupname = '', $load_members = true)
+	public function fetch($id = '', $groupname = '', $load_members = true)
 	{
 		global $conf;
 
@@ -163,13 +163,13 @@ class UserGroup extends CommonObject
 
 
 	/**
-	 * 	Return array of groups objects for a particular user
+	 *  Return array of groups objects for a particular user
 	 *
-	 *	@param		int		$userid 		User id to search
+	 *  @param		int		$userid 		User id to search
 	 *  @param		boolean	$load_members	Load all members of the group
-	 * 	@return		array     				Array of groups objects
+	 *  @return		array     				Array of groups objects
 	 */
-	function listGroupsForUser($userid, $load_members = true)
+	public function listGroupsForUser($userid, $load_members = true)
 	{
 		global $conf, $user;
 
@@ -224,7 +224,7 @@ class UserGroup extends CommonObject
 	 *  @param	int		$mode				0=Return array of user instance, 1=Return array of users id only
 	 * 	@return	mixed						Array of users or -1 on error
 	 */
-	function listUsersForGroup($excludefilter = '', $mode = 0)
+	public function listUsersForGroup($excludefilter = '', $mode = 0)
 	{
 		global $conf, $user;
 
@@ -289,7 +289,7 @@ class UserGroup extends CommonObject
 	 *    @param	int		$entity		Entity to use
 	 *    @return	int					> 0 if OK, < 0 if KO
 	 */
-	function addrights($rid, $allmodule = '', $allperms = '', $entity = 0)
+	public function addrights($rid, $allmodule = '', $allperms = '', $entity = 0)
 	{
 		global $conf, $user, $langs;
 
@@ -415,7 +415,7 @@ class UserGroup extends CommonObject
 	 *    @param	int		$entity		Entity to use
 	 *    @return	int					> 0 if OK, < 0 if OK
 	 */
-	function delrights($rid, $allmodule = '', $allperms = '', $entity = 0)
+	public function delrights($rid, $allmodule = '', $allperms = '', $entity = 0)
 	{
 		global $conf, $user, $langs;
 
@@ -456,8 +456,7 @@ class UserGroup extends CommonObject
 			// Pour compatibilite, si lowid = 0, on est en mode suppression de tout
 			// TODO A virer quand sera gere par l'appelant
 			//if (substr($rid,-1,1) == 0) $wherefordel="module='$module'";
-		}
-		else {
+		} else {
 			// Where pour la liste des droits a supprimer
 			if (! empty($allmodule))
 			{
@@ -535,9 +534,9 @@ class UserGroup extends CommonObject
 	 *  Charge dans l'objet group, la liste des permissions auquels le groupe a droit
 	 *
 	 *  @param      string	$moduletag	 	Name of module we want permissions ('' means all)
-	 *	@return		int						<0 if KO, >0 if OK
+	 *	@return     int						<0 if KO, >0 if OK
 	 */
-	function getrights($moduletag = '')
+	public function getrights($moduletag = '')
 	{
 		global $conf;
 
@@ -622,7 +621,7 @@ class UserGroup extends CommonObject
 	 *	@param	User	$user		User that delete
 	 *	@return     				<0 if KO, > 0 if OK
 	 */
-	function delete(User $user)
+	public function delete(User $user)
 	{
 		global $conf,$langs;
 
@@ -676,7 +675,7 @@ class UserGroup extends CommonObject
 	 *	@param		int		$notrigger	0=triggers enabled, 1=triggers disabled
 	 *	@return     int					<0 if KO, >=0 if OK
 	 */
-	function create($notrigger = 0)
+	public function create($notrigger = 0)
 	{
 		global $user, $conf, $langs, $hookmanager;
 
@@ -747,7 +746,7 @@ class UserGroup extends CommonObject
 	 *      @param      int		$notrigger	    0=triggers enabled, 1=triggers disabled
 	 *    	@return     int						<0 if KO, >=0 if OK
 	 */
-	function update($notrigger = 0)
+	public function update($notrigger = 0)
 	{
 		global $user, $conf, $langs, $hookmanager;
 
@@ -817,12 +816,12 @@ class UserGroup extends CommonObject
 	 *  @param	int		$mode          0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	 *  @return	string 			       Label of status
 	 */
-	function getLibStatut($mode = 0)
+	public function getLibStatut($mode = 0)
 	{
 	    return $this->LibStatut(0, $mode);
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Renvoi le libelle d'un statut donne
 	 *
@@ -830,7 +829,7 @@ class UserGroup extends CommonObject
 	 *  @param  int		$mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	 *  @return string 			       	Label of status
 	 */
-	function LibStatut($statut, $mode = 0)
+	public function LibStatut($statut, $mode = 0)
 	{
         // phpcs:enable
 	    global $langs;
@@ -840,16 +839,16 @@ class UserGroup extends CommonObject
 
 	/**
 	 *  Return a link to the user card (with optionaly the picto)
-	 * 	Use this->id,this->lastname, this->firstname
+	 *  Use this->id,this->lastname, this->firstname
 	 *
-	 *	@param	int		$withpicto					Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto, -1=Include photo into link, -2=Only picto photo, -3=Only photo very small)
-	 *	@param	string	$option						On what the link point to ('nolink', )
+	 *  @param  int		$withpicto					Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto, -1=Include photo into link, -2=Only picto photo, -3=Only photo very small)
+	 *	@param  string	$option						On what the link point to ('nolink', )
 	 *  @param	integer	$notooltip					1=Disable tooltip on picto and name
 	 *  @param  string  $morecss            		Add more css on link
 	 *  @param  int     $save_lastsearch_value    	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
 	 *	@return	string								String with URL
 	 */
-	function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
+	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
 	{
 		global $langs, $conf, $db, $hookmanager;
 		global $dolibarr_main_authentication, $dolibarr_main_demo;
@@ -925,7 +924,7 @@ class UserGroup extends CommonObject
 	 *									2=Return key only (uid=qqq)
 	 *	@return		string				DN
 	 */
-	function _load_ldap_dn($info, $mode = 0)
+    private function _load_ldap_dn($info, $mode = 0)
 	{
         // phpcs:enable
 		global $conf;
@@ -943,7 +942,7 @@ class UserGroup extends CommonObject
 	 *
 	 *	@return		array		Tableau info des attributs
 	 */
-	function _load_ldap_info()
+    private function _load_ldap_info()
 	{
         // phpcs:enable
 		global $conf,$langs;
@@ -979,8 +978,8 @@ class UserGroup extends CommonObject
      *	id must be 0 if object instance is a specimen.
      *
      *  @return	void
-	 */
-	function initAsSpecimen()
+     */
+    public function initAsSpecimen()
 	{
 		global $conf, $user, $langs;
 
@@ -994,11 +993,11 @@ class UserGroup extends CommonObject
 		$this->datec=time();
 		$this->datem=time();
 
-		// Members of this group is just me
-		$this->members=array(
-				$user->id => $user
-		);
-	}
+        // Members of this group is just me
+        $this->members=array(
+            $user->id => $user
+        );
+    }
 
 	/**
 	 *  Create a document onto disk according to template module.

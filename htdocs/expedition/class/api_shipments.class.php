@@ -48,8 +48,8 @@ class Shipments extends DolibarrApi
      */
     public function __construct()
     {
-		global $db, $conf;
-		$this->db = $db;
+        global $db, $conf;
+        $this->db = $db;
         $this->shipment = new Expedition($this->db);
     }
 
@@ -65,21 +65,21 @@ class Shipments extends DolibarrApi
      */
     public function get($id)
     {
-		if(! DolibarrApiAccess::$user->rights->expedition->lire) {
-			throw new RestException(401);
-		}
+        if(! DolibarrApiAccess::$user->rights->expedition->lire) {
+            throw new RestException(401);
+        }
 
         $result = $this->shipment->fetch($id);
         if( ! $result ) {
             throw new RestException(404, 'Shipment not found');
         }
 
-		if( ! DolibarrApi::_checkAccessToResource('expedition', $this->shipment->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
-		}
+        if( ! DolibarrApi::_checkAccessToResource('expedition', $this->shipment->id)) {
+            throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+        }
 
         $this->shipment->fetchObjectLinked();
-		return $this->_cleanObjectDatas($this->shipment);
+        return $this->_cleanObjectDatas($this->shipment);
     }
 
 
@@ -97,7 +97,7 @@ class Shipments extends DolibarrApi
      * @param string           $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
      * @return  array                               Array of shipment objects
      *
-	 * @throws RestException
+     * @throws RestException
      */
     public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $sqlfilters = '')
     {
@@ -134,7 +134,7 @@ class Shipments extends DolibarrApi
             {
                 throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
             }
-	        $regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+            $regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
             $sql.=" AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
         }
 
@@ -173,7 +173,7 @@ class Shipments extends DolibarrApi
         if( ! count($obj_ret)) {
             throw new RestException(404, 'No shipment found');
         }
-		return $obj_ret;
+        return $obj_ret;
     }
 
     /**
@@ -378,30 +378,30 @@ class Shipments extends DolibarrApi
      */
     public function deleteLine($id, $lineid)
     {
-    	if(! DolibarrApiAccess::$user->rights->expedition->creer) {
-    		throw new RestException(401);
-    	}
+        if(! DolibarrApiAccess::$user->rights->expedition->creer) {
+            throw new RestException(401);
+        }
 
-    	$result = $this->shipment->fetch($id);
-    	if( ! $result ) {
-    		throw new RestException(404, 'Shipment not found');
-    	}
+        $result = $this->shipment->fetch($id);
+        if( ! $result ) {
+            throw new RestException(404, 'Shipment not found');
+        }
 
-    	if( ! DolibarrApi::_checkAccessToResource('expedition', $this->shipment->id)) {
-    		throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
-    	}
+        if( ! DolibarrApi::_checkAccessToResource('expedition', $this->shipment->id)) {
+            throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+        }
 
-    	// TODO Check the lineid $lineid is a line of ojbect
+        // TODO Check the lineid $lineid is a line of ojbect
 
-    	$request_data = (object) $request_data;
-    	$updateRes = $this->shipment->deleteline(DolibarrApiAccess::$user, $lineid);
-    	if ($updateRes > 0) {
-    		return $this->get($id);
-    	}
-    	else
-    	{
-    		throw new RestException(405, $this->shipment->error);
-    	}
+        $request_data = (object) $request_data;
+        $updateRes = $this->shipment->deleteline(DolibarrApiAccess::$user, $lineid);
+        if ($updateRes > 0) {
+            return $this->get($id);
+        }
+        else
+        {
+            throw new RestException(405, $this->shipment->error);
+        }
     }
 
     /**
@@ -423,9 +423,9 @@ class Shipments extends DolibarrApi
             throw new RestException(404, 'Shipment not found');
         }
 
-		if (! DolibarrApi::_checkAccessToResource('expedition', $this->shipment->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
-		}
+        if (! DolibarrApi::_checkAccessToResource('expedition', $this->shipment->id)) {
+            throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+        }
         foreach($request_data as $field => $value) {
             if ($field == 'id') continue;
             $this->shipment->$field = $value;
@@ -437,7 +437,7 @@ class Shipments extends DolibarrApi
         }
         else
         {
-        	throw new RestException(500, $this->shipment->error);
+            throw new RestException(500, $this->shipment->error);
         }
     }
 
@@ -451,16 +451,16 @@ class Shipments extends DolibarrApi
     public function delete($id)
     {
         if(! DolibarrApiAccess::$user->rights->shipment->supprimer) {
-			throw new RestException(401);
-		}
+            throw new RestException(401);
+        }
         $result = $this->shipment->fetch($id);
         if( ! $result ) {
             throw new RestException(404, 'Shipment not found');
         }
 
-		if( ! DolibarrApi::_checkAccessToResource('expedition', $this->shipment->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
-		}
+        if( ! DolibarrApi::_checkAccessToResource('expedition', $this->shipment->id)) {
+            throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+        }
 
         if( ! $this->shipment->delete(DolibarrApiAccess::$user)) {
             throw new RestException(500, 'Error when deleting shipment : '.$this->shipment->error);
@@ -496,23 +496,23 @@ class Shipments extends DolibarrApi
     public function validate($id, $notrigger = 0)
     {
         if (! DolibarrApiAccess::$user->rights->expedition->creer) {
-			throw new RestException(401);
-		}
+            throw new RestException(401);
+        }
         $result = $this->shipment->fetch($id);
         if ( ! $result ) {
             throw new RestException(404, 'Shipment not found');
         }
 
-		if ( ! DolibarrApi::_checkAccessToResource('expedition', $this->shipment->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
-		}
+        if ( ! DolibarrApi::_checkAccessToResource('expedition', $this->shipment->id)) {
+            throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+        }
 
-		$result = $this->shipment->valid(DolibarrApiAccess::$user, $notrigger);
-		if ($result == 0) {
-		    throw new RestException(304, 'Error nothing done. May be object is already validated');
-		}
-		if ($result < 0) {
-		    throw new RestException(500, 'Error when validating Shipment: '.$this->shipment->error);
+        $result = $this->shipment->valid(DolibarrApiAccess::$user, $notrigger);
+        if ($result == 0) {
+            throw new RestException(304, 'Error nothing done. May be object is already validated');
+        }
+        if ($result < 0) {
+            throw new RestException(500, 'Error when validating Shipment: '.$this->shipment->error);
         }
         $result = $this->shipment->fetch($id);
         if ( ! $result ) {
@@ -608,7 +608,7 @@ class Shipments extends DolibarrApi
         $this->shipment->fetchObjectLinked();
         return $this->_cleanObjectDatas($this->shipment);
     }
-	*/
+    */
 
     /**
      * Clean sensible object datas
@@ -634,15 +634,15 @@ class Shipments extends DolibarrApi
         {
             foreach ($object->lines as $line)
             {
-        		unset($line->tva_tx);
-        		unset($line->vat_src_code);
-        		unset($line->total_ht);
-        		unset($line->total_ttc);
-        		unset($line->total_tva);
-        		unset($line->total_localtax1);
-        		unset($line->total_localtax2);
-        		unset($line->remise_percent);
-        	}
+                unset($line->tva_tx);
+                unset($line->vat_src_code);
+                unset($line->total_ht);
+                unset($line->total_ttc);
+                unset($line->total_tva);
+                unset($line->total_localtax1);
+                unset($line->total_localtax2);
+                unset($line->remise_percent);
+            }
         }
 
         return $object;

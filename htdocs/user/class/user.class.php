@@ -185,7 +185,7 @@ class User extends CommonObject
 	 *
 	 *    @param   DoliDb  $db     Database handler
 	 */
-	function __construct($db)
+	public function __construct($db)
 	{
 		$this->db = $db;
 
@@ -201,11 +201,11 @@ class User extends CommonObject
 		$this->admin = 0;
 		$this->employee = 1;
 
-		$this->conf				    = new stdClass();
-		$this->rights				= new stdClass();
-		$this->rights->user			= new stdClass();
-		$this->rights->user->user	= new stdClass();
-		$this->rights->user->self	= new stdClass();
+		$this->conf = new stdClass();
+		$this->rights = new stdClass();
+		$this->rights->user = new stdClass();
+		$this->rights->user->user = new stdClass();
+		$this->rights->user->self = new stdClass();
 	}
 
 	/**
@@ -219,7 +219,7 @@ class User extends CommonObject
 	 *  @param  int     $entity             If a value is >= 0, we force the search on a specific entity. If -1, means search depens on default setup.
 	 * 	@return	int							<0 if KO, 0 not found, >0 if OK
 	 */
-	function fetch($id = '', $login = '', $sid = '', $loadpersonalconf = 0, $entity = -1)
+	public function fetch($id = '', $login = '', $sid = '', $loadpersonalconf = 0, $entity = -1)
 	{
 		global $conf, $user;
 
@@ -320,17 +320,17 @@ class User extends CommonObject
 				$this->zip 			= $obj->zip;
 				$this->town 		= $obj->town;
 
-				$this->country_id   = $obj->country_id;
+				$this->country_id = $obj->country_id;
 				$this->country_code = $obj->country_id?$obj->country_code:'';
-				//$this->country 		= $obj->country_id?($langs->trans('Country'.$obj->country_code)!='Country'.$obj->country_code?$langs->transnoentities('Country'.$obj->country_code):$obj->country):'';
+				//$this->country = $obj->country_id?($langs->trans('Country'.$obj->country_code)!='Country'.$obj->country_code?$langs->transnoentities('Country'.$obj->country_code):$obj->country):'';
 
 				$this->state_id     = $obj->state_id;
 				$this->state_code   = $obj->state_code;
 				$this->state        = ($obj->state!='-'?$obj->state:'');
 
 				$this->office_phone	= $obj->office_phone;
-				$this->office_fax   = $obj->office_fax;
-				$this->user_mobile  = $obj->user_mobile;
+				$this->office_fax = $obj->office_fax;
+				$this->user_mobile = $obj->user_mobile;
 				$this->email		= $obj->email;
 				$this->skype		= $obj->skype;
 				$this->twitter		= $obj->twitter;
@@ -344,14 +344,14 @@ class User extends CommonObject
 				$this->openid		= $obj->openid;
 				$this->lang			= $obj->lang;
 				$this->entity		= $obj->entity;
-				$this->accountancy_code		= $obj->accountancy_code;
+				$this->accountancy_code = $obj->accountancy_code;
 				$this->thm			= $obj->thm;
 				$this->tjm			= $obj->tjm;
 				$this->salary		= $obj->salary;
 				$this->salaryextra	= $obj->salaryextra;
-				$this->weeklyhours	= $obj->weeklyhours;
+				$this->weeklyhours = $obj->weeklyhours;
 				$this->color		= $obj->color;
-				$this->dateemployment	= $this->db->jdate($obj->dateemployment);
+				$this->dateemployment = $this->db->jdate($obj->dateemployment);
 				$this->dateemploymentend = $this->db->jdate($obj->dateemploymentend);
 
 				$this->datec				= $this->db->jdate($obj->datec);
@@ -366,8 +366,8 @@ class User extends CommonObject
 				$this->fk_member            = $obj->fk_member;
 				$this->fk_user        		= $obj->fk_user;
 
-				$this->default_range		= $obj->default_range;
-				$this->default_c_exp_tax_cat	= $obj->default_c_exp_tax_cat;
+				$this->default_range = $obj->default_range;
+				$this->default_c_exp_tax_cat = $obj->default_c_exp_tax_cat;
 
 				// Protection when module multicompany was set, admin was set to first entity and then, the module was disabled,
 				// in such case, this admin user must be admin for ALL entities.
@@ -439,7 +439,7 @@ class User extends CommonObject
 	 *
 	 *  @return int						> 0 if OK, < 0 if KO
 	 */
-	function loadDefaultValues()
+	public function loadDefaultValues()
 	{
 		global $conf;
 
@@ -501,7 +501,7 @@ class User extends CommonObject
 	 *  @return int						> 0 if OK, < 0 if KO
 	 *  @see	clearrights, delrights, getrights
 	 */
-	function addrights($rid, $allmodule = '', $allperms = '', $entity = 0, $notrigger = 0)
+	public function addrights($rid, $allmodule = '', $allperms = '', $entity = 0, $notrigger = 0)
 	{
 		global $conf, $user, $langs;
 
@@ -627,7 +627,7 @@ class User extends CommonObject
 	 *  @return int         		> 0 if OK, < 0 if OK
 	 *  @see	clearrights, addrights, getrights
 	 */
-	function delrights($rid, $allmodule = '', $allperms = '', $entity = 0, $notrigger = 0)
+	public function delrights($rid, $allmodule = '', $allperms = '', $entity = 0, $notrigger = 0)
 	{
 		global $conf, $user, $langs;
 
@@ -637,8 +637,7 @@ class User extends CommonObject
 
 		$this->db->begin();
 
-		if (! empty($rid))
-		{
+		if (! empty($rid)) {
 			// Si on a demande supression d'un droit en particulier, on recupere
 			// les caracteristiques module, perms et subperms de ce droit.
 			$sql = "SELECT module, perms, subperms";
@@ -663,8 +662,7 @@ class User extends CommonObject
 			// Suppression des droits induits
 			if ($subperms=='lire' || $subperms=='read') $wherefordel.=" OR (module='$module' AND perms='$perms' AND subperms IS NOT NULL)";
 			if ($perms=='lire' || $perms=='read')       $wherefordel.=" OR (module='$module')";
-		}
-		else {
+		} else {
 			// On a demande suppression d'un droit sur la base d'un nom de module ou perms
 			// Where pour la liste des droits a supprimer
 			if (! empty($allmodule))
@@ -745,7 +743,7 @@ class User extends CommonObject
 	 *  @return	void
 	 *  @see	getrights
 	 */
-	function clearrights()
+	public function clearrights()
 	{
 		dol_syslog(get_class($this)."::clearrights reset user->rights");
 		$this->rights='';
@@ -762,7 +760,7 @@ class User extends CommonObject
 	 *	@return	void
 	 *  @see	clearrights, delrights, addrights
 	 */
-	function getrights($moduletag = '', $forcereload = 0)
+	public function getrights($moduletag = '', $forcereload = 0)
 	{
 		global $conf;
 
@@ -919,7 +917,7 @@ class User extends CommonObject
 	 *	@param	int		$statut		Status to set
 	 *  @return int     			<0 if KO, 0 if nothing is done, >0 if OK
 	 */
-	function setstatus($statut)
+	public function setstatus($statut)
 	{
 		global $conf,$langs,$user;
 
@@ -1010,7 +1008,7 @@ class User extends CommonObject
 	 *	@param		User	$user	User than delete
 	 * 	@return		int				<0 if KO, >0 if OK
 	 */
-	function delete(User $user)
+	public function delete(User $user)
 	{
 		global $conf,$langs;
 
@@ -1102,7 +1100,7 @@ class User extends CommonObject
 	 *  @param  int		$notrigger		1=do not execute triggers, 0 otherwise
 	 *  @return int			         	<0 if KO, id of created user if OK
 	 */
-	function create($user, $notrigger = 0)
+	public function create($user, $notrigger = 0)
 	{
 		global $conf,$langs;
 		global $mysoc;
@@ -1227,7 +1225,7 @@ class User extends CommonObject
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Create a user from a contact object. User will be internal but if contact is linked to a third party, user will be external
 	 *
@@ -1236,7 +1234,7 @@ class User extends CommonObject
 	 *  @param  string	$password   Password to force
 	 *  @return int 				<0 if error, if OK returns id of created user
 	 */
-	function create_from_contact($contact, $login = '', $password = '')
+	public function create_from_contact($contact, $login = '', $password = '')
 	{
         // phpcs:enable
 		global $conf,$user,$langs;
@@ -1244,23 +1242,23 @@ class User extends CommonObject
 		$error=0;
 
 		// Define parameters
-		$this->admin		= 0;
-		$this->lastname		= $contact->lastname;
-		$this->firstname	= $contact->firstname;
-		$this->gender		= $contact->gender;
-		$this->email		= $contact->email;
-		$this->skype 		= $contact->skype;
-		$this->twitter 		= $contact->twitter;
-		$this->facebook		= $contact->facebook;
-		$this->office_phone	= $contact->phone_pro;
-		$this->office_fax	= $contact->fax;
-		$this->user_mobile	= $contact->phone_mobile;
-		$this->address      = $contact->address;
-		$this->zip          = $contact->zip;
-		$this->town         = $contact->town;
-		$this->state_id     = $contact->state_id;
-		$this->country_id   = $contact->country_id;
-		$this->employee     = 0;
+		$this->admin = 0;
+		$this->lastname = $contact->lastname;
+		$this->firstname = $contact->firstname;
+		$this->gender = $contact->gender;
+		$this->email = $contact->email;
+		$this->skype = $contact->skype;
+		$this->twitter = $contact->twitter;
+		$this->facebook = $contact->facebook;
+		$this->office_phone = $contact->phone_pro;
+		$this->office_fax = $contact->fax;
+		$this->user_mobile = $contact->phone_mobile;
+		$this->address = $contact->address;
+		$this->zip = $contact->zip;
+		$this->town = $contact->town;
+		$this->state_id = $contact->state_id;
+		$this->country_id = $contact->country_id;
+		$this->employee = 0;
 
 		if (empty($login)) $login=strtolower(substr($contact->firstname, 0, 4)) . strtolower(substr($contact->lastname, 0, 4));
 		$this->login = $login;
@@ -1308,7 +1306,7 @@ class User extends CommonObject
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Create a user into database from a member object
 	 *
@@ -1316,7 +1314,7 @@ class User extends CommonObject
 	 * 	@param	string		$login		Login to force
 	 *  @return int						<0 if KO, if OK, return id of created account
 	 */
-	function create_from_member($member, $login = '')
+	public function create_from_member($member, $login = '')
 	{
         // phpcs:enable
 		global $conf,$user,$langs;
@@ -1383,13 +1381,13 @@ class User extends CommonObject
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *    Assign rights by default
 	 *
 	 *    @return     integer erreur <0, si ok renvoi le nbre de droits par defaut positionnes
 	 */
-	function set_default_rights()
+	public function set_default_rights()
 	{
         // phpcs:enable
 		global $conf;
@@ -1438,7 +1436,7 @@ class User extends CommonObject
 	 *		@param	int		$nosynccontact		0=Synchronize linked contact, 1=Do not synchronize linked contact
 	 *    	@return int 		        		<0 si KO, >=0 si OK
 	 */
-	function update($user, $notrigger = 0, $nosyncmember = 0, $nosyncmemberpass = 0, $nosynccontact = 0)
+	public function update($user, $notrigger = 0, $nosyncmember = 0, $nosyncmemberpass = 0, $nosynccontact = 0)
 	{
 		global $conf, $langs;
 
@@ -1479,8 +1477,8 @@ class User extends CommonObject
 		$this->zip			= empty($this->zip)?'':$this->zip;
 		$this->town			= empty($this->town)?'':$this->town;
 		$this->accountancy_code = trim($this->accountancy_code);
-		$this->color 		= empty($this->color)?'':$this->color;
-		$this->dateemployment 	= empty($this->dateemployment)?'':$this->dateemployment;
+		$this->color = empty($this->color)?'':$this->color;
+		$this->dateemployment = empty($this->dateemployment)?'':$this->dateemployment;
 		$this->dateemploymentend = empty($this->dateemploymentend)?'':$this->dateemploymentend;
 
 		// Check parameters
@@ -1733,14 +1731,14 @@ class User extends CommonObject
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *    Mise a jour en base de la date de derniere connexion d'un utilisateur
 	 *	  Fonction appelee lors d'une nouvelle connexion
 	 *
 	 *    @return     <0 si echec, >=0 si ok
 	 */
-	function update_last_login_date()
+	public function update_last_login_date()
 	{
         // phpcs:enable
 		$now=dol_now();
@@ -1777,7 +1775,7 @@ class User extends CommonObject
 	 *	@param	int		$nosyncmember	        Do not synchronize linked member
 	 *  @return string 			          		If OK return clear password, 0 if no change, < 0 if error
 	 */
-	function setPassword($user, $password = '', $changelater = 0, $notrigger = 0, $nosyncmember = 0)
+	public function setPassword($user, $password = '', $changelater = 0, $notrigger = 0, $nosyncmember = 0)
 	{
 		global $conf, $langs;
 		require_once DOL_DOCUMENT_ROOT .'/core/lib/security2.lib.php';
@@ -1900,7 +1898,7 @@ class User extends CommonObject
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Send new password by email
 	 *
@@ -1909,7 +1907,7 @@ class User extends CommonObject
 	 *	@param	int		$changelater	0=Send clear passwod into email, 1=Change password only after clicking on confirm email. @TODO Add method 2 = Send link to reset password
 	 *  @return int 		            < 0 si erreur, > 0 si ok
 	 */
-	function send_password($user, $password = '', $changelater = 0)
+	public function send_password($user, $password = '', $changelater = 0)
 	{
         // phpcs:enable
 		global $conf, $langs;
@@ -1977,8 +1975,8 @@ class User extends CommonObject
 			dol_syslog(get_class($this)."::send_password changelater is on, url=".$url);
 		}
 
-$mailfile = new CMailFile(
-			$subject,
+        $mailfile = new CMailFile(
+            $subject,
 			$this->email,
 			$conf->global->MAIN_MAIL_EMAIL_FROM,
 			$mesg,
@@ -1988,8 +1986,8 @@ $mailfile = new CMailFile(
 			'',
 			'',
 			0,
-			$msgishtml
-		);
+            $msgishtml
+        );
 
 		if ($mailfile->sendfile())
 		{
@@ -2008,19 +2006,19 @@ $mailfile = new CMailFile(
 	 *
 	 * 		@return    string      chaine erreur
 	 */
-	function error()
+	public function error()
 	{
 		return $this->error;
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *    	Read clicktodial information for user
 	 *
 	 * 		@return		<0 if KO, >0 if OK
 	 */
-	function fetch_clicktodial()
+	public function fetch_clicktodial()
 	{
         // phpcs:enable
 		$sql = "SELECT url, login, pass, poste ";
@@ -2052,14 +2050,14 @@ $mailfile = new CMailFile(
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Update clicktodial info
 	 *
 	 *  @return	integer
-	 */
-	function update_clicktodial()
-	{
+     */
+    public function update_clicktodial()
+    {
         // phpcs:enable
 		$this->db->begin();
 
@@ -2090,10 +2088,10 @@ $mailfile = new CMailFile(
 			$this->error=$this->db->lasterror();
 			return -1;
 		}
-	}
+    }
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Add user into a group
 	 *
@@ -2102,7 +2100,7 @@ $mailfile = new CMailFile(
 	 *  @param  int		$notrigger  Disable triggers
 	 *  @return int  				<0 if KO, >0 if OK
 	 */
-	function SetInGroup($group, $entity, $notrigger = 0)
+	public function SetInGroup($group, $entity, $notrigger = 0)
 	{
         // phpcs:enable
 		global $conf, $langs, $user;
@@ -2155,7 +2153,7 @@ $mailfile = new CMailFile(
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Remove a user from a group
 	 *
@@ -2164,7 +2162,7 @@ $mailfile = new CMailFile(
 	 *  @param  int		$notrigger   Disable triggers
 	 *  @return int  			     <0 if KO, >0 if OK
 	 */
-	function RemoveFromGroup($group, $entity, $notrigger = 0)
+	public function RemoveFromGroup($group, $entity, $notrigger = 0)
 	{
         // phpcs:enable
 		global $conf,$langs,$user;
@@ -2224,7 +2222,7 @@ $mailfile = new CMailFile(
 	 * 	@param	string	$imagesize		'mini', 'small' or '' (original)
 	 *	@return	string					String with URL link
 	 */
-	function getPhotoUrl($width, $height, $cssclass = '', $imagesize = '')
+	public function getPhotoUrl($width, $height, $cssclass = '', $imagesize = '')
 	{
 		$result ='<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$this->id.'">';
 		$result.=Form::showphoto('userphoto', $this, $width, $height, 0, $cssclass, $imagesize);
@@ -2248,7 +2246,7 @@ $mailfile = new CMailFile(
 	 *  @param  int     $save_lastsearch_value    	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
 	 *	@return	string								String with URL
 	 */
-	function getNomUrl($withpictoimg = 0, $option = '', $infologin = 0, $notooltip = 0, $maxlen = 24, $hidethirdpartylogo = 0, $mode = '', $morecss = '', $save_lastsearch_value = -1)
+	public function getNomUrl($withpictoimg = 0, $option = '', $infologin = 0, $notooltip = 0, $maxlen = 24, $hidethirdpartylogo = 0, $mode = '', $morecss = '', $save_lastsearch_value = -1)
 	{
 		global $langs, $conf, $db, $hookmanager, $user;
 		global $dolibarr_main_authentication, $dolibarr_main_demo;
@@ -2385,7 +2383,7 @@ $mailfile = new CMailFile(
 	 *	@param	string	$option			Sur quoi pointe le lien
 	 *	@return	string					Chaine avec URL
 	 */
-	function getLoginUrl($withpicto = 0, $option = '')
+	public function getLoginUrl($withpicto = 0, $option = '')
 	{
 		global $langs, $user;
 
@@ -2422,12 +2420,12 @@ $mailfile = new CMailFile(
 	 *  @param	int		$mode          0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	 *  @return	string 			       Label of status
 	 */
-	function getLibStatut($mode = 0)
+	public function getLibStatut($mode = 0)
 	{
 		return $this->LibStatut($this->statut, $mode);
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Renvoi le libelle d'un statut donne
 	 *
@@ -2435,7 +2433,7 @@ $mailfile = new CMailFile(
 	 *  @param  int		$mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	 *  @return string 			       	Label of status
 	 */
-	function LibStatut($statut, $mode = 0)
+	public function LibStatut($statut, $mode = 0)
 	{
         // phpcs:enable
 		global $langs;
@@ -2484,7 +2482,7 @@ $mailfile = new CMailFile(
 	 *								2=Return key only (RDN) (uid=qqq)
 	 *	@return	string				DN
 	 */
-	function _load_ldap_dn($info, $mode = 0)
+	private function _load_ldap_dn($info, $mode = 0)
 	{
         // phpcs:enable
 		global $conf;
@@ -2501,7 +2499,7 @@ $mailfile = new CMailFile(
 	 *
 	 *	@return		array		Tableau info des attributs
 	 */
-	function _load_ldap_info()
+	private function _load_ldap_info()
 	{
         // phpcs:enable
 		global $conf,$langs;
@@ -2623,7 +2621,7 @@ $mailfile = new CMailFile(
 	 *
 	 *  @return	void
 	 */
-	function initAsSpecimen()
+	public function initAsSpecimen()
 	{
 		global $user,$langs;
 
@@ -2668,7 +2666,7 @@ $mailfile = new CMailFile(
 	 *  @param  int		$id     Id of user to load
 	 *  @return	void
 	 */
-	function info($id)
+	public function info($id)
 	{
 		$sql = "SELECT u.rowid, u.login as ref, u.datec,";
 		$sql.= " u.tms as date_modification, u.entity";
@@ -2684,10 +2682,10 @@ $mailfile = new CMailFile(
 
 				$this->id = $obj->rowid;
 
-				$this->ref			     = (! $obj->ref) ? $obj->rowid : $obj->ref;
-				$this->date_creation     = $this->db->jdate($obj->datec);
+				$this->ref = (! $obj->ref) ? $obj->rowid : $obj->ref;
+				$this->date_creation = $this->db->jdate($obj->datec);
 				$this->date_modification = $this->db->jdate($obj->date_modification);
-				$this->entity            = $obj->entity;
+				$this->entity = $obj->entity;
 			}
 
 			$this->db->free($result);
@@ -2704,7 +2702,7 @@ $mailfile = new CMailFile(
 	 *
 	 *    @return       int     Number of EMailings
 	 */
-	function getNbOfEMailings()
+	public function getNbOfEMailings()
 	{
 		$sql = "SELECT count(mc.email) as nb";
 		$sql.= " FROM ".MAIN_DB_PREFIX."mailing_cibles as mc";
@@ -2735,7 +2733,7 @@ $mailfile = new CMailFile(
 	 *  @param	int		$admin		Filter on admin tag
 	 *  @return int  				Number of users
 	 */
-	function getNbOfUsers($limitTo, $option = '', $admin = -1)
+	public function getNbOfUsers($limitTo, $option = '', $admin = -1)
 	{
 		global $conf;
 
@@ -2769,7 +2767,7 @@ $mailfile = new CMailFile(
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Update user using data from the LDAP
 	 *
@@ -2777,7 +2775,7 @@ $mailfile = new CMailFile(
 	 *
 	 *  @return int  				<0 if KO, >0 if OK
 	 */
-	function update_ldap2dolibarr(&$ldapuser)
+	public function update_ldap2dolibarr(&$ldapuser)
 	{
         // phpcs:enable
 		// TODO: Voir pourquoi le update met à jour avec toutes les valeurs vide (global $user écrase ?)
@@ -2809,14 +2807,14 @@ $mailfile = new CMailFile(
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Return and array with all instanciated first level children users of current user
 	 *
 	 * @return	void
 	 * @see getAllChildIds
 	 */
-	function get_children()
+	public function get_children()
 	{
         // phpcs:enable
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."user";
@@ -2844,9 +2842,9 @@ $mailfile = new CMailFile(
 
 
 	/**
-	 * 	Load this->parentof that is array(id_son=>id_parent, ...)
+	 *  Load this->parentof that is array(id_son=>id_parent, ...)
 	 *
-	 *	@return		int		<0 if KO, >0 if OK
+	 *  @return     int     <0 if KO, >0 if OK
 	 */
 	private function loadParentOf()
 	{
@@ -2891,8 +2889,8 @@ $mailfile = new CMailFile(
 	 *  @param		string	$filter				SQL filter on users
 	 *	@return		array		      		  	Array of users $this->users. Note: $this->parentof is also set.
 	 */
-	function get_full_tree($deleteafterid = 0, $filter = '')
-	{
+    public function get_full_tree($deleteafterid = 0, $filter = '')
+    {
         // phpcs:enable
 		global $conf, $user;
 		global $hookmanager;
@@ -2993,8 +2991,8 @@ $mailfile = new CMailFile(
 	 *	@return		array		      		  	Array of user id lower than user (all levels under user). This overwrite this->users.
 	 *  @see get_children
 	 */
-	function getAllChildIds($addcurrentuser = 0)
-	{
+    public function getAllChildIds($addcurrentuser = 0)
+    {
 		$childids=array();
 
 		if (isset($this->cache_childids[$this->id]))
@@ -3022,7 +3020,7 @@ $mailfile = new CMailFile(
 		return $childids;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	For user id_user and its childs available in this->users, define property fullpath and fullname.
 	 *  Function called by get_full_tree().
@@ -3031,8 +3029,8 @@ $mailfile = new CMailFile(
 	 * 	@param		int		$protection		Deep counter to avoid infinite loop (no more required, a protection is added with array useridfound)
 	 *	@return		int                     < 0 if KO (infinit loop), >= 0 if OK
 	 */
-	function build_path_from_id_user($id_user, $protection = 0)
-	{
+    public function build_path_from_id_user($id_user, $protection = 0)
+    {
         // phpcs:enable
 		dol_syslog(get_class($this)."::build_path_from_id_user id_user=".$id_user." protection=".$protection, LOG_DEBUG);
 
@@ -3086,13 +3084,13 @@ $mailfile = new CMailFile(
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *      Charge indicateurs this->nb pour le tableau de bord
 	 *
 	 *      @return     int         <0 if KO, >0 if OK
 	 */
-	function load_state_board()
+	public function load_state_board()
 	{
         // phpcs:enable
 		global $conf;
@@ -3158,7 +3156,7 @@ $mailfile = new CMailFile(
 		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Return property of user from its id
 	 *
@@ -3166,7 +3164,7 @@ $mailfile = new CMailFile(
 	 *  @param  string	$mode       'email' or 'mobile'
 	 *  @return string  			Email of user with format: "Full name <email>"
 	 */
-	function user_get_property($rowid, $mode)
+	public function user_get_property($rowid, $mode)
 	{
         // phpcs:enable
 		$user_property='';
@@ -3208,9 +3206,9 @@ $mailfile = new CMailFile(
 	 *  @param  string      $filtermode		Filter mode (AND or OR)
 	 *  @return int							<0 if KO, >0 if OK
 	 */
-	function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, $filter = array(), $filtermode = 'AND')
-	{
-		global $conf;
+    public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, $filter = array(), $filtermode = 'AND')
+    {
+        global $conf;
 
 		$sql="SELECT t.rowid";
 		$sql.= ' FROM '.MAIN_DB_PREFIX .$this->table_element.' as t ';
@@ -3263,8 +3261,8 @@ $mailfile = new CMailFile(
 		}
 		else
 		{
-			$this->errors[] = $this->db->lasterror();
-			return -1;
-		}
-	}
+            $this->errors[] = $this->db->lasterror();
+            return -1;
+        }
+    }
 }

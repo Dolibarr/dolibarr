@@ -37,7 +37,7 @@ class DolibarrApi
     /**
      * @var Restler     $r	Restler object
      */
-    var $r;
+    public $r;
 
     /**
      * Constructor
@@ -46,7 +46,7 @@ class DolibarrApi
      * @param   string  $cachedir       Cache dir
      * @param   boolean $refreshCache   Update cache
      */
-    function __construct($db, $cachedir = '', $refreshCache = false)
+    public function __construct($db, $cachedir = '', $refreshCache = false)
     {
         global $conf, $dolibarr_main_url_root;
 
@@ -94,7 +94,7 @@ class DolibarrApi
      * @param   object  $object	Object to clean
      * @return	array	Array of cleaned object properties
      */
-    function _cleanObjectDatas($object)
+    private function _cleanObjectDatas($object)
     {
 
         // Remove $db object property for object
@@ -222,7 +222,7 @@ class DolibarrApi
      * @return bool
 	 * @throws RestException
 	 */
-    static function _checkAccessToResource($resource, $resource_id = 0, $dbtablename = '', $feature2 = '', $dbt_keyfield = 'fk_soc', $dbt_select = 'rowid')
+    private static function _checkAccessToResource($resource, $resource_id = 0, $dbtablename = '', $feature2 = '', $dbt_keyfield = 'fk_soc', $dbt_select = 'rowid')
     {
 
 		// Features/modules to check
@@ -240,7 +240,7 @@ class DolibarrApi
 		}
 
 		return checkUserAccessToObject(DolibarrApiAccess::$user, $featuresarray, $resource_id, $dbtablename, $feature2, $dbt_keyfield, $dbt_select);
-	}
+    }
 
 	/**
 	 * Return if a $sqlfilters parameter is valid
@@ -248,7 +248,7 @@ class DolibarrApi
 	 * @param  string   $sqlfilters     sqlfilter string
 	 * @return boolean                  True if valid, False if not valid
 	 */
-	function _checkFilters($sqlfilters)
+	private function _checkFilters($sqlfilters)
 	{
 	    //$regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
 	    //$tmp=preg_replace_all('/'.$regexstring.'/', '', $sqlfilters);
@@ -271,14 +271,14 @@ class DolibarrApi
 	    return true;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Function to forge a SQL criteria
 	 *
 	 * @param  array    $matches       Array of found string by regex search
 	 * @return string                  Forged criteria. Example: "t.field like 'abc%'"
 	 */
-	static function _forge_criteria_callback($matches)
+	private static function _forge_criteria_callback($matches)
 	{
         // phpcs:enable
 	    global $db;

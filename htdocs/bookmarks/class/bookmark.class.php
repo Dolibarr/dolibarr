@@ -82,7 +82,7 @@ class Bookmark extends CommonObject
 	 *
 	 *  @param		DoliDB		$db      Database handler
      */
-    function __construct($db)
+    public function __construct($db)
     {
         $this->db = $db;
     }
@@ -93,7 +93,7 @@ class Bookmark extends CommonObject
      *    @param    int		$id		Bookmark Id Loader
      *    @return	int				<0 if KO, >0 if OK
      */
-    function fetch($id)
+    public function fetch($id)
     {
         global $conf;
 
@@ -135,7 +135,7 @@ class Bookmark extends CommonObject
      *
      *      @return     int     <0 si ko, rowid du bookmark cree si ok
      */
-    function create()
+    public function create()
     {
         global $conf;
 
@@ -192,7 +192,7 @@ class Bookmark extends CommonObject
      *
      *      @return     int         <0 if KO, > if OK
      */
-    function update()
+    public function update()
     {
     	// Clean parameters
     	$this->url=trim($this->url);
@@ -227,7 +227,7 @@ class Bookmark extends CommonObject
      *      @param      int		$id     Id removed bookmark
      *      @return     int         	<0 si ko, >0 si ok
      */
-    function remove($id)
+    public function remove($id)
     {
         $sql  = "DELETE FROM ".MAIN_DB_PREFIX."bookmark";
         $sql .= " WHERE rowid = ".$id;
@@ -268,7 +268,7 @@ class Bookmark extends CommonObject
 	 *	@param      int			$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	 * 	@return 	string					Label of contact status
 	 */
-	function getLibStatut($mode)
+	public function getLibStatut($mode)
 	{
 	    return '';
 	}

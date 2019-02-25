@@ -134,15 +134,15 @@ class Website extends CommonObject
 		if (isset($this->status)) {
 			 $this->status = (int) $this->status;
 		}
-		if (empty($this->date_creation)) {
+        if (empty($this->date_creation)) {
             $this->date_creation = $now;
         }
-		if (empty($this->date_modification)) {
+        if (empty($this->date_modification)) {
             $this->date_modification = $now;
         }
 
-		// Check parameters
-		if (empty($this->entity)) {
+        // Check parameters
+        if (empty($this->entity)) {
             $this->entity = $conf->entity;
         }
 
@@ -671,7 +671,7 @@ class Website extends CommonObject
      *  @param  string  $morecss            Add more css on link
 	 *	@return	string						String with URL
 	 */
-	function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $maxlen = 24, $morecss = '')
+	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $maxlen = 24, $morecss = '')
 	{
 		global $langs, $conf, $db;
         global $dolibarr_main_authentication, $dolibarr_main_demo;
@@ -707,12 +707,12 @@ class Website extends CommonObject
 	 *  @param	int		$mode          0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	 *  @return	string 			       Label of status
 	 */
-	function getLibStatut($mode = 0)
+	public function getLibStatut($mode = 0)
 	{
 		return $this->LibStatut($this->status, $mode);
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Renvoi le libelle d'un status donne
 	 *
@@ -720,7 +720,7 @@ class Website extends CommonObject
 	 *  @param  int		$mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	 *  @return string 			       	Label of status
 	 */
-	function LibStatut($status, $mode = 0)
+	public function LibStatut($status, $mode = 0)
 	{
         // phpcs:enable
 		global $langs;
@@ -728,27 +728,27 @@ class Website extends CommonObject
 		if ($mode == 0 || $mode == 1)
 		{
 			if ($status == 1) return $langs->trans('Enabled');
-			if ($status == 0) return $langs->trans('Disabled');
+			elseif ($status == 0) return $langs->trans('Disabled');
 		}
 		elseif ($mode == 2)
 		{
 			if ($status == 1) return img_picto($langs->trans('Enabled'), 'statut4').' '.$langs->trans('Enabled');
-			if ($status == 0) return img_picto($langs->trans('Disabled'), 'statut5').' '.$langs->trans('Disabled');
+			elseif ($status == 0) return img_picto($langs->trans('Disabled'), 'statut5').' '.$langs->trans('Disabled');
 		}
 		elseif ($mode == 3)
 		{
 			if ($status == 1) return img_picto($langs->trans('Enabled'), 'statut4');
-			if ($status == 0) return img_picto($langs->trans('Disabled'), 'statut5');
+			elseif ($status == 0) return img_picto($langs->trans('Disabled'), 'statut5');
 		}
 		elseif ($mode == 4)
 		{
 			if ($status == 1) return img_picto($langs->trans('Enabled'), 'statut4').' '.$langs->trans('Enabled');
-			if ($status == 0) return img_picto($langs->trans('Disabled'), 'statut5').' '.$langs->trans('Disabled');
+			elseif ($status == 0) return img_picto($langs->trans('Disabled'), 'statut5').' '.$langs->trans('Disabled');
 		}
 		elseif ($mode == 5)
 		{
 			if ($status == 1) return $langs->trans('Enabled').' '.img_picto($langs->trans('Enabled'), 'statut4');
-			if ($status == 0) return $langs->trans('Disabled').' '.img_picto($langs->trans('Disabled'), 'statut5');
+			elseif ($status == 0) return $langs->trans('Disabled').' '.img_picto($langs->trans('Disabled'), 'statut5');
 		}
 	}
 
@@ -783,7 +783,7 @@ class Website extends CommonObject
 	 *
 	 * @return  string						Path to file with zip
 	 */
-	function exportWebSite()
+	public function exportWebSite()
 	{
 		global $conf, $mysoc;
 
@@ -958,7 +958,7 @@ class Website extends CommonObject
 	 * @param 	string		$pathtofile		Path of zip file
 	 * @return  int							<0 if KO, Id of new website if OK
 	 */
-	function importWebSite($pathtofile)
+	public function importWebSite($pathtofile)
 	{
 		global $conf, $mysoc;
 
@@ -1195,22 +1195,22 @@ class Website extends CommonObject
 			$out.= '</li></a>';
 		}
 		$i=0;
-		if (is_array($languagecodes))
-		{
-    		foreach($languagecodes as $languagecode)
-    		{
-    			if ($languagecode == $languagecodeselected) continue;	// Already output
-    			$shortcode = strtolower(substr($languagecode, -2));
-    			$label = $weblangs->trans("Language_".$languagecode);
-    			if ($shortcode == 'us') $label = preg_replace('/\s*\(.*\)/', '', $label);
-    			$out.= '<a href="'.$url.$languagecode.'"><li><img height="12px" src="medias/image/common/flags/'.$shortcode.'.png" style="margin-right: 5px;"/>'.$label;
-    			if (empty($i) && empty($languagecodeselected)) $out.= '<span class="fa fa-caret-down" style="padding-left: 5px;" />';
-    			$out.= '</li></a>';
-    			$i++;
-    		}
-		}
-		$out.= '</ul>';
+        if (is_array($languagecodes))
+        {
+            foreach($languagecodes as $languagecode)
+            {
+                if ($languagecode == $languagecodeselected) continue;	// Already output
+                $shortcode = strtolower(substr($languagecode, -2));
+                $label = $weblangs->trans("Language_".$languagecode);
+                if ($shortcode == 'us') $label = preg_replace('/\s*\(.*\)/', '', $label);
+                $out.= '<a href="'.$url.$languagecode.'"><li><img height="12px" src="medias/image/common/flags/'.$shortcode.'.png" style="margin-right: 5px;"/>'.$label;
+                if (empty($i) && empty($languagecodeselected)) $out.= '<span class="fa fa-caret-down" style="padding-left: 5px;" />';
+                $out.= '</li></a>';
+                $i++;
+            }
+        }
+        $out.= '</ul>';
 
-		return $out;
-	}
+        return $out;
+    }
 }

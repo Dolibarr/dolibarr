@@ -44,62 +44,62 @@ class ExpenseReport extends CommonObject
 	 */
 	public $table_element='expensereport';
 
-    var $table_element_line = 'expensereport_det';
-    var $fk_element = 'fk_expensereport';
-    var $picto = 'trip';
+    public $table_element_line = 'expensereport_det';
+    public $fk_element = 'fk_expensereport';
+    public $picto = 'trip';
 
-    var $lines=array();
+    public $lines=array();
 
     public $date_debut;
 
     public $date_fin;
 
-    var $status;
-    var $fk_statut;     // -- 0=draft, 2=validated (attente approb), 4=canceled, 5=approved, 6=payed, 99=denied
-    var $fk_c_paiement;
-    var $paid;
+    public $status;
+    public $fk_statut;     // -- 0=draft, 2=validated (attente approb), 4=canceled, 5=approved, 6=payed, 99=denied
+    public $fk_c_paiement;
+    public $paid;
 
-    var $user_author_infos;
-    var $user_validator_infos;
+    public $user_author_infos;
+    public $user_validator_infos;
 
-    var $fk_typepayment;
-	var $num_payment;
-    var $code_paiement;
-    var $code_statut;
+    public $fk_typepayment;
+	public $num_payment;
+    public $code_paiement;
+    public $code_statut;
 
     // ACTIONS
 
     // Create
-    var $date_create;
-    var $fk_user_author;    // Note fk_user_author is not the 'author' but the guy the expense report is for.
+    public $date_create;
+    public $fk_user_author;    // Note fk_user_author is not the 'author' but the guy the expense report is for.
 
     // Update
-	var $date_modif;
-    var $fk_user_modif;
+	public $date_modif;
+    public $fk_user_modif;
 
     // Refus
-    var $date_refuse;
-    var $detail_refuse;
-    var $fk_user_refuse;
+    public $date_refuse;
+    public $detail_refuse;
+    public $fk_user_refuse;
 
     // Annulation
-    var $date_cancel;
-    var $detail_cancel;
-    var $fk_user_cancel;
+    public $date_cancel;
+    public $detail_cancel;
+    public $fk_user_cancel;
 
-    var $fk_user_validator;	// User that is defined to approve
+    public $fk_user_validator;	// User that is defined to approve
 
     // Validation
-    var $date_valid;		// User making validation
-    var $fk_user_valid;
-    var $user_valid_infos;
+    public $date_valid;		// User making validation
+    public $fk_user_valid;
+    public $user_valid_infos;
 
     // Approve
-    var $date_approve;
-    var $fk_user_approve;	// User that has approved
+    public $date_approve;
+    public $fk_user_approve;	// User that has approved
 
     // Paiement
-    var $user_paid_infos;
+    public $user_paid_infos;
 
     /*
         END ACTIONS
@@ -2484,17 +2484,17 @@ class ExpenseReportLine
     public $projet_ref;
     public $projet_title;
 
-    var $vatrate;
-    var $total_ht;
-    var $total_tva;
-    var $total_ttc;
+    public $vatrate;
+    public $total_ht;
+    public $total_tva;
+    public $total_ttc;
 
     /**
      * Constructor
      *
      * @param DoliDB    $db     Handlet database
      */
-    function __construct($db)
+    public function __construct($db)
     {
         $this->db= $db;
     }
@@ -2505,7 +2505,7 @@ class ExpenseReportLine
      * @param   int     $rowid      Id of object to load
      * @return  int                 <0 if KO, >0 if OK
      */
-    function fetch($rowid)
+    public function fetch($rowid)
     {
         $sql = 'SELECT fde.rowid, fde.fk_expensereport, fde.fk_c_type_fees, fde.fk_c_exp_tax_cat, fde.fk_projet, fde.date,';
         $sql.= ' fde.tva_tx as vatrate, fde.vat_src_code, fde.comments, fde.qty, fde.value_unit, fde.total_ht, fde.total_tva, fde.total_ttc,';
@@ -2557,7 +2557,7 @@ class ExpenseReportLine
      * @param   bool    $fromaddline    false=keep default behavior, true=exclude the update_price() of parent object
      * @return  int                     <0 if KO, >0 if OK
      */
-    function insert($notrigger = 0, $fromaddline = false)
+    public function insert($notrigger = 0, $fromaddline = false)
     {
         global $langs,$user,$conf;
 
@@ -2679,7 +2679,7 @@ class ExpenseReportLine
      * @param   User    $fuser      User
      * @return  int                 <0 if KO, >0 if OK
      */
-    function update($fuser)
+    public function update($fuser)
     {
         global $fuser,$langs,$conf;
 
@@ -2758,7 +2758,6 @@ class ExpenseReportLine
 }
 
 
-// phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 /**
  *    Retourne la liste deroulante des differents etats d'une note de frais.
  *    Les valeurs de la liste sont les id de la table c_expensereport_statuts
@@ -2771,7 +2770,6 @@ class ExpenseReportLine
  */
 function select_expensereport_statut($selected = '', $htmlname = 'fk_statut', $useempty = 1, $useshortlabel = 0)
 {
-    // phpcs:enable
     global $db, $langs;
 
     $tmpep=new ExpenseReport($db);
@@ -2796,7 +2794,6 @@ function select_expensereport_statut($selected = '', $htmlname = 'fk_statut', $u
     print '</select>';
 }
 
-// phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 /**
  *  Return list of types of notes with select value = id
  *
@@ -2808,7 +2805,6 @@ function select_expensereport_statut($selected = '', $htmlname = 'fk_statut', $u
  */
 function select_type_fees_id($selected = '', $htmlname = 'type', $showempty = 0, $active = 1)
 {
-    // phpcs:enable
     global $db,$langs,$user;
     $langs->load("trips");
 
