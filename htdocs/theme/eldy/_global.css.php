@@ -427,20 +427,9 @@ textarea.centpercent {
 .cursornotallowed {
 	cursor: not-allowed;
 }
-.badge {
-	display: inline-block;
-	min-width: 10px;
-	padding: 2px 5px;
-	font-size: 10px;
-	font-weight: 700;
-	line-height: 1em;
-	color: #fff;
-	text-align: center;
-	white-space: nowrap;
-	vertical-align: text-bottom;
-	background-color: #aaa;
-	border-radius: 10px;
-}
+
+<?php include dol_buildpath($path.'/theme/'.$theme.'/_badges.css.php', 0); ?>
+
 .borderrightlight
 {
 	border-right: 1px solid #DDD;
