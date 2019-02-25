@@ -160,7 +160,7 @@ if ($resql)
 			print '<td>';
 			print $companystatic->getNomUrl(1, 'customer', 32);
 			print '</td>';
-			print '<td align="right">';
+			print '<td class="right">';
 			print $orderstatic->getLibStatut(3);
 			print '</td>';
 			print '</tr>';
@@ -219,7 +219,7 @@ if ( $resql )
 			print '<td>';
 			print $companystatic->getNomUrl(1, 'customer');
 			print '</td>';
-            print '<td align="right">';
+            print '<td class="right">';
             print $orderstatic->getLibStatut(3);
             print '</td>';
             print '</tr>';

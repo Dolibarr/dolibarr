@@ -103,12 +103,12 @@ if (! $rowid) {
 	//print_liste_field_titre("StripeCustomerId",$_SERVER["PHP_SELF"],"","","","",$sortfield,$sortorder);
 	//print_liste_field_titre("CustomerId", $_SERVER["PHP_SELF"], "", "", "", "", $sortfield, $sortorder);
 	//print_liste_field_titre("Origin", $_SERVER["PHP_SELF"], "", "", "", "", $sortfield, $sortorder);
-	print_liste_field_titre("DatePayment", $_SERVER["PHP_SELF"], "", "", "", 'align="center"', $sortfield, $sortorder);
-    print_liste_field_titre("DateOperation", $_SERVER["PHP_SELF"], "", "", "", 'align="center"', $sortfield, $sortorder);
-	print_liste_field_titre("Description", $_SERVER["PHP_SELF"], "", "", "", 'align="left"', $sortfield, $sortorder);
-	print_liste_field_titre("Paid", $_SERVER["PHP_SELF"], "", "", "", 'align="right"', $sortfield, $sortorder);
-	print_liste_field_titre("Fee", $_SERVER["PHP_SELF"], "", "", "", 'align="right"', $sortfield, $sortorder);
-	print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "", "", "", 'align="right"');
+	print_liste_field_titre("DatePayment", $_SERVER["PHP_SELF"], "", "", "", '', $sortfield, $sortorder, 'center ');
+    print_liste_field_titre("DateOperation", $_SERVER["PHP_SELF"], "", "", "", '', $sortfield, $sortorder, 'center ');
+	print_liste_field_titre("Description", $_SERVER["PHP_SELF"], "", "", "", '', $sortfield, $sortorder, 'left ');
+	print_liste_field_titre("Paid", $_SERVER["PHP_SELF"], "", "", "", '', $sortfield, $sortorder, 'right ');
+	print_liste_field_titre("Fee", $_SERVER["PHP_SELF"], "", "", "", '', $sortfield, $sortorder, 'right ');
+	print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "", "", "", '', '', '', 'right ');
 	print "</tr>\n";
 
 	print "</tr>\n";
@@ -198,16 +198,16 @@ if (! $rowid) {
 		//}
 		//print "</td>\n";
 		// Date payment
-		print '<td align="center">' . dol_print_date($payout->created, '%d/%m/%Y %H:%M') . "</td>\n";
+		print '<td class="center">' . dol_print_date($payout->created, '%d/%m/%Y %H:%M') . "</td>\n";
         // Date payment
-		print '<td align="center">' . dol_print_date($payout->arrival_date, '%d/%m/%Y %H:%M') . "</td>\n";
+		print '<td class="center">' . dol_print_date($payout->arrival_date, '%d/%m/%Y %H:%M') . "</td>\n";
 		// Type
 		print '<td>' . $payout->description . '</td>';
 		// Amount
-		print "<td align=\"right\">" . price(($payout->amount) / 100, 0, '', 1, - 1, - 1, strtoupper($payout->currency)) . "</td>";
-		print "<td align=\"right\">" . price(($payout->fee) / 100, 0, '', 1, - 1, - 1, strtoupper($payout->currency)) . "</td>";
+		print '<td class="right">' . price(($payout->amount) / 100, 0, '', 1, - 1, - 1, strtoupper($payout->currency)) . "</td>";
+		print '<td class="right">' . price(($payout->fee) / 100, 0, '', 1, - 1, - 1, strtoupper($payout->currency)) . "</td>";
 		// Status
-		print "<td align='right'>";
+		print "<td class='right'>";
 		if ($payout->status=='paid') {
             print img_picto($langs->trans("".$payout->status.""), 'statut4');
         } elseif ($payout->status=='pending') {

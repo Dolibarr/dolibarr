@@ -588,7 +588,7 @@ else
 	            $rowspan=3;
 	    		if (empty($conf->global->SOCIETE_DISABLE_STATE)) $rowspan++;
 
-	            print '<td valign="middle" align="center" rowspan="'.$rowspan.'">';
+	            print '<td class="valignmiddle center" rowspan="'.$rowspan.'">';
 		        print '<a href="#" id="copyaddressfromsoc">'.$langs->trans('CopyAddressFromSoc').'</a>';
 	            print '</td>';
             }

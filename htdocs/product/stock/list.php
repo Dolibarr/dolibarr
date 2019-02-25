@@ -162,22 +162,22 @@ if ($result)
 	// Lignes des champs de filtre
 	print '<tr class="liste_titre_filter">';
 
-	print '<td class="liste_titre" align="left">';
+	print '<td class="liste_titre left">';
 	print '<input class="flat" type="text" name="search_ref" size="6" value="'.dol_escape_htmltag($search_ref).'">';
 	print '</td>';
 
-	print '<td class="liste_titre" align="left">';
+	print '<td class="liste_titre left">';
 	print '<input class="flat" type="text" name="search_label" size="10" value="'.dol_escape_htmltag($search_label).'">';
 	print '</td>';
 
 	print '<td class="liste_titre" colspan="3">';
 	print '</td>';
 
-	print '<td class="liste_titre" align="right">';
+	print '<td class="liste_titre right">';
 	print $form->selectarray('search_status', $warehouse->statuts, $search_status, 1, 0, 0, '', 1);
 	print '</td>';
 
-    print '<td class="liste_titre" align="right">';
+    print '<td class="liste_titre right">';
     $searchpicto=$form->showFilterAndCheckAddButtons(0);
     print $searchpicto;
     print '</td>';
@@ -187,10 +187,10 @@ if ($result)
 	print '<tr class="liste_titre">';
 	print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "e.ref", "", $param, "", $sortfield, $sortorder);
 	print_liste_field_titre("LocationSummary", $_SERVER["PHP_SELF"], "e.lieu", "", $param, "", $sortfield, $sortorder);
-	print_liste_field_titre("PhysicalStock", $_SERVER["PHP_SELF"], "stockqty", '', $param, 'align="right"', $sortfield, $sortorder);
-    print_liste_field_titre("EstimatedStockValue", $_SERVER["PHP_SELF"], "estimatedvalue", '', $param, 'align="right"', $sortfield, $sortorder);
-    print_liste_field_titre("EstimatedStockValueSell", $_SERVER["PHP_SELF"], "", '', $param, 'align="right"', $sortfield, $sortorder);
-	print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "e.statut", '', $param, 'align="right"', $sortfield, $sortorder);
+	print_liste_field_titre("PhysicalStock", $_SERVER["PHP_SELF"], "stockqty", '', $param, '', $sortfield, $sortorder, 'right ');
+    print_liste_field_titre("EstimatedStockValue", $_SERVER["PHP_SELF"], "estimatedvalue", '', $param, '', $sortfield, $sortorder, 'right ');
+    print_liste_field_titre("EstimatedStockValueSell", $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'right ');
+	print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "e.statut", '', $param, '', $sortfield, $sortorder, 'right ');
 	print_liste_field_titre('', $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'maxwidthsearch ');
 	print "</tr>\n";
 
@@ -213,14 +213,14 @@ if ($result)
             // Location
             print '<td>'.$objp->lieu.'</td>';
             // Stock qty
-            print '<td align="right">'.price2num($objp->stockqty, 5).'</td>';
+            print '<td class="right">'.price2num($objp->stockqty, 5).'</td>';
             // PMP value
-            print '<td align="right">';
+            print '<td class="right">';
             if (price2num($objp->estimatedvalue, 'MT')) print price(price2num($objp->estimatedvalue, 'MT'), 1);
             else print '';
             print '</td>';
             // Selling value
-            print '<td align="right">';
+            print '<td class="right">';
             if (empty($conf->global->PRODUIT_MULTIPRICES)) print price(price2num($objp->sellvalue, 'MT'), 1);
             else
 			{
@@ -229,7 +229,7 @@ if ($result)
 			}
             print '</td>';
             // Status
-            print '<td align="right">'.$warehouse->LibStatut($objp->statut, 5).'</td>';
+            print '<td class="right">'.$warehouse->LibStatut($objp->statut, 5).'</td>';
 
             print '<td></td>';
 
@@ -242,10 +242,10 @@ if ($result)
 		if ($totalnboflines-$offset <= $limit)
 		{
     		print '<tr class="liste_total">';
-            print '<td colspan="2" align="right">'.$langs->trans("Total").'</td>';
-			print '<td align="right">'.price2num($totalStock, 5).'</td>';
-            print '<td align="right">'.price(price2num($total, 'MT'), 1, $langs, 0, 0, -1, $conf->currency).'</td>';
-            print '<td align="right">';
+            print '<td colspan="2" class="right">'.$langs->trans("Total").'</td>';
+			print '<td class="right">'.price2num($totalStock, 5).'</td>';
+            print '<td class="right">'.price(price2num($total, 'MT'), 1, $langs, 0, 0, -1, $conf->currency).'</td>';
+            print '<td class="right">';
     		if (empty($conf->global->PRODUIT_MULTIPRICES)) print price(price2num($totalsell, 'MT'), 1, $langs, 0, 0, -1, $conf->currency);
             else
     		{

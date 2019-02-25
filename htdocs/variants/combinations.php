@@ -763,7 +763,7 @@ if (! empty($id) || ! empty($ref))
 				<td class="liste_titre center"><?php echo $langs->trans('OnBuy') ?></td>
 				<td class="liste_titre"></td>
         		<?php
-        		print '<td class="liste_titre" align="middle">';
+        		print '<td class="liste_titre center">';
         		$searchpicto=$form->showCheckAddButtons('checkforselect', 1);
         		print $searchpicto;
         		print '</td>';
@@ -802,7 +802,7 @@ if (! empty($id) || ! empty($ref))
     					<a class="paddingleft paddingright" href="<?php echo dol_buildpath('/variants/combinations.php?id='.$id.'&action=delete&valueid='.$currcomb->id, 2) ?>"><?php echo img_delete() ?></a>
     				</td>
     				<?php
-    				print '<td class="nowrap" align="center">';
+    				print '<td class="nowrap center">';
     				if ($productCombinations || $massactionbutton || $massaction)   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
     				{
     				    $selected=0;

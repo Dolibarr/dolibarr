@@ -940,7 +940,6 @@ class Invoices extends DolibarrApi
                 throw new RestException(401);
         }
 
-
         $result = $this->invoice->fetch($id);
         if( ! $result ) {
                 throw new RestException(404, 'Invoice not found');
@@ -965,6 +964,9 @@ class Invoices extends DolibarrApi
 
 			// Loop on each vat rate
 			$i=0;
+            $amount_ht = array();
+            $amount_tva = array();
+            $amount_ttc = array();
 			foreach($this->invoice->lines as $line)
 			{
 				$amount_ht[$line->tva_tx]+=$line->total_ht;

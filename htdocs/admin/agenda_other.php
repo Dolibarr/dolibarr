@@ -225,10 +225,10 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
     print '<tr class="liste_titre">'."\n";
     print '<td width="100">'.$langs->trans("Name").'</td>'."\n";
     print '<td>'.$langs->trans("Description").'</td>'."\n";
-    print '<td align="center" width="60">'.$langs->trans("Status").'</td>'."\n";
-    print '<td align="center" width="60">'.$langs->trans("Default").'</td>'."\n";
-    print '<td align="center" width="40">'.$langs->trans("ShortInfo").'</td>';
-    print '<td align="center" width="40">'.$langs->trans("Preview").'</td>';
+    print '<td class="center" width="60">'.$langs->trans("Status").'</td>'."\n";
+    print '<td class="center" width="60">'.$langs->trans("Default").'</td>'."\n";
+    print '<td class="center" width="40">'.$langs->trans("ShortInfo").'</td>';
+    print '<td class="center" width="40">'.$langs->trans("Preview").'</td>';
     print '</tr>'."\n";
 
     clearstatcache();
@@ -269,7 +269,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
             			if (in_array($name, $def))
             			{
 
-            			print '<td align="center">'."\n";
+            			print '<td class="center">'."\n";
             			if ($conf->global->ACTION_EVENT_ADDON_PDF != "$name")
             			{
             				print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'&amp;type=action">';
@@ -284,13 +284,13 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
             			}
             			else
             			{
-            				print '<td align="center">'."\n";
+            				print '<td class="center">'."\n";
             				print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmodel&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'&amp;type=action">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
             				print "</td>";
             			}
 
             			// Default
-            			print '<td align="center">';
+            			print '<td class="center">';
             			if ($conf->global->ACTION_EVENT_ADDON_PDF == "$name")
             			{
             				print img_picto($langs->trans("Default"), 'on');
@@ -307,10 +307,10 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
             			$htmltooltip.='<br>'.$langs->trans("Width").'/'.$langs->trans("Height").': '.$module->page_largeur.'/'.$module->page_hauteur;
             			$htmltooltip.='<br><br><u>'.$langs->trans("FeaturesSupported").':</u>';
             			$htmltooltip.='<br>'.$langs->trans("Logo").': '.yn($module->option_logo, 1, 1);
-            			print '<td align="center">';
+            			print '<td class="center">';
             			print $form->textwithpicto('', $htmltooltip, 1, 0);
             			print '</td>';
-            			print '<td align="center">';
+            			print '<td class="center">';
             			print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&amp;module='.$name.'">'.img_object($langs->trans("Preview"), 'order').'</a>';
             			print '</td>';
 
@@ -330,7 +330,7 @@ print '<input type="hidden" name="action" value="set">';
 print '<table class="noborder allwidth">'."\n";
 print '<tr class="liste_titre">'."\n";
 print '<td>'.$langs->trans("Parameters").'</td>'."\n";
-print '<td align="center">&nbsp;</td>'."\n";
+print '<td class="center">&nbsp;</td>'."\n";
 print '<td class="right">'.$langs->trans("Value").'</td>'."\n";
 print '</tr>'."\n";
 
@@ -338,7 +338,7 @@ print '</tr>'."\n";
 
 print '<tr class="oddeven">'."\n";
 print '<td>'.$langs->trans("AGENDA_USE_EVENT_TYPE").'</td>'."\n";
-print '<td align="center">&nbsp;</td>'."\n";
+print '<td class="center">&nbsp;</td>'."\n";
 print '<td class="right">'."\n";
 //print ajax_constantonoff('AGENDA_USE_EVENT_TYPE');	Do not use ajax here, we need to reload page to change other combo list
 if (empty($conf->global->AGENDA_USE_EVENT_TYPE))
@@ -355,7 +355,7 @@ print '</td></tr>'."\n";
 print '<tr class="oddeven">'."\n";
 $htmltext=$langs->trans("ThisValueCanOverwrittenOnUserLevel", $langs->transnoentitiesnoconv("UserGUISetup"));
 print '<td>'.$form->textwithpicto($langs->trans("AGENDA_DEFAULT_VIEW"), $htmltext).'</td>'."\n";
-print '<td align="center">&nbsp;</td>'."\n";
+print '<td class="center">&nbsp;</td>'."\n";
 print '<td class="right">'."\n";
 $tmplist=array(''=>'&nbsp;', 'show_list'=>$langs->trans("ViewList"), 'show_month'=>$langs->trans("ViewCal"), 'show_week'=>$langs->trans("ViewWeek"), 'show_day'=>$langs->trans("ViewDay"), 'show_peruser'=>$langs->trans("ViewPerUser"));
 print $form->selectarray('AGENDA_DEFAULT_VIEW', $tmplist, $conf->global->AGENDA_DEFAULT_VIEW);
@@ -367,8 +367,8 @@ if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))
     print '<!-- AGENDA_USE_EVENT_TYPE_DEFAULT -->';
     print '<tr class="oddeven">'."\n";
     print '<td>'.$langs->trans("AGENDA_USE_EVENT_TYPE_DEFAULT").'</td>'."\n";
-    print '<td align="center">&nbsp;</td>'."\n";
-    print '<td class="right" class="nowrap">'."\n";
+    print '<td class="center">&nbsp;</td>'."\n";
+    print '<td class="right nowrap">'."\n";
     $formactions->select_type_actions($conf->global->AGENDA_USE_EVENT_TYPE_DEFAULT, "AGENDA_USE_EVENT_TYPE_DEFAULT", 'systemauto', 0, 1);
     print '</td></tr>'."\n";
 }
@@ -376,8 +376,8 @@ if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))
 // AGENDA_DEFAULT_FILTER_TYPE
 print '<tr class="oddeven">'."\n";
 print '<td>'.$langs->trans("AGENDA_DEFAULT_FILTER_TYPE").'</td>'."\n";
-print '<td align="center">&nbsp;</td>'."\n";
-print '<td class="right" class="nowrap">'."\n";
+print '<td class="center">&nbsp;</td>'."\n";
+print '<td class="right nowrap">'."\n";
 $formactions->select_type_actions($conf->global->AGENDA_DEFAULT_FILTER_TYPE, "AGENDA_DEFAULT_FILTER_TYPE", '', (empty($conf->global->AGENDA_USE_EVENT_TYPE) ? 1 : -1), 1);
 print '</td></tr>'."\n";
 
@@ -385,7 +385,7 @@ print '</td></tr>'."\n";
 // TODO Remove to use the default generic feature
 print '<tr class="oddeven">'."\n";
 print '<td>'.$langs->trans("AGENDA_DEFAULT_FILTER_STATUS").'</td>'."\n";
-print '<td align="center">&nbsp;</td>'."\n";
+print '<td class="center">&nbsp;</td>'."\n";
 print '<td class="right">'."\n";
 $formactions->form_select_status_action('agenda', $conf->global->AGENDA_DEFAULT_FILTER_STATUS, 1, 'AGENDA_DEFAULT_FILTER_STATUS', 1, 2, 'minwidth100');
 print '</td></tr>'."\n";

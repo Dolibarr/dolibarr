@@ -554,7 +554,7 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 
 		dol_fiche_end();
 
-		print '<div align="center">';
+		print '<div class="center">';
 		print '<input type="submit" class="button" name="add" value="'.$langs->trans("Add").'">';
 		print ' &nbsp; &nbsp; ';
 		print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
@@ -671,38 +671,38 @@ elseif ($id > 0 || ! empty($ref))
 	print '<input class="flat searchstring maxwidth100" type="text" name="search_tasklabel" value="'.dol_escape_htmltag($search_tasklabel).'">';
 	print '</td>';
 
-	print '<td class="liste_titre" align="center">';
+	print '<td class="liste_titre center">';
 	print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="search_dtstartday" value="'.$search_dtstartday.'">';
 	print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="search_dtstartmonth" value="'.$search_dtstartmonth.'">';
 	$formother->select_year($search_dtstartyear?$search_dtstartyear:-1, 'search_dtstartyear', 1, 20, 5);
 	print '</td>';
 
-	print '<td class="liste_titre" align="center">';
+	print '<td class="liste_titre center">';
 	print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="search_dtendday" value="'.$search_dtendday.'">';
 	print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="search_dtendmonth" value="'.$search_dtendmonth.'">';
 	$formother->select_year($search_dtendyear?$search_dtendyear:-1, 'search_dtendyear', 1, 20, 5);
 	print '</td>';
 
-	print '<td class="liste_titre" align="right">';
+	print '<td class="liste_titre right">';
 	print '<input class="flat" type="text" size="4" name="search_planedworkload" value="'.$search_planedworkload.'">';
 	print '</td>';
 
-	print '<td class="liste_titre" align="right">';
+	print '<td class="liste_titre right">';
 	print '<input class="flat" type="text" size="4" name="search_timespend" value="'.$search_timespend.'">';
 	print '</td>';
 
-	print '<td class="liste_titre" align="right">';
+	print '<td class="liste_titre right">';
 	print '<input class="flat" type="text" size="4" name="search_progresscalc" value="'.$search_progresscalc.'">';
 	print '</td>';
 
-	print '<td class="liste_titre" align="right">';
+	print '<td class="liste_titre right">';
 	print '<input class="flat" type="text" size="4" name="search_progressdeclare" value="'.$search_progressdeclare.'">';
 	print '</td>';
 
 	if (! empty($conf->global->PROJECT_SHOW_CONTACTS_IN_LIST)) print '<td></td>';
 
 	// Action column
-	print '<td class="liste_titre" align="right">';
+	print '<td class="liste_titre right">';
 	$searchpicto=$form->showFilterButtons();
 	print $searchpicto;
 	print '</td>';
@@ -712,14 +712,14 @@ elseif ($id > 0 || ! empty($ref))
 	// print '<td>'.$langs->trans("Project").'</td>';
 	print_liste_field_titre("RefTask", $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, '');
 	print_liste_field_titre("LabelTask", $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, '');
-	print_liste_field_titre("DateStart", $_SERVER["PHP_SELF"], "", '', '', 'align="center"', $sortfield, $sortorder, '');
-	print_liste_field_titre("DateEnd", $_SERVER["PHP_SELF"], "", '', '', 'align="center"', $sortfield, $sortorder, '');
-	print_liste_field_titre("PlannedWorkload", $_SERVER["PHP_SELF"], "", '', '', 'align="right"', $sortfield, $sortorder, '');
-	print_liste_field_titre("TimeSpent", $_SERVER["PHP_SELF"], "", '', '', 'align="right"', $sortfield, $sortorder, '');
-	print_liste_field_titre("ProgressCalculated", $_SERVER["PHP_SELF"], "", '', '', 'align="right"', $sortfield, $sortorder, '');
-	print_liste_field_titre("ProgressDeclared", $_SERVER["PHP_SELF"], "", '', '', 'align="right"', $sortfield, $sortorder, '');
-	if (! empty($conf->global->PROJECT_SHOW_CONTACTS_IN_LIST)) print_liste_field_titre("TaskRessourceLinks", $_SERVER["PHP_SELF"], '', '', '', $sortfield, $sortorder, '');
-	print_liste_field_titre('', $_SERVER["PHP_SELF"], "", '', '', 'align="center" width="80"', $sortfield, $sortorder, 'maxwidthsearch ');
+	print_liste_field_titre("DateStart", $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center ');
+	print_liste_field_titre("DateEnd", $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center ');
+	print_liste_field_titre("PlannedWorkload", $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'right ');
+	print_liste_field_titre("TimeSpent", $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'right ');
+	print_liste_field_titre("ProgressCalculated", $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'right ');
+	print_liste_field_titre("ProgressDeclared", $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'right ');
+	if (! empty($conf->global->PROJECT_SHOW_CONTACTS_IN_LIST)) print_liste_field_titre("TaskRessourceLinks", $_SERVER["PHP_SELF"], '', '', '', $sortfield, $sortorder);
+	print_liste_field_titre('', $_SERVER["PHP_SELF"], "", '', '', 'width="80"', $sortfield, $sortorder, 'center maxwidthsearch ');
 	print "</tr>\n";
 
 	if (count($tasksarray) > 0)

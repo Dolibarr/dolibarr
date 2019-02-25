@@ -87,9 +87,9 @@ if ($result)
     print "<tr class=\"liste_titre\">";
     print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "e.ref", "", "", "", $sortfield, $sortorder);
     print_liste_field_titre("LocationSummary", $_SERVER["PHP_SELF"], "e.lieu", "", "", "", $sortfield, $sortorder);
-    print_liste_field_titre("EstimatedStockValue", $_SERVER["PHP_SELF"], "e.valo_pmp", '', '', 'align="right"', $sortfield, $sortorder);
-    print_liste_field_titre("EstimatedStockValueSell", $_SERVER["PHP_SELF"], "", '', '', 'align="right"', $sortfield, $sortorder);
-    print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "e.statut", '', '', 'align="right"', $sortfield, $sortorder);
+    print_liste_field_titre("EstimatedStockValue", $_SERVER["PHP_SELF"], "e.valo_pmp", '', '', '', $sortfield, $sortorder, 'right ');
+    print_liste_field_titre("EstimatedStockValueSell", $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'right ');
+    print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "e.statut", '', '', '', $sortfield, $sortorder, 'right ');
     print "</tr>\n";
 
     if ($num)
@@ -104,17 +104,17 @@ if ($result)
             print '<td><a href="card.php?id='.$objp->rowid.'">'.img_object($langs->trans("ShowWarehouse"), 'stock').' '.$objp->ref.'</a></td>';
             print '<td>'.$objp->lieu.'</td>';
             // PMP value
-            print '<td align="right">';
+            print '<td class="right">';
             if (price2num($objp->estimatedvalue, 'MT')) print price(price2num($objp->estimatedvalue, 'MT'), 1);
             else print '';
             print '</td>';
             // Selling value
-            print '<td align="right">';
+            print '<td class="right">';
             if (empty($conf->global->PRODUIT_MULTIPRICES)) print price(price2num($objp->sellvalue, 'MT'), 1);
             else print $langs->trans("Variable");
             print '</td>';
             // Status
-            print '<td align="right">'.$entrepot->LibStatut($objp->statut, 5).'</td>';
+            print '<td class="right">'.$entrepot->LibStatut($objp->statut, 5).'</td>';
             print "</tr>\n";
             $total += price2num($objp->estimatedvalue, 'MU');
             $totalsell += price2num($objp->sellvalue, 'MU');
@@ -123,10 +123,10 @@ if ($result)
         }
 
         print '<tr class="liste_total">';
-        print '<td colspan="2" align="right">'.$langs->trans("Total").'</td>';
-        print '<td align="right">'.price(price2num($total, 'MT'), 1, $langs, 0, 0, -1, $conf->currency).'</td>';
-        print '<td align="right">'.price(price2num($totalsell, 'MT'), 1, $langs, 0, 0, -1, $conf->currency).'</td>';
-        print '<td align="right">&nbsp;</td>';
+        print '<td colspan="2" class="right">'.$langs->trans("Total").'</td>';
+        print '<td class="right">'.price(price2num($total, 'MT'), 1, $langs, 0, 0, -1, $conf->currency).'</td>';
+        print '<td class="right">'.price(price2num($totalsell, 'MT'), 1, $langs, 0, 0, -1, $conf->currency).'</td>';
+        print '<td class="right">&nbsp;</td>';
         print "</tr>\n";
     }
 
