@@ -1047,13 +1047,13 @@ class SupplierProposal extends CommonObject
                         $action='update';
 
                         // Actions on extra fields
-                           if (! $error && empty($conf->global->MAIN_EXTRAFIELDS_DISABLED))
-                           {
-                               $result=$this->insertExtraFields();
-                               if ($result < 0)
-                               {
-                                   $error++;
-                               }
+                        if (! $error && empty($conf->global->MAIN_EXTRAFIELDS_DISABLED))
+                        {
+                            $result=$this->insertExtraFields();
+                            if ($result < 0)
+                            {
+                                $error++;
+                            }
                         }
 
                         if (! $error && ! $notrigger)
@@ -1871,7 +1871,7 @@ class SupplierProposal extends CommonObject
         }
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *  Set draft status
      *
@@ -1984,7 +1984,7 @@ class SupplierProposal extends CommonObject
      *	@param	int		$notrigger		1=Does not execute triggers, 0= execute triggers
      *	@return	int						1 if ok, otherwise if error
      */
-    function delete($user, $notrigger = 0)
+    public function delete($user, $notrigger = 0)
     {
         global $conf,$langs;
         require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';

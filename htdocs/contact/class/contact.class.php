@@ -273,7 +273,7 @@ class Contact extends CommonObject
                 }
             }
 
-			if (! $error)
+            if (! $error)
             {
                 // Call trigger
                 $result=$this->call_trigger('CONTACT_CREATE', $user);
@@ -588,7 +588,7 @@ class Contact extends CommonObject
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Update field alert birthday
 	 *

@@ -34,7 +34,7 @@ class Conf
 {
 	/** \public */
 	//! To store properties found in conf file
-	var $file;
+    public $file;
 
 	/**
      * @var DoliDB Database handler.
@@ -42,9 +42,9 @@ class Conf
     public $db;
 
 	//! To store properties found into database
-	var $global;
+    public $global;
 	//! To store browser info
-	var $browser;
+    public $browser;
 
 	//! To store if javascript/ajax is enabked
 	public $use_javascript_ajax;
@@ -59,12 +59,12 @@ class Conf
 	public $modules					= array();	// List of activated modules
 	public $modules_parts			= array('css'=>array(),'js'=>array(),'tabs'=>array(),'triggers'=>array(),'login'=>array(),'substitutions'=>array(),'menus'=>array(),'theme'=>array(),'sms'=>array(),'tpl'=>array(),'barcode'=>array(),'models'=>array(),'societe'=>array(),'hooks'=>array(),'dir'=>array(), 'syslog' =>array());
 
-	var $logbuffer					= array();
+    public $logbuffer					= array();
 
 	/**
 	 * @var LogHandlerInterface[]
 	 */
-	var $loghandlers                = array();
+    public $loghandlers                = array();
 
 	//! To store properties of multi-company
 	public $multicompany;

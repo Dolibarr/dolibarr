@@ -69,23 +69,23 @@ abstract class CommonStickerGenerator
     public $format;
 
 	// protected
-	var $_Avery_Name	= '';	// Nom du format de l'etiquette
-	var $_Margin_Left	= 0;	// Marge de gauche de l'etiquette
-	var $_Margin_Top	= 0;	// marge en haut de la page avant la premiere etiquette
-	var $_X_Space 	= 0;	// Espace horizontal entre 2 bandes d'etiquettes
-	var $_Y_Space 	= 0;	// Espace vertical entre 2 bandes d'etiquettes
-	var $_X_Number 	= 0;	// NX Nombre d'etiquettes sur la largeur de la page
-	var $_Y_Number 	= 0;	// NY Nombre d'etiquettes sur la hauteur de la page
-	var $_Width 		= 0;	// Largeur de chaque etiquette
-	var $_Height 		= 0;	// Hauteur de chaque etiquette
-	var $_Char_Size	= 10;	// Hauteur des caracteres
-	var $_Line_Height	= 10;	// Hauteur par defaut d'une ligne
-	var $_Metric 		= 'mm';	// Type of metric.. Will help to calculate good values
-	var $_Metric_Doc 	= 'mm';	// Type of metric for the doc..
-	var $_COUNTX = 1;
-	var $_COUNTY = 1;
-	var $_First = 1;
-	var $Tformat;
+    public $_Avery_Name	= '';	// Nom du format de l'etiquette
+    public $_Margin_Left	= 0;	// Marge de gauche de l'etiquette
+    public $_Margin_Top	= 0;	// marge en haut de la page avant la premiere etiquette
+    public $_X_Space 	= 0;	// Espace horizontal entre 2 bandes d'etiquettes
+    public $_Y_Space 	= 0;	// Espace vertical entre 2 bandes d'etiquettes
+    public $_X_Number 	= 0;	// NX Nombre d'etiquettes sur la largeur de la page
+    public $_Y_Number 	= 0;	// NY Nombre d'etiquettes sur la hauteur de la page
+    public $_Width 		= 0;	// Largeur de chaque etiquette
+    public $_Height 		= 0;	// Hauteur de chaque etiquette
+    public $_Char_Size	= 10;	// Hauteur des caracteres
+    public $_Line_Height	= 10;	// Hauteur par defaut d'une ligne
+    public $_Metric 		= 'mm';	// Type of metric.. Will help to calculate good values
+    public $_Metric_Doc 	= 'mm';	// Type of metric for the doc..
+    public $_COUNTX = 1;
+    public $_COUNTY = 1;
+    public $_First = 1;
+    public $Tformat;
 
 	/**
 	 *	Constructor
