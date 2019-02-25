@@ -382,7 +382,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
      *
      * @return int                         1 if OK, 0 if KO
      */
-    private function _init($array_sql, $options = '')
+    protected function _init($array_sql, $options = '')
     {
         global $conf;
         $err=0;
@@ -484,7 +484,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
      *
      * @return int                     1 if OK, 0 if KO
      */
-    private function _remove($array_sql, $options = '')
+    protected function _remove($array_sql, $options = '')
     {
         $err=0;
 
@@ -658,11 +658,12 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
                 @include_once DOL_DOCUMENT_ROOT.'/core/lib/parsemd.lib.php';
 
                 $content = dolMd2Html(
-                    $content, 'parsedown',
+                    $content,
+                    'parsedown',
                     array(
-                    'doc/'=>dol_buildpath(strtolower($this->name).'/doc/', 1),
-                    'img/'=>dol_buildpath(strtolower($this->name).'/img/', 1),
-                    'images/'=>dol_buildpath(strtolower($this->name).'/imgages/', 1),
+                        'doc/' => dol_buildpath(strtolower($this->name).'/doc/', 1),
+                        'img/' => dol_buildpath(strtolower($this->name).'/img/', 1),
+                        'images/' => dol_buildpath(strtolower($this->name).'/imgages/', 1),
                     )
                 );
             }
@@ -671,8 +672,9 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
                 $content = nl2br($content);
             }
         }
-        else                // Mostly for internal modules
+        else
         {
+            // Mostly for internal modules
             if (! empty($this->descriptionlong)) {
                 if (is_array($this->langfiles)) {
                     foreach($this->langfiles as $val)
@@ -805,14 +807,20 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
         $ret='';
 
         $newversion=preg_replace('/_deprecated/', '', $this->version);
-        if ($newversion == 'experimental') { $ret=($translated?$langs->transnoentitiesnoconv("VersionExperimental"):$newversion);
-        } elseif ($newversion == 'development') { $ret=($translated?$langs->transnoentitiesnoconv("VersionDevelopment"):$newversion);
-        } elseif ($newversion == 'dolibarr') { $ret=DOL_VERSION;
-        } elseif ($newversion) { $ret=$newversion;
-        } else { $ret=($translated?$langs->transnoentitiesnoconv("VersionUnknown"):'unknown');
+        if ($newversion == 'experimental') {
+            $ret=($translated?$langs->transnoentitiesnoconv("VersionExperimental"):$newversion);
+        } elseif ($newversion == 'development') {
+            $ret=($translated?$langs->transnoentitiesnoconv("VersionDevelopment"):$newversion);
+        } elseif ($newversion == 'dolibarr') {
+            $ret=DOL_VERSION;
+        } elseif ($newversion) {
+            $ret=$newversion;
+        } else {
+            $ret=($translated?$langs->transnoentitiesnoconv("VersionUnknown"):'unknown');
         }
 
-        if (preg_match('/_deprecated/', $this->version)) { $ret.=($translated?' ('.$langs->transnoentitiesnoconv("Deprecated").')':$this->version);
+        if (preg_match('/_deprecated/', $this->version)) {
+            $ret.=($translated?' ('.$langs->transnoentitiesnoconv("Deprecated").')':$this->version);
         }
         return $ret;
     }
@@ -825,13 +833,17 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
      */
     public function isCoreOrExternalModule()
     {
-        if ($this->version == 'dolibarr' || $this->version == 'dolibarr_deprecated') { return 'core';
+        if ($this->version == 'dolibarr' || $this->version == 'dolibarr_deprecated') {
+            return 'core';
         }
-        if (! empty($this->version) && ! in_array($this->version, array('experimental','development'))) { return 'external';
+        if (! empty($this->version) && ! in_array($this->version, array('experimental','development'))) {
+            return 'external';
         }
-        if (! empty($this->editor_name) || ! empty($this->editor_url)) { return 'external';
+        if (! empty($this->editor_name) || ! empty($this->editor_url)) {
+            return 'external';
         }
-        if ($this->numero >= 100000) { return 'external';
+        if ($this->numero >= 100000) {
+            return 'external';
         }
         return 'unknown';
     }
@@ -911,11 +923,12 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
         dol_syslog(get_class($this)."::getLastActiveDate", LOG_DEBUG);
         $resql=$this->db->query($sql);
-        if (! $resql) { $err++;
-        } else
-        {
+        if (! $resql) {
+            $err++;
+        } else {
             $obj=$this->db->fetch_object($resql);
-            if ($obj) { return $this->db->jdate($obj->tms);
+            if ($obj) {
+                return $this->db->jdate($obj->tms);
             }
         }
 
@@ -938,15 +951,16 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
         dol_syslog(get_class($this)."::getLastActiveDate", LOG_DEBUG);
         $resql=$this->db->query($sql);
-        if (! $resql) { $err++;
-        } else
-        {
+        if (! $resql) {
+            $err++;
+        } else {
             $obj=$this->db->fetch_object($resql);
             $tmp=array();
             if ($obj->note) {
                 $tmp=json_decode($obj->note, true);
             }
-            if ($obj) { return array('authorid'=>$tmp['authorid'], 'ip'=>$tmp['ip'], 'lastactivationdate'=>$this->db->jdate($obj->tms));
+            if ($obj) {
+                return array('authorid'=>$tmp['authorid'], 'ip'=>$tmp['ip'], 'lastactivationdate'=>$this->db->jdate($obj->tms));
             }
         }
 
@@ -974,7 +988,8 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
         dol_syslog(get_class($this)."::_active delete activation constant", LOG_DEBUG);
         $resql=$this->db->query($sql);
-        if (! $resql) { $err++;
+        if (! $resql) {
+            $err++;
         }
 
         $note=json_encode(array('authorid'=>(is_object($user)?$user->id:0), 'ip'=>(empty($_SERVER['REMOTE_ADDR'])?'':$_SERVER['REMOTE_ADDR'])));
@@ -1029,7 +1044,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
      * @param  string $reldir Relative directory where to scan files
      * @return int             <=0 if KO, >0 if OK
      */
-    private function _load_tables($reldir)
+    protected function _load_tables($reldir)
     {
         // phpcs:enable
         global $conf;

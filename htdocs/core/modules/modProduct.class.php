@@ -521,7 +521,7 @@ class modProduct extends DolibarrModules
 			if (is_object($mysoc) && $mysoc->useNPR())       $this->import_fields_array[$r]=array_merge($this->import_fields_array[$r], array('sp.recuperableonly'=>'VATNPR'));
 			if (is_object($mysoc) && $mysoc->useLocalTax(1)) $this->import_fields_array[$r]=array_merge($this->import_fields_array[$r], array('sp.localtax1_tx'=>'LT1', 'sp.localtax1_type'=>'LT1Type'));
 			if (is_object($mysoc) && $mysoc->useLocalTax(2)) $this->import_fields_array[$r]=array_merge($this->import_fields_array[$r], array('sp.localtax2_tx'=>'LT2', 'sp.localtax2_type'=>'LT2Type'));
-$this->import_fields_array[$r]=array_merge($this->import_fields_array[$r], array(
+            $this->import_fields_array[$r]=array_merge($this->import_fields_array[$r], array(
 					'sp.price'=>"PriceQtyMinHT*",
 					'sp.unitprice'=>'UnitPriceHT*',	// TODO Make this field not required and calculate it from price and qty
 					'sp.remise_percent'=>'DiscountQtyMin'
@@ -625,20 +625,20 @@ $this->import_fields_array[$r]=array_merge($this->import_fields_array[$r], array
 	}
 
 
-	/**
-	 *		Function called when module is enabled.
-	 *		The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
-	 *		It also creates data directories
-	 *
-     *      @param      string	$options    Options when enabling module ('', 'newboxdefonly', 'noboxes')
-	 *      @return     int             	1 if OK, 0 if KO
-	 */
-	function init($options = '')
-	{
-		$this->remove($options);
+    /**
+     *  Function called when module is enabled.
+     *  The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
+     *  It also creates data directories
+     *
+     *  @param      string	$options    Options when enabling module ('', 'newboxdefonly', 'noboxes')
+     *  @return     int             	1 if OK, 0 if KO
+     */
+    public function init($options = '')
+    {
+        $this->remove($options);
 
-		$sql = array();
+        $sql = array();
 
-		return $this->_init($sql, $options);
-	}
+        return $this->_init($sql, $options);
+    }
 }
