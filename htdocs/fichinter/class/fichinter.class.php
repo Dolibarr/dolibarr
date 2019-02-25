@@ -123,13 +123,13 @@ class Fichinter extends CommonObject
 	 *  @param	DoliDB	$db		Database handler
 	 */
     public function __construct($db)
-	{
+    {
 		$this->db = $db;
 
 		$this->products = array();
-	}
+    }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Load indicators into this->nb for board
 	 *
@@ -1002,16 +1002,16 @@ class Fichinter extends CommonObject
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *	Defines a delivery date of intervention
+	 *  Defines a delivery date of intervention
 	 *
-	 *	@param      User	$user				Object user who define
-	 *	@param      date	$date_delivery   	date of delivery
-	 *	@return     int							<0 if ko, >0 if ok
-	 */
+	 *  @param      User	$user				Object user who define
+	 *  @param      date	$date_delivery   	date of delivery
+	 *  @return     int							<0 if ko, >0 if ok
+     */
     public function set_date_delivery($user, $date_delivery)
-	{
+    {
         // phpcs:enable
 		global $conf;
 
