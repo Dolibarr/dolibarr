@@ -243,10 +243,7 @@ class EmailCollectorAction extends CommonObject
         $result = $object->createCommon($user);
         if ($result < 0) {
             $error++;
-            $thi	/**
-            * @var EmailcollectorActionLine[]     Array of subtable lines
-            */
-       s->error = $object->error;
+            $this->error = $object->error;
             $this->errors = $object->errors;
         }
 
