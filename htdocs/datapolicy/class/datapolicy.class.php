@@ -262,26 +262,26 @@ Class DataPolicy
          	$actionmsg .= dol_concatdesc($actionmsg, $langs->transnoentities('MailTopic') . ": " . $subject);
          	$actionmsg .= dol_concatdesc($actionmsg, $langs->transnoentities('TextUsedInTheMessageBody') . ":");
          	$actionmsg .= dol_concatdesc($actionmsg, $message);
-         }
+		}
 
-         // Send mail
-         require_once DOL_DOCUMENT_ROOT . '/core/class/CMailFile.class.php';
-         $mailfile = new CMailFile($subject, $sendto, $from, $message, $filepath, $mimetype, $filename, $sendtocc, $sendtobcc, $deliveryreceipt, -1);
-         if ($mailfile->error) {
-         	$resultmasssend .= '<div class="error">' . $mailfile->error . '</div>';
-         } else {
-         	$result4 = $mailfile->sendfile();
+		// Send mail
+		require_once DOL_DOCUMENT_ROOT . '/core/class/CMailFile.class.php';
+		$mailfile = new CMailFile($subject, $sendto, $from, $message, $filepath, $mimetype, $filename, $sendtocc, $sendtobcc, $deliveryreceipt, -1);
+		if ($mailfile->error) {
+			$resultmasssend .= '<div class="error">' . $mailfile->error . '</div>';
+		} else {
+			$result4 = $mailfile->sendfile();
 
-         	if (!$error) {
-         		$resultmasssend .= $langs->trans("MailSent") . ': ' . $sendto . "<br>";
-         		$societe->array_options['options_datapolicy_send'] = date('Y-m-d', time());
-         		$societe->update($societe->id);
-         	} else {
-         		dol_print_error($db);
-         	}
-         }
-         setEventMessage($resultmasssend);
-	}
+			if (!$error) {
+				$resultmasssend .= $langs->trans("MailSent") . ': ' . $sendto . "<br>";
+				$societe->array_options['options_datapolicy_send'] = date('Y-m-d', time());
+				$societe->update($societe->id);
+			} else {
+				dol_print_error($db);
+			}
+		}
+		setEventMessage($resultmasssend);
+    }
 
     /**
      * sendMailDataPolicyAdherent
