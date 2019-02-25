@@ -1103,6 +1103,8 @@ if ($action == 'create')
 	$soc = new Societe($db);
 	if ($socid>0) $soc->fetch($socid);
 
+    $ref_customer = dol_escape_htmltag(GETPOST('ref_customer', 'alpha'));
+
 	if (GETPOST('origin') && GETPOST('originid'))
 	{
 		// Parse element/subelement (ex: project_task)
@@ -1134,6 +1136,7 @@ if ($action == 'create')
 			// Replicate extrafields
 			$objectsrc->fetch_optionals($originid);
 			$object->array_options = $objectsrc->array_options;
+            if(!empty($objectsrc->ref_client)) $ref_customer = $objectsrc->ref_client;
 
 			$projectid          = (!empty($objectsrc->fk_project)?$objectsrc->fk_project:'');
 
@@ -1177,7 +1180,7 @@ if ($action == 'create')
 
 	// Ref customer
 	print '<tr><td>'.$langs->trans('RefCustomer').'</td>';
-	print '<td><input type="text" class="maxwidth150" name="ref_customer" id="ref_customer" value="'.dol_escape_htmltag(GETPOST('ref_customer','alpha')).'"></td></tr>';
+	print '<td><input type="text" class="maxwidth150" name="ref_customer" id="ref_customer" value="'.$ref_customer.'"></td></tr>';
 
 	// Ref supplier
 	print '<tr><td>'.$langs->trans('RefSupplier').'</td>';
