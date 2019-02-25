@@ -3756,9 +3756,7 @@ class Societe extends CommonObject
 			while($obj=$this->db->fetch_object($resql)) {
                 $tmpobject->id=$obj->rowid;
 
-                $paiement = $tmpobject->getSommePaiement();
-                $creditnotes = $tmpobject->getSumCreditNotesUsed();
-                $deposits = $tmpobject->getSumDepositsUsed();
+
 
 
 				if ($obj->fk_statut != 0                                           // Not a draft
@@ -3774,12 +3772,15 @@ class Societe extends CommonObject
 					&& $obj->fk_statut != 2)   // Not classified as paid
 				//$sql .= " AND (fk_statut <> 3 OR close_code <> 'abandon')";		// Not abandonned for undefined reason
 				{
+					$paiement = $tmpobject->getSommePaiement();
+					$creditnotes = $tmpobject->getSumCreditNotesUsed();
+					$deposits = $tmpobject->getSumDepositsUsed();
 
 					$outstandingOpened+=$obj->total_ttc - $paiement - $creditnotes - $deposits;
 				}
 
                 if($mode == 'supplier' && $obj->type == FactureFournisseur::TYPE_CREDIT_NOTE && $obj->fk_statut == FactureFournisseur::STATUS_CLOSED && !$tmpobject->isCreditNoteUsed()) { //if credit note is converted but not used
-
+                    if(empty($paiement)) $paiement = $tmpobject->getSommePaiement();
                     $outstandingOpened+=$obj->total_ttc-$paiement;
                 }
 			}
