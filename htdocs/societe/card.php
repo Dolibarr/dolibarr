@@ -146,7 +146,7 @@ if (empty($reshook))
 				$object->client = $object->client | $soc_origin->client;
 				$object->fournisseur = $object->fournisseur | $soc_origin->fournisseur;
 				$listofproperties=array(
-					'address', 'zip', 'town', 'state_id', 'country_id', 'phone', 'phone_pro', 'fax', 'email', 'skype', 'twitter', 'facebook', 'url', 'barcode',
+					'address', 'zip', 'town', 'state_id', 'country_id', 'phone', 'phone_pro', 'fax', 'email', 'skype', 'twitter', 'facebook', 'linkedin', 'url', 'barcode',
 					'idprof1', 'idprof2', 'idprof3', 'idprof4', 'idprof5', 'idprof6',
 					'tva_intra', 'effectif_id', 'forme_juridique', 'remise_percent', 'remise_supplier_percent', 'mode_reglement_supplier_id', 'cond_reglement_supplier_id', 'name_bis',
 					'stcomm_id', 'outstanding_limit', 'price_level', 'parent', 'default_lang', 'ref', 'ref_ext', 'import_key', 'fk_incoterms', 'fk_multicurrency',
@@ -407,6 +407,7 @@ if (empty($reshook))
 	        $object->skype					= GETPOST('skype', 'alpha');
 	        $object->twitter				= GETPOST('twitter', 'alpha');
 	        $object->facebook				= GETPOST('facebook', 'alpha');
+            $object->linkedin				= GETPOST('linkedin', 'alpha');
 	        $object->phone					= GETPOST('phone', 'alpha');
 	        $object->fax					= GETPOST('fax', 'alpha');
 	        $object->email					= trim(GETPOST('email', 'custom', 0, FILTER_SANITIZE_EMAIL));
@@ -970,6 +971,7 @@ else
         $object->skype				= GETPOST('skype', 'alpha');
         $object->twitter			= GETPOST('twitter', 'alpha');
         $object->facebook			= GETPOST('facebook', 'alpha');
+        $object->linkedin			= GETPOST('linkedin', 'alpha');
         $object->phone				= GETPOST('phone', 'alpha');
         $object->fax				= GETPOST('fax', 'alpha');
         $object->email				= GETPOST('email', 'custom', 0, FILTER_SANITIZE_EMAIL);
@@ -1304,13 +1306,21 @@ else
 				print '</td></tr>';
         	}
         	// Facebook
-        	if (! empty($conf->global->SOCIALNETWORKS_FACEBOOK))
-        	{
-	        	print '<tr><td>'.$form->editfieldkey('Facebook', 'facebook', '', $object, 0).'</td>';
-				print '<td colspan="3">';
-				print '<input type="text" name="facebook" class="minwidth100" maxlength="80" id="facebook" value="'.dol_escape_htmltag(GETPOSTISSET("facebook")?GETPOST("facebook", 'alpha'):$object->facebook).'">';
-				print '</td></tr>';
-        	}
+            if (! empty($conf->global->SOCIALNETWORKS_FACEBOOK))
+            {
+                print '<tr><td>'.$form->editfieldkey('Facebook', 'facebook', '', $object, 0).'</td>';
+                print '<td colspan="3">';
+                print '<input type="text" name="facebook" class="minwidth100" maxlength="80" id="facebook" value="'.dol_escape_htmltag(GETPOSTISSET("facebook")?GETPOST("facebook", 'alpha'):$object->facebook).'">';
+                print '</td></tr>';
+            }
+            // LinkedIn
+            if (! empty($conf->global->SOCIALNETWORKS_LINKEDIN))
+            {
+                print '<tr><td>'.$form->editfieldkey('LinkedIn', 'linkedin', '', $object, 0).'</td>';
+                print '<td colspan="3">';
+                print '<input type="text" name="linkedin" class="minwidth100" maxlength="80" id="linkedin" value="'.dol_escape_htmltag(GETPOSTISSET("linkedin")?GETPOST("linkedin", 'alpha'):$object->linkedin).'">';
+                print '</td></tr>';
+            }
         }
 
         // Phone / Fax
@@ -1591,6 +1601,7 @@ else
                 $object->skype					= GETPOST('skype', 'alpha');
                 $object->twitter				= GETPOST('twitter', 'alpha');
                 $object->facebook				= GETPOST('facebook', 'alpha');
+                $object->linkedin				= GETPOST('linkedin', 'alpha');
                 $object->phone					= GETPOST('phone', 'alpha');
                 $object->fax					= GETPOST('fax', 'alpha');
                 $object->email					= GETPOST('email', 'custom', 0, FILTER_SANITIZE_EMAIL);
@@ -1916,6 +1927,12 @@ else
 	        		print '<tr><td>'.$form->editfieldkey('Facebook', 'facebook', '', $object, 0).'</td>';
 	        		print '<td colspan="3"><input type="text" name="facebook" id="facebook" value="'.$object->facebook.'"></td></tr>';
 	        	}
+                // LinkedIn
+                if (! empty($conf->global->SOCIALNETWORKS_LINKEDIN))
+                {
+                    print '<tr><td>'.$form->editfieldkey('LinkedIn', 'linkedin', '', $object, 0).'</td>';
+                    print '<td colspan="3"><input type="text" name="linkedin" id="linkedin" value="'.$object->linkedin.'"></td></tr>';
+                }
 	        }
 
             // Phone / Fax

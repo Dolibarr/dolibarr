@@ -95,3 +95,8 @@ ALTER TABLE llx_actioncomm ADD COLUMN calling_duration integer;
 ALTER TABLE llx_don ADD COLUMN fk_soc integer NULL;
 
 ALTER TABLE llx_payment_various ADD COLUMN subledger_account varchar(32);
+
+ALTER TABLE llx_societe ADD COLUMN linkedin  varchar(255) after whatsapp;
+ALTER TABLE llx_socpeople ADD COLUMN linkedin  varchar(255) after whatsapp;
+ALTER TABLE llx_adherent ADD COLUMN linkedin  varchar(255) after whatsapp;
+ALTER TABLE llx_user ADD COLUMN linkedin  varchar(255) after whatsapp;
