@@ -106,7 +106,7 @@ dol_banner_tab($object, 'id', $linkback, $user->rights->user->user->lire || $use
 print '<div class="fichecenter">';
 print '<div class="underbanner clearboth"></div>';
 
-print '<table class="border" width="100%">';
+print '<table class="border centpercent">';
 
 // Login
 print '<tr><td class="titlefield">'.$langs->trans("Login").'</td>';
@@ -172,7 +172,7 @@ if ($conf->global->LDAP_SYNCHRO_ACTIVE == 'dolibarr2ldap') print "<br>\n";
 // Affichage attributs LDAP
 print load_fiche_titre($langs->trans("LDAPInformationsForThisUser"));
 
-print '<table width="100%" class="noborder">';
+print '<table class="noborder centpercent">';
 
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("LDAPAttributes").'</td>';

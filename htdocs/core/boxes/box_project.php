@@ -59,7 +59,7 @@ class box_project extends ModeleBoxes
         $langs->loadLangs(array('boxes', 'projects'));
 
         $this->db = $db;
-        $this->boxlabel="Projects";
+        $this->boxlabel="OpenedProjects";
 
         $this->hidden=! ($user->rights->projet->lire);
     }

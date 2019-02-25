@@ -106,7 +106,7 @@ if ($year) $param.='&year='.$year;
 
 if ($mode != 'sconly')
 {
-	print $langs->trans("DescTaxAndDividendsArea").'<br>';
+	print '<span class="opacitymedium">'.$langs->trans("DescTaxAndDividendsArea").'</span><br>';
 	print "<br>";
 }
 

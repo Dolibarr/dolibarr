@@ -772,7 +772,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 			}
 			print ' <a href="'.$url.'" target="_stripe">'.img_picto($langs->trans('ShowInStripe'), 'object_globe').'</a>';
 		}
-		print '</td><td align="right">';
+		print '</td><td class="right">';
 		if (empty($stripecu))
 		{
 			print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
@@ -829,7 +829,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 		print '<td>'.$langs->trans('Type').'</td>';
 		print '<td>'.$langs->trans('Informations').'</td>';
 		print '<td></td>';
-		print '<td align="center">'.$langs->trans('Default').'</td>';
+		print '<td class="center">'.$langs->trans('Default').'</td>';
 		print '<td>'.$langs->trans('Note').'</td>';
 		print '<td>'.$langs->trans('DateModification').'</td>';
 		// Hook fields
@@ -905,7 +905,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 							else print img_warning().' <font class="error">'.$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CompanyCountry")).'</font>';
 							print '</td>';
 							// Default
-							print '<td align="center">';
+							print '<td class="center">';
 							if (empty($companypaymentmodetemp->default_rib))
 							{
 								print '<a href="' . DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$object->id.'&id='.$companypaymentmodetemp->id.'&action=setlocalassourcedefault">';
@@ -927,7 +927,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 							$reshook=$hookmanager->executeHooks('printFieldListValue', $parameters, $object);    // Note that $action and $object may have been modified by hook
 							print $hookmanager->resPrint;
 							// Action column
-							print '<td align="right" class="nowraponall">';
+							print '<td class="right nowraponall">';
 							if ($user->rights->societe->creer)
 							{
 								if ($stripecu && empty($companypaymentmodetemp->stripe_card_ref))
@@ -1034,7 +1034,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 				}
 				print '</td>';
 				// Default
-				print '<td align="center" width="50">';
+				print '<td class="center" width="50">';
 				if (($customerstripe->default_source != $src->id))
 				{
 					print '<a href="' . DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$object->id.'&source='.$src->id.'&action=setassourcedefault">';
@@ -1057,7 +1057,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 				$reshook=$hookmanager->executeHooks('printFieldListValue', $parameters, $object);    // Note that $action and $object may have been modified by hook
 				print $hookmanager->resPrint;
 				// Action column
-				print '<td align="right" class="nowraponall">';
+				print '<td class="right nowraponall">';
 				if ($user->rights->societe->creer)
 				{
 					print '<a href="' . DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$object->id.'&source='.$src->id.'&action=deletecard">';
@@ -1103,8 +1103,8 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 			print print_liste_field_titre("RUM");
 			print print_liste_field_titre("WithdrawMode");
 		}
-		print_liste_field_titre("DefaultRIB", '', '', '', '', 'align="center"');
-		print_liste_field_titre('', '', '', '', '', 'align="center"');
+		print_liste_field_titre("DefaultRIB", '', '', '', '', '', '', '', 'center ');
+		print_liste_field_titre('', '', '', '', '', '', '', '', 'center ');
 		print_liste_field_titre('', $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'maxwidthsearch ');
 		print "</tr>\n";
 
@@ -1177,7 +1177,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 			}
 
 			// Default
-			print '<td align="center" width="70">';
+			print '<td class="center" width="70">';
 			if (!$rib->default_rib) {
 				print '<a href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&ribid='.$rib->id.'&action=setasbankdefault">';
 				print img_picto($langs->trans("Disabled"), 'off');
@@ -1188,7 +1188,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 			print '</td>';
 
 			// Generate doc
-			print '<td align="center">';
+			print '<td class="center">';
 
 			$buttonlabel = $langs->trans("BuildDoc");
 			$forname='builddocrib'.$rib->id;
@@ -1244,7 +1244,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 			print '</td>';
 
 			// Edit/Delete
-			print '<td align="right" class="nowraponall">';
+			print '<td class="right nowraponall">';
 			if ($user->rights->societe->creer)
 			{
 				print '<a href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&id='.$rib->id.'&action=edit">';
@@ -1436,7 +1436,7 @@ if ($socid && $action == 'edit' && $user->rights->societe->creer)
 
 	dol_fiche_end();
 
-	print '<div align="center">';
+	print '<div class="center">';
 	print '<input class="button" value="'.$langs->trans("Modify").'" type="submit">';
 	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 	print '<input class="button" name="cancel" value="'.$langs->trans("Cancel").'" type="submit">';
@@ -1483,7 +1483,7 @@ if ($socid && $action == 'editcard' && $user->rights->societe->creer)
 
 	dol_fiche_end();
 
-	print '<div align="center">';
+	print '<div class="center">';
 	print '<input class="button" value="'.$langs->trans("Modify").'" type="submit">';
 	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 	print '<input class="button" name="cancel" value="'.$langs->trans("Cancel").'" type="submit">';

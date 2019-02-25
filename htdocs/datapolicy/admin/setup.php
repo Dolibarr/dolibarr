@@ -17,7 +17,7 @@
  */
 
 /**
- * \file    datapolicy/admin/setup.php
+ * \file    htdocs/datapolicy/admin/setup.php
  * \ingroup datapolicy
  * \brief   datapolicy setup page.
  */
@@ -25,7 +25,6 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . "/core/lib/admin.lib.php";
 require_once '../lib/datapolicy.lib.php';
-//require_once "../class/myclass.class.php";
 
 // Translations
 $langs->load('admin');
@@ -61,22 +60,22 @@ $arrayofparameters=array(
 
 include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
-if (DOL_VERSION < '7' && $action == 'update') {
-    foreach ($arrayofparameters as $k => $v) {
-        $res = dolibarr_set_const($db, $k, GETPOST($k), 'chaine', 0, '', $conf->entity);
-        if (! $res > 0) $error++;
-    }
-    if (! $error)
-    {
-        $db->commit();
-        if (empty($nomessageinsetmoduleoptions)) setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-    }
-    else
-    {
-        $db->rollback();
-        if (empty($nomessageinsetmoduleoptions)) setEventMessages($langs->trans("SetupNotSaved"), null, 'errors');
-    }
-}
+// if (DOL_VERSION < '7' && $action == 'update') {
+//     foreach ($arrayofparameters as $k => $v) {
+//         $res = dolibarr_set_const($db, $k, GETPOST($k), 'chaine', 0, '', $conf->entity);
+//         if (! $res > 0) $error++;
+//     }
+//     if (! $error)
+//     {
+//         $db->commit();
+//         if (empty($nomessageinsetmoduleoptions)) setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+//     }
+//     else
+//     {
+//         $db->rollback();
+//         if (empty($nomessageinsetmoduleoptions)) setEventMessages($langs->trans("SetupNotSaved"), null, 'errors');
+//     }
+// }
 
 
 $arrayofparameters=array(
@@ -108,8 +107,8 @@ $valTab = array(
     '48' => $langs->trans('NB_YEARS', 4),
     '60' => $langs->trans('NB_YEARS', 5),
     '120' => $langs->trans('NB_YEARS', 10),
-	'180' => $langs->trans('NB_YEARS', 15),
-	'240' => $langs->trans('NB_YEARS', 20),
+    '180' => $langs->trans('NB_YEARS', 15),
+    '240' => $langs->trans('NB_YEARS', 20),
 );
 
 
@@ -135,15 +134,15 @@ echo '<span class="opacitymedium">'.$langs->trans("datapolicySetupPage").'</span
 
 if ($action == 'edit')
 {
-	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-	print '<input type="hidden" name="action" value="update">';
+    print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<input type="hidden" name="action" value="update">';
 
-	print '<table class="noborder" width="100%">';
-	print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
+    print '<table class="noborder" width="100%">';
+    print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
-	foreach($arrayofparameters as $title => $tab)
-	{
+    foreach($arrayofparameters as $title => $tab)
+    {
         print '<tr class="liste_titre"><td class="titlefield" colspan="2">'.$langs->trans($title).'</td></tr>';
         foreach($tab as $key => $val)
         {
@@ -159,21 +158,19 @@ if ($action == 'edit')
             print '</select>';
             print '</td></tr>';
         }
-	}
+    }
 
-	print '</table>';
+    print '</table>';
 
-	print '<br><div class="center">';
-	print '<input class="button" type="submit" value="'.$langs->trans("Save").'">';
-	print '</div>';
+    print '<br><div class="center">';
+    print '<input class="button" type="submit" value="'.$langs->trans("Save").'">';
+    print '</div>';
 
-	print '</form>';
-	print '<br>';
-}
-else
-{
-	print '<table class="noborder" width="100%">';
-	print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
+    print '</form>';
+    print '<br>';
+} else {
+    print '<table class="noborder" width="100%">';
+    print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
     foreach($arrayofparameters as $title => $tab)
     {
@@ -186,11 +183,11 @@ else
         }
     }
 
-	print '</table>';
+    print '</table>';
 
-	print '<div class="tabsAction">';
-	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit">'.$langs->trans("Modify").'</a>';
-	print '</div>';
+    print '<div class="tabsAction">';
+    print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit">'.$langs->trans("Modify").'</a>';
+    print '</div>';
 }
 
 

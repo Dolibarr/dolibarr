@@ -188,11 +188,10 @@ class FormCompany
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
-	 *   Retourne la liste deroulante des departements/province/cantons tout pays confondu ou pour un pays donne.
-	 *   Dans le cas d'une liste tout pays confondus, l'affichage fait une rupture sur le pays.
-	 *   La cle de la liste est le code (il peut y avoir plusieurs entree pour
-	 *   un code donnee mais dans ce cas, le champ pays differe).
-	 *   Ainsi les liens avec les departements se font sur un departement independemment de son nom.
+	 *   Returns the drop-down list of departments/provinces/cantons for all countries or for a given country.
+     *   In the case of an all-country list, the display breaks on the country.
+     *   The key of the list is the code (there can be several entries for a given code but in this case, the country field differs).
+     *   Thus the links with the departments are done on a department independently of its name.
 	 *
 	 *   @param     string	$selected        	Code state preselected
 	 *   @param     int		$country_codeid     0=list for all countries, otherwise country code or country rowid to show
@@ -207,11 +206,10 @@ class FormCompany
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
-	 *    Retourne la liste deroulante des departements/province/cantons tout pays confondu ou pour un pays donne.
-	 *    Dans le cas d'une liste tout pays confondus, l'affichage fait une rupture sur le pays.
-	 *    La cle de la liste est le code (il peut y avoir plusieurs entree pour
-	 *    un code donnee mais dans ce cas, le champ pays differe).
-	 *    Ainsi les liens avec les departements se font sur un departement independemment de son nom.
+	 *   Returns the drop-down list of departments/provinces/cantons for all countries or for a given country.
+     *   In the case of an all-country list, the display breaks on the country.
+     *   The key of the list is the code (there can be several entries for a given code but in this case, the country field differs).
+     *   Thus the links with the departments are done on a department independently of its name.
 	 *
 	 *    @param	string	$selected        	Code state preselected (mus be state id)
 	 *    @param    integer	$country_codeid    	Country code or id: 0=list for all countries, otherwise country code or country rowid to show

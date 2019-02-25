@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2016       Laurent Destailleur      <eldy@users.sourceforge.net>
- * Copyright (C) 2016-2018  Alexandre Spangaro       <aspangaro@open-dsi.fr>
+ * Copyright (C) 2016-2019  Alexandre Spangaro       <aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,6 +33,9 @@ $langs->loadLangs(array("compta","bills","other","accountancy","loans","banks","
 if ($user->societe_id > 0)
 	accessforbidden();
 
+// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array of hooks
+$hookmanager->initHooks(array('accountancyindex'));
+
 /*
  * Actions
  */
@@ -52,10 +55,10 @@ $step = 0;
 
 if ($conf->accounting->enabled)
 {
-	print $langs->trans("AccountancyAreaDescIntro")."<br>\n";
+	print '<span class="opacitymedium">'.$langs->trans("AccountancyAreaDescIntro")."</span><br>\n";
 	print "<br>\n";print "<br>\n";
 
-	print load_fiche_titre('<span class="fa fa-calendar-check-o"></span> '.$langs->trans("AccountancyAreaDescActionOnce"), '', '')."<br>\n";
+	print load_fiche_titre('<span class="fa fa-calendar-check-o"></span> '.$langs->trans("AccountancyAreaDescActionOnce"), '', '')."\n";
 	print '<hr>';
 	print "<br>\n";
 

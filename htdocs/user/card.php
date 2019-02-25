@@ -13,8 +13,8 @@
  * Copyright (C) 2015      Ari Elbaz (elarifr)  <github@accedinfo.com>
  * Copyright (C) 2015-2018 Charlene Benke       <charlie@patas-monkey.com>
  * Copyright (C) 2016      Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
- * Copyright (C) 2018      David Beniamine      <David.Beniamine@Tetras-Libre.fr>
+ * Copyright (C) 2018-2019  Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2018       David Beniamine     <David.Beniamine@Tetras-Libre.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -727,7 +727,7 @@ if ($action == 'create' || $action == 'adduserldap')
 
 	   	print '<form name="add_user_ldap" action="'.$_SERVER["PHP_SELF"].'" method="post">';
 	   	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-	   	print '<table width="100%" class="border"><tr>';
+	   	print '<table class="border centpercent"><tr>';
 	   	print '<td width="160">';
 	   	print $langs->trans("LDAPUsers");
 	   	print '</td>';
@@ -738,7 +738,7 @@ if ($action == 'create' || $action == 'adduserldap')
 			print $form->selectarray('users', $liste, '', 1);
 			print ajax_combobox('users');
 		}
-	   	print '</td><td align="center">';
+	   	print '</td><td class="center">';
 	   	print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans('Get')).'"'.(count($liste)?'':' disabled').'>';
 	   	print '</td></tr></table>';
 	   	print '</form>';
@@ -1124,8 +1124,7 @@ if ($action == 'create' || $action == 'adduserldap')
 	{
 		print '<tr><td>' . $form->editfieldkey('Categories', 'usercats', '', $object, 0) . '</td><td colspan="3">';
 		$cate_arbo = $form->select_all_categories('user', null, 'parent', null, null, 1);
-print $form->multiselectarray('usercats', $cate_arbo, GETPOST('usercats', 'array'), null, null, null,
-			null, '90%' );
+        print $form->multiselectarray('usercats', $cate_arbo, GETPOST('usercats', 'array'), null, null, null, null, '90%');
 		print "</td></tr>";
 	}
 
@@ -1252,7 +1251,7 @@ print $form->multiselectarray('usercats', $cate_arbo, GETPOST('usercats', 'array
 
  	dol_fiche_end();
 
-	print '<div align="center">';
+	print '<div class="center">';
 	print '<input class="button" value="'.$langs->trans("CreateUser").'" name="create" type="submit">';
 	//print '&nbsp; &nbsp; &nbsp;';
 	//print '<input value="'.$langs->trans("Cancel").'" class="button" type="submit" name="cancel">';
@@ -1617,7 +1616,7 @@ else
 			print '<div class="fichehalfright"><div class="ficheaddleft">';
 
 			print '<div class="underbanner clearboth"></div>';
-			print '<table class="border tableforfield" width="100%">';
+			print '<table class="border tableforfield centpercent">';
 
 			// Color user
 			if (! empty($conf->agenda->enabled))
@@ -1885,7 +1884,7 @@ else
 					if (empty($reshook))
 					{
 						print '<tr class="liste_titre"><th class="liste_titre">'.$langs->trans("Groups").'</th>'."\n";
-						print '<th class="liste_titre" align="right">';
+						print '<th class="liste_titre right">';
 						if ($caneditgroup)
 						{
 							print $form->select_dolgroups('', 'group', 1, $exclude, 0, '', '', $object->entity);
@@ -1913,7 +1912,7 @@ else
 									print img_object($langs->trans("ShowGroup"), "group").' '.$group->name;
 								}
 								print '</td>';
-								print '<td align="right">';
+								print '<td class="right">';
 								if ($caneditgroup)
 								{
 									print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=removegroup&amp;group='.$group->id.'">';
@@ -1956,7 +1955,7 @@ else
 
 			dol_fiche_head($head, 'user', $title, 0, 'user');
 
-			print '<table width="100%" class="border">';
+			print '<table class="border centpercent">';
 
 			// Ref/ID
 			if (! empty($conf->global->MAIN_SHOW_TECHNICAL_ID))
@@ -2523,7 +2522,7 @@ else
 			}
 
 			// Signature
-			print "<tr>".'<td class="tdtop">'.$langs->trans("Signature").'</td>';
+			print '<tr><td class="tdtop">'.$langs->trans("Signature").'</td>';
 			print '<td>';
 			if ($caneditfield)
 			{
@@ -2652,7 +2651,7 @@ else
 
 			dol_fiche_end();
 
-			print '<div align="center">';
+			print '<div class="center">';
 			print '<input value="'.$langs->trans("Save").'" class="button" type="submit" name="save">';
 			print '&nbsp; &nbsp; &nbsp;';
 			print '<input value="'.$langs->trans("Cancel").'" class="button" type="submit" name="cancel">';

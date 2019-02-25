@@ -2019,16 +2019,16 @@ class Societe extends CommonObject
 
 		$name=$this->name?$this->name:$this->nom;
 
-		if(!empty($conf->global->SOCIETE_ON_SEARCH_AND_LIST_GO_ON_CUSTOMER_OR_SUPPLIER_CARD)){
-            if(empty($option) && $this->client > 0) $option = 'customer';
-            if(empty($option) && $this->fournisseur > 0) $option = 'supplier';
+        if (!empty($conf->global->SOCIETE_ON_SEARCH_AND_LIST_GO_ON_CUSTOMER_OR_SUPPLIER_CARD)){
+            if (empty($option) && $this->client > 0) $option = 'customer';
+            if (empty($option) && $this->fournisseur > 0) $option = 'supplier';
         }
 
 
 		if (! empty($conf->global->SOCIETE_ADD_REF_IN_LIST) && (!empty($withpicto)))
 		{
 			$code = '';
-			if (($this->client) && (! empty ($this->code_client))
+			if (($this->client) && (! empty($this->code_client))
 				&& ($conf->global->SOCIETE_ADD_REF_IN_LIST == 1
 				|| $conf->global->SOCIETE_ADD_REF_IN_LIST == 2
 				)
@@ -2037,7 +2037,7 @@ class Societe extends CommonObject
 				$code = $this->code_client . ' - ';
 			}
 
-			if (($this->fournisseur) && (! empty ($this->code_fournisseur))
+			if (($this->fournisseur) && (! empty($this->code_fournisseur))
 				&& ($conf->global->SOCIETE_ADD_REF_IN_LIST == 1
 				|| $conf->global->SOCIETE_ADD_REF_IN_LIST == 3
 				)

@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) - 2013-2015 Jean-François FERRY	<jfefe@aternatik.fr>
+ * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -85,7 +86,7 @@ class FormResource
 
     	$resourcestat = new Dolresource($this->db);
 
-    	$resources_used = $resourcestat->fetch_all('ASC', 't.rowid', $limit, $offset, $filter='');
+    	$resources_used = $resourcestat->fetch_all('ASC', 't.rowid', $limit, 0, $filter);
 
     	if ($outputmode != 2)
     	{
@@ -107,13 +108,14 @@ class FormResource
     		$out.= '<select id="'.$htmlname.'" class="flat minwidth200" name="'.$htmlname.'">'."\n";
     		if ($showempty) $out.= '<option value="-1">&nbsp;</option>'."\n";
 
-    		$num = count($resourcestat->lines);
+    		$num = 0;
+    		if (is_array($resourcestat->lines)) $num = count($resourcestat->lines);
 
     		//var_dump($resourcestat->lines);
     		$i = 0;
     		if ($num)
     		{
-    			while ( $i < $num)
+    			while ($i < $num)
     			{
     			    $resourceclass=ucfirst($resourcestat->lines[$i]->element);
 
@@ -193,17 +195,17 @@ class FormResource
     			if ($empty && empty($arraytypes['code'])) continue;
 
     			if ($format == 0) print '<option value="'.$id.'"';
-    			if ($format == 1) print '<option value="'.$arraytypes['code'].'"';
-    			if ($format == 2) print '<option value="'.$arraytypes['code'].'"';
-    			if ($format == 3) print '<option value="'.$id.'"';
+    			elseif ($format == 1) print '<option value="'.$arraytypes['code'].'"';
+    			elseif ($format == 2) print '<option value="'.$arraytypes['code'].'"';
+    			elseif ($format == 3) print '<option value="'.$id.'"';
     			// Si selected est text, on compare avec code, sinon avec id
     			if (preg_match('/[a-z]/i', $selected) && $selected == $arraytypes['code']) print ' selected';
     			elseif ($selected == $id) print ' selected';
     			print '>';
     			if ($format == 0) $value=($maxlength?dol_trunc($arraytypes['label'], $maxlength):$arraytypes['label']);
-    			if ($format == 1) $value=$arraytypes['code'];
-    			if ($format == 2) $value=($maxlength?dol_trunc($arraytypes['label'], $maxlength):$arraytypes['label']);
-    			if ($format == 3) $value=$arraytypes['code'];
+    			elseif ($format == 1) $value=$arraytypes['code'];
+    			elseif ($format == 2) $value=($maxlength?dol_trunc($arraytypes['label'], $maxlength):$arraytypes['label']);
+    			elseif ($format == 3) $value=$arraytypes['code'];
     			print $value?$value:'&nbsp;';
     			print '</option>';
     		}

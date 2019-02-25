@@ -313,7 +313,6 @@ MailSentBy=Correo electrónico enviado por
 TextUsedInTheMessageBody=Cuerpo del correo electronico
 SendAcknowledgementByMail=Enviar correo electrónico de confirmación
 SendMail=Enviar correo electrónico
-EMail=Email
 NoEMail=Sin correo electrónico
 FollowingConstantsWillBeSubstituted=Las siguientes constantes se reemplazarán por el valor correspondiente.
 BackToList=Volver a la lista

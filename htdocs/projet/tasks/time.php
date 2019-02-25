@@ -539,7 +539,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 
             // Categories
             if ($conf->categorie->enabled) {
-                print '<tr><td valign="middle">'.$langs->trans("Categories").'</td><td>';
+                print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td>';
                 print $form->showCategories($projectstatic->id, 'project', 1);
                 print "</td></tr>";
             }
@@ -758,7 +758,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 			print $formother->select_percent(GETPOST('progress')?GETPOST('progress'):$object->progress, 'progress', 0, 5, 0, 100, 1);
 			print '</td>';
 
-			print '<td align="center">';
+			print '<td class="center">';
 			print '<input type="submit" name="save" class="button" value="'.$langs->trans("Add").'">';
 			print ' &nbsp; ';
 			print '<input type="submit" name="cancel" class="button" value="'.$langs->trans("Cancel").'">';
@@ -1045,8 +1045,9 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 			$contactsofproject=$projectstatic->getListContactId('internal');
 			if (count($contactsofproject)>0)
 			{
-				if (in_array($user->id, $userid=$contactsofproject)) $userid = $user->id;
-				else $userid=$contactsofproject[0];
+				if (in_array($user->id, $contactsofproject)) $userid = $user->id;
+				else $userid = $contactsofproject[0];
+
 				if ($projectstatic->public) $contactsofproject = array();
 				print $form->select_dolusers((GETPOST('userid')?GETPOST('userid'):$userid), 'userid', 0, '', 0, '', $contactsofproject, 0, 0, 0, '', 0, $langs->trans("ResourceNotAssignedToProject"), 'maxwidth200');
 			}
@@ -1078,7 +1079,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 			    print '</td>';
 			}
 
-			print '<td align="center">';
+			print '<td class="center">';
 			print '<input type="submit" name="save" class="button" value="'.$langs->trans("Add").'">';
 			print ' &nbsp; ';
 			print '<input type="submit" name="cancel" class="button" value="'.$langs->trans("Cancel").'">';
@@ -1161,9 +1162,9 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
         }
         if (! empty($arrayfields['author']['checked']))           print_liste_field_titre($arrayfields['author']['label'], $_SERVER['PHP_SELF'], '', '', $param, '', $sortfield, $sortorder);
 		if (! empty($arrayfields['t.note']['checked']))           print_liste_field_titre($arrayfields['t.note']['label'], $_SERVER['PHP_SELF'], 't.note', '', $param, '', $sortfield, $sortorder);
-		if (! empty($arrayfields['t.task_duration']['checked']))  print_liste_field_titre($arrayfields['t.task_duration']['label'], $_SERVER['PHP_SELF'], 't.task_duration', '', $param, 'align="right"', $sortfield, $sortorder);
-		if (! empty($arrayfields['value']['checked']))            print_liste_field_titre($arrayfields['value']['label'], $_SERVER['PHP_SELF'], '', '', $param, 'align="right"', $sortfield, $sortorder);
-		if (! empty($arrayfields['valuebilled']['checked']))      print_liste_field_titre($arrayfields['valuebilled']['label'], $_SERVER['PHP_SELF'], 'il.total_ht', '', $param, 'align="center"', $sortfield, $sortorder);
+		if (! empty($arrayfields['t.task_duration']['checked']))  print_liste_field_titre($arrayfields['t.task_duration']['label'], $_SERVER['PHP_SELF'], 't.task_duration', '', $param, '', $sortfield, $sortorder, 'right ');
+		if (! empty($arrayfields['value']['checked']))            print_liste_field_titre($arrayfields['value']['label'], $_SERVER['PHP_SELF'], '', '', $param, '', $sortfield, $sortorder, 'right ');
+		if (! empty($arrayfields['valuebilled']['checked']))      print_liste_field_titre($arrayfields['valuebilled']['label'], $_SERVER['PHP_SELF'], 'il.total_ht', '', $param, '', $sortfield, $sortorder, 'center ');
 		/*
     	// Extra fields
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
@@ -1172,7 +1173,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 		$parameters=array('arrayfields'=>$arrayfields,'param'=>$param,'sortfield'=>$sortfield,'sortorder'=>$sortorder);
         $reshook=$hookmanager->executeHooks('printFieldListTitle', $parameters);    // Note that $action and $object may have been modified by hook
         print $hookmanager->resPrint;
-    	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', 'align="center" width="80"', $sortfield, $sortorder, 'maxwidthsearch ');
+    	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', 'width="80"', $sortfield, $sortorder, 'center maxwidthsearch ');
 		print "</tr>\n";
 
 		$tasktmp = new Task($db);
@@ -1295,7 +1296,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 			// Time spent
             if (! empty($arrayfields['t.task_duration']['checked']))
             {
-    			print '<td align="right">';
+    			print '<td class="right">';
     			if ($action == 'editline' && $_GET['lineid'] == $task_time->rowid)
     			{
     				print '<input type="hidden" name="old_duration" value="'.$task_time->task_duration.'">';
@@ -1314,7 +1315,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 			// Value spent
             if (! empty($arrayfields['value']['checked']))
             {
-				print '<td align="right">';
+				print '<td class="right">';
 				$value = price2num($task_time->thm * $task_time->task_duration / 3600);
 				print price($value, 1, $langs, 1, -1, -1, $conf->currency);
 				print '</td>';
@@ -1326,7 +1327,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
             // Invoiced - Value billed
             if (! empty($arrayfields['valuebilled']['checked']))
             {
-                print '<td align="center">';    // invoice_id and invoice_line_id
+                print '<td class="center">';    // invoice_id and invoice_line_id
                 if (empty($conf->global->PROJECT_HIDE_TASKS) && ! empty($conf->global->PROJECT_BILL_TIME_SPENT))
                 {
                     if ($projectstatic->bill_time)
@@ -1512,7 +1513,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 			    // Time spent
 			    if (! empty($arrayfields['t.task_duration']['checked']))
 			    {
-			        print '<td align="right">';
+			        print '<td class="right">';
 			        if ($action == 'splitline' && $_GET['lineid'] == $task_time->rowid)
 			        {
 			            print '<input type="hidden" name="old_duration" value="'.$task_time->task_duration.'">';
@@ -1528,7 +1529,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 			    // Value spent
 			    if (! empty($arrayfields['value']['checked']))
 			    {
-			        print '<td align="right">';
+			        print '<td class="right">';
 			        $value = price2num($task_time->thm * $task_time->task_duration / 3600);
 			        print price($value, 1, $langs, 1, -1, -1, $conf->currency);
 			        print '</td>';
@@ -1537,7 +1538,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 			    // Value billed
 			    if (! empty($arrayfields['valuebilled']['checked']))
 			    {
-			        print '<td align="right">';
+			        print '<td class="right">';
 			        $valuebilled = price2num($task_time->total_ht);
 			        if (isset($task_time->total_ht)) print price($valuebilled, 1, $langs, 1, -1, -1, $conf->currency);
 			        print '</td>';
@@ -1660,7 +1661,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 			    // Time spent
 			    if (! empty($arrayfields['t.task_duration']['checked']))
 			    {
-			        print '<td align="right">';
+			        print '<td class="right">';
 			        if ($action == 'splitline' && $_GET['lineid'] == $task_time->rowid)
 			        {
 			            print '<input type="hidden" name="old_duration_2" value="0">';
@@ -1676,7 +1677,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 			    // Value spent
 			    if (! empty($arrayfields['value']['checked']))
 			    {
-			        print '<td align="right">';
+			        print '<td class="right">';
 			        $value = 0;
 			        print price($value, 1, $langs, 1, -1, -1, $conf->currency);
 			        print '</td>';
@@ -1685,7 +1686,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 			    // Value billed
 			    if (! empty($arrayfields['valuebilled']['checked']))
 			    {
-			        print '<td align="right">';
+			        print '<td class="right">';
 			        $valuebilled = price2num($task_time->total_ht);
 			        if (isset($task_time->total_ht)) print price($valuebilled, 1, $langs, 1, -1, -1, $conf->currency);
 			        print '</td>';
@@ -1724,9 +1725,9 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 		            if ($num < $limit && empty($offset)) print '<td class="left">'.$langs->trans("Total").'</td>';
 		            else print '<td class="left">'.$langs->trans("Totalforthispage").'</td>';
 		        }
-		        elseif ($totalarray['totaldurationfield'] == $i) print '<td align="right">'.convertSecondToTime($totalarray['totalduration'], 'allhourmin').'</td>';
-		        elseif ($totalarray['totalvaluefield'] == $i) print '<td align="right">'.price($totalarray['totalvalue']).'</td>';
-		        //elseif ($totalarray['totalvaluebilledfield'] == $i) print '<td align="center">'.price($totalarray['totalvaluebilled']).'</td>';
+		        elseif ($totalarray['totaldurationfield'] == $i) print '<td class="right">'.convertSecondToTime($totalarray['totalduration'], 'allhourmin').'</td>';
+		        elseif ($totalarray['totalvaluefield'] == $i) print '<td class="right">'.price($totalarray['totalvalue']).'</td>';
+		        //elseif ($totalarray['totalvaluebilledfield'] == $i) print '<td class="center">'.price($totalarray['totalvaluebilled']).'</td>';
 		        else print '<td></td>';
 		    }
 		    print '</tr>';

@@ -191,7 +191,7 @@ if ($id > 0 || ! empty($ref))
 
             // Categories
             if($conf->categorie->enabled) {
-                print '<tr><td valign="middle">'.$langs->trans("Categories").'</td><td>';
+                print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td>';
                 print $form->showCategories($projectstatic->id, 'project', 1);
                 print "</td></tr>";
             }
@@ -263,7 +263,7 @@ if ($id > 0 || ! empty($ref))
 
 		// Other attributes
 		$cols = 3;
-		$parameyers=array('socid'=>$socid);
+		$parameters=array('socid'=>$socid);
 		include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
 
 		print '</table>';

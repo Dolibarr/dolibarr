@@ -54,12 +54,12 @@ if (! $sortfield)
 
 $startdate=$enddate='';
 
-$startdateday = GETPOST('startdateday','int');
-$startdatemonth = GETPOST('startdatemonth','int');
-$startdateyear = GETPOST('startdateyear','int');
-$enddateday = GETPOST('enddateday','int');
-$enddatemonth = GETPOST('enddatemonth','int');
-$enddateyear = GETPOST('enddateyear','int');
+$startdateday   = GETPOST('startdateday', 'int');
+$startdatemonth = GETPOST('startdatemonth', 'int');
+$startdateyear  = GETPOST('startdateyear', 'int');
+$enddateday     = GETPOST('enddateday', 'int');
+$enddatemonth   = GETPOST('enddatemonth', 'int');
+$enddateyear    = GETPOST('enddateyear', 'int');
 
 if (!empty($startdatemonth))
     $startdate  = dol_mktime(0, 0, 0, $startdatemonth, $startdateday, $startdateyear);
@@ -171,7 +171,7 @@ if (isset($conf->global->ForceBuyingPriceIfNull) && $conf->global->ForceBuyingPr
 //if ($agentid > 0) $sql.= " GROUP BY s.rowid, s.nom, s.code_client, s.client, u.rowid, u.login, u.lastname, u.firstname";
 //else $sql.= " GROUP BY u.rowid, u.login, u.lastname, u.firstname";
 $sql.= " GROUP BY s.rowid, s.nom, s.code_client, s.client, u.rowid, u.login, u.lastname, u.firstname";
-$sql.=$db->order($sortfield,$sortorder);
+$sql.=$db->order($sortfield, $sortorder);
 // TODO: calculate total to display then restore pagination
 //$sql.= $db->plimit($conf->liste_limit +1, $offset);
 
@@ -207,26 +207,24 @@ if ($result)
 	print "<table class=\"noborder\" width=\"100%\">";
 
 	print '<tr class="liste_titre">';
-    if ($agentid > 0)
-        print_liste_field_titre("Customer",$_SERVER["PHP_SELF"],"s.nom","",$param,'',$sortfield,$sortorder);
-    else
-        print_liste_field_titre("SalesRepresentative",$_SERVER["PHP_SELF"],"u.lastname","",$param,'',$sortfield,$sortorder);
+	if ($agentid > 0)
+		print_liste_field_titre("Customer", $_SERVER["PHP_SELF"], "s.nom", "", $param, '', $sortfield, $sortorder);
+	else
+		print_liste_field_titre("SalesRepresentative", $_SERVER["PHP_SELF"], "u.lastname", "", $param, '', $sortfield, $sortorder);
 
-    print_liste_field_titre("SellingPrice",$_SERVER["PHP_SELF"],"selling_price","",$param,'align="right"',$sortfield,$sortorder);
-    print_liste_field_titre($labelcostprice,$_SERVER["PHP_SELF"],"buying_price","",$param,'align="right"',$sortfield,$sortorder);
-    print_liste_field_titre("Margin",$_SERVER["PHP_SELF"],"marge","",$param,'align="right"',$sortfield,$sortorder);
-    if (! empty($conf->global->DISPLAY_MARGIN_RATES))
-        print_liste_field_titre("MarginRate",$_SERVER["PHP_SELF"],"","",$param,'align="right"',$sortfield,$sortorder);
-    if (! empty($conf->global->DISPLAY_MARK_RATES))
-        print_liste_field_titre("MarkRate",$_SERVER["PHP_SELF"],"","",$param,'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre("SellingPrice", $_SERVER["PHP_SELF"], "selling_price", "", $param, 'align="right"', $sortfield, $sortorder);
+	print_liste_field_titre($labelcostprice, $_SERVER["PHP_SELF"], "buying_price", "", $param, ' align="right"', $sortfield, $sortorder);
+	print_liste_field_titre("Margin", $_SERVER["PHP_SELF"], "marge", "", $param, 'align="right"', $sortfield, $sortorder);
+	if (! empty($conf->global->DISPLAY_MARGIN_RATES))
+		print_liste_field_titre("MarginRate", $_SERVER["PHP_SELF"], "", "", $param, 'align="right"', $sortfield, $sortorder);
+	if (! empty($conf->global->DISPLAY_MARK_RATES))
+		print_liste_field_titre("MarkRate", $_SERVER["PHP_SELF"], "", "", $param, 'align="right"', $sortfield, $sortorder);
 	print "</tr>\n";
 
 	$rounding = min($conf->global->MAIN_MAX_DECIMALS_UNIT, $conf->global->MAIN_MAX_DECIMALS_TOT);
 
     if ($num > 0)
     {
-        $var=true;
-
         $group_list = array();
         while ($objp = $db->fetch_object($result)) {
             if ($agentid > 0) {
@@ -241,11 +239,11 @@ if ($result)
                     $companystatic->id = $objp->socid;
                     $companystatic->name = $objp->name;
                     $companystatic->client = $objp->client;
-                    $group_htmlname = $companystatic->getNomUrl(1,'customer');
+                    $group_htmlname = $companystatic->getNomUrl(1, 'customer');
                 } else {
                     $group_name = $objp->lastname;
                     $userstatic->fetch($objp->agent);
-                    $group_htmlname = $userstatic->getFullName($langs,0,0,0);
+                    $group_htmlname = $userstatic->getFullName($langs, 0, 0, 0);
                 }
                 $group_list[$group_id] = array('name' => $group_name, 'htmlname' => $group_htmlname, 'selling_price' => 0, 'buying_price' => 0, 'marge' => 0);
             }

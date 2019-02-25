@@ -922,7 +922,7 @@ for ($mois = 1+$nb_mois_decalage ; $mois <= 12+$nb_mois_decalage ; $mois++)
 		if($mois>12) {$annee_decalage=$annee+1;}
 		$case = strftime("%Y-%m", dol_mktime(12, 0, 0, $mois_modulo, 1, $annee_decalage));
 
-		print '<td align="right">&nbsp;';
+		print '<td class="right">&nbsp;';
 		if ($modecompta == 'BOOKKEEPING')
 		{
 			if (isset($decaiss[$case]) && $decaiss[$case] != 0)
@@ -943,7 +943,7 @@ for ($mois = 1+$nb_mois_decalage ; $mois <= 12+$nb_mois_decalage ; $mois++)
 		}
 		print "</td>";
 
-		print '<td align="right" class="borderrightlight">&nbsp;';
+		print '<td class="borderrightlight right">&nbsp;';
 		if ($modecompta == 'BOOKKEEPING')
 		{
 			if (isset($encaiss[$case]))
@@ -978,8 +978,8 @@ print '</td>';
 for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 {
 	$nbcols+=2;
-	print '<td align="right">'.(isset($totsorties[$annee])?price(price2num($totsorties[$annee], 'MT')):'&nbsp;').'</td>';
-	print '<td align="right" style="border-right: 1px solid #DDD">'.(isset($totentrees[$annee])?price(price2num($totentrees[$annee], 'MT')):'&nbsp;').'</td>';
+	print '<td class="right">'.(isset($totsorties[$annee])?price(price2num($totsorties[$annee], 'MT')):'&nbsp;').'</td>';
+	print '<td class="right" style="border-right: 1px solid #DDD">'.(isset($totentrees[$annee])?price(price2num($totentrees[$annee], 'MT')):'&nbsp;').'</td>';
 }
 print "</tr>\n";
 
@@ -993,7 +993,7 @@ print "</tr>\n";
 print '<tr class="liste_total"><td>'.$langs->trans("AccountingResult").'</td>';
 for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 {
-	print '<td align="right" colspan="2" class="borderrightlight"> ';
+	print '<td colspan="2" class="borderrightlight right"> ';
 	if (isset($totentrees[$annee]) || isset($totsorties[$annee]))
 	{
 		$in=(isset($totentrees[$annee])?price2num($totentrees[$annee], 'MT'):0);

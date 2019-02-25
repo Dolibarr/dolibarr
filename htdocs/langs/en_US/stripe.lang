@@ -62,3 +62,4 @@ CreateCustomerOnStripe=Create customer on Stripe
 CreateCardOnStripe=Create card on Stripe
 ShowInStripe=Show in Stripe
 StripeUserAccountForActions=User account to use for email notification of some Stripe events (Stripe payouts)
+StripePayoutList=List of Stripe payouts

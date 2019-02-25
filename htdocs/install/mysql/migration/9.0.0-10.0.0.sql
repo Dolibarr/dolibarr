@@ -88,15 +88,84 @@ ALTER TABLE llx_subscription ADD fk_type integer(11);
 ALTER TABLE llx_bank_url DROP INDEX uk_bank_url;
 ALTER TABLE llx_bank_url ADD UNIQUE INDEX uk_bank_url (fk_bank, url_id, type);
 
-
 ALTER TABLE llx_actioncomm ADD COLUMN calling_duration integer;
-
 
 ALTER TABLE llx_don ADD COLUMN fk_soc integer NULL;
 
 ALTER TABLE llx_payment_various ADD COLUMN subledger_account varchar(32);
 
+ALTER TABLE llx_prelevement_facture_demande ADD COLUMN entity integer(11);
+ALTER TABLE llx_prelevement_facture_demande ADD COLUMN sourcetype varchar(32);
+ALTER TABLE llx_prelevement_facture_demande ADD COLUMN ext_payment_id varchar(128) NULL;
+ALTER TABLE llx_prelevement_facture_demande ADD COLUMN ext_payment_site varchar(128) NULL;
+
+-- Fix if table exists
+ALTER TABLE llx_c_units DROP INDEX uk_c_units_code;
+ALTER TABLE llx_c_units ADD COLUMN scale integer;
+ALTER TABLE llx_c_units ADD COLUMN unit_type varchar(10);
+
+-- Create if table dos not exists
+CREATE TABLE llx_c_units(
+	rowid integer AUTO_INCREMENT PRIMARY KEY,
+	code varchar(3),
+	scale integer,
+	label varchar(50),
+	short_label varchar(5),
+	unit_type varchar(10),
+	active tinyint DEFAULT 1 NOT NULL
+) ENGINE=innodb;
+
+ALTER TABLE llx_c_units ADD UNIQUE uk_c_units_code(code);
+
+INSERT INTO llx_c_units (code, scale, label, short_label, unit_type, active) VALUES ('T',  '3','WeightUnitton','T', 'weight', 1);
+INSERT INTO llx_c_units (code, scale, label, short_label, unit_type, active) VALUES ('KG', '0','WeightUnitkg','Kg', 'weight', 1);
+INSERT INTO llx_c_units (code, scale, label, short_label, unit_type, active) VALUES ('G', '-3','WeightUnitg','g', 'weight', 1);
+INSERT INTO llx_c_units (code, scale, label, short_label, unit_type, active) VALUES ('MG','-6','WeightUnitmg','mg', 'weight', 1);
+INSERT INTO llx_c_units (code, scale, label, short_label, unit_type, active) VALUES ('OZ','98','WeightUnitounce','Oz', 'weight', 1);
+INSERT INTO llx_c_units (code, scale, label, short_label, unit_type, active) VALUES ('LB','99','WeightUnitpound','lb', 'weight', 1);
+
+INSERT INTO llx_c_units (code, scale, label, short_label, unit_type, active) VALUES ('M',  '0','SizeUnitm','m', 'size', 1);
+INSERT INTO llx_c_units (code, scale, label, short_label, unit_type, active) VALUES ('DM','-1','SizeUnitdm','dm', 'size', 1);
+INSERT INTO llx_c_units (code, scale, label, short_label, unit_type, active) VALUES ('CM','-2','SizeUnitcm','cm', 'size', 1);
+INSERT INTO llx_c_units (code, scale, label, short_label, unit_type, active) VALUES ('MM','-3','SizeUnitmm','mm', 'size', 1);
+INSERT INTO llx_c_units (code, scale, label, short_label, unit_type, active) VALUES ('FT','98','SizeUnitfoot','ft', 'size', 1);
+INSERT INTO llx_c_units (code, scale, label, short_label, unit_type, active) VALUES ('IN','99','SizeUnitinch','in', 'size', 1);
+
+INSERT INTO llx_c_units (code, scale, label, short_label, unit_type, active) VALUES ('M2',  '0','SurfaceUnitm2','m2', 'surface', 1);
+INSERT INTO llx_c_units (code, scale, label, short_label, unit_type, active) VALUES ('DM2','-2','SurfaceUnitdm2','dm2', 'surface', 1);
+INSERT INTO llx_c_units (code, scale, label, short_label, unit_type, active) VALUES ('CM2','-4','SurfaceUnitcm2','cm2', 'surface', 1);
+INSERT INTO llx_c_units (code, scale, label, short_label, unit_type, active) VALUES ('MM2','-6','SurfaceUnitmm2','mm2', 'surface', 1);
+INSERT INTO llx_c_units (code, scale, label, short_label, unit_type, active) VALUES ('FT2','98','SurfaceUnitfoot2','ft2', 'surface', 1);
+INSERT INTO llx_c_units (code, scale, label, short_label, unit_type, active) VALUES ('IN2','99','SurfaceUnitinch2','in2', 'surface', 1);
+
+
+INSERT INTO llx_c_units (code, scale, label, short_label, unit_type, active) VALUES ('M3',  '0','VolumeUnitm3','m3', 'volume', 1);
+INSERT INTO llx_c_units (code, scale, label, short_label, unit_type, active) VALUES ('DM3','-3','VolumeUnitdm3','dm3', 'volume', 1);
+INSERT INTO llx_c_units (code, scale, label, short_label, unit_type, active) VALUES ('CM3','-6','VolumeUnitcm3','cm3', 'volume', 1);
+INSERT INTO llx_c_units (code, scale, label, short_label, unit_type, active) VALUES ('MM3','-9','VolumeUnitmm3','mm3', 'volume', 1);
+INSERT INTO llx_c_units (code, scale, label, short_label, unit_type, active) VALUES ('FT3','88','VolumeUnitfoot3','ft3', 'volume', 1);
+INSERT INTO llx_c_units (code, scale, label, short_label, unit_type, active) VALUES ('IN3','89','VolumeUnitinch3','in3', 'volume', 1);
+INSERT INTO llx_c_units (code, scale, label, short_label, unit_type, active) VALUES ('OZ3','97','VolumeUnitounce','Oz', 'volume', 1);
+INSERT INTO llx_c_units (code, scale, label, short_label, unit_type, active) VALUES ('L',  '98','VolumeUnitlitre','L', 'volume', 1);
+INSERT INTO llx_c_units (code, scale, label, short_label, unit_type, active) VALUES ('GAL','99','VolumeUnitgallon','gal', 'volume', 1);
+
+INSERT INTO llx_c_units (code, scale, label, short_label, unit_type, active) VALUES ('P',   '0','Piece','p', 'qty', 1);
+INSERT INTO llx_c_units (code, scale, label, short_label, unit_type, active) VALUES ('SET', '0','Set','set', 'qty', 1);
+
+INSERT INTO llx_c_units (code, scale, label, short_label, unit_type, active) VALUES ('S',       '0','second','s', 'time', 1);
+INSERT INTO llx_c_units (code, scale, label, short_label, unit_type, active) VALUES ('MI',     '60','minute','m', 'time', 1);
+INSERT INTO llx_c_units (code, scale, label, short_label, unit_type, active) VALUES ('H',    '3600','hour','h', 'time', 1);
+INSERT INTO llx_c_units (code, scale, label, short_label, unit_type, active) VALUES ('D','12960000','day','d', 'time', 1);
+
+-- Default Warehouse id for a user
+ALTER TABLE llx_user ADD COLUMN fk_warehouse INTEGER NULL;
+
+-- Save informations for online / API shopping and push to invoice
+ALTER TABLE llx_commande ADD COLUMN module_source varchar(32);
+ALTER TABLE llx_commande ADD COLUMN pos_source varchar(32);
+
 ALTER TABLE llx_societe ADD COLUMN linkedin  varchar(255) after whatsapp;
 ALTER TABLE llx_socpeople ADD COLUMN linkedin  varchar(255) after whatsapp;
 ALTER TABLE llx_adherent ADD COLUMN linkedin  varchar(255) after whatsapp;
 ALTER TABLE llx_user ADD COLUMN linkedin  varchar(255) after whatsapp;
+

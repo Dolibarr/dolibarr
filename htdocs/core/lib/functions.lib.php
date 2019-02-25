@@ -622,7 +622,7 @@ function dol_include_once($relpath, $classname = '')
 	$fullpath = dol_buildpath($relpath);
 
 	if (!file_exists($fullpath)) {
-		dol_syslog('functions::dol_include_once Tried to load unexisting file: '.$relpath, LOG_ERR);
+		dol_syslog('functions::dol_include_once Tried to load unexisting file: '.$relpath, LOG_WARNING);
 		return false;
 	}
 
@@ -2636,7 +2636,7 @@ function dol_print_ip($ip, $mode = 0)
  * Return the IP of remote user.
  * Take HTTP_X_FORWARDED_FOR (defined when using proxy)
  * Then HTTP_CLIENT_IP if defined (rare)
- * Then REMOTE_ADDR (not way to be modified by user but may be wrong if using proxy)
+ * Then REMOTE_ADDR (no way to be modified by user but may be wrong if user is using a proxy)
  *
  * @return	string		Ip of remote user.
  */
@@ -2969,6 +2969,11 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 			$picto .= '.png';
 		}
 		$fullpathpicto = $picto;
+		$reg=array();
+		if (preg_match('/class="([^"]+)"/', $moreatt, $reg)) {
+		    $morecss .= ($morecss ? ' ' : '') . $reg[1];
+		    $moreatt = str_replace('class="'.$reg[1].'"', '', $moreatt);
+		}
 	} else {
 		$pictowithoutext = preg_replace('/(\.png|\.gif|\.svg)$/', '', $picto);
 
@@ -2979,7 +2984,9 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'jabber','skype','twitter','facebook','linkedin'
 			)
 		)) {
-			$fakey = $pictowithoutext;
+		    $fa='fa';
+		    if (! empty($conf->global->MAIN_USE_FONT_AWESOME_5)) $fa='fas';
+		    $fakey = $pictowithoutext;
 			$facolor = ''; $fasize = '';
 			$marginleftonlyshort = 2;
 			if ($pictowithoutext == 'switch_off') {
@@ -3074,6 +3081,10 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 			elseif ($pictowithoutext == 'jabber') {
 				$fakey = 'fa-comment-o';
 			}
+			elseif ($pictowithoutext == 'skype') {
+			    $fakey = 'fa-'.$pictowithoutext;
+			    if (! empty($conf->global->MAIN_USE_FONT_AWESOME_5)) $fa = 'fab';
+			}
 			elseif ($pictowithoutext == 'split') {
 			    $fakey = 'fa-code-fork';
 			}
@@ -3095,8 +3106,6 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
             }
             $moreatt=trim($moreatt);
 
-			$fa='fa';
-			if (! empty($conf->global->MAIN_USE_FONT_AWESOME_5)) $fa='fas';
             $enabledisablehtml = '<span class="' . $fa . ' ' . $fakey . ($marginleftonlyshort ? ($marginleftonlyshort == 1 ? ' marginleftonlyshort' : ' marginleftonly') : '');
             $enabledisablehtml .= ' valignmiddle' . ($morecss ? ' ' . $morecss : '') . '" style="' . ($fasize ? ('font-size: ' . $fasize . ';') : '') . ($facolor ? (' color: ' . $facolor . ';') : '') . ($morestyle ? ' ' . $morestyle : '') . '"' . (($notitle || empty($titlealt)) ? '' : ' title="' . dol_escape_htmltag($titlealt) . '"') . ($moreatt ? ' ' . $moreatt : '') . '>';
 			if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
@@ -3148,7 +3157,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 		return $fullpathpicto;
 	}
 		// tag title is used for tooltip on <a>, tag alt can be used with very simple text on image for blind people
-    return '<img src="'.$fullpathpicto.'" alt="'.dol_escape_htmltag($alt).'"'.(($notitle || empty($titlealt))?'':' title="'.dol_escape_htmltag($titlealt).'"').($moreatt?' '.$moreatt:' class="inline-block'.($morecss?' '.$morecss:'').'"').'>';	// Alt is used for accessibility, title for popup
+    return '<img src="'.$fullpathpicto.'" alt="'.dol_escape_htmltag($alt).'"'.(($notitle || empty($titlealt))?'':' title="'.dol_escape_htmltag($titlealt).'"').($moreatt?' '.$moreatt.($morecss?' class="'.$morecss.'"':''):' class="inline-block'.($morecss?' '.$morecss:'').'"').'>';	// Alt is used for accessibility, title for popup
 }
 
 /**
@@ -3176,10 +3185,11 @@ function img_object($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, 
  *	@param      string		$picto       		Name of image file to show (If no extension provided, we use '.png'). Image must be stored into htdocs/theme/common directory.
  *	@param		string		$moreatt			Add more attribute on img tag
  *	@param		int			$pictoisfullpath	If 1, image path is a full path
+ *  @param      string      $morecss            More CSS
  *	@return     string      					Return img tag
  *  @see        #img_object, #img_picto
  */
-function img_weather($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0)
+function img_weather($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $morecss = '')
 {
 	global $conf;
 
@@ -3187,7 +3197,7 @@ function img_weather($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0)
 
 	$path = DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/weather/'.$picto;
 
-	return img_picto($titlealt, $path, $moreatt, 1);
+	return img_picto($titlealt, $path, $moreatt, 1, 0, 0, '', $morecss);
 }
 
 /**
@@ -4055,7 +4065,7 @@ function load_fiche_titre($titre, $morehtmlright = '', $picto = 'title_generic.p
 	$return.= '</td>';
 	if (dol_strlen($morehtmlcenter))
 	{
-		$return.= '<td class="nobordernopadding center valignmiddle>'.$morehtmlcenter.'</td>';
+		$return.= '<td class="nobordernopadding center valignmiddle">'.$morehtmlcenter.'</td>';
 	}
 	if (dol_strlen($morehtmlright))
 	{
@@ -6600,12 +6610,12 @@ function dol_sort_array(&$array, $index, $order = 'asc', $natsort = 0, $case_sen
 			$temp = array();
 			foreach(array_keys($array) as $key) $temp[$key]=$array[$key][$index];
 
-			if (!$natsort) ($order=='asc') ? asort($temp) : arsort($temp);
-			else
-			{
-				($case_sensitive) ? natsort($temp) : natcasesort($temp);
-				if($order!='asc') $temp=array_reverse($temp, true);
-			}
+            if (! $natsort) {
+                ($order=='asc') ? asort($temp) : arsort($temp);
+            } else {
+                ($case_sensitive) ? natsort($temp) : natcasesort($temp);
+                if($order!='asc') $temp=array_reverse($temp, true);
+            }
 
 			$sorted = array();
 

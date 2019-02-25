@@ -46,13 +46,13 @@ if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS))
 // Load translation files required by page
 $langs->loadLangs(array('users', 'other'));
 
-$id         = GETPOST('id', 'int');
-$action     = GETPOST('action', 'alpha');
-$cancel     = GETPOST('cancel', 'aZ09');
-$confirm    = GETPOST('confirm', 'alpha');
-$contextpage=GETPOST('contextpage', 'aZ')?GETPOST('contextpage', 'aZ'):'groupcard';   // To manage different context of search
+$id = GETPOST('id', 'int');
+$action = GETPOST('action', 'alpha');
+$cancel = GETPOST('cancel', 'aZ09');
+$confirm = GETPOST('confirm', 'alpha');
+$contextpage = GETPOST('contextpage', 'aZ')?GETPOST('contextpage', 'aZ'):'groupcard';   // To manage different context of search
 
-$userid     = GETPOST('user', 'int');
+$userid = GETPOST('user', 'int');
 
 // Security check
 $result = restrictedArea($user, 'user', $id, 'usergroup&usergroup', 'user');
@@ -274,7 +274,7 @@ if ($action == 'create')
 
     dol_fiche_head('', '', '', 0, '');
 
-    print '<table class="border" width="100%">';
+    print '<table class="border centpercent">';
 
 	print "<tr>";
 	print '<td class="fieldrequired titlefield">'.$langs->trans("Name").'</td>';
@@ -359,7 +359,7 @@ else
 			print '<div class="fichecenter">';
 			print '<div class="underbanner clearboth"></div>';
 
-			print '<table class="border" width="100%">';
+			print '<table class="border centpercent">';
 
             // Name (already in dol_banner, we keep it to have the GlobalGroup picto, but we should move it in dol_banner)
             if (! empty($conf->mutlicompany->enabled))
@@ -456,13 +456,13 @@ else
 				/*
 				 * Group members
 				 */
-				print '<table class="noborder" width="100%">';
+				print '<table class="noborder centpercent">';
 				print '<tr class="liste_titre">';
 				print '<td class="liste_titre">'.$langs->trans("Login").'</td>';
 				print '<td class="liste_titre">'.$langs->trans("Lastname").'</td>';
 				print '<td class="liste_titre">'.$langs->trans("Firstname").'</td>';
-				print '<td class="liste_titre" width="5" align="center">'.$langs->trans("Status").'</td>';
-				print '<td class="liste_titre" width="5" align="right">&nbsp;</td>';
+				print '<td class="liste_titre center" width="5">'.$langs->trans("Status").'</td>';
+				print '<td class="liste_titre right" width="5">&nbsp;</td>';
 				print "</tr>\n";
 
 				if (! empty($object->members))
@@ -480,8 +480,8 @@ else
 						print '</td>';
 						print '<td>'.$useringroup->lastname.'</td>';
 						print '<td>'.$useringroup->firstname.'</td>';
-						print '<td align="center">'.$useringroup->getLibStatut(3).'</td>';
-						print '<td align="right">';
+						print '<td class="center">'.$useringroup->getLibStatut(3).'</td>';
+						print '<td class="right">';
 						if (! empty($user->admin)) {
 							print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=removeuser&amp;user='.$useringroup->id.'">';
 							print img_picto($langs->trans("RemoveFromGroup"), 'unlink');
@@ -542,7 +542,7 @@ else
 
             dol_fiche_head($head, 'group', $title, 0, 'group');
 
-            print '<table class="border" width="100%">';
+            print '<table class="border centpercent">';
             print '<tr><td class="titlefield fieldrequired">'.$langs->trans("Name").'</td>';
             print '<td class="valeur"><input class="minwidth300" type="text" name="group" value="'.dol_escape_htmltag($object->name).'">';
             print "</td></tr>\n";

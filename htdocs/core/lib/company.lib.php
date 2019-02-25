@@ -488,7 +488,7 @@ function getCountry($searchkey, $withcode = '', $dbtouse = 0, $outputlangs = '',
  *    										'1'=Add region name/code/id as needed to output,
  *    @param    Translate	$outputlangs	Langs object for output translation, not fully implemented yet
  *    @param    int		    $entconv       	0=Return value without entities and not converted to output charset, 1=Ready for html output
- *    @return   mixed       				String with state code or state name or Array('id','code','label')/Array('id','code','label','region_code','region')
+ *    @return   string|array       			String with state code or state name or Array('id','code','label')/Array('id','code','label','region_code','region')
  */
 function getState($id, $withcode = '', $dbtouse = 0, $withregion = 0, $outputlangs = '', $entconv = 1)
 {
@@ -715,7 +715,7 @@ function isInEEC($object)
  *      @param  string		$backtopage		Url to go once contact is created
  *      @param  int         $nocreatelink   1=Hide create project link
  *      @param	string		$morehtmlright	More html on right of title
- *      @return	void
+ *      @return	int
  */
 function show_projects($conf, $langs, $db, $object, $backtopage = '', $nocreatelink = 0, $morehtmlright = '')
 {
@@ -843,7 +843,7 @@ function show_projects($conf, $langs, $db, $object, $backtopage = '', $nocreatel
  * 		@param	DoliDB		$db			Database handler
  * 		@param	Societe		$object		Third party object
  *      @param  string		$backtopage	Url to go once contact is created
- *      @return	void
+ *      @return	int
  */
 function show_contacts($conf, $langs, $db, $object, $backtopage = '')
 {
@@ -856,8 +856,8 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
     $sortfield = GETPOST("sortfield", 'alpha');
     $sortorder = GETPOST("sortorder", 'alpha');
     $page = GETPOST('page', 'int');
-    $search_status		= GETPOST("search_status", 'int');
-    if ($search_status=='') $search_status=1; // always display activ customer first
+    $search_status = GETPOST("search_status", 'int');
+    if ($search_status=='') $search_status=1; // always display active customer first
     $search_name = GETPOST("search_name", 'alpha');
     $search_addressphone = GETPOST("search_addressphone", 'alpha');
 
@@ -1166,109 +1166,18 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
     return $i;
 }
 
-/**
- * 		Show html area for list of addresses
- *
- *		@param	Conf		$conf		Object conf
- * 		@param	Translate	$langs		Object langs
- * 		@param	DoliDB		$db			Database handler
- * 		@param	Societe		$object		Third party object
- *      @param  string		$backtopage	Url to go once address is created
- *      @return	void
- */
-function show_addresses($conf, $langs, $db, $object, $backtopage = '')
-{
-	global $user;
-
-	require_once DOL_DOCUMENT_ROOT.'/societe/class/address.class.php';
-
-	$addressstatic = new Address($db);
-	$num = $addressstatic->fetch_lines($object->id);
-
-	$newcardbutton='';
-	if ($user->rights->societe->creer)
-	{
-		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/comm/address.php?socid='.$object->id.'&amp;action=create&amp;backtopage='.urlencode($backtopage).'"><span class="valignmiddle">'.$langs->trans("AddAddress").'</span>';
-		$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
-		$newcardbutton.= '</a>';
-	}
-
-	print "\n";
-	print load_fiche_titre($langs->trans("AddressesForCompany"), $newcardbutton, '');
-
-	print "\n".'<table class="noborder" width="100%">'."\n";
-
-	print '<tr class="liste_titre"><td>'.$langs->trans("Label").'</td>';
-	print '<td>'.$langs->trans("CompanyName").'</td>';
-	print '<td>'.$langs->trans("Town").'</td>';
-	print '<td>'.$langs->trans("Country").'</td>';
-	print '<td>'.$langs->trans("Phone").'</td>';
-	print '<td>'.$langs->trans("Fax").'</td>';
-	print "<td>&nbsp;</td>";
-	print "</tr>";
-
-	if ($num > 0)
-	{
-		foreach ($addressstatic->lines as $address)
-		{
-			print '<tr class="oddeven">';
-
-			print '<td>';
-			$addressstatic->id = $address->id;
-			$addressstatic->label = $address->label;
-			print $addressstatic->getNomUrl(1);
-			print '</td>';
-
-			print '<td>'.$address->name.'</td>';
-
-			print '<td>'.$address->town.'</td>';
-
-			$img=picto_from_langcode($address->country_code);
-			print '<td>'.($img?$img.' ':'').$address->country.'</td>';
-
-			// Lien click to dial
-			print '<td>';
-			print dol_print_phone($address->phone, $address->country_code, $address->id, $object->id, 'AC_TEL');
-			print '</td>';
-			print '<td>';
-			print dol_print_phone($address->fax, $address->country_code, $address->id, $object->id, 'AC_FAX');
-			print '</td>';
-
-			if ($user->rights->societe->creer)
-			{
-				print '<td align="right">';
-				print '<a href="'.DOL_URL_ROOT.'/comm/address.php?action=edit&amp;id='.$address->id.'&amp;socid='.$object->id.'&amp;backtopage='.urlencode($backtopage).'">';
-				print img_edit();
-				print '</a></td>';
-			}
-
-			print "</tr>\n";
-		}
-	}
-	//else
-	//{
-		//print '<tr class="oddeven">';
-		//print '<td>'.$langs->trans("NoAddressYetDefined").'</td>';
-		//print "</tr>\n";
-	//}
-	print "\n</table>\n";
-
-	print "<br>\n";
-
-	return $num;
-}
 
 /**
  *    	Show html area with actions to do
  *
- * 		@param	Conf		$conf		       Object conf
- * 		@param	Translate	$langs		       Object langs
- * 		@param	DoliDB		$db			       Object db
- * 		@param	Adherent|Societe    $filterobj    Object third party or member
- * 		@param	Contact		$objcon	           Object contact
- *      @param  int			$noprint	       Return string but does not output it
- *      @param  int			$actioncode 	   Filter on actioncode
- *      @return	mixed						   Return html part or void if noprint is 1
+ * 		@param	Conf		$conf		        Object conf
+ * 		@param	Translate	$langs		        Object langs
+ * 		@param	DoliDB		$db			        Object db
+ * 		@param	Adherent|Societe    $filterobj  Object thirdparty or member
+ * 		@param	Contact		$objcon	            Object contact
+ *      @param  int			$noprint	        Return string but does not output it
+ *      @param  int			$actioncode 	    Filter on actioncode
+ *      @return	string|void					    Return html part or void if noprint is 1
  */
 function show_actions_todo($conf, $langs, $db, $filterobj, $objcon = '', $noprint = 0, $actioncode = '')
 {
@@ -1294,7 +1203,7 @@ function show_actions_todo($conf, $langs, $db, $filterobj, $objcon = '', $noprin
  *      @param  array              $filters        Filter on other fields
  *      @param  string             $sortfield      Sort field
  *      @param  string             $sortorder      Sort order
- *      @return	mixed					           Return html part or void if noprint is 1
+ *      @return	string|void				           Return html part or void if noprint is 1
  */
 function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprint = 0, $actioncode = '', $donetodo = 'done', $filters = array(), $sortfield = 'a.datep,a.id', $sortorder = 'DESC')
 {
@@ -1357,27 +1266,31 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
         elseif (is_object($filterobj) && get_class($filterobj) == 'Ticket') $sql.= ", ".MAIN_DB_PREFIX."ticket as o";
 
         $sql.= " WHERE a.entity IN (".getEntity('agenda').")";
-        if (is_object($filterobj) && in_array(get_class($filterobj), array('Societe', 'Client', 'Fournisseur')) && $filterobj->id) $sql.= " AND a.fk_soc = ".$filterobj->id;
-        elseif (is_object($filterobj) && get_class($filterobj) == 'Project' && $filterobj->id) $sql.= " AND a.fk_project = ".$filterobj->id;
-        elseif (is_object($filterobj) && get_class($filterobj) == 'Adherent')
-        {
-            $sql.= " AND a.fk_element = m.rowid AND a.elementtype = 'member'";
-            if ($filterobj->id) $sql.= " AND a.fk_element = ".$filterobj->id;
-        }
-        elseif (is_object($filterobj) && get_class($filterobj) == 'CommandeFournisseur')
-        {
-        	$sql.= " AND a.fk_element = o.rowid AND a.elementtype = 'order_supplier'";
-        	if ($filterobj->id) $sql.= " AND a.fk_element = ".$filterobj->id;
-        }
-        elseif (is_object($filterobj) && get_class($filterobj) == 'Product')
-        {
-        	$sql.= " AND a.fk_element = o.rowid AND a.elementtype = 'product'";
-        	if ($filterobj->id) $sql.= " AND a.fk_element = ".$filterobj->id;
-        }
-        elseif (is_object($filterobj) && get_class($filterobj) == 'Ticket')
-        {
-        	$sql.= " AND a.fk_element = o.rowid AND a.elementtype = 'ticket'";
-        	if ($filterobj->id) $sql.= " AND a.fk_element = ".$filterobj->id;
+        if (is_object($objcon) && $objcon->id) {
+            $sql.= " AND a.fk_contact = ".$objcon->id;
+        } else {
+            if (is_object($filterobj) && in_array(get_class($filterobj), array('Societe', 'Client', 'Fournisseur')) && $filterobj->id) $sql.= " AND a.fk_soc = ".$filterobj->id;
+            elseif (is_object($filterobj) && get_class($filterobj) == 'Project' && $filterobj->id) $sql.= " AND a.fk_project = ".$filterobj->id;
+            elseif (is_object($filterobj) && get_class($filterobj) == 'Adherent')
+            {
+                $sql.= " AND a.fk_element = m.rowid AND a.elementtype = 'member'";
+                if ($filterobj->id) $sql.= " AND a.fk_element = ".$filterobj->id;
+            }
+            elseif (is_object($filterobj) && get_class($filterobj) == 'CommandeFournisseur')
+            {
+                $sql.= " AND a.fk_element = o.rowid AND a.elementtype = 'order_supplier'";
+                if ($filterobj->id) $sql.= " AND a.fk_element = ".$filterobj->id;
+            }
+            elseif (is_object($filterobj) && get_class($filterobj) == 'Product')
+            {
+                $sql.= " AND a.fk_element = o.rowid AND a.elementtype = 'product'";
+                if ($filterobj->id) $sql.= " AND a.fk_element = ".$filterobj->id;
+            }
+            elseif (is_object($filterobj) && get_class($filterobj) == 'Ticket')
+            {
+                $sql.= " AND a.fk_element = o.rowid AND a.elementtype = 'ticket'";
+                if ($filterobj->id) $sql.= " AND a.fk_element = ".$filterobj->id;
+            }
         }
 
         // Condition on actioncode
@@ -1469,7 +1382,8 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
     }
 
     // Add also event from emailings. TODO This should be replaced by an automatic event ? May be it's too much for very large emailing.
-    if (! empty($conf->mailing->enabled) && ! empty($objcon->email))
+    if (! empty($conf->mailing->enabled) && ! empty($objcon->email)
+        && (empty($actioncode) || $actioncode == 'AC_OTH_AUTO' || $actioncode == 'AC_EMAILING'))
     {
         $langs->load("mails");
 
@@ -1619,7 +1533,13 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 
             // Ref
             $out.='<td class="nowrap">';
-            $out.=$actionstatic->getNomUrl(1, -1);
+            if (isset($histo[$key]['type']) && $histo[$key]['type']=='mailing') {
+                $out.='<a href="'.DOL_URL_ROOT.'/comm/mailing/card.php?id='.$histo[$key]['id'].'">'.img_object($langs->trans("ShowEMailing"), "email").' ';
+                $out.=$histo[$key]['id'];
+                $out.='</a>';
+            } else {
+                $out.=$actionstatic->getNomUrl(1, -1);
+            }
             $out.='</td>';
 
             // Author of event
@@ -1761,7 +1681,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
  * 		@param	Translate	$langs		Object langs
  * 		@param	DoliDB		$db			Database handler
  * 		@param	Societe		$object		Third party object
- * 		@return	void
+ * 		@return	int
  */
 function show_subsidiaries($conf, $langs, $db, $object)
 {

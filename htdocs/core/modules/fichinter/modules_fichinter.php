@@ -109,7 +109,7 @@ abstract class ModeleNumRefFicheinter
 	}
 
 	/**
-	 * 	Tests if the numbers already in force in the database do not cause conflicts 
+	 * 	Tests if the numbers already in force in the database do not cause conflicts
 	 *  that would prevent this numbering from working.
 	 *
 	 * 	@return     boolean     false si conflit, true si ok

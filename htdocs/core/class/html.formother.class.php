@@ -956,52 +956,6 @@ class FormOther
         return $out;
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
-    /**
-     * Show form to select address
-     *
-     * @param	int		$page        	Page
-     * @param  	string	$selected    	Id condition pre-selectionne
-     * @param	int		$socid			Id of third party
-     * @param  	string	$htmlname    	Nom du formulaire select
-     * @param	string	$origin        	Origine de l'appel pour pouvoir creer un retour
-     * @param  	int		$originid      	Id de l'origine
-     * @return	void
-     */
-    function form_address($page, $selected, $socid, $htmlname = 'address_id', $origin = '', $originid = '')
-    {
-        // phpcs:enable
-        global $langs,$conf;
-        global $form;
-
-        if ($htmlname != "none")
-        {
-            print '<form method="post" action="'.$page.'">';
-            print '<input type="hidden" name="action" value="setaddress">';
-            print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-            $form->select_address($selected, $socid, $htmlname, 1);
-            print '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
-            $langs->load("companies");
-            print ' &nbsp; <a href='.DOL_URL_ROOT.'/comm/address.php?socid='.$socid.'&action=create&origin='.$origin.'&originid='.$originid.'>'.$langs->trans("AddAddress").'</a>';
-            print '</form>';
-        }
-        else
-        {
-            if ($selected)
-            {
-                require_once DOL_DOCUMENT_ROOT .'/societe/class/address.class.php';
-                $address=new Address($this->db);
-                $result=$address->fetch_address($selected);
-                print '<a href='.DOL_URL_ROOT.'/comm/address.php?socid='.$address->socid.'&id='.$address->id.'&action=edit&origin='.$origin.'&originid='.$originid.'>'.$address->label.'</a>';
-            }
-            else
-            {
-                print "&nbsp;";
-            }
-        }
-    }
-
-
 
     /**
      * 	Get array with HTML tabs with boxes of a particular area including personalized choices of user.

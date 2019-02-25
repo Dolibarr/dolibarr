@@ -4470,6 +4470,7 @@ function migrate_delete_old_files($db, $langs, $conf)
         '/societe/class/api_contact.class.php',
         '/societe/class/api_thirdparty.class.php',
         '/support/online.php',
+        '/takepos/class/actions_takepos.class.php'
     );
 
     foreach ($filetodeletearray as $filetodelete) {

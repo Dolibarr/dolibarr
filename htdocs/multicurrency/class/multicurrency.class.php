@@ -624,14 +624,14 @@ class MultiCurrency extends CommonObject
 	}
 
 	/**
-	 *  Sync rates from api
+	 * Sync rates from api
 	 *
-	 *  @param 	array 	$response 	array of reponse from api to sync dolibarr rates
-     * @return void
+	 * @param 	array 	$response 	array of reponse from api to sync dolibarr rates
+     * @return  void
 	 */
 	public static function syncRates($response)
 	{
-		global $db,$conf;
+		global $conf, $db, $langs;
 
         $ch = curl_init('http://apilayer.net/api/live?access_key='.$key.'');
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -639,8 +639,8 @@ class MultiCurrency extends CommonObject
         curl_close($ch);
         $response = json_decode($response);
 
-        if ($response->success) {
-
+        if ($response->success)
+        {
 			$TRate = $response->quotes;
 			$timestamp = $response->timestamp;
 
