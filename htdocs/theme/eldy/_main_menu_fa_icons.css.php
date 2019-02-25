@@ -17,6 +17,13 @@
 }
 
 
+div.mainmenu.menu {
+	background-image: none;
+}
+
+div.mainmenu.menu::before {	
+content: "\f0c9";
+}
 
 
 .mainmenu.home::before{
