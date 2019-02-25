@@ -150,7 +150,7 @@ ACCOUNTING_EXPENSEREPORT_JOURNAL=Expense report journal
 ACCOUNTING_SOCIAL_JOURNAL=Social journal
 ACCOUNTING_HAS_NEW_JOURNAL=Has new Journal
 
-ACCOUNTING_ACCOUNT_TRANSFER_CASH=Accounting account of bank transfer
+ACCOUNTING_ACCOUNT_TRANSFER_CASH=Accounting account of transitional bank transfer 
 ACCOUNTING_ACCOUNT_SUSPENSE=Accounting account of wait
 DONATION_ACCOUNTINGACCOUNT=Accounting account to register donations
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Accounting account to register subscriptions
