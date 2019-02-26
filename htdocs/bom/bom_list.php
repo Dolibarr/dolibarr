@@ -1,7 +1,6 @@
 <?php
-/* Copyright (C) 2013-2018	Jean-François FERRY	<hello@librethic.io>
- * Copyright (C) 2016		Christophe Battarel	<christophe@altairis.fr>
- * Copyright (C) 2018		Regis Houssin		<regis.houssin@inodbox.com>
+/* Copyright (C) 2007-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) ---Put here your own copyright and developer email---
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,78 +17,105 @@
  */
 
 /**
- *    \file     htdocs/ticket/list.php
- *    \ingroup	ticket
- *    \brief    List page for tickets
+ *   	\file       bom_list.php
+ *		\ingroup    bom
+ *		\brief      List page for bom
  */
 
-require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT . '/ticket/class/actions_ticket.class.php';
-require_once DOL_DOCUMENT_ROOT . '/core/class/html.formticket.class.php';
-require_once DOL_DOCUMENT_ROOT . '/core/lib/functions2.lib.php';
-require_once DOL_DOCUMENT_ROOT . '/core/lib/company.lib.php';
-require_once DOL_DOCUMENT_ROOT . '/user/class/user.class.php';
-include_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
-include_once DOL_DOCUMENT_ROOT . '/core/class/html.formprojet.class.php';
-include_once DOL_DOCUMENT_ROOT . '/core/lib/project.lib.php';
+//if (! defined('NOREQUIREDB'))              define('NOREQUIREDB','1');					// Do not create database handler $db
+//if (! defined('NOREQUIREUSER'))            define('NOREQUIREUSER','1');				// Do not load object $user
+//if (! defined('NOREQUIRESOC'))             define('NOREQUIRESOC','1');				// Do not load object $mysoc
+//if (! defined('NOREQUIRETRAN'))            define('NOREQUIRETRAN','1');				// Do not load object $langs
+//if (! defined('NOSCANGETFORINJECTION'))    define('NOSCANGETFORINJECTION','1');		// Do not check injection attack on GET parameters
+//if (! defined('NOSCANPOSTFORINJECTION'))   define('NOSCANPOSTFORINJECTION','1');		// Do not check injection attack on POST parameters
+//if (! defined('NOCSRFCHECK'))              define('NOCSRFCHECK','1');					// Do not check CSRF attack (test on referer + on token if option MAIN_SECURITY_CSRF_WITH_TOKEN is on).
+//if (! defined('NOTOKENRENEWAL'))           define('NOTOKENRENEWAL','1');				// Do not roll the Anti CSRF token (used if MAIN_SECURITY_CSRF_WITH_TOKEN is on)
+//if (! defined('NOSTYLECHECK'))             define('NOSTYLECHECK','1');				// Do not check style html tag into posted data
+//if (! defined('NOIPCHECK'))                define('NOIPCHECK','1');					// Do not check IP defined into conf $dolibarr_main_restrict_ip
+//if (! defined('NOREQUIREMENU'))            define('NOREQUIREMENU','1');				// If there is no need to load and show top and left menu
+//if (! defined('NOREQUIREHTML'))            define('NOREQUIREHTML','1');				// If we don't need to load the html.form.class.php
+//if (! defined('NOREQUIREAJAX'))            define('NOREQUIREAJAX','1');       	  	// Do not load ajax.lib.php library
+//if (! defined("NOLOGIN"))                  define("NOLOGIN",'1');						// If this page is public (can be called outside logged session)
+//if (! defined("MAIN_LANG_DEFAULT"))        define('MAIN_LANG_DEFAULT','auto');					// Force lang to a particular value
+//if (! defined("MAIN_AUTHENTICATION_MODE")) define('MAIN_AUTHENTICATION_MODE','aloginmodule');		// Force authentication handler
+//if (! defined("NOREDIRECTBYMAINTOLOGIN"))  define('NOREDIRECTBYMAINTOLOGIN',1);		// The main.inc.php does not make a redirect if not logged, instead show simple error message
+//if (! defined("XFRAMEOPTIONS_ALLOWALL"))   define('XFRAMEOPTIONS_ALLOWALL',1);		// Do not add the HTTP header 'X-Frame-Options: SAMEORIGIN' but 'X-Frame-Options: ALLOWALL'
+
+// Load Dolibarr environment
+$res=0;
+// Try main.inc.php into web root known defined into CONTEXT_DOCUMENT_ROOT (not always defined)
+if (! $res && ! empty($_SERVER["CONTEXT_DOCUMENT_ROOT"])) $res=@include $_SERVER["CONTEXT_DOCUMENT_ROOT"]."/main.inc.php";
+// Try main.inc.php into web root detected using web root calculated from SCRIPT_FILENAME
+$tmp=empty($_SERVER['SCRIPT_FILENAME'])?'':$_SERVER['SCRIPT_FILENAME'];$tmp2=realpath(__FILE__); $i=strlen($tmp)-1; $j=strlen($tmp2)-1;
+while($i > 0 && $j > 0 && isset($tmp[$i]) && isset($tmp2[$j]) && $tmp[$i]==$tmp2[$j]) { $i--; $j--; }
+if (! $res && $i > 0 && file_exists(substr($tmp, 0, ($i+1))."/main.inc.php")) $res=@include substr($tmp, 0, ($i+1))."/main.inc.php";
+if (! $res && $i > 0 && file_exists(dirname(substr($tmp, 0, ($i+1)))."/main.inc.php")) $res=@include dirname(substr($tmp, 0, ($i+1)))."/main.inc.php";
+// Try main.inc.php using relative path
+if (! $res && file_exists("../main.inc.php")) $res=@include "../main.inc.php";
+if (! $res && file_exists("../../main.inc.php")) $res=@include "../../main.inc.php";
+if (! $res && file_exists("../../../main.inc.php")) $res=@include "../../../main.inc.php";
+if (! $res) die("Include of main fails");
+
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+dol_include_once('/bom/class/bom.class.php');
 
 // Load translation files required by the page
-$langs->loadLangs(array("ticket","companies","other","projects"));
+$langs->loadLangs(array("bom@bom","other"));
 
-
-// Get parameters
-$action     = GETPOST('action', 'aZ09')?GETPOST('action', 'aZ09'):'view';				// The action 'add', 'create', 'edit', 'update', 'view', ...
-$massaction = GETPOST('massaction', 'alpha');											// The bulk action (combo box choice into lists)
-$show_files = GETPOST('show_files', 'int');												// Show files area generated by bulk actions ?
-$confirm    = GETPOST('confirm', 'alpha');												// Result of a confirmation
+$action     = GETPOST('action','aZ09')?GETPOST('action','aZ09'):'view';				// The action 'add', 'create', 'edit', 'update', 'view', ...
+$massaction = GETPOST('massaction','alpha');											// The bulk action (combo box choice into lists)
+$show_files = GETPOST('show_files','int');												// Show files area generated by bulk actions ?
+$confirm    = GETPOST('confirm','alpha');												// Result of a confirmation
 $cancel     = GETPOST('cancel', 'alpha');												// We click on a Cancel button
 $toselect   = GETPOST('toselect', 'array');												// Array of ids of elements selected into a list
-$contextpage= GETPOST('contextpage', 'aZ')?GETPOST('contextpage', 'aZ'):'ticketlist';   // To manage different context of search
-$backtopage = GETPOST('backtopage', 'alpha');											// Go back to a dedicated page
-$optioncss  = GETPOST('optioncss', 'aZ');												// Option for the css output (always '' except when 'print')
+$contextpage= GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'bomlist';   // To manage different context of search
+$backtopage = GETPOST('backtopage','alpha');											// Go back to a dedicated page
+$optioncss  = GETPOST('optioncss','aZ');												// Option for the css output (always '' except when 'print')
 
-$id			= GETPOST('id', 'int');
-$msg_id = GETPOST('msg_id', 'int');
-$socid = GETPOST('socid', 'int');
-$projectid = GETPOST('projectid', 'int');
-$search_fk_soc=GETPOST('$search_fk_soc', 'int')?GETPOST('$search_fk_soc', 'int'):GETPOST('socid', 'int');
-$search_fk_project=GETPOST('search_fk_project', 'int')?GETPOST('search_fk_project', 'int'):GETPOST('projectid', 'int');
-$search_fk_status = GETPOST('search_fk_statut', 'array');
-$mode = GETPOST('mode', 'alpha');
+$id			= GETPOST('id','int');
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
-$sortfield = GETPOST('sortfield', 'alpha');
-$sortorder = GETPOST('sortorder', 'alpha');
-$page = GETPOST('page', 'int');
-if (empty($page) || $page == -1 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha') || (empty($toselect) && $massaction === '0')) { $page = 0; }     // If $page is not defined, or '' or -1 or if we click on clear filters or if we select empty mass action
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
+$sortfield = GETPOST('sortfield','alpha');
+$sortorder = GETPOST('sortorder','alpha');
+$page = GETPOST('page','int');
+if (empty($page) || $page == -1 || GETPOST('button_search','alpha') || GETPOST('button_removefilter','alpha') || (empty($toselect) && $massaction === '0')) { $page = 0; }     // If $page is not defined, or '' or -1 or if we click on clear filters or if we select empty mass action
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
+//if (! $sortfield) $sortfield="p.date_fin";
+//if (! $sortorder) $sortorder="DESC";
 
 // Initialize technical objects
-$object=new Ticket($db);
+$object = new BillOfMaterials($db);
 $extrafields = new ExtraFields($db);
-$diroutputmassaction=$conf->ticket->dir_output . '/temp/massgeneration/'.$user->id;
-if ($socid > 0)       $hookmanager->initHooks(array('thirdpartyticket'));
-elseif ($project > 0) $hookmanager->initHooks(array('projectticket'));
-else $hookmanager->initHooks(array('ticketlist'));
+$diroutputmassaction = $conf->bom->dir_output . '/temp/massgeneration/'.$user->id;
+$hookmanager->initHooks(array('bomlist'));     // Note that conf->hooks_modules contains array
 // Fetch optionals attributes and labels
-$extralabels = $extrafields->fetch_name_optionals_label('ticket');
-$search_array_options=$extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
+$extralabels = $extrafields->fetch_name_optionals_label('bom');	// Load $extrafields->attributes['bom']
+$search_array_options = $extrafields->getOptionalsFromPost($object->table_element,'','search_');
 
 // Default sort order (if not yet defined by previous GETPOST)
 if (! $sortfield) $sortfield="t.".key($object->fields);   // Set here default search field. By default 1st field in definition.
 if (! $sortorder) $sortorder="ASC";
 
-if (GETPOST('search_fk_status','alpha') == 'non_closed') $_GET['search_fk_statut'][]='openall';     // For backward compatibility
+// Security check
+$socid=0;
+if ($user->societe_id > 0)	// Protection if external user
+{
+	//$socid = $user->societe_id;
+	accessforbidden();
+}
+//$result = restrictedArea($user, 'bom', $id, '');
 
 // Initialize array of search criterias
-$search_all=trim(GETPOST("search_all", 'alpha'));
+$search_all=trim(GETPOST("search_all",'alpha'));
 $search=array();
 foreach($object->fields as $key => $val)
 {
-	if (GETPOST('search_'.$key, 'alpha')) $search[$key]=GETPOST('search_'.$key, 'alpha');
+	if (GETPOST('search_'.$key,'alpha')) $search[$key]=GETPOST('search_'.$key,'alpha');
 }
 
 // List of fields to search into when doing a "search in all"
@@ -117,17 +143,6 @@ if (is_array($extrafields->attributes[$object->table_element]['label']) && count
 }
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
-//if ($socid > 0) $arrayfields['t.fk_soc']['enabled']=0;
-//if ($projectid > 0) $arrayfields['t.fk_project']['enabled']=0;
-
-
-// Security check
-if (!$user->rights->ticket->read) {
-    accessforbidden();
-}
-
-// Store current page url
-$url_page_current = dol_buildpath('/ticket/list.php', 1);
 
 
 
@@ -135,8 +150,8 @@ $url_page_current = dol_buildpath('/ticket/list.php', 1);
  * Actions
  */
 
-if (GETPOST('cancel', 'alpha')) { $action='list'; $massaction=''; }
-if (! GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction=''; }
+if (GETPOST('cancel','alpha')) { $action='list'; $massaction=''; }
+if (! GETPOST('confirmmassaction','alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction=''; }
 
 $parameters=array();
 $reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
@@ -148,7 +163,7 @@ if (empty($reshook))
 	include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
 	// Purge search criteria
-	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') ||GETPOST('button_removefilter', 'alpha')) // All tests are required to be compatible with all browsers
+	if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') ||GETPOST('button_removefilter','alpha')) // All tests are required to be compatible with all browsers
 	{
 		foreach($object->fields as $key => $val)
 		{
@@ -157,18 +172,18 @@ if (empty($reshook))
 		$toselect='';
 		$search_array_options=array();
 	}
-	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')
-		|| GETPOST('button_search_x', 'alpha') || GETPOST('button_search.x', 'alpha') || GETPOST('button_search', 'alpha'))
+	if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')
+		|| GETPOST('button_search_x','alpha') || GETPOST('button_search.x','alpha') || GETPOST('button_search','alpha'))
 	{
 		$massaction='';     // Protection to avoid mass action if we force a new search during a mass action confirmation
 	}
 
 	// Mass actions
-	$objectclass='Ticket';
-	$objectlabel='Ticket';
-	$permtoread = $user->rights->ticket->read;
-	$permtodelete = $user->rights->ticket->delete;
-	$uploaddir = $conf->ticket->dir_output;
+	$objectclass='BillOfMaterials';
+	$objectlabel='BillOfMaterials';
+	$permtoread = $user->rights->bom->read;
+	$permtodelete = $user->rights->bom->delete;
+	$uploaddir = $conf->bom->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
 
@@ -179,19 +194,12 @@ if (empty($reshook))
  */
 
 $form=new Form($db);
-$formTicket = new FormTicket($db);
 
 $now=dol_now();
 
-$user_assign = new User($db);
-$user_create = new User($db);
-$socstatic = new Societe($db);
-
-$help_url = '';
-$title = $langs->trans('TicketList');
-
-llxHeader('', $title, $help_url);
-
+//$help_url="EN:Module_BillOfMaterials|FR:Module_BillOfMaterials_FR|ES:Módulo_BillOfMaterials";
+$help_url='';
+$title = $langs->trans('ListOf', $langs->transnoentitiesnoconv("BillOfMaterialss"));
 
 
 // Build and execute select
@@ -208,35 +216,18 @@ if (! empty($extrafields->attributes[$object->table_element]['label']))
 $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListSelect', $parameters, $object);    // Note that $action and $object may have been modified by hook
 $sql.=$hookmanager->resPrint;
-$sql=preg_replace('/, $/', '', $sql);
+$sql=preg_replace('/, $/','', $sql);
 $sql.= " FROM ".MAIN_DB_PREFIX.$object->table_element." as t";
 if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (t.rowid = ef.fk_object)";
 if ($object->ismultientitymanaged == 1) $sql.= " WHERE t.entity IN (".getEntity($object->element).")";
 else $sql.=" WHERE 1 = 1";
-
 foreach($search as $key => $val)
 {
-	if ($key == 'fk_statut')
-	{
-	    $tmpstatus='';
-	    if ($search['fk_statut'] == 'openall' || in_array('openall', $search['fk_statut'])) $tmpstatus.=($tmpstatus?',':'')."'0', '1', '3', '4', '5', '6'";
-	    if ($search['fk_statut'] == 'closeall' || in_array('closeall', $search['fk_statut'])) $tmpstatus.=($tmpstatus?',':'')."'8', '9'";
-	    if ($tmpstatus) $sql.=" AND fk_statut IN (".$tmpstatus.")";
-	    elseif (is_array($search[$key]) && count($search[$key])) $sql.=natural_search($key, join(',', $search[$key]), 2);
-	    continue;
-	}
+	if ($key == 'status' && $search[$key] == -1) continue;
 	$mode_search=(($object->isInt($object->fields[$key]) || $object->isFloat($object->fields[$key]))?1:0);
-    if ($search[$key] != '') $sql.=natural_search($key, $search[$key], (($key == 'fk_statut')?2:$mode_search));
+	if ($search[$key] != '') $sql.=natural_search($key, $search[$key], (($key == 'status')?2:$mode_search));
 }
 if ($search_all) $sql.= natural_search(array_keys($fieldstosearchall), $search_all);
-if ($search_fk_soc)     $sql.= natural_search('fk_soc', $search_fk_soc, 2);
-if ($search_fk_project) $sql.= natural_search('fk_project', $search_fk_project, 2);
-if (! $user->societe_id && ($mode == "mine" || (!$user->admin && $conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY))) {
-    $sql.= " AND (t.fk_user_assign = ".$user->id;
-    if (empty($conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY)) $sql.=" OR t.fk_user_create = ".$user->id;
-    $sql.=")";
-}
-
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 // Add where from hooks
@@ -260,7 +251,7 @@ $sql.=$hookmanager->resPrint;
 $sql=preg_replace('/, $/','', $sql);
 */
 
-$sql.=$db->order($sortfield, $sortorder);
+$sql.=$db->order($sortfield,$sortorder);
 
 // Count total nb of records
 $nbtotalofrecords = '';
@@ -298,7 +289,7 @@ if ($num == 1 && ! empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && 
 {
 	$obj = $db->fetch_object($resql);
 	$id = $obj->rowid;
-	header("Location: ".DOL_URL_ROOT.'/ticket/card.php?id='.$id);
+	header("Location: ".dol_buildpath('/bom/bom_card.php', 1).'?id='.$id);
 	exit;
 }
 
@@ -306,120 +297,22 @@ if ($num == 1 && ! empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && 
 // Output page
 // --------------------------------------------------------------------
 
-if ($socid && !$projectid && $user->rights->societe->lire) {
-    $socstat = new Societe($db);
-    $res = $socstat->fetch($socid);
-    if ($res > 0) {
+llxHeader('', $title, $help_url);
 
-    	$tmpobject = $object;
-    	$object = $socstat;		// $object must be of type Societe when calling societe_prepare_head
-        $head = societe_prepare_head($socstat);
-		$object = $tmpobject;
-
-        dol_fiche_head($head, 'ticket', $langs->trans("ThirdParty"), -1, 'company');
-
-        dol_banner_tab($socstat, 'socid', '', ($user->societe_id ? 0 : 1), 'rowid', 'nom');
-
-        print '<div class="fichecenter">';
-
-        print '<div class="underbanner clearboth"></div>';
-        print '<table class="border centpercent">';
-
-        // Customer code
-        if ($socstat->client && !empty($socstat->code_client)) {
-            print '<tr><td class="titlefield">';
-            print $langs->trans('CustomerCode') . '</td><td>';
-            print $socstat->code_client;
-            if ($socstat->check_codeclient() != 0) {
-                print ' <font class="error">(' . $langs->trans("WrongCustomerCode") . ')</font>';
-            }
-
-            print '</td>';
-            print '</tr>';
-        }
-        // Supplier code
-        if ($socstat->fournisseur && !empty($socstat->code_fournisseur)) {
-        	print '<tr><td class="titlefield">';
-        	print $langs->trans('SupplierCode') . '</td><td>';
-        	print $socstat->code_fournisseur;
-        	if ($socstat->check_codefournisseur() != 0) {
-        		print ' <font class="error">(' . $langs->trans("WrongSupplierCode") . ')</font>';
-        	}
-
-        	print '</td>';
-        	print '</tr>';
-        }
-
-        print '</table>';
-        print '</div>';
-        dol_fiche_end();
-    }
-}
-
-if ($projectid > 0) {
-    $projectstat = new Project($db);
-    if ($projectstat->fetch($projectid) > 0) {
-        $projectstat->fetch_thirdparty();
-
-        $savobject = $object;
-        $object = $projectstat;
-
-        // To verify role of users
-        //$userAccess = $object->restrictedProjectArea($user,'read');
-        $userWrite = $projectstat->restrictedProjectArea($user, 'write');
-        //$userDelete = $object->restrictedProjectArea($user,'delete');
-        //print "userAccess=".$userAccess." userWrite=".$userWrite." userDelete=".$userDelete;
-
-        $head = project_prepare_head($projectstat);
-        dol_fiche_head($head, 'ticket', $langs->trans("Project"), -1, ($projectstat->public ? 'projectpub' : 'project'));
-
-        // Project card
-
-        $linkback = '<a href="'.DOL_URL_ROOT.'/projet/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
-
-        $morehtmlref='<div class="refidno">';
-        // Title
-        $morehtmlref.=$object->title;
-        // Thirdparty
-        if ($object->thirdparty->id > 0)
-        {
-        	$morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1, 'project');
-        }
-        $morehtmlref.='</div>';
-
-        // Define a complementary filter for search of next/prev ref.
-        if (! $user->rights->projet->all->lire)
-        {
-        	$objectsListId = $object->getProjectsAuthorizedForUser($user, 0, 0);
-        	$object->next_prev_filter=" rowid in (".(count($objectsListId)?join(',', array_keys($objectsListId)):'0').")";
-        }
-
-        dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
-
-        print '<div class="fichecenter">';
-        print '<div class="underbanner clearboth"></div>';
-
-        print '<table class="border" width="100%">';
-
-        // Visibility
-        print '<tr><td class="titlefield">' . $langs->trans("Visibility") . '</td><td>';
-        if ($projectstat->public) {
-            print $langs->trans('SharedProject');
-        } else {
-            print $langs->trans('PrivateProject');
-        }
-        print '</td></tr>';
-
-        print "</table>";
-
-        print '</div>';
-        dol_fiche_end();
-
-        $object = $savobject;
-    } else {
-        print "ErrorRecordNotFound";
-    }
-}
+// Example : Adding jquery code
+print '<script type="text/javascript" language="javascript">
+jQuery(document).ready(function() {
+	function init_myfunc()
+	{
+		jQuery("#myid").removeAttr(\'disabled\');
+		jQuery("#myid").attr(\'disabled\',\'disabled\');
+	}
+	init_myfunc();
+	jQuery("#mybutton").click(function() {
+		init_myfunc();
+	});
+});
+</script>';
 
 $arrayofselected=is_array($toselect)?$toselect:array();
 
@@ -428,22 +321,19 @@ if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&con
 if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.urlencode($limit);
 foreach($search as $key => $val)
 {
-    if (is_array($search[$key]) && count($search[$key])) foreach($search[$key] as $skey) $param.='&search_'.$key.'[]='.urlencode($skey);
-    else $param.= '&search_'.$key.'='.urlencode($search[$key]);
+	$param.= '&search_'.$key.'='.urlencode($search[$key]);
 }
 if ($optioncss != '')     $param.='&optioncss='.urlencode($optioncss);
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
-if ($socid)     $param.='&socid='.urlencode($socid);
-if ($projectid) $param.='&projectid='.urlencode($projectid);
 
 // List of mass actions available
 $arrayofmassactions =  array(
 	//'presend'=>$langs->trans("SendByMail"),
 	//'builddoc'=>$langs->trans("PDFMerge"),
 );
-if ($user->rights->ticket->delete) $arrayofmassactions['predelete']=$langs->trans("Delete");
-if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
+if ($user->rights->bom->delete) $arrayofmassactions['predelete']=$langs->trans("Delete");
+if (GETPOST('nomassaction','int') || in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
 $massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 
 print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
@@ -455,34 +345,34 @@ print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
-print '<input type="hidden" name="mode" value="' . $mode . '" >';
-if ($socid)     print '<input type="hidden" name="socid" value="' . $socid . '" >';
-if ($projectid) print '<input type="hidden" name="projectid" value="' . $projectid . '" >';
 
 $newcardbutton='';
-if ($user->rights->ticket->write)
-{
-	$newcardbutton = '<a class="butActionNew" href="'.DOL_URL_ROOT.'/ticket/new.php?action=create_ticket' . ($socid ? '&socid=' . $socid : '') . ($projectid ? '&origin=projet_project&originid=' . $projectid : '') . '"><span class="valignmiddle">' . $langs->trans('NewTicket').'</span>';
+//if ($user->rights->bom->creer)
+//{
+	$newcardbutton='<a class="butActionNew" href="bom_card.php?action=create&backtopage='.urlencode($_SERVER['PHP_SELF']).'"><span class="valignmiddle">'.$langs->trans('New').'</span>';
 	$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
 	$newcardbutton.= '</a>';
-}
+//}
+//else
+//{
+//    $newcardbutton='<a class="butActionNewRefused" href="#">'.$langs->trans('New');
+//    $newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
+//    $newcardbutton.= '</a>';
+//}
 
-print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_ticket', 0, $newcardbutton, '', $limit);
+print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_companies', 0, $newcardbutton, '', $limit);
 
-if ($mode == 'mine') {
-    print '<div class="opacitymedium">' . $langs->trans('TicketAssignedToMeInfos') . '</div><br>';
-}
 // Add code for pre mass action (confirmation or email presend form)
-$topicmail="SendTicketRef";
-$modelmail="ticket";
-$objecttmp=new Ticket($db);
-$trackid='tick'.$object->id;
+$topicmail="SendBillOfMaterialsRef";
+$modelmail="bom";
+$objecttmp=new BillOfMaterials($db);
+$trackid='xxxx'.$object->id;
 include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
 if ($sall)
 {
 	foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
-	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $sall) . join(', ', $fieldstosearchall).'</div>';
+	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall).'</div>';
 }
 
 $moreforfilter = '';
@@ -519,40 +409,7 @@ foreach($object->fields as $key => $val)
 	if (in_array($val['type'], array('date','datetime','timestamp'))) $cssforfield.=($cssforfield?' ':'').'center';
 	if (in_array($val['type'], array('timestamp'))) $cssforfield.=($cssforfield?' ':'').'nowrap';
 	if ($key == 'status') $cssforfield.=($cssforfield?' ':'').'center';
-	if (! empty($arrayfields['t.'.$key]['checked'])) {
-		if ($key == 'type_code') {
-			print '<td class="liste_titre'.($cssforfield?' '.$cssforfield:'').'">';
-			$formTicket->selectTypesTickets(dol_escape_htmltag($search[$key]), 'search_'.$key.'', '', 0, 1, 1, 0, ($val['css']?$val['css']:'maxwidth150'));
-			print '</td>';
-		} elseif ($key == 'category_code') {
-			print '<td class="liste_titre'.($cssforfield?' '.$cssforfield:'').'">';
-			$formTicket->selectGroupTickets(dol_escape_htmltag($search[$key]), 'search_'.$key.'', '', 0, 1, 1, 0, ($val['css']?$val['css']:'maxwidth150'));
-			print '</td>';
-		} elseif ($key == 'severity_code') {
-			print '<td class="liste_titre'.($cssforfield?' '.$cssforfield:'').'">';
-			$formTicket->selectSeveritiesTickets(dol_escape_htmltag($search[$key]), 'search_'.$key.'', '', 0, 1, 1, 0, ($val['css']?$val['css']:'maxwidth150'));
-			print '</td>';
-		} elseif ($key == 'fk_user_assign') {
-		    print '<td class="liste_titre'.($cssforfield?' '.$cssforfield:'').'">';
-		    print $form->select_dolusers($search[$key], 'search_'.$key, 1, null, 0, '', '', '0', 0, 0, '', 0, '', ($val['css']?$val['css']:'maxwidth150'));
-		    print '</td>';
-		} elseif ($key == 'fk_statut') {
-		    $arrayofstatus = array();
-		    $arrayofstatus['openall']='-- '.$langs->trans('OpenAll').' --';
-		    foreach ($object->statuts_short as $key2 => $val2)
-		    {
-		        $arrayofstatus[$key2] = $val2;
-		        if ($key2 == '6') $arrayofstatus['closeall']='-- '.$langs->trans('ClosedAll').' --';
-		    }
-		    print '<td class="liste_titre'.($cssforfield?' '.$cssforfield:'').'">';
-		    //var_dump($arrayofstatus);var_dump($search['fk_statut']);var_dump(array_values($search[$key]));
-			print Form::multiselectarray('search_fk_statut', $arrayofstatus, array_values($search[$key]), 0, 0, 'minwidth150', 1, 0, '', '', '');
-			print '</td>';
-		}
-		else {
-			print '<td class="liste_titre'.($cssforfield?' '.$cssforfield:'').'"><input type="text" class="flat maxwidth75" name="search_'.$key.'" value="'.dol_escape_htmltag($search[$key]).'"></td>';
-		}
-	}
+	if (! empty($arrayfields['t.'.$key]['checked'])) print '<td class="liste_titre'.($cssforfield?' '.$cssforfield:'').'"><input type="text" class="flat maxwidth75" name="search_'.$key.'" value="'.dol_escape_htmltag($search[$key]).'"></td>';
 }
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
@@ -562,7 +419,7 @@ $parameters=array('arrayfields'=>$arrayfields);
 $reshook=$hookmanager->executeHooks('printFieldListOption', $parameters, $object);    // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 // Action column
-print '<td class="liste_titre right">';
+print '<td class="liste_titre" align="right">';
 $searchpicto=$form->showFilterButtons();
 print $searchpicto;
 print '</td>';
@@ -577,10 +434,10 @@ foreach($object->fields as $key => $val)
 	$cssforfield='';
 	if (in_array($val['type'], array('date','datetime','timestamp'))) $cssforfield.=($cssforfield?' ':'').'center';
 	if (in_array($val['type'], array('timestamp'))) $cssforfield.=($cssforfield?' ':'').'nowrap';
-	if ($key == 'fk_statut') $cssforfield.=($cssforfield?' ':'').'center';
+	if ($key == 'status') $cssforfield.=($cssforfield?' ':'').'center';
 	if (! empty($arrayfields['t.'.$key]['checked']))
 	{
-        print getTitleFieldOfList($arrayfields['t.'.$key]['label'], 0, $_SERVER['PHP_SELF'], 't.'.$key, '', $param, ($cssforfield?'class="'.$cssforfield.'"':''), $sortfield, $sortorder, ($cssforfield?$cssforfield.' ':''))."\n";
+		print getTitleFieldOfList($arrayfields['t.'.$key]['label'], 0, $_SERVER['PHP_SELF'], 't.'.$key, '', $param, ($cssforfield?'class="'.$cssforfield.'"':''), $sortfield, $sortorder, ($cssforfield?$cssforfield.' ':''))."\n";
 	}
 }
 // Extra fields
@@ -589,7 +446,8 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 $parameters=array('arrayfields'=>$arrayfields,'param'=>$param,'sortfield'=>$sortfield,'sortorder'=>$sortorder);
 $reshook=$hookmanager->executeHooks('printFieldListTitle', $parameters, $object);    // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
-print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'maxwidthsearch center ')."\n";
+// Action column
+print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"],'','','','align="center"',$sortfield,$sortorder,'maxwidthsearch ')."\n";
 print '</tr>'."\n";
 
 
@@ -599,7 +457,7 @@ if (is_array($extrafields->attributes[$object->table_element]['computed']) && co
 {
 	foreach ($extrafields->attributes[$object->table_element]['computed'] as $key => $val)
 	{
-		if (preg_match('/\$object/', $val)) $needToFetchEachLine++;  // There is at least one compute field that use $object
+		if (preg_match('/\$object/',$val)) $needToFetchEachLine++;  // There is at least one compute field that use $object
 	}
 }
 
@@ -619,18 +477,19 @@ while ($i < min($num, $limit))
 	{
 		if (isset($obj->$key)) $object->$key = $obj->$key;
 	}
-	$langs->load("ticket");
 
 	// Show here line of result
 	print '<tr class="oddeven">';
 	foreach($object->fields as $key => $val)
 	{
-		$cssforfield='';
-		if (in_array($val['type'], array('date','datetime','timestamp'))) $cssforfield.=($cssforfield?' ':'').'center';
-		if (in_array($val['type'], array('timestamp'))) $cssforfield.=($cssforfield?' ':'').'nowrap';
-		if ($key == 'ref') $cssforfield.=($cssforfield?' ':'').'nowraponall';
-		if ($key == 'fk_statut') $cssforfield.=($cssforfield?' ':'').'center';
-		if (! empty($arrayfields['t.'.$key]['checked']))
+	    $cssforfield='';
+	    if (in_array($val['type'], array('date','datetime','timestamp'))) $cssforfield.=($cssforfield?' ':'').'center';
+	    elseif ($key == 'status') $cssforfield.=($cssforfield?' ':'').'center';
+
+	    if (in_array($val['type'], array('timestamp'))) $cssforfield.=($cssforfield?' ':'').'nowrap';
+	    elseif ($key == 'ref') $cssforfield.=($cssforfield?' ':'').'nowrap';
+
+	    if (! empty($arrayfields['t.'.$key]['checked']))
 		{
 			print '<td';
 			if ($cssforfield || $val['css']) print ' class="';
@@ -639,8 +498,7 @@ while ($i < min($num, $limit))
 			print $val['css'];
 			if ($cssforfield || $val['css']) print '"';
 			print '>';
-			if ($key == 'fk_statut') print $object->getLibStatut(5);
-			else print $object->showOutputField($val, $key, $obj->$key, '');
+			print $object->showOutputField($val, $key, $obj->$key, '');
 			print '</td>';
 			if (! $i) $totalarray['nbfield']++;
 			if (! empty($val['isameasure']))
@@ -657,7 +515,7 @@ while ($i < min($num, $limit))
 	$reshook=$hookmanager->executeHooks('printFieldListValue', $parameters, $object);    // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	// Action column
-	print '<td class="nowrap center">';
+	print '<td class="nowrap" align="center">';
 	if ($massactionbutton || $massaction)   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 	{
 		$selected=0;
@@ -680,7 +538,7 @@ if (isset($totalarray['pos']))
 	while ($i < $totalarray['nbfield'])
 	{
 		$i++;
-		if (! empty($totalarray['pos'][$i]))  print '<td class="right">'.price($totalarray['val'][$totalarray['pos'][$i]]).'</td>';
+		if (! empty($totalarray['pos'][$i]))  print '<td align="right">'.price($totalarray['val'][$totalarray['pos'][$i]]).'</td>';
 		else
 		{
 			if ($i == 1)
@@ -714,9 +572,7 @@ print '</div>'."\n";
 
 print '</form>'."\n";
 
-
-
-if (in_array('builddoc', $arrayofmassactions) && ($nbtotalofrecords === '' || $nbtotalofrecords))
+if (in_array('builddoc',$arrayofmassactions) && ($nbtotalofrecords === '' || $nbtotalofrecords))
 {
 	$hidegeneratedfilelistifempty=1;
 	if ($massaction == 'builddoc' || $action == 'remove_file' || $show_files) $hidegeneratedfilelistifempty=0;
@@ -726,13 +582,13 @@ if (in_array('builddoc', $arrayofmassactions) && ($nbtotalofrecords === '' || $n
 
 	// Show list of available documents
 	$urlsource=$_SERVER['PHP_SELF'].'?sortfield='.$sortfield.'&sortorder='.$sortorder;
-	$urlsource.=str_replace('&amp;', '&', $param);
+	$urlsource.=str_replace('&amp;','&',$param);
 
 	$filedir=$diroutputmassaction;
-	$genallowed=$user->rights->ticket->read;
-	$delallowed=$user->rights->ticket->write;
+	$genallowed=$user->rights->bom->read;
+	$delallowed=$user->rights->bom->create;
 
-	print $formfile->showdocuments('massfilesarea_ticket', '', $filedir, $urlsource, 0, $delallowed, '', 1, 1, 0, 48, 1, $param, $title, '', '', '', null, $hidegeneratedfilelistifempty);
+	print $formfile->showdocuments('massfilesarea_bom','',$filedir,$urlsource,0,$delallowed,'',1,1,0,48,1,$param,$title,'','','',null,$hidegeneratedfilelistifempty);
 }
 
 // End of page
