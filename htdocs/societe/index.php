@@ -132,7 +132,7 @@ print '<table class="noborder nohover" width="100%">'."\n";
 print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").'</th></tr>';
 if (! empty($conf->use_javascript_ajax) && ((round($third['prospect'])?1:0)+(round($third['customer'])?1:0)+(round($third['supplier'])?1:0)+(round($third['other'])?1:0) >= 2))
 {
-    print '<tr><td align="center" colspan="2">';
+    print '<tr><td class="center" colspan="2">';
     $dataseries=array();
     if (! empty($conf->societe->enabled) && $user->rights->societe->lire && empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && empty($conf->global->SOCIETE_DISABLE_PROSPECTS_STATS))     $dataseries[]=array($langs->trans("Prospects"), round($third['prospect']));
     if (! empty($conf->societe->enabled) && $user->rights->societe->lire && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS_STATS))     $dataseries[]=array($langs->trans("Customers"), round($third['customer']));
@@ -154,25 +154,25 @@ else
     if (! empty($conf->societe->enabled) && $user->rights->societe->lire && empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && empty($conf->global->SOCIETE_DISABLE_PROSPECTS_STATS))
     {
         $statstring = "<tr>";
-        $statstring.= '<td><a href="'.DOL_URL_ROOT.'/societe/list.php?type=p">'.$langs->trans("Prospects").'</a></td><td align="right">'.round($third['prospect']).'</td>';
+        $statstring.= '<td><a href="'.DOL_URL_ROOT.'/societe/list.php?type=p">'.$langs->trans("Prospects").'</a></td><td class="right">'.round($third['prospect']).'</td>';
         $statstring.= "</tr>";
     }
     if (! empty($conf->societe->enabled) && $user->rights->societe->lire && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS_STATS))
     {
         $statstring.= "<tr>";
-        $statstring.= '<td><a href="'.DOL_URL_ROOT.'/societe/list.php?type=c">'.$langs->trans("Customers").'</a></td><td align="right">'.round($third['customer']).'</td>';
+        $statstring.= '<td><a href="'.DOL_URL_ROOT.'/societe/list.php?type=c">'.$langs->trans("Customers").'</a></td><td class="right">'.round($third['customer']).'</td>';
         $statstring.= "</tr>";
     }
     if (! empty($conf->fournisseur->enabled) && empty($conf->global->SOCIETE_DISABLE_SUPPLIERS_STATS) && $user->rights->fournisseur->lire)
     {
         $statstring2 = "<tr>";
-        $statstring2.= '<td><a href="'.DOL_URL_ROOT.'/societe/list.php?type=f">'.$langs->trans("Suppliers").'</a></td><td align="right">'.round($third['supplier']).'</td>';
+        $statstring2.= '<td><a href="'.DOL_URL_ROOT.'/societe/list.php?type=f">'.$langs->trans("Suppliers").'</a></td><td class="right">'.round($third['supplier']).'</td>';
         $statstring2.= "</tr>";
     }
     print $statstring;
     print $statstring2;
 }
-print '<tr class="liste_total"><td>'.$langs->trans("UniqueThirdParties").'</td><td align="right">';
+print '<tr class="liste_total"><td>'.$langs->trans("UniqueThirdParties").'</td><td class="right">';
 print $total;
 print '</td></tr>';
 print '</table>';
@@ -188,7 +188,7 @@ if (! empty($conf->categorie->enabled) && ! empty($conf->global->CATEGORY_GRAPHS
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder nohover" width="100%">';
 	print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Categories").'</th></tr>';
-	print '<tr '.$bc[0].'><td align="center" colspan="2">';
+	print '<tr '.$bc[0].'><td class="center" colspan="2">';
 	$sql = "SELECT c.label, count(*) as nb";
 	$sql.= " FROM ".MAIN_DB_PREFIX."categorie_societe as cs";
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as c ON cs.fk_categorie = c.rowid";
@@ -249,7 +249,7 @@ if (! empty($conf->categorie->enabled) && ! empty($conf->global->CATEGORY_GRAPHS
 		}
 	}
 	print '</td></tr>';
-	print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td align="right">';
+	print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td class="right">';
 	print $total;
 	print '</td></tr>';
 	print '</table>';
@@ -321,7 +321,7 @@ if ($result)
             print $thirdparty_static->getNomUrl(1);
             print "</td>\n";
             // Type
-            print '<td align="center">';
+            print '<td class="center">';
             if ($thirdparty_static->client==1 || $thirdparty_static->client==3)
             {
             	$thirdparty_static->name=$langs->trans("Customer");
@@ -341,10 +341,10 @@ if ($result)
             }
             print '</td>';
             // Last modified date
-            print '<td align="right">';
+            print '<td class="right">';
             print dol_print_date($thirdparty_static->datem, 'day');
             print "</td>";
-            print '<td align="right" class="nowrap">';
+            print '<td class="right nowrap">';
             print $thirdparty_static->getLibStatut(3);
             print "</td>";
             print "</tr>\n";

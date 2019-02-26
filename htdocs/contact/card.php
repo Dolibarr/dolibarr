@@ -588,7 +588,7 @@ else
 	            $rowspan=3;
 	    		if (empty($conf->global->SOCIETE_DISABLE_STATE)) $rowspan++;
 
-	            print '<td valign="middle" align="center" rowspan="'.$rowspan.'">';
+	            print '<td class="valignmiddle center" rowspan="'.$rowspan.'">';
 		        print '<a href="#" id="copyaddressfromsoc">'.$langs->trans('CopyAddressFromSoc').'</a>';
 	            print '</td>';
             }
@@ -1225,7 +1225,7 @@ else
 
     	// Other attributes
     	$cols = 3;
-    	$parameyers=array('socid'=>$socid);
+    	$parameters=array('socid'=>$socid);
     	include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
 
         $object->load_ref_elements();

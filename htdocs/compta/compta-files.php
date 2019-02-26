@@ -283,7 +283,7 @@ llxHeader('', $title, $help_url);
 
 $h=0;
 $head[$h][0] = $_SERVER["PHP_SELF"].$varlink;
-$head[$h][1] = $langs->trans("AccountancyFiles");
+$head[$h][1] = $langs->trans("AccountantFiles");
 $head[$h][2] = 'AccountancyFiles';
 
 dol_fiche_head($head, 'AccountancyFiles');
@@ -374,9 +374,9 @@ if (!empty($date_start) && !empty($date_stop))
     print '<td>'.$langs->trans("Ref").'</td>';
     print '<td>'.$langs->trans("Link").'</td>';
     print '<td>'.$langs->trans("Paid").'</td>';
-    print '<td align="right">'.$langs->trans("Debit").'</td>';
-    print '<td align="right">'.$langs->trans("Credit").'</td>';
-    print '<td align="right">'.$langs->trans("Balance").'</td>';
+    print '<td class="right">'.$langs->trans("Debit").'</td>';
+    print '<td class="right">'.$langs->trans("Credit").'</td>';
+    print '<td class="right">'.$langs->trans("Balance").'</td>';
     print '</tr>';
     if ($result)
     {
@@ -421,21 +421,21 @@ if (!empty($date_start) && !empty($date_stop))
                 // File link
                 print '<td><a href='.DOL_URL_ROOT.'/'.$data['link'].">".$data['name']."</a></td>\n";
 
-                print '<td aling="left">'.$data['paid'].'</td>';
-                print '<td align="right">'.(($data['amount'] > 0) ? price(abs($data['amount'])) : '')."</td>\n";
+                print '<td class="left">'.$data['paid'].'</td>';
+                print '<td class="right">'.(($data['amount'] > 0) ? price(abs($data['amount'])) : '')."</td>\n";
                 $totalDebit += ($data['amount'] > 0) ? abs($data['amount']) : 0;
-                print '<td align="right">'.(($data['amount'] > 0) ? '' : price(abs($data['amount'])))."</td>\n";
+                print '<td class="right">'.(($data['amount'] > 0) ? '' : price(abs($data['amount'])))."</td>\n";
                 $totalCredit += ($data['amount'] > 0) ? 0 : abs($data['amount']);
                 // Balance
-                print '<td align="right">'.price($data['balance'])."</td>\n";
+                print '<td class="right">'.price($data['balance'])."</td>\n";
                 print "</tr>\n";
             }
 
             print '<tr class="liste_total">';
             print '<td colspan="5">&nbsp;</td>';
-            print '<td align="right">'.price($totalDebit).'</td>';
-            print '<td align="right">'.price($totalCredit).'</td>';
-            print '<td align="right">'.price(price2num($totalDebit - $totalCredit, 'MT')).'</td>';
+            print '<td class="right">'.price($totalDebit).'</td>';
+            print '<td class="right">'.price($totalCredit).'</td>';
+            print '<td class="right">'.price(price2num($totalDebit - $totalCredit, 'MT')).'</td>';
             print "</tr>\n";
         }
     }

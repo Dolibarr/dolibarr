@@ -182,7 +182,6 @@ FeatureNotYetSupported=Característica aún no soportada
 SendByMail=Enviar por correo electrónico
 MailSentBy=Correo electrónico enviado por
 TextUsedInTheMessageBody=Cuerpo del correo electronico
-EMail=Email
 NoEMail=Sin correo electrónico
 FollowingConstantsWillBeSubstituted=Las siguientes constantes serán reemplazadas con el valor correspondiente.
 Refresh=Actualizar

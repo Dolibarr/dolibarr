@@ -394,7 +394,7 @@ $reshook=$hookmanager->executeHooks('printFieldListTitle', $parameters);    // N
 print $hookmanager->resPrint;
 if (! empty($arrayfields['cd.datec']['checked']))  print_liste_field_titre($arrayfields['cd.datec']['label'], $_SERVER["PHP_SELF"], "cd.datec", "", $param, 'align="center" class="nowrap"', $sortfield, $sortorder);
 if (! empty($arrayfields['cd.tms']['checked']))    print_liste_field_titre($arrayfields['cd.tms']['label'], $_SERVER["PHP_SELF"], "cd.tms", "", $param, 'align="center" class="nowrap"', $sortfield, $sortorder);
-if (! empty($arrayfields['status']['checked'])) print_liste_field_titre($arrayfields['status']['label'], $_SERVER["PHP_SELF"], "cd.statut,c.statut", "", $param, 'align="right"', $sortfield, $sortorder);
+if (! empty($arrayfields['status']['checked'])) print_liste_field_titre($arrayfields['status']['label'], $_SERVER["PHP_SELF"], "cd.statut,c.statut", "", $param, '', $sortfield, $sortorder, 'right ');
 print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', 'align="center"', $sortfield, $sortorder, 'maxwidthsearch ');
 print "</tr>\n";
 
@@ -511,7 +511,7 @@ if (! empty($arrayfields['cd.tms']['checked']))
 if (! empty($arrayfields['status']['checked']))
 {
 	// Status
-	print '<td class="liste_titre" align="right">';
+	print '<td class="liste_titre right">';
 	$arrayofstatus=array(
 		'0'=>$langs->trans("ServiceStatusInitial"),
 		'4'=>$langs->trans("ServiceStatusRunning"),
@@ -523,7 +523,7 @@ if (! empty($arrayfields['status']['checked']))
 	print '</td>';
 }
 // Action column
-print '<td class="liste_titre" align="right">';
+print '<td class="liste_titre right">';
 $searchpicto=$form->showFilterAndCheckAddButtons(0);
 print $searchpicto;
 print '</td>';
@@ -589,7 +589,7 @@ while ($i < min($num, $limit))
 	}
 	if (! empty($arrayfields['cd.total_ht']['checked']))
 	{
-		print '<td align="right">';
+		print '<td class="right">';
 		print price($obj->total_ht);
 		print '</td>';
 		$totalarray['totalht'] += $obj->total_ht;
@@ -601,7 +601,7 @@ while ($i < min($num, $limit))
     }
 	if (! empty($arrayfields['cd.total_tva']['checked']))
 	{
-		print '<td align="right">';
+		print '<td class="right">';
 		print price($obj->total_tva);
 		print '</td>';
         $totalarray['totalvat'] += $obj->total_tva;
@@ -613,14 +613,14 @@ while ($i < min($num, $limit))
     }
 	if (! empty($arrayfields['cd.tva_tx']['checked']))
 	{
-		print '<td align="right">';
+		print '<td class="right">';
 		print price2num($obj->tva_tx).'%';
 		print '</td>';
         if (! $i) $totalarray['nbfield']++;
 	}
 	if (! empty($arrayfields['cd.subprice']['checked']))
 	{
-		print '<td align="right">';
+		print '<td class="right">';
 		print price($obj->subprice);
 		print '</td>';
         if (! $i) $totalarray['nbfield']++;
@@ -698,7 +698,7 @@ while ($i < min($num, $limit))
 	// Status
 	if (! empty($arrayfields['status']['checked']))
 	{
-	   print '<td align="right">';
+	   print '<td class="right">';
 	   if ($obj->cstatut == 0)	// If contract is draft, we say line is also draft
 	   {
 		   print $contractstatic->LibStatut(0, 5, ($obj->date_fin_validite && $db->jdate($obj->date_fin_validite) < $now));
@@ -735,9 +735,9 @@ if (isset($totalarray['displaytotalline'])) {
 			if ($num < $limit && empty($offset)) print '<td class="left">'.$langs->trans("Total").'</td>';
 			else print '<td class="left">'.$langs->trans("Totalforthispage").'</td>';
 		}
-		elseif ($totalarray['totalhtfield'] == $i) print '<td align="right">'.price($totalarray['totalht']).'</td>';
-		elseif ($totalarray['totalvatfield'] == $i) print '<td align="right">'.price($totalarray['totalvat']).'</td>';
-		elseif ($totalarray['totalttcfield'] == $i) print '<td align="right">'.price($totalarray['totalttc']).'</td>';
+		elseif ($totalarray['totalhtfield'] == $i) print '<td class="right">'.price($totalarray['totalht']).'</td>';
+		elseif ($totalarray['totalvatfield'] == $i) print '<td class="right">'.price($totalarray['totalvat']).'</td>';
+		elseif ($totalarray['totalttcfield'] == $i) print '<td class="right">'.price($totalarray['totalttc']).'</td>';
 		else print '<td></td>';
 	}
 	print '</tr>';

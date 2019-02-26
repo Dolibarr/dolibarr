@@ -183,7 +183,7 @@ for ($i=1; $i<=4; $i++) {
 	<table class="nobordernopadding allwidth">
 		<tr>
 			<td><?php echo $langs->trans('RIB'); ?></td>
-			<td align="right">
+			<td class="right">
 			<?php if ($user->rights->societe->creer) { ?>
 			<a href="<?php echo DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$this->control->tpl['id']; ?>"><?php echo $this->control->tpl['image_edit']; ?></a>
 			<?php } else { ?>
@@ -201,7 +201,7 @@ for ($i=1; $i<=4; $i++) {
 	<table class="nobordernopadding allwidth">
 		<tr>
 			<td><?php echo $langs->trans('ParentCompany'); ?></td>
-			<td align="right">
+			<td class="right">
 			&nbsp;
 			</td>
 		</tr>
@@ -215,7 +215,7 @@ for ($i=1; $i<=4; $i++) {
 	<table class="nobordernopadding allwidth">
 		<tr>
 			<td><?php echo $langs->trans('SalesRepresentatives'); ?></td>
-			<td align="right">
+			<td class="right">
 			<?php if ($user->rights->societe->creer) { ?>
 			<a href="<?php echo DOL_URL_ROOT.'/societe/commerciaux.php?socid='.$this->control->tpl['id']; ?>"><?php echo $this->control->tpl['image_edit']; ?></a>
 			<?php } else { ?>

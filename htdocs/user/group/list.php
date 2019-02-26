@@ -1,8 +1,9 @@
 <?php
 /* Copyright (C) 2002-2003	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2004-2018	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2018	Regis Houssin		<regis.houssin@inodbox.com>
- * Copyright (C) 2011		Herve Prot			<herve.prot@symeos.com>
+ * Copyright (C) 2004-2018  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2018  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2011       Herve Prot              <herve.prot@symeos.com>
+ * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -134,7 +135,7 @@ if ($resql)
 
     $i = 0;
 
-    $param="&search_group=".urlencode($search_group)."&amp;sall=".urlencode($sall);
+    $param="&amp;search_group=".urlencode($search_group)."&amp;sall=".urlencode($sall);
     if ($optioncss != '') $param.='&amp;optioncss='.$optioncss;
 
     $text = $langs->trans("ListOfGroups");
@@ -178,11 +179,11 @@ if ($resql)
     //multicompany
     if(! empty($conf->multicompany->enabled) && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1)
     {
-    	print_liste_field_titre("Entity", $_SERVER["PHP_SELF"], "g.entity", $param, "", 'align="center"', $sortfield, $sortorder);
+    	print_liste_field_titre("Entity", $_SERVER["PHP_SELF"], "g.entity", $param, "", '', $sortfield, $sortorder, 'center ');
     }
-    print_liste_field_titre("NbOfUsers", $_SERVER["PHP_SELF"], "nb", $param, "", 'align="center"', $sortfield, $sortorder);
-    print_liste_field_titre("NbOfPermissions", $_SERVER["PHP_SELF"], "nbpermissions", $param, "", 'align="center"', $sortfield, $sortorder);
-    print_liste_field_titre("DateCreationShort", $_SERVER["PHP_SELF"], "g.datec", $param, "", 'align="right"', $sortfield, $sortorder);
+    print_liste_field_titre("NbOfUsers", $_SERVER["PHP_SELF"], "nb", $param, "", '', $sortfield, $sortorder, 'center ');
+    print_liste_field_titre("NbOfPermissions", $_SERVER["PHP_SELF"], "nbpermissions", $param, "", '', $sortfield, $sortorder, 'center ');
+    print_liste_field_titre("DateCreationShort", $_SERVER["PHP_SELF"], "g.datec", $param, "", '', $sortfield, $sortorder, 'center ');
     print "</tr>\n";
 
     $grouptemp = new UserGroup($db);
@@ -207,11 +208,11 @@ if ($resql)
         if (! empty($conf->multicompany->enabled) && is_object($mc) && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1)
         {
             $mc->getInfo($obj->entity);
-            print '<td align="center">'.$mc->label.'</td>';
+            print '<td class="center">'.$mc->label.'</td>';
         }
-        print '<td align="center">'.$obj->nb.'</td>';
-        print '<td align="center">'.$obj->nbpermissions.'</td>';
-        print '<td align="right" class="nowrap">'.dol_print_date($db->jdate($obj->datec), "dayhour").'</td>';
+        print '<td class="center">'.$obj->nb.'</td>';
+        print '<td class="center">'.$obj->nbpermissions.'</td>';
+        print '<td class="right nowrap">'.dol_print_date($db->jdate($obj->datec), "dayhour").'</td>';
         print "</tr>\n";
         $i++;
     }

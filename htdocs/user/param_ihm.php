@@ -296,7 +296,7 @@ if ($action == 'edit')
     // AGENDA_DEFAULT_VIEW
     print '<tr class="oddeven">'."\n";
     print '<td>'.$langs->trans("AGENDA_DEFAULT_VIEW").'</td>'."\n";
-    print '<td align="center">&nbsp;</td>'."\n";
+    print '<td class="center">&nbsp;</td>'."\n";
     print '<td class="nowrap" width="20%"><input class="oddeven" name="check_AGENDA_DEFAULT_VIEW" id="check_AGENDA_DEFAULT_VIEW" type="checkbox" '.(! empty($object->conf->AGENDA_DEFAULT_VIEW)?" checked":"");
     print empty($dolibarr_main_demo)?'':' disabled="disabled"';	// Disabled for demo
     print '> '.$langs->trans("UsePersonalValue").'</td>';
@@ -370,7 +370,7 @@ else
     // AGENDA_DEFAULT_VIEW
     print '<tr class="oddeven">'."\n";
     print '<td>'.$langs->trans("AGENDA_DEFAULT_VIEW").'</td>'."\n";
-    print '<td align="center">&nbsp;</td>'."\n";
+    print '<td class="center">&nbsp;</td>'."\n";
     print '<td class="nowrap" width="20%"><input class="oddeven" type="checkbox" disabled '.(! empty($object->conf->AGENDA_DEFAULT_VIEW)?" checked":"").'> '.$langs->trans("UsePersonalValue").'</td>';
     print '<td>'."\n";
     $tmplist=array(''=>'&nbsp;', 'show_list'=>$langs->trans("ViewList"), 'show_month'=>$langs->trans("ViewCal"), 'show_week'=>$langs->trans("ViewWeek"), 'show_day'=>$langs->trans("ViewDay"), 'show_peruser'=>$langs->trans("ViewPerUser"));

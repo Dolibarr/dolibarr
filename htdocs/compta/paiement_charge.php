@@ -265,9 +265,9 @@ if ($action == 'create')
 	print '<tr class="liste_titre">';
 	//print '<td>'.$langs->trans("SocialContribution").'</td>';
 	print '<td class="left">'.$langs->trans("DateDue").'</td>';
-	print '<td align="right">'.$langs->trans("Amount").'</td>';
-	print '<td align="right">'.$langs->trans("AlreadyPaid").'</td>';
-	print '<td align="right">'.$langs->trans("RemainderToPay").'</td>';
+	print '<td class="right">'.$langs->trans("Amount").'</td>';
+	print '<td class="right">'.$langs->trans("AlreadyPaid").'</td>';
+	print '<td class="right">'.$langs->trans("RemainderToPay").'</td>';
 	print '<td align="center">'.$langs->trans("Amount").'</td>';
 	print "</tr>\n";
 
@@ -282,18 +282,18 @@ if ($action == 'create')
 
 		if ($objp->date_ech > 0)
 		{
-			print "<td align=\"left\">".dol_print_date($objp->date_ech, 'day')."</td>\n";
+			print '<td class="left">'.dol_print_date($objp->date_ech, 'day').'</td>'."\n";
 		}
 		else
 		{
 			print "<td align=\"center\"><b>!!!</b></td>\n";
 		}
 
-		print '<td align="right">'.price($objp->amount)."</td>";
+		print '<td class="right">'.price($objp->amount)."</td>";
 
-		print '<td align="right">'.price($sumpaid)."</td>";
+		print '<td class="right">'.price($sumpaid)."</td>";
 
-		print '<td align="right">'.price($objp->amount - $sumpaid)."</td>";
+		print '<td class="right">'.price($objp->amount - $sumpaid)."</td>";
 
 		print '<td align="center">';
 		if ($sumpaid < $objp->amount)
@@ -322,10 +322,10 @@ if ($action == 'create')
 	{
 		// Print total
 		print '<tr class="oddeven">';
-		print '<td colspan="2" align="left">'.$langs->trans("Total").':</td>';
-		print "<td align=\"right\"><b>".price($total_ttc)."</b></td>";
-		print "<td align=\"right\"><b>".price($totalrecu)."</b></td>";
-		print "<td align=\"right\"><b>".price($total_ttc - $totalrecu)."</b></td>";
+		print '<td colspan="2" class="left">'.$langs->trans("Total").':</td>';
+		print '<td class="right"><b>'.price($total_ttc).'</b></td>';
+		print '<td class="right"><b>'.price($totalrecu).'</b></td>';
+		print '<td class="right"><b>'.price($total_ttc - $totalrecu).'</b></td>';
 		print '<td align="center">&nbsp;</td>';
 		print "</tr>\n";
 	}

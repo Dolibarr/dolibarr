@@ -100,7 +100,6 @@ ALTER TABLE llx_prelevement_facture_demande ADD COLUMN sourcetype varchar(32);
 ALTER TABLE llx_prelevement_facture_demande ADD COLUMN ext_payment_id varchar(128) NULL;
 ALTER TABLE llx_prelevement_facture_demande ADD COLUMN ext_payment_site varchar(128) NULL;
 
-
 -- Fix if table exists
 ALTER TABLE llx_c_units DROP INDEX uk_c_units_code;
 ALTER TABLE llx_c_units ADD COLUMN scale integer;
@@ -118,7 +117,6 @@ CREATE TABLE llx_c_units(
 ) ENGINE=innodb;
 
 ALTER TABLE llx_c_units ADD UNIQUE uk_c_units_code(code);
-
 
 INSERT INTO llx_c_units (code, scale, label, short_label, unit_type, active) VALUES ('T',  '3','WeightUnitton','T', 'weight', 1);
 INSERT INTO llx_c_units (code, scale, label, short_label, unit_type, active) VALUES ('KG', '0','WeightUnitkg','Kg', 'weight', 1);
@@ -162,3 +160,7 @@ INSERT INTO llx_c_units (code, scale, label, short_label, unit_type, active) VAL
 
 -- Default Warehouse id for a user
 ALTER TABLE llx_user ADD COLUMN fk_warehouse INTEGER NULL;
+
+-- Save informations for online / API shopping and push to invoice
+ALTER TABLE llx_commande ADD COLUMN module_source varchar(32);
+ALTER TABLE llx_commande ADD COLUMN pos_source varchar(32);

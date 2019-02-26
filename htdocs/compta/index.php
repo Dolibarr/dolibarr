@@ -200,14 +200,14 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 				print '<td class="nowrap">';
 				print $companystatic->getNomUrl(1, 'customer', 16);
 				print '</td>';
-				print '<td align="right" class="nowrap">'.price($obj->total_ttc).'</td>';
+				print '<td class="nowrap right">'.price($obj->total_ttc).'</td>';
 				print '</tr>';
 				$tot_ttc+=$obj->total_ttc;
 				$i++;
 			}
 
 			print '<tr class="liste_total"><td class="left">'.$langs->trans("Total").'</td>';
-			print '<td colspan="2" align="right">'.price($tot_ttc).'</td>';
+			print '<td colspan="2" class="right">'.price($tot_ttc).'</td>';
 			print '</tr>';
 		}
 		else
@@ -287,14 +287,14 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture-
 				print '<td>';
 				print $companystatic->getNomUrl(1, 'supplier', 16);
 				print '</td>';
-				print '<td align="right">'.price($obj->total_ttc).'</td>';
+				print '<td class="right">'.price($obj->total_ttc).'</td>';
 				print '</tr>';
 				$tot_ttc+=$obj->total_ttc;
 				$i++;
 			}
 
 			print '<tr class="liste_total"><td class="left">'.$langs->trans("Total").'</td>';
-			print '<td colspan="2" align="right">'.price($tot_ttc).'</td>';
+			print '<td colspan="2" class="right">'.price($tot_ttc).'</td>';
 			print '</tr>';
 		}
 		else
@@ -353,9 +353,9 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("BoxTitleLastCustomerBills", $max).'</th>';
-		if (! empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) print '<th align="right">'.$langs->trans("AmountHT").'</th>';
-		print '<th align="right">'.$langs->trans("AmountTTC").'</th>';
-		print '<th align="right">'.$langs->trans("DateModificationShort").'</th>';
+		if (! empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) print '<th class="right">'.$langs->trans("AmountHT").'</th>';
+		print '<th class="right">'.$langs->trans("AmountTTC").'</th>';
+		print '<th class="right">'.$langs->trans("DateModificationShort").'</th>';
 		print '<th width="16">&nbsp;</th>';
 		print '</tr>';
 		if ($num)
@@ -398,7 +398,7 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 					print img_warning($langs->trans("Late"));
 				}
 				print '</td>';
-				print '<td width="16" align="right" class="nobordernopadding hideonsmartphone">';
+				print '<td width="16" class="nobordernopadding hideonsmartphone right">';
 				$filename=dol_sanitizeFileName($obj->ref);
 				$filedir=$conf->facture->dir_output . '/' . dol_sanitizeFileName($obj->ref);
 				$urlsource=$_SERVER['PHP_SELF'].'?facid='.$obj->rowid;
@@ -409,9 +409,9 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 				print '<td class="left">';
                 print $thirdpartystatic->getNomUrl(1, 'customer', 44);
 				print '</td>';
-				if (! empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) print '<td align="right">'.price($obj->total_ht).'</td>';
-				print '<td align="right">'.price($obj->total_ttc).'</td>';
-				print '<td align="right">'.dol_print_date($db->jdate($obj->tms), 'day').'</td>';
+				if (! empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) print '<td class="right">'.price($obj->total_ht).'</td>';
+				print '<td class="right">'.price($obj->total_ttc).'</td>';
+				print '<td class="right">'.dol_print_date($db->jdate($obj->tms), 'day').'</td>';
 				print '<td>'.$facstatic->LibStatut($obj->paye, $obj->fk_statut, 3, $obj->am).'</td>';
 				print '</tr>';
 
@@ -474,9 +474,9 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture-
 
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("BoxTitleLastSupplierBills", $max).'</th>';
-		if (! empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) print '<th align="right">'.$langs->trans("AmountHT").'</th>';
-		print '<th align="right">'.$langs->trans("AmountTTC").'</th>';
-		print '<th align="right">'.$langs->trans("DateModificationShort").'</th>';
+		if (! empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) print '<th class="right">'.$langs->trans("AmountHT").'</th>';
+		print '<th class="right">'.$langs->trans("AmountTTC").'</th>';
+		print '<th class="right">'.$langs->trans("DateModificationShort").'</th>';
 		print '<th width="16">&nbsp;</th>';
 		print "</tr>\n";
 		if ($num)
@@ -507,9 +507,9 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture-
 				print '<td>';
 				print $thirdpartystatic->getNomUrl(1, 'supplier', 44);
 				print '</td>';
-				if (! empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) print '<td align="right">'.price($obj->total_ht).'</td>';
-				print '<td align="right">'.price($obj->total_ttc).'</td>';
-				print '<td align="right">'.dol_print_date($db->jdate($obj->tms), 'day').'</td>';
+				if (! empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) print '<td class="right">'.price($obj->total_ht).'</td>';
+				print '<td class="right">'.price($obj->total_ttc).'</td>';
+				print '<td class="right">'.dol_print_date($db->jdate($obj->tms), 'day').'</td>';
 				print '<td>'.$facstatic->LibStatut($obj->paye, $obj->fk_statut, 3).'</td>';
 				print '</tr>';
 				$total += $obj->total_ht;
@@ -565,8 +565,8 @@ if (! empty($conf->don->enabled) && $user->rights->societe->lire)
 		print '<tr class="liste_titre">';
 		print '<th>'.$langs->trans("BoxTitleLastModifiedDonations", $max).'</th>';
         print '<th></th>';
-        print '<th align="right">'.$langs->trans("AmountTTC").'</th>';
-        print '<th align="right">'.$langs->trans("DateModificationShort").'</th>';
+        print '<th class="right">'.$langs->trans("AmountTTC").'</th>';
+        print '<th class="right">'.$langs->trans("DateModificationShort").'</th>';
         print '<th width="16">&nbsp;</th>';
 		print '</tr>';
 		if ($num)
@@ -588,8 +588,8 @@ if (! empty($conf->don->enabled) && $user->rights->societe->lire)
 				print '<tr class="oddeven">';
 				print '<td>'.$donationstatic->getNomUrl(1).'</td>';
 				print '<td>'.$label.'</td>';
-				print '<td align="right">'.price($objp->amount).'</td>';
-				print '<td align="right">'.dol_print_date($db->jdate($objp->dm), 'day').'</td>';
+				print '<td class="right">'.price($objp->amount).'</td>';
+				print '<td class="right">'.dol_print_date($db->jdate($objp->dm), 'day').'</td>';
                 print '<td>'.$donationstatic->LibStatut($objp->fk_statut, 3).'</td>';
 				print '</tr>';
 
@@ -638,8 +638,8 @@ if (! empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 			print '<tr class="liste_titre">';
 			print '<th>'.$langs->trans("ContributionsToPay").($num?' <a href="'.DOL_URL_ROOT.'/compta/sociales/list.php?status=0"><span class="badge">'.$num.'</span></a>':'').'</th>';
 			print '<th align="center">'.$langs->trans("DateDue").'</th>';
-			print '<th align="right">'.$langs->trans("AmountTTC").'</th>';
-			print '<th align="right">'.$langs->trans("Paid").'</th>';
+			print '<th class="right">'.$langs->trans("AmountTTC").'</th>';
+			print '<th class="right">'.$langs->trans("Paid").'</th>';
 			print '<th align="center" width="16">&nbsp;</th>';
 			print '</tr>';
 			if ($num)
@@ -658,18 +658,18 @@ if (! empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 					print '<tr class="oddeven">';
 					print '<td>'.$chargestatic->getNomUrl(1).'</td>';
 					print '<td align="center">'.dol_print_date($db->jdate($obj->date_ech), 'day').'</td>';
-					print '<td align="right">'.price($obj->amount).'</td>';
-					print '<td align="right">'.price($obj->sumpaid).'</td>';
+					print '<td class="right">'.price($obj->amount).'</td>';
+					print '<td class="right">'.price($obj->sumpaid).'</td>';
 					print '<td align="center">'.$chargestatic->getLibStatut(3).'</td>';
 					print '</tr>';
 					$tot_ttc+=$obj->amount;
 					$i++;
 				}
 
-				print '<tr class="liste_total"><td align="left" colspan="2">'.$langs->trans("Total").'</td>';
-				print '<td align="right">'.price($tot_ttc).'</td>';
-				print '<td align="right"></td>';
-				print '<td align="right">&nbsp;</td>';
+				print '<tr class="liste_total"><td class="left" colspan="2">'.$langs->trans("Total").'</td>';
+				print '<td class="right">'.price($tot_ttc).'</td>';
+				print '<td class="right"></td>';
+				print '<td class="right">&nbsp;</td>';
 				print '</tr>';
 			}
 			else
@@ -729,9 +729,9 @@ if (! empty($conf->facture->enabled) && ! empty($conf->commande->enabled) && $us
 			print '<table class="noborder" width="100%">';
 			print "<tr class=\"liste_titre\">";
 			print '<th colspan="2">'.$langs->trans("OrdersDeliveredToBill").' <a href="'.DOL_URL_ROOT.'/commande/list.php?viewstatut=3&amp;billed=0"><span class="badge">'.$num.'</span></a></th>';
-			if (! empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) print '<th align="right">'.$langs->trans("AmountHT").'</th>';
-			print '<th align="right">'.$langs->trans("AmountTTC").'</th>';
-			print '<th align="right">'.$langs->trans("ToBill").'</th>';
+			if (! empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) print '<th class="right">'.$langs->trans("AmountHT").'</th>';
+			print '<th class="right">'.$langs->trans("AmountTTC").'</th>';
+			print '<th class="right">'.$langs->trans("ToBill").'</th>';
 			print '<th align="center" width="16">&nbsp;</th>';
 			print '</tr>';
 
@@ -765,7 +765,7 @@ if (! empty($conf->facture->enabled) && ! empty($conf->commande->enabled) && $us
 				print '<td width="20" class="nobordernopadding nowrap">';
 				print '&nbsp;';
 				print '</td>';
-				print '<td width="16" align="right" class="nobordernopadding hideonsmartphone">';
+				print '<td width="16" class="nobordernopadding hideonsmartphone right">';
 				$filename=dol_sanitizeFileName($obj->ref);
 				$filedir=$conf->commande->dir_output . '/' . dol_sanitizeFileName($obj->ref);
 				$urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->rowid;
@@ -777,9 +777,9 @@ if (! empty($conf->facture->enabled) && ! empty($conf->commande->enabled) && $us
 				print '<td class="left">';
                 print $societestatic->getNomUrl(1, 'customer', 44);
 				print '</td>';
-				if (! empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) print '<td align="right">'.price($obj->total_ht).'</td>';
-				print '<td align="right">'.price($obj->total_ttc).'</td>';
-				print '<td align="right">'.price($obj->total_ttc-$obj->tot_fttc).'</td>';
+				if (! empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) print '<td class="right">'.price($obj->total_ht).'</td>';
+				print '<td class="right">'.price($obj->total_ttc).'</td>';
+				print '<td class="right">'.price($obj->total_ttc-$obj->tot_fttc).'</td>';
 				print '<td>'.$commandestatic->LibStatut($obj->fk_statut, $obj->facture, 3).'</td>';
 				print '</tr>';
 				$tot_ht += $obj->total_ht;
@@ -790,9 +790,9 @@ if (! empty($conf->facture->enabled) && ! empty($conf->commande->enabled) && $us
 			}
 
 			print '<tr class="liste_total"><td colspan="2">'.$langs->trans("Total").' &nbsp; <font style="font-weight: normal">('.$langs->trans("RemainderToBill").': '.price($tot_tobill).')</font> </td>';
-			if (! empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) print '<td align="right">'.price($tot_ht).'</td>';
-			print '<td align="right">'.price($tot_ttc).'</td>';
-			print '<td align="right">'.price($tot_tobill).'</td>';
+			if (! empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) print '<td class="right">'.price($tot_ht).'</td>';
+			print '<td class="right">'.price($tot_ttc).'</td>';
+			print '<td class="right">'.price($tot_tobill).'</td>';
 			print '<td>&nbsp;</td>';
 			print '</tr>';
 			print '</table><br>';
@@ -844,10 +844,10 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("BillsCustomersUnpaid", $num).' <a href="'.DOL_URL_ROOT.'/compta/facture/list.php?search_status=1"><span class="badge">'.$num.'</span></a></th>';
-		print '<th align="right">'.$langs->trans("DateDue").'</th>';
-		if (! empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) print '<th align="right">'.$langs->trans("AmountHT").'</th>';
-		print '<th align="right">'.$langs->trans("AmountTTC").'</th>';
-		print '<th align="right">'.$langs->trans("Received").'</th>';
+		print '<th class="right">'.$langs->trans("DateDue").'</th>';
+		if (! empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) print '<th class="right">'.$langs->trans("AmountHT").'</th>';
+		print '<th class="right">'.$langs->trans("AmountTTC").'</th>';
+		print '<th class="right">'.$langs->trans("Received").'</th>';
 		print '<th width="16">&nbsp;</th>';
 		print '</tr>';
 		if ($num)
@@ -890,7 +890,7 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 					print img_warning($langs->trans("Late"));
 				}
 				print '</td>';
-				print '<td width="16" align="right" class="nobordernopadding hideonsmartphone">';
+				print '<td width="16" class="nobordernopadding hideonsmartphone right">';
 				$filename=dol_sanitizeFileName($obj->ref);
 				$filedir=$conf->facture->dir_output . '/' . dol_sanitizeFileName($obj->ref);
 				$urlsource=$_SERVER['PHP_SELF'].'?facid='.$obj->rowid;
@@ -901,10 +901,10 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 				print '<td class="left">' ;
 				print $societestatic->getNomUrl(1, 'customer', 44);
 				print '</td>';
-				print '<td align="right">'.dol_print_date($db->jdate($obj->datelimite), 'day').'</td>';
-				if (! empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) print '<td align="right">'.price($obj->total_ht).'</td>';
-				print '<td align="right">'.price($obj->total_ttc).'</td>';
-				print '<td align="right">'.price($obj->am).'</td>';
+				print '<td class="right">'.dol_print_date($db->jdate($obj->datelimite), 'day').'</td>';
+				if (! empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) print '<td class="right">'.price($obj->total_ht).'</td>';
+				print '<td class="right">'.price($obj->total_ttc).'</td>';
+				print '<td class="right">'.price($obj->am).'</td>';
 				print '<td>'.$facstatic->LibStatut($obj->paye, $obj->fk_statut, 3, $obj->am).'</td>';
 				print '</tr>';
 
@@ -917,9 +917,9 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 
 			print '<tr class="liste_total"><td colspan="2">'.$langs->trans("Total").' &nbsp; <font style="font-weight: normal">('.$langs->trans("RemainderToTake").': '.price($total_ttc-$totalam).')</font> </td>';
 			print '<td>&nbsp;</td>';
-			if (! empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) print '<td align="right">'.price($total).'</td>';
-			print '<td align="right">'.price($total_ttc).'</td>';
-			print '<td align="right">'.price($totalam).'</td>';
+			if (! empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) print '<td class="right">'.price($total).'</td>';
+			print '<td class="right">'.price($total_ttc).'</td>';
+			print '<td class="right">'.price($totalam).'</td>';
 			print '<td>&nbsp;</td>';
 			print '</tr>';
 		}
@@ -978,10 +978,10 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture-
 		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("BillsSuppliersUnpaid", $num).' <a href="'.DOL_URL_ROOT.'/fourn/facture/impayees.php"><span class="badge">'.$num.'</span></a></th>';
-		print '<th align="right">'.$langs->trans("DateDue").'</th>';
-		if (! empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) print '<th align="right">'.$langs->trans("AmountHT").'</th>';
-		print '<th align="right">'.$langs->trans("AmountTTC").'</th>';
-		print '<th align="right">'.$langs->trans("Paid").'</th>';
+		print '<th class="right">'.$langs->trans("DateDue").'</th>';
+		if (! empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) print '<th class="right">'.$langs->trans("AmountHT").'</th>';
+		print '<th class="right">'.$langs->trans("AmountTTC").'</th>';
+		print '<th class="right">'.$langs->trans("Paid").'</th>';
 		print '<th width="16">&nbsp;</th>';
 		print "</tr>\n";
 		$societestatic = new Societe($db);
@@ -1013,10 +1013,10 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture-
 				print $facstatic->getNomUrl(1, '');
 				print '</td>';
 				print '<td>'.$societestatic->getNomUrl(1, 'supplier', 44).'</td>';
-				print '<td align="right">'.dol_print_date($db->jdate($obj->date_lim_reglement), 'day').'</td>';
-				if (! empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) print '<td align="right">'.price($obj->total_ht).'</td>';
-				print '<td align="right">'.price($obj->total_ttc).'</td>';
-				print '<td align="right">'.price($obj->am).'</td>';
+				print '<td class="right">'.dol_print_date($db->jdate($obj->date_lim_reglement), 'day').'</td>';
+				if (! empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) print '<td class="right">'.price($obj->total_ht).'</td>';
+				print '<td class="right">'.price($obj->total_ttc).'</td>';
+				print '<td class="right">'.price($obj->am).'</td>';
 				print '<td>'.$facstatic->LibStatut($obj->paye, $obj->fk_statut, 3).'</td>';
 				print '</tr>';
 				$total += $obj->total_ht;
@@ -1027,9 +1027,9 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture-
 
 			print '<tr class="liste_total"><td colspan="2">'.$langs->trans("Total").' &nbsp; <font style="font-weight: normal">('.$langs->trans("RemainderToPay").': '.price($total_ttc-$totalam).')</font> </td>';
 			print '<td>&nbsp;</td>';
-			if (! empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) print '<td align="right">'.price($total).'</td>';
-			print '<td align="right">'.price($total_ttc).'</td>';
-			print '<td align="right">'.price($totalam).'</td>';
+			if (! empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) print '<td class="right">'.price($total).'</td>';
+			print '<td class="right">'.price($total_ttc).'</td>';
+			print '<td class="right">'.price($totalam).'</td>';
 			print '<td>&nbsp;</td>';
 			print '</tr>';
 		}

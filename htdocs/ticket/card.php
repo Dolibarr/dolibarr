@@ -447,7 +447,7 @@ if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'd
         print $langs->trans('Progression') . '</td><td class="left">';
         print '</td>';
         if ($action != 'progression' && $object->fk_statut < 8 && !$user->societe_id) {
-            print '<td align="right"><a href="' . $url_page_current . '?action=progression&amp;track_id=' . $object->track_id . '">' . img_edit($langs->trans('Modify')) . '</a></td>';
+            print '<td class="right"><a href="' . $url_page_current . '?action=progression&amp;track_id=' . $object->track_id . '">' . img_edit($langs->trans('Modify')) . '</a></td>';
         }
         print '</tr></table>';
         print '</td><td colspan="5">';
@@ -604,7 +604,7 @@ if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'd
 			<div class="tagtd">' . $langs->trans("Contacts") . '</div>
 			<div class="tagtd">' . $langs->trans("ContactType") . '</div>
 			<div class="tagtd">' . $langs->trans("Phone") . '</div>
-			<div class="tagtd" align="center">' . $langs->trans("Status") . '</div>';
+			<div class="tagtd center">' . $langs->trans("Status") . '</div>';
 	        print '</div><!-- tagtr -->';
 
 	        // Contact list
@@ -620,7 +620,7 @@ if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'd
 	                $var = !$var;
 	                print '<div class="tagtr ' . ($var ? 'pair' : 'impair') . '">';
 
-	                print '<div class="tagtd" align="left">';
+	                print '<div class="tagtd left">';
 	                if ($tab[$i]['source'] == 'internal') {
 	                    echo $langs->trans("User");
 	                }
@@ -630,7 +630,7 @@ if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'd
 	                }
 
 	                print '</div>';
-	                print '<div class="tagtd" align="left">';
+	                print '<div class="tagtd left">';
 
 	                if ($tab[$i]['socid'] > 0) {
 	                    $companystatic->fetch($tab[$i]['socid']);
@@ -672,7 +672,7 @@ if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'd
 	                }
 	                print '</div>';
 
-	                print '<div class="tagtd" align="center">';
+	                print '<div class="tagtd center">';
 	                if ($object->statut >= 0) {
 	                    echo '<a href="contact.php?track_id=' . $object->track_id . '&amp;action=swapstatut&amp;ligne=' . $tab[$i]['rowid'] . '">';
 	                }

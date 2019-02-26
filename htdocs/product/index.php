@@ -4,7 +4,8 @@
  * Copyright (C) 2005-2014  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2014-2016  Charlie BENKE           <charlie@patas-monkey.com>
  * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
- * Copyright (C) 2019       Pierre Ardoin	    <mapiolca@me.com>
+ * Copyright (C) 2019       Pierre Ardoin           <mapiolca@me.com>
+ * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +22,7 @@
  */
 
 /**
- *	\file       htdocs/product/index.php
+ *  \file       htdocs/product/index.php
  *  \ingroup    product
  *  \brief      Homepage products and services
  */
@@ -142,31 +143,31 @@ print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").'</
 if (! empty($conf->product->enabled))
 {
 	$statProducts = '<tr class="oddeven">';
-	$statProducts.= '<td><a href="list.php?type=0&amp;tosell=0&amp;tobuy=0">'.$langs->trans("ProductsNotOnSell").'</a></td><td align="right">'.round($prodser[0][0]).'</td>';
+	$statProducts.= '<td><a href="list.php?type=0&amp;tosell=0&amp;tobuy=0">'.$langs->trans("ProductsNotOnSell").'</a></td><td class="right">'.round($prodser[0][0]).'</td>';
 	$statProducts.= "</tr>";
 	$statProducts.= '<tr class="oddeven">';
-	$statProducts.= '<td><a href="list.php?type=0">'.$langs->trans("ProductsOnSaleOnly").'</a></td><td align="right">'.round($prodser[0][1]).'</td>';
+	$statProducts.= '<td><a href="list.php?type=0">'.$langs->trans("ProductsOnSaleOnly").'</a></td><td class="right">'.round($prodser[0][1]).'</td>';
 	$statProducts.= "</tr>";
 	$statProducts.= '<tr class="oddeven">';
-	$statProducts.= '<td><a href="list.php?type=0">'.$langs->trans("ProductsOnPurchaseOnly").'</a></td><td align="right">'.round($prodser[0][2]).'</td>';
+	$statProducts.= '<td><a href="list.php?type=0">'.$langs->trans("ProductsOnPurchaseOnly").'</a></td><td class="right">'.round($prodser[0][2]).'</td>';
 	$statProducts.= "</tr>";
 	$statProducts.= '<tr class="oddeven">';
-	$statProducts.= '<td><a href="list.php?type=0&amp;tosell=1&amp;tobuy=1">'.$langs->trans("ProductsOnSellAndOnBuy").'</a></td><td align="right">'.round($prodser[0][3]).'</td>';
+	$statProducts.= '<td><a href="list.php?type=0&amp;tosell=1&amp;tobuy=1">'.$langs->trans("ProductsOnSellAndOnBuy").'</a></td><td class="right">'.round($prodser[0][3]).'</td>';
 	$statProducts.= "</tr>";
 }
 if (! empty($conf->service->enabled))
 {
 	$statServices = '<tr class="oddeven">';
-	$statServices.= '<td><a href="list.php?type=1&amp;tosell=0&amp;tobuy=0">'.$langs->trans("ServicesNotOnSell").'</a></td><td align="right">'.round($prodser[1][0]).'</td>';
+	$statServices.= '<td><a href="list.php?type=1&amp;tosell=0&amp;tobuy=0">'.$langs->trans("ServicesNotOnSell").'</a></td><td class="right">'.round($prodser[1][0]).'</td>';
 	$statServices.= "</tr>";
 	$statServices.= '<tr class="oddeven">';
-	$statServices.= '<td><a href="list.php?type=1">'.$langs->trans("ServicesOnSaleOnly").'</a></td><td align="right">'.round($prodser[1][1]).'</td>';
+	$statServices.= '<td><a href="list.php?type=1">'.$langs->trans("ServicesOnSaleOnly").'</a></td><td class="right">'.round($prodser[1][1]).'</td>';
 	$statServices.= "</tr>";
 	$statServices.= '<tr class="oddeven">';
-	$statServices.= '<td><a href="list.php?type=1">'.$langs->trans("ServicesOnPurchaseOnly").'</a></td><td align="right">'.round($prodser[1][2]).'</td>';
+	$statServices.= '<td><a href="list.php?type=1">'.$langs->trans("ServicesOnPurchaseOnly").'</a></td><td class="right">'.round($prodser[1][2]).'</td>';
 	$statServices.= "</tr>";
 	$statServices.= '<tr class="oddeven">';
-	$statServices.= '<td><a href="list.php?type=1&amp;tosell=1&amp;tobuy=1">'.$langs->trans("ServicesOnSellAndOnBuy").'</a></td><td align="right">'.round($prodser[1][3]).'</td>';
+	$statServices.= '<td><a href="list.php?type=1&amp;tosell=1&amp;tobuy=1">'.$langs->trans("ServicesOnSellAndOnBuy").'</a></td><td class="right">'.round($prodser[1][3]).'</td>';
 	$statServices.= "</tr>";
 }
 $total=0;
@@ -185,7 +186,7 @@ else
 	print $statProducts.$statServices;
 	$total=round($prodser[0][0])+round($prodser[0][1])+round($prodser[0][2])+round($prodser[0][3])+round($prodser[1][0])+round($prodser[1][1])+round($prodser[1][2])+round($prodser[1][3]); //Calcul du Total des Produits et Services
 }
-print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td align="right">';
+print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td class="right">';
 print $total;
 print '</td></tr>';
 print '</table>';
@@ -198,7 +199,7 @@ if (! empty($conf->categorie->enabled) && ! empty($conf->global->CATEGORY_GRAPHS
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Categories").'</th></tr>';
-	print '<tr '.$bc[0].'><td align="center" colspan="2">';
+	print '<tr '.$bc[0].'><td class="center" colspan="2">';
 	$sql = "SELECT c.label, count(*) as nb";
 	$sql.= " FROM ".MAIN_DB_PREFIX."categorie_product as cs";
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as c ON cs.fk_categorie = c.rowid";
@@ -258,7 +259,7 @@ if (! empty($conf->categorie->enabled) && ! empty($conf->global->CATEGORY_GRAPHS
 		}
 	}
 	print '</td></tr>';
-	print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td align="right">';
+	print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td class="right">';
 	print $total;
 	print '</td></tr>';
 	print '</table>';
@@ -356,15 +357,15 @@ if ($result)
                         $objp->price = $price_result;
                     }
                 }
-				print '<td align="right">';
+				print '<td class="right">';
     			if (isset($objp->price_base_type) && $objp->price_base_type == 'TTC') print price($objp->price_ttc).' '.$langs->trans("TTC");
     			else print price($objp->price).' '.$langs->trans("HT");
     			print '</td>';
 			}
-			print '<td align="right" class="nowrap"><span class="statusrefsell">';
+			print '<td class="right nowrap"><span class="statusrefsell">';
 			print $product_static->LibStatut($objp->tosell, 3, 0);
 			print "</span></td>";
-            print '<td align="right" class="nowrap"><span class="statusrefbuy">';
+            print '<td class="right nowrap"><span class="statusrefbuy">';
             print $product_static->LibStatut($objp->tobuy, 3, 1);
             print "</span></td>";
 			print "</tr>\n";
@@ -444,14 +445,14 @@ function activitytrim($product_type)
 			print '<table class="noborder" width="75%">';
 
 			if ($product_type==0)
-				print '<tr class="liste_titre"><td  align=left>'.$langs->trans("ProductSellByQuarterHT").'</td>';
+				print '<tr class="liste_titre"><td class=left>'.$langs->trans("ProductSellByQuarterHT").'</td>';
 			else
-				print '<tr class="liste_titre"><td  align=left>'.$langs->trans("ServiceSellByQuarterHT").'</td>';
-			print '<td align=right>'.$langs->trans("Quarter1").'</td>';
-			print '<td align=right>'.$langs->trans("Quarter2").'</td>';
-			print '<td align=right>'.$langs->trans("Quarter3").'</td>';
-			print '<td align=right>'.$langs->trans("Quarter4").'</td>';
-			print '<td align=right>'.$langs->trans("Total").'</td>';
+				print '<tr class="liste_titre"><td class=left>'.$langs->trans("ServiceSellByQuarterHT").'</td>';
+			print '<td class=right>'.$langs->trans("Quarter1").'</td>';
+			print '<td class=right>'.$langs->trans("Quarter2").'</td>';
+			print '<td class=right>'.$langs->trans("Quarter3").'</td>';
+			print '<td class=right>'.$langs->trans("Quarter4").'</td>';
+			print '<td class=right>'.$langs->trans("Total").'</td>';
 			print '</tr>';
 		}
 		$i = 0;
@@ -463,12 +464,12 @@ function activitytrim($product_type)
 			{
 				if ($trim1+$trim2+$trim3+$trim4 > 0)
 				{
-					print '<tr class="oddeven"><td align=left>'.$tmpyear.'</td>';
-					print '<td align=right>'.price($trim1).'</td>';
-					print '<td align=right>'.price($trim2).'</td>';
-					print '<td align=right>'.price($trim3).'</td>';
-					print '<td align=right>'.price($trim4).'</td>';
-					print '<td align=right>'.price($trim1+$trim2+$trim3+$trim4).'</td>';
+					print '<tr class="oddeven"><td class=left>'.$tmpyear.'</td>';
+					print '<td class=right>'.price($trim1).'</td>';
+					print '<td class=right>'.price($trim2).'</td>';
+					print '<td class=right>'.price($trim3).'</td>';
+					print '<td class=right>'.price($trim4).'</td>';
+					print '<td class=right>'.price($trim1+$trim2+$trim3+$trim4).'</td>';
 					print '</tr>';
 					$lgn++;
 				}
@@ -496,12 +497,12 @@ function activitytrim($product_type)
 		}
 		if ($trim1+$trim2+$trim3+$trim4 > 0)
 		{
-			print '<tr class="oddeven"><td align=left>'.$tmpyear.'</td>';
-			print '<td align=right>'.price($trim1).'</td>';
-			print '<td align=right>'.price($trim2).'</td>';
-			print '<td align=right>'.price($trim3).'</td>';
-			print '<td align=right>'.price($trim4).'</td>';
-			print '<td align=right>'.price($trim1+$trim2+$trim3+$trim4).'</td>';
+			print '<tr class="oddeven"><td class=left>'.$tmpyear.'</td>';
+			print '<td class=right>'.price($trim1).'</td>';
+			print '<td class=right>'.price($trim2).'</td>';
+			print '<td class=right>'.price($trim3).'</td>';
+			print '<td class=right>'.price($trim4).'</td>';
+			print '<td class=right>'.price($trim1+$trim2+$trim3+$trim4).'</td>';
 			print '</tr>';
 		}
 		if ($num > 0 )

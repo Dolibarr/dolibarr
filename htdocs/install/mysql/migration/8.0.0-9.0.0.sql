@@ -267,6 +267,12 @@ CREATE TABLE llx_pos_cash_fence(
 UPDATE llx_const set name = 'PRELEVEMENT_END_TO_END' where name = 'END_TO_END';
 UPDATE llx_const set name = 'PRELEVEMENT_USTRD' where name = 'USTRD';
 
+-- Delete duplicate accounting account not used
+
+
 
 ALTER TABLE llx_accounting_account DROP INDEX uk_accounting_account;
 ALTER TABLE llx_accounting_account ADD UNIQUE INDEX uk_accounting_account (account_number, entity, fk_pcg_version);
+
+
+

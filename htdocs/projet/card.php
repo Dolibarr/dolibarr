@@ -1003,7 +1003,7 @@ elseif ($object->id > 0)
 
 		// Categories
 		if($conf->categorie->enabled) {
-			print '<tr><td valign="middle">'.$langs->trans("Categories").'</td><td>';
+			print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td>';
 			print $form->showCategories($object->id, 'project', 1);
 			print "</td></tr>";
 		}
@@ -1021,7 +1021,7 @@ elseif ($object->id > 0)
 
 	if ($action == 'edit' && $userWrite > 0)
 	{
-		print '<div align="center">';
+		print '<div class="center">';
 		print '<input name="update" class="button" type="submit" value="'.$langs->trans("Modify").'">&nbsp; &nbsp; &nbsp;';
 		print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
 		print '</div>';
