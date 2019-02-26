@@ -78,17 +78,17 @@ $backtopage = GETPOST('backtopage', 'alpha');
 $object=new BillOfMaterials($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction=$conf->bom->dir_output . '/temp/massgeneration/'.$user->id;
-$hookmanager->initHooks(array('bomcard','globalcard'));     // Note that conf->hooks_modules contains array
+$hookmanager->initHooks(array('bomcard', 'globalcard'));     // Note that conf->hooks_modules contains array
 // Fetch optionals attributes and labels
 $extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
-$search_array_options=$extrafields->getOptionalsFromPost($object->table_element,'','search_');
+$search_array_options=$extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
 // Initialize array of search criterias
-$search_all=trim(GETPOST("search_all",'alpha'));
+$search_all=trim(GETPOST("search_all", 'alpha'));
 $search=array();
 foreach($object->fields as $key => $val)
 {
-	if (GETPOST('search_'.$key,'alpha')) $search[$key]=GETPOST('search_'.$key,'alpha');
+	if (GETPOST('search_'.$key,'alpha')) $search[$key]=GETPOST('search_'.$key, 'alpha');
 }
 
 if (empty($action) && empty($id) && empty($ref)) $action='view';
@@ -119,7 +119,7 @@ if (empty($reshook))
 
 	$permissiontoadd = $user->rights->bom->write;
 	$permissiontodelete = $user->rights->bom->delete || ($permissiontoadd && $object->status == 0);
-    	$backurlforlist = dol_buildpath('/bom/bom_list.php',1);
+    	$backurlforlist = dol_buildpath('/bom/bom_list.php', 1);
 	if (empty($backtopage)) {
 	    if (empty($id)) $backtopage = $backurlforlist;
 	    else $backtopage = dol_buildpath('/bom/bom_card.php',1).($id > 0 ? $id : '__ID__');
@@ -360,7 +360,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	if ($action != 'presend' && $action != 'editline') {
     	print '<div class="tabsAction">'."\n";
     	$parameters=array();
-    	$reshook=$hookmanager->executeHooks('addMoreActionsButtons',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+    	$reshook=$hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action);    // Note that $action and $object may have been modified by hook
     	if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
     	if (empty($reshook))

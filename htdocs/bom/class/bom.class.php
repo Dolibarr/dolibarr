@@ -316,7 +316,7 @@ class BillOfMaterials extends CommonObject
 				if ($key=='t.rowid') {
 					$sqlwhere[] = $key . '='. $value;
 				}
-				elseif (strpos($key,'date') !== false) {
+				elseif (strpos($key, 'date') !== false) {
 					$sqlwhere[] = $key.' = \''.$this->db->idate($value).'\'';
 				}
 				elseif ($key=='customsql') {
@@ -412,13 +412,13 @@ class BillOfMaterials extends CommonObject
         $label.= '<br>';
         $label.= '<b>' . $langs->trans('Ref') . ':</b> ' . $this->ref;
 
-        $url = dol_buildpath('/bom/bom_card.php',1).'?id='.$this->id;
+        $url = dol_buildpath('/bom/bom_card.php', 1).'?id='.$this->id;
 
         if ($option != 'nolink')
         {
 	        // Add param to save lastsearch_values or not
 	        $add_save_lastsearch_values=($save_lastsearch_value == 1 ? 1 : 0);
-	        if ($save_lastsearch_value == -1 && preg_match('/list\.php/',$_SERVER["PHP_SELF"])) $add_save_lastsearch_values=1;
+	        if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) $add_save_lastsearch_values=1;
 	        if ($add_save_lastsearch_values) $url.='&save_lastsearch_values=1';
         }
 
@@ -455,7 +455,7 @@ class BillOfMaterials extends CommonObject
 		global $action,$hookmanager;
 		$hookmanager->initHooks(array('bomdao'));
 		$parameters=array('id'=>$this->id, 'getnomurl'=>$result);
-		$reshook=$hookmanager->executeHooks('getNomUrl',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+		$reshook=$hookmanager->executeHooks('getNomUrl', $parameters, $this, $action);    // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) $result = $hookmanager->resPrint;
 		else $result .= $hookmanager->resPrint;
 
@@ -899,7 +899,7 @@ class BillOfMaterialsLine extends CommonObject
 				if ($key=='t.rowid') {
 					$sqlwhere[] = $key . '='. $value;
 				}
-				elseif (strpos($key,'date') !== false) {
+				elseif (strpos($key, 'date') !== false) {
 					$sqlwhere[] = $key.' = \''.$this->db->idate($value).'\'';
 				}
 				elseif ($key=='customsql') {
@@ -1001,7 +1001,7 @@ class BillOfMaterialsLine extends CommonObject
         {
 	        // Add param to save lastsearch_values or not
 	        $add_save_lastsearch_values=($save_lastsearch_value == 1 ? 1 : 0);
-	        if ($save_lastsearch_value == -1 && preg_match('/list\.php/',$_SERVER["PHP_SELF"])) $add_save_lastsearch_values=1;
+	        if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) $add_save_lastsearch_values=1;
 	        if ($add_save_lastsearch_values) $url.='&save_lastsearch_values=1';
         }
 
@@ -1038,7 +1038,7 @@ class BillOfMaterialsLine extends CommonObject
 		global $action,$hookmanager;
 		$hookmanager->initHooks(array('bomlinedao'));
 		$parameters=array('id'=>$this->id, 'getnomurl'=>$result);
-		$reshook=$hookmanager->executeHooks('getNomUrl',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+		$reshook=$hookmanager->executeHooks('getNomUrl', $parameters, $this, $action);    // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) $result = $hookmanager->resPrint;
 		else $result .= $hookmanager->resPrint;
 

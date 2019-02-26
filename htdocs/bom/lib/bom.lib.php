@@ -97,7 +97,7 @@ function bomPrepareHead($object)
     require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
     require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
     $upload_dir = $conf->bom->dir_output . "/bom/" . dol_sanitizeFileName($object->ref);
-    $nbFiles = count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview.*\.png)$'));
+    $nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
     $nbLinks=Link::count($db, $object->element, $object->id);
     $head[$h][0] = dol_buildpath("/bom/bom_document.php", 1).'?id='.$object->id;
     $head[$h][1] = $langs->trans('Documents');
@@ -117,9 +117,8 @@ function bomPrepareHead($object)
     //); // to add new tab
     //$this->tabs = array(
     //	'entity:-tabname:Title:@bom:/bom/mypage.php?id=__ID__'
-        //); // to remove a tab
-        complete_head_from_modules($conf, $langs, $object, $head, $h, 'bom@bom');
+    //); // to remove a tab
+    complete_head_from_modules($conf, $langs, $object, $head, $h, 'bom@bom');
 
-        return $head;
+    return $head;
 }
-

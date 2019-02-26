@@ -74,7 +74,7 @@ if (! $sortfield) $sortfield="name";
 $object=new BillOfMaterials($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction=$conf->bom->dir_output . '/temp/massgeneration/'.$user->id;
-$hookmanager->initHooks(array('bomdocument','globalcard'));     // Note that conf->hooks_modules contains array
+$hookmanager->initHooks(array('bomdocument', 'globalcard'));     // Note that conf->hooks_modules contains array
 // Fetch optionals attributes and labels
 $extralabels = $extrafields->fetch_name_optionals_label('bom');
 
@@ -114,7 +114,7 @@ if ($object->id)
 
 
 	// Build file list
-	$filearray=dol_dir_list($upload_dir,"files",0,'','(\.meta|_preview.*\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
+	$filearray=dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC), 1);
 	$totalsize=0;
 	foreach($filearray as $key => $file)
 	{
@@ -158,7 +158,7 @@ if ($object->id)
 }
 else
 {
-	accessforbidden('',0,0);
+	accessforbidden('', 0, 0);
 }
 
 // End of page
