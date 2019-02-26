@@ -110,6 +110,18 @@ div.description{
 	text-align:center;
 }
 
+div.catwatermark{
+	position:absolute;
+	top:3%;
+	left:3%;
+	width:20%;
+	background-color:black;
+	color:white;
+	text-align:center;
+	font-size: 20px;
+	display: none;
+}
+
 @media only screen and (max-aspect-ratio: 6/4) {
 	div.description{
 	min-height:20%;
