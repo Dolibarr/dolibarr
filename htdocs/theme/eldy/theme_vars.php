@@ -36,6 +36,7 @@ if (! defined('NOLOGIN'))         define('NOLOGIN', 1);          // File must be
 if (! defined('NOREQUIREHTML'))   define('NOREQUIREHTML', 1);
 if (! defined('NOREQUIREAJAX'))   define('NOREQUIREAJAX', '1');
 
+
 // Colors
 $colorbackhmenu1='60,70,100';      // topmenu
 $colorbackvmenu1='248,248,248';      // vmenu
@@ -59,6 +60,38 @@ $fontsizesmaller='0.75em';
 $topMenuFontSize='1.1em';
 $toolTipBgColor='rgba(255, 255, 255, 0.96);';
 $toolTipFontColor='#333';
+
+// Badges colors
+$badgePrimary   ='#007bff';
+$badgeSecondary ='#6c757d';
+$badgeSuccess   ='#28a745';
+$badgeDanger    ='#dc3545';
+$badgeWarning   ='#ffc107';
+$badgeInfo      ='#17a2b8';
+$badgeDark      ='#343a40';
+$badgeLight     ='#f8f9fa';
+
+
+
+/* default color for status : After a quick check, somme status can have oposite function according to objects
+*  So this badges status uses default value according to theme eldy status img
+*  TODO: use color definition vars above for define badges color status X
+*/
+$badgeStatus0='#cbd3d3';
+$badgeStatus1='#bc9526';
+$badgeStatus2='#e6f0f0'; 
+$badgeStatus3='#bca52b';
+$badgeStatus4='#277d1e';
+$badgeStatus5='#cad2d2';
+$badgeStatus6='#cad2d2';
+$badgeStatus7='#baa32b';
+$badgeStatus8='#be3013';
+$badgeStatus9='#e7f0f0';
+
+
+
+
+
 
 if (defined('THEME_ONLY_CONSTANT')) return;
 
@@ -246,4 +279,8 @@ print 'dol_screenwidth='.$_SESSION['dol_screenwidth']."\n";
 print 'dol_screenheight='.$_SESSION['dol_screenheight']."\n";
 print 'fontsize='.$fontsize."\n";
 print 'nbtopmenuentries='.$nbtopmenuentries."\n";
+print 'fontsizesmaller='.$fontsizesmaller;
+print 'topMenuFontSize='.$topMenuFontSize."\n";
+print 'toolTipBgColor='.$toolTipBgColor."\n";
+print 'toolTipFontColor='.$toolTipFontColor."\n";
 print '*/'."\n";

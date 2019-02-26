@@ -1,11 +1,9 @@
 <?php
+if (! defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
+/* <style type="text/css" > */
 /*
  Badge style is based on boostrap framework
  */
-
-if (! defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
-/* <style type="text/css" > */
-
 
 .badge {
     display: inline-block;
@@ -30,6 +28,10 @@ a.badge:focus, a.badge:hover {
     text-decoration: none;
 }
 
+
+
+
+
 /* PRIMARY */
 .badge-primary{
     color: #fff !important;
@@ -37,11 +39,11 @@ a.badge:focus, a.badge:hover {
 }
 a.badge-primary.focus, a.badge-primary:focus {
     outline: 0;
-    box-shadow: 0 0 0 0.2rem rgba(0,123,255,.5);
+    box-shadow: 0 0 0 0.2rem <?php print colorHexToRgb($badgePrimary, 0.5); ?>;
 }
 a.badge-primary:focus, a.badge-primary:hover {
     color: #fff !important;
-    background-color: #0062cc;
+    background-color: <?php print colorDarker($badgePrimary, 10); ?>;
 }
 
 /* SECONDARY */
@@ -51,11 +53,11 @@ a.badge-primary:focus, a.badge-primary:hover {
 }
 a.badge-secondary.focus, a.badge-secondary:focus {
     outline: 0;
-    box-shadow: 0 0 0 0.2rem rgba(108,117,125,.5);
+    box-shadow: 0 0 0 0.2rem <?php print colorHexToRgb($badgeSecondary, 0.5); ?>;
 }
 a.badge-secondary:focus, a.badge-secondary:hover {
     color: #fff !important;
-    background-color: #545b62;
+    background-color: <?php print colorDarker($badgeSecondary, 10); ?>;
 }
 
 /* SUCCESS */
@@ -141,3 +143,8 @@ a.badge-dark:focus, a.badge-dark:hover {
     color: #fff !important;
     background-color: #1d2124;
 }
+
+/* 
+* STATUS BADGES
+*/
+
