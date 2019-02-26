@@ -1,5 +1,8 @@
 # Changelog
 
+## 6.30.2 - 2019-02-25
+* [#601](https://github.com/stripe/stripe-php/pull/601) Fix PHPDoc across multiple resources and add support for new events.
+
 ## 6.30.1 - 2019-02-16
 * [#599](https://github.com/stripe/stripe-php/pull/599) Fix PHPDoc for `SubscriptionSchedule` and `SubscriptionScheduleRevision`
 

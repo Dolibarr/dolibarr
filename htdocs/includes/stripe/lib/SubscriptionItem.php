@@ -7,6 +7,7 @@ namespace Stripe;
  *
  * @property string $id
  * @property string $object
+ * @property mixed $billing_thresholds
  * @property int $created
  * @property StripeObject $metadata
  * @property Plan $plan

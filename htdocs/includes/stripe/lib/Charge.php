@@ -32,6 +32,7 @@ namespace Stripe;
  * @property string $payment_intent
  * @property string $receipt_email
  * @property string $receipt_number
+ * @property string $receipt_url
  * @property bool $refunded
  * @property Collection $refunds
  * @property string $review
@@ -41,6 +42,7 @@ namespace Stripe;
  * @property string $statement_descriptor
  * @property string $status
  * @property string $transfer
+ * @property mixed $transfer_data
  * @property string $transfer_group
  *
  * @package Stripe

@@ -7,6 +7,7 @@ namespace Stripe;
  *
  * @property string $id
  * @property string $object
+ * @property mixed $ach_credit_transfer
  * @property int $amount
  * @property string $client_secret
  * @property mixed $code_verification

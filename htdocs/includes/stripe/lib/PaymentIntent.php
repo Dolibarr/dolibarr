@@ -11,7 +11,7 @@ namespace Stripe;
  * @property int $amount_capturable
  * @property int $amount_received
  * @property string $application
- * @property int $application_fee
+ * @property int $application_fee_amount
  * @property int $canceled_at
  * @property string $cancellation_reason
  * @property string $capture_method
@@ -29,7 +29,6 @@ namespace Stripe;
  * @property string $on_behalf_of
  * @property string[] $payment_method_types
  * @property string $receipt_email
- * @property string $return_url
  * @property string $review
  * @property mixed $shipping
  * @property string $source

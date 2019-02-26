@@ -8,7 +8,6 @@ namespace Stripe;
  * @property string $id
  * @property string $object
  * @property int $account_balance
- * @property string $business_vat_id
  * @property string $created
  * @property string $currency
  * @property string $default_source
@@ -17,6 +16,7 @@ namespace Stripe;
  * @property Discount $discount
  * @property string $email
  * @property string $invoice_prefix
+ * @property mixed $invoice_settings
  * @property bool $livemode
  * @property StripeObject $metadata
  * @property mixed $shipping
