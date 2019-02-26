@@ -133,7 +133,7 @@ class mod_chequereceipt_thyme extends ModeleNumRefChequeReceipts
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Return next free value
 	 *

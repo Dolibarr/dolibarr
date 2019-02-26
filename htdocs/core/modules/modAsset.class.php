@@ -325,10 +325,10 @@ class modAsset extends DolibarrModules
         global $conf;
 
         // Permissions
-        $this->remove($options);
+        $this->removeFromChild(array(), $options);
 
         $sql = array();
 
-        return $this->_init($sql, $options);
+        return $this->initFromChild($sql, $options);
     }
 }

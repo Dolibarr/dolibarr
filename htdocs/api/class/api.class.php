@@ -94,7 +94,7 @@ class DolibarrApi
      * @param   object  $object	Object to clean
      * @return	array	Array of cleaned object properties
      */
-    private function _cleanObjectDatas($object)
+    protected function _cleanObjectDatas($object)
     {
 
         // Remove $db object property for object
@@ -222,7 +222,7 @@ class DolibarrApi
      * @return bool
 	 * @throws RestException
 	 */
-    private static function _checkAccessToResource($resource, $resource_id = 0, $dbtablename = '', $feature2 = '', $dbt_keyfield = 'fk_soc', $dbt_select = 'rowid')
+    protected static function _checkAccessToResource($resource, $resource_id = 0, $dbtablename = '', $feature2 = '', $dbt_keyfield = 'fk_soc', $dbt_select = 'rowid')
     {
 
 		// Features/modules to check
@@ -248,7 +248,7 @@ class DolibarrApi
 	 * @param  string   $sqlfilters     sqlfilter string
 	 * @return boolean                  True if valid, False if not valid
 	 */
-	private function _checkFilters($sqlfilters)
+	protected function _checkFilters($sqlfilters)
 	{
 	    //$regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
 	    //$tmp=preg_replace_all('/'.$regexstring.'/', '', $sqlfilters);
@@ -278,7 +278,7 @@ class DolibarrApi
 	 * @param  array    $matches       Array of found string by regex search
 	 * @return string                  Forged criteria. Example: "t.field like 'abc%'"
 	 */
-	private static function _forge_criteria_callback($matches)
+	protected static function _forge_criteria_callback($matches)
 	{
         // phpcs:enable
 	    global $db;

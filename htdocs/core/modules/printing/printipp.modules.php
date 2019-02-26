@@ -62,7 +62,7 @@ class printing_printipp extends PrintingDriver
      *
      *  @param      DoliDB      $db      Database handler
      */
-    function __construct($db)
+    public function __construct($db)
     {
         global $conf;
 
@@ -152,7 +152,7 @@ class printing_printipp extends PrintingDriver
      *
      *  @return  int                     0 if OK, >0 if KO
      */
-    function listAvailablePrinters()
+    public function listAvailablePrinters()
     {
         global $conf, $langs;
         $error = 0;

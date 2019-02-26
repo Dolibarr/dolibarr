@@ -129,7 +129,7 @@ class modBarcode extends DolibarrModules
      *      @param      string	$options    Options when enabling module ('', 'noboxes')
 	 *      @return     int             	1 if OK, 0 if KO
 	 */
-	function init($options = '')
+	public function init($options = '')
 	{
 		// Permissions
 		$this->remove($options);

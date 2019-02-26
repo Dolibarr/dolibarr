@@ -44,7 +44,7 @@ class SupplierOrders extends DolibarrApi
     /**
      * Constructor
      */
-    function __construct()
+    public function __construct()
     {
         global $db, $conf;
         $this->db = $db;
@@ -61,7 +61,7 @@ class SupplierOrders extends DolibarrApi
      *
      * @throws 	RestException
      */
-    function get($id)
+    public function get($id)
     {
 		if(! DolibarrApiAccess::$user->rights->fournisseur->commande->lire) {
 			throw new RestException(401);
@@ -96,7 +96,7 @@ class SupplierOrders extends DolibarrApi
      *
 	 * @throws RestException
      */
-    function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $status = '', $sqlfilters = '')
+    public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $status = '', $sqlfilters = '')
     {
         global $db, $conf;
 
@@ -187,7 +187,7 @@ class SupplierOrders extends DolibarrApi
      * @param array $request_data   Request datas
      * @return int  ID of supplier order
      */
-    function post($request_data = null)
+    public function post($request_data = null)
     {
         if(! DolibarrApiAccess::$user->rights->fournisseur->commande->creer) {
             throw new RestException(401, "Insuffisant rights");
@@ -223,7 +223,7 @@ class SupplierOrders extends DolibarrApi
      * @param array $request_data   Datas
      * @return int
      */
-    function put($id, $request_data = null)
+    public function put($id, $request_data = null)
     {
         if(! DolibarrApiAccess::$user->rights->fournisseur->commande->creer) {
             throw new RestException(401);
@@ -255,7 +255,7 @@ class SupplierOrders extends DolibarrApi
      * @param int   $id Supplier order ID
      * @return type
      */
-    function delete($id)
+    public function delete($id)
     {
         if (! DolibarrApiAccess::$user->rights->fournisseur->commande->supprimer) {
             throw new RestException(401);
@@ -300,7 +300,7 @@ class SupplierOrders extends DolibarrApi
      *   "notrigger": 0
      * }
      */
-    function validate($id, $idwarehouse = 0, $notrigger = 0)
+    public function validate($id, $idwarehouse = 0, $notrigger = 0)
     {
     	if(! DolibarrApiAccess::$user->rights->fournisseur->commande->creer) {
     		throw new RestException(401);
@@ -336,7 +336,7 @@ class SupplierOrders extends DolibarrApi
      * @param   Object  $object    Object to clean
      * @return  array              Array of cleaned object properties
      */
-    function _cleanObjectDatas($object)
+    private function _cleanObjectDatas($object)
     {
 
         $object = parent::_cleanObjectDatas($object);
@@ -358,7 +358,7 @@ class SupplierOrders extends DolibarrApi
      *
      * @throws RestException
      */
-    function _validate($data)
+    private function _validate($data)
     {
         $order = array();
         foreach (SupplierOrders::$FIELDS as $field) {

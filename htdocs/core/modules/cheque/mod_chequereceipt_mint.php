@@ -25,7 +25,7 @@
 require_once DOL_DOCUMENT_ROOT .'/core/modules/cheque/modules_chequereceipts.php';
 
 /**
- *	Class to manage cheque receipts numbering rules Mint
+ *  Class to manage cheque receipts numbering rules Mint
  */
 class mod_chequereceipt_mint extends ModeleNumRefChequeReceipts
 {
@@ -145,7 +145,7 @@ class mod_chequereceipt_mint extends ModeleNumRefChequeReceipts
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Return next free value
 	 *

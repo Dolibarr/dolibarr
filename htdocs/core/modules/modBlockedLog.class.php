@@ -145,9 +145,8 @@ class modBlockedLog extends DolibarrModules
      *
      * @return	boolean		True if already used, otherwise False
      */
-    function alreadyUsed()
+    public function alreadyUsed()
     {
-
         require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
         $b=new BlockedLog($this->db);
         return $b->alreadyUsed(1);
@@ -162,7 +161,7 @@ class modBlockedLog extends DolibarrModules
      *      @param      string	$options    Options when enabling module ('', 'noboxes')
      *      @return     int             	1 if OK, 0 if KO
      */
-    function init($options = '')
+    public function init($options = '')
     {
         global $conf, $user;
 
@@ -205,7 +204,7 @@ class modBlockedLog extends DolibarrModules
      * @param      string	$options    Options when enabling module ('', 'noboxes')
      * @return     int             		1 if OK, 0 if KO
      */
-    function remove($options = '')
+    public function remove($options = '')
     {
 
         global $conf, $user;
@@ -233,7 +232,7 @@ class modBlockedLog extends DolibarrModules
 
         if ($b->alreadyUsed(1))
         {
-            $res = $b->create($user, '0000000000');		// If already used for something else than SET or UNSET, we log with error
+            $res = $b->create($user, '0000000000'); // If already used for something else than SET or UNSET, we log with error
         }
         else
         {

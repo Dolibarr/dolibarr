@@ -370,6 +370,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
     // We need constructor into function unActivateModule into admin.lib.php
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
     /**
      * Enables a module.
      * Inserts all informations into database
@@ -384,6 +385,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
      */
     protected function _init($array_sql, $options = '')
     {
+        // phpcs:enable
         global $conf;
         $err=0;
 
@@ -476,6 +478,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
         }
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
     /**
      * Disable function. Deletes the module constants and boxes from the database.
      *
@@ -486,6 +489,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
      */
     protected function _remove($array_sql, $options = '')
     {
+        // phpcs:enable
         $err=0;
 
         $this->db->begin();
@@ -1044,7 +1048,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
      * @param  string $reldir Relative directory where to scan files
      * @return int             <=0 if KO, >0 if OK
      */
-    protected function _load_tables($reldir)
+    private function _load_tables($reldir)
     {
         // phpcs:enable
         global $conf;
@@ -1052,7 +1056,8 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
         $error=0;
         $dirfound=0;
 
-        if (empty($reldir)) { return 1;
+        if (empty($reldir)) {
+            return 1;
         }
 
         include_once DOL_DOCUMENT_ROOT . '/core/lib/admin.lib.php';
