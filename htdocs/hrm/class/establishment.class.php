@@ -208,6 +208,7 @@ class Establishment extends CommonObject
 		$sql .= ", fk_country = ".($this->country_id > 0 ? $this->country_id : 'null');
 		$sql .= ", status = ".$this->db->escape($this->status);
 		$sql .= ", fk_user_mod = " . $user->id;
+		$sql .= ", entity = " . $this->entity;
 		$sql .= " WHERE rowid = ".$this->id;
 
 		dol_syslog(get_class($this) . "::update sql=" . $sql, LOG_DEBUG);
@@ -230,7 +231,7 @@ class Establishment extends CommonObject
 	*/
 	function fetch($id)
 	{
-		$sql = "SELECT e.rowid, e.name, e.address, e.zip, e.town, e.status, e.fk_country as country_id,";
+		$sql = "SELECT e.rowid, e.name, e.address, e.zip, e.town, e.status, e.fk_country as country_id, e.entity,";
 		$sql.= ' c.code as country_code, c.label as country';
 		$sql.= " FROM ".MAIN_DB_PREFIX."establishment as e";
         $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as c ON e.fk_country = c.rowid';
@@ -249,6 +250,7 @@ class Establishment extends CommonObject
 			$this->zip			= $obj->zip;
 			$this->town			= $obj->town;
 			$this->status	    = $obj->status;
+			$this->entity		= $obj->entity;
 
             $this->country_id   = $obj->country_id;
             $this->country_code = $obj->country_code;
@@ -352,7 +354,7 @@ class Establishment extends CommonObject
 	 */
 	function info($id)
 	{
-		$sql = 'SELECT e.rowid, e.datec, e.fk_user_author, e.tms, e.fk_user_mod';
+		$sql = 'SELECT e.rowid, e.datec, e.fk_user_author, e.tms, e.fk_user_mod, e.entity';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'establishment as e';
 		$sql.= ' WHERE e.rowid = '.$id;
 
@@ -389,6 +391,37 @@ class Establishment extends CommonObject
 			dol_print_error($this->db);
 		}
 	}
+	
+	/**
+	 * Get on record Establishment
+	 *
+	 * @param	int		$id      Id of record
+	 * @return	obj
+	 */
+	function getEstablishment($id)
+	{
+		$sql = 'SELECT e.rowid, e.name, e.datec, e.fk_user_author, e.tms, e.fk_user_mod, e.entity';
+		$sql.= ' FROM '.MAIN_DB_PREFIX.'establishment as e';
+		$sql.= ' WHERE e.rowid = '.$id;
+
+		dol_syslog(get_class($this)."::fetch info", LOG_DEBUG);
+		$result = $this->db->query($sql);
+
+		if ($result)
+		{
+			if ($this->db->num_rows($result))
+			{
+				$obj = $this->db->fetch_object($result);
+			}
+			$this->db->free($result);
+		}
+		else
+		{
+			dol_print_error($this->db);
+		}
+
+		return $obj;
+	}
 
     /**
      *  Return clicable name (with picto eventually)
@@ -412,6 +445,33 @@ class Establishment extends CommonObject
         if ($withpicto) $result.=($link.img_object($label, $picto).$linkend);
         if ($withpicto && $withpicto != 2) $result.=' ';
         if ($withpicto != 2) $result.=$link.$this->name.$linkend;
+        return $result;
+    }
+	
+	/**
+     *  Return clicable name (with picto eventually)
+     *
+     *  @param      int     $withpicto      0=No picto, 1=Include picto into link, 2=Only picto
+     *  @return     string                  String with URL
+     */
+    function getNomUrlParent($id = 0, $withpicto = 0)
+    {
+        global $langs;
+
+        $result='';
+		
+		$obj = $this->getEstablishment(($id>0)?$id:$conf->entity);
+
+        $link = '<a href="'.DOL_URL_ROOT.'/hrm/establishment/card.php?id='.$obj->rowid.'">';
+        $linkend='</a>';
+
+        $picto='building';
+
+        $label=$langs->trans("Show").': '.$obj->name;
+
+        if ($withpicto) $result.=($link.img_object($label, $picto).$linkend);
+        if ($withpicto && $withpicto != 2) $result.=' ';
+        if ($withpicto != 2) $result.=$link.$obj->name.$linkend;
         return $result;
     }
 
