@@ -316,7 +316,7 @@ class BillOfMaterials extends CommonObject
 				if ($key=='t.rowid') {
 					$sqlwhere[] = $key . '='. $value;
 				}
-				elseif (strpos($key,'date') !== false) {
+				elseif (strpos($key, 'date') !== false) {
 					$sqlwhere[] = $key.' = \''.$this->db->idate($value).'\'';
 				}
 				elseif ($key=='customsql') {

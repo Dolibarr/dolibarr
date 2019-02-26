@@ -33,10 +33,10 @@
  */
 abstract class ModelePDFProduct extends CommonDocGenerator
 {
-	/**
-	 * @var string Error code (or message)
-	 */
-	public $error='';
+    /**
+     * @var string Error code (or message)
+     */
+    public $error='';
 
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
@@ -47,33 +47,33 @@ abstract class ModelePDFProduct extends CommonDocGenerator
      *  @param  integer	$maxfilenamelength  Max length of value to show
      *  @return	array						List of templates
      */
-	static function liste_modeles($db, $maxfilenamelength = 0)
-	{
+    public static function liste_modeles($db, $maxfilenamelength = 0)
+    {
         // phpcs:enable
-		global $conf;
+        global $conf;
 
-		$type='product';
-		$liste=array();
+        $type='product';
+        $liste=array();
 
-		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-		$liste=getListOfModels($db, $type, $maxfilenamelength);
-		return $liste;
-	}
+        include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+        $liste=getListOfModels($db, $type, $maxfilenamelength);
+        return $liste;
+    }
 }
 
 abstract class ModeleProductCode
 {
     /**
-	 * @var string Error code (or message)
-	 */
-	public $error='';
+     * @var string Error code (or message)
+     */
+    public $error='';
 
     /**     Renvoi la description par defaut du modele de numerotation
      *
      *		@param	Translate	$langs		Object langs
      *      @return string      			Texte descripif
      */
-    function info($langs)
+    public function info($langs)
     {
         $langs->load("bills");
         return $langs->trans("NoDescription");
@@ -84,7 +84,7 @@ abstract class ModeleProductCode
      *		@param	Translate	$langs		Object langs
      *      @return string      			Nom du module
      */
-    function getNom($langs)
+    public function getNom($langs)
     {
         return empty($this->name)?$this->nom:$this->name;
     }
@@ -95,7 +95,7 @@ abstract class ModeleProductCode
      *		@param	Translate	$langs		Object langs
      *      @return string      			Example
      */
-    function getExample($langs)
+    public function getExample($langs)
     {
         $langs->load("bills");
         return $langs->trans("NoExample");
@@ -106,7 +106,7 @@ abstract class ModeleProductCode
      *
      *      @return     boolean     false si conflit, true si ok
      */
-    function canBeActivated()
+    public function canBeActivated()
     {
         return true;
     }
@@ -118,7 +118,7 @@ abstract class ModeleProductCode
      *	@param	int			$type		Type
      *  @return string      			Value
      */
-    function getNextValue($objproduct = 0, $type = -1)
+    public function getNextValue($objproduct = 0, $type = -1)
     {
         global $langs;
         return $langs->trans("Function_getNextValue_InModuleNotWorking");
@@ -129,7 +129,7 @@ abstract class ModeleProductCode
      *
      *      @return     string      Version
      */
-    function getVersion()
+    public function getVersion()
     {
         global $langs;
         $langs->load("admin");
@@ -141,7 +141,7 @@ abstract class ModeleProductCode
         return $langs->trans("NotAvailable");
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *  Renvoi la liste des modeles de numérotation
      *
@@ -149,7 +149,7 @@ abstract class ModeleProductCode
      *  @param  integer	$maxfilenamelength  Max length of value to show
      *  @return	array						List of numbers
      */
-    static function liste_modeles($db, $maxfilenamelength = 0)
+    public static function liste_modeles($db, $maxfilenamelength = 0)
     {
         // phpcs:enable
         $liste=array();
@@ -175,22 +175,24 @@ abstract class ModeleProductCode
     }
 
     /**
-     *      Return description of module parameters
+     *  Return description of module parameters
      *
-     *      @param	Translate	$langs      Output language
-     *		@param	Product		$product	Product object
-     *		@param	int			$type		-1=Nothing, 0=Customer, 1=Supplier
-     *		@return	string					HTML translated description
+     *  @param	Translate	$langs      Output language
+     *  @param	Product		$product	Product object
+     *  @param	int			$type		-1=Nothing, 0=Customer, 1=Supplier
+     *  @return	string					HTML translated description
      */
-    function getToolTip($langs, $product, $type)
+    public function getToolTip($langs, $product, $type)
     {
         global $conf;
 
         $langs->load("admin");
 
         $s='';
-        if ($type == -1) $s.=$langs->trans("Name").': <b>'.$this->getNom($langs).'</b><br>';
-        if ($type == -1) $s.=$langs->trans("Version").': <b>'.$this->getVersion().'</b><br>';
+        if ($type == -1) {
+            $s.=$langs->trans("Name").': <b>'.$this->getNom($langs).'</b><br>';
+            $s.=$langs->trans("Version").': <b>'.$this->getVersion().'</b><br>';
+        }
         if ($type == 0)  $s.=$langs->trans("ProductCodeDesc").'<br>';
         if ($type == 1)  $s.=$langs->trans("ServiceCodeDesc").'<br>';
         if ($type != -1) $s.=$langs->trans("ValidityControledByModule").': <b>'.$this->getNom($langs).'</b><br>';
@@ -243,11 +245,11 @@ abstract class ModeleProductCode
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
-	 *   Check if mask/numbering use prefix
-	 *
-	 *   @return	int		0=no, 1=yes
-	 */
-    function verif_prefixIsUsed()
+     *   Check if mask/numbering use prefix
+     *
+     *   @return	int		0=no, 1=yes
+     */
+    public function verif_prefixIsUsed()
     {
         // phpcs:enable
         return 0;

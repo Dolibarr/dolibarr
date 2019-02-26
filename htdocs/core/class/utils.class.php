@@ -843,7 +843,7 @@ class Utils
 
 		$this->output = 'Archive log files (keeping last SYSLOG_FILE_SAVES='.$nbSaves.' files) done.';
 		return 0;
-	}
+    }
 
 	/**	Backup the db OR just a table without mysqldump binary, with PHP only (does not require any exec permission)
 	 *	Author: David Walsh (http://davidwalsh.name/backup-mysql-database-php)
