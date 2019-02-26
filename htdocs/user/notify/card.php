@@ -239,7 +239,7 @@ if ($result > 0)
         $type=array('email'=>$langs->trans("EMail"));
         print $form->selectarray("typeid", $type);
         print '</td>';
-        print '<td align="right"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
+        print '<td class="right"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
         print '</tr>';
     }
     else
@@ -326,7 +326,7 @@ if ($result > 0)
             if ($obj->type == 'email') print $langs->trans("Email");
             if ($obj->type == 'sms') print $langs->trans("SMS");
             print '</td>';
-            print '<td align="right"><a href="card.php?id='.$id.'&action=delete&actid='.$obj->rowid.'">'.img_delete().'</a></td>';
+            print '<td class="right"><a href="card.php?id='.$id.'&amp;action=delete&amp;actid='.$obj->rowid.'">'.img_delete().'</a></td>';
             print '</tr>';
             $i++;
         }
@@ -449,7 +449,7 @@ if ($result > 0)
     print_liste_field_titre("Action", $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder);
     print_liste_field_titre("Type", $_SERVER["PHP_SELF"], "n.type", '', $param, '', $sortfield, $sortorder);
     //print_liste_field_titre("Object",$_SERVER["PHP_SELF"],"",'',$param,'"',$sortfield,$sortorder);
-    print_liste_field_titre("Date", $_SERVER["PHP_SELF"], "n.daten", '', $param, 'align="right"', $sortfield, $sortorder);
+    print_liste_field_titre("Date", $_SERVER["PHP_SELF"], "n.daten", '', $param, '', $sortfield, $sortorder, 'right ');
     print '</tr>';
 
     if ($num)
@@ -494,7 +494,7 @@ if ($result > 0)
             }
            	print '</td>';*/
             // print
-            print'<td align="right">'.dol_print_date($db->jdate($obj->daten), 'dayhour').'</td>';
+            print'<td class="right">'.dol_print_date($db->jdate($obj->daten), 'dayhour').'</td>';
             print '</tr>';
             $i++;
         }

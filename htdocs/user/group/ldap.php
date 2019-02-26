@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2006-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2006-2017 Regis Houssin        <regis.houssin@inodbox.com>
+/* Copyright (C) 2006-2012  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2017  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -110,7 +111,7 @@ dol_banner_tab($object, 'id', $linback, $user->rights->user->user->lire || $user
 print '<div class="fichecenter">';
 print '<div class="underbanner clearboth"></div>';
 
-print '<table class="border" width="100%">';
+print '<table class="border centpercent">';
 
 // Name (already in dol_banner, we keep it to have the GlobalGroup picto, but we should move it in dol_banner)
 if (! empty($conf->mutlicompany->enabled))
@@ -167,7 +168,7 @@ if ($conf->global->LDAP_SYNCHRO_ACTIVE == 'dolibarr2ldap') print "<br>\n";
 // Affichage attributs LDAP
 print load_fiche_titre($langs->trans("LDAPInformationsForThisGroup"));
 
-print '<table width="100%" class="noborder">';
+print '<table class="noborder centpercent">';
 
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("LDAPAttributes").'</td>';

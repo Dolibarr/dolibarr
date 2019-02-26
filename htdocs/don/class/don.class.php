@@ -64,7 +64,7 @@ class Don extends CommonObject
     public $date;
     public $amount;
     public $societe;
-
+    public $socid;
     /**
 	 * @var string Address
 	 */
@@ -678,7 +678,7 @@ class Don extends CommonObject
                 $this->date_valid     = $this->db->jdate($obj->date_valid);
                 $this->datem          = $this->db->jdate($obj->datem);
                 $this->date           = $this->db->jdate($obj->datedon);
-                $this->fk_soc         = $obj->fk_soc;
+                $this->socid          = $obj->fk_soc;
                 $this->firstname      = $obj->firstname;
                 $this->lastname       = $obj->lastname;
                 $this->societe        = $obj->societe;

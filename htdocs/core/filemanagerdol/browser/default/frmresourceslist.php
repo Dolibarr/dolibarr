@@ -101,7 +101,7 @@ oListManager.GetFileRowHtml = function( fileName, fileUrl, fileSize )
 				sLink +
 				fileName +
 				'<\/a>' +
-			'<\/td><td align="right" class="nowrap">&nbsp;' +
+			'<\/td><td class="nowrap right">&nbsp;' +
 				fileSize +
 				' KB' +
 		'<\/td><\/tr>' ;

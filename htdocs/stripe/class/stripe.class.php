@@ -304,29 +304,38 @@ class Stripe extends CommonObject
 			}
 			else //if ($createifnotlinkedtostripe)
 			{
+                if ( ! empty($conf->global->MULTICURRENCY_USE_CURRENCY_ON_DOCUMENT) && isset($object->multicurrency_total_ttc) && $object->multicurrency_code != $conf->currency ) { $montant = $object->multicurrency_total_ttc; }
+                elseif ( isset($object->total_ttc) ) { $montant = $object->total_ttc; }
+                else { $montant = $object->amount; }
+                $amount=isset($object->multicurrency_total_ttc) ? $object->multicurrency_total_ttc : $object->amount;
                 $arrayzerounitcurrency=array('BIF', 'CLP', 'DJF', 'GNF', 'JPY', 'KMF', 'KRW', 'MGA', 'PYG', 'RWF', 'VND', 'VUV', 'XAF', 'XOF', 'XPF');
-                if (! in_array($object->multicurrency_code, $arrayzerounitcurrency)) $stripeamount=$object->multicurrency_total_ttc * 100;
-                else $stripeamount = $object->multicurrency_total_ttc;
-
- 				$fee = round(($amount * ($conf->global->STRIPE_APPLICATION_FEE_PERCENT / 100) + $conf->global->STRIPE_APPLICATION_FEE) * 100);
-				if ($fee < ($conf->global->STRIPE_APPLICATION_FEE_MINIMAL * 100)) {
-					$fee = round($conf->global->STRIPE_APPLICATION_FEE_MINIMAL * 100);
-				}
+                if (! in_array($object->multicurrency_code, $arrayzerounitcurrency)) $stripeamount = $montant * 100;
+                else $stripeamount = $montant;
 
                 $description=$object->element.$object->ref;
 
+                if ( isset($object->multicurrency_code) && ! empty($conf->global->MULTICURRENCY_USE_CURRENCY_ON_DOCUMENT) ) { $currency = $object->multicurrency_code;}
+                else $currency = $conf->currency;
+
 				$dataforintent = array(
-					"amount" => $stripeamount,
-					"currency" => $object->multicurrency_code,
-                    "customer"  => $customer,
-                    "allowed_source_types" => ["card"],
-                    "statement_descriptor" => dol_trunc(dol_trunc(dol_string_unaccent($mysoc->name), 8, 'right', 'UTF-8', 1).' '.$description, 22, 'right', 'UTF-8', 1),     // 22 chars that appears on bank receipt
-					"metadata" => array('dol_type'=>$object->element, 'dol_id'=>$object->id, 'dol_version'=>DOL_VERSION, 'dol_entity'=>$conf->entity, 'ipaddress'=>(empty($_SERVER['REMOTE_ADDR'])?'':$_SERVER['REMOTE_ADDR']))
+        "amount" => $stripeamount,
+        "currency" => $currency,
+        "customer"  => $customer,
+        "payment_method_types" => ["card"],
+        "statement_descriptor" => dol_trunc($description, 10, 'right', 'UTF-8', 1), // dynamic staement with 10 chars that appears on bank receipt  https://stripe.com/docs/charges#dynamic-statement-descriptor
+        "metadata" => array('dol_type'=>$object->element, 'dol_id'=>$object->id, 'dol_version'=>DOL_VERSION, 'dol_entity'=>$conf->entity, 'ipaddress'=>(empty($_SERVER['REMOTE_ADDR'])?'':$_SERVER['REMOTE_ADDR']))
 				);
 
-				if ($conf->entity!=$conf->global->STRIPECONNECT_PRINCIPAL && $fee>0)
+        if (! empty($conf->stripeconnect->enabled))
 				{
-					$dataforintent["application_fee"] = $fee;
+ 				  $fee = round(($amount * ($conf->global->STRIPE_APPLICATION_FEE_PERCENT / 100) + $conf->global->STRIPE_APPLICATION_FEE) * 100);
+				  if ($fee < ($conf->global->STRIPE_APPLICATION_FEE_MINIMAL * 100)) {
+				    $fee = round($conf->global->STRIPE_APPLICATION_FEE_MINIMAL * 100);
+				  }
+          if ($conf->entity!=$conf->global->STRIPECONNECT_PRINCIPAL && $fee>0)
+				  {
+					 $paymentarray["application_fee"] = $fee;
+				  }        
 				}
 				if ($societe->email && $usethirdpartyemailforreceiptemail)
 				{
@@ -593,7 +602,7 @@ class Stripe extends CommonObject
         		$paymentarray = array(
 					"amount" => "$stripeamount",
 					"currency" => "$currency",
-					"statement_descriptor" => dol_trunc(dol_trunc(dol_string_unaccent($mysoc->name), 8, 'right', 'UTF-8', 1).' '.$description, 22, 'right', 'UTF-8', 1),     // 22 chars that appears on bank receipt
+					"statement_descriptor" => dol_trunc($description, 10, 'right', 'UTF-8', 1), // 10 chars that appears on bank receipt https://stripe.com/docs/charges#dynamic-statement-descriptor
 					"description" => "Stripe payment: ".$description,
 					"capture"  => $capture,
 					"metadata" => $metadata,

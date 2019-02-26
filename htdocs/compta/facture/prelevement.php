@@ -518,29 +518,6 @@ if ($object->id > 0)
 	}
 
 
-require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
-
-if (! empty($conf->stripe->enabled) && (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox', 'alpha'))) {
-	$service = 'StripeTest';
-	$servicestatus = 0;
-  
-	$publishable_key = $conf->global->STRIPE_TEST_PUBLISHABLE_KEY;  
-  
-	if (! empty($conf->global->STRIPE_LIVE))
-	{
-	$service = 'StripeLive';
-	$servicestatus = 1;
-    
-  $publishable_key = $conf->global->STRIPE_LIVE_PUBLISHABLE_KEY; 
-	}
-}
-
-$stripe = new Stripe($db);
-$stripeacc = $stripe->getStripeAccount($service);								// Stripe OAuth connect account of dolibarr user (no network access here)
-print $stripecu = $stripe->getStripeCustomerAccount($object->socid, $servicestatus);		// Get thirdparty cu_...
-
-print $stripe->getPaymentIntent($object, $stripecu, $stripeacc, $status);
-
 	/*
 	 * Buttons
 	 */

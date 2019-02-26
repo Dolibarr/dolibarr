@@ -78,19 +78,18 @@ if ($action == 'add' && ! $cancel)
 
 	$account->userid          = $object->id;
 
-	$account->bank            = $_POST["bank"];
-	$account->label           = $_POST["label"];
-	$account->courant         = $_POST["courant"];
-	$account->clos            = $_POST["clos"];
-	$account->code_banque     = $_POST["code_banque"];
-	$account->code_guichet    = $_POST["code_guichet"];
-	$account->number          = $_POST["number"];
-	$account->cle_rib         = $_POST["cle_rib"];
-	$account->bic             = $_POST["bic"];
-	$account->iban            = $_POST["iban"];
-	$account->domiciliation   = $_POST["domiciliation"];
-	$account->proprio         = $_POST["proprio"];
-	$account->owner_address   = $_POST["owner_address"];
+	$account->bank            = GETPOST('bank', 'alpha');
+	$account->label           = GETPOST('label', 'alpha');
+	$account->courant         = GETPOST('courant', 'alpha');
+	$account->code_banque     = GETPOST('code_banque', 'alpha');
+	$account->code_guichet    = GETPOST('code_guichet', 'alpha');
+	$account->number          = GETPOST('number', 'alpha');
+	$account->cle_rib         = GETPOST('cle_rib', 'alpha');
+	$account->bic             = GETPOST('bic', 'alpha');
+	$account->iban            = GETPOST('iban', 'alpha');
+	$account->domiciliation   = GETPOST('domiciliation', 'alpha');
+	$account->proprio         = GETPOST('proprio', 'alpha');
+	$account->owner_address   = GETPOST('owner_address', 'alpha');
 
 	$result = $account->create($user);
 
@@ -101,9 +100,8 @@ if ($action == 'add' && ! $cancel)
 	}
 	else
 	{
-		$url=DOL_URL_ROOT.'/user/bank.php?id='.$object->id.'&bankid='.$bankid;
-		header('Location: '.$url);
-		exit;
+        setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
+        $action = '';
 	}
 }
 
@@ -116,19 +114,18 @@ if ($action == 'update' && ! $cancel)
 
     $account->userid          = $object->id;
 
-	$account->bank            = $_POST["bank"];
-	$account->label           = $_POST["label"];
-	$account->courant         = $_POST["courant"];
-	$account->clos            = $_POST["clos"];
-	$account->code_banque     = $_POST["code_banque"];
-	$account->code_guichet    = $_POST["code_guichet"];
-	$account->number          = $_POST["number"];
-	$account->cle_rib         = $_POST["cle_rib"];
-	$account->bic             = $_POST["bic"];
-	$account->iban            = $_POST["iban"];
-	$account->domiciliation   = $_POST["domiciliation"];
-	$account->proprio         = $_POST["proprio"];
-	$account->owner_address   = $_POST["owner_address"];
+	$account->bank            = GETPOST('bank', 'alpha');
+	$account->label           = GETPOST('label', 'alpha');
+	$account->courant         = GETPOST('courant', 'alpha');
+	$account->code_banque     = GETPOST('code_banque', 'alpha');
+	$account->code_guichet    = GETPOST('code_guichet', 'alpha');
+	$account->number          = GETPOST('number', 'alpha');
+	$account->cle_rib         = GETPOST('cle_rib', 'alpha');
+	$account->bic             = GETPOST('bic', 'alpha');
+	$account->iban            = GETPOST('iban', 'alpha');
+	$account->domiciliation   = GETPOST('domiciliation', 'alpha');
+	$account->proprio         = GETPOST('proprio', 'alpha');
+	$account->owner_address   = GETPOST('owner_address', 'alpha');
 
 	$result = $account->update($user);
 
@@ -139,10 +136,9 @@ if ($action == 'update' && ! $cancel)
 	}
 	else
 	{
-		$url=DOL_URL_ROOT.'/user/bank.php?id='.$object->id.'&bankid='.$bankid;
-        header('Location: '.$url);
-        exit;
-	}
+        setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
+        $action = '';
+    }
 }
 
 
@@ -362,10 +358,10 @@ if ($action != 'edit' && $action != 'create')		// If not bank account yet, $acco
 		{
 			$num = $db->num_rows($resql);
 
-	        print '<table class="noborder" width="100%">';
+	        print '<table class="noborder centpercent">';
 
             print '<tr class="liste_titre">';
-  			print '<td colspan="4"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastHolidays", ($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/holiday/list.php?id='.$object->id.'">'.$langs->trans("AllHolidays").' <span class="badge">'.$num.'</span></a></td>';
+  			print '<td colspan="4"><table class="nobordernopadding centpercent"><tr><td>'.$langs->trans("LastHolidays", ($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/holiday/list.php?id='.$object->id.'">'.$langs->trans("AllHolidays").' <span class="badge">'.$num.'</span></a></td>';
    			print '</tr></table></td>';
    			print '</tr>';
 
@@ -382,9 +378,9 @@ if ($action != 'edit' && $action != 'create')		// If not bank account yet, $acco
 				$nbopenedday=num_open_day($db->jdate($objp->date_debut), $db->jdate($objp->date_fin), 0, 1, $objp->halfday);
 
                 print $holiday->getNomUrl(1);
-				print '</td><td align="right" width="80px">'.dol_print_date($db->jdate($objp->date_debut), 'day')."</td>\n";
-				print '<td align="right" style="min-width: 60px">'.$nbopenedday.' '.$langs->trans('DurationDays').'</td>';
-				print '<td align="right" style="min-width: 60px" class="nowrap">'.$holiday->LibStatut($objp->statut, 5).'</td></tr>';
+				print '</td><td class="right" width="80px">'.dol_print_date($db->jdate($objp->date_debut), 'day')."</td>\n";
+				print '<td class="right" style="min-width: 60px">'.$nbopenedday.' '.$langs->trans('DurationDays').'</td>';
+				print '<td class="right" style="min-width: 60px" class="nowrap">'.$holiday->LibStatut($objp->statut, 5).'</td></tr>';
 				$i++;
 			}
 			$db->free($resql);
@@ -418,10 +414,10 @@ if ($action != 'edit' && $action != 'create')		// If not bank account yet, $acco
 		{
 			$num = $db->num_rows($resql);
 
-	        print '<table class="noborder" width="100%">';
+	        print '<table class="noborder centpercent">';
 
             print '<tr class="liste_titre">';
-   			print '<td colspan="4"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastExpenseReports", ($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/expensereport/list.php?id='.$object->id.'">'.$langs->trans("AllExpenseReports").' <span class="badge">'.$num.'</span></a></td>';
+   			print '<td colspan="4"><table class="nobordernopadding centpercent"><tr><td>'.$langs->trans("LastExpenseReports", ($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/expensereport/list.php?id='.$object->id.'">'.$langs->trans("AllExpenseReports").' <span class="badge">'.$num.'</span></a></td>';
    			print '</tr></table></td>';
    			print '</tr>';
 
@@ -437,9 +433,9 @@ if ($action != 'edit' && $action != 'create')		// If not bank account yet, $acco
                 $exp->fk_type = $objp->fk_type;
 
                 print $exp->getNomUrl(1);
-				print '</td><td align="right" width="80px">'.dol_print_date($db->jdate($objp->date_debut), 'day')."</td>\n";
-				print '<td align="right" style="min-width: 60px">'.price($objp->total_ttc).'</td>';
-				print '<td align="right" style="min-width: 60px" class="nowrap">'.$exp->LibStatut($objp->fk_statut, 5).'</td></tr>';
+				print '</td><td class="right" width="80px">'.dol_print_date($db->jdate($objp->date_debut), 'day')."</td>\n";
+				print '<td class="right" style="min-width: 60px">'.price($objp->total_ttc).'</td>';
+				print '<td class="right nowrap" style="min-width: 60px">'.$exp->LibStatut($objp->fk_statut, 5).'</td></tr>';
 				$i++;
 			}
 			$db->free($resql);
@@ -466,9 +462,9 @@ if ($action != 'edit' && $action != 'create')		// If not bank account yet, $acco
 	if ($user->rights->user->user->creer)
 	{
 		if ($account->id > 0)
-		print '<a class="butAction" href="bank.php?id='.$object->id.'&bankid='.$account->id.'&action=edit">'.$langs->trans("Edit").'</a>';
+            print '<a class="butAction" href="bank.php?id='.$object->id.'&bankid='.$account->id.'&action=edit">'.$langs->trans("Edit").'</a>';
 		else
-		print '<a class="butAction" href="bank.php?id='.$object->id.'&bankid='.$account->id.'&action=create">'.$langs->trans("Create").'</a>';
+            print '<a class="butAction" href="bank.php?id='.$object->id.'&bankid='.$account->id.'&action=create">'.$langs->trans("Create").'</a>';
 	}
 
 	print '</div>';
@@ -547,7 +543,7 @@ if ($id && ($action == 'edit' || $action == 'create' ) && $user->rights->user->u
 
     dol_fiche_end();
 
-	print '<div align="center">';
+	print '<div class="center">';
 	print '<input class="button" value="'.$langs->trans("Modify").'" type="submit">';
     print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 	print '<input class="button" name="cancel" value="'.$langs->trans("Cancel").'" type="submit">';

@@ -372,7 +372,7 @@ if ($sql_select)
 
     // Filters
     print '<tr class="liste_titre">';
-    print '<td class="liste_titre" align="left">';
+    print '<td class="liste_titre left">';
     print '<input class="flat" type="text" name="sref" size="8" value="'.$sref.'">';
     print '</td>';
     print '<td class="liste_titre nowrap center">'; // date
@@ -381,7 +381,7 @@ if ($sql_select)
     print '</td>';
     print '<td class="liste_titre" align="center">';
     print '</td>';
-    print '<td class="liste_titre" align="left">';
+    print '<td class="liste_titre left">';
     print '<input class="flat" type="text" name="sprod_fulldescr" size="15" value="'.dol_escape_htmltag($sprod_fulldescr).'">';
     print '</td>';
     print '<td class="liste_titre" align="center">';    // TODO: Add filters !
@@ -390,7 +390,7 @@ if ($sql_select)
     print '</td>';
     print '<td class="liste_titre" align="center">';
     print '</td>';
-    print '<td class="liste_titre" align="right">';
+    print '<td class="liste_titre right">';
     $searchpicto=$form->showFilterAndCheckAddButtons(0);
     print $searchpicto;
     print '</td>';
@@ -398,14 +398,14 @@ if ($sql_select)
 
     // Titles with sort buttons
     print '<tr class="liste_titre">';
-    print_liste_field_titre('Ref', $_SERVER['PHP_SELF'], 'doc_number', '', $param, 'align="left"', $sortfield, $sortorder);
+    print_liste_field_titre('Ref', $_SERVER['PHP_SELF'], 'doc_number', '', $param, '', $sortfield, $sortorder, 'left ');
     print_liste_field_titre('Date', $_SERVER['PHP_SELF'], 'dateprint', '', $param, 'align="center" width="150"', $sortfield, $sortorder);
     print_liste_field_titre('Status', $_SERVER['PHP_SELF'], 'fk_statut', '', $param, 'align="center"', $sortfield, $sortorder);
-    print_liste_field_titre('Product', $_SERVER['PHP_SELF'], '', '', $param, 'align="left"', $sortfield, $sortorder);
-    print_liste_field_titre('ContactType', $_SERVER['PHP_SELF'], '', '', $param, 'align="left"', $sortfield, $sortorder);
-    print_liste_field_titre('Quantity', $_SERVER['PHP_SELF'], 'prod_qty', '', $param, 'align="right"', $sortfield, $sortorder);
-    print_liste_field_titre('TotalHT', $_SERVER['PHP_SELF'], 'total_ht', '', $param, 'align="right"', $sortfield, $sortorder);
-    print_liste_field_titre('UnitPrice', $_SERVER['PHP_SELF'], '', '', $param, 'align="right"', $sortfield, $sortorder);
+    print_liste_field_titre('Product', $_SERVER['PHP_SELF'], '', '', $param, '', $sortfield, $sortorder, 'left ');
+    print_liste_field_titre('ContactType', $_SERVER['PHP_SELF'], '', '', $param, '', $sortfield, $sortorder, 'left ');
+    print_liste_field_titre('Quantity', $_SERVER['PHP_SELF'], 'prod_qty', '', $param, '', $sortfield, $sortorder, 'right ');
+    print_liste_field_titre('TotalHT', $_SERVER['PHP_SELF'], 'total_ht', '', $param, '', $sortfield, $sortorder, 'right ');
+    print_liste_field_titre('UnitPrice', $_SERVER['PHP_SELF'], '', '', $param, '', $sortfield, $sortorder, 'right ');
     print "</tr>\n";
 
 
@@ -590,13 +590,13 @@ if ($sql_select)
 		//print '<td class="left">'.$prodreftxt.'</td>';
         print '<td>'.$objp->libelle.'</td>';
 
-		print '<td align="right">'.$objp->prod_qty.'</td>';
+		print '<td class="right">'.$objp->prod_qty.'</td>';
 		$total_qty+=$objp->prod_qty;
 
-		print '<td align="right">'.price($objp->total_ht).'</td>';
+		print '<td class="right">'.price($objp->total_ht).'</td>';
 		$total_ht+=$objp->total_ht;
 
-		print '<td align="right">'.price($objp->total_ht/(empty($objp->prod_qty)?1:$objp->prod_qty)).'</td>';
+		print '<td class="right">'.price($objp->total_ht/(empty($objp->prod_qty)?1:$objp->prod_qty)).'</td>';
 
 		print "</tr>\n";
 		$i++;
@@ -606,9 +606,9 @@ if ($sql_select)
 	print '<td>' . $langs->trans('Total') . '</td>';
 	print '<td colspan="3"></td>';
     print '<td></td>';
-	print '<td align="right">' . $total_qty . '</td>';
-	print '<td align="right">' . price($total_ht) . '</td>';
-	print '<td align="right">' . price($total_ht/(empty($total_qty)?1:$total_qty)) . '</td>';
+	print '<td class="right">' . $total_qty . '</td>';
+	print '<td class="right">' . price($total_ht) . '</td>';
+	print '<td class="right">' . price($total_ht/(empty($total_qty)?1:$total_qty)) . '</td>';
 	print "</table>";
 	print '</div>';
 
@@ -624,11 +624,11 @@ elseif (empty($type_element) || $type_element == -1)
     print '<table class="liste" width="100%">'."\n";
     // Titles with sort buttons
     print '<tr class="liste_titre">';
-    print_liste_field_titre('Ref', $_SERVER['PHP_SELF'], 'doc_number', '', $param, 'align="left"', $sortfield, $sortorder);
+    print_liste_field_titre('Ref', $_SERVER['PHP_SELF'], 'doc_number', '', $param, '', $sortfield, $sortorder, 'left ');
     print_liste_field_titre('Date', $_SERVER['PHP_SELF'], 'dateprint', '', $param, 'align="center" width="150"', $sortfield, $sortorder);
     print_liste_field_titre('Status', $_SERVER['PHP_SELF'], 'fk_status', '', $param, 'align="center"', $sortfield, $sortorder);
-    print_liste_field_titre('Product', $_SERVER['PHP_SELF'], '', '', $param, 'align="left"', $sortfield, $sortorder);
-    print_liste_field_titre('Quantity', $_SERVER['PHP_SELF'], 'prod_qty', '', $param, 'align="right"', $sortfield, $sortorder);
+    print_liste_field_titre('Product', $_SERVER['PHP_SELF'], '', '', $param, '', $sortfield, $sortorder, 'left ');
+    print_liste_field_titre('Quantity', $_SERVER['PHP_SELF'], 'prod_qty', '', $param, '', $sortfield, $sortorder, 'right ');
     print "</tr>\n";
 
 	print '<tr class="oddeven"><td class="opacitymedium" colspan="5">'.$langs->trans("SelectElementAndClick", $langs->transnoentitiesnoconv("Search")).'</td></tr>';

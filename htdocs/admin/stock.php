@@ -409,12 +409,12 @@ print '<table class="noborder" width="100%">';
 
 print '<tr class="liste_titre">';
 print "<td>".$langs->trans("Other")."</td>\n";
-print '<td align="center">'.$langs->trans("Status").'</td>'."\n";
+print '<td class="center">'.$langs->trans("Status").'</td>'."\n";
 print '</tr>'."\n";
 
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("UserWarehouseAutoCreate").'</td>';
-print '<td align="center">';
+print '<td class="center">';
 if ($conf->use_javascript_ajax) {
     print ajax_constantonoff('STOCK_USERSTOCK_AUTOCREATE');
 } else {
@@ -428,7 +428,7 @@ print '<tr class="oddeven">';
 print '<td>';
 print $form->textwithpicto($langs->trans("StockSupportServices"), $langs->trans("StockSupportServicesDesc"));
 print '</td>';
-print '<td align="center">';
+print '<td class="center">';
 if ($conf->use_javascript_ajax) {
     print ajax_constantonoff('STOCK_SUPPORTS_SERVICES');
 } else {
@@ -440,7 +440,7 @@ print "</tr>\n";
 
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("AllowAddLimitStockByWarehouse").'</td>';
-print '<td align="center">';
+print '<td class="center">';
 if ($conf->use_javascript_ajax) {
     print ajax_constantonoff('STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE');
 } else {
@@ -451,10 +451,9 @@ print "</td>\n";
 print "</tr>\n";
 
 if (! empty($conf->fournisseur->enabled) && !empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER)) {
-
     print '<tr class="oddeven">';
     print '<td>'.$langs->trans("UseDispatchStatus").'</td>';
-    print '<td class="right">';
+    print '<td class="center">';
 if ($conf->use_javascript_ajax) {
     print ajax_constantonoff('SUPPLIER_ORDER_USE_DISPATCH_STATUS');
 } else {

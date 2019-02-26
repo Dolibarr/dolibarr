@@ -2254,6 +2254,9 @@ function getModuleDirForApiClass($module)
     elseif ($module == 'propale' || $module == 'proposals') {
         $moduledirforclass = 'comm/propal';
     }
+    elseif ($module == 'don' || $module == 'donations') {
+        $moduledirforclass = 'don';
+    }
     elseif ($module == 'agenda' || $module == 'agendaevents') {
         $moduledirforclass = 'comm/action';
     }

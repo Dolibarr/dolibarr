@@ -859,7 +859,7 @@ if ($socid > 0)
 	    				print $obj->description;
 	    				print '</td>';
 	    			}
-	    			print '<td class="left nowrap"><a href="'.DOL_URL_ROOT.'/compta/facture/card.php?facid='.$obj->rowid.'">'.img_object($langs->trans("ShowBill"),'bill').' '.$obj->ref.'</a></td>';
+	    			print '<td class="left nowrap"><a href="'.DOL_URL_ROOT.'/compta/facture/card.php?facid='.$obj->rowid.'">'.img_object($langs->trans("ShowBill"), 'bill').' '.$obj->ref.'</a></td>';
 	    			print '<td class="right">'.price($obj->amount_ht).'</td>';
 	    			if (! empty($conf->multicurrency->enabled))
 	    			{
@@ -1029,7 +1029,7 @@ if ($socid > 0)
 						print $obj->description;
 						print '</td>';
 					}
-					print '<td class="left nowrap"><a href="'.DOL_URL_ROOT.'/fourn/facture/card.php?facid='.$obj->rowid.'">'.img_object($langs->trans("ShowBill"),'bill').' '.$obj->ref.'</a></td>';
+					print '<td class="left nowrap"><a href="'.DOL_URL_ROOT.'/fourn/facture/card.php?facid='.$obj->rowid.'">'.img_object($langs->trans("ShowBill"), 'bill').' '.$obj->ref.'</a></td>';
 					print '<td class="right">'.price($obj->amount_ht).'</td>';
 					if (! empty($conf->multicurrency->enabled))
 					{

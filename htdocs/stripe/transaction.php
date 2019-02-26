@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2018       Thibault FOUCART        <support@ptibogxiv.net>
+/* Copyright (C) 2018-2019  Thibault FOUCART        <support@ptibogxiv.net>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -71,7 +71,6 @@ else
 	$service = 'StripeLive';
 	$servicestatus = '1';
 }
-
 $stripeacc = $stripe->getStripeAccount($service);
 /*if (empty($stripeaccount))
 {
