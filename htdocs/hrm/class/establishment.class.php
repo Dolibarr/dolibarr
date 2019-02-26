@@ -451,6 +451,7 @@ class Establishment extends CommonObject
 	/**
      *  Return clicable name (with picto eventually)
      *
+     *  @param		int		$id				Id of record
      *  @param      int     $withpicto      0=No picto, 1=Include picto into link, 2=Only picto
      *  @return     string                  String with URL
      */
