@@ -56,7 +56,7 @@ class BillOfMaterialsApi extends DolibarrApi
      * @url     GET /
      *
      */
-    function __construct()
+    public function __construct()
     {
 		global $db, $conf;
 		$this->db = $db;
@@ -74,7 +74,7 @@ class BillOfMaterialsApi extends DolibarrApi
      * @url	GET boms/{id}
      * @throws 	RestException
      */
-    function get($id)
+    public function get($id)
     {
 		if(! DolibarrApiAccess::$user->rights->bom->read) {
 			throw new RestException(401);
@@ -85,7 +85,7 @@ class BillOfMaterialsApi extends DolibarrApi
             throw new RestException(404, 'BillOfMaterials not found');
         }
 
-		if( ! DolibarrApi::_checkAccessToResource('bom',$this->bom->id)) {
+		if( ! DolibarrApi::_checkAccessToResource('bom', $this->bom->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
@@ -109,7 +109,7 @@ class BillOfMaterialsApi extends DolibarrApi
      *
      * @url	GET /boms/
      */
-    function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '')
+    public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '')
     {
         global $db, $conf;
 
@@ -196,7 +196,7 @@ class BillOfMaterialsApi extends DolibarrApi
      *
      * @url	POST boms/
      */
-    function post($request_data = null)
+    public function post($request_data = null)
     {
         if(! DolibarrApiAccess::$user->rights->bom->create) {
             throw new RestException(401);
@@ -222,7 +222,7 @@ class BillOfMaterialsApi extends DolibarrApi
      *
      * @url	PUT boms/{id}
      */
-    function put($id, $request_data = null)
+    public function put($id, $request_data = null)
     {
         if(! DolibarrApiAccess::$user->rights->bom->create) {
             throw new RestException(401);
@@ -233,7 +233,7 @@ class BillOfMaterialsApi extends DolibarrApi
             throw new RestException(404, 'BillOfMaterials not found');
         }
 
-		if( ! DolibarrApi::_checkAccessToResource('bom',$this->bom->id)) {
+		if( ! DolibarrApi::_checkAccessToResource('bom', $this->bom->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
@@ -255,7 +255,7 @@ class BillOfMaterialsApi extends DolibarrApi
      *
      * @url	DELETE bom/{id}
      */
-    function delete($id)
+    public function delete($id)
     {
     	if(! DolibarrApiAccess::$user->rights->bom->delete) {
 			throw new RestException(401);
@@ -265,7 +265,7 @@ class BillOfMaterialsApi extends DolibarrApi
             throw new RestException(404, 'BillOfMaterials not found');
         }
 
-        if( ! DolibarrApi::_checkAccessToResource('bom',$this->bom->id)) {
+        if( ! DolibarrApi::_checkAccessToResource('bom', $this->bom->id)) {
             throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
         }
 
@@ -289,7 +289,7 @@ class BillOfMaterialsApi extends DolibarrApi
      * @param   object  $object    Object to clean
      * @return    array    Array of cleaned object properties
      */
-    function _cleanObjectDatas($object)
+    private function _cleanObjectDatas($object)
     {
     	$object = parent::_cleanObjectDatas($object);
 
@@ -311,7 +311,7 @@ class BillOfMaterialsApi extends DolibarrApi
      *
      * @throws RestException
      */
-    function _validate($data)
+    private function _validate($data)
     {
         $bom = array();
         foreach (BillOfMaterialsApi::$FIELDS as $field) {

@@ -48,9 +48,9 @@ dol_include_once('/bom/lib/bom_bom.lib.php');
 $langs->loadLangs(array("bom@bom","companies","other","mails"));
 
 
-$action=GETPOST('action','aZ09');
+$action=GETPOST('action', 'aZ09');
 $confirm=GETPOST('confirm');
-$id=(GETPOST('socid','int') ? GETPOST('socid','int') : GETPOST('id','int'));
+$id=(GETPOST('socid', 'int') ? GETPOST('socid', 'int') : GETPOST('id', 'int'));
 $ref = GETPOST('ref', 'alpha');
 
 // Security check - Protection if external user
@@ -59,9 +59,9 @@ $ref = GETPOST('ref', 'alpha');
 //$result = restrictedArea($user, 'bom', $id);
 
 // Get parameters
-$sortfield = GETPOST("sortfield",'alpha');
-$sortorder = GETPOST("sortorder",'alpha');
-$page = GETPOST("page",'int');
+$sortfield = GETPOST("sortfield", 'alpha');
+$sortorder = GETPOST("sortorder", 'alpha');
+$page = GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
@@ -114,7 +114,7 @@ if ($object->id)
 
 
 	// Build file list
-	$filearray=dol_dir_list($upload_dir,"files",0,'','(\.meta|_preview.*\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
+	$filearray=dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC), 1);
 	$totalsize=0;
 	foreach($filearray as $key => $file)
 	{
@@ -123,7 +123,7 @@ if ($object->id)
 
 	// Object card
 	// ------------------------------------------------------------
-	$linkback = '<a href="' .dol_buildpath('/bom/bom_list.php',1) . '?restore_lastsearch_values=1' . (! empty($socid) ? '&socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
+	$linkback = '<a href="' .dol_buildpath('/bom/bom_list.php', 1) . '?restore_lastsearch_values=1' . (! empty($socid) ? '&socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
 
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
 
@@ -158,7 +158,7 @@ if ($object->id)
 }
 else
 {
-	accessforbidden('',0,0);
+	accessforbidden('', 0, 0);
 }
 
 // End of page

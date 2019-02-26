@@ -382,7 +382,7 @@ class modAdherent extends DolibarrModules
         global $conf,$langs;
 
         // Permissions
-        $this->removeFromChild(array(), $options);
+        $this->remove($options);
 
         //ODT template
         /*
@@ -408,6 +408,6 @@ class modAdherent extends DolibarrModules
             "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->db->escape($this->const[0][2])."','member',".$conf->entity.")"
         );
 
-        return $this->initFromChild($sql, $options);
+        return $this->_init($sql, $options);
     }
 }

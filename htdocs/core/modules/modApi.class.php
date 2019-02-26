@@ -230,7 +230,7 @@ class modApi extends DolibarrModules
 
         $result = $this->_load_tables('/api/sql/');
 
-        return $this->initFromChild($sql, $options);
+        return $this->_init($sql, $options);
     }
 
 	/**
@@ -249,6 +249,6 @@ class modApi extends DolibarrModules
 			"DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = ".$this->db->encrypt('API_PRODUCTION_MODE', 1)
 		);
 
-		return $this->removeFromChild($sql, $options);
+		return $this->_remove($sql, $options);
 	}
 }
