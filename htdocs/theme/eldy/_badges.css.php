@@ -1,4 +1,4 @@
-<?php 
+<?php
 /*
  Badge style is based on boostrap framework
  */
