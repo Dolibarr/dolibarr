@@ -6167,7 +6167,6 @@ class Form
 		}
 
 		// Try also magic suggest
-
 		$out .= '<select id="'.$htmlname.'" class="multiselect'.($morecss?' '.$morecss:'').'" multiple name="'.$htmlname.'[]"'.($moreattrib?' '.$moreattrib:'').($width?' style="width: '.(preg_match('/%/', $width)?$width:$width.'px').'"':'').'>'."\n";
 		if (is_array($array) && ! empty($array))
 		{
@@ -6178,7 +6177,7 @@ class Form
 				foreach ($array as $key => $value)
 				{
 					$out.= '<option value="'.$key.'"';
-					if (is_array($selected) && ! empty($selected) && in_array($key, $selected) && ((string) $key != ''))
+                    if (is_array($selected) && ! empty($selected) && in_array((string) $key, $selected) && ((string) $key != ''))
 					{
 						$out.= ' selected';
 					}
