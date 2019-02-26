@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2019   Thibault FOUCART        <support@ptibogxiv.net>
- * Copyright (C) 2019	Laurent Destailleur		<eldy@users.sourceforge.net>
+/* Copyright (C) 2015   Jean-François Ferry     <jfefe@aternatik.fr>
+ * Copyright (C) 2016	Laurent Destailleur		<eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,7 +48,7 @@ class Donations extends DolibarrApi
     {
 		global $db, $conf;
 		$this->db = $db;
-        $this->don = new Don($this->db);
+    $this->don = new Don($this->db);
     }
 
     /**
@@ -72,7 +72,7 @@ class Donations extends DolibarrApi
             throw new RestException(404, 'Donation not found');
         }
 
-		if( ! DolibarrApi::_checkAccessToResource('donation', $this->don->id)) {
+		if( ! DolibarrApi::_checkAccessToResource('don', $this->don->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
