@@ -2010,16 +2010,16 @@ class Societe extends CommonObject
 
 		$name=$this->name?$this->name:$this->nom;
 
-		if(!empty($conf->global->SOCIETE_ON_SEARCH_AND_LIST_GO_ON_CUSTOMER_OR_SUPPLIER_CARD)){
-            if(empty($option) && $this->client > 0) $option = 'customer';
-            if(empty($option) && $this->fournisseur > 0) $option = 'supplier';
+        if (!empty($conf->global->SOCIETE_ON_SEARCH_AND_LIST_GO_ON_CUSTOMER_OR_SUPPLIER_CARD)){
+            if (empty($option) && $this->client > 0) $option = 'customer';
+            if (empty($option) && $this->fournisseur > 0) $option = 'supplier';
         }
 
 
 		if (! empty($conf->global->SOCIETE_ADD_REF_IN_LIST) && (!empty($withpicto)))
 		{
 			$code = '';
-			if (($this->client) && (! empty ($this->code_client))
+			if (($this->client) && (! empty($this->code_client))
 				&& ($conf->global->SOCIETE_ADD_REF_IN_LIST == 1
 				|| $conf->global->SOCIETE_ADD_REF_IN_LIST == 2
 				)
@@ -2028,7 +2028,7 @@ class Societe extends CommonObject
 				$code = $this->code_client . ' - ';
 			}
 
-			if (($this->fournisseur) && (! empty ($this->code_fournisseur))
+			if (($this->fournisseur) && (! empty($this->code_fournisseur))
 				&& ($conf->global->SOCIETE_ADD_REF_IN_LIST == 1
 				|| $conf->global->SOCIETE_ADD_REF_IN_LIST == 3
 				)
@@ -2176,7 +2176,7 @@ class Societe extends CommonObject
 		}
 
 		$result.=$linkstart;
-		if ($withpicto) $result.=img_object(($notooltip?'':$label), ($this->picto?$this->picto:'generic'), ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip valigntextbottom"'), 0, 0, $notooltip?0:1);
+		if ($withpicto) $result.=img_object(($notooltip?'':$label), ($this->picto?$this->picto:'generic'), ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip valignmiddle"'), 0, 0, $notooltip?0:1);
 		if ($withpicto != 2) $result.=($maxlen?dol_trunc($name, $maxlen):$name);
 		$result.=$linkend;
 

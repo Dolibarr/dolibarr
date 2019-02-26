@@ -185,8 +185,8 @@ class SupplierInvoices extends DolibarrApi
     function post($request_data = null)
     {
         if(! DolibarrApiAccess::$user->rights->fournisseur->facture->creer) {
-			throw new RestException(401, "Insuffisant rights");
-		}
+            throw new RestException(401, "Insuffisant rights");
+        }
         // Check mandatory fields
         $result = $this->_validate($request_data);
 
@@ -221,8 +221,8 @@ class SupplierInvoices extends DolibarrApi
     function put($id, $request_data = null)
     {
         if(! DolibarrApiAccess::$user->rights->fournisseur->facture->creer) {
-			throw new RestException(401);
-		}
+            throw new RestException(401);
+        }
 
         $result = $this->invoice->fetch($id);
         if( ! $result ) {
@@ -239,7 +239,7 @@ class SupplierInvoices extends DolibarrApi
         }
 
         if($this->invoice->update($id, DolibarrApiAccess::$user))
-            return $this->get ($id);
+            return $this->get($id);
 
         return false;
     }
@@ -253,8 +253,8 @@ class SupplierInvoices extends DolibarrApi
     function delete($id)
     {
         if(! DolibarrApiAccess::$user->rights->fournisseur->facture->supprimer) {
-			throw new RestException(401);
-		}
+            throw new RestException(401);
+        }
         $result = $this->invoice->fetch($id);
         if( ! $result ) {
             throw new RestException(404, 'Supplier invoice not found');
@@ -306,9 +306,9 @@ class SupplierInvoices extends DolibarrApi
     		throw new RestException(404, 'Invoice not found');
     	}
 
-		if( ! DolibarrApi::_checkAccessToResource('fournisseur', $this->invoice->id, 'facture_fourn', 'facture')) {
-    		throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
-    	}
+        if( ! DolibarrApi::_checkAccessToResource('fournisseur', $this->invoice->id, 'facture_fourn', 'facture')) {
+            throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+        }
 
     	$result = $this->invoice->validate(DolibarrApiAccess::$user, '', $idwarehouse, $notrigger);
     	if ($result == 0) {

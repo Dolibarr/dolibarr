@@ -302,7 +302,7 @@ if ($id > 0 || ! empty($ref))
 
             // Categories
             if($conf->categorie->enabled) {
-                print '<tr><td valign="middle">'.$langs->trans("Categories").'</td><td>';
+                print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td>';
                 print $form->showCategories($projectstatic->id, 'project', 1);
                 print "</td></tr>";
             }
@@ -428,7 +428,7 @@ if ($id > 0 || ! empty($ref))
 
 			dol_fiche_end();
 
-			print '<div align="center">';
+			print '<div class="center">';
 			print '<input type="submit" class="button" name="update" value="'.$langs->trans("Modify").'"> &nbsp; ';
 			print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
 			print '</div>';

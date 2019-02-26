@@ -42,21 +42,21 @@ $term = GETPOST('term', 'alpha');
  * View
  */
 
-if ($action=="getProducts"){
-	$object = new Categorie($db);
-	$result=$object->fetch($category);
-	$prods = $object->getObjectsInCateg("product");
-	echo json_encode($prods);
+if ($action=="getProducts") {
+    $object = new Categorie($db);
+    $result=$object->fetch($category);
+    $prods = $object->getObjectsInCateg("product");
+    echo json_encode($prods);
 }
 
-if ($action=="search"){
-	$sql = 'SELECT * FROM '.MAIN_DB_PREFIX.'product';
-	$sql.= ' WHERE entity IN ('.getEntity('product').')';
-	$sql .= natural_search(array('label','barcode'), $term);
-	$resql = $db->query($sql);
-	$rows = array();
-	while($row = $db->fetch_array ($resql)){
-		$rows[] = $row;
-	}
-	echo json_encode($rows);
+if ($action=="search") {
+    $sql = 'SELECT * FROM '.MAIN_DB_PREFIX.'product';
+    $sql .= ' WHERE entity IN ('.getEntity('product').')';
+    $sql .= natural_search(array('label','barcode'), $term);
+    $resql = $db->query($sql);
+    $rows = array();
+    while ($row = $db->fetch_array($resql)) {
+        $rows[] = $row;
+    }
+    echo json_encode($rows);
 }

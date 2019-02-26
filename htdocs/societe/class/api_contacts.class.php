@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2015   Jean-François Ferry     <jfefe@aternatik.fr>
+/* Copyright (C) 2015       Jean-François Ferry         <jfefe@aternatik.fr>
+ * Copyright (C) 2019       Frédéric France             <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -177,16 +178,17 @@ class Contacts extends DolibarrApi
 		{
 			$num = $db->num_rows($result);
 			$min = min($num, ($limit <= 0 ? $num : $limit));
+            $i = 0;
 			while ($i < $min)
 			{
 				$obj = $db->fetch_object($result);
 				$contact_static = new Contact($db);
 				if ($contact_static->fetch($obj->rowid))
 				{
-		      if ($includecount)
-		      {
-		      $contact_static->load_ref_elements();
-		      }
+		            if ($includecount)
+		            {
+		                $contact_static->load_ref_elements();
+		            }
 					$obj_ret[] = $this->_cleanObjectDatas($contact_static);
 				}
         

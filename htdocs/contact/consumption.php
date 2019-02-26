@@ -379,16 +379,16 @@ if ($sql_select)
     print $formother->select_month($month?$month:-1, 'month', 1, 0, 'valignmiddle');
     $formother->select_year($year?$year:-1, 'year', 1, 20, 1);
     print '</td>';
-    print '<td class="liste_titre" align="center">';
+    print '<td class="liste_titre center">';
     print '</td>';
     print '<td class="liste_titre left">';
     print '<input class="flat" type="text" name="sprod_fulldescr" size="15" value="'.dol_escape_htmltag($sprod_fulldescr).'">';
     print '</td>';
-    print '<td class="liste_titre" align="center">';    // TODO: Add filters !
+    print '<td class="liste_titre center">';    // TODO: Add filters !
     print '</td>';
-    print '<td class="liste_titre" align="center">';
+    print '<td class="liste_titre center">';
     print '</td>';
-    print '<td class="liste_titre" align="center">';
+    print '<td class="liste_titre center">';
     print '</td>';
     print '<td class="liste_titre right">';
     $searchpicto=$form->showFilterAndCheckAddButtons(0);
@@ -399,8 +399,8 @@ if ($sql_select)
     // Titles with sort buttons
     print '<tr class="liste_titre">';
     print_liste_field_titre('Ref', $_SERVER['PHP_SELF'], 'doc_number', '', $param, '', $sortfield, $sortorder, 'left ');
-    print_liste_field_titre('Date', $_SERVER['PHP_SELF'], 'dateprint', '', $param, 'align="center" width="150"', $sortfield, $sortorder);
-    print_liste_field_titre('Status', $_SERVER['PHP_SELF'], 'fk_statut', '', $param, 'align="center"', $sortfield, $sortorder);
+    print_liste_field_titre('Date', $_SERVER['PHP_SELF'], 'dateprint', '', $param, 'width="150"', $sortfield, $sortorder, 'center ');
+    print_liste_field_titre('Status', $_SERVER['PHP_SELF'], 'fk_statut', '', $param, '', $sortfield, $sortorder, 'center ');
     print_liste_field_titre('Product', $_SERVER['PHP_SELF'], '', '', $param, '', $sortfield, $sortorder, 'left ');
     print_liste_field_titre('ContactType', $_SERVER['PHP_SELF'], '', '', $param, '', $sortfield, $sortorder, 'left ');
     print_liste_field_titre('Quantity', $_SERVER['PHP_SELF'], 'prod_qty', '', $param, '', $sortfield, $sortorder, 'right ');
@@ -427,10 +427,10 @@ if ($sql_select)
 		print '<td class="nobordernopadding nowrap" width="100">';
 		print $documentstatic->getNomUrl(1);
 		print '</td>';
-		print '<td align="center" width="80">'.dol_print_date($db->jdate($objp->dateprint), 'day').'</td>';
+		print '<td class="center" width="80">'.dol_print_date($db->jdate($objp->dateprint), 'day').'</td>';
 
 		// Status
-		print '<td align="center">';
+		print '<td class="center">';
 		if ($type_element == 'contract')
 		{
 			print $documentstaticline->getLibStatut(2);
@@ -616,17 +616,15 @@ if ($sql_select)
 		print_barre_liste('', $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num);
 	}
 	$db->free($resql);
-}
-elseif (empty($type_element) || $type_element == -1)
-{
+} elseif (empty($type_element) || $type_element == -1) {
     print_barre_liste($langs->trans('ProductsIntoElements').' '.$typeElementString.' '.$button, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, '', '');
 
     print '<table class="liste" width="100%">'."\n";
     // Titles with sort buttons
     print '<tr class="liste_titre">';
     print_liste_field_titre('Ref', $_SERVER['PHP_SELF'], 'doc_number', '', $param, '', $sortfield, $sortorder, 'left ');
-    print_liste_field_titre('Date', $_SERVER['PHP_SELF'], 'dateprint', '', $param, 'align="center" width="150"', $sortfield, $sortorder);
-    print_liste_field_titre('Status', $_SERVER['PHP_SELF'], 'fk_status', '', $param, 'align="center"', $sortfield, $sortorder);
+    print_liste_field_titre('Date', $_SERVER['PHP_SELF'], 'dateprint', '', $param, 'width="150"', $sortfield, $sortorder, 'center ');
+    print_liste_field_titre('Status', $_SERVER['PHP_SELF'], 'fk_status', '', $param, '', $sortfield, $sortorder, 'center ');
     print_liste_field_titre('Product', $_SERVER['PHP_SELF'], '', '', $param, '', $sortfield, $sortorder, 'left ');
     print_liste_field_titre('Quantity', $_SERVER['PHP_SELF'], 'prod_qty', '', $param, '', $sortfield, $sortorder, 'right ');
     print "</tr>\n";
@@ -634,8 +632,7 @@ elseif (empty($type_element) || $type_element == -1)
 	print '<tr class="oddeven"><td class="opacitymedium" colspan="5">'.$langs->trans("SelectElementAndClick", $langs->transnoentitiesnoconv("Search")).'</td></tr>';
 
 	print "</table>";
-}
-else {
+} else {
     print_barre_liste($langs->trans('ProductsIntoElements').' '.$typeElementString.' '.$button, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, '', '');
 
     print '<table class="liste" width="100%">'."\n";

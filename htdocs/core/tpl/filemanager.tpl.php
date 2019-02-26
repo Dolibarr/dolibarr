@@ -149,7 +149,7 @@ if (empty($action) || $action == 'editfile' || $action == 'file_manager' || preg
 
 	print '<!-- Title for manual directories -->'."\n";
 	print '<tr class="liste_titre">'."\n";
-    print '<th class="liste_titre" align="left">';
+    print '<th class="liste_titre left">';
     print '&nbsp;'.$langs->trans("ECMSections");
 	print '</th></tr>';
 

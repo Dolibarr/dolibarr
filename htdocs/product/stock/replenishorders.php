@@ -2,7 +2,7 @@
 /*
  * Copyright (C) 2013       Cédric Salvador         <csalvador@gpcsolutions.fr>
  * Copyright (C) 2014       Regis Houssin           <regis.houssin@inodbox.com>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2019  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -198,7 +198,7 @@ if ($resql)
          '<td class="liste_titre">'.
          $form->selectDate($search_date, 'search_date', 0, 0, 1, '', 1, 0, 0, '').
          '</td>'.
-         '<td class="liste_titre" align="right">';
+         '<td class="liste_titre right">';
     $searchpicto = $form->showFilterAndCheckAddButtons(0);
     print $searchpicto;
     print '</td>';
@@ -261,9 +261,10 @@ if ($resql)
         'cf.fk_statut',
         '',
         $param,
-        'align="right"',
+        '',
         $sortfield,
-        $sortorder
+        $sortorder,
+        'right '
     );
     print '</tr>';
 
@@ -277,13 +278,12 @@ if ($resql)
 
         if ($showline)
         {
-            $href = DOL_URL_ROOT . '/fourn/commande/card.php?id=' . $obj->rowid;
-            print '<tr>'.
+            $href = DOL_URL_ROOT.'/fourn/commande/card.php?id='.$obj->rowid;
+            print '<tr>';
             // Ref
-                 '<td>'.
-                 '<a href="' . $href . '">'.
-                 img_object($langs->trans('ShowOrder'), 'order') . ' ' . $obj->ref.
-                 '</a></td>';
+            print '<td>';
+            print '<a href="'.$href.'">'.img_object($langs->trans('ShowOrder'), 'order').' '.$obj->ref.'</a>';
+            print '</td>';
 
             // Company
             $href = DOL_URL_ROOT . '/fourn/card.php?socid=' . $obj->socid;
@@ -300,13 +300,9 @@ if ($resql)
             } else {
                 $txt =  '&nbsp;';
             }
-            print '<td>'.
-                 $txt.
-                 '</td>'.
+            print '<td>'.$txt.'</td>';
             // Amount
-                 '<td>'.
-                 price($obj->total_ttc).
-                 '</td>';
+            print '<td>'.price($obj->total_ttc).'</td>';
 
             // Date
             if ($obj->dc) {
@@ -314,14 +310,10 @@ if ($resql)
             } else {
                 $date =  '-';
             }
-            print '<td>'.
-                 $date.
-                 '</td>'.
+            print '<td>'.$date.'</td>';
             // Statut
-                 '<td align="right">'.
-                 $commandestatic->LibStatut($obj->fk_statut, 5).
-                 '</td>'.
-                 '</tr>';
+            print '<td class="right">'.$commandestatic->LibStatut($obj->fk_statut, 5).'</td>';
+            print '</tr>';
         }
         $i++;
     }
@@ -334,7 +326,7 @@ if ($resql)
 }
 else
 {
-	dol_print_error($db);
+    dol_print_error($db);
 }
 
 // End of page
