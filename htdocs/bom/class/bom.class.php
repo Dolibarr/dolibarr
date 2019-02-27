@@ -995,7 +995,7 @@ class BillOfMaterialsLine extends CommonObject
         $label.= '<br>';
         $label.= '<b>' . $langs->trans('Ref') . ':</b> ' . $this->ref;
 
-        $url = dol_buildpath('/bom/bomline_card.php',1).'?id='.$this->id;
+        $url = dol_buildpath('/bom/bomline_card.php', 1).'?id='.$this->id;
 
         if ($option != 'nolink')
         {

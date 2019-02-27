@@ -54,19 +54,19 @@ if ($query=="cat")
 	$dir = $upload_dir.'/'.$pdir;
 
 	foreach ($object->liste_photos($dir) as $key => $obj)
+	{
+		if ($obj['photo_vignette'])
 		{
-			if ($obj['photo_vignette'])
-			{
-				$filename=$obj['photo_vignette'];
-			}
-			else
-			{
-				$filename=$obj['photo'];
-			}
-			$file=DOL_URL_ROOT.'/viewimage.php?modulepart=category&entity='.$object->entity.'&file='.urlencode($pdir.$filename);
-			header('Location: '.$file);
-			exit;
+			$filename=$obj['photo_vignette'];
 		}
+		else
+		{
+			$filename=$obj['photo'];
+		}
+		$file=DOL_URL_ROOT.'/viewimage.php?modulepart=category&entity='.$object->entity.'&file='.urlencode($pdir.$filename);
+		header('Location: '.$file);
+		exit;
+	}
 	header('Location: ../../public/theme/common/nophoto.png');
 }
 elseif ($query=="pro")
@@ -81,7 +81,6 @@ elseif ($query=="pro")
 	$file = array_pop($match);
 	if ($file=="") header('Location: ../../public/theme/common/nophoto.png');
 	else header('Location: '.$file);
-
 }
 else
 {
