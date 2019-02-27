@@ -34,20 +34,20 @@ include_once DOL_DOCUMENT_ROOT.'/societe/class/client.class.php';
  */
 class box_prospect extends ModeleBoxes
 {
-	var $boxcode="lastprospects";
-	var $boximg="object_company";
-	var $boxlabel="BoxLastProspects";
-	var $depends = array("societe");
+    public $boxcode="lastprospects";
+    public $boximg="object_company";
+    public $boxlabel="BoxLastProspects";
+    public $depends = array("societe");
 
 	/**
      * @var DoliDB Database handler.
      */
     public $db;
 
-	var $enabled = 1;
+    public $enabled = 1;
 
-	var $info_box_head = array();
-	var $info_box_contents = array();
+    public $info_box_head = array();
+    public $info_box_contents = array();
 
 
 	/**
@@ -56,7 +56,7 @@ class box_prospect extends ModeleBoxes
 	 *  @param  DoliDB	$db      	Database handler
      *  @param	string	$param		More parameters
 	 */
-	function __construct($db, $param = '')
+	public function __construct($db, $param = '')
 	{
 		global $conf, $user;
 
@@ -74,7 +74,7 @@ class box_prospect extends ModeleBoxes
 	 *  @param	int		$max        Maximum number of records to load
      *  @return	void
 	 */
-	function loadBox($max = 5)
+	public function loadBox($max = 5)
 	{
 		global $user, $langs, $db, $conf;
 
@@ -177,7 +177,7 @@ class box_prospect extends ModeleBoxes
 	 *  @param	int		$nooutput	No print, only return string
 	 *	@return	string
 	 */
-    function showBox($head = null, $contents = null, $nooutput = 0)
+    public function showBox($head = null, $contents = null, $nooutput = 0)
     {
 		return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
 	}

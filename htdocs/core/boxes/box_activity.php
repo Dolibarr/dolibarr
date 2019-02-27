@@ -30,21 +30,21 @@ include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
  */
 class box_activity extends ModeleBoxes
 {
-    var $boxcode="activity";
-    var $boximg="object_bill";
-    var $boxlabel='BoxGlobalActivity';
-    var $depends = array("facture");
+    public $boxcode="activity";
+    public $boximg="object_bill";
+    public $boxlabel='BoxGlobalActivity';
+    public $depends = array("facture");
 
     /**
      * @var DoliDB Database handler.
      */
     public $db;
 
-    var $param;
-    var $enabled = 1;
+    public $param;
+    public $enabled = 1;
 
-    var $info_box_head = array();
-    var $info_box_contents = array();
+    public $info_box_head = array();
+    public $info_box_contents = array();
 
 
     /**
@@ -53,7 +53,7 @@ class box_activity extends ModeleBoxes
      *  @param  DoliDB  $db         Database handler
      *  @param  string  $param      More parameters
      */
-    function __construct($db, $param)
+    public function __construct($db, $param)
     {
         global $conf, $user;
 
@@ -74,7 +74,7 @@ class box_activity extends ModeleBoxes
      *  @param  int     $max        Maximum number of records to load
      *  @return void
      */
-    function loadBox($max = 5)
+    public function loadBox($max = 5)
     {
         global $conf, $user, $langs, $db;
 
@@ -450,16 +450,16 @@ class box_activity extends ModeleBoxes
     }
 
 
-	/**
-	 *	Method to show box
-	 *
-	 *	@param	array	$head       Array with properties of box title
-	 *	@param  array	$contents   Array with properties of box lines
-	 *  @param	int		$nooutput	No print, only return string
-	 *	@return	string
-	 */
-    function showBox($head = null, $contents = null, $nooutput = 0)
+    /**
+     *  Method to show box
+     *
+     *  @param	array	$head       Array with properties of box title
+     *  @param  array	$contents   Array with properties of box lines
+     *  @param	int		$nooutput	No print, only return string
+     *  @return	string
+     */
+    public function showBox($head = null, $contents = null, $nooutput = 0)
     {
-		return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
-	}
+        return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
+    }
 }

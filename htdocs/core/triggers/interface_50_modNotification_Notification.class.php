@@ -96,7 +96,7 @@ class InterfaceNotification extends DolibarrTriggers
 	 *
 	 * @return      array       Array of events managed by notification module
 	 */
-	function getListOfManagedEvents()
+	public function getListOfManagedEvents()
 	{
 		global $conf;
 
