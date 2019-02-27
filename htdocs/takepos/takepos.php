@@ -93,7 +93,7 @@ function PrintCategories(first){
 	for (i = 0; i < 14; i++) {
 		if (typeof (categories[parseInt(i)+parseInt(first)]) == "undefined") break;
 		$("#catdesc"+i).text(categories[parseInt(i)+parseInt(first)]['label']);
-        $("#catimg"+i).attr("src","genimg/?query=cat&id="+categories[parseInt(i)+parseInt(first)]['rowid']);
+        $("#catimg"+i).attr("src","genimg/index.php?query=cat&id="+categories[parseInt(i)+parseInt(first)]['rowid']);
         $("#catdiv"+i).data("rowid",categories[parseInt(i)+parseInt(first)]['rowid']);
 		$("#catwatermark"+i).show();
 	}
@@ -123,7 +123,7 @@ function MoreCategories(moreorless){
 				continue;
 			}
 		$("#catdesc"+i).text(categories[i+(14*pagecategories)]['label']);
-        $("#catimg"+i).attr("src","genimg/?query=cat&id="+categories[i+(14*pagecategories)]['rowid']);
+        $("#catimg"+i).attr("src","genimg/index.php?query=cat&id="+categories[i+(14*pagecategories)]['rowid']);
         $("#catdiv"+i).data("rowid",categories[i+(14*pagecategories)]['rowid']);
 		$("#catwatermark"+i).show();
 	}
@@ -141,7 +141,7 @@ function LoadProducts(position, issubcat=false){
 	jQuery.each(subcategories, function(i, val) {
 		if (currentcat==val.fk_parent){
 			$("#prodesc"+ishow).text(val.label);
-			$("#proimg"+ishow).attr("src","genimg/?query=cat&id="+val.rowid);
+			$("#proimg"+ishow).attr("src","genimg/index.php?query=cat&id="+val.rowid);
 			$("#prodiv"+ishow).data("rowid",val.rowid);
 			$("#prodiv"+ishow).data("iscat",1);
 			$("#prowatermark"+ishow).show();
@@ -161,7 +161,7 @@ function LoadProducts(position, issubcat=false){
 			else if ((data[idata]['status']) == "1") {
 				//Only show products with status=1 (for sell)
 				$("#prodesc"+ishow).text(data[parseInt(idata)]['label']);
-				$("#proimg"+ishow).attr("src","genimg/?query=pro&id="+data[idata]['id']);
+				$("#proimg"+ishow).attr("src","genimg/index.php?query=pro&id="+data[idata]['id']);
 				$("#prodiv"+ishow).data("rowid",data[idata]['id']);
 				$("#prodiv"+ishow).data("iscat",0);
 				ishow++; //Next product to show after print data product
@@ -201,7 +201,7 @@ function MoreProducts(moreorless){
 			else if ((data[idata]['status']) == "1") {
 				//Only show products with status=1 (for sell)
 				$("#prodesc"+ishow).text(data[parseInt(idata)]['label']);
-				$("#proimg"+ishow).attr("src","genimg/?query=pro&id="+data[idata]['id']);
+				$("#proimg"+ishow).attr("src","genimg/index.php?query=pro&id="+data[idata]['id']);
 				$("#prodiv"+ishow).data("rowid",data[idata]['id']);
 				$("#prodiv"+ishow).data("iscat",0);
 				ishow++; //Next product to show after print data product
