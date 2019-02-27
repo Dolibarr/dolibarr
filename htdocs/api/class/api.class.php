@@ -87,7 +87,7 @@ class DolibarrApi
         );
     }*/
 
-
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
     /**
      * Clean sensible object datas
      *
@@ -96,7 +96,7 @@ class DolibarrApi
      */
     protected function _cleanObjectDatas($object)
     {
-
+        // phpcs:enable
         // Remove $db object property for object
         unset($object->db);
         unset($object->isextrafieldmanaged);
@@ -208,6 +208,7 @@ class DolibarrApi
 		return $object;
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 * Check user access to a resource
 	 *
@@ -224,7 +225,7 @@ class DolibarrApi
 	 */
     protected static function _checkAccessToResource($resource, $resource_id = 0, $dbtablename = '', $feature2 = '', $dbt_keyfield = 'fk_soc', $dbt_select = 'rowid')
     {
-
+        // phpcs:enable
 		// Features/modules to check
 		$featuresarray = array($resource);
 		if (preg_match('/&/', $resource)) {
@@ -242,6 +243,7 @@ class DolibarrApi
 		return checkUserAccessToObject(DolibarrApiAccess::$user, $featuresarray, $resource_id, $dbtablename, $feature2, $dbt_keyfield, $dbt_select);
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 * Return if a $sqlfilters parameter is valid
 	 *
@@ -250,6 +252,7 @@ class DolibarrApi
 	 */
 	protected function _checkFilters($sqlfilters)
 	{
+        // phpcs:enable
 	    //$regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
 	    //$tmp=preg_replace_all('/'.$regexstring.'/', '', $sqlfilters);
 	    $tmp=$sqlfilters;
@@ -272,6 +275,7 @@ class DolibarrApi
 	}
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 * Function to forge a SQL criteria
 	 *
