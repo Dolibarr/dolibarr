@@ -3681,8 +3681,7 @@ class Form
 
 		return $num;
 	}
-	
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+
 	/**
 	 *  Return a HTML select list of establishment
 	 *
@@ -3694,7 +3693,7 @@ class Form
 	 *  @param  string	$moreattrib         To add more attribute on select
 	 * 	@return	int							<0 if error, Num of establishment found if OK (0, 1, 2, ...)
 	 */
-	function select_establishments($selected = '', $htmlname = 'entity', $statut = 0, $filtre = '', $useempty = 0, $moreattrib = '')
+	function selectEstablishments($selected = '', $htmlname = 'entity', $statut = 0, $filtre = '', $useempty = 0, $moreattrib = '')
 	{
         // phpcs:enable
 		global $langs, $conf;
