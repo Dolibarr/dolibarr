@@ -4,6 +4,7 @@
  * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2017 Regis Houssin      	<regis.houssin@inodbox.com>
  * Copyright (C) 2006 	   Jean Heimburger    	<jean@tiaris.info>
+ * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -144,65 +145,57 @@ class Conf
 		$sql.= " ORDER BY entity";	// This is to have entity 0 first, then entity 1 that overwrite.
 
 		$resql = $db->query($sql);
-		if ($resql)
-		{
-			$i = 0;
-			$numr = $db->num_rows($resql);
-			while ($i < $numr)
+		while ($resql && $objp = $db->fetch_object($resql)) {
+			$key=$objp->name;
+			$value=$objp->value;
+			if ($key)
 			{
-				$objp = $db->fetch_object($resql);
-				$key=$objp->name;
-				$value=$objp->value;
-				if ($key)
-				{
-					//if (! defined("$key")) define("$key", $value);	// In some cases, the constant might be already forced (Example: SYSLOG_HANDLERS during install)
-					$this->global->$key=$value;
+				//if (! defined("$key")) define("$key", $value);	// In some cases, the constant might be already forced (Example: SYSLOG_HANDLERS during install)
+				$this->global->$key=$value;
 
-					if ($value && preg_match('/^MAIN_MODULE_/', $key))
+				if ($value && preg_match('/^MAIN_MODULE_/', $key))
+				{
+					// If this is constant for a new tab page activated by a module. It initializes modules_parts['tabs'].
+					if (preg_match('/^MAIN_MODULE_([0-9A-Z_]+)_TABS_/i', $key))
 					{
-						// If this is constant for a new tab page activated by a module. It initializes modules_parts['tabs'].
-						if (preg_match('/^MAIN_MODULE_([0-9A-Z_]+)_TABS_/i', $key))
-						{
-							$partname = 'tabs';
-							$params=explode(':', $value, 2);
-							if (! isset($this->modules_parts[$partname]) || ! is_array($this->modules_parts[$partname])) { $this->modules_parts[$partname] = array(); }
-							$this->modules_parts[$partname][$params[0]][]=$value;	// $value may be a string or an array
-						}
-						// If this is constant for all generic part activated by a module. It initializes
-						// modules_parts['login'], modules_parts['menus'], modules_parts['substitutions'], modules_parts['triggers'], modules_parts['tpl'],
-						// modules_parts['models'], modules_parts['theme']
-						// modules_parts['sms'],
-						// modules_parts['css'], ...
-						elseif (preg_match('/^MAIN_MODULE_([0-9A-Z_]+)_([A-Z]+)$/i', $key, $reg))
-						{
-							$modulename = strtolower($reg[1]);
-							$partname = strtolower($reg[2]);
-							if (! isset($this->modules_parts[$partname]) || ! is_array($this->modules_parts[$partname])) { $this->modules_parts[$partname] = array(); }
-							$arrValue = json_decode($value, true);
-							if (is_array($arrValue) && ! empty($arrValue)) $value = $arrValue;
-							elseif (in_array($partname, array('login','menus','substitutions','triggers','tpl'))) $value = '/'.$modulename.'/core/'.$partname.'/';
-							elseif (in_array($partname, array('models','theme'))) $value = '/'.$modulename.'/';
-							elseif (in_array($partname, array('sms'))) $value = '/'.$modulename.'/';
-							elseif ($value == 1) $value = '/'.$modulename.'/core/modules/'.$partname.'/';	// ex: partname = societe
-							$this->modules_parts[$partname] = array_merge($this->modules_parts[$partname], array($modulename => $value));	// $value may be a string or an array
-						}
-                        // If this is a module constant (must be at end)
-						elseif (preg_match('/^MAIN_MODULE_([0-9A-Z_]+)$/i', $key, $reg))
-						{
-							$modulename=strtolower($reg[1]);
-							if ($modulename == 'propale') $modulename='propal';
-							if ($modulename == 'supplierproposal') $modulename='supplier_proposal';
-							if (! isset($this->$modulename) || ! is_object($this->$modulename)) $this->$modulename=new stdClass();
-							$this->$modulename->enabled=true;
-							$this->modules[]=$modulename;              // Add this module in list of enabled modules
-						}
+						$partname = 'tabs';
+						$params=explode(':', $value, 2);
+						if (! isset($this->modules_parts[$partname]) || ! is_array($this->modules_parts[$partname])) { $this->modules_parts[$partname] = array(); }
+						$this->modules_parts[$partname][$params[0]][]=$value;	// $value may be a string or an array
+					}
+					// If this is constant for all generic part activated by a module. It initializes
+					// modules_parts['login'], modules_parts['menus'], modules_parts['substitutions'], modules_parts['triggers'], modules_parts['tpl'],
+					// modules_parts['models'], modules_parts['theme']
+					// modules_parts['sms'],
+					// modules_parts['css'], ...
+					elseif (preg_match('/^MAIN_MODULE_([0-9A-Z_]+)_([A-Z]+)$/i', $key, $reg))
+					{
+						$modulename = strtolower($reg[1]);
+						$partname = strtolower($reg[2]);
+						if (! isset($this->modules_parts[$partname]) || ! is_array($this->modules_parts[$partname])) { $this->modules_parts[$partname] = array(); }
+						$arrValue = json_decode($value, true);
+						if (is_array($arrValue) && ! empty($arrValue)) $value = $arrValue;
+						elseif (in_array($partname, array('login','menus','substitutions','triggers','tpl'))) $value = '/'.$modulename.'/core/'.$partname.'/';
+						elseif (in_array($partname, array('models','theme'))) $value = '/'.$modulename.'/';
+						elseif (in_array($partname, array('sms'))) $value = '/'.$modulename.'/';
+						elseif ($value == 1) $value = '/'.$modulename.'/core/modules/'.$partname.'/';	// ex: partname = societe
+						$this->modules_parts[$partname] = array_merge($this->modules_parts[$partname], array($modulename => $value));	// $value may be a string or an array
+					}
+                    // If this is a module constant (must be at end)
+					elseif (preg_match('/^MAIN_MODULE_([0-9A-Z_]+)$/i', $key, $reg))
+					{
+						$modulename=strtolower($reg[1]);
+						if ($modulename == 'propale') $modulename='propal';
+						if ($modulename == 'supplierproposal') $modulename='supplier_proposal';
+						if (! isset($this->$modulename) || ! is_object($this->$modulename)) $this->$modulename=new stdClass();
+						$this->$modulename->enabled=true;
+						$this->modules[]=$modulename;              // Add this module in list of enabled modules
 					}
 				}
-				$i++;
 			}
-
-		    $db->free($resql);
 		}
+
+		$db->free($resql);
 
         // Include other local consts.php files and fetch their values to the corresponding database constants.
         if (! empty($this->global->LOCAL_CONSTS_FILES)) {
