@@ -88,7 +88,11 @@ $search_all=trim(GETPOST("search_all", 'alpha'));
 $search=array();
 foreach($object->fields as $key => $val)
 {
+<<<<<<< HEAD
     if (GETPOST('search_'.$key, 'alpha')) $search[$key]=GETPOST('search_'.$key, 'alpha');
+=======
+	if (GETPOST('search_'.$key, 'alpha')) $search[$key]=GETPOST('search_'.$key, 'alpha');
+>>>>>>> upstream/develop
 }
 
 if (empty($action) && empty($id) && empty($ref)) $action='view';
@@ -119,11 +123,15 @@ if (empty($reshook))
 
     $permissiontoadd = $user->rights->bom->write;
 	$permissiontodelete = $user->rights->bom->delete || ($permissiontoadd && $object->status == 0);
-    	$backurlforlist = dol_buildpath('/bom/bom_list.php', 1);
+    $backurlforlist = dol_buildpath('/bom/bom_list.php', 1);
 	if (empty($backtopage)) {
 	    if (empty($id)) $backtopage = $backurlforlist;
 	    else $backtopage = dol_buildpath('/bom/bom_card.php', 1).($id > 0 ? $id : '__ID__');
+<<<<<<< HEAD
     }
+=======
+	}
+>>>>>>> upstream/develop
 	$triggermodname = 'BILLOFMATERIALS_BILLOFMATERIALS_MODIFY';	// Name of trigger action code to execute when we modify record
 
 	// Actions cancel, add, update, delete or clone

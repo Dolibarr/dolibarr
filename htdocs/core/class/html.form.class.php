@@ -3683,6 +3683,75 @@ class Form
 	}
 
 	/**
+	 *  Return a HTML select list of establishment
+	 *
+	 *  @param	string	$selected           Id establishment pre-selected
+	 *  @param  string	$htmlname           Name of select zone
+	 *  @param  int		$statut             Status of searched establishment (0=open, 1=closed, 2=both)
+	 *  @param  string	$filtre             To filter list
+	 *  @param  int		$useempty           1=Add an empty value in list, 2=Add an empty value in list only if there is more than 2 entries.
+	 *  @param  string	$moreattrib         To add more attribute on select
+	 * 	@return	int							<0 if error, Num of establishment found if OK (0, 1, 2, ...)
+	 */
+	function selectEstablishments($selected = '', $htmlname = 'entity', $statut = 0, $filtre = '', $useempty = 0, $moreattrib = '')
+	{
+        // phpcs:enable
+		global $langs, $conf;
+
+		$langs->load("admin");
+		$num = 0;
+
+		$sql = "SELECT rowid, name, fk_country, status, entity";
+		$sql.= " FROM ".MAIN_DB_PREFIX."establishment";
+		$sql.= " WHERE 1=1";
+		if ($statut != 2) $sql.= " AND status = '".$statut."'";
+		if ($filtre) $sql.=" AND ".$filtre;
+		$sql.= " ORDER BY name";
+
+		dol_syslog(get_class($this)."::select_establishment", LOG_DEBUG);
+		$result = $this->db->query($sql);
+		if ($result)
+		{
+			$num = $this->db->num_rows($result);
+			$i = 0;
+			if ($num)
+			{
+				print '<select id="select'.$htmlname.'" class="flat selectestablishment" name="'.$htmlname.'"'.($moreattrib?' '.$moreattrib:'').'>';
+				if ($useempty == 1 || ($useempty == 2 && $num > 1))
+				{
+					print '<option value="-1">&nbsp;</option>';
+				}
+
+				while ($i < $num)
+				{
+					$obj = $this->db->fetch_object($result);
+					if ($selected == $obj->rowid)
+					{
+						print '<option value="'.$obj->rowid.'" selected>';
+					}
+					else
+					{
+						print '<option value="'.$obj->rowid.'">';
+					}
+					print trim($obj->name);
+					if ($statut == 2 && $obj->status == 1) print ' ('.$langs->trans("Closed").')';
+					print '</option>';
+					$i++;
+				}
+				print "</select>";
+			}
+			else
+			{
+				if ($statut == 0) print '<span class="opacitymedium">'.$langs->trans("NoActiveEstablishmentDefined").'</span>';
+				else print '<span class="opacitymedium">'.$langs->trans("NoEstablishmentFound").'</span>';
+			}
+		}
+		else {
+			dol_print_error($this->db);
+		}
+	}
+
+	/**
 	 *    Display form to select bank account
 	 *
 	 *    @param	string	$page        Page
