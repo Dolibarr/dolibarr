@@ -838,6 +838,7 @@ if ($source == 'order')
 	// Debitor
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("ThirdParty");
 	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$order->thirdparty->name.'</b>';
+	print '</td></tr>'."\n";
 
 	// Object
 	$text='<b>'.$langs->trans("PaymentOrderRef", $order->ref).'</b>';
@@ -958,6 +959,7 @@ if ($source == 'invoice')
 	// Debitor
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("ThirdParty");
 	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$invoice->thirdparty->name.'</b>';
+	print '</td></tr>'."\n";
 
 	// Object
 	$text='<b>'.$langs->trans("PaymentInvoiceRef", $invoice->ref).'</b>';
@@ -1295,22 +1297,20 @@ if ($source == 'membersubscription')
 	$fulltag=dol_string_unaccent($fulltag);
 
 	// Creditor
-
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Creditor");
 	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$creditor.'</b>';
 	print '<input type="hidden" name="creditor" value="'.$creditor.'">';
 	print '</td></tr>'."\n";
 
 	// Debitor
-
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Member");
 	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>';
 	if ($member->morphy == 'mor' && ! empty($member->societe)) print $member->societe;
 	else print $member->getFullName($langs);
 	print '</b>';
+	print '</td></tr>'."\n";
 
 	// Object
-
 	$text='<b>'.$langs->trans("PaymentSubscription").'</b>';
 	if (GETPOST('desc', 'alpha')) $text='<b>'.$langs->trans(GETPOST('desc', 'alpha')).'</b>';
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Designation");
@@ -1343,7 +1343,6 @@ if ($source == 'membersubscription')
 	}
 
 	// Amount
-
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Amount");
 	if (empty($amount))
 	{
@@ -1391,7 +1390,6 @@ if ($source == 'membersubscription')
 	print '</td></tr>'."\n";
 
 	// Tag
-
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("PaymentCode");
 	print '</td><td class="CTableRow'.($var?'1':'2').'"><b style="word-break: break-all;">'.$fulltag.'</b>';
 	print '<input type="hidden" name="tag" value="'.$tag.'">';
@@ -1463,22 +1461,20 @@ if ($source == 'donation')
 	$fulltag=dol_string_unaccent($fulltag);
 
 	// Creditor
-
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Creditor");
 	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$creditor.'</b>';
 	print '<input type="hidden" name="creditor" value="'.$creditor.'">';
 	print '</td></tr>'."\n";
 
 	// Debitor
-
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("ThirdParty");
 	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>';
 	if ($don->morphy == 'mor' && ! empty($don->societe)) print $don->societe;
 	else print $don->getFullName($langs);
 	print '</b>';
+	print '</td></tr>'."\n";
 
 	// Object
-
 	$text='<b>'.$langs->trans("PaymentDonation").'</b>';
 	if (GETPOST('desc', 'alpha')) $text='<b>'.$langs->trans(GETPOST('desc', 'alpha')).'</b>';
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Designation");
@@ -1488,7 +1484,6 @@ if ($source == 'donation')
 	print '</td></tr>'."\n";
 
 	// Amount
-
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Amount");
 	if (empty($amount))
 	{
@@ -1536,7 +1531,6 @@ if ($source == 'donation')
 	print '</td></tr>'."\n";
 
 	// Tag
-
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("PaymentCode");
 	print '</td><td class="CTableRow'.($var?'1':'2').'"><b style="word-break: break-all;">'.$fulltag.'</b>';
 	print '<input type="hidden" name="tag" value="'.$tag.'">';
