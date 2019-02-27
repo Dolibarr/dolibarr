@@ -22,7 +22,7 @@ if (! empty($extrafieldsobjectkey))	// $extrafieldsobject is the $object->table_
 				$sortonfield = "ef.".$key;
 				if (! empty($extrafields->attributes[$extrafieldsobjectkey]['computed'][$key])) $sortonfield='';
 				if ($extrafields->attributes[$extrafieldsobjectkey]['type'][$key] == 'separate') print '<th class="liste_titre thseparator"></th>';
-				else print getTitleFieldOfList($langs->trans($extralabels[$key]), 0, $_SERVER["PHP_SELF"], $sortonfield, "", $param, ($align?'align="'.$align.'"':''), $sortfield, $sortorder)."\n";
+				else print getTitleFieldOfList($langs->trans($extralabels[$key]), 0, $_SERVER["PHP_SELF"], $sortonfield, "", $param, ($align?'align="'.$align.'" data-titlekey="'.$key.'"':'data-titlekey="'.$key.'"'), $sortfield, $sortorder)."\n";
 			}
 		}
 	}

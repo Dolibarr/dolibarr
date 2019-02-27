@@ -62,7 +62,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 dol_include_once('/bom/class/bom.class.php');
 
 // Load translation files required by the page
-$langs->loadLangs(array("bom@bom","other"));
+$langs->loadLangs(array("bom@bom", "other"));
 
 $action     = GETPOST('action', 'aZ09')?GETPOST('action', 'aZ09'):'view';				// The action 'add', 'create', 'edit', 'update', 'view', ...
 $massaction = GETPOST('massaction', 'alpha');											// The bulk action (combo box choice into lists)
@@ -333,7 +333,7 @@ $arrayofmassactions =  array(
 	//'builddoc'=>$langs->trans("PDFMerge"),
 );
 if ($user->rights->bom->delete) $arrayofmassactions['predelete']=$langs->trans("Delete");
-if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
+if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete'))) $arrayofmassactions=array();
 $massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 
 print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
@@ -482,9 +482,9 @@ while ($i < min($num, $limit))
     print '<tr class="oddeven">';
     foreach($object->fields as $key => $val)
     {
-        $cssforfield='';
-        if (in_array($val['type'], array('date','datetime','timestamp'))) $cssforfield.=($cssforfield?' ':'').'center';
-        elseif ($key == 'status') $cssforfield.=($cssforfield?' ':'').'center';
+	    $cssforfield='';
+	    if (in_array($val['type'], array('date', 'datetime', 'timestamp'))) $cssforfield.=($cssforfield?' ':'').'center';
+	    elseif ($key == 'status') $cssforfield.=($cssforfield?' ':'').'center';
 
         if (in_array($val['type'], array('timestamp'))) $cssforfield.=($cssforfield?' ':'').'nowrap';
         elseif ($key == 'ref') $cssforfield.=($cssforfield?' ':'').'nowrap';

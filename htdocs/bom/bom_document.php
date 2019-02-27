@@ -49,7 +49,7 @@ $langs->loadLangs(array("bom@bom","companies","other","mails"));
 
 
 $action=GETPOST('action', 'aZ09');
-$confirm=GETPOST('confirm');
+$confirm=GETPOST('confirm', 'alpha');
 $id=(GETPOST('socid', 'int') ? GETPOST('socid', 'int') : GETPOST('id', 'int'));
 $ref = GETPOST('ref', 'alpha');
 
@@ -74,7 +74,7 @@ if (! $sortfield) $sortfield="name";
 $object=new BillOfMaterials($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction=$conf->bom->dir_output . '/temp/massgeneration/'.$user->id;
-$hookmanager->initHooks(array('bomdocument','globalcard'));     // Note that conf->hooks_modules contains array
+$hookmanager->initHooks(array('bomdocument', 'globalcard'));     // Note that conf->hooks_modules contains array
 // Fetch optionals attributes and labels
 $extralabels = $extrafields->fetch_name_optionals_label('bom');
 

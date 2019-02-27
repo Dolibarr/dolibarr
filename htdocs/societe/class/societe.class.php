@@ -203,6 +203,11 @@ class Societe extends CommonObject
 	 * @var string
 	 */
 	public $facebook;
+    /**
+     * LinkedIn username
+     * @var string
+     */
+    public $linkedin;
 	/**
 	 * Webpage
 	 * @var string
@@ -848,6 +853,7 @@ class Societe extends CommonObject
 		$this->skype		= trim($this->skype);
 		$this->twitter		= trim($this->twitter);
 		$this->facebook		= trim($this->facebook);
+        $this->linkedin		= trim($this->linkedin);
 		$this->url			= $this->url?clean_url($this->url, 0):'';
 		$this->note_private = trim($this->note_private);
 		$this->note_public  = trim($this->note_public);
@@ -991,6 +997,7 @@ class Societe extends CommonObject
 			$sql .= ",skype = ".(! empty($this->skype)?"'".$this->db->escape($this->skype)."'":"null");
 			$sql .= ",twitter = ".(! empty($this->twitter)?"'".$this->db->escape($this->twitter)."'":"null");
 			$sql .= ",facebook = ".(! empty($this->facebook)?"'".$this->db->escape($this->facebook)."'":"null");
+			$sql .= ",linkedin = ".(! empty($this->linkedin)?"'".$this->db->escape($this->linkedin)."'":"null");
 			$sql .= ",url = ".(! empty($this->url)?"'".$this->db->escape($this->url)."'":"null");
 
 			$sql .= ",parent = " . ($this->parent > 0 ? $this->parent : "null");
@@ -1132,6 +1139,7 @@ class Societe extends CommonObject
 							$lmember->skype=$this->skype;
 							$lmember->twitter=$this->twitter;
 							$lmember->facebook=$this->facebook;
+							$lmember->linkedin=$this->linkedin;
 							$lmember->phone=$this->phone;
 
 							$result=$lmember->update($user, 0, 1, 1, 1);	// Use nosync to 1 to avoid cyclic updates
@@ -1235,7 +1243,7 @@ class Societe extends CommonObject
 		$sql .= ', s.status';
 		$sql .= ', s.price_level';
 		$sql .= ', s.tms as date_modification, s.fk_user_creat, s.fk_user_modif';
-		$sql .= ', s.phone, s.fax, s.email, s.skype, s.twitter, s.facebook, s.url, s.zip, s.town, s.note_private, s.note_public, s.model_pdf, s.client, s.fournisseur';
+		$sql .= ', s.phone, s.fax, s.email, s.skype, s.twitter, s.facebook, s.linkedin, s.url, s.zip, s.town, s.note_private, s.note_public, s.model_pdf, s.client, s.fournisseur';
 		$sql .= ', s.siren as idprof1, s.siret as idprof2, s.ape as idprof3, s.idprof4, s.idprof5, s.idprof6';
 		$sql .= ', s.capital, s.tva_intra';
 		$sql .= ', s.fk_typent as typent_id';
@@ -1332,6 +1340,7 @@ class Societe extends CommonObject
 				$this->skype = $obj->skype;
 				$this->twitter = $obj->twitter;
 				$this->facebook = $obj->facebook;
+				$this->linkedin = $obj->linkedin;
 				$this->url = $obj->url;
 				$this->phone = $obj->phone;
 				$this->fax = $obj->fax;
@@ -3337,6 +3346,7 @@ class Societe extends CommonObject
 		$this->skype=$member->skype;
 		$this->twitter=$member->twitter;
 		$this->facebook=$member->facebook;
+		$this->linkedin=$member->linkedin;
 
 		$this->client = 1;				// A member is a customer by default
 		$this->code_client = ($customercode?$customercode:-1);
@@ -3480,6 +3490,7 @@ class Societe extends CommonObject
 		$this->skype='tom.hanson';
 		$this->twitter='tomhanson';
 		$this->facebook='tomhanson';
+		$this->linkedin='tomhanson';
 		$this->url='http://www.specimen.com';
 
 		$this->phone='0909090901';

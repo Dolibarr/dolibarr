@@ -117,8 +117,8 @@ function bomPrepareHead($object)
     //); // to add new tab
     //$this->tabs = array(
     //	'entity:-tabname:Title:@bom:/bom/mypage.php?id=__ID__'
-        //); // to remove a tab
-        complete_head_from_modules($conf, $langs, $object, $head, $h, 'bom@bom');
+    //); // to remove a tab
+    complete_head_from_modules($conf, $langs, $object, $head, $h, 'bom@bom');
 
-        return $head;
+    return $head;
 }

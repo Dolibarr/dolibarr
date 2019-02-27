@@ -78,7 +78,7 @@ $backtopage = GETPOST('backtopage', 'alpha');
 $object=new BillOfMaterials($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction=$conf->bom->dir_output . '/temp/massgeneration/'.$user->id;
-$hookmanager->initHooks(array('bomcard','globalcard'));     // Note that conf->hooks_modules contains array
+$hookmanager->initHooks(array('bomcard', 'globalcard'));     // Note that conf->hooks_modules contains array
 // Fetch optionals attributes and labels
 $extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
 $search_array_options=$extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
@@ -88,7 +88,7 @@ $search_all=trim(GETPOST("search_all", 'alpha'));
 $search=array();
 foreach($object->fields as $key => $val)
 {
-	if (GETPOST('search_'.$key, 'alpha')) $search[$key]=GETPOST('search_'.$key, 'alpha');
+    if (GETPOST('search_'.$key, 'alpha')) $search[$key]=GETPOST('search_'.$key, 'alpha');
 }
 
 if (empty($action) && empty($id) && empty($ref)) $action='view';

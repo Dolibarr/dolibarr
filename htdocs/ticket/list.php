@@ -82,7 +82,7 @@ $search_array_options=$extrafields->getOptionalsFromPost($object->table_element,
 if (! $sortfield) $sortfield="t.".key($object->fields);   // Set here default search field. By default 1st field in definition.
 if (! $sortorder) $sortorder="ASC";
 
-if (GETPOST('search_fk_status','alpha') == 'non_closed') $_GET['search_fk_statut'][]='openall';     // For backward compatibility
+if (GETPOST('search_fk_status', 'alpha') == 'non_closed') $_GET['search_fk_statut'][]='openall';     // For backward compatibility
 
 // Initialize array of search criterias
 $search_all=trim(GETPOST("search_all", 'alpha'));

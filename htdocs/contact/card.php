@@ -189,6 +189,7 @@ if (empty($reshook))
         $object->skype			= GETPOST("skype", 'alpha');
         $object->twitter		= GETPOST("twitter", 'alpha');
         $object->facebook		= GETPOST("facebook", 'alpha');
+        $object->linkedin		= GETPOST("linkedin", 'alpha');
         $object->email			= GETPOST("email", 'alpha');
         $object->phone_pro		= GETPOST("phone_pro", 'alpha');
         $object->phone_perso	= GETPOST("phone_perso", 'alpha');
@@ -362,6 +363,7 @@ if (empty($reshook))
             $object->skype			= GETPOST("skype", 'alpha');
             $object->twitter		= GETPOST("twitter", 'alpha');
             $object->facebook		= GETPOST("facebook", 'alpha');
+            $object->linkedin		= GETPOST("linkedin", 'alpha');
             $object->phone_pro		= GETPOST("phone_pro", 'alpha');
             $object->phone_perso	= GETPOST("phone_perso", 'alpha');
             $object->phone_mobile	= GETPOST("phone_mobile", 'alpha');
@@ -698,6 +700,12 @@ else
             		print '<tr><td><label for="facebook">'.$form->editfieldkey('Facebook', 'facebook', '', $object, 0).'</label></td>';
             		print '<td colspan="3"><input type="text" name="facebook" id="facebook" class="minwidth100" maxlength="80" value="'.dol_escape_htmltag(GETPOSTISSET("facebook")?GETPOST("facebook", 'alpha'):$object->facebook).'"></td></tr>';
             	}
+                // LinkedIn
+                if (! empty($conf->global->SOCIALNETWORKS_LINKEDIN))
+                {
+                    print '<tr><td><label for="linkedin">'.$form->editfieldkey('LinkedIn', 'linkedin', '', $object, 0).'</label></td>';
+                    print '<td colspan="3"><input type="text" name="linkedin" id="linkedin" class="minwidth100" maxlength="80" value="'.dol_escape_htmltag(GETPOSTISSET("linkedin")?GETPOST("linkedin", 'alpha'):$object->linkedin).'"></td></tr>';
+                }
             }
 
             // Visibility
@@ -979,11 +987,17 @@ else
             		print '<td><input type="text" name="twitter" id="twitter" class="minwidth100" maxlength="80" value="'.dol_escape_htmltag(GETPOSTISSET("twitter")?GETPOST("twitter", 'alpha'):$object->twitter).'"></td></tr>';
             	}
             	// Facebook
-            	if (! empty($conf->global->SOCIALNETWORKS_FACEBOOK))
-            	{
-            		print '<tr><td><label for="facebook">'.$form->editfieldkey('Facebook', 'facebook', '', $object, 0).'</label></td>';
-            		print '<td><input type="text" name="facebook" id="facebook" class="minwidth100" maxlength="80" value="'.dol_escape_htmltag(GETPOST("facebook")?GETPOST("facebook", 'alpha'):$object->facebook).'"></td></tr>';
-            	}
+                if (! empty($conf->global->SOCIALNETWORKS_FACEBOOK))
+                {
+                    print '<tr><td><label for="facebook">'.$form->editfieldkey('Facebook', 'facebook', '', $object, 0).'</label></td>';
+                    print '<td><input type="text" name="facebook" id="facebook" class="minwidth100" maxlength="80" value="'.dol_escape_htmltag(GETPOST("facebook")?GETPOST("facebook", 'alpha'):$object->facebook).'"></td></tr>';
+                }
+                // LinkedIn
+                if (! empty($conf->global->SOCIALNETWORKS_LINKEDIN))
+                {
+                    print '<tr><td><label for="linkedin">'.$form->editfieldkey('LinkedIn', 'linkedin', '', $object, 0).'</label></td>';
+                    print '<td><input type="text" name="linkedin" id="linkedin" class="minwidth100" maxlength="80" value="'.dol_escape_htmltag(GETPOST("linkedin")?GETPOST("linkedin", 'alpha'):$object->linkedin).'"></td></tr>';
+                }
             }
 
             // Visibility

@@ -59,7 +59,7 @@ class modBom extends DolibarrModules
 		//$this->familyinfo = array('myownfamily' => array('position' => '01', 'label' => $langs->trans("MyOwnFamily")));
 
 		// Module label (no space allowed), used if translation string 'ModuleBomName' not found (Bom is name of module).
-		$this->name = preg_replace('/^mod/i','',get_class($this));
+		$this->name = preg_replace('/^mod/i', '', get_class($this));
 		// Module description, used if translation string 'ModuleBomDesc' not found (Bom is name of module).
 		$this->description = "Bill of Materials (BOM) definitions for Manufacturing Resource Planning";
 		// Used only if file README.md and README-LL.md not found.

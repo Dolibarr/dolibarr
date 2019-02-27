@@ -672,6 +672,8 @@ abstract class CommonObject
 			$outdone++;
 			if ($this->facebook) $out.=dol_print_socialnetworks($this->facebook, $this->id, $object->id, 'facebook');
 			$outdone++;
+			if ($this->linkedin) $out.=dol_print_socialnetworks($this->linkedin, $this->id, $object->id, 'linkedin');
+			$outdone++;
 		}
 		$out.='</div>';
 

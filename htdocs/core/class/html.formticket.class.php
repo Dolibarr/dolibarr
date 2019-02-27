@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) - 2013-2015 Jean-François FERRY    <hello@librethic.io>
- * Copyright (C) 2016        Christophe Battarel <christophe@altairis.fr>
+/* Copyright (C) 2013-2015  Jean-François FERRY     <hello@librethic.io>
+ * Copyright (C) 2016       Christophe Battarel     <christophe@altairis.fr>
+ * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -291,17 +292,17 @@ class FormTicket
 
         // Type
         print '<tr><td class="titlefield"><span class="fieldrequired"><label for="selecttype_code">' . $langs->trans("TicketTypeRequest") . '</span></label></td><td>';
-        print $this->selectTypesTickets((GETPOST('type_code') ? GETPOST('type_code') : $this->type_code), 'type_code', '', '2');
+        $this->selectTypesTickets((GETPOST('type_code') ? GETPOST('type_code') : $this->type_code), 'type_code', '', '2');
         print '</td></tr>';
 
         // Severity
         print '<tr><td><span class="fieldrequired"><label for="selectseverity_code">' . $langs->trans("TicketSeverity") . '</span></label></td><td>';
-        print $this->selectSeveritiesTickets((GETPOST('severity_code') ? GETPOST('severity_code') : $this->severity_code), 'severity_code', '', '2');
+        $this->selectSeveritiesTickets((GETPOST('severity_code') ? GETPOST('severity_code') : $this->severity_code), 'severity_code', '', '2');
         print '</td></tr>';
 
         // Group
         print '<tr><td><span class="fieldrequired"><label for="selectcategory_code">' . $langs->trans("TicketGroup") . '</span></label></td><td>';
-        print $this->selectGroupTickets((GETPOST('category_code') ? GETPOST('category_code') : $this->category_code), 'category_code', '', '2');
+        $this->selectGroupTickets((GETPOST('category_code') ? GETPOST('category_code') : $this->category_code), 'category_code', '', '2');
         print '</td></tr>';
 
         // Notify thirdparty at creation

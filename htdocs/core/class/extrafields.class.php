@@ -148,7 +148,7 @@ class ExtraFields
 	public $errors = array();
 
     /**
-	 * @var integer DB Error number
+	 * @var string DB Error number
 	 */
 	public $errno;
 
