@@ -1011,15 +1011,6 @@ if ($source == 'invoice')
 	print '<input type="hidden" name="fulltag" value="'.$fulltag.'">';
 	print '</td></tr>'."\n";
 
-	// Add download link
-	if ($download > 0)
-	{
-		print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Document");
-		print '</td><td class="CTableRow'.($var?'1':'2').'">';
-		print $invoice->getDirectExternalLink(1);
-		print '</td></tr>'."\n";
-	}
-
 	// Shipping address
 	$shipToName=$invoice->thirdparty->name;
 	$shipToStreet=$invoice->thirdparty->address;
