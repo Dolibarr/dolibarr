@@ -176,7 +176,13 @@ class FormFile
 			if ($savingdocmask)
             {
             	//add a global variable for disable the auto renaming on upload
-                if($conf->global->MAIN_DOC_UPLOAD_NOT_RENAME_BY_DEFAULT==1){$rename='';}else{$rename='checked';}
+                if (! empty($conf->global->MAIN_DOC_UPLOAD_NOT_RENAME_BY_DEFAULT))
+                {
+                    $rename='';
+                }
+                else {
+                    $rename='checked';
+                }
                 
                 $out .= '<tr>';
    	            if (! empty($options)) $out .= '<td>'.$options.'</td>';
