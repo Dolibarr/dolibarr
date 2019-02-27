@@ -96,6 +96,7 @@ MenuTaxAccounts=Tax accounts
 MenuExpenseReportAccounts=Expense report accounts
 MenuLoanAccounts=Loan accounts
 MenuProductsAccounts=Product accounts
+MenuClosureAccounts=Closure accounts
 ProductsBinding=Products accounts
 Ventilation=Binding to accounts
 Binding=Binding to accounts
@@ -150,7 +151,12 @@ ACCOUNTING_EXPENSEREPORT_JOURNAL=Expense report journal
 ACCOUNTING_SOCIAL_JOURNAL=Social journal
 ACCOUNTING_HAS_NEW_JOURNAL=Has new Journal
 
+ACCOUNTING_RESULT_PROFIT=Result accounting account (Profit)
+ACCOUNTING_RESULT_LOSS=Result accounting account (Loss)
+ACCOUNTING_CLOSURE_DEFAULT_JOURNAL=Journal of closure
+
 ACCOUNTING_ACCOUNT_TRANSFER_CASH=Accounting account of transitional bank transfer 
+
 ACCOUNTING_ACCOUNT_SUSPENSE=Accounting account of wait
 DONATION_ACCOUNTINGACCOUNT=Accounting account to register donations
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Accounting account to register subscriptions
@@ -288,6 +294,7 @@ ChartofaccountsId=Chart of accounts Id
 InitAccountancy=Init accountancy
 InitAccountancyDesc=This page can be used to initialize an accounting account on products and services that does not have accounting account defined for sales and purchases.
 DefaultBindingDesc=This page can be used to set a default account to use to link transactions record about payment salaries, donation, taxes and vat when no specific accounting account were already set.
+DefaultClosureDesc=This page can be used to set parameters to use to enclose a balance sheet.
 Options=Options
 OptionModeProductSell=Mode sales
 OptionModeProductBuy=Mode purchases
