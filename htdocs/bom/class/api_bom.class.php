@@ -85,7 +85,7 @@ class BillOfMaterialsApi extends DolibarrApi
             throw new RestException(404, 'BillOfMaterials not found');
         }
 
-		if( ! DolibarrApi::_checkAccessToResource('bom',$this->bom->id)) {
+		if( ! DolibarrApi::_checkAccessToResource('bom', $this->bom->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
@@ -233,7 +233,7 @@ class BillOfMaterialsApi extends DolibarrApi
             throw new RestException(404, 'BillOfMaterials not found');
         }
 
-		if( ! DolibarrApi::_checkAccessToResource('bom',$this->bom->id)) {
+		if( ! DolibarrApi::_checkAccessToResource('bom', $this->bom->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
@@ -265,7 +265,7 @@ class BillOfMaterialsApi extends DolibarrApi
             throw new RestException(404, 'BillOfMaterials not found');
         }
 
-        if( ! DolibarrApi::_checkAccessToResource('bom',$this->bom->id)) {
+        if( ! DolibarrApi::_checkAccessToResource('bom', $this->bom->id)) {
             throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
         }
 

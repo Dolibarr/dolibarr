@@ -27,10 +27,10 @@ if (! defined('NOREQUIREAJAX'))		define('NOREQUIREAJAX', '1');
 
 require '../../main.inc.php';	// Load $user and permissions
 
-$id= GETPOST('id');
-$w= GETPOST('w');
-$h= GETPOST('h');
-$query= GETPOST('query');
+$id = GETPOST('id', 'int');
+$w = GETPOST('w', 'int');
+$h = GETPOST('h', 'int');
+$query= GETPOST('query', 'alpha');
 
 
 
@@ -48,11 +48,11 @@ if ($query=="cat")
 
 	$object = new Categorie($db);
 	$result = $object->fetch($id);
-	
+
 	$upload_dir = $conf->categorie->multidir_output[$object->entity];
 	$pdir = get_exdir($object->id, 2, 0, 0, $object, 'category') . $object->id ."/photos/";
 	$dir = $upload_dir.'/'.$pdir;
-		
+
 	foreach ($object->liste_photos($dir) as $key => $obj)
 		{
 			if ($obj['photo_vignette'])
@@ -63,12 +63,11 @@ if ($query=="cat")
 			{
 				$filename=$obj['photo'];
 			}
-			$viewfilename=$obj['photo'];
 			$file=DOL_URL_ROOT.'/viewimage.php?modulepart=category&entity='.$object->entity.'&file='.urlencode($pdir.$filename);
 			header('Location: '.$file);
 			exit;
 		}
-	header('Location: ../../public/theme/common/nophoto.png'); 
+	header('Location: ../../public/theme/common/nophoto.png');
 }
 elseif ($query=="pro")
 {
@@ -77,15 +76,17 @@ elseif ($query=="pro")
 	$objProd = new Product($db);
 	$objProd->fetch($id);
 	$image=$objProd->show_photos('product', $conf->product->multidir_output[$entity], 'small', 1);
-	
-	preg_match( '@src="([^"]+)"@' , $image, $match );
+
+	preg_match('@src="([^"]+)"@', $image, $match);
 	$file = array_pop($match);
-	if ($file=="") header('Location: ../../public/theme/common/nophoto.png'); 
+	if ($file=="") header('Location: ../../public/theme/common/nophoto.png');
 	else header('Location: '.$file);
-	
+
 }
 else
 {
+    // TODO We don't need this. Size of image must be defined on HTML page, image must NOT be resize when downloaded.
+
 	// The file
 	$filename = $query.".jpg";
 
