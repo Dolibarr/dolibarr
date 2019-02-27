@@ -194,7 +194,7 @@ if ($action == 'create')
 	print '<tr>';
 	print '<td>'.$form->editfieldkey('Parent', 'entity', '', $object, 0, 'string', '', 1).'</td>';
 	print '<td class="maxwidthonsmartphone">';
-	print $form->select_establishments(GETPOST('entity', 'int')>0?GETPOST('entity', 'int'):$conf->entity, 'entity', 1);
+	print $form->selectEstablishments(GETPOST('entity', 'int')>0?GETPOST('entity', 'int'):$conf->entity, 'entity', 1);
 	print '</td>';
 	print '</tr>';
 
@@ -295,7 +295,7 @@ if (($id || $ref) && $action == 'edit')
 			// Parent
             print '<tr><td>'.$form->editfieldkey('Parent', 'entity', '', $object, 0, 'string', '', 1).'</td>';
 			print '<td class="maxwidthonsmartphone">';
-			print $form->select_establishments($object->entity>0?$object->entity:$conf->entity, 'entity', 1);
+			print $form->selectEstablishments($object->entity>0?$object->entity:$conf->entity, 'entity', 1);
             print '</td></tr>';
 
 			// Address
