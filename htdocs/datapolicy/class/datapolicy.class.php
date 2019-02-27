@@ -255,9 +255,11 @@ Class DataPolicy
 
         $actiontypecode = 'AC_EMAIL';
         $actionmsg = $langs->transnoentities('MailSentBy') . ' ' . $from . ' ' . $langs->transnoentities('To') . ' ' . $sendto;
-        if ($message) {
-            if ($sendtocc) {
-                $actionmsg .= dol_concatdesc($actionmsg, $langs->transnoentities('Bcc') . ": " . $sendtocc);
+        if ($message)
+        {
+            if ($sendtocc)
+            {
+                 $actionmsg .= dol_concatdesc($actionmsg, $langs->transnoentities('Bcc') . ": " . $sendtocc);
             }
             $actionmsg .= dol_concatdesc($actionmsg, $langs->transnoentities('MailTopic') . ": " . $subject);
             $actionmsg .= dol_concatdesc($actionmsg, $langs->transnoentities('TextUsedInTheMessageBody') . ":");

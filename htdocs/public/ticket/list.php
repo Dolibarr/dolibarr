@@ -471,7 +471,7 @@ if ($action == "view_ticketlist")
 
                 if (!empty($arrayfields['category.code']['checked'])) {
                     print '<td class="liste_titre">';
-                    $formTicket->selectAnalyticCodesTickets($search_category, 'search_category', '', 2, 1, 1);
+                    $formTicket->selectGroupTickets($search_category, 'search_category', '', 2, 1, 1);
                     print '</td>';
                 }
 

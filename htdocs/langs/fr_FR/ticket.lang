@@ -27,9 +27,9 @@ Permission56003=Supprimer tickets
 Permission56004=Gérer les tickets
 Permission56005=Voir les tickets de tous les tiers (sauf pour les utilisateurs externes, toujours limité au tiers dont ils dépendent)
 
-TicketDictType=Type de ticket
-TicketDictCategory=Catégories de tickets
-TicketDictSeverity=Sévérité des tickets
+TicketDictType=Ticket - Types
+TicketDictCategory=Ticket - Groupes
+TicketDictSeverity=Ticket - Sévérités
 TicketTypeShortBUGSOFT=Dysfonctionnement logiciel
 TicketTypeShortBUGHARD=Dysfonctionnement matériel
 TicketTypeShortCOM=Question commerciale
