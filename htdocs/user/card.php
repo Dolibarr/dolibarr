@@ -387,8 +387,11 @@ if (empty($reshook)) {
 				$dateemploymentend = dol_mktime(0, 0, 0, GETPOST('dateemploymentendmonth', 'int'), GETPOST('dateemploymentendday', 'int'), GETPOST('dateemploymentendyear', 'int'));
 				$object->dateemploymentend = $dateemploymentend;
 				
-				$object->fk_warehouse = GETPOST('fk_warehouse', 'int');
-
+                if (! empty($conf->stock->enabled))
+                {
+				    $object->fk_warehouse = GETPOST('fk_warehouse', 'int');
+                }
+                
 				if (! empty($conf->multicompany->enabled))
 				{
 					if (! empty($_POST["superadmin"]))
