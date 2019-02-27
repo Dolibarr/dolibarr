@@ -179,7 +179,8 @@ class mailing_xinputfile extends MailingTargets
 					        {
 					        	$i++;
 					        	$langs->load("errors");
-					        	$this->error = $langs->trans("ErrorFoundBadEmailInFile",$i,$cpt,$email);
+							$msg = $langs->trans("ErrorFoundBadEmailInFile",$i,$cpt,$email);
+					        	if(!empty($msg)) $this->error = $msg;
 					        }
 				        }
 				    }
