@@ -621,7 +621,7 @@ class Contrat extends CommonObject
 		$sql.= " ref_ext,";
 		$sql.= " fk_user_mise_en_service, date_contrat as datecontrat,";
 		$sql.= " fk_user_author, fin_validite, date_cloture,";
-		$sql.= " fk_projet,";
+		$sql.= " fk_projet as fk_project,";
 		$sql.= " fk_commercial_signature, fk_commercial_suivi,";
 		$sql.= " note_private, note_public, model_pdf, extraparams";
 		$sql.= " FROM ".MAIN_DB_PREFIX."contrat";
@@ -672,8 +672,8 @@ class Contrat extends CommonObject
 				$this->note_public				= $obj->note_public;
 				$this->modelpdf					= $obj->model_pdf;
 
-				$this->fk_projet				= $obj->fk_projet; // deprecated
-				$this->fk_project				= $obj->fk_projet;
+				$this->fk_projet				= $obj->fk_project; // deprecated
+				$this->fk_project				= $obj->fk_project;
 
 				$this->socid					= $obj->fk_soc;
 				$this->fk_soc					= $obj->fk_soc;
