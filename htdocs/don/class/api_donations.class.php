@@ -72,7 +72,7 @@ class Donations extends DolibarrApi
             throw new RestException(404, 'Donation not found');
         }
 
-		if( ! DolibarrApi::_checkAccessToResource('donation', $this->don->id)) {
+		if( ! DolibarrApi::_checkAccessToResource('don', $this->don->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
