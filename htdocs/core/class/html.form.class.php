@@ -2266,7 +2266,7 @@ class Form
 							$objp->remise_percent = $objp2->remise_percent;
 							$objp->remise = $objp2->remise;
 
-							$this->constructProductListOption($objp, $opt, $optJson, 0, $selected, $hidepriceinlabel);
+							$this->constructProductListOption($objp, $opt, $optJson, 0, $selected, $hidepriceinlabel, $filterkey);
 
 							$j++;
 
@@ -2293,7 +2293,7 @@ class Form
 							$objp->price_ttc = price2num($objp->price_ttc, 'MU');
 						}
 					}
-					$this->constructProductListOption($objp, $opt, $optJson, $price_level, $selected, $hidepriceinlabel);
+					$this->constructProductListOption($objp, $opt, $optJson, $price_level, $selected, $hidepriceinlabel, $filterkey);
 					// Add new entry
 					// "key" value of json key array is used by jQuery automatically as selected value
 					// "label" value of json key array is used by jQuery automatically as text for combo box
@@ -2318,7 +2318,8 @@ class Form
 	}
 
 	/**
-	 * constructProductListOption
+	 * constructProductListOption.
+	 * This define value for &$opt and &$optJson.
 	 *
 	 * @param 	resultset	$objp			    Resultset of fetch
 	 * @param 	string		$opt			    Option (var used for returned value in string option format)
@@ -2326,11 +2327,12 @@ class Form
 	 * @param 	int			$price_level	    Price level
 	 * @param 	string		$selected		    Preselected value
 	 * @param   int         $hidepriceinlabel   Hide price in label
+	 * @param   string      $filterkey          Filter key to highlight
 	 * @return	void
 	 */
-	private function constructProductListOption(&$objp, &$opt, &$optJson, $price_level, $selected, $hidepriceinlabel = 0)
+	private function constructProductListOption(&$objp, &$opt, &$optJson, $price_level, $selected, $hidepriceinlabel = 0, $filterkey = '')
 	{
-		global $langs,$conf,$user,$db;
+		global $langs, $conf, $user, $db;
 
 		$outkey='';
 		$outval='';
@@ -2368,7 +2370,7 @@ class Form
 		{
 			$opt.= ' pbq="'.$objp->price_by_qty_rowid.'" data-pbq="'.$objp->price_by_qty_rowid.'" data-pbqqty="'.$objp->price_by_qty_quantity.'" data-pbqpercent="'.$objp->price_by_qty_remise_percent.'"';
 		}
-		if (! empty($conf->stock->enabled) && $objp->fk_product_type == 0 && isset($objp->stock))
+		if (! empty($conf->stock->enabled) && isset($objp->stock) && ($objp->fk_product_type == Product::TYPE_PRODUCT || ! empty($conf->global->STOCK_SUPPORTS_SERVICES)))
 		{
 			if ($objp->stock > 0) $opt.= ' class="product_line_stock_ok"';
 			elseif ($objp->stock <= 0) $opt.= ' class="product_line_stock_too_low"';
@@ -2509,14 +2511,38 @@ class Form
 			$outtva_tx=$objp->tva_tx;
 		}
 
-		if (! empty($conf->stock->enabled) && isset($objp->stock) && $objp->fk_product_type == 0)
+		if (! empty($conf->stock->enabled) && isset($objp->stock) && ($objp->fk_product_type == Product::TYPE_PRODUCT || ! empty($conf->global->STOCK_SUPPORTS_SERVICES)))
 		{
 			$opt.= ' - '.$langs->trans("Stock").':'.$objp->stock;
 
 			if ($objp->stock > 0) {
-				$outval.= ' - <span class="product_line_stock_ok">'.$langs->transnoentities("Stock").':'.$objp->stock.'</span>';
+				$outval.= ' - <span class="product_line_stock_ok">';
 			}elseif ($objp->stock <= 0) {
-				$outval.= ' - <span class="product_line_stock_too_low">'.$langs->transnoentities("Stock").':'.$objp->stock.'</span>';
+				$outval.= ' - <span class="product_line_stock_too_low">';
+			}
+			$outval.= $langs->transnoentities("Stock").':'.$objp->stock;
+			$outval.= '</span>';
+			if (! empty($conf->global->STOCK_SHOW_VIRTUAL_STOCK_IN_PRODUCTS_COMBO))  // Warning, this option may slow down combo list generation
+			{
+			    $langs->load("stocks");
+
+			    $tmpproduct=new Product($this->db);
+			    $tmpproduct->fetch($objp->rowid);
+			    $tmpproduct->load_virtual_stock();
+			    $virtualstock = $tmpproduct->stock_theorique;
+
+			    $opt.= ' - '.$langs->trans("VirtualStock").':'.$virtualstock;
+
+			    $outval.=' - '.$langs->transnoentities("VirtualStock").':';
+			    if ($virtualstock > 0) {
+			        $outval.= ' - <span class="product_line_stock_ok">';
+			    }elseif ($virtualstock <= 0) {
+			        $outval.= ' - <span class="product_line_stock_too_low">';
+			    }
+			    $outval.=$virtualstock;
+			    $outval.='</span>';
+
+			    unset($tmpproduct);
 			}
 		}
 
@@ -4729,7 +4755,7 @@ class Form
 
 		$out='';
 		$out.= '<select class="flat" name="'.$htmlname.'" id="'.$htmlname.'">';
-		if ($useempty) $out .= '<option value=""></option>';
+		if ($useempty) $out .= '<option value="">&nbsp;</option>';
 		// If company current currency not in table, we add it into list. Should always be available.
 		if (! in_array($conf->currency, $TCurrency))
 		{
@@ -6141,7 +6167,6 @@ class Form
 		}
 
 		// Try also magic suggest
-
 		$out .= '<select id="'.$htmlname.'" class="multiselect'.($morecss?' '.$morecss:'').'" multiple name="'.$htmlname.'[]"'.($moreattrib?' '.$moreattrib:'').($width?' style="width: '.(preg_match('/%/', $width)?$width:$width.'px').'"':'').'>'."\n";
 		if (is_array($array) && ! empty($array))
 		{
@@ -6152,7 +6177,7 @@ class Form
 				foreach ($array as $key => $value)
 				{
 					$out.= '<option value="'.$key.'"';
-					if (is_array($selected) && ! empty($selected) && in_array($key, $selected) && !empty($key))
+                    if (is_array($selected) && ! empty($selected) && in_array((string) $key, $selected) && ((string) $key != ''))
 					{
 						$out.= ' selected';
 					}

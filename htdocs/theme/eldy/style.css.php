@@ -949,6 +949,7 @@ select.selectarrowonleft option {
     .width100 { width: 100px; }
     .width200 { width: 200px; }
     .minwidth100 { min-width: 100px; }
+    .minwidth150 { min-width: 150px; }
     .minwidth200 { min-width: 200px; }
     .minwidth300 { min-width: 300px; }
     .minwidth400 { min-width: 400px; }
@@ -966,6 +967,7 @@ select.selectarrowonleft option {
 .width50  { width: 50px; }
 .width75  { width: 75px; }
 .width100 { width: 100px; }
+.width150 { width: 150px; }
 .width200 { width: 200px; }
 .maxwidth25  { max-width: 25px; }
 .maxwidth50  { max-width: 50px; }
@@ -3296,7 +3298,7 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 
     background: #fcfcfc;
     border: 1px solid #eee;
-    /* border-left: 6px solid #ddd; */
+    border-left: 6px solid #ddd;
     box-shadow: 1px 1px 8px #ddd;
     border-radius: 0px;
 }
@@ -3371,7 +3373,7 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 	box-shadow: 0px 0px 8px 0px rgba(0,0,0,0.20);
 }
 span.boxstatstext {
-	opacity: 0.8;
+	opacity: 0.7;
     line-height: 18px;
     color: #000;
 }

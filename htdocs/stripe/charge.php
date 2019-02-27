@@ -101,10 +101,10 @@ if (!$rowid)
     print_liste_field_titre("StripeCustomerId", $_SERVER["PHP_SELF"], "", "", "", "", $sortfield, $sortorder);
     print_liste_field_titre("Customer", $_SERVER["PHP_SELF"], "", "", "", "", $sortfield, $sortorder);
     print_liste_field_titre("Origin", $_SERVER["PHP_SELF"], "", "", "", "", $sortfield, $sortorder);
-    print_liste_field_titre("DatePayment", $_SERVER["PHP_SELF"], "", "", "", 'align="center"', $sortfield, $sortorder);
-    print_liste_field_titre("Type", $_SERVER["PHP_SELF"], "", "", "", 'align="left"', $sortfield, $sortorder);
-    print_liste_field_titre("Paid", $_SERVER["PHP_SELF"], "", "", "", 'align="right"', $sortfield, $sortorder);
-    print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "", "", "", 'align="right"');
+    print_liste_field_titre("DatePayment", $_SERVER["PHP_SELF"], "", "", "", '', $sortfield, $sortorder, 'center ');
+    print_liste_field_titre("Type", $_SERVER["PHP_SELF"], "", "", "", '', $sortfield, $sortorder, 'left ');
+    print_liste_field_titre("Paid", $_SERVER["PHP_SELF"], "", "", "", '', $sortfield, $sortorder, 'right ');
+    print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "", "", "", '', '', '', 'right ');
     print "</tr>\n";
 
 	print "</tr>\n";
@@ -149,9 +149,9 @@ if (!$rowid)
 		}
 
 		print '<tr class="oddeven">';
-    
+
     if (!empty($stripeacc)) $connect=$stripeacc.'/';
-    
+
 		// Ref
 		$url='https://dashboard.stripe.com/'.$connect.'test/payments/'.$charge->id;
 			if ($servicestatus)
@@ -169,7 +169,7 @@ if (!$rowid)
     $url='https://dashboard.stripe.com/'.$connect.'customers/'.$charge->customer;
 		}
 		print '<a href="'.$url.'" target="_stripe">'.img_picto($langs->trans('ShowInStripe'), 'object_globe').' '.$charge->customer.'</a>';
-  
+
     print "</td>\n";
 		// Link
 		print "<td>";
@@ -199,7 +199,7 @@ if (!$rowid)
 		} else print $FULLTAG;
 	    print "</td>\n";
 		// Date payment
-	    print '<td align="center">'.dol_print_date($charge->created, '%d/%m/%Y %H:%M')."</td>\n";
+	    print '<td class="center">'.dol_print_date($charge->created, '%d/%m/%Y %H:%M')."</td>\n";
 	    // Type
 	    print '<td>';
 		if ($charge->source->object=='card')
@@ -213,9 +213,9 @@ if (!$rowid)
 		}
 	    print '</td>';
 	    // Amount
-	    print "<td align=\"right\">".price(($charge->amount-$charge->amount_refunded)/100, 0, '', 1, - 1, - 1, strtoupper($charge->currency))."</td>";
+	    print '<td class="right">'.price(($charge->amount-$charge->amount_refunded)/100, 0, '', 1, - 1, - 1, strtoupper($charge->currency))."</td>";
 	    // Status
-	    print '<td align="right">';
+	    print '<td class="right">';
 	    if ($charge->refunded=='1'){
 	    	print img_picto($langs->trans("refunded"), 'statut6');
 	    } elseif ($charge->paid=='1'){

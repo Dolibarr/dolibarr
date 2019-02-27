@@ -214,6 +214,7 @@ if (empty($reshook)) {
 			$object->skype = GETPOST("skype", 'alphanohtml');
 			$object->twitter = GETPOST("twitter", 'alphanohtml');
 			$object->facebook = GETPOST("facebook", 'alphanohtml');
+			$object->linkedin = GETPOST("linkedin", 'alphanohtml');
 
 			$object->email = preg_replace('/\s+/', '', GETPOST("email", 'alpha'));
 			$object->job = GETPOST("job", 'alpha');
@@ -364,6 +365,7 @@ if (empty($reshook)) {
 				$object->skype = GETPOST("skype", 'alpha');
 				$object->twitter = GETPOST("twitter", 'alpha');
 				$object->facebook = GETPOST("facebook", 'alpha');
+				$object->linkedin = GETPOST("linkedin", 'alpha');
 				$object->email = preg_replace('/\s+/', '', GETPOST("email", 'alpha'));
 				$object->job = GETPOST("job", 'alpha');
 				$object->signature = GETPOST("signature", 'none');
@@ -606,6 +608,7 @@ if (empty($reshook)) {
 					$ldap_skype = $attribute[$conf->global->LDAP_FIELD_SKYPE];
 					$ldap_twitter = $attribute[$conf->global->LDAP_FIELD_TWITTER];
 					$ldap_facebook = $attribute[$conf->global->LDAP_FIELD_FACEBOOK];
+					$ldap_linkedin = $attribute[$conf->global->LDAP_FIELD_LINKEDIN];
 					$ldap_mail = $attribute[$conf->global->LDAP_FIELD_MAIL];
 					$ldap_sid = $attribute[$conf->global->LDAP_FIELD_SID];
 				}
@@ -1066,6 +1069,23 @@ if ($action == 'create' || $action == 'adduserldap')
 		}
 		print '</td></tr>';
 	}
+
+    // LinkedIn
+    if (! empty($conf->socialnetworks->enabled))
+    {
+        print '<tr><td>'.$langs->trans("LinkedIn").'</td>';
+        print '<td>';
+        if (! empty($ldap_linkedin))
+        {
+            print '<input type="hidden" name="linkedin" value="'.$ldap_linkedin.'">';
+            print $ldap_linkedin;
+        }
+        else
+        {
+            print '<input class="maxwidth200" type="text" name="linkedin" value="'.GETPOST('linkedin', 'alpha').'">';
+        }
+        print '</td></tr>';
+    }
 
 	// EMail
 	print '<tr><td'.(! empty($conf->global->USER_MAIL_REQUIRED)?' class="fieldrequired"':'').'>'.$langs->trans("EMail").'</td>';
@@ -2286,7 +2306,7 @@ else
 				print '</td></tr>';
 			}
 
-			// Skype
+			// Facebook
 			if (! empty($conf->socialnetworks->enabled))
 			{
 				print '<tr><td>'.$langs->trans("Facebook").'</td>';
@@ -2302,6 +2322,23 @@ else
 				}
 				print '</td></tr>';
 			}
+
+            // LinkedIn
+            if (! empty($conf->socialnetworks->enabled))
+            {
+                print '<tr><td>'.$langs->trans("LinkedIn").'</td>';
+                print '<td>';
+                if ($caneditfield  && empty($object->ldap_sid))
+                {
+                    print '<input size="40" type="text" name="linkedin" class="flat" value="'.$object->linkedin.'">';
+                }
+                else
+                {
+                    print '<input type="hidden" name="linkedin" value="'.$object->linkedin.'">';
+                    print $object->linkedin;
+                }
+                print '</td></tr>';
+            }
 
 			// EMail
 			print "<tr>".'<td'.(! empty($conf->global->USER_MAIL_REQUIRED)?' class="fieldrequired"':'').'>'.$langs->trans("EMail").'</td>';

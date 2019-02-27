@@ -283,7 +283,7 @@ llxHeader('', $title, $help_url);
 
 $h=0;
 $head[$h][0] = $_SERVER["PHP_SELF"].$varlink;
-$head[$h][1] = $langs->trans("AccountancyFiles");
+$head[$h][1] = $langs->trans("AccountantFiles");
 $head[$h][2] = 'AccountancyFiles';
 
 dol_fiche_head($head, 'AccountancyFiles');

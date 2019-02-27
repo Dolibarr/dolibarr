@@ -154,6 +154,13 @@ if ($mode == 'setup' && $user->admin)
         	$urltodelete='';
         	$urltocheckperms='';
         }
+        elseif ($key[0] == 'OAUTH_STRIPE_LIVE_NAME')
+        {
+        	$OAUTH_SERVICENAME='StripeLive';
+        	$urltorenew=$urlwithroot.'/core/modules/oauth/stripelive_oauthcallback.php?backtourl='.urlencode(DOL_URL_ROOT.'/admin/oauthlogintokens.php');
+        	$urltodelete='';
+        	$urltocheckperms='';
+        }
         else
 		{
 			$urltorenew='';

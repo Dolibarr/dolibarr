@@ -89,7 +89,7 @@ class FormAccounting extends Form
 			$sql.= " FROM " . MAIN_DB_PREFIX . "accounting_journal";
 			$sql.= " WHERE active = 1";
 			$sql.= " AND entity = ".$conf->entity;
-			//if ($nature && is_numeric($nature))   $sql .= " AND nature = ".$nature;
+			if ($nature && is_numeric($nature))   $sql .= " AND nature = ".$nature;
 			$sql.= " ORDER BY code";
 
 			dol_syslog(get_class($this) . "::select_journal", LOG_DEBUG);

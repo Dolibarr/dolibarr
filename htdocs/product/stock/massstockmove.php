@@ -347,14 +347,13 @@ print '<table class="liste" width="100%">';
 $param='';
 
 print '<tr class="liste_titre">';
-print getTitleFieldOfList($langs->trans('ProductRef'), 0, $_SERVER["PHP_SELF"], '', $param, '', 'class="tagtd maxwidthonsmartphone"', $sortfield, $sortorder);
-if ($conf->productbatch->enabled)
-{
-	print getTitleFieldOfList($langs->trans('Batch'), 0, $_SERVER["PHP_SELF"], '', $param, '', 'class="tagtd maxwidthonsmartphone"', $sortfield, $sortorder);
+print getTitleFieldOfList($langs->trans('ProductRef'), 0, $_SERVER["PHP_SELF"], '', $param, '', '', $sortfield, $sortorder, 'tagtd maxwidthonsmartphone ');
+if ($conf->productbatch->enabled) {
+	print getTitleFieldOfList($langs->trans('Batch'), 0, $_SERVER["PHP_SELF"], '', $param, '', '', $sortfield, $sortorder, 'tagtd maxwidthonsmartphone ');
 }
-print getTitleFieldOfList($langs->trans('WarehouseSource'), 0, $_SERVER["PHP_SELF"], '', $param, '', 'class="tagtd maxwidthonsmartphone"', $sortfield, $sortorder);
-print getTitleFieldOfList($langs->trans('WarehouseTarget'), 0, $_SERVER["PHP_SELF"], '', $param, '', 'class="tagtd maxwidthonsmartphone"', $sortfield, $sortorder);
-print getTitleFieldOfList($langs->trans('Qty'), 0, $_SERVER["PHP_SELF"], '', $param, '', 'align="center" class="tagtd maxwidthonsmartphone"', $sortfield, $sortorder);
+print getTitleFieldOfList($langs->trans('WarehouseSource'), 0, $_SERVER["PHP_SELF"], '', $param, '', '', $sortfield, $sortorder, 'tagtd maxwidthonsmartphone ');
+print getTitleFieldOfList($langs->trans('WarehouseTarget'), 0, $_SERVER["PHP_SELF"], '', $param, '', '', $sortfield, $sortorder, 'tagtd maxwidthonsmartphone ');
+print getTitleFieldOfList($langs->trans('Qty'), 0, $_SERVER["PHP_SELF"], '', $param, '', '', $sortfield, $sortorder, 'center tagtd maxwidthonsmartphone ');
 print getTitleFieldOfList('', 0);
 print '</tr>';
 
@@ -364,8 +363,7 @@ print '<tr class="oddeven">';
 print '<td class="titlefield">';
 $filtertype=0;
 if (! empty($conf->global->STOCK_SUPPORTS_SERVICES)) $filtertype='';
-if ($conf->global->PRODUIT_LIMIT_SIZE <= 0)
-{
+if ($conf->global->PRODUIT_LIMIT_SIZE <= 0) {
 	$limit='';
 }
 else
@@ -391,9 +389,9 @@ print '<td>';
 print $formproduct->selectWarehouses($id_tw, 'id_tw', 'warehouseopen,warehouseinternal', 1, 0, 0, '', 0, 0, array(), 'minwidth200imp maxwidth200');
 print '</td>';
 // Qty
-print '<td align="center"><input type="text" class="flat maxwidth50" name="qty" value="'.$qty.'"></td>';
+print '<td class="center"><input type="text" class="flat maxwidth50" name="qty" value="'.$qty.'"></td>';
 // Button to add line
-print '<td align="right"><input type="submit" class="button" name="addline" value="'.dol_escape_htmltag($titletoadd).'"></td>';
+print '<td class="right"><input type="submit" class="button" name="addline" value="'.dol_escape_htmltag($titletoadd).'"></td>';
 
 print '</tr>';
 
@@ -420,8 +418,8 @@ foreach($listofdata as $key => $val)
 	print '<td>';
 	print $warehousestatict->getNomUrl(1);
 	print '</td>';
-	print '<td align="center">'.$val['qty'].'</td>';
-	print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=delline&idline='.$val['id'].'">'.img_delete($langs->trans("Remove")).'</a></td>';
+	print '<td class="center">'.$val['qty'].'</td>';
+	print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=delline&idline='.$val['id'].'">'.img_delete($langs->trans("Remove")).'</a></td>';
 
 	print '</tr>';
 }

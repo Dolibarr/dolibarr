@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2016   Marcos García       <marcosgdf@gmail.com>
- * Copyright (C) 2017   Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2018   Frédéric France     <frederic.france@netlogic.fr>
+/* Copyright (C) 2016      Marcos García       <marcosgdf@gmail.com>
+ * Copyright (C) 2017      Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2018-2019 Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,9 +29,9 @@ $langs->loadLangs(array("products", "other"));
 
 $id = GETPOST('id', 'int');
 $valueid = GETPOST('valueid', 'int');
-$ref = GETPOST('ref');
-$weight_impact = (float) GETPOST('weight_impact');
-$price_impact = (float) GETPOST('price_impact');
+$ref = GETPOST('ref', 'alpha');
+$weight_impact = GETPOST('weight_impact', 'alpha');
+$price_impact = GETPOST('price_impact', 'alpha');
 $price_impact_percent = (bool) GETPOST('price_impact_percent');
 $form = new Form($db);
 
@@ -859,7 +859,7 @@ if (! empty($id) || ! empty($ref))
 				<td class="liste_titre center"><?php echo $langs->trans('OnBuy') ?></td>
 				<td class="liste_titre"></td>
         		<?php
-        		print '<td class="liste_titre" align="middle">';
+        		print '<td class="liste_titre center">';
         		$searchpicto=$form->showCheckAddButtons('checkforselect', 1);
         		print $searchpicto;
         		print '</td>';
@@ -946,7 +946,7 @@ if (! empty($id) || ! empty($ref))
     					<a class="paddingleft paddingright" href="<?php echo dol_buildpath('/variants/combinations.php?id='.$id.'&action=delete&valueid='.$currcomb->id, 2) ?>"><?php echo img_delete() ?></a>
     				</td>
     				<?php
-    				print '<td class="nowrap" align="center">';
+    				print '<td class="nowrap center">';
     				if ($productCombinations || $massactionbutton || $massaction)   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
     				{
     				    $selected=0;

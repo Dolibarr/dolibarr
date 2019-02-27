@@ -121,7 +121,7 @@ if (empty($reshook))
 	{
 		$action = '';
 		$object->fetch($id); // show shipment also after canceling modification
-	}
+    }
 
 	include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php';		// Must be include, not include_once
 
@@ -784,8 +784,7 @@ if (empty($reshook))
 									$stockLocation="entl".$detail_entrepot->line_id;
 									$qty = "qtyl".$detail_entrepot->line_id;
 									$warehouse = GETPOST($stockLocation, 'int');
-									if (!empty ($warehouse))
-									{
+									if (!empty($warehouse)) {
 										$line->id = $detail_entrepot->line_id;
 										$line->entrepot_id = $warehouse;
 										$line->qty = GETPOST($qty, 'int');
@@ -800,8 +799,9 @@ if (empty($reshook))
 							}
 						}
 					}
-					else	// Product no predefined
+					else
 					{
+                        // Product no predefined
 						$qty = "qtyl".$line_id;
 						$line->id = $line_id;
 						$line->qty = GETPOST($qty, 'int');
@@ -960,7 +960,7 @@ if ($action == 'create')
                 print '<tr>';
                 print '<td>' . $langs->trans("Project") . '</td><td colspan="2">';
                 $numprojet = $formproject->select_projects($soc->id, $projectid, 'projectid', 0);
-                print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/card.php?socid=' . $soc->id . '&action=create&status=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create&socid='.$soc->id).'">' . $langs->trans("AddProject") . '</a>';
+                print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/card.php?socid=' . $soc->id . '&action=create&status=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create&socid='.$soc->id).'">' . $langs->trans("AddProject") . ' <span class="fa fa-plus-circle valignmiddle"></span></a>';
                 print '</td>';
                 print '</tr>';
             }

@@ -655,7 +655,7 @@ class SMTPs
 		$_retVal = true;
 
 		// if we have a path...
-		if ( ! empty ($_strConfigPath) )
+		if ( ! empty($_strConfigPath) )
 		{
 			// If the path is not valid, this will NOT generate an error,
 			// it will simply return false.
@@ -989,7 +989,7 @@ class SMTPs
 		$aryHost = $this->_msgRecipients;
 
 		// Only run this if we have something
-		if ( !empty ($_addrList))
+		if ( !empty($_addrList))
 		{
 			// $_addrList can be a STRING or an array
 			if ( is_string($_addrList) )
@@ -1409,7 +1409,7 @@ class SMTPs
 
 		// If we have ZERO, we have a problem
 		if( $keyCount === 0 )
-		die ("Sorry, no content");
+		die("Sorry, no content");
 
 		// If we have ONE, we can use the simple format
 		elseif( $keyCount === 1 && empty($conf->global->MAIN_MAIL_USE_MULTI_PART))

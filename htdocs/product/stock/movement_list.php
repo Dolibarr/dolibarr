@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2014	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2015		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2018		Ferran Marcet			<fmarcet@2byte.es>
+ * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -768,7 +769,7 @@ if ($resql)
     if (! empty($arrayfields['m.rowid']['checked']))
     {
 	    // Ref
-	    print '<td class="liste_titre" align="left">';
+	    print '<td class="liste_titre left">';
 	    print '<input class="flat maxwidth25" type="text" name="search_ref" value="'.dol_escape_htmltag($search_ref).'">';
 	    print '</td>';
     }
@@ -786,36 +787,36 @@ if ($resql)
     if (! empty($arrayfields['p.ref']['checked']))
     {
 	    // Product Ref
-	    print '<td class="liste_titre" align="left">';
+	    print '<td class="liste_titre left">';
 	    print '<input class="flat maxwidth75" type="text" name="search_product_ref" value="'.dol_escape_htmltag($idproduct?$product->ref:$search_product_ref).'">';
 	    print '</td>';
     }
     if (! empty($arrayfields['p.label']['checked']))
     {
 	    // Product label
-	    print '<td class="liste_titre" align="left">';
+	    print '<td class="liste_titre left">';
 	    print '<input class="flat maxwidth100" type="text" name="search_product" value="'.dol_escape_htmltag($idproduct?$product->label:$search_product).'">';
 	    print '</td>';
     }
     // Batch
     if (! empty($arrayfields['m.batch']['checked']))
     {
-    	print '<td class="liste_titre" align="center"><input class="flat maxwidth75" type="text" name="search_batch" value="'.dol_escape_htmltag($search_batch).'"></td>';
+    	print '<td class="liste_titre center"><input class="flat maxwidth75" type="text" name="search_batch" value="'.dol_escape_htmltag($search_batch).'"></td>';
 	}
     if (! empty($arrayfields['pl.eatby']['checked']))
     {
-	    print '<td class="liste_titre" align="left">';
+	    print '<td class="liste_titre left">';
 	    print '</td>';
     }
     if (! empty($arrayfields['pl.sellby']['checked']))
     {
-	    print '<td class="liste_titre" align="left">';
+	    print '<td class="liste_titre left">';
 	    print '</td>';
     }
     // Warehouse
     if (! empty($arrayfields['e.ref']['checked']))
     {
-        print '<td class="liste_titre maxwidthonsmartphone" align="left">';
+        print '<td class="liste_titre maxwidthonsmartphone left">';
         //print '<input class="flat" type="text" size="8" name="search_warehouse" value="'.($search_warehouse).'">';
         print $formproduct->selectWarehouses($search_warehouse, 'search_warehouse', 'warehouseopen,warehouseinternal', 1, 0, 0, '', 0, 0, null, 'maxwidth200');
         print '</td>';
@@ -823,28 +824,28 @@ if ($resql)
     if (! empty($arrayfields['m.fk_user_author']['checked']))
     {
 	    // Author
-	    print '<td class="liste_titre" align="left">';
+	    print '<td class="liste_titre left">';
 	    print '<input class="flat" type="text" size="6" name="search_user" value="'.dol_escape_htmltag($search_user).'">';
 	    print '</td>';
     }
     if (! empty($arrayfields['m.inventorycode']['checked']))
     {
 	    // Inventory code
-	    print '<td class="liste_titre" align="left">';
+	    print '<td class="liste_titre left">';
 	    print '<input class="flat" type="text" size="4" name="search_inventorycode" value="'.dol_escape_htmltag($search_inventorycode).'">';
 	    print '</td>';
     }
     if (! empty($arrayfields['m.label']['checked']))
     {
 	    // Label of movement
-	    print '<td class="liste_titre" align="left">';
+	    print '<td class="liste_titre left">';
 	    print '<input class="flat" type="text" size="8" name="search_movement" value="'.dol_escape_htmltag($search_movement).'">';
 	    print '</td>';
     }
 	if (! empty($arrayfields['m.type_mouvement']['checked']))
     {
 	    // Type of movement
-	    print '<td class="liste_titre" align="center">';
+	    print '<td class="liste_titre center">';
 	    //print '<input class="flat" type="text" size="3" name="search_type_mouvement" value="'.dol_escape_htmltag($search_type_mouvement).'">';
 		print '<select id="search_type_mouvement" name="search_type_mouvement" class="maxwidth150">';
 		print '<option value="" '.(($search_type_mouvement=="")?'selected="selected"':'').'></option>';
@@ -861,21 +862,21 @@ if ($resql)
     if (! empty($arrayfields['origin']['checked']))
     {
 	    // Origin of movement
-	    print '<td class="liste_titre" align="left">';
+	    print '<td class="liste_titre left">';
 	    print '&nbsp; ';
 	    print '</td>';
     }
     if (! empty($arrayfields['m.value']['checked']))
     {
 	    // Qty
-	    print '<td class="liste_titre" align="right">';
+	    print '<td class="liste_titre right">';
 	    print '<input class="flat" type="text" size="4" name="search_qty" value="'.dol_escape_htmltag($search_qty).'">';
 	    print '</td>';
     }
     if (! empty($arrayfields['m.price']['checked']))
     {
     	// Price
-    	print '<td class="liste_titre" align="left">';
+    	print '<td class="liste_titre left">';
     	print '&nbsp; ';
     	print '</td>';
     }
@@ -901,28 +902,59 @@ if ($resql)
 	    print '</td>';
 	}
     // Actions
-    print '<td class="liste_titre" align="right">';
+    print '<td class="liste_titre right">';
     $searchpicto=$form->showFilterAndCheckAddButtons(0);
     print $searchpicto;
     print '</td>';
     print "</tr>\n";
 
     print '<tr class="liste_titre">';
-    if (! empty($arrayfields['m.rowid']['checked']))            print_liste_field_titre($arrayfields['m.rowid']['label'], $_SERVER["PHP_SELF"], 'm.rowid', '', $param, '', $sortfield, $sortorder);
-    if (! empty($arrayfields['m.datem']['checked']))            print_liste_field_titre($arrayfields['m.datem']['label'], $_SERVER["PHP_SELF"], 'm.datem', '', $param, '', $sortfield, $sortorder);
-    if (! empty($arrayfields['p.ref']['checked']))              print_liste_field_titre($arrayfields['p.ref']['label'], $_SERVER["PHP_SELF"], 'p.ref', '', $param, '', $sortfield, $sortorder);
-    if (! empty($arrayfields['p.label']['checked']))            print_liste_field_titre($arrayfields['p.label']['label'], $_SERVER["PHP_SELF"], 'p.label', '', $param, '', $sortfield, $sortorder);
-    if (! empty($arrayfields['m.batch']['checked']))            print_liste_field_titre($arrayfields['m.batch']['label'], $_SERVER["PHP_SELF"], 'm.batch', '', $param, 'align="center"', $sortfield, $sortorder);
-	if (! empty($arrayfields['pl.eatby']['checked']))           print_liste_field_titre($arrayfields['pl.eatby']['label'], $_SERVER["PHP_SELF"], 'pl.eatby', '', $param, 'align="center"', $sortfield, $sortorder);
-	if (! empty($arrayfields['pl.sellby']['checked']))          print_liste_field_titre($arrayfields['pl.sellby']['label'], $_SERVER["PHP_SELF"], 'pl.sellby', '', $param, 'align="center"', $sortfield, $sortorder);
-    if (! empty($arrayfields['e.ref']['checked']))  	      	print_liste_field_titre($arrayfields['e.ref']['label'], $_SERVER["PHP_SELF"], "e.ref", "", $param, "", $sortfield, $sortorder);	// We are on a specific warehouse card, no filter on other should be possible
-    if (! empty($arrayfields['m.fk_user_author']['checked']))   print_liste_field_titre($arrayfields['m.fk_user_author']['label'], $_SERVER["PHP_SELF"], "m.fk_user_author", "", $param, "", $sortfield, $sortorder);
-    if (! empty($arrayfields['m.inventorycode']['checked']))    print_liste_field_titre($arrayfields['m.inventorycode']['label'], $_SERVER["PHP_SELF"], "m.inventorycode", "", $param, "", $sortfield, $sortorder);
-    if (! empty($arrayfields['m.label']['checked']))            print_liste_field_titre($arrayfields['m.label']['label'], $_SERVER["PHP_SELF"], "m.label", "", $param, "", $sortfield, $sortorder);
-    if (! empty($arrayfields['m.type_mouvement']['checked']))	print_liste_field_titre($arrayfields['m.type_mouvement']['label'], $_SERVER["PHP_SELF"], "m.type_mouvement", "", $param, 'align="center"', $sortfield, $sortorder);
-    if (! empty($arrayfields['origin']['checked']))             print_liste_field_titre($arrayfields['origin']['label'], $_SERVER["PHP_SELF"], "", "", $param, "", $sortfield, $sortorder);
-    if (! empty($arrayfields['m.value']['checked']))            print_liste_field_titre($arrayfields['m.value']['label'], $_SERVER["PHP_SELF"], "m.value", "", $param, 'align="right"', $sortfield, $sortorder);
-    if (! empty($arrayfields['m.price']['checked']))            print_liste_field_titre($arrayfields['m.price']['label'], $_SERVER["PHP_SELF"], "m.price", "", $param, 'align="right"', $sortfield, $sortorder);
+    if (! empty($arrayfields['m.rowid']['checked'])) {
+        print_liste_field_titre($arrayfields['m.rowid']['label'], $_SERVER["PHP_SELF"], 'm.rowid', '', $param, '', $sortfield, $sortorder);
+    }
+    if (! empty($arrayfields['m.datem']['checked'])) {
+        print_liste_field_titre($arrayfields['m.datem']['label'], $_SERVER["PHP_SELF"], 'm.datem', '', $param, '', $sortfield, $sortorder);
+    }
+    if (! empty($arrayfields['p.ref']['checked'])) {
+        print_liste_field_titre($arrayfields['p.ref']['label'], $_SERVER["PHP_SELF"], 'p.ref', '', $param, '', $sortfield, $sortorder);
+    }
+    if (! empty($arrayfields['p.label']['checked'])) {
+        print_liste_field_titre($arrayfields['p.label']['label'], $_SERVER["PHP_SELF"], 'p.label', '', $param, '', $sortfield, $sortorder);
+    }
+    if (! empty($arrayfields['m.batch']['checked'])) {
+        print_liste_field_titre($arrayfields['m.batch']['label'], $_SERVER["PHP_SELF"], 'm.batch', '', $param, '', $sortfield, $sortorder, 'center ');
+    }
+	if (! empty($arrayfields['pl.eatby']['checked'])) {
+        print_liste_field_titre($arrayfields['pl.eatby']['label'], $_SERVER["PHP_SELF"], 'pl.eatby', '', $param, '', $sortfield, $sortorder, 'center ');
+    }
+	if (! empty($arrayfields['pl.sellby']['checked'])) {
+        print_liste_field_titre($arrayfields['pl.sellby']['label'], $_SERVER["PHP_SELF"], 'pl.sellby', '', $param, '', $sortfield, $sortorder, 'center ');
+    }
+    if (! empty($arrayfields['e.ref']['checked'])) {
+        // We are on a specific warehouse card, no filter on other should be possible
+        print_liste_field_titre($arrayfields['e.ref']['label'], $_SERVER["PHP_SELF"], "e.ref", "", $param, "", $sortfield, $sortorder);
+    }
+    if (! empty($arrayfields['m.fk_user_author']['checked'])) {
+        print_liste_field_titre($arrayfields['m.fk_user_author']['label'], $_SERVER["PHP_SELF"], "m.fk_user_author", "", $param, "", $sortfield, $sortorder);
+    }
+    if (! empty($arrayfields['m.inventorycode']['checked'])) {
+        print_liste_field_titre($arrayfields['m.inventorycode']['label'], $_SERVER["PHP_SELF"], "m.inventorycode", "", $param, "", $sortfield, $sortorder);
+    }
+    if (! empty($arrayfields['m.label']['checked'])) {
+        print_liste_field_titre($arrayfields['m.label']['label'], $_SERVER["PHP_SELF"], "m.label", "", $param, "", $sortfield, $sortorder);
+    }
+    if (! empty($arrayfields['m.type_mouvement']['checked'])) {
+        print_liste_field_titre($arrayfields['m.type_mouvement']['label'], $_SERVER["PHP_SELF"], "m.type_mouvement", "", $param, '', $sortfield, $sortorder, 'center ');
+    }
+    if (! empty($arrayfields['origin']['checked'])) {
+        print_liste_field_titre($arrayfields['origin']['label'], $_SERVER["PHP_SELF"], "", "", $param, "", $sortfield, $sortorder);
+    }
+    if (! empty($arrayfields['m.value']['checked'])) {
+        print_liste_field_titre($arrayfields['m.value']['label'], $_SERVER["PHP_SELF"], "m.value", "", $param, '', $sortfield, $sortorder, 'right ');
+    }
+    if (! empty($arrayfields['m.price']['checked'])) {
+        print_liste_field_titre($arrayfields['m.price']['label'], $_SERVER["PHP_SELF"], "m.price", "", $param, '', $sortfield, $sortorder, 'right ');
+    }
 
     // Extra fields
     include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
@@ -931,9 +963,13 @@ if ($resql)
 	$parameters=array('arrayfields'=>$arrayfields,'param'=>$param,'sortfield'=>$sortfield,'sortorder'=>$sortorder);
     $reshook=$hookmanager->executeHooks('printFieldListTitle', $parameters);    // Note that $action and $object may have been modified by hook
     print $hookmanager->resPrint;
-	if (! empty($arrayfields['m.datec']['checked']))     print_liste_field_titre($arrayfields['p.datec']['label'], $_SERVER["PHP_SELF"], "p.datec", "", $param, 'align="center" class="nowrap"', $sortfield, $sortorder);
-	if (! empty($arrayfields['m.tms']['checked']))       print_liste_field_titre($arrayfields['p.tms']['label'], $_SERVER["PHP_SELF"], "p.tms", "", $param, 'align="center" class="nowrap"', $sortfield, $sortorder);
-	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', 'align="center"', $sortfield, $sortorder, 'maxwidthsearch ');
+	if (! empty($arrayfields['m.datec']['checked'])) {
+        print_liste_field_titre($arrayfields['p.datec']['label'], $_SERVER["PHP_SELF"], "p.datec", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
+    }
+	if (! empty($arrayfields['m.tms']['checked'])) {
+        print_liste_field_titre($arrayfields['p.tms']['label'], $_SERVER["PHP_SELF"], "p.tms", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
+    }
+	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
     print "</tr>\n";
 
 
@@ -1010,11 +1046,11 @@ if ($resql)
         }
         if (! empty($arrayfields['pl.eatby']['checked']))
         {
-        	print '<td align="center">'. dol_print_date($objp->eatby, 'day') .'</td>';
+        	print '<td class="center">'. dol_print_date($objp->eatby, 'day') .'</td>';
         }
         if (! empty($arrayfields['pl.sellby']['checked']))
         {
-        	print '<td align="center">'. dol_print_date($objp->sellby, 'day') .'</td>';
+        	print '<td class="center">'. dol_print_date($objp->sellby, 'day') .'</td>';
 		}
         // Warehouse
         if (! empty($arrayfields['e.ref']['checked']))
@@ -1053,16 +1089,16 @@ if ($resql)
             // Type of movement
             switch($objp->type_mouvement){
                 case "0":
-                    print '<td align="center">'.$langs->trans('StockIncreaseAfterCorrectTransfer').'</td>';
+                    print '<td class="center">'.$langs->trans('StockIncreaseAfterCorrectTransfer').'</td>';
                     break;
                 case "1":
-                    print '<td align="center">'.$langs->trans('StockDecreaseAfterCorrectTransfer').'</td>';
+                    print '<td class="center">'.$langs->trans('StockDecreaseAfterCorrectTransfer').'</td>';
                     break;
                 case "2":
-                    print '<td align="center">'.$langs->trans('StockDecrease').'</td>';
+                    print '<td class="center">'.$langs->trans('StockDecrease').'</td>';
                     break;
                 case "3":
-                    print '<td align="center">'.$langs->trans('StockIncrease').'</td>';
+                    print '<td class="center">'.$langs->trans('StockIncrease').'</td>';
                     break;
             }
         }
@@ -1074,7 +1110,7 @@ if ($resql)
         if (! empty($arrayfields['m.value']['checked']))
         {
 	        // Qty
-	        print '<td align="right">';
+	        print '<td class="right">';
 	        if ($objp->qt > 0) print '+';
 	        print $objp->qty;
 	        print '</td>';
@@ -1082,12 +1118,12 @@ if ($resql)
         if (! empty($arrayfields['m.price']['checked']))
         {
         	// Price
-        	print '<td align="right">';
+        	print '<td class="right">';
         	if ($objp->price != 0) print price($objp->price);
         	print '</td>';
         }
         // Action column
-        print '<td class="nowrap" align="center">';
+        print '<td class="nowrap center">';
         if ($massactionbutton || $massaction)   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
         {
             $selected=0;
@@ -1125,14 +1161,14 @@ if ($resql)
     	//print '<tr class="total"><td class="liste_total">';
     	print $langs->trans("NbOfProductBeforePeriod", $productlabelselected, dol_print_date($datebefore, 'day', 'gmt'));
     	//print '</td>';
-    	//print '<td class="liste_total" colspan="6" align="right">';
+    	//print '<td class="liste_total right" colspan="6">';
     	print ': '.$balancebefore;
     	print "<br>\n";
     	//print '</td></tr>';
     	//print '<tr class="total"><td class="liste_total">';
     	print $langs->trans("NbOfProductAfterPeriod", $productlabelselected, dol_print_date($dateafter, 'day', 'gmt'));
     	//print '</td>';
-    	//print '<td class="liste_total" colspan="6" align="right">';
+    	//print '<td class="liste_total right" colspan="6">';
     	print ': '.$balanceafter;
     	print "<br>\n";
     	//print '</td></tr>';

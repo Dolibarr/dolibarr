@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013-2014 Olivier Geffroy      <jeff@jeffinfo.com>
  * Copyright (C) 2013-2014 Florian Henry        <florian.henry@open-concept.pro>
- * Copyright (C) 2013-2018 Alexandre Spangaro   <aspangaro@open-dsi.fr>
+ * Copyright (C) 2013-2019 Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2014-2015 Ari Elbaz (elarifr)  <github@accedinfo.com>
  * Copyright (C) 2014      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2014      Juanjo Menent        <jmenent@2byte.es>
@@ -144,6 +144,18 @@ if ($action == 'setenabledraftexport') {
 		}
 }
 
+if ($action == 'setenablesubsidiarylist') {
+    $setenablesubsidiarylist = GETPOST('value', 'int');
+    $res = dolibarr_set_const($db, "ACCOUNTANCY_COMBO_FOR_AUX", $setenablesubsidiarylist, 'yesno', 0, '', $conf->entity);
+    if (! $res > 0)
+        $error ++;
+    if (! $error) {
+        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+    } else {
+        setEventMessages($langs->trans("Error"), null, 'mesgs');
+    }
+}
+
 /*
  * View
  */
@@ -250,6 +262,19 @@ if (! empty($user->admin))
 		print '</a></td>';
 	}
 	print '</tr>';
+
+    print '<tr class="oddeven">';
+    print '<td>' . $langs->trans("ACCOUNTANCY_COMBO_FOR_AUX") . '</td>';
+    if (! empty($conf->global->ACCOUNTANCY_COMBO_FOR_AUX)) {
+        print '<td class="right"><a href="' . $_SERVER['PHP_SELF'] . '?action=setenablesubsidiarylist&value=0">';
+        print img_picto($langs->trans("Activated"), 'switch_on');
+        print '</a></td>';
+    } else {
+        print '<td class="right"><a href="' . $_SERVER['PHP_SELF'] . '?action=setenablesubsidiarylist&value=1">';
+        print img_picto($langs->trans("Disabled"), 'switch_off');
+        print '</a></td>';
+    }
+    print '</tr>';
 
     print '<tr class="oddeven">';
     print '<td>' . $langs->trans("ACCOUNTING_MANAGE_ZERO") . '</td>';

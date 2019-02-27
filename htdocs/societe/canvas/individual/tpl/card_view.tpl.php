@@ -142,7 +142,7 @@ dol_fiche_head($head, 'card', $langs->trans("ThirdParty"), 0, 'company');
 	<table class="nobordernopadding allwidth">
 		<tr>
 			<td><?php echo $langs->trans('RIB'); ?></td>
-			<td align="right">
+			<td class="right">
 			<?php if ($user->rights->societe->creer) { ?>
 			<a href="<?php echo DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$this->control->tpl['id']; ?>"><?php echo $this->control->tpl['image_edit']; ?></a>
 			<?php } else { ?>
@@ -160,7 +160,7 @@ dol_fiche_head($head, 'card', $langs->trans("ThirdParty"), 0, 'company');
 	<table class="nobordernopadding allwidth">
 		<tr>
 			<td><?php echo $langs->trans('SalesRepresentatives'); ?></td>
-			<td align="right">
+			<td class="right">
 			<?php if ($user->rights->societe->creer) { ?>
 			<a href="<?php echo DOL_URL_ROOT.'/societe/commerciaux.php?socid='.$this->control->tpl['id']; ?>"><?php echo $this->control->tpl['image_edit']; ?></a>
 			<?php } else { ?>

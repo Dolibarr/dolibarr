@@ -354,8 +354,8 @@ if ($result) {
             print $objp->severity_label;
             print "</td>";
 
-            print '<td class="nowrap">';
-            print $tickesupstatic->getLibStatut(3);
+            print '<td class="nowrap right">';
+            print $tickesupstatic->getLibStatut(5);
             print "</td>";
 
             print "</tr>\n";

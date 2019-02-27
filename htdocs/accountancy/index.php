@@ -55,10 +55,10 @@ $step = 0;
 
 if ($conf->accounting->enabled)
 {
-	print $langs->trans("AccountancyAreaDescIntro")."<br>\n";
+	print '<span class="opacitymedium">'.$langs->trans("AccountancyAreaDescIntro")."</span><br>\n";
 	print "<br>\n";print "<br>\n";
 
-	print load_fiche_titre('<span class="fa fa-calendar-check-o"></span> '.$langs->trans("AccountancyAreaDescActionOnce"), '', '')."<br>\n";
+	print load_fiche_titre('<span class="fa fa-calendar-check-o"></span> '.$langs->trans("AccountancyAreaDescActionOnce"), '', '')."\n";
 	print '<hr>';
 	print "<br>\n";
 
