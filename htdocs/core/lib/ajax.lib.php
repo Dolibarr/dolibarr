@@ -541,7 +541,7 @@ function ajax_constantonoff($code, $input = array(), $entity = null, $revertonof
 /**
  *  On/off button for object
  *
- *  @param  int     $object     Id product to set
+ *  @param  Object  $object     Object to set
  *  @param  string  $code       Name of constant : status or status_buy for product by example
  *  @param  string  $field      Name of database field : tosell or tobuy for product by example
  *  @param  string  $text_on    Text if on

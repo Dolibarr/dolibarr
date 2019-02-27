@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2007-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2018	   Ferran Marcet		<fmarcet@2byte.es>
+/* Copyright (C) 2007-2016  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2018       Ferran Marcet           <fmarcet@2byte.es>
+ * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,10 +18,10 @@
  */
 
 /**
- *   	\file       product/stock/productlot_list.php
- *		\ingroup    stock
- *		\brief      This file is an example of a php page
- *					Initialy built by build_class_from_table on 2016-05-17 12:22
+ * \file        product/stock/productlot_list.php
+ * \ingroup     stock
+ * \brief       This file is an example of a php page
+ *              Initialy built by build_class_from_table on 2016-05-17 12:22
  */
 
 require '../../main.inc.php';
@@ -34,10 +35,10 @@ require_once DOL_DOCUMENT_ROOT.'/product/stock/class/productlot.class.php';
 $langs->loadLangs(array('stocks', 'productbatch', 'other', 'users'));
 
 // Get parameters
-$id			= GETPOST('id', 'int');
-$action		= GETPOST('action', 'alpha');
+$id = GETPOST('id', 'int');
+$action = GETPOST('action', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
-$myparam	= GETPOST('myparam', 'alpha');
+$myparam = GETPOST('myparam', 'alpha');
 $toselect = GETPOST('toselect', 'array');
 
 
@@ -362,12 +363,12 @@ if ($resql)
 	/*if (! empty($arrayfields['u.statut']['checked']))
      {
      // Status
-     print '<td class="liste_titre" align="center">';
+     print '<td class="liste_titre center">';
      print $form->selectarray('search_statut', array('-1'=>'','0'=>$langs->trans('Disabled'),'1'=>$langs->trans('Enabled')),$search_statut);
      print '</td>';
      }*/
 	// Action column
-	print '<td class="liste_titre" align="right">';
+	print '<td class="liste_titre right">';
 	$searchpicto=$form->showFilterAndCheckAddButtons($massactionbutton?1:0, 'checkforselect', 1);
 	print $searchpicto;
 	print '</td>';
@@ -389,11 +390,17 @@ if ($resql)
 	$parameters=array('arrayfields'=>$arrayfields,'param'=>$param,'sortfield'=>$sortfield,'sortorder'=>$sortorder);
 	$reshook=$hookmanager->executeHooks('printFieldListTitle', $parameters);    // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
-	if (! empty($arrayfields['t.datec']['checked']))  print_liste_field_titre($arrayfields['t.datec']['label'], $_SERVER["PHP_SELF"], "t.datec", "", $param, 'align="center" class="nowrap"', $sortfield, $sortorder);
-	if (! empty($arrayfields['t.tms']['checked']))    print_liste_field_titre($arrayfields['t.tms']['label'], $_SERVER["PHP_SELF"], "t.tms", "", $param, 'align="center" class="nowrap"', $sortfield, $sortorder);
-	//if (! empty($arrayfields['t.status']['checked'])) print_liste_field_titre($arrayfields['t.status']['label'],$_SERVER["PHP_SELF"],"t.status","",$param,'align="center"',$sortfield,$sortorder);
-	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', 'align="center"', $sortfield, $sortorder, 'maxwidthsearch ');
-	print '</tr>'."\n";
+    if (! empty($arrayfields['t.datec']['checked'])) {
+        print_liste_field_titre($arrayfields['t.datec']['label'], $_SERVER["PHP_SELF"], "t.datec", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
+    }
+    if (! empty($arrayfields['t.tms']['checked'])) {
+        print_liste_field_titre($arrayfields['t.tms']['label'], $_SERVER["PHP_SELF"], "t.tms", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
+    }
+    //if (! empty($arrayfields['t.status']['checked'])) {
+    //    print_liste_field_titre($arrayfields['t.status']['label'], $_SERVER["PHP_SELF"], "t.status", "", $param, '', $sortfield, $sortorder, 'center ');
+    //}
+    print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
+    print '</tr>'."\n";
 
 	$productlot = new Productlot($db);
 
@@ -464,7 +471,7 @@ if ($resql)
 			// Date creation
 			if (! empty($arrayfields['t.datec']['checked']))
 			{
-				print '<td align="center">';
+				print '<td class="center">';
 				print dol_print_date($db->jdate($obj->date_creation), 'dayhour', 'tzuser');
 				print '</td>';
 				if (! $i) $totalarray['nbfield']++;
@@ -472,7 +479,7 @@ if ($resql)
 			// Date modification
 			if (! empty($arrayfields['t.tms']['checked']))
 			{
-				print '<td align="center">';
+				print '<td class="center">';
 				print dol_print_date($db->jdate($obj->date_update), 'dayhour', 'tzuser');
 				print '</td>';
 				if (! $i) $totalarray['nbfield']++;
@@ -482,11 +489,11 @@ if ($resql)
             if (! empty($arrayfields['u.statut']['checked']))
             {
     		  $userstatic->statut=$obj->statut;
-              print '<td align="center">'.$userstatic->getLibStatut(3).'</td>';
+              print '<td class="center">'.$userstatic->getLibStatut(3).'</td>';
             }*/
 
 			// Action column
-			print '<td class="nowrap" align="center">';
+			print '<td class="nowrap center">';
 			if ($massactionbutton || $massaction)   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 			{
 				$selected=0;
@@ -514,9 +521,9 @@ if ($resql)
 				if ($num < $limit && empty($offset)) print '<td class="left">'.$langs->trans("Total").'</td>';
 				else print '<td class="left">'.$langs->trans("Totalforthispage").'</td>';
 			}
-			elseif ($totalarray['totalhtfield'] == $i) print '<td align="right">'.price($totalarray['totalht']).'</td>';
-			elseif ($totalarray['totalvatfield'] == $i) print '<td align="right">'.price($totalarray['totalvat']).'</td>';
-			elseif ($totalarray['totalttcfield'] == $i) print '<td align="right">'.price($totalarray['totalttc']).'</td>';
+			elseif ($totalarray['totalhtfield'] == $i) print '<td class="right">'.price($totalarray['totalht']).'</td>';
+			elseif ($totalarray['totalvatfield'] == $i) print '<td class="right">'.price($totalarray['totalvat']).'</td>';
+			elseif ($totalarray['totalttcfield'] == $i) print '<td class="right">'.price($totalarray['totalttc']).'</td>';
 			else print '<td></td>';
 		}
 		print '</tr>';

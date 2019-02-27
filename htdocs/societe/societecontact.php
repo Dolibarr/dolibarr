@@ -249,7 +249,7 @@ if ($id > 0 || ! empty($ref))
 					print_liste_field_titre("Person", $_SERVER["PHP_SELF"], "d.morphy", $param, "", "", $sortfield, $sortorder);
 					print_liste_field_titre("EMail", $_SERVER["PHP_SELF"], "d.email", $param, "", "", $sortfield, $sortorder);
 					print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "d.statut,d.datefin", $param, "", "", $sortfield, $sortorder);
-					print_liste_field_titre("EndSubscription", $_SERVER["PHP_SELF"], "d.datefin", $param, "", 'align="center"', $sortfield, $sortorder);
+					print_liste_field_titre("EndSubscription", $_SERVER["PHP_SELF"], "d.datefin", $param, "", '', $sortfield, $sortorder, 'center ');
 					print "</tr>\n";
 
 					$i=0;
@@ -305,7 +305,7 @@ if ($id > 0 || ! empty($ref))
 						// End of subscription date
 						if ($datefin)
 						{
-							print '<td align="center" class="nowrap">';
+							print '<td class="center nowrap">';
 							print dol_print_date($datefin, 'day');
 							if ($memberstatic->hasDelay()) {
 								print " ".img_warning($langs->trans("SubscriptionLate"));
@@ -314,7 +314,7 @@ if ($id > 0 || ! empty($ref))
 						}
 						else
 						{
-							print '<td align="left" class="nowrap">';
+							print '<td class="left nowrap">';
 							if ($objp->subscription == 'yes')
 							{
 								print $langs->trans("SubscriptionNotReceived");

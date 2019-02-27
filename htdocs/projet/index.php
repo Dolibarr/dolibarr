@@ -221,7 +221,7 @@ if ($resql)
 			print '&nbsp;';
 			print '</td>';
 
-			print '<td width="16" align="right" class="nobordernopadding hideonsmartphone">';
+			print '<td width="16" class="right nobordernopadding hideonsmartphone">';
 			$filename=dol_sanitizeFileName($obj->ref);
 			$filedir=$conf->commande->dir_output . '/' . dol_sanitizeFileName($obj->ref);
 			$urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->rowid;
@@ -237,7 +237,7 @@ if ($resql)
 			}
 			print '</td>';
 			print '<td>'.dol_print_date($db->jdate($obj->datem), 'day').'</td>';
-			print '<td align="right">'.$projectstatic->LibStatut($obj->fk_statut, 5).'</td>';
+			print '<td class="right">'.$projectstatic->LibStatut($obj->fk_statut, 5).'</td>';
 			print '</tr>';
 			$i++;
 		}
@@ -252,7 +252,7 @@ print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print_liste_field_titre("OpenedProjectsByThirdparties", $_SERVER["PHP_SELF"], "s.nom", "", "", '', $sortfield, $sortorder);
-print_liste_field_titre("NbOfProjects", "", "", "", "", 'align="right"', $sortfield, $sortorder);
+print_liste_field_titre("NbOfProjects", "", "", "", "", '', $sortfield, $sortorder, 'right ');
 print "</tr>\n";
 
 $sql = "SELECT COUNT(p.rowid) as nb, SUM(p.opp_amount)";
@@ -289,7 +289,7 @@ if ( $resql )
 			print $langs->trans("OthersNotLinkedToThirdParty");
 		}
 		print '</td>';
-		print '<td align="right">';
+		print '<td class="right">';
 		if ($obj->socid) print '<a href="'.DOL_URL_ROOT.'/projet/list.php?socid='.$obj->socid.'&search_status=1">'.$obj->nb.'</a>';
 		else print '<a href="'.DOL_URL_ROOT.'/projet/list.php?search_societe='.urlencode('^$').'&search_status=1">'.$obj->nb.'</a>';
 		print '</td>';

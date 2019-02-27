@@ -43,7 +43,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 	public $emetteur;
 
 	/**
-     * @var array() Minimum version of PHP required by module.
+     * @var array Minimum version of PHP required by module.
 	 * e.g.: PHP ≥ 5.4 = array(5, 4)
      */
 	public $phpmin = array(5, 4);

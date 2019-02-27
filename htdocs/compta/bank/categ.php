@@ -106,7 +106,7 @@ if ($action != 'edit')
 
 	print '<tr class="oddeven">';
 	print '<td>&nbsp;</td><td><input name="label" type="text" size="45"></td>';
-	print '<td align="center"><input type="submit" name="add" class="button" value="'.$langs->trans("Add").'"></td>';
+	print '<td class="center"><input type="submit" name="add" class="button" value="'.$langs->trans("Add").'"></td>';
 	print '</tr>';
 }
 

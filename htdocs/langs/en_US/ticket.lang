@@ -27,9 +27,9 @@ Permission56003=Delete tickets
 Permission56004=Manage tickets
 Permission56005=See tickets of all third parties (not effective for external users, always be limited to the third party they depend on)
 
-TicketDictType=Tickets type
-TicketDictCategory=Tickets analytic code
-TicketDictSeverity=Tickets severity
+TicketDictType=Ticket - Types
+TicketDictCategory=Ticket - Groupes
+TicketDictSeverity=Ticket - Severities
 TicketTypeShortBUGSOFT=Dysfonctionnement logiciel
 TicketTypeShortBUGHARD=Dysfonctionnement matériel
 TicketTypeShortCOM=Commercial question
@@ -123,13 +123,14 @@ TicketsAutoAssignTicket=Automatically assign the user who created the ticket
 TicketsAutoAssignTicketHelp=When creating a ticket, the user can be automatically assigned to the ticket.
 TicketNumberingModules=Tickets numbering module
 TicketNotifyTiersAtCreation=Notify third party at creation
+TicketGroup=Group
 
 #
 # Index & list page
 #
 TicketsIndex=Ticket - home
 TicketList=List of tickets
-TicketAssignedToMeInfos=This page display ticket list which are assigned to current user
+TicketAssignedToMeInfos=This page display ticket list created by or assigned to current user
 NoTicketsFound=No ticket found
 TicketViewAllTickets=View all tickets
 TicketViewNonClosedOnly=View only open tickets

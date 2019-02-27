@@ -618,13 +618,13 @@ if (! empty($arrayfields['p.opp_percent']['checked']))
 }
 if (! empty($arrayfields['p.budget_amount']['checked']))
 {
-	print '<td class="liste_titre nowrap" align="right">';
+	print '<td class="liste_titre nowrap right">';
 	print '<input type="text" class="flat" name="search_budget_amount" size="4" value="'.$search_budget_amount.'">';
 	print '</td>';
 }
 if (! empty($arrayfields['p.bill_time']['checked']))
 {
-	print '<td class="liste_titre nowrap" align="right">';
+	print '<td class="liste_titre nowrap right">';
 	print '';
 	print '</td>';
 }
@@ -649,7 +649,7 @@ if (! empty($arrayfields['p.tms']['checked']))
 }
 if (! empty($arrayfields['p.fk_statut']['checked']))
 {
-	print '<td class="liste_titre nowrap" align="right">';
+	print '<td class="liste_titre nowrap right">';
 	$arrayofstatus = array();
 	foreach($object->statuts_short as $key => $val) $arrayofstatus[$key]=$langs->trans($val);
 	$arrayofstatus['99']=$langs->trans("NotClosed").' ('.$langs->trans('Draft').' + '.$langs->trans('Opened').')';
@@ -658,7 +658,7 @@ if (! empty($arrayfields['p.fk_statut']['checked']))
 	print '</td>';
 }
 // Action column
-print '<td class="liste_titre" align="right">';
+print '<td class="liste_titre right">';
 $searchpicto=$form->showFilterButtons();
 print $searchpicto;
 print '</td>';
@@ -670,24 +670,24 @@ if (! empty($arrayfields['p.ref']['checked']))           print_liste_field_titre
 if (! empty($arrayfields['p.title']['checked']))         print_liste_field_titre($arrayfields['p.title']['label'], $_SERVER["PHP_SELF"], "p.title", "", $param, "", $sortfield, $sortorder);
 if (! empty($arrayfields['s.nom']['checked']))           print_liste_field_titre($arrayfields['s.nom']['label'], $_SERVER["PHP_SELF"], "s.nom", "", $param, "", $sortfield, $sortorder);
 if (! empty($arrayfields['commercial']['checked']))      print_liste_field_titre($arrayfields['commercial']['label'], $_SERVER["PHP_SELF"], "", "", $param, "", $sortfield, $sortorder);
-if (! empty($arrayfields['p.dateo']['checked']))         print_liste_field_titre($arrayfields['p.dateo']['label'], $_SERVER["PHP_SELF"], "p.dateo", "", $param, 'align="center"', $sortfield, $sortorder);
-if (! empty($arrayfields['p.datee']['checked']))         print_liste_field_titre($arrayfields['p.datee']['label'], $_SERVER["PHP_SELF"], "p.datee", "", $param, 'align="center"', $sortfield, $sortorder);
+if (! empty($arrayfields['p.dateo']['checked']))         print_liste_field_titre($arrayfields['p.dateo']['label'], $_SERVER["PHP_SELF"], "p.dateo", "", $param, '', $sortfield, $sortorder, 'center ');
+if (! empty($arrayfields['p.datee']['checked']))         print_liste_field_titre($arrayfields['p.datee']['label'], $_SERVER["PHP_SELF"], "p.datee", "", $param, '', $sortfield, $sortorder, 'center ');
 if (! empty($arrayfields['p.public']['checked']))        print_liste_field_titre($arrayfields['p.public']['label'], $_SERVER["PHP_SELF"], "p.public", "", $param, "", $sortfield, $sortorder);
-if (! empty($arrayfields['p.fk_opp_status']['checked'])) print_liste_field_titre($arrayfields['p.fk_opp_status']['label'], $_SERVER["PHP_SELF"], 'p.fk_opp_status', "", $param, 'align="center"', $sortfield, $sortorder);
-if (! empty($arrayfields['p.opp_amount']['checked']))    print_liste_field_titre($arrayfields['p.opp_amount']['label'], $_SERVER["PHP_SELF"], 'p.opp_amount', "", $param, 'align="right"', $sortfield, $sortorder);
-if (! empty($arrayfields['p.opp_percent']['checked']))   print_liste_field_titre($arrayfields['p.opp_percent']['label'], $_SERVER["PHP_SELF"], 'p.opp_percent', "", $param, 'align="right"', $sortfield, $sortorder);
-if (! empty($arrayfields['p.budget_amount']['checked'])) print_liste_field_titre($arrayfields['p.budget_amount']['label'], $_SERVER["PHP_SELF"], 'p.budget_amount', "", $param, 'align="right"', $sortfield, $sortorder);
-if (! empty($arrayfields['p.bill_time']['checked']))     print_liste_field_titre($arrayfields['p.bill_time']['label'], $_SERVER["PHP_SELF"], 'p.bill_time', "", $param, 'align="right"', $sortfield, $sortorder);
+if (! empty($arrayfields['p.fk_opp_status']['checked'])) print_liste_field_titre($arrayfields['p.fk_opp_status']['label'], $_SERVER["PHP_SELF"], 'p.fk_opp_status', "", $param, '', $sortfield, $sortorder, 'center ');
+if (! empty($arrayfields['p.opp_amount']['checked']))    print_liste_field_titre($arrayfields['p.opp_amount']['label'], $_SERVER["PHP_SELF"], 'p.opp_amount', "", $param, '', $sortfield, $sortorder, 'right ');
+if (! empty($arrayfields['p.opp_percent']['checked']))   print_liste_field_titre($arrayfields['p.opp_percent']['label'], $_SERVER["PHP_SELF"], 'p.opp_percent', "", $param, '', $sortfield, $sortorder, 'right ');
+if (! empty($arrayfields['p.budget_amount']['checked'])) print_liste_field_titre($arrayfields['p.budget_amount']['label'], $_SERVER["PHP_SELF"], 'p.budget_amount', "", $param, '', $sortfield, $sortorder, 'right ');
+if (! empty($arrayfields['p.bill_time']['checked']))     print_liste_field_titre($arrayfields['p.bill_time']['label'], $_SERVER["PHP_SELF"], 'p.bill_time', "", $param, '', $sortfield, $sortorder, 'right ');
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 // Hook fields
 $parameters=array('arrayfields'=>$arrayfields,'param'=>$param,'sortfield'=>$sortfield,'sortorder'=>$sortorder);
 $reshook=$hookmanager->executeHooks('printFieldListTitle', $parameters);    // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
-if (! empty($arrayfields['p.datec']['checked']))  print_liste_field_titre($arrayfields['p.datec']['label'], $_SERVER["PHP_SELF"], "p.datec", "", $param, 'align="center" class="nowrap"', $sortfield, $sortorder);
-if (! empty($arrayfields['p.tms']['checked']))    print_liste_field_titre($arrayfields['p.tms']['label'], $_SERVER["PHP_SELF"], "p.tms", "", $param, 'align="center" class="nowrap"', $sortfield, $sortorder);
-if (! empty($arrayfields['p.fk_statut']['checked'])) print_liste_field_titre($arrayfields['p.fk_statut']['label'], $_SERVER["PHP_SELF"], "p.fk_statut", "", $param, 'align="right"', $sortfield, $sortorder);
-print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', 'align="center"', $sortfield, $sortorder, 'maxwidthsearch ');
+if (! empty($arrayfields['p.datec']['checked']))  print_liste_field_titre($arrayfields['p.datec']['label'], $_SERVER["PHP_SELF"], "p.datec", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
+if (! empty($arrayfields['p.tms']['checked']))    print_liste_field_titre($arrayfields['p.tms']['label'], $_SERVER["PHP_SELF"], "p.tms", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
+if (! empty($arrayfields['p.fk_statut']['checked'])) print_liste_field_titre($arrayfields['p.fk_statut']['label'], $_SERVER["PHP_SELF"], "p.fk_statut", "", $param, '', $sortfield, $sortorder, 'right ');
+print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
 print "</tr>\n";
 
 $i=0;
@@ -824,7 +824,7 @@ while ($i < min($num, $limit))
 		// Opp Amount
 		if (! empty($arrayfields['p.opp_amount']['checked']))
 		{
-			print '<td align="right">';
+			print '<td class="right">';
 			//if ($obj->opp_status_code)
 			if (strcmp($obj->opp_amount, ''))
 			{
@@ -838,7 +838,7 @@ while ($i < min($num, $limit))
 		// Opp percent
 		if (! empty($arrayfields['p.opp_percent']['checked']))
 		{
-			print '<td align="right">';
+			print '<td class="right">';
 			if ($obj->opp_percent) print price($obj->opp_percent, 1, $langs, 1, 0).'%';
 			print '</td>';
 			if (! $i) $totalarray['nbfield']++;
@@ -846,7 +846,7 @@ while ($i < min($num, $limit))
 		// Budget
 		if (! empty($arrayfields['p.budget_amount']['checked']))
 		{
-			print '<td align="right">';
+			print '<td class="right">';
 			if ($obj->budget_amount != '')
 			{
 				print price($obj->budget_amount, 1, $langs, 1, -1, -1);
@@ -859,7 +859,7 @@ while ($i < min($num, $limit))
 		// Bill time
 		if (! empty($arrayfields['p.bill_time']['checked']))
 		{
-			print '<td align="right">';
+			print '<td class="right">';
 			if ($obj->bill_time)
 			{
 				print yn($obj->bill_time);
@@ -876,7 +876,7 @@ while ($i < min($num, $limit))
 		// Date creation
 		if (! empty($arrayfields['p.datec']['checked']))
 		{
-			print '<td align="center">';
+			print '<td class="center">';
 			print dol_print_date($db->jdate($obj->date_creation), 'dayhour', 'tzuser');
 			print '</td>';
 			if (! $i) $totalarray['nbfield']++;
@@ -884,7 +884,7 @@ while ($i < min($num, $limit))
 		// Date modification
 		if (! empty($arrayfields['p.tms']['checked']))
 		{
-			print '<td align="center">';
+			print '<td class="center">';
 			print dol_print_date($db->jdate($obj->date_update), 'dayhour', 'tzuser');
 			print '</td>';
 			if (! $i) $totalarray['nbfield']++;
@@ -892,11 +892,11 @@ while ($i < min($num, $limit))
 		// Status
 		if (! empty($arrayfields['p.fk_statut']['checked']))
 		{
-			print '<td align="right">'.$object->getLibStatut(5).'</td>';
+			print '<td class="right">'.$object->getLibStatut(5).'</td>';
 			if (! $i) $totalarray['nbfield']++;
 		}
 		// Action column
-		print '<td class="nowrap" align="center">';
+		print '<td class="nowrap center">';
 		if ($massactionbutton || $massaction)   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 		{
 			$selected=0;
@@ -925,8 +925,8 @@ if (isset($totalarray['totaloppfield']) || isset($totalarray['totalbudgetfield']
 			if ($num < $limit && empty($offset)) print '<td class="left">'.$langs->trans("Total").'</td>';
 			else print '<td class="left">'.$langs->trans("Totalforthispage").'</td>';
 		}
-		elseif ($totalarray['totaloppfield'] == $i) print '<td align="right">'.price($totalarray['totalopp'], 1, $langs, 1, -1, -1).'</td>';
-		elseif ($totalarray['totalbudgetfield'] == $i) print '<td align="right">'.price($totalarray['totalbudget'], 1, $langs, 1, -1, -1).'</td>';
+		elseif ($totalarray['totaloppfield'] == $i) print '<td class="right">'.price($totalarray['totalopp'], 1, $langs, 1, -1, -1).'</td>';
+		elseif ($totalarray['totalbudgetfield'] == $i) print '<td class="right">'.price($totalarray['totalbudget'], 1, $langs, 1, -1, -1).'</td>';
 		else print '<td></td>';
 	}
 	print '</tr>';

@@ -243,13 +243,13 @@ class Stripe extends CommonObject
     /**
 	 * Get the Stripe payment intent
 	 *
-	 * @param	Societe	$object							Object tp pay on Stripe
-	 * @param	string 	$customer								Stripe customer ref 'cus_xxxxxxxxxxxxx' via customerStripe()
-	 * @param	string	$key							''=Use common API. If not '', it is the Stripe connect account 'acc_....' to use Stripe connect
-	 * @param	int		$status							Status (0=test, 1=live)
-	 * @param	int		$usethirdpartyemailforreceiptemail		1=use thirdparty email fpr receipt
-	 * @param	int		$mode		automatic=automatic payment, manual=need confirmation
-	 * @return 	\Stripe\PaymentIntent|null 			Stripe PaymentIntent or null if not found
+	 * @param	Societe	$object							    Object to pay with Stripe
+	 * @param	string 	$customer							Stripe customer ref 'cus_xxxxxxxxxxxxx' via customerStripe()
+	 * @param	string	$key							    ''=Use common API. If not '', it is the Stripe connect account 'acc_....' to use Stripe connect
+	 * @param	int		$status							    Status (0=test, 1=live)
+	 * @param	int		$usethirdpartyemailforreceiptemail	1=use thirdparty email for receipt
+	 * @param	int		$mode		                        automatic=automatic payment, manual=need confirmation
+	 * @return 	\Stripe\PaymentIntent|null 			        Stripe PaymentIntent or null if not found
 	 */
 	public function getPaymentIntent($object, $customer, $key = null, $status = 0, $usethirdpartyemailforreceiptemail = 0, $mode = 'automatic')
 	{
@@ -284,7 +284,7 @@ class Stripe extends CommonObject
 				$obj = $this->db->fetch_object($resql);
 				$intent = $obj->ext_payment_id;
 
-				dol_syslog(get_class($this) . "::customerStripe found stripe customer key_account = ".$tiers);
+				dol_syslog(get_class($this) . "::customerStripe found record");
 
 					// Force to use the correct API key
 					//global $stripearrayofkeysbyenv;
@@ -340,7 +340,7 @@ class Stripe extends CommonObject
                 }
 				if ($societe->email && $usethirdpartyemailforreceiptemail)
 				{
-					$dataforintent["receipt_email"] = $societe->email;
+				    $dataforintent["receipt_email"] = $object->thirdparty->email;
 				}
 
 				try {
@@ -594,9 +594,11 @@ class Stripe extends CommonObject
 					$charge = \Stripe\Charge::create($paymentarray, array("idempotency_key" => "$ref"));
 				}
 			} else {
-
-				$fee = round(($amount * ($conf->global->STRIPE_APPLICATION_FEE_PERCENT / 100) + $conf->global->STRIPE_APPLICATION_FEE) * 100);
-				if ($fee < ($conf->global->STRIPE_APPLICATION_FEE_MINIMAL * 100)) {
+                $fee = round(($object->total_ttc * ($conf->global->STRIPE_APPLICATION_FEE_PERCENT / 100) + $conf->global->STRIPE_APPLICATION_FEE) * 100);
+			    if ($fee >= ($conf->global->STRIPE_APPLICATION_FEE_MAXIMAL * 100) && $conf->global->STRIPE_APPLICATION_FEE_MAXIMAL>$conf->global->STRIPE_APPLICATION_FEE_MINIMAL) {
+					$fee = round($conf->global->STRIPE_APPLICATION_FEE_MAXIMAL * 100);
+				}
+                elseif ($fee < ($conf->global->STRIPE_APPLICATION_FEE_MINIMAL * 100)) {
 					$fee = round($conf->global->STRIPE_APPLICATION_FEE_MINIMAL * 100);
 				}
 

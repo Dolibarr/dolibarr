@@ -337,7 +337,7 @@ print '<tr class="liste_titre">';
 print '<td width="300">'.$langs->trans("Box").'</td>';
 print '<td>'.$langs->trans("Note").'/'.$langs->trans("Parameters").'</td>';
 print '<td>'.$langs->trans("SourceFile").'</td>';
-print '<td width="160" align="center">'.$langs->trans("ActivateOn").'</td>';
+print '<td width="160" class="center">'.$langs->trans("ActivateOn").'</td>';
 print "</tr>\n";
 
 foreach($boxtoadd as $box)
@@ -398,9 +398,9 @@ print '<table class="tagtable liste">'."\n";
 print '<tr class="liste_titre">';
 print '<td width="300">'.$langs->trans("Box").'</td>';
 print '<td>'.$langs->trans("Note").'/'.$langs->trans("Parameters").'</td>';
-print '<td align="center" width="160">'.$langs->trans("ActiveOn").'</td>';
-print '<td align="center" width="60" colspan="2">'.$langs->trans("PositionByDefault").'</td>';
-print '<td align="center" width="80">'.$langs->trans("Disable").'</td>';
+print '<td class="center" width="160">'.$langs->trans("ActiveOn").'</td>';
+print '<td class="center" width="60" colspan="2">'.$langs->trans("PositionByDefault").'</td>';
+print '<td class="center" width="80">'.$langs->trans("Disable").'</td>';
 print '</tr>'."\n";
 
 $box_order=1;
@@ -429,15 +429,15 @@ foreach($boxactivated as $key => $box)
 	}
 	else print ($box->note?$box->note:'&nbsp;');
 	print '</td>';
-	print '<td align="center">' . (empty($pos_name[$box->position])?'':$langs->trans($pos_name[$box->position])) . '</td>';
+	print '<td class="center">' . (empty($pos_name[$box->position])?'':$langs->trans($pos_name[$box->position])) . '</td>';
 	$hasnext=($key < (count($boxactivated)-1));
 	$hasprevious=($key != 0);
-	print '<td align="center">'.($key+1).'</td>';
-	print '<td align="center">';
+	print '<td class="center">'.($key+1).'</td>';
+	print '<td class="center">';
 	print ($hasnext?'<a href="boxes.php?action=switch&amp;switchfrom='.$box->rowid.'&amp;switchto='.$boxactivated[$key+1]->rowid.'">'.img_down().'</a>&nbsp;':'');
 	print ($hasprevious?'<a href="boxes.php?action=switch&amp;switchfrom='.$box->rowid.'&amp;switchto='.$boxactivated[$key-1]->rowid.'">'.img_up().'</a>':'');
 	print '</td>';
-	print '<td align="center">';
+	print '<td class="center">';
 	print '<a href="boxes.php?rowid='.$box->rowid.'&amp;action=delete">'.img_delete().'</a>';
 	print '</td>';
 

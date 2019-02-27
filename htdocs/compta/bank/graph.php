@@ -832,12 +832,12 @@ if ($mode == 'standard')
 	$link="<a href='".$_SERVER["PHP_SELF"]."?account=".$account.($_GET["option"]!='all'?'':'&option=all')."&year=".$prevyear."&month=".$prevmonth."'>".img_previous('', 'class="valignbottom"')."</a> ".$langs->trans("Month")." <a href='".$_SERVER["PHP_SELF"]."?account=".$account."&year=".$nextyear."&month=".$nextmonth."'>".img_next('', 'class="valignbottom"')."</a>";
 	print '<tr><td class="right">'.$link.'</td></tr>';
 
-	print '<tr><td align="center">';
+	print '<tr><td class="center">';
 	$file = "movement".$account."-".$year.$month.".png";
 	print $show4;
 	print '</td></tr>';
 
-	print '<tr><td align="center">';
+	print '<tr><td class="center">';
 	print $show1;
 	print '</td></tr>';
 
@@ -846,18 +846,18 @@ if ($mode == 'standard')
 	$link="<a href='".$_SERVER["PHP_SELF"]."?account=".$account.($_GET["option"]!='all'?'':'&option=all')."&year=".($prevyear)."'>".img_previous('', 'class="valignbottom"')."</a> ".$langs->trans("Year")." <a href='".$_SERVER["PHP_SELF"]."?account=".$account."&year=".($nextyear)."'>".img_next('', 'class="valignbottom"')."</a>";
 	print '<tr><td class="right">'.$link.'</td></tr>';
 
-	print '<tr><td align="center">';
+	print '<tr><td class="center">';
 	print $show5;
 	print '</td></tr>';
 
-	print '<tr><td align="center">';
+	print '<tr><td class="center">';
 	print $show2;
 	print '</td></tr>';
 }
 
 if ($mode == 'showalltime')
 {
-	print '<tr><td align="center">';
+	print '<tr><td class="center">';
 	print $show3;
 	print '</td></tr>';
 }

@@ -118,7 +118,9 @@ if (empty($user->societe_id))
     $boxstat.='<div class="box">';
     $boxstat.='<table summary="'.dol_escape_htmltag($langs->trans("DolibarrStateBoard")).'" class="noborder boxtable boxtablenobottom nohover" width="100%">';
     $boxstat.='<tr class="liste_titre">';
-    $boxstat.='<th class="liste_titre">'.$langs->trans("DolibarrStateBoard").'</th>';
+    $boxstat.='<th class="liste_titre">';
+    $boxstat.='<div class="inline-block valignmiddle">'.$langs->trans("DolibarrStateBoard").'</div>';
+    $boxstat.='</th>';
     $boxstat.='</tr>';
     $boxstat.='<tr class="impair"><td class="tdboxstats nohover flexcontainer">';
 
@@ -530,10 +532,20 @@ $boxwork='';
 $boxwork.='<div class="box">';
 $boxwork.='<table summary="'.dol_escape_htmltag($langs->trans("WorkingBoard")).'" class="noborder boxtable boxtablenobottom boxworkingboard" width="100%">'."\n";
 $boxwork.='<tr class="liste_titre">';
-$boxwork.='<th class="liste_titre">'.$langs->trans("DolibarrWorkBoard").'</th>';
+$boxwork.='<th class="liste_titre"><div class="inline-block valignmiddle">'.$langs->trans("DolibarrWorkBoard").'</div>';
+if ($showweather)
+{
+    if ($totallate > 0) $text=$langs->transnoentitiesnoconv("WarningYouHaveAtLeastOneTaskLate").' ('.$langs->transnoentitiesnoconv("NActionsLate", $totallate.(!empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE) ? '%' : '')).')';
+    else $text=$langs->transnoentitiesnoconv("NoItemLate");
+    $text.='. '.$langs->transnoentitiesnoconv("LateDesc");
+    //$text.=$form->textwithpicto('',$langs->trans("LateDesc"));
+    $options='height="24px" style="float: right"';
+    $boxwork.=showWeather($totallate, $text, $options, 'inline-block valignmiddle');
+}
+$boxwork.='</th>';
 $boxwork.='</tr>'."\n";
 
-if ($showweather)
+/*if ($showweather)
 {
     $boxwork.='<tr class="nohover">';
     $boxwork.='<td class="nohover'.($conf->global->MAIN_DISABLE_METEO == 2 ?' hideonsmartphone' : '').' center valignmiddle">';
@@ -546,7 +558,7 @@ if ($showweather)
     $boxwork.=showWeather($totallate, $text, $options);
     $boxwork.='</td>';
     $boxwork.='</tr>';
-}
+}*/
 
 // Show dashboard
 $nbworkboardempty=0;
@@ -694,9 +706,10 @@ $db->close();
  *  @param      int     $totallate      Nb of element late
  *  @param      string  $text           Text to show on logo
  *  @param      string  $options        More parameters on img tag
+ *  @param      string  $morecss        More CSS
  *  @return     string                  Return img tag of weather
  */
-function showWeather($totallate, $text, $options)
+function showWeather($totallate, $text, $options, $morecss = '')
 {
     global $conf;
 
@@ -723,10 +736,10 @@ function showWeather($totallate, $text, $options)
         $level3=$conf->global->{$used_conf.'3'};
     }
 
-    if ($totallate <= $level0) $out.=img_weather($text, 'weather-clear.png', $options);
-    elseif ($totallate > $level0 && $totallate <= $level1) $out.=img_weather($text, 'weather-few-clouds.png', $options);
-    elseif ($totallate > $level1 && $totallate <= $level2) $out.=img_weather($text, 'weather-clouds.png', $options);
-    elseif ($totallate > $level2 && $totallate <= $level3) $out.=img_weather($text, 'weather-many-clouds.png', $options);
-    elseif ($totallate > $level3) $out.=img_weather($text, 'weather-storm.png', $options);
+    if ($totallate <= $level0) $out.=img_weather($text, 'weather-clear.png', $options, 0, $morecss);
+    elseif ($totallate > $level0 && $totallate <= $level1) $out.=img_weather($text, 'weather-few-clouds.png', $options, 0, $morecss);
+    elseif ($totallate > $level1 && $totallate <= $level2) $out.=img_weather($text, 'weather-clouds.png', $options, 0, $morecss);
+    elseif ($totallate > $level2 && $totallate <= $level3) $out.=img_weather($text, 'weather-many-clouds.png', $options, 0, $morecss);
+    elseif ($totallate > $level3) $out.=img_weather($text, 'weather-storm.png', $options, 0, $morecss);
     return $out;
 }

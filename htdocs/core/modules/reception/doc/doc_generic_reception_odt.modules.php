@@ -1,20 +1,21 @@
 <?php
-/* Copyright (C) 2018	   Quentin Vial-Gouteyron    <quentin.vial-gouteyron@atm-consulting.fr>
-*
-* This program is free software; you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation; either version 3 of the License, or
-* (at your option) any later version.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with this program. If not, see <http://www.gnu.org/licenses/>.
-* or see http://www.gnu.org/
-*/
+/* Copyright (C) 2018       Quentin Vial-Gouteyron      <quentin.vial-gouteyron@atm-consulting.fr>
+ * Copyright (C) 2019       Frédéric France             <frederic.france@netlogic.fr>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * or see http://www.gnu.org/
+ */
 
 /**
  *	\file       htdocs/core/modules/reception/doc/doc_generic_reception_odt.modules.php
@@ -35,10 +36,21 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/doc.lib.php';
  */
 class doc_generic_reception_odt extends ModelePdfReception
 {
-	var $emetteur;	// Objet societe qui emet
+    /**
+     * @var Company Issuer object that emits
+     */
+    public $emetteur;	// Objet societe qui emet
 
-	var $phpmin = array(5,2,0);	// Minimum version of PHP required by module
-	var $version = 'dolibarr';
+    /**
+     * @var array Minimum version of PHP required by module.
+     * e.g.: PHP ≥ 5.4 = array(5, 4)
+     */
+    public $phpmin = array(5, 4);	// Minimum version of PHP required by module
+
+    /**
+     * @var string Dolibarr version of the loaded document
+     */
+	public $version = 'dolibarr';
 
 
 	/**
@@ -300,7 +312,7 @@ class doc_generic_reception_odt extends ModelePdfReception
 				'__FROM_EMAIL__' => $this->emetteur->email,
 				'__TOTAL_TTC__' => $object->total_ttc,
 				'__TOTAL_HT__' => $object->total_ht,
-				'__TOTAL_VAT__' => $object->total_vat
+				'__TOTAL_VAT__' => $object->total_tva
 				);
 				complete_substitutions_array($substitutionarray, $langs, $object);
 				// Call the ODTSubstitution hook
@@ -318,7 +330,7 @@ class doc_generic_reception_odt extends ModelePdfReception
 				// Open and load template
 				require_once ODTPHP_PATH.'odf.php';
 				try {
-    $odfHandler = new odf(
+                    $odfHandler = new odf(
 						$srctemplatepath,
 						array(
 						'PATH_TO_TMP'	  => $conf->reception->dir_temp,
@@ -343,10 +355,9 @@ class doc_generic_reception_odt extends ModelePdfReception
 				// Make substitutions into odt of freetext
 				try {
 					$odfHandler->setVars('free_text', $newfreetext, true, 'UTF-8');
-				}
-				catch(OdfException $e)
-				{
-				}
+				} catch(OdfException $e) {
+					dol_syslog($e->getMessage(), LOG_INFO);
+                }
 
 				// Make substitutions into odt of user info
 				$tmparray=$this->get_substitutionarray_user($user, $outputlangs);
@@ -364,9 +375,8 @@ class doc_generic_reception_odt extends ModelePdfReception
 						{
 							$odfHandler->setVars($key, $value, true, 'UTF-8');
 						}
-					}
-					catch(OdfException $e)
-					{
+					} catch(OdfException $e) {
+                        dol_syslog($e->getMessage(), LOG_INFO);
 					}
 				}
 				// Make substitutions into odt of mysoc
@@ -385,9 +395,8 @@ class doc_generic_reception_odt extends ModelePdfReception
 						{
 							$odfHandler->setVars($key, $value, true, 'UTF-8');
 						}
-					}
-					catch(OdfException $e)
-					{
+					} catch(OdfException $e) {
+                        dol_syslog($e->getMessage(), LOG_INFO);
 					}
 				}
 				// Make substitutions into odt of thirdparty
@@ -404,9 +413,8 @@ class doc_generic_reception_odt extends ModelePdfReception
 						{
 							$odfHandler->setVars($key, $value, true, 'UTF-8');
 						}
-					}
-					catch(OdfException $e)
-					{
+					} catch(OdfException $e) {
+                        dol_syslog($e->getMessage(), LOG_INFO);
 					}
 				}
 				// Replace tags of object + external modules
@@ -427,9 +435,8 @@ class doc_generic_reception_odt extends ModelePdfReception
 						{
 							$odfHandler->setVars($key, $value, true, 'UTF-8');
 						}
-					}
-					catch(OdfException $e)
-					{
+					} catch(OdfException $e) {
+                        dol_syslog($e->getMessage(), LOG_INFO);
 					}
 				}
 				// Replace tags of lines
@@ -445,15 +452,12 @@ class doc_generic_reception_odt extends ModelePdfReception
 						$reshook=$hookmanager->executeHooks('ODTSubstitutionLine', $parameters, $this, $action);    // Note that $action and $object may have been modified by some hooks
 						foreach($tmparray as $key => $val)
 						{
-							try
-							{
+							try {
 								$listlines->setVars($key, $val, true, 'UTF-8');
-							}
-							catch(OdfException $e)
-							{
-							}
-							catch(SegmentException $e)
-							{
+							} catch(OdfException $e) {
+                                dol_syslog($e->getMessage(), LOG_INFO);
+							} catch(SegmentException $e) {
+                                dol_syslog($e->getMessage(), LOG_INFO);
 							}
 						}
 						$listlines->merge();
@@ -473,9 +477,8 @@ class doc_generic_reception_odt extends ModelePdfReception
 				{
 					try {
 						$odfHandler->setVars($key, $value, true, 'UTF-8');
-					}
-					catch(OdfException $e)
-					{
+					} catch(OdfException $e) {
+                        dol_syslog($e->getMessage(), LOG_INFO);
 					}
 				}
 
@@ -487,7 +490,7 @@ class doc_generic_reception_odt extends ModelePdfReception
 				if (!empty($conf->global->MAIN_ODT_AS_PDF)) {
 					try {
 						$odfHandler->exportAsAttachedPDF($file);
-					}catch (Exception $e){
+					} catch (Exception $e){
 						$this->error=$e->getMessage();
 						return -1;
 					}
@@ -495,7 +498,7 @@ class doc_generic_reception_odt extends ModelePdfReception
 				else {
 					try {
 					$odfHandler->saveToDisk($file);
-					}catch (Exception $e){
+					} catch (Exception $e){
 						$this->error=$e->getMessage();
 						return -1;
 					}

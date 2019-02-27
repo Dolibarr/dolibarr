@@ -266,22 +266,22 @@ if ($num == 1 && ! empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && 
 llxHeader('', $langs->trans("ListOfUsers"));
 
 $param='';
-if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
-if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.urlencode($limit);
-if ($sall != '') $param.='&sall='.urlencode($sall);
-if ($search_user != '') $param.="&search_user=".urlencode($search_user);
-if ($search_login != '') $param.="&search_login=".urlencode($search_login);
-if ($search_lastname != '') $param.="&search_lastname=".urlencode($search_lastname);
-if ($search_firstname != '') $param.="&search_firstname=".urlencode($search_firstname);
-if ($search_gender != '') $param.="&search_gender=".urlencode($search_gender);
-if ($search_employee != '') $param.="&search_employee=".urlencode($search_employee);
-if ($search_accountancy_code != '') $param.="&search_accountancy_code=".urlencode($search_accountancy_code);
-if ($search_email != '') $param.="&search_email=".urlencode($search_email);
-if ($search_supervisor > 0) $param.="&search_supervisor=".urlencode($search_supervisor);
-if ($search_statut != '') $param.="&search_statut=".urlencode($search_statut);
-if ($optioncss != '') $param.='&optioncss='.urlencode($optioncss);
-if ($mode != '')      $param.='&mode='.urlencode($mode);
-if ($search_categ > 0) $param.="&search_categ=".urlencode($search_categ);
+if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&amp;contextpage='.urlencode($contextpage);
+if ($limit > 0 && $limit != $conf->liste_limit) $param.='&amp;limit='.urlencode($limit);
+if ($sall != '') $param.='&amp;sall='.urlencode($sall);
+if ($search_user != '') $param.="&amp;search_user=".urlencode($search_user);
+if ($search_login != '') $param.="&amp;search_login=".urlencode($search_login);
+if ($search_lastname != '') $param.="&amp;search_lastname=".urlencode($search_lastname);
+if ($search_firstname != '') $param.="&amp;search_firstname=".urlencode($search_firstname);
+if ($search_gender != '') $param.="&amp;search_gender=".urlencode($search_gender);
+if ($search_employee != '') $param.="&amp;search_employee=".urlencode($search_employee);
+if ($search_accountancy_code != '') $param.="&amp;search_accountancy_code=".urlencode($search_accountancy_code);
+if ($search_email != '') $param.="&amp;search_email=".urlencode($search_email);
+if ($search_supervisor > 0) $param.="&amp;search_supervisor=".urlencode($search_supervisor);
+if ($search_statut != '') $param.="&amp;search_statut=".urlencode($search_statut);
+if ($optioncss != '') $param.='&amp;optioncss='.urlencode($optioncss);
+if ($mode != '')      $param.='&amp;mode='.urlencode($mode);
+if ($search_categ > 0) $param.="&amp;search_categ=".urlencode($search_categ);
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
@@ -435,12 +435,12 @@ if (! empty($arrayfields['u.tms']['checked']))
 if (! empty($arrayfields['u.statut']['checked']))
 {
 	// Status
-	print '<td class="liste_titre" align="center">';
+	print '<td class="liste_titre center">';
 	print $form->selectarray('search_statut', array('-1'=>'','0'=>$langs->trans('Disabled'),'1'=>$langs->trans('Enabled')), $search_statut);
 	print '</td>';
 }
 // Action column
-print '<td class="liste_titre" align="right">';
+print '<td class="liste_titre right">';
 $searchpicto=$form->showFilterAndCheckAddButtons(0);
 print $searchpicto;
 print '</td>';
@@ -459,18 +459,18 @@ if (! empty($arrayfields['u.email']['checked']))          print_liste_field_titr
 if (! empty($arrayfields['u.fk_soc']['checked']))         print_liste_field_titre("Company", $_SERVER['PHP_SELF'], "u.fk_soc", $param, "", "", $sortfield, $sortorder);
 if (! empty($arrayfields['u.entity']['checked']))         print_liste_field_titre("Entity", $_SERVER['PHP_SELF'], "u.entity", $param, "", "", $sortfield, $sortorder);
 if (! empty($arrayfields['u.fk_user']['checked']))        print_liste_field_titre("HierarchicalResponsible", $_SERVER['PHP_SELF'], "u.fk_user", $param, "", "", $sortfield, $sortorder);
-if (! empty($arrayfields['u.datelastlogin']['checked']))  print_liste_field_titre("LastConnexion", $_SERVER['PHP_SELF'], "u.datelastlogin", $param, "", 'align="center"', $sortfield, $sortorder);
-if (! empty($arrayfields['u.datepreviouslogin']['checked'])) print_liste_field_titre("PreviousConnexion", $_SERVER['PHP_SELF'], "u.datepreviouslogin", $param, "", 'align="center"', $sortfield, $sortorder);
+if (! empty($arrayfields['u.datelastlogin']['checked']))  print_liste_field_titre("LastConnexion", $_SERVER['PHP_SELF'], "u.datelastlogin", $param, "", '', $sortfield, $sortorder, 'center ');
+if (! empty($arrayfields['u.datepreviouslogin']['checked'])) print_liste_field_titre("PreviousConnexion", $_SERVER['PHP_SELF'], "u.datepreviouslogin", $param, "", '', $sortfield, $sortorder, 'center ');
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 // Hook fields
 $parameters=array('arrayfields'=>$arrayfields,'param'=>$param,'sortfield'=>$sortfield,'sortorder'=>$sortorder);
 $reshook=$hookmanager->executeHooks('printFieldListTitle', $parameters);    // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
-if (! empty($arrayfields['u.datec']['checked']))  print_liste_field_titre("DateCreationShort", $_SERVER["PHP_SELF"], "u.datec", "", $param, 'align="center" class="nowrap"', $sortfield, $sortorder);
-if (! empty($arrayfields['u.tms']['checked']))    print_liste_field_titre("DateModificationShort", $_SERVER["PHP_SELF"], "u.tms", "", $param, 'align="center" class="nowrap"', $sortfield, $sortorder);
-if (! empty($arrayfields['u.statut']['checked'])) print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "u.statut", "", $param, 'align="center"', $sortfield, $sortorder);
-print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', 'align="center"', $sortfield, $sortorder, 'maxwidthsearch ');
+if (! empty($arrayfields['u.datec']['checked']))  print_liste_field_titre("DateCreationShort", $_SERVER["PHP_SELF"], "u.datec", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
+if (! empty($arrayfields['u.tms']['checked']))    print_liste_field_titre("DateModificationShort", $_SERVER["PHP_SELF"], "u.tms", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
+if (! empty($arrayfields['u.statut']['checked'])) print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "u.statut", "", $param, '', $sortfield, $sortorder, 'center ');
+print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
 print "</tr>\n";
 
 
@@ -616,13 +616,13 @@ while ($i < min($num, $limit))
 	// Date last login
 	if (! empty($arrayfields['u.datelastlogin']['checked']))
 	{
-		print '<td class="nowrap" align="center">'.dol_print_date($db->jdate($obj->datelastlogin), "dayhour").'</td>';
+		print '<td class="nowrap center">'.dol_print_date($db->jdate($obj->datelastlogin), "dayhour").'</td>';
 		if (! $i) $totalarray['nbfield']++;
 	}
 	// Date previous login
 	if (! empty($arrayfields['u.datepreviouslogin']['checked']))
 	{
-		print '<td class="nowrap" align="center">'.dol_print_date($db->jdate($obj->datepreviouslogin), "dayhour").'</td>';
+		print '<td class="nowrap center">'.dol_print_date($db->jdate($obj->datepreviouslogin), "dayhour").'</td>';
 		if (! $i) $totalarray['nbfield']++;
 	}
 
@@ -635,7 +635,7 @@ while ($i < min($num, $limit))
 	// Date creation
 	if (! empty($arrayfields['u.datec']['checked']))
 	{
-		print '<td align="center">';
+		print '<td class="center">';
 		print dol_print_date($db->jdate($obj->date_creation), 'dayhour', 'tzuser');
 		print '</td>';
 		if (! $i) $totalarray['nbfield']++;
@@ -643,7 +643,7 @@ while ($i < min($num, $limit))
 	// Date modification
 	if (! empty($arrayfields['u.tms']['checked']))
 	{
-		print '<td align="center">';
+		print '<td class="center">';
 		print dol_print_date($db->jdate($obj->date_update), 'dayhour', 'tzuser');
 		print '</td>';
 		if (! $i) $totalarray['nbfield']++;
@@ -652,7 +652,7 @@ while ($i < min($num, $limit))
 	if (! empty($arrayfields['u.statut']['checked']))
 	{
 	   $userstatic->statut=$obj->statut;
-	   print '<td align="center">'.$userstatic->getLibStatut(3).'</td>';
+	   print '<td class="center">'.$userstatic->getLibStatut(3).'</td>';
 	   if (! $i) $totalarray['nbfield']++;
 	}
 	// Action column

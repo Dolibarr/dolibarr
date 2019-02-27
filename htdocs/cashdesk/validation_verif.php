@@ -359,7 +359,7 @@ switch ($action)
 		// End of case: valide_facture
 }
 
-unset ($_SESSION['serObjFacturation']);
+unset($_SESSION['serObjFacturation']);
 
 $_SESSION['serObjFacturation'] = serialize($obj_facturation);
 

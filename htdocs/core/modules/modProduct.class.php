@@ -351,48 +351,48 @@ class modProduct extends DolibarrModules
         $this->import_convertvalue_array[$r] = array(
 				'p.weight_units' => array(
 						'rule' => 'fetchidfromcodeunits',
-						'classfile' => '/core/class/cmeasuringunits.class.php',
-						'class' => 'CMeasuringUnits',
+						'classfile' => '/core/class/cunits.class.php',
+						'class' => 'CUnits',
 						'method' => 'fetch',
 						'units' => 'weight',
 						'dict' => 'DictionaryMeasuringUnits'
 				),
 				'p.length_units' => array(
 						'rule' => 'fetchidfromcodeunits',
-						'classfile' => '/core/class/cmeasuringunits.class.php',
-						'class' => 'CMeasuringUnits',
+						'classfile' => '/core/class/cunits.class.php',
+						'class' => 'CUnits',
 						'method' => 'fetch',
 						'units' => 'size',
 						'dict' => 'DictionaryMeasuringUnits'
 				),
 				'p.width_units' => array(
 						'rule' => 'fetchidfromcodeunits',
-						'classfile' => '/core/class/cmeasuringunits.class.php',
-						'class' => 'CMeasuringUnits',
+						'classfile' => '/core/class/cunits.class.php',
+						'class' => 'CUnits',
 						'method' => 'fetch',
 						'units' => 'size',
 						'dict' => 'DictionaryMeasuringUnits'
 				),
 				'p.height_units' => array(
 						'rule' => 'fetchidfromcodeunits',
-						'classfile' => '/core/class/cmeasuringunits.class.php',
-						'class' => 'CMeasuringUnits',
+						'classfile' => '/core/class/cunits.class.php',
+						'class' => 'CUnits',
 						'method' => 'fetch',
 						'units' => 'size',
 						'dict' => 'DictionaryMeasuringUnits'
 				),
 				'p.surface_units' => array(
 						'rule' => 'fetchidfromcodeunits',
-						'classfile' => '/core/class/cmeasuringunits.class.php',
-						'class' => 'CMeasuringUnits',
+						'classfile' => '/core/class/cunits.class.php',
+						'class' => 'CUnits',
 						'method' => 'fetch',
 						'units' => 'surface',
 						'dict' => 'DictionaryMeasuringUnits'
 				),
 				'p.volume_units' => array(
 						'rule' => 'fetchidfromcodeunits',
-						'classfile' => '/core/class/cmeasuringunits.class.php',
-						'class' => 'CMeasuringUnits',
+						'classfile' => '/core/class/cunits.class.php',
+						'class' => 'CUnits',
 						'method' => 'fetch',
 						'units' => 'volume',
 						'dict' => 'DictionaryMeasuringUnits'

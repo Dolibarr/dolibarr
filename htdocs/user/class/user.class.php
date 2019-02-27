@@ -73,6 +73,7 @@ class User extends CommonObject
 	public $skype;
 	public $twitter;
 	public $facebook;
+	public $linkedin;
 
 	public $job;			// job position
 	public $signature;
@@ -173,6 +174,8 @@ class User extends CommonObject
 
 	public $default_c_exp_tax_cat;
 	public $default_range;
+	
+	public $fk_warehouse;
 
 	public $fields = array(
         'rowid'=>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1,  'index'=>1, 'position'=>1, 'comment'=>'Id'),
@@ -227,7 +230,7 @@ class User extends CommonObject
 		$login=trim($login);
 
 		// Get user
-		$sql = "SELECT u.rowid, u.lastname, u.firstname, u.employee, u.gender, u.birth, u.email, u.job, u.skype, u.twitter, u.facebook,";
+		$sql = "SELECT u.rowid, u.lastname, u.firstname, u.employee, u.gender, u.birth, u.email, u.job, u.skype, u.twitter, u.facebook, u.linkedin,";
 		$sql.= " u.signature, u.office_phone, u.office_fax, u.user_mobile,";
 		$sql.= " u.address, u.zip, u.town, u.fk_state as state_id, u.fk_country as country_id,";
 		$sql.= " u.admin, u.login, u.note,";
@@ -248,6 +251,7 @@ class User extends CommonObject
 		$sql.= " u.weeklyhours,";
 		$sql.= " u.color,";
 		$sql.= " u.dateemployment, u.dateemploymentend,";
+		$sql.= " u.fk_warehouse,";
 		$sql.= " u.ref_int, u.ref_ext,";
 		$sql.= " u.default_range, u.default_c_exp_tax_cat,";			// Expense report default mode
 		$sql.= " c.code as country_code, c.label as country,";
@@ -335,6 +339,7 @@ class User extends CommonObject
 				$this->skype		= $obj->skype;
 				$this->twitter		= $obj->twitter;
 				$this->facebook		= $obj->facebook;
+				$this->linkedin		= $obj->linkedin;
 				$this->job			= $obj->job;
 				$this->signature	= $obj->signature;
 				$this->admin		= $obj->admin;
@@ -368,6 +373,7 @@ class User extends CommonObject
 
 				$this->default_range		= $obj->default_range;
 				$this->default_c_exp_tax_cat	= $obj->default_c_exp_tax_cat;
+				$this->fk_warehouse			= $obj->fk_warehouse;
 
 				// Protection when module multicompany was set, admin was set to first entity and then, the module was disabled,
 				// in such case, this admin user must be admin for ALL entities.
@@ -1252,6 +1258,7 @@ class User extends CommonObject
 		$this->skype 		= $contact->skype;
 		$this->twitter 		= $contact->twitter;
 		$this->facebook		= $contact->facebook;
+		$this->linkedin		= $contact->linkedin;
 		$this->office_phone	= $contact->phone_pro;
 		$this->office_fax	= $contact->fax;
 		$this->user_mobile	= $contact->phone_mobile;
@@ -1469,6 +1476,7 @@ class User extends CommonObject
 		$this->skype        = trim($this->skype);
 		$this->twitter      = trim($this->twitter);
 		$this->facebook     = trim($this->facebook);
+		$this->linkedin     = trim($this->linkedin);
 
 		$this->job    		= trim($this->job);
 		$this->signature    = trim($this->signature);
@@ -1482,6 +1490,7 @@ class User extends CommonObject
 		$this->color 		= empty($this->color)?'':$this->color;
 		$this->dateemployment 	= empty($this->dateemployment)?'':$this->dateemployment;
 		$this->dateemploymentend = empty($this->dateemploymentend)?'':$this->dateemploymentend;
+		$this->fk_warehouse = trim(empty($this->fk_warehouse)?'':$this->fk_warehouse);
 
 		// Check parameters
 		if (! empty($conf->global->USER_MAIL_REQUIRED) && ! isValidEMail($this->email))
@@ -1521,6 +1530,7 @@ class User extends CommonObject
 		$sql.= ", skype = '".$this->db->escape($this->skype)."'";
 		$sql.= ", twitter = '".$this->db->escape($this->twitter)."'";
 		$sql.= ", facebook = '".$this->db->escape($this->facebook)."'";
+		$sql.= ", linkedin = '".$this->db->escape($this->linkedin)."'";
 		$sql.= ", job = '".$this->db->escape($this->job)."'";
 		$sql.= ", signature = '".$this->db->escape($this->signature)."'";
 		$sql.= ", accountancy_code = '".$this->db->escape($this->accountancy_code)."'";
@@ -1539,6 +1549,7 @@ class User extends CommonObject
 		$sql.= ", entity = '".$this->db->escape($this->entity)."'";
 		$sql.= ", default_range = ".($this->default_range > 0 ? $this->default_range : 'null');
 		$sql.= ", default_c_exp_tax_cat = ".($this->default_c_exp_tax_cat > 0 ? $this->default_c_exp_tax_cat : 'null');
+		$sql.= ", fk_warehouse = ".($this->fk_warehouse?"'".$this->db->escape($this->fk_warehouse)."'":"null");
 
 		$sql.= " WHERE rowid = ".$this->id;
 
@@ -1609,6 +1620,7 @@ class User extends CommonObject
 						$adh->skype=$this->skype;
 						$adh->twitter=$this->twitter;
 						$adh->facebook=$this->facebook;
+						$adh->linkedin=$this->linkedin;
 
 						$adh->phone=$this->office_phone;
 						$adh->phone_mobile=$this->user_mobile;
@@ -1661,6 +1673,7 @@ class User extends CommonObject
 						$tmpobj->skype=$this->skype;
 						$tmpobj->twitter=$this->twitter;
 						$tmpobj->facebook=$this->facebook;
+						$tmpobj->linkedin=$this->linkedin;
 
 						$tmpobj->phone_pro=$this->office_phone;
 						$tmpobj->phone_mobile=$this->user_mobile;
@@ -1977,7 +1990,7 @@ class User extends CommonObject
 			dol_syslog(get_class($this)."::send_password changelater is on, url=".$url);
 		}
 
-$mailfile = new CMailFile(
+		$mailfile = new CMailFile(
 			$subject,
 			$this->email,
 			$conf->global->MAIN_MAIL_EMAIL_FROM,
@@ -2528,7 +2541,8 @@ $mailfile = new CMailFile(
 			'LDAP_FIELD_SID'		=> 'ldap_sid',
 			'LDAP_FIELD_SKYPE'		=> 'skype',
 			'LDAP_FIELD_TWITTER'	=> 'twitter',
-			'LDAP_FIELD_FACEBOOK'	=> 'facebook'
+			'LDAP_FIELD_FACEBOOK'	=> 'facebook',
+            'LDAP_FIELD_LINKEDIN'	=> 'linkedin'
 		);
 
 		// Champs
@@ -2642,6 +2656,7 @@ $mailfile = new CMailFile(
 		$this->skype='skypepseudo';
 		$this->twitter='twitterpseudo';
 		$this->facebook='facebookpseudo';
+		$this->linkedin='linkedinpseudo';
 		$this->office_phone='0999999999';
 		$this->office_fax='0999999998';
 		$this->user_mobile='0999999997';
@@ -2796,6 +2811,7 @@ $mailfile = new CMailFile(
 		$this->skype=$ldapuser->{$conf->global->LDAP_FIELD_SKYPE};
 		$this->twitter=$ldapuser->{$conf->global->LDAP_FIELD_TWITTER};
 		$this->facebook=$ldapuser->{$conf->global->LDAP_FIELD_FACEBOOK};
+		$this->linkedin=$ldapuser->{$conf->global->LDAP_FIELD_LINKEDIN};
 		$this->ldap_sid=$ldapuser->{$conf->global->LDAP_FIELD_SID};
 
 		$this->job=$ldapuser->{$conf->global->LDAP_FIELD_TITLE};

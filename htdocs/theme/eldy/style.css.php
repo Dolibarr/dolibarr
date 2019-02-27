@@ -271,7 +271,7 @@ body {
 
 .thumbstat { font-weight: bold !important; }
 th a { font-weight: <?php echo ($useboldtitle?'bold':'normal'); ?> !important; }
-a.tab { font-weight: bold !important; }
+a.tab { font-weight: 500 !important; }
 
 a:link, a:visited, a:hover, a:active { font-family: <?php print $fontlist ?>; font-weight: normal; color: rgb(<?php print $colortextlink; ?>); text-decoration: none;  }
 a:hover { text-decoration: underline; color: rgb(<?php print $colortextlink; ?>); }
@@ -949,6 +949,7 @@ select.selectarrowonleft option {
     .width100 { width: 100px; }
     .width200 { width: 200px; }
     .minwidth100 { min-width: 100px; }
+    .minwidth150 { min-width: 150px; }
     .minwidth200 { min-width: 200px; }
     .minwidth300 { min-width: 300px; }
     .minwidth400 { min-width: 400px; }
@@ -966,6 +967,7 @@ select.selectarrowonleft option {
 .width50  { width: 50px; }
 .width75  { width: 75px; }
 .width100 { width: 100px; }
+.width150 { width: 150px; }
 .width200 { width: 200px; }
 .maxwidth25  { max-width: 25px; }
 .maxwidth50  { max-width: 50px; }
@@ -1589,8 +1591,10 @@ div.tmenudiv {
 div.tmenudisabled, a.tmenudisabled {
 	opacity: 0.6;
 }
+a.tmenu, a.tmenusel, a.tmenudisabled {
+    font-weight: 300;
+}
 a.tmenudisabled:link, a.tmenudisabled:visited, a.tmenudisabled:hover, a.tmenudisabled:active {
-    font-weight: normal;
 	padding: 0px 5px 0px 5px;
 	white-space: nowrap;
 	color: #<?php echo $colortextbackhmenu; ?>;
@@ -1599,14 +1603,12 @@ a.tmenudisabled:link, a.tmenudisabled:visited, a.tmenudisabled:hover, a.tmenudis
 }
 
 a.tmenu:link, a.tmenu:visited, a.tmenu:hover, a.tmenu:active {
-    font-weight: normal;
 	padding: 0px 4px 0px 4px;
 	white-space: nowrap;
 	color: #<?php echo $colortextbackhmenu; ?>;
     text-decoration: none;
 }
 a.tmenusel:link, a.tmenusel:visited, a.tmenusel:hover, a.tmenusel:active {
-	font-weight: normal;
 	padding: 0px 4px 0px 4px;
 	margin: 0px 0px 0px 0px;
 	white-space: nowrap;
@@ -2160,8 +2162,8 @@ input.vmenusearchselectcombo[type=text] {
 .searchform input { font-size: 16px; }
 
 
-a.vmenu:link, a.vmenu:visited, a.vmenu:hover, a.vmenu:active, span.vmenu { white-space: nowrap; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: bold; }
-font.vmenudisabled  { font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: bold; color: #aaa; margin-left: 4px; }
+a.vmenu:link, a.vmenu:visited, a.vmenu:hover, a.vmenu:active, span.vmenu { white-space: nowrap; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: bold; }	/* bold = 600, 500 is ko with Edge on 1200x960 */
+font.vmenudisabled  { font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: bold; color: #aaa; margin-left: 4px; }												/* bold = 600, 500 is ko with Edge on 1200x960 */
 a.vmenu:link, a.vmenu:visited { color: #<?php echo $colortextbackvmenu; ?>; }
 
 a.vsmenu:link, a.vsmenu:visited, a.vsmenu:hover, a.vsmenu:active, span.vsmenu { font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: normal; color: #202020; margin: 1px 1px 1px 6px; }
@@ -3296,7 +3298,7 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 
     background: #fcfcfc;
     border: 1px solid #eee;
-    /* border-left: 6px solid #ddd; */
+    border-left: 6px solid #ddd;
     box-shadow: 1px 1px 8px #ddd;
     border-radius: 0px;
 }
@@ -3371,7 +3373,7 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 	box-shadow: 0px 0px 8px 0px rgba(0,0,0,0.20);
 }
 span.boxstatstext {
-	opacity: 0.8;
+	opacity: 0.7;
     line-height: 18px;
     color: #000;
 }

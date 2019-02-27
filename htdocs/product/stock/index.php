@@ -92,7 +92,7 @@ if ($result)
 
             print '<tr class="oddeven">';
             print "<td><a href=\"card.php?id=$objp->rowid\">".img_object($langs->trans("ShowStock"), "stock")." ".$objp->label."</a></td>\n";
-            print '<td align="right">'.$entrepot->LibStatut($objp->statut, 5).'</td>';
+            print '<td class="right">'.$entrepot->LibStatut($objp->statut, 5).'</td>';
             print "</tr>\n";
             $i++;
         }
@@ -142,7 +142,7 @@ if ($resql)
 		print '<th>'.$langs->trans("EatByDate").'</th>';
 	}
 	print '<th>'.$langs->trans("Warehouse").'</th>';
-	print '<th align="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/product/stock/movement_list.php">'.$langs->trans("FullList").'</a></th>';
+	print '<th class="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/product/stock/movement_list.php">'.$langs->trans("FullList").'</a></th>';
 	print "</tr>\n";
 
 	$i=0;
@@ -170,7 +170,7 @@ if ($resql)
 		print '<td class="tdoverflowmax200"><a href="card.php?id='.$objp->entrepot_id.'">';
 		print img_object($langs->trans("ShowWarehouse"), "stock").' '.$objp->stock;
 		print "</a></td>\n";
-		print '<td align="right">';
+		print '<td class="right">';
 		if ($objp->qty > 0) print '+';
 		print $objp->qty.'</td>';
 		print "</tr>\n";

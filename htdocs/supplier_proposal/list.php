@@ -476,7 +476,7 @@ if ($resql)
 	}
 	if (! empty($arrayfields['s.nom']['checked']))
 	{
-		print '<td class="liste_titre" align="left">';
+		print '<td class="liste_titre left">';
 		print '<input class="flat" type="text" size="12" name="search_societe" value="'.dol_escape_htmltag($search_societe).'">';
 		print '</td>';
 	}
@@ -492,21 +492,21 @@ if ($resql)
 	// Country
 	if (! empty($arrayfields['country.code_iso']['checked']))
 	{
-		print '<td class="liste_titre" align="center">';
+		print '<td class="liste_titre center">';
 		print $form->select_country($search_country, 'search_country', '', 0, 'maxwidth100');
 		print '</td>';
 	}
 	// Company type
 	if (! empty($arrayfields['typent.code']['checked']))
 	{
-		print '<td class="liste_titre maxwidthonsmartphone" align="center">';
+		print '<td class="liste_titre maxwidthonsmartphone center">';
 		print $form->selectarray("search_type_thirdparty", $formcompany->typent_array(0), $search_type_thirdparty, 0, 0, 0, '', 0, 0, 0, (empty($conf->global->SOCIETE_SORT_ON_TYPEENT)?'ASC':$conf->global->SOCIETE_SORT_ON_TYPEENT));
 		print '</td>';
 	}
 	// Date
 	if (! empty($arrayfields['sp.date_valid']['checked']))
 	{
-		print '<td class="liste_titre" colspan="1" align="center">';
+		print '<td class="liste_titre center" colspan="1">';
 		//print $langs->trans('Month').': ';
 		print '<input class="flat width25 valignmiddle" type="text" maxlength="2" name="monthvalid" value="'.dol_escape_htmltag($monthvalid).'">';
 		//print '&nbsp;'.$langs->trans('Year').': ';
@@ -517,7 +517,7 @@ if ($resql)
 	// Date
 	if (! empty($arrayfields['sp.date_livraison']['checked']))
 	{
-		print '<td class="liste_titre" colspan="1" align="center">';
+		print '<td class="liste_titre center" colspan="1">';
 		//print $langs->trans('Month').': ';
 		print '<input class="flat width25 valignmiddle" type="text" maxlength="2" name="month" value="'.dol_escape_htmltag($month).'">';
 		//print '&nbsp;'.$langs->trans('Year').': ';
@@ -529,28 +529,28 @@ if ($resql)
 	if (! empty($arrayfields['sp.total_ht']['checked']))
 	{
 		// Amount
-		print '<td class="liste_titre" align="right">';
+		print '<td class="liste_titre right">';
 		print '<input class="flat" type="text" size="5" name="search_montant_ht" value="'.dol_escape_htmltag($search_montant_ht).'">';
 		print '</td>';
 	}
 	if (! empty($arrayfields['sp.total_vat']['checked']))
 	{
 		// Amount
-		print '<td class="liste_titre" align="right">';
+		print '<td class="liste_titre right">';
 		print '<input class="flat" type="text" size="5" name="search_montant_vat" value="'.dol_escape_htmltag($search_montant_vat).'">';
 		print '</td>';
 	}
 	if (! empty($arrayfields['sp.total_ttc']['checked']))
 	{
 		// Amount
-		print '<td class="liste_titre" align="right">';
+		print '<td class="liste_titre right">';
 		print '<input class="flat" type="text" size="5" name="search_montant_ttc" value="'.dol_escape_htmltag($search_montant_ttc).'">';
 		print '</td>';
 	}
 	if (! empty($arrayfields['u.login']['checked']))
 	{
 		// Author
-		print '<td class="liste_titre" align="center">';
+		print '<td class="liste_titre center">';
 		print '<input class="flat" size="4" type="text" name="search_login" value="'.dol_escape_htmltag($search_author).'">';
 		print '</td>';
 	}
@@ -575,12 +575,12 @@ if ($resql)
 	// Status
 	if (! empty($arrayfields['sp.fk_statut']['checked']))
 	{
-		print '<td class="liste_titre maxwidthonsmartphone" align="right">';
+		print '<td class="liste_titre maxwidthonsmartphone right">';
 		$formpropal->selectProposalStatus($search_status, 1, 0, 1, 'supplier', 'search_status');
 		print '</td>';
 	}
 	// Action column
-	print '<td class="liste_titre" align="middle">';
+	print '<td class="liste_titre middle">';
 	$searchpicto=$form->showFilterButtons();
 	print $searchpicto;
 	print '</td>';
@@ -594,24 +594,24 @@ if ($resql)
 	if (! empty($arrayfields['s.town']['checked']))           print_liste_field_titre($arrayfields['s.town']['label'], $_SERVER["PHP_SELF"], 's.town', '', $param, '', $sortfield, $sortorder);
 	if (! empty($arrayfields['s.zip']['checked']))            print_liste_field_titre($arrayfields['s.zip']['label'], $_SERVER["PHP_SELF"], 's.zip', '', $param, '', $sortfield, $sortorder);
 	if (! empty($arrayfields['state.nom']['checked']))        print_liste_field_titre($arrayfields['state.nom']['label'], $_SERVER["PHP_SELF"], "state.nom", "", $param, '', $sortfield, $sortorder);
-	if (! empty($arrayfields['country.code_iso']['checked'])) print_liste_field_titre($arrayfields['country.code_iso']['label'], $_SERVER["PHP_SELF"], "country.code_iso", "", $param, 'align="center"', $sortfield, $sortorder);
-	if (! empty($arrayfields['typent.code']['checked']))      print_liste_field_titre($arrayfields['typent.code']['label'], $_SERVER["PHP_SELF"], "typent.code", "", $param, 'align="center"', $sortfield, $sortorder);
-	if (! empty($arrayfields['sp.date_valid']['checked']))      print_liste_field_titre($arrayfields['sp.date_valid']['label'], $_SERVER["PHP_SELF"], 'sp.date_valid', '', $param, 'align="center"', $sortfield, $sortorder);
-	if (! empty($arrayfields['sp.date_livraison']['checked']))  print_liste_field_titre($arrayfields['sp.date_livraison']['label'], $_SERVER["PHP_SELF"], 'sp.date_livraison', '', $param, 'align="center"', $sortfield, $sortorder);
-	if (! empty($arrayfields['sp.total_ht']['checked']))        print_liste_field_titre($arrayfields['sp.total_ht']['label'], $_SERVER["PHP_SELF"], 'sp.total_ht', '', $param, 'align="right"', $sortfield, $sortorder);
-	if (! empty($arrayfields['sp.total_vat']['checked']))       print_liste_field_titre($arrayfields['sp.total_vat']['label'], $_SERVER["PHP_SELF"], 'sp.total_vat', '', $param, 'align="right"', $sortfield, $sortorder);
-	if (! empty($arrayfields['sp.total_ttc']['checked']))       print_liste_field_titre($arrayfields['sp.total_ttc']['label'], $_SERVER["PHP_SELF"], 'sp.total_ttc', '', $param, 'align="right"', $sortfield, $sortorder);
-	if (! empty($arrayfields['u.login']['checked']))            print_liste_field_titre($arrayfields['u.login']['label'], $_SERVER["PHP_SELF"], 'u.login', '', $param, 'align="center"', $sortfield, $sortorder);
+	if (! empty($arrayfields['country.code_iso']['checked'])) print_liste_field_titre($arrayfields['country.code_iso']['label'], $_SERVER["PHP_SELF"], "country.code_iso", "", $param, '', $sortfield, $sortorder, 'center ');
+	if (! empty($arrayfields['typent.code']['checked']))      print_liste_field_titre($arrayfields['typent.code']['label'], $_SERVER["PHP_SELF"], "typent.code", "", $param, '', $sortfield, $sortorder, 'center ');
+	if (! empty($arrayfields['sp.date_valid']['checked']))      print_liste_field_titre($arrayfields['sp.date_valid']['label'], $_SERVER["PHP_SELF"], 'sp.date_valid', '', $param, '', $sortfield, $sortorder, 'center ');
+	if (! empty($arrayfields['sp.date_livraison']['checked']))  print_liste_field_titre($arrayfields['sp.date_livraison']['label'], $_SERVER["PHP_SELF"], 'sp.date_livraison', '', $param, '', $sortfield, $sortorder, 'center ');
+	if (! empty($arrayfields['sp.total_ht']['checked']))        print_liste_field_titre($arrayfields['sp.total_ht']['label'], $_SERVER["PHP_SELF"], 'sp.total_ht', '', $param, '', $sortfield, $sortorder, 'right ');
+	if (! empty($arrayfields['sp.total_vat']['checked']))       print_liste_field_titre($arrayfields['sp.total_vat']['label'], $_SERVER["PHP_SELF"], 'sp.total_vat', '', $param, '', $sortfield, $sortorder, 'right ');
+	if (! empty($arrayfields['sp.total_ttc']['checked']))       print_liste_field_titre($arrayfields['sp.total_ttc']['label'], $_SERVER["PHP_SELF"], 'sp.total_ttc', '', $param, '', $sortfield, $sortorder, 'right ');
+	if (! empty($arrayfields['u.login']['checked']))            print_liste_field_titre($arrayfields['u.login']['label'], $_SERVER["PHP_SELF"], 'u.login', '', $param, '', $sortfield, $sortorder, 'center ');
 	// Extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 	// Hook fields
 	$parameters=array('arrayfields'=>$arrayfields,'param'=>$param,'sortfield'=>$sortfield,'sortorder'=>$sortorder);
 	$reshook=$hookmanager->executeHooks('printFieldListTitle', $parameters);    // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
-	if (! empty($arrayfields['sp.datec']['checked']))     print_liste_field_titre($arrayfields['sp.datec']['label'], $_SERVER["PHP_SELF"], "sp.datec", "", $param, 'align="center" class="nowrap"', $sortfield, $sortorder);
-	if (! empty($arrayfields['sp.tms']['checked']))       print_liste_field_titre($arrayfields['sp.tms']['label'], $_SERVER["PHP_SELF"], "sp.tms", "", $param, 'align="center" class="nowrap"', $sortfield, $sortorder);
-	if (! empty($arrayfields['sp.fk_statut']['checked'])) print_liste_field_titre($arrayfields['sp.fk_statut']['label'], $_SERVER["PHP_SELF"], "sp.fk_statut", "", $param, 'align="right"', $sortfield, $sortorder);
-	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', 'align="center"', $sortfield, $sortorder, 'maxwidthsearch ');
+	if (! empty($arrayfields['sp.datec']['checked']))     print_liste_field_titre($arrayfields['sp.datec']['label'], $_SERVER["PHP_SELF"], "sp.datec", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
+	if (! empty($arrayfields['sp.tms']['checked']))       print_liste_field_titre($arrayfields['sp.tms']['label'], $_SERVER["PHP_SELF"], "sp.tms", "", $param, '', $sortfield, $sortorder, 'center nowrap');
+	if (! empty($arrayfields['sp.fk_statut']['checked'])) print_liste_field_titre($arrayfields['sp.fk_statut']['label'], $_SERVER["PHP_SELF"], "sp.fk_statut", "", $param, '', $sortfield, $sortorder, 'right ');
+	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
 	print '</tr>'."\n";
 
 	$now = dol_now();
@@ -654,7 +654,7 @@ if ($resql)
 				print '</td>';
 			}
 			// Other picto tool
-			print '<td width="16" align="right" class="nobordernopadding hideonsmartphone">';
+			print '<td width="16" class="right nobordernopadding hideonsmartphone">';
 			$filename=dol_sanitizeFileName($obj->ref);
 			$filedir=$conf->supplier_proposal->dir_output . '/' . dol_sanitizeFileName($obj->ref);
 			$urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->rowid;
@@ -707,7 +707,7 @@ if ($resql)
 		// Country
 		if (! empty($arrayfields['country.code_iso']['checked']))
 		{
-			print '<td align="center">';
+			print '<td class="center">';
 			$tmparray=getCountry($obj->fk_pays, 'all');
 			print $tmparray['label'];
 			print '</td>';
@@ -716,7 +716,7 @@ if ($resql)
 		// Type ent
 		if (! empty($arrayfields['typent.code']['checked']))
 		{
-			print '<td align="center">';
+			print '<td class="center">';
 			if (count($typenArray)==0) $typenArray = $formcompany->typent_array(1);
 			print $typenArray[$obj->typent_code];
 			print '</td>';
@@ -726,7 +726,7 @@ if ($resql)
 		// Date proposal
 		if (! empty($arrayfields['sp.date_valid']['checked']))
 		{
-			print '<td align="center">';
+			print '<td class="center">';
 			print dol_print_date($db->jdate($obj->date_valid), 'day');
 			print "</td>\n";
 			if (! $i) $totalarray['nbfield']++;
@@ -735,7 +735,7 @@ if ($resql)
 		// Date delivery
 		if (! empty($arrayfields['sp.date_livraison']['checked']))
 		{
-			print '<td align="center">';
+			print '<td class="center">';
 			print dol_print_date($db->jdate($obj->dp), 'day');
 			print "</td>\n";
 			if (! $i) $totalarray['nbfield']++;
@@ -744,7 +744,7 @@ if ($resql)
 		// Amount HT
 		if (! empty($arrayfields['sp.total_ht']['checked']))
 		{
-			  print '<td align="right">'.price($obj->total_ht)."</td>\n";
+			  print '<td class="right">'.price($obj->total_ht)."</td>\n";
 			  if (! $i) $totalarray['nbfield']++;
 			  if (! $i) $totalarray['totalhtfield']=$totalarray['nbfield'];
 			  $totalarray['totalht'] += $obj->total_ht;
@@ -752,7 +752,7 @@ if ($resql)
 		// Amount VAT
 		if (! empty($arrayfields['sp.total_vat']['checked']))
 		{
-			print '<td align="right">'.price($obj->total_vat)."</td>\n";
+			print '<td class="right">'.price($obj->total_vat)."</td>\n";
 			if (! $i) $totalarray['nbfield']++;
 			if (! $i) $totalarray['totalvatfield']=$totalarray['nbfield'];
 			$totalarray['totalvat'] += $obj->total_vat;
@@ -760,7 +760,7 @@ if ($resql)
 		// Amount TTC
 		if (! empty($arrayfields['sp.total_ttc']['checked']))
 		{
-			print '<td align="right">'.price($obj->total_ttc)."</td>\n";
+			print '<td class="right">'.price($obj->total_ttc)."</td>\n";
 			if (! $i) $totalarray['nbfield']++;
 			if (! $i) $totalarray['totalttcfield']=$totalarray['nbfield'];
 			$totalarray['totalttc'] += $obj->total_ttc;
@@ -772,7 +772,7 @@ if ($resql)
 		// Author
 		if (! empty($arrayfields['u.login']['checked']))
 		{
-			print '<td align="center">';
+			print '<td class="center">';
 			if ($userstatic->id) print $userstatic->getLoginUrl(1);
 			else print '&nbsp;';
 			print "</td>\n";
@@ -788,7 +788,7 @@ if ($resql)
 		// Date creation
 		if (! empty($arrayfields['sp.datec']['checked']))
 		{
-			print '<td align="center" class="nowrap">';
+			print '<td class="center nowrap">';
 			print dol_print_date($db->jdate($obj->date_creation), 'dayhour', 'tzuser');
 			print '</td>';
 			if (! $i) $totalarray['nbfield']++;
@@ -796,7 +796,7 @@ if ($resql)
 		// Date modification
 		if (! empty($arrayfields['sp.tms']['checked']))
 		{
-			print '<td align="center" class="nowrap">';
+			print '<td class="center nowrap">';
 			print dol_print_date($db->jdate($obj->date_update), 'dayhour', 'tzuser');
 			print '</td>';
 			if (! $i) $totalarray['nbfield']++;
@@ -804,12 +804,12 @@ if ($resql)
 		// Status
 		if (! empty($arrayfields['sp.fk_statut']['checked']))
 		{
-			print '<td align="right">'.$objectstatic->LibStatut($obj->fk_statut, 5)."</td>\n";
+			print '<td class="right">'.$objectstatic->LibStatut($obj->fk_statut, 5)."</td>\n";
 			if (! $i) $totalarray['nbfield']++;
 		}
 
 		// Action column
-		print '<td class="nowrap" align="center">';
+		print '<td class="nowrap center">';
 		if ($massactionbutton || $massaction)   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 		{
 			$selected=0;
@@ -845,9 +845,9 @@ if ($resql)
 				if ($num < $limit && empty($offset)) print '<td class="left">'.$langs->trans("Total").'</td>';
 				else print '<td class="left">'.$langs->trans("Totalforthispage").'</td>';
 			}
-			elseif ($totalarray['totalhtfield'] == $i) print '<td align="right">'.price($totalarray['totalht']).'</td>';
-			elseif ($totalarray['totalvatfield'] == $i) print '<td align="right">'.price($totalarray['totalvat']).'</td>';
-			elseif ($totalarray['totalttcfield'] == $i) print '<td align="right">'.price($totalarray['totalttc']).'</td>';
+			elseif ($totalarray['totalhtfield'] == $i) print '<td class="right">'.price($totalarray['totalht']).'</td>';
+			elseif ($totalarray['totalvatfield'] == $i) print '<td class="right">'.price($totalarray['totalvat']).'</td>';
+			elseif ($totalarray['totalttcfield'] == $i) print '<td class="right">'.price($totalarray['totalttc']).'</td>';
 			else print '<td></td>';
 		}
 		print '</tr>';

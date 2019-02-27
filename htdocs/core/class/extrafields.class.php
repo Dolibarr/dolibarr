@@ -9,7 +9,7 @@
  * Copyright (C) 2015       Charles-Fr BENKE        <charles.fr@benke.fr>
  * Copyright (C) 2016       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2017       Nicolas ZABOURI         <info@inovea-conseil.com>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2019  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,84 +42,138 @@ class ExtraFields
      */
     public $db;
 
-	// type of element (for what object is the extrafield)
-	// @deprecated
-	var $attribute_elementtype;
-	// Array with type of the extra field
-	// @deprecated
-	var $attribute_type;
-	// Array with label of extra field
-	// @deprecated
-	var $attribute_label;
-	// Array with size of extra field
-	// @deprecated
-	var $attribute_size;
-	// array with list of possible values for some types of extra fields
-	// @deprecated
-	var $attribute_choice;
-	// Array to store compute formula for computed fields
-	// @deprecated
-	var $attribute_computed;
-	// Array to store default value
-	// @deprecated
-	var $attribute_default;
-	// Array to store if attribute is unique or not
-	// @deprecated
-	var $attribute_unique;
-	// Array to store if attribute is required or not
-	// @deprecated
-	var $attribute_required;
-	// Array to store parameters of attribute (used in select type)
-	// @deprecated
-	var $attribute_param;
-	// Array to store position of attribute
-	// @deprecated
-	var $attribute_pos;
-	// Array to store if attribute is editable regardless of the document status
-	// @deprecated
-	var $attribute_alwayseditable;
-	// Array to store permission to check
-	// @deprecated
-	var $attribute_perms;
-	// Array to store language file to translate label of values
-	// @deprecated
-	var $attribute_langfile;
-	// Array to store if field is visible by default on list
-	// @deprecated
-	var $attribute_list;
+	/**
+     * @var string type of element (for what object is the extrafield)
+	 * @deprecated
+     */
+    public $attribute_elementtype;
 
-	// New array to store extrafields definition
-	var $attributes;
+    /**
+     * @var array Array with type of the extra field
+	 * @deprecated
+     */
+    public $attribute_type;
+
+    /**
+     * @var array Array with label of extra field
+	 * @deprecated
+     */
+    public $attribute_label;
+
+    /**
+     * @var array Array with size of extra field
+	 * @deprecated
+     */
+	public $attribute_size;
+
+    /**
+     * @var array Array with list of possible values for some types of extra fields
+	 * @deprecated
+     */
+	public $attribute_choice;
+
+    /**
+     * @var array Array to store compute formula for computed fields
+	 * @deprecated
+     */
+	public $attribute_computed;
+
+    /**
+     * @var array Array to store default value
+	 * @deprecated
+     */
+	public $attribute_default;
+
+    /**
+     * @var array Array to store if attribute is unique or not
+	 * @deprecated
+     */
+	public $attribute_unique;
+
+    /**
+     * @var array Array to store if attribute is required or not
+	 * @deprecated
+     */
+	public $attribute_required;
+
+    /**
+     * @var array Array to store parameters of attribute (used in select type)
+	 * @deprecated
+     */
+	public $attribute_param;
+
+    /**
+     * @var array Array to store position of attribute
+	 * @deprecated
+     */
+	public $attribute_pos;
+
+    /**
+     * @var array Array to store if attribute is editable regardless of the document status
+	 * @deprecated
+     */
+	public $attribute_alwayseditable;
+
+    /**
+     * @var array Array to store permission to check
+	 * @deprecated
+     */
+	public $attribute_perms;
+
+    /**
+     * @var array Array to store language file to translate label of values
+	 * @deprecated
+     */
+	public $attribute_langfile;
+
+    /**
+     * @var array Array to store if field is visible by default on list
+	 * @deprecated
+     */
+	public $attribute_list;
+
+	/**
+     * @var array New array to store extrafields definition
+     */
+	public $attributes;
 
 	/**
 	 * @var string Error code (or message)
 	 */
 	public $error='';
 
-	var $errno;
+	/**
+	 * @var string[] Array of Error code (or message)
+	 */
+	public $errors = array();
+
+    /**
+	 * @var string DB Error number
+	 */
+	public $errno;
 
 
 	public static $type2label=array(
-	'varchar'=>'String',
-	'text'=>'TextLong',
-	'html'=>'HtmlText',
-	'int'=>'Int',
-	'double'=>'Float',
-	'date'=>'Date',
-	'datetime'=>'DateAndTime',
-	'boolean'=>'Boolean',
-	'price'=>'ExtrafieldPrice',
-	'phone'=>'ExtrafieldPhone',
-	'mail'=>'ExtrafieldMail',
-	'url'=>'ExtrafieldUrl',
-	'password' => 'ExtrafieldPassword',
-	'select' => 'ExtrafieldSelect',
-	'sellist' => 'ExtrafieldSelectList',
-	'radio' => 'ExtrafieldRadio',
-	'checkbox' => 'ExtrafieldCheckBox',
-	'chkbxlst' => 'ExtrafieldCheckBoxFromList',
-	'link' => 'ExtrafieldLink',
-	'separate' => 'ExtrafieldSeparator',
+	    'varchar'=>'String',
+	    'text'=>'TextLong',
+	    'html'=>'HtmlText',
+	    'int'=>'Int',
+	    'double'=>'Float',
+	    'date'=>'Date',
+	    'datetime'=>'DateAndTime',
+	    'boolean'=>'Boolean',
+	    'price'=>'ExtrafieldPrice',
+	    'phone'=>'ExtrafieldPhone',
+	    'mail'=>'ExtrafieldMail',
+	    'url'=>'ExtrafieldUrl',
+	    'password' => 'ExtrafieldPassword',
+	    'select' => 'ExtrafieldSelect',
+	    'sellist' => 'ExtrafieldSelectList',
+	    'radio' => 'ExtrafieldRadio',
+	    'checkbox' => 'ExtrafieldCheckBox',
+	    'chkbxlst' => 'ExtrafieldCheckBoxFromList',
+	    'link' => 'ExtrafieldLink',
+	    'separate' => 'ExtrafieldSeparator',
 	);
 
 
@@ -131,7 +185,8 @@ class ExtraFields
 	function __construct($db)
 	{
 		$this->db = $db;
-		$this->error = array();
+		$this->error = '';
+		$this->errors = array();
 		$this->attributes = array();
 
 		// For old usage
@@ -430,6 +485,7 @@ class ExtraFields
 			if ($result < 0)
 			{
 			    $this->error=$this->db->lasterror();
+				$this->errors[]=$this->db->lasterror();
 			    $error++;
 			}
 
@@ -450,6 +506,7 @@ class ExtraFields
             			if ($result < 0)
             			{
             				$this->error=$this->db->lasterror();
+				            $this->errors[]=$this->db->lasterror();
             				$error++;
             			}
                     }
@@ -1885,7 +1942,7 @@ class ExtraFields
 	/**
 	 * Fill array_options property of object by extrafields value (using for data sent by forms)
 	 *
-	 * @param   array	$extralabels    $array of extrafields (@deprecated)
+	 * @param   array	$extralabels    Deprecated $array of extrafields
 	 * @param   object	$object         Object
 	 * @param	string	$onlykey		Only following key is filled. When we make update of only one extrafield ($action = 'update_extras'), calling page must must set this to avoid to have other extrafields being reset.
 	 * @return	int						1 if array_options set, 0 if no value, -1 if error (field required missing for example)

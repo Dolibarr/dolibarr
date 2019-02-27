@@ -496,7 +496,7 @@ if (empty($numref))
 				}
 				print '<td class="right">'.price(($balancestart[$objp->numr]+$content[$objp->numr]), '', $langs, 1, -1, -1, $conf->currency).'</td>';
 
-				print '<td align="center">';
+				print '<td class="center">';
 				if ($user->rights->banque->consolidate && $action != 'editbankreceipt') {
 					print '<a href="'.$_SERVER["PHP_SELF"].'?account='.$object->id.'&action=editbankreceipt&brref='.$objp->numr.'">'.img_edit().'</a>';
 				}
@@ -540,10 +540,10 @@ else
 	print '<input type="hidden" name="action" value="add">';
 
     print '<div class="div-table-responsive">';
-	print '<table class="noborder" width="100%">';
+	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
-	print '<td align="center">'.$langs->trans("DateOperationShort").'</td>';
-	print '<td align="center">'.$langs->trans("DateValueShort").'</td>';
+	print '<td class="center">'.$langs->trans("DateOperationShort").'</td>';
+	print '<td class="center">'.$langs->trans("DateValueShort").'</td>';
 	print '<td>'.$langs->trans("Type").'</td>';
 	print '<td>'.$langs->trans("Description").'</td>';
 	print '<td class="right" width="60">'.$langs->trans("Debit").'</td>';
@@ -589,10 +589,10 @@ else
 			print '<tr class="oddeven">';
 
 			// Date operation
-			print '<td class="nowrap" align="center">'.dol_print_date($db->jdate($objp->do), "day").'</td>';
+			print '<td class="nowrap center">'.dol_print_date($db->jdate($objp->do), "day").'</td>';
 
 			// Date de valeur
-			print '<td align="center" valign="center" class="nowrap">';
+			print '<td valign="center" class="center nowrap">';
 			print dol_print_date($db->jdate($objp->dv), "day") .' ';
 			print '<a href="releve.php?action=dvprev&amp;num='.$numref.'&amp;account='.$object->id.'&amp;dvid='.$objp->rowid.'">';
 			print img_edit_remove() . "</a> ";
@@ -778,13 +778,13 @@ else
 
 			if ($user->rights->banque->modifier || $user->rights->banque->consolidate)
 			{
-				print '<td align="center"><a href="'.DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$objp->rowid.'&account='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?account='.$object->id.'&num='.$numref).'">';
+				print '<td class="center"><a href="'.DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$objp->rowid.'&account='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?account='.$object->id.'&num='.$numref).'">';
 				print img_edit();
 				print "</a></td>";
 			}
 			else
 			{
-				print "<td align=\"center\">&nbsp;</td>";
+				print "<td class=\"center\">&nbsp;</td>";
 			}
 			print "</tr>";
 			$i++;
@@ -793,11 +793,11 @@ else
 	}
 
 	// Line Total
-	print "\n".'<tr class="liste_total"><td class="right" colspan="4">'.$langs->trans("Total")." :</td><td align=\"right\">".price($totald)."</td><td align=\"right\">".price($totalc)."</td><td>&nbsp;</td><td>&nbsp;</td></tr>";
+	print "\n".'<tr class="liste_total"><td class="right" colspan="4">'.$langs->trans("Total")." :</td><td class=\"right\">".price($totald)."</td><td class=\"right\">".price($totalc)."</td><td>&nbsp;</td><td>&nbsp;</td></tr>";
 
 	// Line Balance
 	print "\n<tr>";
-	print "<td align=\"right\" colspan=\"3\">&nbsp;</td><td colspan=\"3\"><b>".$langs->trans("EndBankBalance")." :</b></td>";
+	print "<td class=\"right\" colspan=\"3\">&nbsp;</td><td colspan=\"3\"><b>".$langs->trans("EndBankBalance")." :</b></td>";
 	print '<td class="right"><b>'.price(price2num($total, 'MT'))."</b></td><td>&nbsp;</td>";
 	print "</tr>\n";
 	print "</table>";

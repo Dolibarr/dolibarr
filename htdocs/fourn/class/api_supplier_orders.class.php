@@ -190,8 +190,8 @@ class SupplierOrders extends DolibarrApi
     function post($request_data = null)
     {
         if(! DolibarrApiAccess::$user->rights->fournisseur->commande->creer) {
-			throw new RestException(401, "Insuffisant rights");
-		}
+            throw new RestException(401, "Insuffisant rights");
+        }
         // Check mandatory fields
         $result = $this->_validate($request_data);
 
@@ -226,8 +226,8 @@ class SupplierOrders extends DolibarrApi
     function put($id, $request_data = null)
     {
         if(! DolibarrApiAccess::$user->rights->fournisseur->commande->creer) {
-			throw new RestException(401);
-		}
+            throw new RestException(401);
+        }
 
         $result = $this->order->fetch($id);
         if( ! $result ) {
@@ -244,7 +244,7 @@ class SupplierOrders extends DolibarrApi
         }
 
         if($this->order->update($id, DolibarrApiAccess::$user))
-            return $this->get ($id);
+            return $this->get($id);
 
         return false;
     }
@@ -257,20 +257,19 @@ class SupplierOrders extends DolibarrApi
      */
     function delete($id)
     {
-        if(! DolibarrApiAccess::$user->rights->fournisseur->commande->supprimer) {
-			throw new RestException(401);
-		}
+        if (! DolibarrApiAccess::$user->rights->fournisseur->commande->supprimer) {
+            throw new RestException(401);
+        }
         $result = $this->order->fetch($id);
-        if( ! $result ) {
+        if ( ! $result) {
             throw new RestException(404, 'Supplier order not found');
         }
 
-		if( ! DolibarrApi::_checkAccessToResource('fournisseur', $this->order->id, '', 'commande')) {
+		if ( ! DolibarrApi::_checkAccessToResource('fournisseur', $this->order->id, '', 'commande')) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-        if( $this->order->delete(DolibarrApiAccess::$user) < 0)
-        {
+        if ( $this->order->delete(DolibarrApiAccess::$user) < 0) {
             throw new RestException(500);
         }
 

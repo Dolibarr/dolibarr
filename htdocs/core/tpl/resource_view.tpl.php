@@ -18,8 +18,8 @@ if($mode == 'edit' )
     print '<form class="tagtr liste_titre">';
     print '<div class="tagtd liste_titre">'.$langs->trans('Resource').'</div>';
     print '<div class="tagtd liste_titre">'.$langs->trans('Type').'</div>';
-    print '<div class="tagtd liste_titre" align="center">'.$langs->trans('Busy').'</div>';
-    print '<div class="tagtd liste_titre" align="center">'.$langs->trans('Mandatory').'</div>';
+    print '<div class="tagtd liste_titre center">'.$langs->trans('Busy').'</div>';
+    print '<div class="tagtd liste_titre center">'.$langs->trans('Mandatory').'</div>';
     print '<div class="tagtd liste_titre"></div>';
     print '</form>';
 }
@@ -28,8 +28,8 @@ else
     print '<form class="tagtr liste_titre">';
     print '<div class="tagtd liste_titre">'.$langs->trans('Resource').'</div>';
     print '<div class="tagtd liste_titre">'.$langs->trans('Type').'</div>';
-    print '<div class="tagtd liste_titre" align="center">'.$langs->trans('Busy').'</div>';
-    print '<div class="tagtd liste_titre" align="center">'.$langs->trans('Mandatory').'</div>';
+    print '<div class="tagtd liste_titre center">'.$langs->trans('Busy').'</div>';
+    print '<div class="tagtd liste_titre center">'.$langs->trans('Mandatory').'</div>';
     print '<div class="tagtd liste_titre"></div>';
     print '</form>';
 }
@@ -56,9 +56,9 @@ if( (array) $linked_resources && count($linked_resources) > 0)
 
 			print '<div class="tagtd">'.$object_resource->getNomUrl(1).'</div>';
 			print '<div class="tagtd">'.$object_resource->type_label.'</div>';
-			print '<div class="tagtd" align="center">'.$form->selectyesno('busy', $linked_resource['busy']?1:0, 1).'</div>';
-			print '<div class="tagtd" align="center">'.$form->selectyesno('mandatory', $linked_resource['mandatory']?1:0, 1).'</div>';
-			print '<div class="tagtd" align="right"><input type="submit" class="button" value="'.$langs->trans("Update").'"></div>';
+			print '<div class="tagtd center">'.$form->selectyesno('busy', $linked_resource['busy']?1:0, 1).'</div>';
+			print '<div class="tagtd center">'.$form->selectyesno('mandatory', $linked_resource['mandatory']?1:0, 1).'</div>';
+			print '<div class="tagtd right"><input type="submit" class="button" value="'.$langs->trans("Update").'"></div>';
 			print '</form>';
 		}
 		else
@@ -77,15 +77,15 @@ if( (array) $linked_resources && count($linked_resources) > 0)
 			print $object_resource->type_label;
 			print '</div>';
 
-			print '<div class="tagtd" align="center">';
+			print '<div class="tagtd center">';
 			print yn($linked_resource['busy']);
 			print '</div>';
 
-			print '<div class="tagtd" align="center">';
+			print '<div class="tagtd center">';
 			print yn($linked_resource['mandatory']);
 			print '</div>';
 
-			print '<div class="tagtd" align="right">';
+			print '<div class="tagtd right">';
 			print '<a href="'.$_SERVER['PHP_SELF'].'?mode=edit&resource_type='.$linked_resource['resource_type'].'&element='.$element.'&element_id='.$element_id.'&lineid='.$linked_resource['rowid'].'">';
 			print img_edit();
 			print '</a>';

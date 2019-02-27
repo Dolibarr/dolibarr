@@ -322,12 +322,12 @@ if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'd
         {
 	        $morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' ';
 	        if ($action != 'editcustomer' && $object->fk_statut < 8 && !$user->societe_id && $user->rights->ticket->write) {
-	        	$morehtmlref.='<a href="' . $url_page_current . '?action=editcustomer&amp;track_id=' . $object->track_id . '">' . img_edit($langs->transnoentitiesnoconv('Edit'), 1) . '</a> : ';
+	        	$morehtmlref.='<a href="' . $url_page_current . '?action=editcustomer&track_id=' . $object->track_id . '">' . img_edit($langs->transnoentitiesnoconv('Edit'), 0) . '</a> : ';
 	        }
 	        if ($action == 'editcustomer') {
 	        	$morehtmlref.=$form->form_thirdparty($url_page_current . '?track_id=' . $object->track_id, $object->socid, 'editcustomer', '', 1, 0, 0, array(), 1);
 	        } else {
-	        	$morehtmlref.=$form->form_thirdparty($url_page_current . '?track_id=' . $object->track_id, $object->socid, 'none', '', 1, 0, 0, array(), 1);
+	            $morehtmlref.=$form->form_thirdparty($url_page_current . '?track_id=' . $object->track_id, $object->socid, 'none', '', 1, 0, 0, array(), 1);
 	        }
         }
 
@@ -447,7 +447,7 @@ if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'd
         print $langs->trans('Progression') . '</td><td class="left">';
         print '</td>';
         if ($action != 'progression' && $object->fk_statut < 8 && !$user->societe_id) {
-            print '<td align="right"><a href="' . $url_page_current . '?action=progression&amp;track_id=' . $object->track_id . '">' . img_edit($langs->trans('Modify')) . '</a></td>';
+            print '<td class="right"><a href="' . $url_page_current . '?action=progression&amp;track_id=' . $object->track_id . '">' . img_edit($langs->trans('Modify')) . '</a></td>';
         }
         print '</tr></table>';
         print '</td><td colspan="5">';
@@ -551,7 +551,7 @@ if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'd
             print '<td>';
             print $langs->trans('TicketChangeCategory');
             print '</td><td>';
-            print $formticket->selectAnalyticCodesTickets($object->category_code, 'update_value_category', '', 2);
+            print $formticket->selectGroupTickets($object->category_code, 'update_value_category', '', 2);
             print '</td>';
             print '</tr>';
         } else {
@@ -571,8 +571,8 @@ if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'd
             }*/
             print '</td></tr>';
 
-            // Category
-            print '<tr><td>' . $langs->trans("AnalyticCode") . '</td><td>';
+            // Group
+            print '<tr><td>' . $langs->trans("TicketGroup") . '</td><td>';
             print $langs->getLabelFromKey($db, $object->category_code, 'c_ticket_category', 'code', 'label');
             /*if ($user->admin && !$noadmininfo) {
              print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
@@ -604,7 +604,7 @@ if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'd
 			<div class="tagtd">' . $langs->trans("Contacts") . '</div>
 			<div class="tagtd">' . $langs->trans("ContactType") . '</div>
 			<div class="tagtd">' . $langs->trans("Phone") . '</div>
-			<div class="tagtd" align="center">' . $langs->trans("Status") . '</div>';
+			<div class="tagtd center">' . $langs->trans("Status") . '</div>';
 	        print '</div><!-- tagtr -->';
 
 	        // Contact list
@@ -620,7 +620,7 @@ if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'd
 	                $var = !$var;
 	                print '<div class="tagtr ' . ($var ? 'pair' : 'impair') . '">';
 
-	                print '<div class="tagtd" align="left">';
+	                print '<div class="tagtd left">';
 	                if ($tab[$i]['source'] == 'internal') {
 	                    echo $langs->trans("User");
 	                }
@@ -630,7 +630,7 @@ if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'd
 	                }
 
 	                print '</div>';
-	                print '<div class="tagtd" align="left">';
+	                print '<div class="tagtd left">';
 
 	                if ($tab[$i]['socid'] > 0) {
 	                    $companystatic->fetch($tab[$i]['socid']);
@@ -672,7 +672,7 @@ if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'd
 	                }
 	                print '</div>';
 
-	                print '<div class="tagtd" align="center">';
+	                print '<div class="tagtd center">';
 	                if ($object->statut >= 0) {
 	                    echo '<a href="contact.php?track_id=' . $object->track_id . '&amp;action=swapstatut&amp;ligne=' . $tab[$i]['rowid'] . '">';
 	                }

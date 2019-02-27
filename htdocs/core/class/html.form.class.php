@@ -669,7 +669,7 @@ class Form
 	 *
 	 *  @param	string	$selected       	Id or Code or Label of preselected country
 	 *  @param  string	$htmlname       	Name of html select object
-	 *  @param  string	$htmloption     	Options html on select object
+	 *  @param  string	$htmloption     	More html options on select object
 	 *  @param	integer	$maxlength			Max length for labels (0=no limit)
 	 *  @param	string	$morecss			More css class
 	 *  @param	string	$usecodeaskey		''=Use id as key (default), 'code3'=Use code on 3 alpha as key, 'code2"=Use code on 2 alpha as key
@@ -2266,7 +2266,7 @@ class Form
 							$objp->remise_percent = $objp2->remise_percent;
 							$objp->remise = $objp2->remise;
 
-							$this->constructProductListOption($objp, $opt, $optJson, 0, $selected, $hidepriceinlabel);
+							$this->constructProductListOption($objp, $opt, $optJson, 0, $selected, $hidepriceinlabel, $filterkey);
 
 							$j++;
 
@@ -2293,7 +2293,7 @@ class Form
 							$objp->price_ttc = price2num($objp->price_ttc, 'MU');
 						}
 					}
-					$this->constructProductListOption($objp, $opt, $optJson, $price_level, $selected, $hidepriceinlabel);
+					$this->constructProductListOption($objp, $opt, $optJson, $price_level, $selected, $hidepriceinlabel, $filterkey);
 					// Add new entry
 					// "key" value of json key array is used by jQuery automatically as selected value
 					// "label" value of json key array is used by jQuery automatically as text for combo box
@@ -2318,7 +2318,8 @@ class Form
 	}
 
 	/**
-	 * constructProductListOption
+	 * constructProductListOption.
+	 * This define value for &$opt and &$optJson.
 	 *
 	 * @param 	resultset	$objp			    Resultset of fetch
 	 * @param 	string		$opt			    Option (var used for returned value in string option format)
@@ -2326,11 +2327,12 @@ class Form
 	 * @param 	int			$price_level	    Price level
 	 * @param 	string		$selected		    Preselected value
 	 * @param   int         $hidepriceinlabel   Hide price in label
+	 * @param   string      $filterkey          Filter key to highlight
 	 * @return	void
 	 */
-	private function constructProductListOption(&$objp, &$opt, &$optJson, $price_level, $selected, $hidepriceinlabel = 0)
+	private function constructProductListOption(&$objp, &$opt, &$optJson, $price_level, $selected, $hidepriceinlabel = 0, $filterkey = '')
 	{
-		global $langs,$conf,$user,$db;
+		global $langs, $conf, $user, $db;
 
 		$outkey='';
 		$outval='';
@@ -2368,7 +2370,7 @@ class Form
 		{
 			$opt.= ' pbq="'.$objp->price_by_qty_rowid.'" data-pbq="'.$objp->price_by_qty_rowid.'" data-pbqqty="'.$objp->price_by_qty_quantity.'" data-pbqpercent="'.$objp->price_by_qty_remise_percent.'"';
 		}
-		if (! empty($conf->stock->enabled) && $objp->fk_product_type == 0 && isset($objp->stock))
+		if (! empty($conf->stock->enabled) && isset($objp->stock) && ($objp->fk_product_type == Product::TYPE_PRODUCT || ! empty($conf->global->STOCK_SUPPORTS_SERVICES)))
 		{
 			if ($objp->stock > 0) $opt.= ' class="product_line_stock_ok"';
 			elseif ($objp->stock <= 0) $opt.= ' class="product_line_stock_too_low"';
@@ -2509,14 +2511,38 @@ class Form
 			$outtva_tx=$objp->tva_tx;
 		}
 
-		if (! empty($conf->stock->enabled) && isset($objp->stock) && $objp->fk_product_type == 0)
+		if (! empty($conf->stock->enabled) && isset($objp->stock) && ($objp->fk_product_type == Product::TYPE_PRODUCT || ! empty($conf->global->STOCK_SUPPORTS_SERVICES)))
 		{
 			$opt.= ' - '.$langs->trans("Stock").':'.$objp->stock;
 
 			if ($objp->stock > 0) {
-				$outval.= ' - <span class="product_line_stock_ok">'.$langs->transnoentities("Stock").':'.$objp->stock.'</span>';
+				$outval.= ' - <span class="product_line_stock_ok">';
 			}elseif ($objp->stock <= 0) {
-				$outval.= ' - <span class="product_line_stock_too_low">'.$langs->transnoentities("Stock").':'.$objp->stock.'</span>';
+				$outval.= ' - <span class="product_line_stock_too_low">';
+			}
+			$outval.= $langs->transnoentities("Stock").':'.$objp->stock;
+			$outval.= '</span>';
+			if (! empty($conf->global->STOCK_SHOW_VIRTUAL_STOCK_IN_PRODUCTS_COMBO))  // Warning, this option may slow down combo list generation
+			{
+			    $langs->load("stocks");
+
+			    $tmpproduct=new Product($this->db);
+			    $tmpproduct->fetch($objp->rowid);
+			    $tmpproduct->load_virtual_stock();
+			    $virtualstock = $tmpproduct->stock_theorique;
+
+			    $opt.= ' - '.$langs->trans("VirtualStock").':'.$virtualstock;
+
+			    $outval.=' - '.$langs->transnoentities("VirtualStock").':';
+			    if ($virtualstock > 0) {
+			        $outval.= ' - <span class="product_line_stock_ok">';
+			    }elseif ($virtualstock <= 0) {
+			        $outval.= ' - <span class="product_line_stock_too_low">';
+			    }
+			    $outval.=$virtualstock;
+			    $outval.='</span>';
+
+			    unset($tmpproduct);
 			}
 		}
 
@@ -3657,6 +3683,75 @@ class Form
 	}
 
 	/**
+	 *  Return a HTML select list of establishment
+	 *
+	 *  @param	string	$selected           Id establishment pre-selected
+	 *  @param  string	$htmlname           Name of select zone
+	 *  @param  int		$statut             Status of searched establishment (0=open, 1=closed, 2=both)
+	 *  @param  string	$filtre             To filter list
+	 *  @param  int		$useempty           1=Add an empty value in list, 2=Add an empty value in list only if there is more than 2 entries.
+	 *  @param  string	$moreattrib         To add more attribute on select
+	 * 	@return	int							<0 if error, Num of establishment found if OK (0, 1, 2, ...)
+	 */
+	function selectEstablishments($selected = '', $htmlname = 'entity', $statut = 0, $filtre = '', $useempty = 0, $moreattrib = '')
+	{
+        // phpcs:enable
+		global $langs, $conf;
+
+		$langs->load("admin");
+		$num = 0;
+
+		$sql = "SELECT rowid, name, fk_country, status, entity";
+		$sql.= " FROM ".MAIN_DB_PREFIX."establishment";
+		$sql.= " WHERE 1=1";
+		if ($statut != 2) $sql.= " AND status = '".$statut."'";
+		if ($filtre) $sql.=" AND ".$filtre;
+		$sql.= " ORDER BY name";
+
+		dol_syslog(get_class($this)."::select_establishment", LOG_DEBUG);
+		$result = $this->db->query($sql);
+		if ($result)
+		{
+			$num = $this->db->num_rows($result);
+			$i = 0;
+			if ($num)
+			{
+				print '<select id="select'.$htmlname.'" class="flat selectestablishment" name="'.$htmlname.'"'.($moreattrib?' '.$moreattrib:'').'>';
+				if ($useempty == 1 || ($useempty == 2 && $num > 1))
+				{
+					print '<option value="-1">&nbsp;</option>';
+				}
+
+				while ($i < $num)
+				{
+					$obj = $this->db->fetch_object($result);
+					if ($selected == $obj->rowid)
+					{
+						print '<option value="'.$obj->rowid.'" selected>';
+					}
+					else
+					{
+						print '<option value="'.$obj->rowid.'">';
+					}
+					print trim($obj->name);
+					if ($statut == 2 && $obj->status == 1) print ' ('.$langs->trans("Closed").')';
+					print '</option>';
+					$i++;
+				}
+				print "</select>";
+			}
+			else
+			{
+				if ($statut == 0) print '<span class="opacitymedium">'.$langs->trans("NoActiveEstablishmentDefined").'</span>';
+				else print '<span class="opacitymedium">'.$langs->trans("NoEstablishmentFound").'</span>';
+			}
+		}
+		else {
+			dol_print_error($this->db);
+		}
+	}
+
+	/**
 	 *    Display form to select bank account
 	 *
 	 *    @param	string	$page        Page
@@ -4729,7 +4824,7 @@ class Form
 
 		$out='';
 		$out.= '<select class="flat" name="'.$htmlname.'" id="'.$htmlname.'">';
-		if ($useempty) $out .= '<option value=""></option>';
+		if ($useempty) $out .= '<option value="">&nbsp;</option>';
 		// If company current currency not in table, we add it into list. Should always be available.
 		if (! in_array($conf->currency, $TCurrency))
 		{
@@ -6141,7 +6236,6 @@ class Form
 		}
 
 		// Try also magic suggest
-
 		$out .= '<select id="'.$htmlname.'" class="multiselect'.($morecss?' '.$morecss:'').'" multiple name="'.$htmlname.'[]"'.($moreattrib?' '.$moreattrib:'').($width?' style="width: '.(preg_match('/%/', $width)?$width:$width.'px').'"':'').'>'."\n";
 		if (is_array($array) && ! empty($array))
 		{
@@ -6152,7 +6246,7 @@ class Form
 				foreach ($array as $key => $value)
 				{
 					$out.= '<option value="'.$key.'"';
-					if (is_array($selected) && ! empty($selected) && in_array($key, $selected) && !empty($key))
+                    if (is_array($selected) && ! empty($selected) && in_array((string) $key, $selected) && ((string) $key != ''))
 					{
 						$out.= ' selected';
 					}

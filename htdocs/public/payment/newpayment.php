@@ -1530,6 +1530,7 @@ if ($source == 'donation')
 	print '</td></tr>'."\n";
 
 	// Object
+	$text='<b>'.$langs->trans("PaymentDonation").'</b>';
 	if (GETPOST('desc', 'alpha')) $text='<b>'.$langs->trans(GETPOST('desc', 'alpha')).'</b>';
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Designation");
 	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$langs->trans("PaymentDonation").'</b>';

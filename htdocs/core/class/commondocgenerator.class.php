@@ -570,7 +570,7 @@ abstract class CommonDocGenerator
 		    'line_multicurrency_total_ttc_locale' => price($line->multicurrency_total_ttc, 0, $outputlangs),
 		);
 
-		    // Units
+        // Units
 		if ($conf->global->PRODUCT_USE_UNITS)
 		{
 		      $resarray['line_unit']=$outputlangs->trans($line->getLabelOfUnit('long'));
@@ -882,7 +882,7 @@ abstract class CommonDocGenerator
 
 
         // Sorting
-        uasort ($this->cols, array( $this, 'columnSort' ));
+        uasort($this->cols, array($this, 'columnSort'));
 
         // Positionning
         $curX = $this->page_largeur-$this->marge_droite; // start from right
@@ -945,10 +945,10 @@ abstract class CommonDocGenerator
     }
 
     /**
-     *   	get column content width from column key
+     *  get column content width from column key
      *
-     *   	@param	string			$colKey    		the column key
-     *      @return	float      width in mm
+     *  @param	string      $colKey     the column key
+     *  @return	float                   width in mm
      */
     function getColumnContentWidth($colKey)
     {
@@ -1025,13 +1025,13 @@ abstract class CommonDocGenerator
 
 
     /**
-     *   	print standard column content
+     *  print standard column content
      *
-     *   	@param	PDF		    $pdf    	pdf object
-     *   	@param	float		$curY    	curent Y position
-     *   	@param	string		$colKey    	the column key
-     *   	@param	string		$columnText   column text
-     *      @return	int         new rank on success and -1 on error
+     *  @param	PDF		    $pdf    	pdf object
+     *  @param	float		$curY    	curent Y position
+     *  @param	string		$colKey    	the column key
+     *  @param	string		$columnText   column text
+     *  @return	int         new rank on success and -1 on error
      */
     function printStdColumnContent($pdf, &$curY, $colKey, $columnText = '')
     {
