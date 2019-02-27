@@ -238,7 +238,7 @@ class Task extends CommonObject
 		$sql = "SELECT";
 		$sql.= " t.rowid,";
 		$sql.= " t.ref,";
-		$sql.= " t.fk_projet,";
+		$sql.= " t.fk_projet as fk_project,";
 		$sql.= " t.fk_task_parent,";
 		$sql.= " t.label,";
 		$sql.= " t.description,";
@@ -281,7 +281,7 @@ class Task extends CommonObject
 
 				$this->id					= $obj->rowid;
 				$this->ref					= $obj->ref;
-				$this->fk_project			= $obj->fk_projet;
+				$this->fk_project			= $obj->fk_project;
 				$this->fk_task_parent		= $obj->fk_task_parent;
 				$this->label				= $obj->label;
 				$this->description			= $obj->description;

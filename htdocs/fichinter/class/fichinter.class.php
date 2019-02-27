@@ -379,7 +379,7 @@ class Fichinter extends CommonObject
 		$sql.= " f.datec, f.dateo, f.datee, f.datet, f.fk_user_author,";
 		$sql.= " f.date_valid as datev,";
 		$sql.= " f.tms as datem,";
-		$sql.= " f.duree, f.fk_projet, f.note_public, f.note_private, f.model_pdf, f.extraparams, fk_contrat";
+		$sql.= " f.duree, f.fk_projet as fk_project, f.note_public, f.note_private, f.model_pdf, f.extraparams, fk_contrat";
 		$sql.= " FROM ".MAIN_DB_PREFIX."fichinter as f";
 		if ($ref) {
 			$sql.= " WHERE f.entity IN (".getEntity('intervention').")";
@@ -407,8 +407,8 @@ class Fichinter extends CommonObject
 				$this->datet        = $this->db->jdate($obj->datet);
 				$this->datev        = $this->db->jdate($obj->datev);
 				$this->datem        = $this->db->jdate($obj->datem);
-				$this->fk_project = $obj->fk_projet;
-				$this->note_public = $obj->note_public;
+				$this->fk_project   = $obj->fk_project;
+				$this->note_public  = $obj->note_public;
 				$this->note_private = $obj->note_private;
 				$this->modelpdf = $obj->model_pdf;
 				$this->fk_contrat = $obj->fk_contrat;

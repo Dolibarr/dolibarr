@@ -402,17 +402,6 @@ class SocieteAccount extends CommonObject
 	}
 
 	/**
-	 * Return link to download file from a direct external access
-	 *
-	 * @param	int				$withpicto			Add download picto into link
-	 * @return	string			HTML link to file
-	 */
-	function getDirectExternalLink($withpicto = 0)
-	{
-		return 'todo';
-	}
-
-	/**
 	 *  Retourne le libelle du status d'un user (actif, inactif)
 	 *
 	 *  @param	int		$mode          0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
