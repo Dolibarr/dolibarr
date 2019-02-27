@@ -3081,7 +3081,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 			elseif ($pictowithoutext == 'jabber') {
 				$fakey = 'fa-comment-o';
 			}
-			elseif ($pictowithoutext == 'skype') {
+			elseif (in_array($pictowithoutext, array('skype', 'twitter', 'facebook', 'linkedin'))) {
 			    $fakey = 'fa-'.$pictowithoutext;
 			    if (! empty($conf->global->MAIN_USE_FONT_AWESOME_5)) $fa = 'fab';
 			}
