@@ -73,6 +73,7 @@ $search_no_email=GETPOST("search_no_email",'int');
 $search_skype=GETPOST("search_skype", 'alpha');
 $search_twitter=GETPOST("search_twitter", 'alpha');
 $search_facebook=GETPOST("search_facebook", 'alpha');
+$search_linkedin=GETPOST("search_linkedin", 'alpha');
 $search_priv=GETPOST("search_priv", 'alpha');
 $search_categ=GETPOST("search_categ", 'int');
 $search_categ_thirdparty=GETPOST("search_categ_thirdparty", 'int');
@@ -166,6 +167,7 @@ $arrayfields=array(
 	'p.skype'=>array('label'=>"Skype", 'checked'=>1, 'enabled'=>(! empty($conf->socialnetworks->enabled))),
 	'p.twitter'=>array('label'=>"Twitter", 'checked'=>1, 'enabled'=>(! empty($conf->socialnetworks->enabled))),
 	'p.facebook'=>array('label'=>"Facebook", 'checked'=>1, 'enabled'=>(! empty($conf->socialnetworks->enabled))),
+    'p.linkedin'=>array('label'=>"LinkedIn", 'checked'=>1, 'enabled'=>(! empty($conf->socialnetworks->enabled))),
 	'p.thirdparty'=>array('label'=>"ThirdParty", 'checked'=>1, 'enabled'=>empty($conf->global->SOCIETE_DISABLE_CONTACTS)),
 	'p.priv'=>array('label'=>"ContactVisibility", 'checked'=>1, 'position'=>200),
 	'p.datec'=>array('label'=>"DateCreationShort", 'checked'=>0, 'position'=>500),
@@ -229,6 +231,7 @@ if (empty($reshook))
 		$search_skype="";
 		$search_twitter="";
 		$search_facebook="";
+		$search_linkedin="";
 		$search_priv="";
 		$search_status=-1;
 		$search_categ='';
@@ -325,6 +328,7 @@ if (strlen($search_fax))            $sql.= natural_search('p.fax', $search_fax);
 if (strlen($search_skype))          $sql.= natural_search('p.skype', $search_skype);
 if (strlen($search_twitter))        $sql.= natural_search('p.twitter', $search_twitter);
 if (strlen($search_facebook))       $sql.= natural_search('p.facebook', $search_facebook);
+if (strlen($search_linkedin))       $sql.= natural_search('p.linkedin', $search_linkedin);
 if (strlen($search_email))          $sql.= natural_search('p.email', $search_email);
 if (strlen($search_zip))   			$sql.= natural_search("p.zip", $search_zip);
 if (strlen($search_town))   		$sql.= natural_search("p.town", $search_town);
@@ -637,6 +641,12 @@ if (! empty($arrayfields['p.facebook']['checked']))
 	print '<input class="flat" type="text" name="search_facebook" size="6" value="'.dol_escape_htmltag($search_facebook).'">';
 	print '</td>';
 }
+if (! empty($arrayfields['p.linkedin']['checked']))
+{
+    print '<td class="liste_titre">';
+    print '<input class="flat" type="text" name="search_linkedin" size="6" value="'.dol_escape_htmltag($search_linkedin).'">';
+    print '</td>';
+}
 if (! empty($arrayfields['p.thirdparty']['checked']))
 {
 	print '<td class="liste_titre">';
@@ -712,6 +722,7 @@ if (! empty($arrayfields['p.no_email']['checked']))            print_liste_field
 if (! empty($arrayfields['p.skype']['checked']))               print_liste_field_titre($arrayfields['p.skype']['label'], $_SERVER["PHP_SELF"], "p.skype", $begin, $param, '', $sortfield, $sortorder);
 if (! empty($arrayfields['p.twitter']['checked']))             print_liste_field_titre($arrayfields['p.twitter']['label'], $_SERVER["PHP_SELF"], "p.twitter", $begin, $param, '', $sortfield, $sortorder);
 if (! empty($arrayfields['p.facebook']['checked']))            print_liste_field_titre($arrayfields['p.facebook']['label'], $_SERVER["PHP_SELF"], "p.facebook", $begin, $param, '', $sortfield, $sortorder);
+if (! empty($arrayfields['p.linkedin']['checked']))            print_liste_field_titre($arrayfields['p.linkedin']['label'], $_SERVER["PHP_SELF"], "p.linkedin", $begin, $param, '', $sortfield, $sortorder);
 if (! empty($arrayfields['p.thirdparty']['checked']))          print_liste_field_titre($arrayfields['p.thirdparty']['label'], $_SERVER["PHP_SELF"], "s.nom", $begin, $param, '', $sortfield, $sortorder);
 if (! empty($arrayfields['p.priv']['checked']))                print_liste_field_titre($arrayfields['p.priv']['label'], $_SERVER["PHP_SELF"], "p.priv", $begin, $param, '', $sortfield, $sortorder, 'center ');
 // Extra fields
@@ -877,12 +888,18 @@ while ($i < min($num, $limit))
 		if (! $i) $totalarray['nbfield']++;
 	}
 	// Facebook
-	if (! empty($arrayfields['p.facebook']['checked']))
-	{
-		if (! empty($conf->socialnetworks->enabled)) { print '<td>'.dol_print_socialnetworks($obj->facebook, $obj->rowid, $obj->socid, 'facebook').'</td>'; }
-		if (! $i) $totalarray['nbfield']++;
-	}
-	// Company
+    if (! empty($arrayfields['p.facebook']['checked']))
+    {
+        if (! empty($conf->socialnetworks->enabled)) { print '<td>'.dol_print_socialnetworks($obj->facebook, $obj->rowid, $obj->socid, 'facebook').'</td>'; }
+        if (! $i) $totalarray['nbfield']++;
+    }
+    // LinkedIn
+    if (! empty($arrayfields['p.linkedin']['checked']))
+    {
+        if (! empty($conf->socialnetworks->enabled)) { print '<td>'.dol_print_socialnetworks($obj->linkedin, $obj->rowid, $obj->socid, 'linkedin').'</td>'; }
+        if (! $i) $totalarray['nbfield']++;
+    }
+    // Company
 	if (! empty($arrayfields['p.thirdparty']['checked']))
 	{
 		print '<td>';
