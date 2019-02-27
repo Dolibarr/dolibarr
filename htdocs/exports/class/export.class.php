@@ -491,13 +491,13 @@ class Export
     }
 
     /**
-     *      Build an input field used to filter the query
-	 *
-	 *      @param		string	$TypeField		Type of Field to filter
-	 *      @return		string					html string of the input field ex : "<input type=text name=... value=...>"
-	 */
+     *  Build an input field used to filter the query
+     *
+     *  @param      string  $TypeField      Type of Field to filter
+     *  @return     string                  html string of the input field ex : "<input type=text name=... value=...>"
+     */
     public function genDocFilter($TypeField)
-	{
+    {
         global $langs;
 
 		$szMsg='';

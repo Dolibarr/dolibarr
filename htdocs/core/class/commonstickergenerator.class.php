@@ -61,43 +61,57 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/format_cards.lib.php';
  */
 abstract class CommonStickerGenerator
 {
-	public $code;   // Code of format
+    public $code;   // Code of format
 
-	/**
+    /**
      * @var array format Array with informations
      */
     public $format;
 
-	// protected
-    public $_Avery_Name	= '';	// Nom du format de l'etiquette
-    public $_Margin_Left	= 0;	// Marge de gauche de l'etiquette
-    public $_Margin_Top	= 0;	// marge en haut de la page avant la premiere etiquette
-    public $_X_Space 	= 0;	// Espace horizontal entre 2 bandes d'etiquettes
-    public $_Y_Space 	= 0;	// Espace vertical entre 2 bandes d'etiquettes
-    public $_X_Number 	= 0;	// NX Nombre d'etiquettes sur la largeur de la page
-    public $_Y_Number 	= 0;	// NY Nombre d'etiquettes sur la hauteur de la page
-    public $_Width 		= 0;	// Largeur de chaque etiquette
-    public $_Height 		= 0;	// Hauteur de chaque etiquette
-    public $_Char_Size	= 10;	// Hauteur des caracteres
-    public $_Line_Height	= 10;	// Hauteur par defaut d'une ligne
-    public $_Metric 		= 'mm';	// Type of metric.. Will help to calculate good values
-    public $_Metric_Doc 	= 'mm';	// Type of metric for the doc..
-    public $_COUNTX = 1;
-    public $_COUNTY = 1;
-    public $_First = 1;
+    // phpcs:disable PEAR.NamingConventions.ValidVariableName.PublicUnderscore
+    // protected
+    // Nom du format de l'etiquette
+    protected $_Avery_Name = '';
+    // Marge de gauche de l'etiquette
+    protected $_Margin_Left = 0;
+    // marge en haut de la page avant la premiere etiquette
+    protected $_Margin_Top = 0;
+    // Espace horizontal entre 2 bandes d'etiquettes
+    protected $_X_Space = 0;
+    // Espace vertical entre 2 bandes d'etiquettes
+    protected $_Y_Space = 0;
+    // NX Nombre d'etiquettes sur la largeur de la page
+    protected $_X_Number = 0;
+    // NY Nombre d'etiquettes sur la hauteur de la page
+    protected $_Y_Number = 0;
+    // Largeur de chaque etiquette
+    protected $_Width = 0;
+    // Hauteur de chaque etiquette
+    protected $_Height = 0;
+    // Hauteur des caracteres
+    protected $_Char_Size = 10;
+    // Hauteur par defaut d'une ligne
+    protected $_Line_Height = 10;
+    // Type of metric.. Will help to calculate good values
+    protected $_Metric = 'mm';
+    // Type of metric for the doc..
+    protected $_Metric_Doc = 'mm';
+    protected $_COUNTX = 1;
+    protected $_COUNTY = 1;
+    protected $_First = 1;
     public $Tformat;
-
+    // phpcs:enable
 	/**
 	 *	Constructor
 	 *
 	 *  @param		DoliDB		$db      Database handler
 	 */
-	function __construct($db)
+	public function __construct($db)
 	{
 		$this->db = $db;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Function to build PDF on disk, then output on HTTP strem.
 	 *
@@ -107,7 +121,7 @@ abstract class CommonStickerGenerator
 	 *	@param	string		$outputdir			Output directory for pdf file
 	 *  @return int             				1=OK, 0=KO
 	 */
-	abstract function write_file($arrayofrecords, $outputlangs, $srctemplatepath, $outputdir = '');
+	public abstract function write_file($arrayofrecords, $outputlangs, $srctemplatepath, $outputdir = '');
     // phpcs:enable
 
 	/**
@@ -118,9 +132,9 @@ abstract class CommonStickerGenerator
 	 * @param   array     	$param          Associative array containing label content and optional parameters
 	 * @return  void
 	 */
-	abstract function addSticker(&$pdf, $outputlangs, $param);
+	public abstract function addSticker(&$pdf, $outputlangs, $param);
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Methode qui permet de modifier la taille des caracteres
 	 * Cela modiera aussi l'espace entre chaque ligne
@@ -129,7 +143,7 @@ abstract class CommonStickerGenerator
 	 * @param    int        $pt    point
 	 * @return   void
 	 */
-	function Set_Char_Size(&$pdf, $pt)
+	public function Set_Char_Size(&$pdf, $pt)
 	{
         // phpcs:enable
 		if ($pt > 3) {
@@ -139,7 +153,8 @@ abstract class CommonStickerGenerator
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * protected Print dot line
 	 *
@@ -152,8 +167,8 @@ abstract class CommonStickerGenerator
 	 * @param 	int		$nbPointilles		Nb pointilles
 	 * @return	void
 	 */
-    function _Pointille(&$pdf, $x1 = 0, $y1 = 0, $x2 = 210, $y2 = 297, $epaisseur = 1, $nbPointilles = 15)
-	{
+    protected function _Pointille(&$pdf, $x1 = 0, $y1 = 0, $x2 = 210, $y2 = 297, $epaisseur = 1, $nbPointilles = 15)
+    {
         // phpcs:enable
 		$pdf->SetLineWidth($epaisseur);
 		$length=abs($x1-$x2);
@@ -182,7 +197,8 @@ abstract class CommonStickerGenerator
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 * protected Function realisant une croix aux 4 coins des cartes
 	 *
@@ -195,7 +211,7 @@ abstract class CommonStickerGenerator
 	 * @param int	$taille             Size
 	 * @return void
 	 */
-	function _Croix(&$pdf, $x1 = 0, $y1 = 0, $x2 = 210, $y2 = 297, $epaisseur = 1, $taille = 4)
+	protected function _Croix(&$pdf, $x1 = 0, $y1 = 0, $x2 = 210, $y2 = 297, $epaisseur = 1, $taille = 4)
 	{
         // phpcs:enable
 		$pdf->SetDrawColor(192, 192, 192);
@@ -240,14 +256,15 @@ abstract class CommonStickerGenerator
 		return $value;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 * protected Give the height for a char size given.
 	 *
 	 * @param  int    $pt    Point
 	 * @return int           Height chars
 	 */
-	function _Get_Height_Chars($pt)
+	protected function _Get_Height_Chars($pt)
 	{
         // phpcs:enable
 		// Tableau de concordance entre la hauteur des caracteres et de l'espacement entre les lignes
@@ -259,7 +276,8 @@ abstract class CommonStickerGenerator
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 * protected Set format
 	 *
@@ -267,7 +285,7 @@ abstract class CommonStickerGenerator
 	 * @param    string    $format  Format
 	 * @return   void
 	 */
-	function _Set_Format(&$pdf, $format)
+	protected function _Set_Format(&$pdf, $format)
 	{
         // phpcs:enable
 		$this->_Metric = $format['metric'];

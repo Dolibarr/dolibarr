@@ -386,9 +386,9 @@ class Fiscalyear extends CommonObject
 	/**
 	 *  Return the number of movements by fiscal year
 	 *
-	 *	@param	int		$datestart	Date start to scan
-	 *	@param	int		$dateend	Date end to scan
-	 *	@return	string				Number of movements
+	 *  @param	int		$datestart	Date start to scan
+	 *  @param	int		$dateend	Date end to scan
+	 *  @return	string				Number of movements
 	 */
 	public function getAccountancyMovementsByFiscalYear($datestart, $dateend)
 	{

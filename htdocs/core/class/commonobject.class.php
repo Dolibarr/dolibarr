@@ -3734,7 +3734,7 @@ abstract class CommonObject
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *    Return incoterms informations
 	 *    TODO Use a cache for label get

@@ -691,7 +691,7 @@ class Cronjob extends CommonObject
      *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
 	 *  @return	int					 <0 if KO, >0 if OK
 	 */
-	function delete($user, $notrigger = 0)
+    public function delete($user, $notrigger = 0)
 	{
 		$error=0;
 
@@ -1109,8 +1109,7 @@ class Cronjob extends CommonObject
 			}
 		}
 
-		if($this->jobtype == 'function')
-		{
+		if ($this->jobtype == 'function') {
 			//load lib
 			$libpath = '/' . strtolower($this->module_name) . '/lib/' . $this->libname;
 			$ret = dol_include_once($libpath);
@@ -1333,7 +1332,7 @@ class Cronjob extends CommonObject
 	    	if ($status == 1) return img_picto($langs->trans('Enabled').$moretext, 'statut'.($processing?'1':'4'), 'class="pictostatus"').' '.$langs->trans('Enabled').$moretext;
 	    	elseif ($status == 0) return img_picto($langs->trans('Disabled').$moretext, 'statut5', 'class="pictostatus"').' '.$langs->trans('Disabled').$moretext;
 	    }
-	    elseif ($mode == 5)
+        elseif ($mode == 5)
         {
             if ($status == 1) return $langs->trans('Enabled').$moretext.' '.img_picto($langs->trans('Enabled').$moretext, 'statut'.($processing?'1':'4'), 'class="pictostatus"');
             elseif ($status == 0) return $langs->trans('Disabled').$moretext.' '.img_picto($langs->trans('Disabled').$moretext, 'statut5', 'class="pictostatus"');

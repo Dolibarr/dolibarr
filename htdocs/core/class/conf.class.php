@@ -32,11 +32,11 @@
  */
 class Conf
 {
-	/** \public */
-	//! To store properties found in conf file
+    /** \public */
+    //! To store properties found in conf file
     public $file;
 
-	/**
+    /**
      * @var DoliDB Database handler.
      */
     public $db;
@@ -55,19 +55,36 @@ class Conf
 	public $css;          // Contains full path of css page ("/theme/eldy/style.css.php", ...)
     //! Used to store current menu handler
 	public $standard_menu;
+    // List of activated modules
+    public $modules = array();
+    public $modules_parts = array(
+        'css' => array(),
+        'js' => array(),
+        'tabs' => array(),
+        'triggers' => array(),
+        'login' => array(),
+        'substitutions' => array(),
+        'menus' => array(),
+        'theme' => array(),
+        'sms' => array(),
+        'tpl' => array(),
+        'barcode' => array(),
+        'models' => array(),
+        'societe' => array(),
+        'hooks' => array(),
+        'dir' => array(),
+        'syslog' => array(),
+    );
 
-	public $modules					= array();	// List of activated modules
-	public $modules_parts			= array('css'=>array(),'js'=>array(),'tabs'=>array(),'triggers'=>array(),'login'=>array(),'substitutions'=>array(),'menus'=>array(),'theme'=>array(),'sms'=>array(),'tpl'=>array(),'barcode'=>array(),'models'=>array(),'societe'=>array(),'hooks'=>array(),'dir'=>array(), 'syslog' =>array());
+    public $logbuffer = array();
 
-    public $logbuffer					= array();
+    /**
+     * @var LogHandlerInterface[]
+     */
+    public $loghandlers = array();
 
-	/**
-	 * @var LogHandlerInterface[]
-	 */
-    public $loghandlers                = array();
-
-	//! To store properties of multi-company
-	public $multicompany;
+    //! To store properties of multi-company
+    public $multicompany;
 	//! Used to store running instance for multi-company (default 1)
 	public $entity					= 1;
 	//! Used to store list of entities to use for each element
@@ -83,7 +100,7 @@ class Conf
 	/**
 	 * Constructor
 	 */
-	function __construct()
+	public function __construct()
 	{
 		// Properly declare multi-modules objects.
 		$this->file				= new stdClass();
@@ -130,7 +147,7 @@ class Conf
 	 *	@param      DoliDB		$db		Database handler
 	 *	@return     int					< 0 if KO, >= 0 if OK
 	 */
-	function setValues($db)
+	public function setValues($db)
 	{
 		global $conf;
 
