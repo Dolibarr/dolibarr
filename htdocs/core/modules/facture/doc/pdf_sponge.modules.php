@@ -76,7 +76,7 @@ class pdf_sponge extends ModelePDFFactures
 
 	/**
      * Dolibarr version of the loaded document
-     * @public string
+     * @var string
      */
 	public $version = 'development';
 

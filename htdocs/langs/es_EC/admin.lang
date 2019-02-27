@@ -975,7 +975,6 @@ FCKeditorForProduct=WYSIWIG creación / edición de productos / servicios descri
 FCKeditorForMailing= WYSIWIG creación / edición para eMailings masivos (Herramientas->eMailing)
 FCKeditorForUserSignature=WYSIWIG creación / edición de firma de usuario
 FCKeditorForMail=WYSIWIG Creación / edición para todo el correo (excepto Herramientas->eMailing)
-OSCommerceTestKo2=Conexión al servidor '%s' con el usuario '%s' falló.
 StockSetup=Configuración del módulo de stock/inventario
 NotTopTreeMenuPersonalized=Menús personalizados no vinculados a una entrada de menú superior
 Menu=Selección del menú

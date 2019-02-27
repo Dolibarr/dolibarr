@@ -111,12 +111,12 @@ class ProductCombination2ValuePair
 	public function fetchByFkCombination($fk_combination)
 	{
 		$sql = "SELECT
-  c.rowid,
-  c2v.fk_prod_attr_val,
-  c2v.fk_prod_attr,
-  c2v.fk_prod_combination
-FROM ".MAIN_DB_PREFIX."product_attribute c LEFT JOIN ".MAIN_DB_PREFIX."product_attribute_combination2val c2v ON c.rowid = c2v.fk_prod_attr
-WHERE c2v.fk_prod_combination = ".(int) $fk_combination;
+        c.rowid,
+        c2v.fk_prod_attr_val,
+        c2v.fk_prod_attr,
+        c2v.fk_prod_combination
+        FROM ".MAIN_DB_PREFIX."product_attribute c LEFT JOIN ".MAIN_DB_PREFIX."product_attribute_combination2val c2v ON c.rowid = c2v.fk_prod_attr
+        WHERE c2v.fk_prod_combination = ".(int) $fk_combination;
 
 		$sql .= $this->db->order('c.rang', 'asc');
 

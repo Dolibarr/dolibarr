@@ -39,7 +39,7 @@ $place = GETPOST('place', 'int');
 
 $sql="SELECT rowid FROM ".MAIN_DB_PREFIX."facture where ref='(PROV-POS-".$place.")'";
 $resql = $db->query($sql);
-$row = $db->fetch_array ($resql);
+$row = $db->fetch_array($resql);
 $placeid=$row[0];
 if (! $placeid) $placeid=0; // Invoice not exist
 else{

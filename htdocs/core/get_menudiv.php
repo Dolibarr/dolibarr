@@ -126,7 +126,7 @@ print '
         display: block;
     }
     li.lilevel3 a {
-        padding: 0.2em 15px 0.2em 60px;
+        padding: 0.6em 15px 0.6em 60px;
         color: #000;
         cursor: pointer;
         display: block;

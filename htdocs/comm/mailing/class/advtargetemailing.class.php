@@ -423,12 +423,15 @@ class AdvanceTargetingMailing extends CommonObject
 		$this->db->begin();
 		dol_syslog(get_class($this)."::update sql=".$sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
+		if (! $resql) {
+            $error++;
+            $this->errors[]="Error ".$this->db->lasterror();
+        }
 
-		if (! $error)
-		{
-			if (! $notrigger)
-			{
+		//if (! $error)
+		//{
+		//	if (! $notrigger)
+		//	{
 				// Uncomment this and change MYOBJECT to your own tag if you
 				// want this action calls a trigger.
 
@@ -438,8 +441,8 @@ class AdvanceTargetingMailing extends CommonObject
 				//$result=$interface->run_triggers('MYOBJECT_MODIFY',$this,$user,$langs,$conf);
 				//if ($result < 0) { $error++; $this->errors=$interface->errors; }
 				//// End call triggers
-			}
-		}
+		//	}
+		//}
 
 		// Commit or rollback
 		if ($error)
@@ -790,15 +793,15 @@ class AdvanceTargetingMailing extends CommonObject
 						if (!empty($arrayquery['options_'.$key.'_end_dt'.'_cnct'])){
 							$sqlwhere[]= " (te.".$key." >= '".$this->db->idate($arrayquery['options_'.$key.'_st_dt'.'_cnct'])."' AND te.".$key." <= '".$this->db->idate($arrayquery['options_'.$key.'_end_dt'.'_cnct'])."')";
 						}
-					}elseif ($extrafields->attribute_type[$key] == 'boolean') {
+					} elseif ($extrafields->attribute_type[$key] == 'boolean') {
 						if ($arrayquery['options_'.$key.'_cnct']!=''){
 							if ($arrayquery['options_'.$key.'_cnct']==0) {
 								$sqlwhere[]= " (te.".$key." = ".$arrayquery['options_'.$key.'_cnct']." OR ((te.".$key." IS NULL) AND (te.fk_object IS NOT NULL)))";
-							}else {
+							} else {
 								$sqlwhere[]= " (te.".$key." = ".$arrayquery['options_'.$key.'_cnct'].")";
 							}
 						}
-					}else{
+					} else {
 						if (is_array($arrayquery['options_'.$key.'_cnct'])) {
 							$sqlwhere[]= " (te.".$key." IN ('".implode("','", $arrayquery['options_'.$key.'_cnct'])."'))";
 						} elseif (!empty($arrayquery['options_'.$key.'_cnct'])) {
@@ -965,12 +968,12 @@ class AdvanceTargetingMailing extends CommonObject
 			}
 
 			if (count($return_sql_like)>0) {
-				$return_sql_criteria .= '(' . implode (' OR ', $return_sql_like) .')';
+				$return_sql_criteria .= '(' . implode(' OR ', $return_sql_like) .')';
 			}
 			if (count($return_sql_not_like)>0) {
-				$return_sql_criteria .= ' AND (' . implode (' AND ', $return_sql_not_like).')';
+				$return_sql_criteria .= ' AND (' . implode(' AND ', $return_sql_not_like).')';
 			}
-		}else {
+		} else {
 			$return_sql_criteria .= $column_to_test . ' LIKE \''.$this->db->escape($criteria).'\'';
 		}
 

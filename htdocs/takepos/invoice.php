@@ -78,7 +78,7 @@ if ($action == 'valid' && $user->rights->facture->creer)
 	$payment->datepaye=$now;
 	$payment->bank_account=$bankaccount;
 	$payment->amounts[$invoice->id]=$invoice->total_ttc;
-	
+
   if ($pay=="cash") $payment->paiementid=4;
 	elseif ($pay=="card") $payment->paiementid=6;
 	elseif ($pay=="cheque") $payment->paiementid=7;
@@ -86,7 +86,7 @@ if ($action == 'valid' && $user->rights->facture->creer)
 
   $payment->create($user);
 	$payment->addPaymentToBank($user, 'payment', '(CustomerInvoicePayment)', $bankaccount, '', '');
-	
+
   $invoice->set_paid($user);
 }
 
@@ -321,7 +321,8 @@ if ($placeid > 0) {
     foreach($invoice->lines as $line)
     {
         print '<tr class="drag drop oddeven';
-        if ($line->special_code == "3") { print ' order';
+        if ($line->special_code == "3") {
+            print ' order';
         }
         print '" id="' . $line->rowid . '">';
         print '<td align="left">' . $line->product_label . $line->desc . '</td>';
@@ -334,7 +335,7 @@ if ($placeid > 0) {
 print '</table>';
 
 print '<p style="font-size:120%;" align="right"><b>'.$langs->trans('TotalTTC');
-                                            
+
 if($conf->global->TAKEPOS_BAR_RESTAURANT) print " ".$langs->trans('Place')." ".$place;
 
 print ': '.price($invoice->total_ttc, 1, '', 1, - 1, - 1, $conf->currency).'&nbsp;</b></p>';

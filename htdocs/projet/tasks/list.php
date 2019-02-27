@@ -565,7 +565,7 @@ if (! empty($arrayfields['t.tms']['checked']))
 	print '</td>';
 }
 // Action column
-print '<td class="liste_titre" align="right">';
+print '<td class="liste_titre right">';
 $searchpicto=$form->showFilterButtons();
 print $searchpicto;
 print '</td>';
@@ -574,25 +574,25 @@ print "</tr>\n";
 print '<tr class="liste_titre">';
 if (! empty($arrayfields['t.ref']['checked']))           print_liste_field_titre($arrayfields['t.ref']['label'], $_SERVER["PHP_SELF"], "t.ref", "", $param, "", $sortfield, $sortorder);
 if (! empty($arrayfields['t.label']['checked']))         print_liste_field_titre($arrayfields['t.label']['label'], $_SERVER["PHP_SELF"], "t.label", "", $param, "", $sortfield, $sortorder);
-if (! empty($arrayfields['t.dateo']['checked']))         print_liste_field_titre($arrayfields['t.dateo']['label'], $_SERVER["PHP_SELF"], "t.dateo", "", $param, 'align="center"', $sortfield, $sortorder);
-if (! empty($arrayfields['t.datee']['checked']))         print_liste_field_titre($arrayfields['t.datee']['label'], $_SERVER["PHP_SELF"], "t.datee", "", $param, 'align="center"', $sortfield, $sortorder);
+if (! empty($arrayfields['t.dateo']['checked'])) print_liste_field_titre($arrayfields['t.dateo']['label'], $_SERVER["PHP_SELF"], "t.dateo", "", $param, '', $sortfield, $sortorder, 'center ');
+if (! empty($arrayfields['t.datee']['checked']))         print_liste_field_titre($arrayfields['t.datee']['label'], $_SERVER["PHP_SELF"], "t.datee", "", $param, '', $sortfield, $sortorder, 'center ');
 if (! empty($arrayfields['p.ref']['checked']))           print_liste_field_titre($arrayfields['p.ref']['label'], $_SERVER["PHP_SELF"], "p.ref", "", $param, "", $sortfield, $sortorder);
 if (! empty($arrayfields['p.title']['checked']))         print_liste_field_titre($arrayfields['p.title']['label'], $_SERVER["PHP_SELF"], "p.title", "", $param, "", $sortfield, $sortorder);
 if (! empty($arrayfields['s.nom']['checked']))           print_liste_field_titre($arrayfields['s.nom']['label'], $_SERVER["PHP_SELF"], "s.nom", "", $param, "", $sortfield, $sortorder);
-if (! empty($arrayfields['p.fk_statut']['checked']))     print_liste_field_titre($arrayfields['p.fk_statut']['label'], $_SERVER["PHP_SELF"], "p.fk_statut", "", $param, 'align="center"', $sortfield, $sortorder);
-if (! empty($arrayfields['t.planned_workload']['checked']))         print_liste_field_titre($arrayfields['t.planned_workload']['label'], $_SERVER["PHP_SELF"], "t.planned_workload", "", $param, 'align="center"', $sortfield, $sortorder);
-if (! empty($arrayfields['t.duration_effective']['checked']))       print_liste_field_titre($arrayfields['t.duration_effective']['label'], $_SERVER["PHP_SELF"], "t.duration_effective", "", $param, 'align="center"', $sortfield, $sortorder);
-if (! empty($arrayfields['t.progress_calculated']['checked']))      print_liste_field_titre($arrayfields['t.progress_calculated']['label'], $_SERVER["PHP_SELF"], "", "", $param, 'align="center"');
-if (! empty($arrayfields['t.progress']['checked']))      print_liste_field_titre($arrayfields['t.progress']['label'], $_SERVER["PHP_SELF"], "t.progress", "", $param, 'align="center"', $sortfield, $sortorder);
+if (! empty($arrayfields['p.fk_statut']['checked']))     print_liste_field_titre($arrayfields['p.fk_statut']['label'], $_SERVER["PHP_SELF"], "p.fk_statut", "", $param, '', $sortfield, $sortorder, 'center ');
+if (! empty($arrayfields['t.planned_workload']['checked']))         print_liste_field_titre($arrayfields['t.planned_workload']['label'], $_SERVER["PHP_SELF"], "t.planned_workload", "", $param, '', $sortfield, $sortorder, 'center ');
+if (! empty($arrayfields['t.duration_effective']['checked']))       print_liste_field_titre($arrayfields['t.duration_effective']['label'], $_SERVER["PHP_SELF"], "t.duration_effective", "", $param, '', $sortfield, $sortorder, 'center ');
+if (! empty($arrayfields['t.progress_calculated']['checked']))      print_liste_field_titre($arrayfields['t.progress_calculated']['label'], $_SERVER["PHP_SELF"], "", "", $param, '', '', '', 'center ');
+if (! empty($arrayfields['t.progress']['checked']))      print_liste_field_titre($arrayfields['t.progress']['label'], $_SERVER["PHP_SELF"], "t.progress", "", $param, '', $sortfield, $sortorder, 'center ');
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 // Hook fields
 $parameters=array('arrayfields'=>$arrayfields,'param'=>$param,'sortfield'=>$sortfield,'sortorder'=>$sortorder);
 $reshook=$hookmanager->executeHooks('printFieldListTitle', $parameters);    // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
-if (! empty($arrayfields['t.datec']['checked']))  print_liste_field_titre($arrayfields['t.datec']['label'], $_SERVER["PHP_SELF"], "t.datec", "", $param, 'align="center" class="nowrap"', $sortfield, $sortorder);
-if (! empty($arrayfields['t.tms']['checked']))    print_liste_field_titre($arrayfields['t.tms']['label'], $_SERVER["PHP_SELF"], "t.tms", "", $param, 'align="center" class="nowrap"', $sortfield, $sortorder);
-print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', 'align="center"', $sortfield, $sortorder, 'maxwidthsearch ');
+if (! empty($arrayfields['t.datec']['checked']))  print_liste_field_titre($arrayfields['t.datec']['label'], $_SERVER["PHP_SELF"], "t.datec", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
+if (! empty($arrayfields['t.tms']['checked']))    print_liste_field_titre($arrayfields['t.tms']['label'], $_SERVER["PHP_SELF"], "t.tms", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
+print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
 print "</tr>\n";
 
 
@@ -625,7 +625,7 @@ while ($i < min($num, $limit))
 	$userAccess = $projectstatic->restrictedProjectArea($user);    // why this ?
 	if ($userAccess >= 0)
 	{
-		print '<tr class="oddeven">';
+		print '<tr data-rowid="'.$object->id.'" class="oddeven">';
 
 		// Ref
 		if (! empty($arrayfields['t.ref']['checked']))
@@ -697,7 +697,7 @@ while ($i < min($num, $limit))
 		// Project status
 		if (! empty($arrayfields['p.fk_statut']['checked']))
 		{
-			print '<td align="center">';
+			print '<td class="center">';
 			print $projectstatic->getLibStatut(1);
 			print '</td>';
 			if (! $i) $totalarray['nbfield']++;
@@ -770,7 +770,7 @@ while ($i < min($num, $limit))
 		// Date creation
 		if (! empty($arrayfields['t.datec']['checked']))
 		{
-			print '<td align="center">';
+			print '<td class="center">';
 			print dol_print_date($db->jdate($obj->date_creation), 'dayhour', 'tzuser');
 			print '</td>';
 			if (! $i) $totalarray['nbfield']++;
@@ -778,7 +778,7 @@ while ($i < min($num, $limit))
 		// Date modification
 		if (! empty($arrayfields['t.tms']['checked']))
 		{
-			print '<td align="center">';
+			print '<td class="center">';
 			print dol_print_date($db->jdate($obj->date_update), 'dayhour', 'tzuser');
 			print '</td>';
 			if (! $i) $totalarray['nbfield']++;
@@ -787,10 +787,10 @@ while ($i < min($num, $limit))
 		/*if (! empty($arrayfields['p.fk_statut']['checked']))
 		{
     		$projectstatic->statut = $obj->fk_statut;
-    		print '<td align="right">'.$projectstatic->getLibStatut(5).'</td>';
+    		print '<td class="right">'.$projectstatic->getLibStatut(5).'</td>';
 		}*/
 		// Action column
-		print '<td class="nowrap" align="center">';
+		print '<td class="nowrap center">';
 		if ($massactionbutton || $massaction)   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 		{
 			$selected=0;
@@ -821,9 +821,9 @@ if (isset($totalarray['totaldurationeffectivefield']) || isset($totalarray['tota
 			if ($num < $limit && empty($offset)) print '<td class="left">'.$langs->trans("Total").'</td>';
 			else print '<td class="left">'.$langs->trans("Totalforthispage").'</td>';
 		}
-		elseif ($totalarray['totalplannedworkloadfield'] == $i) print '<td align="center">'.convertSecondToTime($totalarray['totalplannedworkload'], $plannedworkloadoutputformat).'</td>';
-		elseif ($totalarray['totaldurationeffectivefield'] == $i) print '<td align="center">'.convertSecondToTime($totalarray['totaldurationeffective'], $timespentoutputformat).'</td>';
-		elseif ($totalarray['totalprogress_calculated'] == $i) print '<td align="center">'.($totalarray['totalplannedworkload'] > 0 ? round(100 * $totalarray['totaldurationeffective'] / $totalarray['totalplannedworkload'], 2).' %' : '').'</td>';
+		elseif ($totalarray['totalplannedworkloadfield'] == $i) print '<td class="center">'.convertSecondToTime($totalarray['totalplannedworkload'], $plannedworkloadoutputformat).'</td>';
+		elseif ($totalarray['totaldurationeffectivefield'] == $i) print '<td class="center">'.convertSecondToTime($totalarray['totaldurationeffective'], $timespentoutputformat).'</td>';
+		elseif ($totalarray['totalprogress_calculated'] == $i) print '<td class="center">'.($totalarray['totalplannedworkload'] > 0 ? round(100 * $totalarray['totaldurationeffective'] / $totalarray['totalplannedworkload'], 2).' %' : '').'</td>';
 		else print '<td></td>';
 	}
 	print '</tr>';

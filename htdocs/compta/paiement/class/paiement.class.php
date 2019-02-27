@@ -366,6 +366,7 @@ class Paiement extends CommonObject
                                 if ($invoice->type == Facture::TYPE_DEPOSIT)
                                 {
 			                        $amount_ht = $amount_tva = $amount_ttc = array();
+			                        $multicurrency_amount_ht = $multicurrency_amount_tva = $multicurrency_amount_ttc = array();
 
 									// Insert one discount by VAT rate category
 									$discount = new DiscountAbsolute($this->db);
@@ -384,6 +385,9 @@ class Paiement extends CommonObject
 												$amount_ht[$line->tva_tx] += $line->total_ht;
 												$amount_tva[$line->tva_tx] += $line->total_tva;
 												$amount_ttc[$line->tva_tx] += $line->total_ttc;
+												$multicurrency_amount_ht[$line->tva_tx] += $line->multicurrency_total_ht;
+												$multicurrency_amount_tva[$line->tva_tx] += $line->multicurrency_total_tva;
+												$multicurrency_amount_ttc[$line->tva_tx] += $line->multicurrency_total_ttc;
 												$i++;
 											}
 										}
@@ -392,6 +396,9 @@ class Paiement extends CommonObject
 											$discount->amount_ht = abs($amount_ht[$tva_tx]);
 											$discount->amount_tva = abs($amount_tva[$tva_tx]);
 											$discount->amount_ttc = abs($amount_ttc[$tva_tx]);
+											$discount->multicurrency_amount_ht = abs($multicurrency_amount_ht[$tva_tx]);
+											$discount->multicurrency_amount_tva = abs($multicurrency_amount_tva[$tva_tx]);
+											$discount->multicurrency_amount_ttc = abs($multicurrency_amount_ttc[$tva_tx]);
 											$discount->tva_tx = abs($tva_tx);
 
 											$result = $discount->create($user);
@@ -1110,7 +1117,7 @@ class Paiement extends CommonObject
 	/**
 	 * 	get the right way of payment
 	 *
-	 * 	@return 	string 	'dolibarr' if standard comportment or paid in dolibarr currency, 'customer' if payment received from multicurrency inputs
+	 * 	@return 	string 	'dolibarr' if standard comportment or paid in main currency, 'customer' if payment received from multicurrency inputs
 	 */
 	function getWay()
 	{

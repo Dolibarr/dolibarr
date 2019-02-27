@@ -185,17 +185,17 @@ print '<input type="hidden" name="action" value="set">';
 print '<table class="noborder allwidth">'."\n";
 print '<tr class="liste_titre">'."\n";
 print '<td>'.$langs->trans("Parameters").'</td>'."\n";
-print '<td align="center">&nbsp;</td>'."\n";
+print '<td class="center">&nbsp;</td>'."\n";
 print '<td class="right">'.$langs->trans("Value").'</td>'."\n";
 print '</tr>'."\n";
 
 
 // AGENDA REMINDER EMAIL
-if ($conf->global->MAIN_FEATURES_LEVEL > 0)
+if ($conf->global->MAIN_FEATURES_LEVEL == 2)
 {
 	print '<tr class="oddeven">'."\n";
 	print '<td>'.$langs->trans('AGENDA_REMINDER_EMAIL', $langs->transnoentities("Module2300Name")).'</td>'."\n";
-	print '<td align="center">&nbsp;</td>'."\n";
+	print '<td class="center">&nbsp;</td>'."\n";
 	print '<td class="right">'."\n";
 
 	if (empty($conf->global->AGENDA_REMINDER_EMAIL)) {
@@ -208,11 +208,11 @@ if ($conf->global->MAIN_FEATURES_LEVEL > 0)
 }
 
 // AGENDA REMINDER BROWSER
-if ($conf->global->MAIN_FEATURES_LEVEL > 0)
+if ($conf->global->MAIN_FEATURES_LEVEL == 2)
 {
     print '<tr class="oddeven">'."\n";
     print '<td>'.$langs->trans('AGENDA_REMINDER_BROWSER').'</td>'."\n";
-    print '<td align="center">&nbsp;</td>'."\n";
+    print '<td class="center">&nbsp;</td>'."\n";
     print '<td class="right">'."\n";
 
     if (empty($conf->global->AGENDA_REMINDER_BROWSER)) {
@@ -224,7 +224,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL > 0)
 
         print '<tr class="oddeven">'."\n";
         print '<td>'.$langs->trans('AGENDA_REMINDER_BROWSER_SOUND').'</td>'."\n";
-        print '<td align="center">&nbsp;</td>'."\n";
+        print '<td class="center">&nbsp;</td>'."\n";
         print '<td class="right">'."\n";
 
         if (empty($conf->global->AGENDA_REMINDER_BROWSER_SOUND)) {

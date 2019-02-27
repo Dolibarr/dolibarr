@@ -696,6 +696,7 @@ if (empty($reshook))
 			$db->begin();
 
 			$amount_ht = $amount_tva = $amount_ttc = array();
+			$multicurrency_amount_ht = $multicurrency_amount_tva = $multicurrency_amount_ttc = array();
 
 			// Loop on each vat rate
 			$i = 0;
@@ -709,7 +710,7 @@ if (empty($reshook))
 					$multicurrency_amount_ht[$line->tva_tx] += $line->multicurrency_total_ht;
 					$multicurrency_amount_tva[$line->tva_tx] += $line->multicurrency_total_tva;
 					$multicurrency_amount_ttc[$line->tva_tx] += $line->multicurrency_total_ttc;
-					$i ++;
+					$i++;
 				}
 			}
 
@@ -2695,7 +2696,7 @@ if ($action == 'create')
 			});
 			</script>';
 		}
-		print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&client=3&fournisseur=0&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'">'.$langs->trans("AddThirdParty").'</a>';
+		print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&client=3&fournisseur=0&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'">'.$langs->trans("AddThirdParty").' <span class="fa fa-plus-circle valignmiddle"></span></a>';
 		print '</td>';
 	}
 	print '</tr>' . "\n";
@@ -3091,7 +3092,7 @@ if ($action == 'create')
 		$langs->load('projects');
 		print '<tr><td>' . $langs->trans('Project') . '</td><td colspan="2">';
 		$numprojet = $formproject->select_projects(($socid > 0 ? $socid : -1), $projectid, 'projectid', 0, 0, 1, 1);
-		print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/card.php?socid=' . $soc->id . '&action=create&status=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create&socid='.$soc->id.($fac_rec?'&fac_rec='.$fac_rec:'')).'">' . $langs->trans("AddProject") . '</a>';
+		print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/card.php?socid=' . $soc->id . '&action=create&status=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create&socid='.$soc->id.($fac_rec?'&fac_rec='.$fac_rec:'')).'">' . $langs->trans("AddProject") . ' <span class="fa fa-plus-circle valignmiddle"></span></a>';
 		print '</td></tr>';
 	}
 
@@ -4669,6 +4670,13 @@ elseif ($id > 0 || ! empty($ref))
 				{
 					print '<div class="inline-block divButAction"><a class="butAction'.($conf->use_javascript_ajax?' reposition':'').'" href="'.$_SERVER["PHP_SELF"].'?facid='.$object->id.'&amp;action=converttoreduc">'.$langs->trans('ConvertToReduc').'</a></div>';
 				}
+			}
+
+			// POS Ticket
+			if (! empty($conf->takepos->enabled) && $object->module_source != '')
+			{
+                $receipt_url=DOL_URL_ROOT."/takepos/receipt.php";
+                print '<div class="inline-block divButAction"><a target="_blank" class="butAction" href="' . $receipt_url . '?facid=' . $object->id.'">' . $langs->trans('POSTicket') .'</a></div>';
 			}
 
 			// Classify paid

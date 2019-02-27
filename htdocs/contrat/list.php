@@ -559,7 +559,7 @@ if (! empty($arrayfields['lower_planned_end_date']['checked']))
 // Status
 if (! empty($arrayfields['status']['checked']))
 {
-	print '<td class="liste_titre" colspan="4" align="right"></td>';
+	print '<td class="liste_titre right" colspan="4"></td>';
 }
 print '<td class="liste_titre" align="middle">';
 $searchpicto=$form->showFilterButtons();

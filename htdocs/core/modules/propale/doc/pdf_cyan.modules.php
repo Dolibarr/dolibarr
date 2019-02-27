@@ -41,22 +41,25 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
  */
 class pdf_cyan extends ModelePDFPropales
 {
-	public $db;
+    /**
+     * @var DoliDb Database handler
+     */
+    public $db;
 	public $name;
 	public $description;
 	public $update_main_doc_field;	// Save the name of generated file as the main doc when generating a doc with this template
 	public $type;
 
-	public $phpmin = array(4,3,0); // Minimum version of PHP required by module
+	public $phpmin = array(5, 4); // Minimum version of PHP required by module
 	public $version = 'development';
 
 	public $page_largeur;
 	public $page_hauteur;
 	public $format;
 	public $marge_gauche;
-	public	$marge_droite;
-	public	$marge_haute;
-	public	$marge_basse;
+	public $marge_droite;
+	public $marge_haute;
+	public $marge_basse;
 
 	public $emetteur;	// Objet societe qui emet
 

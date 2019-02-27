@@ -38,10 +38,10 @@ function dol_convertToWord($num, $langs, $currency = false, $centimes = false)
 	global $conf;
 
     $num = str_replace(array(',', ' '), '', trim($num));
-    if(! $num) {
+    if (! $num) {
         return false;
     }
-	if($centimes && strlen($num) == 1) {
+	if ($centimes && strlen($num) == 1) {
 		$num = $num*10;
 	}
 	$TNum = explode('.', $num);
@@ -151,7 +151,7 @@ function dolNumberToWord($numero, $langs, $numorcurrency = 'number')
 	if ($numero >= 1000000000001)
 		return -1;
 	// Get 2 decimals to cents, another functions round or truncate
-	$strnumber = number_format ($numero, 10);
+	$strnumber = number_format($numero, 10);
 	$len=strlen($strnumber);
 	for ($i=0; $i<$len; $i++)
 	{
@@ -187,7 +187,7 @@ function dolNumberToWord($numero, $langs, $numorcurrency = 'number')
 				$numero = $numero - $DdMMillon * 10000000000;
 				$UdMMillon = (int) ($numero / 1000000000);
 				$numero = $numero - $UdMMillon * 1000000000;
-				$entexto .= hundreds2text ($CdMMillon, $DdMMillon, $UdMMillon);
+				$entexto .= hundreds2text($CdMMillon, $DdMMillon, $UdMMillon);
 				$entexto .= " MIL ";
 			}
 			if ($number >= 1000000){
@@ -197,7 +197,7 @@ function dolNumberToWord($numero, $langs, $numorcurrency = 'number')
 				$numero = $numero - $DdMILLON * 10000000;
 				$udMILLON = (int) ($numero / 1000000);
 				$numero = $numero - $udMILLON * 1000000;
-				$entexto .= hundreds2text ($CdMILLON, $DdMILLON, $udMILLON);
+				$entexto .= hundreds2text($CdMILLON, $DdMILLON, $udMILLON);
 				if (!$CdMMillon && !$DdMMillon && !$UdMMillon && !$CdMILLON && !$DdMILLON && $udMILLON==1)
 					$entexto .= " MILL&OacuteN ";
 				else
@@ -210,7 +210,7 @@ function dolNumberToWord($numero, $langs, $numorcurrency = 'number')
 				$numero = $numero - $ddm * 10000;
 				$udm = (int) ($numero / 1000);
 				$numero = $numero - $udm * 1000;
-				$entexto .= hundreds2text ($cdm, $ddm, $udm);
+				$entexto .= hundreds2text($cdm, $ddm, $udm);
 				if ($cdm || $ddm || $udm)
 					$entexto .= " MIL ";
 			}
@@ -218,7 +218,7 @@ function dolNumberToWord($numero, $langs, $numorcurrency = 'number')
 			$numero = $numero - $c * 100;
 			$d = (int) ($numero / 10);
 			$u = (int) $numero - $d * 10;
-			$entexto .= hundreds2text ($c, $d, $u);
+			$entexto .= hundreds2text($c, $d, $u);
 			if (!$cdm && !$ddm && !$udm && !$c && !$d && !$u && $number>1000000)
 				$entexto .= " DE";
 			$entexto .= " PESOS ".$parte_decimal." / 100 M.N.";

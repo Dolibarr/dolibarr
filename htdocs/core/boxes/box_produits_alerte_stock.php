@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2005-2012 Maxime Kohlhaas      <mko@atm-consulting.fr>
- * Copyright (C) 2015      Frederic France      <frederic.france@free.fr>
+ * Copyright (C) 2015-2019 Frédéric France      <frederic.france@netlogic.fr>
  * Copyright (C) 2015      Juanjo Menent	    <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -117,6 +117,8 @@ class box_produits_alerte_stock extends ModeleBoxes
                 while ($line < $num) {
 					$objp = $db->fetch_object($result);
 					$datem=$db->jdate($objp->tms);
+                    $price = '';
+                    $price_base_type = '';
 
 					// Multilangs
 					if (! empty($conf->global->MAIN_MULTILANGS)) // si l'option est active

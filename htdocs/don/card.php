@@ -154,7 +154,7 @@ if ($action == 'add')
 
 	if (! $error)
 	{
-  		$object->fk_soc = GETPOST("fk_soc", 'int');
+    $object->socid = GETPOST("socid", 'int');
 		$object->firstname = GETPOST("firstname", 'alpha');
 		$object->lastname = GETPOST("lastname", 'alpha');
 		$object->societe = GETPOST("societe", 'alpha');
@@ -164,7 +164,7 @@ if ($action == 'add')
 		$object->town = GETPOST("town", 'alpha');
 		$object->country_id = GETPOST('country_id', 'int');
 		$object->email = GETPOST('email', 'alpha');
-    	$object->date = $donation_date;
+    $object->date = $donation_date;
 		$object->note_private = GETPOST("note_private", 'none');
 		$object->note_public = GETPOST("note_public", 'none');
 		$object->public = GETPOST("public", 'alpha');
@@ -372,7 +372,7 @@ if ($action == 'create')
 				});
 				</script>';
 			}
-			print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&client=3&fournisseur=0&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'">'.$langs->trans("AddThirdParty").'</a>';
+			print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&client=3&fournisseur=0&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'">'.$langs->trans("AddThirdParty").' <span class="fa fa-plus-circle valignmiddle"></span></a>';
 			print '</td>';
 		}
 		print '</tr>' . "\n";
@@ -531,10 +531,10 @@ if (! empty($id) && $action == 'edit')
 	print "</td>";
 	print "</tr>\n";
 
-if ( $object->fk_soc && ! empty($conf->societe->enabled) && ! empty($conf->global->DONATION_USE_THIRDPARTIES) ) {
+if ( $object->socid && ! empty($conf->societe->enabled) && ! empty($conf->global->DONATION_USE_THIRDPARTIES) ) {
 
 	$company=new Societe($db);
-	$result=$company->fetch($object->fk_soc);
+	$result=$company->fetch($object->socid);
 
 	print '<tr><td>'.$langs->trans("LinkedToDolibarrThirdParty").'</td><td colspan="2">'.$company->getNomUrl(1).'</td></tr>';
 } else {
@@ -693,10 +693,10 @@ if (! empty($id) && $action != 'edit')
 	print yn($object->public);
 	print '</td></tr>';
 
-if ($object->fk_soc) {
+if ($object->socid) {
 
 	$company=new Societe($db);
-	$result=$company->fetch($object->fk_soc);
+	$result=$company->fetch($object->socid);
 
 	print '<tr><td>'.$langs->trans("LinkedToDolibarrThirdParty").'</td><td colspan="2">'.$company->getNomUrl(1).'</td></tr>';
 } else {

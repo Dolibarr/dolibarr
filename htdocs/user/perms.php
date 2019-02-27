@@ -264,13 +264,13 @@ if (($caneditperms && empty($objMod->rights_admin_allowed)) || empty($object->ad
 {
 	if ($caneditperms)
 	{
-		print '<td align="center" class="nowrap">';
+		print '<td class="center nowrap">';
 		print '<a class="reposition" title="'.dol_escape_htmltag($langs->trans("All")).'" alt="'.dol_escape_htmltag($langs->trans("All")).'" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=addrights&amp;entity='.$entity.'&amp;module=allmodules">'.$langs->trans("All")."</a>";
 		print '/';
 		print '<a class="reposition" title="'.dol_escape_htmltag($langs->trans("None")).'" alt="'.dol_escape_htmltag($langs->trans("None")).'" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delrights&amp;entity='.$entity.'&amp;module=allmodules">'.$langs->trans("None")."</a>";
 		print '</td>';
 	}
-	print '<td align="center" width="24">&nbsp;</td>';
+	print '<td class="center" width="24">&nbsp;</td>';
 }
 print '<td>'.$langs->trans("Permissions").'</td>';
 print '</tr>'."\n";
@@ -316,7 +316,7 @@ if ($result)
     		{
     			if ($caneditperms)
     			{
-    				print '<td align="center" class="nowrap">';
+    				print '<td class="center nowrap">';
     				print '<a class="reposition" title="'.dol_escape_htmltag($langs->trans("All")).'" alt="'.dol_escape_htmltag($langs->trans("All")).'" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=addrights&amp;entity='.$entity.'&amp;module='.$obj->module.'">'.$langs->trans("All")."</a>";
     				print '/';
     				print '<a class="reposition" title="'.dol_escape_htmltag($langs->trans("None")).'" alt="'.dol_escape_htmltag($langs->trans("None")).'" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delrights&amp;entity='.$entity.'&amp;module='.$obj->module.'">'.$langs->trans("None")."</a>";
@@ -344,9 +344,9 @@ if ($result)
         {
         	if ($caneditperms)
         	{
-        		print '<td align="center">'.img_picto($langs->trans("Administrator"), 'star').'</td>';
+        		print '<td class="center">'.img_picto($langs->trans("Administrator"), 'star').'</td>';
         	}
-        	print '<td align="center" class="nowrap">';
+        	print '<td class="center nowrap">';
         	print img_picto($langs->trans("Active"), 'tick');
         	print '</td>';
         }
@@ -354,9 +354,9 @@ if ($result)
         {
         	if ($caneditperms)
         	{
-        		print '<td align="center"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delrights&amp;entity='.$entity.'&amp;rights='.$obj->id.'">'.img_edit_remove($langs->trans("Remove")).'</a></td>';
+        		print '<td class="center"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delrights&amp;entity='.$entity.'&amp;rights='.$obj->id.'">'.img_edit_remove($langs->trans("Remove")).'</a></td>';
         	}
-        	print '<td align="center" class="nowrap">';
+        	print '<td class="center nowrap">';
         	print img_picto($langs->trans("Active"), 'tick');
         	print '</td>';
         }
@@ -367,11 +367,11 @@ if ($result)
 	        {
 	        	if ($caneditperms)
 	        	{
-	        		print '<td align="center">';
+	        		print '<td class="center">';
 	        		print $form->textwithtooltip($langs->trans("Inherited"), $langs->trans("PermissionInheritedFromAGroup"));
 	        		print '</td>';
 	        	}
-	        	print '<td align="center" class="nowrap">';
+	        	print '<td class="center nowrap">';
 	        	print img_picto($langs->trans("Active"), 'tick');
 	        	print '</td>';
 	        }
@@ -380,7 +380,7 @@ if ($result)
 	        	// Do not own permission
 	        	if ($caneditperms)
 	        	{
-	        		print '<td align="center"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=addrights&amp;entity='.$entity.'&amp;rights='.$obj->id.'">'.img_edit_add($langs->trans("Add")).'</a></td>';
+	        		print '<td class="center"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=addrights&amp;entity='.$entity.'&amp;rights='.$obj->id.'">'.img_edit_add($langs->trans("Add")).'</a></td>';
 	        	}
 	        	print '<td>&nbsp</td>';
 	        }
@@ -390,7 +390,7 @@ if ($result)
         	// Do not own permission
         	if ($caneditperms)
         	{
-        		print '<td align="center"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=addrights&amp;entity='.$entity.'&amp;rights='.$obj->id.'">'.img_edit_add($langs->trans("Add")).'</a></td>';
+        		print '<td class="center"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=addrights&amp;entity='.$entity.'&amp;rights='.$obj->id.'">'.img_edit_add($langs->trans("Add")).'</a></td>';
         	}
         	print '<td>&nbsp</td>';
         }

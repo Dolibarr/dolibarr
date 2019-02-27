@@ -32,7 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 $action = GETPOST('action', 'alpha');
 
 $obj_facturation = unserialize($_SESSION['serObjFacturation']);
-unset ($_SESSION['serObjFacturation']);
+unset($_SESSION['serObjFacturation']);
 
 
 switch($action)

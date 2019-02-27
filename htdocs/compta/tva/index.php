@@ -101,8 +101,8 @@ function pt($db, $sql, $date)
 
         print '<tr class="liste_titre">';
         print '<td class="nowrap">'.$date.'</td>';
-        print '<td align="right">'.$langs->trans("ClaimedForThisPeriod").'</td>';
-        print '<td align="right">'.$langs->trans("PaidDuringThisPeriod").'</td>';
+        print '<td class="right">'.$langs->trans("ClaimedForThisPeriod").'</td>';
+        print '<td class="right">'.$langs->trans("PaidDuringThisPeriod").'</td>';
         print "</tr>\n";
 
         $totalclaimed = 0;
@@ -122,8 +122,8 @@ function pt($db, $sql, $date)
             {
             	print '<tr class="oddeven">';
             	print '<td class="nowrap">'.$previousmonth."</td>\n";
-            	print '<td class="nowrap" align="right">'.price($amountclaimed)."</td>\n";
-            	print '<td class="nowrap" align="right">'.price($amountpaid)."</td>\n";
+            	print '<td class="nowrap right">'.price($amountclaimed)."</td>\n";
+            	print '<td class="nowrap right">'.price($amountpaid)."</td>\n";
             	print "</tr>\n";
 
             	$amountclaimed = 0;
@@ -145,8 +145,8 @@ function pt($db, $sql, $date)
             {
             	print '<tr class="oddeven">';
             	print '<td class="nowrap">'.$obj->dm."</td>\n";
-            	print '<td class="nowrap" align="right">'.price($amountclaimed)."</td>\n";
-            	print '<td class="nowrap" align="right">'.price($amountpaid)."</td>\n";
+            	print '<td class="nowrap right">'.price($amountclaimed)."</td>\n";
+            	print '<td class="nowrap right">'.price($amountpaid)."</td>\n";
             	print "</tr>\n";
             	$amountclaimed = 0;
             	$amountpaid = 0;
@@ -166,8 +166,8 @@ function pt($db, $sql, $date)
         {
         	print '<tr class="oddeven">';
         	print '<td class="nowrap">'.$previousmonth."</td>\n";
-        	print '<td class="nowrap" align="right">'.price($amountclaimed)."</td>\n";
-        	print '<td class="nowrap" align="right">'.price($amountpaid)."</td>\n";
+        	print '<td class="nowrap right">'.price($amountclaimed)."</td>\n";
+        	print '<td class="nowrap right">'.price($amountpaid)."</td>\n";
         	print "</tr>\n";
 
         	$amountclaimed = 0;
@@ -175,9 +175,9 @@ function pt($db, $sql, $date)
         }
 
         print '<tr class="liste_total">';
-        print '<td align="right">'.$langs->trans("Total").'</td>';
-        print '<td class="nowrap" align="right">'.price($totalclaimed).'</td>';
-        print '<td class="nowrap" align="right">'.price($totalpaid).'</td>';
+        print '<td class="right">'.$langs->trans("Total").'</td>';
+        print '<td class="nowrap right">'.price($totalclaimed).'</td>';
+        print '<td class="nowrap right">'.price($totalpaid).'</td>';
         print "</tr>";
 
         print "</table>";
@@ -242,9 +242,9 @@ print load_fiche_titre($langs->trans("VATSummary"), '', '');
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td width="30%">'.$langs->trans("Year")." ".$y.'</td>';
-print '<td align="right">'.$langs->trans("VATToPay").'</td>';
-print '<td align="right">'.$langs->trans("VATToCollect").'</td>';
-print '<td align="right">'.$langs->trans("Balance").'</td>';
+print '<td class="right">'.$langs->trans("VATToPay").'</td>';
+print '<td class="right">'.$langs->trans("VATToCollect").'</td>';
+print '<td class="right">'.$langs->trans("Balance").'</td>';
 print '<td>&nbsp;</td>'."\n";
 print '</tr>'."\n";
 
@@ -444,7 +444,7 @@ while ((($y < $yend) || ($y == $yend && $m <= $mend)) && $mcursor < 1000)	// $mc
 	    	$x_coll_sum           += $temp_vat;
 	    }
     }
-    print "<td class=\"nowrap\" align=\"right\">".price(price2num($x_coll_sum, 'MT'))."</td>";
+    print '<td class="nowrap right">'.price(price2num($x_coll_sum, 'MT')).'</td>';
 
     $x_paye_sum = 0;
     foreach (array_keys($x_paye) as $rate)
@@ -488,7 +488,7 @@ while ((($y < $yend) || ($y == $yend && $m <= $mend)) && $mcursor < 1000)	// $mc
 	    	$x_paye_sum           += $temp_vat;
 	    }
     }
-    print "<td class=\"nowrap\" align=\"right\">".price(price2num($x_paye_sum, 'MT'))."</td>";
+    print '<td class="nowrap right">'.price(price2num($x_paye_sum, 'MT')).'</td>';
 
     $subtotalcoll = $subtotalcoll + $x_coll_sum;
     $subtotalpaye = $subtotalpaye + $x_paye_sum;
@@ -497,7 +497,7 @@ while ((($y < $yend) || ($y == $yend && $m <= $mend)) && $mcursor < 1000)	// $mc
     $total = $total + $diff;
     $subtotal = price2num($subtotal + $diff, 'MT');
 
-    print "<td class=\"nowrap\" align=\"right\">".price(price2num($diff, 'MT'))."</td>\n";
+    print '<td class="nowrap right">'.price(price2num($diff, 'MT')).'</td>'."\n";
     print "<td>&nbsp;</td>\n";
     print "</tr>\n";
 
@@ -505,16 +505,16 @@ while ((($y < $yend) || ($y == $yend && $m <= $mend)) && $mcursor < 1000)	// $mc
     if ($i > 2)
     {
         print '<tr class="liste_total">';
-        print '<td align="right"><a href="quadri_detail.php?leftmenu=tax_vat&q='.round($m/3).'&year='.$y.'">'.$langs->trans("SubTotal").'</a>:</td>';
-        print '<td class="nowrap" align="right">'.price(price2num($subtotalcoll, 'MT')).'</td>';
-        print '<td class="nowrap" align="right">'.price(price2num($subtotalpaye, 'MT')).'</td>';
-        print '<td class="nowrap" align="right">'.price(price2num($subtotal, 'MT')).'</td>';
+        print '<td class="right"><a href="quadri_detail.php?leftmenu=tax_vat&q='.round($m/3).'&year='.$y.'">'.$langs->trans("SubTotal").'</a>:</td>';
+        print '<td class="nowrap right">'.price(price2num($subtotalcoll, 'MT')).'</td>';
+        print '<td class="nowrap right">'.price(price2num($subtotalpaye, 'MT')).'</td>';
+        print '<td class="nowrap right">'.price(price2num($subtotal, 'MT')).'</td>';
         print '<td>&nbsp;</td></tr>';
         $i = 0;
         $subtotalcoll=0; $subtotalpaye=0; $subtotal=0;
     }
 }
-print '<tr class="liste_total"><td align="right" colspan="3">'.$langs->trans("TotalToPay").':</td><td class="nowrap" align="right">'.price(price2num($total, 'MT')).'</td>';
+print '<tr class="liste_total"><td class="right" colspan="3">'.$langs->trans("TotalToPay").':</td><td class="nowrap right">'.price(price2num($total, 'MT')).'</td>';
 print "<td>&nbsp;</td>\n";
 print '</tr>';
 
@@ -575,19 +575,19 @@ if (! empty($conf->global->MAIN_FEATURES_LEVEL))
         print '<table class="noborder" width="100%">';
 
         print "<tr>";
-        print '<td align="right">' . $langs->trans("VATDue") . '</td>';
-        print '<td class="nowrap" align="right">' . price(price2num($total, 'MT')) . '</td>';
+        print '<td class="right">' . $langs->trans("VATDue") . '</td>';
+        print '<td class="nowrap right">' . price(price2num($total, 'MT')) . '</td>';
         print "</tr>\n";
 
         print "<tr>";
-        print '<td align="right">' . $langs->trans("VATPaid") . '</td>';
-        print '<td class="nowrap" align="right">' . price(price2num($obj->mm, 'MT')) . "</td>\n";
+        print '<td class="right">' . $langs->trans("VATPaid") . '</td>';
+        print '<td class="nowrap right">' . price(price2num($obj->mm, 'MT')) . "</td>\n";
         print "</tr>\n";
 
         $restopay = $total - $obj->mm;
         print "<tr>";
-        print '<td align="right">' . $langs->trans("RemainToPay") . '</td>';
-        print '<td class="nowrap" align="right">' . price(price2num($restopay, 'MT')) . '</td>';
+        print '<td class="right">' . $langs->trans("RemainToPay") . '</td>';
+        print '<td class="nowrap right">' . price(price2num($restopay, 'MT')) . '</td>';
         print "</tr>\n";
 
         print '</table>';

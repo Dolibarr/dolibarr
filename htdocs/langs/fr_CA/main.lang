@@ -99,7 +99,6 @@ MonthVeryShort09=D
 NbOfObjectReferers=Nombre d'articles connexes
 Referers=Articles connexes
 SendAcknowledgementByMail=Envoyer un email de confirmation
-EMail=Courriel
 ValueIsNotValid=La valeur n'est pas valide
 RecordsModified=%s enregistrement modifié
 RecordsDeleted=%s enregistrement(s) supprimé(s)
