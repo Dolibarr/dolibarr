@@ -379,9 +379,9 @@ class Ldap
 	/**
 	 * Change ldap protocol version to use.
 	 *
-	 * @return	boolean					version
+	 * @return	boolean                 version
 	 */
-    function setVersion()
+    public function setVersion()
     {
 		// LDAP_OPT_PROTOCOL_VERSION est une constante qui vaut 17
 		$ldapsetversion = ldap_set_option($this->connection, LDAP_OPT_PROTOCOL_VERSION, $this->ldapProtocolVersion);
@@ -391,9 +391,9 @@ class Ldap
 	/**
 	 * changement du referrals.
 	 *
-	 * @return	boolean					referrals
+	 * @return	boolean                 referrals
 	 */
-    function setReferrals()
+    public function setReferrals()
     {
 		// LDAP_OPT_REFERRALS est une constante qui vaut ?
 		$ldapreferrals = ldap_set_option($this->connection, LDAP_OPT_REFERRALS, 0);
@@ -559,7 +559,7 @@ class Ldap
 
 	/**
 	 *  Modify a LDAP entry (to use if dn != olddn)
-	 *	Ldap object connect and bind must have been done
+	 *  Ldap object connect and bind must have been done
 	 *
 	 *  @param	string	$dn			DN entry key
 	 *  @param	array	$info		Attributes array

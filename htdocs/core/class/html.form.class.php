@@ -3693,7 +3693,7 @@ class Form
 	 *  @param  string	$moreattrib         To add more attribute on select
 	 * 	@return	int							<0 if error, Num of establishment found if OK (0, 1, 2, ...)
 	 */
-	function selectEstablishments($selected = '', $htmlname = 'entity', $statut = 0, $filtre = '', $useempty = 0, $moreattrib = '')
+	public function selectEstablishments($selected = '', $htmlname = 'entity', $statut = 0, $filtre = '', $useempty = 0, $moreattrib = '')
 	{
         // phpcs:enable
 		global $langs, $conf;
@@ -4317,17 +4317,17 @@ class Form
 	}
 
 	/**
-	 *	Output HTML form to select list of input reason (events that triggered an object creation, like after sending an emailing, making an advert, ...)
+	 *  Output HTML form to select list of input reason (events that triggered an object creation, like after sending an emailing, making an advert, ...)
 	 *  List found into table c_input_reason loaded by loadCacheInputReason
 	 *
 	 *  @param  string	$page        	Page
 	 *  @param  string	$selected    	Id condition pre-selectionne
 	 *  @param  string	$htmlname    	Name of select html field
-	 *	@param	int		$addempty		Add empty entry
+	 *  @param	int		$addempty		Add empty entry
 	 *  @return	void
-	 */
+     */
     public function formInputReason($page, $selected = '', $htmlname = 'demandreason', $addempty = 0)
-	{
+    {
 		global $langs;
 		if ($htmlname != "none")
 		{
@@ -4647,17 +4647,17 @@ class Form
 
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/**
-	 *    Show forms to select a contact
-	 *
-	 *    @param	string		$page        	Page
-	 *    @param	Societe		$societe		Filter on third party
-	 *    @param    int			$selected    	Id contact pre-selectionne
-	 *    @param    string		$htmlname    	Name of HTML select. If 'none', we just show contact link.
-	 *    @return	void
-	 */
+    /**
+     *  Show forms to select a contact
+     *
+     *  @param	string		$page        	Page
+     *  @param	Societe		$societe		Filter on third party
+     *  @param    int			$selected    	Id contact pre-selectionne
+     *  @param    string		$htmlname    	Name of HTML select. If 'none', we just show contact link.
+     *  @return	void
+     */
     public function form_contacts($page, $societe, $selected = '', $htmlname = 'contactid')
-	{
+    {
         // phpcs:enable
 		global $langs, $conf;
 
@@ -4856,10 +4856,10 @@ class Form
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *	Load into the cache vat rates of a country
+	 *  Load into the cache vat rates of a country
 	 *
-	 *	@param	string	$country_code		Country code with quotes ("'CA'", or "'CA,IN,...'")
-	 *	@return	int							Nb of loaded lines, 0 if already loaded, <0 if KO
+	 *  @param	string	$country_code		Country code with quotes ("'CA'", or "'CA,IN,...'")
+	 *  @return	int							Nb of loaded lines, 0 if already loaded, <0 if KO
 	 */
     public function load_cache_vatrates($country_code)
 	{
@@ -5143,7 +5143,7 @@ class Form
      *  @deprecated
 	 *  @see    form_date, select_month, select_year, select_dayofweek
 	 */
-    function select_date($set_time = '', $prefix = 're', $h = 0, $m = 0, $empty = 0, $form_name = "", $d = 1, $addnowlink = 0, $nooutput = 0, $disabled = 0, $fullday = '', $addplusone = '', $adddateof = '')
+    public function select_date($set_time = '', $prefix = 're', $h = 0, $m = 0, $empty = 0, $form_name = "", $d = 1, $addnowlink = 0, $nooutput = 0, $disabled = 0, $fullday = '', $addplusone = '', $adddateof = '')
     {
         // phpcs:enable
         $retstring = $this->selectDate($set_time, $prefix, $h, $m, $empty, $form_name, $d, $addnowlink, $disabled, $fullday, $addplusone, $adddateof);
@@ -5834,7 +5834,7 @@ class Form
 	 * 	@return	string								HTML select string.
 	 *  @see multiselectarray, selectArrayAjax, selectArrayFilter
 	 */
-	static function selectarray($htmlname, $array, $id = '', $show_empty = 0, $key_in_label = 0, $value_as_key = 0, $moreparam = '', $translate = 0, $maxlen = 0, $disabled = 0, $sort = '', $morecss = '', $addjscombo = 0, $moreparamonempty = '', $disablebademail = 0, $nohtmlescape = 0)
+	public static function selectarray($htmlname, $array, $id = '', $show_empty = 0, $key_in_label = 0, $value_as_key = 0, $moreparam = '', $translate = 0, $maxlen = 0, $disabled = 0, $sort = '', $morecss = '', $addjscombo = 0, $moreparamonempty = '', $disablebademail = 0, $nohtmlescape = 0)
 	{
 		global $conf, $langs;
 
@@ -5944,7 +5944,7 @@ class Form
 	 * 	@return	string   						HTML select string
 	 *  @see selectArrayFilter, ajax_combobox in ajax.lib.php
 	 */
-	static function selectArrayAjax($htmlname, $url, $id = '', $moreparam = '', $moreparamtourl = '', $disabled = 0, $minimumInputLength = 1, $morecss = '', $callurlonselect = 0, $placeholder = '', $acceptdelayedhtml = 0)
+	public static function selectArrayAjax($htmlname, $url, $id = '', $moreparam = '', $moreparamtourl = '', $disabled = 0, $minimumInputLength = 1, $morecss = '', $callurlonselect = 0, $placeholder = '', $acceptdelayedhtml = 0)
 	{
 		global $conf, $langs;
 		global $delayedhtmlcontent;
@@ -6028,11 +6028,11 @@ class Form
 		return $out;
 	}
 
-	/**
-	 *	Return a HTML select string, built from an array of key+value, but content returned into select is defined into $array parameter.
-	 *  Note: Do not apply langs->trans function on returned content of Ajax service, content may be entity encoded twice.
-	 *
-	 *	@param	string	$htmlname       		Name of html select area
+    /**
+     *  Return a HTML select string, built from an array of key+value, but content returned into select is defined into $array parameter.
+     *  Note: Do not apply langs->trans function on returned content of Ajax service, content may be entity encoded twice.
+     *
+     *  @param  string	$htmlname               Name of html select area
 	 *	@param	string	$array					Array (key=>array('text'=>'A text', 'url'=>'An url'), ...)
 	 *	@param	string	$id             		Preselected key
 	 *	@param  string	$moreparam      		Add more parameters onto the select tag
@@ -6043,10 +6043,10 @@ class Form
 	 *  @param  int     $callurlonselect        If set to 1, some code is added so an url return by the ajax is called when value is selected.
 	 *  @param  string  $placeholder            String to use as placeholder
 	 *  @param  integer $acceptdelayedhtml      1 = caller is requesting to have html js content not returned but saved into global $delayedhtmlcontent (so caller can show it at end of page to avoid flash FOUC effect)
-	 * 	@return	string   						HTML select string
+	 *  @return	string   						HTML select string
 	 *  @see selectArrayAjax, ajax_combobox in ajax.lib.php
 	 */
-	static function selectArrayFilter($htmlname, $array, $id = '', $moreparam = '', $disableFiltering = 0, $disabled = 0, $minimumInputLength = 1, $morecss = '', $callurlonselect = 0, $placeholder = '', $acceptdelayedhtml = 0)
+	public static function selectArrayFilter($htmlname, $array, $id = '', $moreparam = '', $disableFiltering = 0, $disabled = 0, $minimumInputLength = 1, $morecss = '', $callurlonselect = 0, $placeholder = '', $acceptdelayedhtml = 0)
 	{
 		global $conf, $langs;
 		global $delayedhtmlcontent;
@@ -6164,7 +6164,7 @@ class Form
 	 *	@return	string					HTML multiselect string
 	 *  @see selectarray, selectArrayAjax, selectArrayFilter
 	 */
-	static function multiselectarray($htmlname, $array, $selected = array(), $key_in_label = 0, $value_as_key = 0, $morecss = '', $translate = 0, $width = 0, $moreattrib = '', $elemtype = '', $placeholder = '', $addjscombo = -1)
+	public static function multiselectarray($htmlname, $array, $selected = array(), $key_in_label = 0, $value_as_key = 0, $morecss = '', $translate = 0, $width = 0, $moreattrib = '', $elemtype = '', $placeholder = '', $addjscombo = -1)
 	{
 		global $conf, $langs;
 
@@ -6274,7 +6274,7 @@ class Form
 	 *	@return	string					HTML multiselect string
 	 *  @see selectarray
 	 */
-	static function multiSelectArrayWithCheckbox($htmlname, &$array, $varpage)
+	public static function multiSelectArrayWithCheckbox($htmlname, &$array, $varpage)
 	{
 		global $conf,$langs,$user;
 
@@ -7015,7 +7015,7 @@ class Form
 	 *      @param	string		$forcecapture		Force parameter capture on HTML input file element to ask a smartphone to allow to open camera to take photo. Auto if empty.
 	 * 	  	@return string    						HTML code to output photo
 	 */
-	static function showphoto($modulepart, $object, $width = 100, $height = 0, $caneditfield = 0, $cssclass = 'photowithmargin', $imagesize = '', $addlinktofullsize = 1, $cache = 0, $forcecapture = '')
+	public static function showphoto($modulepart, $object, $width = 100, $height = 0, $caneditfield = 0, $cssclass = 'photowithmargin', $imagesize = '', $addlinktofullsize = 1, $cache = 0, $forcecapture = '')
 	{
 		global $conf,$langs;
 
@@ -7505,6 +7505,6 @@ class Form
 			dol_print_error($db);
 		}
 
-		return $out;
-	}
+        return $out;
+    }
 }

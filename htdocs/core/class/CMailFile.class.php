@@ -407,8 +407,8 @@ class CMailFile
                 }
             }
 
-			// Set the To addresses with an associative array
-			if (! empty($to)) {
+            // Set the To addresses with an associative array
+            if (! empty($to)) {
                 try {
                 	$result = $this->message->setTo($this->getArrayAddress($to));
                 } catch (Exception $e) {
@@ -752,9 +752,9 @@ class CMailFile
 			}
 			elseif ($this->sendmode == 'swiftmailer')
 			{
-				// Use Swift Mailer library
-				// ------------------------------------------
-				require_once DOL_DOCUMENT_ROOT.'/includes/swiftmailer/lib/swift_required.php';
+                // Use Swift Mailer library
+                // ------------------------------------------
+                require_once DOL_DOCUMENT_ROOT.'/includes/swiftmailer/lib/swift_required.php';
 
 				// Clean parameters
 				if (empty($conf->global->$keyforsmtpserver)) $conf->global->$keyforsmtpserver=ini_get('SMTP');
@@ -1251,7 +1251,7 @@ class CMailFile
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Try to create a socket connection
 	 *

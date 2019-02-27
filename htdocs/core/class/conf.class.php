@@ -41,13 +41,13 @@ class Conf
      */
     public $db;
 
-	//! To store properties found into database
+    //! To store properties found into database
     public $global;
-	//! To store browser info
+    //! To store browser info
     public $browser;
 
-	//! To store if javascript/ajax is enabked
-	public $use_javascript_ajax;
+    //! To store if javascript/ajax is enabked
+    public $use_javascript_ajax;
 	//! Used to store current currency (ISO code like 'USD', 'EUR', ...)
 	public $currency;
 	//! Used to store current css (from theme)
@@ -141,11 +141,11 @@ class Conf
 
 
 	/**
-	 *	Load setup values into conf object (read llx_const)
+	 *  Load setup values into conf object (read llx_const)
 	 *  Note that this->db->xxx, this->file->xxx and this->multicompany have been already loaded when setValues is called.
 	 *
-	 *	@param      DoliDB		$db		Database handler
-	 *	@return     int					< 0 if KO, >= 0 if OK
+	 *  @param      DoliDB      $db     Database handler
+	 *  @return     int                 < 0 if KO, >= 0 if OK
 	 */
 	public function setValues($db)
 	{
@@ -218,8 +218,8 @@ class Conf
 				$i++;
 			}
 
-		    $db->free($resql);
-		}
+            $db->free($resql);
+        }
 
         // Include other local consts.php files and fetch their values to the corresponding database constants.
         if (! empty($this->global->LOCAL_CONSTS_FILES)) {
@@ -233,8 +233,8 @@ class Conf
             }
         }
 
-		//var_dump($this->modules);
-		//var_dump($this->modules_parts['theme']);
+        //var_dump($this->modules);
+        //var_dump($this->modules_parts['theme']);
 
 		// If you can't set timezone of your PHP, set this constant. Better is to set it to UTC.
 		// In future, this constant will be forced to 'UTC' so PHP server timezone will not have effect anymore.
@@ -251,12 +251,10 @@ class Conf
 		}
 
 		// Object $mc
-		if (! defined('NOREQUIREMC') && ! empty($this->multicompany->enabled))
-		{
+		if (! defined('NOREQUIREMC') && ! empty($this->multicompany->enabled)) {
 			global $mc;
 			$ret = @dol_include_once('/multicompany/class/actions_multicompany.class.php');
-			if ($ret)
-			{
+			if ($ret) {
 				$mc = new ActionsMulticompany($db);
 				$this->mc = $mc;
 			}
@@ -592,7 +590,9 @@ class Conf
 		    $this->adherent->subscription = new stdClass();
             $this->adherent->subscription->warning_delay=(isset($this->global->MAIN_DELAY_MEMBERS)?$this->global->MAIN_DELAY_MEMBERS:0)*24*60*60;
 		}
-		if (isset($this->agenda)) $this->agenda->warning_delay=(isset($this->global->MAIN_DELAY_ACTIONS_TODO)?$this->global->MAIN_DELAY_ACTIONS_TODO:7)*24*60*60;
+		if (isset($this->agenda)) {
+            $this->agenda->warning_delay=(isset($this->global->MAIN_DELAY_ACTIONS_TODO)?$this->global->MAIN_DELAY_ACTIONS_TODO:7)*24*60*60;
+        }
 		if (isset($this->projet))
 		{
 		    $this->projet->warning_delay=(isset($this->global->MAIN_DELAY_PROJECT_TO_CLOSE)?$this->global->MAIN_DELAY_PROJECT_TO_CLOSE:7)*24*60*60;
@@ -632,9 +632,9 @@ class Conf
 		    $this->bank->cheque->warning_delay=(isset($this->global->MAIN_DELAY_CHEQUES_TO_DEPOSIT)?$this->global->MAIN_DELAY_CHEQUES_TO_DEPOSIT:0)*24*60*60;
 		}
 		if (isset($this->expensereport)) {
-		    $this->expensereport->approve		= new stdClass();
+		    $this->expensereport->approve = new stdClass();
 		    $this->expensereport->approve->warning_delay=(isset($this->global->MAIN_DELAY_EXPENSEREPORTS)?$this->global->MAIN_DELAY_EXPENSEREPORTS:0)*24*60*60;
-		    $this->expensereport->payment		= new stdClass();
+		    $this->expensereport->payment = new stdClass();
 		    $this->expensereport->payment->warning_delay=(isset($this->global->MAIN_DELAY_EXPENSEREPORTS_TO_PAY)?$this->global->MAIN_DELAY_EXPENSEREPORTS_TO_PAY:0)*24*60*60;
 		}
 
