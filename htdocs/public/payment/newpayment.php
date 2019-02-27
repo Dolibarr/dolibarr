@@ -907,15 +907,6 @@ $stripecu = $stripe->getStripeCustomerAccount($object->socid, $servicestatus);	/
 	print '</td></tr>'."\n";
 }
 
-	// Add download link
-	if ($download > 0)
-	{
-		print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Document");
-		print '</td><td class="CTableRow'.($var?'1':'2').'">';
-		print $object->getDirectExternalLink(1);
-		print '</td></tr>'."\n";
-	}
-
 	// Shipping address
 	$shipToName=$order->thirdparty->name;
 	$shipToStreet=$order->thirdparty->address;
@@ -1066,15 +1057,6 @@ $stripecu = $stripe->getStripeCustomerAccount($object->socid, $servicestatus);		
     print '<b>'.$paymentintent->id.'</b>';
 	print '</td></tr>'."\n";
 }
-
-	// Add download link
-	if ($download > 0)
-	{
-		print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Document");
-		print '</td><td class="CTableRow'.($var?'1':'2').'">';
-		print $object->getDirectExternalLink(1);
-		print '</td></tr>'."\n";
-	}
 
 	// Shipping address
 	$shipToName=$invoice->thirdparty->name;
