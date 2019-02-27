@@ -1226,7 +1226,7 @@ class SupplierProposal extends CommonObject
         $sql.= ", p.date_livraison as date_livraison";
         $sql.= ", p.model_pdf, p.extraparams";
         $sql.= ", p.note_private, p.note_public";
-        $sql.= ", p.fk_projet, p.fk_statut";
+        $sql.= ", p.fk_projet as fk_project, p.fk_statut";
         $sql.= ", p.fk_user_author, p.fk_user_valid, p.fk_user_cloture";
         $sql.= ", p.fk_cond_reglement";
         $sql.= ", p.fk_mode_reglement";
@@ -1266,7 +1266,7 @@ class SupplierProposal extends CommonObject
                 $this->total_localtax2		= $obj->localtax2;
                 $this->total_ttc            = $obj->total;
                 $this->socid                = $obj->fk_soc;
-                $this->fk_project           = $obj->fk_projet;
+                $this->fk_project           = $obj->fk_project;
                 $this->modelpdf             = $obj->model_pdf;
                 $this->note                 = $obj->note_private; // TODO deprecated
                 $this->note_private         = $obj->note_private;

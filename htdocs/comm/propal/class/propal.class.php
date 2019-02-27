@@ -1357,7 +1357,7 @@ dol_syslog(get_class($this)."::updateLine rowid=$rowid, pu=$pu, qty=$qty, remise
 		$sql.= ", p.date_livraison as date_livraison";
 		$sql.= ", p.model_pdf, p.last_main_doc, p.ref_client, p.extraparams";
 		$sql.= ", p.note_private, p.note_public";
-		$sql.= ", p.fk_projet, p.fk_statut";
+		$sql.= ", p.fk_projet as fk_project, p.fk_statut";
 		$sql.= ", p.fk_user_author, p.fk_user_valid, p.fk_user_cloture";
 		$sql.= ", p.fk_delivery_address";
 		$sql.= ", p.fk_availability";
@@ -1412,7 +1412,7 @@ dol_syslog(get_class($this)."::updateLine rowid=$rowid, pu=$pu, qty=$qty, remise
 				$this->total_localtax2		= $obj->localtax2;
 				$this->total_ttc            = $obj->total;
 				$this->socid                = $obj->fk_soc;
-				$this->fk_project           = $obj->fk_projet;
+				$this->fk_project           = $obj->fk_project;
 				$this->modelpdf             = $obj->model_pdf;
 				$this->last_main_doc		= $obj->last_main_doc;
 				$this->note                 = $obj->note_private; // TODO deprecated

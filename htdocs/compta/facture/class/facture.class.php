@@ -1160,30 +1160,6 @@ class Facture extends CommonInvoice
 	}
 
 	/**
-	 * Return link to download file from a direct external access
-	 *
-	 * @param	int				$withpicto			Add download picto into link
-	 * @return	string			HTML link to file
-	 */
-	function getDirectExternalLink($withpicto = 0)
-	{
-		global $dolibarr_main_url_root;
-
-		// Define $urlwithroot
-		$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
-		$urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
-		//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
-
-		// TODO Read into ecmfile table to get entry and hash exists (PS: If not found, add it)
-		include_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
-		$ecmfile=new EcmFiles($this->db);
-		//$result = $ecmfile->get();
-
-		$hashp='todo';
-		return '<a href="'.$urlwithroot.'/document.php?modulepart=invoice&hashp='.$hashp.'" target="_download" rel="noindex, nofollow">'.$this->ref.'</a>';
-	}
-
-	/**
 	 *  Return clicable link of object (with eventually picto)
 	 *
 	 *  @param	int		$withpicto       			Add picto into link

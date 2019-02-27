@@ -885,7 +885,6 @@ LineNb=Line no.
 IncotermLabel=Incoterms
 TabLetteringCustomer=Customer lettering
 TabLetteringSupplier=Vendor lettering
-# Week day
 Monday=Monday
 Tuesday=Tuesday
 Wednesday=Wednesday
@@ -965,3 +964,4 @@ SelectAThirdPartyFirst=Select a third party first...
 YouAreCurrentlyInSandboxMode=You are currently in the %s "sandbox" mode
 Inventory=Inventory
 AnalyticCode=Analytic code
+TMenuMRP=MRP

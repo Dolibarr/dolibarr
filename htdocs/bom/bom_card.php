@@ -118,12 +118,12 @@ if (empty($reshook))
     $error=0;
 
     $permissiontoadd = $user->rights->bom->write;
-	$permissiontodelete = $user->rights->bom->delete || ($permissiontoadd && $object->status == 0);
-    	$backurlforlist = dol_buildpath('/bom/bom_list.php', 1);
+    $permissiontodelete = $user->rights->bom->delete || ($permissiontoadd && $object->status == 0);
+    $backurlforlist = dol_buildpath('/bom/bom_list.php', 1);
 	if (empty($backtopage)) {
 	    if (empty($id)) $backtopage = $backurlforlist;
 	    else $backtopage = dol_buildpath('/bom/bom_card.php', 1).($id > 0 ? $id : '__ID__');
-    }
+  }
 	$triggermodname = 'BILLOFMATERIALS_BILLOFMATERIALS_MODIFY';	// Name of trigger action code to execute when we modify record
 
 	// Actions cancel, add, update, delete or clone
