@@ -388,12 +388,12 @@ if (empty($reshook)) {
 				$object->dateemployment = $dateemployment;
 				$dateemploymentend = dol_mktime(0, 0, 0, GETPOST('dateemploymentendmonth', 'int'), GETPOST('dateemploymentendday', 'int'), GETPOST('dateemploymentendyear', 'int'));
 				$object->dateemploymentend = $dateemploymentend;
-				
+
                 if (! empty($conf->stock->enabled))
                 {
 				    $object->fk_warehouse = GETPOST('fk_warehouse', 'int');
                 }
-                
+
 				if (! empty($conf->multicompany->enabled))
 				{
 					if (! empty($_POST["superadmin"]))
@@ -1553,7 +1553,7 @@ else
 			print '<tr><td>'.$langs->trans("PostOrFunction").'</td>';
 			print '<td>'.$object->job.'</td>';
 			print '</tr>'."\n";
-			
+
 			// Default warehouse
             if (! empty($conf->stock->enabled))
             {
@@ -1828,17 +1828,24 @@ else
 					}
 				}
 
-				// Activer
+				// Enable user
 				if ($user->id <> $id && $candisableuser && $object->statut == 0 &&
 				((empty($conf->multicompany->enabled) && $object->entity == $user->entity) || ! $user->entity || ($object->entity == $conf->entity) || ($conf->global->MULTICOMPANY_TRANSVERSE_MODE && $conf->entity == 1)))
 				{
 					print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=enable">'.$langs->trans("Reactivate").'</a></div>';
 				}
-				// Desactiver
+				// Disable user
 				if ($user->id <> $id && $candisableuser && $object->statut == 1 &&
 				((empty($conf->multicompany->enabled) && $object->entity == $user->entity) || ! $user->entity || ($object->entity == $conf->entity) || ($conf->global->MULTICOMPANY_TRANSVERSE_MODE && $conf->entity == 1)))
 				{
 					print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?action=disable&amp;id='.$object->id.'">'.$langs->trans("DisableUser").'</a></div>';
+				}
+				else
+				{
+				    if ($user->id == $id)
+				    {
+				        print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("CantDisableYourself").'">'.$langs->trans("DisableUser").'</a></div>';
+				    }
 				}
 				// Delete
 				if ($user->id <> $id && $candisableuser &&
@@ -2582,7 +2589,7 @@ else
 				print $object->job;
 			}
 			print '</td></tr>';
-			
+
 			// Default warehouse
             if (! empty($conf->stock->enabled))
             {
