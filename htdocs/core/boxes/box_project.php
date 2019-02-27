@@ -89,9 +89,12 @@ class box_project extends ModeleBoxes
 		    include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 		    $projectstatic = new Project($this->db);
 
+            $socid=0;
+            //if ($user->societe_id > 0) $socid = $user->societe_id;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
+            
             // Get list of project id allowed to user (in a string list separated by coma)
 		    $projectsListId='';
-    		if (! $user->rights->projet->all->lire) $projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 1, $user->socid);
+    		if (! $user->rights->projet->all->lire) $projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 1, $socid);
 
 		    $sql = "SELECT p.rowid, p.ref, p.title, p.fk_statut, p.public";
 			$sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
