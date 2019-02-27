@@ -704,7 +704,7 @@ else
                 if (! empty($conf->global->SOCIALNETWORKS_LINKEDIN))
                 {
                     print '<tr><td><label for="linkedin">'.$form->editfieldkey('LinkedIn', 'linkedin', '', $object, 0).'</label></td>';
-                    print '<td colspan="3"><input type="text" name="linkedin" id="linkedin" class="minwidth100" maxlength="80" value="'.dol_escape_htmltag(GETPOSTISSET("linkedin")?GETPOST("linkedin", 'alpha'):$object->linkedin.'"></td></tr>';
+                    print '<td colspan="3"><input type="text" name="linkedin" id="linkedin" class="minwidth100" maxlength="80" value="'.dol_escape_htmltag(GETPOSTISSET("linkedin")?GETPOST("linkedin", 'alpha'):$object->linkedin).'"></td></tr>';
                 }
             }
 
