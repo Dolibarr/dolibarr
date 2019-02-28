@@ -201,16 +201,16 @@
 		<figure class="highlight">
 		<pre>
 		<code class="language-html" data-lang="html">
-&lt;span class=&quot;badge badge-pill badge-primary&quot;&gt;Primary&lt;/span&gt;
-&lt;span class=&quot;badge badge-pill badge-secondary&quot;&gt;Secondary&lt;/span&gt;
-&lt;span class=&quot;badge badge-pill badge-success&quot;&gt;Success&lt;/span&gt;
-&lt;span class=&quot;badge badge-pill badge-danger&quot;&gt;Danger&lt;/span&gt;
-&lt;span class=&quot;badge badge-pill badge-warning&quot;&gt;Warning&lt;/span&gt;
-&lt;span class=&quot;badge badge-pill badge-info&quot;&gt;Info&lt;/span&gt;
-&lt;span class=&quot;badge badge-pill badge-light&quot;&gt;Light&lt;/span&gt;
-&lt;span class=&quot;badge badge-pill badge-dark&quot;&gt;Dark&lt;/span&gt;
+&lt;span class=&quot;badge badge-dot badge-primary&quot;&gt;Primary&lt;/span&gt;
+&lt;span class=&quot;badge badge-dot badge-secondary&quot;&gt;Secondary&lt;/span&gt;
+&lt;span class=&quot;badge badge-dot badge-success&quot;&gt;Success&lt;/span&gt;
+&lt;span class=&quot;badge badge-dot badge-danger&quot;&gt;Danger&lt;/span&gt;
+&lt;span class=&quot;badge badge-dot badge-warning&quot;&gt;Warning&lt;/span&gt;
+&lt;span class=&quot;badge badge-dot badge-info&quot;&gt;Info&lt;/span&gt;
+&lt;span class=&quot;badge badge-dot badge-light&quot;&gt;Light&lt;/span&gt;
+&lt;span class=&quot;badge badge-dot badge-dark&quot;&gt;Dark&lt;/span&gt;
 <?php for ($i = 0; $i <= 9; $i++): ?>
-&lt;span class="badge badge-pill badge-status-<?php print $i;  ?>" &gt;status-<?php print $i;  ?>&lt;/span&gt;
+&lt;span class="badge badge-dot badge-status-<?php print $i;  ?>" &gt;status-<?php print $i;  ?>&lt;/span&gt;
 <?php endfor; ?>
 		</code></pre></figure>
 		
