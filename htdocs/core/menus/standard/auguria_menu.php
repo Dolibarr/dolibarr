@@ -32,15 +32,15 @@ class MenuManager
      * @var DoliDB Database handler.
      */
     public $db;
-    
-	var $type_user;								// Put 0 for internal users, 1 for external users
-	var $atarget="";                            // To store default target to use onto links
-	var $name="auguria";
 
-	var $menu_array;
-	var $menu_array_after;
+    public $type_user;								// Put 0 for internal users, 1 for external users
+    public $atarget="";                            // To store default target to use onto links
+    public $name="auguria";
 
-	var $tabMenu;
+    public $menu_array;
+    public $menu_array_after;
+
+    public $tabMenu;
 
 
     /**
@@ -49,7 +49,7 @@ class MenuManager
 	 *  @param	DoliDB		$db     	Database handler
      *  @param	int			$type_user	Type of user
      */
-    function __construct($db, $type_user)
+    public function __construct($db, $type_user)
     {
     	$this->type_user=$type_user;
     	$this->db=$db;
@@ -63,7 +63,7 @@ class MenuManager
    	 * @param	string	$forceleftmenu		To force leftmenu to load
    	 * @return	void
    	 */
-   	function loadMenu($forcemainmenu = '', $forceleftmenu = '')
+   	public function loadMenu($forcemainmenu = '', $forceleftmenu = '')
    	{
     	global $conf, $user, $langs;
 
@@ -123,7 +123,7 @@ class MenuManager
      *  @param	array	$moredata		An array with more data to output
      *  @return int                     0 or nb of top menu entries if $mode = 'topnb'
 	 */
-	function showmenu($mode, $moredata = null)
+	public function showmenu($mode, $moredata = null)
 	{
     	global $conf, $langs, $user;
 

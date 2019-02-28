@@ -504,7 +504,7 @@ class MyObject extends CommonObject
 		else $result .= $hookmanager->resPrint;
 
 		return $result;
-	}
+    }
 
 	/**
 	 *  Return label of the status

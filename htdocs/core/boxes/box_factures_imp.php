@@ -33,20 +33,20 @@ require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
  */
 class box_factures_imp extends ModeleBoxes
 {
-	var $boxcode="oldestunpaidcustomerbills";
-	var $boximg="object_bill";
-	var $boxlabel="BoxOldestUnpaidCustomerBills";
-	var $depends = array("facture");
+    public $boxcode="oldestunpaidcustomerbills";
+    public $boximg="object_bill";
+    public $boxlabel="BoxOldestUnpaidCustomerBills";
+    public $depends = array("facture");
 
 	/**
      * @var DoliDB Database handler.
      */
     public $db;
 
-	var $param;
+    public $param;
 
-	var $info_box_head = array();
-	var $info_box_contents = array();
+    public $info_box_head = array();
+    public $info_box_contents = array();
 
 
 	/**
@@ -55,7 +55,7 @@ class box_factures_imp extends ModeleBoxes
 	 *  @param  DoliDB  $db         Database handler
 	 *  @param  string  $param      More parameters
 	 */
-	function __construct($db, $param)
+	public function __construct($db, $param)
 	{
 	    global $user;
 
@@ -70,7 +70,7 @@ class box_factures_imp extends ModeleBoxes
 	 *  @param	int		$max        Maximum number of records to load
      *  @return	void
 	 */
-	function loadBox($max = 5)
+	public function loadBox($max = 5)
 	{
 		global $conf, $user, $langs, $db;
 
@@ -207,7 +207,7 @@ class box_factures_imp extends ModeleBoxes
 	 *  @param	int		$nooutput	No print, only return string
 	 *	@return	string
 	 */
-    function showBox($head = null, $contents = null, $nooutput = 0)
+    public function showBox($head = null, $contents = null, $nooutput = 0)
     {
 		return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
 	}
