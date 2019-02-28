@@ -35,7 +35,7 @@ a.badge:focus, a.badge:hover {
 /* PRIMARY */
 .badge-primary{
     color: #fff !important;
-    background-color: #007bff;
+    background-color: <?php print $badgePrimary; ?>;
 }
 a.badge-primary.focus, a.badge-primary:focus {
     outline: 0;
@@ -49,7 +49,7 @@ a.badge-primary:focus, a.badge-primary:hover {
 /* SECONDARY */
 .badge-secondary {
     color: #fff !important;
-    background-color: #6c757d;
+    background-color: <?php print $badgeSecondary; ?>;
 }
 a.badge-secondary.focus, a.badge-secondary:focus {
     outline: 0;
@@ -63,85 +63,85 @@ a.badge-secondary:focus, a.badge-secondary:hover {
 /* SUCCESS */
 .badge-success {
     color: #fff !important;
-    background-color: #28a745;
+    background-color: <?php print $badgeSuccess; ?>;
 }
 a.badge-success.focus, a.badge-success:focus {
     outline: 0;
-    box-shadow: 0 0 0 0.2rem rgba(40,167,69,.5);
+    box-shadow: 0 0 0 0.2rem <?php print colorHexToRgb($badgeSuccess, 0.5); ?>;
 }
 a.badge-success:focus, a.badge-success:hover {
     color: #fff !important;
-    background-color: #1e7e34;
+    background-color: <?php print colorDarker($badgeSuccess, 10); ?>;
 }
 
 /* DANGER */
 .badge-danger {
     color: #fff !important;
-    background-color: #dc3545;
+    background-color:  <?php print $badgeDanger; ?>;
 }
 a.badge-danger.focus, a.badge-danger:focus {
     outline: 0;
-    box-shadow: 0 0 0 0.2rem rgba(220,53,69,.5);
+    box-shadow: 0 0 0 0.2rem <?php print colorHexToRgb($badgeDanger, 0.5); ?>;
 }
 a.badge-danger:focus, a.badge-danger:hover {
     color: #fff !important;
-    background-color: #bd2130;
+    background-color: <?php print colorDarker($badgeDanger, 10); ?>;
 }
 
 /* WARNING */
 .badge-warning {
     color: #212529 !important;
-    background-color: #ffc107;
+    background-color: <?php print $badgeWarning; ?>;
 }
 a.badge-warning.focus, a.badge-warning:focus {
     outline: 0;
-    box-shadow: 0 0 0 0.2rem rgba(255,193,7,.5);
+    box-shadow: 0 0 0 0.2rem <?php print colorHexToRgb($badgeWarning, 0.5); ?>;
 }
 a.badge-warning:focus, a.badge-warning:hover {
     color: #212529 !important;
-    background-color: #d39e00;
+    background-color: <?php print colorDarker($badgeWarning, 10); ?>;
 }
 
 /* INFO */
 .badge-info {
     color: #fff !important;
-    background-color: #17a2b8;
+    background-color: <?php print $badgeInfo; ?>;
 }
 a.badge-info.focus, a.badge-info:focus {
     outline: 0;
-    box-shadow: 0 0 0 0.2rem rgba(23,162,184,.5);
+    box-shadow: 0 0 0 0.2rem <?php print colorHexToRgb($badgeInfo, 0.5); ?>;
 }
 a.badge-info:focus, a.badge-info:hover {
     color: #fff !important;
-    background-color: #117a8b;
+    background-color: <?php print colorDarker($badgeInfo, 10); ?>;
 }
 
 /* LIGHT */
 .badge-light {
     color: #212529 !important;
-    background-color: #f8f9fa;
+    background-color: <?php print $badgeLight; ?>;
 }
 a.badge-light.focus, a.badge-light:focus {
     outline: 0;
-    box-shadow: 0 0 0 0.2rem rgba(248,249,250,.5);
+    box-shadow: 0 0 0 0.2rem <?php print colorHexToRgb($badgeLight, 0.5); ?>;
 }
 a.badge-light:focus, a.badge-light:hover {
     color: #212529 !important;
-    background-color: #dae0e5;
+    background-color: <?php print colorDarker($badgeLight, 10); ?>;
 }
 
 /* DARK */
 .badge-dark {
     color: #fff !important;
-    background-color: #343a40;
+    background-color: <?php print $badgeDark; ?>;
 }
 a.badge-dark.focus, a.badge-dark:focus {
     outline: 0;
-    box-shadow: 0 0 0 0.2rem rgba(52,58,64,.5);
+    box-shadow: 0 0 0 0.2rem <?php print colorHexToRgb($badgeDark, 0.5); ?>;
 }
 a.badge-dark:focus, a.badge-dark:hover {
     color: #fff !important;
-    background-color: #1d2124;
+    background-color: <?php print colorDarker($badgeDark, 10); ?>;
 }
 
 /* 
