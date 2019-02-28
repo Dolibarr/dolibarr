@@ -134,7 +134,7 @@ class InterfaceIFTTT extends DolibarrTriggers
                     'Accept-Encoding'=>'gzip, deflate',
                     'Content-Type'=>'application/json',
                     'X-Request-ID'=>getRandomPassword(true, null)
-                )
+                );
 
                 $result = getURLContent($url, 'POSTALREADYFORMATED', '', 1, $addheaders);
 
