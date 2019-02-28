@@ -72,7 +72,7 @@ class FormFile
 	 *  @param	string		$options		Add an option column
 	 *  @param	integer		$useajax		Use fileupload ajax (0=never, 1=if enabled, 2=always whatever is option).
      *                                      Deprecated 2 should never be used and if 1 is used, option should no be enabled.
-	 *  @param	string		$dodocmask	Mask to use to define output filename. For example 'XXXXX-__YYYYMMDD__-__file__'
+	 *  @param	string		$savingdocmask	Mask to use to define output filename. For example 'XXXXX-__YYYYMMDD__-__file__'
 	 *  @param	integer		$linkfiles		1=Also add form to link files, 0=Do not show form to link files
 	 *  @param	string		$htmlname		Name and id of HTML form ('formuserfile' by default, 'formuserfileecm' when used to upload a file in ECM)
 	 *  @param	string		$accept			Specifies the types of files accepted (This is not a security check but an user interface facility. eg '.pdf,image/*' or '.png,.jpg' or 'video/*')
