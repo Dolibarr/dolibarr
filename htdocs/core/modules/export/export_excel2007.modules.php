@@ -114,7 +114,7 @@ class ExportExcel2007 extends ExportExcel
      *
 	 *  @return		int							<0 if KO, >0 if OK
      */
-	function close_file()
+    public function close_file()
 	{
         // phpcs:enable
 		global $conf;

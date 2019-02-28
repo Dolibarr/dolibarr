@@ -61,7 +61,7 @@ class mod_commande_fournisseur_orchidee extends ModeleNumRefSuppliersOrders
      *
      * 	@return     string      Texte descripif
      */
-	function info()
+    public function info()
     {
     	global $db, $conf, $langs;
 

@@ -183,11 +183,11 @@ class FormFile
                 else {
                     $rename='checked';
                 }
-                
+
                 $out .= '<tr>';
    	            if (! empty($options)) $out .= '<td>'.$options.'</td>';
 	            $out .= '<td valign="middle" class="nowrap">';
-				$out .= '<input type="checkbox" '.$rename.' class="savingdocmask" name="savingdocmask" value="'.dol_escape_js($savingdocmask).'"> '.$langs->trans("SaveUploadedFileWithMask", preg_replace('/__file__/',$langs->transnoentitiesnoconv("OriginFileName"),$savingdocmask), $langs->transnoentitiesnoconv("OriginFileName"));
+				$out .= '<input type="checkbox" '.$rename.' class="savingdocmask" name="savingdocmask" value="'.dol_escape_js($savingdocmask).'"> '.$langs->trans("SaveUploadedFileWithMask", preg_replace('/__file__/', $langs->transnoentitiesnoconv("OriginFileName"), $savingdocmask), $langs->transnoentitiesnoconv("OriginFileName"));
             	$out .= '</td>';
             	$out .= '</tr>';
             }
@@ -1571,7 +1571,7 @@ class FormFile
 				{
 					preg_match('/(.*)\/[^\/]+$/', $relativefile, $reg); $ref=(isset($reg[1])?$reg[1]:'');
 				}
-				
+
 				if (! $id && ! $ref) continue;
 				$found=0;
 				if (! empty($this->cache_objects[$modulepart.'_'.$id.'_'.$ref]))

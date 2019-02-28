@@ -117,8 +117,8 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 	 *
 	 *  @param	DoliDB		$db     	Database handler
 	 */
-	function __construct($db)
-	{
+    public function __construct($db)
+    {
 		global $conf, $langs, $mysoc;
 
 		// Load translation files required by the page
@@ -180,10 +180,10 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
         $this->localtax2=array();
 		$this->atleastoneratenotnull=0;
 		$this->atleastonediscount=0;
-	}
+    }
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
      *  Function to build pdf onto disk
      *
@@ -195,8 +195,8 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
      *  @param		int					$hideref			Do not show ref
      *  @return		int										1=OK, 0=KO
      */
-	function write_file($object, $outputlangs = '', $srctemplatepath = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0)
-	{
+    public function write_file($object, $outputlangs = '', $srctemplatepath = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0)
+    {
         // phpcs:enable
 		global $user,$langs,$conf,$mysoc,$hookmanager,$nblignes;
 
@@ -608,7 +608,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 			$this->error=$langs->trans("ErrorConstantNotDefined", "SUPPLIER_OUTPUTDIR");
 			return 0;
 		}
-	}
+    }
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**

@@ -78,7 +78,7 @@ abstract class ModeleNumRefTask
 	 *
 	 *  @return		boolean     true if module can be used
 	 */
-	function isEnabled()
+    public function isEnabled()
 	{
 		return true;
 	}
@@ -88,7 +88,7 @@ abstract class ModeleNumRefTask
 	 *
 	 *  @return     string      Texte descripif
 	 */
-	function info()
+    public function info()
 	{
 		global $langs;
 		$langs->load("projects");
@@ -100,7 +100,7 @@ abstract class ModeleNumRefTask
 	 *
 	 *  @return     string      Example
 	 */
-	function getExample()
+    public function getExample()
 	{
 		global $langs;
 		$langs->load("projects");
@@ -113,7 +113,7 @@ abstract class ModeleNumRefTask
 	 *
 	 *  @return     boolean     false si conflit, true si ok
 	 */
-	function canBeActivated()
+    public function canBeActivated()
 	{
 		return true;
 	}
@@ -125,7 +125,7 @@ abstract class ModeleNumRefTask
 	 *	@param	Project		$project	Object project
 	 *	@return	string					Valeur
 	 */
-	function getNextValue($objsoc, $project)
+    public function getNextValue($objsoc, $project)
 	{
 		global $langs;
 		return $langs->trans("NotAvailable");
@@ -136,7 +136,7 @@ abstract class ModeleNumRefTask
 	 *
 	 *  @return     string      Valeur
 	 */
-	function getVersion()
+    public function getVersion()
 	{
 		global $langs;
 		$langs->load("admin");

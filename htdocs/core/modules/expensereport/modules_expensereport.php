@@ -111,7 +111,7 @@ abstract class ModeleNumRefExpenseReport
 	 *
 	 *	@return     string      Example
 	 */
-	function getExample()
+    public function getExample()
 	{
 		global $langs;
 		$langs->load("trips");
@@ -123,7 +123,7 @@ abstract class ModeleNumRefExpenseReport
 	 *
 	 *	@return     boolean     false if conflict, true if ok
 	 */
-	function canBeActivated()
+    public function canBeActivated()
 	{
 		return true;
 	}
@@ -134,7 +134,7 @@ abstract class ModeleNumRefExpenseReport
 	 *	@param	Object		$object		Object we need next value for
 	 *	@return	string      Value
 	 */
-	function getNextValue($object)
+    public function getNextValue($object)
 	{
 		global $langs;
 		return $langs->trans("NotAvailable");
@@ -145,7 +145,7 @@ abstract class ModeleNumRefExpenseReport
 	 *
 	 *  @return     string      Value
 	 */
-	function getVersion()
+    public function getVersion()
 	{
 		global $langs;
 		$langs->load("admin");

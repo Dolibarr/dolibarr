@@ -63,7 +63,7 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 	 *
 	 *  @param		DoliDB		$db      Database handler
 	 */
-	function __construct($db)
+    public function __construct($db)
 	{
 		global $conf, $langs, $mysoc;
 
@@ -108,7 +108,7 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 	 * @param	Translate	$langs      Lang object to use for output
 	 * @return	string      			Description
 	 */
-	function info($langs)
+    public function info($langs)
 	{
 		global $conf, $langs;
 
@@ -202,7 +202,7 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 	 *  @param		int			$hideref			Do not show ref
 	 *	@return		int         					1 if OK, <=0 if KO
 	 */
-	function write_file($object, $outputlangs, $srctemplatepath, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
+    public function write_file($object, $outputlangs, $srctemplatepath, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
         // phpcs:enable
 		global $user,$langs,$conf,$mysoc,$hookmanager;

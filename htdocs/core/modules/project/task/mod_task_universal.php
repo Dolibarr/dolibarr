@@ -59,7 +59,7 @@ class mod_task_universal extends ModeleNumRefTask
      *
      *  @return     string      Texte descripif
      */
-	function info()
+    public function info()
     {
     	global $conf,$langs;
 

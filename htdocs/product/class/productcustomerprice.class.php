@@ -321,7 +321,7 @@ class Productcustomerprice extends CommonObject
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Load all customer prices in memory from database
 	 *
@@ -436,7 +436,7 @@ class Productcustomerprice extends CommonObject
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Load all objects in memory from database
 	 *
@@ -742,7 +742,7 @@ class Productcustomerprice extends CommonObject
 			$this->db->commit();
 			return 1;
 		}
-	}
+    }
 
 	/**
 	 * Force update price on child price
@@ -835,7 +835,7 @@ class Productcustomerprice extends CommonObject
 			$this->error = "Error " . $this->db->lasterror();
 			return - 1;
 		}
-	}
+    }
 
 	/**
 	 * Delete object in database
@@ -890,7 +890,7 @@ class Productcustomerprice extends CommonObject
 			$this->db->commit();
 			return 1;
 		}
-	}
+    }
 
 	/**
 	 * Load an object from its id and create a new one in database
@@ -942,7 +942,7 @@ class Productcustomerprice extends CommonObject
 			$this->db->rollback();
 			return - 1;
 		}
-	}
+    }
 
 	/**
 	 * Initialise object with example values
@@ -972,7 +972,7 @@ class Productcustomerprice extends CommonObject
 		$this->localtax2_tx = '';
 		$this->fk_user = '';
 		$this->import_key = '';
-	}
+    }
 }
 
 /**

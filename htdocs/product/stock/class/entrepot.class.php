@@ -444,7 +444,7 @@ class Entrepot extends CommonObject
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Return list of all warehouses
 	 *
@@ -477,7 +477,7 @@ class Entrepot extends CommonObject
 		return $liste;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Return number of unique different product into a warehouse
 	 *
@@ -511,7 +511,7 @@ class Entrepot extends CommonObject
 		return $ret;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Return stock and value of warehosue
 	 *
@@ -557,7 +557,7 @@ class Entrepot extends CommonObject
 		return $this->LibStatut($this->statut, $mode);
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Return label of a given status
 	 *
@@ -684,7 +684,7 @@ class Entrepot extends CommonObject
         $this->country_code='FR';
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Return full path to current warehouse
 	 *
@@ -726,7 +726,7 @@ class Entrepot extends CommonObject
         return implode(' >> ', array_reverse($TArbo));
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Return array of children warehouses ids from $id warehouse (recursive function)
 	 *
@@ -751,7 +751,7 @@ class Entrepot extends CommonObject
 		}
 
 		return $TChildWarehouses;
-	}
+    }
 
 	/**
 	 *	Create object on disk

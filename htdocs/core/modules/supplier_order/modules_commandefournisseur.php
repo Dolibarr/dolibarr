@@ -82,7 +82,7 @@ abstract class ModeleNumRefSuppliersOrders
 	 *
 	 *   @return	boolean     true if model can be used
 	 */
-	function isEnabled()
+    public function isEnabled()
 	{
 		return true;
 	}
@@ -91,7 +91,7 @@ abstract class ModeleNumRefSuppliersOrders
 	 *
 	 *   @return    string      Description Text
 	 */
-	function info()
+    public function info()
 	{
 		global $langs;
 		$langs->load("orders");
@@ -102,7 +102,7 @@ abstract class ModeleNumRefSuppliersOrders
 	 *
 	 *    @return   string      Example
 	 */
-	function getExample()
+    public function getExample()
 	{
 		global $langs;
 		$langs->load("orders");
@@ -113,7 +113,7 @@ abstract class ModeleNumRefSuppliersOrders
 	 *
 	 *   @return	boolean     false if conflict, true if ok
 	 */
-	function canBeActivated()
+    public function canBeActivated()
 	{
 		return true;
 	}
@@ -122,7 +122,7 @@ abstract class ModeleNumRefSuppliersOrders
 	 *
 	 *   @return     string      Valeur
 	 */
-	function getNextValue()
+    public function getNextValue()
 	{
 		global $langs;
 		return $langs->trans("NotAvailable");
@@ -132,7 +132,7 @@ abstract class ModeleNumRefSuppliersOrders
 	 *
 	 *    @return     string      Value
 	 */
-	function getVersion()
+    public function getVersion()
 	{
 		global $langs;
 		$langs->load("admin");

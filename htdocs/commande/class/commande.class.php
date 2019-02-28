@@ -551,10 +551,10 @@ class Commande extends CommonOrder
 			$this->db->rollback();
 			return -1;
 		}
-	}
+    }
 
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Tag the order as validated (opened)
 	 *	Function used when order is reopend after being closed.
@@ -1768,7 +1768,7 @@ class Commande extends CommonOrder
 	}
 
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Adding line of fixed discount in the order in DB
 	 *
@@ -3727,7 +3727,7 @@ class Commande extends CommonOrder
 	}
 
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Charge indicateurs this->nb de tableau de bord
 	 *

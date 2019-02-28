@@ -455,7 +455,7 @@ class FactureRec extends CommonInvoice
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Recupere les lignes de factures predefinies dans this->lines
 	 *
