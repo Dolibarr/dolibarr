@@ -179,7 +179,7 @@ class mailing_xinputfile extends MailingTargets
 					        {
 					        	$i++;
 					        	$langs->load("errors");
-							$msg = $langs->trans("ErrorFoundBadEmailInFile",$i,$cpt,$email);
+							$msg = $langs->trans("ErrorFoundBadEmailInFile", $i, $cpt, $email);
 					        	if (!empty($msg)) $this->error = $msg;
 							else $this->error = 'ErrorFoundBadEmailInFile '.$i.' '.$cpt.' '.$email;	// We experience case where $langs->trans return an empty string.
 					        }
