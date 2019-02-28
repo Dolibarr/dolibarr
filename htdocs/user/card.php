@@ -855,7 +855,7 @@ if ($action == 'create' || $action == 'adduserldap')
 		print '<td>';
 		print $form->selectyesno('admin',GETPOST('admin'),1);
 
-		if (! empty($conf->multicompany->enabled) && ! $user->entity && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE))
+		if (! empty($conf->multicompany->enabled) && ! $user->entity)
 		{
 			if (! empty($conf->use_javascript_ajax))
 			{
@@ -1992,7 +1992,7 @@ else
 				{
 					print $form->selectyesno('admin',$object->admin,1);
 
-					if (! empty($conf->multicompany->enabled) && ! $user->entity && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE))
+					if (! empty($conf->multicompany->enabled) && ! $user->entity)
 					{
 						if ($conf->use_javascript_ajax)
 						{
