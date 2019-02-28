@@ -165,11 +165,15 @@ if ($socid > 0)
 
 	print '<table class="border centpercent">';
 
-	if($isCustomer && $isSupplier) {
+	if($isCustomer || $isSupplier) {
 		// Discount type
-		print '<tr><td class="titlefield fieldrequired">'.$langs->trans('DiscountType').'</td>';
-		print '<td><input type="radio" name="discount_type" id="discount_type_0" selected value="0"/> <label for="discount_type_0">'.$langs->trans('Customer').'</label>';
-		print ' <input type="radio" name="discount_type" id="discount_type_1" selected value="1"/> <label for="discount_type_1">'.$langs->trans('Supplier').'</label>';
+		print '<tr><td class="titlefield fieldrequired">'.$langs->trans('DiscountType').'</td><td>';
+		if ($isCustomer) {
+			print '<input type="radio" name="discount_type" id="discount_type_0" selected value="0"/> <label for="discount_type_0">'.$langs->trans('Customer').'</label>';
+		}
+		if ($isSupplier) {
+			print ' <input type="radio" name="discount_type" id="discount_type_1" selected value="1"/> <label for="discount_type_1">'.$langs->trans('Supplier').'</label>';
+		}
 		print '</td></tr>';
 	}
 
