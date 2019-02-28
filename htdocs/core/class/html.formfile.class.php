@@ -174,14 +174,23 @@ class FormFile
 			$out .= "</td></tr>";
 
 			if ($savingdocmask)
-			{
-				$out .= '<tr>';
-   				if (! empty($options)) $out .= '<td>'.$options.'</td>';
-				$out .= '<td class="nowrap valignmiddle">';
-				$out .= '<input type="checkbox" checked class="savingdocmask" name="savingdocmask" value="'.dol_escape_js($savingdocmask).'"> '.$langs->trans("SaveUploadedFileWithMask", preg_replace('/__file__/', $langs->transnoentitiesnoconv("OriginFileName"), $savingdocmask), $langs->transnoentitiesnoconv("OriginFileName"));
-				$out .= '</td>';
-				$out .= '</tr>';
-			}
+            {
+            	//add a global variable for disable the auto renaming on upload
+                if (! empty($conf->global->MAIN_DOC_UPLOAD_NOT_RENAME_BY_DEFAULT))
+                {
+                    $rename='';
+                }
+                else {
+                    $rename='checked';
+                }
+                
+                $out .= '<tr>';
+   	            if (! empty($options)) $out .= '<td>'.$options.'</td>';
+	            $out .= '<td valign="middle" class="nowrap">';
+				$out .= '<input type="checkbox" '.$rename.' class="savingdocmask" name="savingdocmask" value="'.dol_escape_js($savingdocmask).'"> '.$langs->trans("SaveUploadedFileWithMask", preg_replace('/__file__/',$langs->transnoentitiesnoconv("OriginFileName"),$savingdocmask), $langs->transnoentitiesnoconv("OriginFileName"));
+            	$out .= '</td>';
+            	$out .= '</tr>';
+            }
 
 			$out .= "</table>";
 
