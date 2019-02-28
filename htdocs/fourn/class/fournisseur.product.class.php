@@ -107,7 +107,7 @@ class ProductFournisseur extends Product
      *
      *  @param		DoliDB		$db      Database handler
      */
-    function __construct($db)
+    public function __construct($db)
     {
         global $langs;
 
@@ -118,14 +118,14 @@ class ProductFournisseur extends Product
 
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *    Remove all prices for this couple supplier-product
      *
      *    @param	int		$id_fourn   Supplier Id
      *    @return   int         		< 0 if error, > 0 if ok
      */
-    function remove_fournisseur($id_fourn)
+    public function remove_fournisseur($id_fourn)
     {
         // phpcs:enable
         $ok=1;
@@ -1056,7 +1056,7 @@ class ProductFournisseur extends Product
 
         return $result;
     }
-    
+
     /**
      * Private function to log price history
      *

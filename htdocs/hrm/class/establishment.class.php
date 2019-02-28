@@ -191,8 +191,8 @@ class Establishment extends CommonObject
 	{
 		global $langs;
 
-		// Check parameters
-		if (empty($this->name))
+        // Check parameters
+        if (empty($this->name))
         {
             $this->error='ErrorBadParameter';
             return -1;
@@ -391,7 +391,7 @@ class Establishment extends CommonObject
 			dol_print_error($this->db);
 		}
 	}
-	
+
 	/**
 	 * Get on record Establishment
 	 *
@@ -447,7 +447,7 @@ class Establishment extends CommonObject
         if ($withpicto != 2) $result.=$link.$this->name.$linkend;
         return $result;
     }
-	
+
 	/**
      *  Return clicable name (with picto eventually)
      *
@@ -460,7 +460,7 @@ class Establishment extends CommonObject
         global $langs, $conf;
 
         $result='';
-		
+
 		$obj = $this->getEstablishment(($id>0)?$id:$conf->entity);
 
         $link = '<a href="'.DOL_URL_ROOT.'/hrm/establishment/card.php?id='.$obj->rowid.'">';

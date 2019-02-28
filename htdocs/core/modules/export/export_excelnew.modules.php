@@ -72,7 +72,7 @@ class ExportExcelnew extends ModeleExports
 	 *
 	 *	@param	    DoliDB	$db      Database handler
 	 */
-	function __construct($db)
+	public function __construct($db)
 	{
 		global $conf, $langs;
 		$this->db = $db;
@@ -105,7 +105,7 @@ class ExportExcelnew extends ModeleExports
 	 *
 	 * @return string
 	 */
-	function getDriverId()
+	public function getDriverId()
 	{
 		return $this->id;
 	}
@@ -115,7 +115,7 @@ class ExportExcelnew extends ModeleExports
 	 *
 	 * @return 	string			Return driver label
 	 */
-	function getDriverLabel()
+	public function getDriverLabel()
 	{
 		return $this->label;
 	}
@@ -125,7 +125,7 @@ class ExportExcelnew extends ModeleExports
 	 *
 	 * @return string
 	 */
-	function getDriverDesc()
+	public function getDriverDesc()
     {
         return $this->desc;
     }
@@ -135,7 +135,7 @@ class ExportExcelnew extends ModeleExports
 	 *
 	 * @return string
 	 */
-    function getDriverExtension()
+    public function getDriverExtension()
 	{
 		return $this->extension;
 	}
@@ -145,7 +145,7 @@ class ExportExcelnew extends ModeleExports
 	 *
 	 * @return string
 	 */
-	function getDriverVersion()
+	public function getDriverVersion()
 	{
 		return $this->version;
 	}
@@ -155,7 +155,7 @@ class ExportExcelnew extends ModeleExports
 	 *
 	 * @return string
 	 */
-	function getLibLabel()
+	public function getLibLabel()
 	{
 		return $this->label_lib;
 	}
@@ -165,13 +165,13 @@ class ExportExcelnew extends ModeleExports
 	 *
 	 * @return string
 	 */
-	function getLibVersion()
+	public function getLibVersion()
 	{
 		return $this->version_lib;
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Open output file
 	 *
@@ -179,7 +179,7 @@ class ExportExcelnew extends ModeleExports
 	 *  @param		Translate	$outputlangs	Output language object
 	 *	@return		int							<0 if KO, >=0 if OK
 	 */
-	function open_file($file, $outputlangs)
+	public function open_file($file, $outputlangs)
 	{
         // phpcs:enable
 		global $user,$conf,$langs;
@@ -227,14 +227,14 @@ class ExportExcelnew extends ModeleExports
 		return $ret;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Write header
 	 *
      *  @param      Translate	$outputlangs        Object lang to translate values
 	 * 	@return		int								<0 if KO, >0 if OK
 	 */
-	function write_header($outputlangs)
+	public function write_header($outputlangs)
 	{
         // phpcs:enable
 		//$outputlangs->charset_output='ISO-8859-1';	// Because Excel 5 format is ISO
@@ -243,7 +243,7 @@ class ExportExcelnew extends ModeleExports
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
      *  Output title line into file
      *
@@ -253,7 +253,7 @@ class ExportExcelnew extends ModeleExports
      *  @param		array		$array_types					Array with types of fields
 	 * 	@return		int											<0 if KO, >0 if OK
 	 */
-	function write_title($array_export_fields_label, $array_selected_sorted, $outputlangs, $array_types)
+	public function write_title($array_export_fields_label, $array_selected_sorted, $outputlangs, $array_types)
 	{
         // phpcs:enable
 		global $conf;
@@ -286,7 +286,7 @@ class ExportExcelnew extends ModeleExports
 		return 0;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
      *  Output record line into file
      *
@@ -296,7 +296,7 @@ class ExportExcelnew extends ModeleExports
      *  @param		array		$array_types				Array with types of fields
 	 * 	@return		int										<0 if KO, >0 if OK
 	 */
-	function write_record($array_selected_sorted, $objp, $outputlangs, $array_types)
+	public function write_record($array_selected_sorted, $objp, $outputlangs, $array_types)
 	{
         // phpcs:enable
 		global $conf;
@@ -333,32 +333,32 @@ class ExportExcelnew extends ModeleExports
 
 			if (preg_match('/^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$/i', $newvalue))
 			{
-        		    $newvalue=dol_stringtotime($newvalue);
-        		    $this->workbook->getActiveSheet()->SetCellValueByColumnAndRow($this->col, $this->row+1, \PhpOffice\PhpSpreadsheet\Shared\Date::PHPToExcel($newvalue));
-        		    $coord=$this->workbook->getActiveSheet()->getCellByColumnAndRow($this->col, $this->row+1)->getCoordinate();
-        		    $this->workbook->getActiveSheet()->getStyle($coord)->getNumberFormat()->setFormatCode('yyyy-mm-dd');
+        	    $newvalue=dol_stringtotime($newvalue);
+        	    $this->workbook->getActiveSheet()->SetCellValueByColumnAndRow($this->col, $this->row+1, \PhpOffice\PhpSpreadsheet\Shared\Date::PHPToExcel($newvalue));
+        	    $coord=$this->workbook->getActiveSheet()->getCellByColumnAndRow($this->col, $this->row+1)->getCoordinate();
+        	    $this->workbook->getActiveSheet()->getStyle($coord)->getNumberFormat()->setFormatCode('yyyy-mm-dd');
 			}
 			elseif (preg_match('/^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9] [0-9][0-9]:[0-9][0-9]:[0-9][0-9]$/i', $newvalue))
 			{
-        		    $newvalue=dol_stringtotime($newvalue);
-        		    $this->workbook->getActiveSheet()->SetCellValueByColumnAndRow($this->col, $this->row+1, \PhpOffice\PhpSpreadsheet\Shared\Date::PHPToExcel($newvalue));
-        		    $coord=$this->workbook->getActiveSheet()->getCellByColumnAndRow($this->col, $this->row+1)->getCoordinate();
-        		    $this->workbook->getActiveSheet()->getStyle($coord)->getNumberFormat()->setFormatCode('yyyy-mm-dd h:mm:ss');
+        	    $newvalue=dol_stringtotime($newvalue);
+        	    $this->workbook->getActiveSheet()->SetCellValueByColumnAndRow($this->col, $this->row+1, \PhpOffice\PhpSpreadsheet\Shared\Date::PHPToExcel($newvalue));
+        	    $coord=$this->workbook->getActiveSheet()->getCellByColumnAndRow($this->col, $this->row+1)->getCoordinate();
+        	    $this->workbook->getActiveSheet()->getStyle($coord)->getNumberFormat()->setFormatCode('yyyy-mm-dd h:mm:ss');
 			}
 			else
 			{
-    		    	if ($typefield == 'Text' || $typefield == 'TextAuto')
-    		    	{
-    		    		//$this->workbook->getActiveSheet()->getCellByColumnAndRow($this->col, $this->row+1)->setValueExplicit($newvalue, PHPExcel_Cell_DataType::TYPE_STRING);
-						$this->workbook->getActiveSheet()->SetCellValueByColumnAndRow($this->col, $this->row+1, (string) $newvalue);
-    		    		$coord=$this->workbook->getActiveSheet()->getCellByColumnAndRow($this->col, $this->row+1)->getCoordinate();
-    		    		$this->workbook->getActiveSheet()->getStyle($coord)->getNumberFormat()->setFormatCode('@');
-    		    		$this->workbook->getActiveSheet()->getStyle($coord)->getAlignment()->setHorizontal(PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT);
-    		    	}
-    		    	else
-    		    	{
-    		    		$this->workbook->getActiveSheet()->SetCellValueByColumnAndRow($this->col, $this->row+1, $newvalue);
-    		    	}
+    	    	if ($typefield == 'Text' || $typefield == 'TextAuto')
+    	    	{
+    	    		//$this->workbook->getActiveSheet()->getCellByColumnAndRow($this->col, $this->row+1)->setValueExplicit($newvalue, PHPExcel_Cell_DataType::TYPE_STRING);
+					$this->workbook->getActiveSheet()->SetCellValueByColumnAndRow($this->col, $this->row+1, (string) $newvalue);
+    	    		$coord=$this->workbook->getActiveSheet()->getCellByColumnAndRow($this->col, $this->row+1)->getCoordinate();
+    	    		$this->workbook->getActiveSheet()->getStyle($coord)->getNumberFormat()->setFormatCode('@');
+    	    		$this->workbook->getActiveSheet()->getStyle($coord)->getAlignment()->setHorizontal(PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT);
+    	    	}
+    	    	else
+    	    	{
+    	    		$this->workbook->getActiveSheet()->SetCellValueByColumnAndRow($this->col, $this->row+1, $newvalue);
+    	    	}
 			}
 			$this->col++;
 		}
@@ -367,48 +367,48 @@ class ExportExcelnew extends ModeleExports
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
      *	Write footer
      *
 	 * 	@param		Translate	$outputlangs	Output language object
 	 * 	@return		int							<0 if KO, >0 if OK
      */
-	function write_footer($outputlangs)
+	public function write_footer($outputlangs)
 	{
         // phpcs:enable
 		return 0;
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *	Close Excel file
      *
 	 * 	@return		int							<0 if KO, >0 if OK
      */
-	function close_file()
+	public function close_file()
 	{
         // phpcs:enable
-		global $conf;
+        global $conf;
 
-            $objWriter = new Xlsx($this->workbook);
-            $objWriter->save($this->file);
-            $this->workbook->disconnectWorksheets();
-            unset($this->workbook);
+        $objWriter = new Xlsx($this->workbook);
+        $objWriter->save($this->file);
+        $this->workbook->disconnectWorksheets();
+        unset($this->workbook);
 
 		return 1;
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      * Clean a cell to respect rules of Excel file cells
      *
      * @param 	string	$newvalue	String to clean
      * @return 	string				Value cleaned
      */
-    function excel_clean($newvalue)
+    public function excel_clean($newvalue)
     {
         // phpcs:enable
 		// Rule Dolibarr: No HTML
@@ -424,14 +424,13 @@ class ExportExcelnew extends ModeleExports
      * @param 	int		$c		Column position
      * @return 	string			Letter
      */
-    function column2Letter($c)
+    public function column2Letter($c)
     {
 
     	$c = intval($c);
     	if ($c <= 0) return '';
 
-    	while ($c != 0)
-    	{
+    	while ($c != 0) {
     		$p = ($c - 1) % 26;
     		$c = intval(($c - $p) / 26);
     		$letter = chr(65 + $p) . $letter;
