@@ -188,8 +188,8 @@ class MailingTargets    // This can't be abstract as it is used for some method
         			if ($this->db->errno() != 'DB_ERROR_RECORD_ALREADY_EXISTS')
         			{
         				// Si erreur autre que doublon
-        				dol_syslog($this->db->error());
-        				$this->error=$this->db->error();
+        				dol_syslog($this->db->error().' : '.$targetarray['email']);
+        				$this->error=$this->db->error().' : '.$targetarray['email'];
         				$this->db->rollback();
         				return -1;
         			}
