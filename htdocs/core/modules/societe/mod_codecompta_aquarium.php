@@ -57,7 +57,7 @@ class mod_codecompta_aquarium extends ModeleAccountancyCode
 	/**
 	 * 	Constructor
 	 */
-	function __construct()
+	public function __construct()
 	{
 	    global $conf;
 		if (! isset($conf->global->COMPANY_AQUARIUM_MASK_CUSTOMER) || trim($conf->global->COMPANY_AQUARIUM_MASK_CUSTOMER) == '') $conf->global->COMPANY_AQUARIUM_MASK_CUSTOMER='411';
@@ -73,7 +73,7 @@ class mod_codecompta_aquarium extends ModeleAccountancyCode
 	 * @param	Translate	$langs		Object langs
 	 * @return	string   		   		Description of module
 	 */
-	function info($langs)
+	public function info($langs)
 	{
 	    global $conf;
 	    global $form;
@@ -112,7 +112,7 @@ class mod_codecompta_aquarium extends ModeleAccountancyCode
 	 * @param	int			$type		Type of third party (1:customer, 2:supplier, -1:autodetect)
 	 * @return	string					Return string example
 	 */
-	function getExample($langs, $objsoc = 0, $type = -1)
+	public function getExample($langs, $objsoc = 0, $type = -1)
 	{
 		$s='';
 		$s.=$this->prefixcustomeraccountancycode.'CUSTCODE';
@@ -131,7 +131,7 @@ class mod_codecompta_aquarium extends ModeleAccountancyCode
 	 *  @param  string		$type			'customer' or 'supplier'
 	 *  @return	int							>=0 if OK, <0 if KO
 	 */
-	function get_code($db, $societe, $type = '')
+	public function get_code($db, $societe, $type = '')
 	{
         // phpcs:enable
 		global $conf;
@@ -196,7 +196,7 @@ class mod_codecompta_aquarium extends ModeleAccountancyCode
 	 * 	@param	string		$type		'supplier' or 'customer'
 	 *	@return	int						0 if OK but not available, >0 if OK and available, <0 if KO
 	 */
-	function verif($db, $code, $societe, $type)
+	public function verif($db, $code, $societe, $type)
 	{
 		$sql = "SELECT ";
 		if ($type == 'customer') $sql.= "code_compta";

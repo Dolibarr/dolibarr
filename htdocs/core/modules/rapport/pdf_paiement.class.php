@@ -37,7 +37,7 @@ class pdf_paiement
      *
      *  @param      DoliDb		$db      Database handler
 	 */
-	function __construct($db)
+	public function __construct($db)
 	{
 		global $langs,$conf;
 
@@ -93,7 +93,7 @@ class pdf_paiement
 	 *	@param	string	$outputlangs	Lang output object
 	 *	@return	int						<0 if KO, >0 if OK
 	 */
-	function write_file($_dir, $month, $year, $outputlangs)
+	public function write_file($_dir, $month, $year, $outputlangs)
 	{
         // phpcs:enable
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
@@ -340,6 +340,7 @@ class pdf_paiement
 		return 1;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 *  Show top header of page.
 	 *
@@ -349,8 +350,9 @@ class pdf_paiement
 	 *  @param  Translate	$outputlangs	Object lang for output
 	 *  @return	void
 	 */
-	function _pagehead(&$pdf, $page, $showaddress, $outputlangs)
+	protected function _pagehead(&$pdf, $page, $showaddress, $outputlangs)
 	{
+        // phpcs:enable
 		global $langs, $conf;
 
 		// Do not add the BACKGROUND as this is a report
@@ -412,7 +414,7 @@ class pdf_paiement
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Output body
 	 *
@@ -422,7 +424,7 @@ class pdf_paiement
 	 *	@param	Translate	$outputlangs	Object langs
 	 *	@return	void
 	 */
-	function Body(&$pdf, $page, $lines, $outputlangs)
+	public function Body(&$pdf, $page, $lines, $outputlangs)
 	{
         // phpcs:enable
 		global $langs;

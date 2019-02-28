@@ -46,7 +46,7 @@ abstract class ModeleThirdPartyDoc extends CommonDocGenerator
      *  @param	integer		$maxfilenamelength  Max length of value to show
      * 	@return	array							List of templates
      */
-    static function liste_modeles($db, $maxfilenamelength = 0)
+    public static function liste_modeles($db, $maxfilenamelength = 0)
     {
         // phpcs:enable
         global $conf;
@@ -77,7 +77,7 @@ abstract class ModeleThirdPartyCode
      *		@param	Translate	$langs		Object langs
      *      @return string      			Texte descripif
      */
-    function info($langs)
+    public function info($langs)
     {
         $langs->load("bills");
         return $langs->trans("NoDescription");
@@ -88,7 +88,7 @@ abstract class ModeleThirdPartyCode
      *		@param	Translate	$langs		Object langs
      *      @return string      			Nom du module
      */
-    function getNom($langs)
+    public function getNom($langs)
     {
         return $this->nom;
     }
@@ -99,7 +99,7 @@ abstract class ModeleThirdPartyCode
      *		@param	Translate	$langs		Object langs
      *      @return string      			Example
      */
-    function getExample($langs)
+    public function getExample($langs)
     {
         $langs->load("bills");
         return $langs->trans("NoExample");
@@ -110,7 +110,7 @@ abstract class ModeleThirdPartyCode
      *
      *      @return     boolean     false si conflit, true si ok
      */
-    function canBeActivated()
+    public function canBeActivated()
     {
         return true;
     }
@@ -122,18 +122,19 @@ abstract class ModeleThirdPartyCode
      *	@param	int			$type		Type
      *  @return string      			Value
      */
-    function getNextValue($objsoc = 0, $type = -1)
+    public function getNextValue($objsoc = 0, $type = -1)
     {
         global $langs;
         return $langs->trans("Function_getNextValue_InModuleNotWorking");
     }
 
 
-    /**     Return version of module
+    /**
+     *  Return version of module
      *
-     *      @return     string      Version
+     *  @return     string      Version
      */
-    function getVersion()
+    public function getVersion()
     {
         global $langs;
         $langs->load("admin");
@@ -145,7 +146,7 @@ abstract class ModeleThirdPartyCode
         return $langs->trans("NotAvailable");
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *  Renvoie la liste des modeles de numérotation
      *
@@ -153,7 +154,7 @@ abstract class ModeleThirdPartyCode
      *  @param  integer	$maxfilenamelength  Max length of value to show
      *  @return	array						List of numbers
      */
-    static function liste_modeles($db, $maxfilenamelength = 0)
+    public static function liste_modeles($db, $maxfilenamelength = 0)
     {
         // phpcs:enable
         $liste=array();
@@ -186,7 +187,7 @@ abstract class ModeleThirdPartyCode
      *  @param	int			$type		-1=Nothing, 0=Customer, 1=Supplier
      *  @return	string					HTML translated description
      */
-    function getToolTip($langs, $soc, $type)
+    public function getToolTip($langs, $soc, $type)
     {
         global $conf;
 
@@ -251,7 +252,7 @@ abstract class ModeleThirdPartyCode
 	 *
 	 *   @return    int	    0=no, 1=yes
      */
-    function verif_prefixIsUsed()
+    public function verif_prefixIsUsed()
     {
         // phpcs:enable
         return 0;
@@ -271,25 +272,27 @@ abstract class ModeleAccountancyCode
 	public $error='';
 
 
-    /**		Return description of module
+    /**
+     *  Return description of module
      *
-     * 		@param	Translate	$langs		Object langs
-     * 		@return string      			Description of module
+     *  @param	Translate	$langs		Object langs
+     *  @return string      			Description of module
      */
-    function info($langs)
+    public function info($langs)
     {
         $langs->load("bills");
         return $langs->trans("NoDescription");
     }
 
-    /**		Return an example of result returned by getNextValue
+    /**
+     *  Return an example of result returned by getNextValue
      *
-     *      @param	Translate	$langs		Object langs
-     *      @param	societe		$objsoc		Object thirdparty
-     *      @param	int			$type		Type of third party (1:customer, 2:supplier, -1:autodetect)
-     *      @return	string					Example
+     *  @param	Translate	$langs		Object langs
+     *  @param	societe		$objsoc		Object thirdparty
+     *  @param	int			$type		Type of third party (1:customer, 2:supplier, -1:autodetect)
+     *  @return	string					Example
      */
-    function getExample($langs, $objsoc = 0, $type = -1)
+    public function getExample($langs, $objsoc = 0, $type = -1)
     {
         $langs->load("bills");
         return $langs->trans("NoExample");
@@ -300,16 +303,17 @@ abstract class ModeleAccountancyCode
      *
      *      @return     boolean     false si conflit, true si ok
      */
-    function canBeActivated()
+    public function canBeActivated()
     {
         return true;
     }
 
-    /**     Return version of module
+    /**
+     *  Return version of module
      *
-     *      @return     string      Version
+     *  @return     string      Version
      */
-    function getVersion()
+    public function getVersion()
     {
         global $langs;
         $langs->load("admin");
@@ -322,14 +326,14 @@ abstract class ModeleAccountancyCode
     }
 
     /**
-     *      Return description of module parameters
+     *  Return description of module parameters
      *
-     *      @param	Translate	$langs      Output language
-     *		@param	Societe		$soc		Third party object
-     *		@param	int			$type		-1=Nothing, 0=Customer, 1=Supplier
-     *		@return	string					HTML translated description
+     *  @param	Translate	$langs      Output language
+     *  @param	Societe		$soc		Third party object
+     *  @param	int			$type		-1=Nothing, 0=Customer, 1=Supplier
+     *  @return	string					HTML translated description
      */
-    function getToolTip($langs, $soc, $type)
+    public function getToolTip($langs, $soc, $type)
     {
         global $conf,$db;
 
@@ -358,7 +362,7 @@ abstract class ModeleAccountancyCode
         return $s;
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *  Set accountancy account code for a third party into this->code
      *
@@ -367,7 +371,7 @@ abstract class ModeleAccountancyCode
      *  @param  int		$type			'customer' or 'supplier'
      *  @return	int						>=0 if OK, <0 if KO
      */
-    function get_code($db, $societe, $type = '')
+    public function get_code($db, $societe, $type = '')
     {
         // phpcs:enable
         global $langs;
@@ -377,8 +381,6 @@ abstract class ModeleAccountancyCode
 }
 
 
-
-// phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 /**
  *  Create a document onto disk according to template module.
  *
@@ -396,8 +398,7 @@ abstract class ModeleAccountancyCode
  */
 function thirdparty_doc_create(DoliDB $db, Societe $object, $message, $modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 {
-    // phpcs:enable
-	dol_syslog(__METHOD__ . " is deprecated", LOG_WARNING);
+    dol_syslog(__METHOD__ . " is deprecated", LOG_WARNING);
 
-	return $object->generateDocument($modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
+    return $object->generateDocument($modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
 }

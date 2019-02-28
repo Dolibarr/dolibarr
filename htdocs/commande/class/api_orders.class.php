@@ -299,7 +299,7 @@ class Orders extends DolibarrApi
         if ($updateRes > 0) {
             return $updateRes;
         } else {
-			throw new RestException(400, $this->commande->error);
+            throw new RestException(400, $this->commande->error);
         }
     }
 

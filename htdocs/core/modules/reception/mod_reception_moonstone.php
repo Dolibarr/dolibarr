@@ -29,16 +29,16 @@ require_once DOL_DOCUMENT_ROOT .'/core/modules/reception/modules_reception.php';
  */
 class mod_reception_moonstone extends ModelNumRefReception
 {
-	var $version='dolibarr';
-	var $error = '';
-	var $nom = 'Moonstone';
+    public $version='dolibarr';
+    public $error = '';
+    public $nom = 'Moonstone';
 
 	/**
 	 *	Return default description of numbering model
 	 *
 	 *	@return     string      text description
 	 */
-	function info()
+	public function info()
     {
     	global $conf,$langs;
 
@@ -74,7 +74,7 @@ class mod_reception_moonstone extends ModelNumRefReception
 	 *
 	 *	@return     string      Example
 	 */
-    function getExample()
+    public function getExample()
     {
      	global $conf,$langs,$mysoc;
 
@@ -100,7 +100,7 @@ class mod_reception_moonstone extends ModelNumRefReception
 	 *	@param	Object		$reception	Reception object
 	 *	@return string      			Value if OK, 0 if KO
 	 */
-    function getNextValue($objsoc, $reception)
+    public function getNextValue($objsoc, $reception)
     {
 		global $db,$conf;
 
@@ -129,7 +129,7 @@ class mod_reception_moonstone extends ModelNumRefReception
 	 *	@param	Object		$objforref	Reception object
 	 *	@return string      			Next free value
 	 */
-	function reception_get_num($objsoc, $objforref)
+	public function reception_get_num($objsoc, $objforref)
 	{
 		// phpcs:enable
 		return $this->getNextValue($objsoc, $objforref);

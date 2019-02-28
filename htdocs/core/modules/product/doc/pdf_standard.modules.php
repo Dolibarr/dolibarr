@@ -853,7 +853,7 @@ class pdf_standard extends ModelePDFProduct
 	        $pdf->SetFont('','', $default_font_size - 1);
 	        $pdf->MultiCell(80, 4, $carac_emetteur, 0, 'L');
 	        */
-	    }
+        }
 
         $pdf->SetTextColor(0, 0, 0);
     }

@@ -297,7 +297,7 @@ class mod_codeproduct_elephant extends ModeleProductCode
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Renvoi si un code est pris ou non (par autre tiers)
 	 *
