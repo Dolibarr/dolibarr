@@ -63,8 +63,8 @@
 		</div>
 
 		<div class="bd-example">
-		<button type="button" class="btn btn-primary">
-		  Profile <span class="badge badge-light" aria-label="9 unread messages" >9</span>
+		<button type="button" class="button">
+		  Profile <span class="badge badge-primary" aria-label="9 unread messages" >9</span>
 		  <span class="sr-only">unread messages</span>
 		</button>
 		</div>
@@ -254,7 +254,7 @@
 &lt;a href=&quot;#&quot; class=&quot;badge badge-light&quot;&gt;Light&lt;/a&gt;
 &lt;a href=&quot;#&quot; class=&quot;badge badge-dark&quot;&gt;Dark&lt;/a&gt;
 <?php for ($i = 0; $i <= 9; $i++): ?>
-&lt;a class="badge badge-status-<?php print $i;  ?>" &gt;status-<?php print $i;  ?>&lt;/a&gt;
+&lt;a href=&quot;#&quot; class="badge badge-status-<?php print $i;  ?>" &gt;status-<?php print $i;  ?>&lt;/a&gt;
 <?php endfor; ?>
 		</code></pre></figure>
 
