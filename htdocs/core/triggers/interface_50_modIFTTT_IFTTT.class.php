@@ -115,8 +115,30 @@ class InterfaceIFTTT extends DolibarrTriggers
     		case 'THIRDPARTY_CREATED':
 	            dol_syslog("Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id);
 
-	            // TODO
+	            include_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 
+	            // See https://platform.ifttt.com/docs/api_reference#realtime-api
+
+                $arrayofdata=array();
+                $arrayofdata['user_id']=$conf->global->IFTTT_USER_ID;
+                $arrayofdata['trigger_identity']=$conf->global->IFTTT_TRIGGER_IDENTITY;
+                $arrayofdata['name']='testabcdef';
+                $arrayofdata['email']='testemailabcdef';
+
+                $url = 'https://realtime.ifttt.com/v1/notifications';
+
+                $addheaders=array(
+                    'IFTTT-Service-Key'=>'123',
+                    'Accept'=>'application/json',
+                    'Accept-Charset'=>'utf-8',
+                    'Accept-Encoding'=>'gzip, deflate',
+                    'Content-Type'=>'application/json',
+                    'X-Request-ID'=>getRandomPassword(true, null)
+                )
+
+                $result = getURLContent($url, 'POSTALREADYFORMATED', '', 1, $addheaders);
+
+	            $ok = 1;
 	            break;
     	}
 
