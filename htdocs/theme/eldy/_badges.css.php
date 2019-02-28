@@ -7,7 +7,7 @@ if (! defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
 
 .badge {
     display: inline-block;
-    padding: .25em .4em;
+    padding: .2em .35em;
     font-size: 80%;
     font-weight: 700 !important;
     line-height: 1;
@@ -16,12 +16,21 @@ if (! defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
     vertical-align: baseline;
     border-radius: .25rem;
     transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+    border-width: 3px;
+    border-style: solid;
+    border-color: rgba(255,255,255,0);
 }
 
 .badge-pill {
     padding-right: .6em;
     padding-left: .6em;
     border-radius: 10rem;
+}
+
+.badge-dot {
+    padding: 0;
+    border-radius: 50%;
+    padding: 0.8em;
 }
 
 a.badge:focus, a.badge:hover {
@@ -148,3 +157,47 @@ a.badge-dark:focus, a.badge-dark:hover {
 * STATUS BADGES
 */
 
+/* Default Status */
+
+<?php for ($i = 0; $i <= 9; $i++) { 
+
+    print "\n/* STATUS-".$i." */\n";
+    
+    $thisBadgeBackgroundColor = $thisBadgeBorderColor = ${'badgeStatus'.$i};
+
+    
+    $TBadgeBorderOnly = array(0,3,5,7);
+    $thisBadgeTextColor = colorIsLight(${'badgeStatus'.$i})?'#212529':'#ffffff';
+    if(in_array($i, $TBadgeBorderOnly)){
+        $thisBadgeTextColor = '#212529';
+        $thisBadgeBackgroundColor = "#fff";
+    }
+    
+    print ".badge-status-".$i." {\n";
+    print "        color: ".$thisBadgeTextColor." !important;\n";
+    
+    if(in_array($i, $TBadgeBorderOnly)){
+        print "        border-color: ".$thisBadgeBorderColor.";\n";
+    }
+    
+    print "        background-color: ".$thisBadgeBackgroundColor.";\n";
+    print "}\n";
+    
+    print ".badge-status-".$i.".focus, .badge-status-".$i.":focus {\n";
+    print "    outline: 0;\n";
+    print "    box-shadow: 0 0 0 0.2rem ".colorHexToRgb($thisBadgeBackgroundColor, 0.5).";\n";
+    print "}\n";
+    
+    print ".badge-status-".$i.":focus, .badge-status-".$i.":hover {\n";
+    print "    color: ".$thisBadgeTextColor." !important;\n";
+    print "    background-color: ".colorDarker($thisBadgeBackgroundColor, 10).";\n";
+    if(in_array($i, $TBadgeBorderOnly)){
+        print "        border-color: ".colorDarker($thisBadgeBorderColor, 10).";\n";
+    }
+    print "}\n";
+
+}
+    
+    
+?>    
+    
