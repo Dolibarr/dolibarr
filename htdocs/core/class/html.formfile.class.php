@@ -1555,22 +1555,14 @@ class FormFile
 				$id=0; $ref=''; $label='';
 
 				// To show ref or specific information according to view to show (defined by $module)
-				if ($modulepart == 'company')           { preg_match('/(\d+)\/[^\/]+$/', $relativefile, $reg); $id=(isset($reg[1])?$reg[1]:''); }
-				elseif ($modulepart == 'invoice')           { preg_match('/(.*)\/[^\/]+$/', $relativefile, $reg);  $ref=(isset($reg[1])?$reg[1]:''); }
-				elseif ($modulepart == 'invoice_supplier')  { preg_match('/([^\/]+)\/[^\/]+$/', $relativefile, $reg); $ref=(isset($reg[1])?$reg[1]:''); if (is_numeric($ref)) { $id=$ref; $ref=''; } }	// $ref may be also id with old supplier invoices
-				elseif ($modulepart == 'propal')            { preg_match('/(.*)\/[^\/]+$/', $relativefile, $reg);  $ref=(isset($reg[1])?$reg[1]:''); }
-				elseif ($modulepart == 'supplier_proposal') { preg_match('/(.*)\/[^\/]+$/', $relativefile, $reg);  $ref=(isset($reg[1])?$reg[1]:''); }
-				elseif ($modulepart == 'order')             { preg_match('/(.*)\/[^\/]+$/', $relativefile, $reg);  $ref=(isset($reg[1])?$reg[1]:''); }
-				elseif ($modulepart == 'order_supplier')    { preg_match('/(.*)\/[^\/]+$/', $relativefile, $reg);  $ref=(isset($reg[1])?$reg[1]:''); }
-				elseif ($modulepart == 'contract')          { preg_match('/(.*)\/[^\/]+$/', $relativefile, $reg);  $ref=(isset($reg[1])?$reg[1]:''); }
-				elseif ($modulepart == 'product')           { preg_match('/(.*)\/[^\/]+$/', $relativefile, $reg);  $ref=(isset($reg[1])?$reg[1]:''); }
-				elseif ($modulepart == 'tax')               { preg_match('/(\d+)\/[^\/]+$/', $relativefile, $reg); $id=(isset($reg[1])?$reg[1]:''); }
-				elseif ($modulepart == 'project')           { preg_match('/(.*)\/[^\/]+$/', $relativefile, $reg);  $ref=(isset($reg[1])?$reg[1]:'');}
-				elseif ($modulepart == 'fichinter')         { preg_match('/(.*)\/[^\/]+$/', $relativefile, $reg);  $ref=(isset($reg[1])?$reg[1]:'');}
-				elseif ($modulepart == 'user')              { preg_match('/(.*)\/[^\/]+$/', $relativefile, $reg);  $id=(isset($reg[1])?$reg[1]:'');}
-				elseif ($modulepart == 'expensereport')     { preg_match('/(.*)\/[^\/]+$/', $relativefile, $reg);  $ref=(isset($reg[1])?$reg[1]:'');}
-				elseif ($modulepart == 'holiday')           { preg_match('/(.*)\/[^\/]+$/', $relativefile, $reg);  $id=(isset($reg[1])?$reg[1]:'');}
-
+				if ($modulepart == 'company' || $modulepart == 'tax')		{ preg_match('/(\d+)\/[^\/]+$/', $relativefile, $reg); $id=(isset($reg[1])?$reg[1]:''); }
+				elseif ($modulepart == 'invoice_supplier')					{ preg_match('/([^\/]+)\/[^\/]+$/', $relativefile, $reg); $ref=(isset($reg[1])?$reg[1]:''); if (is_numeric($ref)) { $id=$ref; $ref=''; } }	// $ref may be also id with old supplier invoices
+				elseif ($modulepart == 'user' || $modulepart == 'holiday')	{ preg_match('/(.*)\/[^\/]+$/', $relativefile, $reg); $id=(isset($reg[1])?$reg[1]:''); }
+                elseif (in_array($modulepart, array('invoice', 'propal', 'supplier_proposal', 'order', 'order_supplier', 'contract', 'product', 'project', 'fichinter', 'expensereport')))
+				{
+					preg_match('/(.*)\/[^\/]+$/', $relativefile, $reg); $ref=(isset($reg[1])?$reg[1]:'');
+				}
+				
 				if (! $id && ! $ref) continue;
 				$found=0;
 				if (! empty($this->cache_objects[$modulepart.'_'.$id.'_'.$ref]))
