@@ -396,7 +396,7 @@ class Establishment extends CommonObject
 	 * Get on record Establishment
 	 *
 	 * @param	int		$id      Id of record
-	 * @return	obj
+	 * @return	Object
 	 */
 	function getEstablishment($id)
 	{
@@ -457,7 +457,7 @@ class Establishment extends CommonObject
      */
     function getNomUrlParent($id = 0, $withpicto = 0)
     {
-        global $langs;
+        global $langs, $conf;
 
         $result='';
 		
