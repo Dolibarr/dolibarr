@@ -2948,15 +2948,12 @@ if ($action == 'create')
 			print '</div></div>';
 
 			// Next situation invoice
-			$opt = $form->selectSituationInvoices(GETPOST('originid'), $socid);
 			print '<div class="tagtr listofinvoicetype"><div class="tagtd listofinvoicetype">';
 			$tmp='<input type="radio" name="type" value="5"' . (GETPOST('type') == 5 && GETPOST('originid') ? ' checked' : '');
 			if ($opt == ('<option value ="0" selected>' . $langs->trans('NoSituations') . '</option>') || (GETPOST('origin') && GETPOST('origin') != 'facture' && GETPOST('origin') != 'commande')) $tmp.=' disabled';
 			$tmp.= '> ';
 			$text = $tmp.$langs->trans("InvoiceSituationAsk") . ' ';
-			$text .= '<select class="flat" id="situations" name="situations">';
-			$text .= $opt;
-			$text .= '</select>';
+			$text .= $form->selectSituationInvoices(GETPOST('originid', 'int'), $socid);
 			$desc = $form->textwithpicto($text, $langs->transnoentities("InvoiceSituationDesc"), 1, 'help', '', 0, 3);
 			print $desc;
 			print '</div></div>';

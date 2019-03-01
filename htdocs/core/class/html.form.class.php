@@ -3312,55 +3312,70 @@ class Form
 	/**
 	 * Creates HTML last in cycle situation invoices selector
 	 *
-	 * @param     string  $selected   		Preselected ID
-	 * @param     int     $socid      		Company ID
+	 * @param     string	$selected		Preselected ID
+	 * @param     int		$socid			Company ID
+	 * @param     string	$htmlname		Select name
 	 *
 	 * @return    string                     HTML select
 	 */
-	function selectSituationInvoices($selected = '', $socid = 0)
+	function selectSituationInvoices($selected = null, $socid = null, $htmlname = 'situations')
 	{
 		global $langs;
 
 		$langs->load('bills');
 
-		$opt = '<option value ="" selected></option>';
-		$sql = 'SELECT rowid, facnumber, situation_cycle_ref, situation_counter, situation_final, fk_soc FROM ' . MAIN_DB_PREFIX . 'facture WHERE situation_counter>=1';
-		$sql.= ' ORDER by situation_cycle_ref, situation_counter desc';
+		$sql = 'SELECT rowid, facnumber, situation_cycle_ref, situation_counter';
+		$sql.= ' FROM ' . MAIN_DB_PREFIX . 'facture';
+		$sql.= ' WHERE entity IN ('.getEntity('invoice').')';
+		$sql.= ' AND situation_counter >= 1';
+		$sql.= " AND facnumber NOT LIKE '%PROV%'";
+		$sql.= " AND situation_final != 1";
+		if (! empty($socid)) {
+			$sql.= ' AND fk_soc = ' . $socid;
+		}
+		$sql.= ' ORDER BY situation_cycle_ref, situation_counter DESC';
+
 		$resql = $this->db->query($sql);
-		if ($resql && $this->db->num_rows($resql) > 0) {
-			// Last seen cycle
-			$ref = 0;
-			while ($obj = $this->db->fetch_object($resql)){
-				//Same company ?
-			    if ($socid == $obj->fk_soc) {
+
+		if ($resql)
+		{
+			$out = '<select class="flat" id="'.$htmlname.'" name="'.$htmlname.'">';
+
+			$num = $this->db->num_rows($resql);
+
+			if ($num > 0)
+			{
+				// Last seen cycle
+				$ref = 0;
+				while ($obj = $this->db->fetch_object($resql))
+				{
 					//Same cycle ?
-			        if ($obj->situation_cycle_ref != $ref) {
+					if ($obj->situation_cycle_ref != $ref)
+					{
 						// Just seen this cycle
-			            $ref = $obj->situation_cycle_ref;
-						//not final ?
-			            if ($obj->situation_final != 1) {
-							//Not prov?
-			                if (substr($obj->facnumber, 1, 4) != 'PROV') {
-			                    if ($selected == $obj->rowid) {
-			                        $opt .= '<option value="' . $obj->rowid . '" selected>' . $obj->facnumber . '</option>';
-								} else {
-								    $opt .= '<option value="' . $obj->rowid . '">' . $obj->facnumber . '</option>';
-								}
-							}
+						$ref = $obj->situation_cycle_ref;
+
+						if ($selected == $obj->rowid) {
+							$out.= '<option value="' . $obj->rowid . '" selected>' . $obj->facnumber . '</option>';
+						} else {
+							$out.= '<option value="' . $obj->rowid . '">' . $obj->facnumber . '</option>';
 						}
 					}
 				}
 			}
+			else
+			{
+				$out.= '<option value ="0" selected>' . $langs->trans('NoSituations') . '</option>';
+			}
+
+			$out.='</select>';
 		}
 		else
 		{
-				dol_syslog("Error sql=" . $sql . ", error=" . $this->error, LOG_ERR);
+			dol_print_error($this->db);
 		}
-		if ($opt == '<option value ="" selected></option>')
-		{
-			$opt = '<option value ="0" selected>' . $langs->trans('NoSituations') . '</option>';
-		}
-		return $opt;
+
+		return $out;
 	}
 
 	/**
