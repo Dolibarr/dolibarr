@@ -805,7 +805,7 @@ if ($action == 'create')
                 print '<tr>';
                 print '<td>' . $langs->trans("Project") . '</td><td colspan="2">';
                 $numprojet = $formproject->select_projects($soc->id, $projectid, 'projectid', 0);
-                print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/card.php?socid=' . $soc->id . '&action=create&status=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create&socid='.$soc->id).'">' . $langs->trans("AddProject") . '</a>';
+                print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/card.php?socid=' . $soc->id . '&action=create&status=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create&socid='.$soc->id).'">' . $langs->trans("AddProject") . ' <span class="fa fa-plus-circle valignmiddle"></span></a>';
                 print '</td>';
                 print '</tr>';
             }
@@ -989,9 +989,9 @@ if ($action == 'create')
             {
                 print '<tr class="liste_titre">';
                 print '<td>'.$langs->trans("Description").'</td>';
-                print '<td align="center">'.$langs->trans("QtyOrdered").'</td>';
-                print '<td align="center">'.$langs->trans("QtyReceived").'</td>';
-                print '<td align="center">'.$langs->trans("QtyToReceive");
+                print '<td class="center">'.$langs->trans("QtyOrdered").'</td>';
+                print '<td class="center">'.$langs->trans("QtyReceived").'</td>';
+                print '<td class="center">'.$langs->trans("QtyToReceive");
 				if (empty($conf->productbatch->enabled))
 				{
 	                print ' <br>(<a href="#" id="autofill">'.$langs->trans("Fill").'</a>';
@@ -1085,7 +1085,7 @@ if ($action == 'create')
                 }
 
                 // Qty
-                print '<td align="center">'.$line->qty;
+                print '<td class="center">'.$line->qty;
 				print '<input type="hidden" name="fk_commandefournisseurdet'.$indiceAsked.'" value=\''.$line->id.'\' />';
 				print '<textarea style="display:none;"  name="comment'.$indiceAsked.'" >'.$line->desc.'</textarea>';
                 print '<input name="qtyasked'.$indiceAsked.'" id="qtyasked'.$indiceAsked.'" type="hidden" value="'.$line->qty.'">';
@@ -1093,7 +1093,7 @@ if ($action == 'create')
                 $qtyProdCom=$line->qty;
 
                 // Qty already received
-                print '<td align="center">';
+                print '<td class="center">';
 
 
                 $quantityDelivered = $object->receptions[$line->id];
@@ -1124,7 +1124,7 @@ if ($action == 'create')
 
 
 						// Quantity to send
-						print '<td align="center">';
+						print '<td class="center">';
 						if ($line->product_type == Product::TYPE_PRODUCT || ! empty($conf->global->STOCK_SUPPORTS_SERVICES))
 						{
                             if (GETPOST('qtyl'.$indiceAsked, 'int')) $defaultqty=GETPOST('qtyl'.$indiceAsked, 'int');
@@ -1416,7 +1416,7 @@ elseif ($id || $ref)
 		print $langs->trans('DateDeliveryPlanned');
 		print '</td>';
 
-		if ($action != 'editdate_livraison') print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdate_livraison&amp;id='.$object->id.'">'.img_edit($langs->trans('SetDeliveryDate'), 1).'</a></td>';
+		if ($action != 'editdate_livraison') print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdate_livraison&amp;id='.$object->id.'">'.img_edit($langs->trans('SetDeliveryDate'), 1).'</a></td>';
 		print '</tr></table>';
 		print '</td><td colspan="2">';
 		if ($action == 'editdate_livraison')
@@ -1556,7 +1556,7 @@ elseif ($id || $ref)
 		print $langs->trans('ReceptionMethod');
 		print '</td>';
 
-		if ($action != 'editshipping_method_id') print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editshipping_method_id&amp;id='.$object->id.'">'.img_edit($langs->trans('SetReceptionMethod'), 1).'</a></td>';
+		if ($action != 'editshipping_method_id') print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editshipping_method_id&amp;id='.$object->id.'">'.img_edit($langs->trans('SetReceptionMethod'), 1).'</a></td>';
 		print '</tr></table>';
 		print '</td><td colspan="2">';
 		if ($action == 'editshipping_method_id')
@@ -1594,7 +1594,7 @@ elseif ($id || $ref)
 			print '<tr><td>';
 	        print '<table width="100%" class="nobordernopadding"><tr><td>';
 	        print $langs->trans('IncotermLabel');
-	        print '<td><td align="right">';
+	        print '<td><td class="right">';
 	        if ($user->rights->reception->creer) print '<a href="'.DOL_URL_ROOT.'/reception/card.php?id='.$object->id.'&action=editincoterm">'.img_edit().'</a>';
 	        else print '&nbsp;';
 	        print '</td></tr></table>';
@@ -1637,24 +1637,24 @@ elseif ($id || $ref)
 		// #
 		if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER))
 		{
-			print '<td width="5" align="center">&nbsp;</td>';
+			print '<td width="5" class="center">&nbsp;</td>';
 		}
 		// Product/Service
 		print '<td>'.$langs->trans("Products").'</td>';
 		// Comment
 		print '<td>'.$langs->trans("Description").'</td>';
 		// Qty
-		print '<td align="center">'.$langs->trans("QtyOrdered").'</td>';
+		print '<td class="center">'.$langs->trans("QtyOrdered").'</td>';
 		if ($origin && $origin_id > 0)
 		{
-			print '<td align="center">'.$langs->trans("QtyInOtherReceptions").'</td>';
+			print '<td class="center">'.$langs->trans("QtyInOtherReceptions").'</td>';
 		}
 		if ($action == 'editline')
 		{
 			$editColspan = 3;
 			if (empty($conf->stock->enabled)) $editColspan--;
 			if (empty($conf->productbatch->enabled)) $editColspan--;
-			print '<td align="center" colspan="'. $editColspan . '">';
+			print '<td class="center" colspan="'. $editColspan . '">';
 			if ($object->statut <= 1)
 			{
 				print $langs->trans("QtyToReceive").' - ';
@@ -1677,11 +1677,11 @@ elseif ($id || $ref)
 		{
 			if ($object->statut <= 1)
 			{
-				print '<td align="center">'.$langs->trans("QtyToReceive").'</td>';
+				print '<td class="center">'.$langs->trans("QtyToReceive").'</td>';
 			}
 			else
 			{
-				print '<td align="center">'.$langs->trans("QtyReceived").'</td>';
+				print '<td class="center">'.$langs->trans("QtyReceived").'</td>';
 			}
 			if (! empty($conf->stock->enabled))
 			{
@@ -1693,9 +1693,9 @@ elseif ($id || $ref)
 				print '<td class="left">'.$langs->trans("Batch").'</td>';
 			}
 		}
-		print '<td align="center">'.$langs->trans("CalculatedWeight").'</td>';
-		print '<td align="center">'.$langs->trans("CalculatedVolume").'</td>';
-		//print '<td align="center">'.$langs->trans("Size").'</td>';
+		print '<td class="center">'.$langs->trans("CalculatedWeight").'</td>';
+		print '<td class="center">'.$langs->trans("CalculatedVolume").'</td>';
+		//print '<td class="center">'.$langs->trans("Size").'</td>';
 		if ($object->statut == 0)
 		{
 			print '<td class="linecoledit"></td>';
@@ -1775,7 +1775,7 @@ elseif ($id || $ref)
 			// #
 			if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER))
 			{
-				print '<td align="center">'.($i+1).'</td>';
+				print '<td class="center">'.($i+1).'</td>';
 			}
 
 			// Predefined product or service
@@ -1834,12 +1834,12 @@ elseif ($id || $ref)
 
 
 			// Qty ordered
-			print '<td align="center">'.$lines[$i]->qty_asked.'</td>';
+			print '<td class="center">'.$lines[$i]->qty_asked.'</td>';
 
 			// Qty in other receptions (with reception and warehouse used)
     		if ($origin && $origin_id > 0)
     		{
-    			print '<td align="center" class="nowrap">';
+    			print '<td class="center nowrap">';
     			foreach ($alreadysent as $key => $val)
     			{
     			    if ($lines[$i]->fk_commandefourndet == $key)
@@ -1871,7 +1871,7 @@ elseif ($id || $ref)
 			if ($action == 'editline' && $lines[$i]->id == $line_id)
 			{
 				// edit mode
-				print '<td colspan="'.$editColspan.'" align="center"><table class="nobordernopadding">';
+				print '<td colspan="'.$editColspan.'" class="center"><table class="nobordernopadding">';
 				if (! empty($conf->stock->enabled))
 				{
 					if ($lines[$i]->fk_product > 0)
@@ -1912,7 +1912,7 @@ elseif ($id || $ref)
 			else
 			{
 				// Qty to receive or received
-				print '<td align="center">'.$lines[$i]->qty.'</td>';
+				print '<td class="center">'.$lines[$i]->qty.'</td>';
 
 				// Warehouse source
 				if (! empty($conf->stock->enabled))
@@ -1959,13 +1959,13 @@ elseif ($id || $ref)
 			}
 
 			// Weight
-			print '<td align="center">';
+			print '<td class="center">';
 			if ($lines[$i]->fk_product_type == Product::TYPE_PRODUCT) print $lines[$i]->product->weight*$lines[$i]->qty.' '.measuring_units_string($lines[$i]->product->weight_units, "weight");
 			else print '&nbsp;';
 			print '</td>';
 
 			// Volume
-			print '<td align="center">';
+			print '<td class="center">';
 			if ($lines[$i]->fk_product_type == Product::TYPE_PRODUCT) print $lines[$i]->product->volume*$lines[$i]->qty.' '.measuring_units_string($lines[$i]->product->volume_units, "volume");
 			else print '&nbsp;';
 			print '</td>';
@@ -1973,14 +1973,14 @@ elseif ($id || $ref)
 
 			if ($action == 'editline' && $lines[$i]->id == $line_id)
 			{
-				print '<td align="center" colspan="2" valign="middle">';
+				print '<td class="center" colspan="2" valign="middle">';
 				print '<input type="submit" class="button" id="savelinebutton" name="save" value="' . $langs->trans("Save") . '"><br>';
 				print '<input type="submit" class="button" id="cancellinebutton" name="cancel" value="' . $langs->trans("Cancel") . '"><br>';
 			}
 			elseif ($object->statut == 0)
 			{
 				// edit-delete buttons
-				print '<td class="linecoledit" align="center">';
+				print '<td class="linecoledit center">';
 				print '<a href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&amp;action=editline&amp;lineid=' . $lines[$i]->id . '">' . img_edit() . '</a>';
 				print '</td>';
 				print '<td class="linecoldelete" width="10">';

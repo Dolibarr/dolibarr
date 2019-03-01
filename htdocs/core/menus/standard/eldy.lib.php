@@ -143,6 +143,25 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 		$menu->add('/product/index.php?mainmenu=products&amp;leftmenu=', $chaine, 0, $showmode, $atarget, "products", '', 30, $id, $idsel, $classname);
 	}
 
+	// MRP
+	$tmpentry = array(
+	    'enabled'=>(! empty($conf->bom->enabled) || ! empty($conf->mrp->enabled)),
+	    'perms'=>(! empty($user->rights->bom->read) || ! empty($user->rights->mrp->read)),
+	    'module'=>'bom|mrp',
+	);
+	$showmode=isVisibleToUserType($type_user, $tmpentry, $listofmodulesforexternal);
+	if ($showmode)
+	{
+	    $classname="";
+	    if ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "mrp") { $classname='class="tmenusel"'; $_SESSION['idmenu']=''; }
+	    else $classname = 'class="tmenu"';
+	    $idsel='products';
+
+	    $chaine=$langs->trans("TMenuMRP");
+
+	    $menu->add('/bom/bom_list.php?mainmenu=mrp&amp;leftmenu=', $chaine, 0, $showmode, $atarget, "bom", '', 30, $id, $idsel, $classname);
+	}
+
 	// Projects
 	$tmpentry=array('enabled'=>(! empty($conf->projet->enabled)),
 	'perms'=>(! empty($user->rights->projet->lire)),
@@ -1058,6 +1077,7 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 				    }
 				    $newmenu->add("/accountancy/admin/productaccount.php?mainmenu=accountancy&leftmenu=accountancy_admin", $langs->trans("MenuProductsAccounts"), 1, $user->rights->accounting->chartofaccount, '', $mainmenu, 'accountancy_admin_product', 55);
 				    $newmenu->add("/accountancy/admin/export.php?mainmenu=accountancy&leftmenu=accountancy_admin", $langs->trans("ExportOptions"), 1, $user->rights->accounting->chartofaccount, '', $mainmenu, 'accountancy_admin_export', 60);
+            $newmenu->add("/accountancy/admin/closure.php?mainmenu=accountancy&leftmenu=accountancy_admin", $langs->trans("MenuClosureAccounts"), 1, $user->rights->accounting->chartofaccount, '', $mainmenu, 'accountancy_admin_closure', 70);
 
 				    // Fiscal year
 				    if ($conf->global->MAIN_FEATURES_LEVEL > 1) {
@@ -1441,6 +1461,20 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 				if ($usemenuhider || empty($leftmenu) || $leftmenu=="receptions") $newmenu->add("/reception/list.php?leftmenu=receptions&viewstatut=2", $langs->trans("StatusReceptionProcessedShort"), 2, $user->rights->reception->lire);
 				$newmenu->add("/reception/stats/index.php?leftmenu=receptions", $langs->trans("Statistics"), 1, $user->rights->reception->lire);
 			}
+		}
+
+		/*
+		 * Menu PRODUCTS-SERVICES MRP
+		 */
+		if ($mainmenu == 'mrp')
+		{
+		    // BOM
+		    if (! empty($conf->bom->enabled) || ! empty($conf->mrp->enabled))
+		    {
+		        $newmenu->add("", $langs->trans("BOM"), 0, $user->rights->service->lire, '', $mainmenu, 'service');
+		        $newmenu->add("/bom/bom_card.php?leftmenu=bom&amp;action=create", $langs->trans("NewBom"), 1, $user->rights->bom->write);
+		        $newmenu->add("/bom/bom_list.php?leftmenu=bom", $langs->trans("List"), 1, $user->rights->bom->read);
+		    }
 		}
 
 		/*

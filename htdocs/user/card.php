@@ -48,6 +48,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 if (! empty($conf->ldap->enabled)) require_once DOL_DOCUMENT_ROOT.'/core/class/ldap.class.php';
 if (! empty($conf->adherent->enabled)) require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 if (! empty($conf->categorie->enabled)) require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+if (! empty($conf->stock->enabled)) require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 
 $id			= GETPOST('id', 'int');
 $action		= GETPOST('action', 'aZ09');
@@ -91,7 +92,7 @@ $result = restrictedArea($user, 'user', $id, 'user&user', $feature2);
 if ($user->id <> $id && ! $canreaduser) accessforbidden();
 
 // Load translation files required by page
-$langs->loadLangs(array('users', 'companies', 'ldap', 'admin', 'hrm'));
+$langs->loadLangs(array('users', 'companies', 'ldap', 'admin', 'hrm', 'stocks'));
 
 $object = new User($db);
 $extrafields = new ExtraFields($db);
@@ -214,6 +215,7 @@ if (empty($reshook)) {
 			$object->skype = GETPOST("skype", 'alphanohtml');
 			$object->twitter = GETPOST("twitter", 'alphanohtml');
 			$object->facebook = GETPOST("facebook", 'alphanohtml');
+			$object->linkedin = GETPOST("linkedin", 'alphanohtml');
 
 			$object->email = preg_replace('/\s+/', '', GETPOST("email", 'alpha'));
 			$object->job = GETPOST("job", 'alpha');
@@ -236,6 +238,8 @@ if (empty($reshook)) {
 
 			$dateemploymentend = dol_mktime(0, 0, 0, GETPOST('dateemploymentendmonth'), GETPOST('dateemploymentendday'), GETPOST('dateemploymentendyear'));
 			$object->dateemploymentend = $dateemploymentend;
+
+			$object->fk_warehouse = GETPOST('fk_warehouse', 'int');
 
 			// Fill array 'array_options' with data from add form
 			$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
@@ -364,6 +368,7 @@ if (empty($reshook)) {
 				$object->skype = GETPOST("skype", 'alpha');
 				$object->twitter = GETPOST("twitter", 'alpha');
 				$object->facebook = GETPOST("facebook", 'alpha');
+				$object->linkedin = GETPOST("linkedin", 'alpha');
 				$object->email = preg_replace('/\s+/', '', GETPOST("email", 'alpha'));
 				$object->job = GETPOST("job", 'alpha');
 				$object->signature = GETPOST("signature", 'none');
@@ -383,6 +388,11 @@ if (empty($reshook)) {
 				$object->dateemployment = $dateemployment;
 				$dateemploymentend = dol_mktime(0, 0, 0, GETPOST('dateemploymentendmonth', 'int'), GETPOST('dateemploymentendday', 'int'), GETPOST('dateemploymentendyear', 'int'));
 				$object->dateemploymentend = $dateemploymentend;
+
+                if (! empty($conf->stock->enabled))
+                {
+				    $object->fk_warehouse = GETPOST('fk_warehouse', 'int');
+                }
 
 				if (! empty($conf->multicompany->enabled))
 				{
@@ -606,6 +616,7 @@ if (empty($reshook)) {
 					$ldap_skype = $attribute[$conf->global->LDAP_FIELD_SKYPE];
 					$ldap_twitter = $attribute[$conf->global->LDAP_FIELD_TWITTER];
 					$ldap_facebook = $attribute[$conf->global->LDAP_FIELD_FACEBOOK];
+					$ldap_linkedin = $attribute[$conf->global->LDAP_FIELD_LINKEDIN];
 					$ldap_mail = $attribute[$conf->global->LDAP_FIELD_MAIL];
 					$ldap_sid = $attribute[$conf->global->LDAP_FIELD_SID];
 				}
@@ -639,6 +650,7 @@ $form = new Form($db);
 $formother=new FormOther($db);
 $formcompany = new FormCompany($db);
 $formfile = new FormFile($db);
+if (! empty($conf->stock->enabled)) $formproduct = new FormProduct($db);
 
 llxHeader('', $langs->trans("UserCard"));
 
@@ -1067,6 +1079,23 @@ if ($action == 'create' || $action == 'adduserldap')
 		print '</td></tr>';
 	}
 
+    // LinkedIn
+    if (! empty($conf->socialnetworks->enabled))
+    {
+        print '<tr><td>'.$langs->trans("LinkedIn").'</td>';
+        print '<td>';
+        if (! empty($ldap_linkedin))
+        {
+            print '<input type="hidden" name="linkedin" value="'.$ldap_linkedin.'">';
+            print $ldap_linkedin;
+        }
+        else
+        {
+            print '<input class="maxwidth200" type="text" name="linkedin" value="'.GETPOST('linkedin', 'alpha').'">';
+        }
+        print '</td></tr>';
+    }
+
 	// EMail
 	print '<tr><td'.(! empty($conf->global->USER_MAIL_REQUIRED)?' class="fieldrequired"':'').'>'.$langs->trans("EMail").'</td>';
 	print '<td>';
@@ -1165,6 +1194,13 @@ if ($action == 'create' || $action == 'adduserldap')
 	print '<input class="maxwidth200" type="text" name="job" value="'.GETPOST('job').'">';
 	print '</td></tr>';
 
+	// Default warehouse
+    if (! empty($conf->stock->enabled))
+    {
+		print '<tr><td>'.$langs->trans("DefaultWarehouse").'</td><td>';
+		print $formproduct->selectWarehouses($object->fk_warehouse, 'fk_warehouse', 'warehouseopen', 1);
+		print '</td></tr>';
+	}
 
 	if ((! empty($conf->salaries->enabled) && ! empty($user->rights->salaries->read))
 		|| (! empty($conf->hrm->enabled) && ! empty($user->rights->hrm->employee->read)))
@@ -1518,6 +1554,17 @@ else
 			print '<td>'.$object->job.'</td>';
 			print '</tr>'."\n";
 
+			// Default warehouse
+            if (! empty($conf->stock->enabled))
+            {
+				require_once DOL_DOCUMENT_ROOT .'/product/stock/class/entrepot.class.php';
+				$warehousestatic=new Entrepot($db);
+				$warehousestatic->fetch($object->fk_warehouse);
+				print '<tr><td>'.$langs->trans("DefaultWarehouse").'</td><td>';
+				print $warehousestatic->getNomUrl();
+				print '</td></tr>';
+            }
+
 			//$childids = $user->getAllChildIds(1);
 
 			if ((! empty($conf->salaries->enabled) && ! empty($user->rights->salaries->read))
@@ -1781,17 +1828,24 @@ else
 					}
 				}
 
-				// Activer
+				// Enable user
 				if ($user->id <> $id && $candisableuser && $object->statut == 0 &&
 				((empty($conf->multicompany->enabled) && $object->entity == $user->entity) || ! $user->entity || ($object->entity == $conf->entity) || ($conf->global->MULTICOMPANY_TRANSVERSE_MODE && $conf->entity == 1)))
 				{
 					print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=enable">'.$langs->trans("Reactivate").'</a></div>';
 				}
-				// Desactiver
+				// Disable user
 				if ($user->id <> $id && $candisableuser && $object->statut == 1 &&
 				((empty($conf->multicompany->enabled) && $object->entity == $user->entity) || ! $user->entity || ($object->entity == $conf->entity) || ($conf->global->MULTICOMPANY_TRANSVERSE_MODE && $conf->entity == 1)))
 				{
 					print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?action=disable&amp;id='.$object->id.'">'.$langs->trans("DisableUser").'</a></div>';
+				}
+				else
+				{
+				    if ($user->id == $id)
+				    {
+				        print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("CantDisableYourself").'">'.$langs->trans("DisableUser").'</a></div>';
+				    }
 				}
 				// Delete
 				if ($user->id <> $id && $candisableuser &&
@@ -2286,7 +2340,7 @@ else
 				print '</td></tr>';
 			}
 
-			// Skype
+			// Facebook
 			if (! empty($conf->socialnetworks->enabled))
 			{
 				print '<tr><td>'.$langs->trans("Facebook").'</td>';
@@ -2302,6 +2356,23 @@ else
 				}
 				print '</td></tr>';
 			}
+
+            // LinkedIn
+            if (! empty($conf->socialnetworks->enabled))
+            {
+                print '<tr><td>'.$langs->trans("LinkedIn").'</td>';
+                print '<td>';
+                if ($caneditfield  && empty($object->ldap_sid))
+                {
+                    print '<input size="40" type="text" name="linkedin" class="flat" value="'.$object->linkedin.'">';
+                }
+                else
+                {
+                    print '<input type="hidden" name="linkedin" value="'.$object->linkedin.'">';
+                    print $object->linkedin;
+                }
+                print '</td></tr>';
+            }
 
 			// EMail
 			print "<tr>".'<td'.(! empty($conf->global->USER_MAIL_REQUIRED)?' class="fieldrequired"':'').'>'.$langs->trans("EMail").'</td>';
@@ -2518,6 +2589,15 @@ else
 				print $object->job;
 			}
 			print '</td></tr>';
+
+			// Default warehouse
+            if (! empty($conf->stock->enabled))
+            {
+                print '<tr><td>'.$langs->trans("DefaultWarehouse").'</td><td>';
+                print $formproduct->selectWarehouses($object->fk_warehouse, 'fk_warehouse', 'warehouseopen', 1);
+                print ' <a href="'.DOL_URL_ROOT.'/product/stock/card.php?action=create&amp;backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$object->id.'&action=edit').'">'.$langs->trans("AddWarehouse").'</a>';
+                print '</td></tr>';
+            }
 
 			if ((! empty($conf->salaries->enabled) && ! empty($user->rights->salaries->read))
 				|| (! empty($conf->hrm->enabled) && ! empty($user->rights->hrm->employee->read)))

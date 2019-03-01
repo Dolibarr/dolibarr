@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (C) 2014-2018  Frederic France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2014-2019  Frédéric France      <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -95,7 +95,7 @@ class printing_printgcp extends PrintingDriver
         	$storage = new DoliStorage($this->db, $this->conf);
         	//$storage->clearToken($this->OAUTH_SERVICENAME_GOOGLE);
         	// Setup the credentials for the requests
-        $credentials = new Credentials(
+            $credentials = new Credentials(
             	$this->google_id,
             	$this->google_secret,
             	$urlwithroot.'/core/modules/oauth/google_oauthcallback.php'
@@ -234,6 +234,7 @@ class printing_printgcp extends PrintingDriver
      */
     public function getlistAvailablePrinters()
     {
+        $ret = array();
         // Token storage
         $storage = new DoliStorage($this->db, $this->conf);
         // Setup the credentials for the requests
@@ -335,8 +336,9 @@ class printing_printgcp extends PrintingDriver
                     return $error;
                 }
             }
+        } else {
+            dol_print_error($this->db);
         }
-        else dol_print_error($this->db);
 
         $ret = $this->sendPrintToPrinter($printer_id, $file, $fileprint, $mimetype);
         $this->error = 'PRINTGCP: '.$ret['errormessage'];
@@ -358,7 +360,7 @@ class printing_printgcp extends PrintingDriver
     public function sendPrintToPrinter($printerid, $printjobtitle, $filepath, $contenttype)
     {
         // Check if printer id
-        if(empty($printerid)) {
+        if (empty($printerid)) {
             return array('status' =>0, 'errorcode' =>'','errormessage'=>'No provided printer ID');
         }
         // Open the file which needs to be print

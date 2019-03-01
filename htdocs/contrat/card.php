@@ -1212,7 +1212,7 @@ if ($action == 'create')
 	{
 		print '<td>';
 		print $form->select_company('', 'socid', '', 'SelectThirdParty', 1, 0, null, 0, 'minwidth300');
-		print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'">'.$langs->trans("AddThirdParty").'</a>';
+		print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'">'.$langs->trans("AddThirdParty").' <span class="fa fa-plus-circle valignmiddle"></span></a>';
 		print '</td>';
 	}
 	print '</tr>'."\n";
@@ -1254,7 +1254,7 @@ if ($action == 'create')
 
 		print '<tr><td>'.$langs->trans("Project").'</td><td>';
 		$formproject->select_projects(($soc->id>0?$soc->id:-1), $projectid, "projectid", 0, 0, 1, 1);
-		print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/card.php?socid=' . $soc->id . '&action=create&status=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create&socid='.$soc->id).'">' . $langs->trans("AddProject") . '</a>';
+		print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/card.php?socid=' . $soc->id . '&action=create&status=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create&socid='.$soc->id).'">' . $langs->trans("AddProject") . ' <span class="fa fa-plus-circle valignmiddle"></span></a>';
 		print "</td></tr>";
 	}
 
@@ -1563,14 +1563,14 @@ else
 				print '<tr class="liste_titre'.($cursorline?' liste_titre_add':'').'">';
 				print '<td>'.$langs->trans("ServiceNb", $cursorline).'</td>';
 				print '<td width="80" align="center">'.$langs->trans("VAT").'</td>';
-				print '<td width="80" align="right">'.$langs->trans("PriceUHT").'</td>';
+				print '<td width="80" class="right">'.$langs->trans("PriceUHT").'</td>';
 				if (!empty($conf->multicurrency->enabled)) {
-					print '<td width="80" align="right">'.$langs->trans("PriceUHTCurrency").'</td>';
+					print '<td width="80" class="right">'.$langs->trans("PriceUHTCurrency").'</td>';
 				}
 				print '<td width="30" align="center">'.$langs->trans("Qty").'</td>';
-				if ($conf->global->PRODUCT_USE_UNITS) print '<td width="30" align="left">'.$langs->trans("Unit").'</td>';
-				print '<td width="50" align="right">'.$langs->trans("ReductionShort").'</td>';
-				if (! empty($conf->margin->enabled) && ! empty($conf->global->MARGIN_SHOW_ON_CONTRACT)) print '<td width="50" align="right">'.$langs->trans("BuyingPrice").'</td>';
+				if ($conf->global->PRODUCT_USE_UNITS) print '<td width="30" class="left">'.$langs->trans("Unit").'</td>';
+				print '<td width="50" class="right">'.$langs->trans("ReductionShort").'</td>';
+				if (! empty($conf->margin->enabled) && ! empty($conf->global->MARGIN_SHOW_ON_CONTRACT)) print '<td width="50" class="right">'.$langs->trans("BuyingPrice").'</td>';
 				print '<td width="30">&nbsp;</td>';
 				print "</tr>\n";
 
@@ -1618,10 +1618,10 @@ else
 					print vatrate($objp->tva_tx.($objp->vat_src_code?(' ('.$objp->vat_src_code.')'):''), '%', $objp->info_bits);
 					print '</td>';
 					// Price
-					print '<td align="right">'.($objp->subprice != '' ? price($objp->subprice) : '')."</td>\n";
+					print '<td class="right">'.($objp->subprice != '' ? price($objp->subprice) : '')."</td>\n";
 					// Price multicurrency
 					if (!empty($conf->multicurrency->enabled)) {
-						print '<td align="right" class="linecoluht_currency nowrap">'.price($objp->multicurrency_subprice).'</td>';
+						print '<td class="linecoluht_currency nowrap right">'.price($objp->multicurrency_subprice).'</td>';
 					}
 					// Quantite
 					print '<td align="center">'.$objp->qty.'</td>';
@@ -1630,7 +1630,7 @@ else
 					// Remise
 					if ($objp->remise_percent > 0)
 					{
-						print '<td align="right">'.$objp->remise_percent."%</td>\n";
+						print '<td class="right">'.$objp->remise_percent."%</td>\n";
 					}
 					else
 					{
@@ -1641,7 +1641,7 @@ else
 					if (! empty($conf->margin->enabled) && ! empty($conf->global->MARGIN_SHOW_ON_CONTRACT)) print '<td align="right" class="nowrap">'.price($objp->pa_ht).'</td>';
 
 					// Icon move, update et delete (statut contrat 0=brouillon,1=valide,2=ferme)
-					print '<td align="right" class="nowrap">';
+					print '<td class="nowrap right">';
 					if ($user->rights->contrat->creer && count($arrayothercontracts) && ($object->statut >= 0))
 					{
 						print '<!-- link to move service line into another contract -->';
@@ -1746,10 +1746,10 @@ else
 					$doleditor->Create();
 
 					print '</td>';
-					print '<td align="right">';
+					print '<td class="right">';
 					print $form->load_tva("eltva_tx", $objp->tva_tx.($objp->vat_src_code?(' ('.$objp->vat_src_code.')'):''), $mysoc, $object->thirdparty, $objp->fk_product, $objp->info_bits, $objp->product_type, 0, 1);
 					print '</td>';
-					print '<td align="right"><input size="5" type="text" name="elprice" value="'.price($objp->subprice).'"></td>';
+					print '<td class="right"><input size="5" type="text" name="elprice" value="'.price($objp->subprice).'"></td>';
 					print '<td align="center"><input size="2" type="text" name="elqty" value="'.$objp->qty.'"></td>';
 					if ($conf->global->PRODUCT_USE_UNITS)
 					{
@@ -1757,10 +1757,10 @@ else
 						print $form->selectUnits($objp->fk_unit, "unit");
 						print '</td>';
 					}
-					print '<td align="right" class="nowrap"><input size="1" type="text" name="elremise_percent" value="'.$objp->remise_percent.'">%</td>';
+					print '<td class="nowrap right"><input size="1" type="text" name="elremise_percent" value="'.$objp->remise_percent.'">%</td>';
 					if (! empty($usemargins))
 					{
-						print '<td align="right">';
+						print '<td class="right">';
 						if ($objp->fk_product) print '<select id="fournprice" name="fournprice"></select>';
 						print '<input id="buying_price" type="text" size="5" name="buying_price" value="'.price($objp->pa_ht, 0, '', 0).'"></td>';
 					}
@@ -1880,7 +1880,7 @@ else
 
 				print '<tr class="oddeven">';
 				print '<td>'.$langs->trans("ServiceStatus").': '.$object->lines[$cursorline-1]->getLibStatut(4).'</td>';
-				print '<td width="30" align="right">';
+				print '<td width="30" class="right">';
 				if ($user->societe_id == 0)
 				{
 					if ($object->statut > 0 && $action != 'activateline' && $action != 'unactivateline')

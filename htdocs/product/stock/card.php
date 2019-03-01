@@ -443,13 +443,21 @@ else
 			print "<tr class=\"liste_titre\">";
 			print_liste_field_titre("Product", "", "p.ref", "&amp;id=".$id, "", "", $sortfield, $sortorder);
 			print_liste_field_titre("Label", "", "p.label", "&amp;id=".$id, "", "", $sortfield, $sortorder);
-            print_liste_field_titre("Units", "", "ps.reel", "&amp;id=".$id, "", 'align="right"', $sortfield, $sortorder);
-            print_liste_field_titre("AverageUnitPricePMPShort", "", "p.pmp", "&amp;id=".$id, "", 'align="right"', $sortfield, $sortorder);
-			print_liste_field_titre("EstimatedStockValueShort", "", "", "&amp;id=".$id, "", 'align="right"', $sortfield, $sortorder);
-            if (empty($conf->global->PRODUIT_MULTIPRICES)) print_liste_field_titre("SellPriceMin", "", "p.price", "&amp;id=".$id, "", 'align="right"', $sortfield, $sortorder);
-            if (empty($conf->global->PRODUIT_MULTIPRICES)) print_liste_field_titre("EstimatedStockValueSellShort", "", "", "&amp;id=".$id, "", 'align="right"', $sortfield, $sortorder);
-			if ($user->rights->stock->mouvement->creer) print_liste_field_titre('');
-			if ($user->rights->stock->creer)            print_liste_field_titre('');
+            print_liste_field_titre("Units", "", "ps.reel", "&amp;id=".$id, "", '', $sortfield, $sortorder, 'right ');
+            print_liste_field_titre("AverageUnitPricePMPShort", "", "p.pmp", "&amp;id=".$id, "", '', $sortfield, $sortorder, 'right ');
+			print_liste_field_titre("EstimatedStockValueShort", "", "", "&amp;id=".$id, "", '', $sortfield, $sortorder, 'right ');
+            if (empty($conf->global->PRODUIT_MULTIPRICES)) {
+                print_liste_field_titre("SellPriceMin", "", "p.price", "&amp;id=".$id, "", '', $sortfield, $sortorder, 'right ');
+            }
+            if (empty($conf->global->PRODUIT_MULTIPRICES)) {
+                print_liste_field_titre("EstimatedStockValueSellShort", "", "", "&amp;id=".$id, "", '', $sortfield, $sortorder, 'right ');
+            }
+			if ($user->rights->stock->mouvement->creer) {
+                print_liste_field_titre('');
+            }
+			if ($user->rights->stock->creer) {
+                print_liste_field_titre('');
+            }
 			print "</tr>\n";
 
 			$totalunit=0;
@@ -506,28 +514,28 @@ else
 					// Label
 					print '<td>'.$objp->produit.'</td>';
 
-					print '<td align="right">';
+					print '<td class="right">';
 					$valtoshow=price2num($objp->value, 'MS');
 					print empty($valtoshow)?'0':$valtoshow;
 					print '</td>';
 					$totalunit+=$objp->value;
 
                     // Price buy PMP
-					print '<td align="right">'.price(price2num($objp->ppmp, 'MU')).'</td>';
+					print '<td class="right">'.price(price2num($objp->ppmp, 'MU')).'</td>';
 
                     // Total PMP
-					print '<td align="right">'.price(price2num($objp->ppmp*$objp->value, 'MT')).'</td>';
+					print '<td class="right">'.price(price2num($objp->ppmp*$objp->value, 'MT')).'</td>';
 					$totalvalue+=price2num($objp->ppmp*$objp->value, 'MT');
 
                     // Price sell min
                     if (empty($conf->global->PRODUIT_MULTIPRICES))
                     {
                         $pricemin=$objp->price;
-                        print '<td align="right">';
+                        print '<td class="right">';
                         print price(price2num($pricemin, 'MU'), 1);
                         print '</td>';
                         // Total sell min
-                        print '<td align="right">';
+                        print '<td class="right">';
                         print price(price2num($pricemin*$objp->value, 'MT'), 1);
                         print '</td>';
                     }
@@ -535,14 +543,14 @@ else
 
                     if ($user->rights->stock->mouvement->creer)
 					{
-						print '<td align="center"><a href="'.DOL_URL_ROOT.'/product/stock/product.php?dwid='.$object->id.'&id='.$objp->rowid.'&action=transfert&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$id).'">';
+						print '<td class="center"><a href="'.DOL_URL_ROOT.'/product/stock/product.php?dwid='.$object->id.'&id='.$objp->rowid.'&action=transfert&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$id).'">';
 						print img_picto($langs->trans("StockMovement"), 'uparrow.png', 'class="hideonsmartphone"').' '.$langs->trans("StockMovement");
 						print "</a></td>";
 					}
 
 					if ($user->rights->stock->creer)
 					{
-						print '<td align="center"><a href="'.DOL_URL_ROOT.'/product/stock/product.php?dwid='.$object->id.'&id='.$objp->rowid.'&action=correction&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$id).'">';
+						print '<td class="center"><a href="'.DOL_URL_ROOT.'/product/stock/product.php?dwid='.$object->id.'&id='.$objp->rowid.'&action=correction&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$id).'">';
 						print $langs->trans("StockCorrection");
 						print "</a></td>";
 					}
@@ -553,16 +561,16 @@ else
 				$db->free($resql);
 
 				print '<tr class="liste_total"><td class="liste_total" colspan="2">'.$langs->trans("Total").'</td>';
-				print '<td class="liste_total" align="right">';
+				print '<td class="liste_total right">';
 				$valtoshow=price2num($totalunit, 'MS');
 				print empty($valtoshow)?'0':$valtoshow;
 				print '</td>';
 				print '<td class="liste_total">&nbsp;</td>';
-                print '<td class="liste_total" align="right">'.price(price2num($totalvalue, 'MT')).'</td>';
+                print '<td class="liste_total right">'.price(price2num($totalvalue, 'MT')).'</td>';
                 if (empty($conf->global->PRODUIT_MULTIPRICES))
                 {
                     print '<td class="liste_total">&nbsp;</td>';
-                    print '<td class="liste_total" align="right">'.price(price2num($totalvaluesell, 'MT')).'</td>';
+                    print '<td class="liste_total right">'.price(price2num($totalvaluesell, 'MT')).'</td>';
                 }
                 print '<td class="liste_total">&nbsp;</td>';
 				print '<td class="liste_total">&nbsp;</td>';

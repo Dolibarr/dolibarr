@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2013      Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2014 Marcos García				<marcosgdf@gmail.com>
+/* Copyright (C) 2013       Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2014       Marcos García           <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -448,7 +448,7 @@ if (issetAndNoEmpty('reporterhoraires')) {
 if (issetAndNoEmpty('resethoraires')) {
 	$nbofchoice=count($_SESSION["totalchoixjour"]);
 	for ($i = 0; $i < $nbofchoice; $i++) {
-		unset ($_SESSION["horaires$i"]);
+		unset($_SESSION["horaires$i"]);
 	}
 }
 
@@ -484,7 +484,8 @@ for ($i = 0; $i < $nbrejourmois + $premierjourmois; $i++) {
 			//bouton vert
 			if (($numerojour >= $jourAJ && $_SESSION["mois"] == $moisAJ && $_SESSION["annee"] == $anneeAJ) || ($_SESSION["mois"] > $moisAJ && $_SESSION["annee"] == $anneeAJ) || $_SESSION["annee"] > $anneeAJ) {
 				print '<td align="center" class="libre"><input type="submit" class="bouton ON" name="choixjourajout[]" value="'.$numerojour.'"></td>'."\n";
-			} else { //bouton gris
+			} else {
+                //bouton gris
 				print '<td align="center" class="avant">'.$numerojour.'</td>'."\n";
 			}
 		}

@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2018 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2019 Alexandre Spangaro   <aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -96,7 +97,7 @@ dol_fiche_head($head, 'setup', '', 0, 'user');
 
 print '<br>';
 
-$arrayofsocialnetworks=array('jabber'=>'Jabber', 'skype'=>'Skype', 'twitter'=>'Twitter', 'facebook'=>'Facebook');
+$arrayofsocialnetworks=array('jabber'=>'Jabber', 'skype'=>'Skype', 'twitter'=>'Twitter', 'facebook'=>'Facebook', 'linkedin'=>'LinkedIn');
 
 foreach($arrayofsocialnetworks as $snkey => $snlabel) {
     $consttocheck = 'SOCIALNETWORKS_'.strtoupper($snkey);

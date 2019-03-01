@@ -122,7 +122,7 @@ if (empty($reshook) && is_array($extrafields->attributes[$object->table_element]
 			{
 			    $fieldid='id';
 			    if ($object->table_element == 'societe') $fieldid='socid';
-				print '<td align="right"><a class="reposition" href="' . $_SERVER['PHP_SELF'] . '?'.$fieldid.'=' . $object->id . '&action=edit_extras&attribute=' . $key . '">' . img_edit().'</a></td>';
+				print '<td class="right"><a class="reposition" href="' . $_SERVER['PHP_SELF'] . '?'.$fieldid.'=' . $object->id . '&action=edit_extras&attribute=' . $key . '">' . img_edit().'</a></td>';
 			}
 			print '</tr></table>';
 			print '</td>';

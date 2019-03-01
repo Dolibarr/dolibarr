@@ -65,8 +65,8 @@ if (! $mesg)
 }
 
 print '<table class="border" width="100%">';
-print '<tr><td align="center">Nombre d reception par mois</td>';
-print '<td align="center">';
+print '<tr><td class="center">Nombre d reception par mois</td>';
+print '<td class="center">';
 print $px->show();
 print '</td></tr>';
 print '</table>';

@@ -319,7 +319,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 
 		print '</table>';
 
-		print '<br><div align="center">';
+		print '<br><div class="center">';
 		print '<input type="submit" class="button" value="' . $langs->trans("Save") . '">';
 		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 		print '<input type="submit" class="button" name="cancel" value="' . $langs->trans("Cancel") . '">';
@@ -440,13 +440,13 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 			print '<tr class="liste_titre">';
 			print '<td>' . $langs->trans("Product") . '</td>';
 			print '<td>' . $langs->trans("AppliedPricesFrom") . '</td>';
-			print '<td align="center">' . $langs->trans("PriceBase") . '</td>';
-			print '<td align="right">' . $langs->trans("VAT") . '</td>';
-			print '<td align="right">' . $langs->trans("HT") . '</td>';
-			print '<td align="right">' . $langs->trans("TTC") . '</td>';
-			print '<td align="right">' . $langs->trans("MinPrice") . ' ' . $langs->trans("HT") . '</td>';
-			print '<td align="right">' . $langs->trans("MinPrice") . ' ' . $langs->trans("TTC") . '</td>';
-			print '<td align="right">' . $langs->trans("ChangedBy") . '</td>';
+			print '<td class="center">' . $langs->trans("PriceBase") . '</td>';
+			print '<td class="right">' . $langs->trans("VAT") . '</td>';
+			print '<td class="right">' . $langs->trans("HT") . '</td>';
+			print '<td class="right">' . $langs->trans("TTC") . '</td>';
+			print '<td class="right">' . $langs->trans("MinPrice") . ' ' . $langs->trans("HT") . '</td>';
+			print '<td class="right">' . $langs->trans("MinPrice") . ' ' . $langs->trans("TTC") . '</td>';
+			print '<td class="right">' . $langs->trans("ChangedBy") . '</td>';
 			print '<td>&nbsp;</td>';
 			print '</tr>';
 
@@ -459,17 +459,17 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 				print "<td>" . $staticprod->getNomUrl(1) . "</td>";
 				print "<td>" . dol_print_date($line->datec, "dayhour") . "</td>";
 
-				print '<td align="center">' . $langs->trans($line->price_base_type) . "</td>";
-				print '<td align="right">' . vatrate($line->tva_tx, true, $line->recuperableonly) . "</td>";
-				print '<td align="right">' . price($line->price) . "</td>";
-				print '<td align="right">' . price($line->price_ttc) . "</td>";
-				print '<td align="right">' . price($line->price_min) . '</td>';
-				print '<td align="right">' . price($line->price_min_ttc) . '</td>';
+				print '<td class="center">' . $langs->trans($line->price_base_type) . "</td>";
+				print '<td class="right">' . vatrate($line->tva_tx, true, $line->recuperableonly) . "</td>";
+				print '<td class="right">' . price($line->price) . "</td>";
+				print '<td class="right">' . price($line->price_ttc) . "</td>";
+				print '<td class="right">' . price($line->price_min) . '</td>';
+				print '<td class="right">' . price($line->price_min_ttc) . '</td>';
 
 				// User
 				$userstatic = new User($db);
 				$userstatic->fetch($line->fk_user);
-				print '<td align="right">';
+				print '<td class="right">';
 				print $userstatic->getLoginUrl(1);
 				print '</td>';
 			}
@@ -529,13 +529,13 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
         print '<tr class="liste_titre">';
         print '<td>' . $langs->trans("Product") . '</td>';
         print '<td>' . $langs->trans("AppliedPricesFrom") . '</td>';
-        print '<td align="center">' . $langs->trans("PriceBase") . '</td>';
-        print '<td align="right">' . $langs->trans("VAT") . '</td>';
-        print '<td align="right">' . $langs->trans("HT") . '</td>';
-        print '<td align="right">' . $langs->trans("TTC") . '</td>';
-        print '<td align="right">' . $langs->trans("MinPrice") . ' ' . $langs->trans("HT") . '</td>';
-        print '<td align="right">' . $langs->trans("MinPrice") . ' ' . $langs->trans("TTC") . '</td>';
-        print '<td align="right">' . $langs->trans("ChangedBy") . '</td>';
+        print '<td class="center">' . $langs->trans("PriceBase") . '</td>';
+        print '<td class="right">' . $langs->trans("VAT") . '</td>';
+        print '<td class="right">' . $langs->trans("HT") . '</td>';
+        print '<td class="right">' . $langs->trans("TTC") . '</td>';
+        print '<td class="right">' . $langs->trans("MinPrice") . ' ' . $langs->trans("HT") . '</td>';
+        print '<td class="right">' . $langs->trans("MinPrice") . ' ' . $langs->trans("TTC") . '</td>';
+        print '<td class="right">' . $langs->trans("ChangedBy") . '</td>';
         print '<td>&nbsp;</td>';
         print '</tr>';
 
@@ -545,7 +545,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 			print '<td class="liste_titre"><input type="text" class="flat" name="search_prod" value="' . $search_prod . '" size="20"></td>';
             print '<td class="liste_titre" colspan="8">&nbsp;</td>';
             // Print the search button
-            print '<td class="liste_titre" align="right">';
+            print '<td class="liste_titre right">';
             $searchpicto=$form->showFilterAndCheckAddButtons(0);
             print $searchpicto;
             print '</td>';
@@ -564,24 +564,24 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
                 print "<td>" . $staticprod->getNomUrl(1) . "</td>";
                 print "<td>" . dol_print_date($line->datec, "dayhour") . "</td>";
 
-                print '<td align="center">' . $langs->trans($line->price_base_type) . "</td>";
-                print '<td align="right">' . vatrate($line->tva_tx.($line->default_vat_code?' ('.$line->default_vat_code.')':''), true, $line->recuperableonly) . "</td>";
-                print '<td align="right">' . price($line->price) . "</td>";
-                print '<td align="right">' . price($line->price_ttc) . "</td>";
-                print '<td align="right">' . price($line->price_min) . '</td>';
-                print '<td align="right">' . price($line->price_min_ttc) . '</td>';
+                print '<td class="center">' . $langs->trans($line->price_base_type) . "</td>";
+                print '<td class="right">' . vatrate($line->tva_tx.($line->default_vat_code?' ('.$line->default_vat_code.')':''), true, $line->recuperableonly) . "</td>";
+                print '<td class="right">' . price($line->price) . "</td>";
+                print '<td class="right">' . price($line->price_ttc) . "</td>";
+                print '<td class="right">' . price($line->price_min) . '</td>';
+                print '<td class="right">' . price($line->price_min_ttc) . '</td>';
 
                 // User
                 $userstatic = new User($db);
                 $userstatic->fetch($line->fk_user);
-                print '<td align="right">';
+                print '<td class="right">';
                 print $userstatic->getLoginUrl(1);
                 print '</td>';
 
                 // Action
                 if ($user->rights->produit->creer || $user->rights->service->creer)
                 {
-                    print '<td align="right">';
+                    print '<td class="right">';
                     print '<a href="' . $_SERVER["PHP_SELF"] . '?action=showlog_customer_price&amp;socid=' . $object->id . '&amp;prodid=' . $line->fk_product . '">';
                     print img_info();
                     print '</a>';

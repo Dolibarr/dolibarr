@@ -1120,6 +1120,9 @@ class Facture extends CommonInvoice
 		$this->note_private         = $object->note_private;
 		$this->note_public          = $object->note_public;
 
+        $this->module_source		= $object->module_source;
+		$this->pos_source			= $object->pos_source;
+
 		$this->origin				= $object->element;
 		$this->origin_id			= $object->id;
 
@@ -1154,30 +1157,6 @@ class Facture extends CommonInvoice
 			else return -1;
 		}
 		else return -1;
-	}
-
-	/**
-	 * Return link to download file from a direct external access
-	 *
-	 * @param	int				$withpicto			Add download picto into link
-	 * @return	string			HTML link to file
-	 */
-	function getDirectExternalLink($withpicto = 0)
-	{
-		global $dolibarr_main_url_root;
-
-		// Define $urlwithroot
-		$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
-		$urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
-		//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
-
-		// TODO Read into ecmfile table to get entry and hash exists (PS: If not found, add it)
-		include_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
-		$ecmfile=new EcmFiles($this->db);
-		//$result = $ecmfile->get();
-
-		$hashp='todo';
-		return '<a href="'.$urlwithroot.'/document.php?modulepart=invoice&hashp='.$hashp.'" target="_download" rel="noindex, nofollow">'.$this->ref.'</a>';
 	}
 
 	/**
@@ -1324,6 +1303,7 @@ class Facture extends CommonInvoice
 		$sql.= ', p.code as mode_reglement_code, p.libelle as mode_reglement_libelle';
 		$sql.= ', c.code as cond_reglement_code, c.libelle as cond_reglement_libelle, c.libelle_facture as cond_reglement_libelle_doc';
         $sql.= ', f.fk_incoterms, f.location_incoterms';
+        $sql.= ', f.module_source, f.pos_source';
         $sql.= ", i.libelle as libelle_incoterms";
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'facture as f';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_payment_term as c ON f.fk_cond_reglement = c.rowid';
@@ -1357,7 +1337,7 @@ class Facture extends CommonInvoice
 				$this->date_pointoftax		= $this->db->jdate($obj->date_pointoftax);
 				$this->date_creation		= $this->db->jdate($obj->datec);
 				$this->date_validation		= $this->db->jdate($obj->datev);
-				$this->date_modification		= $this->db->jdate($obj->datem);
+				$this->date_modification	= $this->db->jdate($obj->datem);
 				$this->datem				= $this->db->jdate($obj->datem);
 				$this->remise_percent		= $obj->remise_percent;
 				$this->remise_absolue		= $obj->remise_absolue;
@@ -1396,9 +1376,12 @@ class Facture extends CommonInvoice
 				$this->extraparams			= (array) json_decode($obj->extraparams, true);
 
 				//Incoterms
-				$this->fk_incoterms = $obj->fk_incoterms;
-				$this->location_incoterms = $obj->location_incoterms;
-				$this->libelle_incoterms = $obj->libelle_incoterms;
+				$this->fk_incoterms         = $obj->fk_incoterms;
+				$this->location_incoterms   = $obj->location_incoterms;
+				$this->libelle_incoterms    = $obj->libelle_incoterms;
+
+  				$this->module_source        = $obj->module_source;
+				$this->pos_source           = $obj->pos_source;
 
 				// Multicurrency
 				$this->fk_multicurrency 		= $obj->fk_multicurrency;
@@ -2650,7 +2633,7 @@ class Facture extends CommonInvoice
 	 *    	@return    	int             				<0 if KO, Id of line if OK
 	 */
 	function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1 = 0, $txlocaltax2 = 0, $fk_product = 0, $remise_percent = 0, $date_start = '', $date_end = '', $ventil = 0, $info_bits = 0, $fk_remise_except = '', $price_base_type = 'HT', $pu_ttc = 0, $type = self::TYPE_STANDARD, $rang = -1, $special_code = 0, $origin = '', $origin_id = 0, $fk_parent_line = 0, $fk_fournprice = null, $pa_ht = 0, $label = '', $array_options = 0, $situation_percent = 100, $fk_prev_id = 0, $fk_unit = null, $pu_ht_devise = 0)
-	{
+    {
 		// Deprecation warning
 		if ($label) {
 			dol_syslog(__METHOD__ . ": using line label is deprecated", LOG_WARNING);
@@ -3346,10 +3329,10 @@ class Facture extends CommonInvoice
 
 			$mybool=false;
 
-			
+
 			$file = $conf->global->FACTURE_ADDON.".php";
 			$classname = $conf->global->FACTURE_ADDON;
-			
+
 
 			// Include file with class
 			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
@@ -3382,7 +3365,7 @@ class Facture extends CommonInvoice
                     }
 				}
 			}
-			
+
 			if (! $mybool)
 			{
 				dol_print_error('', "Failed to include file ".$file);

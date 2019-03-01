@@ -151,14 +151,14 @@ print "<table class=\"noborder\" width=\"100%\">";
 
 print "<tr class=\"liste_titre\">";
 print '<td>'.$langs->trans("Parameter")."</td>";
-print '<td align="center">'.$langs->trans("Value")."</td>";
+print '<td class="center">'.$langs->trans("Value")."</td>";
 print "</tr>";
 
 // Show external agenda
 
 print '<tr class="oddeven">';
 print "<td>".$langs->trans("ExtSitesEnableThisTool")."</td>";
-print '<td align="center">';
+print '<td class="center">';
 if ($conf->use_javascript_ajax)
 {
 	print ajax_constantonoff('AGENDA_DISABLE_EXT', array('enabled'=>array(0=>'.hideifnotset')), null, 1);
@@ -181,7 +181,7 @@ print "</tr>";
 
 print '<tr class="oddeven">';
 print "<td>".$langs->trans("ExtSitesNbOfAgenda")."</td>";
-print '<td align="center">';
+print '<td class="center">';
 print '<input class="flat hideifnotset" type="text" size="2" id="AGENDA_EXT_NB" name="AGENDA_EXT_NB" value="'.$conf->global->AGENDA_EXT_NB.'">';
 print "</td>";
 print "</tr>";

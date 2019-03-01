@@ -116,8 +116,8 @@ print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Description").'</td>';
 print '<td class="nowrap">'.$langs->trans("Example").'</td>';
-print '<td align="center" width="60">'.$langs->trans("Status").'</td>';
-print '<td align="center" width="16">'.$langs->trans("ShortInfo").'</td>';
+print '<td class="center" width="60">'.$langs->trans("Status").'</td>';
+print '<td class="center" width="16">'.$langs->trans("ShortInfo").'</td>';
 print '</tr>'."\n";
 
 clearstatcache();
@@ -177,7 +177,7 @@ foreach ($dirmodels as $reldir)
 							else print $tmp;
 							print '</td>'."\n";
 
-							print '<td align="center">';
+							print '<td class="center">';
 							if ($conf->global->CHEQUERECEIPTS_ADDON == $file || $conf->global->CHEQUERECEIPTS_ADDON.'.php' == $file)
 							{
 								print img_picto($langs->trans("Activated"), 'switch_on');
@@ -206,7 +206,7 @@ foreach ($dirmodels as $reldir)
 								}
 							}
 
-							print '<td align="center">';
+							print '<td class="center">';
 							print $form->textwithpicto('', $htmltooltip, 1, 0);
 
 							if ($conf->global->CHEQUERECEIPTS_ADDON.'.php' == $file)  // If module is the one used, we show existing errors
@@ -244,7 +244,7 @@ print '<input type="hidden" name="action" value="set_BANK_CHEQUERECEIPT_FREE_TEX
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameters").'</td>';
-print '<td align="center" width="60">&nbsp;</td>';
+print '<td class="center" width="60">&nbsp;</td>';
 print '<td width="80">&nbsp;</td>';
 print "</tr>\n";
 

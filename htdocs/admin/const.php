@@ -190,7 +190,7 @@ print '<td>'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Value").'</td>';
 print '<td>'.$langs->trans("Comment").'</td>';
 if (! empty($conf->multicompany->enabled) && !$user->entity) print '<td>'.$langs->trans("Entity").'</td>';
-print '<td align="center">'.$langs->trans("Action").'</td>';
+print '<td class="center">'.$langs->trans("Action").'</td>';
 print "</tr>\n";
 
 
@@ -210,11 +210,11 @@ if (! empty($conf->multicompany->enabled) && !$user->entity)
 	print '<td>';
 	print '<input type="text" class="flat" size="1" name="entity" value="'.$conf->entity.'">';
 	print '</td>';
-	print '<td align="center">';
+	print '<td class="center">';
 }
 else
 {
-	print '<td align="center">';
+	print '<td class="center">';
 	print '<input type="hidden" name="entity" value="'.$conf->entity.'">';
 }
 print '<input type="submit" class="button" value="'.$langs->trans("Add").'" name="add">';
@@ -273,11 +273,11 @@ if ($result)
 			print '<td>';
 			print '<input type="text" class="flat" size="1" name="const['.$i.'][entity]" value="'.$obj->entity.'">';
 			print '</td>';
-			print '<td align="center">';
+			print '<td class="center">';
 		}
 		else
 		{
-			print '<td align="center">';
+			print '<td class="center">';
 			print '<input type="hidden" name="const['.$i.'][entity]" value="'.$obj->entity.'">';
 		}
 

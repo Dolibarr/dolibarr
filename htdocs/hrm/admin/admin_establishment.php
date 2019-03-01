@@ -78,7 +78,7 @@ dol_fiche_head($head, 'establishments', $langs->trans("HRM"), -1, "user");
 
 $sql = "SELECT e.rowid, e.name, e.address, e.zip, e.town, e.status";
 $sql.= " FROM ".MAIN_DB_PREFIX."establishment as e";
-$sql.= " WHERE e.entity = ".$conf->entity;
+$sql.= " WHERE e.entity IN (".getEntity('establishment').')';
 $sql.= $db->order($sortfield, $sortorder);
 $sql.= $db->plimit($limit+1, $offset);
 

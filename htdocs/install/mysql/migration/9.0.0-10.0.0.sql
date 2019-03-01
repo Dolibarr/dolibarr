@@ -94,12 +94,10 @@ ALTER TABLE llx_don ADD COLUMN fk_soc integer NULL;
 
 ALTER TABLE llx_payment_various ADD COLUMN subledger_account varchar(32);
 
-
 ALTER TABLE llx_prelevement_facture_demande ADD COLUMN entity integer(11);
 ALTER TABLE llx_prelevement_facture_demande ADD COLUMN sourcetype varchar(32);
 ALTER TABLE llx_prelevement_facture_demande ADD COLUMN ext_payment_id varchar(128) NULL;
 ALTER TABLE llx_prelevement_facture_demande ADD COLUMN ext_payment_site varchar(128) NULL;
-
 
 -- Fix if table exists
 ALTER TABLE llx_c_units DROP INDEX uk_c_units_code;
@@ -118,7 +116,6 @@ CREATE TABLE llx_c_units(
 ) ENGINE=innodb;
 
 ALTER TABLE llx_c_units ADD UNIQUE uk_c_units_code(code);
-
 
 INSERT INTO llx_c_units (code, scale, label, short_label, unit_type, active) VALUES ('T',  '3','WeightUnitton','T', 'weight', 1);
 INSERT INTO llx_c_units (code, scale, label, short_label, unit_type, active) VALUES ('KG', '0','WeightUnitkg','Kg', 'weight', 1);
@@ -162,3 +159,73 @@ INSERT INTO llx_c_units (code, scale, label, short_label, unit_type, active) VAL
 
 -- Default Warehouse id for a user
 ALTER TABLE llx_user ADD COLUMN fk_warehouse INTEGER NULL;
+
+-- Save informations for online / API shopping and push to invoice
+ALTER TABLE llx_commande ADD COLUMN module_source varchar(32);
+ALTER TABLE llx_commande ADD COLUMN pos_source varchar(32);
+
+
+ALTER TABLE llx_societe ADD COLUMN linkedin  varchar(255) after whatsapp;
+ALTER TABLE llx_socpeople ADD COLUMN linkedin  varchar(255) after whatsapp;
+ALTER TABLE llx_adherent ADD COLUMN linkedin  varchar(255) after whatsapp;
+ALTER TABLE llx_user ADD COLUMN linkedin  varchar(255) after whatsapp;
+
+
+
+
+CREATE TABLE llx_bom_bom(
+	-- BEGIN MODULEBUILDER FIELDS
+	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL, 
+	ref varchar(128) NOT NULL, 
+	label varchar(255), 
+	description text, 
+	note_public text, 
+	note_private text, 
+	date_creation datetime NOT NULL, 
+	tms timestamp NOT NULL, 
+	fk_user_creat integer NOT NULL, 
+	fk_user_modif integer, 
+	import_key varchar(14), 
+	status integer NOT NULL, 
+	fk_product integer, 
+	qty double(24,8)
+	-- END MODULEBUILDER FIELDS
+) ENGINE=innodb;
+
+create table llx_bom_bom_extrafields
+(
+  rowid                     integer AUTO_INCREMENT PRIMARY KEY,
+  tms                       timestamp,
+  fk_object                 integer NOT NULL,
+  import_key                varchar(14)                          		-- import key
+) ENGINE=innodb;
+
+CREATE TABLE llx_bom_bomline(
+	-- BEGIN MODULEBUILDER FIELDS
+	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL, 
+	description text, 
+	import_key varchar(14), 
+	qty double(24,8), 
+	fk_product integer, 
+	fk_bom integer, 
+	rank integer NOT NULL
+	-- END MODULEBUILDER FIELDS
+) ENGINE=innodb;
+
+create table llx_bom_bomline_extrafields
+(
+  rowid                     integer AUTO_INCREMENT PRIMARY KEY,
+  tms                       timestamp,
+  fk_object                 integer NOT NULL,
+  import_key                varchar(14)                          		-- import key
+) ENGINE=innodb;
+
+ALTER TABLE llx_bom_bom ADD INDEX idx_bom_bom_rowid (rowid);
+ALTER TABLE llx_bom_bom ADD INDEX idx_bom_bom_ref (ref);
+ALTER TABLE llx_bom_bom ADD CONSTRAINT llx_bom_bom_fk_user_creat FOREIGN KEY (fk_user_creat) REFERENCES llx_user(rowid);
+ALTER TABLE llx_bom_bom ADD INDEX idx_bom_bom_status (status);
+ALTER TABLE llx_bom_bom ADD INDEX idx_bom_bom_fk_product (fk_product);
+
+ALTER TABLE llx_bom_bomline ADD INDEX idx_bom_bomline_rowid (rowid);
+ALTER TABLE llx_bom_bomline ADD INDEX idx_bom_bomline_fk_product (fk_product);
+ALTER TABLE llx_bom_bomline ADD INDEX idx_bom_bomline_fk_bom (fk_bom);

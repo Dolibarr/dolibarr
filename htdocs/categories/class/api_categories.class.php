@@ -220,7 +220,7 @@ class Categories extends DolibarrApi
 
         if ($this->category->update(DolibarrApiAccess::$user) > 0)
         {
-            return $this->get ($id);
+            return $this->get($id);
         }
         else
         {

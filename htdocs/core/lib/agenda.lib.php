@@ -239,7 +239,7 @@ function show_array_actions_to_do($max = 5)
 
 	    print '<table class="noborder" width="100%">';
 	    print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("LastActionsToDo", $max).'</th>';
-		print '<th colspan="2" align="right"><a class="commonlink" href="'.DOL_URL_ROOT.'/comm/action/list.php?status=todo">'.$langs->trans("FullList").'</a></th>';
+		print '<th colspan="2" class="right"><a class="commonlink" href="'.DOL_URL_ROOT.'/comm/action/list.php?status=todo">'.$langs->trans("FullList").'</a></th>';
 		print '</tr>';
 
 		$var = true;
@@ -276,7 +276,7 @@ function show_array_actions_to_do($max = 5)
             $datep2=$db->jdate($obj->dp2);
 
             // Date
-			print '<td width="100" align="right">'.dol_print_date($datep, 'day').'&nbsp;';
+			print '<td width="100" class="right">'.dol_print_date($datep, 'day').'&nbsp;';
 			$late=0;
 			if ($obj->percent == 0 && $datep && $datep < time()) $late=1;
 			if ($obj->percent == 0 && ! $datep && $datep2 && $datep2 < time()) $late=1;
@@ -286,7 +286,7 @@ function show_array_actions_to_do($max = 5)
 			print "</td>";
 
 			// Statut
-			print "<td align=\"right\" width=\"14\">".$staticaction->LibStatut($obj->percent, 3)."</td>\n";
+			print '<td class="right" width="14">'.$staticaction->LibStatut($obj->percent, 3)."</td>\n";
 
 			print "</tr>\n";
 
@@ -336,7 +336,7 @@ function show_array_last_actions_done($max = 5)
 
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("LastDoneTasks", $max).'</th>';
-		print '<th colspan="2" align="right"><a class="commonlink" href="'.DOL_URL_ROOT.'/comm/action/list.php?status=done">'.$langs->trans("FullList").'</a></th>';
+		print '<th colspan="2" class="right"><a class="commonlink" href="'.DOL_URL_ROOT.'/comm/action/list.php?status=done">'.$langs->trans("FullList").'</a></th>';
 		print '</tr>';
 		$var = true;
 		$i = 0;
@@ -369,11 +369,11 @@ function show_array_last_actions_done($max = 5)
 			print '</td>';
 
 			// Date
-			print '<td width="100" align="right">'.dol_print_date($db->jdate($obj->da2), 'day');
+			print '<td width="100" class="right">'.dol_print_date($db->jdate($obj->da2), 'day');
 			print "</td>";
 
 			// Statut
-			print "<td align=\"right\" width=\"14\">".$staticaction->LibStatut($obj->percent, 3)."</td>\n";
+			print "<td class=\"right\" width=\"14\">".$staticaction->LibStatut($obj->percent, 3)."</td>\n";
 
 			print "</tr>\n";
 			$i++;

@@ -953,7 +953,9 @@ class Cronjob extends CommonObject
 	function run_jobs($userlogin)
 	{
         // phpcs:enable
-		global $langs, $conf;
+		global $langs, $conf, $hookmanager;
+
+		$hookmanager->initHooks(array('cron'));
 
 		$now=dol_now();
 		$error = 0;

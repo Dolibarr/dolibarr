@@ -45,7 +45,7 @@ if ($action=="getTables"){
     $sql="SELECT * from ".MAIN_DB_PREFIX."takepos_floor_tables where floor=".$floor;
     $resql = $db->query($sql);
     $rows = array();
-    while($row = $db->fetch_array ($resql)){
+    while($row = $db->fetch_array($resql)){
         $rows[] = $row;
     }
     echo json_encode($rows);
@@ -62,15 +62,15 @@ if ($action=="update")
 
 if ($action=="updatename")
 {
-	$newname = preg_replace("/[^a-zA-Z0-9\s]/", "", $newname); // Only English chars
-	if (strlen($newname) > 3) $newname = substr($newname, 0, 3); // Only 3 chars
+    $newname = preg_replace("/[^a-zA-Z0-9\s]/", "", $newname); // Only English chars
+    if (strlen($newname) > 3) $newname = substr($newname, 0, 3); // Only 3 chars
     $db->query("update ".MAIN_DB_PREFIX."takepos_floor_tables set label='$newname' where label='$place'");
 }
 
 if ($action=="add")
 {
     $asdf=$db->query("insert into ".MAIN_DB_PREFIX."takepos_floor_tables values ('', '', '', '45', '45', $floor)");
-	$db->query("update ".MAIN_DB_PREFIX."takepos_floor_tables set label=rowid where label=''"); // No empty table names
+    $db->query("update ".MAIN_DB_PREFIX."takepos_floor_tables set label=rowid where label=''"); // No empty table names
 }
 
 // Title

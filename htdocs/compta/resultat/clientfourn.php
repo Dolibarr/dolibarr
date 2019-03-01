@@ -301,7 +301,7 @@ if ($modecompta == 'BOOKKEEPING')
 					// Get cpts of category/group
 					$cpts = $AccCat->getCptsCat(0, $tmppredefinedgroupwhere);
 
-					foreach($cpts as $i => $cpt)
+					foreach($cpts as $j => $cpt)
 					{
 						$return = $AccCat->getSumDebitCredit($cpt['account_number'], $date_start, $date_end, $cpt['dc']);
 						if ($return < 0) {

@@ -96,6 +96,7 @@ MenuTaxAccounts=Tax accounts
 MenuExpenseReportAccounts=Expense report accounts
 MenuLoanAccounts=Loan accounts
 MenuProductsAccounts=Product accounts
+MenuClosureAccounts=Closure accounts
 ProductsBinding=Products accounts
 Ventilation=Binding to accounts
 Binding=Binding to accounts
@@ -142,6 +143,7 @@ ACCOUNTING_LENGTH_AACCOUNT=Length of the third-party accounting accounts (If you
 ACCOUNTING_MANAGE_ZERO=Allow to manage different number of zeros at the end of an accounting account. Needed by some countries (like Switzerland). If set to off (default), you can set the following two parameters to ask the application to add virtual zeros.
 BANK_DISABLE_DIRECT_INPUT=Disable direct recording of transaction in bank account
 ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=Enable draft export on journal
+ACCOUNTANCY_COMBO_FOR_AUX=Enable combo list for subsidiary account (may be slow if you have a lot of third parties)
 
 ACCOUNTING_SELL_JOURNAL=Sell journal
 ACCOUNTING_PURCHASE_JOURNAL=Purchase journal
@@ -150,7 +152,12 @@ ACCOUNTING_EXPENSEREPORT_JOURNAL=Expense report journal
 ACCOUNTING_SOCIAL_JOURNAL=Social journal
 ACCOUNTING_HAS_NEW_JOURNAL=Has new Journal
 
-ACCOUNTING_ACCOUNT_TRANSFER_CASH=Accounting account of transfer
+ACCOUNTING_RESULT_PROFIT=Result accounting account (Profit)
+ACCOUNTING_RESULT_LOSS=Result accounting account (Loss)
+ACCOUNTING_CLOSURE_DEFAULT_JOURNAL=Journal of closure
+
+ACCOUNTING_ACCOUNT_TRANSFER_CASH=Accounting account of transitional bank transfer 
+
 ACCOUNTING_ACCOUNT_SUSPENSE=Accounting account of wait
 DONATION_ACCOUNTINGACCOUNT=Accounting account to register donations
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Accounting account to register subscriptions
@@ -207,6 +214,7 @@ DescThirdPartyReport=Consult here the list of third-party customers and vendors 
 ListAccounts=List of the accounting accounts
 UnknownAccountForThirdparty=Unknown third-party account. We will use %s
 UnknownAccountForThirdpartyBlocking=Unknown third-party account. Blocking error
+ThirdpartyAccountNotDefinedOrThirdPartyUnknown=Third-party account not defined or third party unknown. Blocking error.
 UnknownAccountForThirdpartyAndWaitingAccountNotDefinedBlocking=Unknown third-party account and waiting account not defined. Blocking error
 PaymentsNotLinkedToProduct=Payment not linked to any product / service
 
@@ -287,6 +295,7 @@ ChartofaccountsId=Chart of accounts Id
 InitAccountancy=Init accountancy
 InitAccountancyDesc=This page can be used to initialize an accounting account on products and services that does not have accounting account defined for sales and purchases.
 DefaultBindingDesc=This page can be used to set a default account to use to link transactions record about payment salaries, donation, taxes and vat when no specific accounting account were already set.
+DefaultClosureDesc=This page can be used to set parameters to use to enclose a balance sheet.
 Options=Options
 OptionModeProductSell=Mode sales
 OptionModeProductBuy=Mode purchases

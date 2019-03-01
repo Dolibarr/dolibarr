@@ -173,7 +173,7 @@ if (! defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck))
 }
 if (empty($dolibarr_main_db_host))
 {
-	print '<div align="center">Dolibarr setup is not yet complete.<br><br>'."\n";
+	print '<div class="center">Dolibarr setup is not yet complete.<br><br>'."\n";
 	print '<a href="install/index.php">Click here to finish Dolibarr install process</a> ...</div>'."\n";
 	die;
 }

@@ -93,8 +93,9 @@ function PrintCategories(first){
 	for (i = 0; i < 14; i++) {
 		if (typeof (categories[parseInt(i)+parseInt(first)]) == "undefined") break;
 		$("#catdesc"+i).text(categories[parseInt(i)+parseInt(first)]['label']);
-        $("#catimg"+i).attr("src","genimg/?query=cat&w=55&h=50&id="+categories[parseInt(i)+parseInt(first)]['rowid']);
+        $("#catimg"+i).attr("src","genimg/index.php?query=cat&id="+categories[parseInt(i)+parseInt(first)]['rowid']);
         $("#catdiv"+i).data("rowid",categories[parseInt(i)+parseInt(first)]['rowid']);
+		$("#catwatermark"+i).show();
 	}
 }
 
@@ -117,12 +118,14 @@ function MoreCategories(moreorless){
 	for (i = 0; i < 14; i++) {
 		if (typeof (categories[i+(14*pagecategories)]) == "undefined"){
 				$("#catdesc"+i).text("");
-				$("#catimg"+i).attr("src","");
+				$("#catimg"+i).attr("src","genimg/empty.png");
+				$("#catwatermark"+i).hide();
 				continue;
 			}
 		$("#catdesc"+i).text(categories[i+(14*pagecategories)]['label']);
-        $("#catimg"+i).attr("src","genimg/?query=cat&w=55&h=50&id="+categories[i+(14*pagecategories)]['rowid']);
+        $("#catimg"+i).attr("src","genimg/index.php?query=cat&id="+categories[i+(14*pagecategories)]['rowid']);
         $("#catdiv"+i).data("rowid",categories[i+(14*pagecategories)]['rowid']);
+		$("#catwatermark"+i).show();
 	}
 }
 
@@ -131,16 +134,17 @@ function LoadProducts(position, issubcat=false){
 	$('#catimg'+position).animate({opacity: '1'}, 100);
 	if (issubcat==true) currentcat=$('#prodiv'+position).data('rowid');
 	else currentcat=$('#catdiv'+position).data('rowid');
-    if (currentcat=="") return;
+    if (currentcat==undefined) return;
 	pageproducts=0;
 	ishow=0; //product to show counter
 
 	jQuery.each(subcategories, function(i, val) {
 		if (currentcat==val.fk_parent){
 			$("#prodesc"+ishow).text(val.label);
-			$("#proimg"+ishow).attr("src","genimg/?query=cat&w=55&h=50&id="+val.rowid);
+			$("#proimg"+ishow).attr("src","genimg/index.php?query=cat&id="+val.rowid);
 			$("#prodiv"+ishow).data("rowid",val.rowid);
 			$("#prodiv"+ishow).data("iscat",1);
+			$("#prowatermark"+ishow).show();
 			ishow++;
 		}
 	});
@@ -150,18 +154,19 @@ function LoadProducts(position, issubcat=false){
 		while (idata < 30 && ishow < 30) {
 			if (typeof (data[idata]) == "undefined") {
 				$("#prodesc"+ishow).text("");
-				$("#proimg"+ishow).attr("src","");
+				$("#proimg"+ishow).attr("src","genimg/empty.png");
 				$("#prodiv"+ishow).data("rowid","");
 				ishow++; //Next product to show after print data product
 			}
 			else if ((data[idata]['status']) == "1") {
 				//Only show products with status=1 (for sell)
 				$("#prodesc"+ishow).text(data[parseInt(idata)]['label']);
-				$("#proimg"+ishow).attr("src","genimg/?query=pro&w=55&h=50&id="+data[idata]['id']);
+				$("#proimg"+ishow).attr("src","genimg/index.php?query=pro&id="+data[idata]['id']);
 				$("#prodiv"+ishow).data("rowid",data[idata]['id']);
 				$("#prodiv"+ishow).data("iscat",0);
 				ishow++; //Next product to show after print data product
 			}
+			$("#prowatermark"+ishow).hide();
 			idata++; //Next data everytime
 		}
 	});
@@ -189,18 +194,19 @@ function MoreProducts(moreorless){
 		while (idata < (30*pageproducts)+30) {
 			if (typeof (data[idata]) == "undefined") {
 				$("#prodesc"+ishow).text("");
-				$("#proimg"+ishow).attr("src","");
+				$("#proimg"+ishow).attr("src","genimg/empty.png");
 				$("#prodiv"+ishow).data("rowid","");
 				ishow++; //Next product to show after print data product
 			}
 			else if ((data[idata]['status']) == "1") {
 				//Only show products with status=1 (for sell)
 				$("#prodesc"+ishow).text(data[parseInt(idata)]['label']);
-				$("#proimg"+ishow).attr("src","genimg/?query=pro&w=55&h=50&id="+data[idata]['id']);
+				$("#proimg"+ishow).attr("src","genimg/index.php?query=pro&id="+data[idata]['id']);
 				$("#prodiv"+ishow).data("rowid",data[idata]['id']);
 				$("#prodiv"+ishow).data("iscat",0);
 				ishow++; //Next product to show after print data product
 			}
+			$("#prowatermark"+ishow).hide();
 			idata++; //Next data everytime
 		}
 	});
@@ -261,12 +267,12 @@ function Search2(){
 		for (i = 0; i < 30; i++) {
 			if (typeof (data[i]) == "undefined"){
 				$("#prodesc"+i).text("");
-				$("#proimg"+i).attr("src","");
+				$("#proimg"+i).attr("src","genimg/empty.png");
                 $("#prodiv"+i).data("rowid","");
 				continue;
 			}
 			$("#prodesc"+i).text(data[parseInt(i)]['label']);
-			$("#proimg"+i).attr("src","genimg/?query=pro&w=55&h=50&id="+data[i]['rowid']);
+			$("#proimg"+i).attr("src","genimg/?query=pro&id="+data[i]['rowid']);
 			$("#prodiv"+i).data("rowid",data[i]['rowid']);
 			$("#prodiv"+i).data("iscat",0);
 		}
@@ -491,10 +497,11 @@ foreach($menus as $menu) {
 	{
 	?>
 			<div class='wrapper' <?php if ($count==14) echo 'onclick="MoreCategories(\'less\');"'; elseif ($count==15) echo 'onclick="MoreCategories(\'more\');"'; else echo 'onclick="LoadProducts('.$count.');"';?> id='catdiv<?php echo $count;?>'>
-				<img class='imgwrapper' <?php if ($count==14) echo 'src="img/arrow-prev-top.png"'; if ($count==15) echo 'src="img/arrow-next-top.png"';?> width="98%" id='catimg<?php echo $count;?>'/>
+				<img class='imgwrapper' <?php if ($count==14) echo 'src="img/arrow-prev-top.png"'; if ($count==15) echo 'src="img/arrow-next-top.png"';?> width="100%" height="85%" id='catimg<?php echo $count;?>'/>
 				<div class='description'>
 					<div class='description_content' id='catdesc<?php echo $count;?>'></div>
 				</div>
+				<div class="catwatermark" id='catwatermark<?php echo $count;?>'>+</div>
 			</div>
 	<?php
     $count++;
@@ -509,10 +516,11 @@ while ($count<32)
 {
 ?>
 			<div class='wrapper2' id='prodiv<?php echo $count;?>' <?php if ($count==30) {?> onclick="MoreProducts('less');" <?php } if ($count==31) {?> onclick="MoreProducts('more');" <?php } else echo 'onclick="ClickProduct('.$count.');"';?>>
-				<img class='imgwrapper' <?php if ($count==30) echo 'src="img/arrow-prev-top.png"'; if ($count==31) echo 'src="img/arrow-next-top.png"';?> width="95%" id='proimg<?php echo $count;?>'/>
+				<img class='imgwrapper' <?php if ($count==30) echo 'src="img/arrow-prev-top.png"'; if ($count==31) echo 'src="img/arrow-next-top.png"';?> width="100%" height="85%" id='proimg<?php echo $count;?>'/>
 				<div class='description'>
 					<div class='description_content' id='prodesc<?php echo $count;?>'></div>
 				</div>
+				<div class="catwatermark" id='prowatermark<?php echo $count;?>'>+</div>
 			</div>
 <?php
     $count++;

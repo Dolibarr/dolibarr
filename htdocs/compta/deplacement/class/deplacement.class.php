@@ -247,7 +247,7 @@ class Deplacement extends CommonObject
 	*/
 	function fetch($id, $ref = '')
 	{
-		$sql = "SELECT rowid, fk_user, type, fk_statut, km, fk_soc, dated, note_private, note_public, fk_projet, extraparams";
+		$sql = "SELECT rowid, fk_user, type, fk_statut, km, fk_soc, dated, note_private, note_public, fk_projet as fk_project, extraparams";
 		$sql.= " FROM ".MAIN_DB_PREFIX."deplacement";
 		$sql.= " WHERE entity IN (".getEntity('deplacement').")";
 		if ($ref) $sql.= " AND ref ='".$this->db->escape($ref)."'";
@@ -269,7 +269,7 @@ class Deplacement extends CommonObject
 			$this->statut	    = $obj->fk_statut;
 			$this->note_private	= $obj->note_private;
 			$this->note_public	= $obj->note_public;
-			$this->fk_project	= $obj->fk_projet;
+			$this->fk_project	= $obj->fk_project;
 
 			$this->extraparams	= (array) json_decode($obj->extraparams, true);
 

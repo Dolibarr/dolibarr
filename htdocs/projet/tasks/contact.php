@@ -263,7 +263,7 @@ if ($id > 0 || ! empty($ref))
 
             // Categories
             if($conf->categorie->enabled) {
-                print '<tr><td valign="middle">'.$langs->trans("Categories").'</td><td>';
+                print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td>';
                 print $form->showCategories($projectstatic->id, 'project', 1);
                 print "</td></tr>";
             }
@@ -380,7 +380,7 @@ if ($id > 0 || ! empty($ref))
 			print '<td>';
 			$formcompany->selectTypeContact($object, '', 'type', 'internal', 'rowid');
 			print '</td>';
-			print '<td align="right" colspan="3" ><input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
+			print '<td class="right" colspan="3" ><input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
 			print '</tr>';
 
 			print '</form>';
@@ -415,7 +415,7 @@ if ($id > 0 || ! empty($ref))
 				print '<td>';
 				$formcompany->selectTypeContact($object, '', 'type', 'external', 'rowid');
 				print '</td>';
-				print '<td align="right" colspan="3" ><input type="submit" class="button" id="add-customer-contact" value="'.$langs->trans("Add").'"';
+				print '<td class="right" colspan="3" ><input type="submit" class="button" id="add-customer-contact" value="'.$langs->trans("Add").'"';
 				if (! $nbofcontacts) print ' disabled';
 				print '></td>';
 				print '</tr>';
@@ -430,7 +430,7 @@ if ($id > 0 || ! empty($ref))
 		print '<td>'.$langs->trans("ThirdParty").'</td>';
 		print '<td>'.$langs->trans("TaskContact").'</td>';
 		print '<td>'.$langs->trans("ContactType").'</td>';
-		print '<td align="center">'.$langs->trans("Status").'</td>';
+		print '<td class="center">'.$langs->trans("Status").'</td>';
 		print '<td colspan="2">&nbsp;</td>';
 		print "</tr>\n";
 
@@ -493,7 +493,7 @@ if ($id > 0 || ! empty($ref))
 				print '<td>'.$tab[$i]['libelle'].'</td>';
 
 				// Statut
-				print '<td align="center">';
+				print '<td class="center">';
 				// Activation desativation du contact
 				if ($object->statut >= 0) print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=swapstatut&ligne='.$tab[$i]['rowid'].($withproject?'&withproject=1':'').'">';
 				print $contactstatic->LibStatut($tab[$i]['status'], 3);
@@ -501,7 +501,7 @@ if ($id > 0 || ! empty($ref))
 				print '</td>';
 
 				// Icon update et delete
-				print '<td align="center" class="nowrap">';
+				print '<td class="center nowrap">';
 				if ($user->rights->projet->creer)
 				{
 					print '&nbsp;';

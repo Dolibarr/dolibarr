@@ -186,7 +186,7 @@ class Ticket extends CommonObject
     	'origin_email' => array('type'=>'mail', 'label'=>'OriginEmail', 'visible'=>-2, 'enabled'=>1, 'position'=>16, 'notnull'=>1, 'index'=>1, 'searchall'=>1, 'comment'=>"Reference of object"),
     	'subject' => array('type'=>'varchar(255)', 'label'=>'Subject', 'visible'=>1, 'enabled'=>1, 'position'=>18, 'notnull'=>-1, 'searchall'=>1, 'help'=>""),
     	'type_code' => array('type'=>'varchar(32)', 'label'=>'Type', 'visible'=>1, 'enabled'=>1, 'position'=>20, 'notnull'=>-1, 'searchall'=>1, 'help'=>"", 'css'=>'maxwidth100'),
-    	'category_code' => array('type'=>'varchar(32)', 'label'=>'Category', 'visible'=>-1, 'enabled'=>1, 'position'=>21, 'notnull'=>-1, 'searchall'=>1, 'help'=>"", 'css'=>'maxwidth100'),
+    	'category_code' => array('type'=>'varchar(32)', 'label'=>'TicketGroup', 'visible'=>-1, 'enabled'=>1, 'position'=>21, 'notnull'=>-1, 'searchall'=>1, 'help'=>"", 'css'=>'maxwidth100'),
 	    'severity_code' => array('type'=>'varchar(32)', 'label'=>'Severity', 'visible'=>1, 'enabled'=>1, 'position'=>22, 'notnull'=>-1, 'searchall'=>1, 'help'=>"", 'css'=>'maxwidth100'),
     	'fk_soc' => array('type'=>'integer:Societe:societe/class/societe.class.php', 'label'=>'ThirdParty', 'visible'=>1, 'enabled'=>1, 'position'=>50, 'notnull'=>-1, 'index'=>1, 'searchall'=>1, 'help'=>"LinkToThirparty"),
 	    'notify_tiers_at_create' => array('type'=>'integer', 'label'=>'NotifyThirdparty', 'visible'=>-1, 'enabled'=>0, 'position'=>51, 'notnull'=>1, 'index'=>1),
