@@ -282,9 +282,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 		<?php print badgeHelper('your label for accessibility', 'your label <u>with</u> <em>html</em>', 'warning', 'dot') ?>
 		
 		<figure class="highlight"><pre>
-&lt;?php print badgeHelper('your label for accessibility', ' your label <u>with</u> <em>html</em>', 'primary') ?&gt;
-&lt;?php print badgeHelper('your label for accessibility', ' your label <u>with</u> <em>html</em>', 'danger', 'pill') ?&gt;
-&lt;?php print badgeHelper('your label for accessibility', ' your label <u>with</u> <em>html</em>', 'warning', 'dot') ?&gt;
+&lt;?php print badgeHelper('your label for accessibility', 'your label &lt;u&gt;with&lt;/u&gt; &lt;em&gt;html&lt;/em&gt;', 'danger', 'pill') ?&gt;
+&lt;?php print badgeHelper('your label for accessibility', 'your label &lt;u&gt;with&lt;/u&gt; &lt;em&gt;html&lt;/em&gt;', 'warning', 'dot') ?&gt;
 		</pre></figure>
 		
 		<h2 id="helper">Use status helper function</h2>
@@ -307,6 +306,21 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 		<p><?php print statusHelper('your label for accessibility', 'your label <u>with</u> <em>html</em>', 'status4',3) ?></p>
 
 		<?php $conf->global->MAIN_STATUS_USES_CSS = $saveGlobalConf; ?>
+		
+		
+				<figure class="highlight"><pre>
+&lt;?php print statusHelper('your label for accessibility', 'your label &lt;u&gt;with&lt;/u&gt; &lt;em&gt;html&lt;/em&gt;', 'status4') ?&gt;
+&lt;?php print statusHelper('your label for accessibility', 'your label &lt;u&gt;with&lt;/u&gt; &lt;em&gt;html&lt;/em&gt;', 'status4',1) ?&gt;
+&lt;?php print statusHelper('your label for accessibility', 'your label &lt;u&gt;with&lt;/u&gt; &lt;em&gt;html&lt;/em&gt;', 'status4',2) ?&gt;
+&lt;?php print statusHelper('your label for accessibility', 'your label &lt;u&gt;with&lt;/u&gt; &lt;em&gt;html&lt;/em&gt;', 'status4',3) ?&gt;
+		</pre></figure>
+		
+		
+		
+		
+		
+		
+		
         </main>
   
   </body>
