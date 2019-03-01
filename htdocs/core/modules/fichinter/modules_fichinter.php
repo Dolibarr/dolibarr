@@ -40,7 +40,7 @@ abstract class ModelePDFFicheinter extends CommonDocGenerator
 	public $error='';
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Return list of active generation modules
 	 *
@@ -48,7 +48,7 @@ abstract class ModelePDFFicheinter extends CommonDocGenerator
      *  @param  integer	$maxfilenamelength  Max length of value to show
      *  @return	array						List of templates
 	 */
-	static function liste_modeles($db, $maxfilenamelength = 0)
+	public static function liste_modeles($db, $maxfilenamelength = 0)
 	{
         // phpcs:enable
 		global $conf;
@@ -79,7 +79,7 @@ abstract class ModeleNumRefFicheinter
 	 *
 	 * 	@return		boolean     true if module can be used
 	 */
-	function isEnabled()
+	public function isEnabled()
 	{
 		return true;
 	}
@@ -89,7 +89,7 @@ abstract class ModeleNumRefFicheinter
 	 *
 	 * 	@return     string      Descriptive text
 	 */
-	function info()
+	public function info()
 	{
 		global $langs;
 		$langs->load("ficheinter");
@@ -101,7 +101,7 @@ abstract class ModeleNumRefFicheinter
 	 *
 	 * 	@return     string      Example
 	 */
-	function getExample()
+	public function getExample()
 	{
 		global $langs;
 		$langs->load("ficheinter");
@@ -114,7 +114,7 @@ abstract class ModeleNumRefFicheinter
 	 *
 	 * 	@return     boolean     false si conflit, true si ok
 	 */
-	function canBeActivated()
+	public function canBeActivated()
 	{
 		return true;
 	}
@@ -124,7 +124,7 @@ abstract class ModeleNumRefFicheinter
 	 *
 	 * 	@return     string      Value
 	 */
-	function getNextValue()
+	public function getNextValue()
 	{
 		global $langs;
 		return $langs->trans("NotAvailable");
@@ -135,21 +135,21 @@ abstract class ModeleNumRefFicheinter
 	 *
 	 * 	@return     string      Value
 	 */
-	function getVersion()
+	public function getVersion()
 	{
 		global $langs;
 		$langs->load("admin");
 
 		if ($this->version == 'development') return $langs->trans("VersionDevelopment");
-		if ($this->version == 'experimental') return $langs->trans("VersionExperimental");
-		if ($this->version == 'dolibarr') return DOL_VERSION;
-		if ($this->version) return $this->version;
-		return $langs->trans("NotAvailable");
+		elseif ($this->version == 'experimental') return $langs->trans("VersionExperimental");
+		elseif ($this->version == 'dolibarr') return DOL_VERSION;
+		elseif ($this->version) return $this->version;
+		else return $langs->trans("NotAvailable");
 	}
 }
 
 
-// phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 /**
  *  Create an intervention document on disk using template defined into FICHEINTER_ADDON_PDF
  *

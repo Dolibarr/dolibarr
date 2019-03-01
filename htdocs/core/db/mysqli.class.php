@@ -162,7 +162,7 @@ class DoliDBMysqli extends DoliDB
      *  @param     string	$type	Type of SQL order ('ddl' for insert, update, select, delete or 'dml' for create, alter...)
      *  @return    string   		SQL request line converted
      */
-    static function convertSQLFromMysql($line, $type = 'ddl')
+    public static function convertSQLFromMysql($line, $type = 'ddl')
     {
         return $line;
     }
@@ -194,14 +194,14 @@ class DoliDBMysqli extends DoliDB
 	 * @see close
 	 */
     public function connect($host, $login, $passwd, $name, $port = 0)
-	{
+    {
 		dol_syslog(get_class($this) . "::connect host=$host, port=$port, login=$login, passwd=--hidden--, name=$name", LOG_DEBUG);
 
 		// Can also be
 		// mysqli::init(); mysql::options(MYSQLI_INIT_COMMAND, 'SET AUTOCOMMIT = 0'); mysqli::options(MYSQLI_OPT_CONNECT_TIMEOUT, 5);
 		// return mysqli::real_connect($host, $user, $pass, $db, $port);
 		return new mysqli($host, $login, $passwd, $name, $port);
-	}
+    }
 
     /**
 	 *	Return version of database server
@@ -219,9 +219,9 @@ class DoliDBMysqli extends DoliDB
      *	@return	        string      Version string
      */
     public function getDriverInfo()
-	{
-		return $this->db->client_info;
-	}
+    {
+        return $this->db->client_info;
+    }
 
 
     /**

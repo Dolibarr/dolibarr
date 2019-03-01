@@ -1247,7 +1247,7 @@ class DoliDBSqlite3 extends DoliDB
             $pragmas = array(
                 'application_id', 'auto_vacuum', 'automatic_index', 'busy_timeout', 'cache_size',
                 'cache_spill', 'case_sensitive_like', 'checkpoint_fullsync', 'collation_list',
-				'compile_options', 'data_version',	/*'database_list',*/
+                'compile_options', 'data_version',	/*'database_list',*/
                 'defer_foreign_keys', 'encoding', 'foreign_key_check', 'freelist_count',
                 'full_column_names', 'fullsync', 'ingore_check_constraints', 'integrity_check',
                 'journal_mode', 'journal_size_limit', 'legacy_file_format', 'locking_mode',

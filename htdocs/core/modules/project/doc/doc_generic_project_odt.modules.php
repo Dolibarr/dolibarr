@@ -78,7 +78,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 	 *
 	 *  @param		DoliDB		$db      Database handler
 	 */
-	function __construct($db)
+	public function __construct($db)
 	{
 		global $conf, $langs, $mysoc;
 
@@ -117,7 +117,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Define array with couple substitution key => substitution value
 	 *
@@ -126,7 +126,7 @@ class doc_generic_project_odt extends ModelePDFProjects
      * @param   string		    $array_key	        Name of the key for return array
 	 * @return	array								Array of substitution
 	 */
-	function get_substitutionarray_object($object, $outputlangs, $array_key = 'object')
+	public function get_substitutionarray_object($object, $outputlangs, $array_key = 'object')
 	{
         // phpcs:enable
 		global $conf;
@@ -156,7 +156,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 		return $resarray;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Define array with couple substitution key => substitution value
 	 *
@@ -164,7 +164,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 	 *	@param  Translate		$outputlangs        Lang object to use for output
 	 *  @return	array								Return a substitution array
 	 */
-	function get_substitutionarray_tasks(Task $task, $outputlangs)
+	public function get_substitutionarray_tasks(Task $task, $outputlangs)
 	{
         // phpcs:enable
 		global $conf;
@@ -197,7 +197,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 		return $resarray;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Define array with couple substitution key => substitution value
 	 *
@@ -205,7 +205,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 	 *	@param  Translate		$outputlangs        Lang object to use for output
 	 *  @return	array								Return a substitution array
 	 */
-	function get_substitutionarray_project_contacts($contact, $outputlangs)
+	public function get_substitutionarray_project_contacts($contact, $outputlangs)
 	{
         // phpcs:enable
 		global $conf;
@@ -255,7 +255,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 		return $ret;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Define array with couple substitution key => substitution value
 	 *
@@ -263,19 +263,19 @@ class doc_generic_project_odt extends ModelePDFProjects
 	 *	@param  Translate		$outputlangs        Lang object to use for output
 	 *  @return	array								Return a substitution array
 	 */
-	function get_substitutionarray_project_file($file, $outputlangs)
-	{
+    public function get_substitutionarray_project_file($file, $outputlangs)
+    {
         // phpcs:enable
-		global $conf;
+        global $conf;
 
-		return array(
-		'projfile_name'=>$file['name'],
-		'projfile_date'=>dol_print_date($file['date'], 'day'),
-		'projfile_size'=>$file['size']
-		);
-	}
+        return array(
+            'projfile_name'=>$file['name'],
+            'projfile_date'=>dol_print_date($file['date'], 'day'),
+            'projfile_size'=>$file['size']
+        );
+    }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Define array with couple substitution key => substitution value
 	 *
@@ -283,23 +283,23 @@ class doc_generic_project_odt extends ModelePDFProjects
 	 *	@param  Translate		$outputlangs        Lang object to use for output
 	 *  @return	array								Return a substitution array
 	 */
-	function get_substitutionarray_project_reference($refdetail, $outputlangs)
-	{
+    public function get_substitutionarray_project_reference($refdetail, $outputlangs)
+    {
         // phpcs:enable
-		global $conf;
+        global $conf;
 
-		return array(
-		'projref_type'=>$refdetail['type'],
-		'projref_ref'=>$refdetail['ref'],
-		'projref_date'=>dol_print_date($refdetail['date'], 'day'),
-		'projref_socname'=>$refdetail['socname'],
-		'projref_amountht'=>price($refdetail['amountht'], 0, $outputlangs),
-		'projref_amountttc'=>price($refdetail['amountttc'], 0, $outputlangs),
-		'projref_status'=>$refdetail['status']
-		);
-	}
+        return array(
+            'projref_type'=>$refdetail['type'],
+            'projref_ref'=>$refdetail['ref'],
+            'projref_date'=>dol_print_date($refdetail['date'], 'day'),
+            'projref_socname'=>$refdetail['socname'],
+            'projref_amountht'=>price($refdetail['amountht'], 0, $outputlangs),
+            'projref_amountttc'=>price($refdetail['amountttc'], 0, $outputlangs),
+            'projref_status'=>$refdetail['status']
+        );
+    }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Define array with couple substitution key => substitution value
 	 *
@@ -307,7 +307,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 	 *	@param  Translate		$outputlangs        Lang object to use for output
 	 *  @return	array								Return a substitution array
 	 */
-	function get_substitutionarray_tasksressource($taskressource, $outputlangs)
+	public function get_substitutionarray_tasksressource($taskressource, $outputlangs)
 	{
         // phpcs:enable
 		global $conf;
@@ -323,7 +323,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 		);
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Define array with couple substitution key => substitution value
 	 *
@@ -331,7 +331,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 	 *	@param  Translate		$outputlangs        Lang object to use for output
 	 *  @return	array								Return a substitution array
 	 */
-	function get_substitutionarray_taskstime($tasktime, $outputlangs)
+	public function get_substitutionarray_taskstime($tasktime, $outputlangs)
 	{
         // phpcs:enable
 		global $conf;
@@ -352,7 +352,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 		);
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Define array with couple substitution key => substitution value
 	 *
@@ -360,7 +360,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 	 *	@param  Translate		$outputlangs        Lang object to use for output
 	 *  @return	array								Return a substitution array
 	 */
-	function get_substitutionarray_task_file($file, $outputlangs)
+	public function get_substitutionarray_task_file($file, $outputlangs)
 	{
         // phpcs:enable
 		global $conf;
@@ -379,7 +379,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 	 *	@param	Translate	$langs      Lang object to use for output
 	 *	@return string       			Description
 	 */
-	function info($langs)
+	public function info($langs)
 	{
 		global $conf,$langs;
 
@@ -462,7 +462,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 		return $texte;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Function to build a document on disk using the generic odt module.
 	 *
@@ -471,7 +471,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 	 * 	@param	string		$srctemplatepath	    Full path of source filename for generator using a template file
 	 *	@return	int         						1 if OK, <=0 if KO
 	 */
-	function write_file($object, $outputlangs, $srctemplatepath)
+	public function write_file($object, $outputlangs, $srctemplatepath)
 	{
         // phpcs:enable
 		global $user,$langs,$conf,$mysoc,$hookmanager;
@@ -588,7 +588,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 				// Open and load template
 				require_once ODTPHP_PATH.'odf.php';
 				try {
-    $odfHandler = new odf(
+                    $odfHandler = new odf(
 						$srctemplatepath,
 						array(
 						'PATH_TO_TMP'	  => $conf->projet->dir_temp,

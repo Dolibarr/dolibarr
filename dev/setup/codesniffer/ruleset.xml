@@ -201,7 +201,7 @@
     <rule ref="Squiz.Functions.FunctionDeclarationArgumentSpacing.SpacingAfterHint">
         <severity>0</severity>
     </rule>
-    <!--<rule ref="Squiz.Scope.MethodScope.Missing" />-->
+    <rule ref="Squiz.Scope.MethodScope.Missing" />
 
     <!-- Rules from PEAR Standard -->
 

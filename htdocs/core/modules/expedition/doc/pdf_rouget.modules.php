@@ -57,7 +57,7 @@ class pdf_rouget extends ModelePdfExpedition
     public $type;
 
 	/**
-     * @var array() Minimum version of PHP required by module.
+     * @var array Minimum version of PHP required by module.
 	 * e.g.: PHP ≥ 5.4 = array(5, 4)
      */
 	public $phpmin = array(5, 4);
@@ -115,7 +115,7 @@ class pdf_rouget extends ModelePdfExpedition
 	 *
 	 *	@param	DoliDB	$db		Database handler
 	 */
-	function __construct($db = 0)
+	public function __construct($db = 0)
 	{
 		global $conf,$langs,$mysoc;
 
@@ -156,23 +156,22 @@ class pdf_rouget extends ModelePdfExpedition
 
 		$this->posxpicture=$this->posxweightvol - (empty($conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH)?20:$conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH);	// width of images
 
-		if ($this->page_largeur < 210) // To work with US executive format
-		{
-		    $this->posxweightvol-=20;
-		    $this->posxpicture-=20;
-		    $this->posxqtyordered-=20;
-		    $this->posxqtytoship-=20;
-		}
+        // To work with US executive format
+        if ($this->page_largeur < 210) {
+            $this->posxweightvol-=20;
+            $this->posxpicture-=20;
+            $this->posxqtyordered-=20;
+            $this->posxqtytoship-=20;
+        }
 
-		if (! empty($conf->global->SHIPPING_PDF_HIDE_ORDERED))
-		{
+		if (! empty($conf->global->SHIPPING_PDF_HIDE_ORDERED)) {
 		    $this->posxweightvol += ($this->posxqtytoship - $this->posxqtyordered);
 		    $this->posxpicture += ($this->posxqtytoship - $this->posxqtyordered);
 		    $this->posxqtyordered = $this->posxqtytoship;
 		}
 	}
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Function to build pdf onto disk
 	 *
@@ -184,7 +183,7 @@ class pdf_rouget extends ModelePdfExpedition
      *  @param		int			$hideref			Do not show ref
      *  @return     int         	    			1=OK, 0=KO
 	 */
-	function write_file($object, $outputlangs, $srctemplatepath = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0)
+	public function write_file($object, $outputlangs, $srctemplatepath = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
 		// phpcs:enable
 		global $user,$conf,$langs,$hookmanager;
@@ -664,7 +663,7 @@ class pdf_rouget extends ModelePdfExpedition
 		}
 	}
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Show total to pay
 	 *
@@ -675,7 +674,7 @@ class pdf_rouget extends ModelePdfExpedition
 	 *	@param	Translate	$outputlangs	Objet langs
 	 *	@return int							Position pour suite
 	 */
-	function _tableau_tot(&$pdf, $object, $deja_regle, $posy, $outputlangs)
+	private function _tableau_tot(&$pdf, $object, $deja_regle, $posy, $outputlangs)
 	{
 		// phpcs:enable
 		global $conf,$mysoc;
@@ -783,7 +782,7 @@ class pdf_rouget extends ModelePdfExpedition
 	 *   @param		int			$hidebottom		Hide bottom bar of array
 	 *   @return	void
 	 */
-	function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop = 0, $hidebottom = 0)
+	private function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop = 0, $hidebottom = 0)
 	{
 		global $conf;
 

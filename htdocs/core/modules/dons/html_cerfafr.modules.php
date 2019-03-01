@@ -40,7 +40,7 @@ class html_cerfafr extends ModeleDon
 	 *
 	 *  @param      DoliDb      $db      Database handler
 	 */
-	function __construct($db)
+	public function __construct($db)
 	{
 		global $conf,$langs;
 
@@ -58,13 +58,13 @@ class html_cerfafr extends ModeleDon
 	 *
 	 *  @return	boolean     true if module can be used
 	 */
-	function isEnabled()
+	public function isEnabled()
 	{
 		return true;
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Write the object to document file to disk
 	 *
@@ -73,7 +73,7 @@ class html_cerfafr extends ModeleDon
 	 *  @param	string		$currency		Currency code
 	 *	@return	int             			>0 if OK, <0 if KO
 	 */
-	function write_file($don, $outputlangs, $currency = '')
+	public function write_file($don, $outputlangs, $currency = '')
 	{
         // phpcs:enable
 		global $user,$conf,$langs,$mysoc;
@@ -306,22 +306,22 @@ class html_cerfafr extends ModeleDon
 		$dix[3]=intval($valeur_entiere%100000000/10000000);
 		$cent[3]=intval($valeur_entiere%1000000000/100000000);
 		$chif=array('', 'un', 'deux', 'trois', 'quatre', 'cinq', 'six', 'sept', 'huit', 'neuf', 'dix', 'onze', 'douze', 'treize', 'quatorze', 'quinze', 'seize', 'dix sept', 'dix huit', 'dix neuf');
-			$secon_c='';
-			$trio_c='';
-		for($i=1; $i<=3; $i++){
+		$secon_c='';
+		$trio_c='';
+		for($i=1; $i<=3; $i++) {
 			$prim[$i]='';
 			$secon[$i]='';
 			$trio[$i]='';
-			if($dix[$i]==0){
+			if ($dix[$i]==0) {
 				$secon[$i]='';
 				$prim[$i]=$chif[$unite[$i]];
 			}
-			elseif($dix[$i]==1){
+			elseif ($dix[$i]==1) {
 				$secon[$i]='';
 				$prim[$i]=$chif[($unite[$i]+10)];
 			}
-			elseif($dix[$i]==2){
-				if($unite[$i]==1){
+			elseif ($dix[$i]==2) {
+				if ($unite[$i]==1) {
 				$secon[$i]='vingt et';
 				$prim[$i]=$chif[$unite[$i]];
 				}
@@ -330,8 +330,8 @@ class html_cerfafr extends ModeleDon
 				$prim[$i]=$chif[$unite[$i]];
 				}
 			}
-			elseif($dix[$i]==3){
-				if($unite[$i]==1){
+			elseif ($dix[$i]==3) {
+				if ($unite[$i]==1) {
 				$secon[$i]='trente et';
 				$prim[$i]=$chif[$unite[$i]];
 				}
@@ -340,8 +340,8 @@ class html_cerfafr extends ModeleDon
 				$prim[$i]=$chif[$unite[$i]];
 				}
 			}
-			elseif($dix[$i]==4){
-				if($unite[$i]==1){
+			elseif ($dix[$i]==4) {
+				if ($unite[$i]==1) {
 				$secon[$i]='quarante et';
 				$prim[$i]=$chif[$unite[$i]];
 				}
@@ -350,8 +350,8 @@ class html_cerfafr extends ModeleDon
 				$prim[$i]=$chif[$unite[$i]];
 				}
 			}
-			elseif($dix[$i]==5){
-				if($unite[$i]==1){
+			elseif ($dix[$i]==5) {
+				if ($unite[$i]==1) {
 				$secon[$i]='cinquante et';
 				$prim[$i]=$chif[$unite[$i]];
 				}
@@ -360,8 +360,8 @@ class html_cerfafr extends ModeleDon
 				$prim[$i]=$chif[$unite[$i]];
 				}
 			}
-			elseif($dix[$i]==6){
-				if($unite[$i]==1){
+			elseif ($dix[$i]==6) {
+				if ($unite[$i]==1) {
 				$secon[$i]='soixante et';
 				$prim[$i]=$chif[$unite[$i]];
 				}
@@ -370,8 +370,8 @@ class html_cerfafr extends ModeleDon
 				$prim[$i]=$chif[$unite[$i]];
 				}
 			}
-			elseif($dix[$i]==7){
-				if($unite[$i]==1){
+			elseif ($dix[$i]==7) {
+				if ($unite[$i]==1) {
 				$secon[$i]='soixante et';
 				$prim[$i]=$chif[$unite[$i]+10];
 				}
@@ -380,8 +380,8 @@ class html_cerfafr extends ModeleDon
 				$prim[$i]=$chif[$unite[$i]+10];
 				}
 			}
-			elseif($dix[$i]==8){
-				if($unite[$i]==1){
+			elseif ($dix[$i]==8) {
+				if ($unite[$i]==1) {
 				$secon[$i]='quatre-vingts et';
 				$prim[$i]=$chif[$unite[$i]];
 				}
@@ -390,8 +390,8 @@ class html_cerfafr extends ModeleDon
 				$prim[$i]=$chif[$unite[$i]];
 				}
 			}
-			elseif($dix[$i]==9){
-				if($unite[$i]==1){
+			elseif ($dix[$i]==9) {
+				if ($unite[$i]==1) {
 				$secon[$i]='quatre-vingts et';
 				$prim[$i]=$chif[$unite[$i]+10];
 				}
@@ -407,19 +407,19 @@ class html_cerfafr extends ModeleDon
 
 		$chif2=array('', 'dix', 'vingt', 'trente', 'quarante', 'cinquante', 'soixante', 'soixante-dix', 'quatre-vingts', 'quatre-vingts dix');
 		$secon_c=$chif2[$dix_c];
-		if($cent_c==1) $trio_c='cent';
-		elseif($cent_c!=0 || $cent_c!='') $trio_c=$chif[$cent_c] .' cents';
+		if ($cent_c==1) $trio_c='cent';
+		elseif ($cent_c!=0 || $cent_c!='') $trio_c=$chif[$cent_c] .' cents';
 
-		if(($cent[3]==0 || $cent[3]=='') && ($dix[3]==0 || $dix[3]=='') && ($unite[3]==1))
+		if (($cent[3]==0 || $cent[3]=='') && ($dix[3]==0 || $dix[3]=='') && ($unite[3]==1))
 			$somme = $trio[3]. '  ' .$secon[3]. ' ' . $prim[3]. ' million ';
-		elseif(($cent[3]!=0 && $cent[3]!='') || ($dix[3]!=0 && $dix[3]!='') || ($unite[3]!=0 && $unite[3]!=''))
+		elseif (($cent[3]!=0 && $cent[3]!='') || ($dix[3]!=0 && $dix[3]!='') || ($unite[3]!=0 && $unite[3]!=''))
 			$somme = $trio[3]. ' ' .$secon[3]. ' ' . $prim[3]. ' millions ';
 		else
 			$somme = $trio[3]. ' ' .$secon[3]. ' ' . $prim[3];
 
-		if(($cent[2]==0 || $cent[2]=='') && ($dix[2]==0 || $dix[2]=='') && ($unite[2]==1))
+		if (($cent[2]==0 || $cent[2]=='') && ($dix[2]==0 || $dix[2]=='') && ($unite[2]==1))
 			$somme = $somme.' mille ';
-		elseif(($cent[2]!=0 && $cent[2]!='') || ($dix[2]!=0 && $dix[2]!='') || ($unite[2]!=0 && $unite[2]!=''))
+		elseif (($cent[2]!=0 && $cent[2]!='') || ($dix[2]!=0 && $dix[2]!='') || ($unite[2]!=0 && $unite[2]!=''))
 			$somme = $somme. $trio[2]. ' ' .$secon[2]. ' ' . $prim[2]. ' milles ';
 		else
 			$somme = $somme. $trio[2]. ' ' .$secon[2]. ' ' . $prim[2];
@@ -428,7 +428,7 @@ class html_cerfafr extends ModeleDon
 
 		$somme = $somme. ' '. $dev1 .' ' ;
 
-		if(($cent_c=='0' || $cent_c=='') && ($dix_c=='0' || $dix_c==''))
+		if (($cent_c=='0' || $cent_c=='') && ($dix_c=='0' || $dix_c==''))
 			return $somme. ' et z&eacute;ro '. $dev2;
 		else
 			return $somme. $trio_c. ' ' .$secon_c. ' ' . $dev2;
