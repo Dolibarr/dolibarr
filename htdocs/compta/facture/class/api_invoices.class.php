@@ -1099,7 +1099,7 @@ class Invoices extends DolibarrApi
      * @throws 404
      * @throws 405
      */
-    function useCreditNote($id, $discountid)
+    public function useCreditNote($id, $discountid)
     {
 
         require_once DOL_DOCUMENT_ROOT . '/core/class/discount.class.php';
