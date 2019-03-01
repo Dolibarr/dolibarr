@@ -313,6 +313,57 @@ class FactureRec extends CommonInvoice
 
 
 	/**
+	 * 	Update a line to invoice_rec.
+	 *
+	 *  @param		User	$user					User
+	 *  @param		int		$notrigger				No trigger
+	 *	@return    	int             				<0 if KO, Id of line if OK
+	 */
+	function update(User $user, $notrigger = 0)
+	{
+	    global $conf;
+
+	    $sql = "UPDATE ".MAIN_DB_PREFIX."facture_rec SET";
+	    $sql.= " fk_soc = ".$this->fk_soc;
+        // TODO Add missing fields
+	    $sql.= " WHERE rowid = ".$this->id;
+
+	    dol_syslog(get_class($this)."::update", LOG_DEBUG);
+	    $resql=$this->db->query($sql);
+	    if ($resql)
+	    {
+	        if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+	        {
+	            $result=$this->insertExtraFields();
+	            if ($result < 0)
+	            {
+	                $error++;
+	            }
+	        }
+
+	        if (! $error && ! $notrigger)
+	        {
+	            // Call trigger
+	            $result=$this->call_trigger('BILLREC_UPDATE', $user);
+	            if ($result < 0)
+	            {
+	                $this->db->rollback();
+	                return -2;
+	            }
+	            // End call triggers
+	        }
+	        $this->db->commit();
+	        return 1;
+	    }
+	    else
+	    {
+	        $this->error=$this->db->lasterror();
+	        $this->db->rollback();
+	        return -2;
+	    }
+	}
+
+	/**
 	 *	Load object and lines
 	 *
 	 *	@param      int		$rowid       	Id of object to load
@@ -1878,7 +1929,7 @@ class FactureLigneRec extends CommonInvoiceLine
     		if (! $error && ! $notrigger)
     		{
     			// Call trigger
-    			$result=$this->call_trigger('LINEBILL_REC_UPDATE', $user);
+    			$result=$this->call_trigger('LINEBILLREC_UPDATE', $user);
     			if ($result < 0)
     			{
     				$this->db->rollback();
