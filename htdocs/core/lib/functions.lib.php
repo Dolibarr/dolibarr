@@ -7920,3 +7920,130 @@ function roundUpToNextMultiple($n, $x = 5)
 {
 	return (ceil($n)%$x === 0) ? ceil($n) : round(($n+$x/2)/$x)*$x;
 }
+
+/**
+ * @param string $label     label of badge no html : use in alt attribute for accessibility
+ * @param string $html      optional : label of badge with html
+ * @param string $type     type of badge : Primary Secondary Success Danger Warning Info Light Dark status0 status1 status2 status3 status4 status5 status6 status7 status8 status9
+ * @param string $mode 
+ * @param array $params
+ * @return string
+ */
+function badgeHelper($label, $html='', $type='primary', $mode='', $url='', $params=array())
+{
+    
+    if(empty($html)){
+        $html = $label;
+    }
+    
+    $attr=array(
+        'class'=>'badge'.(!empty($mode)?' badge-'.$mode:'').(!empty($type)?' badge-'.$type:'')
+        ,'aria-label'=>$label
+    );
+    
+    if(!empty($url)){
+        $attr['href'] = $url;
+    }
+    
+    if($mode==='dot')
+    {
+        $attr['class'].= ' classfortooltip';
+        $attr['title'] = $html;
+        $html='';
+    }
+    
+    // Override attr
+    if(!empty($params['attr']) && is_array($params['attr'])){
+        foreach($params['attr']as $key => $value){
+            $attr[$key] = $value;
+        }
+    }
+
+    
+    // escape all attribute
+    $attr = array_map('dol_escape_htmltag', $attr);
+    
+    $TCompiledAttr = array();
+    foreach($attr as $key => $value){
+        $TCompiledAttr[] = $key.'="'.$value.'"';
+    }
+    
+    $compiledAttributes = !empty($TCompiledAttr)?implode(' ',$TCompiledAttr):'';
+    
+    $tag = !empty($url)?'a':'span';
+    
+
+    return '<'.$tag.' '.$compiledAttributes.'>'.$html.'</'.$tag.'>';
+}
+
+
+/**
+ * @param string $statusLabel       label of badge no html : use in alt attribute for accessibility
+ * @param string $html              optional : label of badge with html
+ * @param string $statusType        status0 status1 status2 status3 status4 status5 status6 status7 status8 status9 : image name or badge name
+ * @param  int	$displayMode         for retrocompatibility  0=label only, 1=label + Picto, 2=Picto, 3=Picto + label
+ * @param string $url               
+ * @param array $params
+ * @return string
+ */
+function statusHelper($statusLabel='', $html='', $statusType='status0', $displayMode=0, $url='', $params=array())
+{
+    global $conf; 
+
+    // image's filename are still in French
+    $statusImg=array(
+        'status0' => 'statut0'
+        ,'status1' => 'statut1'
+        ,'status2' => 'statut2'
+        ,'status3' => 'statut3'
+        ,'status4' => 'statut4'
+        ,'status5' => 'statut5'
+        ,'status6' => 'statut6'
+        ,'status7' => 'statut7'
+        ,'status8' => 'statut8'
+        ,'status9' => 'statut9'
+    );
+    
+    if($displayMode==0){
+        $return = !empty($html)?$html:$statusLabel;
+    }
+    // use status with images
+    elseif(empty($conf->global->MAIN_STATUS_USES_CSS)){
+        $return = '';
+        $htmlLabel = '<span class="hideonsmartphone">'.(!empty($html)?$html:$statusLabel).'</span>';
+        
+        if(!empty($statusImg[$statusType])){
+            $htmlImg = img_picto($statusLabel, $statusImg[$statusType]);
+        }else{
+            $htmlImg = img_picto($statusLabel, $statusType);
+        }
+        
+        
+        
+        if($displayMode===1){
+            $return = $htmlLabel .' '. $htmlImg;
+        }
+        elseif($displayMode===2){
+            $return = $htmlImg;
+        }
+        elseif($displayMode===3){
+            $return =  $htmlImg .' '. $htmlLabel;
+        }
+        else{
+            $return = !empty($html)?$html:$statusLabel;
+        }
+        
+        
+    }
+    
+    // Use new badge
+    if(!empty($conf->global->MAIN_STATUS_USES_CSS) && !empty($displayMode)){
+        
+        $mode = 'pill';
+        if($displayMode == 2)$mode = 'dot';
+            
+        $return = badgeHelper($statusLabel, $html,$statusType,$mode);
+    }
+    
+    return $return;
+}

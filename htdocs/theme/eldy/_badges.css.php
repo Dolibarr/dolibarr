@@ -7,7 +7,7 @@ if (! defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
 
 .badge {
     display: inline-block;
-    padding: .2em .35em;
+    padding: .1em .35em;
     font-size: 80%;
     font-weight: 700 !important;
     line-height: 1;
@@ -16,9 +16,10 @@ if (! defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
     vertical-align: baseline;
     border-radius: .25rem;
     transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out;
-    border-width: 3px;
+    border-width: 2px;
     border-style: solid;
     border-color: rgba(255,255,255,0);
+    box-sizing: border-box;
 }
 
 .badge-pill {
@@ -30,7 +31,8 @@ if (! defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
 .badge-dot {
     padding: 0;
     border-radius: 50%;
-    padding: 0.8em;
+    padding: 0.6em;
+    vertical-align: middle;
 }
 
 a.badge:focus, a.badge:hover {
@@ -161,7 +163,7 @@ a.badge-dark:focus, a.badge-dark:hover {
 
 <?php for ($i = 0; $i <= 9; $i++) { 
 
-    print "\n/* STATUS-".$i." */\n";
+    print "\n/* STATUS".$i." */\n";
     
     $thisBadgeBackgroundColor = $thisBadgeBorderColor = ${'badgeStatus'.$i};
 
@@ -173,7 +175,7 @@ a.badge-dark:focus, a.badge-dark:hover {
         $thisBadgeBackgroundColor = "#fff";
     }
     
-    print ".badge-status-".$i." {\n";
+    print ".badge-status".$i." {\n";
     print "        color: ".$thisBadgeTextColor." !important;\n";
     
     if(in_array($i, $TBadgeBorderOnly)){
@@ -183,12 +185,12 @@ a.badge-dark:focus, a.badge-dark:hover {
     print "        background-color: ".$thisBadgeBackgroundColor.";\n";
     print "}\n";
     
-    print ".badge-status-".$i.".focus, .badge-status-".$i.":focus {\n";
+    print ".badge-status".$i.".focus, .badge-status".$i.":focus {\n";
     print "    outline: 0;\n";
     print "    box-shadow: 0 0 0 0.2rem ".colorHexToRgb($thisBadgeBackgroundColor, 0.5).";\n";
     print "}\n";
     
-    print ".badge-status-".$i.":focus, .badge-status-".$i.":hover {\n";
+    print ".badge-status".$i.":focus, .badge-status".$i.":hover {\n";
     print "    color: ".$thisBadgeTextColor." !important;\n";
     print "    background-color: ".colorDarker($thisBadgeBackgroundColor, 10).";\n";
     if(in_array($i, $TBadgeBorderOnly)){
