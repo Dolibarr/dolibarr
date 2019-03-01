@@ -63,21 +63,21 @@ class SupplierOrders extends DolibarrApi
      */
     public function get($id)
     {
-		if(! DolibarrApiAccess::$user->rights->fournisseur->commande->lire) {
-			throw new RestException(401);
-		}
+        if(! DolibarrApiAccess::$user->rights->fournisseur->commande->lire) {
+            throw new RestException(401);
+        }
 
         $result = $this->order->fetch($id);
         if ( ! $result ) {
             throw new RestException(404, 'Supplier order not found');
         }
 
-		if ( ! DolibarrApi::_checkAccessToResource('fournisseur', $this->order->id, '', 'commande')) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
-		}
+        if ( ! DolibarrApi::_checkAccessToResource('fournisseur', $this->order->id, '', 'commande')) {
+            throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+        }
 
-		$this->order->fetchObjectLinked();
-		return $this->_cleanObjectDatas($this->order);
+        $this->order->fetchObjectLinked();
+        return $this->_cleanObjectDatas($this->order);
     }
 
     /**
@@ -94,7 +94,7 @@ class SupplierOrders extends DolibarrApi
      * @param string    $sqlfilters       Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.datec:<:'20160101')"
      * @return array                      Array of order objects
      *
-	 * @throws RestException
+     * @throws RestException
      */
     public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $status = '', $sqlfilters = '')
     {
@@ -120,7 +120,7 @@ class SupplierOrders extends DolibarrApi
         if ($socids) $sql.= " AND t.fk_soc IN (".$socids.")";
         if ($search_sale > 0) $sql.= " AND t.rowid = sc.fk_soc";		// Join for the needed table to filter by sale
 
-		// Filter by status
+        // Filter by status
         if ($status == 'draft')     $sql.= " AND t.fk_statut IN (0)";
         if ($status == 'validated') $sql.= " AND t.fk_statut IN (1)";
         if ($status == 'approved')  $sql.= " AND t.fk_statut IN (2)";
@@ -141,7 +141,7 @@ class SupplierOrders extends DolibarrApi
             {
                 throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
             }
-	        $regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+            $regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
             $sql.=" AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
         }
 
@@ -178,7 +178,7 @@ class SupplierOrders extends DolibarrApi
         if( ! count($obj_ret)) {
             throw new RestException(404, 'No supplier order found');
         }
-		return $obj_ret;
+        return $obj_ret;
     }
 
     /**
@@ -234,9 +234,9 @@ class SupplierOrders extends DolibarrApi
             throw new RestException(404, 'Supplier order not found');
         }
 
-		if( ! DolibarrApi::_checkAccessToResource('fournisseur', $this->order->id, '', 'commande')) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
-		}
+        if( ! DolibarrApi::_checkAccessToResource('fournisseur', $this->order->id, '', 'commande')) {
+            throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+        }
 
         foreach($request_data as $field => $value) {
             if ($field == 'id') continue;
@@ -265,9 +265,9 @@ class SupplierOrders extends DolibarrApi
             throw new RestException(404, 'Supplier order not found');
         }
 
-		if ( ! DolibarrApi::_checkAccessToResource('fournisseur', $this->order->id, '', 'commande')) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
-		}
+        if ( ! DolibarrApi::_checkAccessToResource('fournisseur', $this->order->id, '', 'commande')) {
+            throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+        }
 
         if ( $this->order->delete(DolibarrApiAccess::$user) < 0) {
             throw new RestException(500);
@@ -302,32 +302,32 @@ class SupplierOrders extends DolibarrApi
      */
     public function validate($id, $idwarehouse = 0, $notrigger = 0)
     {
-    	if(! DolibarrApiAccess::$user->rights->fournisseur->commande->creer) {
-    		throw new RestException(401);
-    	}
-    	$result = $this->order->fetch($id);
-    	if( ! $result ) {
-    		throw new RestException(404, 'Order not found');
-    	}
+        if(! DolibarrApiAccess::$user->rights->fournisseur->commande->creer) {
+            throw new RestException(401);
+        }
+        $result = $this->order->fetch($id);
+        if( ! $result ) {
+            throw new RestException(404, 'Order not found');
+        }
 
-    	if( ! DolibarrApi::_checkAccessToResource('fournisseur', $this->order->id, '', 'commande')) {
-    		throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
-    	}
+        if( ! DolibarrApi::_checkAccessToResource('fournisseur', $this->order->id, '', 'commande')) {
+            throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+        }
 
-    	$result = $this->order->valid(DolibarrApiAccess::$user, $idwarehouse, $notrigger);
-    	if ($result == 0) {
-    		throw new RestException(304, 'Error nothing done. May be object is already validated');
-    	}
-    	if ($result < 0) {
-    		throw new RestException(500, 'Error when validating Order: '.$this->order->error);
-    	}
+        $result = $this->order->valid(DolibarrApiAccess::$user, $idwarehouse, $notrigger);
+        if ($result == 0) {
+            throw new RestException(304, 'Error nothing done. May be object is already validated');
+        }
+        if ($result < 0) {
+            throw new RestException(500, 'Error when validating Order: '.$this->order->error);
+        }
 
-    	return array(
-	    	'success' => array(
-		    	'code' => 200,
-		    	'message' => 'Order validated (Ref='.$this->order->ref.')'
-	    	)
-    	);
+        return array(
+            'success' => array(
+                'code' => 200,
+                'message' => 'Order validated (Ref='.$this->order->ref.')'
+            )
+        );
     }
 
     /**

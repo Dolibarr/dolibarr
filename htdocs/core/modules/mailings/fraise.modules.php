@@ -33,14 +33,14 @@ include_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
  */
 class mailing_fraise extends MailingTargets
 {
-    var $name='FundationMembers';                    // Identifiant du module mailing
+    public $name='FundationMembers';                    // Identifiant du module mailing
 	// This label is used if no translation is found for key XXX neither MailingModuleDescXXX where XXX=name is found
-    var $desc='Foundation members with emails';
+    public $desc='Foundation members with emails';
     // Set to 1 if selector is available for admin users only
-    var $require_admin=0;
+    public $require_admin=0;
 
-    var $require_module=array('adherent');
-    var $picto='user';
+    public $require_module=array('adherent');
+    public $picto='user';
 
     /**
      * @var DoliDB Database handler.
@@ -52,7 +52,7 @@ class mailing_fraise extends MailingTargets
      *
      *  @param        DoliDB        $db      Database handler
      */
-    function __construct($db)
+    public function __construct($db)
     {
         $this->db = $db;
     }
@@ -66,7 +66,7 @@ class mailing_fraise extends MailingTargets
      *
      *    @return        string[]        Array with SQL requests
      */
-    function getSqlArrayForStats()
+    public function getSqlArrayForStats()
     {
         global $langs;
 
@@ -90,7 +90,7 @@ class mailing_fraise extends MailingTargets
      *  @param    string    $sql        Requete sql de comptage
      *    @return        int            Nb of recipients
      */
-    function getNbOfRecipients($sql = '')
+    public function getNbOfRecipients($sql = '')
     {
         $sql  = "SELECT count(distinct(a.email)) as nb";
         $sql .= " FROM ".MAIN_DB_PREFIX."adherent as a";
@@ -107,7 +107,7 @@ class mailing_fraise extends MailingTargets
      *
      *   @return     string      Retourne zone select
      */
-    function formFilter()
+    public function formFilter()
     {
         global $conf, $langs;
 
@@ -214,20 +214,20 @@ class mailing_fraise extends MailingTargets
      *  @param    int        $id        ID
      *  @return     string      Url lien
      */
-    function url($id)
+    public function url($id)
     {
         return '<a href="'.DOL_URL_ROOT.'/adherents/card.php?rowid='.$id.'">'.img_object('', "user").'</a>';
     }
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *  Ajoute destinataires dans table des cibles
      *
      *  @param    int        $mailing_id        Id of emailing
      *  @return int                       < 0 si erreur, nb ajout si ok
      */
-    function add_to_target($mailing_id)
+    public function add_to_target($mailing_id)
     {
         // phpcs:enable
     	global $langs,$_POST;

@@ -115,7 +115,8 @@ class modMyModule extends DolibarrModules
                 ),
                 'entity' => '0',
             ),
-            'moduleforexternal' => 0							// Set this to 1 if feature of module are opened to external users
+            // Set this to 1 if feature of module are opened to external users
+            'moduleforexternal' => 0,
         );
 
         // Data directories to create when module is enabled.
@@ -126,8 +127,10 @@ class modMyModule extends DolibarrModules
         $this->config_page_url = array("setup.php@mymodule");
 
         // Dependencies
-        $this->hidden = false;			// A condition to hide module
-        $this->depends = array();		// List of module class names as string that must be enabled if this module is enabled. Example: array('always1'=>'modModuleToEnable1','always2'=>'modModuleToEnable2', 'FR1'=>'modModuleToEnableFR'...)
+        // A condition to hide module
+        $this->hidden = false;
+        // List of module class names as string that must be enabled if this module is enabled. Example: array('always1'=>'modModuleToEnable1','always2'=>'modModuleToEnable2', 'FR1'=>'modModuleToEnableFR'...)
+        $this->depends = array();
         $this->requiredby = array();	// List of module class names as string to disable if this one is disabled. Example: array('modModuleToDisable1', ...)
         $this->conflictwith = array();	// List of module class names as string this module is in conflict with. Example: array('modModuleToDisable1', ...)
         $this->langfiles = array("mymodule@mymodule");
@@ -144,7 +147,7 @@ class modMyModule extends DolibarrModules
         //                             1=>array('MYMODULE_MYNEWCONST2','chaine','myvalue','This is another constant to add',0, 'current', 1)
         // );
         $this->const = array(
-            1=>array('MYMODULE_MYCONSTANT', 'chaine', 'avalue', 'This is a constant to add', 1, 'allentities', 1)
+            1 => array('MYMODULE_MYCONSTANT', 'chaine', 'avalue', 'This is a constant to add', 1, 'allentities', 1)
         );
 
         // Some keys to add into the overwriting translation tables

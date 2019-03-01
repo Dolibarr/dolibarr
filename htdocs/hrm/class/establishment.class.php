@@ -398,7 +398,7 @@ class Establishment extends CommonObject
 	 * @param	int		$id      Id of record
 	 * @return	Object
 	 */
-	function getEstablishment($id)
+	public function getEstablishment($id)
 	{
 		$sql = 'SELECT e.rowid, e.name, e.datec, e.fk_user_author, e.tms, e.fk_user_mod, e.entity';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'establishment as e';
@@ -455,13 +455,13 @@ class Establishment extends CommonObject
      *  @param      int     $withpicto      0=No picto, 1=Include picto into link, 2=Only picto
      *  @return     string                  String with URL
      */
-    function getNomUrlParent($id = 0, $withpicto = 0)
+    public function getNomUrlParent($id = 0, $withpicto = 0)
     {
         global $langs, $conf;
 
         $result='';
 
-		$obj = $this->getEstablishment(($id>0)?$id:$conf->entity);
+        $obj = $this->getEstablishment(($id>0)?$id:$conf->entity);
 
         $link = '<a href="'.DOL_URL_ROOT.'/hrm/establishment/card.php?id='.$obj->rowid.'">';
         $linkend='</a>';

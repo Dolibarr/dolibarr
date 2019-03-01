@@ -429,9 +429,9 @@ class MultiCurrency extends CommonObject
 	 *
 	 * @return int -1 if KO, 1 if OK, 2 if label found and OK
 	 */
-	function addRateFromDolibarr($code, $rate)
-	{
-	 	global $db, $user;
+    public function addRateFromDolibarr($code, $rate)
+    {
+        global $db, $user;
 
 		$currency = new MultiCurrency($db);
 		$currency->code = $code;
@@ -455,7 +455,7 @@ class MultiCurrency extends CommonObject
 		}
 
 		return -1;
-	}
+    }
 
 	 /**
 	 * Add new entry into llx_multicurrency_rate to historise
@@ -463,9 +463,9 @@ class MultiCurrency extends CommonObject
 	 * @param double	$rate	rate value
 	  *
 	 * @return int <0 if KO, >0 if OK
-	 */
-	public function updateRate($rate)
-	{
+     */
+    public function updateRate($rate)
+    {
         return $this->addRate($rate);
     }
 
@@ -474,8 +474,8 @@ class MultiCurrency extends CommonObject
 	 *
 	 * @return int <0 if KO, 0 if not found, >0 if OK
 	 */
-	public function getRate()
-	{
+    public function getRate()
+    {
 	 	$sql = 'SELECT cr.rowid';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.$this->table_element_line.' as cr';
 		$sql.= ' WHERE cr.fk_multicurrency = '.$this->id;
@@ -497,8 +497,8 @@ class MultiCurrency extends CommonObject
 	 *
 	 * @return 0 if not found, >0 if OK
 	 */
-	public static function getIdFromCode(&$db, $code)
-	{
+    public static function getIdFromCode(&$db, $code)
+    {
 	 	global $conf;
 
 	 	$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.'multicurrency WHERE code = \''.$db->escape($code).'\' AND entity = '.$conf->entity;
@@ -519,8 +519,8 @@ class MultiCurrency extends CommonObject
 	 * @return 	array	[0] => id currency
 	 *					[1] => rate
 	 */
-	public static function getIdAndTxFromCode(&$db, $code, $date_document = '')
-	{
+    public static function getIdAndTxFromCode(&$db, $code, $date_document = '')
+    {
 		global $conf;
 
 	 	$sql1 = 'SELECT m.rowid, mc.rate FROM '.MAIN_DB_PREFIX.'multicurrency m';

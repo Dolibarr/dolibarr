@@ -182,7 +182,7 @@ class Proposals extends DolibarrApi
 	 * @return  int     ID of proposal
 	 */
     public function post($request_data = null)
-	{
+    {
         if(! DolibarrApiAccess::$user->rights->propal->creer) {
             throw new RestException(401, "Insuffisant rights");
         }
@@ -204,7 +204,7 @@ class Proposals extends DolibarrApi
 		}
 
 		return $this->propal->id;
-	}
+    }
 
 	/**
 	 * Get lines of a commercial proposal

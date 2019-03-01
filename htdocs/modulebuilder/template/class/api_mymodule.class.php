@@ -154,8 +154,7 @@ class MyModuleApi extends DolibarrApi
 
         $sql.= $db->order($sortfield, $sortorder);
         if ($limit)	{
-            if ($page < 0)
-            {
+            if ($page < 0) {
                 $page = 0;
             }
             $offset = $limit * $page;

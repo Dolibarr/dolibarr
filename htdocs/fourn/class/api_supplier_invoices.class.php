@@ -121,13 +121,20 @@ class SupplierInvoices extends DolibarrApi
         if ($search_sale > 0) $sql.= " AND t.rowid = sc.fk_soc";		// Join for the needed table to filter by sale
 
         // Filter by status
-        if ($status == 'draft')     $sql.= " AND t.fk_statut IN (0)";
-        if ($status == 'unpaid')    $sql.= " AND t.fk_statut IN (1)";
-        if ($status == 'paid')      $sql.= " AND t.fk_statut IN (2)";
-        if ($status == 'cancelled') $sql.= " AND t.fk_statut IN (3)";
+        if ($status == 'draft') {
+            $sql.= " AND t.fk_statut IN (0)";
+        }
+        if ($status == 'unpaid') {
+            $sql.= " AND t.fk_statut IN (1)";
+        }
+        if ($status == 'paid') {
+            $sql.= " AND t.fk_statut IN (2)";
+        }
+        if ($status == 'cancelled') {
+            $sql.= " AND t.fk_statut IN (3)";
+        }
         // Insert sale filter
-        if ($search_sale > 0)
-        {
+        if ($search_sale > 0) {
             $sql .= " AND sc.fk_user = ".$search_sale;
         }
         // Add sql filters
