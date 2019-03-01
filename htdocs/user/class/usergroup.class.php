@@ -93,10 +93,10 @@ class UserGroup extends CommonObject
      *    @param   DoliDb  $db     Database handler
      */
     public function __construct($db)
-	{
-		$this->db = $db;
-		$this->nb_rights = 0;
-	}
+    {
+        $this->db = $db;
+        $this->nb_rights = 0;
+    }
 
 
 	/**
@@ -637,15 +637,15 @@ class UserGroup extends CommonObject
 		$sql .= " WHERE fk_usergroup = ".$this->id;
 		$this->db->query($sql);
 
-		// Remove extrafields
-		if ((! $error) && (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED))) // For avoid conflicts if trigger used
+        // Remove extrafields
+        if ((! $error) && (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED))) // For avoid conflicts if trigger used
         {
-			$result=$this->deleteExtraFields();
-			if ($result < 0)
-			{
-           		$error++;
-           		dol_syslog(get_class($this)."::delete error -4 ".$this->error, LOG_ERR);
-           	}
+            $result=$this->deleteExtraFields();
+            if ($result < 0)
+            {
+                $error++;
+                dol_syslog(get_class($this)."::delete error -4 ".$this->error, LOG_ERR);
+            }
         }
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."usergroup";
@@ -914,7 +914,7 @@ class UserGroup extends CommonObject
 		return $result;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Retourne chaine DN complete dans l'annuaire LDAP pour l'objet
 	 *
@@ -936,7 +936,7 @@ class UserGroup extends CommonObject
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Initialize the info array (array of LDAP values) that will be used to call LDAP functions
 	 *

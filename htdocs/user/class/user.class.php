@@ -1,17 +1,18 @@
 <?php
-/* Copyright (c) 2002-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (c) 2002-2003 Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (c) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
- * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
- * Copyright (C) 2005-2017 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2005      Lionel Cousteix      <etm_ltd@tiscali.co.uk>
- * Copyright (C) 2011      Herve Prot           <herve.prot@symeos.com>
- * Copyright (C) 2013-2018 Philippe Grand       <philippe.grand@atoo-net.com>
- * Copyright (C) 2013-2015 Alexandre Spangaro   <aspangaro@open-dsi.fr>
- * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
- * Copyright (C) 2018      charlene Benke       <charlie@patas-monkey.com>
- * Copyright (C) 2018      Nicolas ZABOURI      <info@inovea-conseil.com>
+/* Copyright (c) 2002-2007  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (c) 2002-2003  Jean-Louis Bergamo      <jlb@j1b.org>
+ * Copyright (c) 2004-2012  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2004       Sebastien Di Cintio     <sdicintio@ressource-toi.org>
+ * Copyright (C) 2004       Benoit Mortier          <benoit.mortier@opensides.be>
+ * Copyright (C) 2005-2017  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2005       Lionel Cousteix         <etm_ltd@tiscali.co.uk>
+ * Copyright (C) 2011       Herve Prot              <herve.prot@symeos.com>
+ * Copyright (C) 2013-2018  Philippe Grand          <philippe.grand@atoo-net.com>
+ * Copyright (C) 2013-2015  Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
+ * Copyright (C) 2018       charlene Benke          <charlie@patas-monkey.com>
+ * Copyright (C) 2018       Nicolas ZABOURI         <info@inovea-conseil.com>
+ * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1057,12 +1058,12 @@ class User extends CommonObject
 		// Remove extrafields
 		if ((! $error) && (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED))) // For avoid conflicts if trigger used
 		{
-			$result=$this->deleteExtraFields();
-			if ($result < 0)
-			{
-		   		$error++;
-		   		dol_syslog(get_class($this)."::delete error -4 ".$this->error, LOG_ERR);
-		   	}
+		    $result=$this->deleteExtraFields();
+		    if ($result < 0)
+		    {
+		        $error++;
+		        dol_syslog(get_class($this)."::delete error -4 ".$this->error, LOG_ERR);
+		    }
 		}
 
 		// Remove user
@@ -2485,7 +2486,7 @@ class User extends CommonObject
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Retourne chaine DN complete dans l'annuaire LDAP pour l'objet
 	 *
@@ -2506,7 +2507,7 @@ class User extends CommonObject
 		return $dn;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Initialize the info array (array of LDAP values) that will be used to call LDAP functions
 	 *
@@ -2891,7 +2892,7 @@ class User extends CommonObject
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * 	Reconstruit l'arborescence hierarchique des users sous la forme d'un tableau
 	 *	Set and return this->users that is an array sorted according to tree with arrays of:

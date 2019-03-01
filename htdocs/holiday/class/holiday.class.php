@@ -1022,11 +1022,11 @@ class Holiday extends CommonObject
 	 *  This function can be used to avoid to have 2 leave requests on same period for example.
 	 *  Warning: It consumes a lot of memory because it load in ->holiday all holiday of a dedicated user at each call.
 	 *
-	 * 	@param 	int		$fk_user		Id user
-	 * 	@param 	date	$dateStart		Start date of period to check
-	 * 	@param 	date	$dateEnd		End date of period to check
-	 *  @param	int		$halfday		Tag to define how start and end the period to check:
-	 *  	    						0:Full days, 2:Start afternoon end morning, -1:Start afternoon end afternoon, 1:Start morning end morning
+	 *  @param 	int		$fk_user		Id user
+	 *  @param 	date	$dateStart		Start date of period to check
+	 *  @param 	date	$dateEnd		End date of period to check
+	 *  @param  int     $halfday        Tag to define how start and end the period to check:
+	 *                                  0:Full days, 2:Start afternoon end morning, -1:Start afternoon end afternoon, 1:Start morning end morning
 	 * 	@return boolean					False = New range overlap an existing holiday, True = no overlapping (is never on holiday during checked period).
 	 *  @see verifDateHolidayForTimestamp
 	 */
@@ -1216,7 +1216,7 @@ class Holiday extends CommonObject
 		return $this->LibStatut($this->statut, $mode, $this->date_debut);
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Returns the label of a statut
 	 *
@@ -1874,7 +1874,7 @@ class Holiday extends CommonObject
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Return list of people with permission to validate leave requests.
 	 * Search for permission "approve leave requests"

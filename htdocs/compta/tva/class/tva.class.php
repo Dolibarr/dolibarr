@@ -378,7 +378,7 @@ class Tva extends CommonObject
         return $solde;
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      * 	Total of the VAT from invoices emitted by the thirdparty.
      *

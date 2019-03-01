@@ -108,29 +108,29 @@ class ExportExcel2007 extends ExportExcel
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *  Close Excel file
      *
 	 *  @return		int							<0 if KO, >0 if OK
      */
     public function close_file()
-	{
+    {
         // phpcs:enable
-		global $conf;
+        global $conf;
 
-		if (! empty($conf->global->MAIN_USE_PHP_WRITEEXCEL))
-    	{
-	        $this->workbook->close();
-    	}
-    	else
-    	{
+        if (! empty($conf->global->MAIN_USE_PHP_WRITEEXCEL))
+        {
+            $this->workbook->close();
+        }
+        else
+        {
             require_once PHPEXCEL_PATH.'PHPExcel/Writer/Excel5.php';
-    	    $objWriter = new PHPExcel_Writer_Excel2007($this->workbook);
+            $objWriter = new PHPExcel_Writer_Excel2007($this->workbook);
             $objWriter->save($this->file);
             $this->workbook->disconnectWorksheets();
             unset($this->workbook);
-    	}
-		return 1;
-	}
+        }
+        return 1;
+    }
 }

@@ -45,9 +45,9 @@ class FormProduct
 
 
 	/**
-	 *	Constructor
+	 *  Constructor
 	 *
-	 *	@param	DoliDB	$db		Database handler
+	 *  @param  DoliDB  $db     Database handler
 	 */
 	function __construct($db)
 	{
@@ -280,7 +280,7 @@ class FormProduct
         }
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Output a combo box with list of units
 	 *  pour l'instant on ne definit pas les unites dans la base
@@ -297,16 +297,16 @@ class FormProduct
 		print $this->load_measuring_units($name, $measuring_style, $default, $adddefault);
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Return a combo box with list of units
 	 *  For the moment, units labels are defined in measuring_units_string
 	 *
-	 *  @param	string		$name                Name of HTML field
+	 *  @param  string		$name                Name of HTML field
 	 *  @param  string		$measuring_style     Unit to show: weight, size, surface, volume
 	 *  @param  string		$default             Force unit
-	 * 	@param	int			$adddefault			Add empty unit called "Default"
-	 * 	@return	string
+	 *  @param  int			$adddefault			Add empty unit called "Default"
+	 *  @return string
 	 */
 	public function load_measuring_units($name = 'measuring_units', $measuring_style = '', $default = '0', $adddefault = 0)
 	{
@@ -320,10 +320,16 @@ class FormProduct
 
 		require_once DOL_DOCUMENT_ROOT . '/core/class/cunits.class.php';
 		$measuringUnits = new CUnits($db);
-		$result = $measuringUnits->fetchAll('', '', 0, 0, array(
-				't.unit_type' => $measuring_style,
-				't.active' => 1
-		));
+        $result = $measuringUnits->fetchAll(
+            '',
+            '',
+            0,
+            0,
+            array(
+                't.unit_type' => $measuring_style,
+                't.active' => 1,
+            )
+        );
 		if ($result < 0) {
 			dol_print_error($db);
 			return - 1;
@@ -332,8 +338,7 @@ class FormProduct
 			if ($adddefault)
 				$return .= '<option value="0">' . $langs->trans("Default") . '</option>';
 
-			foreach ($measuringUnits->records as $lines)
-			{
+			foreach ($measuringUnits->records as $lines) {
 				$return .= '<option value="' . $lines->code . '"';
 				if ($key == $default) {
 					$return .= ' selected';

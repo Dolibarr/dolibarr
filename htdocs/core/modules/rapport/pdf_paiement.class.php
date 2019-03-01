@@ -83,7 +83,7 @@ class pdf_paiement
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Fonction generant la rapport sur le disque
 	 *
@@ -125,7 +125,7 @@ class pdf_paiement
 		$year = sprintf("%04d", $year);
 
 		$file = $dir . "/payments-".$year."-".$month.".pdf";
-		switch ($this->doc_type) {
+        switch ($this->doc_type) {
             case "client":
                 $file = $dir . "/payments-".$year."-".$month.".pdf";
                 break;
@@ -159,9 +159,9 @@ class pdf_paiement
         $num=0;
         $lines=array();
 
-		// count number of lines of payment
-		$sql = "SELECT p.rowid as prowid";
-		switch ($this->doc_type) {
+        // count number of lines of payment
+        $sql = "SELECT p.rowid as prowid";
+        switch ($this->doc_type) {
             case "client":
                 $sql.= " FROM ".MAIN_DB_PREFIX."paiement as p";
                 break;
@@ -361,7 +361,7 @@ class pdf_paiement
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
 		$title=$conf->global->MAIN_INFO_SOCIETE_NOM;
-		switch($this->doc_type) {
+        switch($this->doc_type) {
             case "client":
                 $title.=' - '.$outputlangs->transnoentities("ListOfCustomerPayments");
                 break;

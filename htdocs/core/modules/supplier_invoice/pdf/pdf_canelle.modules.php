@@ -610,7 +610,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 		}
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Show total to pay
 	 *
@@ -621,7 +621,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 	 *	@param	Translate	$outputlangs	Objet langs
 	 *	@return int							Position pour suite
 	 */
-	function _tableau_tot(&$pdf, $object, $deja_regle, $posy, $outputlangs)
+    private function _tableau_tot(&$pdf, $object, $deja_regle, $posy, $outputlangs)
 	{
         // phpcs:enable
 		global $conf,$mysoc;
@@ -832,7 +832,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 	 *   @param		string		$currency		Currency code
 	 *   @return	void
 	 */
-	function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop = 0, $hidebottom = 0, $currency = '')
+	private function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop = 0, $hidebottom = 0, $currency = '')
 	{
 		global $conf;
 
@@ -932,17 +932,17 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Show payments table
 	 *
-	 *  @param	PDF			$pdf     		Object PDF
-	 *  @param  FactureFournisseur		$object     	Object invoice
-	 *	@param	int			$posy			Position y in PDF
-	 *	@param	Translate	$outputlangs	Object langs for output
-	 *	@return int							<0 if KO, >0 if OK
+	 *  @param  PDF                 $pdf            Object PDF
+	 *  @param  FactureFournisseur  $object         Object invoice
+	 *  @param  int                 $posy           Position y in PDF
+	 *  @param  Translate           $outputlangs    Object langs for output
+	 *  @return int                                 <0 if KO, >0 if OK
 	 */
-	function _tableau_versements(&$pdf, $object, $posy, $outputlangs)
+	private function _tableau_versements(&$pdf, $object, $posy, $outputlangs)
 	{
         // phpcs:enable
 		global $conf;
@@ -1028,13 +1028,13 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 	/**
 	 *  Show top header of page.
 	 *
-	 *  @param	PDF			$pdf     		Object PDF
-	 *  @param  FactureFournisseur		$object     	Object to show
-	 *  @param  int	    	$showaddress    0=no, 1=yes
-	 *  @param  Translate	$outputlangs	Object lang for output
-	 *  @return	void
+	 *  @param  PDF                 $pdf            Object PDF
+	 *  @param  FactureFournisseur  $object         Object to show
+	 *  @param  int                 $showaddress    0=no, 1=yes
+	 *  @param  Translate           $outputlangs    Object lang for output
+	 *  @return void
 	 */
-	function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
+	private function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
 	{
 		global $langs, $conf, $mysoc;
 
@@ -1238,19 +1238,19 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 		return $top_shift;
 	}
 
-	/**
-	 *   	Show footer of page. Need this->emetteur object
+    /**
+     *  Show footer of page. Need this->emetteur object
      *
-	 *   	@param	PDF			$pdf     			PDF
-	 * 		@param	FactureFournisseur		$object				Object to show
-	 *      @param	Translate	$outputlangs		Object lang for output
-	 *      @param	int			$hidefreetext		1=Hide free text
-	 *      @return	int								Return height of bottom margin including footer text
-	 */
-	function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
-	{
-		global $conf;
-		$showdetails=$conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;
-		return pdf_pagefoot($pdf, $outputlangs, 'SUPPLIER_INVOICE_FREE_TEXT', $this->emetteur, $this->marge_basse, $this->marge_gauche, $this->page_hauteur, $object, $showdetails, $hidefreetext);
-	}
+     *  @param  PDF                 $pdf                PDF
+     *  @param  FactureFournisseur  $object             Object to show
+     *  @param  Translate           $outputlangs        Object lang for output
+     *  @param  int                 $hidefreetext       1=Hide free text
+     *  @return int                                     Return height of bottom margin including footer text
+     */
+    private function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
+    {
+        global $conf;
+        $showdetails=$conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;
+        return pdf_pagefoot($pdf, $outputlangs, 'SUPPLIER_INVOICE_FREE_TEXT', $this->emetteur, $this->marge_basse, $this->marge_gauche, $this->page_hauteur, $object, $showdetails, $hidefreetext);
+    }
 }

@@ -32,7 +32,7 @@ abstract class ModelePdfReception extends CommonDocGenerator
     public $error='';
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
 	 *  Return list of active generation modules
 	 *

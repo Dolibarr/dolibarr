@@ -33,12 +33,12 @@ class mod_reception_moonstone extends ModelNumRefReception
     public $error = '';
     public $nom = 'Moonstone';
 
-	/**
-	 *	Return default description of numbering model
-	 *
-	 *	@return     string      text description
-	 */
-	public function info()
+    /**
+     *  Return default description of numbering model
+     *
+     *  @return     string      text description
+     */
+    public function info()
     {
     	global $conf,$langs;
 
@@ -119,9 +119,9 @@ class mod_reception_moonstone extends ModelNumRefReception
 		$numFinal=get_next_value($db, $mask, 'reception', 'ref', '', $objsoc, $date);
 
 		return  $numFinal;
-	}
+    }
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Return next free value
 	 *

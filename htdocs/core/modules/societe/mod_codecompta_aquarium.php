@@ -122,7 +122,7 @@ class mod_codecompta_aquarium extends ModeleAccountancyCode
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Set accountancy account code for a third party into this->code
 	 *

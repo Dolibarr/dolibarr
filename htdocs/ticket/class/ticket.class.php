@@ -2299,7 +2299,7 @@ class Ticket extends CommonObject
      *    @param    string  $code       Filter on this code of contact type ('SHIPPING', 'BILLING', ...)
      *    @return 	array          		Array of contacts
      */
-    function listeContact($statut = -1, $source = 'external', $list = 0, $code = '')
+    public function listeContact($statut = -1, $source = 'external', $list = 0, $code = '')
     {
         global $langs;
 
@@ -2436,14 +2436,14 @@ class Ticket extends CommonObject
     }
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *  Return if at least one photo is available
      *
-     *  @param      string		$sdir       Directory to scan
-     *  @return     boolean     			True if at least one photo is available, False if not
+     *  @param      string      $sdir       Directory to scan
+     *  @return     boolean                 True if at least one photo is available, False if not
      */
-    function is_photo_available($sdir)
+    public function is_photo_available($sdir)
     {
         // phpcs:enable
         include_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';

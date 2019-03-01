@@ -103,7 +103,7 @@ class FactureRec extends CommonInvoice
 	 *
 	 * 	@param		DoliDB		$db		Database handler
 	 */
-	function __construct($db)
+	public function __construct($db)
 	{
 		$this->db = $db;
 	}
@@ -1482,31 +1482,27 @@ class FactureRec extends CommonInvoice
      */
     public function setFrequencyAndUnit($frequency, $unit)
     {
-        if (! $this->table_element)
-        {
+        if (! $this->table_element) {
             dol_syslog(get_class($this)."::setFrequencyAndUnit was called on objet with property table_element not defined", LOG_ERR);
             return -1;
         }
 
-		if (!empty($frequency) && empty($unit))
-        {
+        if (!empty($frequency) && empty($unit)) {
             dol_syslog(get_class($this)."::setFrequencyAndUnit was called on objet with params frequency defined but unit not defined", LOG_ERR);
             return -2;
         }
 
         $sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
         $sql.= ' SET frequency = '.($frequency?$this->db->escape($frequency):'null');
-        if (!empty($unit))
-        {
+        if (!empty($unit)) {
         	$sql.= ', unit_frequency = \''.$this->db->escape($unit).'\'';
 		}
         $sql.= ' WHERE rowid = '.$this->id;
 
         dol_syslog(get_class($this)."::setFrequencyAndUnit", LOG_DEBUG);
-        if ($this->db->query($sql))
-        {
+        if ($this->db->query($sql)) {
             $this->frequency = $frequency;
-			if (!empty($unit)) $this->unit_frequency = $unit;
+            if (!empty($unit)) $this->unit_frequency = $unit;
             return 1;
         }
         else
@@ -1848,8 +1844,7 @@ class FactureLigneRec extends CommonInvoiceLine
     	$sql.= ", info_bits='".price2num($this->info_bits)."'";
     	$sql.= ", date_start_fill=".(int) $this->date_start_fill;
     	$sql.= ", date_end_fill=".(int) $this->date_end_fill;
-    	if (empty($this->skip_update_total))
-    	{
+    	if (empty($this->skip_update_total)) {
     		$sql.= ", total_ht=".price2num($this->total_ht);
 	    	$sql.= ", total_tva=".price2num($this->total_tva);
 	    	$sql.= ", total_localtax1=".price2num($this->total_localtax1);
@@ -1864,8 +1859,8 @@ class FactureLigneRec extends CommonInvoiceLine
 
     	dol_syslog(get_class($this)."::updateline", LOG_DEBUG);
     	$resql=$this->db->query($sql);
-    	if ($resql)
-    	{
+        if ($resql)
+        {
     		if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
     		{
     			$result=$this->insertExtraFields();
@@ -1886,8 +1881,8 @@ class FactureLigneRec extends CommonInvoiceLine
     			}
     			// End call triggers
     		}
-    		$this->db->commit();
-    		return 1;
+            $this->db->commit();
+            return 1;
         }
         else
         {

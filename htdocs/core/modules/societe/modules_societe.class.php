@@ -38,7 +38,7 @@ abstract class ModeleThirdPartyDoc extends CommonDocGenerator
 	 */
 	public $error='';
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *  Return list of active generation modules
      *
@@ -246,7 +246,7 @@ abstract class ModeleThirdPartyCode
         return $s;
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *   Check if mask/numbering use prefix
 	 *

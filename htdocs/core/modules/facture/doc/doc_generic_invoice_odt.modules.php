@@ -64,7 +64,7 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 	 *  @param		DoliDB		$db      Database handler
 	 */
     public function __construct($db)
-	{
+    {
 		global $conf, $langs, $mysoc;
 
 		// Load translation files required by the page
@@ -99,7 +99,7 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 		// Recupere emetteur
 		$this->emetteur=$mysoc;
 		if (! $this->emetteur->country_code) $this->emetteur->country_code=substr($langs->defaultlang, -2);    // Par defaut, si n'etait pas defini
-	}
+    }
 
 
 	/**
@@ -109,7 +109,7 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 	 * @return	string      			Description
 	 */
     public function info($langs)
-	{
+    {
 		global $conf, $langs;
 
 		// Load translation files required by the page
@@ -188,9 +188,9 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 		$texte.= '</form>';
 
 		return $texte;
-	}
+    }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Function to build a document on disk using the generic odt module.
 	 *
@@ -521,5 +521,5 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 		}
 
 		return -1;
-	}
+    }
 }
