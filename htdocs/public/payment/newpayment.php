@@ -1777,12 +1777,13 @@ if (preg_match('/^dopayment/', $action))
 
 		print '<table id="dolpaymenttable" summary="Payment form" class="center">
 	    <tbody><tr><td class="textpublicpayment">
-
+        <div id="payment-request-button"><!-- A Stripe Element will be inserted here. --></div>
 	    <div class="form-row left">
 	    <label for="card-element">
 	    '.$langs->trans("CreditOrDebitCard").'
-	    </label>
-	    <div id="card-element">
+	    </label><br>
+        <input id="cardholder-name" name="cardholder-name" value="" type="text" placeholder="'.$langs->trans("CardOwner").'" autocomplete="off" required>
+        <br><div id="card-element">
 	    <!-- a Stripe Element will be inserted here. -->
 	    </div>
 	    <!-- Used to display form errors -->
@@ -1830,7 +1831,8 @@ if (preg_match('/^dopayment/', $action))
 
 	    // Create an instance of the card Element
 	    var cardElement = elements.create('card', {style: style});
-
+        var cardholderName = document.getElementById('cardholder-name');
+      
 	    // Add an instance of the card Element into the `card-element` <div>
 	    cardElement.mount('#card-element');
 
@@ -1853,12 +1855,16 @@ cardButton.addEventListener('click', function(event) {
     clientSecret, cardElement, {
       source_data: {
         owner: {
-          name: 'Jane Doe',
+          name: cardholderName.value,
         }
       }
     }
   ).then(function(result) {
+	      jQuery('#buttontopay').hide();
+	      jQuery('#hourglasstopay').show();  
 			        if (result.error) {
+	      jQuery('#buttontopay').show();
+	      jQuery('#hourglasstopay').hide();              
 			          // Inform the user if there was an error
 			          var errorElement = document.getElementById('card-errors');
 			          errorElement.textContent = result.error.message;
