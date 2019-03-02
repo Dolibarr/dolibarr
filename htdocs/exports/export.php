@@ -1266,17 +1266,11 @@ if ($step == 5 && $datatoexport)
 	print '</table>';
 
 
-	print '<div class="fichecenter"><div class="fichehalfleft">';
-
     if (! is_dir($conf->export->dir_temp)) dol_mkdir($conf->export->dir_temp);
 
-    // Affiche liste des documents
+    // Show existing generated documents
     // NB: La fonction show_documents rescanne les modules qd genallowed=1, sinon prend $liste
     print $formfile->showdocuments('export', '', $upload_dir, $_SERVER["PHP_SELF"].'?step=5&datatoexport='.$datatoexport, $liste, 1, (! empty($_POST['model'])?$_POST['model']:'csv'), 1, 1, 0, 0, 0, '', $langs->trans('Files'), '', '', '');
-
-    print '</div><div class="fichehalfright"><div class="ficheaddleft">';
-
-    print '</div></div></div>';
 }
 
 llxFooter();
