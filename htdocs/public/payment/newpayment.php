@@ -884,21 +884,21 @@ if ($source == 'order')
 	print '<input type="hidden" name="fulltag" value="'.$fulltag.'">';
 	print '</td></tr>'."\n";
   
-if (! empty($conf->stripe->enabled) && (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox', 'alpha')) && empty($order->billed) && ($paymentmethod == 'stripe') ) {
-require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
-
-    $service = 'StripeTest';
-	$servicestatus = 0;
- 
-	if (! empty($conf->global->STRIPE_LIVE))
-	{
-	$service = 'StripeLive';
+    if (! empty($conf->stripe->enabled) && empty($order->billed) && ($paymentmethod == 'stripe') ) {
+    require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';	
+    
+    $service = 'StripeLive';
 	$servicestatus = 1;
+  
+	if (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox', 'alpha'))
+	{
+	$service = 'StripeTest';
+	$servicestatus = 0;
 	}
 
-$stripe = new Stripe($db);
-$stripeacc = $stripe->getStripeAccount($service);							// Stripe OAuth connect account of dolibarr user (no network access here)
-$stripecu = $stripe->getStripeCustomerAccount($object->socid, $servicestatus);	// Get thirdparty cu_...
+    $stripe = new Stripe($db);
+    $stripeacc = $stripe->getStripeAccount($service);							// Stripe OAuth connect account of dolibarr user (no network access here)
+    $stripecu = $stripe->getStripeCustomerAccount($object->socid, $servicestatus);	// Get thirdparty cu_...
 	//  for dev only
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("PaymentIntent");
 	print '</td><td class="CTableRow'.($var?'1':'2').'">';
@@ -1035,21 +1035,21 @@ if ($source == 'invoice')
 	print '<input type="hidden" name="fulltag" value="'.$fulltag.'">';
 	print '</td></tr>'."\n";
   
-if (! empty($conf->stripe->enabled) && (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox', 'alpha')) && empty($object->paye) && ($paymentmethod == 'stripe') ) {
-require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
-
-    $service = 'StripeTest';
-	$servicestatus = 0;
-
-	if (! empty($conf->global->STRIPE_LIVE))
+    if (! empty($conf->stripe->enabled) && empty($object->paye) && ($paymentmethod == 'stripe') ) {
+    require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';	
+    
+    $service = 'StripeLive';
+	$servicestatus = 1;
+  
+	if (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox', 'alpha'))
 	{
-	$service = 'StripeLive';
-    $servicestatus = 1;
-    }
+	$service = 'StripeTest';
+	$servicestatus = 0;
+	}
 
-$stripe = new Stripe($db);
-$stripeacc = $stripe->getStripeAccount($service);								// Stripe OAuth connect account of dolibarr user (no network access here)
-$stripecu = $stripe->getStripeCustomerAccount($object->socid, $servicestatus);		// Get thirdparty cu_...
+    $stripe = new Stripe($db);
+    $stripeacc = $stripe->getStripeAccount($service);								// Stripe OAuth connect account of dolibarr user (no network access here)
+    $stripecu = $stripe->getStripeCustomerAccount($object->socid, $servicestatus);		// Get thirdparty cu_...
 	//  for dev only
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("PaymentIntent");
 	print '</td><td class="CTableRow'.($var?'1':'2').'">';
@@ -1574,20 +1574,21 @@ if ($source == 'donation')
 	print '<input type="hidden" name="fulltag" value="'.$fulltag.'">';
 	print '</td></tr>'."\n";
     
-    if (! empty($conf->stripe->enabled) && (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox', 'alpha')) && empty($object->paid) && ($paymentmethod == 'stripe') ) {
-        require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
-    $service = 'StripeTest';
-	$servicestatus = 0;
-
-	if (! empty($conf->global->STRIPE_LIVE))
-	{
-	$service = 'StripeLive';
+    if (! empty($conf->stripe->enabled) && empty($object->paid) && ($paymentmethod == 'stripe') ) {
+    require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';	
+    
+    $service = 'StripeLive';
 	$servicestatus = 1;
+  
+	if (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox', 'alpha'))
+	{
+	$service = 'StripeTest';
+	$servicestatus = 0;
 	}
 
-$stripe = new Stripe($db);
-$stripeacc = $stripe->getStripeAccount($service);								// Stripe OAuth connect account of dolibarr user (no network access here)
-$stripecu = $stripe->getStripeCustomerAccount($object->fk_soc, $servicestatus);		// Get thirdparty cu_...
+    $stripe = new Stripe($db);
+    $stripeacc = $stripe->getStripeAccount($service);								// Stripe OAuth connect account of dolibarr user (no network access here)
+    $stripecu = $stripe->getStripeCustomerAccount($object->fk_soc, $servicestatus);		// Get thirdparty cu_...
 	//  for dev only
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("PaymentIntent");
 	print '</td><td class="CTableRow'.($var?'1':'2').'">';
