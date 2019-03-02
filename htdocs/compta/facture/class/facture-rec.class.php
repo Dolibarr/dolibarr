@@ -323,6 +323,8 @@ class FactureRec extends CommonInvoice
 	{
 	    global $conf;
 
+        $error = 0;
+
 	    $sql = "UPDATE ".MAIN_DB_PREFIX."facture_rec SET";
 	    $sql.= " fk_soc = ".$this->fk_soc;
         // TODO Add missing fields
