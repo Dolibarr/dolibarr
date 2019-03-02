@@ -2980,7 +2980,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 		//if (in_array($picto, array('switch_off', 'switch_on', 'off', 'on')))
         if (empty($srconly) && in_array($pictowithoutext, array(
 				'bank', 'close_title', 'delete', 'edit', 'ellipsis-h', 'filter', 'grip', 'grip_title', 'list', 'listlight', 'off', 'on', 'play', 'playdisabled', 'printer', 'resize',
-				'note', 'sign-out', 'split', 'switch_off', 'switch_on', 'unlink', 'uparrow', '1downarrow', '1uparrow',
+				'note', 'sign-out', 'split', 'switch_off', 'switch_on', 'unlink', 'uparrow', '1downarrow', '1uparrow', '1leftarrow', '1rightarrow',
 				'jabber','skype','twitter','facebook','linkedin'
 			)
 		)) {
@@ -3053,12 +3053,10 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				$fakey = 'fa-mail-forward';
 				$facolor = '#555';
 			}
-			elseif ($pictowithoutext == '1uparrow') {
-				$fakey = 'fa-caret-up';
-				$marginleftonlyshort = 1;
-			}
-			elseif ($pictowithoutext == '1downarrow') {
-				$fakey = 'fa-caret-down';
+			elseif (in_array($pictowithoutext, array('1uparrow', '1downarrow', '1leftarrow', '1rightarrow', '1uparrow_selected', '1downarrow_selected', '1leftarrow_selected', '1rightarrow_selected'))) {
+			    $convertarray=array('1uparrow'=>'caret-up', '1downarrow'=>'caret-down', '1leftarrow'=>'caret-left', '1rightarrow'=>'caret-right', '1uparrow_selected'=>'caret-up', '1downarrow_selected'=>'caret-down', '1leftarrow_selected'=>'caret-left', '1rightarrow_selected'=>'caret-right');
+			    $fakey = 'fa-'.$convertarray[$pictowithoutext];
+			    if (preg_match('/selected/', $pictowithoutext)) $facolor = '#888';
 				$marginleftonlyshort = 1;
 			}
 			elseif ($pictowithoutext == 'sign-out')     {

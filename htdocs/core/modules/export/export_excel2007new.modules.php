@@ -32,7 +32,7 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 /**
  *	Class to build export files with Excel format
  */
-class ExportExcelnew extends ModeleExports
+class ExportExcel2007new extends ModeleExports
 {
 	/**
 	 * @var int ID

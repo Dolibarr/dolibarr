@@ -756,6 +756,9 @@ select.flat.selectlimit {
 .nomarginleft {
 	margin-left: 0px !important;
 }
+.marginbottomonly {
+	margin-bottom: 10px !important;
+}
 .selectlimit, .selectlimit:focus {
     border-left: none !important;
     border-top: none !important;
