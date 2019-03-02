@@ -396,7 +396,7 @@ class modAgenda extends DolibarrModules
 		$this->export_TypeFields_array[$r]=array('ac.ref_ext'=>"Text",'ac.datec'=>"Date",'ac.datep'=>"Date",
 			'ac.datep2'=>"Date",'ac.label'=>"Text",'ac.note'=>"Text",'ac.percent'=>"Numeric",
 			'ac.durationp'=>"Duree",
-			'cac.libelle'=>"List:c_actioncomm:libelle:id",
+			'cac.libelle'=>"List:c_actioncomm:libelle:libelle",
 			's.nom'=>'Text','s.address'=>'Text','s.zip'=>'Text','s.town'=>'Text',
 			'co.code'=>'Text','s.phone'=>'Text','s.siren'=>'Text','s.siret'=>'Text','s.ape'=>'Text','s.idprof4'=>'Text','s.idprof5'=>'Text','s.idprof6'=>'Text',
 			's.code_compta'=>'Text','s.code_compta_fournisseur'=>'Text','s.tva_intra'=>'Text');
