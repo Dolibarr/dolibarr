@@ -428,21 +428,12 @@ if ($step == 1 || ! $datatoexport)
 {
     llxHeader('', $langs->trans("NewExport"), 'EN:Module_Exports_En|FR:Module_Exports|ES:M&oacute;dulo_Exportaciones');
 
-    /*
-     * Affichage onglets
-     */
     $h = 0;
 
     $head[$h][0] = DOL_URL_ROOT.'/exports/export.php?step=1';
     $head[$h][1] = $langs->trans("Step")." 1";
     $hselected=$h;
     $h++;
-
-    /*
-    $head[$h][0] = '';
-    $head[$h][1] = $langs->trans("Step")." 2";
-    $h++;
-    */
 
     dol_fiche_head($head, $hselected, $langs->trans("NewExport"), -1);
 
@@ -500,10 +491,6 @@ if ($step == 2 && $datatoexport)
 {
     llxHeader('', $langs->trans("NewExport"), 'EN:Module_Exports_En|FR:Module_Exports|ES:M&oacute;dulo_Exportaciones');
 
-
-    /*
-     * Affichage onglets
-     */
     $h = 0;
 
     $head[$h][0] = DOL_URL_ROOT.'/exports/export.php?step=1';
@@ -515,7 +502,7 @@ if ($step == 2 && $datatoexport)
     $hselected=$h;
     $h++;
 
-    dol_fiche_head($head, $hselected, $langs->trans("NewExport"), -1);
+    dol_fiche_head($head, $hselected, $langs->trans("NewExport"), -2);
 
     print '<div class="fichecenter">';
     print '<div class="underbanner clearboth"></div>';
@@ -697,9 +684,6 @@ if ($step == 3 && $datatoexport)
 
     llxHeader('', $langs->trans("NewExport"), 'EN:Module_Exports_En|FR:Module_Exports|ES:M&oacute;dulo_Exportaciones');
 
-	/*
-	 * Affichage onglets
-	*/
 	$h = 0;
 
 	$head[$h][0] = DOL_URL_ROOT.'/exports/export.php?step=1';
@@ -715,7 +699,7 @@ if ($step == 3 && $datatoexport)
 	$hselected=$h;
 	$h++;
 
-	dol_fiche_head($head, $hselected, $langs->trans("NewExport"), -1);
+	dol_fiche_head($head, $hselected, $langs->trans("NewExport"), -2);
 
     print '<div class="fichecenter">';
     print '<div class="underbanner clearboth"></div>';
@@ -873,9 +857,6 @@ if ($step == 4 && $datatoexport)
 
     llxHeader('', $langs->trans("NewExport"), 'EN:Module_Exports_En|FR:Module_Exports|ES:M&oacute;dulo_Exportaciones');
 
-    /*
-     * Affichage onglets
-     */
     $stepoffset=0;
     $h = 0;
 
@@ -901,7 +882,7 @@ if ($step == 4 && $datatoexport)
     $hselected=$h;
     $h++;
 
-    dol_fiche_head($head, $hselected, $langs->trans("NewExport"), -1);
+    dol_fiche_head($head, $hselected, $langs->trans("NewExport"), -2);
 
     print '<div class="fichecenter">';
     print '<div class="underbanner clearboth"></div>';
@@ -1121,9 +1102,6 @@ if ($step == 5 && $datatoexport)
 
     llxHeader('', $langs->trans("NewExport"), 'EN:Module_Exports_En|FR:Module_Exports|ES:M&oacute;dulo_Exportaciones');
 
-    /*
-     * Affichage onglets
-     */
     $h = 0;
     $stepoffset=0;
 
@@ -1153,7 +1131,7 @@ if ($step == 5 && $datatoexport)
     $hselected=$h;
     $h++;
 
-    dol_fiche_head($head, $hselected, $langs->trans("NewExport"), -1);
+    dol_fiche_head($head, $hselected, $langs->trans("NewExport"), -2);
 
     /*
      * Confirmation suppression fichier

@@ -282,19 +282,18 @@ function dol_json_decode($json, $assoc = false)
 /**
  * Return text according to type
  *
- * @param 	string	$val	Value to decode
- * @return	string			Formated value
+ * @param   string  $val    Value to decode
+ * @return  string          Formated value
  */
 function _unval($val)
 {
-	while (preg_match('/\\\u([0-9A-F]{2})([0-9A-F]{2})/i', $val, $reg))
-	{
-	    // single, escaped unicode character
-	    $utf16 = chr(hexdec($reg[1])) . chr(hexdec($reg[2]));
-	    $utf8  = utf162utf8($utf16);
-	    $val=preg_replace('/\\\u'.$reg[1].$reg[2].'/i', $utf8, $val);
-	}
-	return $val;
+    while (preg_match('/\\\u([0-9A-F]{2})([0-9A-F]{2})/i', $val, $reg)) {
+        // single, escaped unicode character
+        $utf16 = chr(hexdec($reg[1])) . chr(hexdec($reg[2]));
+        $utf8  = utf162utf8($utf16);
+        $val=preg_replace('/\\\u'.$reg[1].$reg[2].'/i', $utf8, $val);
+    }
+    return $val;
 }
 
 /**
@@ -310,7 +309,7 @@ function _unval($val)
 function utf162utf8($utf16)
 {
 	// oh please oh please oh please oh please oh please
-	if(function_exists('mb_convert_encoding')) {
+	if (function_exists('mb_convert_encoding')) {
 	    return mb_convert_encoding($utf16, 'UTF-8', 'UTF-16');
 	}
 

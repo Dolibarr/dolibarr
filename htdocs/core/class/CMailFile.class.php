@@ -352,56 +352,40 @@ class CMailFile
 		elseif ($this->sendmode == 'swiftmailer')
 		{
 			// Use Swift Mailer library
-			// ------------------------------------------
-
             $host = dol_getprefix('email');
 
             require_once DOL_DOCUMENT_ROOT.'/includes/swiftmailer/lexer/lib/Doctrine/Common/Lexer/AbstractLexer.php';
 
-            require_once DOL_DOCUMENT_ROOT.'/includes/swiftmailer/egulias/email-validator/EmailValidator/Exception/InvalidEmail.php';
-            require_once DOL_DOCUMENT_ROOT.'/includes/swiftmailer/egulias/email-validator/EmailValidator/Exception/NoDomainPart.php';
-            require_once DOL_DOCUMENT_ROOT.'/includes/swiftmailer/egulias/email-validator/EmailValidator/EmailParser.php';
-			require_once DOL_DOCUMENT_ROOT.'/includes/swiftmailer/egulias/email-validator/EmailValidator/EmailLexer.php';
-			require_once DOL_DOCUMENT_ROOT.'/includes/swiftmailer/egulias/email-validator/EmailValidator/EmailValidator.php';
-			require_once DOL_DOCUMENT_ROOT.'/includes/swiftmailer/egulias/email-validator/EmailValidator/Warning/Warning.php';
-			require_once DOL_DOCUMENT_ROOT.'/includes/swiftmailer/egulias/email-validator/EmailValidator/Warning/LocalTooLong.php';
-			require_once DOL_DOCUMENT_ROOT.'/includes/swiftmailer/egulias/email-validator/EmailValidator/Parser/Parser.php';
-			require_once DOL_DOCUMENT_ROOT.'/includes/swiftmailer/egulias/email-validator/EmailValidator/Parser/DomainPart.php';
-			require_once DOL_DOCUMENT_ROOT.'/includes/swiftmailer/egulias/email-validator/EmailValidator/Parser/LocalPart.php';
-			require_once DOL_DOCUMENT_ROOT.'/includes/swiftmailer/egulias/email-validator/EmailValidator/Validation/EmailValidation.php';
-			require_once DOL_DOCUMENT_ROOT.'/includes/swiftmailer/egulias/email-validator/EmailValidator/Validation/RFCValidation.php';
+            // egulias autoloader lib
+            require_once DOL_DOCUMENT_ROOT.'/includes/swiftmailer/autoload.php';
 
-            require_once DOL_DOCUMENT_ROOT.'/includes/swiftmailer/lib/classes/Swift/InputByteStream.php';
-			require_once DOL_DOCUMENT_ROOT.'/includes/swiftmailer/lib/classes/Swift/Signer.php';
-			require_once DOL_DOCUMENT_ROOT.'/includes/swiftmailer/lib/classes/Swift/Signers/HeaderSigner.php';
-			require_once DOL_DOCUMENT_ROOT.'/includes/swiftmailer/lib/classes/Swift/Signers/DKIMSigner.php';
-			//require_once DOL_DOCUMENT_ROOT.'/includes/swiftmailer/lib/classes/Swift/SignedMessage.php';
-			require_once DOL_DOCUMENT_ROOT.'/includes/swiftmailer/lib/swift_required.php';
-			// Create the message
-			//$this->message = Swift_Message::newInstance();
-			$this->message = new Swift_Message();
+            require_once DOL_DOCUMENT_ROOT.'/includes/swiftmailer/lib/swift_required.php';
+
+            // Create the message
+            //$this->message = Swift_Message::newInstance();
+            $this->message = new Swift_Message();
             //$this->message = new Swift_SignedMessage();
             // Adding a trackid header to a message
-			$headers = $this->message->getHeaders();
-			$headers->addTextHeader('X-Dolibarr-TRACKID', $trackid . '@' . $host);
-			$headerID = time() . '.swiftmailer-dolibarr-' . $trackid . '@' . $host;
-			$msgid = $headers->get('Message-ID');
-			$msgid->setId($headerID);
-			$headers->addIdHeader('References', $headerID);
-			// TODO if (! empty($moreinheader)) ...
+            $headers = $this->message->getHeaders();
+            $headers->addTextHeader('X-Dolibarr-TRACKID', $trackid . '@' . $host);
+            $headerID = time() . '.swiftmailer-dolibarr-' . $trackid . '@' . $host;
+            $msgid = $headers->get('Message-ID');
+            $msgid->setId($headerID);
+            $headers->addIdHeader('References', $headerID);
+            // TODO if (! empty($moreinheader)) ...
 
-			// Give the message a subject
-			try {
-				$result = $this->message->setSubject($subject);
-			} catch (Exception $e) {
-				$this->errors[] =  $e->getMessage();
-			}
+            // Give the message a subject
+            try {
+                $result = $this->message->setSubject($subject);
+            } catch (Exception $e) {
+                $this->errors[] =  $e->getMessage();
+            }
 
-			// Set the From address with an associative array
-			//$this->message->setFrom(array('john@doe.com' => 'John Doe'));
-			if (! empty($from)) {
+            // Set the From address with an associative array
+            //$this->message->setFrom(array('john@doe.com' => 'John Doe'));
+            if (! empty($from)) {
                 try {
-                	$result = $this->message->setFrom($this->getArrayAddress($from));
+                    $result = $this->message->setFrom($this->getArrayAddress($from));
                 } catch (Exception $e) {
                     $this->errors[] = $e->getMessage();
                 }
@@ -410,13 +394,13 @@ class CMailFile
             // Set the To addresses with an associative array
             if (! empty($to)) {
                 try {
-                	$result = $this->message->setTo($this->getArrayAddress($to));
+                    $result = $this->message->setTo($this->getArrayAddress($to));
                 } catch (Exception $e) {
                     $this->errors[] = $e->getMessage();
                 }
             }
 
-			if (! empty($replyto)) {
+            if (! empty($replyto)) {
                 try {
                 	$result = $this->message->SetReplyTo($this->getArrayAddress($replyto));
                 } catch (Exception $e) {
@@ -424,16 +408,14 @@ class CMailFile
                 }
             }
 
-			try {
-				$result = $this->message->setCharSet($conf->file->character_set_client);
-			} catch (Exception $e) {
-				$this->errors[] =  $e->getMessage();
-			}
+            try {
+                $result = $this->message->setCharSet($conf->file->character_set_client);
+            } catch (Exception $e) {
+                $this->errors[] =  $e->getMessage();
+            }
 
-			if (! empty($this->html))
-			{
-				if (!empty($css))
-				{
+            if (! empty($this->html)) {
+				if (!empty($css)) {
 					$this->css = $css;
 					$this->buildCSS();
 				}

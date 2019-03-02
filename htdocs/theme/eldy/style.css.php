@@ -2369,6 +2369,11 @@ div.tabBar div.titre {
 	padding-top: 20px;
 }
 
+div.tabBar.tabBarNoTop {
+    padding-top: 0;
+    border-top: 0;
+}
+
 /* tabBar used for creation/update/send forms */
 div.tabBarWithBottom {
 	padding-bottom: 18px;
