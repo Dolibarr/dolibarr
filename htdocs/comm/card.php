@@ -409,8 +409,8 @@ if ($object->id > 0)
     	print '</td>';
     	print '<td>';
     	$amount_discount=$object->getAvailableDiscounts();
-    	if ($amount_discount < 0) dol_print_error($db,$object->error);
-    	if ($amount_discount > 0) print '<a href="'.DOL_URL_ROOT.'/comm/remx.php?id='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?socid='.$object->id).'">'.price($amount_discount,1,$langs,1,-1,-1,$conf->currency).'</a>';
+    	if ($amount_discount < 0) dol_print_error($db, $object->error);
+    	if ($amount_discount > 0) print '<a href="'.DOL_URL_ROOT.'/comm/remx.php?id='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?socid='.$object->id).'">'.price($amount_discount, 1, $langs, 1, -1, -1, $conf->currency).'</a>';
     	//else print $langs->trans("DiscountNone");
     	print '</td>';
     	print '</tr>';
