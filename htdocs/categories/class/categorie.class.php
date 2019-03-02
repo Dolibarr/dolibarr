@@ -1374,7 +1374,7 @@ class Categorie extends CommonObject
 	 * @param   string|int	$type   Type of category ('customer', 'supplier', 'contact', 'product', 'member') or (0, 1, 2, ...)
 	 * @param   string 		$mode   'id'=Get array of category ids, 'object'=Get array of fetched category instances, 'label'=Get array of category
 	 *                      	    labels, 'id'= Get array of category IDs
-	 * @return  array|int           Array of category objects or < 0 if KO
+	 * @return  Categorie[]|int     Array of category objects or < 0 if KO
 	 */
 	public function containing($id, $type, $mode = 'object')
 	{
@@ -1456,7 +1456,7 @@ class Categorie extends CommonObject
  	 * 	@param		string		$type		Type of category ('member', 'customer', 'supplier', 'product', 'contact'). Old mode (0, 1, 2, ...) is deprecated.
 	 * 	@param		boolean		$exact		Exact string search (true/false)
 	 * 	@param		boolean		$case		Case sensitive (true/false)
-	 * 	@return		array|int				Array of category id, -1 if error
+	 * 	@return		Categorie[]|int			Array of Categorie, -1 if error
 	 */
 	public function rechercher($id, $nom, $type, $exact = false, $case = false)
 	{
