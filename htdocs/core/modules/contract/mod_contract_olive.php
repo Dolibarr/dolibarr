@@ -66,7 +66,7 @@ class mod_contract_olive extends ModelNumRefContracts
 	 *
 	 *	@return string      		Description of module
 	 */
-	function info()
+	public function info()
 	{
 		global $langs;
 
@@ -81,7 +81,7 @@ class mod_contract_olive extends ModelNumRefContracts
 	 * @param	Contrat		$contract	Object contract
 	 * @return	string					Return next value
 	 */
-	function getNextValue($objsoc, $contract)
+	public function getNextValue($objsoc, $contract)
 	{
 		global $langs;
 		return '';
@@ -101,7 +101,7 @@ class mod_contract_olive extends ModelNumRefContracts
 	 * 								-3 ErrorProductCodeAlreadyUsed
 	 * 								-4 ErrorPrefixRequired
 	 */
-	function verif($db, &$code, $product, $type)
+	public function verif($db, &$code, $product, $type)
 	{
 		global $conf;
 

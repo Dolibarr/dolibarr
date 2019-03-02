@@ -62,7 +62,7 @@ class ExportCsv extends ModeleExports
 	 *
 	 *	@param	    DoliDB	$db      Database handler
 	 */
-	function __construct($db)
+	public function __construct($db)
 	{
 		global $conf, $langs;
 		$this->db = $db;
@@ -89,7 +89,7 @@ class ExportCsv extends ModeleExports
 	 *
 	 * @return string
 	 */
-	function getDriverId()
+	public function getDriverId()
 	{
 		return $this->id;
 	}
@@ -99,7 +99,7 @@ class ExportCsv extends ModeleExports
 	 *
 	 * @return 	string			Return driver label
 	 */
-	function getDriverLabel()
+	public function getDriverLabel()
 	{
 		return $this->label;
 	}
@@ -109,7 +109,7 @@ class ExportCsv extends ModeleExports
 	 *
 	 * @return string
 	 */
-	function getDriverDesc()
+	public function getDriverDesc()
 	{
 		return $this->desc;
 	}
@@ -119,7 +119,7 @@ class ExportCsv extends ModeleExports
 	 *
 	 * @return string
 	 */
-	function getDriverExtension()
+	public function getDriverExtension()
 	{
 		return $this->extension;
 	}
@@ -129,7 +129,7 @@ class ExportCsv extends ModeleExports
 	 *
 	 * @return string
 	 */
-	function getDriverVersion()
+	public function getDriverVersion()
 	{
 		return $this->version;
 	}
@@ -139,7 +139,7 @@ class ExportCsv extends ModeleExports
 	 *
 	 * @return string
 	 */
-	function getLibLabel()
+	public function getLibLabel()
 	{
 		return $this->label_lib;
 	}
@@ -149,13 +149,13 @@ class ExportCsv extends ModeleExports
 	 *
 	 * @return string
 	 */
-	function getLibVersion()
+	public function getLibVersion()
 	{
 		return $this->version_lib;
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Open output file
 	 *
@@ -163,7 +163,7 @@ class ExportCsv extends ModeleExports
 	 * 	@param		Translate	$outputlangs	Output language object
 	 *	@return		int							<0 if KO, >=0 if OK
 	 */
-	function open_file($file, $outputlangs)
+	public function open_file($file, $outputlangs)
 	{
         // phpcs:enable
 		global $langs;
@@ -184,21 +184,21 @@ class ExportCsv extends ModeleExports
 		return $ret;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * 	Output header into file
 	 *
 	 * 	@param		Translate	$outputlangs	Output language object
 	 * 	@return		int							<0 if KO, >0 if OK
 	 */
-	function write_header($outputlangs)
+	public function write_header($outputlangs)
 	{
         // phpcs:enable
 		return 0;
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * 	Output title line into file
 	 *
@@ -208,7 +208,7 @@ class ExportCsv extends ModeleExports
      *  @param		array		$array_types					Array with types of fields
 	 * 	@return		int											<0 if KO, >0 if OK
 	 */
-	function write_title($array_export_fields_label, $array_selected_sorted, $outputlangs, $array_types)
+	public function write_title($array_export_fields_label, $array_selected_sorted, $outputlangs, $array_types)
 	{
         // phpcs:enable
 		global $conf;
@@ -234,7 +234,7 @@ class ExportCsv extends ModeleExports
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *	Output record line into file
      *
@@ -244,7 +244,7 @@ class ExportCsv extends ModeleExports
      *  @param		array		$array_types				Array with types of fields
 	 * 	@return		int										<0 if KO, >0 if OK
 	 */
-	function write_record($array_selected_sorted, $objp, $outputlangs, $array_types)
+	public function write_record($array_selected_sorted, $objp, $outputlangs, $array_types)
 	{
         // phpcs:enable
 		global $conf;
@@ -288,26 +288,26 @@ class ExportCsv extends ModeleExports
 		return 0;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * 	Output footer into file
 	 *
 	 * 	@param		Translate	$outputlangs	Output language object
 	 * 	@return		int							<0 if KO, >0 if OK
 	 */
-	function write_footer($outputlangs)
+	public function write_footer($outputlangs)
 	{
         // phpcs:enable
 		return 0;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * 	Close file handle
 	 *
 	 * 	@return		int							<0 if KO, >0 if OK
 	 */
-	function close_file()
+	public function close_file()
 	{
         // phpcs:enable
 		fclose($this->handle);

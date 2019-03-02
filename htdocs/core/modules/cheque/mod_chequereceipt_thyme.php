@@ -49,7 +49,7 @@ class mod_chequereceipt_thyme extends ModeleNumRefChequeReceipts
      *
      *  @return     string      Texte descripif
      */
-	function info()
+	public function info()
     {
     	global $conf, $langs;
 
@@ -89,7 +89,7 @@ class mod_chequereceipt_thyme extends ModeleNumRefChequeReceipts
      *
      *  @return     string      Example
      */
-    function getExample()
+    public function getExample()
     {
      	global $conf,$langs,$mysoc;
 
@@ -112,7 +112,7 @@ class mod_chequereceipt_thyme extends ModeleNumRefChequeReceipts
 	 *  @param  Object		$object		Object we need next value for
 	 *  @return string      			Value if KO, <0 if KO
 	 */
-    function getNextValue($objsoc, $object)
+    public function getNextValue($objsoc, $object)
     {
 		global $db,$conf;
 
@@ -133,7 +133,7 @@ class mod_chequereceipt_thyme extends ModeleNumRefChequeReceipts
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Return next free value
 	 *
@@ -141,7 +141,7 @@ class mod_chequereceipt_thyme extends ModeleNumRefChequeReceipts
 	 * 	@param	string		$objforref	Object for number to search
 	 *  @return string      			Next free value
      */
-    function chequereceipt_get_num($objsoc, $objforref)
+    public function chequereceipt_get_num($objsoc, $objforref)
     {
         // phpcs:enable
         return $this->getNextValue($objsoc, $objforref);

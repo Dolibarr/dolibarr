@@ -72,7 +72,7 @@ class ActionsDatapolicy
      *                           				=0 if OK but we want to process standard actions too,
      *                            				>0 if OK and we want to replace standard actions.
      */
-    function getNomUrl($parameters, &$object, &$action)
+    public function getNomUrl($parameters, &$object, &$action)
     {
         global $db, $langs, $conf, $user;
         $this->resprints = '';
@@ -300,7 +300,7 @@ class ActionsDatapolicy
      *                                  =0 if OK but we want to process standard actions too,
      *                                  >0 if OK and we want to replace standard actions.
      */
-    function beforePDFCreation($parameters, &$object, &$action)
+    public function beforePDFCreation($parameters, &$object, &$action)
     {
         global $conf, $user, $langs;
         global $hookmanager;
@@ -329,7 +329,7 @@ class ActionsDatapolicy
      * @param HookManager	$hookmanager	Hook manager
      * @return void
      */
-    function addMoreActionsButtons($parameters, &$object, &$action, $hookmanager)
+    public function addMoreActionsButtons($parameters, &$object, &$action, $hookmanager)
     {
         global $conf, $user, $langs;
         $langs->load('datapolicy@datapolicy');
@@ -388,7 +388,7 @@ class ActionsDatapolicy
      * @param HookManager	$hookmanager	Hook manager
      * @return void
      */
-    function printCommonFooter($parameters, &$object, &$action, $hookmanager)
+    public function printCommonFooter($parameters, &$object, &$action, $hookmanager)
     {
         global $conf, $user, $langs;
 

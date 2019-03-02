@@ -97,7 +97,7 @@ abstract class CommonInvoice extends CommonObject
 	 *  @param 		int 	$multicurrency 	Return multicurrency_amount instead of amount
 	 *	@return		double						Remain of amount to pay
 	 */
-	function getRemainToPay($multicurrency = 0)
+	public function getRemainToPay($multicurrency = 0)
 	{
 	    $alreadypaid=0;
 	    $alreadypaid+=$this->getSommePaiement($multicurrency);
@@ -112,7 +112,7 @@ abstract class CommonInvoice extends CommonObject
 	 *  @param 		int 	$multicurrency 	Return multicurrency_amount instead of amount
 	 *	@return		int						Amount of payment already done, <0 if KO
 	 */
-	function getSommePaiement($multicurrency = 0)
+	public function getSommePaiement($multicurrency = 0)
 	{
 		$table='paiement_facture';
 		$field='fk_facture';
@@ -149,7 +149,7 @@ abstract class CommonInvoice extends CommonObject
 	 * 		@param 		int 	$multicurrency 	Return multicurrency_amount instead of amount
 	 *		@return		int						<0 if KO, Sum of deposits amount otherwise
 	 */
-	function getSumDepositsUsed($multicurrency = 0)
+	public function getSumDepositsUsed($multicurrency = 0)
 	{
 		if ($this->element == 'facture_fourn' || $this->element == 'invoice_supplier')
 	    {
@@ -178,7 +178,7 @@ abstract class CommonInvoice extends CommonObject
 	 * 		@param 		int 	$multicurrency 	Return multicurrency_amount instead of amount
 	 *		@return		int						<0 if KO, Sum of credit notes and deposits amount otherwise
 	 */
-	function getSumCreditNotesUsed($multicurrency = 0)
+	public function getSumCreditNotesUsed($multicurrency = 0)
 	{
 	    require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
 
@@ -200,7 +200,7 @@ abstract class CommonInvoice extends CommonObject
 	 *
 	 *	@return		array		Tableau d'id de factures avoirs
 	 */
-	function getListIdAvoirFromInvoice()
+	public function getListIdAvoirFromInvoice()
 	{
 		$idarray=array();
 
@@ -233,7 +233,7 @@ abstract class CommonInvoice extends CommonObject
 	 *	@param		string	$option		filtre sur statut ('', 'validated', ...)
 	 *	@return		int					<0 si KO, 0 si aucune facture ne remplace, id facture sinon
 	 */
-	function getIdReplacingInvoice($option = '')
+	public function getIdReplacingInvoice($option = '')
 	{
 		$sql = 'SELECT rowid';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.$this->table_element;
@@ -274,7 +274,7 @@ abstract class CommonInvoice extends CommonObject
 	 *	@param		string	$filtertype		1 to filter on type of payment == 'PRE'
 	 *  @return     array					Array with list of payments
 	 */
-	function getListOfPayments($filtertype = '')
+	public function getListOfPayments($filtertype = '')
 	{
 		$retarray=array();
 
@@ -325,7 +325,7 @@ abstract class CommonInvoice extends CommonObject
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Return if an invoice can be deleted
 	 *	Rule is:
@@ -339,8 +339,8 @@ abstract class CommonInvoice extends CommonObject
 	 *
 	 *  @return    int         <=0 if no, >0 if yes
 	 */
-	function is_erasable()
-	{
+    public function is_erasable()
+    {
         // phpcs:enable
 		global $conf;
 
@@ -428,7 +428,7 @@ abstract class CommonInvoice extends CommonObject
 	 *
 	 *	@return     string        Label of type of invoice
 	 */
-	function getLibType()
+    public function getLibType()
 	{
 		global $langs;
         if ($this->type == CommonInvoice::TYPE_STANDARD) return $langs->trans("InvoiceStandard");
@@ -447,12 +447,12 @@ abstract class CommonInvoice extends CommonObject
 	 *  @param      integer	$alreadypaid    0=No payment already done, >0=Some payments were already done (we recommand to put here amount payed if you have it, 1 otherwise)
 	 *  @return     string			        Label of status
 	 */
-	function getLibStatut($mode = 0, $alreadypaid = -1)
+	public function getLibStatut($mode = 0, $alreadypaid = -1)
 	{
 		return $this->LibStatut($this->paye, $this->statut, $mode, $alreadypaid, $this->type);
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Return label of a status
 	 *
@@ -463,18 +463,16 @@ abstract class CommonInvoice extends CommonObject
 	 *	@param		int		$type			Type invoice
 	 *	@return     string        			Label of status
 	 */
-	function LibStatut($paye, $status, $mode = 0, $alreadypaid = -1, $type = 0)
+	public function LibStatut($paye, $status, $mode = 0, $alreadypaid = -1, $type = 0)
 	{
         // phpcs:enable
 		global $langs;
 		$langs->load('bills');
 
 		//print "$paye,$status,$mode,$alreadypaid,$type";
-		if ($mode == 0)
-		{
+		if ($mode == 0) {
 			$prefix='';
-			if (! $paye)
-			{
+			if (! $paye) {
 				if ($status == 0) return $langs->trans('Bill'.$prefix.'StatusDraft');
 				elseif (($status == 3 || $status == 2) && $alreadypaid <= 0) return $langs->trans('Bill'.$prefix.'StatusClosedUnpaid');
 				elseif (($status == 3 || $status == 2) && $alreadypaid > 0) return $langs->trans('Bill'.$prefix.'StatusClosedPaidPartially');
@@ -585,7 +583,7 @@ abstract class CommonInvoice extends CommonObject
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Renvoi une date limite de reglement de facture en fonction des
 	 *	conditions de reglements de la facture et date de facturation.
@@ -593,7 +591,7 @@ abstract class CommonInvoice extends CommonObject
 	 *	@param      integer	$cond_reglement   	Condition of payment (code or id) to use. If 0, we use current condition.
 	 *  @return     date     			       	Date limite de reglement si ok, <0 si ko
 	 */
-	function calculate_date_lim_reglement($cond_reglement = 0)
+    public function calculate_date_lim_reglement($cond_reglement = 0)
 	{
         // phpcs:enable
 		if (! $cond_reglement) $cond_reglement=$this->cond_reglement_code;

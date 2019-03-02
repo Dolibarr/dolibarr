@@ -61,7 +61,7 @@ class mod_pacific extends ModeleNumRefFicheinter
 	 *
      *  @return     string      Text with description
      */
-    function info()
+    public function info()
     {
     	global $langs;
       	return $langs->trans("SimpleNumRefModelDesc", $this->prefix);
@@ -72,7 +72,7 @@ class mod_pacific extends ModeleNumRefFicheinter
 	 *
 	 *  @return     string      Example
 	 */
-	function getExample()
+	public function getExample()
 	{
 		return $this->prefix."0501-0001";
 	}
@@ -83,7 +83,7 @@ class mod_pacific extends ModeleNumRefFicheinter
 	 *
 	 *  @return     boolean     false si conflit, true si ok
 	 */
-	function canBeActivated()
+	public function canBeActivated()
 	{
 		global $langs,$conf,$db;
 
@@ -122,7 +122,7 @@ class mod_pacific extends ModeleNumRefFicheinter
 	 *  @param  Object		$object		Object we need next value for
 	 *  @return string      			Value if KO, <0 if KO
 	 */
-	function getNextValue($objsoc = 0, $object = '')
+	public function getNextValue($objsoc = 0, $object = '')
 	{
 		global $db,$conf;
 
@@ -158,7 +158,7 @@ class mod_pacific extends ModeleNumRefFicheinter
 	 * 	@param	Object	$objforref	Object for number to search
 	 *  @return string      		Next free value
 	 */
-	function getNumRef($objsoc, $objforref)
+	public function getNumRef($objsoc, $objforref)
 	{
 		return $this->getNextValue($objsoc, $objforref);
 	}

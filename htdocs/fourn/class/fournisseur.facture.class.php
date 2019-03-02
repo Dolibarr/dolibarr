@@ -29,9 +29,9 @@
  */
 
 /**
- *	\file       htdocs/fourn/class/fournisseur.facture.class.php
- *	\ingroup    fournisseur,facture
- *	\brief      File of class to manage suppliers invoices
+ *  \file       htdocs/fourn/class/fournisseur.facture.class.php
+ *  \ingroup    fournisseur,facture
+ *  \brief      File of class to manage suppliers invoices
  */
 
 include_once DOL_DOCUMENT_ROOT.'/core/class/commoninvoice.class.php';
@@ -53,14 +53,14 @@ class FactureFournisseur extends CommonInvoice
     public $table_element='facture_fourn';
 
     /**
-	 * @var int    Name of subtable line
-	 */
-	public $table_element_line='facture_fourn_det';
+     * @var int    Name of subtable line
+     */
+    public $table_element_line='facture_fourn_det';
 
     /**
-	 * @var int Field with ID of parent key if this field has a parent
-	 */
-	public $fk_element='fk_facture_fourn';
+     * @var int Field with ID of parent key if this field has a parent
+     */
+    public $fk_element='fk_facture_fourn';
 
     public $picto='bill';
 
@@ -707,22 +707,22 @@ class FactureFournisseur extends CommonInvoice
     }
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *	Load this->lines
      *
      *  @return     int         1 si ok, < 0 si erreur
      */
-    function fetch_lines()
+    public function fetch_lines()
     {
         // phpcs:enable
-    	$this->lines = array();
+        $this->lines = array();
 
         $sql = 'SELECT f.rowid, f.ref as ref_supplier, f.description, f.date_start, f.date_end, f.pu_ht, f.pu_ttc, f.qty, f.remise_percent, f.vat_src_code, f.tva_tx';
         $sql.= ', f.localtax1_tx, f.localtax2_tx, f.localtax1_type, f.localtax2_type, f.total_localtax1, f.total_localtax2, f.fk_facture_fourn ';
         $sql.= ', f.total_ht, f.tva as total_tva, f.total_ttc, f.fk_product, f.product_type, f.info_bits, f.rang, f.special_code, f.fk_parent_line, f.fk_unit';
         $sql.= ', p.rowid as product_id, p.ref as product_ref, p.label as label, p.description as product_desc';
-		$sql.= ', f.fk_multicurrency, f.multicurrency_code, f.multicurrency_subprice, f.multicurrency_total_ht, f.multicurrency_total_tva, f.multicurrency_total_ttc';
+        $sql.= ', f.fk_multicurrency, f.multicurrency_code, f.multicurrency_subprice, f.multicurrency_total_ht, f.multicurrency_total_tva, f.multicurrency_total_ttc';
         $sql.= ' FROM '.MAIN_DB_PREFIX.'facture_fourn_det as f';
         $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON f.fk_product = p.rowid';
         $sql.= ' WHERE fk_facture_fourn='.$this->id;
@@ -783,12 +783,12 @@ class FactureFournisseur extends CommonInvoice
                     $line->fk_unit          = $obj->fk_unit;
 
 					// Multicurrency
-					$line->fk_multicurrency 		= $obj->fk_multicurrency;
-					$line->multicurrency_code 		= $obj->multicurrency_code;
-					$line->multicurrency_subprice 	= $obj->multicurrency_subprice;
-					$line->multicurrency_total_ht 	= $obj->multicurrency_total_ht;
-					$line->multicurrency_total_tva 	= $obj->multicurrency_total_tva;
-					$line->multicurrency_total_ttc 	= $obj->multicurrency_total_ttc;
+					$line->fk_multicurrency = $obj->fk_multicurrency;
+					$line->multicurrency_code = $obj->multicurrency_code;
+					$line->multicurrency_subprice = $obj->multicurrency_subprice;
+					$line->multicurrency_total_ht = $obj->multicurrency_total_ht;
+					$line->multicurrency_total_tva = $obj->multicurrency_total_tva;
+					$line->multicurrency_total_ttc = $obj->multicurrency_total_ttc;
 
 	                $this->lines[$i] = $line;
 
@@ -934,14 +934,14 @@ class FactureFournisseur extends CommonInvoice
         }
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *    Add a discount line into an invoice (as an invoice line) using an existing absolute discount (Consume the discount)
      *
      *    @param     int	$idremise	Id of absolute discount
      *    @return    int          		>0 if OK, <0 if KO
      */
-    function insert_discount($idremise)
+    public function insert_discount($idremise)
     {
         // phpcs:enable
     	global $langs;
@@ -1187,16 +1187,16 @@ class FactureFournisseur extends CommonInvoice
     }
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *  Tag invoice as a payed invoice
      *
      *	@param  User	$user       Object user
-	 *	@param  string	$close_code	Code renseigne si on classe a payee completement alors que paiement incomplet. Not implementd yet.
-	 *	@param  string	$close_note	Commentaire renseigne si on classe a payee alors que paiement incomplet. Not implementd yet.
+     *	@param  string	$close_code	Code renseigne si on classe a payee completement alors que paiement incomplet. Not implementd yet.
+     *	@param  string	$close_note	Commentaire renseigne si on classe a payee alors que paiement incomplet. Not implementd yet.
      *	@return int         		<0 si ko, >0 si ok
      */
-    function set_paid($user, $close_code = '', $close_note = '')
+    public function set_paid($user, $close_code = '', $close_note = '')
     {
         // phpcs:enable
         global $conf,$langs;
@@ -1237,7 +1237,7 @@ class FactureFournisseur extends CommonInvoice
     }
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *	Tag la facture comme non payee completement + appel trigger BILL_UNPAYED
      *	Fonction utilisee quand un paiement prelevement est refuse,
@@ -1246,7 +1246,7 @@ class FactureFournisseur extends CommonInvoice
      *	@param      User	$user       Object user that change status
      *	@return     int         		<0 si ok, >0 si ok
      */
-    function set_unpaid($user)
+    public function set_unpaid($user)
     {
         // phpcs:enable
         global $conf,$langs;
@@ -1450,7 +1450,7 @@ class FactureFournisseur extends CommonInvoice
     }
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *	Set draft status
      *
@@ -1458,7 +1458,7 @@ class FactureFournisseur extends CommonInvoice
      *	@param	int		$idwarehouse	Id warehouse to use for stock change.
      *	@return	int						<0 if KO, >0 if OK
      */
-    function set_draft($user, $idwarehouse = -1)
+    public function set_draft($user, $idwarehouse = -1)
     {
         // phpcs:enable
         global $conf,$langs;
@@ -2033,7 +2033,7 @@ class FactureFournisseur extends CommonInvoice
         }
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
 	 *	Renvoi liste des factures remplacables
 	 *	Statut validee ou abandonnee pour raison autre + non payee + aucun paiement + pas deja remplacee
@@ -2042,7 +2042,7 @@ class FactureFournisseur extends CommonInvoice
 	 *	@return    	array|int			Tableau des factures ('id'=>id, 'ref'=>ref, 'status'=>status, 'paymentornot'=>0/1)
      *                                  <0 if error
      */
-	function list_replacable_supplier_invoices($socid = 0)
+    public function list_replacable_supplier_invoices($socid = 0)
 	{
         // phpcs:enable
 		global $conf;
@@ -2084,7 +2084,7 @@ class FactureFournisseur extends CommonInvoice
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Renvoi liste des factures qualifiables pour correction par avoir
 	 *	Les factures qui respectent les regles suivantes sont retournees:
@@ -2094,7 +2094,7 @@ class FactureFournisseur extends CommonInvoice
 	 *	@return    	array|int			Tableau des factures ($id => array('ref'=>,'paymentornot'=>,'status'=>,'paye'=>)
      *                                  <0 if error
 	 */
-	function list_qualified_avoir_supplier_invoices($socid = 0)
+    public function list_qualified_avoir_supplier_invoices($socid = 0)
 	{
         // phpcs:enable
 		global $conf;
@@ -2137,14 +2137,14 @@ class FactureFournisseur extends CommonInvoice
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *	Load indicators for dashboard (this->nbtodo and this->nbtodolate)
      *
      *	@param      User	$user       Object user
      *	@return WorkboardResponse|int <0 if KO, WorkboardResponse if OK
      */
-    function load_board($user)
+    public function load_board($user)
     {
         // phpcs:enable
         global $conf, $langs;
@@ -2246,8 +2246,8 @@ class FactureFournisseur extends CommonInvoice
         if (! empty($this->total_ttc))
             $label.= '<br><b>' . $langs->trans('AmountTTC') . ':</b> ' . price($this->total_ttc, 0, $langs, 0, -1, -1, $conf->currency);
         if ($this->type == self::TYPE_REPLACEMENT) $label=$langs->transnoentitiesnoconv("ShowInvoiceReplace").': '.$this->ref;
-        if ($this->type == self::TYPE_CREDIT_NOTE) $label=$langs->transnoentitiesnoconv("ShowInvoiceAvoir").': '.$this->ref;
-        if ($this->type == self::TYPE_DEPOSIT)     $label=$langs->transnoentitiesnoconv("ShowInvoiceDeposit").': '.$this->ref;
+        elseif ($this->type == self::TYPE_CREDIT_NOTE) $label=$langs->transnoentitiesnoconv("ShowInvoiceAvoir").': '.$this->ref;
+        elseif ($this->type == self::TYPE_DEPOSIT)     $label=$langs->transnoentitiesnoconv("ShowInvoiceDeposit").': '.$this->ref;
         if ($moretitle) $label.=' - '.$moretitle;
 
         $ref=$this->ref;
@@ -2434,13 +2434,13 @@ class FactureFournisseur extends CommonInvoice
         $this->total_ttc      = $xnbp*119.6;
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *      Load indicators for dashboard (this->nbtodo and this->nbtodolate)
 	 *
 	 *      @return         int     <0 if KO, >0 if OK
      */
-	function load_state_board()
+    public function load_state_board()
 	{
         // phpcs:enable
 		global $conf, $user;
@@ -3187,13 +3187,13 @@ class SupplierInvoiceLine extends CommonObjectLine
         }
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *  Mise a jour de l'objet ligne de commande en base
      *
      *  @return		int		<0 si ko, >0 si ok
      */
-    function update_total()
+    public function update_total()
     {
         // phpcs:enable
         $this->db->begin();

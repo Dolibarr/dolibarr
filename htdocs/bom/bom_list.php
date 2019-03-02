@@ -478,19 +478,19 @@ while ($i < min($num, $limit))
 		if (isset($obj->$key)) $object->$key = $obj->$key;
 	}
 
-	// Show here line of result
-	print '<tr class="oddeven">';
-	foreach($object->fields as $key => $val)
-	{
+    // Show here line of result
+    print '<tr class="oddeven">';
+    foreach($object->fields as $key => $val)
+    {
 	    $cssforfield='';
 	    if (in_array($val['type'], array('date', 'datetime', 'timestamp'))) $cssforfield.=($cssforfield?' ':'').'center';
 	    elseif ($key == 'status') $cssforfield.=($cssforfield?' ':'').'center';
 
-	    if (in_array($val['type'], array('timestamp'))) $cssforfield.=($cssforfield?' ':'').'nowrap';
-	    elseif ($key == 'ref') $cssforfield.=($cssforfield?' ':'').'nowrap';
+        if (in_array($val['type'], array('timestamp'))) $cssforfield.=($cssforfield?' ':'').'nowrap';
+        elseif ($key == 'ref') $cssforfield.=($cssforfield?' ':'').'nowrap';
 
-	    if (! empty($arrayfields['t.'.$key]['checked']))
-		{
+        if (! empty($arrayfields['t.'.$key]['checked']))
+        {
 			print '<td';
 			if ($cssforfield || $val['css']) print ' class="';
 			print $cssforfield;
@@ -506,8 +506,8 @@ while ($i < min($num, $limit))
 				if (! $i) $totalarray['pos'][$totalarray['nbfield']]='t.'.$key;
 				$totalarray['val']['t.'.$key] += $obj->$key;
 			}
-		}
-	}
+        }
+    }
 	// Extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 	// Fields from hook

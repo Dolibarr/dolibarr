@@ -43,15 +43,15 @@ class FormActions
     /**
 	 *	Constructor
 	 *
-	 *  @param		DoliDB		$db      Database handler
+     *  @param      DoliDB		$db      Database handler
      */
-    function __construct($db)
+    public function __construct($db)
     {
         $this->db = $db;
     }
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *  Show list of action status
      *
@@ -64,7 +64,7 @@ class FormActions
      *  @param  string  $morecss        More css on select field
      * 	@return	void
      */
-    function form_select_status_action($formname, $selected, $canedit = 1, $htmlname = 'complete', $showempty = 0, $onlyselect = 0, $morecss = 'maxwidth100')
+    public function form_select_status_action($formname, $selected, $canedit = 1, $htmlname = 'complete', $showempty = 0, $onlyselect = 0, $morecss = 'maxwidth100')
     {
         // phpcs:enable
         global $langs,$conf;
@@ -168,7 +168,7 @@ class FormActions
      *  @param	string	$morehtmlright			More html text on right of title line
      *	@return	int								<0 if KO, >=0 if OK
      */
-    function showactions($object, $typeelement, $socid = 0, $forceshowtitle = 0, $morecss = 'listactions', $max = 0, $moreparambacktopage = '', $morehtmlright = '')
+    public function showactions($object, $typeelement, $socid = 0, $forceshowtitle = 0, $morecss = 'listactions', $max = 0, $moreparambacktopage = '', $morehtmlright = '')
     {
         global $langs,$conf,$user;
         global $bc;
@@ -179,7 +179,7 @@ class FormActions
         $sortorder='DESC,DESC';
 
         $listofactions=ActionComm::getActions($this->db, $socid, $object->id, $typeelement, '', $sortfield, $sortorder, ($max?($max+1):0));
-		if (! is_array($listofactions)) dol_print_error($this->db, 'FailedToGetActions');
+        if (! is_array($listofactions)) dol_print_error($this->db, 'FailedToGetActions');
 
         $num = count($listofactions);
         if ($num || $forceshowtitle)
@@ -314,7 +314,7 @@ class FormActions
     }
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *  Output html select list of type of event
      *
@@ -327,7 +327,7 @@ class FormActions
      *  @param  int             $nooutput       1=No output
      * 	@return	string
      */
-    function select_type_actions($selected = '', $htmlname = 'actioncode', $excludetype = '', $onlyautoornot = 0, $hideinfohelp = 0, $multiselect = 0, $nooutput = 0)
+    public function select_type_actions($selected = '', $htmlname = 'actioncode', $excludetype = '', $onlyautoornot = 0, $hideinfohelp = 0, $multiselect = 0, $nooutput = 0)
     {
         // phpcs:enable
         global $langs,$user,$form,$conf;

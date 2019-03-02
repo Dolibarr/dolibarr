@@ -32,9 +32,9 @@ class RssParser
     public $db;
 
     /**
-	 * @var string Error code (or message)
-	 */
-	public $error='';
+     * @var string Error code (or message)
+     */
+    public $error='';
 
     private $_format='';
     private $_urlRSS;
@@ -61,7 +61,7 @@ class RssParser
      */
     public function __construct($db)
     {
-    	$this->db = $db;
+        $this->db = $db;
     }
 
     /**
@@ -252,28 +252,28 @@ class RssParser
 
         if ($str !== false)
         {
-	        // Convert $str into xml
-	        if (! empty($conf->global->EXTERNALRSS_USE_SIMPLEXML))
-	        {
-	            //print 'xx'.LIBXML_NOCDATA;
-	            libxml_use_internal_errors(false);
-	            $rss = simplexml_load_string($str, "SimpleXMLElement", LIBXML_NOCDATA);
-	        }
-	        else
-	        {
-	            $xmlparser=xml_parser_create('');
-	            if (!is_resource($xmlparser)) {
-	                $this->error="ErrorFailedToCreateParser"; return -1;
-	            }
+            // Convert $str into xml
+            if (! empty($conf->global->EXTERNALRSS_USE_SIMPLEXML))
+            {
+                //print 'xx'.LIBXML_NOCDATA;
+                libxml_use_internal_errors(false);
+                $rss = simplexml_load_string($str, "SimpleXMLElement", LIBXML_NOCDATA);
+            }
+            else
+            {
+                $xmlparser=xml_parser_create('');
+                if (!is_resource($xmlparser)) {
+                    $this->error="ErrorFailedToCreateParser"; return -1;
+                }
 
-	            xml_set_object($xmlparser, $this);
-	            xml_set_element_handler($xmlparser, 'feed_start_element', 'feed_end_element');
-	            xml_set_character_data_handler($xmlparser, 'feed_cdata');
-	            $status = xml_parse($xmlparser, $str);
-	            xml_parser_free($xmlparser);
-	            $rss=$this;
-	            //var_dump($rss->_format);exit;
-	        }
+                xml_set_object($xmlparser, $this);
+                xml_set_element_handler($xmlparser, 'feed_start_element', 'feed_end_element');
+                xml_set_character_data_handler($xmlparser, 'feed_cdata');
+                $status = xml_parse($xmlparser, $str);
+                xml_parser_free($xmlparser);
+                $rss=$this;
+                //var_dump($rss->_format);exit;
+            }
         }
 
         // If $rss loaded
@@ -287,16 +287,16 @@ class RssParser
                 $fp = fopen($newpathofdestfile, 'w');
                 if ($fp)
                 {
-                	fwrite($fp, $str);
-                	fclose($fp);
-                	if (! empty($conf->global->MAIN_UMASK)) $newmask=$conf->global->MAIN_UMASK;
-                	@chmod($newpathofdestfile, octdec($newmask));
+                    fwrite($fp, $str);
+                    fclose($fp);
+                    if (! empty($conf->global->MAIN_UMASK)) $newmask=$conf->global->MAIN_UMASK;
+                    @chmod($newpathofdestfile, octdec($newmask));
 
-	                $this->_lastfetchdate=$nowgmt;
+                    $this->_lastfetchdate=$nowgmt;
                 }
                 else
                 {
-                	print 'Error, failed to open file '.$newpathofdestfile.' for write';
+                    print 'Error, failed to open file '.$newpathofdestfile.' for write';
                 }
             }
 
@@ -435,13 +435,13 @@ class RssParser
 
                     // Add record to result array
                     $this->_rssarray[$i] = array(
-    					'link'=>$itemLink,
-    					'title'=>$itemTitle,
-    					'description'=>$itemDescription,
-    					'pubDate'=>$itemPubDate,
-    					'category'=>$itemCategory,
-    				    'id'=>$itemId,
-    				    'author'=>$itemAuthor);
+                        'link'=>$itemLink,
+                        'title'=>$itemTitle,
+                        'description'=>$itemDescription,
+                        'pubDate'=>$itemPubDate,
+                        'category'=>$itemCategory,
+                        'id'=>$itemId,
+                        'author'=>$itemAuthor);
                     //var_dump($this->_rssarray);
 
                     $i++;
@@ -461,7 +461,7 @@ class RssParser
 
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      * 	Triggered when opened tag is found
      *
@@ -470,7 +470,7 @@ class RssParser
      *  @param	array		$attrs		Attributes of tags
      *  @return	void
      */
-    function feed_start_element($p, $element, &$attrs)
+    public function feed_start_element($p, $element, &$attrs)
     {
         // phpcs:enable
         $el = $element = strtolower($element);
@@ -581,7 +581,7 @@ class RssParser
     }
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      * 	Triggered when CDATA is found
      *
@@ -589,7 +589,7 @@ class RssParser
      *  @param	string	$text	Tag
      *  @return	void
      */
-    function feed_cdata($p, $text)
+    public function feed_cdata($p, $text)
     {
         // phpcs:enable
         if ($this->_format == 'atom' and $this->incontent)
@@ -603,7 +603,7 @@ class RssParser
         }
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      * 	Triggered when closed tag is found
      *
@@ -611,7 +611,7 @@ class RssParser
      *  @param	string		$el		Tag
      *  @return	void
      */
-    function feed_end_element($p, $el)
+    public function feed_end_element($p, $el)
     {
         // phpcs:enable
         $el = strtolower($el);
@@ -666,7 +666,7 @@ class RssParser
      *  @param	string	$str2		Str2
      *  @return	string				String cancatenated
      */
-    function concat(&$str1, $str2 = "")
+    public function concat(&$str1, $str2 = "")
     {
         if (!isset($str1) ) {
             $str1="";
@@ -674,14 +674,14 @@ class RssParser
         $str1 .= $str2;
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      * Enter description here ...
      *
      * @param	string	$text		Text
      * @return	void
      */
-    function append_content($text)
+    public function append_content($text)
     {
         // phpcs:enable
         if ( $this->initem ) {
@@ -699,7 +699,7 @@ class RssParser
      * 	@param	string	$text	Text
      * 	@return	void
      */
-    function append($el, $text)
+    public function append($el, $text)
     {
         if (!$el) {
             return;

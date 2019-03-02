@@ -61,7 +61,7 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 	/**
 	 *	Constructor
 	 */
-	function __construct()
+	public function __construct()
 	{
 		$this->code_null = 0;
 		$this->code_modifiable = 1;
@@ -77,7 +77,7 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 	 * 		@param	Translate 		$langs		Object langs
 	 * 		@return string      			Description of module
 	 */
-	function info($langs)
+	public function info($langs)
 	{
 		global $conf, $mc;
 		global $form;
@@ -119,7 +119,7 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 	 * @param	Product		$objproduct		Object product
 	 * @return	string						Return string example
 	 */
-	function getExample($langs, $objproduct = 0)
+	public function getExample($langs, $objproduct = 0)
 	{
 		$examplebarcode = $this->getNextValue($objproduct, '');
 		if (! $examplebarcode)
@@ -142,7 +142,7 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 	 * @param	string		$type       	Type of barcode (EAN, ISBN, ...)
 	 * @return 	string      				Value if OK, '' if module not configured, <0 if KO
 	 */
-	function getNextValue($objproduct = null, $type = '')
+	public function getNextValue($objproduct = null, $type = '')
 	{
 		global $db,$conf;
 
@@ -184,7 +184,7 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 	 * 											-3 ErrorCustomerCodeAlreadyUsed
 	 * 											-4 ErrorPrefixRequired
 	 */
-	function verif($db, &$code, $product, $thirdparty_type, $type)
+	public function verif($db, &$code, $product, $thirdparty_type, $type)
 	{
 		global $conf;
 
@@ -235,7 +235,7 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Return if a code is used (by other element)
 	 *
@@ -244,7 +244,7 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 	 *	@param	Product		$product	Objet product
 	 *	@return	int						0 if available, <0 if KO
 	 */
-	function verif_dispo($db, $code, $product)
+	public function verif_dispo($db, $code, $product)
 	{
         // phpcs:enable
 		$sql = "SELECT barcode FROM ".MAIN_DB_PREFIX."product";
@@ -269,7 +269,7 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Return if a barcode value match syntax
 	 *
@@ -277,7 +277,7 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
      *  @param	string	$typefortest	Type of barcode (ISBN, EAN, ...)
 	 *	@return	int						0 if OK, <0 if KO
 	 */
-	function verif_syntax($codefortest, $typefortest)
+	public function verif_syntax($codefortest, $typefortest)
 	{
         // phpcs:enable
 		global $conf;
@@ -296,15 +296,15 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 
 		$newcodefortest=$codefortest;
 
-		// Special case, if mask is on 12 digits instead of 13, we remove last char into code to test
-		if (in_array($typefortest, array('EAN13','ISBN')))	// We remove the CRC char not included into mask
-		{
-    		if (preg_match('/\{(0+)([@\+][0-9]+)?([@\+][0-9]+)?\}/i', $mask, $reg))
-    	    {
-    	        if (strlen($reg[1]) == 12) $newcodefortest=substr($newcodefortest, 0, 12);
-    	        dol_syslog(get_class($this).'::verif_syntax newcodefortest='.$newcodefortest);
-    	    }
-		}
+        // Special case, if mask is on 12 digits instead of 13, we remove last char into code to test
+        if (in_array($typefortest, array('EAN13','ISBN')))	// We remove the CRC char not included into mask
+        {
+            if (preg_match('/\{(0+)([@\+][0-9]+)?([@\+][0-9]+)?\}/i', $mask, $reg))
+            {
+                if (strlen($reg[1]) == 12) $newcodefortest=substr($newcodefortest, 0, 12);
+                dol_syslog(get_class($this).'::verif_syntax newcodefortest='.$newcodefortest);
+            }
+        }
 
 		$result=check_value($mask, $newcodefortest);
 		if (is_string($result))

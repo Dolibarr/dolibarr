@@ -43,7 +43,7 @@ class modAgenda extends DolibarrModules
 	 *
 	 *   @param      DoliDB		$db      Database handler
 	 */
-	function __construct($db)
+	public function __construct($db)
 	{
 		global $conf, $user;
 
@@ -204,18 +204,20 @@ class modAgenda extends DolibarrModules
 		//							'target'=>'',
 		//							'user'=>2);				// 0=Menu for internal users, 1=external users, 2=both
 		// $r++;
-		$this->menu[$r]=array('fk_menu'=>0,
-													'type'=>'top',
-													'titre'=>'TMenuAgenda',
-													'mainmenu'=>'agenda',
-													'url'=>'/comm/action/index.php',
-													'langs'=>'agenda',
-													'position'=>86,
-													'perms'=>'$user->rights->agenda->myactions->read',
-													'enabled'=>'$conf->agenda->enabled',
-													'target'=>'',
-													'user'=>2);
-		$r++;
+		$this->menu[$r]=array(
+            'fk_menu'=>0,
+            'type'=>'top',
+            'titre'=>'TMenuAgenda',
+            'mainmenu'=>'agenda',
+            'url'=>'/comm/action/index.php',
+            'langs'=>'agenda',
+            'position'=>86,
+            'perms'=>'$user->rights->agenda->myactions->read',
+            'enabled'=>'$conf->agenda->enabled',
+            'target'=>'',
+            'user'=>2,
+        );
+        $r++;
 
 		$this->menu[$r]=array('fk_menu'=>'r=0',
 													'type'=>'left',

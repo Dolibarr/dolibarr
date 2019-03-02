@@ -44,62 +44,62 @@ class ExpenseReport extends CommonObject
 	 */
 	public $table_element='expensereport';
 
-    var $table_element_line = 'expensereport_det';
-    var $fk_element = 'fk_expensereport';
-    var $picto = 'trip';
+    public $table_element_line = 'expensereport_det';
+    public $fk_element = 'fk_expensereport';
+    public $picto = 'trip';
 
-    var $lines=array();
+    public $lines=array();
 
     public $date_debut;
 
     public $date_fin;
 
-    var $status;
-    var $fk_statut;     // -- 0=draft, 2=validated (attente approb), 4=canceled, 5=approved, 6=payed, 99=denied
-    var $fk_c_paiement;
-    var $paid;
+    public $status;
+    public $fk_statut;     // -- 0=draft, 2=validated (attente approb), 4=canceled, 5=approved, 6=payed, 99=denied
+    public $fk_c_paiement;
+    public $paid;
 
-    var $user_author_infos;
-    var $user_validator_infos;
+    public $user_author_infos;
+    public $user_validator_infos;
 
-    var $fk_typepayment;
-	var $num_payment;
-    var $code_paiement;
-    var $code_statut;
+    public $fk_typepayment;
+	public $num_payment;
+    public $code_paiement;
+    public $code_statut;
 
     // ACTIONS
 
     // Create
-    var $date_create;
-    var $fk_user_author;    // Note fk_user_author is not the 'author' but the guy the expense report is for.
+    public $date_create;
+    public $fk_user_author;    // Note fk_user_author is not the 'author' but the guy the expense report is for.
 
     // Update
-	var $date_modif;
-    var $fk_user_modif;
+	public $date_modif;
+    public $fk_user_modif;
 
     // Refus
-    var $date_refuse;
-    var $detail_refuse;
-    var $fk_user_refuse;
+    public $date_refuse;
+    public $detail_refuse;
+    public $fk_user_refuse;
 
     // Annulation
-    var $date_cancel;
-    var $detail_cancel;
-    var $fk_user_cancel;
+    public $date_cancel;
+    public $detail_cancel;
+    public $fk_user_cancel;
 
-    var $fk_user_validator;	// User that is defined to approve
+    public $fk_user_validator;	// User that is defined to approve
 
     // Validation
-    var $date_valid;		// User making validation
-    var $fk_user_valid;
-    var $user_valid_infos;
+    public $date_valid;		// User making validation
+    public $fk_user_valid;
+    public $user_valid_infos;
 
     // Approve
-    var $date_approve;
-    var $fk_user_approve;	// User that has approved
+    public $date_approve;
+    public $fk_user_approve;	// User that has approved
 
     // Paiement
-    var $user_paid_infos;
+    public $user_paid_infos;
 
     /*
         END ACTIONS
@@ -137,7 +137,7 @@ class ExpenseReport extends CommonObject
      *
      *  @param  DoliDB  $db     Handler acces base de donnees
      */
-    function __construct($db)
+    public function __construct($db)
     {
         $this->db = $db;
         $this->total_ht = 0;
@@ -155,10 +155,10 @@ class ExpenseReport extends CommonObject
      * Create object in database
      *
      * @param   User    $user   User that create
-	 * @param   int     $notrigger   Disable triggers
+     * @param   int     $notrigger   Disable triggers
      * @return  int             <0 if KO, >0 if OK
      */
-    function create($user, $notrigger = 0)
+    public function create($user, $notrigger = 0)
     {
         global $conf;
 
@@ -307,7 +307,7 @@ class ExpenseReport extends CommonObject
      *	@param		int			$fk_user_author		  Id of new user
      *	@return		int							      New id of clone
      */
-    function createFromClone($fk_user_author)
+    public function createFromClone($fk_user_author)
     {
         global $user,$hookmanager;
 
@@ -377,7 +377,7 @@ class ExpenseReport extends CommonObject
      * @param   User    $userofexpensereport    New user we want to have the expense report on.
      * @return  int                             <0 if KO, >0 if OK
      */
-    function update($user, $notrigger = 0, $userofexpensereport = null)
+    public function update($user, $notrigger = 0, $userofexpensereport = null)
     {
         global $langs;
 
@@ -447,7 +447,7 @@ class ExpenseReport extends CommonObject
      *  @param  string  $ref    Ref                     {@name ref}
      *  @return int             <0 if KO, >0 if OK
      */
-    function fetch($id, $ref = '')
+    public function fetch($id, $ref = '')
     {
         global $conf;
 
@@ -545,7 +545,7 @@ class ExpenseReport extends CommonObject
         }
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *    Classify the expense report as paid
      *
@@ -554,7 +554,7 @@ class ExpenseReport extends CommonObject
 	 *    @param    int     $notrigger          Disable triggers
      *    @return   int                         <0 if KO, >0 if OK
      */
-    function set_paid($id, $fuser, $notrigger = 0)
+    public function set_paid($id, $fuser, $notrigger = 0)
     {
         // phpcs:enable
 		$error = 0;
@@ -613,12 +613,12 @@ class ExpenseReport extends CommonObject
      *  @param      int     $mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
      *  @return     string              Label
      */
-    function getLibStatut($mode = 0)
+    public function getLibStatut($mode = 0)
     {
         return $this->LibStatut($this->status, $mode);
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *  Returns the label of a statut
      *
@@ -626,7 +626,7 @@ class ExpenseReport extends CommonObject
      *  @param      int     $mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
      *  @return     string              Label
      */
-    function LibStatut($status, $mode = 0)
+    public function LibStatut($status, $mode = 0)
     {
         // phpcs:enable
         global $langs;
@@ -660,7 +660,7 @@ class ExpenseReport extends CommonObject
      *  @param  int     $id      Id of object
      *  @return void
      */
-    function info($id)
+    public function info($id)
     {
         global $conf;
 
@@ -684,16 +684,16 @@ class ExpenseReport extends CommonObject
             {
                 $obj = $this->db->fetch_object($resql);
 
-                $this->id                = $obj->rowid;
+                $this->id = $obj->rowid;
 
-                $this->date_creation     = $this->db->jdate($obj->datec);
+                $this->date_creation = $this->db->jdate($obj->datec);
                 $this->date_modification = $this->db->jdate($obj->date_modification);
-                $this->date_validation   = $this->db->jdate($obj->datev);
-                $this->date_approbation  = $this->db->jdate($obj->datea);
+                $this->date_validation = $this->db->jdate($obj->datev);
+                $this->date_approbation = $this->db->jdate($obj->datea);
 
                 $cuser = new User($this->db);
                 $cuser->fetch($obj->fk_user_author);
-                $this->user_creation     = $cuser;
+                $this->user_creation = $cuser;
 
                 if ($obj->fk_user_creation)
                 {
@@ -737,7 +737,7 @@ class ExpenseReport extends CommonObject
      *
      *  @return void
      */
-    function initAsSpecimen()
+    public function initAsSpecimen()
     {
         global $user,$langs,$conf;
 
@@ -767,8 +767,7 @@ class ExpenseReport extends CommonObject
         $this->note_public='SPECIMEN';
         $nbp = 5;
         $xnbp = 0;
-        while ($xnbp < $nbp)
-        {
+        while ($xnbp < $nbp) {
             $line=new ExpenseReportLine($this->db);
             $line->comments=$langs->trans("Comment")." ".$xnbp;
             $line->date=($now-3600*(1+$xnbp));
@@ -793,7 +792,7 @@ class ExpenseReport extends CommonObject
         }
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      * fetch_line_by_project
      *
@@ -801,7 +800,7 @@ class ExpenseReport extends CommonObject
      * @param   User    $user           User
      * @return  int                     <0 if KO, >0 if OK
      */
-    function fetch_line_by_project($projectid, $user = '')
+    public function fetch_line_by_project($projectid, $user = '')
     {
         // phpcs:enable
         global $conf,$db,$langs;
@@ -906,7 +905,7 @@ class ExpenseReport extends CommonObject
      * @param   int         $id     Id of expense report
      * @return  int                 <0 if KO, >0 if OK
      */
-    function recalculer($id)
+    public function recalculer($id)
     {
         $sql = 'SELECT tt.total_ht, tt.total_ttc, tt.total_tva';
         $sql.= ' FROM '.MAIN_DB_PREFIX.$this->table_element_line.' as tt';
@@ -950,13 +949,13 @@ class ExpenseReport extends CommonObject
         }
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      * fetch_lines
      *
      * @return  int     <0 if OK, >0 if KO
      */
-    function fetch_lines()
+    public function fetch_lines()
     {
         // phpcs:enable
         $this->lines=array();
@@ -1038,7 +1037,7 @@ class ExpenseReport extends CommonObject
      * @param   User    $fuser      User that delete
      * @return  int                 <0 if KO, >0 if OK
      */
-    function delete(User $fuser = null)
+    public function delete(User $fuser = null)
     {
         global $user,$langs,$conf;
 
@@ -1078,7 +1077,7 @@ class ExpenseReport extends CommonObject
 	 * @param   int     $notrigger  Disable triggers
      * @return  int                 <0 if KO, 0 if nothing done, >0 if OK
      */
-    function setValidate($fuser, $notrigger = 0)
+    public function setValidate($fuser, $notrigger = 0)
     {
         global $conf,$langs,$user;
 
@@ -1195,14 +1194,14 @@ class ExpenseReport extends CommonObject
         }
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      * set_save_from_refuse
      *
      * @param   User    $fuser      User
      * @return  int                 <0 if KO, >0 if OK
      */
-    function set_save_from_refuse($fuser)
+    public function set_save_from_refuse($fuser)
     {
         // phpcs:enable
         global $conf,$langs;
@@ -1249,16 +1248,15 @@ class ExpenseReport extends CommonObject
 	 * @param   int     $notrigger  Disable triggers
      * @return  int                 <0 if KO, 0 if nothing done, >0 if OK
      */
-    function setApproved($fuser, $notrigger = 0)
+    public function setApproved($fuser, $notrigger = 0)
     {
         $now=dol_now();
-		$error = 0;
+        $error = 0;
 
         // date approval
         $this->date_approve = $now;
-        if ($this->fk_statut != 5)
-        {
-			$this->db->begin();
+        if ($this->fk_statut != 5) {
+            $this->db->begin();
 
             $sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
             $sql.= " SET ref = '".$this->db->escape($this->ref)."', fk_statut = 5, fk_user_approve = ".$fuser->id.",";
@@ -1309,10 +1307,10 @@ class ExpenseReport extends CommonObject
      *
      * @param User      $fuser      User
      * @param Details   $details    Details
-	 * @param int       $notrigger  Disable triggers
+     * @param int       $notrigger  Disable triggers
      * @return int
      */
-    function setDeny($fuser, $details, $notrigger = 0)
+    public function setDeny($fuser, $details, $notrigger = 0)
     {
         $now = dol_now();
 		$error = 0;
@@ -1369,7 +1367,7 @@ class ExpenseReport extends CommonObject
         }
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      * set_unpaid
      *
@@ -1377,7 +1375,7 @@ class ExpenseReport extends CommonObject
 	 * @param   int     $notrigger  Disable triggers
      * @return  int                 <0 if KO, >0 if OK
      */
-    function set_unpaid($fuser, $notrigger = 0)
+    public function set_unpaid($fuser, $notrigger = 0)
     {
         // phpcs:enable
 		$error = 0;
@@ -1430,7 +1428,7 @@ class ExpenseReport extends CommonObject
         }
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      * set_cancel
      *
@@ -1439,7 +1437,7 @@ class ExpenseReport extends CommonObject
 	 * @param   int     $notrigger  Disable triggers
      * @return  int                 <0 if KO, >0 if OK
      */
-    function set_cancel($fuser, $detail, $notrigger = 0)
+    public function set_cancel($fuser, $detail, $notrigger = 0)
     {
         // phpcs:enable
 		$error = 0;
@@ -1499,7 +1497,7 @@ class ExpenseReport extends CommonObject
      *
      * @return    string            free ref
      */
-    function getNextNumRef()
+    public function getNextNumRef()
     {
         global $langs, $conf;
         $langs->load("trips");
@@ -1559,7 +1557,7 @@ class ExpenseReport extends CommonObject
      *  @param  	int     $save_lastsearch_value    	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
      *	@return		string								String with URL
      */
-    function getNomUrl($withpicto = 0, $max = 0, $short = 0, $moretitle = '', $notooltip = 0, $save_lastsearch_value = -1)
+    public function getNomUrl($withpicto = 0, $max = 0, $short = 0, $moretitle = '', $notooltip = 0, $save_lastsearch_value = -1)
     {
         global $langs, $conf;
 
@@ -1615,7 +1613,7 @@ class ExpenseReport extends CommonObject
         return $result;
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *  Update total of an expense report when you add a line.
      *
@@ -1623,7 +1621,7 @@ class ExpenseReport extends CommonObject
      *  @param    string    $ligne_total_tva    Amount of all taxes
      *  @return    void
      */
-    function update_totaux_add($ligne_total_ht, $ligne_total_tva)
+    public function update_totaux_add($ligne_total_ht, $ligne_total_tva)
     {
         // phpcs:enable
         $this->total_ht = $this->total_ht + $ligne_total_ht;
@@ -1645,7 +1643,7 @@ class ExpenseReport extends CommonObject
         endif;
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *  Update total of an expense report when you delete a line.
      *
@@ -1653,7 +1651,7 @@ class ExpenseReport extends CommonObject
      *  @param    string    $ligne_total_tva    Amount of all taxes
      *  @return    void
      */
-    function update_totaux_del($ligne_total_ht, $ligne_total_tva)
+    public function update_totaux_del($ligne_total_ht, $ligne_total_tva)
     {
         // phpcs:enable
         $this->total_ht = $this->total_ht - $ligne_total_ht;
@@ -1689,7 +1687,7 @@ class ExpenseReport extends CommonObject
 	 * @param    int         $type               Type line
 	 * @return   int                             <0 if KO, >0 if OK
 	 */
-	function addline($qty = 0, $up = 0, $fk_c_type_fees = 0, $vatrate = 0, $date = '', $comments = '', $fk_project = 0, $fk_c_exp_tax_cat = 0, $type = 0)
+	public function addline($qty = 0, $up = 0, $fk_c_type_fees = 0, $vatrate = 0, $date = '', $comments = '', $fk_project = 0, $fk_c_exp_tax_cat = 0, $type = 0)
 	{
 		global $conf,$langs,$mysoc;
 
@@ -1783,7 +1781,7 @@ class ExpenseReport extends CommonObject
 	 * @param	string	$seller		seller, but actually he is unknown
 	 * @return true or false
 	 */
-	function checkRules($type = 0, $seller = '')
+	public function checkRules($type = 0, $seller = '')
 	{
 		global $user,$conf,$db,$langs;
 
@@ -1852,7 +1850,7 @@ class ExpenseReport extends CommonObject
 	 *
 	 * @return boolean		true=applied, false=not applied
 	 */
-	function applyOffset()
+	public function applyOffset()
 	{
 		global $conf;
 
@@ -1900,7 +1898,7 @@ class ExpenseReport extends CommonObject
 	 *
 	 * @return bool
 	 */
-	function offsetAlreadyGiven()
+	public function offsetAlreadyGiven()
 	{
 		$sql = 'SELECT e.rowid FROM '.MAIN_DB_PREFIX.'expensereport e';
 		$sql.= ' INNER JOIN '.MAIN_DB_PREFIX.'expensereport_det d ON (e.rowid = d.fk_expensereport)';
@@ -1939,7 +1937,7 @@ class ExpenseReport extends CommonObject
      * @param   int         $fk_c_exp_tax_cat       id of category of car
      * @return  int                                 <0 if KO, >0 if OK
      */
-    function updateline($rowid, $type_fees_id, $projet_id, $vatrate, $comments, $qty, $value_unit, $date, $expensereport_id, $fk_c_exp_tax_cat = 0)
+    public function updateline($rowid, $type_fees_id, $projet_id, $vatrate, $comments, $qty, $value_unit, $date, $expensereport_id, $fk_c_exp_tax_cat = 0)
     {
         global $user, $mysoc;
 
@@ -2046,7 +2044,7 @@ class ExpenseReport extends CommonObject
      * @param   User    $fuser      User
      * @return  int                 <0 if KO, >0 if OK
      */
-    function deleteline($rowid, $fuser = '')
+    public function deleteline($rowid, $fuser = '')
     {
         $this->db->begin();
 
@@ -2068,7 +2066,7 @@ class ExpenseReport extends CommonObject
         return 1;
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      * periode_existe
      *
@@ -2077,7 +2075,7 @@ class ExpenseReport extends CommonObject
      * @param   Date    $date_fin       End date
      * @return  int                     <0 if KO, >0 if OK
      */
-    function periode_existe($fuser, $date_debut, $date_fin)
+    public function periode_existe($fuser, $date_debut, $date_fin)
     {
         // phpcs:enable
         $sql = "SELECT rowid, date_debut, date_fin";
@@ -2086,8 +2084,7 @@ class ExpenseReport extends CommonObject
 
         dol_syslog(get_class($this)."::periode_existe sql=".$sql);
         $result = $this->db->query($sql);
-        if($result)
-        {
+        if ($result) {
             $num_lignes = $this->db->num_rows($result); $i = 0;
 
             if ($num_lignes>0)
@@ -2126,14 +2123,14 @@ class ExpenseReport extends CommonObject
     }
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      * Return list of people with permission to validate expense reports.
      * Search for permission "approve expense report"
      *
      * @return  array       Array of user ids
      */
-    function fetch_users_approver_expensereport()
+    public function fetch_users_approver_expensereport()
     {
         // phpcs:enable
         $users_validator=array();
@@ -2207,7 +2204,7 @@ class ExpenseReport extends CommonObject
      * @param   int     $active     Active or not
      * @return  array
      */
-    function listOfTypes($active = 1)
+    public function listOfTypes($active = 1)
     {
         global $langs;
         $ret=array();
@@ -2234,13 +2231,13 @@ class ExpenseReport extends CommonObject
         return $ret;
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *      Charge indicateurs this->nb pour le tableau de bord
      *
      *      @return     int         <0 if KO, >0 if OK
      */
-    function load_state_board()
+    public function load_state_board()
     {
         // phpcs:enable
         global $conf;
@@ -2253,10 +2250,8 @@ class ExpenseReport extends CommonObject
         $sql.= " AND ex.entity IN (".getEntity('expensereport').")";
 
         $resql=$this->db->query($sql);
-        if ($resql)
-        {
-            while ($obj=$this->db->fetch_object($resql))
-            {
+        if ($resql) {
+            while ($obj=$this->db->fetch_object($resql)) {
                 $this->nb["expensereports"]=$obj->nb;
             }
             $this->db->free($resql);
@@ -2270,7 +2265,7 @@ class ExpenseReport extends CommonObject
         }
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *      Load indicators for dashboard (this->nbtodo and this->nbtodolate)
      *
@@ -2278,16 +2273,16 @@ class ExpenseReport extends CommonObject
      *      @param  string  $option         'topay' or 'toapprove'
      *      @return WorkboardResponse|int 	<0 if KO, WorkboardResponse if OK
      */
-    function load_board($user, $option = 'topay')
+    public function load_board($user, $option = 'topay')
     {
         // phpcs:enable
         global $conf, $langs;
 
         if ($user->societe_id) return -1;   // protection pour eviter appel par utilisateur externe
 
-	    $now=dol_now();
+        $now=dol_now();
 
-	    $userchildids = $user->getAllChildIds(1);
+        $userchildids = $user->getAllChildIds(1);
 
         $sql = "SELECT ex.rowid, ex.date_valid";
         $sql.= " FROM ".MAIN_DB_PREFIX."expensereport as ex";
@@ -2484,17 +2479,17 @@ class ExpenseReportLine
     public $projet_ref;
     public $projet_title;
 
-    var $vatrate;
-    var $total_ht;
-    var $total_tva;
-    var $total_ttc;
+    public $vatrate;
+    public $total_ht;
+    public $total_tva;
+    public $total_ttc;
 
     /**
      * Constructor
      *
      * @param DoliDB    $db     Handlet database
      */
-    function __construct($db)
+    public function __construct($db)
     {
         $this->db= $db;
     }
@@ -2505,7 +2500,7 @@ class ExpenseReportLine
      * @param   int     $rowid      Id of object to load
      * @return  int                 <0 if KO, >0 if OK
      */
-    function fetch($rowid)
+    public function fetch($rowid)
     {
         $sql = 'SELECT fde.rowid, fde.fk_expensereport, fde.fk_c_type_fees, fde.fk_c_exp_tax_cat, fde.fk_projet, fde.date,';
         $sql.= ' fde.tva_tx as vatrate, fde.vat_src_code, fde.comments, fde.qty, fde.value_unit, fde.total_ht, fde.total_tva, fde.total_ttc,';
@@ -2557,7 +2552,7 @@ class ExpenseReportLine
      * @param   bool    $fromaddline    false=keep default behavior, true=exclude the update_price() of parent object
      * @return  int                     <0 if KO, >0 if OK
      */
-    function insert($notrigger = 0, $fromaddline = false)
+    public function insert($notrigger = 0, $fromaddline = false)
     {
         global $langs,$user,$conf;
 
@@ -2679,7 +2674,7 @@ class ExpenseReportLine
      * @param   User    $fuser      User
      * @return  int                 <0 if KO, >0 if OK
      */
-    function update($fuser)
+    public function update($fuser)
     {
         global $fuser,$langs,$conf;
 
@@ -2758,7 +2753,6 @@ class ExpenseReportLine
 }
 
 
-// phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 /**
  *    Retourne la liste deroulante des differents etats d'une note de frais.
  *    Les valeurs de la liste sont les id de la table c_expensereport_statuts
@@ -2771,7 +2765,6 @@ class ExpenseReportLine
  */
 function select_expensereport_statut($selected = '', $htmlname = 'fk_statut', $useempty = 1, $useshortlabel = 0)
 {
-    // phpcs:enable
     global $db, $langs;
 
     $tmpep=new ExpenseReport($db);
@@ -2796,7 +2789,6 @@ function select_expensereport_statut($selected = '', $htmlname = 'fk_statut', $u
     print '</select>';
 }
 
-// phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 /**
  *  Return list of types of notes with select value = id
  *
@@ -2808,7 +2800,6 @@ function select_expensereport_statut($selected = '', $htmlname = 'fk_statut', $u
  */
 function select_type_fees_id($selected = '', $htmlname = 'type', $showempty = 0, $active = 1)
 {
-    // phpcs:enable
     global $db,$langs,$user;
     $langs->load("trips");
 

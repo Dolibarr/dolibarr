@@ -60,7 +60,7 @@ class mod_supplier_payment_bronan extends ModeleNumRefSupplierPayments
      *
      *  @return     string      Text with description
      */
-    function info()
+    public function info()
     {
     	global $langs;
       	return $langs->trans("SimpleNumRefModelDesc", $this->prefix);
@@ -72,7 +72,7 @@ class mod_supplier_payment_bronan extends ModeleNumRefSupplierPayments
 	 *
 	 *  @return     string      Example
 	 */
-	function getExample()
+	public function getExample()
 	{
 		return $this->prefix."0501-0001";
 	}
@@ -84,7 +84,7 @@ class mod_supplier_payment_bronan extends ModeleNumRefSupplierPayments
 	 *
 	 *  @return     boolean     false si conflit, true si ok
 	 */
-	function canBeActivated()
+	public function canBeActivated()
 	{
 		global $conf,$langs,$db;
 
@@ -119,7 +119,7 @@ class mod_supplier_payment_bronan extends ModeleNumRefSupplierPayments
 	 *  @param  Object		$object		Object we need next value for
 	 *  @return string      			Value if KO, <0 if KO
 	 */
-	function getNextValue($objsoc, $object)
+	public function getNextValue($objsoc, $object)
 	{
 		global $db,$conf;
 
@@ -155,7 +155,7 @@ class mod_supplier_payment_bronan extends ModeleNumRefSupplierPayments
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Return next free value
 	 *
@@ -163,7 +163,7 @@ class mod_supplier_payment_bronan extends ModeleNumRefSupplierPayments
 	 * 	@param	string		$objforref	Object for number to search
 	 *  @return string      			Next free value
 	 */
-	function payment_get_num($objsoc, $objforref)
+	public function payment_get_num($objsoc, $objforref)
 	{
         // phpcs:enable
 		return $this->getNextValue($objsoc, $objforref);

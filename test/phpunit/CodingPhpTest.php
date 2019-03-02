@@ -70,11 +70,11 @@ class CodingPhpTest extends PHPUnit_Framework_TestCase
      *
      * @return SecurityTest
      */
-    function __construct()
+    public function __construct()
     {
-    	parent::__construct();
+        parent::__construct();
 
-    	//$this->sharedFixture
+        //$this->sharedFixture
         global $conf,$user,$langs,$db;
         $this->savconf=$conf;
         $this->savuser=$user;
@@ -164,12 +164,12 @@ class CodingPhpTest extends PHPUnit_Framework_TestCase
             preg_match_all('/(..)\s*\.\s*\$this->db->idate\(/', $filecontent, $matches, PREG_SET_ORDER);
             foreach($matches as $key => $val)
             {
-            	if ($val[1] != '\'"' && $val[1] != '\'\'')
-            	{
-            		$ok=false;
-            		break;
-            	}
-            	//if ($reg[0] != 'db') $ok=false;
+                if ($val[1] != '\'"' && $val[1] != '\'\'')
+                {
+                    $ok=false;
+                    break;
+                }
+                //if ($reg[0] != 'db') $ok=false;
             }
             //print __METHOD__." Result for checking we don't have non escaped string in sql requests for file ".$file."\n";
             $this->assertTrue($ok, 'Found a $this->db->idate to forge a sql request without quotes around this date field '.$file['fullname'].' :: '.$val[0]);
@@ -201,7 +201,7 @@ class CodingPhpTest extends PHPUnit_Framework_TestCase
             preg_match_all('/(..............)\$_SERVER\[\'QUERY_STRING\'\]/', $filecontent, $matches, PREG_SET_ORDER);
             foreach($matches as $key => $val)
             {
-            	if ($val[1] != 'scape_htmltag(' && $val[1] != 'ing_nohtmltag(' && $val[1] != 'dol_escape_js(')
+                if ($val[1] != 'scape_htmltag(' && $val[1] != 'ing_nohtmltag(' && $val[1] != 'dol_escape_js(')
                 {
                     $ok=false;
                     break;
@@ -217,8 +217,8 @@ class CodingPhpTest extends PHPUnit_Framework_TestCase
             preg_match_all('/print_liste_field_titre\(\$langs/', $filecontent, $matches, PREG_SET_ORDER);
             foreach($matches as $key => $val)
             {
-           		$ok=false;
-           		break;
+                   $ok=false;
+                   break;
             }
             $this->assertTrue($ok, 'Found a use of print_liste_field_titre with fist parameter that is a translated value instead of just the translation key in file '.$file['fullname'].'. Bad.');
 
@@ -230,7 +230,7 @@ class CodingPhpTest extends PHPUnit_Framework_TestCase
             preg_match_all('/<br \/>/', $filecontent, $matches, PREG_SET_ORDER);
             foreach($matches as $key => $val)
             {
-            	if ($file['name'] != 'functions.lib.php')
+                if ($file['name'] != 'functions.lib.php')
                 {
                     $ok=false;
                     break;

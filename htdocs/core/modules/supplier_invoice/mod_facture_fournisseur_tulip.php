@@ -65,9 +65,9 @@ class mod_facture_fournisseur_tulip extends ModeleNumRefSuppliersInvoices
      *
      * 	@return     string      Description Text
      */
-	function info()
+    public function info()
     {
-    	global $conf, $langs;
+        global $conf, $langs;
 
 		// Load translation files required by the page
         $langs->loadLangs(array("bills","admin"));
@@ -98,7 +98,7 @@ class mod_facture_fournisseur_tulip extends ModeleNumRefSuppliersInvoices
 		$texte.= '<td align="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
 
 		$texte.= '</tr>';
-		
+
 		// Parametrage du prefix des avoirs
 		$texte.= '<tr><td>'.$langs->trans("Mask").' ('.$langs->trans("InvoiceAvoir").'):</td>';
 		$texte.= '<td align="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskcredit" value="'.$conf->global->SUPPLIER_CREDIT_TULIP_MASK.'">', $tooltip, 1, 1).'</td>';
@@ -129,7 +129,7 @@ class mod_facture_fournisseur_tulip extends ModeleNumRefSuppliersInvoices
      *
      *  @return     string     Example
      */
-    function getExample()
+    public function getExample()
     {
     	global $conf,$langs,$mysoc;
 
@@ -153,7 +153,7 @@ class mod_facture_fournisseur_tulip extends ModeleNumRefSuppliersInvoices
      * @param	string		$mode       'next' for next value or 'last' for last value
      * @return 	string      			Value if OK, 0 if KO
 	 */
-    function getNextValue($objsoc, $object, $mode = 'next')
+    public function getNextValue($objsoc, $object, $mode = 'next')
     {
 		global $db,$conf;
 
@@ -182,18 +182,18 @@ class mod_facture_fournisseur_tulip extends ModeleNumRefSuppliersInvoices
 		$numFinal=get_next_value($db, $mask, 'facture_fourn', 'ref', '', $objsoc, $object->date);
 
 		return  $numFinal;
-	}
+    }
 
     /**
-	 * Return next free value
-	 *
-     * @param	Societe		$objsoc     	Object third party
-     * @param	string		$objforref		Object for number to search
-     * @param   string		$mode       	'next' for next value or 'last' for last value
-     * @return  string      				Next free value
+     * Return next free value
+     *
+     *  @param  Societe     $objsoc         Object third party
+     *  @param  string      $objforref      Object for number to search
+     *  @param  string      $mode           'next' for next value or 'last' for last value
+     *  @return string                      Next free value
      */
-	function getNumRef($objsoc, $objforref, $mode = 'next')
-	{
-		return $this->getNextValue($objsoc, $objforref, $mode);
-	}
+    public function getNumRef($objsoc, $objforref, $mode = 'next')
+    {
+        return $this->getNextValue($objsoc, $objforref, $mode);
+    }
 }

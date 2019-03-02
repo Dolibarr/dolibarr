@@ -32,15 +32,15 @@ abstract class ActionsAdherentCardCommon
      */
     public $db;
 
-    var $dirmodule;
-    var $targetmodule;
-    var $canvas;
-    var $card;
+    public $dirmodule;
+    public $targetmodule;
+    public $canvas;
+    public $card;
 
 	//! Template container
-	var $tpl = array();
+	public $tpl = array();
 	//! Object container
-	var $object;
+	public $object;
 
 	/**
 	 * @var string Error code (or message)
@@ -59,7 +59,7 @@ abstract class ActionsAdherentCardCommon
      *  @param	int		$id		Object id
      *  @return	object			Object loaded
      */
-    function getObject($id)
+    public function getObject($id)
     {
     	//$ret = $this->getInstanceDao();
 
@@ -75,7 +75,7 @@ abstract class ActionsAdherentCardCommon
     	//}
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *  Set content of ->tpl array, to use into template
      *
@@ -83,7 +83,7 @@ abstract class ActionsAdherentCardCommon
      *  @param	int			$id			Id
      *  @return	string					HTML output
      */
-    function assign_values(&$action, $id)
+    public function assign_values(&$action, $id)
     {
         // phpcs:enable
         global $conf, $langs, $user, $canvas;
@@ -245,23 +245,23 @@ abstract class ActionsAdherentCardCommon
         // phpcs:enable
         global $langs, $mysoc;
 
-        $this->object->old_name 			= 	$_POST["old_name"];
-        $this->object->old_firstname 		= 	$_POST["old_firstname"];
+        $this->object->old_name 		= $_POST["old_name"];
+        $this->object->old_firstname 	= $_POST["old_firstname"];
 
-        $this->object->fk_soc				=	$_POST["fk_soc"];
-        $this->object->lastname				=	$_POST["lastname"];
-        $this->object->firstname			= 	$_POST["firstname"];
-        $this->object->civility_id			= 	$_POST["civility_id"];
-        $this->object->address				=	$_POST["address"];
-        $this->object->zip					=	$_POST["zipcode"];
-        $this->object->town					=	$_POST["town"];
-        $this->object->country_id			=	$_POST["country_id"]?$_POST["country_id"]:$mysoc->country_id;
-        $this->object->state_id        		=	$_POST["state_id"];
-        $this->object->phone_perso			= 	$_POST["phone_perso"];
-        $this->object->phone_mobile			= 	$_POST["phone_mobile"];
-        $this->object->email				=	$_POST["email"];
-        $this->object->note					=	$_POST["note"];
-        $this->object->canvas				=	$_POST["canvas"];
+        $this->object->fk_soc			= $_POST["fk_soc"];
+        $this->object->lastname			= $_POST["lastname"];
+        $this->object->firstname		= $_POST["firstname"];
+        $this->object->civility_id		= $_POST["civility_id"];
+        $this->object->address			= $_POST["address"];
+        $this->object->zip				= $_POST["zipcode"];
+        $this->object->town				= $_POST["town"];
+        $this->object->country_id		= $_POST["country_id"]?$_POST["country_id"]:$mysoc->country_id;
+        $this->object->state_id        	= $_POST["state_id"];
+        $this->object->phone_perso		= $_POST["phone_perso"];
+        $this->object->phone_mobile		= $_POST["phone_mobile"];
+        $this->object->email			= $_POST["email"];
+        $this->object->note				= $_POST["note"];
+        $this->object->canvas			= $_POST["canvas"];
 
         // We set country_id, and country_code label of the chosen country
         if ($this->object->country_id)
@@ -272,8 +272,8 @@ abstract class ActionsAdherentCardCommon
             {
                 $obj = $this->db->fetch_object($resql);
 
-                $this->object->country_code	=	$obj->code;
-                $this->object->country		=	$langs->trans("Country".$obj->code)?$langs->trans("Country".$obj->code):$obj->libelle;
+                $this->object->country_code = $obj->code;
+                $this->object->country = $langs->trans("Country".$obj->code)?$langs->trans("Country".$obj->code):$obj->libelle;
             }
             else
             {
