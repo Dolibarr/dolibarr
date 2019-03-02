@@ -1876,6 +1876,8 @@ class FactureLigneRec extends CommonInvoiceLine
     {
     	global $conf;
 
+    	$error = 0;
+
     	include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 
     	$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet_rec SET";
