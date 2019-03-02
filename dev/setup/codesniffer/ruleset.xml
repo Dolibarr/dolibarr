@@ -11,10 +11,8 @@
 	<exclude-pattern type="relative">htdocs/conf.php</exclude-pattern>
 	<exclude-pattern type="relative">*/nltechno*</exclude-pattern>
 	<exclude-pattern type="relative">*/htdocs/includes</exclude-pattern>
-	<exclude-pattern type="relative">*.min.css</exclude-pattern>
-	<exclude-pattern type="relative">*.js</exclude-pattern>
 
-		<!-- List of all tests -->
+	<!-- List of all tests -->
 
 
 	<!-- Rules from Internal Standard -->

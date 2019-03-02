@@ -18,9 +18,9 @@
 
 /**
  *      \file       test/phpunit/JsonLibTest.php
- *		\ingroup    test
+ *      \ingroup    test
  *      \brief      PHPUnit test
- *		\remarks	To run this script as CLI:  phpunit filename.php
+ *      \remarks    To run this script as CLI:  phpunit filename.php
  */
 
 global $conf,$user,$langs,$db;
@@ -122,7 +122,7 @@ class JsonLibTest extends PHPUnit_Framework_TestCase
     /**
      * testJsonEncode
      *
-     * @return	void
+     * @return  void
      */
     public function testJsonEncode()
     {

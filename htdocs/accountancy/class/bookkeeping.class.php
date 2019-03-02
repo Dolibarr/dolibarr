@@ -167,10 +167,10 @@ class BookKeeping extends CommonObject
 			$this->doc_ref = trim($this->doc_ref);
 		}
 		if (isset($this->fk_doc)) {
-			$this->fk_doc = trim($this->fk_doc);
+			$this->fk_doc = (int) $this->fk_doc;
 		}
 		if (isset($this->fk_docdet)) {
-			$this->fk_docdet = trim($this->fk_docdet);
+			$this->fk_docdet = (int) $this->fk_docdet;
 		}
 		if (isset($this->thirdparty_code)) {
 			$this->thirdparty_code = trim($this->thirdparty_code);
@@ -487,10 +487,10 @@ class BookKeeping extends CommonObject
 			$this->doc_ref = trim($this->doc_ref);
 		}
 		if (isset($this->fk_doc)) {
-			$this->fk_doc = trim($this->fk_doc);
+			$this->fk_doc = (int) $this->fk_doc;
 		}
 		if (isset($this->fk_docdet)) {
-			$this->fk_docdet = trim($this->fk_docdet);
+			$this->fk_docdet = (int) $this->fk_docdet;
 		}
 		if (isset($this->thirdparty_code)) {
 			$this->thirdparty_code = trim($this->thirdparty_code);
@@ -1104,10 +1104,10 @@ class BookKeeping extends CommonObject
 			$this->doc_ref = trim($this->doc_ref);
 		}
 		if (isset($this->fk_doc)) {
-			$this->fk_doc = trim($this->fk_doc);
+			$this->fk_doc = (int) $this->fk_doc;
 		}
 		if (isset($this->fk_docdet)) {
-			$this->fk_docdet = trim($this->fk_docdet);
+			$this->fk_docdet = (int) $this->fk_docdet;
 		}
 		if (isset($this->thirdparty_code)) {
 			$this->thirdparty_code = trim($this->thirdparty_code);
@@ -1473,8 +1473,8 @@ class BookKeeping extends CommonObject
 		$this->doc_date = $now;
 		$this->doc_type = '';
 		$this->doc_ref = '';
-		$this->fk_doc = '';
-		$this->fk_docdet = '';
+		$this->fk_doc = 0;
+		$this->fk_docdet = 0;
 		$this->thirdparty_code = 'CU001';
 		$this->subledger_account = '41100001';
 		$this->subledger_label = 'My customer company';

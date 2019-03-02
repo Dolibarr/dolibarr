@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2015	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2009-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2010-2011	Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2012       Cedric Salvador      <csalvador@gpcsolutions.fr>
+ * Copyright (C) 2012       Cedric Salvador         <csalvador@gpcsolutions.fr>
  * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2017       Frédéric France         <frederic.france@netlogic.fr>
@@ -322,6 +322,8 @@ class FactureRec extends CommonInvoice
 	public function update(User $user, $notrigger = 0)
 	{
 	    global $conf;
+
+        $error = 0;
 
 	    $sql = "UPDATE ".MAIN_DB_PREFIX."facture_rec SET";
 	    $sql.= " fk_soc = ".$this->fk_soc;
@@ -1082,7 +1084,7 @@ class FactureRec extends CommonInvoice
 		$parameters = array(
 			'restrictioninvoiceid' => $restrictioninvoiceid,
 			'forcevalidation' => $forcevalidation,
-			);
+		);
 		$reshook = $hookmanager->executeHooks('beforeCreationOfRecurringInvoices', $parameters, $sql); // note that $sql might be modified by hooks
 
 		$resql = $db->query($sql);
@@ -1183,7 +1185,7 @@ class FactureRec extends CommonInvoice
 					'invoiceidgenerated' => $invoiceidgenerated,
 					'facturerec' => $facturerec,	// it's an object which PHP passes by "reference", so modifiable by hooks.
 					'this'       => $this,		// it's an object which PHP passes by "reference", so modifiable by hooks.
-					);
+				);
 				$reshook = $hookmanager->executeHooks('afterCreationOfRecurringInvoice', $parameters, $facture);  // note: $facture can be modified by hooks (warning: $facture can be null)
 
 				$i++;
