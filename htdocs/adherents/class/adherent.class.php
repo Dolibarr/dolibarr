@@ -2774,9 +2774,13 @@ class Adherent extends CommonObject
 					{
 						$adherent->fetch_thirdparty();
 
+						// Language code to use ($languagecodeformember) is default language of thirdparty, if no thirdparty, the language found from country of member then country of thirdparty, and if still not found we use the language of company.
+						$languagefromcountrycode = getLanguageCodeFromCountryCode($adherent->country_code ? $adherent->country_code : $adherent->thirdparty->country_code);
+						$languagecodeformember = (empty($adherent->thirdparty->default_lang) ? ($languagefromcountrycode ? $languagefromcountrycode : $mysoc->default_lang) : $adherent->thirdparty->default_lang);
+
 						// Send reminder email
 						$outputlangs = new Translate('', $conf);
-						$outputlangs->setDefaultLang(empty($adherent->thirdparty->default_lang) ? $mysoc->default_lang : $adherent->thirdparty->default_lang);
+						$outputlangs->setDefaultLang($languagecodeformember);
 						$outputlangs->loadLangs(array("main", "members"));
 						dol_syslog("sendReminderForExpiredSubscription Language for member id ".$adherent->id." set to ".$outputlangs->defaultlang." mysoc->default_lang=".$mysoc->default_lang);
 

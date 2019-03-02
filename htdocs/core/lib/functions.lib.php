@@ -6831,7 +6831,8 @@ function picto_from_langcode($codelang, $moreatt = '')
 }
 
 /**
- * Return default language from country code
+ * Return default language from country code.
+ * Return null if not found.
  *
  * @param 	string 	$countrycode	Country code like 'US', 'FR', 'CA', ...
  * @return	string					Value of locale like 'en_US', 'fr_FR', ...
@@ -6839,6 +6840,8 @@ function picto_from_langcode($codelang, $moreatt = '')
 function getLanguageCodeFromCountryCode($countrycode)
 {
 	global $mysoc;
+
+	if (empty($countrycode)) return null;
 
 	if (strtoupper($countrycode) == 'MQ') return 'fr_CA';
 	if (strtoupper($countrycode) == 'SE') return 'sv_SE';	// se_SE is Sami/Sweden, and we want in priority sv_SE for SE country
