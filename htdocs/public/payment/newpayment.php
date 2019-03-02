@@ -848,7 +848,7 @@ if ($source == 'order')
 	print '</td><td class="CTableRow'.($var?'1':'2').'">'.$text;
 	print '<input type="hidden" name="s" value="'.dol_escape_htmltag($source).'">';
 	print '<input type="hidden" name="ref" value="'.dol_escape_htmltag($order->ref).'">';
-  print '<input type="hidden" name="dol_id" value="'.dol_escape_htmltag($order->id).'">';
+    print '<input type="hidden" name="dol_id" value="'.dol_escape_htmltag($order->id).'">';
 	$directdownloadlink = $order->getLastMainDocLink('commande');
 	if ($directdownloadlink)
 	{
