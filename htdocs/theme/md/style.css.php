@@ -756,6 +756,9 @@ select.flat.selectlimit {
 .nomarginleft {
 	margin-left: 0px !important;
 }
+.marginbottomonly {
+	margin-bottom: 10px !important;
+}
 .selectlimit, .selectlimit:focus {
     border-left: none !important;
     border-top: none !important;
@@ -967,6 +970,7 @@ select.selectarrowonleft option {
 	.minwidth50imp  { min-width: 50px !important; }
     .minwidth75imp  { min-width: 75px !important; }
     .minwidth100imp { min-width: 100px !important; }
+    .minwidth150imp { min-width: 150px !important; }
     .minwidth200imp { min-width: 200px !important; }
     .minwidth300imp { min-width: 300px !important; }
     .minwidth400imp { min-width: 300px !important; }
@@ -980,20 +984,21 @@ select.selectarrowonleft option {
 	.minwidth50imp  { min-width: 50px !important; }
     .minwidth75imp  { min-width: 70px !important; }
     .minwidth100imp { min-width: 80px !important; }
-    .minwidth200imp { min-width: 100px !important; }
-    .minwidth300imp { min-width: 100px !important; }
-    .minwidth400imp { min-width: 100px !important; }
-    .minwidth500imp { min-width: 100px !important; }
+    .minwidth150imp { min-width: 100px !important; }
+    .minwidth200imp { min-width: 110px !important; }
+    .minwidth300imp { min-width: 120px !important; }
+    .minwidth400imp { min-width: 150px !important; }
+    .minwidth500imp { min-width: 250px !important; }
 }
 
 /* Force values for small screen 767 */
 @media only screen and (max-width: 767px)
 {
 	body {
-		font-size: <?php print $fontsize+3; ?>px;
+		font-size: <?php print is_numeric($fontsize) ? ($fontsize+3).'px' : $fontsize; ?>;
 	}
 	div.refidno {
-		font-size: <?php print $fontsize+3; ?>px !important;
+		font-size: <?php print is_numeric($fontsize) ? ($fontsize+3).'px' : $fontsize; ?> !important;
 	}
 }
 
@@ -1056,11 +1061,12 @@ select.selectarrowonleft option {
     .maxwidth400onsmartphone { max-width: 400px; }
 	.minwidth50imp  { min-width: 50px !important; }
 	.minwidth75imp  { min-width: 60px !important; }
-    .minwidth100imp { min-width: 60px !important; }
-    .minwidth200imp { min-width: 60px !important; }
-    .minwidth300imp { min-width: 60px !important; }
-    .minwidth400imp { min-width: 60px !important; }
-    .minwidth500imp { min-width: 60px !important; }
+    .minwidth100imp { min-width: 80px !important; }
+    .minwidth150imp { min-width: 90px !important; }
+    .minwidth200imp { min-width: 100px !important; }
+    .minwidth300imp { min-width: 120px !important; }
+    .minwidth400imp { min-width: 150px !important; }
+    .minwidth500imp { min-width: 250px !important; }
     .titlefield { width: auto; }
     .titlefieldcreate { width: auto; }
 

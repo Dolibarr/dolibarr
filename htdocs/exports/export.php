@@ -519,7 +519,7 @@ if ($step == 2 && $datatoexport)
 
     print '<div class="fichecenter">';
     print '<div class="underbanner clearboth"></div>';
-    print '<table width="100%" class="border">';
+    print '<table width="100%" class="border tableforfield">';
 
     // Module
     print '<tr><td class="titlefield">'.$langs->trans("Module").'</td>';
@@ -551,13 +551,13 @@ if ($step == 2 && $datatoexport)
     print '<input type="hidden" name="action" value="select_model">';
     print '<input type="hidden" name="step" value="2">';
     print '<input type="hidden" name="datatoexport" value="'.$datatoexport.'">';
-    print '<table><tr><td colspan="2">';
-    print $langs->trans("SelectExportFields").' ';
+    print '<div class="valignmiddle marginbottomonly">';
+    print '<span class="opacitymedium">'.$langs->trans("SelectExportFields").'</span> ';
     if(empty($conf->global->EXPORTS_SHARE_MODELS))$htmlother->select_export_model($exportmodelid, 'exportmodelid', $datatoexport, 1, $user->id);
 	else $htmlother->select_export_model($exportmodelid, 'exportmodelid', $datatoexport, 1);
     print ' ';
     print '<input type="submit" class="button" value="'.$langs->trans("Select").'">';
-    print '</td></tr></table>';
+    print '</div>';
     print '</form>';
 
 
@@ -565,10 +565,10 @@ if ($step == 2 && $datatoexport)
     print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans("Entities").'</td>';
     print '<td>'.$langs->trans("ExportableFields").'</td>';
-    print '<td width="100" align="center">';
-    print '<a class="liste_titre" title='.$langs->trans("All").' alt='.$langs->trans("All").' href="'.$_SERVER["PHP_SELF"].'?step=2&datatoexport='.$datatoexport.'&action=selectfield&field=all">'.$langs->trans("All")."</a>";
+    print '<td width="100" class="center">';
+    print '<a class="liste_titre commonlink" title='.$langs->trans("All").' alt='.$langs->trans("All").' href="'.$_SERVER["PHP_SELF"].'?step=2&datatoexport='.$datatoexport.'&action=selectfield&field=all">'.$langs->trans("All")."</a>";
     print ' / ';
-    print '<a class="liste_titre" title='.$langs->trans("None").' alt='.$langs->trans("None").' href="'.$_SERVER["PHP_SELF"].'?step=2&datatoexport='.$datatoexport.'&action=unselectfield&field=all">'.$langs->trans("None")."</a>";
+    print '<a class="liste_titre commonlink" title='.$langs->trans("None").' alt='.$langs->trans("None").' href="'.$_SERVER["PHP_SELF"].'?step=2&datatoexport='.$datatoexport.'&action=unselectfield&field=all">'.$langs->trans("None")."</a>";
     print '</td>';
     print '<td width="44%">'.$langs->trans("ExportedFields").'</td>';
     print '</tr>';
@@ -719,7 +719,7 @@ if ($step == 3 && $datatoexport)
 
     print '<div class="fichecenter">';
     print '<div class="underbanner clearboth"></div>';
-	print '<table width="100%" class="border">';
+	print '<table width="100%" class="border tableforfield">';
 
 	// Module
 	print '<tr><td class="titlefield">'.$langs->trans("Module").'</td>';
@@ -754,7 +754,7 @@ if ($step == 3 && $datatoexport)
 	print '<br>';
 
 	// Combo list of export models
-	print $langs->trans("SelectFilterFields").'<br>';
+	print '<span class="opacitymedium">'.$langs->trans("SelectFilterFields").'</span><br><br>';
 
 
 	// un formulaire en plus pour recuperer les filtres
@@ -905,10 +905,10 @@ if ($step == 4 && $datatoexport)
 
     print '<div class="fichecenter">';
     print '<div class="underbanner clearboth"></div>';
-    print '<table width="100%" class="border">';
+    print '<table width="100%" class="border tableforfield">';
 
     // Module
-    print '<tr><td class="titlefield">'.$langs->trans("Module").'</td>';
+    print '<tr><td class="titlefield tableforfield">'.$langs->trans("Module").'</td>';
     print '<td>';
     //print img_object($objexport->array_export_module[0]->getName(),$objexport->array_export_module[0]->picto).' ';
     print $objexport->array_export_module[0]->getName();
@@ -962,7 +962,7 @@ if ($step == 4 && $datatoexport)
     // Select request if all fields are selected
     $sqlmaxforexport=$objexport->build_sql(0, array(), array());
 
-    print $langs->trans("ChooseFieldsOrdersAndTitle").'<br>';
+    print '<div class="marginbottomonly"><span class="opacitymedium">'.$langs->trans("ChooseFieldsOrdersAndTitle").'</span></div>';
 
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre">';
@@ -1166,7 +1166,7 @@ if ($step == 5 && $datatoexport)
     print '<div class="fichecenter">';
     print '<div class="underbanner clearboth"></div>';
 
-    print '<table width="100%" class="border">';
+    print '<table width="100%" class="border tableforfield">';
 
     // Module
     print '<tr><td class="titlefield">'.$langs->trans("Module").'</td>';
@@ -1193,7 +1193,7 @@ if ($step == 5 && $datatoexport)
     }
     print '<td>'.$list.'</td></tr>';
 
-    // List of filtered fiels
+    // List of filtered fields
     if (isset($objexport->array_export_TypeFields[0]) && is_array($objexport->array_export_TypeFields[0]))
     {
     	print '<tr><td>'.$langs->trans("FilteredFields").'</td>';
@@ -1222,9 +1222,9 @@ if ($step == 5 && $datatoexport)
     // List of available export formats
     $htmltabloflibs = '<table class="noborder" width="100%">';
     $htmltabloflibs.= '<tr class="liste_titre">';
-    $htmltabloflibs.= '<td class="titlefield">'.$langs->trans("AvailableFormats").'</td>';
+    $htmltabloflibs.= '<td>'.$langs->trans("AvailableFormats").'</td>';
     $htmltabloflibs.= '<td>'.$langs->trans("LibraryUsed").'</td>';
-    $htmltabloflibs.= '<td align="right">'.$langs->trans("LibraryVersion").'</td>';
+    $htmltabloflibs.= '<td class="right">'.$langs->trans("LibraryVersion").'</td>';
     $htmltabloflibs.= '</tr>'."\n";
 
     $liste=$objmodelexport->liste_modeles($db);
@@ -1238,7 +1238,7 @@ if ($step == 5 && $datatoexport)
     	}
 
     	$htmltabloflibs.= '<tr class="oddeven">';
-    	$htmltabloflibs.= '<td width="16">'.img_picto_common($key, $objmodelexport->getPictoForKey($key)).' ';
+    	$htmltabloflibs.= '<td>'.img_picto_common($key, $objmodelexport->getPictoForKey($key)).' ';
 	    $text=$objmodelexport->getDriverDescForKey($key);
 	    $label=$listeall[$key];
 	    $htmltabloflibs.= $form->textwithpicto($label, $text).'</td>';
@@ -1266,17 +1266,11 @@ if ($step == 5 && $datatoexport)
 	print '</table>';
 
 
-	print '<div class="fichecenter"><div class="fichehalfleft">';
-
     if (! is_dir($conf->export->dir_temp)) dol_mkdir($conf->export->dir_temp);
 
-    // Affiche liste des documents
+    // Show existing generated documents
     // NB: La fonction show_documents rescanne les modules qd genallowed=1, sinon prend $liste
     print $formfile->showdocuments('export', '', $upload_dir, $_SERVER["PHP_SELF"].'?step=5&datatoexport='.$datatoexport, $liste, 1, (! empty($_POST['model'])?$_POST['model']:'csv'), 1, 1, 0, 0, 0, '', $langs->trans('Files'), '', '', '');
-
-    print '</div><div class="fichehalfright"><div class="ficheaddleft">';
-
-    print '</div></div></div>';
 }
 
 llxFooter();
