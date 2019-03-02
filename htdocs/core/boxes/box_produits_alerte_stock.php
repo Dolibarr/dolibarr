@@ -35,20 +35,20 @@ include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
  */
 class box_produits_alerte_stock extends ModeleBoxes
 {
-	var $boxcode="productsalertstock";
-	var $boximg="object_product";
-	var $boxlabel="BoxProductsAlertStock";
-	var $depends = array("produit");
+    public $boxcode="productsalertstock";
+    public $boximg="object_product";
+    public $boxlabel="BoxProductsAlertStock";
+    public $depends = array("produit");
 
 	/**
      * @var DoliDB Database handler.
      */
     public $db;
 
-	var $param;
+    public $param;
 
-	var $info_box_head = array();
-	var $info_box_contents = array();
+    public $info_box_head = array();
+    public $info_box_contents = array();
 
 
 	/**
@@ -57,7 +57,7 @@ class box_produits_alerte_stock extends ModeleBoxes
 	 *  @param  DoliDB	$db      	Database handler
 	 *  @param	string	$param		More parameters
 	 */
-	function __construct($db, $param = '')
+	public function __construct($db, $param = '')
 	{
 	    global $conf,$user;
 
@@ -75,7 +75,7 @@ class box_produits_alerte_stock extends ModeleBoxes
 	 *  @param	int		$max        Maximum number of records to load
      *  @return	void
 	 */
-	function loadBox($max = 5)
+	public function loadBox($max = 5)
 	{
 		global $user, $langs, $db, $conf, $hookmanager;
 
@@ -241,7 +241,7 @@ class box_produits_alerte_stock extends ModeleBoxes
 	 *  @param	int		$nooutput	No print, only return string
 	 *	@return	string
 	 */
-    function showBox($head = null, $contents = null, $nooutput = 0)
+    public function showBox($head = null, $contents = null, $nooutput = 0)
     {
         return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
 	}

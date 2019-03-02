@@ -81,7 +81,7 @@ if ($action == 'addprinter' && $user->admin) {
     }
 
     if (! $error) {
-        $result= $printer->AddPrinter($printername, GETPOST('printertypeid', 'int'), GETPOST('printerprofileid', 'int'), $parameter);
+        $result= $printer->addPrinter($printername, GETPOST('printertypeid', 'int'), GETPOST('printerprofileid', 'int'), $parameter);
         if ($result > 0) $error++;
 
         if (! $error)
@@ -107,7 +107,7 @@ if ($action == 'deleteprinter' && $user->admin) {
     }
 
     if (! $error) {
-        $result= $printer->DeletePrinter($printerid);
+        $result= $printer->deletePrinter($printerid);
         if ($result > 0) $error++;
 
         if (! $error)
@@ -133,7 +133,7 @@ if ($action == 'updateprinter' && $user->admin) {
     }
 
     if (! $error) {
-        $result= $printer->UpdatePrinter($printername, GETPOST('printertypeid', 'int'), GETPOST('printerprofileid', 'int'), $parameter, $printerid);
+        $result= $printer->updatePrinter($printername, GETPOST('printertypeid', 'int'), GETPOST('printerprofileid', 'int'), $parameter, $printerid);
         if ($result > 0) $error++;
 
         if (! $error) {
@@ -156,7 +156,7 @@ if ($action == 'testprinter' && $user->admin) {
 
     if (! $error) {
         // test
-        $ret = $printer->SendTestToPrinter($printerid);
+        $ret = $printer->sendTestToPrinter($printerid);
         if ($ret == 0) {
             setEventMessages($langs->trans("TestSentToPrinter", $printername), null);
         } else {
@@ -176,7 +176,7 @@ if ($action == 'updatetemplate' && $user->admin) {
     }
 
     if (! $error) {
-        $result= $printer->UpdateTemplate($templatename, $template, $templateid);
+        $result= $printer->updateTemplate($templatename, $template, $templateid);
         if ($result > 0) $error++;
 
         if (! $error) {

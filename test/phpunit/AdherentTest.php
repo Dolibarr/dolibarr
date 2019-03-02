@@ -59,7 +59,7 @@ class AdherentTest extends PHPUnit_Framework_TestCase
      *
      * @return AdherentTest
      */
-    function __construct()
+    public function __construct()
     {
     	parent::__construct();
 

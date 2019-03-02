@@ -59,7 +59,7 @@ class mod_contract_magre extends ModelNumRefContracts
 	 *
 	 *	@return     string      text description
 	 */
-	function info()
+    public function info()
     {
     	global $conf,$langs;
 
@@ -95,7 +95,7 @@ class mod_contract_magre extends ModelNumRefContracts
 	 *
 	 *	@return     string      Example
 	 */
-    function getExample()
+    public function getExample()
     {
      	global $conf,$langs,$mysoc;
 
@@ -118,7 +118,7 @@ class mod_contract_magre extends ModelNumRefContracts
 	 *	@param	Object		$contract	contract object
 	 *	@return string      			Value if OK, 0 if KO
 	 */
-    function getNextValue($objsoc, $contract)
+    public function getNextValue($objsoc, $contract)
     {
 		global $db,$conf;
 
@@ -137,15 +137,15 @@ class mod_contract_magre extends ModelNumRefContracts
 		return  $numFinal;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Return next value
 	 *
-	 *	@param	Societe		$objsoc     third party object
-	 *	@param	Object		$objforref	contract object
-	 *	@return string      			Value if OK, 0 if KO
-	 */
-    function contract_get_num($objsoc, $objforref)
+	 *  @param	Societe		$objsoc     third party object
+	 *  @param	Object		$objforref	contract object
+	 *  @return string      			Value if OK, 0 if KO
+     */
+    public function contract_get_num($objsoc, $objforref)
     {
         // phpcs:enable
         return $this->getNextValue($objsoc, $objforref);

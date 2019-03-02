@@ -32,7 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
  */
 class pdf_squille extends ModelePdfReception
 {
-	var $emetteur;	// Objet societe qui emet
+    public $emetteur;	// Objet societe qui emet
 
 
 	/**
@@ -40,7 +40,7 @@ class pdf_squille extends ModelePdfReception
 	 *
 	 *	@param	DoliDB	$db		Database handler
 	 */
-	function __construct($db = 0)
+	public function __construct($db = 0)
 	{
 		global $conf,$langs,$mysoc;
 
@@ -98,7 +98,7 @@ class pdf_squille extends ModelePdfReception
 		}
 	}
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Function to build pdf onto disk
 	 *
@@ -110,7 +110,7 @@ class pdf_squille extends ModelePdfReception
      *  @param		int			$hideref			Do not show ref
      *  @return     int         	    			1=OK, 0=KO
 	 */
-	function write_file($object, $outputlangs, $srctemplatepath = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0)
+	public function write_file($object, $outputlangs, $srctemplatepath = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
 		// phpcs:enable
 		global $user,$conf,$langs,$hookmanager;
@@ -592,7 +592,7 @@ class pdf_squille extends ModelePdfReception
 		}
 	}
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Show total to pay
 	 *
@@ -604,7 +604,7 @@ class pdf_squille extends ModelePdfReception
 	 *  @param	int			$totalOrdered	Total ordered
 	 *	@return int							Position pour suite
 	 */
-	function _tableau_tot(&$pdf, $object, $deja_regle, $posy, $outputlangs, $totalOrdered)
+	private function _tableau_tot(&$pdf, $object, $deja_regle, $posy, $outputlangs, $totalOrdered)
 	{
 		// phpcs:enable
 		global $conf,$mysoc;
@@ -707,7 +707,7 @@ class pdf_squille extends ModelePdfReception
 	 *   @param		int			$hidebottom		Hide bottom bar of array
 	 *   @return	void
 	 */
-	function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop = 0, $hidebottom = 0)
+	private function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop = 0, $hidebottom = 0)
 	{
 		global $conf;
 
@@ -786,7 +786,7 @@ class pdf_squille extends ModelePdfReception
 	 *  @param  Translate	$outputlangs	Object lang for output
 	 *  @return	void
 	 */
-	function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
+	private function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
 	{
 		global $conf,$langs,$mysoc;
 
@@ -1037,7 +1037,7 @@ class pdf_squille extends ModelePdfReception
 	 *      @param	int			$hidefreetext		1=Hide free text
 	 *      @return	int								Return height of bottom margin including footer text
 	 */
-	function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
+	private function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
 	{
 		global $conf;
 		$showdetails=$conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;

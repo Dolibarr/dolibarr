@@ -117,7 +117,7 @@ class pdf_standard extends ModelePDFSuppliersPayments
 	 *
 	 *  @param	DoliDB		$db     	Database handler
 	 */
-	function __construct($db)
+	public function __construct($db)
 	{
 		global $conf, $langs, $mysoc;
 
@@ -176,7 +176,7 @@ class pdf_standard extends ModelePDFSuppliersPayments
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *  Function to build pdf onto disk
      *
@@ -188,7 +188,7 @@ class pdf_standard extends ModelePDFSuppliersPayments
      *  @param		int					$hideref			Do not show ref
      *  @return		int										1=OK, 0=KO
      */
-	function write_file($object, $outputlangs = '', $srctemplatepath = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0)
+	public function write_file($object, $outputlangs = '', $srctemplatepath = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
         // phpcs:enable
 		global $user, $langs, $conf, $mysoc, $hookmanager;
@@ -517,7 +517,7 @@ class pdf_standard extends ModelePDFSuppliersPayments
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Show total to pay
 	 *
@@ -527,7 +527,7 @@ class pdf_standard extends ModelePDFSuppliersPayments
 	 *	@param	Translate		$outputlangs	Objet langs
 	 *	@return int								Position pour suite
 	 */
-	function _tableau_cheque(&$pdf, $object, $posy, $outputlangs)
+	private function _tableau_cheque(&$pdf, $object, $posy, $outputlangs)
 	{
         // phpcs:enable
 		global $conf,$mysoc;
@@ -590,7 +590,7 @@ class pdf_standard extends ModelePDFSuppliersPayments
 	 *   @param		string		$currency		Currency code
 	 *   @return	void
 	 */
-	function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop = 0, $hidebottom = 0, $currency = '')
+	private function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop = 0, $hidebottom = 0, $currency = '')
 	{
 		global $conf,$mysoc;
 
@@ -631,7 +631,7 @@ class pdf_standard extends ModelePDFSuppliersPayments
 	 *  @param  Translate	$outputlangs	Object lang for output
 	 *  @return	void
 	 */
-	function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
+	private function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
 	{
 		global $langs, $conf, $mysoc;
 
@@ -810,7 +810,7 @@ class pdf_standard extends ModelePDFSuppliersPayments
 	 *      @param	int			$hidefreetext		1=Hide free text
 	 *      @return	int								Return height of bottom margin including footer text
 	 */
-	function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
+	private function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
 	{
 		global $conf;
 		$showdetails=$conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;

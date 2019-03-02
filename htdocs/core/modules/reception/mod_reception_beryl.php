@@ -28,10 +28,10 @@ require_once DOL_DOCUMENT_ROOT .'/core/modules/reception/modules_reception.php';
  */
 class mod_reception_beryl extends ModelNumRefReception
 {
-	var $version='dolibarr';
-	var $prefix='RCP';
-	var $error='';
-	var $nom='Beryl';
+    public $version='dolibarr';
+    public $prefix='RCP';
+    public $error='';
+    public $nom='Beryl';
 
 
 	/**
@@ -39,7 +39,7 @@ class mod_reception_beryl extends ModelNumRefReception
 	 *
 	 *	@return     string      text description
 	 */
-    function info()
+    public function info()
     {
     	global $langs;
       	return $langs->trans("SimpleNumRefModelDesc", $this->prefix);
@@ -51,7 +51,7 @@ class mod_reception_beryl extends ModelNumRefReception
 	 *
 	 *	@return     string      Example
 	 */
-	function getExample()
+	public function getExample()
 	{
 		return $this->prefix."0501-0001";
 	}
@@ -62,7 +62,7 @@ class mod_reception_beryl extends ModelNumRefReception
 	 *
 	 *	@return     boolean     false if conflit, true if ok
 	 */
-	function canBeActivated()
+	public function canBeActivated()
 	{
 		global $conf,$langs,$db;
 
@@ -97,7 +97,7 @@ class mod_reception_beryl extends ModelNumRefReception
 	 *	@param	Object		$shipment	Shipment object
 	 *	@return string      			Value if OK, 0 if KO
 	 */
-	function getNextValue($objsoc, $shipment)
+	public function getNextValue($objsoc, $shipment)
 	{
 		global $db,$conf;
 
@@ -130,7 +130,7 @@ class mod_reception_beryl extends ModelNumRefReception
 		return $this->prefix.$yymm."-".$num;
 	}
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Return next free value
 	 *
@@ -138,7 +138,7 @@ class mod_reception_beryl extends ModelNumRefReception
 	 *	@param	Object		$objforref	Shipment object
 	 *	@return string      			Next free value
 	 */
-	function reception_get_num($objsoc, $objforref)
+	public function reception_get_num($objsoc, $objforref)
 	{
 		// phpcs:enable
 		return $this->getNextValue($objsoc, $objforref);

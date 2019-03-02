@@ -411,7 +411,7 @@ class BookKeeping extends CommonObject
 	 *  @param  int     $save_lastsearch_value    	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
 	 *	@return	string								String with URL
 	 */
-	function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
+	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
 	{
 		global $db, $conf, $langs;
 		global $dolibarr_main_authentication, $dolibarr_main_demo;
@@ -1308,7 +1308,7 @@ class BookKeeping extends CommonObject
 	 * @param  string		$importkey		Import key
 	 * @return int Result
 	 */
-    function deleteByImportkey($importkey)
+    public function deleteByImportkey($importkey)
     {
 		$this->db->begin();
 
@@ -1338,7 +1338,7 @@ class BookKeeping extends CommonObject
 	 * @param  string $mode 		Mode
 	 * @return int					<0 if KO, >0 if OK
 	 */
-    function deleteByYearAndJournal($delyear = '', $journal = '', $mode = '')
+    public function deleteByYearAndJournal($delyear = '', $journal = '', $mode = '')
     {
 		global $conf;
 
@@ -1378,7 +1378,7 @@ class BookKeeping extends CommonObject
 	 * @param 	int 	$piecenum 	Piecenum to delete
 	 * @return 	int 				Result
 	 */
-    function deleteMvtNum($piecenum)
+    public function deleteMvtNum($piecenum)
     {
 		global $conf;
 
@@ -1565,7 +1565,7 @@ class BookKeeping extends CommonObject
 	 * @param  string  $mode       Mode
 	 * @return int                 <0 if KO, >0 if OK
 	 */
-    function fetchAllPerMvt($piecenum, $mode = '')
+    public function fetchAllPerMvt($piecenum, $mode = '')
     {
 		global $conf;
 
@@ -1618,14 +1618,14 @@ class BookKeeping extends CommonObject
 		return 1;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Export bookkeping
 	 *
 	 * @param	string	$model	Model
 	 * @return	int				Result
 	 */
-    function export_bookkeping($model = 'ebp')
+    public function export_bookkeping($model = 'ebp')
     {
         // phpcs:enable
 		global $conf;
@@ -1771,7 +1771,7 @@ class BookKeeping extends CommonObject
 		*/
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	* Return list of accounts with label by chart of accounts
 	*
@@ -1784,7 +1784,7 @@ class BookKeeping extends CommonObject
 	* @param int		$aabase		Set accounting_account base class to display empty=all or from 1 to 8 will display only account beginning by this number
 	* @return string	String with HTML select
     */
-    function select_account($selectid, $htmlname = 'account', $showempty = 0, $event = array(), $select_in = 0, $select_out = 0, $aabase = '')
+    public function select_account($selectid, $htmlname = 'account', $showempty = 0, $event = array(), $select_in = 0, $select_out = 0, $aabase = '')
     {
         // phpcs:enable
 		global $conf;
@@ -1843,14 +1843,14 @@ class BookKeeping extends CommonObject
 		return $out;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Description of a root accounting account
 	 *
 	 * @param 	string 	$account	Accounting account
 	 * @return 	string 				Root account
 	 */
-	function get_compte_racine($account = null)
+	public function get_compte_racine($account = null)
 	{
         // phpcs:enable
 		global $conf;
@@ -1884,15 +1884,15 @@ class BookKeeping extends CommonObject
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Description of accounting account
 	 *
 	 * @param	string	$account	Accounting account
 	 * @return	string				Account desc
 	 */
-	function get_compte_desc($account = null)
-	{
+    public function get_compte_desc($account = null)
+    {
         // phpcs:enable
 		global $conf;
 

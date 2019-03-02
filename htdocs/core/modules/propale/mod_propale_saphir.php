@@ -62,7 +62,7 @@ class mod_propale_saphir extends ModeleNumRefPropales
      *
      *  @return     string      Texte descripif
      */
-	function info()
+	public function info()
     {
     	global $conf, $langs;
 
@@ -102,7 +102,7 @@ class mod_propale_saphir extends ModeleNumRefPropales
      *
      *  @return     string      Example
      */
-    function getExample()
+    public function getExample()
     {
      	global $conf,$langs,$mysoc;
 
@@ -128,7 +128,7 @@ class mod_propale_saphir extends ModeleNumRefPropales
 	 * 	@param	Propal		$propal		Object commercial proposal
 	 *  @return string      			Value if OK, 0 if KO
 	 */
-	function getNextValue($objsoc, $propal)
+	public function getNextValue($objsoc, $propal)
 	{
 		global $db,$conf;
 

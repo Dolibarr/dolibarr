@@ -43,7 +43,7 @@ class Warehouses extends DolibarrApi
     /**
      * Constructor
      */
-    function __construct()
+    public function __construct()
     {
         global $db, $conf;
         $this->db = $db;
@@ -60,7 +60,7 @@ class Warehouses extends DolibarrApi
      *
      * @throws 	RestException
      */
-    function get($id)
+    public function get($id)
     {
         if (! DolibarrApiAccess::$user->rights->stock->lire) {
             throw new RestException(401);
@@ -92,7 +92,7 @@ class Warehouses extends DolibarrApi
      *
      * @throws RestException
      */
-    function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '')
+    public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '')
     {
         global $db, $conf;
 
@@ -159,7 +159,7 @@ class Warehouses extends DolibarrApi
      * @param array $request_data   Request data
      * @return int  ID of warehouse
      */
-    function post($request_data = null)
+    public function post($request_data = null)
     {
         if(! DolibarrApiAccess::$user->rights->stock->creer) {
             throw new RestException(401);
@@ -184,7 +184,7 @@ class Warehouses extends DolibarrApi
      * @param array $request_data   Datas
      * @return int
      */
-    function put($id, $request_data = null)
+    public function put($id, $request_data = null)
     {
         if(! DolibarrApiAccess::$user->rights->stock->creer) {
             throw new RestException(401);
@@ -216,7 +216,7 @@ class Warehouses extends DolibarrApi
      * @param int $id   Warehouse ID
      * @return array
      */
-    function delete($id)
+    public function delete($id)
     {
         if(! DolibarrApiAccess::$user->rights->stock->supprimer) {
             throw new RestException(401);
@@ -249,7 +249,7 @@ class Warehouses extends DolibarrApi
      * @param   Entrepot  $object    Object to clean
      * @return    array    Array of cleaned object properties
      */
-    function _cleanObjectDatas($object)
+    private function _cleanObjectDatas($object)
     {
 
         $object = parent::_cleanObjectDatas($object);
@@ -269,7 +269,7 @@ class Warehouses extends DolibarrApi
      *
      * @throws RestException
      */
-    function _validate($data)
+    private function _validate($data)
     {
         $warehouse = array();
         foreach (Warehouses::$FIELDS as $field) {

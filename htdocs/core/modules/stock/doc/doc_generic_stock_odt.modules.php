@@ -61,7 +61,7 @@ class doc_generic_stock_odt extends ModelePDFStock
 	 *
 	 *  @param		DoliDB		$db      Database handler
 	 */
-	function __construct($db)
+	public function __construct($db)
 	{
 		global $conf, $langs, $mysoc;
 
@@ -106,7 +106,7 @@ class doc_generic_stock_odt extends ModelePDFStock
 	 *	@param	Translate	$langs      Lang object to use for output
 	 *	@return string       			Description
 	 */
-	function info($langs)
+	public function info($langs)
 	{
 		global $conf, $langs;
 
@@ -205,7 +205,7 @@ class doc_generic_stock_odt extends ModelePDFStock
 		return $texte;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Function to build a document on disk using the generic odt module.
 	 *
@@ -217,7 +217,7 @@ class doc_generic_stock_odt extends ModelePDFStock
 	 *  @param		int			$hideref			Do not show ref
 	 *	@return		int         					1 if OK, <=0 if KO
 	 */
-	function write_file($object, $outputlangs, $srctemplatepath, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
+	public function write_file($object, $outputlangs, $srctemplatepath, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
         // phpcs:enable
 		global $stock,$langs,$conf,$mysoc,$hookmanager,$user;
@@ -357,13 +357,13 @@ class doc_generic_stock_odt extends ModelePDFStock
 				// Open and load template
 				require_once ODTPHP_PATH.'odf.php';
 				try {
-    $odfHandler = new odf(
-						$srctemplatepath,
-						array(
-						'PATH_TO_TMP'	  => $conf->produit->dir_temp,
-						'ZIP_PROXY'		  => 'PclZipProxy',	// PhpZipProxy or PclZipProxy. Got "bad compression method" error when using PhpZipProxy.
-						'DELIMITER_LEFT'  => '{',
-						'DELIMITER_RIGHT' => '}'
+                    $odfHandler = new odf(
+                        $srctemplatepath,
+					    array(
+						    'PATH_TO_TMP'	  => $conf->produit->dir_temp,
+						    'ZIP_PROXY'		  => 'PclZipProxy',	// PhpZipProxy or PclZipProxy. Got "bad compression method" error when using PhpZipProxy.
+						    'DELIMITER_LEFT'  => '{',
+						    'DELIMITER_RIGHT' => '}'
 						)
 					);
 				}

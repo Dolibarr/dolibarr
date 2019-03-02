@@ -62,7 +62,7 @@ class mod_project_simple extends ModeleNumRefProjects
      *
      *  @return     string      Text with description
      */
-    function info()
+    public function info()
     {
     	global $langs;
       	return $langs->trans("SimpleNumRefModelDesc", $this->prefix);
@@ -74,7 +74,7 @@ class mod_project_simple extends ModeleNumRefProjects
      *
      * 	@return     string      Example
      */
-    function getExample()
+    public function getExample()
     {
         return $this->prefix."0501-0001";
     }
@@ -85,7 +85,7 @@ class mod_project_simple extends ModeleNumRefProjects
      *
      *   @return     boolean     false si conflit, true si ok
      */
-    function canBeActivated()
+    public function canBeActivated()
     {
     	global $conf,$langs,$db;
 
@@ -122,7 +122,7 @@ class mod_project_simple extends ModeleNumRefProjects
 	*  @param   Project	$project	Object project
 	*  @return	string				Value if OK, 0 if KO
 	*/
-    function getNextValue($objsoc, $project)
+    public function getNextValue($objsoc, $project)
     {
 		global $db,$conf;
 
@@ -159,7 +159,7 @@ class mod_project_simple extends ModeleNumRefProjects
     }
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *  Return next reference not yet used as a reference
      *
@@ -167,7 +167,7 @@ class mod_project_simple extends ModeleNumRefProjects
      *  @param  Project	$project	Object project
      *  @return string      		Next not used reference
      */
-    function project_get_num($objsoc = 0, $project = '')
+    public function project_get_num($objsoc = 0, $project = '')
     {
         // phpcs:enable
         return $this->getNextValue($objsoc, $project);

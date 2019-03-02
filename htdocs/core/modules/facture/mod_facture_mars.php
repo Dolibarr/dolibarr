@@ -53,7 +53,7 @@ class mod_facture_mars extends ModeleNumRefFactures
 	/**
 	 * Constructor
 	 */
-	function __construct()
+	public function __construct()
 	{
 		if (! empty($conf->global->INVOICE_NUMBERING_MARS_FORCE_PREFIX))
 		{
@@ -66,7 +66,7 @@ class mod_facture_mars extends ModeleNumRefFactures
 	 *
 	 *  @return     string      Texte descripif
 	 */
-	function info()
+	public function info()
 	{
 		global $langs;
 		$langs->load("bills");
@@ -78,7 +78,7 @@ class mod_facture_mars extends ModeleNumRefFactures
 	 *
 	 *  @return     string      Example
 	 */
-	function getExample()
+	public function getExample()
 	{
 		return $this->prefixinvoice."0501-0001";
 	}
@@ -89,7 +89,7 @@ class mod_facture_mars extends ModeleNumRefFactures
 	 *
 	 *  @return     boolean     false si conflit, true si ok
 	 */
-	function canBeActivated()
+	public function canBeActivated()
 	{
 		global $langs,$conf,$db;
 
@@ -149,7 +149,7 @@ class mod_facture_mars extends ModeleNumRefFactures
      * @param   string		$mode       'next' for next value or 'last' for last value
 	 * @return  string       			Value
 	 */
-	function getNextValue($objsoc, $invoice, $mode = 'next')
+	public function getNextValue($objsoc, $invoice, $mode = 'next')
 	{
 		global $db;
 		$prefix=$this->prefixinvoice;
@@ -216,16 +216,16 @@ class mod_facture_mars extends ModeleNumRefFactures
 		else dol_print_error('', 'Bad parameter for getNextValue');
 	}
 
-	/**
-	 * Return next free value
-	 *
-     * @param	Societe		$objsoc     	Object third party
-     * @param	string		$objforref		Object for number to search
-     * @param   string		$mode       	'next' for next value or 'last' for last value
-     * @return  string      				Next free value
-	 */
-	function getNumRef($objsoc, $objforref, $mode = 'next')
-	{
-		return $this->getNextValue($objsoc, $objforref, $mode);
-	}
+    /**
+     *  Return next free value
+     *
+     *  @param  Societe     $objsoc         Object third party
+     *  @param  string      $objforref      Object for number to search
+     *  @param  string      $mode           'next' for next value or 'last' for last value
+     *  @return string                      Next free value
+     */
+    public function getNumRef($objsoc, $objforref, $mode = 'next')
+    {
+        return $this->getNextValue($objsoc, $objforref, $mode);
+    }
 }

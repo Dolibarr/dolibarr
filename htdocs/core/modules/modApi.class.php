@@ -38,7 +38,7 @@ class modApi extends DolibarrModules
 	 *
 	 *   @param      DoliDB		$db      Database handler
 	 */
-	function __construct($db)
+	public function __construct($db)
 	{
         global $langs,$conf;
 
@@ -224,14 +224,14 @@ class modApi extends DolibarrModules
      *      @param      string	$options    Options when enabling module ('', 'noboxes')
 	 *      @return     int             	1 if OK, 0 if KO
 	 */
-	function init($options = '')
-	{
-		$sql = array();
+    public function init($options = '')
+    {
+        $sql = array();
 
-		$result=$this->_load_tables('/api/sql/');
+        $result = $this->_load_tables('/api/sql/');
 
-		return $this->_init($sql, $options);
-	}
+        return $this->_init($sql, $options);
+    }
 
 	/**
 	 *		Function called when module is disabled.
@@ -241,7 +241,7 @@ class modApi extends DolibarrModules
 	 *      @param string $options Options when enabling module ('', 'noboxes')
 	 *      @return int 1 if OK, 0 if KO
 	 */
-	function remove($options = '')
+	public function remove($options = '')
 	{
 		// Remove old constants with entity fields different of 0
 		$sql = array(

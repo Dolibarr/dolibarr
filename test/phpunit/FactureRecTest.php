@@ -59,7 +59,7 @@ class FactureRecTest extends PHPUnit_Framework_TestCase
 	 *
 	 * @return FactureTest
 	 */
-	function __construct()
+	public function __construct()
 	{
 		parent::__construct();
 
@@ -75,10 +75,10 @@ class FactureRecTest extends PHPUnit_Framework_TestCase
 		print "\n";
 	}
 
-	// Static methods
-  	public static function setUpBeforeClass()
+    // Static methods
+    public static function setUpBeforeClass()
     {
-    	global $conf,$user,$langs,$db;
+        global $conf,$user,$langs,$db;
 		$db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
 
     	print __METHOD__."\n";
@@ -114,7 +114,7 @@ class FactureRecTest extends PHPUnit_Framework_TestCase
 	 *
 	 * @return	void
 	 */
-	protected function tearDown()
+    protected function tearDown()
     {
     	print __METHOD__."\n";
     }

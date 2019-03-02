@@ -40,53 +40,53 @@ class CMailFile
 	public $sendmode;
 	public $sendsetup;
 
-	var $subject;      	// Topic:       Subject of email
-	var $addr_from;    	// From:		Label and EMail of sender (must include '<>'). For example '<myemail@example.com>' or 'John Doe <myemail@example.com>' or '<myemail+trackingid@example.com>'). Note that with gmail smtps, value here is forced by google to account (but not the reply-to).
+    public $subject;      	// Topic:       Subject of email
+    public $addr_from;    	// From:		Label and EMail of sender (must include '<>'). For example '<myemail@example.com>' or 'John Doe <myemail@example.com>' or '<myemail+trackingid@example.com>'). Note that with gmail smtps, value here is forced by google to account (but not the reply-to).
 	// Sender:      Who send the email ("Sender" has sent emails on behalf of "From").
 	//              Use it when the "From" is an email of a domain that is a SPF protected domain, and sending smtp server is not this domain. In such case, add Sender field with an email of the protected domain.
 	// Return-Path: Email where to send bounds.
-	var $reply_to;		// Reply-To:	Email where to send replies from mailer software (mailer use From if reply-to not defined, Gmail use gmail account if reply-to not defined)
-	var $errors_to;		// Errors-To:	Email where to send errors.
-	var $addr_to;
-	var $addr_cc;
-	var $addr_bcc;
-	var $trackid;
+    public $reply_to;		// Reply-To:	Email where to send replies from mailer software (mailer use From if reply-to not defined, Gmail use gmail account if reply-to not defined)
+    public $errors_to;		// Errors-To:	Email where to send errors.
+    public $addr_to;
+    public $addr_cc;
+    public $addr_bcc;
+    public $trackid;
 
-	var $mixed_boundary;
-	var $related_boundary;
-	var $alternative_boundary;
-	var $deliveryreceipt;
+    public $mixed_boundary;
+    public $related_boundary;
+    public $alternative_boundary;
+    public $deliveryreceipt;
 
-	var $eol;
-	var $eol2;
+    public $eol;
+    public $eol2;
 
 	/**
 	 * @var string Error code (or message)
 	 */
 	public $error='';
 
-	var $smtps;			// Contains SMTPs object (if this method is used)
-	var $phpmailer;		// Contains PHPMailer object (if this method is used)
+    public $smtps;			// Contains SMTPs object (if this method is used)
+    public $phpmailer;		// Contains PHPMailer object (if this method is used)
 
 	/**
 	 * @var string CSS
 	 */
 	public $css;
 	//! Defined css style for body background
-	var $styleCSS;
+    public $styleCSS;
 	//! Defined background directly in body tag
-	var $bodyCSS;
+    public $bodyCSS;
 
-	var $headers;
-	var $message;
+    public $headers;
+    public $message;
 
 	// Image
-	var $html;
-	var $image_boundary;
-	var $atleastoneimage=0;    // at least one image file with file=xxx.ext into content (TODO Debug this. How can this case be tested. Remove if not used).
-	var $html_images=array();
-	var $images_encoded=array();
-	var $image_types = array(
+    public $html;
+    public $image_boundary;
+    public $atleastoneimage=0;    // at least one image file with file=xxx.ext into content (TODO Debug this. How can this case be tested. Remove if not used).
+    public $html_images=array();
+    public $images_encoded=array();
+    public $image_types = array(
         'gif'  => 'image/gif',
 		'jpg'  => 'image/jpeg',
 		'jpeg' => 'image/jpeg',
@@ -119,7 +119,7 @@ class CMailFile
 	 *  @param  string  $sendcontext      	 'standard', 'emailing', ... (used to define with sending mode and parameters to use)
 	 *  @param	string	$replyto			 Reply-to email (will be set to same value than From by default if not provided)
 	 */
-	function __construct($subject, $to, $from, $msg, $filename_list = array(), $mimetype_list = array(), $mimefilename_list = array(), $addr_cc = "", $addr_bcc = "", $deliveryreceipt = 0, $msgishtml = 0, $errors_to = '', $css = '', $trackid = '', $moreinheader = '', $sendcontext = 'standard', $replyto = '')
+	public function __construct($subject, $to, $from, $msg, $filename_list = array(), $mimetype_list = array(), $mimefilename_list = array(), $addr_cc = "", $addr_bcc = "", $deliveryreceipt = 0, $msgishtml = 0, $errors_to = '', $css = '', $trackid = '', $moreinheader = '', $sendcontext = 'standard', $replyto = '')
 	{
 		global $conf, $dolibarr_main_data_root;
 
@@ -407,8 +407,8 @@ class CMailFile
                 }
             }
 
-			// Set the To addresses with an associative array
-			if (! empty($to)) {
+            // Set the To addresses with an associative array
+            if (! empty($to)) {
                 try {
                 	$result = $this->message->setTo($this->getArrayAddress($to));
                 } catch (Exception $e) {
@@ -493,7 +493,7 @@ class CMailFile
 	 *
 	 * @return    boolean     True if mail sent, false otherwise
 	 */
-	function sendfile()
+	public function sendfile()
 	{
 		global $conf,$db,$langs;
 
@@ -752,9 +752,9 @@ class CMailFile
 			}
 			elseif ($this->sendmode == 'swiftmailer')
 			{
-				// Use Swift Mailer library
-				// ------------------------------------------
-				require_once DOL_DOCUMENT_ROOT.'/includes/swiftmailer/lib/swift_required.php';
+                // Use Swift Mailer library
+                // ------------------------------------------
+                require_once DOL_DOCUMENT_ROOT.'/includes/swiftmailer/lib/swift_required.php';
 
 				// Clean parameters
 				if (empty($conf->global->$keyforsmtpserver)) $conf->global->$keyforsmtpserver=ini_get('SMTP');
@@ -844,20 +844,20 @@ class CMailFile
 	 * @param string $stringtoencode String to encode
 	 * @return string                string encoded
 	 */
-	static function encodetorfc2822($stringtoencode)
+	public static function encodetorfc2822($stringtoencode)
 	{
 		global $conf;
 		return '=?'.$conf->file->character_set_client.'?B?'.base64_encode($stringtoencode).'?=';
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Read a file on disk and return encoded content for emails (mode = 'mail')
 	 *
 	 * @param	string	$sourcefile		Path to file to encode
 	 * @return 	int					    <0 if KO, encoded string if OK
 	 */
-	function _encode_file($sourcefile)
+	private function _encode_file($sourcefile)
 	{
         // phpcs:enable
 		$newsourcefile=dol_osencode($sourcefile);
@@ -877,7 +877,7 @@ class CMailFile
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Write content of a SMTP request into a dump file (mode = all)
 	 *  Used for debugging.
@@ -885,7 +885,7 @@ class CMailFile
 	 *
 	 *  @return	void
 	 */
-	function dump_mail()
+	public function dump_mail()
 	{
         // phpcs:enable
 		global $conf,$dolibarr_main_data_root;
@@ -923,7 +923,7 @@ class CMailFile
 	 * @param	string	$msg	String
 	 * @return	string			Completed string
 	 */
-	function checkIfHTML($msg)
+	public function checkIfHTML($msg)
 	{
 		if (!preg_match('/^[\s\t]*<html/i', $msg))
 		{
@@ -948,7 +948,7 @@ class CMailFile
 	 *
 	 * @return string
 	 */
-	function buildCSS()
+	public function buildCSS()
 	{
 		if (! empty($this->css))
 		{
@@ -972,13 +972,13 @@ class CMailFile
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Create SMTP headers (mode = 'mail')
 	 *
 	 * @return	string headers
 	 */
-	function write_smtpheaders()
+	public function write_smtpheaders()
 	{
         // phpcs:enable
 		global $conf;
@@ -1036,7 +1036,7 @@ class CMailFile
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Create header MIME (mode = 'mail')
 	 *
@@ -1044,7 +1044,7 @@ class CMailFile
 	 * @param 	array	$mimefilename_list		Array of mime types
 	 * @return	string							mime headers
 	 */
-	function write_mimeheaders($filename_list, $mimefilename_list)
+	public function write_mimeheaders($filename_list, $mimefilename_list)
 	{
         // phpcs:enable
 		$mimedone=0;
@@ -1067,14 +1067,14 @@ class CMailFile
 		return $out;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Return email content (mode = 'mail')
 	 *
 	 * @param	string		$msgtext		Message string
 	 * @return	string						String content
 	 */
-	function write_body($msgtext)
+	public function write_body($msgtext)
 	{
         // phpcs:enable
 		global $conf;
@@ -1169,7 +1169,7 @@ class CMailFile
 		return $out;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Attach file to email (mode = 'mail')
 	 *
@@ -1178,7 +1178,7 @@ class CMailFile
 	 * @param 	array	$mimefilename_list	Tableau
 	 * @return	string						Chaine fichiers encodes
 	 */
-	function write_files($filename_list, $mimetype_list, $mimefilename_list)
+	public function write_files($filename_list, $mimetype_list, $mimefilename_list)
 	{
         // phpcs:enable
 		$out = '';
@@ -1218,14 +1218,14 @@ class CMailFile
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Attach an image to email (mode = 'mail')
 	 *
 	 * @param	array	$images_list	Array of array image
 	 * @return	string					Chaine images encodees
 	 */
-	function write_images($images_list)
+	public function write_images($images_list)
 	{
         // phpcs:enable
 		$out = '';
@@ -1251,7 +1251,7 @@ class CMailFile
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Try to create a socket connection
 	 *
@@ -1259,7 +1259,7 @@ class CMailFile
 	 * @param 	int			$port		Example: 25, 465
 	 * @return	int						Socket id if ok, 0 if KO
 	 */
-	function check_server_port($host, $port)
+	public function check_server_port($host, $port)
 	{
         // phpcs:enable
 		global $conf;
@@ -1315,7 +1315,7 @@ class CMailFile
 		return $_retVal;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * This function has been modified as provided by SirSir to allow multiline responses when
 	 * using SMTP Extensions.
@@ -1324,7 +1324,7 @@ class CMailFile
 	 * @param   string	$response		Response string
 	 * @return  boolean					true if success
 	 */
-	function server_parse($socket, $response)
+	public function server_parse($socket, $response)
 	{
         // phpcs:enable
 		$_retVal = true;	// Indicates if Object was created or not
@@ -1354,7 +1354,7 @@ class CMailFile
 	 * @param	string	$images_dir		Location of physical images files
 	 * @return	int 		        	>0 if OK, <0 if KO
 	 */
-	function findHtmlImages($images_dir)
+	public function findHtmlImages($images_dir)
 	{
 		// Build the list of image extensions
 		$extensions = array_keys($this->image_types);
@@ -1456,7 +1456,7 @@ class CMailFile
 	 *										     If format 3: '<john@doe.com>' or '"John Doe" <john@doe.com>' or '"=?UTF-8?B?Sm9obiBEb2U=?=" <john@doe.com>'
 	 *                                           If format 4: 'John Doe' or 'john@doe.com' if no label exists
 	 */
-	static function getValidAddress($address, $format, $encode = 0, $maxnumberofemail = 0)
+	public static function getValidAddress($address, $format, $encode = 0, $maxnumberofemail = 0)
 	{
 		global $conf;
 
@@ -1523,7 +1523,7 @@ class CMailFile
 	 * @param   string      $address        Example: 'John Doe <john@doe.com>, Alan Smith <alan@smith.com>' or 'john@doe.com, alan@smith.com'
 	 * @return  array                       array of email => name
 	 */
-	function getArrayAddress($address)
+	public function getArrayAddress($address)
 	{
 		global $conf;
 

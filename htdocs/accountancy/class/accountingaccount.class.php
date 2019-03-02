@@ -138,13 +138,13 @@ class AccountingAccount extends CommonObject
 	 *
 	 * @param DoliDB $db Database handle
 	 */
-    function __construct($db)
+    public function __construct($db)
     {
 		global $conf;
 
 		$this->db = $db;
 		$this->next_prev_filter='fk_pcg_version IN (SELECT pcg_version FROM ' . MAIN_DB_PREFIX . 'accounting_system WHERE rowid=' . $conf->global->CHARTOFACCOUNTS . ')';		// Used to add a filter in Form::showrefnav method
-	}
+    }
 
 	/**
 	 * Load record in memory
@@ -154,7 +154,7 @@ class AccountingAccount extends CommonObject
 	 * @param 	int 	$limittocurrentchart   1=Do not load record if it is into another accounting system
 	 * @return 	int                            <0 if KO, 0 if not found, Id of record if OK and found
 	 */
-	function fetch($rowid = null, $account_number = null, $limittocurrentchart = 0)
+	public function fetch($rowid = null, $account_number = null, $limittocurrentchart = 0)
 	{
 		global $conf;
 
@@ -216,7 +216,7 @@ class AccountingAccount extends CommonObject
 	 * @param  int     $notrigger  Disable triggers
 	 * @return int                 <0 if KO, >0 if OK
 	 */
-    function create($user, $notrigger = 0)
+    public function create($user, $notrigger = 0)
     {
 		global $conf;
 		$error = 0;
@@ -317,7 +317,7 @@ class AccountingAccount extends CommonObject
 			$this->db->commit();
 			return $this->id;
 		}
-	}
+    }
 
 	/**
 	 * Update record
@@ -325,7 +325,7 @@ class AccountingAccount extends CommonObject
 	 * @param  User $user      Use making update
 	 * @return int             <0 if KO, >0 if OK
 	 */
-	function update($user)
+	public function update($user)
 	{
 		// Check parameters
 		if (empty($this->pcg_type) || $this->pcg_type == '-1')
@@ -368,7 +368,7 @@ class AccountingAccount extends CommonObject
 	 *
 	 * @return int <0 if KO, >0 if OK
 	 */
-    function checkUsage()
+    public function checkUsage()
     {
 		global $langs;
 
@@ -402,7 +402,7 @@ class AccountingAccount extends CommonObject
 	 * @param int $notrigger 0=triggers after, 1=disable triggers
 	 * @return int <0 if KO, >0 if OK
 	 */
-    function delete($user, $notrigger = 0)
+    public function delete($user, $notrigger = 0)
     {
 		$error = 0;
 
@@ -453,9 +453,9 @@ class AccountingAccount extends CommonObject
 		} else {
 			return - 1;
 		}
-	}
+    }
 
-	/**
+    /**
 	 * Return clicable name (with picto eventually)
 	 *
 	 * @param	int		$withpicto					0=No picto, 1=Include picto into link, 2=Only picto
@@ -466,8 +466,8 @@ class AccountingAccount extends CommonObject
      * @param	int     $save_lastsearch_value		-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
 	 * @return  string	String with URL
 	 */
-	function getNomUrl($withpicto = 0, $withlabel = 0, $nourl = 0, $moretitle = '', $notooltip = 0, $save_lastsearch_value = -1)
-	{
+    public function getNomUrl($withpicto = 0, $withlabel = 0, $nourl = 0, $moretitle = '', $notooltip = 0, $save_lastsearch_value = -1)
+    {
 		global $langs, $conf, $user;
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 
@@ -522,7 +522,7 @@ class AccountingAccount extends CommonObject
 		if ($withpicto && $withpicto != 2) $result .= ' ';
 		if ($withpicto != 2) $result.=$linkstart . $label_link . $linkend;
 		return $result;
-	}
+    }
 
 	/**
 	 * Information on record
@@ -530,7 +530,7 @@ class AccountingAccount extends CommonObject
 	 * @param int $id of record
 	 * @return void
 	 */
-    function info($id)
+    public function info($id)
     {
 		$sql = 'SELECT a.rowid, a.datec, a.fk_user_author, a.fk_user_modif, a.tms';
 		$sql .= ' FROM ' . MAIN_DB_PREFIX . 'accounting_account as a';
@@ -562,14 +562,14 @@ class AccountingAccount extends CommonObject
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Account deactivated
 	 *
 	 * @param  int  $id         Id
 	 * @return int              <0 if KO, >0 if OK
 	 */
-    function account_desactivate($id)
+    public function account_desactivate($id)
     {
         // phpcs:enable
 		$result = $this->checkUsage();
@@ -597,14 +597,14 @@ class AccountingAccount extends CommonObject
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Account activated
 	 *
 	 * @param  int  $id         Id
 	 * @return int              <0 if KO, >0 if OK
 	 */
-    function account_activate($id)
+    public function account_activate($id)
     {
         // phpcs:enable
 		$this->db->begin();
@@ -615,15 +615,15 @@ class AccountingAccount extends CommonObject
 
 		dol_syslog(get_class($this) . "::activate sql=" . $sql, LOG_DEBUG);
 		$result = $this->db->query($sql);
-		if ($result) {
+        if ($result) {
 			$this->db->commit();
 			return 1;
-		} else {
+        } else {
 			$this->error = $this->db->lasterror();
 			$this->db->rollback();
 			return - 1;
-		}
-	}
+        }
+    }
 
 
 	/**
@@ -632,12 +632,12 @@ class AccountingAccount extends CommonObject
 	 *  @param  int     $mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	 *  @return string              Label of status
 	 */
-	function getLibStatut($mode = 0)
+	public function getLibStatut($mode = 0)
 	{
 		return $this->LibStatut($this->status, $mode);
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Renvoi le libelle d'un statut donne
 	 *
@@ -645,7 +645,7 @@ class AccountingAccount extends CommonObject
 	 *  @param  int     $mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	 *  @return string              Label of status
 	 */
-	function LibStatut($statut, $mode = 0)
+	public function LibStatut($statut, $mode = 0)
 	{
         // phpcs:enable
 		global $langs;
@@ -655,32 +655,32 @@ class AccountingAccount extends CommonObject
 		{
 			$prefix='';
 			if ($statut == 1) return $langs->trans('Enabled');
-			if ($statut == 0) return $langs->trans('Disabled');
+			elseif ($statut == 0) return $langs->trans('Disabled');
 		}
 		elseif ($mode == 1)
 		{
 			if ($statut == 1) return $langs->trans('Enabled');
-			if ($statut == 0) return $langs->trans('Disabled');
+			elseif ($statut == 0) return $langs->trans('Disabled');
 		}
 		elseif ($mode == 2)
 		{
 			if ($statut == 1) return img_picto($langs->trans('Enabled'), 'statut4').' '.$langs->trans('Enabled');
-			if ($statut == 0) return img_picto($langs->trans('Disabled'), 'statut5').' '.$langs->trans('Disabled');
+			elseif ($statut == 0) return img_picto($langs->trans('Disabled'), 'statut5').' '.$langs->trans('Disabled');
 		}
 		elseif ($mode == 3)
 		{
 			if ($statut == 1) return img_picto($langs->trans('Enabled'), 'statut4');
-			if ($statut == 0) return img_picto($langs->trans('Disabled'), 'statut5');
+			elseif ($statut == 0) return img_picto($langs->trans('Disabled'), 'statut5');
 		}
 		elseif ($mode == 4)
 		{
 			if ($statut == 1) return img_picto($langs->trans('Enabled'), 'statut4').' '.$langs->trans('Enabled');
-			if ($statut == 0) return img_picto($langs->trans('Disabled'), 'statut5').' '.$langs->trans('Disabled');
+			elseif ($statut == 0) return img_picto($langs->trans('Disabled'), 'statut5').' '.$langs->trans('Disabled');
 		}
 		elseif ($mode == 5)
 		{
 			if ($statut == 1) return $langs->trans('Enabled').' '.img_picto($langs->trans('Enabled'), 'statut4');
-			if ($statut == 0) return $langs->trans('Disabled').' '.img_picto($langs->trans('Disabled'), 'statut5');
+			elseif ($statut == 0) return $langs->trans('Disabled').' '.img_picto($langs->trans('Disabled'), 'statut5');
 		}
 	}
 }

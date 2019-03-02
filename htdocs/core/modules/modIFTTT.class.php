@@ -31,12 +31,12 @@ include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 class modIFTTT extends DolibarrModules
 {
 	/**
-	 *   Constructor. Define names, constants, directories, boxes, permissions
+	 *  Constructor. Define names, constants, directories, boxes, permissions
 	 *
-	 *   @param      DoliDB		$db      Database handler
-	 */
-	function __construct($db)
-	{
+	 *  @param      DoliDB		$db      Database handler
+     */
+    public function __construct($db)
+    {
         global $langs,$conf;
 
         $this->db = $db;
@@ -116,12 +116,12 @@ class modIFTTT extends DolibarrModules
         $this->tabs = array();
 
         // Dictionaries
-	    if (! isset($conf->ifttt->enabled))
+        if (! isset($conf->ifttt->enabled))
         {
         	$conf->ifttt=new stdClass();
         	$conf->ifttt->enabled=0;
         }
-		$this->dictionaries=array();
+        $this->dictionaries=array();
 
         // Boxes
 		// Add here list of php file(s) stored in core/boxes that contains class to show a box.
@@ -214,14 +214,14 @@ class modIFTTT extends DolibarrModules
 	}
 
 	/**
-	 *		Function called when module is enabled.
-	 *		The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
-	 *		It also creates data directories
+	 *  Function called when module is enabled.
+	 *  The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
+	 *  It also creates data directories
 	 *
-     *      @param      string	$options    Options when enabling module ('', 'noboxes')
-	 *      @return     int             	1 if OK, 0 if KO
+     *  @param      string	$options    Options when enabling module ('', 'noboxes')
+	 *  @return     int             	1 if OK, 0 if KO
 	 */
-	function init($options = '')
+	public function init($options = '')
 	{
 		$sql = array();
 
@@ -230,22 +230,22 @@ class modIFTTT extends DolibarrModules
 		return $this->_init($sql, $options);
 	}
 
-	/**
-	 *		Function called when module is disabled.
-	 *      Remove from database constants, boxes and permissions from Dolibarr database.
-	 *		Data directories are not deleted.
-	 *
-	 *      @param string $options Options when enabling module ('', 'noboxes')
-	 *      @return int 1 if OK, 0 if KO
-	 */
-	function remove($options = '')
-	{
-		// Remove old constants with entity fields different of 0
-		$sql = array(
-			"DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = ".$this->db->encrypt('MAIN_MODULE_IFTTT', 1),
-			"DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = ".$this->db->encrypt('IFTTT_PRODUCTION_MODE', 1)
-		);
+    /**
+     *  Function called when module is disabled.
+     *  Remove from database constants, boxes and permissions from Dolibarr database.
+     *  Data directories are not deleted.
+     *
+     *  @param string $options Options when enabling module ('', 'noboxes')
+     *  @return int 1 if OK, 0 if KO
+     */
+    public function remove($options = '')
+    {
+        // Remove old constants with entity fields different of 0
+        $sql = array(
+            "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = ".$this->db->encrypt('MAIN_MODULE_IFTTT', 1),
+            "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = ".$this->db->encrypt('IFTTT_PRODUCTION_MODE', 1)
+        );
 
-		return $this->_remove($sql, $options);
-	}
+        return $this->_remove($sql, $options);
+    }
 }

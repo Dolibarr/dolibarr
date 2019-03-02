@@ -40,7 +40,7 @@ class modService extends DolibarrModules
 	 *
 	 *   @param      DoliDB		$db      Database handler
 	 */
-	function __construct($db)
+	public function __construct($db)
 	{
 		global $conf, $mysoc;
 
@@ -363,7 +363,7 @@ class modService extends DolibarrModules
      *      @param      string	$options    Options when enabling module ('', 'newboxdefonly', 'noboxes')
 	 *      @return     int             	1 if OK, 0 if KO
 	 */
-	function init($options = '')
+	public function init($options = '')
 	{
 		$this->remove($options);
 

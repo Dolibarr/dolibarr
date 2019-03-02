@@ -24,25 +24,25 @@ include_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
  */
 class ProjectStats extends Stats
 {
-	private $project;
-	public $userid;
-	public $socid;
-	public $year;
+    private $project;
+    public $userid;
+    public $socid;
+    public $year;
 
     /**
      * Constructor
      *
      * @param   DoliDB $db     Database handler
      */
-    function __construct($db)
-	{
-		global $conf, $user;
+    public function __construct($db)
+    {
+        global $conf, $user;
 
-		$this->db = $db;
+        $this->db = $db;
 
-		require_once 'project.class.php';
-		$this->project = new Project($this->db);
-	}
+        require_once 'project.class.php';
+        $this->project = new Project($this->db);
+    }
 
 
 	/**
@@ -53,7 +53,7 @@ class ProjectStats extends Stats
 	 * @return array|int       Array with value or -1 if error
 	 * @throws Exception
 	 */
-	function getAllProjectByStatus($limit = 5)
+	public function getAllProjectByStatus($limit = 5)
 	{
 		global $conf, $user, $langs;
 
@@ -118,7 +118,7 @@ class ProjectStats extends Stats
 	 *
 	 * @return array of values
 	 */
-	function getAllByYear()
+	public function getAllByYear()
 	{
 		global $conf, $user, $langs;
 
@@ -193,7 +193,7 @@ class ProjectStats extends Stats
 	 * @param	int		$format		0=Label of absiss is a translated text, 1=Label of absiss is month number, 2=Label of absiss is first letter of month
 	 * @return 	array 				Array of values
 	 */
-	function getNbByMonth($year, $format = 0)
+	public function getNbByMonth($year, $format = 0)
 	{
 		global $user;
 
@@ -222,7 +222,7 @@ class ProjectStats extends Stats
 	 * @param	int		$format		0=Label of absiss is a translated text, 1=Label of absiss is month number, 2=Label of absiss is first letter of month
 	 * @return 	array 				Array with amount by month
 	 */
-	function getAmountByMonth($year, $format = 0)
+	public function getAmountByMonth($year, $format = 0)
 	{
 		global $user;
 
@@ -253,7 +253,7 @@ class ProjectStats extends Stats
 	 * @param   int     $wonlostfilter  Add a filter on status won/lost
 	 * @return 	array					Array of values
 	 */
-	function getWeightedAmountByMonthWithPrevYear($endyear, $startyear, $cachedelay = 0, $wonlostfilter = 1)
+	public function getWeightedAmountByMonthWithPrevYear($endyear, $startyear, $cachedelay = 0, $wonlostfilter = 1)
 	{
 		global $conf,$user,$langs;
 
@@ -346,7 +346,7 @@ class ProjectStats extends Stats
 	 * @param  int $wonlostfilter      Add a filter on status won/lost
 	 * @return array                   Array with amount by month
 	 */
-	function getWeightedAmountByMonth($year, $wonlostfilter = 1)
+	public function getWeightedAmountByMonth($year, $wonlostfilter = 1)
 	{
 		global $user;
 
@@ -375,7 +375,7 @@ class ProjectStats extends Stats
 	 * @param int $cachedelay accept for cache file (0=No read, no save of cache, -1=No read but save)
 	 * @return array of values
 	 */
-	function getTransformRateByMonthWithPrevYear($endyear, $startyear, $cachedelay = 0)
+	public function getTransformRateByMonthWithPrevYear($endyear, $startyear, $cachedelay = 0)
 	{
 		global $conf, $user, $langs;
 
@@ -456,7 +456,7 @@ class ProjectStats extends Stats
 	 * @param	int		$format		0=Label of absiss is a translated text, 1=Label of absiss is month number, 2=Label of absiss is first letter of month
 	 * @return 	array 				Array with amount by month
 	 */
-	function getTransformRateByMonth($year, $format = 0)
+	public function getTransformRateByMonth($year, $format = 0)
 	{
 		global $user;
 

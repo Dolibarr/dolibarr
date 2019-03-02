@@ -61,7 +61,7 @@ class pdf_strato extends ModelePDFContract
     public $type;
 
 	/**
-     * @var array() Minimum version of PHP required by module.
+     * @var array Minimum version of PHP required by module.
 	 * e.g.: PHP ≥ 5.4 = array(5, 4)
      */
 	public $phpmin = array(5, 4);
@@ -124,7 +124,7 @@ class pdf_strato extends ModelePDFContract
 	 *
 	 *  @param		DoliDB		$db      Database handler
 	 */
-	function __construct($db)
+	public function __construct($db)
 	{
 		global $conf,$langs,$mysoc;
 
@@ -160,7 +160,7 @@ class pdf_strato extends ModelePDFContract
 		$this->posxdesc=$this->marge_gauche+1;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *  Function to build pdf onto disk
      *
@@ -171,9 +171,9 @@ class pdf_strato extends ModelePDFContract
      *  @param		int				$hidedesc			Do not show desc
      *  @param		int				$hideref			Do not show ref
      *  @return		int									1=OK, 0=KO
-	 */
-	function write_file($object, $outputlangs, $srctemplatepath = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0)
-	{
+     */
+    public function write_file($object, $outputlangs, $srctemplatepath = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0)
+    {
         // phpcs:enable
 		global $user,$langs,$conf,$hookmanager,$mysoc;
 
@@ -513,7 +513,7 @@ class pdf_strato extends ModelePDFContract
 	 *   @param		int			$hidebottom		Hide bottom bar of array
 	 *   @return	void
 	 */
-	function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop = 0, $hidebottom = 0)
+	private function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop = 0, $hidebottom = 0)
 	{
 		global $conf;
 
@@ -522,7 +522,7 @@ class pdf_strato extends ModelePDFContract
 		if ($hidetop) $hidetop=-1;
 
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
-/*
+        /*
 		$pdf->SetXY($this->marge_gauche, $tab_top);
 		$pdf->MultiCell(190,8,$outputlangs->transnoentities("Description"),0,'L',0);
 		$pdf->line($this->marge_gauche, $tab_top + 8, $this->page_largeur-$this->marge_droite, $tab_top + 8);
@@ -546,7 +546,7 @@ class pdf_strato extends ModelePDFContract
 		$pdf->line($this->marge_gauche, $nexY, $this->page_largeur-$this->marge_droite, $nexY);
 
 		$pdf->MultiCell(0, 3, '');		// Set interline to 3. Then writeMultiCell must use 3 also.
-*/
+        */
 
 		// Output Rect
 		$this->printRect($pdf, $this->marge_gauche, $tab_top, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $tab_height+3);	// Rect prend une longueur en 3eme param et 4eme param
@@ -560,7 +560,7 @@ class pdf_strato extends ModelePDFContract
      * @param   Translate   $outputlangs    Object language for output
      * @return void
      */
-	private function tabSignature(&$pdf, $tab_top, $tab_height, $outputlangs)
+    private function tabSignature(&$pdf, $tab_top, $tab_height, $outputlangs)
     {
 		$pdf->SetDrawColor(128, 128, 128);
 		$posmiddle = $this->marge_gauche + round(($this->page_largeur - $this->marge_gauche - $this->marge_droite)/2);
@@ -577,19 +577,19 @@ class pdf_strato extends ModelePDFContract
 
 		$pdf->SetXY($posmiddle + 5, $posy + 5);
 		$pdf->MultiCell($this->page_largeur-$this->marge_droite - $posmiddle - 5, 20, '', 1);
-	}
+    }
 
-	/**
-	 *  Show top header of page.
-	 *
-	 *  @param	PDF			$pdf     		Object PDF
-	 *  @param  CommonObject		$object     	Object to show
-	 *  @param  int	    	$showaddress    0=no, 1=yes
-	 *  @param  Translate	$outputlangs	Object lang for output
-	 *  @return	void
-	 */
-	function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
-	{
+    /**
+     *  Show top header of page.
+     *
+     *  @param	PDF			$pdf     		Object PDF
+     *  @param  CommonObject		$object     	Object to show
+     *  @param  int	    	$showaddress    0=no, 1=yes
+     *  @param  Translate	$outputlangs	Object lang for output
+     *  @return	void
+     */
+    private function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
+    {
 		global $conf,$langs;
 
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
@@ -767,7 +767,7 @@ class pdf_strato extends ModelePDFContract
 	 *      @param	int			$hidefreetext		1=Hide free text
 	 *      @return	integer
 	 */
-	function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
+	private function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
 	{
 		global $conf;
 		$showdetails=$conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;

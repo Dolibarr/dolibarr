@@ -25,13 +25,13 @@ include_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
  */
 class mailing_advthirdparties extends MailingTargets
 {
-	var $name='ThirdPartyAdvancedTargeting';
+    public $name='ThirdPartyAdvancedTargeting';
 	// This label is used if no translation is found for key XXX neither MailingModuleDescXXX where XXX=name is found
-	var $desc="Third parties";
-	var $require_admin=0;
+    public $desc="Third parties";
+    public $require_admin=0;
 
-	var $require_module=array("none");	// This module should not be displayed as Selector in mailling
-	var $picto='company';
+    public $require_module=array("none");	// This module should not be displayed as Selector in mailling
+    public $picto='company';
 
 	/**
      * @var DoliDB Database handler.
@@ -44,13 +44,13 @@ class mailing_advthirdparties extends MailingTargets
 	 *
 	 *  @param		DoliDB		$db      Database handler
 	 */
-	function __construct($db)
+	public function __construct($db)
 	{
 		$this->db=$db;
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *    This is the main function that returns the array of emails
 	 *
@@ -60,7 +60,7 @@ class mailing_advthirdparties extends MailingTargets
 	 *    @param	array	$contactid 		Array of contact id to add
 	 *    @return   int 					<0 if error, number of emails added if ok
 	 */
-	function add_to_target_spec($mailing_id, $socid, $type_of_target, $contactid)
+	public function add_to_target_spec($mailing_id, $socid, $type_of_target, $contactid)
 	{
         // phpcs:enable
 		global $conf, $langs;
@@ -190,7 +190,7 @@ class mailing_advthirdparties extends MailingTargets
 	 *
 	 *	@return		array		Array with SQL requests
 	 */
-	function getSqlArrayForStats()
+	public function getSqlArrayForStats()
 	{
 		// CHANGE THIS: Optionnal
 
@@ -208,7 +208,7 @@ class mailing_advthirdparties extends MailingTargets
 	 *  @param	string	$sql 		Not use here
 	 *	@return	    int			          Nb of recipients
 	 */
-	function getNbOfRecipients($sql = '')
+	public function getNbOfRecipients($sql = '')
 	{
 		global $conf;
 
@@ -228,7 +228,7 @@ class mailing_advthirdparties extends MailingTargets
 	 *
 	 *  @return     string      A html select zone
 	 */
-	function formFilter()
+	public function formFilter()
 	{
 		global $conf, $langs;
 
@@ -287,7 +287,7 @@ class mailing_advthirdparties extends MailingTargets
 	 *  @param	string		$type	type
 	 *  @return string      	Url link
 	 */
-	function url($id, $type)
+	public function url($id, $type)
 	{
 		if ($type=='thirdparty') {
 			$companystatic=new Societe($this->db);
