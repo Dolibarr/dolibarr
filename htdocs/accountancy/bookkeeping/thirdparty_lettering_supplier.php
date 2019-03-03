@@ -240,12 +240,12 @@ if ($resql) {
 		print '<td class="right">' . price($obj->debit) . '</td>';
 		print '<td class="right">' . price($obj->credit) . '</td>';
 		print '<td class="right">' . price(round($solde, 2)) . '</td>';
-		print '<td align="center">' . $obj->code_journal . '</td>';
+		print '<td class="center">' . $obj->code_journal . '</td>';
 
 		if (empty($obj->lettering_code)) {
-			print '<td class="nowrap" align="center"><input type="checkbox" class="flat checkforselect" name="toselect[]" id="toselect[]" value="' . $obj->rowid . '" /></td>';
+			print '<td class="nowrap center"><input type="checkbox" class="flat checkforselect" name="toselect[]" id="toselect[]" value="' . $obj->rowid . '" /></td>';
 		} else
-			print '<td align="center">' . $obj->lettering_code . '</td>';
+			print '<td class="center">' . $obj->lettering_code . '</td>';
 
 		print "</tr>\n";
 	}
