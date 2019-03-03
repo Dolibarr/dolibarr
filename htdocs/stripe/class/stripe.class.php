@@ -304,13 +304,16 @@ class Stripe extends CommonObject
 			}
 			else //if ($createifnotlinkedtostripe)
 			{
-                if ( ! empty($conf->global->MULTICURRENCY_USE_CURRENCY_ON_DOCUMENT) && isset($object->multicurrency_total_ttc) && $object->multicurrency_code != $conf->currency ) { $montant = $object->multicurrency_total_ttc; }
-                elseif ( isset($object->total_ttc) ) { $montant = $object->total_ttc; }
-                else { $montant = $object->amount; }
-                $amount=isset($object->multicurrency_total_ttc) ? $object->multicurrency_total_ttc : $object->amount;
                 $arrayzerounitcurrency=array('BIF', 'CLP', 'DJF', 'GNF', 'JPY', 'KMF', 'KRW', 'MGA', 'PYG', 'RWF', 'VND', 'VUV', 'XAF', 'XOF', 'XPF');
-                if (! in_array($object->multicurrency_code, $arrayzerounitcurrency)) $stripeamount = $montant * 100;
-                else $stripeamount = $montant;
+                if (! in_array($object->multicurrency_code, $arrayzerounitcurrency)) $stripeamount=$object->multicurrency_total_ttc * 100;
+                else $stripeamount = $object->multicurrency_total_ttc;
+
+                $fee = round(($object->total_ttc * ($conf->global->STRIPE_APPLICATION_FEE_PERCENT / 100) + $conf->global->STRIPE_APPLICATION_FEE) * 100);
+			    if ($fee >= ($conf->global->STRIPE_APPLICATION_FEE_MAXIMAL * 100) && $conf->global->STRIPE_APPLICATION_FEE_MAXIMAL>$conf->global->STRIPE_APPLICATION_FEE_MINIMAL) {
+					$fee = round($conf->global->STRIPE_APPLICATION_FEE_MAXIMAL * 100);
+				} elseif ($fee < ($conf->global->STRIPE_APPLICATION_FEE_MINIMAL * 100)) {
+					$fee = round($conf->global->STRIPE_APPLICATION_FEE_MINIMAL * 100);
+				}
 
                 $description=$object->element.$object->ref;
 
