@@ -50,7 +50,7 @@ foreach($linkedObjectBlock as $key => $objectlink)
     <td><?php echo $langs->trans("Contract"); ?></td>
     <td><?php echo $objectlink->getNomUrl(1); ?></td>
     <td></td>
-	<td align="center"><?php echo dol_print_date($objectlink->date_contrat, 'day'); ?></td>
+	<td class="center"><?php echo dol_print_date($objectlink->date_contrat, 'day'); ?></td>
     <td class="right"><?php
 		// Price of contract is not shown by default because a contract is a list of service with
 		// start and end date that change with time andd that may be different that the period of reference for price.
