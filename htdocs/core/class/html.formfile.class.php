@@ -1147,10 +1147,10 @@ class FormFile
 
 			print '<tr class="liste_titre nodrag nodrop">';
 			//print $url.' sortfield='.$sortfield.' sortorder='.$sortorder;
-			print_liste_field_titre('Documents2', $url, "name", "", $param, 'class="left"', $sortfield, $sortorder);
-			print_liste_field_titre('Size', $url, "size", "", $param, 'class="right"', $sortfield, $sortorder);
-			print_liste_field_titre('Date', $url, "date", "", $param, 'class="center"', $sortfield, $sortorder);
-			if (empty($useinecm) || $useinecm == 4 || $useinecm == 5 || $useinecm == 6) print_liste_field_titre('', $url, "", "", $param, 'class="center"');					// Preview
+			print_liste_field_titre('Documents2', $url, "name", "", $param, '', $sortfield, $sortorder, ' left');
+			print_liste_field_titre('Size', $url, "size", "", $param, '', $sortfield, $sortorder, ' right');
+			print_liste_field_titre('Date', $url, "date", "", $param, '', $sortfield, $sortorder, ' center');
+			if (empty($useinecm) || $useinecm == 4 || $useinecm == 5 || $useinecm == 6) print_liste_field_titre('', $url, "", "", $param, '', $sortfield, $sortorder, ' center');	// Preview
 			print_liste_field_titre('');
 			print_liste_field_titre('');
 			if (! $disablemove) print_liste_field_titre('');
