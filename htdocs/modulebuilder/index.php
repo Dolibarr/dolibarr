@@ -1766,7 +1766,7 @@ elseif (! empty($module))
 								print '<td class="center"><input class="text" size="2" name="propisameasure" value="'.dol_escape_htmltag(GETPOST('propisameasure', 'alpha')).'"></td>';
 								print '<td class="center"><input class="text" size="2" name="propsearchall" value="'.dol_escape_htmltag(GETPOST('propsearchall', 'alpha')).'"></td>';
 								print '<td><input class="text maxwidth100" name="propcomment" value="'.dol_escape_htmltag(GETPOST('propcomment', 'alpha')).'"></td>';
-								print '<td align="center">';
+								print '<td class="center">';
 								print '<input class="button" type="submit" name="add" value="'.$langs->trans("Add").'">';
 								print '</td></tr>';
 
@@ -1812,8 +1812,7 @@ elseif (! empty($module))
 									print $proptype;
 									print '</td>';
 									print '<td>';
-									if ($proparrayofkeyval)
-									{
+									if ($proparrayofkeyval) {
 										print json_encode($proparrayofkeyval);
 									}
 									print '</td>';
@@ -1826,7 +1825,7 @@ elseif (! empty($module))
 									print '<td class="center">';
 									print $propindex?'1':'';
 									print '</td>';
-									print '<td align="right">';
+									print '<td class="right">';
 									print $propposition;
 									print '</td>';
 									print '<td class="center">';

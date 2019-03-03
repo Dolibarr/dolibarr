@@ -286,16 +286,16 @@ if ($result) {
 			print $objp->description;
 		}
 		print '</td>';
-		print '<td align="right">';
+		print '<td class="right">';
 		print price($objp->subprice);
 		print '</td>';
-		print '<td align="right">';
+		print '<td class="right">';
 		print '<input type="text" name="buyingprice_' . $objp->invoicedetid . '" id="buyingprice_' . $objp->invoicedetid . '" size="6" value="' . price($objp->buy_price_ht) . '" class="right flat">';
 		print '</td>';
-		print '<td align="right">';
+		print '<td class="right">';
 		print $objp->qty;
 		print '</td>';
-		print '<td align="right">';
+		print '<td class="right">';
 		print price($objp->total_ht);
 		print '</td>';
 		print '<td></td>';
