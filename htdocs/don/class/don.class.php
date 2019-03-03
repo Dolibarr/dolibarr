@@ -676,7 +676,7 @@ class Don extends CommonObject
                 $this->date_valid     	= $this->db->jdate($obj->date_valid);
                 $this->date_validation	= $this->db->jdate($obj->date_valid);
                 $this->datem		= $this->db->jdate($obj->datem);
-                $this->date_modification= $this->db->jdate($obj->datem);		    
+                $this->date_modification= $this->db->jdate($obj->datem);
                 $this->date           	= $this->db->jdate($obj->datedon);
                 $this->firstname      	= $obj->firstname;
                 $this->lastname       	= $obj->lastname;
