@@ -402,12 +402,12 @@ if ($step == 2 && $datatoimport)
 
     $head = import_prepare_head($param, 2);
 
-	dol_fiche_head($head, 'step2', $langs->trans("NewImport"), -1);
+	dol_fiche_head($head, 'step2', $langs->trans("NewImport"), -2);
 
 	print '<div class="underbanner clearboth"></div>';
 	print '<div class="fichecenter">';
 
-	print '<table width="100%" class="border">';
+	print '<table width="100%" class="border tableforfield">';
 
 	// Module
 	print '<tr><td class="titlefield">'.$langs->trans("Module").'</td>';
@@ -480,7 +480,7 @@ if ($step == 3 && $datatoimport)
 
     $head = import_prepare_head($param, 3);
 
-	dol_fiche_head($head, 'step3', $langs->trans("NewImport"), -1);
+	dol_fiche_head($head, 'step3', $langs->trans("NewImport"), -2);
 
 	/*
 	 * Confirm delete file
@@ -493,7 +493,7 @@ if ($step == 3 && $datatoimport)
 	print '<div class="underbanner clearboth"></div>';
 	print '<div class="fichecenter">';
 
-	print '<table width="100%" class="border">';
+	print '<table width="100%" class="border tableforfield">';
 
 	// Module
 	print '<tr><td class="titlefield">'.$langs->trans("Module").'</td>';
@@ -520,7 +520,7 @@ if ($step == 3 && $datatoimport)
 
 	print '<div class="underbanner clearboth"></div>';
 	print '<div class="fichecenter">';
-	print '<table width="100%" class="border">';
+	print '<table width="100%" class="border tableforfield">';
 	//print '<tr><td colspan="2"><b>'.$langs->trans("InformationOnSourceFile").'</b></td></tr>';
 
 	// Source file format
@@ -742,12 +742,12 @@ if ($step == 4 && $datatoimport)
 
     $head = import_prepare_head($param, 4);
 
-	dol_fiche_head($head, 'step4', $langs->trans("NewImport"), -1);
+	dol_fiche_head($head, 'step4', $langs->trans("NewImport"), -2);
 
 	print '<div class="underbanner clearboth"></div>';
 	print '<div class="fichecenter">';
 
-	print '<table width="100%" class="border">';
+	print '<table width="100%" class="border tableforfield">';
 
 	// Module
 	print '<tr><td class="titlefield">'.$langs->trans("Module").'</td>';
@@ -773,7 +773,7 @@ if ($step == 4 && $datatoimport)
 	print '<b>'.$langs->trans("InformationOnSourceFile").'</b>';
 	print '<div class="underbanner clearboth"></div>';
 	print '<div class="fichecenter">';
-	print '<table width="100%" class="border">';
+	print '<table width="100%" class="border tableforfield">';
 	//print '<tr><td colspan="2"><b>'.$langs->trans("InformationOnSourceFile").'</b></td></tr>';
 
 	// Source file format
@@ -1103,7 +1103,7 @@ if ($step == 4 && $datatoimport)
 	{
 		print '<br>'."\n";
 		print '<!-- Area to add new import profile -->'."\n";
-		print $langs->trans("SaveImportModel");
+		print '<div class="marginbottomonly"><span class="opacitymedium">'.$langs->trans("SaveImportModel").'</span></div>';
 
 		print '<form class="nocellnopadd" action="'.$_SERVER["PHP_SELF"].'" method="post">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -1215,12 +1215,12 @@ if ($step == 5 && $datatoimport)
     print '<input type="hidden" name="step" value="5">';    // step 5
     print '<input type="hidden" name="action" value="launchsimu">';    // step 5
 
-	dol_fiche_head($head, 'step5', $langs->trans("NewImport"), -1);
+	dol_fiche_head($head, 'step5', $langs->trans("NewImport"), -2);
 
 	print '<div class="underbanner clearboth"></div>';
 	print '<div class="fichecenter">';
 
-	print '<table width="100%" class="border">';
+	print '<table width="100%" class="border tableforfield">';
 
 	// Module
 	print '<tr><td class="titlefield">'.$langs->trans("Module").'</td>';
@@ -1246,7 +1246,7 @@ if ($step == 5 && $datatoimport)
 	print '<b>'.$langs->trans("InformationOnSourceFile").'</b>';
 	print '<div class="underbanner clearboth"></div>';
 	print '<div class="fichecenter">';
-	print '<table width="100%" class="border">';
+	print '<table width="100%" class="border tableforfield">';
 	//print '<tr><td colspan="2"><b>'.$langs->trans("InformationOnSourceFile").'</b></td></tr>';
 
 	// Source file format
@@ -1352,8 +1352,7 @@ if ($step == 5 && $datatoimport)
 	print '<div class="underbanner clearboth"></div>';
 	print '<div class="fichecenter">';
 
-	print '<table width="100%" class="border">';
-	//print '<tr><td colspan="2"><b>'.$langs->trans("InformationOnTargetTables").'</b></td></tr>';
+	print '<table width="100%" class="border tableforfield">';
 
 	// Tables imported
 	print '<tr><td class="titlefield">';
