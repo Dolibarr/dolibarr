@@ -427,7 +427,7 @@ if ($step == 2 && $datatoimport)
 
 	print '</table>';
 
-	print '</div><br>';
+	print '</div>';
 
 	dol_fiche_end();
 

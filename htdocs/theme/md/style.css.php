@@ -2305,10 +2305,12 @@ div.tabBar div.titre {
 	padding-top: 10px;
 }
 
+/*
 div.tabBar.tabBarNoTop {
     padding-top: 0;
     border-top: 0;
 }
+*/
 
 div.tabBarWithBottom {
 	padding-bottom: 18px;
