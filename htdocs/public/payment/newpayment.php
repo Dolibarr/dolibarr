@@ -902,7 +902,7 @@ if ($source == 'order')
 	//  for dev only
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("PaymentIntent");
 	print '</td><td class="CTableRow'.($var?'1':'2').'">';
-    $paymentintent=$stripe->getPaymentIntent($object, $stripecu, $stripeacc, $status);
+    $paymentintent=$stripe->getPaymentIntent($object, $stripecu, $stripeacc, $servicestatus);
     print '<b>'.$paymentintent->id.'</b>';
 	print '</td></tr>'."\n";
 }
@@ -1053,7 +1053,7 @@ if ($source == 'invoice')
 	//  for dev only
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("PaymentIntent");
 	print '</td><td class="CTableRow'.($var?'1':'2').'">';
-    $paymentintent=$stripe->getPaymentIntent($object, $stripecu, $stripeacc, $status);
+    $paymentintent=$stripe->getPaymentIntent($object, $stripecu, $stripeacc, $servicestatus);
     print '<b>'.$paymentintent->id.'</b>';
 	print '</td></tr>'."\n";
 }
@@ -1592,7 +1592,7 @@ if ($source == 'donation')
 	//  for dev only
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("PaymentIntent");
 	print '</td><td class="CTableRow'.($var?'1':'2').'">';
-    $paymentintent=$stripe->getPaymentIntent($object, $stripecu, $stripeacc, $status);
+    $paymentintent=$stripe->getPaymentIntent($object, $stripecu, $stripeacc, $servicestatus);
     print '<b>'.$paymentintent->id.'</b>';
 	print '</td></tr>'."\n";
     }
