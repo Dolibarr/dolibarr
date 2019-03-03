@@ -326,7 +326,9 @@ input {
 	padding-left: 5px;
 }
 select {
-	padding: 5px;
+	padding-top: 4px;
+	padding-right: 4px;
+	padding-bottom: 3px;
 	padding-left: 2px;
 }
 input, select {
@@ -348,9 +350,6 @@ textarea.cke_source:focus
 	box-shadow: none;
 }
 
-select {
-	/* padding: 4px 4px 2px 1px; */
-}
 textarea {
 	border-radius: 0;
 	border-top:solid 1px rgba(0,0,0,.2);
@@ -1074,16 +1073,11 @@ select.selectarrowonleft option {
 
 	select {
 		padding-top: 4px;
-		padding-bottom: 4px;
+		padding-bottom: 5px;
 	}
+
 	input, input[type=text], input[type=password], select, textarea     {
 		min-width: 20px;
-		font-size: <?php print is_numeric($fontsize)?($fontsize+3).'px':$fontsize; ?>;
-    	/* min-height: 1.4em; */
-    	/* line-height: 1.4em; */
-    	/* padding: .4em .1em; */
-    	/* border-bottom: 1px solid #BBB; */
-    	/* max-width: inherit; why this ? */
     }
     input[type=text], input[type=password] {
 		max-width: 180px;

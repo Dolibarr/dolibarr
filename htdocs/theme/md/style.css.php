@@ -327,7 +327,9 @@ input {
 	padding-left: 5px;
 }
 select {
-	padding: 4px;
+	padding-top: 4px;
+	padding-right: 4px;
+	padding-bottom: 4px;
 	padding-left: 2px;
 }
 input, select {
@@ -1039,14 +1041,11 @@ select.selectarrowonleft option {
 		padding-top: 4px;
 		padding-bottom: 5px;
 	}
+
 	input, input[type=text], input[type=password], select, textarea     {
 		min-width: 20px;
     	min-height: 1.4em;
     	line-height: 1.4em;
-		font-size: <?php print $fontsize+3; ?>px;
-    	/* padding: .4em .1em; */
-    	/* border-bottom: 1px solid #BBB; */
-    	/* max-width: inherit; why this */
      }
 
     .hideonsmartphone { display: none; }
