@@ -509,7 +509,7 @@ else
 					print '<td>'.$objp->produit.'</td>';
 
 					print '<td align="right">';
-					$valtoshow=price2num($objp->value, 'MS');
+					$valtoshow=price(price2num($objp->value, 'MS'), 0, '', 0, 0);  // TODO replace with a qty() function
 					print empty($valtoshow)?'0':$valtoshow;
 					print '</td>';
 					$totalunit+=$objp->value;
