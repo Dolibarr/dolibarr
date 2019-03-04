@@ -972,6 +972,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
     }
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
     /**
      * Insert constants for module activation
      *
@@ -979,6 +980,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
      */
     protected function _active()
     {
+        // phpcs:enable
         global $conf, $user;
 
         $err = 0;
@@ -1013,6 +1015,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
     }
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
     /**
      * Module deactivation
      *
@@ -1020,6 +1023,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
      */
     protected function _unactive()
     {
+        // phpcs:enable
         global $conf;
 
         $err = 0;
@@ -1039,6 +1043,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
     /**
      * Create tables and keys required by module.
      * Files module.sql and module.key.sql with create table and create keys
