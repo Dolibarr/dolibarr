@@ -1490,52 +1490,6 @@ class Ticket extends CommonObject
         }
     }
 
-    /**
-     *   Create log for the ticket
-     *         1- create entry into database for message storage
-     *         2- if trigger, send an email to ticket contacts
-     *
-     *   @param  User   $user    	User that create
-     *   @param  string $message 	Log message
-     *   @param  int    $noemail 	0=send email after, 1=disable emails
-     *   @return int             	<0 if KO, >0 if OK
-     */
-    public function createTicketLog(User $user, $message, $noemail = 0)
-    {
-        global $conf, $langs;
-
-        $error = 0;
-
-        $this->db->begin();
-
-        // Clean parameters
-        $this->message = trim($this->message);
-
-        // Check parameters
-        if (!$message) {
-            $this->error = 'ErrorBadValueForParameter';
-            return -1;
-        }
-
-        // TODO Should call the trigger TICKET_MODIFY with $this->context with all data to record event
-        // so the event is stored by the agenda/event trigger
-
-        if (!$error) {
-            $this->db->commit();
-
-            if ($conf->global->TICKET_ACTIVATE_LOG_BY_EMAIL && !$noemail) {
-                $this->sendLogByEmail($user, $message);
-            }
-
-            return 1;
-        }
-        else
-        {
-            $this->db->rollback();
-
-            return -1;
-        }
-    }
 
     /**
      *  Send notification of changes by email

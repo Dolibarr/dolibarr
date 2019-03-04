@@ -87,14 +87,14 @@ TicketEmailNotificationFrom=Notification email from
 TicketEmailNotificationFromHelp=Used into ticket message answer by example
 TicketEmailNotificationTo=Notifications email to
 TicketEmailNotificationToHelp=Send email notifications to this address.
-TicketNewEmailBodyLabel=Text message sent after creating a ticket (public interface)
+TicketNewEmailBodyLabel=Text message sent after creating a ticket
 TicketNewEmailBodyHelp=The text specified here will be inserted into the email confirming the creation of a new ticket from the public interface. Information on the consultation of the ticket are automatically added.
 TicketParamPublicInterface=Public interface setup
 TicketsEmailMustExist=Require an existing email address to create a ticket
 TicketsEmailMustExistHelp=In the public interface, the email address should already be filled in the database to create a new ticket.
 PublicInterface=Public interface
-TicketUrlPublicInterfaceLabelAdmin=Public interface URL
-TicketUrlPublicInterfaceHelpAdmin=It is possible to define an alias to the web server and thus make available the public interface to another IP address.
+TicketUrlPublicInterfaceLabelAdmin=Alternative URL for public interface
+TicketUrlPublicInterfaceHelpAdmin=It is possible to define an alias to the web server and thus make available the public interface with another URL (the server must act as a proxy on this new URL)
 TicketPublicInterfaceTextHomeLabelAdmin=Welcome text of the public interface
 TicketPublicInterfaceTextHome=You can create a support ticket or view existing from its identifier tracking ticket.
 TicketPublicInterfaceTextHomeHelpAdmin=The text defined here will appear on the home page of the public interface.
@@ -124,7 +124,7 @@ TicketsAutoAssignTicketHelp=When creating a ticket, the user can be automaticall
 TicketNumberingModules=Tickets numbering module
 TicketNotifyTiersAtCreation=Notify third party at creation
 TicketGroup=Group
-
+TicketsDisableCustomerEmail=Alsways disable emails when a ticket is created from public interface
 #
 # Index & list page
 #
@@ -267,7 +267,7 @@ ErrorEmailMustExistToCreateTicket=Error: email address not found in our database
 TicketNewEmailSubjectAdmin=New ticket created
 TicketNewEmailBodyAdmin=<p>Ticket has just been created with ID #%s, see information:</p>
 SeeThisTicketIntomanagementInterface=See ticket in management interface
-TicketPublicInterfaceForbidden=Access for this area: forbidden
+TicketPublicInterfaceForbidden=The public interface for the tickets was not enabled
 
 # notifications
 TicketNotificationEmailSubject=Ticket %s updated

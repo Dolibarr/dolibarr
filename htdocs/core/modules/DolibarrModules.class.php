@@ -1156,7 +1156,8 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
             }
         }
 
-        if (! $dirfound) { dol_syslog("A module ask to load sql files into ".$reldir." but this directory was not found.", LOG_WARNING);
+        if (! $dirfound) {
+            dol_syslog("A module ask to load sql files into ".$reldir." but this directory was not found.", LOG_WARNING);
         }
         return $ok;
     }

@@ -88,9 +88,8 @@ class MouvementStock extends CommonObject
 		$this->db = $db;
 	}
 
-
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
-    /**
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
+	/**
 	 *	Add a movement of stock (in one direction only)
 	 *
 	 *	@param		User	$user			User object
@@ -114,8 +113,8 @@ class MouvementStock extends CommonObject
 	 */
     public function _create($user, $fk_product, $entrepot_id, $qty, $type, $price = 0, $label = '', $inventorycode = '', $datem = '', $eatby = '', $sellby = '', $batch = '', $skip_batch = false, $id_product_batch = 0)
 	{
-        // phpcs:enable
-		global $conf, $langs;
+	    // phpcs:disable
+	    global $conf, $langs;
 
 		require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 		require_once DOL_DOCUMENT_ROOT.'/product/stock/class/productlot.class.php';
@@ -726,20 +725,26 @@ class MouvementStock extends CommonObject
 	/**
 	 *	Increase stock for product and subproducts
 	 *
-	 * 	@param 		User	$user			Object user
-	 * 	@param		int		$fk_product		Id product
-	 * 	@param		int		$entrepot_id	Warehouse id
-	 * 	@param		int		$qty			Quantity
-	 * 	@param		int		$price			Price
-	 * 	@param		string	$label			Label of stock movement
-	 *	@param		date	$eatby			eat-by date
-	 *	@param		date	$sellby			sell-by date
-	 *	@param		string	$batch			batch number
-	 *	@return		int						<0 if KO, >0 if OK
+	 * 	@param 		User	$user			     Object user
+	 * 	@param		int		$fk_product		     Id product
+	 * 	@param		int		$entrepot_id	     Warehouse id
+	 * 	@param		int		$qty			     Quantity
+	 * 	@param		int		$price			     Price
+	 * 	@param		string	$label			     Label of stock movement
+	 *	@param		date	$eatby			     eat-by date
+	 *	@param		date	$sellby			     sell-by date
+	 *	@param		string	$batch			     batch number
+	 * 	@param		string	$datem			     Force date of movement
+	 * 	@param		int		$id_product_batch    Id product_batch
+	 *	@return		int						     <0 if KO, >0 if OK
 	 */
-	public function reception($user, $fk_product, $entrepot_id, $qty, $price = 0, $label = '', $eatby = '', $sellby = '', $batch = '')
+	public function reception($user, $fk_product, $entrepot_id, $qty, $price = 0, $label = '', $eatby = '', $sellby = '', $batch = '', $datem = '', $id_product_batch = 0)
 	{
-		return $this->_create($user, $fk_product, $entrepot_id, $qty, 3, $price, $label, '', '', $eatby, $sellby, $batch);
+	    global $conf;
+
+	    $skip_batch = empty($conf->productbatch->enabled);
+
+	    return $this->_create($user, $fk_product, $entrepot_id, $qty, 3, $price, $label, '', $datem, $eatby, $sellby, $batch, $skip_batch, $id_product_batch);
 	}
 
 
