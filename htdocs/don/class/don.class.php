@@ -687,7 +687,6 @@ class Don extends CommonObject
                 $this->societe            = $obj->societe;
                 $this->statut             = $obj->fk_statut;
                 $this->address            = $obj->address;
-                $this->town               = $obj->town;
                 $this->zip                = $obj->zip;
                 $this->town               = $obj->town;
                 $this->country_id         = $obj->fk_country;
