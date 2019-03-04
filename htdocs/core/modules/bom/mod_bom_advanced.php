@@ -68,7 +68,7 @@ class mod_bom_advanced extends ModeleNumRefboms
 		$texte.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		$texte.= '<input type="hidden" name="action" value="updateMask">';
 		$texte.= '<input type="hidden" name="maskconstBom" value="BOM_ADVANCED_MASK">';
-		$texte.= '<table class="nobBomnopadding" width="100%">';
+		$texte.= '<table class="nobordernopadding" width="100%">';
 
 		$tooltip=$langs->trans("GenericMaskCodes", $langs->transnoentities("Bom"), $langs->transnoentities("Bom"));
 		$tooltip.=$langs->trans("GenericMaskCodes2");

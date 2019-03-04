@@ -315,6 +315,9 @@ foreach ($dirmodels as $reldir)
 print "</table><br>\n";
 
 
+if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
+{
+
 /*
  * Document templates generators
  */
@@ -532,6 +535,7 @@ print '</form>';
 print '</table>';
 print '<br>';
 
+}
 
 /*
  * Notifications
