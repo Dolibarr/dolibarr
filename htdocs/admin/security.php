@@ -501,11 +501,11 @@ if (GETPOST('info','int') > 0)
 {
     if (function_exists('password_hash'))
     {
-        print $langs->trans("Note: The function password_hash exists on your PHP");
+        print $langs->trans("Note: The function password_hash exists on your PHP")."<br>\n";
     }
     else
     {
-        print $langs->trans("Note: The function password_hash does not exists on your PHP");
+        print $langs->trans("Note: The function password_hash does not exists on your PHP")."<br>\n";
     }
     print 'MAIN_SECURITY_HASH_ALGO = '.$conf->global->MAIN_SECURITY_HASH_ALGO."<br>\n";
     print 'MAIN_SECURITY_SALT = '.$conf->global->MAIN_SECURITY_SALT."<br>\n";
