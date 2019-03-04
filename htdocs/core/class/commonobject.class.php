@@ -7455,9 +7455,18 @@ abstract class CommonObject
 	 */
 	public function initAsSpecimenCommon()
 	{
-		$this->id = 0;
+	    global $user;
 
-		// TODO...
+		$this->id = 0;
+		if (array_key_exists('label', $this->fields)) $this->label='This is label';
+		if (array_key_exists('note_public', $this->fields)) $this->note_public='Public note';
+		if (array_key_exists('note_private', $this->fields)) $this->note_private='Private note';
+		if (array_key_exists('date_creation', $this->fields)) $this->date_creation=(dol_now()-3600*24);
+		if (array_key_exists('date_modification', $this->fields)) $this->date_modification=(dol_now()-3600*24);
+		if (array_key_exists('fk_user_creat', $this->fields)) $this->fk_user_creat=$user->id;
+		if (array_key_exists('fk_user_modif', $this->fields)) $this->fk_user_modif=$user->id;
+		if (array_key_exists('date', $this->fields)) $this->date=dol_now();
+		// ...
 	}
 
 

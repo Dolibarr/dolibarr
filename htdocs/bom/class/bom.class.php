@@ -44,7 +44,7 @@ class BOM extends CommonObject
 	/**
 	 * @var int  Does bom support multicompany module ? 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 	 */
-	public $ismultientitymanaged = 0;
+	public $ismultientitymanaged = 1;
 
 	/**
 	 * @var int  Does bom support extrafields ? 0=No, 1=Yes
@@ -55,6 +55,9 @@ class BOM extends CommonObject
 	 * @var string String with name of icon for bom. Must be the part after the 'object_' into object_bom.png
 	 */
 	public $picto = 'bom';
+
+
+	public $table_element_line = 'bom_bomline';
 
 
 	/**
@@ -587,7 +590,8 @@ class BOM extends CommonObject
 	 */
 	public function initAsSpecimen()
 	{
-		$this->initAsSpecimenCommon();
+	    $this->initAsSpecimenCommon();
+	    $this->date = $this->date_creation;
 	}
 
 
