@@ -222,7 +222,7 @@ class SMTPs
 
 
     // @CHANGE LDR
-    private $log = '';
+    public $log = '';
     private $_errorsTo = '';
     private $_deliveryReceipt = 0;
     private $_trackId = '';
