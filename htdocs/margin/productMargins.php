@@ -280,7 +280,7 @@ if ($result)
 				$invoicestatic->ref=$objp->ref;
 				print $invoicestatic->getNomUrl(1);
 				print "</td>\n";
-				print "<td align=\"center\">";
+				print "<td class=\"center\">";
 				print dol_print_date($db->jdate($objp->datef), 'day')."</td>";
 			}
 			else {
@@ -302,13 +302,13 @@ if ($result)
 				print "</td>\n";
 				//print "<td>".$product_static->getNomUrl(1)."</td>\n";
 			}
-			print "<td align=\"right\">".price($pv, null, null, null, null, $rounding)."</td>\n";
-			print "<td align=\"right\">".price($pa, null, null, null, null, $rounding)."</td>\n";
-			print "<td align=\"right\">".price($marge, null, null, null, null, $rounding)."</td>\n";
+			print "<td class=\"right\">".price($pv, null, null, null, null, $rounding)."</td>\n";
+			print "<td class=\"right\">".price($pa, null, null, null, null, $rounding)."</td>\n";
+			print "<td class=\"right\">".price($marge, null, null, null, null, $rounding)."</td>\n";
 			if (! empty($conf->global->DISPLAY_MARGIN_RATES))
-				print "<td align=\"right\">".(($marginRate === '')?'n/a':price($marginRate, null, null, null, null, $rounding)."%")."</td>\n";
+				print "<td class=\"right\">".(($marginRate === '')?'n/a':price($marginRate, null, null, null, null, $rounding)."%")."</td>\n";
 			if (! empty($conf->global->DISPLAY_MARK_RATES))
-				print "<td align=\"right\">".(($markRate === '')?'n/a':price($markRate, null, null, null, null, $rounding)."%")."</td>\n";
+				print "<td class=\"right\">".(($markRate === '')?'n/a':price($markRate, null, null, null, null, $rounding)."%")."</td>\n";
 			print "</tr>\n";
 
 			$i++;
@@ -330,13 +330,13 @@ if ($result)
 	else
 		print '<td>';
 	print $langs->trans('TotalMargin')."</td>";
-	print "<td align=\"right\">".price($cumul_vente, null, null, null, null, $rounding)."</td>\n";
-	print "<td align=\"right\">".price($cumul_achat, null, null, null, null, $rounding)."</td>\n";
-	print "<td align=\"right\">".price($totalMargin, null, null, null, null, $rounding)."</td>\n";
+	print "<td class=\"right\">".price($cumul_vente, null, null, null, null, $rounding)."</td>\n";
+	print "<td class=\"right\">".price($cumul_achat, null, null, null, null, $rounding)."</td>\n";
+	print "<td class=\"right\">".price($totalMargin, null, null, null, null, $rounding)."</td>\n";
 	if (! empty($conf->global->DISPLAY_MARGIN_RATES))
-		print "<td align=\"right\">".(($marginRate === '')?'n/a':price($marginRate, null, null, null, null, $rounding)."%")."</td>\n";
+		print "<td class=\"right\">".(($marginRate === '')?'n/a':price($marginRate, null, null, null, null, $rounding)."%")."</td>\n";
 	if (! empty($conf->global->DISPLAY_MARK_RATES))
-		print "<td align=\"right\">".(($markRate === '')?'n/a':price($markRate, null, null, null, null, $rounding)."%")."</td>\n";
+		print "<td class=\"right\">".(($markRate === '')?'n/a':price($markRate, null, null, null, null, $rounding)."%")."</td>\n";
 	print "</tr>\n";
 
 	print "</table>";
