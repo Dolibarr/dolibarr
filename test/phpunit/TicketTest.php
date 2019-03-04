@@ -341,7 +341,7 @@ class TicketTest extends PHPUnit_Framework_TestCase
 	 * @depends	testTicketFetch
 	 * The depends says test is run only if previous is ok
 	 */
-	public function testTicketcreateTicketLog($localobject)
+	/*public function testTicketcreateTicketLog($localobject)
 	{
 		global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -357,7 +357,7 @@ class TicketTest extends PHPUnit_Framework_TestCase
 
 		$this->assertGreaterThan(0, $result);
 		return $localobject;
-	}
+	}*/
 
 	/**
 	 * testTicketclose
