@@ -1281,9 +1281,12 @@ class Adherent extends CommonObject
 				$this->public			= $obj->public;
 
 				$this->datec			= $this->db->jdate($obj->datec);
+                $this->date_creation    = $this->db->jdate($obj->datec);
 				$this->datem			= $this->db->jdate($obj->datem);
+                $this->date_modification= $this->db->jdate($obj->datem);
 				$this->datefin			= $this->db->jdate($obj->datefin);
 				$this->datevalid		= $this->db->jdate($obj->datev);
+                $this->date_validation	= $this->db->jdate($obj->datev);
 				$this->birth			= $this->db->jdate($obj->birthday);
 
 				$this->note_private		= $obj->note_private;

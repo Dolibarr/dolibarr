@@ -32,8 +32,7 @@ require_once DOL_DOCUMENT_ROOT . '/core/class/html.formaccounting.class.php';
 $langs->loadLangs(array("compta","admin","accountancy"));
 
 // Security check
-if (empty($user->rights->accounting->chartofaccount))
-{
+if (empty($user->rights->accounting->chartofaccount)) {
 	accessforbidden();
 }
 
@@ -112,7 +111,7 @@ foreach ($list_account_main as $key) {
     print $form->textwithpicto($label, $htmltext);
     print '</td>';
     // Value
-    print '<td>';  // Do not force align=right, or it align also the content of the select box
+    print '<td>';  // Do not force class=right, or it align also the content of the select box
     print $formaccounting->select_account($conf->global->$key, $key, 1, '', 1, 1);
     print '</td>';
     print '</tr>';

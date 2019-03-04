@@ -41,8 +41,7 @@ $rowid=GETPOST('rowid', 'alpha');
 $code=GETPOST('code', 'alpha');
 
 // Security access
-if (empty($user->rights->accounting->chartofaccount))
-{
+if (empty($user->rights->accounting->chartofaccount)) {
 	accessforbidden();
 }
 
@@ -468,29 +467,46 @@ if ($id)
             $valuetoshow=ucfirst($fieldlist[$field]);   // Par defaut
             $valuetoshow=$langs->trans($valuetoshow);   // try to translate
             $class="left";
-            if ($fieldlist[$field]=='type')            {
-				if ($tabname[$id] == MAIN_DB_PREFIX."c_paiement") $valuetoshow=$form->textwithtooltip($langs->trans("Type"), $langs->trans("TypePaymentDesc"), 2, 1, img_help(1, ''));
-				else $valuetoshow=$langs->trans("Type");
+            if ($fieldlist[$field]=='type') {
+				if ($tabname[$id] == MAIN_DB_PREFIX."c_paiement") {
+                    $valuetoshow=$form->textwithtooltip($langs->trans("Type"), $langs->trans("TypePaymentDesc"), 2, 1, img_help(1, ''));
+                } else {
+                    $valuetoshow=$langs->trans("Type");
+                }
             }
-            if ($fieldlist[$field]=='code')            { $valuetoshow=$langs->trans("Code"); }
-            if ($fieldlist[$field]=='libelle' || $fieldlist[$field]=='label')
-            {
+            if ($fieldlist[$field]=='code') {
+                $valuetoshow=$langs->trans("Code");
+            }
+            if ($fieldlist[$field]=='libelle' || $fieldlist[$field]=='label') {
             	$valuetoshow=$langs->trans("Label");
             }
-            if ($fieldlist[$field]=='libelle_facture') { $valuetoshow=$langs->trans("LabelOnDocuments"); }
-            if ($fieldlist[$field]=='country')         {
+            if ($fieldlist[$field]=='libelle_facture') {
+                $valuetoshow=$langs->trans("LabelOnDocuments");
+            }
+            if ($fieldlist[$field]=='country') {
                 $valuetoshow=$langs->trans("Country");
             }
-            if ($fieldlist[$field]=='accountancy_code'){ $valuetoshow=$langs->trans("AccountancyCode"); }
-            if ($fieldlist[$field]=='accountancy_code_sell'){ $valuetoshow=$langs->trans("AccountancyCodeSell"); }
-            if ($fieldlist[$field]=='accountancy_code_buy'){ $valuetoshow=$langs->trans("AccountancyCodeBuy"); }
-            if ($fieldlist[$field]=='pcg_version' || $fieldlist[$field]=='fk_pcg_version') { $valuetoshow=$langs->trans("Pcg_version"); }
-            if ($fieldlist[$field]=='range_account')   { $valuetoshow=$langs->trans("Comment"); }
-			if ($fieldlist[$field]=='category_type')   { $valuetoshow=$langs->trans("Calculated"); }
+            if ($fieldlist[$field]=='accountancy_code') {
+                $valuetoshow=$langs->trans("AccountancyCode");
+            }
+            if ($fieldlist[$field]=='accountancy_code_sell') {
+                $valuetoshow=$langs->trans("AccountancyCodeSell");
+            }
+            if ($fieldlist[$field]=='accountancy_code_buy') {
+                $valuetoshow=$langs->trans("AccountancyCodeBuy");
+            }
+            if ($fieldlist[$field]=='pcg_version' || $fieldlist[$field]=='fk_pcg_version') {
+                $valuetoshow=$langs->trans("Pcg_version");
+            }
+            if ($fieldlist[$field]=='range_account') {
+                $valuetoshow=$langs->trans("Comment");
+            }
+			if ($fieldlist[$field]=='category_type') {
+                $valuetoshow=$langs->trans("Calculated");
+            }
 
-            if ($valuetoshow != '')
-            {
-                print '<td align="'.$align.'">';
+            if ($valuetoshow != '') {
+                print '<td class="'.$class.'">';
             	if (! empty($tabhelp[$id][$value]) && preg_match('/^http(s*):/i', $tabhelp[$id][$value])) print '<a href="'.$tabhelp[$id][$value].'" target="_blank">'.$valuetoshow.' '.img_help(1, $valuetoshow).'</a>';
             	elseif (! empty($tabhelp[$id][$value])) print $form->textwithpicto($valuetoshow, $tabhelp[$id][$value]);
             	else print $valuetoshow;
@@ -591,7 +607,7 @@ if ($id)
         print '<td class="liste_titre"></td>';
         print '<td class="liste_titre"></td>';
         print '<td class="liste_titre"></td>';
-        print '<td class="liste_titre" align="center">';
+        print '<td class="liste_titre center">';
     	if ($filterfound)
     	{
         	$searchpicto=$form->showFilterAndCheckAddButtons(0);
@@ -613,38 +629,73 @@ if ($id)
 
             $valuetoshow=ucfirst($fieldlist[$field]);   // By defaut
             $valuetoshow=$langs->trans($valuetoshow);   // try to translate
-            if ($fieldlist[$field]=='source')          { $valuetoshow=$langs->trans("Contact"); }
-            if ($fieldlist[$field]=='price')           { $valuetoshow=$langs->trans("PriceUHT"); }
-            if ($fieldlist[$field]=='taux')            {
-				if ($tabname[$id] != MAIN_DB_PREFIX."c_revenuestamp") $valuetoshow=$langs->trans("Rate");
-				else $valuetoshow=$langs->trans("Amount");
-				$align='center';
+            if ($fieldlist[$field]=='source') {
+                $valuetoshow=$langs->trans("Contact");
             }
-            if ($fieldlist[$field]=='type')            { $valuetoshow=$langs->trans("Type"); }
-            if ($fieldlist[$field]=='code')            { $valuetoshow=$langs->trans("Code"); }
-            if ($fieldlist[$field]=='libelle' || $fieldlist[$field]=='label')
-            {
+            if ($fieldlist[$field]=='price') {
+                $valuetoshow=$langs->trans("PriceUHT");
+            }
+            if ($fieldlist[$field]=='taux') {
+                if ($tabname[$id] != MAIN_DB_PREFIX."c_revenuestamp") {
+                    $valuetoshow=$langs->trans("Rate");
+                } else {
+                    $valuetoshow=$langs->trans("Amount");
+                }
+				$class='center';
+            }
+            if ($fieldlist[$field]=='type') {
+                $valuetoshow=$langs->trans("Type");
+            }
+            if ($fieldlist[$field]=='code') {
+                $valuetoshow=$langs->trans("Code");
+            }
+            if ($fieldlist[$field]=='libelle' || $fieldlist[$field]=='label') {
             	$valuetoshow=$langs->trans("Label");
             }
-            if ($fieldlist[$field]=='country')         { $valuetoshow=$langs->trans("Country"); }
-            if ($fieldlist[$field]=='region_id' || $fieldlist[$field]=='country_id') { $showfield=0; }
-            if ($fieldlist[$field]=='accountancy_code'){ $valuetoshow=$langs->trans("AccountancyCode"); }
-            if ($fieldlist[$field]=='accountancy_code_sell'){ $valuetoshow=$langs->trans("AccountancyCodeSell"); $sortable=0; }
-            if ($fieldlist[$field]=='accountancy_code_buy'){ $valuetoshow=$langs->trans("AccountancyCodeBuy"); $sortable=0; }
-			if ($fieldlist[$field]=='fk_pcg_version')  { $valuetoshow=$langs->trans("Pcg_version"); }
-            if ($fieldlist[$field]=='account_parent')  { $valuetoshow=$langs->trans("Accountsparent"); }
-            if ($fieldlist[$field]=='pcg_type')        { $valuetoshow=$langs->trans("Pcg_type"); }
-            if ($fieldlist[$field]=='pcg_subtype')     { $valuetoshow=$langs->trans("Pcg_subtype"); }
-        	if ($fieldlist[$field]=='type_template')   { $valuetoshow=$langs->trans("TypeOfTemplate"); }
-			if ($fieldlist[$field]=='range_account')   { $valuetoshow=$langs->trans("Comment"); }
-			if ($fieldlist[$field]=='category_type')   { $valuetoshow=$langs->trans("Calculated"); }
+            if ($fieldlist[$field]=='country') {
+                $valuetoshow=$langs->trans("Country");
+            }
+            if ($fieldlist[$field]=='region_id' || $fieldlist[$field]=='country_id') {
+                $showfield=0;
+            }
+            if ($fieldlist[$field]=='accountancy_code') {
+                $valuetoshow=$langs->trans("AccountancyCode");
+            }
+            if ($fieldlist[$field]=='accountancy_code_sell') {
+                $valuetoshow=$langs->trans("AccountancyCodeSell");
+                $sortable=0;
+            }
+            if ($fieldlist[$field]=='accountancy_code_buy') {
+                $valuetoshow=$langs->trans("AccountancyCodeBuy");
+                $sortable=0;
+            }
+			if ($fieldlist[$field]=='fk_pcg_version') {
+                $valuetoshow=$langs->trans("Pcg_version");
+            }
+            if ($fieldlist[$field]=='account_parent') {
+                $valuetoshow=$langs->trans("Accountsparent");
+            }
+            if ($fieldlist[$field]=='pcg_type') {
+                $valuetoshow=$langs->trans("Pcg_type");
+            }
+            if ($fieldlist[$field]=='pcg_subtype') {
+                $valuetoshow=$langs->trans("Pcg_subtype");
+            }
+        	if ($fieldlist[$field]=='type_template') {
+                $valuetoshow=$langs->trans("TypeOfTemplate");
+            }
+			if ($fieldlist[$field]=='range_account') {
+                $valuetoshow=$langs->trans("Comment");
+            }
+			if ($fieldlist[$field]=='category_type') {
+                $valuetoshow=$langs->trans("Calculated");
+            }
             // Affiche nom du champ
-            if ($showfield)
-            {
-                print getTitleFieldOfList($valuetoshow, 0, $_SERVER["PHP_SELF"], ($sortable?$fieldlist[$field]:''), ($page?'page='.$page.'&':''), $param, "align=".$align, $sortfield, $sortorder);
+            if ($showfield) {
+                print getTitleFieldOfList($valuetoshow, 0, $_SERVER["PHP_SELF"], ($sortable?$fieldlist[$field]:''), ($page?'page='.$page.'&':''), $param, "", $sortfield, $sortorder, $class.' ');
             }
         }
-		print getTitleFieldOfList($langs->trans("Status"), 0, $_SERVER["PHP_SELF"], "active", ($page?'page='.$page.'&':''), $param, 'align="center"', $sortfield, $sortorder);
+		print getTitleFieldOfList($langs->trans("Status"), 0, $_SERVER["PHP_SELF"], "active", ($page?'page='.$page.'&':''), $param, '', $sortfield, $sortorder, 'center ');
         print getTitleFieldOfList('');
         print getTitleFieldOfList('');
         print getTitleFieldOfList('');
@@ -670,7 +721,7 @@ if ($id)
 
                     print '<td></td>';
                     print '<td></td>';
-                    print '<td align="center">';
+                    print '<td class="center">';
                     print '<input type="hidden" name="page" value="'.$page.'">';
                     print '<input type="hidden" name="rowid" value="'.$rowid.'">';
                     print '<input type="submit" class="button" name="actionmodify" value="'.$langs->trans("Modify").'">';
@@ -732,7 +783,7 @@ if ($id)
 
                             $class='tddict';
 							// Show value for field
-							if ($showfield) print '<!-- '.$fieldlist[$field].' --><td align="'.$align.'" class="'.$class.'">'.$valuetoshow.'</td>';
+							if ($showfield) print '<!-- '.$fieldlist[$field].' --><td class="'.$class.'">'.$valuetoshow.'</td>';
                         }
                     }
 
@@ -750,7 +801,7 @@ if ($id)
                     $url.='&';
 
                     // Active
-                    print '<td align="center" class="nowrap">';
+                    print '<td class="center" class="nowrap">';
                     if ($canbedisabled) print '<a href="'.$url.'action='.$acts[$obj->active].'">'.$actl[$obj->active].'</a>';
                     else
                  	{
@@ -759,13 +810,13 @@ if ($id)
                     print "</td>";
 
                     // Modify link
-                    if ($canbemodified) print '<td align="center"><a class="reposition" href="'.$url.'action=edit">'.img_edit().'</a></td>';
+                    if ($canbemodified) print '<td class="center"><a class="reposition" href="'.$url.'action=edit">'.img_edit().'</a></td>';
                     else print '<td>&nbsp;</td>';
 
                     // Delete link
                     if ($iserasable)
                     {
-                        print '<td align="center">';
+                        print '<td class="center">';
                         if ($user->admin) print '<a href="'.$url.'action=delete">'.img_delete().'</a>';
                         //else print '<a href="#">'.img_delete().'</a>';    // Some dictionary can be edited by other profile than admin
                         print '</td>';

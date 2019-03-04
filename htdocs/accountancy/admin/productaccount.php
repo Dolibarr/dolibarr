@@ -307,7 +307,7 @@ if ($result)
 	print '<td>'.$langs->trans('OptionModeProductBuyDesc')."</td></tr>\n";
 	print "</table>\n";
 
-	print '<div align="center"><input type="submit" class="button" value="' . $langs->trans('Refresh') . '" name="changetype"></div>';
+	print '<div class="center"><input type="submit" class="button" value="' . $langs->trans('Refresh') . '" name="changetype"></div>';
 
 	print "<br>\n";
 
@@ -338,7 +338,7 @@ if ($result)
 	print ' '.$langs->trans("or").' '.$form->selectarray('search_current_account_valid', $listofvals, $search_current_account_valid, 1);
 	print '</td>';
 	print '<td class="liste_titre">&nbsp;</td>';
-	print '<td align="center" class="liste_titre">';
+	print '<td class="center liste_titre">';
 	$searchpicto=$form->showFilterButtons();
 	print $searchpicto;
 	print '</td>';
@@ -348,14 +348,14 @@ if ($result)
 	print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "p.ref", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("Label", $_SERVER["PHP_SELF"], "p.label", "", $param, '', $sortfield, $sortorder);
     if (! empty($conf->global->ACCOUNTANCY_SHOW_PROD_DESC)) print_liste_field_titre("Description", $_SERVER["PHP_SELF"], "p.description", "", $param, '', $sortfield, $sortorder);
-    if ($accounting_product_mode == 'ACCOUNTANCY_SELL') print_liste_field_titre("OnSell", $_SERVER["PHP_SELF"], "p.tosell", "", $param, 'align="center"', $sortfield, $sortorder);
-    if ($accounting_product_mode == 'ACCOUNTANCY_BUY')  print_liste_field_titre("OnBuy", $_SERVER["PHP_SELF"], "p.tobuy", "", $param, 'align="center"', $sortfield, $sortorder);
+    if ($accounting_product_mode == 'ACCOUNTANCY_SELL') print_liste_field_titre("OnSell", $_SERVER["PHP_SELF"], "p.tosell", "", $param, '', $sortfield, $sortorder, 'center ');
+    if ($accounting_product_mode == 'ACCOUNTANCY_BUY')  print_liste_field_titre("OnBuy", $_SERVER["PHP_SELF"], "p.tobuy", "", $param, '', $sortfield, $sortorder, 'center ');
    	if ($accounting_product_mode == 'ACCOUNTANCY_BUY') $fieldtosortaccount="p.accountancy_code_buy";
    	else $fieldtosortaccount="p.accountancy_code_sell";
    	print_liste_field_titre("CurrentDedicatedAccountingAccount", $_SERVER["PHP_SELF"], $fieldtosortaccount, "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("AssignDedicatedAccountingAccount");
 	$clickpitco=$form->showCheckAddButtons('checkforselect', 1);
-	print_liste_field_titre($clickpitco, '', '', '', '', 'align="center"');
+	print_liste_field_titre($clickpitco, '', '', '', '', '', '', '', 'center ');
 	print '</tr>';
 
 	$product_static = new Product($db);
@@ -408,10 +408,10 @@ if ($result)
 		}
 
 		if ($accounting_product_mode == 'ACCOUNTANCY_SELL')
-			print '<td align="center">'.$product_static->getLibStatut(3, 0).'</td>';
+			print '<td class="center">'.$product_static->getLibStatut(3, 0).'</td>';
 
 		if ($accounting_product_mode == 'ACCOUNTANCY_BUY')
-			print '<td align="center">'.$product_static->getLibStatut(3, 1).'</td>';
+			print '<td class="center">'.$product_static->getLibStatut(3, 1).'</td>';
 
 		// Current accounting account
 		print '<td class="left">';
@@ -450,7 +450,7 @@ if ($result)
 		}
 
 		// Checkbox select
-		print '<td align="center">';
+		print '<td class="center">';
 		print '<input type="checkbox" class="checkforselect" name="chk_prod[]" value="' . $obj->rowid . '"/></td>';
 		print "</tr>";
 		$i ++;
@@ -485,7 +485,7 @@ if ($result)
         </script>';
 
 
-	print '<br><div align="center"><input type="submit" class="butAction" id="changeaccount" name="changeaccount" value="' . $langs->trans("Save") . '"></div>';
+	print '<br><div class="center"><input type="submit" class="butAction" id="changeaccount" name="changeaccount" value="' . $langs->trans("Save") . '"></div>';
 
 	print '</form>';
 

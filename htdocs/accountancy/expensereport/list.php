@@ -319,7 +319,7 @@ if ($result) {
 	print '<td class="liste_titre right"><input type="text" class="right flat maxwidth50" name="search_vat" placeholder="%" size="1" value="' . dol_escape_htmltag($search_vat) . '"></td>';
 	print '<td class="liste_titre"></td>';
 	print '<td class="liste_titre"></td>';
-	print '<td align="center" class="liste_titre">';
+	print '<td class="center" class="liste_titre">';
 	$searchpicto=$form->showFilterButtons();
 	print $searchpicto;
 	print '</td>';
@@ -328,16 +328,16 @@ if ($result) {
 	print '<tr class="liste_titre">';
 	print_liste_field_titre("LineId", $_SERVER["PHP_SELF"], "erd.rowid", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("ExpenseReport", $_SERVER["PHP_SELF"], "er.ref", "", $param, '', $sortfield, $sortorder);
-	print_liste_field_titre("Date", $_SERVER["PHP_SELF"], "erd.date, erd.rowid", "", $param, 'align="center"', $sortfield, $sortorder);
+	print_liste_field_titre("Date", $_SERVER["PHP_SELF"], "erd.date, erd.rowid", "", $param, '', $sortfield, $sortorder, 'center ');
 	print_liste_field_titre("TypeFees", $_SERVER["PHP_SELF"], "f.label", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("Description", $_SERVER["PHP_SELF"], "erd.comments", "", $param, '', $sortfield, $sortorder);
-	print_liste_field_titre("Amount", $_SERVER["PHP_SELF"], "erd.total_ht", "", $param, 'class="right"', $sortfield, $sortorder);
-	print_liste_field_titre("VATRate", $_SERVER["PHP_SELF"], "erd.tva_tx", "", $param, 'class="right"', $sortfield, $sortorder);
-	print_liste_field_titre("AccountAccountingSuggest", '', '', '', '', 'align="center"', $sortfield, $sortorder);
-	print_liste_field_titre("IntoAccount", '', '', '', '', 'align="center"', $sortfield, $sortorder);
+	print_liste_field_titre("Amount", $_SERVER["PHP_SELF"], "erd.total_ht", "", $param, '', $sortfield, $sortorder, 'right ');
+	print_liste_field_titre("VATRate", $_SERVER["PHP_SELF"], "erd.tva_tx", "", $param, '', $sortfield, $sortorder, 'right ');
+	print_liste_field_titre("AccountAccountingSuggest", '', '', '', '', '', $sortfield, $sortorder, 'center ');
+	print_liste_field_titre("IntoAccount", '', '', '', '', '', $sortfield, $sortorder, 'center ');
 	$checkpicto='';
 	if ($massactionbutton) $checkpicto=$form->showCheckAddButtons('checkforselect', 1);
-	print_liste_field_titre($checkpicto, '', '', '', '', 'align="center"');
+	print_liste_field_titre($checkpicto, '', '', '', '', '', '', '', 'center ');
 	print "</tr>\n";
 
 
@@ -362,7 +362,7 @@ if ($result) {
 		print '<td>' . $expensereport_static->getNomUrl(1) . '</td>';
 
 		// Date
-		print '<td align="center">' . dol_print_date($db->jdate($objp->date), 'day') . '</td>';
+		print '<td class="center">' . dol_print_date($db->jdate($objp->date), 'day') . '</td>';
 
 		// Fees label
 		print '<td>';
@@ -386,16 +386,16 @@ if ($result) {
 		print '</td>';
 
 		// Current account
-		print '<td align="center">';
+		print '<td class="center">';
 		print length_accountg(html_entity_decode($objp->code_buy));
 		print '</td>';
 
 		// Suggested accounting account
-		print '<td align="center">';
+		print '<td class="center">';
 		print $formaccounting->select_account($objp->aarowid_suggest, 'codeventil'.$objp->rowid, 1, array(), 0, 0, 'codeventil maxwidth300 maxwidthonsmartphone', 'cachewithshowemptyone');
 		print '</td>';
 
-		print '<td align="center">';
+		print '<td class="center">';
 		print '<input type="checkbox" class="flat checkforselect checkforselect'.$objp->rowid.'" name="toselect[]" value="' . $objp->rowid . "_" . $i . '"' . ($objp->aarowid ? "checked" : "") . '/>';
 		print '</td>';
 
