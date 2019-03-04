@@ -138,6 +138,11 @@ class Adherent extends CommonObject
 	public $facebook;
 
     /**
+     * @var string linkedin account
+     */
+    public $linkedin;
+
+    /**
      * @var string Phone number
      */
 	public $phone;
@@ -218,7 +223,7 @@ class Adherent extends CommonObject
 	 *
 	 *	@param 		DoliDB		$db		Database handler
 	 */
-	function __construct($db)
+	public function __construct($db)
 	{
 		$this->db = $db;
 		$this->statut = -1;
@@ -229,7 +234,7 @@ class Adherent extends CommonObject
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Function sending an email to the current member with the text supplied in parameter.
 	 *
@@ -246,7 +251,7 @@ class Adherent extends CommonObject
 	 *  @param	string	$moreinheader		Add more html headers
 	 *  @return	int							<0 if KO, >0 if OK
 	 */
-	function send_an_email($text, $subject, $filename_list = array(), $mimetype_list = array(), $mimefilename_list = array(), $addr_cc = "", $addr_bcc = "", $deliveryreceipt = 0, $msgishtml = -1, $errors_to = '', $moreinheader = '')
+	public function send_an_email($text, $subject, $filename_list = array(), $mimetype_list = array(), $mimefilename_list = array(), $addr_cc = "", $addr_bcc = "", $deliveryreceipt = 0, $msgishtml = -1, $errors_to = '', $moreinheader = '')
 	{
         // phpcs:enable
 		global $conf,$langs;
@@ -291,7 +296,7 @@ class Adherent extends CommonObject
 	 * @param	string	$text       Text to make substitution to
 	 * @return  string      		Value of input text string with substitutions done
 	 */
-	function makeSubstitution($text)
+	public function makeSubstitution($text)
 	{
 		global $conf,$langs;
 
@@ -358,7 +363,7 @@ class Adherent extends CommonObject
 	 *	@param	string		$morphy		Nature of the adherent (physical or moral)
 	 *	@return	string					Label
 	 */
-	function getmorphylib($morphy = '')
+	public function getmorphylib($morphy = '')
 	{
 		global $langs;
 		if (! $morphy) { $morphy=$this->morphy; }
@@ -374,7 +379,7 @@ class Adherent extends CommonObject
 	 *	@param  int		$notrigger		1 ne declenche pas les triggers, 0 sinon
 	 *	@return	int						<0 if KO, >0 if OK
 	 */
-	function create($user, $notrigger = 0)
+	public function create($user, $notrigger = 0)
 	{
 		global $conf,$langs;
 
@@ -500,7 +505,7 @@ class Adherent extends CommonObject
 	 * 	@param	string	$action				Current action for hookmanager
 	 * 	@return	int							<0 if KO, >0 if OK
 	 */
-	function update($user, $notrigger = 0, $nosyncuser = 0, $nosyncuserpass = 0, $nosyncthirdparty = 0, $action = 'update')
+	public function update($user, $notrigger = 0, $nosyncuser = 0, $nosyncuserpass = 0, $nosyncthirdparty = 0, $action = 'update')
 	{
 		global $conf, $langs, $hookmanager;
 
@@ -550,6 +555,7 @@ class Adherent extends CommonObject
 		$sql.= ", skype = '".$this->db->escape($this->skype)."'";
 		$sql.= ", twitter = '".$this->db->escape($this->twitter)."'";
 		$sql.= ", facebook = '".$this->db->escape($this->facebook)."'";
+		$sql.= ", linkedin = '".$this->db->escape($this->linkedin)."'";
 		$sql.= ", phone = ".($this->phone?"'".$this->db->escape($this->phone)."'":"null");
 		$sql.= ", phone_perso = ".($this->phone_perso?"'".$this->db->escape($this->phone_perso)."'":"null");
 		$sql.= ", phone_mobile = ".($this->phone_mobile?"'".$this->db->escape($this->phone_mobile)."'":"null");
@@ -660,6 +666,7 @@ class Adherent extends CommonObject
 						$luser->skype=$this->skype;
 						$luser->twitter=$this->twitter;
 						$luser->facebook=$this->facebook;
+						$luser->linkedin=$this->linkedin;
 						$luser->office_phone=$this->phone;
 						$luser->user_mobile=$this->phone_mobile;
 
@@ -701,6 +708,7 @@ class Adherent extends CommonObject
 						$lthirdparty->skype=$this->skype;
 						$lthirdparty->twitter=$this->twitter;
 						$lthirdparty->facebook=$this->facebook;
+						$lthirdparty->linkedin=$this->linkedin;
 						$lthirdparty->phone=$this->phone;
 						$lthirdparty->state_id=$this->state_id;
 						$lthirdparty->country_id=$this->country_id;
@@ -752,7 +760,7 @@ class Adherent extends CommonObject
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Update denormalized last subscription date.
 	 * 	This function is called when we delete a subscription for example.
@@ -760,7 +768,7 @@ class Adherent extends CommonObject
 	 *	@param	User	$user			User making change
 	 *	@return	int						<0 if KO, >0 if OK
 	 */
-	function update_end_date($user)
+	public function update_end_date($user)
 	{
         // phpcs:enable
 		$this->db->begin();
@@ -817,7 +825,7 @@ class Adherent extends CommonObject
 	 *	@param	int		$notrigger	1=Does not execute triggers, 0= execute triggers
 	 *  @return	int					<0 if KO, 0=nothing to do, >0 if OK
 	 */
-	function delete($rowid, $user, $notrigger = 0)
+	public function delete($rowid, $user, $notrigger = 0)
 	{
 		global $conf, $langs;
 
@@ -927,7 +935,7 @@ class Adherent extends CommonObject
 	 *    @param	int		$nosyncuser		Do not synchronize linked user
 	 *    @return   string           		If OK return clear password, 0 if no change, < 0 if error
 	 */
-	function setPassword($user, $password = '', $isencrypted = 0, $notrigger = 0, $nosyncuser = 0)
+	public function setPassword($user, $password = '', $isencrypted = 0, $notrigger = 0, $nosyncuser = 0)
 	{
 		global $conf, $langs;
 
@@ -1038,7 +1046,7 @@ class Adherent extends CommonObject
 	 *    @param     int	$userid        	Id of user to link to
 	 *    @return    int					1=OK, -1=KO
 	 */
-	function setUserId($userid)
+	public function setUserId($userid)
 	{
 		global $conf, $langs;
 
@@ -1072,7 +1080,7 @@ class Adherent extends CommonObject
 	 *    @param     int	$thirdpartyid		Id of user to link to
 	 *    @return    int						1=OK, -1=KO
 	 */
-	function setThirdPartyId($thirdpartyid)
+	public function setThirdPartyId($thirdpartyid)
 	{
 		global $conf, $langs;
 
@@ -1108,14 +1116,14 @@ class Adherent extends CommonObject
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Method to load member from its login
 	 *
 	 *	@param	string	$login		login of member
 	 *	@return	void
 	 */
-	function fetch_login($login)
+	public function fetch_login($login)
 	{
         // phpcs:enable
 		global $conf;
@@ -1139,7 +1147,7 @@ class Adherent extends CommonObject
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Method to load member from its name
 	 *
@@ -1147,7 +1155,7 @@ class Adherent extends CommonObject
 	 *	@param	string	$lastname	Lastname
 	 *	@return	void
 	 */
-	function fetch_name($firstname, $lastname)
+	public function fetch_name($firstname, $lastname)
 	{
         // phpcs:enable
 		global $conf;
@@ -1183,13 +1191,13 @@ class Adherent extends CommonObject
 	 *  @param	bool	$fetch_subscriptions	To load member subscriptions
 	 *	@return int								>0 if OK, 0 if not found, <0 if KO
 	 */
-	function fetch($rowid, $ref = '', $fk_soc = '', $ref_ext = '', $fetch_optionals = true, $fetch_subscriptions = true)
+	public function fetch($rowid, $ref = '', $fk_soc = '', $ref_ext = '', $fetch_optionals = true, $fetch_subscriptions = true)
 	{
 		global $langs;
 
 		$sql = "SELECT d.rowid, d.ref_ext, d.civility as civility_id, d.gender, d.firstname, d.lastname, d.societe as company, d.fk_soc, d.statut, d.public, d.address, d.zip, d.town, d.note_private,";
 		$sql.= " d.note_public,";
-		$sql.= " d.email, d.skype, d.twitter, d.facebook, d.phone, d.phone_perso, d.phone_mobile, d.login, d.pass, d.pass_crypted,";
+		$sql.= " d.email, d.skype, d.twitter, d.facebook, d.linkedin, d.phone, d.phone_perso, d.phone_mobile, d.login, d.pass, d.pass_crypted,";
 		$sql.= " d.photo, d.fk_adherent_type, d.morphy, d.entity,";
 		$sql.= " d.datec as datec,";
 		$sql.= " d.tms as datem,";
@@ -1266,15 +1274,19 @@ class Adherent extends CommonObject
 				$this->skype			= $obj->skype;
 				$this->twitter			= $obj->twitter;
 				$this->facebook			= $obj->facebook;
+				$this->linkedin			= $obj->linkedin;
 
 				$this->photo			= $obj->photo;
 				$this->statut			= $obj->statut;
 				$this->public			= $obj->public;
 
 				$this->datec			= $this->db->jdate($obj->datec);
+                $this->date_creation    = $this->db->jdate($obj->datec);
 				$this->datem			= $this->db->jdate($obj->datem);
+                $this->date_modification= $this->db->jdate($obj->datem);
 				$this->datefin			= $this->db->jdate($obj->datefin);
 				$this->datevalid		= $this->db->jdate($obj->datev);
+                $this->date_validation	= $this->db->jdate($obj->datev);
 				$this->birth			= $this->db->jdate($obj->birthday);
 
 				$this->note_private		= $obj->note_private;
@@ -1316,7 +1328,7 @@ class Adherent extends CommonObject
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Function to get member subscriptions data
 	 *				first_subscription_date, first_subscription_date_start, first_subscription_date_end, first_subscription_amount
@@ -1324,7 +1336,7 @@ class Adherent extends CommonObject
 	 *
 	 *	@return		int			<0 si KO, >0 si OK
 	 */
-	function fetch_subscriptions()
+	public function fetch_subscriptions()
 	{
         // phpcs:enable
 		global $langs;
@@ -1400,7 +1412,7 @@ class Adherent extends CommonObject
 	 *	@param	int     	$datesubend			Date end subscription
 	 *	@return int         					rowid of record added, <0 if KO
 	 */
-	function subscription($date, $amount, $accountid = 0, $operation = '', $label = '', $num_chq = '', $emetteur_nom = '', $emetteur_banque = '', $datesubend = 0)
+	public function subscription($date, $amount, $accountid = 0, $operation = '', $label = '', $num_chq = '', $emetteur_nom = '', $emetteur_banque = '', $datesubend = 0)
 	{
 		global $conf,$langs,$user;
 
@@ -1486,7 +1498,7 @@ class Adherent extends CommonObject
 	 *  @param	string		$autocreatethirdparty	Auto create new thirdparty if member not yet linked to a thirdparty and we request an option that generate invoice.
 	 *	@return int									<0 if KO, >0 if OK
 	 */
-	function subscriptionComplementaryActions($subscriptionid, $option, $accountid, $datesubscription, $paymentdate, $operation, $label, $amount, $num_chq, $emetteur_nom = '', $emetteur_banque = '', $autocreatethirdparty = 0)
+	public function subscriptionComplementaryActions($subscriptionid, $option, $accountid, $datesubscription, $paymentdate, $operation, $label, $amount, $num_chq, $emetteur_nom = '', $emetteur_banque = '', $autocreatethirdparty = 0)
 	{
 		global $conf, $langs, $user, $mysoc;
 
@@ -1779,7 +1791,7 @@ class Adherent extends CommonObject
 	 *		@param	User	$user		user adherent qui valide
 	 *		@return	int					<0 if KO, 0 if nothing done, >0 if OK
 	 */
-	function validate($user)
+	public function validate($user)
 	{
 		global $langs,$conf;
 
@@ -1832,7 +1844,7 @@ class Adherent extends CommonObject
 	 *		@param	User	$user		User making change
 	 *		@return	int					<0 if KO, >0 if OK
 	 */
-	function resiliate($user)
+	public function resiliate($user)
 	{
 		global $langs,$conf;
 
@@ -1874,13 +1886,13 @@ class Adherent extends CommonObject
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Function to add member into external tools mailing-list, spip, etc.
 	 *
 	 *  @return		int		<0 if KO, >0 if OK
 	 */
-	function add_to_abo()
+	public function add_to_abo()
 	{
         // phpcs:enable
 		global $conf,$langs;
@@ -1933,13 +1945,13 @@ class Adherent extends CommonObject
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Function to delete a member from external tools like mailing-list, spip, etc.
 	 *
 	 *  @return     int     <0 if KO, >0 if OK
 	 */
-	function del_to_abo()
+	public function del_to_abo()
 	{
         // phpcs:enable
 		global $conf,$langs;
@@ -1997,7 +2009,7 @@ class Adherent extends CommonObject
 	 *
 	 *    @return   string              	Translated name of civility (translated with transnoentitiesnoconv)
 	 */
-	function getCivilityLabel()
+	public function getCivilityLabel()
 	{
 		global $langs;
 		$langs->load("dict");
@@ -2018,7 +2030,7 @@ class Adherent extends CommonObject
 	 *  @param  int     $save_lastsearch_value    	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
 	 *	@return	string								Chaine avec URL
 	 */
-	function getNomUrl($withpictoimg = 0, $maxlen = 0, $option = 'card', $mode = '', $morecss = '', $save_lastsearch_value = -1)
+	public function getNomUrl($withpictoimg = 0, $maxlen = 0, $option = 'card', $mode = '', $morecss = '', $save_lastsearch_value = -1)
 	{
 		global $conf, $langs;
 
@@ -2109,12 +2121,12 @@ class Adherent extends CommonObject
 	 *  @param	int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	 *  @return string				Label
 	 */
-	function getLibStatut($mode = 0)
+	public function getLibStatut($mode = 0)
 	{
 		return $this->LibStatut($this->statut, $this->need_subscription, $this->datefin, $mode);
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Renvoi le libelle d'un statut donne
 	 *
@@ -2124,7 +2136,7 @@ class Adherent extends CommonObject
 	 *  @param  int			$mode        			0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	 *  @return string      						Label
 	 */
-	function LibStatut($statut, $need_subscription, $date_end_subscription, $mode = 0)
+	public function LibStatut($statut, $need_subscription, $date_end_subscription, $mode = 0)
 	{
         // phpcs:enable
 		global $langs;
@@ -2202,13 +2214,13 @@ class Adherent extends CommonObject
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *      Charge indicateurs this->nb de tableau de bord
 	 *
 	 *      @return     int         <0 if KO, >0 if OK
 	 */
-	function load_state_board()
+	public function load_state_board()
 	{
         // phpcs:enable
 		global $conf;
@@ -2238,14 +2250,14 @@ class Adherent extends CommonObject
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *      Load indicators for dashboard (this->nbtodo and this->nbtodolate)
 	 *
 	 *      @param	User	$user   		Objet user
 	 *      @return WorkboardResponse|int 	<0 if KO, WorkboardResponse if OK
 	 */
-	function load_board($user)
+	public function load_board($user)
 	{
         // phpcs:enable
 		global $conf, $langs;
@@ -2337,7 +2349,7 @@ class Adherent extends CommonObject
 	 *
 	 *  @return	void
 	 */
-	function initAsSpecimen()
+	public function initAsSpecimen()
 	{
 		global $user,$langs;
 
@@ -2362,6 +2374,7 @@ class Adherent extends CommonObject
 		$this->skype = 'skypepseudo';
 		$this->twitter = 'twitterpseudo';
 		$this->facebook = 'facebookpseudo';
+		$this->linkedin = 'linkedinpseudo';
 		$this->phone        = '0999999999';
 		$this->phone_perso  = '0999999998';
 		$this->phone_mobile = '0999999997';
@@ -2390,7 +2403,7 @@ class Adherent extends CommonObject
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Retourne chaine DN complete dans l'annuaire LDAP pour l'objet
 	 *
@@ -2400,7 +2413,7 @@ class Adherent extends CommonObject
 	 *								2=Return key only (uid=qqq)
 	 *	@return	string				DN
 	 */
-	function _load_ldap_dn($info, $mode = 0)
+	private function _load_ldap_dn($info, $mode = 0)
 	{
         // phpcs:enable
 		global $conf;
@@ -2412,13 +2425,13 @@ class Adherent extends CommonObject
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Initialise tableau info (tableau des attributs LDAP)
 	 *
 	 *	@return		array		Tableau info des attributs
 	 */
-	function _load_ldap_info()
+	private function _load_ldap_info()
 	{
         // phpcs:enable
 		global $conf,$langs;
@@ -2469,8 +2482,9 @@ class Adherent extends CommonObject
 		if ($this->country_code && ! empty($conf->global->LDAP_MEMBER_FIELD_COUNTRY))			$info[$conf->global->LDAP_MEMBER_FIELD_COUNTRY] = $this->country_code;
 		if ($this->skype && ! empty($conf->global->LDAP_MEMBER_FIELD_SKYPE))					$info[$conf->global->LDAP_MEMBER_FIELD_SKYPE] = $this->skype;
 		if ($this->twitter && ! empty($conf->global->LDAP_MEMBER_FIELD_TWITTER))				$info[$conf->global->LDAP_MEMBER_FIELD_TWITTER] = $this->twitter;
-		if ($this->facebook && ! empty($conf->global->LDAP_MEMBER_FIELD_FACEBOOK))				$info[$conf->global->LDAP_MEMBER_FIELD_FACEBOOK] = $this->facebook;
-		if ($this->phone && ! empty($conf->global->LDAP_MEMBER_FIELD_PHONE))					$info[$conf->global->LDAP_MEMBER_FIELD_PHONE] = $this->phone;
+		if ($this->facebook && ! empty($conf->global->LDAP_MEMBER_FIELD_FACEBOOK))			$info[$conf->global->LDAP_MEMBER_FIELD_FACEBOOK] = $this->facebook;
+		if ($this->linkedin && ! empty($conf->global->LDAP_MEMBER_FIELD_LINKEDIN))			$info[$conf->global->LDAP_MEMBER_FIELD_LINKEDIN] = $this->linkedin;
+        if ($this->phone && ! empty($conf->global->LDAP_MEMBER_FIELD_PHONE))					$info[$conf->global->LDAP_MEMBER_FIELD_PHONE] = $this->phone;
 		if ($this->phone_perso && ! empty($conf->global->LDAP_MEMBER_FIELD_PHONE_PERSO))		$info[$conf->global->LDAP_MEMBER_FIELD_PHONE_PERSO] = $this->phone_perso;
 		if ($this->phone_mobile && ! empty($conf->global->LDAP_MEMBER_FIELD_MOBILE))			$info[$conf->global->LDAP_MEMBER_FIELD_MOBILE] = $this->phone_mobile;
 		if ($this->fax && ! empty($conf->global->LDAP_MEMBER_FIELD_FAX))						$info[$conf->global->LDAP_MEMBER_FIELD_FAX] = $this->fax;
@@ -2525,7 +2539,7 @@ class Adherent extends CommonObject
 	 *      @param  int		$id       Id of member to load
 	 *      @return	void
 	 */
-	function info($id)
+	public function info($id)
 	{
 		$sql = 'SELECT a.rowid, a.datec as datec,';
 		$sql.= ' a.datevalid as datev,';
@@ -2581,7 +2595,7 @@ class Adherent extends CommonObject
 	 *
 	 *  @return       int     Number of EMailings
 	 */
-	function getNbOfEMailings()
+	public function getNbOfEMailings()
 	{
 		$sql = "SELECT count(mc.email) as nb";
 		$sql.= " FROM ".MAIN_DB_PREFIX."mailing_cibles as mc";
@@ -2763,9 +2777,13 @@ class Adherent extends CommonObject
 					{
 						$adherent->fetch_thirdparty();
 
+						// Language code to use ($languagecodeformember) is default language of thirdparty, if no thirdparty, the language found from country of member then country of thirdparty, and if still not found we use the language of company.
+						$languagefromcountrycode = getLanguageCodeFromCountryCode($adherent->country_code ? $adherent->country_code : $adherent->thirdparty->country_code);
+						$languagecodeformember = (empty($adherent->thirdparty->default_lang) ? ($languagefromcountrycode ? $languagefromcountrycode : $mysoc->default_lang) : $adherent->thirdparty->default_lang);
+
 						// Send reminder email
 						$outputlangs = new Translate('', $conf);
-						$outputlangs->setDefaultLang(empty($adherent->thirdparty->default_lang) ? $mysoc->default_lang : $adherent->thirdparty->default_lang);
+						$outputlangs->setDefaultLang($languagecodeformember);
 						$outputlangs->loadLangs(array("main", "members"));
 						dol_syslog("sendReminderForExpiredSubscription Language for member id ".$adherent->id." set to ".$outputlangs->defaultlang." mysoc->default_lang=".$mysoc->default_lang);
 

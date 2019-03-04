@@ -8,7 +8,7 @@
  * Copyright (C) 2016-2018  Alexandre Spangaro  <aspangaro@open-dsi.fr>
  * Copyright (C) 2013-2017  Olivier Geffroy     <jeff@jeffinfo.com>
  * Copyright (C) 2017       Elarifr. Ari Elbaz  <github@accedinfo.com>
- * Copyright (C) 2017       Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2017-2019  Frédéric France     <frederic.france@netlogic.fr>
 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -98,18 +98,18 @@ class AccountancyExport
 		global $langs;
 
 		return array (
-				//self::$EXPORT_TYPE_NORMAL => $langs->trans('Modelcsv_normal'),
-				self::$EXPORT_TYPE_CONFIGURABLE => $langs->trans('Modelcsv_configurable'),
-				self::$EXPORT_TYPE_CEGID => $langs->trans('Modelcsv_CEGID'),
-				self::$EXPORT_TYPE_COALA => $langs->trans('Modelcsv_COALA'),
-				self::$EXPORT_TYPE_BOB50 => $langs->trans('Modelcsv_bob50'),
-				self::$EXPORT_TYPE_CIEL => $langs->trans('Modelcsv_ciel'),
-				self::$EXPORT_TYPE_QUADRATUS => $langs->trans('Modelcsv_quadratus'),
-				self::$EXPORT_TYPE_EBP => $langs->trans('Modelcsv_ebp'),
-				self::$EXPORT_TYPE_COGILOG => $langs->trans('Modelcsv_cogilog'),
-				self::$EXPORT_TYPE_AGIRIS => $langs->trans('Modelcsv_agiris'),
-				self::$EXPORT_TYPE_FEC => $langs->trans('Modelcsv_FEC'),
-			);
+			//self::$EXPORT_TYPE_NORMAL => $langs->trans('Modelcsv_normal'),
+			self::$EXPORT_TYPE_CONFIGURABLE => $langs->trans('Modelcsv_configurable'),
+			self::$EXPORT_TYPE_CEGID => $langs->trans('Modelcsv_CEGID'),
+			self::$EXPORT_TYPE_COALA => $langs->trans('Modelcsv_COALA'),
+			self::$EXPORT_TYPE_BOB50 => $langs->trans('Modelcsv_bob50'),
+			self::$EXPORT_TYPE_CIEL => $langs->trans('Modelcsv_ciel'),
+			self::$EXPORT_TYPE_QUADRATUS => $langs->trans('Modelcsv_quadratus'),
+			self::$EXPORT_TYPE_EBP => $langs->trans('Modelcsv_ebp'),
+			self::$EXPORT_TYPE_COGILOG => $langs->trans('Modelcsv_cogilog'),
+			self::$EXPORT_TYPE_AGIRIS => $langs->trans('Modelcsv_agiris'),
+			self::$EXPORT_TYPE_FEC => $langs->trans('Modelcsv_FEC'),
+		);
 	}
 
 	/**

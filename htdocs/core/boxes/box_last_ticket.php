@@ -192,7 +192,7 @@ class box_last_ticket extends ModeleBoxes
      *     @param  int   $nooutput No print, only return string
      *     @return string
      */
-    function showBox($head = null, $contents = null, $nooutput = 0)
+    public function showBox($head = null, $contents = null, $nooutput = 0)
     {
         parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
     }

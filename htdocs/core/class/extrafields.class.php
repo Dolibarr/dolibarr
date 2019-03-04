@@ -148,7 +148,7 @@ class ExtraFields
 	public $errors = array();
 
     /**
-	 * @var integer DB Error number
+	 * @var string DB Error number
 	 */
 	public $errno;
 
@@ -182,7 +182,7 @@ class ExtraFields
 	 *
 	 *  @param		DoliDB		$db      Database handler
 	*/
-	function __construct($db)
+	public function __construct($db)
 	{
 		$this->db = $db;
 		$this->error = '';
@@ -226,7 +226,7 @@ class ExtraFields
 	 *  @param  string  		$enabled  		 	Condition to have the field enabled or not
 	 *  @return int      							<=0 if KO, >0 if OK
 	 */
-	function addExtraField($attrname, $label, $type, $pos, $size, $elementtype, $unique = 0, $required = 0, $default_value = '', $param = '', $alwayseditable = 0, $perms = '', $list = '-1', $help = '', $computed = '', $entity = '', $langfile = '', $enabled = '1')
+	public function addExtraField($attrname, $label, $type, $pos, $size, $elementtype, $unique = 0, $required = 0, $default_value = '', $param = '', $alwayseditable = 0, $perms = '', $list = '-1', $help = '', $computed = '', $entity = '', $langfile = '', $enabled = '1')
 	{
 		if (empty($attrname)) return -1;
 		if (empty($label)) return -1;
@@ -469,7 +469,7 @@ class ExtraFields
 	 *  @param  string	$elementtype    Element type ('member', 'product', 'thirdparty', 'contact', ...)
 	 *  @return int              		< 0 if KO, 0 if nothing is done, 1 if OK
 	 */
-	function delete($attrname, $elementtype = 'member')
+	public function delete($attrname, $elementtype = 'member')
 	{
 		if ($elementtype == 'thirdparty') $elementtype='societe';
 		if ($elementtype == 'contact') $elementtype='socpeople';
@@ -586,7 +586,7 @@ class ExtraFields
      *  @param  int     $totalizable        Is extrafield totalizable on list
 	 * 	@return	int							>0 if OK, <=0 if KO
 	 */
-	function update($attrname, $label, $type, $length, $elementtype, $unique = 0, $required = 0, $pos = 0, $param = '', $alwayseditable = 0, $perms = '', $list = '', $help = '', $default = '', $computed = '', $entity = '', $langfile = '', $enabled = '1', $totalizable = 0)
+	public function update($attrname, $label, $type, $length, $elementtype, $unique = 0, $required = 0, $pos = 0, $param = '', $alwayseditable = 0, $perms = '', $list = '', $help = '', $default = '', $computed = '', $entity = '', $langfile = '', $enabled = '1', $totalizable = 0)
 	{
 		if ($elementtype == 'thirdparty') $elementtype='societe';
 		if ($elementtype == 'contact') $elementtype='socpeople';
@@ -819,7 +819,7 @@ class ExtraFields
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * 	Load array this->attributes, or old this->attribute_xxx like attribute_label, attribute_type, ...
 	 *
@@ -827,7 +827,7 @@ class ExtraFields
 	 * 	@param	boolean		$forceload			Force load of extra fields whatever is option MAIN_EXTRAFIELDS_DISABLED. Deprecated. Should not be required.
 	 * 	@return	array							Array of attributes keys+label for all extra fields.
 	 */
-	function fetch_name_optionals_label($elementtype, $forceload = false)
+	public function fetch_name_optionals_label($elementtype, $forceload = false)
 	{
         // phpcs:enable
 		global $conf;
@@ -950,7 +950,7 @@ class ExtraFields
 	 * @param  string  $extrafieldsobjectkey	If defined (for example $object->table_element), use the new method to get extrafields data
 	 * @return string
 	 */
-	function showInputField($key, $value, $moreparam = '', $keysuffix = '', $keyprefix = '', $morecss = '', $objectid = 0, $extrafieldsobjectkey = '')
+	public function showInputField($key, $value, $moreparam = '', $keysuffix = '', $keyprefix = '', $morecss = '', $objectid = 0, $extrafieldsobjectkey = '')
 	{
 		global $conf,$langs,$form;
 
@@ -1565,7 +1565,7 @@ class ExtraFields
 	 * @param	string	$extrafieldsobjectkey	If defined (for example $object->table_element), use the new method to get extrafields data
 	 * @return	string							Formated value
 	 */
-	function showOutputField($key, $value, $moreparam = '', $extrafieldsobjectkey = '')
+	public function showOutputField($key, $value, $moreparam = '', $extrafieldsobjectkey = '')
 	{
 		global $conf,$langs;
 
@@ -1877,7 +1877,7 @@ class ExtraFields
 	 * @param	string	$extrafieldsobjectkey	If defined, use the new method to get extrafields data
 	 * @return	string							Formated value
 	 */
-	function getAlignFlag($key, $extrafieldsobjectkey = '')
+	public function getAlignFlag($key, $extrafieldsobjectkey = '')
 	{
 		global $conf,$langs;
 
@@ -1929,7 +1929,7 @@ class ExtraFields
 	 * @param	string	$object			Object
 	 * @return 	string					HTML code with line for separator
 	 */
-	function showSeparator($key, $object)
+	public function showSeparator($key, $object)
 	{
 		global $langs;
 
@@ -1947,7 +1947,7 @@ class ExtraFields
 	 * @param	string	$onlykey		Only following key is filled. When we make update of only one extrafield ($action = 'update_extras'), calling page must must set this to avoid to have other extrafields being reset.
 	 * @return	int						1 if array_options set, 0 if no value, -1 if error (field required missing for example)
 	 */
-	function setOptionalsFromPost($extralabels, &$object, $onlykey = '')
+	public function setOptionalsFromPost($extralabels, &$object, $onlykey = '')
 	{
 		global $_POST, $langs;
 		$nofillrequired='';// For error when required field left blank
@@ -2046,7 +2046,7 @@ class ExtraFields
 	 * @param  string			$keysuffix      		Suffix string to add into name and id of field (can be used to avoid duplicate names)
 	 * @return array|int								array_options set or 0 if no value
 	 */
-	function getOptionalsFromPost($extrafieldsobjectkey, $keyprefix = '', $keysuffix = '')
+	public function getOptionalsFromPost($extrafieldsobjectkey, $keyprefix = '', $keysuffix = '')
 	{
 		global $_POST;
 

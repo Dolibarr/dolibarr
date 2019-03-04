@@ -129,7 +129,7 @@ class AccountancyCategory // extends CommonObject
 	 *
 	 *  @param      DoliDb		$db      Database handler
 	 */
-	function __construct($db)
+	public function __construct($db)
 	{
 		$this->db = $db;
 	}
@@ -142,7 +142,7 @@ class AccountancyCategory // extends CommonObject
 	 *  @param      int		$notrigger   0=launch triggers after, 1=disable triggers
 	 *  @return     int      		   	 <0 if KO, Id of created object if OK
 	 */
-	function create($user, $notrigger = 0)
+	public function create($user, $notrigger = 0)
 	{
 		global $conf, $langs;
 		$error=0;
@@ -239,7 +239,7 @@ class AccountancyCategory // extends CommonObject
 	 *  @param		string	$label	Label
 	 *  @return     int          	<0 if KO, >0 if OK
 	 */
-	function fetch($id, $code = '', $label = '')
+	public function fetch($id, $code = '', $label = '')
 	{
 		$sql = "SELECT";
 		$sql.= " t.rowid,";
@@ -299,7 +299,7 @@ class AccountancyCategory // extends CommonObject
 	 *  @param      int		$notrigger	 0=launch triggers after, 1=disable triggers
 	 *  @return     int     		   	 <0 if KO, >0 if OK
 	 */
-	function update($user = null, $notrigger = 0)
+	public function update($user = null, $notrigger = 0)
 	{
 		global $conf, $langs;
 		$error=0;
@@ -379,7 +379,7 @@ class AccountancyCategory // extends CommonObject
 	 *  @param	int		$notrigger	 0=launch triggers after, 1=disable triggers
 	 *  @return	int					 <0 if KO, >0 if OK
 	 */
-	function delete($user, $notrigger = 0)
+	public function delete($user, $notrigger = 0)
 	{
 		global $conf, $langs;
 		$error=0;
@@ -460,7 +460,7 @@ class AccountancyCategory // extends CommonObject
 
 			return - 1;
 		}
-	}
+    }
 
 	/**
 	 * Function to select accounting category of an accounting account present in chart of accounts
@@ -509,7 +509,7 @@ class AccountancyCategory // extends CommonObject
 
 			return - 1;
 		}
-	}
+    }
 
 	/**
 	 * Function to select accounting category of an accounting account present in chart of accounts
@@ -552,7 +552,7 @@ class AccountancyCategory // extends CommonObject
 
 	        return - 1;
 	    }
-	}
+    }
 
 	/**
 	 * Function to add an accounting account in an accounting category
@@ -617,7 +617,7 @@ class AccountancyCategory // extends CommonObject
 
 			return 1;
 		}
-	}
+    }
 
 	/**
 	 * Function to delete an accounting account from an accounting category
@@ -643,7 +643,7 @@ class AccountancyCategory // extends CommonObject
 		}
 
 		// Commit or rollback
-		if ($error) {
+        if ($error) {
 			foreach ($this->errors as $errmsg) {
 				dol_syslog(__METHOD__ . " " . $errmsg, LOG_ERR);
 				$this->error .= ($this->error ? ', ' . $errmsg : $errmsg);
@@ -651,12 +651,12 @@ class AccountancyCategory // extends CommonObject
 			$this->db->rollback();
 
 			return - 1 * $error;
-		} else {
+        } else {
 			$this->db->commit();
 
-			return 1;
-		}
-	}
+            return 1;
+        }
+    }
 
 	/**
 	 * Function to know all category from accounting account

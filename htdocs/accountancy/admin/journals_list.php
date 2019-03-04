@@ -430,16 +430,18 @@ if ($id)
 			$valuetoshow=ucfirst($fieldlist[$field]);   // Par defaut
 			$valuetoshow=$langs->trans($valuetoshow);   // try to translate
 			$class="left";
-			if ($fieldlist[$field]=='code')            { $valuetoshow=$langs->trans("Code"); }
-			if ($fieldlist[$field]=='libelle' || $fieldlist[$field]=='label')
-			{
+            if ($fieldlist[$field]=='code') {
+                $valuetoshow=$langs->trans("Code");
+            }
+			if ($fieldlist[$field]=='libelle' || $fieldlist[$field]=='label') {
 				$valuetoshow=$langs->trans("Label");
 			}
-			if ($fieldlist[$field]=='nature')          { $valuetoshow=$langs->trans("Nature"); }
+            if ($fieldlist[$field]=='nature') {
+                $valuetoshow=$langs->trans("Nature");
+            }
 
-			if ($valuetoshow != '')
-			{
-				print '<td align="'.$align.'">';
+			if ($valuetoshow != '') {
+				print '<td class="'.$class.'">';
 				if (! empty($tabhelp[$id][$value]) && preg_match('/^http(s*):/i', $tabhelp[$id][$value])) print '<a href="'.$tabhelp[$id][$value].'" target="_blank">'.$valuetoshow.' '.img_help(1, $valuetoshow).'</a>';
 				elseif (! empty($tabhelp[$id][$value])) print $form->textwithpicto($valuetoshow, $tabhelp[$id][$value]);
 				else print $valuetoshow;
@@ -549,17 +551,22 @@ if ($id)
 			*/
 			$valuetoshow=ucfirst($fieldlist[$field]);   // By defaut
 			$valuetoshow=$langs->trans($valuetoshow);   // try to translate
-			if ($fieldlist[$field]=='code')            { $valuetoshow=$langs->trans("Code"); }
-			if ($fieldlist[$field]=='libelle' || $fieldlist[$field]=='label') { $valuetoshow=$langs->trans("Label"); }
-			if ($fieldlist[$field]=='nature')          { $valuetoshow=$langs->trans("Nature"); }
+			if ($fieldlist[$field]=='code') {
+                $valuetoshow=$langs->trans("Code");
+            }
+			if ($fieldlist[$field]=='libelle' || $fieldlist[$field]=='label') {
+                $valuetoshow=$langs->trans("Label");
+            }
+			if ($fieldlist[$field]=='nature') {
+                $valuetoshow=$langs->trans("Nature");
+            }
 
 			// Affiche nom du champ
-			if ($showfield)
-			{
-				print getTitleFieldOfList($valuetoshow, 0, $_SERVER["PHP_SELF"], ($sortable?$fieldlist[$field]:''), ($page?'page='.$page.'&':''), $param, "align=".$align, $sortfield, $sortorder);
+			if ($showfield) {
+				print getTitleFieldOfList($valuetoshow, 0, $_SERVER["PHP_SELF"], ($sortable?$fieldlist[$field]:''), ($page?'page='.$page.'&':''), $param, "", $sortfield, $sortorder, $class.' ');
 			}
 		}
-		print getTitleFieldOfList($langs->trans("Status"), 0, $_SERVER["PHP_SELF"], "active", ($page?'page='.$page.'&':''), $param, 'align="center"', $sortfield, $sortorder);
+		print getTitleFieldOfList($langs->trans("Status"), 0, $_SERVER["PHP_SELF"], "active", ($page?'page='.$page.'&':''), $param, '', $sortfield, $sortorder, 'center ');
 		print getTitleFieldOfList('');
 		print getTitleFieldOfList('');
 		print getTitleFieldOfList('');
@@ -621,7 +628,7 @@ if ($id)
 
 							$class='tddict';
 							// Show value for field
-							if ($showfield) print '<!-- '.$fieldlist[$field].' --><td align="'.$align.'" class="'.$class.'">'.$valuetoshow.'</td>';
+							if ($showfield) print '<!-- '.$fieldlist[$field].' --><td class="'.$class.'">'.$valuetoshow.'</td>';
 						}
 					}
 
@@ -696,11 +703,11 @@ $db->close();
 /**
  *	Show fields in insert/edit mode
  *
- * 	@param		array	$fieldlist		Array of fields
- * 	@param		Object	$obj			If we show a particular record, obj is filled with record fields
- *  @param		string	$tabname		Name of SQL table
- *  @param		string	$context		'add'=Output field for the "add form", 'edit'=Output field for the "edit form", 'hide'=Output field for the "add form" but we dont want it to be rendered
- *	@return		void
+ *  @param      array   $fieldlist      Array of fields
+ *  @param      Object  $obj            If we show a particular record, obj is filled with record fields
+ *  @param      string  $tabname        Name of SQL table
+ *  @param      string  $context        'add'=Output field for the "add form", 'edit'=Output field for the "edit form", 'hide'=Output field for the "add form" but we dont want it to be rendered
+ *  @return     void
  */
 function fieldListJournal($fieldlist, $obj = '', $tabname = '', $context = '')
 {

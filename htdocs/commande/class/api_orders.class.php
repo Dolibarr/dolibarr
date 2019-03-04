@@ -44,10 +44,10 @@ class Orders extends DolibarrApi
     /**
      * Constructor
      */
-    function __construct()
+    public function __construct()
     {
-		global $db, $conf;
-		$this->db = $db;
+        global $db, $conf;
+        $this->db = $db;
         $this->commande = new Commande($this->db);
     }
 
@@ -62,7 +62,7 @@ class Orders extends DolibarrApi
 	 *
      * @throws 	RestException
      */
-    function get($id, $contact_list = 1)
+    public function get($id, $contact_list = 1)
     {
 		if(! DolibarrApiAccess::$user->rights->commande->lire) {
 			throw new RestException(401);
@@ -100,7 +100,7 @@ class Orders extends DolibarrApi
      *
      * @throws RestException
      */
-    function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $sqlfilters = '')
+    public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $sqlfilters = '')
     {
         global $db, $conf;
 
@@ -185,11 +185,11 @@ class Orders extends DolibarrApi
      * @param   array   $request_data   Request data
      * @return  int     ID of order
      */
-    function post($request_data = null)
+    public function post($request_data = null)
     {
         if(! DolibarrApiAccess::$user->rights->commande->creer) {
 			throw new RestException(401, "Insuffisant rights");
-		}
+        }
         // Check mandatory fields
         $result = $this->_validate($request_data);
 
@@ -220,7 +220,7 @@ class Orders extends DolibarrApi
      *
      * @return int
      */
-    function getLines($id)
+    public function getLines($id)
     {
         if(! DolibarrApiAccess::$user->rights->commande->lire) {
 			throw new RestException(401);
@@ -252,7 +252,7 @@ class Orders extends DolibarrApi
      *
      * @return int
      */
-    function postLine($id, $request_data = null)
+    public function postLine($id, $request_data = null)
     {
         if(! DolibarrApiAccess::$user->rights->commande->creer) {
 			throw new RestException(401);
@@ -299,7 +299,7 @@ class Orders extends DolibarrApi
         if ($updateRes > 0) {
             return $updateRes;
         } else {
-			throw new RestException(400, $this->commande->error);
+            throw new RestException(400, $this->commande->error);
         }
     }
 
@@ -314,7 +314,7 @@ class Orders extends DolibarrApi
      *
      * @return object
      */
-    function putLine($id, $lineid, $request_data = null)
+    public function putLine($id, $lineid, $request_data = null)
     {
         if(! DolibarrApiAccess::$user->rights->commande->creer) {
 			throw new RestException(401);
@@ -375,7 +375,7 @@ class Orders extends DolibarrApi
      * @throws 401
      * @throws 404
      */
-    function deleteLine($id, $lineid)
+    public function deleteLine($id, $lineid)
     {
         if(! DolibarrApiAccess::$user->rights->commande->creer) {
 			throw new RestException(401);
@@ -399,7 +399,7 @@ class Orders extends DolibarrApi
             throw new RestException(405, $this->commande->error);
         }
     }
-  
+
     /**
 	 * Add a contact type of given order
 	 *
@@ -413,7 +413,7 @@ class Orders extends DolibarrApi
      * @throws 401
      * @throws 404
 	 */
-    function postContact($id, $contactid, $type)
+    public function postContact($id, $contactid, $type)
     {
         if(!DolibarrApiAccess::$user->rights->commande->creer) {
             throw new RestException(401);
@@ -455,7 +455,7 @@ class Orders extends DolibarrApi
      * @throws 404
      * @throws 500
 	 */
-    function deleteContact($id, $rowid)
+    public function deleteContact($id, $rowid)
     {
         if(!DolibarrApiAccess::$user->rights->commande->creer) {
             throw new RestException(401);
@@ -488,7 +488,7 @@ class Orders extends DolibarrApi
      *
      * @return int
      */
-    function put($id, $request_data = null)
+    public function put($id, $request_data = null)
     {
         if (! DolibarrApiAccess::$user->rights->commande->creer) {
 			throw new RestException(401);
@@ -529,7 +529,7 @@ class Orders extends DolibarrApi
      * @param   int     $id         Order ID
      * @return  array
      */
-    function delete($id)
+    public function delete($id)
     {
         if(! DolibarrApiAccess::$user->rights->commande->supprimer) {
 			throw new RestException(401);
@@ -577,7 +577,7 @@ class Orders extends DolibarrApi
      *
      * @return  array
      */
-    function validate($id, $idwarehouse = 0, $notrigger = 0)
+    public function validate($id, $idwarehouse = 0, $notrigger = 0)
     {
         if(! DolibarrApiAccess::$user->rights->commande->creer) {
 			throw new RestException(401);
@@ -629,7 +629,7 @@ class Orders extends DolibarrApi
      * @throws 404
      * @throws 405
      */
-    function reopen($id)
+    public function reopen($id)
     {
 
         if(! DolibarrApiAccess::$user->rights->commande->creer) {
@@ -667,7 +667,7 @@ class Orders extends DolibarrApi
      * @throws 404
      * @throws 405
      */
-    function setinvoiced($id)
+    public function setinvoiced($id)
     {
 
         if(! DolibarrApiAccess::$user->rights->commande->creer) {
@@ -710,7 +710,7 @@ class Orders extends DolibarrApi
      *
      * @return  int
      */
-    function close($id, $notrigger = 0)
+    public function close($id, $notrigger = 0)
     {
     	if(! DolibarrApiAccess::$user->rights->commande->creer) {
     		throw new RestException(401);
@@ -756,7 +756,7 @@ class Orders extends DolibarrApi
      *
      * @return  array
      */
-    function settodraft($id, $idwarehouse = -1)
+    public function settodraft($id, $idwarehouse = -1)
     {
         if(! DolibarrApiAccess::$user->rights->commande->creer) {
             throw new RestException(401);
@@ -807,7 +807,7 @@ class Orders extends DolibarrApi
      * @throws 404
      * @throws 405
      */
-    function createOrderFromProposal($proposalid)
+    public function createOrderFromProposal($proposalid)
     {
 
         require_once DOL_DOCUMENT_ROOT . '/comm/propal/class/propal.class.php';
@@ -844,7 +844,7 @@ class Orders extends DolibarrApi
      * @param   object  $object    Object to clean
      * @return    array    Array of cleaned object properties
      */
-    function _cleanObjectDatas($object)
+    private function _cleanObjectDatas($object)
     {
 
         $object = parent::_cleanObjectDatas($object);
@@ -866,7 +866,7 @@ class Orders extends DolibarrApi
      * @return  array
      * @throws  RestException
      */
-    function _validate($data)
+    private function _validate($data)
     {
         $commande = array();
         foreach (Orders::$FIELDS as $field) {

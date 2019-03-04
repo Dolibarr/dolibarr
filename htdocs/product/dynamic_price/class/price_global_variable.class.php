@@ -35,40 +35,40 @@ class PriceGlobalVariable
     public $db;
 
     /**
-	 * @var string Error code (or message)
-	 */
-	public $error='';
+     * @var string Error code (or message)
+     */
+    public $error='';
 
     /**
-	 * @var string[] Error codes (or messages)
-	 */
-	public $errors = array();
+     * @var string[] Error codes (or messages)
+     */
+    public $errors = array();
 
     /**
-	 * @var int ID
-	 */
-	public $id;
+     * @var int ID
+     */
+    public $id;
 
     public $code;
 
     /**
-	 * @var string description
-	 */
-	public $description;
+     * @var string description
+     */
+    public $description;
 
     public $value;
 
     /**
-	 * @var string Name of table without prefix where object is stored
-	 */
-	public $table_element = "c_price_global_variable";
+     * @var string Name of table without prefix where object is stored
+     */
+    public $table_element = "c_price_global_variable";
 
     /**
      *  Constructor
      *
      *  @param	DoliDb		$db      Database handler
      */
-    function __construct($db)
+    public function __construct($db)
     {
         $this->db = $db;
     }
@@ -81,7 +81,7 @@ class PriceGlobalVariable
      *  @param  int		$notrigger   0=launch triggers after, 1=disable triggers
      *  @return int      		   	 <0 if KO, Id of created object if OK
      */
-    function create($user, $notrigger = 0)
+    public function create($user, $notrigger = 0)
     {
         $error=0;
 
@@ -143,7 +143,7 @@ class PriceGlobalVariable
      *  @param		int		$id    	Id object
      *  @return		int			    < 0 if KO, 0 if OK but not found, > 0 if OK
      */
-    function fetch($id)
+    public function fetch($id)
     {
         $sql = "SELECT code, description, value";
         $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element;
@@ -182,7 +182,7 @@ class PriceGlobalVariable
      *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
      *  @return int     		   	 <0 if KO, >0 if OK
      */
-    function update($user = 0, $notrigger = 0)
+    public function update($user = 0, $notrigger = 0)
     {
         $error=0;
 
@@ -242,7 +242,7 @@ class PriceGlobalVariable
      *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
      *  @return	int					 <0 if KO, >0 if OK
      */
-    function delete($rowid, $user, $notrigger = 0)
+    public function delete($rowid, $user, $notrigger = 0)
     {
         $error=0;
 
@@ -296,7 +296,7 @@ class PriceGlobalVariable
      *
      *	@return	void
      */
-    function initAsSpecimen()
+    public function initAsSpecimen()
     {
         $this->id=0;
         $this->code='';
@@ -309,7 +309,7 @@ class PriceGlobalVariable
      *
      *	@return	void
      */
-    function checkParameters()
+    public function checkParameters()
     {
         // Clean parameters
         if (isset($this->code)) $this->code=trim($this->code);
@@ -324,7 +324,7 @@ class PriceGlobalVariable
      *
      *    @return	array				Array of price global variables
      */
-    function listGlobalVariables()
+    public function listGlobalVariables()
     {
         $sql = "SELECT rowid, code, description, value";
         $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element;

@@ -212,13 +212,13 @@ if ($result)
 	else
 		print_liste_field_titre("SalesRepresentative", $_SERVER["PHP_SELF"], "u.lastname", "", $param, '', $sortfield, $sortorder);
 
-	print_liste_field_titre("SellingPrice", $_SERVER["PHP_SELF"], "selling_price", "", $param, 'align="right"', $sortfield, $sortorder);
-	print_liste_field_titre($labelcostprice, $_SERVER["PHP_SELF"], "buying_price", "", $param, ' align="right"', $sortfield, $sortorder);
-	print_liste_field_titre("Margin", $_SERVER["PHP_SELF"], "marge", "", $param, 'align="right"', $sortfield, $sortorder);
+	print_liste_field_titre("SellingPrice", $_SERVER["PHP_SELF"], "selling_price", "", $param, '', $sortfield, $sortorder, 'right ');
+	print_liste_field_titre($labelcostprice, $_SERVER["PHP_SELF"], "buying_price", "", $param, '', $sortfield, $sortorder, 'right ');
+	print_liste_field_titre("Margin", $_SERVER["PHP_SELF"], "marge", "", $param, '', $sortfield, $sortorder, 'right ');
 	if (! empty($conf->global->DISPLAY_MARGIN_RATES))
-		print_liste_field_titre("MarginRate", $_SERVER["PHP_SELF"], "", "", $param, 'align="right"', $sortfield, $sortorder);
+		print_liste_field_titre("MarginRate", $_SERVER["PHP_SELF"], "", "", $param, '', $sortfield, $sortorder, 'right ');
 	if (! empty($conf->global->DISPLAY_MARK_RATES))
-		print_liste_field_titre("MarkRate", $_SERVER["PHP_SELF"], "", "", $param, 'align="right"', $sortfield, $sortorder);
+		print_liste_field_titre("MarkRate", $_SERVER["PHP_SELF"], "", "", $param, '', $sortfield, $sortorder, 'right ');
 	print "</tr>\n";
 
 	$rounding = min($conf->global->MAIN_MAX_DECIMALS_UNIT, $conf->global->MAIN_MAX_DECIMALS_TOT);
@@ -289,13 +289,13 @@ if ($result)
 
             print '<tr class="oddeven">';
             print "<td>".$group_array['htmlname']."</td>\n";
-            print "<td align=\"right\">".price($pv, null, null, null, null, $rounding)."</td>\n";
-            print "<td align=\"right\">".price($pa, null, null, null, null, $rounding)."</td>\n";
-            print "<td align=\"right\">".price($marge, null, null, null, null, $rounding)."</td>\n";
+            print "<td class=\"right\">".price($pv, null, null, null, null, $rounding)."</td>\n";
+            print "<td class=\"right\">".price($pa, null, null, null, null, $rounding)."</td>\n";
+            print "<td class=\"right\">".price($marge, null, null, null, null, $rounding)."</td>\n";
             if (! empty($conf->global->DISPLAY_MARGIN_RATES))
-                print "<td align=\"right\">".(($marginRate === '')?'n/a':price($marginRate, null, null, null, null, $rounding)."%")."</td>\n";
+                print "<td class=\"right\">".(($marginRate === '')?'n/a':price($marginRate, null, null, null, null, $rounding)."%")."</td>\n";
             if (! empty($conf->global->DISPLAY_MARK_RATES))
-                print "<td align=\"right\">".(($markRate === '')?'n/a':price($markRate, null, null, null, null, $rounding)."%")."</td>\n";
+                print "<td class=\"right\">".(($markRate === '')?'n/a':price($markRate, null, null, null, null, $rounding)."%")."</td>\n";
             print "</tr>\n";
         }
     }

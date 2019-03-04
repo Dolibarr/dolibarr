@@ -115,7 +115,7 @@ class ModeleBoxes // Can't be abtract as it is instantiated to build "empty" box
 	 * @param   DoliDB  $db     Database handler
      * @param   string  $param  More parameters
 	 */
-	function __construct($db, $param = '')
+	public function __construct($db, $param = '')
 	{
 		$this->db=$db;
 	}
@@ -125,7 +125,7 @@ class ModeleBoxes // Can't be abtract as it is instantiated to build "empty" box
 	 *
 	 * @return  string  Error message
 	 */
-	function error()
+	public function error()
 	{
 		return $this->error;
 	}
@@ -138,7 +138,7 @@ class ModeleBoxes // Can't be abtract as it is instantiated to build "empty" box
 	 *
 	 * @return  int         <0 if KO, >0 if OK
 	 */
-	function fetch($rowid)
+	public function fetch($rowid)
 	{
 		global $conf;
 
@@ -182,7 +182,7 @@ class ModeleBoxes // Can't be abtract as it is instantiated to build "empty" box
 	 *
 	 * @return  string
 	 */
-	function outputBox($head = null, $contents = null)
+	public function outputBox($head = null, $contents = null)
 	{
 		global $langs, $user, $conf;
 
@@ -204,7 +204,7 @@ class ModeleBoxes // Can't be abtract as it is instantiated to build "empty" box
 	 * @param	int		$nooutput	No print, only return string
 	 * @return  string
 	 */
-	function showBox($head = null, $contents = null, $nooutput = 0)
+	public function showBox($head = null, $contents = null, $nooutput = 0)
 	{
 		global $langs, $user, $conf;
 
@@ -385,7 +385,7 @@ class ModeleBoxes // Can't be abtract as it is instantiated to build "empty" box
 	 *  @param	array	$forcedirwidget		null=All default directories. This parameter is used by modulebuilder module only.
 	 * 	@return	array						Array list of widget
 	 */
-	static function getWidgetsList($forcedirwidget = null)
+	public static function getWidgetsList($forcedirwidget = null)
 	{
 		global $conf, $langs, $db;
 

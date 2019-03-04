@@ -36,7 +36,7 @@ class modWebsite extends DolibarrModules
 	 *
 	 *   @param      DoliDB		$db      Database handler
      */
-    function __construct($db)
+    public function __construct($db)
     {
     	global $langs,$conf;
 
@@ -138,14 +138,14 @@ class modWebsite extends DolibarrModules
 
 
     /**
-     *		Function called when module is enabled.
-     *		The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
-     *		It also creates data directories
+     *  Function called when module is enabled.
+     *  The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
+     *  It also creates data directories
      *
-     *      @param      string	$options    Options when enabling module ('', 'noboxes')
-     *      @return     int             	1 if OK, 0 if KO
+     *  @param      string	$options    Options when enabling module ('', 'noboxes')
+     *  @return     int                 1 if OK, 0 if KO
      */
-    function init($options = '')
+    public function init($options = '')
     {
     	global $conf,$langs;
 

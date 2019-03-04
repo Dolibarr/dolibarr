@@ -139,11 +139,11 @@ if ($resql)
 	print '<tr class="liste_titre_filter">';
 	print '<td class="liste_titre"><input class="flat" size="4" type="text" name="search_ref" value="'.$search_ref.'"></td>';
 	print '<td class="liste_titre"><input class="flat" size="12" type="text" name="search_label" value="'.$search_label.'"></td>';
-	print '<td class="liste_titre" align="right" ><input class="flat" size="8" type="text" name="search_amount" value="'.$search_amount.'"></td>';
+	print '<td class="liste_titre right" ><input class="flat" size="8" type="text" name="search_amount" value="'.$search_amount.'"></td>';
 	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre"></td>';
-	print '<td align="right" class="liste_titre">';
+	print '<td class="right liste_titre">';
 	print '<input type="image" class="liste_titre" src="'.img_picto($langs->trans("Search"), 'search.png', '', '', 1).'" name="button_search" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 	print '<input type="image" class="liste_titre" src="'.img_picto($langs->trans("Search"), 'searchclear.png', '', '', 1).'" name="button_removefilter" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
 	print '</td>';
@@ -151,11 +151,11 @@ if ($resql)
 
 	print '<tr class="liste_titre">';
 	print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "l.rowid", "", $param, "", $sortfield, $sortorder);
-	print_liste_field_titre("Label", $_SERVER["PHP_SELF"], "l.label", "", $param, 'align="left"', $sortfield, $sortorder);
-	print_liste_field_titre("LoanCapital", $_SERVER["PHP_SELF"], "l.capital", "", $param, 'align="right"', $sortfield, $sortorder);
-	print_liste_field_titre("DateStart", $_SERVER["PHP_SELF"], "l.datestart", "", $param, 'align="center"', $sortfield, $sortorder);
-	print_liste_field_titre("DateEnd", $_SERVER["PHP_SELF"], "l.dateend", "", $param, 'align="center"', $sortfield, $sortorder);
-	print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "l.paid", "", $param, 'align="right"', $sortfield, $sortorder);
+	print_liste_field_titre("Label", $_SERVER["PHP_SELF"], "l.label", "", $param, '', $sortfield, $sortorder, 'left ');
+	print_liste_field_titre("LoanCapital", $_SERVER["PHP_SELF"], "l.capital", "", $param, '', $sortfield, $sortorder, 'right ');
+	print_liste_field_titre("DateStart", $_SERVER["PHP_SELF"], "l.datestart", "", $param, '', $sortfield, $sortorder, 'center ');
+	print_liste_field_titre("DateEnd", $_SERVER["PHP_SELF"], "l.dateend", "", $param, '', $sortfield, $sortorder, 'center ');
+	print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "l.paid", "", $param, '', $sortfield, $sortorder, 'right ');
 	print_liste_field_titre('');
 	print "</tr>\n";
 
@@ -175,15 +175,15 @@ if ($resql)
 		print '<td>'.dol_trunc($obj->label, 42).'</td>';
 
 		// Capital
-		print '<td align="right" width="100">'.price($obj->capital).'</td>';
+		print '<td class="right" width="100">'.price($obj->capital).'</td>';
 
 		// Date start
-		print '<td width="110" align="center">'.dol_print_date($db->jdate($obj->datestart), 'day').'</td>';
+		print '<td width="110" class="center">'.dol_print_date($db->jdate($obj->datestart), 'day').'</td>';
 
 		// Date end
-		print '<td width="110" align="center">'.dol_print_date($db->jdate($obj->dateend), 'day').'</td>';
+		print '<td width="110" class="center">'.dol_print_date($db->jdate($obj->dateend), 'day').'</td>';
 
-		print '<td align="right" class="nowrap">'.$loan_static->LibStatut($obj->paid, 5, $obj->alreadypayed).'</a></td>';
+		print '<td class="right nowrap">'.$loan_static->LibStatut($obj->paid, 5, $obj->alreadypayed).'</a></td>';
 
 		print '<td></td>';
 

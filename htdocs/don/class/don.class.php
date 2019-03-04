@@ -6,6 +6,7 @@
  * Copyright (C) 2015-2017 Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2016      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2019      Thibault FOUCART     <support@ptibogxiv.net>
+ * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -103,7 +104,7 @@ class Don extends CommonObject
      *
      *  @param	DoliDB	$db 	Database handler
      */
-    function __construct($db)
+    public function __construct($db)
     {
          $this->db = $db;
     }
@@ -115,12 +116,12 @@ class Don extends CommonObject
      *  @param	int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long
      *  @return string        		Libelle
      */
-    function getLibStatut($mode = 0)
+    public function getLibStatut($mode = 0)
     {
         return $this->LibStatut($this->statut, $mode);
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *  Renvoi le libelle d'un statut donne
      *
@@ -128,7 +129,7 @@ class Don extends CommonObject
      *  @param  int		$mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
      *  @return string 			       	Libelle du statut
      */
-    function LibStatut($statut, $mode = 0)
+    public function LibStatut($statut, $mode = 0)
     {
         // phpcs:enable
     	if (empty($this->labelstatut) || empty($this->labelstatutshort))
@@ -198,7 +199,7 @@ class Don extends CommonObject
      *
      *  @return	void
      */
-    function initAsSpecimen()
+    public function initAsSpecimen()
     {
         global $conf, $user,$langs;
 
@@ -257,7 +258,7 @@ class Don extends CommonObject
      *	@param	int	$minimum	Minimum
      *	@return	int				0 if KO, >0 if OK
      */
-    function check($minimum = 0)
+    public function check($minimum = 0)
     {
     	global $langs;
     	$langs->load('main');
@@ -350,7 +351,7 @@ class Don extends CommonObject
      * @return  int  		        <0 if KO, id of created donation if OK
      * TODO    add numbering module for Ref
      */
-    function create($user, $notrigger = 0)
+    public function create($user, $notrigger = 0)
     {
         global $conf, $langs;
 
@@ -395,7 +396,7 @@ class Don extends CommonObject
         $sql.= ", ".$conf->entity;
         $sql.= ", ".price2num($this->amount);
         $sql.= ", ".($this->modepaymentid?$this->modepaymentid:"null");
-        $sql.= ", '".$this->db->escape($this->fk_soc)."'";
+        $sql.= ", '".$this->db->escape($this->socid)."'";
         $sql.= ", '".$this->db->escape($this->firstname)."'";
         $sql.= ", '".$this->db->escape($this->lastname)."'";
         $sql.= ", '".$this->db->escape($this->societe)."'";
@@ -429,7 +430,7 @@ class Don extends CommonObject
                 // End call triggers
             }
         }
-		else
+        else
         {
             $this->error = $this->db->lasterror();
             $this->errno = $this->db->lasterrno();
@@ -473,7 +474,7 @@ class Don extends CommonObject
      *  @param      int		$notrigger	Disable triggers
      *  @return     int      		>0 if OK, <0 if KO
      */
-    function update($user, $notrigger = 0)
+    public function update($user, $notrigger = 0)
     {
         global $langs, $conf;
 
@@ -564,7 +565,7 @@ class Don extends CommonObject
      *    @param       int		$notrigger       Disable triggers
      *    @return      int       			      <0 if KO, 0 if not possible, >0 if OK
      */
-    function delete($user, $notrigger = 0)
+    public function delete($user, $notrigger = 0)
     {
 		global $user, $conf, $langs;
 		require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
@@ -639,12 +640,12 @@ class Don extends CommonObject
      *      @param      string	$ref        Ref of donation to load
      *      @return     int      			<0 if KO, >0 if OK
      */
-    function fetch($id, $ref = '')
+    public function fetch($id, $ref = '')
     {
         global $conf;
 
         $sql = "SELECT d.rowid, d.datec, d.date_valid, d.tms as datem, d.datedon,";
-        $sql.= " d.fk_soc,d.firstname, d.lastname, d.societe, d.amount, d.fk_statut, d.address, d.zip, d.town, ";
+        $sql.= " d.fk_soc as socid,d.firstname, d.lastname, d.societe, d.amount, d.fk_statut, d.address, d.zip, d.town, ";
         $sql.= " d.fk_country, d.country as country_olddata, d.public, d.amount, d.fk_payment, d.paid, d.note_private, d.note_public, d.email, d.phone, ";
         $sql.= " d.phone_mobile, d.fk_projet as fk_project, d.model_pdf,";
         $sql.= " p.ref as project_ref,";
@@ -672,40 +673,42 @@ class Don extends CommonObject
             {
                 $obj = $this->db->fetch_object($resql);
 
-                $this->id             = $obj->rowid;
-                $this->ref            = $obj->rowid;
-                $this->datec          = $this->db->jdate($obj->datec);
-                $this->date_valid     = $this->db->jdate($obj->date_valid);
-                $this->datem          = $this->db->jdate($obj->datem);
-                $this->date           = $this->db->jdate($obj->datedon);
-                $this->fk_soc         = $obj->fk_soc;
-                $this->firstname      = $obj->firstname;
-                $this->lastname       = $obj->lastname;
-                $this->societe        = $obj->societe;
-                $this->statut         = $obj->fk_statut;
-                $this->address        = $obj->address;
-                $this->town           = $obj->town;
-                $this->zip            = $obj->zip;
-                $this->town           = $obj->town;
-                $this->country_id     = $obj->fk_country;
-                $this->country_code   = $obj->country_code;
-                $this->country        = $obj->country;
-                $this->country_olddata= $obj->country_olddata;	// deprecated
-                $this->email          = $obj->email;
-                $this->phone          = $obj->phone;
-                $this->phone_mobile   = $obj->phone_mobile;
-                $this->project        = $obj->project_ref;
-                $this->fk_projet      = $obj->fk_project;   // deprecated
-                $this->fk_project     = $obj->fk_project;
-                $this->public         = $obj->public;
-                $this->modepaymentid  = $obj->fk_payment;
-                $this->modepaymentcode = $obj->payment_code;
-                $this->modepayment    = $obj->payment_label;
-                $this->paid			  = $obj->paid;
-                $this->amount         = $obj->amount;
-                $this->note_private	  = $obj->note_private;
-                $this->note_public	  = $obj->note_public;
-                $this->modelpdf       = $obj->model_pdf;
+                $this->id                 = $obj->rowid;
+                $this->ref                = $obj->rowid;
+                $this->date_creation      = $this->db->jdate($obj->datec);
+                $this->datec              = $this->db->jdate($obj->datec);
+                $this->date_validation    = $this->db->jdate($obj->date_valid);
+                $this->date_valid     	  = $this->db->jdate($obj->date_valid);
+                $this->date_modification  = $this->db->jdate($obj->datem);
+                $this->datem              = $this->db->jdate($obj->datem);
+                $this->date               = $this->db->jdate($obj->datedon);
+                $this->socid              = $obj->socid;
+                $this->firstname          = $obj->firstname;
+                $this->lastname           = $obj->lastname;
+                $this->societe            = $obj->societe;
+                $this->statut             = $obj->fk_statut;
+                $this->address            = $obj->address;
+                $this->zip                = $obj->zip;
+                $this->town               = $obj->town;
+                $this->country_id         = $obj->fk_country;
+                $this->country_code       = $obj->country_code;
+                $this->country            = $obj->country;
+                $this->country_olddata    = $obj->country_olddata;	// deprecated
+                $this->email              = $obj->email;
+                $this->phone              = $obj->phone;
+                $this->phone_mobile       = $obj->phone_mobile;
+                $this->project            = $obj->project_ref;
+                $this->fk_projet          = $obj->fk_project;   // deprecated
+                $this->fk_project         = $obj->fk_project;
+                $this->public             = $obj->public;
+                $this->mode_reglement_id  = $obj->fk_payment;
+                $this->mode_reglement_code= $obj->payment_code;
+                $this->mode_reglement     = $obj->payment_label;
+                $this->paid			      = $obj->paid;
+                $this->amount             = $obj->amount;
+                $this->note_private	      = $obj->note_private;
+                $this->note_public	      = $obj->note_public;
+                $this->modelpdf           = $obj->model_pdf;
 
                 // Retreive all extrafield
                 // fetch optionals attributes and labels
@@ -727,12 +730,12 @@ class Don extends CommonObject
      *  @param		int			$notrigger	1=Does not execute triggers, 0= execute triggers
      *	@return		int						<0 if KO, >0 if OK
      */
-	function setValid($user, $notrigger = 0)
+	public function setValid($user, $notrigger = 0)
 	{
 		return $this->valid_promesse($this->id, $user->id, $notrigger);
 	}
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
      *    Validate a promise of donation
      *
@@ -741,7 +744,7 @@ class Don extends CommonObject
      *    @param	int		$notrigger	Disable triggers
      *    @return   int     			<0 if KO, >0 if OK
      */
-	function valid_promesse($id, $userid, $notrigger = 0)
+    public function valid_promesse($id, $userid, $notrigger = 0)
 	{
 		// phpcs:enable
 		global $langs, $user;
@@ -784,7 +787,7 @@ class Don extends CommonObject
         }
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *    Classify the donation as paid, the donation was received
      *
@@ -792,7 +795,7 @@ class Don extends CommonObject
      *    @param    int		$modepayment   	    mode of payment
      *    @return   int      					<0 if KO, >0 if OK
      */
-    function set_paid($id, $modepayment = 0)
+    public function set_paid($id, $modepayment = 0)
     {
         // phpcs:enable
         $sql = "UPDATE ".MAIN_DB_PREFIX."don SET fk_statut = 2";
@@ -821,14 +824,14 @@ class Don extends CommonObject
         }
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *    Set donation to status cancelled
      *
      *    @param	int		$id   	    id of donation
      *    @return   int     			<0 if KO, >0 if OK
      */
-    function set_cancel($id)
+    public function set_cancel($id)
     {
         // phpcs:enable
         $sql = "UPDATE ".MAIN_DB_PREFIX."don SET fk_statut = -1 WHERE rowid = ".$id;
@@ -852,14 +855,14 @@ class Don extends CommonObject
         }
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *  Sum of donations
      *
      *	@param	string	$param	1=promesses de dons validees , 2=xxx, 3=encaisses
      *	@return	int				Summ of donations
      */
-    function sum_donations($param)
+    public function sum_donations($param)
     {
         // phpcs:enable
         global $conf;
@@ -881,13 +884,13 @@ class Don extends CommonObject
         return $result;
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *	Charge indicateurs this->nb pour le tableau de bord
      *
      *	@return     int         <0 if KO, >0 if OK
      */
-    function load_state_board()
+    public function load_state_board()
     {
         // phpcs:enable
         global $conf;
@@ -924,7 +927,7 @@ class Don extends CommonObject
      *	@param	int  	$notooltip		1=Disable tooltip
      *	@return	string					Chaine avec URL
      */
-    function getNomUrl($withpicto = 0, $notooltip = 0)
+    public function getNomUrl($withpicto = 0, $notooltip = 0)
     {
         global $langs;
 
@@ -948,7 +951,7 @@ class Don extends CommonObject
 	 * @param	int		$id      Id of record
 	 * @return	void
 	 */
-	function info($id)
+	public function info($id)
 	{
 		$sql = 'SELECT d.rowid, d.datec, d.fk_user_author, d.fk_user_valid,';
 		$sql.= ' d.tms';

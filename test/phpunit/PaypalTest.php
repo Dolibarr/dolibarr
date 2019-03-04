@@ -59,7 +59,7 @@ class PaypalTest extends PHPUnit_Framework_TestCase
 	 *
 	 * @return ProductTest
 	 */
-	function __construct()
+	public function __construct()
 	{
 		parent::__construct();
 
@@ -75,8 +75,8 @@ class PaypalTest extends PHPUnit_Framework_TestCase
 		print "\n";
 	}
 
-	// Static methods
-  	public static function setUpBeforeClass()
+    // Static methods
+    public static function setUpBeforeClass()
     {
     	global $conf,$user,$langs,$db;
 

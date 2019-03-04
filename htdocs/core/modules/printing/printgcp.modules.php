@@ -70,7 +70,7 @@ class printing_printgcp extends PrintingDriver
      *
      *  @param      DoliDB      $db      Database handler
      */
-    function __construct($db)
+    public function __construct($db)
     {
         global $conf, $langs, $dolibarr_main_url_root;
 
@@ -89,47 +89,47 @@ class printing_printgcp extends PrintingDriver
             );
         } else {
 
-        	$this->google_id = $conf->global->OAUTH_GOOGLE_ID;
-        	$this->google_secret = $conf->global->OAUTH_GOOGLE_SECRET;
-        	// Token storage
-        	$storage = new DoliStorage($this->db, $this->conf);
-        	//$storage->clearToken($this->OAUTH_SERVICENAME_GOOGLE);
-        	// Setup the credentials for the requests
+            $this->google_id = $conf->global->OAUTH_GOOGLE_ID;
+            $this->google_secret = $conf->global->OAUTH_GOOGLE_SECRET;
+            // Token storage
+            $storage = new DoliStorage($this->db, $this->conf);
+            //$storage->clearToken($this->OAUTH_SERVICENAME_GOOGLE);
+            // Setup the credentials for the requests
             $credentials = new Credentials(
-            	$this->google_id,
-            	$this->google_secret,
-            	$urlwithroot.'/core/modules/oauth/google_oauthcallback.php'
-        	);
-        	$access = ($storage->hasAccessToken($this->OAUTH_SERVICENAME_GOOGLE)?'HasAccessToken':'NoAccessToken');
-        	$serviceFactory = new \OAuth\ServiceFactory();
-        	$apiService = $serviceFactory->createService($this->OAUTH_SERVICENAME_GOOGLE, $credentials, $storage, array());
-        	$token_ok=true;
-        	try {
-            	$token = $storage->retrieveAccessToken($this->OAUTH_SERVICENAME_GOOGLE);
-        	} catch (Exception $e) {
-            	$this->errors[] = $e->getMessage();
-            	$token_ok = false;
-        	}
-        	//var_dump($this->errors);exit;
+                $this->google_id,
+                $this->google_secret,
+                $urlwithroot.'/core/modules/oauth/google_oauthcallback.php'
+            );
+            $access = ($storage->hasAccessToken($this->OAUTH_SERVICENAME_GOOGLE)?'HasAccessToken':'NoAccessToken');
+            $serviceFactory = new \OAuth\ServiceFactory();
+            $apiService = $serviceFactory->createService($this->OAUTH_SERVICENAME_GOOGLE, $credentials, $storage, array());
+            $token_ok=true;
+            try {
+                $token = $storage->retrieveAccessToken($this->OAUTH_SERVICENAME_GOOGLE);
+            } catch (Exception $e) {
+                $this->errors[] = $e->getMessage();
+                $token_ok = false;
+            }
+            //var_dump($this->errors);exit;
 
-        	$expire = false;
-        	// Is token expired or will token expire in the next 30 seconds
-        	if ($token_ok) {
-            	$expire = ($token->getEndOfLife() !== -9002 && $token->getEndOfLife() !== -9001 && time() > ($token->getEndOfLife() - 30));
-        	}
+            $expire = false;
+            // Is token expired or will token expire in the next 30 seconds
+            if ($token_ok) {
+                $expire = ($token->getEndOfLife() !== -9002 && $token->getEndOfLife() !== -9001 && time() > ($token->getEndOfLife() - 30));
+            }
 
-        	// Token expired so we refresh it
-        	if ($token_ok && $expire) {
-            	try {
-                	// il faut sauvegarder le refresh token car google ne le donne qu'une seule fois
-                	$refreshtoken = $token->getRefreshToken();
-                	$token = $apiService->refreshAccessToken($token);
-                	$token->setRefreshToken($refreshtoken);
-                	$storage->storeAccessToken($this->OAUTH_SERVICENAME_GOOGLE, $token);
-            	} catch (Exception $e) {
-                	$this->errors[] = $e->getMessage();
-            	}
-        	}
+            // Token expired so we refresh it
+            if ($token_ok && $expire) {
+                try {
+                    // il faut sauvegarder le refresh token car google ne le donne qu'une seule fois
+                    $refreshtoken = $token->getRefreshToken();
+                    $token = $apiService->refreshAccessToken($token);
+                    $token->setRefreshToken($refreshtoken);
+                    $storage->storeAccessToken($this->OAUTH_SERVICENAME_GOOGLE, $token);
+                } catch (Exception $e) {
+                    $this->errors[] = $e->getMessage();
+                }
+            }
             if ($this->google_id != '' && $this->google_secret != '') {
                 $this->conf[] = array('varname'=>'PRINTGCP_INFO', 'info'=>'GoogleAuthConfigured', 'type'=>'info');
                 $this->conf[] = array(

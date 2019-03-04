@@ -322,12 +322,12 @@ if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'd
         {
 	        $morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' ';
 	        if ($action != 'editcustomer' && $object->fk_statut < 8 && !$user->societe_id && $user->rights->ticket->write) {
-	        	$morehtmlref.='<a href="' . $url_page_current . '?action=editcustomer&amp;track_id=' . $object->track_id . '">' . img_edit($langs->transnoentitiesnoconv('Edit'), 1) . '</a> : ';
+	        	$morehtmlref.='<a href="' . $url_page_current . '?action=editcustomer&track_id=' . $object->track_id . '">' . img_edit($langs->transnoentitiesnoconv('Edit'), 0) . '</a> : ';
 	        }
 	        if ($action == 'editcustomer') {
 	        	$morehtmlref.=$form->form_thirdparty($url_page_current . '?track_id=' . $object->track_id, $object->socid, 'editcustomer', '', 1, 0, 0, array(), 1);
 	        } else {
-	        	$morehtmlref.=$form->form_thirdparty($url_page_current . '?track_id=' . $object->track_id, $object->socid, 'none', '', 1, 0, 0, array(), 1);
+	            $morehtmlref.=$form->form_thirdparty($url_page_current . '?track_id=' . $object->track_id, $object->socid, 'none', '', 1, 0, 0, array(), 1);
 	        }
         }
 
@@ -551,7 +551,7 @@ if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'd
             print '<td>';
             print $langs->trans('TicketChangeCategory');
             print '</td><td>';
-            print $formticket->selectAnalyticCodesTickets($object->category_code, 'update_value_category', '', 2);
+            print $formticket->selectGroupTickets($object->category_code, 'update_value_category', '', 2);
             print '</td>';
             print '</tr>';
         } else {
@@ -571,8 +571,8 @@ if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'd
             }*/
             print '</td></tr>';
 
-            // Category
-            print '<tr><td>' . $langs->trans("AnalyticCode") . '</td><td>';
+            // Group
+            print '<tr><td>' . $langs->trans("TicketGroup") . '</td><td>';
             print $langs->getLabelFromKey($db, $object->category_code, 'c_ticket_category', 'code', 'label');
             /*if ($user->admin && !$noadmininfo) {
              print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);

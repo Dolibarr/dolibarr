@@ -58,11 +58,11 @@ class ProductTest extends PHPUnit_Framework_TestCase
      *
      * @return ProductTest
      */
-    function __construct()
+    public function __construct()
     {
-    	parent::__construct();
+        parent::__construct();
 
-    	//$this->sharedFixture
+        //$this->sharedFixture
         global $conf,$user,$langs,$db;
         $this->savconf=$conf;
         $this->savuser=$user;

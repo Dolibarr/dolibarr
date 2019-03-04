@@ -28,18 +28,18 @@ include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
  */
 class box_graph_invoices_supplier_permonth extends ModeleBoxes
 {
-	var $boxcode="invoicessupplierpermonth";
-	var $boximg="object_bill";
-	var $boxlabel="BoxSuppliersInvoicesPerMonth";
-	var $depends = array("fournisseur");
+    public $boxcode="invoicessupplierpermonth";
+    public $boximg="object_bill";
+    public $boxlabel="BoxSuppliersInvoicesPerMonth";
+    public $depends = array("fournisseur");
 
 	/**
      * @var DoliDB Database handler.
      */
     public $db;
 
-	var $info_box_head = array();
-	var $info_box_contents = array();
+    public $info_box_head = array();
+    public $info_box_contents = array();
 
 
 	/**
@@ -48,7 +48,7 @@ class box_graph_invoices_supplier_permonth extends ModeleBoxes
 	 * 	@param	DoliDB	$db			Database handler
 	 *  @param	string	$param		More parameters
 	 */
-	function __construct($db, $param)
+	public function __construct($db, $param)
 	{
 		global $user;
 
@@ -63,7 +63,7 @@ class box_graph_invoices_supplier_permonth extends ModeleBoxes
 	 *  @param	int		$max        Maximum number of records to load
      *  @return	void
 	 */
-	function loadBox($max = 5)
+	public function loadBox($max = 5)
 	{
 		global $conf, $user, $langs, $db;
 
@@ -277,7 +277,7 @@ class box_graph_invoices_supplier_permonth extends ModeleBoxes
 	 *  @param	int		$nooutput	No print, only return string
 	 *	@return	string
 	 */
-    function showBox($head = null, $contents = null, $nooutput = 0)
+    public function showBox($head = null, $contents = null, $nooutput = 0)
     {
 		return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
 	}

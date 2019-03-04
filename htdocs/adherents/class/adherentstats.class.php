@@ -37,12 +37,12 @@ class AdherentStats extends Stats
      */
     public $table_element;
 
-    var $socid;
-    var $userid;
+    public $socid;
+    public $userid;
 
-    var $from;
-    var $field;
-    var $where;
+    public $from;
+    public $field;
+    public $where;
 
 
 	/**
@@ -52,7 +52,7 @@ class AdherentStats extends Stats
 	 * 	@param 		int			$socid	   	Id third party
      * 	@param   	int			$userid    	Id user for filter
 	 */
-	function __construct($db, $socid = 0, $userid = 0)
+	public function __construct($db, $socid = 0, $userid = 0)
 	{
 		global $user, $conf;
 
@@ -85,7 +85,7 @@ class AdherentStats extends Stats
      *	@param	int		$format		0=Label of absiss is a translated text, 1=Label of absiss is month number, 2=Label of absiss is first letter of month
      * @return	array				Array of nb each month
 	 */
-	function getNbByMonth($year, $format = 0)
+	public function getNbByMonth($year, $format = 0)
 	{
 		global $user;
 
@@ -105,7 +105,7 @@ class AdherentStats extends Stats
 	 *
      * @return	array				Array of nb each year
 	 */
-	function getNbByYear()
+	public function getNbByYear()
 	{
 		global $user;
 
@@ -126,7 +126,7 @@ class AdherentStats extends Stats
      * @param	int		$format		0=Label of absiss is a translated text, 1=Label of absiss is month number, 2=Label of absiss is first letter of month
      * @return	array				Array of amount each month
 	 */
-	function getAmountByMonth($year, $format = 0)
+	public function getAmountByMonth($year, $format = 0)
 	{
 		global $user;
 
@@ -147,7 +147,7 @@ class AdherentStats extends Stats
      * @param   int		$year       Year
      * @return	array				Array of average each month
 	 */
-	function getAverageByMonth($year)
+	public function getAverageByMonth($year)
 	{
 		global $user;
 
@@ -168,7 +168,7 @@ class AdherentStats extends Stats
 	 *
 	 * 	@return		array					Array with nb, total amount, average for each year
 	 */
-	function getAllByYear()
+	public function getAllByYear()
 	{
 		global $user;
 

@@ -44,7 +44,7 @@ class FormMargin
      *
      *	@param	DoliDB		$db      Database handler
      */
-    function __construct($db)
+    public function __construct($db)
     {
         $this->db = $db;
     }
@@ -59,7 +59,7 @@ class FormMargin
 	 * 	@param 	boolean			$force_price	True of not
 	 * 	@return array							Array with info
 	 */
-	function getMarginInfosArray($object, $force_price = false)
+	public function getMarginInfosArray($object, $force_price = false)
 	{
 		global $conf, $db;
 
@@ -191,7 +191,7 @@ class FormMargin
 	 * 	@param 	boolean			$force_price	Force price
 	 * 	@return	void
 	 */
-	function displayMarginInfos($object, $force_price = false)
+	public function displayMarginInfos($object, $force_price = false)
 	{
 		global $langs, $conf, $user;
 

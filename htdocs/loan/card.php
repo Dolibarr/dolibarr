@@ -304,7 +304,7 @@ if ($action == 'create')
 
 	// insurance amount
 	print '<tr><td>'.$langs->trans("Insurance").'</td><td><input name="insurance_amount" size="10" value="' . dol_escape_htmltag(GETPOST("insurance_amount")) . '" placeholder="'.$langs->trans('Amount').'"></td></tr>';
-	
+
 	// Project
 	if (! empty($conf->projet->enabled))
 	{
@@ -499,7 +499,7 @@ if ($id > 0)
 		{
 			print '<tr><td class="titlefield">'.$langs->trans("LoanCapital").'</td><td>'.price($object->capital, 0, $outputlangs, 1, -1, -1, $conf->currency).'</td></tr>';
 		}
-		
+
 		// Insurance
 		if ($action == 'edit')
 		{
@@ -712,9 +712,9 @@ if ($id > 0)
 			print '<td>'.$langs->trans("RefPayment").'</td>';
 			print '<td>'.$langs->trans("Date").'</td>';
 			print '<td>'.$langs->trans("Type").'</td>';
-			print '<td align="right">'.$langs->trans("Insurance").'</td>';
-			print '<td align="right">'.$langs->trans("Interest").'</td>';
-			print '<td align="right">'.$langs->trans("LoanCapital").'</td>';
+			print '<td class="right">'.$langs->trans("Insurance").'</td>';
+			print '<td class="right">'.$langs->trans("Interest").'</td>';
+			print '<td class="right">'.$langs->trans("LoanCapital").'</td>';
 			print '</tr>';
 
 			while ($i < $num)
@@ -725,9 +725,9 @@ if ($id > 0)
 				print '<td><a href="'.DOL_URL_ROOT.'/loan/payment/card.php?id='.$objp->rowid.'">'.img_object($langs->trans("Payment"), "payment").' '.$objp->rowid.'</a></td>';
 				print '<td>'.dol_print_date($db->jdate($objp->dp), 'day')."</td>\n";
 				print "<td>".$objp->paiement_type.' '.$objp->num_payment."</td>\n";
-				print '<td align="right">'.price($objp->amount_insurance, 0, $outputlangs, 1, -1, -1, $conf->currency)."</td>\n";
-				print '<td align="right">'.price($objp->amount_interest, 0, $outputlangs, 1, -1, -1, $conf->currency)."</td>\n";
-				print '<td align="right">'.price($objp->amount_capital, 0, $outputlangs, 1, -1, -1, $conf->currency)."</td>\n";
+				print '<td class="right">'.price($objp->amount_insurance, 0, $outputlangs, 1, -1, -1, $conf->currency)."</td>\n";
+				print '<td class="right">'.price($objp->amount_interest, 0, $outputlangs, 1, -1, -1, $conf->currency)."</td>\n";
+				print '<td class="right">'.price($objp->amount_capital, 0, $outputlangs, 1, -1, -1, $conf->currency)."</td>\n";
 				print "</tr>";
 				$total_capital += $objp->amount_capital;
 				$i++;
@@ -737,13 +737,13 @@ if ($id > 0)
 
 			if ($object->paid == 0)
 			{
-				print '<tr><td colspan="5" align="right">'.$langs->trans("AlreadyPaid").' :</td><td align="right">'.price($totalpaid, 0, $langs, 0, 0, -1, $conf->currency).'</td></tr>';
-				print '<tr><td colspan="5" align="right">'.$langs->trans("AmountExpected").' :</td><td align="right">'.price($object->capital, 0, $outputlangs, 1, -1, -1, $conf->currency).'</td></tr>';
+				print '<tr><td colspan="5" class="right">'.$langs->trans("AlreadyPaid").' :</td><td class="right">'.price($totalpaid, 0, $langs, 0, 0, -1, $conf->currency).'</td></tr>';
+				print '<tr><td colspan="5" class="right">'.$langs->trans("AmountExpected").' :</td><td class="right">'.price($object->capital, 0, $outputlangs, 1, -1, -1, $conf->currency).'</td></tr>';
 
 				$staytopay = $object->capital - $totalpaid;
 
-				print '<tr><td colspan="5" align="right">'.$langs->trans("RemainderToPay").' :</td>';
-				print '<td align="right"'.($staytopay?' class="amountremaintopay"':'class="amountpaymentcomplete"').'>';
+				print '<tr><td colspan="5" class="right">'.$langs->trans("RemainderToPay").' :</td>';
+				print '<td class="right"'.($staytopay?' class="amountremaintopay"':'class="amountpaymentcomplete"').'>';
 				print price($staytopay, 0, $langs, 0, 0, -1, $conf->currency);
 				print '</td></tr>';
 			}

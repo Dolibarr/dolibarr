@@ -29,37 +29,37 @@
  */
 class FormAdmin
 {
-	var $db;
-	var $error;
+    public $db;
+    public $error;
 
 
 	/**
-	 *	Constructor
-	 *
-	 *  @param		DoliDB		$db      Database handler
-	 */
-	function __construct($db)
-	{
-		$this->db = $db;
-	}
-
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
-	/**
-	 *    	Return html select list with available languages (key='en_US', value='United States' for example)
-	 *
-	 *    	@param      string		$selected       Language pre-selected
-	 *    	@param      string		$htmlname       Name of HTML select
-	 *    	@param      int			$showauto       Show 'auto' choice
-	 * 		@param		array		$filter			Array of keys to exclude in list
-	 * 		@param		string		$showempty		'1'=Add empty value or string to show
-	 *      @param      int			$showwarning    Show a warning if language is not complete
-	 *      @param		int			$disabled		Disable edit of select
-	 *      @param		string		$morecss		Add more css styles
-	 *      @param      int         $showcode       1=Add language code into label at begining, 2=Add language code into label at end
-	 *      @param		int			$forcecombo		Force to use combo box (so no ajax beautify effect)
-	 *      @return		string						Return HTML select string with list of languages
+	 *  Constructor
+     *
+     *  @param      DoliDB      $db      Database handler
      */
-	function select_language($selected = '', $htmlname = 'lang_id', $showauto = 0, $filter = null, $showempty = '', $showwarning = 0, $disabled = 0, $morecss = '', $showcode = 0, $forcecombo = 0)
+    public function __construct($db)
+    {
+        $this->db = $db;
+    }
+
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+    /**
+     *  Return html select list with available languages (key='en_US', value='United States' for example)
+     *
+     *  @param      string		$selected       Language pre-selected
+     *  @param      string		$htmlname       Name of HTML select
+     *  @param      int			$showauto       Show 'auto' choice
+	 *  @param      array		$filter         Array of keys to exclude in list
+	 *  @param		string		$showempty		'1'=Add empty value or string to show
+	 *  @param      int			$showwarning    Show a warning if language is not complete
+	 *  @param		int			$disabled		Disable edit of select
+	 *  @param		string		$morecss		Add more css styles
+	 *  @param      int         $showcode       1=Add language code into label at begining, 2=Add language code into label at end
+     *  @param		int			$forcecombo		Force to use combo box (so no ajax beautify effect)
+     *  @return		string						Return HTML select string with list of languages
+     */
+    public function select_language($selected = '', $htmlname = 'lang_id', $showauto = 0, $filter = null, $showempty = '', $showwarning = 0, $disabled = 0, $morecss = '', $showcode = 0, $forcecombo = 0)
 	{
 		// phpcs:enable
 		global $langs;
@@ -121,8 +121,8 @@ class FormAdmin
 		return $out;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
-	/**
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+    /**
      *    Return list of available menus (eldy_backoffice, ...)
      *
      *    @param	string		$selected        Preselected menu value
@@ -131,7 +131,7 @@ class FormAdmin
      *    @param    string		$moreattrib      More attributes on html select tag
      *    @return	integer|null
      */
-    function select_menu($selected, $htmlname, $dirmenuarray, $moreattrib = '')
+    public function select_menu($selected, $htmlname, $dirmenuarray, $moreattrib = '')
     {
 		// phpcs:enable
         global $langs,$conf;
@@ -212,7 +212,7 @@ class FormAdmin
 		print '</select>';
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *  Return combo list of available menu families
      *
@@ -221,13 +221,13 @@ class FormAdmin
      *  @param	string[]	$dirmenuarray    Directories to scan
      *  @return	void
      */
-    function select_menu_families($selected, $htmlname, $dirmenuarray)
+    public function select_menu_families($selected, $htmlname, $dirmenuarray)
     {
-		// phpcs:enable
-		global $langs,$conf;
+        // phpcs:enable
+        global $langs,$conf;
 
         //$expdevmenu=array('smartphone_backoffice.php','smartphone_frontoffice.php');  // Menu to disable if $conf->global->MAIN_FEATURES_LEVEL is not set
-		$expdevmenu=array();
+        $expdevmenu=array();
 
 		$menuarray=array();
 
@@ -285,7 +285,7 @@ class FormAdmin
     }
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *  Return a HTML select list of timezones
      *
@@ -293,15 +293,15 @@ class FormAdmin
      *  @param  string		$htmlname        Nom de la zone select
      *  @return	void
      */
-    function select_timezone($selected, $htmlname)
+    public function select_timezone($selected, $htmlname)
     {
-		// phpcs:enable
-		global $langs,$conf;
+        // phpcs:enable
+        global $langs,$conf;
 
         print '<select class="flat" id="'.$htmlname.'" name="'.$htmlname.'">';
-		print '<option value="-1">&nbsp;</option>';
+        print '<option value="-1">&nbsp;</option>';
 
-		$arraytz=array(
+        $arraytz = array(
 			"Pacific/Midway"=>"GMT-11:00",
 			"Pacific/Fakaofo"=>"GMT-10:00",
 			"America/Anchorage"=>"GMT-09:00",
@@ -328,28 +328,27 @@ class FormAdmin
 			"Pacific/Auckland"=>"GMT+12:00",
 			"Pacific/Enderbury"=>"GMT+13:00"
 		);
-		foreach ($arraytz as $lib => $gmt)
-		{
-			print '<option value="'.$lib.'"';
-			if ($selected == $lib || $selected == $gmt) print ' selected';
-			print '>'.$gmt.'</option>'."\n";
-		}
-		print '</select>';
-	}
+        foreach ($arraytz as $lib => $gmt) {
+            print '<option value="'.$lib.'"';
+            if ($selected == $lib || $selected == $gmt) print ' selected';
+            print '>'.$gmt.'</option>'."\n";
+        }
+        print '</select>';
+    }
 
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Return html select list with available languages (key='en_US', value='United States' for example)
 	 *
 	 *  @param      string	$selected       Paper format pre-selected
 	 *  @param      string	$htmlname       Name of HTML select field
-	 * 	@param		string	$filter			Value to filter on code
-	 * 	@param		int		$showempty		Add empty value
-	 * 	@return		string					Return HTML output
+	 *  @param		string	$filter			Value to filter on code
+	 *  @param		int		$showempty		Add empty value
+	 *  @return		string					Return HTML output
 	 */
-	function select_paper_format($selected = '', $htmlname = 'paperformat_id', $filter = 0, $showempty = 0)
+	public function select_paper_format($selected = '', $htmlname = 'paperformat_id', $filter = 0, $showempty = 0)
 	{
 		// phpcs:enable
 		global $langs;

@@ -109,6 +109,8 @@ class InterfaceTicketEmail extends DolibarrTriggers
     {
 		$ok = 0;
 
+		if (empty($conf->ticket->enabled)) return 0;     // Module not active, we do nothing
+
     	switch ($action) {
     		case 'TICKET_ASSIGNED':
 	            dol_syslog("Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id);

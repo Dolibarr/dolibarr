@@ -61,7 +61,7 @@ class mod_arctic extends ModeleNumRefFicheinter
      *
      *  @return     string      Texte descripif
      */
-	function info()
+    public function info()
     {
     	global $conf, $langs;
 
@@ -101,7 +101,7 @@ class mod_arctic extends ModeleNumRefFicheinter
      *
      * @return     string      Example
      */
-    function getExample()
+    public function getExample()
     {
      	global $conf,$langs,$mysoc;
 
@@ -124,7 +124,7 @@ class mod_arctic extends ModeleNumRefFicheinter
 	 *  @param  Object		$object		Object we need next value for
 	 *  @return string      			Value if KO, <0 if KO
 	 */
-    function getNextValue($objsoc = 0, $object = '')
+    public function getNextValue($objsoc = 0, $object = '')
     {
 		global $db,$conf;
 
@@ -152,7 +152,7 @@ class mod_arctic extends ModeleNumRefFicheinter
 	 *  @param	Object		$objforref	Object for number to search
      *  @return string      			Next free value
      */
-    function getNumRef($objsoc, $objforref)
+    public function getNumRef($objsoc, $objforref)
     {
         return $this->getNextValue($objsoc, $objforref);
     }

@@ -32,15 +32,15 @@ abstract class ActionsCardCommon
      */
     public $db;
 
-    var $dirmodule;
-    var $targetmodule;
-    var $canvas;
-    var $card;
+    public $dirmodule;
+    public $targetmodule;
+    public $canvas;
+    public $card;
 
 	//! Template container
-	var $tpl = array();
+	public $tpl = array();
 	//! Object container
-	var $object;
+	public $object;
 
 	/**
 	 * @var string Error code (or message)
@@ -70,7 +70,7 @@ abstract class ActionsCardCommon
     	$this->object = $object;
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *    Assign custom values for canvas (for example into this->tpl to be used by templates)
 	 *
@@ -79,7 +79,7 @@ abstract class ActionsCardCommon
 	 *    @param	string	$ref		Ref of object
 	 *    @return	void
      */
-    function assign_values(&$action, $id = 0, $ref = '')
+    public function assign_values(&$action, $id = 0, $ref = '')
     {
         // phpcs:enable
         global $conf, $langs, $user, $mysoc, $canvas;

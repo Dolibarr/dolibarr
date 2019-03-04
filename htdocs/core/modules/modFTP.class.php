@@ -33,12 +33,12 @@ include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 class modFTP extends DolibarrModules
 {
 
-   /**
-	 *   Constructor. Define names, constants, directories, boxes, permissions
-	 *
-	 *   @param      DoliDB		$db      Database handler
+    /**
+     *   Constructor. Define names, constants, directories, boxes, permissions
+     *
+     *   @param      DoliDB		$db      Database handler
     */
-	function __construct($db)
+	public function __construct($db)
 	{
 		$this->db = $db;
 
