@@ -212,7 +212,7 @@ if (is_resource($handle))
 {
     while (($file = readdir($handle))!==false)
     {
-        if (preg_match('/(modGeneratePass[a-z]+)\.class\.php/i', $file, $reg))
+        if (preg_match('/(modGeneratePass[a-z]+)\.class\.php$/i', $file, $reg))
         {
             // Charging the numbering class
             $classname = $reg[1];
