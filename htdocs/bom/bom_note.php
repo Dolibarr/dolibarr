@@ -41,7 +41,7 @@ dol_include_once('/bom/class/bom.class.php');
 dol_include_once('/bom/lib/bom_bom.lib.php');
 
 // Load translation files required by the page
-$langs->loadLangs(array("bom@bom","companies"));
+$langs->loadLangs(array("mrp","companies"));
 
 // Get parameters
 $id			= GETPOST('id', 'int');
@@ -95,7 +95,7 @@ if ($id > 0 || ! empty($ref))
 
 	$head = bomPrepareHead($object);
 
-	dol_fiche_head($head, 'note', $langs->trans("BillOfMaterials"), -1, 'bom@bom');
+	dol_fiche_head($head, 'note', $langs->trans("BillOfMaterials"), -1, 'bom');
 
 	// Object card
 	// ------------------------------------------------------------

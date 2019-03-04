@@ -44,7 +44,7 @@ require_once '../lib/bom.lib.php';
 //require_once "../class/myclass.class.php";
 
 // Translations
-$langs->loadLangs(array("admin", "bom@bom"));
+$langs->loadLangs(array("admin", "mrp"));
 
 // Access control
 if (! $user->admin) accessforbidden();
@@ -78,11 +78,11 @@ llxHeader('', $langs->trans($page_name));
 // Subheader
 $linkback = '<a href="'.($backtopage?$backtopage:DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1').'">'.$langs->trans("BackToModuleList").'</a>';
 
-print load_fiche_titre($langs->trans($page_name), $linkback, 'object_bom@bom');
+print load_fiche_titre($langs->trans($page_name), $linkback, 'object_bom');
 
 // Configuration header
 $head = bomAdminPrepareHead();
-dol_fiche_head($head, 'settings', '', -1, "bom@bom");
+dol_fiche_head($head, 'settings', '', -1, "bom");
 
 // Setup page goes here
 echo $langs->trans("BomSetupPage").'<br><br>';
