@@ -1,14 +1,5 @@
 <?php
-/* Copyright (C) 2003-2006 Rodolphe Quiedeville	        <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2013 Laurent Destailleur          <eldy@users.sourceforge.net>
- * Copyright (C) 2004      Sebastien Di Cintio          <sdicintio@ressource-toi.org>
- * Copyright (C) 2004      Benoit Mortier               <benoit.mortier@opensides.be>
- * Copyright (C) 2004      Andre Cianfarani             <acianfa@free.fr>
- * Copyright (C) 2005-2014 Regis Houssin                <regis.houssin@inodbox.com>
- * Copyright (C) 2008 	   Raphael Bertrand (Resultic)  <raphael.bertrand@resultic.fr>
- * Copyright (C) 2011-2013 Juanjo Menent			    <jmenent@2byte.es>
- * Copyright (C) 2011-2016 Philippe Grand			    <philippe.grand@atoo-net.com>
- * Copyright (C) 2013 	   Florian Henry			    <florian.henry@open-concept.pro>
+/* Copyright (C) 2019 Laurent Destailleur          <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,19 +16,19 @@
  */
 
 /**
- *	\file       htdocs/admin/commande.php
- *	\ingroup    commande
- *	\brief      Setup page of module Order
+ *	\file       htdocs/admin/bom.php
+ *	\ingroup    bom
+ *	\brief      Setup page of module BOM
  */
 
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/order.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/bom/class/bom.class.php';
+require_once DOL_DOCUMENT_ROOT.'/bom/lib/bom.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('admin', 'errors', 'orders', 'other'));
+$langs->loadLangs(array('admin', 'errors', 'mrp', 'other'));
 
 if (! $user->admin) accessforbidden();
 
@@ -45,7 +36,7 @@ $action = GETPOST('action', 'alpha');
 $value = GETPOST('value', 'alpha');
 $label = GETPOST('label', 'alpha');
 $scandir = GETPOST('scan_dir', 'alpha');
-$type = 'order';
+$type = 'bom';
 
 
 /*
@@ -56,10 +47,10 @@ include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
 if ($action == 'updateMask')
 {
-	$maskconstorder=GETPOST('maskconstorder', 'alpha');
-	$maskorder=GETPOST('maskorder', 'alpha');
+	$maskconstbom=GETPOST('maskconstbom', 'alpha');
+	$maskbom=GETPOST('maskbom', 'alpha');
 
-	if ($maskconstorder) $res = dolibarr_set_const($db, $maskconstorder, $maskorder, 'chaine', 0, '', $conf->entity);
+	if ($maskconstbom) $res = dolibarr_set_const($db, $maskconstbom, $maskbom, 'chaine', 0, '', $conf->entity);
 
 	if (! $res > 0) $error++;
 
@@ -77,15 +68,15 @@ elseif ($action == 'specimen')
 {
 	$modele=GETPOST('module', 'alpha');
 
-	$commande = new Commande($db);
-	$commande->initAsSpecimen();
+	$bom = new BOM($db);
+	$bom->initAsSpecimen();
 
 	// Search template files
 	$file=''; $classname=''; $filefound=0;
 	$dirmodels=array_merge(array('/'), (array) $conf->modules_parts['models']);
 	foreach($dirmodels as $reldir)
 	{
-	    $file=dol_buildpath($reldir."core/modules/commande/doc/pdf_".$modele.".modules.php", 0);
+	    $file=dol_buildpath($reldir."core/modules/bom/doc/pdf_".$modele.".modules.php", 0);
 		if (file_exists($file))
 		{
 			$filefound=1;
@@ -100,9 +91,9 @@ elseif ($action == 'specimen')
 
 		$module = new $classname($db);
 
-		if ($module->write_file($commande, $langs) > 0)
+		if ($module->write_file($bom, $langs) > 0)
 		{
-			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=commande&file=SPECIMEN.pdf");
+			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=bom&file=SPECIMEN.pdf");
 			return;
 		}
 		else
@@ -129,18 +120,18 @@ elseif ($action == 'del')
 	$ret = delDocumentModel($value, $type);
 	if ($ret > 0)
 	{
-        if ($conf->global->COMMANDE_ADDON_PDF == "$value") dolibarr_del_const($db, 'COMMANDE_ADDON_PDF', $conf->entity);
+        if ($conf->global->BOM_ADDON_PDF == "$value") dolibarr_del_const($db, 'BOM_ADDON_PDF', $conf->entity);
 	}
 }
 
 // Set default model
 elseif ($action == 'setdoc')
 {
-	if (dolibarr_set_const($db, "COMMANDE_ADDON_PDF", $value, 'chaine', 0, '', $conf->entity))
+	if (dolibarr_set_const($db, "BOM_ADDON_PDF", $value, 'chaine', 0, '', $conf->entity))
 	{
 		// The constant that was read before the new set
 		// We therefore requires a variable to have a coherent view
-		$conf->global->COMMANDE_ADDON_PDF = $value;
+		$conf->global->BOM_ADDON_PDF = $value;
 	}
 
 	// On active le modele
@@ -156,13 +147,13 @@ elseif ($action == 'setmod')
 	// TODO Check if numbering module chosen can be activated
 	// by calling method canBeActivated
 
-	dolibarr_set_const($db, "COMMANDE_ADDON", $value, 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "BOM_ADDON", $value, 'chaine', 0, '', $conf->entity);
 }
 
-elseif ($action == 'set_COMMANDE_DRAFT_WATERMARK')
+elseif ($action == 'set_BOM_DRAFT_WATERMARK')
 {
-	$draft = GETPOST("COMMANDE_DRAFT_WATERMARK");
-	$res = dolibarr_set_const($db, "COMMANDE_DRAFT_WATERMARK", trim($draft), 'chaine', 0, '', $conf->entity);
+	$draft = GETPOST("BOM_DRAFT_WATERMARK");
+	$res = dolibarr_set_const($db, "BOM_DRAFT_WATERMARK", trim($draft), 'chaine', 0, '', $conf->entity);
 
 	if (! $res > 0) $error++;
 
@@ -176,11 +167,11 @@ elseif ($action == 'set_COMMANDE_DRAFT_WATERMARK')
     }
 }
 
-elseif ($action == 'set_ORDER_FREE_TEXT')
+elseif ($action == 'set_BOM_FREE_TEXT')
 {
-	$freetext = GETPOST("ORDER_FREE_TEXT", 'none');	// No alpha here, we want exact string
+	$freetext = GETPOST("BOM_FREE_TEXT", 'none');	// No alpha here, we want exact string
 
-	$res = dolibarr_set_const($db, "ORDER_FREE_TEXT", $freetext, 'chaine', 0, '', $conf->entity);
+	$res = dolibarr_set_const($db, "BOM_FREE_TEXT", $freetext, 'chaine', 0, '', $conf->entity);
 
 	if (! $res > 0) $error++;
 
@@ -195,45 +186,11 @@ elseif ($action == 'set_ORDER_FREE_TEXT')
 } elseif ($action=="setshippableiconinlist") {
     // Activate Set Shippable Icon In List
     $setshippableiconinlist = GETPOST('value', 'int');
-    $res = dolibarr_set_const($db, "SHIPPABLE_ORDER_ICON_IN_LIST", $setshippableiconinlist, 'yesno', 0, '', $conf->entity);
+    $res = dolibarr_set_const($db, "SHIPPABLE_BOM_ICON_IN_LIST", $setshippableiconinlist, 'yesno', 0, '', $conf->entity);
     if (! $res > 0) $error++;
     if (! $error) {
         setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
     } else {
-        setEventMessages($langs->trans("Error"), null, 'errors');
-    }
-}
-
-// Activate ask for payment bank
-elseif ($action == 'set_BANK_ASK_PAYMENT_BANK_DURING_ORDER')
-{
-    $res = dolibarr_set_const($db, "BANK_ASK_PAYMENT_BANK_DURING_ORDER", $value, 'chaine', 0, '', $conf->entity);
-
-    if (! $res > 0) $error++;
-
-    if (! $error)
-    {
-        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-    }
-    else
-    {
-        setEventMessages($langs->trans("Error"), null, 'errors');
-    }
-}
-
-// Activate ask for warehouse
-elseif ($action == 'set_WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER')
-{
-    $res = dolibarr_set_const($db, "WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER", $value, 'chaine', 0, '', $conf->entity);
-
-    if (! $res > 0) $error++;
-
-    if (! $error)
-    {
-        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-    }
-    else
-    {
         setEventMessages($langs->trans("Error"), null, 'errors');
     }
 }
@@ -247,20 +204,20 @@ $form=new Form($db);
 
 $dirmodels=array_merge(array('/'), (array) $conf->modules_parts['models']);
 
-llxHeader("", $langs->trans("OrdersSetup"));
+llxHeader("", $langs->trans("BOMsSetup"));
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
-print load_fiche_titre($langs->trans("OrdersSetup"), $linkback, 'title_setup');
+print load_fiche_titre($langs->trans("BOMsSetup"), $linkback, 'title_setup');
 
-$head = order_admin_prepare_head();
+$head = bomAdminPrepareHead();
 
-dol_fiche_head($head, 'general', $langs->trans("Orders"), -1, 'order');
+dol_fiche_head($head, 'settings', $langs->trans("BOMs"), -1, 'bom');
 
 /*
- * Orders Numbering model
+ * BOMs Numbering model
  */
 
-print load_fiche_titre($langs->trans("OrdersNumberingModules"), '', '');
+print load_fiche_titre($langs->trans("BOMsNumberingModules"), '', '');
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
@@ -275,17 +232,16 @@ clearstatcache();
 
 foreach ($dirmodels as $reldir)
 {
-	$dir = dol_buildpath($reldir."core/modules/commande/");
+	$dir = dol_buildpath($reldir."core/modules/bom/");
 
 	if (is_dir($dir))
 	{
 		$handle = opendir($dir);
 		if (is_resource($handle))
 		{
-
 			while (($file = readdir($handle))!==false)
 			{
-				if (substr($file, 0, 13) == 'mod_commande_' && substr($file, dol_strlen($file)-3, 3) == 'php')
+			    if (substr($file, 0, 8) == 'mod_bom_' && substr($file, dol_strlen($file)-3, 3) == 'php')
 				{
 					$file = substr($file, 0, dol_strlen($file)-4);
 
@@ -313,7 +269,7 @@ foreach ($dirmodels as $reldir)
                         print '</td>'."\n";
 
 						print '<td class="center">';
-						if ($conf->global->COMMANDE_ADDON == $file)
+						if ($conf->global->BOM_ADDON == $file)
 						{
 							print img_picto($langs->trans("Activated"), 'switch_on');
 						}
@@ -325,14 +281,14 @@ foreach ($dirmodels as $reldir)
 						}
 						print '</td>';
 
-						$commande=new Commande($db);
-						$commande->initAsSpecimen();
+						$bom=new BOM($db);
+						$bom->initAsSpecimen();
 
 						// Info
 						$htmltooltip='';
 						$htmltooltip.=''.$langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
-						$commande->type=0;
-						$nextval=$module->getNextValue($mysoc, $commande);
+						$bom->type=0;
+						$nextval=$module->getNextValue($mysoc, $bom);
                         if ("$nextval" != $langs->trans("NotAvailable")) {  // Keep " on nextval
                             $htmltooltip.=''.$langs->trans("NextValue").': ';
                             if ($nextval) {
@@ -363,7 +319,7 @@ print "</table><br>\n";
  * Document templates generators
  */
 
-print load_fiche_titre($langs->trans("OrdersModelModule"), '', '');
+print load_fiche_titre($langs->trans("BOMsModelModule"), '', '');
 
 // Load array def with activated templates
 $def = array();
@@ -405,7 +361,7 @@ foreach ($dirmodels as $reldir)
 {
     foreach (array('','/doc') as $valdir)
     {
-    	$dir = dol_buildpath($reldir."core/modules/commande".$valdir);
+    	$dir = dol_buildpath($reldir."core/modules/bom".$valdir);
 
         if (is_dir($dir))
         {
@@ -464,7 +420,7 @@ foreach ($dirmodels as $reldir)
 
 	                            // Default
 	                            print '<td class="center">';
-	                            if ($conf->global->COMMANDE_ADDON_PDF == $name)
+	                            if ($conf->global->BOM_ADDON_PDF == $name)
 	                            {
 	                                print img_picto($langs->trans("Default"), 'on');
 	                            }
@@ -488,7 +444,7 @@ foreach ($dirmodels as $reldir)
 					    		$htmltooltip.='<br>'.$langs->trans("MultiLanguage").': '.yn($module->option_multilang, 1, 1);
 					    		//$htmltooltip.='<br>'.$langs->trans("Discounts").': '.yn($module->option_escompte,1,1);
 					    		//$htmltooltip.='<br>'.$langs->trans("CreditNote").': '.yn($module->option_credit_note,1,1);
-					    		$htmltooltip.='<br>'.$langs->trans("WatermarkOnDraftOrders").': '.yn($module->option_draft_watermark, 1, 1);
+					    		$htmltooltip.='<br>'.$langs->trans("WatermarkOnDraftBOMs").': '.yn($module->option_draft_watermark, 1, 1);
 
 
 	                            print '<td class="center">';
@@ -540,10 +496,10 @@ $htmltext.='</i>';
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print '<input type="hidden" name="action" value="set_ORDER_FREE_TEXT">';
+print '<input type="hidden" name="action" value="set_BOM_FREE_TEXT">';
 print '<tr class="oddeven"><td colspan="2">';
-print $form->textwithpicto($langs->trans("FreeLegalTextOnOrders"), $langs->trans("AddCRIfTooLong").'<br><br>'.$htmltext, 1, 'help', '', 0, 2, 'freetexttooltip').'<br>';
-$variablename='ORDER_FREE_TEXT';
+print $form->textwithpicto($langs->trans("FreeLegalTextOnBOMs"), $langs->trans("AddCRIfTooLong").'<br><br>'.$htmltext, 1, 'help', '', 0, 2, 'freetexttooltip').'<br>';
+$variablename='BOM_FREE_TEXT';
 if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT))
 {
     print '<textarea name="'.$variablename.'" class="flat" cols="120">'.$conf->global->$variablename.'</textarea>';
@@ -563,96 +519,15 @@ print '</form>';
 
 print "<form method=\"post\" action=\"".$_SERVER["PHP_SELF"]."\">";
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print "<input type=\"hidden\" name=\"action\" value=\"set_COMMANDE_DRAFT_WATERMARK\">";
+print "<input type=\"hidden\" name=\"action\" value=\"set_BOM_DRAFT_WATERMARK\">";
 print '<tr class="oddeven"><td>';
-print $form->textwithpicto($langs->trans("WatermarkOnDraftOrders"), $htmltext, 1, 'help', '', 0, 2, 'watermarktooltip').'<br>';
+print $form->textwithpicto($langs->trans("WatermarkOnDraftBOMs"), $htmltext, 1, 'help', '', 0, 2, 'watermarktooltip').'<br>';
 print '</td><td>';
-print '<input class="flat minwidth200" type="text" name="COMMANDE_DRAFT_WATERMARK" value="'.$conf->global->COMMANDE_DRAFT_WATERMARK.'">';
+print '<input class="flat minwidth200" type="text" name="BOM_DRAFT_WATERMARK" value="'.$conf->global->BOM_DRAFT_WATERMARK.'">';
 print '</td><td class="right">';
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 print "</td></tr>\n";
 print '</form>';
-
-// Shippable Icon in List
-/* Kept as hidden feature for the moment, result seems bugged.
-Whet is definition of "shippable" according to all different STOCK_CALCULATE_... options ?
-
-print '<tr class="oddeven">';
-print '<td>'.$langs->trans("ShippableOrderIconInList").'</td>';
-print '<td>&nbsp</td>';
-print '<td class="center">';
-if (!empty($conf->global->SHIPPABLE_ORDER_ICON_IN_LIST)) {
-    print '<a href="'.$_SERVER['PHP_SELF'].'?action=setshippableiconinlist&value=0">';
-    print img_picto($langs->trans("Activated"),'switch_on');
-} else {
-    print '<a href="'.$_SERVER['PHP_SELF'].'?action=setshippableiconinlist&value=1">';
-    print img_picto($langs->trans("Disabled"),'switch_off');
-}
-print '</a></td>';
-print '</tr>';
-
-/* Seems to be not so used. So kept hidden for the moment to avoid dangerous options inflation.
-/*
-// Ask for payment bank during order
-if ($conf->banque->enabled)
-{
-
-    print '<tr class="oddeven"><td>';
-    print $langs->trans("BANK_ASK_PAYMENT_BANK_DURING_ORDER").'</td><td>&nbsp</td><td class="center">';
-    if (! empty($conf->use_javascript_ajax))
-    {
-        print ajax_constantonoff('BANK_ASK_PAYMENT_BANK_DURING_ORDER');
-    }
-    else
-    {
-        if (empty($conf->global->BANK_ASK_PAYMENT_BANK_DURING_ORDER))
-        {
-            print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_BANK_ASK_PAYMENT_BANK_DURING_ORDER&amp;value=1">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
-        }
-        else
-        {
-            print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_BANK_ASK_PAYMENT_BANK_DURING_ORDER&amp;value=0">'.img_picto($langs->trans("Enabled"),'switch_on').'</a>';
-        }
-    }
-    print '</td></tr>';
-}
-else
-{
-
-    print '<tr class="oddeven"><td>';
-    print $langs->trans("BANK_ASK_PAYMENT_BANK_DURING_ORDER").'</td><td>&nbsp;</td><td class="center">'.$langs->trans('NotAvailable').'</td></tr>';
-}
-
-// Ask for warehouse during order
-if ($conf->stock->enabled)
-{
-
-    print '<tr class="oddeven"><td>';
-    print $langs->trans("WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER").'</td><td>&nbsp</td><td class="center">';
-    if (! empty($conf->use_javascript_ajax))
-    {
-        print ajax_constantonoff('WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER');
-    }
-    else
-    {
-        if (empty($conf->global->WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER))
-        {
-            print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER&amp;value=1">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
-        }
-        else
-        {
-            print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER&amp;value=0">'.img_picto($langs->trans("Enabled"),'switch_on').'</a>';
-        }
-    }
-    print '</td></tr>';
-}
-else
-{
-
-    print '<tr class="oddeven"><td>';
-    print $langs->trans("WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER").'</td><td>&nbsp;</td><td class="center">'.$langs->trans('NotAvailable').'</td></tr>';
-}
-*/
 
 print '</table>';
 print '<br>';
@@ -661,7 +536,7 @@ print '<br>';
 /*
  * Notifications
  */
-
+/*
 print load_fiche_titre($langs->trans("Notifications"), '', '');
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
@@ -676,6 +551,7 @@ print '</td><td class="right">';
 print "</td></tr>\n";
 
 print '</table>';
+*/
 
 // End of page
 llxFooter();

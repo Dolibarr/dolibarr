@@ -20,18 +20,18 @@
  */
 
 /**
- * \file       htdocs/core/modules/commande/mod_commande_saphir.php
- * \ingroup    commande
- * \brief      Fichier contenant la classe du modele de numerotation de reference de commande Saphir
+ * \file       htdocs/core/modules/bom/mod_bom_advanced.php
+ * \ingroup    bom
+ * \brief      Fichier contenant la classe du modele de numerotation de reference de bom advanced
  */
 
-require_once DOL_DOCUMENT_ROOT .'/core/modules/commande/modules_commande.php';
+require_once DOL_DOCUMENT_ROOT .'/core/modules/bom/modules_bom.php';
 
 
 /**
- *	Class to manage customer order numbering rules Saphir
+ *	Class to manage customer Bom numbering rules advanced
  */
-class mod_commande_saphir extends ModeleNumRefCommandes
+class mod_bom_advanced extends ModeleNumRefboms
 {
 	/**
      * Dolibarr version of the loaded document
@@ -47,7 +47,7 @@ class mod_commande_saphir extends ModeleNumRefCommandes
 	/**
 	 * @var string name
 	 */
-	public $name='Saphir';
+	public $name='advanced';
 
 
     /**
@@ -67,18 +67,18 @@ class mod_commande_saphir extends ModeleNumRefCommandes
 		$texte.= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 		$texte.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		$texte.= '<input type="hidden" name="action" value="updateMask">';
-		$texte.= '<input type="hidden" name="maskconstorder" value="COMMANDE_SAPHIR_MASK">';
-		$texte.= '<table class="nobordernopadding" width="100%">';
+		$texte.= '<input type="hidden" name="maskconstBom" value="BOM_ADVANCED_MASK">';
+		$texte.= '<table class="nobBomnopadding" width="100%">';
 
-		$tooltip=$langs->trans("GenericMaskCodes", $langs->transnoentities("Order"), $langs->transnoentities("Order"));
+		$tooltip=$langs->trans("GenericMaskCodes", $langs->transnoentities("Bom"), $langs->transnoentities("Bom"));
 		$tooltip.=$langs->trans("GenericMaskCodes2");
 		$tooltip.=$langs->trans("GenericMaskCodes3");
-		$tooltip.=$langs->trans("GenericMaskCodes4a", $langs->transnoentities("Order"), $langs->transnoentities("Order"));
+		$tooltip.=$langs->trans("GenericMaskCodes4a", $langs->transnoentities("Bom"), $langs->transnoentities("Bom"));
 		$tooltip.=$langs->trans("GenericMaskCodes5");
 
 		// Parametrage du prefix
 		$texte.= '<tr><td>'.$langs->trans("Mask").':</td>';
-		$texte.= '<td align="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskorder" value="'.$conf->global->COMMANDE_SAPHIR_MASK.'">', $tooltip, 1, 1).'</td>';
+		$texte.= '<td align="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskBom" value="'.$conf->global->BOM_ADVANCED_MASK.'">', $tooltip, 1, 1).'</td>';
 
 		$texte.= '<td align="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
 
@@ -128,7 +128,7 @@ class mod_commande_saphir extends ModeleNumRefCommandes
 		require_once DOL_DOCUMENT_ROOT .'/core/lib/functions2.lib.php';
 
 		// We get cursor rule
-		$mask=$conf->global->COMMANDE_SAPHIR_MASK;
+		$mask=$conf->global->BOM_ADVANCED_MASK;
 
 		if (! $mask)
 		{
@@ -136,9 +136,9 @@ class mod_commande_saphir extends ModeleNumRefCommandes
 			return 0;
 		}
 
-		$date = ($object->date_commande ? $object->date_commande : $object->date);
+		$date = ($object->date_bom ? $object->date_bom : $object->date);
 
-		$numFinal=get_next_value($db, $mask, 'commande', 'ref', '', $objsoc, $date);
+		$numFinal=get_next_value($db, $mask, 'bom', 'ref', '', $objsoc, $date);
 
 		return  $numFinal;
 	}
@@ -152,7 +152,7 @@ class mod_commande_saphir extends ModeleNumRefCommandes
 	 *  @param	string		$objforref	Object for number to search
 	 *  @return string      			Next free value
      */
-    public function commande_get_num($objsoc, $objforref)
+    public function bom_get_num($objsoc, $objforref)
     {
         // phpcs:enable
         return $this->getNextValue($objsoc, $objforref);

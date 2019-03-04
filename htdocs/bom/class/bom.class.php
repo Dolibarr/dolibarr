@@ -1,6 +1,5 @@
 <?php
-/* Copyright (C) 2017  Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) ---Put here your own copyright and developer email---
+/* Copyright (C) 2019  Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +18,7 @@
 /**
  * \file        class/bom.class.php
  * \ingroup     bom
- * \brief       This file is a CRUD class file for BillOfMaterials (Create/Read/Update/Delete)
+ * \brief       This file is a CRUD class file for BOM (Create/Read/Update/Delete)
  */
 
 // Put here all includes required by your class file
@@ -28,9 +27,9 @@ require_once DOL_DOCUMENT_ROOT . '/core/class/commonobject.class.php';
 //require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 
 /**
- * Class for BillOfMaterials
+ * Class for BOM
  */
-class BillOfMaterials extends CommonObject
+class BOM extends CommonObject
 {
 	/**
 	 * @var string ID to identify managed object

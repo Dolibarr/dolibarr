@@ -18,16 +18,16 @@
  */
 
 /**
- *  \file       htdocs/core/modules/commande/mod_commande_marbre.php
- *  \ingroup    commande
- *  \brief      File of class to manage customer order numbering rules Marbre
+ *  \file       htdocs/core/modules/bom/mod_bom_standard.php
+ *  \ingroup    bom
+ *  \brief      File of class to manage customer order numbering rules standard
  */
-require_once DOL_DOCUMENT_ROOT .'/core/modules/commande/modules_commande.php';
+require_once DOL_DOCUMENT_ROOT .'/core/modules/bom/modules_bom.php';
 
 /**
- *	Class to manage customer order numbering rules Marbre
+ *	Class to manage customer order numbering rules standard
  */
-class mod_commande_marbre extends ModeleNumRefCommandes
+class mod_bom_standard extends ModeleNumRefboms
 {
 	/**
      * Dolibarr version of the loaded document
@@ -35,7 +35,7 @@ class mod_commande_marbre extends ModeleNumRefCommandes
      */
 	public $version = 'dolibarr';		// 'development', 'experimental', 'dolibarr'
 
-	public $prefix='CO';
+	public $prefix='BOM';
 
 	/**
 	 * @var string Error code (or message)
@@ -45,7 +45,7 @@ class mod_commande_marbre extends ModeleNumRefCommandes
 	/**
 	 * @var string name
 	 */
-	public $name='Marbre';
+	public $name='standard';
 
 
     /**
@@ -85,7 +85,7 @@ class mod_commande_marbre extends ModeleNumRefCommandes
 
 		$posindice=8;
 		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
-		$sql.= " FROM ".MAIN_DB_PREFIX."commande";
+		$sql.= " FROM ".MAIN_DB_PREFIX."bom";
 		$sql.= " WHERE ref LIKE '".$db->escape($this->prefix)."____-%'";
 		$sql.= " AND entity = ".$conf->entity;
 
@@ -119,7 +119,7 @@ class mod_commande_marbre extends ModeleNumRefCommandes
 		// D'abord on recupere la valeur max
 		$posindice=8;
 		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
-		$sql.= " FROM ".MAIN_DB_PREFIX."commande";
+		$sql.= " FROM ".MAIN_DB_PREFIX."bom_bom";
 		$sql.= " WHERE ref LIKE '".$db->escape($this->prefix)."____-%'";
 		$sql.= " AND entity = ".$conf->entity;
 
@@ -132,7 +132,7 @@ class mod_commande_marbre extends ModeleNumRefCommandes
 		}
 		else
 		{
-			dol_syslog("mod_commande_marbre::getNextValue", LOG_DEBUG);
+			dol_syslog("mod_bom_standard::getNextValue", LOG_DEBUG);
 			return -1;
 		}
 
@@ -143,7 +143,7 @@ class mod_commande_marbre extends ModeleNumRefCommandes
     	if ($max >= (pow(10, 4) - 1)) $num=$max+1;	// If counter > 9999, we do not format on 4 chars, we take number as it is
     	else $num = sprintf("%04s", $max+1);
 
-		dol_syslog("mod_commande_marbre::getNextValue return ".$this->prefix.$yymm."-".$num);
+		dol_syslog("mod_bom_standard::getNextValue return ".$this->prefix.$yymm."-".$num);
 		return $this->prefix.$yymm."-".$num;
 	}
 
@@ -156,7 +156,7 @@ class mod_commande_marbre extends ModeleNumRefCommandes
 	 * 	@param	string		$objforref	Object for number to search
 	 *  @return string      			Next free value
 	 */
-	public function commande_get_num($objsoc, $objforref)
+	public function bom_get_num($objsoc, $objforref)
 	{
         // phpcs:enable
 		return $this->getNextValue($objsoc, $objforref);

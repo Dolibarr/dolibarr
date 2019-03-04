@@ -46,7 +46,7 @@ class modBom extends DolibarrModules
 
 		// Id for module (must be unique).
 		// Use here a free id (See in Home -> System information -> Dolibarr for list of used modules id).
-		$this->numero = 650;		// TODO Go on page https://wiki.dolibarr.org/index.php/List_of_modules_id to reserve id number for your module
+		$this->numero = 650;
 		// Key text used to identify module (for permissions, menus, etc...)
 		$this->rights_class = 'bom';
 
@@ -100,7 +100,7 @@ class modBom extends DolibarrModules
 		$this->dirs = array("/bom/temp");
 
 		// Config pages. Put here list of php page, stored into bom/admin directory, to use to setup module.
-		$this->config_page_url = array("setup.php@bom");
+		$this->config_page_url = array("bom.php");
 
 		// Dependencies
 		$this->hidden = false;			// A condition to hide module
@@ -121,7 +121,9 @@ class modBom extends DolibarrModules
 		//                             1=>array('BILLOFMATERIALS_MYNEWCONST2','chaine','myvalue','This is another constant to add',0, 'current', 1)
 		// );
 		$this->const = array(
-			//1=>array('BILLOFMATERIALS_MYCONSTANT', 'chaine', 'avalue', 'This is a constant to add', 1, 'allentities', 1)
+			1=>array('BOM_ADDON_PDF', 'chaine', 'avalue', 'Name of PDF model of BOM', 0),
+		    2=>array('BOM_ADDON', 'chaine', 'mod_bom_standard', 'Name of numbering rules of BOM', 0),
+		    3=>array('BOM_ADDON_PDF_ODT_PATH', 'chaine', 'DOL_DATA_ROOT/doctemplates/boms', '', 0)
 		);
 
 		// Some keys to add into the overwriting translation tables

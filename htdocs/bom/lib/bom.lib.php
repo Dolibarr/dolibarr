@@ -35,7 +35,7 @@ function bomAdminPrepareHead()
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = dol_buildpath("/bom/admin/setup.php", 1);
+	$head[$h][0] = DOL_URL_ROOT."/admin/bom.php";
 	$head[$h][1] = $langs->trans("Settings");
 	$head[$h][2] = 'settings';
 	$h++;

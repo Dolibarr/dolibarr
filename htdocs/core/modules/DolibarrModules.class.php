@@ -977,7 +977,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
      *
      * @return int Error count (0 if OK)
      */
-    private function _active()
+    protected function _active()
     {
         global $conf, $user;
 
@@ -1018,7 +1018,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
      *
      * @return int Error count (0 if OK)
      */
-    private function _unactive()
+    protected function _unactive()
     {
         global $conf;
 
@@ -1048,7 +1048,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
      * @param  string $reldir Relative directory where to scan files
      * @return int             <=0 if KO, >0 if OK
      */
-    private function _load_tables($reldir)
+    protected function _load_tables($reldir)
     {
         // phpcs:enable
         global $conf;
