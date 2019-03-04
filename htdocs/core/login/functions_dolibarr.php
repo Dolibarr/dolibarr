@@ -80,7 +80,7 @@ function check_user_password_dolibarr($usertotest,$passwordtotest,$entitytotest=
 				if (! empty($conf->global->DATABASE_PWD_ENCRYPTED)) $cryptType=$conf->global->DATABASE_PWD_ENCRYPTED;
 
 				// By default, we used MD5
-				if (! in_array($cryptType,array('md5'))) $cryptType='md5';
+				if (! in_array($cryptType, array('md5'))) $cryptType='md5';
 				// Check crypted password according to crypt algorithm
 				if ($cryptType == 'md5')
 				{
@@ -109,8 +109,8 @@ function check_user_password_dolibarr($usertotest,$passwordtotest,$entitytotest=
 				}
 				else
 				{
-					dol_syslog("functions_dolibarr::check_user_password_dolibarr Authentification ko bad password for '".$usertotest."'");
-					sleep(2);      // Anti brut force protection
+				    sleep(2);      // Anti brut force protection
+				    dol_syslog("functions_dolibarr::check_user_password_dolibarr Authentification ko bad password for '".$usertotest."', cryptType=".$cryptType);
 
 					// Load translation files required by the page
                     $langs->loadLangs(array('main', 'errors'));
