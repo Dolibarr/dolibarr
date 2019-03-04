@@ -246,7 +246,11 @@ function Floors(){
 }
 
 function FreeZone(){
-	$.colorbox({href:"freezone.php?place="+place, onClosed: function () { Refresh(); },width:"80%", height:"30%", transition:"none", iframe:"true", title:"<?php echo $langs->trans("FreeZone");?>"});
+	$.colorbox({href:"freezone.php?action=freezone&place="+place, onClosed: function () { Refresh(); },width:"80%", height:"30%", transition:"none", iframe:"true", title:"<?php echo $langs->trans("FreeZone");?>"});
+}
+
+function TakeposOrderNotes(){
+	$.colorbox({href:"freezone.php?action=addnote&place="+place+"&idline="+selectedline, onClosed: function () { Refresh(); },width:"80%", height:"30%", transition:"none", iframe:"true", title:"<?php echo $langs->trans("OrderNotes");?>"});
 }
 
 function Refresh(){
@@ -456,6 +460,10 @@ if($conf->global->TAKEPOS_BAR_RESTAURANT){
 	if ($conf->global->TAKEPOS_BAR_RESTAURANT){
 		if ($conf->global->TAKEPOSCONNECTOR) $menus[$r++]=array('title'=>$langs->trans("Receipt"),'action'=>'TakeposPrinting(placeid);');
 		else $menus[$r++]=array('title'=>$langs->trans("Receipt"),'action'=>'Print(placeid);');
+	}
+	if ($conf->global->TAKEPOSCONNECTOR && $conf->global->TAKEPOS_ORDER_NOTES==1){
+		$menus[$r++]=array('title'=>$langs->trans("OrderNotes"),
+		'action'=>'TakeposOrderNotes();');
 	}
 }
 
