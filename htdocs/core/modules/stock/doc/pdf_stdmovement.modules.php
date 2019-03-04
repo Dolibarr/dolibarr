@@ -179,7 +179,7 @@ class pdf_stdmovement extends ModelePDFMovement
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Function to build a document on disk using the generic odt module.
 	 *
@@ -191,7 +191,7 @@ class pdf_stdmovement extends ModelePDFMovement
 	 *  @param		int			$hideref			Do not show ref
 	 *	@return		int         					1 if OK, <=0 if KO
 	 */
-	function write_file($object, $outputlangs, $srctemplatepath, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
+	public function write_file($object, $outputlangs, $srctemplatepath, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
         // phpcs:enable
 		global $user,$langs,$conf,$mysoc,$db,$hookmanager;
@@ -203,9 +203,9 @@ class pdf_stdmovement extends ModelePDFMovement
 		// Load traductions files requiredby by page
 		$outputlangs->loadLangs(array("main", "dict", "companies", "bills", "stocks", "orders", "deliveries"));
 
-	/**
-	 * TODO: get from object
-	 */
+        /**
+         * TODO: get from object
+         */
 
 		$id=GETPOST('id', 'int');
 		$ref = GETPOST('ref', 'alpha');
@@ -327,9 +327,9 @@ class pdf_stdmovement extends ModelePDFMovement
 		$resql = $db->query($sql);
 		$nbtotalofrecords = $db->num_rows($result);
 
-	/*
-	 * END TODO
-	 **/
+        /*
+         * END TODO
+         **/
 
 		//$nblignes = count($object->lines);
 
@@ -822,7 +822,7 @@ class pdf_stdmovement extends ModelePDFMovement
 	 *   @param		string		$currency		Currency code
 	 *   @return	void
 	 */
-	function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop = 0, $hidebottom = 0, $currency = '')
+	private function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop = 0, $hidebottom = 0, $currency = '')
 	{
 	    global $conf;
 
@@ -948,7 +948,7 @@ class pdf_stdmovement extends ModelePDFMovement
 	 *  @param	string		$titlekey		Translation key to show as title of document
 	 *  @return	void
 	 */
-	function _pagehead(&$pdf, $object, $showaddress, $outputlangs, $titlekey = "")
+	private function _pagehead(&$pdf, $object, $showaddress, $outputlangs, $titlekey = "")
 	{
 	    global $conf,$langs,$db,$hookmanager;
 
@@ -1168,15 +1168,15 @@ class pdf_stdmovement extends ModelePDFMovement
 	}
 
 	/**
-	 *   	Show footer of page. Need this->emetteur object
+	 *  Show footer of page. Need this->emetteur object
 	 *
-	 *   	@param	TCPDF		$pdf     			PDF
-	 * 		@param	Object		$object				Object to show
-	 *      @param	Translate	$outputlangs		Object lang for output
-	 *      @param	int			$hidefreetext		1=Hide free text
-	 *      @return	int								Return height of bottom margin including footer text
+	 *  @param	TCPDF		$pdf     			PDF
+	 *  @param	Object		$object				Object to show
+	 *  @param	Translate	$outputlangs		Object lang for output
+	 *  @param	int			$hidefreetext		1=Hide free text
+	 *  @return	int								Return height of bottom margin including footer text
 	 */
-	function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
+	private function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
 	{
 	    global $conf;
 	    $showdetails=$conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;

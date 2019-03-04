@@ -31,7 +31,7 @@ class Status
      *
      * @return array
      */
-    function index()
+    public function index()
     {
         global $conf;
 

@@ -62,7 +62,7 @@ class mod_supplier_proposal_saphir extends ModeleNumRefSupplierProposal
      *
      *  @return     string      Texte descripif
      */
-	function info()
+    public function info()
     {
     	global $conf, $langs;
 
@@ -102,7 +102,7 @@ class mod_supplier_proposal_saphir extends ModeleNumRefSupplierProposal
      *
      *  @return     string      Example
      */
-    function getExample()
+    public function getExample()
     {
      	global $conf,$langs,$mysoc;
 
@@ -125,7 +125,7 @@ class mod_supplier_proposal_saphir extends ModeleNumRefSupplierProposal
 	 * 	@param	Propal		$supplier_proposal	Object supplier_proposal
 	 *  @return string      					Value if OK, 0 if KO
 	 */
-	function getNextValue($objsoc, $supplier_proposal)
+	public function getNextValue($objsoc, $supplier_proposal)
 	{
 		global $db,$conf;
 

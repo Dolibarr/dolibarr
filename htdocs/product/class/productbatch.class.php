@@ -57,7 +57,7 @@ class Productbatch extends CommonObject
      *
      *  @param	DoliDb		$db      Database handler
      */
-    function __construct($db)
+    public function __construct($db)
     {
         $this->db = $db;
     }
@@ -70,7 +70,7 @@ class Productbatch extends CommonObject
      *  @param  int		$notrigger   0=launch triggers after, 1=disable triggers
      *  @return int      		   	 <0 if KO, Id of created object if OK
      */
-    function create($user, $notrigger = 0)
+    public function create($user, $notrigger = 0)
     {
 		global $conf, $langs;
 		$error=0;
@@ -142,7 +142,7 @@ class Productbatch extends CommonObject
      *  @param	int		$id		Id object
      *  @return int          	<0 if KO, >0 if OK
      */
-    function fetch($id)
+    public function fetch($id)
     {
 		global $langs;
 		$sql = "SELECT";
@@ -201,7 +201,7 @@ class Productbatch extends CommonObject
      *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
      *  @return int     		   	 <0 if KO, >0 if OK
      */
-    function update($user = null, $notrigger = 0)
+    public function update($user = null, $notrigger = 0)
     {
     	global $conf, $langs;
 		$error=0;
@@ -262,17 +262,17 @@ class Productbatch extends CommonObject
 			$this->db->commit();
 			return 1;
 		}
-	}
+    }
 
- 	/**
-	 *  Delete object in database
-	 *
-     *	@param  User	$user        User that deletes
+    /**
+     *  Delete object in database
+     *
+     *  @param  User	$user        User that deletes
      *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
-	 *  @return	int					 <0 if KO, >0 if OK
-	 */
-	function delete($user, $notrigger = 0)
-	{
+     *  @return	int					 <0 if KO, >0 if OK
+     */
+    public function delete($user, $notrigger = 0)
+    {
 		global $conf, $langs;
 		$error=0;
 
@@ -330,7 +330,7 @@ class Productbatch extends CommonObject
 	 *	@param	int		$fromid     Id of object to clone
 	 * 	@return	int					New id of clone
 	 */
-	function createFromClone($fromid)
+	public function createFromClone($fromid)
 	{
 		global $user,$langs;
 
@@ -387,7 +387,7 @@ class Productbatch extends CommonObject
 	 *
 	 *	@return	void
 	 */
-	function initAsSpecimen()
+	public function initAsSpecimen()
 	{
 		$this->id=0;
 
@@ -421,7 +421,7 @@ class Productbatch extends CommonObject
      *  @param	string		$batch_number   	batch number for object
      *  @return int          					<0 if KO, >0 if OK
      */
-    function find($fk_product_stock = 0, $eatby = '', $sellby = '', $batch_number = '')
+    public function find($fk_product_stock = 0, $eatby = '', $sellby = '', $batch_number = '')
     {
     	global $langs;
 		$where = array();
@@ -511,10 +511,9 @@ class Productbatch extends CommonObject
 
 		dol_syslog("productbatch::findAll", LOG_DEBUG);
 		$resql=$db->query($sql);
-		if ($resql)
-        {
-			$num = $db->num_rows($resql);
-			$i=0;
+        if ($resql) {
+            $num = $db->num_rows($resql);
+            $i=0;
             while ($i < $num)
             {
                 $obj = $db->fetch_object($resql);
@@ -539,7 +538,7 @@ class Productbatch extends CommonObject
         }
         else
         {
-      	    $error="Error ".$db->lasterror();
+            $error="Error ".$db->lasterror();
             return -1;
         }
     }

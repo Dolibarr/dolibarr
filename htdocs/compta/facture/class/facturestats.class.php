@@ -32,17 +32,17 @@ include_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
  */
 class FactureStats extends Stats
 {
-    var $socid;
-    var $userid;
+    public $socid;
+    public $userid;
 
     /**
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element;
-	
-    var $from;
-    var $field;
-    var $where;
+
+    public $from;
+    public $field;
+    public $where;
 
 
 	/**
@@ -53,7 +53,7 @@ class FactureStats extends Stats
 	 * 	@param 	string		$mode	   	Option ('customer', 'supplier')
      * 	@param	int			$userid    	Id user for filter (creation user)
 	 */
-	function __construct($db, $socid, $mode, $userid = 0)
+	public function __construct($db, $socid, $mode, $userid = 0)
 	{
 		global $user, $conf;
 
@@ -100,7 +100,7 @@ class FactureStats extends Stats
      *	@param	int		$format		0=Label of absiss is a translated text, 1=Label of absiss is month number, 2=Label of absiss is first letter of month
 	 *	@return	array				Array of values
 	 */
-	function getNbByMonth($year, $format = 0)
+	public function getNbByMonth($year, $format = 0)
 	{
 		global $user;
 
@@ -123,7 +123,7 @@ class FactureStats extends Stats
 	 *
 	 *	@return		array	Array with number by year
 	 */
-	function getNbByYear()
+	public function getNbByYear()
 	{
 		global $user;
 
@@ -145,7 +145,7 @@ class FactureStats extends Stats
      *	@param	int		$format		0=Label of absiss is a translated text, 1=Label of absiss is month number, 2=Label of absiss is first letter of month
 	 *	@return	array				Array with amount by month
 	 */
-	function getAmountByMonth($year, $format = 0)
+	public function getAmountByMonth($year, $format = 0)
 	{
 		global $user;
 
@@ -168,7 +168,7 @@ class FactureStats extends Stats
 	 *	@param	int		$year	Year to scan
 	 *	@return	array			Array of values
 	 */
-	function getAverageByMonth($year)
+	public function getAverageByMonth($year)
 	{
 		global $user;
 
@@ -188,7 +188,7 @@ class FactureStats extends Stats
 	 *
 	 *	@return	array	Array of values
 	 */
-	function getAllByYear()
+	public function getAllByYear()
 	{
 		global $user;
 
@@ -208,7 +208,7 @@ class FactureStats extends Stats
 	 *	@param	int		$year	Year to scan
 	 *	@return	array	Array of values
 	 */
-	function getAllByProduct($year)
+	public function getAllByProduct($year)
 	{
 		global $user;
 

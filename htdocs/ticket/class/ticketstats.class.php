@@ -30,9 +30,9 @@ require_once 'ticket.class.php';
 class TicketStats extends Stats
 {
     /**
-	 * @var string Name of table without prefix where object is stored
-	 */
-	public $table_element;
+     * @var string Name of table without prefix where object is stored
+     */
+    public $table_element;
 
     public $socid;
     public $userid;

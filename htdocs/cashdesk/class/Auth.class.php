@@ -60,7 +60,7 @@ class Auth
 	 * @param 	string	$aPasswd	Password
 	 * @return	void
 	 */
-	function passwd($aPasswd)
+	public function passwd($aPasswd)
 	{
 		$this->passwd = $aPasswd;
 	}

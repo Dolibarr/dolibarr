@@ -87,7 +87,7 @@ class BuildDocTest extends PHPUnit_Framework_TestCase
      *
      * @return BuildDocTest
      */
-    function __construct()
+    public function __construct()
     {
         parent::__construct();
 

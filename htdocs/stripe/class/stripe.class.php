@@ -91,17 +91,14 @@ class Stripe extends CommonObject
 
 		dol_syslog(get_class($this) . "::fetch", LOG_DEBUG);
 		$result = $this->db->query($sql);
-    	if ($result)
-		{
-			if ($this->db->num_rows($result))
-			{
+    	if ($result) {
+			if ($this->db->num_rows($result)) {
 				$obj = $this->db->fetch_object($result);
     			$tokenstring=$obj->tokenstring;
 
     			$tmparray = dol_json_decode($tokenstring);
     			$key = $tmparray->stripe_user_id;
-    		}
-    		else {
+    		} else {
     			$tokenstring='';
     		}
     	}
@@ -311,8 +308,7 @@ class Stripe extends CommonObject
                 $fee = round(($object->total_ttc * ($conf->global->STRIPE_APPLICATION_FEE_PERCENT / 100) + $conf->global->STRIPE_APPLICATION_FEE) * 100);
 			    if ($fee >= ($conf->global->STRIPE_APPLICATION_FEE_MAXIMAL * 100) && $conf->global->STRIPE_APPLICATION_FEE_MAXIMAL>$conf->global->STRIPE_APPLICATION_FEE_MINIMAL) {
 					$fee = round($conf->global->STRIPE_APPLICATION_FEE_MAXIMAL * 100);
-				}
-                elseif ($fee < ($conf->global->STRIPE_APPLICATION_FEE_MINIMAL * 100)) {
+				} elseif ($fee < ($conf->global->STRIPE_APPLICATION_FEE_MINIMAL * 100)) {
 					$fee = round($conf->global->STRIPE_APPLICATION_FEE_MINIMAL * 100);
 				}
 

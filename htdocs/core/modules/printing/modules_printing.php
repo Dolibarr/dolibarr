@@ -47,7 +47,7 @@ class PrintingDriver
      *
      *  @param      DoliDB      $db      Database handler
      */
-    function __construct($db)
+    public function __construct($db)
     {
         $this->db = $db;
     }
@@ -59,7 +59,7 @@ class PrintingDriver
      *  @param  integer  $maxfilenamelength  Max length of value to show
      *  @return array                       List of drivers
     */
-    static function listDrivers($db, $maxfilenamelength = 0)
+    public static function listDrivers($db, $maxfilenamelength = 0)
     {
         global $conf;
 
@@ -80,7 +80,7 @@ class PrintingDriver
      *
      *  @return     string      Return translation of key PrintingModuleDescXXX where XXX is module name, or $this->desc if not exists
      */
-    function getDesc()
+    public function getDesc()
     {
         global $langs;
         $langs->load("printing");

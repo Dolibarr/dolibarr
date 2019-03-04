@@ -59,7 +59,7 @@ class CSMSFile
 	 *	@param 	int		$priority			Priority
 	 *	@param 	int		$class				Class
 	 */
-	function __construct($to, $from, $msg, $deliveryreceipt = 0, $deferred = 0, $priority = 3, $class = 1)
+	public function __construct($to, $from, $msg, $deliveryreceipt = 0, $deferred = 0, $priority = 3, $class = 1)
 	{
 		global $conf;
 
@@ -94,7 +94,7 @@ class CSMSFile
 	 *
 	 * @return    boolean     True if sms sent, false otherwise
 	 */
-	function sendfile()
+	public function sendfile()
 	{
 		global $conf;
 
@@ -195,17 +195,17 @@ class CSMSFile
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
-	/**
-	 *  Write content of a SendSms request into a dump file (mode = all)
-	 *  Used for debugging.
-	 *
-	 *  @return	void
-	 */
-	function dump_sms()
-	{
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+    /**
+     *  Write content of a SendSms request into a dump file (mode = all)
+     *  Used for debugging.
+     *
+     *  @return	void
+     */
+    public function dump_sms()
+    {
         // phpcs:enable
-		global $conf,$dolibarr_main_data_root;
+        global $conf,$dolibarr_main_data_root;
 
 		if (@is_writeable($dolibarr_main_data_root))	// Avoid fatal error on fopen with open_basedir
 		{
@@ -226,7 +226,7 @@ class CSMSFile
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *  Write content of a SendSms result into a dump file (mode = all)
      *  Used for debugging.
@@ -234,7 +234,7 @@ class CSMSFile
      *  @param	int		$result		Result of sms sending
      *  @return	void
      */
-    function dump_sms_result($result)
+    public function dump_sms_result($result)
     {
         // phpcs:enable
         global $conf,$dolibarr_main_data_root;

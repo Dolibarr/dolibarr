@@ -80,7 +80,9 @@ input {
 	padding-left: 5px;
 }
 select {
-	padding: 5px;
+	padding-top: 4px;
+	padding-right: 4px;
+	padding-bottom: 3px;
 	padding-left: 2px;
 }
 input, select {
@@ -512,6 +514,9 @@ select.flat.selectlimit {
 .nomarginleft {
 	margin-left: 0px !important;
 }
+.marginbottomonly {
+	margin-bottom: 10px !important;
+}
 .selectlimit, .selectlimit:focus {
     border-left: none !important;
     border-top: none !important;
@@ -750,6 +755,7 @@ select.selectarrowonleft option {
 	.minwidth50imp  { min-width: 50px !important; }
     .minwidth75imp  { min-width: 75px !important; }
     .minwidth100imp { min-width: 100px !important; }
+    .minwidth150imp { min-width: 150px !important; }
     .minwidth200imp { min-width: 200px !important; }
     .minwidth300imp { min-width: 300px !important; }
     .minwidth400imp { min-width: 300px !important; }
@@ -763,8 +769,9 @@ select.selectarrowonleft option {
 	.minwidth50imp  { min-width: 50px !important; }
     .minwidth75imp  { min-width: 70px !important; }
     .minwidth100imp { min-width: 80px !important; }
-    .minwidth200imp { min-width: 100px !important; }
-    .minwidth300imp { min-width: 100px !important; }
+    .minwidth150imp { min-width: 100px !important; }
+    .minwidth200imp { min-width: 110px !important; }
+    .minwidth300imp { min-width: 120px !important; }
     .minwidth400imp { min-width: 150px !important; }
     .minwidth500imp { min-width: 250px !important; }
 }
@@ -812,16 +819,10 @@ select.selectarrowonleft option {
 
 	select {
 		padding-top: 4px;
-		padding-bottom: 4px;
+		padding-bottom: 5px;
 	}
 	input, input[type=text], input[type=password], select, textarea     {
 		min-width: 20px;
-		font-size: <?php print is_numeric($fontsize)?($fontsize+3).'px':$fontsize; ?>;
-    	/* min-height: 1.4em; */
-    	/* line-height: 1.4em; */
-    	/* padding: .4em .1em; */
-    	/* border-bottom: 1px solid #BBB; */
-    	/* max-width: inherit; why this ? */
     }
     input[type=text], input[type=password] {
 		max-width: 180px;
@@ -843,9 +844,10 @@ select.selectarrowonleft option {
     .maxwidth400onsmartphone { max-width: 400px; }
 	.minwidth50imp  { min-width: 50px !important; }
 	.minwidth75imp  { min-width: 60px !important; }
-    .minwidth100imp { min-width: 60px !important; }
-    .minwidth200imp { min-width: 60px !important; }
-    .minwidth300imp { min-width: 100px !important; }
+    .minwidth100imp { min-width: 80px !important; }
+    .minwidth150imp { min-width: 90px !important; }
+    .minwidth200imp { min-width: 100px !important; }
+    .minwidth300imp { min-width: 120px !important; }
     .minwidth400imp { min-width: 150px !important; }
     .minwidth500imp { min-width: 250px !important; }
     .titlefield { width: auto; }

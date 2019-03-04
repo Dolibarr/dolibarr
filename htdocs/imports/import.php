@@ -345,6 +345,7 @@ if ($step == 1 || ! $datatoimport)
 	print '<div class="opacitymedium">'.$langs->trans("SelectImportDataSet").'</div><br>';
 
 	// Affiche les modules d'imports
+	print '<div class="div-table-responsive-no-min">';		// You can use div-table-responsive-no-min if you dont need reserved height for your table
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans("Module").'</td>';
@@ -384,6 +385,7 @@ if ($step == 1 || ! $datatoimport)
 		print '<tr><td '.$bc[false].' colspan="3">'.$langs->trans("NoImportableData").'</td></tr>';
 	}
 	print '</table>';
+    print '</div>';
 
     dol_fiche_end();
 }
@@ -402,12 +404,12 @@ if ($step == 2 && $datatoimport)
 
     $head = import_prepare_head($param, 2);
 
-	dol_fiche_head($head, 'step2', $langs->trans("NewImport"), -1);
+	dol_fiche_head($head, 'step2', $langs->trans("NewImport"), -2);
 
 	print '<div class="underbanner clearboth"></div>';
 	print '<div class="fichecenter">';
 
-	print '<table width="100%" class="border">';
+	print '<table width="100%" class="border tableforfield">';
 
 	// Module
 	print '<tr><td class="titlefield">'.$langs->trans("Module").'</td>';
@@ -427,7 +429,7 @@ if ($step == 2 && $datatoimport)
 
 	print '</table>';
 
-	print '</div><br>';
+	print '</div>';
 
 	dol_fiche_end();
 
@@ -437,6 +439,8 @@ if ($step == 2 && $datatoimport)
 	print '<input type="hidden" name="max_file_size" value="'.$conf->maxfilesize.'">';
 
 	print '<span class="opacitymedium">'.$langs->trans("ChooseFormatOfFileToImport", img_picto('', 'filenew')).'</span><br><br>';
+
+	print '<div class="div-table-responsive-no-min">';		// You can use div-table-responsive-no-min if you dont need reserved height for your table
 	print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
 
 	$filetoimport='';
@@ -461,7 +465,10 @@ if ($step == 2 && $datatoimport)
 		print '</tr>';
 	}
 
-	print '</table></form>';
+	print '</table>';
+	print '</div>';
+
+	print '</form>';
 }
 
 
@@ -480,7 +487,7 @@ if ($step == 3 && $datatoimport)
 
     $head = import_prepare_head($param, 3);
 
-	dol_fiche_head($head, 'step3', $langs->trans("NewImport"), -1);
+	dol_fiche_head($head, 'step3', $langs->trans("NewImport"), -2);
 
 	/*
 	 * Confirm delete file
@@ -493,7 +500,7 @@ if ($step == 3 && $datatoimport)
 	print '<div class="underbanner clearboth"></div>';
 	print '<div class="fichecenter">';
 
-	print '<table width="100%" class="border">';
+	print '<table width="100%" class="border tableforfield">';
 
 	// Module
 	print '<tr><td class="titlefield">'.$langs->trans("Module").'</td>';
@@ -520,7 +527,7 @@ if ($step == 3 && $datatoimport)
 
 	print '<div class="underbanner clearboth"></div>';
 	print '<div class="fichecenter">';
-	print '<table width="100%" class="border">';
+	print '<table width="100%" class="border tableforfield">';
 	//print '<tr><td colspan="2"><b>'.$langs->trans("InformationOnSourceFile").'</b></td></tr>';
 
 	// Source file format
@@ -553,6 +560,7 @@ if ($step == 3 && $datatoimport)
 
 	print '<span class="opacitymedium">'.$langs->trans("ChooseFileToImport", img_picto('', 'filenew')).'</span><br><br>';
 
+	print '<div class="div-table-responsive-no-min">';		// You can use div-table-responsive-no-min if you dont need reserved height for your table
 	print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
 
 	$filetoimport='';
@@ -631,7 +639,10 @@ if ($step == 3 && $datatoimport)
 		}
 	}
 
-	print '</table></form>';
+	print '</table>';
+	print '</div>';
+
+	print '</form>';
 }
 
 
@@ -742,12 +753,12 @@ if ($step == 4 && $datatoimport)
 
     $head = import_prepare_head($param, 4);
 
-	dol_fiche_head($head, 'step4', $langs->trans("NewImport"), -1);
+	dol_fiche_head($head, 'step4', $langs->trans("NewImport"), -2);
 
 	print '<div class="underbanner clearboth"></div>';
 	print '<div class="fichecenter">';
 
-	print '<table width="100%" class="border">';
+	print '<table width="100%" class="border tableforfield">';
 
 	// Module
 	print '<tr><td class="titlefield">'.$langs->trans("Module").'</td>';
@@ -773,7 +784,7 @@ if ($step == 4 && $datatoimport)
 	print '<b>'.$langs->trans("InformationOnSourceFile").'</b>';
 	print '<div class="underbanner clearboth"></div>';
 	print '<div class="fichecenter">';
-	print '<table width="100%" class="border">';
+	print '<table width="100%" class="border tableforfield">';
 	//print '<tr><td colspan="2"><b>'.$langs->trans("InformationOnSourceFile").'</b></td></tr>';
 
 	// Source file format
@@ -834,15 +845,17 @@ if ($step == 4 && $datatoimport)
     print '<input type="hidden" name="endatlinenb" value="'.$endatlinenb.'">';
     print '<input type="hidden" name="separator" value="'.dol_escape_htmltag($separator).'">';
     print '<input type="hidden" name="enclosure" value="'.dol_escape_htmltag($enclosure).'">';
-    print '<table><tr><td colspan="2" class="opacitymedium">';
+
+    print '<div class="marginbottomonly opacitymedium">';
     print $langs->trans("SelectImportFields", img_picto('', 'grip_title', '')).' ';
     $htmlother->select_import_model($importmodelid, 'importmodelid', $datatoimport, 1);
     print '<input type="submit" class="button" value="'.$langs->trans("Select").'">';
-    print '</td></tr></table>';
+    print '</div>';
     print '</form>';
 
 	// Title of array with fields
-	print '<table class="noborder" width="100%">';
+    print '<div class="div-table-responsive-no-min">';		// You can use div-table-responsive-no-min if you dont need reserved height for your table
+    print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans("FieldsInSourceFile").'</td>';
 	print '<td>'.$langs->trans("FieldsInTargetDatabase").'</td>';
@@ -1039,6 +1052,7 @@ if ($step == 4 && $datatoimport)
 	print '</td></tr>';
 
 	print '</table>';
+    print '</div>';
 
 
 	if ($conf->use_javascript_ajax)
@@ -1103,7 +1117,7 @@ if ($step == 4 && $datatoimport)
 	{
 		print '<br>'."\n";
 		print '<!-- Area to add new import profile -->'."\n";
-		print $langs->trans("SaveImportModel");
+		print '<div class="marginbottomonly"><span class="opacitymedium">'.$langs->trans("SaveImportModel").'</span></div>';
 
 		print '<form class="nocellnopadd" action="'.$_SERVER["PHP_SELF"].'" method="post">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -1215,12 +1229,12 @@ if ($step == 5 && $datatoimport)
     print '<input type="hidden" name="step" value="5">';    // step 5
     print '<input type="hidden" name="action" value="launchsimu">';    // step 5
 
-	dol_fiche_head($head, 'step5', $langs->trans("NewImport"), -1);
+	dol_fiche_head($head, 'step5', $langs->trans("NewImport"), -2);
 
 	print '<div class="underbanner clearboth"></div>';
 	print '<div class="fichecenter">';
 
-	print '<table width="100%" class="border">';
+	print '<table width="100%" class="border tableforfield">';
 
 	// Module
 	print '<tr><td class="titlefield">'.$langs->trans("Module").'</td>';
@@ -1246,7 +1260,7 @@ if ($step == 5 && $datatoimport)
 	print '<b>'.$langs->trans("InformationOnSourceFile").'</b>';
 	print '<div class="underbanner clearboth"></div>';
 	print '<div class="fichecenter">';
-	print '<table width="100%" class="border">';
+	print '<table width="100%" class="border tableforfield">';
 	//print '<tr><td colspan="2"><b>'.$langs->trans("InformationOnSourceFile").'</b></td></tr>';
 
 	// Source file format
@@ -1352,8 +1366,7 @@ if ($step == 5 && $datatoimport)
 	print '<div class="underbanner clearboth"></div>';
 	print '<div class="fichecenter">';
 
-	print '<table width="100%" class="border">';
-	//print '<tr><td colspan="2"><b>'.$langs->trans("InformationOnTargetTables").'</b></td></tr>';
+	print '<table width="100%" class="border tableforfield">';
 
 	// Tables imported
 	print '<tr><td class="titlefield">';
@@ -1578,7 +1591,7 @@ if ($step == 5 && $datatoimport)
         $importid=dol_print_date(dol_now(), '%Y%m%d%H%M%S');
 
         print '<div class="center">';
-        print $langs->trans("NowClickToRunTheImport", $langs->transnoentitiesnoconv("RunImportFile")).'<br>';
+        print '<span class="opacitymedium">'.$langs->trans("NowClickToRunTheImport", $langs->transnoentitiesnoconv("RunImportFile")).'</span><br>';
         if (empty($nboferrors)) print $langs->trans("DataLoadedWithId", $importid).'<br>';
         print '</div>';
 

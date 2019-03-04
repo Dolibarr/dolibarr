@@ -29,7 +29,7 @@ abstract class ModeleExpenseReport extends CommonDocGenerator
 	public $error='';
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Return list of active models generation
      *
@@ -37,7 +37,7 @@ abstract class ModeleExpenseReport extends CommonDocGenerator
      *  @param  integer	$maxfilenamelength  Max length of value to show
      *  @return	array						List of templates
      */
-	static function liste_modeles($db, $maxfilenamelength = 0)
+	public static function liste_modeles($db, $maxfilenamelength = 0)
 	{
         // phpcs:enable
 		global $conf;
@@ -52,7 +52,6 @@ abstract class ModeleExpenseReport extends CommonDocGenerator
 	}
 }
 
-// phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 /**
  * expensereport_pdf_create
  *
@@ -68,8 +67,7 @@ abstract class ModeleExpenseReport extends CommonDocGenerator
  */
 function expensereport_pdf_create(DoliDB $db, ExpenseReport $object, $message, $modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 {
-    // phpcs:enable
-	return $object->generateDocument($modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
+    return $object->generateDocument($modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
 }
 
 /**
@@ -89,7 +87,7 @@ abstract class ModeleNumRefExpenseReport
 	 *
 	 *	@return		boolean     true if model can be used
 	 */
-	function isEnabled()
+    public function isEnabled()
 	{
 		return true;
 	}
@@ -99,7 +97,7 @@ abstract class ModeleNumRefExpenseReport
 	 *
 	 *	@return     string      Descriptive text
 	 */
-	function info()
+    public function info()
 	{
 		global $langs;
 		$langs->load("orders");
@@ -111,7 +109,7 @@ abstract class ModeleNumRefExpenseReport
 	 *
 	 *	@return     string      Example
 	 */
-	function getExample()
+    public function getExample()
 	{
 		global $langs;
 		$langs->load("trips");
@@ -123,7 +121,7 @@ abstract class ModeleNumRefExpenseReport
 	 *
 	 *	@return     boolean     false if conflict, true if ok
 	 */
-	function canBeActivated()
+    public function canBeActivated()
 	{
 		return true;
 	}
@@ -134,26 +132,26 @@ abstract class ModeleNumRefExpenseReport
 	 *	@param	Object		$object		Object we need next value for
 	 *	@return	string      Value
 	 */
-	function getNextValue($object)
+    public function getNextValue($object)
 	{
 		global $langs;
 		return $langs->trans("NotAvailable");
 	}
 
-	/**
-	 *	Returns the version of the numbering module
-	 *
-	 *  @return     string      Value
-	 */
-	function getVersion()
-	{
-		global $langs;
-		$langs->load("admin");
+    /**
+     *  Returns the version of the numbering module
+     *
+     *  @return     string      Value
+     */
+    public function getVersion()
+    {
+        global $langs;
+        $langs->load("admin");
 
-		if ($this->version == 'development') return $langs->trans("VersionDevelopment");
-		if ($this->version == 'experimental') return $langs->trans("VersionExperimental");
-		if ($this->version == 'dolibarr') return DOL_VERSION;
-		if ($this->version) return $this->version;
-		return $langs->trans("NotAvailable");
-	}
+        if ($this->version == 'development') return $langs->trans("VersionDevelopment");
+        elseif ($this->version == 'experimental') return $langs->trans("VersionExperimental");
+        elseif ($this->version == 'dolibarr') return DOL_VERSION;
+        elseif ($this->version) return $this->version;
+        else return $langs->trans("NotAvailable");
+    }
 }

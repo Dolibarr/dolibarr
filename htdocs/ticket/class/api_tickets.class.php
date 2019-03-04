@@ -55,8 +55,8 @@ class Tickets extends DolibarrApi
      */
     public function __construct()
     {
-    	global $db;
-    	$this->db = $db;
+        global $db;
+        $this->db = $db;
         $this->ticket = new Ticket($this->db);
     }
 
@@ -72,9 +72,9 @@ class Tickets extends DolibarrApi
      * @throws 	403
      * @throws 	404
      */
-    function get($id)
+    public function get($id)
     {
-    	return $this->getCommon($id, '', '');
+        return $this->getCommon($id, '', '');
     }
 
     /**
@@ -93,7 +93,7 @@ class Tickets extends DolibarrApi
      */
     public function getByTrackId($track_id)
     {
-		return $this->getCommon(0, $track_id, '');
+        return $this->getCommon(0, $track_id, '');
     }
 
     /**
@@ -112,13 +112,13 @@ class Tickets extends DolibarrApi
      */
     public function getByRef($ref)
     {
-    	try {
-    		return $this->getCommon(0, '', $ref);
-    	}
-    	catch(Exception $e)
-    	{
-   			throw $e;
-    	}
+        try {
+            return $this->getCommon(0, '', $ref);
+        }
+        catch(Exception $e)
+        {
+               throw $e;
+        }
     }
 
     /**
@@ -301,22 +301,22 @@ class Tickets extends DolibarrApi
         }
         // Add sql filters
         if ($sqlfilters) {
-        	if (! DolibarrApi::_checkFilters($sqlfilters)) {
-        		throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
-        	}
-        	$regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
-        	$sql.=" AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
+            if (! DolibarrApi::_checkFilters($sqlfilters)) {
+                throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
+            }
+            $regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+            $sql.=" AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
         }
 
         $sql.= $db->order($sortfield, $sortorder);
 
         if ($limit) {
-        	if ($page < 0) {
-        		$page = 0;
-        	}
-        	$offset = $limit * $page;
+            if ($page < 0) {
+                $page = 0;
+            }
+            $offset = $limit * $page;
 
-        	$sql .= $this->db->plimit($limit, $offset);
+            $sql .= $this->db->plimit($limit, $offset);
         }
 
         $result = $db->query($sql);
@@ -341,7 +341,7 @@ class Tickets extends DolibarrApi
         if (! count($obj_ret)) {
             throw new RestException(404, 'No ticket found');
         }
-		    return $obj_ret;
+            return $obj_ret;
     }
 
     /**
@@ -355,8 +355,8 @@ class Tickets extends DolibarrApi
     {
         $ticketstatic = new Ticket($this->db);
         if (! DolibarrApiAccess::$user->rights->ticket->write) {
-			throw new RestException(401);
-		}
+            throw new RestException(401);
+        }
         // Check mandatory fields
         $result = $this->_validate($request_data);
 
@@ -417,17 +417,17 @@ class Tickets extends DolibarrApi
     public function put($id, $request_data = null)
     {
         if (! DolibarrApiAccess::$user->rights->ticket->write) {
-			throw new RestException(401);
-		}
+            throw new RestException(401);
+        }
 
         $result = $this->ticket->fetch($id);
         if (! $result) {
             throw new RestException(404, 'Ticket not found');
         }
 
-		if (! DolibarrApi::_checkAccessToResource('ticket', $this->ticket->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
-		}
+        if (! DolibarrApi::_checkAccessToResource('ticket', $this->ticket->id)) {
+            throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+        }
 
         foreach ($request_data as $field => $value) {
             $this->ticket->$field = $value;
@@ -450,16 +450,16 @@ class Tickets extends DolibarrApi
     public function delete($id)
     {
         if (! DolibarrApiAccess::$user->rights->ticket->delete) {
-			throw new RestException(401);
-		}
+            throw new RestException(401);
+        }
         $result = $this->ticket->fetch($id);
         if (! $result) {
             throw new RestException(404, 'Ticket not found');
         }
 
-		if (! DolibarrApi::_checkAccessToResource('ticket', $this->ticket->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
-		}
+        if (! DolibarrApi::_checkAccessToResource('ticket', $this->ticket->id)) {
+            throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+        }
 
         if (!$this->ticket->delete($id)) {
             throw new RestException(500);
@@ -523,12 +523,12 @@ class Tickets extends DolibarrApi
      * @todo use an array for properties to clean
      *
      */
-    function _cleanObjectDatas($object)
+    private function _cleanObjectDatas($object)
     {
 
-    	$object = parent::_cleanObjectDatas($object);
+        $object = parent::_cleanObjectDatas($object);
 
-    	// Other attributes to clean
+        // Other attributes to clean
         $attr2clean = array(
             "contact",
             "contact_id",
@@ -568,8 +568,8 @@ class Tickets extends DolibarrApi
             "civility_id",
             "cache_msgs_ticket",
             "cache_logs_ticket",
-        	"statuts_short",
-        	"statuts"
+            "statuts_short",
+            "statuts"
         );
         foreach ($attr2clean as $toclean) {
             unset($object->$toclean);

@@ -52,7 +52,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 	 *
 	 *  @param		DoliDB		$db      Database handler
 	 */
-	function __construct($db)
+    public function __construct($db)
 	{
 		global $conf, $langs, $mysoc;
 
@@ -92,7 +92,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
 	 *  Fonction generant le projet sur le disque
 	 *
@@ -105,7 +105,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
      *  @param      null|array  $moreparams         More parameters
 	 *	@return	    int         				    1 if OK, <=0 if KO
 	 */
-	function write_file($object, $outputlangs, $srctemplatepath = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)
+    public function write_file($object, $outputlangs, $srctemplatepath = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)
 	{
         // phpcs:enable
 		global $conf, $hookmanager, $langs, $user, $mysoc;
@@ -435,7 +435,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 	 *   @param		int			$hidebottom		Hide bottom bar of array
 	 *   @return	void
 	 */
-	function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop = 0, $hidebottom = 0)
+    private function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop = 0, $hidebottom = 0)
 	{
 		global $conf,$mysoc;
 
@@ -443,7 +443,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *   Show miscellaneous information (payment mode, payment term, ...)
 	 *
@@ -453,7 +453,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 	 *   @param		Translate	$outputlangs	Langs object
 	 *   @return	void
 	 */
-	function _tableau_info(&$pdf, $object, $posy, $outputlangs)
+	private function _tableau_info(&$pdf, $object, $posy, $outputlangs)
 	{
         // phpcs:enable
         global $conf, $mysoc;
@@ -480,7 +480,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Show area for the customer to sign
 	 *
@@ -490,7 +490,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 	 *	@param	Translate	$outputlangs	Objet langs
 	 *	@return int							Position pour suite
 	 */
-	function _signature_area(&$pdf, $object, $posy, $outputlangs)
+	private function _signature_area(&$pdf, $object, $posy, $outputlangs)
 	{
         // phpcs:enable
 	    $default_font_size = pdf_getPDFFontSize($outputlangs);
@@ -531,7 +531,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 	 *  @param  Translate	$outputlangs	Object lang for output
 	 *  @return	void
 	 */
-	function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
+	private function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
 	{
 		global $langs,$conf,$mysoc;
 
@@ -623,7 +623,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 	 *      @param	int			$hidefreetext		1=Hide free text
 	 *      @return	integer
 	 */
-	function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
+	private function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
 	{
 		global $conf;
 		$showdetails=$conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;

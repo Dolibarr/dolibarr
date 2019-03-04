@@ -432,19 +432,19 @@ class MyObject extends CommonObject
 		//return $this->deleteCommon($user, $notrigger, 1);
 	}
 
-	/**
-	 *  Return a link to the object card (with optionaly the picto)
-	 *
-	 *	@param	int		$withpicto					Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
-	 *	@param	string	$option						On what the link point to ('nolink', ...)
-     *  @param	int  	$notooltip					1=Disable tooltip
-     *  @param  string  $morecss            		Add more css on link
-     *  @param  int     $save_lastsearch_value    	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
-	 *	@return	string								String with URL
-	 */
-	function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
-	{
-		global $db, $conf, $langs, $hookmanager;
+    /**
+     *  Return a link to the object card (with optionaly the picto)
+     *
+     *  @param  int     $withpicto                  Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
+     *  @param  string  $option                     On what the link point to ('nolink', ...)
+     *  @param  int     $notooltip                  1=Disable tooltip
+     *  @param  string  $morecss                    Add more css on link
+     *  @param  int     $save_lastsearch_value      -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+     *  @return	string                              String with URL
+     */
+    public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
+    {
+        global $db, $conf, $langs, $hookmanager;
         global $dolibarr_main_authentication, $dolibarr_main_demo;
         global $menumanager;
 
@@ -460,10 +460,10 @@ class MyObject extends CommonObject
 
         if ($option != 'nolink')
         {
-	        // Add param to save lastsearch_values or not
-	        $add_save_lastsearch_values=($save_lastsearch_value == 1 ? 1 : 0);
-	        if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) $add_save_lastsearch_values=1;
-	        if ($add_save_lastsearch_values) $url.='&save_lastsearch_values=1';
+            // Add param to save lastsearch_values or not
+            $add_save_lastsearch_values=($save_lastsearch_value == 1 ? 1 : 0);
+            if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) $add_save_lastsearch_values=1;
+            if ($add_save_lastsearch_values) $url.='&save_lastsearch_values=1';
         }
 
         $linkclose='';
@@ -504,7 +504,7 @@ class MyObject extends CommonObject
 		else $result .= $hookmanager->resPrint;
 
 		return $result;
-	}
+    }
 
 	/**
 	 *  Return label of the status
@@ -673,11 +673,11 @@ class MyObject extends CommonObject
 /*
 class MyObjectLine
 {
-	// @var int ID
-	public $id;
-	// @var mixed Sample line property 1
-	public $prop1;
-	// @var mixed Sample line property 2
-	public $prop2;
+    // @var int ID
+    public $id;
+    // @var mixed Sample line property 1
+    public $prop1;
+    // @var mixed Sample line property 2
+    public $prop2;
 }
 */

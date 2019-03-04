@@ -643,7 +643,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 					    if ($pagenb == $pageposafter)
 						{
 							$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforfooter, 0, $outputlangs, 0, 1, $object->multicurrency_code);
-						}
+					    }
 						else
 						{
 							$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforfooter, 0, $outputlangs, 1, 1, $object->multicurrency_code);
@@ -816,7 +816,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 			$pdf->MultiCell(80, 4, $dlp, 0, 'L');
 
             $posy=$pdf->GetY()+1;
-		}
+        }
         elseif ($object->availability_code || $object->availability)    // Show availability conditions
 		{
 			$pdf->SetFont('', 'B', $default_font_size - 2);
@@ -831,7 +831,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 			$pdf->MultiCell(80, 4, $lib_availability, 0, 'L');
 
 			$posy=$pdf->GetY()+1;
-		}
+        }
 
         // Show payment mode
         if ($object->mode_reglement_code
@@ -889,8 +889,8 @@ class pdf_eratosthene extends ModelePDFCommandes
 			            $posy=$pdf->GetY()+2;
 		            }
 	            }
-	        }
-		}
+            }
+        }
 
         // If payment mode not forced or forced to VIR, show payment with BAN
         if (empty($object->mode_reglement_code) || $object->mode_reglement_code == 'VIR')
@@ -1672,5 +1672,5 @@ class pdf_eratosthene extends ModelePDFCommandes
 	    {
 	        $this->cols = $hookmanager->resArray;
 	    }
-	}
+    }
 }

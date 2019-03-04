@@ -54,7 +54,7 @@ class Dolistore
 	 *
 	 * @param	boolean		$debug		Enable debug of request on screen
 	 */
-	function __construct($debug = false)
+	public function __construct($debug = false)
 	{
 		global $conf, $langs;
 
@@ -77,7 +77,7 @@ class Dolistore
 	 * @param 	array 	$options	Options
 	 * @return	void
 	 */
-	function getRemoteData($options = array('start' => 0, 'end' => 10, 'per_page' => 50, 'categorie' => 0))
+	public function getRemoteData($options = array('start' => 0, 'end' => 10, 'per_page' => 50, 'categorie' => 0))
 	{
 		global $conf, $langs;
 
@@ -163,14 +163,14 @@ class Dolistore
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Return tree of Dolistore categories. $this->categories must have been loaded before.
 	 *
 	 * @param 	int			$parent		Id of parent category
 	 * @return 	string
 	 */
-	function get_categories($parent = 0)
+	public function get_categories($parent = 0)
 	{
         // phpcs:enable
 		if (!isset($this->categories)) die('not possible');
@@ -212,13 +212,13 @@ class Dolistore
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Return list of product formated for output
 	 *
 	 * @return string			HTML output
 	 */
-	function get_products()
+	public function get_products()
 	{
         // phpcs:enable
 		global $langs, $conf;
@@ -291,44 +291,44 @@ class Dolistore
                 </td>
                 <td class="margeCote">'.$download_link.'</td>
                 </tr>';
-		}
-		return $html;
-	}
+        }
+        return $html;
+    }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      * get previous link
      *
      * @param   string    $text     symbol previous
      * @return  string              html previous link
      */
-	function get_previous_link($text = '<<')
+	public function get_previous_link($text = '<<')
 	{
         // phpcs:enable
 		return '<a href="'.$this->get_previous_url().'" class="button">'.$text.'</a>';
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      * get next link
      *
      * @param   string    $text     symbol next
      * @return  string              html next link
      */
-	function get_next_link($text = '>>')
+    public function get_next_link($text = '>>')
 	{
         // phpcs:enable
 		return '<a href="'.$this->get_next_url().'" class="button">'.$text.'</a>';
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
-   /**
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+    /**
      * get previous url
      *
      * @return string    previous url
      */
-    function get_previous_url()
-	{
+    public function get_previous_url()
+    {
         // phpcs:enable
 		$param_array = array();
 		if ($this->start < $this->per_page) {
@@ -343,15 +343,15 @@ class Dolistore
 		}
 		$param = http_build_query($param_array);
 		return $this->url."&".$param;
-	}
+    }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      * get next url
      *
      * @return string    next url
      */
-	function get_next_url()
+    public function get_next_url()
 	{
         // phpcs:enable
 		$param_array = array();
@@ -369,7 +369,7 @@ class Dolistore
 		return $this->url."&".$param;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      * version compare
      *
@@ -377,7 +377,7 @@ class Dolistore
      * @param   string  $v2     version 2
      * @return int              result of compare
      */
-	function version_compare($v1, $v2)
+	public function version_compare($v1, $v2)
 	{
         // phpcs:enable
 		$v1       = explode('.', $v1);

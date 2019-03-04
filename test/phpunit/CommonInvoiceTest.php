@@ -57,7 +57,7 @@ class CommonInvoiceTest extends PHPUnit\Framework\TestCase
      *
      * @return CommonObjectTest
      */
-    function __construct()
+    public function __construct()
     {
     	parent::__construct();
 

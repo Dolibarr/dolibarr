@@ -88,7 +88,7 @@ class PaymentDonation extends CommonObject
 	 *
 	 *  @param		DoliDB		$db      Database handler
 	 */
-	function __construct($db)
+	public function __construct($db)
 	{
 		$this->db = $db;
 	}
@@ -101,7 +101,7 @@ class PaymentDonation extends CommonObject
 	 *  @param      bool 		$notrigger 		false=launch triggers after, true=disable triggers
 	 *  @return     int     					<0 if KO, id of payment if OK
 	 */
-	function create($user, $notrigger = false)
+	public function create($user, $notrigger = false)
 	{
 		global $conf, $langs;
 
@@ -193,7 +193,7 @@ class PaymentDonation extends CommonObject
 	 *  @param	int		$id         Id object
 	 *  @return int         		<0 if KO, >0 if OK
 	 */
-	function fetch($id)
+	public function fetch($id)
 	{
 		global $langs;
 		$sql = "SELECT";
@@ -264,7 +264,7 @@ class PaymentDonation extends CommonObject
 	 *  @param  int		$notrigger	    0=launch triggers after, 1=disable triggers
 	 *  @return int         			<0 if KO, >0 if OK
 	 */
-	function update($user, $notrigger = 0)
+	public function update($user, $notrigger = 0)
 	{
 		global $conf, $langs;
 		$error=0;
@@ -344,7 +344,7 @@ class PaymentDonation extends CommonObject
 	 *  @param  int		$notrigger		0=launch triggers after, 1=disable triggers
 	 *  @return int						<0 if KO, >0 if OK
 	 */
-	function delete($user, $notrigger = 0)
+	public function delete($user, $notrigger = 0)
 	{
 		global $conf, $langs;
 		$error=0;
@@ -411,7 +411,7 @@ class PaymentDonation extends CommonObject
 	 *	@param	int		$fromid     	Id of object to clone
 	 * 	@return	int						New id of clone
 	 */
-	function createFromClone($fromid)
+	public function createFromClone($fromid)
 	{
 		global $user,$langs;
 
@@ -467,12 +467,12 @@ class PaymentDonation extends CommonObject
 	 *  @param	int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long
 	 *  @return string        		Libelle
 	 */
-	function getLibStatut($mode = 0)
+	public function getLibStatut($mode = 0)
 	{
 	    return '';
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Renvoi le libelle d'un statut donne
 	 *
@@ -480,13 +480,13 @@ class PaymentDonation extends CommonObject
 	 *  @param  int		$mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	 *  @return string 			       	Libelle du statut
 	 */
-	function LibStatut($statut, $mode = 0)
-	{
+    public function LibStatut($statut, $mode = 0)
+    {
         // phpcs:enable
         global $langs;
 
-	    return '';
-	}
+        return '';
+    }
 
 
 	/**
@@ -496,7 +496,7 @@ class PaymentDonation extends CommonObject
      *
      *  @return	void
 	 */
-	function initAsSpecimen()
+	public function initAsSpecimen()
 	{
 		$this->id=0;
 
@@ -526,7 +526,7 @@ class PaymentDonation extends CommonObject
      *      @param  string	$emetteur_banque    Name of bank
      *      @return int                 		<0 if KO, >0 if OK
      */
-    function addPaymentToBank($user, $mode, $label, $accountid, $emetteur_nom, $emetteur_banque)
+    public function addPaymentToBank($user, $mode, $label, $accountid, $emetteur_nom, $emetteur_banque)
     {
         global $conf;
 
@@ -597,14 +597,14 @@ class PaymentDonation extends CommonObject
     }
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
-	/**
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+    /**
 	 *  Update link between the donation payment and the generated line in llx_bank
 	 *
 	 *  @param	int		$id_bank         Id if bank
 	 *  @return	int			             >0 if OK, <=0 if KO
 	 */
-	function update_fk_bank($id_bank)
+	public function update_fk_bank($id_bank)
 	{
         // phpcs:enable
 		$sql = "UPDATE ".MAIN_DB_PREFIX."payment_donation SET fk_bank = ".$id_bank." WHERE rowid = ".$this->id;
@@ -629,7 +629,7 @@ class PaymentDonation extends CommonObject
 	 * 	@param	int		$maxlen			Longueur max libelle
 	 *	@return	string					Chaine avec URL
 	 */
-	function getNomUrl($withpicto = 0, $maxlen = 0)
+	public function getNomUrl($withpicto = 0, $maxlen = 0)
 	{
 		global $langs;
 

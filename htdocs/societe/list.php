@@ -265,7 +265,7 @@ if (empty($reshook))
 		$search_status=-1;
 		$search_stcomm='';
 	 	$search_level='';
-	 	$search_parent_name=-1;
+	 	$search_parent_name='';
 	 	$search_import_key='';
 	 	$toselect='';
 		$search_array_options=array();
@@ -738,7 +738,7 @@ if (! empty($arrayfields['region.nom']['checked']))
 if (! empty($arrayfields['country.code_iso']['checked']))
 {
 	print '<td class="liste_titre center">';
-	print $form->select_country($search_country, 'search_country', '', 0, 'maxwidth100');
+	print $form->select_country($search_country, 'search_country', '', 0, 'minwidth100imp maxwidth100');
 	print '</td>';
 }
 // Company type

@@ -40,7 +40,7 @@ class modPrinting extends DolibarrModules
      *
      *  @param      DoliDB      $db      Database handler
      */
-    function __construct($db)
+    public function __construct($db)
     {
         $this->db = $db ;
         $this->numero = 64000;
