@@ -1042,8 +1042,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
     }
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps,PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
     /**
      * Create tables and keys required by module.
      * Files module.sql and module.key.sql with create table and create keys
