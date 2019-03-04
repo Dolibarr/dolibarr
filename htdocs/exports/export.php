@@ -438,11 +438,10 @@ if ($step == 1 || ! $datatoexport)
     dol_fiche_head($head, $hselected, $langs->trans("NewExport"), -1);
 
 
-    print '<table class="notopnoleftnoright" width="100%">';
-
     print '<div class="opacitymedium">'.$langs->trans("SelectExportDataSet").'</div><br>';
 
     // Affiche les modules d'exports
+    print '<div class="div-table-responsive-no-min">';		// You can use div-table-responsive-no-min if you dont need reserved height for your table
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre">';
     print '<td>'.$langs->trans("Module").'</td>';
@@ -481,8 +480,7 @@ if ($step == 1 || ! $datatoexport)
         print '<tr><td '.$bc[false].' colspan="3">'.$langs->trans("NoExportableData").'</td></tr>';
     }
     print '</table>';
-
-    print '</table>';
+    print '</div>';
 
     print '</div>';
 }
@@ -506,6 +504,7 @@ if ($step == 2 && $datatoexport)
 
     print '<div class="fichecenter">';
     print '<div class="underbanner clearboth"></div>';
+
     print '<table width="100%" class="border tableforfield">';
 
     // Module
@@ -548,6 +547,7 @@ if ($step == 2 && $datatoexport)
     print '</form>';
 
 
+    print '<div class="div-table-responsive-no-min">';		// You can use div-table-responsive-no-min if you dont need reserved height for your table
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans("Entities").'</td>';
@@ -646,7 +646,7 @@ if ($step == 2 && $datatoexport)
     }
 
     print '</table>';
-
+    print '</div>';
 
     /*
      * Barre d'action
@@ -743,6 +743,8 @@ if ($step == 3 && $datatoexport)
 
 	// un formulaire en plus pour recuperer les filtres
 	print '<form action="'.$_SERVER["PHP_SELF"].'?step=4&action=submitFormField&datatoexport='.$datatoexport.'" name="FilterField" method="post">';
+
+	print '<div class="div-table-responsive-no-min">';		// You can use div-table-responsive-no-min if you dont need reserved height for your table
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans("Entities").'</td>';
@@ -832,6 +834,7 @@ if ($step == 3 && $datatoexport)
 	}
 
 	print '</table>';
+    print '</div>';
 
 	print '</div>';
 
@@ -945,6 +948,7 @@ if ($step == 4 && $datatoexport)
 
     print '<div class="marginbottomonly"><span class="opacitymedium">'.$langs->trans("ChooseFieldsOrdersAndTitle").'</span></div>';
 
+    print '<div class="div-table-responsive-no-min">';		// You can use div-table-responsive-no-min if you dont need reserved height for your table
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre">';
     print '<td>'.$langs->trans("Entities").'</td>';
@@ -1015,6 +1019,7 @@ if ($step == 4 && $datatoexport)
     }
 
     print '</table>';
+    print '</div>';
 
     print '</div>';
 
@@ -1045,6 +1050,7 @@ if ($step == 4 && $datatoexport)
         print '<input type="hidden" name="datatoexport" value="'.$datatoexport.'">';
         print '<input type="hidden" name="hexa" value="'.$hexa.'">';
 
+        print '<div class="div-table-responsive-no-min">';		// You can use div-table-responsive-no-min if you dont need reserved height for your table
         print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans("ExportModelName").'</td>';
@@ -1085,6 +1091,8 @@ if ($step == 4 && $datatoexport)
 		}
 
         print '</table>';
+        print '</div>';
+
         print '</form>';
     }
 }
@@ -1248,7 +1256,7 @@ if ($step == 5 && $datatoexport)
 
     // Show existing generated documents
     // NB: La fonction show_documents rescanne les modules qd genallowed=1, sinon prend $liste
-    print $formfile->showdocuments('export', '', $upload_dir, $_SERVER["PHP_SELF"].'?step=5&datatoexport='.$datatoexport, $liste, 1, (! empty($_POST['model'])?$_POST['model']:'csv'), 1, 1, 0, 0, 0, '', $langs->trans('Files'), '', '', '');
+    print $formfile->showdocuments('export', '', $upload_dir, $_SERVER["PHP_SELF"].'?step=5&datatoexport='.$datatoexport, $liste, 1, (! empty($_POST['model'])?$_POST['model']:'csv'), 1, 1, 0, 0, 0, '', '&nbsp;', '', '', '');
 }
 
 llxFooter();
