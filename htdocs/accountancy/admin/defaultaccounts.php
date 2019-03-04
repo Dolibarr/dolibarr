@@ -156,7 +156,7 @@ foreach ($list_account_main as $key) {
     print $form->textwithpicto($label, $htmltext);
     print '</td>';
     // Value
-    print '<td>';  // Do not force align=right, or it align also the content of the select box
+    print '<td>';  // Do not force class=right, or it align also the content of the select box
     print $formaccounting->select_account($conf->global->$key, $key, 1, '', 1, 1);
     print '</td>';
     print '</tr>';
@@ -179,7 +179,7 @@ foreach ($list_account as $key) {
 	$label = $langs->trans($key);
 	print '<td width="50%">' . $label . '</td>';
 	// Value
-	print '<td>';  // Do not force align=right, or it align also the content of the select box
+	print '<td>';  // Do not force class=right, or it align also the content of the select box
 	print $formaccounting->select_account($conf->global->$key, $key, 1, '', 1, 1);
 	print '</td>';
 	print '</tr>';
