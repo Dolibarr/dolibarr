@@ -2222,7 +2222,8 @@ function colorValidateHex($color, $allow_white = false)
  * @param integer $steps
  * @return string
  */
-function colorAdjustBrightness($hex, $steps) {
+function colorAdjustBrightness($hex, $steps)
+{
     // Steps should be between -255 and 255. Negative = darker, positive = lighter
     $steps = max(-255, min(255, $steps));
     
@@ -2250,7 +2251,8 @@ function colorAdjustBrightness($hex, $steps) {
  * @param integer $percent 0 to 100
  * @return string
  */
-function colorDarker($hex, $percent) {
+function colorDarker($hex, $percent)
+{
     $steps = intval(255 * $percent / 100 ) * -1;
     return colorAdjustBrightness($hex, $steps);
 }
@@ -2260,7 +2262,8 @@ function colorDarker($hex, $percent) {
  * @param integer $percent 0 to 100
  * @return string
  */
-function colorLighten($hex, $percent) {
+function colorLighten($hex, $percent)
+{
     $steps = intval(255 * $percent / 100 );
     return colorAdjustBrightness($hex, $steps);
 }
@@ -2272,7 +2275,8 @@ function colorLighten($hex, $percent) {
  * @param bool $returnArray :
  * @return string
  */
-function colorHexToRgb($hex, $alpha = false, $returnArray = false) {
+function colorHexToRgb($hex, $alpha = false, $returnArray = false)
+{
     $string = '';
     $hex      = str_replace('#', '', $hex);
     $length   = strlen($hex);
@@ -2294,7 +2298,6 @@ function colorHexToRgb($hex, $alpha = false, $returnArray = false) {
     else{
         return $string;
     }
-    
 }
 
 
