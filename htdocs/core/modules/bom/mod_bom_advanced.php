@@ -138,23 +138,8 @@ class mod_bom_advanced extends ModeleNumRefboms
 
 		$date = ($object->date_bom ? $object->date_bom : $object->date);
 
-		$numFinal=get_next_value($db, $mask, 'bom', 'ref', '', $objsoc, $date);
+		$numFinal=get_next_value($db, $mask, 'bom_bom', 'ref', '', $objsoc, $date);
 
 		return  $numFinal;
 	}
-
-
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/**
-	 *  Return next free value
-	 *
-	 *  @param	Societe		$objsoc     Object third party
-	 *  @param	string		$objforref	Object for number to search
-	 *  @return string      			Next free value
-     */
-    public function bom_get_num($objsoc, $objforref)
-    {
-        // phpcs:enable
-        return $this->getNextValue($objsoc, $objforref);
-    }
 }

@@ -47,8 +47,8 @@ include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
 if ($action == 'updateMask')
 {
-	$maskconstbom=GETPOST('maskconstbom', 'alpha');
-	$maskbom=GETPOST('maskbom', 'alpha');
+	$maskconstbom=GETPOST('maskconstBom', 'alpha');
+	$maskbom=GETPOST('maskBom', 'alpha');
 
 	if ($maskconstbom) $res = dolibarr_set_const($db, $maskconstbom, $maskbom, 'chaine', 0, '', $conf->entity);
 

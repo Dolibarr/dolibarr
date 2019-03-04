@@ -146,19 +146,4 @@ class mod_bom_standard extends ModeleNumRefboms
 		dol_syslog("mod_bom_standard::getNextValue return ".$this->prefix.$yymm."-".$num);
 		return $this->prefix.$yymm."-".$num;
 	}
-
-
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/**
-	 *  Return next free value
-	 *
-	 *  @param	Societe		$objsoc     Object third party
-	 * 	@param	string		$objforref	Object for number to search
-	 *  @return string      			Next free value
-	 */
-	public function bom_get_num($objsoc, $objforref)
-	{
-        // phpcs:enable
-		return $this->getNextValue($objsoc, $objforref);
-	}
 }
