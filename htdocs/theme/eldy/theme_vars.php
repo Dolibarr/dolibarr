@@ -79,7 +79,7 @@ $badgeLight     ='#f8f9fa';
 */
 $badgeStatus0='#cbd3d3';
 $badgeStatus1='#bc9526';
-$badgeStatus2='#e6f0f0'; 
+$badgeStatus2='#e6f0f0';
 $badgeStatus3='#bca52b';
 $badgeStatus4='#277d1e';
 $badgeStatus5='#cad2d2';

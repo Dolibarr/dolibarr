@@ -161,7 +161,7 @@ a.badge-dark:focus, a.badge-dark:hover {
 
 /* Default Status */
 
-<?php for ($i = 0; $i <= 9; $i++) { 
+<?php for ($i = 0; $i <= 9; $i++){
 
     print "\n/* STATUS".$i." */\n";
     
@@ -197,9 +197,5 @@ a.badge-dark:focus, a.badge-dark:hover {
         print "        border-color: ".colorDarker($thisBadgeBorderColor, 10).";\n";
     }
     print "}\n";
-
 }
-    
-    
-?>    
-    
+
