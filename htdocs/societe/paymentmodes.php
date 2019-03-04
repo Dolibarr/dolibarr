@@ -873,7 +873,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 
 							$arrayofstripecard[$companypaymentmodetemp->stripe_card_ref]=$companypaymentmodetemp->stripe_card_ref;
 
-							print '<tr>';
+							print '<tr class="oddeven">';
 							print '<td>';
 							print $companypaymentmodetemp->id;
 							print '</td>';
