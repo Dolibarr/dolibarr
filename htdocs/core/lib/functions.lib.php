@@ -7981,14 +7981,15 @@ function dolGetBadge($label, $html = '', $type = 'primary', $mode = '', $url = '
 
 /**
  * @param string $statusLabel       label of badge no html : use in alt attribute for accessibility
+ * @param string $statusLabelShort  short label of badge no html
  * @param string $html              optional : label of badge with html
  * @param string $statusType        status0 status1 status2 status3 status4 status5 status6 status7 status8 status9 : image name or badge name
- * @param int	$displayMode         for retrocompatibility  0=label only, 1=label + Picto, 2=Picto, 3=Picto + label
+ * @param int	$displayMode         for retrocompatibility  0=Long label, 1=Short label, 2=Picto + Short label, 3=Picto, 4=Picto + Long label, 5=Short label + Picto, 6=Long label + Picto
  * @param string $url               the url for link
  * @param array $params         various params for future : recommended rather than adding more function arguments
  * @return string html status
  */
-function dolGetStatus($statusLabel = '', $html = '', $statusType = 'status0', $displayMode = 0, $url = '', $params = array())
+function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $statusType = 'status0', $displayMode = 0, $url = '', $params = array())
 {
     global $conf;
 
@@ -8011,28 +8012,36 @@ function dolGetStatus($statusLabel = '', $html = '', $statusType = 'status0', $d
     if($displayMode==0){
         $return = !empty($html)?$html:$statusLabel;
     }
+    elseif($displayMode===1){
+        $return = !empty($html)?$html:(!empty($statusLabelShort)?$statusLabelShort:$statusLabel);
+    }
     // use status with images
     elseif(empty($conf->global->MAIN_STATUS_USES_CSS)){
         $return = '';
-        $htmlLabel = '<span class="hideonsmartphone">'.(!empty($html)?$html:$statusLabel).'</span>';
+        $htmlLabel      = '<span class="hideonsmartphone">'.(!empty($html)?$html:$statusLabel).'</span>';
+        $htmlLabelShort = '<span class="hideonsmartphone">'.(!empty($html)?$html:(!empty($statusLabelShort)?$statusLabelShort:$statusLabel)).'</span>';
         
         if(!empty($statusImg[$statusType])){
             $htmlImg = img_picto($statusLabel, $statusImg[$statusType]);
         }else{
             $htmlImg = img_picto($statusLabel, $statusType);
         }
-        
-        if($displayMode === 1){
-            $return = $htmlLabel .' '. $htmlImg;
-        }
-        elseif($displayMode === 2){
-            $return = $htmlImg;
-        }
-        elseif($displayMode === 3){
+       
+ 
+        if($displayMode === 2){
             $return =  $htmlImg .' '. $htmlLabel;
         }
-        else{
-            $return = !empty($html)?$html:$statusLabel;
+        elseif($displayMode === 3){
+            $return = $htmlImg;
+        }
+        elseif($displayMode === 4){
+            $return =  $htmlImg .' '. $htmlLabel;
+        }
+        elseif($displayMode === 5){
+            $return = $htmlLabelShort .' '. $htmlImg;
+        }
+        else{ // $displayMode >= 6
+            $return = $htmlLabel .' '. $htmlImg;
         }
         
     }
@@ -8040,10 +8049,19 @@ function dolGetStatus($statusLabel = '', $html = '', $statusType = 'status0', $d
     // Use new badge
     if(!empty($conf->global->MAIN_STATUS_USES_CSS) && !empty($displayMode)){
         
-        $mode = 'pill';
-        if($displayMode == 2)$mode = 'dot';
-            
-        $return = dolGetBadge($statusLabel, $html, $statusType, $mode);
+        $statusLabelShort = !empty($statusLabelShort)?$statusLabelShort:$statusLabel;
+        
+   
+        if($displayMode == 3){
+            $return = dolGetBadge($statusLabel, '', $statusType, 'dot');
+        }
+        elseif($displayMode === 5){
+            $return = dolGetBadge($statusLabelShort, $html, $statusType);
+        }
+        else{
+            $return = dolGetBadge($statusLabel, $html, $statusType);
+        }
+        
     }
     
     return $return;
