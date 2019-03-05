@@ -2846,7 +2846,7 @@ function migrate_project_task_actors($db, $langs, $conf)
 
         $db->begin();
 
-        $sql = "SELECT fk_projet_task, fk_user FROM ".MAIN_DB_PREFIX."projet_task_actors";
+        $sql = "SELECT fk_projet_task as fk_project_task, fk_user FROM ".MAIN_DB_PREFIX."projet_task_actors";
         $resql = $db->query($sql);
         if ($resql)
         {
@@ -2868,7 +2868,7 @@ function migrate_project_task_actors($db, $langs, $conf)
                     $sql2.= ") VALUES (";
                     $sql2.= "'".$db->idate(dol_now())."'";
                     $sql2.= ", '4'";
-                    $sql2.= ", ".$obj->fk_projet_task;
+                    $sql2.= ", ".$obj->fk_project_task;
                     $sql2.= ", '180'";
                     $sql2.= ", ".$obj->fk_user;
                     $sql2.= ")";

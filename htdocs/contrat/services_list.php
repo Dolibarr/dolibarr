@@ -376,26 +376,26 @@ print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"")
 print '<tr class="liste_titre">';
 if (! empty($arrayfields['c.ref']['checked'])) print_liste_field_titre($arrayfields['c.ref']['label'], $_SERVER["PHP_SELF"], "c.ref", "", $param, "", $sortfield, $sortorder);
 if (! empty($arrayfields['p.description']['checked'])) print_liste_field_titre($arrayfields['p.description']['label'], $_SERVER["PHP_SELF"], "p.description", "", $param, "", $sortfield, $sortorder);
-if (! empty($arrayfields['cd.qty']['checked']))  print_liste_field_titre($arrayfields['cd.qty']['label'], $_SERVER["PHP_SELF"], "cd.qty", "", $param, 'align="center" class="nowrap"', $sortfield, $sortorder);
-if (! empty($arrayfields['cd.total_ht']['checked']))  print_liste_field_titre($arrayfields['cd.total_ht']['label'], $_SERVER["PHP_SELF"], "cd.total_ht", "", $param, 'align="center" class="nowrap"', $sortfield, $sortorder);
-if (! empty($arrayfields['cd.total_tva']['checked']))  print_liste_field_titre($arrayfields['cd.total_tva']['label'], $_SERVER["PHP_SELF"], "cd.total_tva", "", $param, 'align="center" class="nowrap"', $sortfield, $sortorder);
-if (! empty($arrayfields['cd.tva_tx']['checked']))  print_liste_field_titre($arrayfields['cd.tva_tx']['label'], $_SERVER["PHP_SELF"], "cd.tva_tx", "", $param, 'align="center" class="nowrap"', $sortfield, $sortorder);
-if (! empty($arrayfields['cd.subprice']['checked']))  print_liste_field_titre($arrayfields['cd.subprice']['label'], $_SERVER["PHP_SELF"], "cd.subprice", "", $param, 'align="center" class="nowrap"', $sortfield, $sortorder);
+if (! empty($arrayfields['cd.qty']['checked']))  print_liste_field_titre($arrayfields['cd.qty']['label'], $_SERVER["PHP_SELF"], "cd.qty", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
+if (! empty($arrayfields['cd.total_ht']['checked']))  print_liste_field_titre($arrayfields['cd.total_ht']['label'], $_SERVER["PHP_SELF"], "cd.total_ht", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
+if (! empty($arrayfields['cd.total_tva']['checked']))  print_liste_field_titre($arrayfields['cd.total_tva']['label'], $_SERVER["PHP_SELF"], "cd.total_tva", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
+if (! empty($arrayfields['cd.tva_tx']['checked']))  print_liste_field_titre($arrayfields['cd.tva_tx']['label'], $_SERVER["PHP_SELF"], "cd.tva_tx", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
+if (! empty($arrayfields['cd.subprice']['checked']))  print_liste_field_titre($arrayfields['cd.subprice']['label'], $_SERVER["PHP_SELF"], "cd.subprice", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
 if (! empty($arrayfields['s.nom']['checked'])) print_liste_field_titre($arrayfields['s.nom']['label'], $_SERVER["PHP_SELF"], "s.nom", "", $param, "", $sortfield, $sortorder);
-if (! empty($arrayfields['cd.date_ouverture_prevue']['checked'])) print_liste_field_titre($arrayfields['cd.date_ouverture_prevue']['label'], $_SERVER["PHP_SELF"], "cd.date_ouverture_prevue", "", $param, 'align="center"', $sortfield, $sortorder);
-if (! empty($arrayfields['cd.date_ouverture']['checked'])) print_liste_field_titre($arrayfields['cd.date_ouverture']['label'], $_SERVER["PHP_SELF"], "cd.date_ouverture", "", $param, 'align="center"', $sortfield, $sortorder);
-if (! empty($arrayfields['cd.date_fin_validite']['checked'])) print_liste_field_titre($arrayfields['cd.date_fin_validite']['label'], $_SERVER["PHP_SELF"], "cd.date_fin_validite", "", $param, 'align="center"', $sortfield, $sortorder);
-if (! empty($arrayfields['cd.date_cloture']['checked'])) print_liste_field_titre($arrayfields['cd.date_cloture']['label'], $_SERVER["PHP_SELF"], "cd.date_cloture", "", $param, 'align="center"', $sortfield, $sortorder);
+if (! empty($arrayfields['cd.date_ouverture_prevue']['checked'])) print_liste_field_titre($arrayfields['cd.date_ouverture_prevue']['label'], $_SERVER["PHP_SELF"], "cd.date_ouverture_prevue", "", $param, '', $sortfield, $sortorder, 'center ');
+if (! empty($arrayfields['cd.date_ouverture']['checked'])) print_liste_field_titre($arrayfields['cd.date_ouverture']['label'], $_SERVER["PHP_SELF"], "cd.date_ouverture", "", $param, '', $sortfield, $sortorder, 'center ');
+if (! empty($arrayfields['cd.date_fin_validite']['checked'])) print_liste_field_titre($arrayfields['cd.date_fin_validite']['label'], $_SERVER["PHP_SELF"], "cd.date_fin_validite", "", $param, '', $sortfield, $sortorder, 'center ');
+if (! empty($arrayfields['cd.date_cloture']['checked'])) print_liste_field_titre($arrayfields['cd.date_cloture']['label'], $_SERVER["PHP_SELF"], "cd.date_cloture", "", $param, '', $sortfield, $sortorder, 'center ');
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 // Hook fields
 $parameters=array('arrayfields'=>$arrayfields,'param'=>$param,'sortfield'=>$sortfield,'sortorder'=>$sortorder);
 $reshook=$hookmanager->executeHooks('printFieldListTitle', $parameters);    // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
-if (! empty($arrayfields['cd.datec']['checked']))  print_liste_field_titre($arrayfields['cd.datec']['label'], $_SERVER["PHP_SELF"], "cd.datec", "", $param, 'align="center" class="nowrap"', $sortfield, $sortorder);
-if (! empty($arrayfields['cd.tms']['checked']))    print_liste_field_titre($arrayfields['cd.tms']['label'], $_SERVER["PHP_SELF"], "cd.tms", "", $param, 'align="center" class="nowrap"', $sortfield, $sortorder);
+if (! empty($arrayfields['cd.datec']['checked']))  print_liste_field_titre($arrayfields['cd.datec']['label'], $_SERVER["PHP_SELF"], "cd.datec", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
+if (! empty($arrayfields['cd.tms']['checked']))    print_liste_field_titre($arrayfields['cd.tms']['label'], $_SERVER["PHP_SELF"], "cd.tms", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
 if (! empty($arrayfields['status']['checked'])) print_liste_field_titre($arrayfields['status']['label'], $_SERVER["PHP_SELF"], "cd.statut,c.statut", "", $param, '', $sortfield, $sortorder, 'right ');
-print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', 'align="center"', $sortfield, $sortorder, 'maxwidthsearch ');
+print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
 print "</tr>\n";
 
 print '<tr class="liste_titre">';
@@ -451,7 +451,7 @@ if (! empty($arrayfields['s.nom']['checked']))
 
 if (! empty($arrayfields['cd.date_ouverture_prevue']['checked']))
 {
-	print '<td class="liste_titre" align="center">';
+	print '<td class="liste_titre center">';
 	$arrayofoperators=array('<'=>'<','>'=>'>');
 	print $form->selectarray('filter_opouvertureprevue', $arrayofoperators, $filter_opouvertureprevue, 1);
 	print ' ';
@@ -461,7 +461,7 @@ if (! empty($arrayfields['cd.date_ouverture_prevue']['checked']))
 }
 if (! empty($arrayfields['cd.date_ouverture']['checked']))
 {
-	print '<td class="liste_titre" align="center">';
+	print '<td class="liste_titre center">';
 	$arrayofoperators=array('<'=>'<','>'=>'>');
 	print $form->selectarray('filter_op1', $arrayofoperators, $filter_op1, 1);
 	print ' ';
@@ -471,7 +471,7 @@ if (! empty($arrayfields['cd.date_ouverture']['checked']))
 }
 if (! empty($arrayfields['cd.date_fin_validite']['checked']))
 {
-	print '<td class="liste_titre" align="center">';
+	print '<td class="liste_titre center">';
 	$arrayofoperators=array('<'=>'<','>'=>'>');
 	print $form->selectarray('filter_op2', $arrayofoperators, $filter_op2, 1);
 	print ' ';
@@ -481,7 +481,7 @@ if (! empty($arrayfields['cd.date_fin_validite']['checked']))
 }
 if (! empty($arrayfields['cd.date_cloture']['checked']))
 {
-	print '<td class="liste_titre" align="center">';
+	print '<td class="liste_titre center">';
 	$arrayofoperators=array('<'=>'<','>'=>'>');
 	print $form->selectarray('filter_opcloture', $arrayofoperators, $filter_opcloture, 1);
 	print ' ';
@@ -639,7 +639,7 @@ while ($i < min($num, $limit))
 	// Start date
 	if (! empty($arrayfields['cd.date_ouverture_prevue']['checked']))
 	{
-		print '<td align="center">';
+		print '<td class="center">';
 		print ($obj->date_ouverture_prevue?dol_print_date($db->jdate($obj->date_ouverture_prevue), 'dayhour'):'&nbsp;');
 		if ($db->jdate($obj->date_ouverture_prevue) && ($db->jdate($obj->date_ouverture_prevue) < ($now - $conf->contrat->services->inactifs->warning_delay)) && $obj->statut == 0)
 		print ' '.img_picto($langs->trans("Late"), "warning");
@@ -649,13 +649,13 @@ while ($i < min($num, $limit))
 	}
 	if (! empty($arrayfields['cd.date_ouverture']['checked']))
 	{
-		print '<td align="center">'.($obj->date_ouverture?dol_print_date($db->jdate($obj->date_ouverture), 'dayhour'):'&nbsp;').'</td>';
+		print '<td class="center">'.($obj->date_ouverture?dol_print_date($db->jdate($obj->date_ouverture), 'dayhour'):'&nbsp;').'</td>';
         if (! $i) $totalarray['nbfield']++;
 	}
 	// End date
 	if (! empty($arrayfields['cd.date_fin_validite']['checked']))
 	{
-		print '<td align="center">'.($obj->date_fin_validite?dol_print_date($db->jdate($obj->date_fin_validite), 'dayhour'):'&nbsp;');
+		print '<td class="center">'.($obj->date_fin_validite?dol_print_date($db->jdate($obj->date_fin_validite), 'dayhour'):'&nbsp;');
 		if ($obj->date_fin_validite && $db->jdate($obj->date_fin_validite) < ($now - $conf->contrat->services->expires->warning_delay) && $obj->statut < 5)
 		{
 			$warning_delay=$conf->contrat->services->expires->warning_delay / 3600 / 24;
@@ -669,7 +669,7 @@ while ($i < min($num, $limit))
 	// Close date (real end date)
 	if (! empty($arrayfields['cd.date_cloture']['checked']))
 	{
-		print '<td align="center">'.dol_print_date($db->jdate($obj->date_cloture), 'dayhour').'</td>';
+		print '<td class="center">'.dol_print_date($db->jdate($obj->date_cloture), 'dayhour').'</td>';
         if (! $i) $totalarray['nbfield']++;
 	}
 
@@ -682,7 +682,7 @@ while ($i < min($num, $limit))
 	// Date creation
 	if (! empty($arrayfields['cd.datec']['checked']))
 	{
-		print '<td align="center">';
+		print '<td class="center">';
 		print dol_print_date($db->jdate($obj->date_creation), 'dayhour', 'tzuser');
 		print '</td>';
 		if (! $i) $totalarray['nbfield']++;
@@ -690,7 +690,7 @@ while ($i < min($num, $limit))
 	// Date modification
 	if (! empty($arrayfields['cd.tms']['checked']))
 	{
-		print '<td align="center">';
+		print '<td class="center">';
 		print dol_print_date($db->jdate($obj->date_update), 'dayhour', 'tzuser');
 		print '</td>';
 		if (! $i) $totalarray['nbfield']++;
@@ -711,7 +711,7 @@ while ($i < min($num, $limit))
        if (! $i) $totalarray['nbfield']++;
 	}
 	// Action column
-	print '<td class="nowrap" align="center">';
+	print '<td class="nowrap center">';
 	if ($massactionbutton || $massaction)   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 	{
 		$selected=0;

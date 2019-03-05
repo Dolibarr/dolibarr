@@ -27,6 +27,7 @@ namespace Stripe;
  * @property StripeObject $metadata
  * @property Plan $plan
  * @property int $quantity
+ * @property SubscriptionSchedule $schedule
  * @property int $start
  * @property string $status
  * @property float $tax_percent

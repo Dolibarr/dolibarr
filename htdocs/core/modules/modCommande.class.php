@@ -43,7 +43,7 @@ class modCommande extends DolibarrModules
 	 *
 	 *   @param      DoliDB		$db      Database handler
 	 */
-	function __construct($db)
+	public function __construct($db)
 	{
 		global $conf, $user;
 
@@ -269,7 +269,7 @@ class modCommande extends DolibarrModules
      *      @param      string	$options    Options when enabling module ('', 'newboxdefonly', 'noboxes')
 	 *      @return     int             	1 if OK, 0 if KO
 	 */
-	function init($options = '')
+	public function init($options = '')
 	{
 		global $conf,$langs;
 
@@ -299,6 +299,6 @@ class modCommande extends DolibarrModules
 				"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->db->escape($this->const[0][2])."','order',".$conf->entity.")"
 		);
 
-		 return $this->_init($sql, $options);
+		return $this->_init($sql, $options);
 	}
 }

@@ -28,29 +28,29 @@ include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
  */
 class ActionsCardProduct
 {
-    var $targetmodule;
-    var $canvas;
-    var $card;
+    public $targetmodule;
+    public $canvas;
+    public $card;
 
     //! Template container
-	var $tpl = array();
+	public $tpl = array();
 
 	// List of fiels for action=list
-	var $field_list =array();
+	public $field_list =array();
     public $list_datas = array();
 
 
     /**
-	 *    Constructor
-	 *
+     *    Constructor
+     *
      *    @param	DoliDB	$db             Database handler
      *    @param	string	$dirmodule		Name of directory of module
      *    @param	string	$targetmodule	Name of directory where canvas is stored
      *    @param	string	$canvas         Name of canvas
      *    @param	string	$card           Name of tab (sub-canvas)
-	 */
-	function __construct($db, $dirmodule, $targetmodule, $canvas, $card)
-	{
+     */
+    public function __construct($db, $dirmodule, $targetmodule, $canvas, $card)
+    {
         $this->db               = $db;
         $this->dirmodule		= $dirmodule;
         $this->targetmodule     = $targetmodule;
@@ -64,7 +64,7 @@ class ActionsCardProduct
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *    Assign custom values for canvas (for example into this->tpl to be used by templates)
 	 *
@@ -73,7 +73,7 @@ class ActionsCardProduct
 	 *    @param	string	$ref		Ref of object
 	 *    @return	void
 	 */
-	function assign_values(&$action, $id = 0, $ref = '')
+    public function assign_values(&$action, $id = 0, $ref = '')
 	{
         // phpcs:enable
 		global $limit, $offset, $sortfield, $sortorder;
@@ -86,8 +86,7 @@ class ActionsCardProduct
 
 		//parent::assign_values($action);
 
-	    foreach($this->object as $key => $value)
-        {
+        foreach($this->object as $key => $value) {
             $this->tpl[$key] = $value;
         }
 
@@ -296,7 +295,7 @@ class ActionsCardProduct
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * 	Fetch datas list and save into ->list_datas
 	 *
@@ -306,7 +305,7 @@ class ActionsCardProduct
 	 *  @param	string	$sortorder	Sort order ('ASC' or 'DESC')
 	 *  @return	void
 	 */
-	function LoadListDatas($limit, $offset, $sortfield, $sortorder)
+    public function LoadListDatas($limit, $offset, $sortfield, $sortorder)
 	{
         // phpcs:enable
 		global $conf, $langs;

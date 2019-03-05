@@ -239,7 +239,7 @@ class Propal extends CommonObject
 	 *	@param      int		$socid		Id third party
 	 *	@param      int		$propalid   Id proposal
 	 */
-	function __construct($db, $socid = "", $propalid = 0)
+    public function __construct($db, $socid = "", $propalid = 0)
 	{
 		global $conf,$langs;
 
@@ -254,7 +254,7 @@ class Propal extends CommonObject
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Add line into array products
 	 *  $this->thirdparty should be loaded
@@ -267,7 +267,7 @@ class Propal extends CommonObject
 	 *	TODO	Replace calls to this function by generation objet Ligne
 	 *			inserted into table $this->products
 	 */
-	function add_product($idproduct, $qty, $remise_percent = 0)
+    public function add_product($idproduct, $qty, $remise_percent = 0)
 	{
         // phpcs:enable
 		global $conf, $mysoc;
@@ -316,14 +316,14 @@ class Propal extends CommonObject
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Adding line of fixed discount in the proposal in DB
 	 *
 	 *	@param     int		$idremise			Id of fixed discount
 	 *  @return    int          				>0 if OK, <0 if KO
 	 */
-	function insert_discount($idremise)
+    public function insert_discount($idremise)
 	{
         // phpcs:enable
 		global $langs;
@@ -434,7 +434,7 @@ class Propal extends CommonObject
      *    	@return    	int         	    			>0 if OK, <0 if KO
      *    	@see       	add_product
      */
-	function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1 = 0.0, $txlocaltax2 = 0.0, $fk_product = 0, $remise_percent = 0.0, $price_base_type = 'HT', $pu_ttc = 0.0, $info_bits = 0, $type = 0, $rang = -1, $special_code = 0, $fk_parent_line = 0, $fk_fournprice = 0, $pa_ht = 0, $label = '', $date_start = '', $date_end = '', $array_options = 0, $fk_unit = null, $origin = '', $origin_id = 0, $pu_ht_devise = 0, $fk_remise_except = 0)
+    public function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1 = 0.0, $txlocaltax2 = 0.0, $fk_product = 0, $remise_percent = 0.0, $price_base_type = 'HT', $pu_ttc = 0.0, $info_bits = 0, $type = 0, $rang = -1, $special_code = 0, $fk_parent_line = 0, $fk_fournprice = 0, $pa_ht = 0, $label = '', $date_start = '', $date_end = '', $array_options = 0, $fk_unit = null, $origin = '', $origin_id = 0, $pu_ht_devise = 0, $fk_remise_except = 0)
 	{
 		global $mysoc, $conf, $langs;
 
@@ -663,11 +663,11 @@ class Propal extends CommonObject
 	 * 	@param		int			$notrigger			disable line update trigger
 	 *  @return     int     		        		0 if OK, <0 if KO
 	 */
-	function updateline($rowid, $pu, $qty, $remise_percent, $txtva, $txlocaltax1 = 0.0, $txlocaltax2 = 0.0, $desc = '', $price_base_type = 'HT', $info_bits = 0, $special_code = 0, $fk_parent_line = 0, $skip_update_total = 0, $fk_fournprice = 0, $pa_ht = 0, $label = '', $type = 0, $date_start = '', $date_end = '', $array_options = 0, $fk_unit = null, $pu_ht_devise = 0, $notrigger = 0)
+    public function updateline($rowid, $pu, $qty, $remise_percent, $txtva, $txlocaltax1 = 0.0, $txlocaltax2 = 0.0, $desc = '', $price_base_type = 'HT', $info_bits = 0, $special_code = 0, $fk_parent_line = 0, $skip_update_total = 0, $fk_fournprice = 0, $pa_ht = 0, $label = '', $type = 0, $date_start = '', $date_end = '', $array_options = 0, $fk_unit = null, $pu_ht_devise = 0, $notrigger = 0)
 	{
 		global $mysoc;
 
-dol_syslog(get_class($this)."::updateLine rowid=$rowid, pu=$pu, qty=$qty, remise_percent=$remise_percent,
+        dol_syslog(get_class($this)."::updateLine rowid=$rowid, pu=$pu, qty=$qty, remise_percent=$remise_percent,
         txtva=$txtva, desc=$desc, price_base_type=$price_base_type, info_bits=$info_bits, special_code=$special_code, fk_parent_line=$fk_parent_line, pa_ht=$pa_ht, type=$type, date_start=$date_start, date_end=$date_end");
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 
@@ -827,7 +827,7 @@ dol_syslog(get_class($this)."::updateLine rowid=$rowid, pu=$pu, qty=$qty, remise
 	 *  @param		int		$lineid			Id of line to delete
 	 *  @return     int         			>0 if OK, <0 if KO
 	 */
-	function deleteline($lineid)
+    public function deleteline($lineid)
 	{
 		global $user;
 
@@ -869,7 +869,7 @@ dol_syslog(get_class($this)."::updateLine rowid=$rowid, pu=$pu, qty=$qty, remise
 	 * 	@param		int		$notrigger	1=Does not execute triggers, 0= execute triggers
 	 *  @return     int     			<0 if KO, >=0 if OK
 	 */
-	function create($user, $notrigger = 0)
+    public function create($user, $notrigger = 0)
 	{
 		global $conf,$hookmanager;
 		$error=0;
@@ -1193,7 +1193,7 @@ dol_syslog(get_class($this)."::updateLine rowid=$rowid, pu=$pu, qty=$qty, remise
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Insert into DB a proposal object completely defined by its data members (ex, results from copy).
 	 *
@@ -1201,7 +1201,7 @@ dol_syslog(get_class($this)."::updateLine rowid=$rowid, pu=$pu, qty=$qty, remise
 	 *	@return    	int				Id of the new object if ok, <0 if ko
 	 *	@see       	create
 	 */
-	function create_from($user)
+    public function create_from($user)
 	{
         // phpcs:enable
 		// i love this function because $this->products is not used in create function...
@@ -1216,7 +1216,7 @@ dol_syslog(get_class($this)."::updateLine rowid=$rowid, pu=$pu, qty=$qty, remise
 	 *		@param		int				$socid			Id of thirdparty
 	 * 	 	@return		int								New id of clone
 	 */
-	function createFromClone($socid = 0)
+    public function createFromClone($socid = 0)
 	{
 		global $user,$conf,$hookmanager;
 
@@ -1345,7 +1345,7 @@ dol_syslog(get_class($this)."::updateLine rowid=$rowid, pu=$pu, qty=$qty, remise
 	 *	@param		string		$ref		Ref of proposal
 	 *	@return     int         			>0 if OK, <0 if KO
 	 */
-	function fetch($rowid, $ref = '')
+    public function fetch($rowid, $ref = '')
 	{
 
 		$sql = "SELECT p.rowid, p.ref, p.entity, p.remise, p.remise_percent, p.remise_absolue, p.fk_soc";
@@ -1357,7 +1357,7 @@ dol_syslog(get_class($this)."::updateLine rowid=$rowid, pu=$pu, qty=$qty, remise
 		$sql.= ", p.date_livraison as date_livraison";
 		$sql.= ", p.model_pdf, p.last_main_doc, p.ref_client, p.extraparams";
 		$sql.= ", p.note_private, p.note_public";
-		$sql.= ", p.fk_projet, p.fk_statut";
+		$sql.= ", p.fk_projet as fk_project, p.fk_statut";
 		$sql.= ", p.fk_user_author, p.fk_user_valid, p.fk_user_cloture";
 		$sql.= ", p.fk_delivery_address";
 		$sql.= ", p.fk_availability";
@@ -1412,7 +1412,7 @@ dol_syslog(get_class($this)."::updateLine rowid=$rowid, pu=$pu, qty=$qty, remise
 				$this->total_localtax2		= $obj->localtax2;
 				$this->total_ttc            = $obj->total;
 				$this->socid                = $obj->fk_soc;
-				$this->fk_project           = $obj->fk_projet;
+				$this->fk_project           = $obj->fk_project;
 				$this->modelpdf             = $obj->model_pdf;
 				$this->last_main_doc		= $obj->last_main_doc;
 				$this->note                 = $obj->note_private; // TODO deprecated
@@ -1509,7 +1509,7 @@ dol_syslog(get_class($this)."::updateLine rowid=$rowid, pu=$pu, qty=$qty, remise
 	 *      @param      int		$notrigger	    0=launch triggers after, 1=disable triggers
 	 *      @return     int      			   	<0 if KO, >0 if OK
 	 */
-	function update(User $user, $notrigger = 0)
+    public function update(User $user, $notrigger = 0)
 	{
 		global $conf;
 
@@ -1597,14 +1597,14 @@ dol_syslog(get_class($this)."::updateLine rowid=$rowid, pu=$pu, qty=$qty, remise
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Load array lines
 	 *
 	 * @param		int		$only_product	Return only physical products
 	 * @return		int						<0 if KO, >0 if OK
 	 */
-	function fetch_lines($only_product = 0)
+    public function fetch_lines($only_product = 0)
 	{
         // phpcs:enable
 		$this->lines=array();
@@ -1723,7 +1723,7 @@ dol_syslog(get_class($this)."::updateLine rowid=$rowid, pu=$pu, qty=$qty, remise
 	 *  @param	int		$notrigger	1=Does not execute triggers, 0=execute triggers
 	 *  @return int         		<0 if KO, 0=Nothing done, >=0 if OK
 	 */
-	function valid($user, $notrigger = 0)
+    public function valid($user, $notrigger = 0)
 	{
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
@@ -1838,7 +1838,7 @@ dol_syslog(get_class($this)."::updateLine rowid=$rowid, pu=$pu, qty=$qty, remise
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Define proposal date
 	 *
@@ -1847,7 +1847,7 @@ dol_syslog(get_class($this)."::updateLine rowid=$rowid, pu=$pu, qty=$qty, remise
 	 *  @param  int			$notrigger	1=Does not execute triggers, 0= execute triggers
 	 *  @return	int         			<0 if KO, >0 if OK
 	 */
-	function set_date($user, $date, $notrigger = 0)
+    public function set_date($user, $date, $notrigger = 0)
 	{
         // phpcs:enable
 		if (empty($date))
@@ -1907,7 +1907,7 @@ dol_syslog(get_class($this)."::updateLine rowid=$rowid, pu=$pu, qty=$qty, remise
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Define end validity date
 	 *
@@ -1916,7 +1916,7 @@ dol_syslog(get_class($this)."::updateLine rowid=$rowid, pu=$pu, qty=$qty, remise
 	 *  @param  	int		$notrigger			1=Does not execute triggers, 0= execute triggers
 	 *	@return     int         				<0 if KO, >0 if OK
 	 */
-	function set_echeance($user, $date_fin_validite, $notrigger = 0)
+    public function set_echeance($user, $date_fin_validite, $notrigger = 0)
 	{
         // phpcs:enable
 		if (! empty($user->rights->propal->creer))
@@ -1969,7 +1969,7 @@ dol_syslog(get_class($this)."::updateLine rowid=$rowid, pu=$pu, qty=$qty, remise
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Set delivery date
 	 *
@@ -1978,7 +1978,7 @@ dol_syslog(get_class($this)."::updateLine rowid=$rowid, pu=$pu, qty=$qty, remise
 	 *  @param  	int		$notrigger			1=Does not execute triggers, 0= execute triggers
 	 *	@return     int         				<0 if ko, >0 if ok
 	 */
-	function set_date_livraison($user, $date_livraison, $notrigger = 0)
+    public function set_date_livraison($user, $date_livraison, $notrigger = 0)
 	{
         // phpcs:enable
 		if (! empty($user->rights->propal->creer))
@@ -2031,7 +2031,7 @@ dol_syslog(get_class($this)."::updateLine rowid=$rowid, pu=$pu, qty=$qty, remise
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Set delivery
 	 *
@@ -2040,7 +2040,7 @@ dol_syslog(get_class($this)."::updateLine rowid=$rowid, pu=$pu, qty=$qty, remise
 	 *  @param  	int		$notrigger		1=Does not execute triggers, 0= execute triggers
 	 *  @return     int           			<0 if KO, >0 if OK
 	 */
-	function set_availability($user, $id, $notrigger = 0)
+    public function set_availability($user, $id, $notrigger = 0)
 	{
         // phpcs:enable
 		if (! empty($user->rights->propal->creer) && $this->statut >= self::STATUS_DRAFT)
@@ -2102,7 +2102,7 @@ dol_syslog(get_class($this)."::updateLine rowid=$rowid, pu=$pu, qty=$qty, remise
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Set source of demand
 	 *
@@ -2111,7 +2111,7 @@ dol_syslog(get_class($this)."::updateLine rowid=$rowid, pu=$pu, qty=$qty, remise
 	 *  @param  	int		$notrigger	1=Does not execute triggers, 0= execute triggers
 	 *  @return     int           		<0 if KO, >0 if OK
 	 */
-	function set_demand_reason($user, $id, $notrigger = 0)
+    public function set_demand_reason($user, $id, $notrigger = 0)
 	{
         // phpcs:enable
 		if (! empty($user->rights->propal->creer) && $this->statut >= self::STATUS_DRAFT)
@@ -2175,7 +2175,7 @@ dol_syslog(get_class($this)."::updateLine rowid=$rowid, pu=$pu, qty=$qty, remise
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Set customer reference number
 	 *
@@ -2184,7 +2184,7 @@ dol_syslog(get_class($this)."::updateLine rowid=$rowid, pu=$pu, qty=$qty, remise
 	 *  @param  	int		$notrigger		1=Does not execute triggers, 0= execute triggers
 	 *  @return     int						<0 if ko, >0 if ok
 	 */
-	function set_ref_client($user, $ref_client, $notrigger = 0)
+    public function set_ref_client($user, $ref_client, $notrigger = 0)
 	{
         // phpcs:enable
 		if (! empty($user->rights->propal->creer))
@@ -2240,7 +2240,7 @@ dol_syslog(get_class($this)."::updateLine rowid=$rowid, pu=$pu, qty=$qty, remise
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Set an overall discount on the proposal
 	 *
@@ -2249,7 +2249,7 @@ dol_syslog(get_class($this)."::updateLine rowid=$rowid, pu=$pu, qty=$qty, remise
 	 *  @param  	int		$notrigger	1=Does not execute triggers, 0= execute triggers
 	 *	@return     int         		<0 if ko, >0 if ok
 	 */
-	function set_remise_percent($user, $remise, $notrigger = 0)
+    public function set_remise_percent($user, $remise, $notrigger = 0)
 	{
         // phpcs:enable
 		$remise=trim($remise)?trim($remise):0;
@@ -2307,7 +2307,7 @@ dol_syslog(get_class($this)."::updateLine rowid=$rowid, pu=$pu, qty=$qty, remise
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Set an absolute overall discount on the proposal
 	 *
@@ -2316,7 +2316,7 @@ dol_syslog(get_class($this)."::updateLine rowid=$rowid, pu=$pu, qty=$qty, remise
 	 *  @param  	int		$notrigger	1=Does not execute triggers, 0= execute triggers
 	 *	@return     int         		<0 if ko, >0 if ok
 	 */
-	function set_remise_absolue($user, $remise, $notrigger = 0)
+    public function set_remise_absolue($user, $remise, $notrigger = 0)
 	{
         // phpcs:enable
 		$remise=trim($remise)?trim($remise):0;
@@ -2385,7 +2385,7 @@ dol_syslog(get_class($this)."::updateLine rowid=$rowid, pu=$pu, qty=$qty, remise
 	 *  @param		int		$notrigger	1=Does not execute triggers, 0= execute triggers
 	 *	@return     int         		<0 if KO, >0 if OK
 	 */
-	function reopen($user, $statut, $note = '', $notrigger = 0)
+    public function reopen($user, $statut, $note = '', $notrigger = 0)
 	{
 
 		$this->statut = $statut;
@@ -2446,7 +2446,7 @@ dol_syslog(get_class($this)."::updateLine rowid=$rowid, pu=$pu, qty=$qty, remise
 	 *  @param		int		$notrigger	1=Does not execute triggers, 0=Execute triggers
 	 *	@return     int         		<0 if KO, >0 if OK
 	 */
-	function cloture($user, $statut, $note = "", $notrigger = 0)
+    public function cloture($user, $statut, $note = "", $notrigger = 0)
 	{
 		global $langs,$conf;
 
@@ -2549,7 +2549,7 @@ dol_syslog(get_class($this)."::updateLine rowid=$rowid, pu=$pu, qty=$qty, remise
 	 *  @param		int		$notrigger	1=Does not execute triggers, 0= execute triggers
 	 *	@return     int     			<0 si ko, >0 si ok
 	 */
-	function classifyBilled(User $user, $notrigger = 0)
+    public function classifyBilled(User $user, $notrigger = 0)
 	{
 		$error=0;
 
@@ -2597,7 +2597,7 @@ dol_syslog(get_class($this)."::updateLine rowid=$rowid, pu=$pu, qty=$qty, remise
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Set draft status
 	 *
@@ -2605,7 +2605,7 @@ dol_syslog(get_class($this)."::updateLine rowid=$rowid, pu=$pu, qty=$qty, remise
 	 *  @param		int		$notrigger	1=Does not execute triggers, 0= execute triggers
 	 *	@return		int					<0 if KO, >0 if OK
 	 */
-	function set_draft($user, $notrigger = 0)
+    public function set_draft($user, $notrigger = 0)
 	{
         // phpcs:enable
 		$error=0;
@@ -2656,7 +2656,7 @@ dol_syslog(get_class($this)."::updateLine rowid=$rowid, pu=$pu, qty=$qty, remise
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *    Return list of proposal (eventually filtered on user) into an array
 	 *
@@ -2670,7 +2670,7 @@ dol_syslog(get_class($this)."::updateLine rowid=$rowid, pu=$pu, qty=$qty, remise
 	 *    @param    string	$sortorder			Sort order
 	 *    @return	int		       				-1 if KO, array with result if OK
 	 */
-	function liste_array($shortlist = 0, $draft = 0, $notcurrentuser = 0, $socid = 0, $limit = 0, $offset = 0, $sortfield = 'p.datep', $sortorder = 'DESC')
+    public function liste_array($shortlist = 0, $draft = 0, $notcurrentuser = 0, $socid = 0, $limit = 0, $offset = 0, $sortfield = 'p.datep', $sortorder = 'DESC')
 	{
         // phpcs:enable
 		global $user;
@@ -2739,19 +2739,19 @@ dol_syslog(get_class($this)."::updateLine rowid=$rowid, pu=$pu, qty=$qty, remise
 	 *
 	 *	@return	array		Array of invoices
 	 */
-	function getInvoiceArrayList()
+    public function getInvoiceArrayList()
 	{
 		return $this->InvoiceArrayList($this->id);
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Returns an array with id and ref of related invoices
 	 *
 	 *	@param		int		$id			Id propal
 	 *	@return		array				Array of invoices id
 	 */
-	function InvoiceArrayList($id)
+    public function InvoiceArrayList($id)
 	{
         // phpcs:enable
 		$ga = array();
@@ -2838,7 +2838,7 @@ dol_syslog(get_class($this)."::updateLine rowid=$rowid, pu=$pu, qty=$qty, remise
 	 *	@param	int		$notrigger		1=Does not execute triggers, 0= execute triggers
 	 *	@return	int						1 if ok, otherwise if error
 	 */
-	function delete($user, $notrigger = 0)
+    public function delete($user, $notrigger = 0)
 	{
 		global $conf;
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -2962,7 +2962,7 @@ dol_syslog(get_class($this)."::updateLine rowid=$rowid, pu=$pu, qty=$qty, remise
 	 *  @return int                  	>0 if OK, <0 if KO
 	 *  @deprecated  use set_availability
 	 */
-	function availability($availability_id, $notrigger = 0)
+    public function availability($availability_id, $notrigger = 0)
 	{
 		global $user;
 
@@ -3024,7 +3024,7 @@ dol_syslog(get_class($this)."::updateLine rowid=$rowid, pu=$pu, qty=$qty, remise
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Change source demand
 	 *
@@ -3033,7 +3033,7 @@ dol_syslog(get_class($this)."::updateLine rowid=$rowid, pu=$pu, qty=$qty, remise
 	 *	@return int						>0 si ok, <0 si ko
 	 *	@deprecated use set_demand_reason
 	 */
-	function demand_reason($demand_reason_id, $notrigger = 0)
+    public function demand_reason($demand_reason_id, $notrigger = 0)
 	{
         // phpcs:enable
 		global $user;
@@ -3103,7 +3103,7 @@ dol_syslog(get_class($this)."::updateLine rowid=$rowid, pu=$pu, qty=$qty, remise
 	 * 	@param	int		$id		Proposal id
 	 *  @return	void
 	 */
-	function info($id)
+    public function info($id)
 	{
 		$sql = "SELECT c.rowid, ";
 		$sql.= " c.datec, c.date_valid as datev, c.date_cloture as dateo,";
@@ -3158,12 +3158,12 @@ dol_syslog(get_class($this)."::updateLine rowid=$rowid, pu=$pu, qty=$qty, remise
 	 *    	@param      int			$mode        0=Long label, 1=Short label, 2=Picto + Short label, 3=Picto, 4=Picto + Long label, 5=Short label + Picto, 6=Long label + Picto
 	 *    	@return     string		Label
 	 */
-	function getLibStatut($mode = 0)
+    public function getLibStatut($mode = 0)
 	{
 		return $this->LibStatut($this->statut, $mode);
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *    	Return label of a status (draft, validated, ...)
 	 *
@@ -3171,7 +3171,7 @@ dol_syslog(get_class($this)."::updateLine rowid=$rowid, pu=$pu, qty=$qty, remise
 	 *    	@param      int			$mode      	0=Long label, 1=Short label, 2=Picto + Short label, 3=Picto, 4=Picto + Long label, 5=Short label + Picto, 6=Long label + Picto
 	 *    	@return     string		Label
 	 */
-	function LibStatut($statut, $mode = 1)
+    public function LibStatut($statut, $mode = 1)
 	{
         // phpcs:enable
 		global $conf;
@@ -3210,7 +3210,7 @@ dol_syslog(get_class($this)."::updateLine rowid=$rowid, pu=$pu, qty=$qty, remise
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *      Load indicators for dashboard (this->nbtodo and this->nbtodolate)
 	 *
@@ -3218,7 +3218,7 @@ dol_syslog(get_class($this)."::updateLine rowid=$rowid, pu=$pu, qty=$qty, remise
 	 *      @param          int		$mode   "opened" for proposal to close, "signed" for proposal to invoice
 	 *      @return WorkboardResponse|int <0 if KO, WorkboardResponse if OK
 	 */
-	function load_board($user, $mode)
+    public function load_board($user, $mode)
 	{
         // phpcs:enable
 		global $conf, $langs;
@@ -3300,7 +3300,7 @@ dol_syslog(get_class($this)."::updateLine rowid=$rowid, pu=$pu, qty=$qty, remise
 	 *
 	 *  @return	void
 	 */
-	function initAsSpecimen()
+    public function initAsSpecimen()
 	{
 		global $langs;
 
@@ -3386,13 +3386,13 @@ dol_syslog(get_class($this)."::updateLine rowid=$rowid, pu=$pu, qty=$qty, remise
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *      Charge indicateurs this->nb de tableau de bord
 	 *
 	 *      @return     int         <0 if ko, >0 if ok
 	 */
-	function load_state_board()
+    public function load_state_board()
 	{
         // phpcs:enable
 		global $user;
@@ -3438,7 +3438,7 @@ dol_syslog(get_class($this)."::updateLine rowid=$rowid, pu=$pu, qty=$qty, remise
 	 *  @param	Societe		$soc  	Object thirdparty
 	 *  @return string      		Reference libre pour la propale
 	 */
-	function getNextNumRef($soc)
+    public function getNextNumRef($soc)
 	{
 		global $conf,$langs;
 		$langs->load("propal");
@@ -3500,7 +3500,7 @@ dol_syslog(get_class($this)."::updateLine rowid=$rowid, pu=$pu, qty=$qty, remise
 	 *  @param      int     $save_lastsearch_value    -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
 	 *	@return     string          		          String with URL
 	 */
-	function getNomUrl($withpicto = 0, $option = '', $get_params = '', $notooltip = 0, $save_lastsearch_value = -1)
+    public function getNomUrl($withpicto = 0, $option = '', $get_params = '', $notooltip = 0, $save_lastsearch_value = -1)
 	{
 		global $langs, $conf, $user;
 
@@ -3574,7 +3574,7 @@ dol_syslog(get_class($this)."::updateLine rowid=$rowid, pu=$pu, qty=$qty, remise
 	 *
 	 * 	@return int		>0 if OK, <0 if KO
 	 */
-	function getLinesArray()
+    public function getLinesArray()
 	{
 		return $this->fetch_lines();
 	}
@@ -3754,7 +3754,7 @@ class PropaleLigne extends CommonObjectLine
 	 *
 	 * 	@param	DoliDB	$db	Database handler
 	 */
-	function __construct($db)
+    public function __construct($db)
 	{
 		$this->db= $db;
 	}
@@ -3765,7 +3765,7 @@ class PropaleLigne extends CommonObjectLine
 	 *	@param	int		$rowid		Propal line id
 	 *	@return	int					<0 if KO, >0 if OK
 	 */
-	function fetch($rowid)
+    public function fetch($rowid)
 	{
 		$sql = 'SELECT pd.rowid, pd.fk_propal, pd.fk_parent_line, pd.fk_product, pd.label as custom_label, pd.description, pd.price, pd.qty, pd.vat_src_code, pd.tva_tx,';
 		$sql.= ' pd.remise, pd.remise_percent, pd.fk_remise_except, pd.subprice,';
@@ -3859,7 +3859,7 @@ class PropaleLigne extends CommonObjectLine
 	 *	@param		int		$notrigger		1=Does not execute triggers, 0= execute triggers
 	 *	@return		int						<0 if KO, >0 if OK
 	 */
-	function insert($notrigger = 0)
+    public function insert($notrigger = 0)
 	{
 		global $conf,$user;
 
@@ -4002,7 +4002,7 @@ class PropaleLigne extends CommonObjectLine
 	 *	@param 	int		$notrigger	1=Does not execute triggers, 0= execute triggers
 	 *	@return	 int  				<0 if ko, >0 if ok
 	 */
-	function delete(User $user, $notrigger = 0)
+    public function delete(User $user, $notrigger = 0)
 	{
 		global $conf;
 
@@ -4056,7 +4056,7 @@ class PropaleLigne extends CommonObjectLine
 	 *	@param 	int		$notrigger	1=Does not execute triggers, 0= execute triggers
 	 *	@return	int					<0 if ko, >0 if ok
 	 */
-	function update($notrigger = 0)
+    public function update($notrigger = 0)
 	{
 		global $conf,$user;
 
@@ -4178,14 +4178,14 @@ class PropaleLigne extends CommonObjectLine
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Update DB line fields total_xxx
 	 *	Used by migration
 	 *
 	 *	@return		int		<0 if KO, >0 if OK
 	 */
-	function update_total()
+    public function update_total()
 	{
         // phpcs:enable
 		$this->db->begin();

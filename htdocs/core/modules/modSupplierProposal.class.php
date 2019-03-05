@@ -42,7 +42,7 @@ class modSupplierProposal extends DolibarrModules
 	 *
 	 *   @param      DoliDB		$db      Database handler
 	 */
-	function __construct($db)
+	public function __construct($db)
 	{
 		global $conf;
 
@@ -57,10 +57,10 @@ class modSupplierProposal extends DolibarrModules
 
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		$this->picto='supplier_proposal';
-        
+
 		// Data directories to create when module is enabled.
 		$this->dirs = array();
-		
+
 		 // Config pages. Put here list of php page names stored in admin directory used to setup module.
         $this->config_page_url = array("supplier_proposal.php");
 
@@ -206,7 +206,7 @@ class modSupplierProposal extends DolibarrModules
      *      @param      string	$options    Options when enabling module ('', 'noboxes')
 	 *      @return     int             	1 if OK, 0 if KO
 	 */
-	function init($options = '')
+    public function init($options = '')
 	{
 		global $conf,$langs;
 

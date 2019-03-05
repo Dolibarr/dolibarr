@@ -59,7 +59,7 @@ class doc_generic_user_odt extends ModelePDFUser
 	 *
 	 *  @param		DoliDB		$db      Database handler
 	 */
-	function __construct($db)
+    public function __construct($db)
 	{
 		global $conf, $langs, $mysoc;
 
@@ -104,7 +104,7 @@ class doc_generic_user_odt extends ModelePDFUser
 	 *	@param	Translate	$langs      Lang object to use for output
 	 *	@return string       			Description
 	 */
-	function info($langs)
+    public function info($langs)
 	{
 		global $conf, $langs;
 
@@ -203,9 +203,9 @@ class doc_generic_user_odt extends ModelePDFUser
 		return $texte;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *	Function to build a document on disk using the generic odt module.
+	 *  Function to build a document on disk using the generic odt module.
 	 *
 	 *	@param		User		$object				Object source to build document
 	 *	@param		Translate	$outputlangs		Lang output object
@@ -215,7 +215,7 @@ class doc_generic_user_odt extends ModelePDFUser
 	 *  @param		int			$hideref			Do not show ref
 	 *	@return		int         					1 if OK, <=0 if KO
 	 */
-	function write_file($object, $outputlangs, $srctemplatepath, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
+    public function write_file($object, $outputlangs, $srctemplatepath, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
         // phpcs:enable
 		global $user, $langs, $conf, $mysoc, $hookmanager;
@@ -330,7 +330,7 @@ class doc_generic_user_odt extends ModelePDFUser
 				// Open and load template
 				require_once ODTPHP_PATH.'odf.php';
 				try {
-    $odfHandler = new odf(
+                    $odfHandler = new odf(
 						$srctemplatepath,
 						array(
 							'PATH_TO_TMP'	  => $conf->user->dir_temp,
@@ -439,7 +439,7 @@ class doc_generic_user_odt extends ModelePDFUser
 		return -1;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      * get substitution array for object
      *
@@ -448,7 +448,7 @@ class doc_generic_user_odt extends ModelePDFUser
      * @param string        $array_key      key for array
      * @return array                        array of substitutions
      */
-    function get_substitutionarray_object($object, $outputlangs, $array_key = 'object')
+    public function get_substitutionarray_object($object, $outputlangs, $array_key = 'object')
     {
         // phpcs:enable
 		$array_other = array();

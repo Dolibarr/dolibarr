@@ -45,7 +45,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 	 *
 	 *	@param	DoliDB	$db		Database handler
 	 */
-	function __construct($db)
+	public function __construct($db)
 	{
 		global $conf,$langs,$mysoc;
 
@@ -78,7 +78,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 		$this->tab_height = 200;	//$this->line_height * $this->line_per_page;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Fonction to generate document on disk
 	 *
@@ -88,7 +88,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 	 *	@param	Translate		$outputlangs	Lang output object
      *	@return	int     						1=ok, 0=ko
 	 */
-	function write_file($object, $_dir, $number, $outputlangs)
+	public function write_file($object, $_dir, $number, $outputlangs)
 	{
         // phpcs:enable
 		global $user,$conf,$langs,$hookmanager;
@@ -209,7 +209,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Generate Header
 	 *
@@ -219,7 +219,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 	 *	@param	Translate	$outputlangs	Object language for output
 	 *	@return	void
 	 */
-	function Header(&$pdf, $page, $pages, $outputlangs)
+	public function Header(&$pdf, $page, $pages, $outputlangs)
 	{
         // phpcs:enable
 		global $langs;
@@ -317,7 +317,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Output array
 	 *
@@ -327,7 +327,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 	 *	@param	Translate	$outputlangs	Object lang
 	 *	@return	void
 	 */
-	function Body(&$pdf, $pagenb, $pages, $outputlangs)
+	public function Body(&$pdf, $pagenb, $pages, $outputlangs)
 	{
         // phpcs:enable
 		// x=10 - Num
@@ -378,15 +378,15 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 
 
 	/**
-	 *   	Show footer of page. Need this->emetteur object
+	 *  Show footer of page. Need this->emetteur object
      *
-	 *   	@param	PDF			$pdf     			PDF
-	 * 		@param	Object		$object				Object to show
-	 *      @param	Translate	$outputlangs		Object lang for output
-	 *      @param	int			$hidefreetext		1=Hide free text
-	 *      @return	void
+	 *  @param	PDF			$pdf     			PDF
+	 *  @param	Object		$object				Object to show
+	 *  @param	Translate	$outputlangs		Object lang for output
+	 *  @param	int			$hidefreetext		1=Hide free text
+	 *  @return	void
 	 */
-	function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
+	private function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
 	{
 		global $conf;
 		$default_font_size = pdf_getPDFFontSize($outputlangs);

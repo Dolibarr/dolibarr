@@ -56,7 +56,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->loan->del
 
 	$sql = "UPDATE ".MAIN_DB_PREFIX."loan_schedule SET fk_bank = 0 WHERE fk_bank = ".$payment->fk_bank;
 	$db->query($sql);
-	
+
 	$result = $payment->delete($user);
 	if ($result > 0)
 	{
@@ -214,9 +214,9 @@ if ($resql)
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans('Loan').'</td>';
 	print '<td>'.$langs->trans('Label').'</td>';
-	// print '<td align="right">'.$langs->trans('ExpectedToPay').'</td>';
-	print '<td align="center">'.$langs->trans('Status').'</td>';
-	print '<td align="right">'.$langs->trans('PayedByThisPayment').'</td>';
+	// print '<td class="right">'.$langs->trans('ExpectedToPay').'</td>';
+	print '<td class="center">'.$langs->trans('Status').'</td>';
+	print '<td class="right">'.$langs->trans('PayedByThisPayment').'</td>';
 	print "</tr>\n";
 
 	if ($num > 0)
@@ -234,13 +234,13 @@ if ($resql)
 			// Label
 			print '<td>'.$objp->label.'</td>';
 			// Expected to pay
-			// print '<td align="right">'.price($objp->capital).'</td>';
+			// print '<td class="right">'.price($objp->capital).'</td>';
 			// Status
-			print '<td align="center">'.$loan->getLibStatut(4, $objp->amount_capital).'</td>';
+			print '<td class="center">'.$loan->getLibStatut(4, $objp->amount_capital).'</td>';
 			// Amount payed
 			$amount_payed = $objp->amount_capital + $objp->amount_insurance + $objp->amount_interest;
 
-			print '<td align="right">'.price($amount_payed).'</td>';
+			print '<td class="right">'.price($amount_payed).'</td>';
 			print "</tr>\n";
 			if ($objp->paid == 1)	// If at least one invoice is paid, disable delete
 			{

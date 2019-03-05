@@ -54,7 +54,7 @@ class box_task extends ModeleBoxes
      *  @param  DoliDB  $db         Database handler
      *  @param  string  $param      More parameters
      */
-    function __construct($db, $param = '')
+    public function __construct($db, $param = '')
     {
         global $user, $langs;
 
@@ -73,7 +73,7 @@ class box_task extends ModeleBoxes
 	 *  @param  int     $max        Maximum number of records to load
 	 *  @return void
 	 */
-	function loadBox($max = 5)
+	public function loadBox($max = 5)
 	{
 		global $conf, $user, $langs, $db;
 
@@ -150,7 +150,7 @@ class box_task extends ModeleBoxes
 	 *  @param	int		$nooutput	No print, only return string
 	 *	@return	string
 	 */
-	function showBox($head = null, $contents = null, $nooutput = 0)
+	public function showBox($head = null, $contents = null, $nooutput = 0)
 	{
 		return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
 	}

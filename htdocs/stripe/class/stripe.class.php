@@ -91,17 +91,14 @@ class Stripe extends CommonObject
 
 		dol_syslog(get_class($this) . "::fetch", LOG_DEBUG);
 		$result = $this->db->query($sql);
-    	if ($result)
-		{
-			if ($this->db->num_rows($result))
-			{
+    	if ($result) {
+			if ($this->db->num_rows($result)) {
 				$obj = $this->db->fetch_object($result);
     			$tokenstring=$obj->tokenstring;
 
     			$tmparray = dol_json_decode($tokenstring);
     			$key = $tmparray->stripe_user_id;
-    		}
-    		else {
+    		} else {
     			$tokenstring='';
     		}
     	}
@@ -243,13 +240,13 @@ class Stripe extends CommonObject
     /**
 	 * Get the Stripe payment intent
 	 *
-	 * @param	Societe	$object							Object tp pay on Stripe
-	 * @param	string 	$customer								Stripe customer ref 'cus_xxxxxxxxxxxxx' via customerStripe()
-	 * @param	string	$key							''=Use common API. If not '', it is the Stripe connect account 'acc_....' to use Stripe connect
-	 * @param	int		$status							Status (0=test, 1=live)
-	 * @param	int		$usethirdpartyemailforreceiptemail		1=use thirdparty email fpr receipt
-	 * @param	int		$mode		automatic=automatic payment, manual=need confirmation
-	 * @return 	\Stripe\PaymentIntent|null 			Stripe PaymentIntent or null if not found
+	 * @param	Societe	$object							    Object to pay with Stripe
+	 * @param	string 	$customer							Stripe customer ref 'cus_xxxxxxxxxxxxx' via customerStripe()
+	 * @param	string	$key							    ''=Use common API. If not '', it is the Stripe connect account 'acc_....' to use Stripe connect
+	 * @param	int		$status							    Status (0=test, 1=live)
+	 * @param	int		$usethirdpartyemailforreceiptemail	1=use thirdparty email for receipt
+	 * @param	int		$mode		                        automatic=automatic payment, manual=need confirmation
+	 * @return 	\Stripe\PaymentIntent|null 			        Stripe PaymentIntent or null if not found
 	 */
 	public function getPaymentIntent($object, $customer, $key = null, $status = 0, $usethirdpartyemailforreceiptemail = 0, $mode = 'automatic')
 	{
@@ -284,11 +281,11 @@ class Stripe extends CommonObject
 				$obj = $this->db->fetch_object($resql);
 				$intent = $obj->ext_payment_id;
 
-				dol_syslog(get_class($this) . "::customerStripe found stripe customer key_account = ".$tiers);
+				dol_syslog(get_class($this) . "::customerStripe found record");
 
-					// Force to use the correct API key
-					//global $stripearrayofkeysbyenv;
-					//\Stripe\Stripe::setApiKey($stripearrayofkeysbyenv[$status]['secret_key']);
+				// Force to use the correct API key
+				global $stripearrayofkeysbyenv;
+				\Stripe\Stripe::setApiKey($stripearrayofkeysbyenv[$status]['secret_key']);
 
 				try {
 					if (empty($key)) {				// If the Stripe connect account not set, we use common API usage
@@ -304,48 +301,41 @@ class Stripe extends CommonObject
 			}
 			else //if ($createifnotlinkedtostripe)
 			{
-                if ( ! empty($conf->global->MULTICURRENCY_USE_CURRENCY_ON_DOCUMENT) && isset($object->multicurrency_total_ttc) && $object->multicurrency_code != $conf->currency ) { $montant = $object->multicurrency_total_ttc; }
-                elseif ( isset($object->total_ttc) ) { $montant = $object->total_ttc; }
-                else { $montant = $object->amount; }
-                $amount=isset($object->multicurrency_total_ttc) ? $object->multicurrency_total_ttc : $object->amount;
                 $arrayzerounitcurrency=array('BIF', 'CLP', 'DJF', 'GNF', 'JPY', 'KMF', 'KRW', 'MGA', 'PYG', 'RWF', 'VND', 'VUV', 'XAF', 'XOF', 'XPF');
-                if (! in_array($object->multicurrency_code, $arrayzerounitcurrency)) $stripeamount = $montant * 100;
-                else $stripeamount = $montant;
+                if (! in_array($object->multicurrency_code, $arrayzerounitcurrency)) $stripeamount=$object->multicurrency_total_ttc * 100;
+                else $stripeamount = $object->multicurrency_total_ttc;
+
+                $fee = round(($object->total_ttc * ($conf->global->STRIPE_APPLICATION_FEE_PERCENT / 100) + $conf->global->STRIPE_APPLICATION_FEE) * 100);
+			    if ($fee >= ($conf->global->STRIPE_APPLICATION_FEE_MAXIMAL * 100) && $conf->global->STRIPE_APPLICATION_FEE_MAXIMAL>$conf->global->STRIPE_APPLICATION_FEE_MINIMAL) {
+					$fee = round($conf->global->STRIPE_APPLICATION_FEE_MAXIMAL * 100);
+				} elseif ($fee < ($conf->global->STRIPE_APPLICATION_FEE_MINIMAL * 100)) {
+					$fee = round($conf->global->STRIPE_APPLICATION_FEE_MINIMAL * 100);
+				}
 
                 $description=$object->element.$object->ref;
 
-                if ( isset($object->multicurrency_code) && ! empty($conf->global->MULTICURRENCY_USE_CURRENCY_ON_DOCUMENT) ) { $currency = $object->multicurrency_code;}
-                else $currency = $conf->currency;
-
 				$dataforintent = array(
-        "amount" => $stripeamount,
-        "currency" => $currency,
-        "customer"  => $customer,
-        "payment_method_types" => ["card"],
-        "statement_descriptor" => dol_trunc($description, 10, 'right', 'UTF-8', 1), // dynamic staement with 10 chars that appears on bank receipt  https://stripe.com/docs/charges#dynamic-statement-descriptor
-        "metadata" => array('dol_type'=>$object->element, 'dol_id'=>$object->id, 'dol_version'=>DOL_VERSION, 'dol_entity'=>$conf->entity, 'ipaddress'=>(empty($_SERVER['REMOTE_ADDR'])?'':$_SERVER['REMOTE_ADDR']))
+					"amount" => $stripeamount,
+					"currency" => $object->multicurrency_code,
+                    "customer"  => $customer,
+                    "allowed_source_types" => ["card"],
+                    "statement_descriptor" => dol_trunc(dol_trunc(dol_string_unaccent($mysoc->name), 8, 'right', 'UTF-8', 1).' '.$description, 22, 'right', 'UTF-8', 1),     // 22 chars that appears on bank receipt
+					"metadata" => array('dol_type'=>$object->element, 'dol_id'=>$object->id, 'dol_version'=>DOL_VERSION, 'dol_entity'=>$conf->entity, 'ipaddress'=>(empty($_SERVER['REMOTE_ADDR'])?'':$_SERVER['REMOTE_ADDR']))
 				);
 
-        if (! empty($conf->stripeconnect->enabled))
+				if ($conf->entity!=$conf->global->STRIPECONNECT_PRINCIPAL && $fee>0)
 				{
- 				  $fee = round(($amount * ($conf->global->STRIPE_APPLICATION_FEE_PERCENT / 100) + $conf->global->STRIPE_APPLICATION_FEE) * 100);
-				  if ($fee < ($conf->global->STRIPE_APPLICATION_FEE_MINIMAL * 100)) {
-				    $fee = round($conf->global->STRIPE_APPLICATION_FEE_MINIMAL * 100);
-				  }
-          if ($conf->entity!=$conf->global->STRIPECONNECT_PRINCIPAL && $fee>0)
-				  {
-					 $paymentarray["application_fee"] = $fee;
-				  }        
+					$dataforintent["application_fee"] = $fee;
 				}
-				if ($societe->email && $usethirdpartyemailforreceiptemail)
+				if ($usethirdpartyemailforreceiptemail && $object->thirdparty->email)
 				{
-					$dataforintent["receipt_email"] = $societe->email;
+				    $dataforintent["receipt_email"] = $object->thirdparty->email;
 				}
 
 				try {
 					// Force to use the correct API key
-					//global $stripearrayofkeysbyenv;
-					//\Stripe\Stripe::setApiKey($stripearrayofkeysbyenv[$status]['secret_key']);
+					global $stripearrayofkeysbyenv;
+					\Stripe\Stripe::setApiKey($stripearrayofkeysbyenv[$status]['secret_key']);
 
 					if (empty($key)) {				// If the Stripe connect account not set, we use common API usage
 						$paymentintent = \Stripe\PaymentIntent::create($dataforintent, array("idempotency_key" => "$description"));
@@ -593,16 +583,18 @@ class Stripe extends CommonObject
 					$charge = \Stripe\Charge::create($paymentarray, array("idempotency_key" => "$ref"));
 				}
 			} else {
-
-				$fee = round(($amount * ($conf->global->STRIPE_APPLICATION_FEE_PERCENT / 100) + $conf->global->STRIPE_APPLICATION_FEE) * 100);
-				if ($fee < ($conf->global->STRIPE_APPLICATION_FEE_MINIMAL * 100)) {
+                $fee = round(($object->total_ttc * ($conf->global->STRIPE_APPLICATION_FEE_PERCENT / 100) + $conf->global->STRIPE_APPLICATION_FEE) * 100);
+			    if ($fee >= ($conf->global->STRIPE_APPLICATION_FEE_MAXIMAL * 100) && $conf->global->STRIPE_APPLICATION_FEE_MAXIMAL>$conf->global->STRIPE_APPLICATION_FEE_MINIMAL) {
+					$fee = round($conf->global->STRIPE_APPLICATION_FEE_MAXIMAL * 100);
+				}
+                elseif ($fee < ($conf->global->STRIPE_APPLICATION_FEE_MINIMAL * 100)) {
 					$fee = round($conf->global->STRIPE_APPLICATION_FEE_MINIMAL * 100);
 				}
 
         		$paymentarray = array(
 					"amount" => "$stripeamount",
 					"currency" => "$currency",
-					"statement_descriptor" => dol_trunc($description, 10, 'right', 'UTF-8', 1), // 10 chars that appears on bank receipt https://stripe.com/docs/charges#dynamic-statement-descriptor
+					"statement_descriptor" => dol_trunc(dol_trunc(dol_string_unaccent($mysoc->name), 8, 'right', 'UTF-8', 1).' '.$description, 22, 'right', 'UTF-8', 1),     // 22 chars that appears on bank receipt
 					"description" => "Stripe payment: ".$description,
 					"capture"  => $capture,
 					"metadata" => $metadata,

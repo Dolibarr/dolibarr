@@ -120,6 +120,18 @@ if ($action == "freezone") {
     $invoice->fetch($placeid);
 }
 
+if ($action == "addnote") {
+    foreach($invoice->lines as $line)
+    {
+        if ($line->id == $number)
+		{
+			$line->array_options['order_notes'] = $desc;
+			$result = $invoice->updateline($line->id, $line->desc, $line->subprice, $line->qty, $line->remise_percent, $line->date_start, $line->date_end, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, 'HT', $line->info_bits, $line->product_type, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->special_code, $line->array_options, $line->situation_percent, $line->fk_unit);
+        }
+    }
+    $invoice->fetch($placeid);
+}
+
 if ($action == "deleteline") {
     if ($idline > 0 and $placeid > 0) { //If exist invoice and line, to avoid errors if deleted from other device or no line selected
         $invoice->deleteline($idline);
@@ -185,7 +197,9 @@ if ($action == "order" and $placeid != 0) {
         if ($count > 0) {
             $sql = "UPDATE " . MAIN_DB_PREFIX . "facturedet set special_code='3' where rowid=$line->rowid";
             $db->query($sql);
-            $order_receipt_printer1.= '<tr>' . $line->product_label . '<td align="right">' . $line->qty . '</td></tr>';
+            $order_receipt_printer1.= '<tr>' . $line->product_label . '<td align="right">' . $line->qty;
+			if (!empty($line->array_options['options_order_notes'])) $order_receipt_printer1.="<br>(".$line->array_options['options_order_notes'].")";
+			$order_receipt_printer1.='</td></tr>';
         }
     }
 
@@ -200,7 +214,9 @@ if ($action == "order" and $placeid != 0) {
         if ($count > 0) {
             $sql = "UPDATE " . MAIN_DB_PREFIX . "facturedet set special_code='3' where rowid=$line->rowid";
             $db->query($sql);
-            $order_receipt_printer2.= '<tr>' . $line->product_label . '<td align="right">' . $line->qty . '</td></tr>';
+            $order_receipt_printer2.= '<tr>' . $line->product_label . '<td align="right">' . $line->qty;
+			if (!empty($line->array_options['options_order_notes'])) $order_receipt_printer2.="<br>(".$line->array_options['options_order_notes'].")";
+			$order_receipt_printer2.='</td></tr>';
         }
     }
 
@@ -325,7 +341,9 @@ if ($placeid > 0) {
             print ' order';
         }
         print '" id="' . $line->rowid . '">';
-        print '<td align="left">' . $line->product_label . $line->desc . '</td>';
+        print '<td align="left">' . $line->product_label . $line->desc;
+		if (!empty($line->array_options['options_order_notes'])) echo "<br>(".$line->array_options['options_order_notes'].")";
+		print '</td>';
         print '<td align="right">' . $line->qty . '</td>';
         print '<td align="right">' . price($line->total_ttc) . '</td>';
         print '</tr>';

@@ -49,13 +49,13 @@ $backtopage = GETPOST('backtopage', 'alpha');											// Go back to a dedicate
 $optioncss  = GETPOST('optioncss', 'aZ');												// Option for the css output (always '' except when 'print')
 
 $id			= GETPOST('id', 'int');
-$msg_id = GETPOST('msg_id', 'int');
-$socid = GETPOST('socid', 'int');
-$projectid = GETPOST('projectid', 'int');
+$msg_id     = GETPOST('msg_id', 'int');
+$socid      = GETPOST('socid', 'int');
+$projectid  = GETPOST('projectid', 'int');
 $search_fk_soc=GETPOST('$search_fk_soc', 'int')?GETPOST('$search_fk_soc', 'int'):GETPOST('socid', 'int');
 $search_fk_project=GETPOST('search_fk_project', 'int')?GETPOST('search_fk_project', 'int'):GETPOST('projectid', 'int');
 $search_fk_status = GETPOST('search_fk_statut', 'array');
-$mode = GETPOST('mode', 'alpha');
+$mode       = GETPOST('mode', 'alpha');
 
 // Load variable for pagination
 $limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
@@ -79,10 +79,10 @@ $extralabels = $extrafields->fetch_name_optionals_label('ticket');
 $search_array_options=$extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
 // Default sort order (if not yet defined by previous GETPOST)
-if (! $sortfield) $sortfield="t.".key($object->fields);   // Set here default search field. By default 1st field in definition.
-if (! $sortorder) $sortorder="ASC";
+if (! $sortfield) $sortfield="t.datec";
+if (! $sortorder) $sortorder="DESC";
 
-if (GETPOST('search_fk_status','alpha') == 'non_closed') $_GET['search_fk_statut'][]='openall';     // For backward compatibility
+if (GETPOST('search_fk_status', 'alpha') == 'non_closed') $_GET['search_fk_statut'][]='openall';     // For backward compatibility
 
 // Initialize array of search criterias
 $search_all=trim(GETPOST("search_all", 'alpha'));
@@ -462,7 +462,7 @@ if ($projectid) print '<input type="hidden" name="projectid" value="' . $project
 $newcardbutton='';
 if ($user->rights->ticket->write)
 {
-	$newcardbutton = '<a class="butActionNew" href="'.DOL_URL_ROOT.'/ticket/new.php?action=create_ticket' . ($socid ? '&socid=' . $socid : '') . ($projectid ? '&origin=projet_project&originid=' . $projectid : '') . '"><span class="valignmiddle">' . $langs->trans('NewTicket').'</span>';
+	$newcardbutton = '<a class="butActionNew" href="'.DOL_URL_ROOT.'/ticket/card.php?action=create' . ($socid ? '&socid=' . $socid : '') . ($projectid ? '&origin=projet_project&originid=' . $projectid : '') . '"><span class="valignmiddle">' . $langs->trans('NewTicket').'</span>';
 	$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
 	$newcardbutton.= '</a>';
 }

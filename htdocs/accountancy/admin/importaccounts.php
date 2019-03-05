@@ -132,7 +132,7 @@ if ($result) {
 	print '<td>' . $langs->trans("Accountparent") . '</td>';
 	print '<td>' . $langs->trans("Pcgtype") . '</td>';
 	print '<td>' . $langs->trans("Pcgsubtype") . '</td>';
-	print '<td align="center">' . $langs->trans("Import") . '</td>';
+	print '<td class="center">' . $langs->trans("Import") . '</td>';
 	print '</tr>';
 
 	$form = new Form($db);
@@ -166,7 +166,7 @@ if ($result) {
 		// Colonne choix ligne a ventiler
 		$checked = ('label' == 'O') ? ' checked' : '';
 
-		print '<td align="center">';
+		print '<td class="center">';
 		print '<input type="checkbox" name="mesCasesCochees[]" ' . $checked . ' value="' . $objp->accounting . '"/>';
 		print '</td>';
 
@@ -174,7 +174,7 @@ if ($result) {
 		$i ++;
 	}
 
-	print '<tr><td colspan="8">&nbsp;</td></tr><tr><td colspan="8" align="center"><input type="submit" class="butAction" value="' . $langs->trans("Import") . '"></td></tr>';
+	print '<tr><td colspan="8">&nbsp;</td></tr><tr><td colspan="8" class="center"><input type="submit" class="butAction" value="' . $langs->trans("Import") . '"></td></tr>';
 
 	print '</table>';
 	print '</form>';

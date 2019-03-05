@@ -649,16 +649,16 @@ if ($source == 'order')
 	print '<input type="hidden" name="fulltag" value="'.$fulltag.'">';
 	print '</td></tr>'."\n";
   
-if (! empty($conf->stripe->enabled) && (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox', 'alpha')) && empty($order->billed) && ($paymentmethod == 'stripe') ) {
+if (! empty($conf->stripe->enabled) && empty($order->billed) && ($paymentmethod == 'stripe') ) {
 require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';	
   
-  $service = 'StripeTest';
-	$servicestatus = 0;
-  
-	if (! empty($conf->global->STRIPE_LIVE))
-	{
-	$service = 'StripeLive';
+  $service = 'StripeLive';
 	$servicestatus = 1;
+  
+	if (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox', 'alpha'))
+	{
+	$service = 'StripeTest';
+	$servicestatus = 0;
 	}
   
 $stripe = new Stripe($db);
@@ -667,19 +667,10 @@ $stripecu = $stripe->getStripeCustomerAccount($object->socid, $servicestatus);		
 	//  for dev only
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("PaymentIntent");
 	print '</td><td class="CTableRow'.($var?'1':'2').'">';
-  $paymentintent=$stripe->getPaymentIntent($object, $stripecu, $stripeacc, $status);
+  $paymentintent=$stripe->getPaymentIntent($object, $stripecu, $stripeacc, $servicestatus);
   print '<b>'.$paymentintent->id.'</b>';
 	print '</td></tr>'."\n";
-}
-
-	// Add download link
-	if ($download > 0)
-	{
-		print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Document");
-		print '</td><td class="CTableRow'.($var?'1':'2').'">';
-		print $object->getDirectExternalLink(1);
-		print '</td></tr>'."\n";
-	}  
+} 
 
 	// Shipping address
 	$shipToName=$order->thirdparty->name;
@@ -809,16 +800,16 @@ if ($source == 'invoice')
 	print '<input type="hidden" name="fulltag" value="'.$fulltag.'">';
 	print '</td></tr>'."\n";
   
-if (! empty($conf->stripe->enabled) && (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox', 'alpha')) && empty($object->paye) && ($paymentmethod == 'stripe') ) {
+if (! empty($conf->stripe->enabled) && empty($object->paye) && ($paymentmethod == 'stripe') ) {
 require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';	
   
-  $service = 'StripeTest';
-	$servicestatus = 0;
-  
-	if (! empty($conf->global->STRIPE_LIVE))
-	{
-	$service = 'StripeLive';
+  $service = 'StripeLive';
 	$servicestatus = 1;
+  
+	if (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox', 'alpha'))
+	{
+	$service = 'StripeTest';
+	$servicestatus = 0;
 	}
   
 $stripe = new Stripe($db);
@@ -827,19 +818,10 @@ $stripecu = $stripe->getStripeCustomerAccount($object->socid, $servicestatus);		
 	//  for dev only
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("PaymentIntent");
 	print '</td><td class="CTableRow'.($var?'1':'2').'">';
-  $paymentintent=$stripe->getPaymentIntent($object, $stripecu, $stripeacc, $status);
+  $paymentintent=$stripe->getPaymentIntent($object, $stripecu, $stripeacc, $servicestatus);
   print '<b>'.$paymentintent->id.'</b>';
 	print '</td></tr>'."\n";
 }
-
-	// Add download link
-	if ($download > 0)
-	{
-		print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Document");
-		print '</td><td class="CTableRow'.($var?'1':'2').'">';
-		print $object->getDirectExternalLink(1);
-		print '</td></tr>'."\n";
-	}
 
 	// Shipping address
 	$shipToName=$invoice->thirdparty->name;
@@ -1353,17 +1335,17 @@ if ($source == 'donation')
 	print '<input type="hidden" name="tag" value="'.$tag.'">';
 	print '<input type="hidden" name="fulltag" value="'.$fulltag.'">';
 	print '</td></tr>'."\n";
-  
-if (! empty($conf->stripe->enabled) && (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox', 'alpha')) && empty($object->paid) && ($paymentmethod == 'stripe') ) {
+
+if (! empty($conf->stripe->enabled) && empty($object->paid) && ($paymentmethod == 'stripe') ) {
 require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';	
   
-  $service = 'StripeTest';
-	$servicestatus = 0; 
+  $service = 'StripeLive';
+	$servicestatus = 1;
   
-	if (! empty($conf->global->STRIPE_LIVE))
+	if (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox', 'alpha'))
 	{
-	$service = 'StripeLive';
-	$servicestatus = 1; 
+	$service = 'StripeTest';
+	$servicestatus = 0;
 	}
   
 $stripe = new Stripe($db);
@@ -1372,7 +1354,7 @@ $stripecu = $stripe->getStripeCustomerAccount($object->fk_soc, $servicestatus);	
 	//  for dev only
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("PaymentIntent");
 	print '</td><td class="CTableRow'.($var?'1':'2').'">';
-  $paymentintent=$stripe->getPaymentIntent($object, $stripecu, $stripeacc, $status);
+  $paymentintent=$stripe->getPaymentIntent($object, $stripecu, $stripeacc, $servicestatus);
   print '<b>'.$paymentintent->id.'</b>';
 	print '</td></tr>'."\n";
 }   
@@ -1562,8 +1544,10 @@ if (preg_match('/^dopayment/', $action))
 	    <div class="form-row left">
 	    <label for="card-element">
 	    '.$langs->trans("CreditOrDebitCard").'
-	    </label>
-	    <div id="card-element">
+	    </label><br>
+      <input id="cardholder-name" name="cardholder-name" value="" type="text" placeholder="'.$langs->trans("CardOwner").'" autocomplete="off" required>
+      <br>
+      <div id="card-element">
 	    <!-- a Stripe Element will be inserted here. -->
 	    </div>
 	    <!-- Used to display form errors -->
@@ -1611,7 +1595,8 @@ if (preg_match('/^dopayment/', $action))
 
 	    // Create an instance of the card Element
 	    var cardElement = elements.create('card', {style: style});
-
+      var cardholderName = document.getElementById('cardholder-name');
+      
 	    // Add an instance of the card Element into the `card-element` <div>
 	    cardElement.mount('#card-element');
 
@@ -1634,7 +1619,7 @@ cardButton.addEventListener('click', function(event) {
     clientSecret, cardElement, {
       source_data: {
         owner: {
-          name: 'Jane Doe',
+          name: cardholderName.value,
         }
       }
     }

@@ -94,9 +94,9 @@ if ($action == 'setvalue' && $user->admin)
 	if (! $result > 0)
 		$error ++;
 	// Stock decrement
-	$result = dolibarr_set_const($db, "ONLINE_PAYMENT_WAREHOUSE", (GETPOST('ONLINE_PAYMENT_WAREHOUSE', 'alpha') > 0 ? GETPOST('ONLINE_PAYMENT_WAREHOUSE', 'alpha') : ''), 'chaine', 0, '', $conf->entity);
-	if (! $result > 0)
-		$error ++;
+	//$result = dolibarr_set_const($db, "ONLINE_PAYMENT_WAREHOUSE", (GETPOST('ONLINE_PAYMENT_WAREHOUSE', 'alpha') > 0 ? GETPOST('ONLINE_PAYMENT_WAREHOUSE', 'alpha') : ''), 'chaine', 0, '', $conf->entity);
+	//if (! $result > 0)
+	//	$error ++;
 
 	// Payment token for URL
 	$result = dolibarr_set_const($db, "PAYMENT_SECURITY_TOKEN", GETPOST('PAYMENT_SECURITY_TOKEN', 'alpha'), 'chaine', 0, '', $conf->entity);
@@ -165,10 +165,10 @@ print '<td class="titlefield">';
 print $langs->trans("StripeLiveEnabled").'</td><td>';
   if ($conf->use_javascript_ajax) {
     print ajax_constantonoff('STRIPE_LIVE');
-} else {
+  } else {
     $arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
     print $form->selectarray("STRIPE_LIVE", $arrval, $conf->global->STRIPE_LIVE);
-}
+  }
 print '</td></tr>';
 
 if (empty($conf->stripeconnect->enabled))
@@ -193,7 +193,7 @@ if (empty($conf->stripeconnect->enabled))
   $url = dol_buildpath('/public/stripe/ipn.php?test', 2);
 	$out.= '<input type="text" id="onlinetestwebhookurl" class="quatrevingtpercent" value="'.$url.'">';
 	$out.= ajax_autoselect("onlinetestwebhookurl", 0);
-	print '<br />'.$out;  
+	print '<br>'.$out;
 	print '</td></tr>';
 } else {
 	print '<tr class="oddeven"><td>'.$langs->trans("StripeConnect").'</td>';
@@ -228,7 +228,7 @@ if (empty($conf->stripeconnect->enabled))
   $url = dol_buildpath('/public/stripe/ipn.php', 2);
 	$out.= '<input type="text" id="onlinelivewebhookurl" class="quatrevingtpercent" value="'.$url.'">';
 	$out.= ajax_autoselect("onlinelivewebhookurl", 0);
-	print '<br />'.$out;  
+	print '<br>'.$out;
 	print '</td></tr>';
 }
 else
@@ -280,10 +280,10 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2)	// TODO Not used by current code
 	print $langs->trans("STRIPE_PAYMENT_REQUEST_API").'</td><td>';
   if ($conf->use_javascript_ajax) {
     print ajax_constantonoff('STRIPE_PAYMENT_REQUEST_API');
-} else {
+  } else {
     $arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
     print $form->selectarray("STRIPE_PAYMENT_REQUEST_API", $arrval, $conf->global->STRIPE_PAYMENT_REQUEST_API);
-}
+  }
 	print '</td></tr>';
 }
 
@@ -294,21 +294,21 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2)	// TODO Not used by current code
 	print $langs->trans("STRIPE_SEPA_DIRECT_DEBIT").'</td><td>';
   if ($conf->use_javascript_ajax) {
     print ajax_constantonoff('STRIPE_SEPA_DIRECT_DEBIT');
-} else {
+  } else {
     $arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
     print $form->selectarray("STRIPE_SEPA_DIRECT_DEBIT", $arrval, $conf->global->STRIPE_SEPA_DIRECT_DEBIT);
-}
+  }
 	print '</td></tr>';
 }
 
 // Warehouse for automatic decrement
-if ($conf->global->MAIN_FEATURES_LEVEL >= 2)	// warehouse to reduce stock for online payment
-{
-	print '<tr class="oddeven"><td>';
-	print $langs->trans("ONLINE_PAYMENT_WAREHOUSE").'</td><td>';
-	print $formproduct->selectWarehouses($conf->global->ONLINE_PAYMENT_WAREHOUSE, 'ONLINE_PAYMENT_WAREHOUSE', '', 1, $disabled);
-	print '</td></tr>';
-}
+//if ($conf->global->MAIN_FEATURES_LEVEL >= 2)	// warehouse to reduce stock for online payment
+//{
+//	print '<tr class="oddeven"><td>';
+//	print $langs->trans("ONLINE_PAYMENT_WAREHOUSE").'</td><td>';
+//	print $formproduct->selectWarehouses($conf->global->ONLINE_PAYMENT_WAREHOUSE, 'ONLINE_PAYMENT_WAREHOUSE', '', 1, $disabled);
+//	print '</td></tr>';
+//}
 
 print '<tr class="oddeven"><td>';
 print $langs->trans("CSSUrlForPaymentForm").'</td><td>';

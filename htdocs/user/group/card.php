@@ -36,6 +36,7 @@ $canreadperms=($user->admin || $user->rights->user->user->lire);
 $caneditperms=($user->admin || $user->rights->user->user->creer);
 $candisableperms=($user->admin || $user->rights->user->user->supprimer);
 $feature2 = 'user';
+
 // Advanced permissions
 if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS))
 {
@@ -44,16 +45,19 @@ if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS))
     $candisableperms=($user->admin || $user->rights->user->group_advance->delete);
     $feature2 = 'group_advance';
 }
+
 // Load translation files required by page
 $langs->loadLangs(array('users', 'other'));
-$id         = GETPOST('id', 'int');
-$action     = GETPOST('action', 'alpha');
-$cancel     = GETPOST('cancel', 'aZ09');
-$confirm    = GETPOST('confirm', 'alpha');
-$contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'groupcard';   // To manage different context of search
-$userid     = GETPOST('user', 'int');
+
+$id = GETPOST('id', 'int');
+$action = GETPOST('action', 'alpha');
+$cancel = GETPOST('cancel', 'aZ09');
+$confirm = GETPOST('confirm', 'alpha');
+$contextpage = GETPOST('contextpage', 'aZ')?GETPOST('contextpage', 'aZ'):'groupcard';   // To manage different context of search
+
+$userid = GETPOST('user', 'int');
+
 // Security check
-$result = restrictedArea($user, 'user', $id, 'usergroup&usergroup', 'user');
 $result = restrictedArea($user, 'user', $id, 'usergroup&usergroup', $feature2);
 
 // Users/Groups management only in master entity if transverse mode

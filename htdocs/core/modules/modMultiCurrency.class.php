@@ -38,8 +38,8 @@ class modMultiCurrency extends DolibarrModules
 	 *
 	 * @param DoliDB $db Database handler
 	 */
-	public function __construct($db)
-	{
+    public function __construct($db)
+    {
         global $langs, $conf;
 
         $this->db = $db;

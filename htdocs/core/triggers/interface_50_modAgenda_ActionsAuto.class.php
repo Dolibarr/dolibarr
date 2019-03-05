@@ -761,7 +761,6 @@ class InterfaceActionsAuto extends DolibarrTriggers
 
 			$object->sendtoid=0;
 		}
-
 		elseif($action == 'TASK_MODIFY')
 		{
             // Load translation files required by the page
@@ -773,7 +772,6 @@ class InterfaceActionsAuto extends DolibarrTriggers
 
 			$object->sendtoid=0;
 		}
-
 		elseif($action == 'TASK_DELETE')
 		{
             // Load translation files required by the page
