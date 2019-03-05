@@ -711,15 +711,16 @@ class MouvementStock extends CommonObject
 	 *	@param		date	$sellby			    sell-by date
 	 *	@param		string	$batch			    batch number
 	 * 	@param		int		$id_product_batch	Id product_batch
+	 *  @param      string  $inventorycode      Inventory code
 	 * 	@return		int						    <0 if KO, >0 if OK
 	 */
-	public function livraison($user, $fk_product, $entrepot_id, $qty, $price = 0, $label = '', $datem = '', $eatby = '', $sellby = '', $batch = '', $id_product_batch = 0)
+	public function livraison($user, $fk_product, $entrepot_id, $qty, $price = 0, $label = '', $datem = '', $eatby = '', $sellby = '', $batch = '', $id_product_batch = 0, $inventorycode='')
 	{
 	    global $conf;
 
 		$skip_batch = empty($conf->productbatch->enabled);
 
-	    return $this->_create($user, $fk_product, $entrepot_id, (0 - $qty), 2, $price, $label, '', $datem, $eatby, $sellby, $batch, $skip_batch, $id_product_batch);
+		return $this->_create($user, $fk_product, $entrepot_id, (0 - $qty), 2, $price, $label, $inventorycode, $datem, $eatby, $sellby, $batch, $skip_batch, $id_product_batch);
 	}
 
 	/**
@@ -736,15 +737,16 @@ class MouvementStock extends CommonObject
 	 *	@param		string	$batch			     batch number
 	 * 	@param		string	$datem			     Force date of movement
 	 * 	@param		int		$id_product_batch    Id product_batch
+	 *  @param      string  $inventorycode       Inventory code
 	 *	@return		int						     <0 if KO, >0 if OK
 	 */
-	public function reception($user, $fk_product, $entrepot_id, $qty, $price = 0, $label = '', $eatby = '', $sellby = '', $batch = '', $datem = '', $id_product_batch = 0)
+	public function reception($user, $fk_product, $entrepot_id, $qty, $price = 0, $label = '', $eatby = '', $sellby = '', $batch = '', $datem = '', $id_product_batch = 0, $inventorycode='')
 	{
 	    global $conf;
 
 	    $skip_batch = empty($conf->productbatch->enabled);
 
-	    return $this->_create($user, $fk_product, $entrepot_id, $qty, 3, $price, $label, '', $datem, $eatby, $sellby, $batch, $skip_batch, $id_product_batch);
+	    return $this->_create($user, $fk_product, $entrepot_id, $qty, 3, $price, $label, $inventorycode, $datem, $eatby, $sellby, $batch, $skip_batch, $id_product_batch);
 	}
 
 
