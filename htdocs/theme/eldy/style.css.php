@@ -43,7 +43,7 @@ require_once __DIR__ . '/theme_vars.php';
 
 
 
-
+if (defined('THEME_ONLY_CONSTANT')) return;
 
 session_cache_limiter('public');
 

@@ -104,9 +104,7 @@ textarea.cke_source:focus
 	box-shadow: none;
 }
 
-select {
-	/* padding: 4px 4px 2px 1px; */
-}
+
 textarea {
 	border-radius: 0;
 	border-top:solid 1px rgba(0,0,0,.2);
@@ -821,6 +819,7 @@ select.selectarrowonleft option {
 		padding-top: 4px;
 		padding-bottom: 5px;
 	}
+
 	input, input[type=text], input[type=password], select, textarea     {
 		min-width: 20px;
     }
@@ -1336,8 +1335,10 @@ div.tmenudiv {
 div.tmenudisabled, a.tmenudisabled {
 	opacity: 0.6;
 }
+a.tmenu, a.tmenusel, a.tmenudisabled {
+    font-weight: 300;
+}
 a.tmenudisabled:link, a.tmenudisabled:visited, a.tmenudisabled:hover, a.tmenudisabled:active {
-    font-weight: normal;
 	padding: 0px 5px 0px 5px;
 	white-space: nowrap;
 	color: #<?php echo $colortextbackhmenu; ?>;
@@ -1346,14 +1347,12 @@ a.tmenudisabled:link, a.tmenudisabled:visited, a.tmenudisabled:hover, a.tmenudis
 }
 
 a.tmenu:link, a.tmenu:visited, a.tmenu:hover, a.tmenu:active {
-    font-weight: normal;
 	padding: 0px 4px 0px 4px;
 	white-space: nowrap;
 	color: #<?php echo $colortextbackhmenu; ?>;
     text-decoration: none;
 }
 a.tmenusel:link, a.tmenusel:visited, a.tmenusel:hover, a.tmenusel:active {
-	font-weight: normal;
 	padding: 0px 4px 0px 4px;
 	margin: 0px 0px 0px 0px;
 	white-space: nowrap;
@@ -1403,7 +1402,9 @@ li.tmenusel::after, li.tmenu:hover::after{
 	border-width: 0px 6px 5px 6px;
 	border-color:  transparent transparent #ffffff transparent;
 }
-/*li.tmenusel::before, li.tmenu:hover::before{
+/*
+// add a bottom arrow
+li.tmenusel::before, li.tmenu:hover::before{
 	content: "";
 	position:absolute;
 	top:0px;
@@ -1611,6 +1612,12 @@ a.tmenuimage:hover{
                 $found=1;
                 break;
             }
+    		else if (file_exists($dirroot."/".$val."/img/".$val.".png"))    // Retro compatibilité
+    		{
+    			$url=dol_buildpath('/'.$val.'/img/'.$val.'.png', 1);
+    			$found=1;
+    			break;
+    		}
         }
         // Img file not found
         if (! $found)
@@ -2133,6 +2140,11 @@ div.tabBar {
 }
 div.tabBar div.titre {
 	padding-top: 20px;
+}
+
+div.tabBar.tabBarNoTop {
+    padding-top: 0;
+    border-top: 0;
 }
 
 /* tabBar used for creation/update/send forms */
@@ -2798,7 +2810,7 @@ div.pagination li.paginationafterarrows {
 	box-shadow: unset;
 	-webkit-box-shadow: unset;
 }
-.oddeven, .evenodd, .impair, .nohover .impair:hover, tr.impair td.nohover
+.oddeven, .evenodd, .impair, .nohover .impair:hover, tr.impair td.nohover, .tagtr.oddeven
 {
 	font-family: <?php print $fontlist ?>;
 	margin-bottom: 1px;
@@ -2812,7 +2824,7 @@ div.pagination li.paginationafterarrows {
 	background-color: #<?php echo colorArrayToHex(colorStringToArray($colorbacklineimpair1)); ?>;
 }
 
-.oddeven, .evenodd, .pair, .nohover .pair:hover, tr.pair td.nohover {
+.oddeven, .evenodd, .pair, .nohover .pair:hover, tr.pair td.nohover, .tagtr.oddeven {
 	font-family: <?php print $fontlist ?>;
 	margin-bottom: 1px;
 	color: #202020;
@@ -2878,7 +2890,7 @@ div.liste_titre_bydiv {
 	/*width: calc(100% - 1px);	1px more, i don't know why so i remove */
 	width: calc(100%);
 }
-tr.liste_titre, tr.liste_titre_sel, form.liste_titre, form.liste_titre_sel, table.dataTable.tr
+tr.liste_titre, tr.liste_titre_sel, form.liste_titre, form.liste_titre_sel, table.dataTable.tr, tagtr.liste_titre
 {
 	height: 26px !important;
 }
@@ -2889,11 +2901,10 @@ div.colorback	/* for the form "assign user" on time spent view */
 	margin-top: 5px;
 	border: 1px solid #ddd;
 }
-div.liste_titre_bydiv, .liste_titre div.tagtr, tr.liste_titre, tr.liste_titre_sel, form.liste_titre, form.liste_titre_sel, table.dataTable thead tr
+div.liste_titre_bydiv, .liste_titre div.tagtr, tr.liste_titre, tr.liste_titre_sel, .tagtr.liste_titre, .tagtr.liste_titre_sel, form.liste_titre, form.liste_titre_sel, table.dataTable thead tr
 {
 	background: rgb(<?php echo $colorbacktitle1; ?>);
 	font-weight: <?php echo $useboldtitle?'bold':'normal'; ?>;
-/*    border-bottom: 1px solid #ddd; */
 
     color: rgb(<?php echo $colortexttitle; ?>);
     font-family: <?php print $fontlist ?>;
@@ -3018,19 +3029,24 @@ div.tabBar .noborder {
 /* Prepare to remove class pair - impair */
 
 .noborder > tbody > tr:nth-child(even):not(.liste_titre), .liste > tbody > tr:nth-child(even):not(.liste_titre),
-div:not(.fichecenter):not(.fichehalfleft):not(.ficheaddleft) > .border > tbody > tr:nth-of-type(even):not(.liste_titre), .liste > tbody > tr:nth-of-type(even):not(.liste_titre) {
+div:not(.fichecenter):not(.fichehalfleft):not(.ficheaddleft) > .border > tbody > tr:nth-of-type(even):not(.liste_titre), .liste > tbody > tr:nth-of-type(even):not(.liste_titre),
+div:not(.fichecenter):not(.fichehalfleft):not(.ficheaddleft) .oddeven.tagtr:nth-of-type(even):not(.liste_titre)
+{
 	background: linear-gradient(bottom, rgb(<?php echo $colorbacklineimpair1; ?>) 85%, rgb(<?php echo $colorbacklineimpair2; ?>) 100%);
 	background: -o-linear-gradient(bottom, rgb(<?php echo $colorbacklineimpair1; ?>) 85%, rgb(<?php echo $colorbacklineimpair2; ?>) 100%);
 	background: -moz-linear-gradient(bottom, rgb(<?php echo $colorbacklineimpair1; ?>) 85%, rgb(<?php echo $colorbacklineimpair2; ?>) 100%);
 	background: -webkit-linear-gradient(bottom, rgb(<?php echo $colorbacklineimpair1; ?>) 85%, rgb(<?php echo $colorbacklineimpair2; ?>) 100%);
 	background: -ms-linear-gradient(bottom, rgb(<?php echo $colorbacklineimpair1; ?>) 85%, rgb(<?php echo $colorbacklineimpair2; ?>) 100%);
 }
-.noborder > tbody > tr:nth-child(even):not(:last-child) td:not(.liste_titre), .liste > tbody > tr:nth-child(even):not(:last-child) td:not(.liste_titre) {
+.noborder > tbody > tr:nth-child(even):not(:last-child) td:not(.liste_titre), .liste > tbody > tr:nth-child(even):not(:last-child) td:not(.liste_titre),
+.noborder .oddeven.tagtr:nth-child(even):not(:last-child) .tagtd:not(.liste_titre)
+{
 	border-bottom: 1px solid #ddd;
 }
 
 .noborder > tbody > tr:nth-child(odd):not(.liste_titre), .liste > tbody > tr:nth-child(odd):not(.liste_titre),
-div:not(.fichecenter):not(.fichehalfleft):not(.ficheaddleft) > .border > tbody > tr:nth-of-type(odd):not(.liste_titre), .liste > tbody > tr:nth-of-type(odd):not(.liste_titre)
+div:not(.fichecenter):not(.fichehalfleft):not(.ficheaddleft) > .border > tbody > tr:nth-of-type(odd):not(.liste_titre), .liste > tbody > tr:nth-of-type(odd):not(.liste_titre),
+div:not(.fichecenter):not(.fichehalfleft):not(.ficheaddleft) .oddeven.tagtr:nth-of-type(odd):not(.liste_titre)
 {
 	background: linear-gradient(bottom, rgb(<?php echo $colorbacklinepair1; ?>) 85%, rgb(<?php echo $colorbacklinepair2; ?>) 100%);
 	background: -o-linear-gradient(bottom, rgb(<?php echo $colorbacklinepair1; ?>) 85%, rgb(<?php echo $colorbacklinepair2; ?>) 100%);
@@ -3038,7 +3054,9 @@ div:not(.fichecenter):not(.fichehalfleft):not(.ficheaddleft) > .border > tbody >
 	background: -webkit-linear-gradient(bottom, rgb(<?php echo $colorbacklinepair1; ?>) 85%, rgb(<?php echo $colorbacklinepair2; ?>) 100%);
 	background: -ms-linear-gradient(bottom, rgb(<?php echo $colorbacklinepair1; ?>) 85%, rgb(<?php echo $colorbacklinepair2; ?>) 100%);
 }
-.noborder > tbody > tr:nth-child(odd):not(:last-child) td:not(.liste_titre), .liste > tbody > tr:nth-child(odd):not(:last-child) td:not(.liste_titre) {
+.noborder > tbody > tr:nth-child(odd):not(:last-child) td:not(.liste_titre), .liste > tbody > tr:nth-child(odd):not(:last-child) td:not(.liste_titre),
+.noborder .oddeven.tagtr:nth-child(odd):not(:last-child) .tagtd:not(.liste_titre)
+{
 	border-bottom: 1px solid #ddd;
 }
 
@@ -3554,20 +3572,15 @@ div.ui-tooltip.mytooltip {
 	border: none !important;
 	padding: 10px 15px;
 	border-radius: 0;
-
 	margin: 2px;
 	font-stretch: condensed;
-
 	-moz-box-shadow:   0.5px 0.5px 4px 0px rgba(0, 0, 0, 0.5);
 	-webkit-box-shadow:0.5px 0.5px 4px 0px rgba(0, 0, 0, 0.5);
 	-o-box-shadow:     0.5px 0.5px 4px 0px rgba(0, 0, 0, 0.5);
 	box-shadow:        0.5px 0.5px 4px 0px rgba(0, 0, 0, 0.5);
 	filter:progid:DXImageTransform.Microsoft.Shadow(color=#656565, Direction=134, Strength=5);
-
 	background: <?php print $toolTipBgColor; ?> !important;  
 	color : <?php print $toolTipFontColor; ?>;
-	
-
 }
 
 

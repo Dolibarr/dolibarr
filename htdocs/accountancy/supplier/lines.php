@@ -328,8 +328,8 @@ if ($result) {
 	//	print '<input type="text" class="flat maxwidth50" name="search_country" value="' . dol_escape_htmltag($search_country) . '">';
 	print '</td>';
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_tvaintra" value="' . dol_escape_htmltag($search_tvaintra) . '"></td>';
-	print '<td class="liste_titre" align="center"><input type="text" class="flat maxwidth50" name="search_account" value="' . dol_escape_htmltag($search_account) . '"></td>';
-	print '<td class="liste_titre" align="center">';
+	print '<td class="liste_titre center"><input type="text" class="flat maxwidth50" name="search_account" value="' . dol_escape_htmltag($search_account) . '"></td>';
+	print '<td class="liste_titre center">';
     $searchpicto=$form->showFilterButtons();
     print $searchpicto;
     print '</td>';
@@ -339,17 +339,17 @@ if ($result) {
 	print_liste_field_titre("LineId", $_SERVER["PHP_SELF"], "l.rowid", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("Invoice", $_SERVER["PHP_SELF"], "f.ref", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("InvoiceLabel", $_SERVER["PHP_SELF"], "f.libelle", "", $param, '', $sortfield, $sortorder);
-	print_liste_field_titre("Date", $_SERVER["PHP_SELF"], "f.datef, f.ref, l.rowid", "", $param, 'align="center"', $sortfield, $sortorder);
+	print_liste_field_titre("Date", $_SERVER["PHP_SELF"], "f.datef, f.ref, l.rowid", "", $param, '', $sortfield, $sortorder, 'center ');
 	print_liste_field_titre("ProductRef", $_SERVER["PHP_SELF"], "p.ref", "", $param, '', $sortfield, $sortorder);
 	//print_liste_field_titre("ProductLabel", $_SERVER["PHP_SELF"], "p.label", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("Description", $_SERVER["PHP_SELF"], "l.description", "", $param, '', $sortfield, $sortorder);
-	print_liste_field_titre("Amount", $_SERVER["PHP_SELF"], "l.total_ht", "", $param, 'class="right"', $sortfield, $sortorder);
-	print_liste_field_titre("VATRate", $_SERVER["PHP_SELF"], "l.tva_tx", "", $param, 'class="right"', $sortfield, $sortorder);
+	print_liste_field_titre("Amount", $_SERVER["PHP_SELF"], "l.total_ht", "", $param, '', $sortfield, $sortorder, 'right ');
+	print_liste_field_titre("VATRate", $_SERVER["PHP_SELF"], "l.tva_tx", "", $param, '', $sortfield, $sortorder, 'right ');
 	print_liste_field_titre("Country", $_SERVER["PHP_SELF"], "co.label", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("VATIntra", $_SERVER["PHP_SELF"], "s.tva_intra", "", $param, '', $sortfield, $sortorder);
-	print_liste_field_titre("Account", $_SERVER["PHP_SELF"], "aa.account_number", "", $param, 'align="center"', $sortfield, $sortorder);
+	print_liste_field_titre("Account", $_SERVER["PHP_SELF"], "aa.account_number", "", $param, '', $sortfield, $sortorder, 'center ');
 	$checkpicto=$form->showCheckAddButtons();
-	print_liste_field_titre($checkpicto, '', '', '', '', 'align="center"');
+	print_liste_field_titre($checkpicto, '', '', '', '', '', '', '', 'center ');
 	print "</tr>\n";
 
 	$facturefournisseur_static = new FactureFournisseur($db);
@@ -380,7 +380,7 @@ if ($result) {
 		print $objp->invoice_label;
 		print '</td>';
 
-		print '<td align="center">' . dol_print_date($db->jdate($objp->datef), 'day') . '</td>';
+		print '<td class="center">' . dol_print_date($db->jdate($objp->datef), 'day') . '</td>';
 
 		// Ref product
 		print '<td>';
@@ -404,7 +404,7 @@ if ($result) {
 
 		print '<td>' . $objp->tva_intra . '</td>';
 
-		print '<td align="center">';
+		print '<td class="center">';
 		print $codecompta . ' <a href="./card.php?id=' . $objp->rowid  . '&backtopage='.urlencode($_SERVER["PHP_SELF"].($param?'?'.$param:'')) . '">';
 		print img_edit();
 		print '</a></td>';

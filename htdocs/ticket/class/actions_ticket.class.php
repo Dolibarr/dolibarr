@@ -133,7 +133,7 @@ class ActionsTicket
                 dol_mkdir($upload_dir_tmp);
             }
             dol_add_file_process($upload_dir_tmp, 0, 0, 'addedfile', dol_print_date(dol_now(), '%Y%m%d%H%M%S') . '-__file__');
-            $action = !empty($object->track_id) ? 'add_message' : 'create_ticket';
+            $action = !empty($object->track_id) ? 'add_message' : 'create';
             ////}
         }
 
@@ -156,21 +156,21 @@ class ActionsTicket
 
             // TODO Delete only files that was uploaded from email form
             dol_remove_file_process($_POST['removedfile'], 0);
-            $action = !empty($object->track_id) ? 'add_message' : 'create_ticket';
+            $action = !empty($object->track_id) ? 'add_message' : 'create';
             ////}
         }
 
-        if (GETPOST('add_ticket') && $user->rights->ticket->write) {
+        if (GETPOST('add','alpha') && $user->rights->ticket->write) {
             $error = 0;
 
             if (!GETPOST("subject")) {
                 $error++;
                 $this->errors[] = $langs->trans("ErrorFieldRequired", $langs->transnoentities("Subject"));
-                $action = 'create_ticket';
+                $action = 'create';
             } elseif (!GETPOST("message")) {
                 $error++;
                 $this->errors[] = $langs->trans("ErrorFieldRequired", $langs->transnoentities("message"));
-                $action = 'create_ticket';
+                $action = 'create';
             }
 
             if (!$error) {
@@ -189,6 +189,8 @@ class ActionsTicket
                 $notifyTiers = GETPOST("notify_tiers_at_create", 'alpha');
                 $object->notify_tiers_at_create = empty($notifyTiers) ? 0 : 1;
 
+                $object->fk_project = GETPOST('projectid', 'int');
+
                 $extrafields = new ExtraFields($this->db);
                 $extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
                 $ret = $extrafields->setOptionalsFromPost($extralabels, $object);
@@ -198,7 +200,7 @@ class ActionsTicket
                     $error++;
                     $this->error = $object->error;
                     $this->errors = $object->errors;
-                    $action = 'create_ticket';
+                    $action = 'create';
                 }
 
                 if (!$error && $id > 0)
@@ -338,19 +340,15 @@ class ActionsTicket
         if ($action == "mark_ticket_read" && $user->rights->ticket->write) {
             $object->fetch('', '', GETPOST("track_id", 'alpha'));
 
-            if ($object->markAsRead($user) > 0) {
-                // Log action in ticket logs table
-                $log_action = $langs->trans('TicketLogMesgReadBy', $user->getFullName($langs));
-                $ret = $object->createTicketLog($user, $log_action);
-                if ($ret > 0) {
-                    setEventMessages($langs->trans('TicketMarkedAsRead'), null, 'mesgs');
-                } else {
-                    setEventMessages($langs->trans('TicketMarkedAsReadButLogActionNotSaved'), null, 'errors');
-                }
+            if ($object->markAsRead($user) > 0)
+            {
+                setEventMessages($langs->trans('TicketMarkedAsRead'), null, 'mesgs');
+
                 header("Location: card.php?track_id=" . $object->track_id . "&action=view");
                 exit;
             } else {
-                array_push($this->errors, $object->error);
+                $this->errors = $object->error;
+                $this->error = $object->error;
             }
             $action = 'view';
         }
@@ -396,12 +394,9 @@ class ActionsTicket
                 // Log action in ticket logs table
                 $object->fetch_user($usertoassign);
                 $log_action = $langs->trans('TicketLogAssignedTo', $object->user->getFullName($langs));
-                $ret = $object->createTicketLog($user, $log_action);
-                if ($ret > 0) {
-                    setEventMessages($langs->trans('TicketAssigned'), null, 'mesgs');
-                } else {
-                    setEventMessages($langs->trans('TicketAssignedButLogActionNotSaved'), null, 'errors');
-                }
+
+                setEventMessages($langs->trans('TicketAssigned'), null, 'mesgs');
+
                 header("Location: card.php?track_id=" . $object->track_id . "&action=view");
                 exit;
             } else {
@@ -436,12 +431,9 @@ class ActionsTicket
             if ($object->close()) {
                 // Log action in ticket logs table
                 $log_action = $langs->trans('TicketLogClosedBy', $user->getFullName($langs));
-                $ret = $object->createTicketLog($user, $log_action);
-                if ($ret > 0) {
-                    setEventMessages($langs->trans('TicketMarkedAsClosed'), null, 'mesgs');
-                } else {
-                    setEventMessages($langs->trans('TicketMarkedAsClosedButLogActionNotSaved'), null, 'warnings');
-                }
+
+                setEventMessages($langs->trans('TicketMarkedAsClosed'), null, 'mesgs');
+
                 $url = 'card.php?action=view&track_id=' . GETPOST('track_id', 'alpha');
                 header("Location: " . $url);
             } else {
@@ -455,12 +447,9 @@ class ActionsTicket
             if (($_SESSION['email_customer'] == $object->origin_email || $_SESSION['email_customer'] == $object->thirdparty->email) && $object->close()) {
                 // Log action in ticket logs table
                 $log_action = $langs->trans('TicketLogClosedBy', $_SESSION['email_customer']);
-                $ret = $object->createTicketLog($user, $log_action);
-                if ($ret > 0) {
-                    setEventMessages('<div class="confirm">' . $langs->trans('TicketMarkedAsClosed') . '</div>', null, 'mesgs');
-                } else {
-                    setEventMessages($langs->trans('TicketMarkedAsClosedButLogActionNotSaved'), null, 'warnings');
-                }
+
+                setEventMessages('<div class="confirm">' . $langs->trans('TicketMarkedAsClosed') . '</div>', null, 'mesgs');
+
                 $url = 'view.php?action=view_ticket&track_id=' . GETPOST('track_id', 'alpha');
                 header("Location: " . $url);
             } else {
@@ -495,10 +484,8 @@ class ActionsTicket
 
         if ($action == 'set_progression' && $user->rights->ticket->write) {
             if ($this->fetch(GETPOST('id', 'int'), '', GETPOST('track_id', 'alpha')) >= 0) {
-                $result = $object->setProgression(GETPOST('progress'));
-                // Log action in ticket logs table
-                $log_action = $langs->trans('TicketLogProgressSetTo', GETPOST('progress'));
-                $ret = $object->createTicketLog($user, $log_action);
+                $result = $object->setProgression(GETPOST('progress', 'alpha'));
+
                 $url = 'card.php?action=view&track_id=' . $object->track_id;
                 header("Location: " . $url);
                 exit();
@@ -529,12 +516,12 @@ class ActionsTicket
         if ($action == 'confirm_reopen' && $user->rights->ticket->manage && !GETPOST('cancel')) {
             if ($this->fetch(GETPOST('id', 'int'), '', GETPOST('track_id', 'alpha')) >= 0) {
                 // prevent browser refresh from reopening ticket several times
-                if ($object->fk_statut == 8) {
-                    $res = $object->setStatut(4);
+                if ($object->fk_statut == Ticket::STATUS_CLOSED) {
+                    $res = $object->setStatut(Ticket::STATUS_ASSIGNED);
                     if ($res) {
                         // Log action in ticket logs table
                         $log_action = $langs->trans('TicketLogReopen');
-                        $ret = $object->createTicketLog($user, $log_action);
+
                         $url = 'card.php?action=view&track_id=' . $object->track_id;
                         header("Location: " . $url);
                         exit();
@@ -544,7 +531,7 @@ class ActionsTicket
         } // Categorisation dans projet
         elseif ($action == 'classin' && $user->rights->ticket->write) {
             if ($this->fetch(GETPOST('id', 'int'), '', GETPOST('track_id', 'alpha')) >= 0) {
-                $object->setProject(GETPOST('projectid'));
+                $object->setProject(GETPOST('projectid', 'int'));
                 $url = 'card.php?action=view&track_id=' . $object->track_id;
                 header("Location: " . $url);
                 exit();
@@ -552,7 +539,7 @@ class ActionsTicket
         } // Categorisation dans contrat
         elseif ($action == 'setcontract' && $user->rights->ticket->write) {
             if ($this->fetch(GETPOST('id', 'int'), '', GETPOST('track_id', 'alpha')) >= 0) {
-                $object->setContract(GETPOST('contractid'));
+                $object->setContract(GETPOST('contractid', 'int'));
                 $url = 'card.php?action=view&track_id=' . $object->track_id;
                 header("Location: " . $url);
                 exit();
@@ -573,10 +560,7 @@ class ActionsTicket
                     // output the result of comparing two files as plain text
                     $log_action .= Diff::toString(Diff::compare(strip_tags($oldvalue_message), strip_tags($object->message)));
 
-                    $ret = $object->createTicketLog($user, $log_action);
-                    if ($ret > 0) {
-                        setEventMessages($langs->trans('TicketMessageSuccesfullyUpdated'), null, 'mesgs');
-                    }
+                    setEventMessages($langs->trans('TicketMessageSuccesfullyUpdated'), null, 'mesgs');
                 }
             }
 
@@ -590,7 +574,7 @@ class ActionsTicket
                 if ($res) {
                     // Log action in ticket logs table
                     $log_action = $langs->trans('TicketLogStatusChanged', $langs->transnoentities($object->statuts_short[$old_status]), $langs->transnoentities($object->statuts_short[$new_status]));
-                    $ret = $object->createTicketLog($user, $log_action);
+
                     $url = 'card.php?action=view&track_id=' . $object->track_id;
                     header("Location: " . $url);
                     exit();
@@ -1013,7 +997,7 @@ class ActionsTicket
     {
         global $langs;
 
-        if ($action == 'create_ticket') {
+        if ($action == 'create') {
             return $langs->trans("CreateTicket");
         } elseif ($action == 'edit') {
             return $langs->trans("EditTicket");
@@ -1498,9 +1482,13 @@ class ActionsTicket
                 print '<div class="tagtd">';
 
                 if ($status == 1)
+                {
                     $urlforbutton = $_SERVER['PHP_SELF'] . '?track_id=' . $object->track_id . '&action=mark_ticket_read';	// To set as read, we use a dedicated action
-                   else
-                       $urlforbutton = $_SERVER['PHP_SELF'] . '?track_id=' . $object->track_id . '&action=set_status&new_status=' . $status;
+                }
+                else
+                {
+                    $urlforbutton = $_SERVER['PHP_SELF'] . '?track_id=' . $object->track_id . '&action=set_status&new_status=' . $status;
+                }
 
                 print '<a class="button" href="' . $urlforbutton . '">';
                 print img_picto($langs->trans($object->statuts_short[$status]), 'statut' . $status . '.png@ticket') . ' ' . $langs->trans($object->statuts_short[$status]);

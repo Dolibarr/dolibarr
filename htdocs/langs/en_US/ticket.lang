@@ -87,14 +87,14 @@ TicketEmailNotificationFrom=Notification email from
 TicketEmailNotificationFromHelp=Used into ticket message answer by example
 TicketEmailNotificationTo=Notifications email to
 TicketEmailNotificationToHelp=Send email notifications to this address.
-TicketNewEmailBodyLabel=Text message sent after creating a ticket (public interface)
+TicketNewEmailBodyLabel=Text message sent after creating a ticket
 TicketNewEmailBodyHelp=The text specified here will be inserted into the email confirming the creation of a new ticket from the public interface. Information on the consultation of the ticket are automatically added.
 TicketParamPublicInterface=Public interface setup
 TicketsEmailMustExist=Require an existing email address to create a ticket
 TicketsEmailMustExistHelp=In the public interface, the email address should already be filled in the database to create a new ticket.
 PublicInterface=Public interface
-TicketUrlPublicInterfaceLabelAdmin=Public interface URL
-TicketUrlPublicInterfaceHelpAdmin=It is possible to define an alias to the web server and thus make available the public interface to another IP address.
+TicketUrlPublicInterfaceLabelAdmin=Alternative URL for public interface
+TicketUrlPublicInterfaceHelpAdmin=It is possible to define an alias to the web server and thus make available the public interface with another URL (the server must act as a proxy on this new URL)
 TicketPublicInterfaceTextHomeLabelAdmin=Welcome text of the public interface
 TicketPublicInterfaceTextHome=You can create a support ticket or view existing from its identifier tracking ticket.
 TicketPublicInterfaceTextHomeHelpAdmin=The text defined here will appear on the home page of the public interface.
@@ -124,7 +124,7 @@ TicketsAutoAssignTicketHelp=When creating a ticket, the user can be automaticall
 TicketNumberingModules=Tickets numbering module
 TicketNotifyTiersAtCreation=Notify third party at creation
 TicketGroup=Group
-
+TicketsDisableCustomerEmail=Alsways disable emails when a ticket is created from public interface
 #
 # Index & list page
 #
@@ -154,7 +154,6 @@ TicketMarkedAsRead=Ticket has been marked as read
 TicketReadOn=Read on
 TicketCloseOn=Clotured on
 MarkAsRead=Mark ticket as read
-TicketMarkedAsReadButLogActionNotSaved=Ticket marked as closed but no action saved
 TicketHistory=Ticket history
 AssignUser=Assign to user
 TicketAssigned=Ticket is now assigned
@@ -179,7 +178,6 @@ ConfirmCloseAticket=Confirm ticket closing
 ConfirmDeleteTicket=Please confirm ticket deleting
 TicketDeletedSuccess=Ticket deleted with success
 TicketMarkedAsClosed=Ticket marked as closed
-TicketMarkedAsClosedButLogActionNotSaved=Ticket marked as closed but no log saved !
 TicketDurationAuto=Calculated duration
 TicketDurationAutoInfos=Duration calculated automatically from intervention related
 TicketUpdated=Ticket updated
@@ -226,14 +224,12 @@ Unread=Unread
 #
 # Logs
 #
-TicketLogMesgReadBy=Ticket read by %s
+TicketLogMesgReadBy=Ticket %s read by %s
 NoLogForThisTicket=No log for this ticket yet
-TicketLogAssignedTo=Ticket assigned to %s
-TicketAssignedButLogActionNotSaved=Ticket assigned but no log saved !
-TicketLogPropertyChanged=Change classification: from %s to %s
-TicketLogClosedBy=Ticket closed by %s
-TicketLogProgressSetTo=Progress change to %s percent
-TicketLogReopen=Ticket re-opened
+TicketLogAssignedTo=Ticket %s assigned to %s
+TicketLogPropertyChanged=Ticket %s modified: classification from %s to %s
+TicketLogClosedBy=Ticket %s closed by %s
+TicketLogReopen=Ticket %s re-opened
 
 #
 # Public pages
@@ -267,7 +263,7 @@ ErrorEmailMustExistToCreateTicket=Error: email address not found in our database
 TicketNewEmailSubjectAdmin=New ticket created
 TicketNewEmailBodyAdmin=<p>Ticket has just been created with ID #%s, see information:</p>
 SeeThisTicketIntomanagementInterface=See ticket in management interface
-TicketPublicInterfaceForbidden=Access for this area: forbidden
+TicketPublicInterfaceForbidden=The public interface for the tickets was not enabled
 
 # notifications
 TicketNotificationEmailSubject=Ticket %s updated

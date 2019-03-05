@@ -1,6 +1,5 @@
 <?php
-/* Copyright (C) 2017  Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) ---Put here your own copyright and developer email---
+/* Copyright (C) 2019  Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +18,7 @@
 /**
  * \file        class/bom.class.php
  * \ingroup     bom
- * \brief       This file is a CRUD class file for BillOfMaterials (Create/Read/Update/Delete)
+ * \brief       This file is a CRUD class file for BOM (Create/Read/Update/Delete)
  */
 
 // Put here all includes required by your class file
@@ -28,9 +27,9 @@ require_once DOL_DOCUMENT_ROOT . '/core/class/commonobject.class.php';
 //require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 
 /**
- * Class for BillOfMaterials
+ * Class for BOM
  */
-class BillOfMaterials extends CommonObject
+class BOM extends CommonObject
 {
 	/**
 	 * @var string ID to identify managed object
@@ -45,7 +44,7 @@ class BillOfMaterials extends CommonObject
 	/**
 	 * @var int  Does bom support multicompany module ? 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 	 */
-	public $ismultientitymanaged = 0;
+	public $ismultientitymanaged = 1;
 
 	/**
 	 * @var int  Does bom support extrafields ? 0=No, 1=Yes
@@ -55,7 +54,10 @@ class BillOfMaterials extends CommonObject
 	/**
 	 * @var string String with name of icon for bom. Must be the part after the 'object_' into object_bom.png
 	 */
-	public $picto = 'bom@bom';
+	public $picto = 'bom';
+
+
+	public $table_element_line = 'bom_bomline';
 
 
 	/**
@@ -83,8 +85,8 @@ class BillOfMaterials extends CommonObject
 	 */
 	public $fields=array(
 		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-1, 'position'=>1, 'notnull'=>1, 'index'=>1, 'comment'=>"Id",),
-		'ref' => array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>1, 'visible'=>1, 'position'=>10, 'notnull'=>1, 'index'=>1, 'searchall'=>1, 'comment'=>"Reference of object", 'showoncombobox'=>'1',),
-		'label' => array('type'=>'varchar(255)', 'label'=>'Label', 'enabled'=>1, 'visible'=>1, 'position'=>30, 'notnull'=>-1, 'searchall'=>1, 'help'=>"Help text", 'showoncombobox'=>'1',),
+		'ref' => array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>1, 'visible'=>1, 'position'=>10, 'notnull'=>1, 'index'=>1, 'searchall'=>1, 'comment'=>"Reference of BOM", 'showoncombobox'=>'1',),
+		'label' => array('type'=>'varchar(255)', 'label'=>'Label', 'enabled'=>1, 'visible'=>1, 'position'=>30, 'notnull'=>1, 'searchall'=>1, 'showoncombobox'=>'1',),
 		'description' => array('type'=>'text', 'label'=>'Description', 'enabled'=>1, 'visible'=>-1, 'position'=>60, 'notnull'=>-1,),
 		'note_public' => array('type'=>'html', 'label'=>'NotePublic', 'enabled'=>1, 'visible'=>-1, 'position'=>61, 'notnull'=>-1,),
 		'note_private' => array('type'=>'html', 'label'=>'NotePrivate', 'enabled'=>1, 'visible'=>-1, 'position'=>62, 'notnull'=>-1,),
@@ -93,9 +95,9 @@ class BillOfMaterials extends CommonObject
 		'fk_user_creat' => array('type'=>'integer', 'label'=>'UserAuthor', 'enabled'=>1, 'visible'=>-2, 'position'=>510, 'notnull'=>1, 'foreignkey'=>'llx_user.rowid',),
 		'fk_user_modif' => array('type'=>'integer', 'label'=>'UserModif', 'enabled'=>1, 'visible'=>-2, 'position'=>511, 'notnull'=>-1,),
 		'import_key' => array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'position'=>1000, 'notnull'=>-1,),
-		'status' => array('type'=>'integer', 'label'=>'Status', 'enabled'=>1, 'visible'=>1, 'position'=>1000, 'notnull'=>1, 'index'=>1, 'arrayofkeyval'=>array('0'=>'Brouillon', '1'=>'Actif', '-1'=>'Inactif')),
-		'fk_product' => array('type'=>'integer:Product:product/class/product.class.php', 'label'=>'Product', 'enabled'=>1, 'visible'=>1, 'position'=>50, 'notnull'=>-1, 'index'=>1,),
-		'qty' => array('type'=>'double(24,8)', 'label'=>'Quantity', 'enabled'=>1, 'visible'=>1, 'position'=>55, 'notnull'=>-1, 'isameasure'=>'1',),
+		'fk_product' => array('type'=>'integer:Product:product/class/product.class.php', 'label'=>'Product', 'enabled'=>1, 'visible'=>1, 'position'=>50, 'notnull'=>1, 'index'=>1, 'help'=>'ProductBOMHelp'),
+		'qty' => array('type'=>'double(24,8)', 'label'=>'Quantity', 'enabled'=>1, 'visible'=>1, 'default'=>1, 'position'=>55, 'notnull'=>1, 'isameasure'=>'1',),
+	    'status' => array('type'=>'integer', 'label'=>'Status', 'enabled'=>1, 'visible'=>2, 'position'=>1000, 'notnull'=>1, 'default'=>0, 'index'=>1, 'arrayofkeyval'=>array('0'=>'Draft', '1'=>'Enabled', '-1'=>'Disabled')),
 	);
 	public $rowid;
 	public $ref;
@@ -487,7 +489,7 @@ class BillOfMaterials extends CommonObject
 		if (empty($this->labelstatus))
 		{
 			global $langs;
-			//$langs->load("bom");
+			//$langs->load("mrp");
 			$this->labelstatus[1] = $langs->trans('Enabled');
 			$this->labelstatus[0] = $langs->trans('Disabled');
 		}
@@ -588,7 +590,8 @@ class BillOfMaterials extends CommonObject
 	 */
 	public function initAsSpecimen()
 	{
-		$this->initAsSpecimenCommon();
+	    $this->initAsSpecimenCommon();
+	    $this->date = $this->date_creation;
 	}
 
 
@@ -1070,7 +1073,7 @@ class BillOfMaterialsLine extends CommonObject
 		if (empty($this->labelstatus))
 		{
 			global $langs;
-			//$langs->load("bom");
+			//$langs->load("mrp");
 			$this->labelstatus[1] = $langs->trans('Enabled');
 			$this->labelstatus[0] = $langs->trans('Disabled');
 		}

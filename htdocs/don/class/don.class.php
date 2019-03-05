@@ -678,6 +678,7 @@ class Don extends CommonObject
                 $this->date_creation      = $this->db->jdate($obj->datec);
                 $this->datec              = $this->db->jdate($obj->datec);
                 $this->date_validation    = $this->db->jdate($obj->date_valid);
+                $this->date_valid     	  = $this->db->jdate($obj->date_valid);
                 $this->date_modification  = $this->db->jdate($obj->datem);
                 $this->datem              = $this->db->jdate($obj->datem);
                 $this->date               = $this->db->jdate($obj->datedon);
@@ -687,7 +688,6 @@ class Don extends CommonObject
                 $this->societe            = $obj->societe;
                 $this->statut             = $obj->fk_statut;
                 $this->address            = $obj->address;
-                $this->town               = $obj->town;
                 $this->zip                = $obj->zip;
                 $this->town               = $obj->town;
                 $this->country_id         = $obj->fk_country;
@@ -704,7 +704,7 @@ class Don extends CommonObject
                 $this->mode_reglement_id  = $obj->fk_payment;
                 $this->mode_reglement_code= $obj->payment_code;
                 $this->mode_reglement     = $obj->payment_label;
-                $this->paid			          = $obj->paid;
+                $this->paid			      = $obj->paid;
                 $this->amount             = $obj->amount;
                 $this->note_private	      = $obj->note_private;
                 $this->note_public	      = $obj->note_public;

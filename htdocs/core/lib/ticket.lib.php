@@ -40,9 +40,15 @@ function ticketAdminPrepareHead()
     $head[$h][1] = $langs->trans("TicketSettings");
     $head[$h][2] = 'settings';
     $h++;
+
     $head[$h][0] = DOL_URL_ROOT.'/admin/ticket_extrafields.php';
     $head[$h][1] = $langs->trans("ExtraFieldsTicket");
     $head[$h][2] = 'attributes';
+    $h++;
+
+    $head[$h][0] = DOL_URL_ROOT.'/admin/ticket_public.php';
+    $head[$h][1] = $langs->trans("PublicInterface");
+    $head[$h][2] = 'public';
     $h++;
 
     // Show more tabs from modules

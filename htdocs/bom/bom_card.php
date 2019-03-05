@@ -63,7 +63,7 @@ dol_include_once('/bom/class/bom.class.php');
 dol_include_once('/bom/lib/bom_bom.lib.php');
 
 // Load translation files required by the page
-$langs->loadLangs(array("bom@bom","other"));
+$langs->loadLangs(array("mrp","other"));
 
 // Get parameters
 $id			= GETPOST('id', 'int');
@@ -154,7 +154,7 @@ if (empty($reshook))
 $form=new Form($db);
 $formfile=new FormFile($db);
 
-llxHeader('', 'BillOfMaterials', '');
+llxHeader('', 'NewBOM', '');
 
 // Example : Adding jquery code
 print '<script type="text/javascript" language="javascript">
@@ -175,7 +175,7 @@ jQuery(document).ready(function() {
 // Part to create
 if ($action == 'create')
 {
-	print load_fiche_titre($langs->trans("NewObject", $langs->transnoentitiesnoconv("BillOfMaterials")));
+	print load_fiche_titre($langs->trans("NewBOM"));
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -243,7 +243,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     $res = $object->fetch_optionals();
 
 	$head = bomPrepareHead($object);
-	dol_fiche_head($head, 'card', $langs->trans("BillOfMaterials"), -1, 'bom@bom');
+	dol_fiche_head($head, 'card', $langs->trans("NewBOM"), -1, 'bom');
 
 	$formconfirm = '';
 

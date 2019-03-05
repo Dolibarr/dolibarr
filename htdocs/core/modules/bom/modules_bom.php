@@ -23,21 +23,20 @@
  */
 
 /**
- *  \file			htdocs/core/modules/commande/modules_commande.php
- *  \ingroup		commande
- *  \brief			File that contains parent class for orders models
- *                  and parent class for orders numbering models
+ *  \file			htdocs/core/modules/bom/modules_bom.php
+ *  \ingroup		bom
+ *  \brief			File that contains parent class for boms models
+ *                  and parent class for boms numbering models
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';	// required for use by classes that inherit
-require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
 
 
 /**
- *	Parent class for orders models
+ *	Parent class for boms models
  */
-abstract class ModelePDFCommandes extends CommonDocGenerator
+abstract class ModelePDFBoms extends CommonDocGenerator
 {
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -66,9 +65,9 @@ abstract class ModelePDFCommandes extends CommonDocGenerator
 
 
 /**
- *  Parent class to manage numbering of Sale Orders
+ *  Parent class to manage numbering of BOMs
  */
-abstract class ModeleNumRefCommandes
+abstract class ModeleNumRefBoms
 {
 	/**
 	 * @var string Error code (or message)
@@ -93,7 +92,7 @@ abstract class ModeleNumRefCommandes
 	public function info()
 	{
 		global $langs;
-		$langs->load("orders");
+		$langs->load("mrp");
 		return $langs->trans("NoDescription");
 	}
 
@@ -105,7 +104,7 @@ abstract class ModeleNumRefCommandes
 	public function getExample()
 	{
 		global $langs;
-		$langs->load("orders");
+		$langs->load("mrp");
 		return $langs->trans("NoExample");
 	}
 
