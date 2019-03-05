@@ -163,17 +163,17 @@ class MouvementStockTest extends PHPUnit_Framework_TestCase
     	// Do a list of movement into warehouse 1
 
     	// Create an input movement (type = 3) of price 9.9 -> should update PMP to 9.9
-		$result=$localobject->reception($user, $product1id, $warehouse1id, 10, 9.9, 'Movement for unit test 1');
+		$result=$localobject->reception($user, $product1id, $warehouse1id, 10, 9.9, 'Movement for unit test 1', '', '', '', '', 0, 'Inventory Code Test');
     	print __METHOD__." result=".$result."\n";
     	$this->assertLessThan($result, 0);
 
     	// Create an input movement (type = 3) of price 9.7 -> should update PMP to 9.9/9.7 = 9.8
-    	$result=$localobject->reception($user, $product1id, $warehouse1id, 10, 9.7, 'Movement for unit test 2');
+    	$result=$localobject->reception($user, $product1id, $warehouse1id, 10, 9.7, 'Movement for unit test 2', '', '', '', '', 0, 'Inventory Code Test');
     	print __METHOD__." result=".$result."\n";
     	$this->assertLessThan($result, 0);
 
     	// Create an output movement (type = 2) of price 9.7 -> should update PMP to 9.9/9.7 = 9.8
-    	$result=$localobject->livraison($user, $product1id, $warehouse1id, 5, 999, 'Movement for unit test 3');
+    	$result=$localobject->livraison($user, $product1id, $warehouse1id, 5, 999, 'Movement for unit test 3', '', '', '', '', 0, 'Inventory Code Test');
     	print __METHOD__." result=".$result."\n";
     	$this->assertLessThan($result, 0);
 
@@ -191,17 +191,17 @@ class MouvementStockTest extends PHPUnit_Framework_TestCase
     	// Do same but into warehouse 2
 
     	// Create an input movement (type = 3) of price 9.9 -> should update PMP to 9.9
-    	$result=$localobject->reception($user, $product1id, $warehouse2id, 10, 9.9, 'Movement for unit test 1 wh 2');
+    	$result=$localobject->reception($user, $product1id, $warehouse2id, 10, 9.9, 'Movement for unit test 1 wh 2', '', '', '', '', 0, 'Inventory Code Test 2');
     	print __METHOD__." result=".$result."\n";
     	$this->assertLessThan($result, 0);
 
     	// Create an input movement (type = 3) of price 9.7 -> should update PMP to 9.9/9.7 = 9.8
-    	$result=$localobject->reception($user, $product1id, $warehouse2id, 10, 9.7, 'Movement for unit test 2 wh 2');
+    	$result=$localobject->reception($user, $product1id, $warehouse2id, 10, 9.7, 'Movement for unit test 2 wh 2', '', '', '', '', 0, 'Inventory Code Test 2');
     	print __METHOD__." result=".$result."\n";
     	$this->assertLessThan($result, 0);
 
     	// Create an output movement (type = 2) of price 9.7 -> should update PMP to 9.9/9.7 = 9.8
-    	$result=$localobject->livraison($user, $product1id, $warehouse2id, 5, 999, 'Movement for unit test 3 wh 2');
+    	$result=$localobject->livraison($user, $product1id, $warehouse2id, 5, 999, 'Movement for unit test 3 wh 2', '', '', '', '', 0, 'Inventory Code Test 2');
     	print __METHOD__." result=".$result."\n";
     	$this->assertLessThan($result, 0);
 
