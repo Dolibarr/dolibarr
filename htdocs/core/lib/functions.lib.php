@@ -8045,9 +8045,8 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
         }
         
     }
-    
     // Use new badge
-    if(!empty($conf->global->MAIN_STATUS_USES_CSS) && !empty($displayMode)){
+    elseif(!empty($conf->global->MAIN_STATUS_USES_CSS) && !empty($displayMode)){
         
         $statusLabelShort = !empty($statusLabelShort)?$statusLabelShort:$statusLabel;
         
