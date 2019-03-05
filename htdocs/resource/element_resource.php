@@ -238,7 +238,7 @@ else
 
 			print '<div class="underbanner clearboth"></div>';
 
-			print '<table class="border" width="100%">';
+			print '<table class="border tableforfield" width="100%">';
 
 			// Type
 			if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))

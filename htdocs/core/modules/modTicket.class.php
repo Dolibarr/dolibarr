@@ -218,7 +218,7 @@ class modTicket extends DolibarrModules
             'type' => 'left',
             'titre' => 'NewTicket',
             'mainmenu' => 'ticket',
-            'url' => '/ticket/new.php?action=create_ticket',
+            'url' => '/ticket/card.php?action=create',
             'langs' => 'ticket',
             'position' => 102,
             'enabled' => '$conf->ticket->enabled',

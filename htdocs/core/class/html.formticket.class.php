@@ -24,6 +24,7 @@
  */
 require_once DOL_DOCUMENT_ROOT . "/core/class/html.form.class.php";
 require_once DOL_DOCUMENT_ROOT . "/core/class/html.formmail.class.php";
+require_once DOL_DOCUMENT_ROOT . "/core/class/html.formprojet.class.php";
 
 if (!class_exists('FormCompany')) {
     include DOL_DOCUMENT_ROOT . '/core/class/html.formcompany.class.php';
@@ -103,7 +104,7 @@ class FormTicket
     {
         $this->db = $db;
 
-        $this->action = 'add_ticket';
+        $this->action = 'add';
 
         $this->withcompany = 1;
         $this->withfromsocid = 0;
@@ -258,6 +259,14 @@ class FormTicket
                 print '<td><input type="hidden" name="contactid" value="' . $user->contactid . '"/></td>';
                 print '<td><input type="hidden" name="type" value="Z"/></td></tr>';
             }
+
+            // Notify thirdparty at creation
+            if (empty($this->ispublic))
+            {
+                print '<tr><td><label for="notify_tiers_at_create">' . $langs->trans("TicketNotifyTiersAtCreation") . '</label></td><td>';
+                print '<input type="checkbox" id="notify_tiers_at_create" name="notify_tiers_at_create"'.($this->withnotifytiersatcreate?' checked="checked"':'').'>';
+                print '</td></tr>';
+            }
         }
 
         // TITLE
@@ -305,14 +314,6 @@ class FormTicket
         $this->selectGroupTickets((GETPOST('category_code') ? GETPOST('category_code') : $this->category_code), 'category_code', '', '2');
         print '</td></tr>';
 
-        // Notify thirdparty at creation
-        if (empty($this->ispublic))
-        {
-	        print '<tr><td><label for="notify_tiers_at_create">' . $langs->trans("TicketNotifyTiersAtCreation") . '</label></td><td>';
-        	print '<input type="checkbox" id="notify_tiers_at_create" name="notify_tiers_at_create"'.($this->withnotifytiersatcreate?' checked="checked"':'').'>';
-        	print '</td></tr>';
-        }
-
         // TITLE
         if ($this->withtitletopic) {
             print '<tr><td><label for="subject"><span class="fieldrequired">' . $langs->trans("Subject") . '</span></label></td><td>';
@@ -331,18 +332,29 @@ class FormTicket
         }
 
         // MESSAGE
-        $msg = GETPOST('message', 'alpha') ? GETPOST('message', 'alpha') : '';
+        $msg = GETPOSTISSET('message') ? GETPOST('message', 'none') : '';
         print '<tr><td><label for="message"><span class="fieldrequired">' . $langs->trans("Message") . '</span></label></td><td>';
 
         // If public form, display more information
-        if ($this->ispublic) {
+        $toolbarname = 'dolibarr_notes';
+        if ($this->ispublic)
+        {
+            $toolbarname = 'dolibarr_details';
             print '<div class="warning">' . ($conf->global->TICKET_PUBLIC_TEXT_HELP_MESSAGE ? $conf->global->TICKET_PUBLIC_TEXT_HELP_MESSAGE : $langs->trans('TicketPublicPleaseBeAccuratelyDescribe')) . '</div>';
         }
         include_once DOL_DOCUMENT_ROOT . '/core/class/doleditor.class.php';
         $uselocalbrowser = true;
-        $doleditor = new DolEditor('message', GETPOST('message', 'alpha'), '100%', 230, 'dolibarr_details', 'In', true, $uselocalbrowser);
+        $doleditor = new DolEditor('message', $msg, '100%', 230, $toolbarname, 'In', true, $uselocalbrowser);
         $doleditor->Create();
         print '</td></tr>';
+
+        if (! empty($conf->projet->enabled) && ! $this->ispublic)
+        {
+            $formproject=new FormProjets($this->db);
+            print '<tr><td><label for="project"><span class="">' . $langs->trans("Project") . '</span></label></td><td>';
+            print $formproject->select_projects(-1, GETPOST('projectid','int'), 'projectid', 0, 0, 1, 1);
+            print '</td></tr>';
+        }
 
         // Attached files
         if (!empty($this->withfile)) {
@@ -408,7 +420,7 @@ class FormTicket
         if ($withdolfichehead) dol_fiche_end();
 
         print '<center>';
-        print '<input class="button" type="submit" name="add_ticket" value="' . $langs->trans(($this->withthreadid > 0 ? "SendResponse" : "NewTicket")) . '" />';
+        print '<input class="button" type="submit" name="add" value="' . $langs->trans(($this->withthreadid > 0 ? "SendResponse" : "NewTicket")) . '" />';
 
         if ($this->withcancel) {
             print " &nbsp; &nbsp; ";
@@ -724,7 +736,7 @@ class FormTicket
     /**
      * Show the form to add message on ticket
      *
-     * @param  string $width Width of form
+     * @param  string   $width      Width of form
      * @return void
      */
     public function showMessageForm($width = '40%')
@@ -817,7 +829,6 @@ class FormTicket
         }
 
         print '<table class="border"  width="' . $width . '">';
-
 
         // External users can't send message email
         if ($user->rights->ticket->write && !$user->socid) {
@@ -952,9 +963,11 @@ class FormTicket
             $defaultmessage=preg_replace("/^\n+/", "", $defaultmessage);
         }
 
-        print '<tr><td><label for="message"><span class="fieldrequired">' . $langs->trans("Message") . '</span></label></td><td>';
+        print '<tr><td class="tdtop"><label for="message"><span class="fieldrequired">' . $langs->trans("Message") . '</span></label></td><td>';
+        //$toolbarname = 'dolibarr_details';
+        $toolbarname = 'dolibarr_notes';
         include_once DOL_DOCUMENT_ROOT . '/core/class/doleditor.class.php';
-        $doleditor = new DolEditor('message', $defaultmessage, '100%', 350, 'dolibarr_details', '', false, true, $conf->global->FCKEDITOR_ENABLE_SOCIETE, ROWS_2, 70);
+        $doleditor = new DolEditor('message', $defaultmessage, '100%', 200, $toolbarname, '', false, true, $conf->global->FCKEDITOR_ENABLE_SOCIETE, ROWS_5, 70);
         $doleditor->Create();
         print '</td><td align="center">';
         if ($user->rights->ticket->write && !$user->socid) {
@@ -1014,17 +1027,15 @@ class FormTicket
             print $out;
         }
 
-        print '<tr><td colspan="3">';
-        print '<center>';
-        print '<input class="button" type="submit" name="btn_add_message" value="' . $langs->trans("AddMessage") . '" />';
+        print '</table>';
 
+        print '<center><br>';
+        print '<input class="button" type="submit" name="btn_add_message" value="' . $langs->trans("AddMessage") . '" />';
         if ($this->withcancel) {
             print " &nbsp; &nbsp; ";
             print "<input class=\"button\" type=\"submit\" name=\"cancel\" value=\"" . $langs->trans("Cancel") . "\">";
         }
         print "</center>\n";
-        print '</td></tr>';
-        print '</table>';
 
         print "</form>\n";
         print "<!-- End form TICKET -->\n";

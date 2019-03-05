@@ -1396,19 +1396,22 @@ class Ticket extends CommonObject
     {
         global $conf, $langs;
 
-        if ($this->statut != 9) { // no closed
+        if ($this->statut != self::STATUS_CANCELED) { // no closed
             $this->db->begin();
 
             $sql = "UPDATE " . MAIN_DB_PREFIX . "ticket";
             $sql .= " SET fk_statut = 1, date_read='" . $this->db->idate(dol_now()) . "'";
             $sql .= " WHERE rowid = " . $this->id;
 
-            dol_syslog(get_class($this) . "::markAsRead sql=" . $sql);
+            dol_syslog(get_class($this) . "::markAsRead");
             $resql = $this->db->query($sql);
             if ($resql) {
+                $this->actionmsg = $langs->trans('TicketLogMesgReadBy', $this->ref, $user->getFullName($langs));
+                $this->actionmsg2 = $langs->trans('TicketLogMesgReadBy', $this->ref, $user->getFullName($langs));
+
                 if (!$error && !$notrigger) {
                     // Call trigger
-                    $result=$this->call_trigger('TICKET_MARK_READ', $user);
+                    $result=$this->call_trigger('TICKET_MODIFY', $user);
                     if ($result < 0) {
                         $error++;
                     }

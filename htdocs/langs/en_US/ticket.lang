@@ -154,7 +154,6 @@ TicketMarkedAsRead=Ticket has been marked as read
 TicketReadOn=Read on
 TicketCloseOn=Clotured on
 MarkAsRead=Mark ticket as read
-TicketMarkedAsReadButLogActionNotSaved=Ticket marked as closed but no action saved
 TicketHistory=Ticket history
 AssignUser=Assign to user
 TicketAssigned=Ticket is now assigned
@@ -179,7 +178,6 @@ ConfirmCloseAticket=Confirm ticket closing
 ConfirmDeleteTicket=Please confirm ticket deleting
 TicketDeletedSuccess=Ticket deleted with success
 TicketMarkedAsClosed=Ticket marked as closed
-TicketMarkedAsClosedButLogActionNotSaved=Ticket marked as closed but no log saved !
 TicketDurationAuto=Calculated duration
 TicketDurationAutoInfos=Duration calculated automatically from intervention related
 TicketUpdated=Ticket updated
@@ -226,14 +224,12 @@ Unread=Unread
 #
 # Logs
 #
-TicketLogMesgReadBy=Ticket read by %s
+TicketLogMesgReadBy=Ticket %s read by %s
 NoLogForThisTicket=No log for this ticket yet
-TicketLogAssignedTo=Ticket assigned to %s
-TicketAssignedButLogActionNotSaved=Ticket assigned but no log saved !
-TicketLogPropertyChanged=Change classification: from %s to %s
-TicketLogClosedBy=Ticket closed by %s
-TicketLogProgressSetTo=Progress change to %s percent
-TicketLogReopen=Ticket re-opened
+TicketLogAssignedTo=Ticket %s assigned to %s
+TicketLogPropertyChanged=Ticket %s modified: classification from %s to %s
+TicketLogClosedBy=Ticket %s closed by %s
+TicketLogReopen=Ticket %s re-opened
 
 #
 # Public pages

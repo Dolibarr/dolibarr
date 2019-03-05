@@ -333,10 +333,6 @@ class InterfaceTicketEmail extends DolibarrTriggers
            		dol_syslog("Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id);
            		break;
 
-           	case 'TICKET_MARK_READ':
-           		dol_syslog("Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id);
-           		break;
-
            	case 'TICKET_CLOSE':
            		dol_syslog("Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id);
            		break;
