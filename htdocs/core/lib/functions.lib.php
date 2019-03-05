@@ -7931,7 +7931,7 @@ function roundUpToNextMultiple($n, $x = 5)
  * @param array $params     various params for future : recommended rather than adding more fuction arguments
  * @return string   html badge
  */
-function dol_get_badge($label, $html = '', $type = 'primary', $mode = '', $url = '', $params = array())
+function dolGetBadge($label, $html = '', $type = 'primary', $mode = '', $url = '', $params = array())
 {
     
     $attr=array(
@@ -7980,20 +7980,6 @@ function dol_get_badge($label, $html = '', $type = 'primary', $mode = '', $url =
 
 
 /**
- * @param string $label     label of badge no html : use in alt attribute for accessibility
- * @param string $html      optional : label of badge with html
- * @param string $type      type of badge : Primary Secondary Success Danger Warning Info Light Dark status0 status1 status2 status3 status4 status5 status6 status7 status8 status9
- * @param string $mode      default '' , pill, dot
- * @param string $url       the url for link
- * @param array $params     various params for future : recommended rather than adding more function arguments * 
- * @return void print html bagde
- */
-function dol_print_badge($label, $html = '', $type = 'primary', $mode = '', $url = '', $params = array())
-{
-    print dol_get_badge($label, $html, $type, $mode, $url, $params);
-}
-
-/**
  * @param string $statusLabel       label of badge no html : use in alt attribute for accessibility
  * @param string $html              optional : label of badge with html
  * @param string $statusType        status0 status1 status2 status3 status4 status5 status6 status7 status8 status9 : image name or badge name
@@ -8002,7 +7988,7 @@ function dol_print_badge($label, $html = '', $type = 'primary', $mode = '', $url
  * @param array $params         various params for future : recommended rather than adding more function arguments
  * @return string html status
  */
-function dol_get_status($statusLabel = '', $html = '', $statusType = 'status0', $displayMode = 0, $url = '', $params = array())
+function dolGetStatus($statusLabel = '', $html = '', $statusType = 'status0', $displayMode = 0, $url = '', $params = array())
 {
     global $conf;
 
@@ -8057,26 +8043,12 @@ function dol_get_status($statusLabel = '', $html = '', $statusType = 'status0', 
         $mode = 'pill';
         if($displayMode == 2)$mode = 'dot';
             
-        $return = dol_get_badge($statusLabel, $html, $statusType, $mode);
+        $return = dolGetBadge($statusLabel, $html, $statusType, $mode);
     }
     
     return $return;
 }
 
-
-/**
- * @param string $statusLabel      label of badge no html : use in alt attribute for accessibility
- * @param string $html      optional : label of badge with html
- * @param string $statusType        status0 status1 status2 status3 status4 status5 status6 status7 status8 status9 : image name or badge name
- * @param  int	$displayMode     for retrocompatibility  0=label only, 1=label + Picto, 2=Picto, 3=Picto + label
- * @param string $url       the url for link
- * @param array $params various params for future : recommended rather than adding more function arguments
- * @return void print html status
- */
-function dol_print_status($statusLabel='', $html='', $statusType='status0', $displayMode=0, $url='', $params = array())
-{
-    print dol_get_status($statusLabel, $html, $statusType, $displayMode, $url, $params);
-}
 
 /**
  * @param string $label     label of button no html : use in alt attribute for accessibility $html is not empty
@@ -8088,7 +8060,7 @@ function dol_print_status($statusLabel='', $html='', $statusType='status0', $dis
  * @param array $params     various params for future : recommended rather than adding more function arguments
  * @return string html button
  */
-function dol_get_buttonAction($label, $html = '', $actionType = 'default', $url = '', $id = '', $userRight = 1, $params = array())
+function dolGetButtonAction($label, $html = '', $actionType = 'default', $url = '', $id = '', $userRight = 1, $params = array())
 {
 
     
@@ -8146,17 +8118,3 @@ function dol_get_buttonAction($label, $html = '', $actionType = 'default', $url 
     return '<div class="inline-block divButAction"><'.$tag.' '.$compiledAttributes.'>'.$html.'</'.$tag.'></div>';
 }
 
-/**
- * @param string $label     label of button no html : use in alt attribute for accessibility $html is not empty
- * @param string $html      optional : content with html
- * @param string $actionType      default, delete, danger
- * @param string $url       the url for link
- * @param string $id        attribute id of button
- * @param int $userRight    user action right
- * @param array $params     various params for future : recommended rather than adding more function arguments
- * @return void print html button
- */
-function dol_print_buttonAction($label, $html = '', $actionType = 'default', $url = '', $id = '', $userRight = 1, $params = array())
-{
-    print dol_get_buttonAction($label, $html, $actionType, $url, $id, $userRight, $params);
-}

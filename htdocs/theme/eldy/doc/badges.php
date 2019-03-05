@@ -276,43 +276,43 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 
 
 		<h2 id="helper">Use badge helper function</h2>
-		<p>Using the dol_get_badge function provide in core/lib/functions.lib.php. This function is recommended for code uniformisation and easy maintain</p>
-		<?php dol_print_badge('your label for accessibility', 'your label <u>with</u> <em>html</em>', 'primary') ?>
-		<?php dol_print_badge('your label for accessibility', 'your label <u>with</u> <em>html</em>', 'danger', 'pill') ?>
-		<?php dol_print_badge('your label for accessibility', 'your label <u>with</u> <em>html</em>', 'warning', 'dot') ?>
+		<p>Using the dolGetBadge function provide in core/lib/functions.lib.php. This function is recommended for code uniformisation and easy maintain</p>
+		<?php print dolGetBadge('your label for accessibility', 'your label <u>with</u> <em>html</em>', 'primary') ?>
+		<?php print dolGetBadge('your label for accessibility', 'your label <u>with</u> <em>html</em>', 'danger', 'pill') ?>
+		<?php print dolGetBadge('your label for accessibility', 'your label <u>with</u> <em>html</em>', 'warning', 'dot') ?>
 		
 		<figure class="highlight"><pre>
-&lt;?php  dol_print_badge('your label for accessibility', 'your label &lt;u&gt;with&lt;/u&gt; &lt;em&gt;html&lt;/em&gt;', 'danger', 'pill') ?&gt;
-&lt;?php  dol_print_badge('your label for accessibility', 'your label &lt;u&gt;with&lt;/u&gt; &lt;em&gt;html&lt;/em&gt;', 'warning', 'dot') ?&gt;
+&lt;?php  print dolGetBadge('your label for accessibility', 'your label &lt;u&gt;with&lt;/u&gt; &lt;em&gt;html&lt;/em&gt;', 'danger', 'pill') ?&gt;
+&lt;?php  print dolGetBadge('your label for accessibility', 'your label &lt;u&gt;with&lt;/u&gt; &lt;em&gt;html&lt;/em&gt;', 'warning', 'dot') ?&gt;
 		</pre></figure>
 		
 		<h2 id="helper">Use status helper function</h2>
-		<p>Using the dol_get_status function provide in core/lib/functions.lib.php. This function is recommended for code uniformisation and easy maintain</p>
+		<p>Using the dolGetStatus function provide in core/lib/functions.lib.php. This function is recommended for code uniformisation and easy maintain</p>
 		<?php 
 		$saveGlobalConf = $conf->global->MAIN_STATUS_USES_CSS;
 		$conf->global->MAIN_STATUS_USES_CSS = 1;
 		?>
 		<h4>Using hidden global conf MAIN_STATUS_USES_CSS=1</h4>
-		<p><?php dol_print_status('your label for accessibility', 'your label <u>with</u> <em>html</em>', 'status4') ?></p>
-		<p><?php dol_print_status('your label for accessibility', 'your label <u>with</u> <em>html</em>', 'status4',1) ?></p>
-		<p><?php dol_print_status('your label for accessibility', 'your label <u>with</u> <em>html</em>', 'status4',2) ?></p>
-		<p><?php dol_print_status('your label for accessibility', 'your label <u>with</u> <em>html</em>', 'status4',3) ?></p>
+		<p><?php print dolGetStatus('your label for accessibility', 'your label <u>with</u> <em>html</em>', 'status4') ?></p>
+		<p><?php print dolGetStatus('your label for accessibility', 'your label <u>with</u> <em>html</em>', 'status4',1) ?></p>
+		<p><?php print dolGetStatus('your label for accessibility', 'your label <u>with</u> <em>html</em>', 'status4',2) ?></p>
+		<p><?php print dolGetStatus('your label for accessibility', 'your label <u>with</u> <em>html</em>', 'status4',3) ?></p>
 
 		<?php $conf->global->MAIN_STATUS_USES_CSS = 0; ?>
 		<h4>Disabled hidden global conf : MAIN_STATUS_USES_CSS=0</h4>
-		<p><?php dol_print_status('your label for accessibility', 'your label <u>with</u> <em>html</em>', 'status4') ?></p>
-		<p><?php dol_print_status('your label for accessibility', 'your label <u>with</u> <em>html</em>', 'status4',1) ?></p>
-		<p><?php dol_print_status('your label for accessibility', 'your label <u>with</u> <em>html</em>', 'status4',2) ?></p>
-		<p><?php dol_print_status('your label for accessibility', 'your label <u>with</u> <em>html</em>', 'status4',3) ?></p>
+		<p><?php print dolGetStatus('your label for accessibility', 'your label <u>with</u> <em>html</em>', 'status4') ?></p>
+		<p><?php print dolGetStatus('your label for accessibility', 'your label <u>with</u> <em>html</em>', 'status4',1) ?></p>
+		<p><?php print dolGetStatus('your label for accessibility', 'your label <u>with</u> <em>html</em>', 'status4',2) ?></p>
+		<p><?php print dolGetStatus('your label for accessibility', 'your label <u>with</u> <em>html</em>', 'status4',3) ?></p>
 
 		<?php $conf->global->MAIN_STATUS_USES_CSS = $saveGlobalConf; ?>
 		
 		
 				<figure class="highlight"><pre>
-&lt;?php dol_print_status('your label for accessibility', 'your label &lt;u&gt;with&lt;/u&gt; &lt;em&gt;html&lt;/em&gt;', 'status4') ?&gt;
-&lt;?php dol_print_status('your label for accessibility', 'your label &lt;u&gt;with&lt;/u&gt; &lt;em&gt;html&lt;/em&gt;', 'status4',1) ?&gt;
-&lt;?php dol_print_status('your label for accessibility', 'your label &lt;u&gt;with&lt;/u&gt; &lt;em&gt;html&lt;/em&gt;', 'status4',2) ?&gt;
-&lt;?php dol_print_status('your label for accessibility', 'your label &lt;u&gt;with&lt;/u&gt; &lt;em&gt;html&lt;/em&gt;', 'status4',3) ?&gt;
+&lt;?php print dolGetStatus('your label for accessibility', 'your label &lt;u&gt;with&lt;/u&gt; &lt;em&gt;html&lt;/em&gt;', 'status4') ?&gt;
+&lt;?php print dolGetStatus('your label for accessibility', 'your label &lt;u&gt;with&lt;/u&gt; &lt;em&gt;html&lt;/em&gt;', 'status4',1) ?&gt;
+&lt;?php print dolGetStatus('your label for accessibility', 'your label &lt;u&gt;with&lt;/u&gt; &lt;em&gt;html&lt;/em&gt;', 'status4',2) ?&gt;
+&lt;?php print dolGetStatus('your label for accessibility', 'your label &lt;u&gt;with&lt;/u&gt; &lt;em&gt;html&lt;/em&gt;', 'status4',3) ?&gt;
 		</pre></figure>
 
 		
