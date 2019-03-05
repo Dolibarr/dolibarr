@@ -54,6 +54,12 @@ if (! empty($conf->agenda->enabled))        require_once DOL_DOCUMENT_ROOT.'/com
 
 class pdf_beluga extends ModelePDFProjects
 {
+    /**
+     * Page orientation
+     * @var string 'P' or 'Portait' (default), 'L' or 'Landscape'
+     */
+    private $orientation = '';
+
 	/**
 	 * Issuer
 	 * @var Societe
@@ -79,8 +85,14 @@ class pdf_beluga extends ModelePDFProjects
 		// Dimension page pour format A4
 		$this->type = 'pdf';
 		$formatarray=pdf_getFormat();
-		$this->page_largeur = $formatarray['width'];
-		$this->page_hauteur = $formatarray['height'];
+        $this->orientation = 'L';
+        if ($this->orientation == 'L' || $this->orientation == 'Landscape') {
+            $this->page_largeur = $formatarray['height'];
+            $this->page_hauteur = $formatarray['width'];
+        } else {
+            $this->page_largeur = $formatarray['width'];
+            $this->page_hauteur = $formatarray['height'];
+        }
 		$this->format = array($this->page_largeur,$this->page_hauteur);
 		$this->marge_gauche=isset($conf->global->MAIN_PDF_MARGIN_LEFT)?$conf->global->MAIN_PDF_MARGIN_LEFT:10;
 		$this->marge_droite=isset($conf->global->MAIN_PDF_MARGIN_RIGHT)?$conf->global->MAIN_PDF_MARGIN_RIGHT:10;
@@ -95,13 +107,22 @@ class pdf_beluga extends ModelePDFProjects
 		$this->emetteur=$mysoc;
 		if (! $this->emetteur->country_code) $this->emetteur->country_code=substr($langs->defaultlang, -2);    // By default if not defined
 
-		// Defini position des colonnes
-		$this->posxref=$this->marge_gauche+1;
-		$this->posxdate=$this->marge_gauche+25;
-		$this->posxsociety=$this->marge_gauche+45;
-		$this->posxamountht=$this->marge_gauche+110;
-		$this->posxamountttc=$this->marge_gauche+135;
-		$this->posxstatut=$this->marge_gauche+165;
+        // Defini position des colonnes
+        if ($this->orientation == 'L' || $this->orientation == 'Landscape') {
+            $this->posxref=$this->marge_gauche+1;
+            $this->posxdate=$this->marge_gauche+105;
+            $this->posxsociety=$this->marge_gauche+125;
+            $this->posxamountht=$this->marge_gauche+190;
+            $this->posxamountttc=$this->marge_gauche+215;
+            $this->posxstatut=$this->marge_gauche+245;
+        } else {
+            $this->posxref=$this->marge_gauche+1;
+            $this->posxdate=$this->marge_gauche+25;
+            $this->posxsociety=$this->marge_gauche+45;
+            $this->posxamountht=$this->marge_gauche+110;
+            $this->posxamountttc=$this->marge_gauche+135;
+            $this->posxstatut=$this->marge_gauche+165;
+        }
 		if ($this->page_largeur < 210) // To work with US executive format
 		{
 			$this->posxref-=20;
@@ -217,7 +238,7 @@ class pdf_beluga extends ModelePDFProjects
 				$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite);   // Left, Top, Right
 
 				// New page
-				$pdf->AddPage();
+				$pdf->AddPage($this->orientation);
 				if (! empty($tplidx)) $pdf->useTemplate($tplidx);
 				$pagenb++;
 				$this->_pagehead($pdf, $object, 1, $outputlangs);
@@ -433,7 +454,7 @@ class pdf_beluga extends ModelePDFProjects
 					            $pdf->SetTextColor(0, 0, 0);
 
 					            $pdf->setTopMargin($tab_top_newpage);
-					            $pdf->setPageOrientation('', 1, $heightforfooter+$heightforfreetext+$heightforinfotot);	// The only function to edit the bottom margin of current page to set it.
+					            $pdf->setPageOrientation($this->orientation, 1, $heightforfooter+$heightforfreetext+$heightforinfotot);	// The only function to edit the bottom margin of current page to set it.
 					            $pageposbefore=$pdf->getPage();
 
 					            // Description of line
@@ -469,7 +490,7 @@ class pdf_beluga extends ModelePDFProjects
 						            $pdf->rollbackTransaction(true);
 						            $pageposafter=$pageposbefore;
 						            //print $pageposafter.'-'.$pageposbefore;exit;
-						            $pdf->setPageOrientation('', 1, $heightforfooter);	// The only function to edit the bottom margin of current page to set it.
+						            $pdf->setPageOrientation($this->orientation, 1, $heightforfooter);	// The only function to edit the bottom margin of current page to set it.
 						            // Label
 						            $pdf->SetXY($this->posxref, $curY);
 						            $posybefore=$pdf->GetY();
@@ -480,7 +501,7 @@ class pdf_beluga extends ModelePDFProjects
 						            {
 							            if ($i == ($num-1))	// No more lines, and no space left to show total, so we create a new page
 							            {
-								            $pdf->AddPage('', '', true);
+								            $pdf->AddPage($this->orientation, '', true);
 								            if (! empty($tplidx)) $pdf->useTemplate($tplidx);
 								            if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
 								            $pdf->setPage($pageposafter+1);
@@ -495,9 +516,9 @@ class pdf_beluga extends ModelePDFProjects
 							            {
 								            $pdf->rollbackTransaction(true);
 								            $pageposafter=$pageposbefore;
-								            $pdf->setPageOrientation('', 1, $heightforfooter);	// The only function to edit the bottom margin of current page to set it.
+								            $pdf->setPageOrientation($this->orientation, 1, $heightforfooter);	// The only function to edit the bottom margin of current page to set it.
 
-								            $pdf->AddPage('', '', true);
+								            $pdf->AddPage($this->orientation, '', true);
 								            if (! empty($tplidx)) $pdf->useTemplate($tplidx);
 								            if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
 								            $pdf->setPage($pageposafter+1);
@@ -505,7 +526,7 @@ class pdf_beluga extends ModelePDFProjects
 								            $pdf->MultiCell(0, 3, '');		// Set interline to 3
 								            $pdf->SetTextColor(0, 0, 0);
 
-								            $pdf->setPageOrientation('', 1, $heightforfooter);	// The only function to edit the bottom margin of current page to set it.
+								            $pdf->setPageOrientation($this->orientation, 1, $heightforfooter);	// The only function to edit the bottom margin of current page to set it.
 								            $curY = $tab_top_newpage + $heightoftitleline + 1;
 
 								            // Label
@@ -528,7 +549,7 @@ class pdf_beluga extends ModelePDFProjects
 					            $pageposafter=$pdf->getPage();
 					            $pdf->setPage($pageposbefore);
 					            $pdf->setTopMargin($this->marge_haute);
-					            $pdf->setPageOrientation('', 1, 0);	// The only function to edit the bottom margin of current page to set it.
+					            $pdf->setPageOrientation($this->orientation, 1, 0);	// The only function to edit the bottom margin of current page to set it.
 
 					            // We suppose that a too long description is moved completely on next page
 					            if ($pageposafter > $pageposbefore && empty($showpricebeforepagebreak)) {
@@ -628,7 +649,7 @@ class pdf_beluga extends ModelePDFProjects
 						$this->_pagefoot($pdf, $object, $outputlangs, 1);
 						$pagenb++;
 						$pdf->setPage($pagenb);
-						$pdf->setPageOrientation('', 1, 0);	// The only function to edit the bottom margin of current page to set it.
+						$pdf->setPageOrientation($this->orientation, 1, 0);	// The only function to edit the bottom margin of current page to set it.
 						if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
 					}
 				}
