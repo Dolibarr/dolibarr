@@ -682,7 +682,7 @@ if ($action == 'create')
 
 	dol_fiche_head();
 
-	print '<table class="border" width="100%">';
+	print '<table class="border tableforfield" width="100%">';
 
 	// Type of event
 	if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))
@@ -849,7 +849,7 @@ if ($action == 'create')
 	print '<br><hr><br>';
 
 
-	print '<table class="border" width="100%">';
+	print '<table class="border tableforfield" width="100%">';
 
 	if ($conf->societe->enabled)
 	{
@@ -1078,7 +1078,7 @@ if ($id > 0)
 
 		dol_fiche_head($head, 'card', $langs->trans("Action"), 0, 'action');
 
-		print '<table class="border" width="100%">';
+		print '<table class="border tableforfield" width="100%">';
 
 		// Ref
 		print '<tr><td class="titlefieldcreate">'.$langs->trans("Ref").'</td><td colspan="3">'.$object->id.'</td></tr>';
@@ -1259,7 +1259,7 @@ if ($id > 0)
 		print '<br><hr><br>';
 
 
-		print '<table class="border" width="100%">';
+		print '<table class="border tableforfield" width="100%">';
 
 		if ($conf->societe->enabled)
 		{
@@ -1455,7 +1455,7 @@ if ($id > 0)
 		print '<div class="underbanner clearboth"></div>';
 
 		// Affichage fiche action en mode visu
-		print '<table class="border" width="100%">';
+		print '<table class="border tableforfield" width="100%">';
 
 		// Type
 		if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))
@@ -1558,7 +1558,7 @@ if ($id > 0)
 		print '<br>';
 
 		print '<div class="underbanner clearboth"></div>';
-		print '<table class="border" width="100%">';
+		print '<table class="border tableforfield centpercent">';
 
 		if ($conf->societe->enabled)
 		{

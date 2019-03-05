@@ -333,33 +333,6 @@ class TicketTest extends PHPUnit_Framework_TestCase
 	}
 
 	/**
-	 * testTicketcreateTicketLog
-	 *
-	 * @param	Ticket		$localobject		Ticket
-	 * @return	int
-	 *
-	 * @depends	testTicketFetch
-	 * The depends says test is run only if previous is ok
-	 */
-	/*public function testTicketcreateTicketLog($localobject)
-	{
-		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
-
-
-		$message = 'Test ticket log';
-		$noemail = 1;
-		$result=$localobject->createTicketLog($user, $message, $noemail);
-		print __METHOD__." id=".$localobject->id." result=".$result."\n";
-
-		$this->assertGreaterThan(0, $result);
-		return $localobject;
-	}*/
-
-	/**
 	 * testTicketclose
 	 *
 	 * @param	Ticket		$localobject		Ticket
