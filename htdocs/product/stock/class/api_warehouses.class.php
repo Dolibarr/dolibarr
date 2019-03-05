@@ -243,15 +243,16 @@ class Warehouses extends DolibarrApi
     }
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
     /**
      * Clean sensible object datas
      *
      * @param   Entrepot  $object    Object to clean
      * @return    array    Array of cleaned object properties
      */
-    private function _cleanObjectDatas($object)
+    protected function _cleanObjectDatas($object)
     {
-
+        // phpcs:enable
         $object = parent::_cleanObjectDatas($object);
 
         // Remove the subscriptions because they are handled as a subresource.
