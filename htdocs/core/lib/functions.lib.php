@@ -8012,7 +8012,7 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
     if($displayMode==0){
         $return = !empty($html)?$html:$statusLabel;
     }
-    elseif($displayMode===1){
+    elseif($displayMode==1){
         $return = !empty($html)?$html:(!empty($statusLabelShort)?$statusLabelShort:$statusLabel);
     }
     // use status with images
@@ -8047,7 +8047,7 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
     }
     
     // Use new badge
-    if(!empty($conf->global->MAIN_STATUS_USES_CSS) && !empty($displayMode)){
+    elseif(!empty($conf->global->MAIN_STATUS_USES_CSS) && !empty($displayMode)){
         
         $statusLabelShort = !empty($statusLabelShort)?$statusLabelShort:$statusLabel;
         
@@ -8064,7 +8064,7 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
         
     }
     
-    return $return;
+    return $return.$displayMode;
 }
 
 

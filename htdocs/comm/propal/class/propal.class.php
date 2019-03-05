@@ -3194,19 +3194,16 @@ class Propal extends CommonObject
 		}
 
 		$statuttrans='';
-		if ($statut==self::STATUS_DRAFT) $statuttrans='statut0';
-		elseif ($statut==self::STATUS_VALIDATED) $statuttrans='statut1';
-		elseif ($statut==self::STATUS_SIGNED) $statuttrans='statut3';
-		elseif ($statut==self::STATUS_NOTSIGNED) $statuttrans='statut5';
-		elseif ($statut==self::STATUS_BILLED) $statuttrans='statut6';
+		if ($statut==self::STATUS_DRAFT) $statuttrans='status0';
+		elseif ($statut==self::STATUS_VALIDATED) $statuttrans='status1';
+		elseif ($statut==self::STATUS_SIGNED) $statuttrans='status3';
+		elseif ($statut==self::STATUS_NOTSIGNED) $statuttrans='status5';
+		elseif ($statut==self::STATUS_BILLED) $statuttrans='status6';
 
-		if ($mode == 0)	return $this->labelstatut[$statut];
-		elseif ($mode == 1)	return $this->labelstatut_short[$statut];
-		elseif ($mode == 2)	return img_picto($this->labelstatut_short[$statut], $statuttrans).' '.$this->labelstatut_short[$statut];
-		elseif ($mode == 3)	return img_picto($this->labelstatut[$statut], $statuttrans);
-		elseif ($mode == 4)	return img_picto($this->labelstatut[$statut], $statuttrans).' '.$this->labelstatut[$statut];
-		elseif ($mode == 5)	return '<span class="hideonsmartphone">'.$this->labelstatut_short[$statut].' </span>'.img_picto($this->labelstatut[$statut], $statuttrans);
-		elseif ($mode == 6)	return '<span class="hideonsmartphone">'.$this->labelstatut[$statut].' </span>'.img_picto($this->labelstatut[$statut], $statuttrans);
+		
+		return dolGetStatus($this->labelstatut[$statut], $this->labelstatut_short[$statut], '', $statuttrans, $mode);
+		
+		
 	}
 
 
