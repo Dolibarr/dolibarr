@@ -428,4 +428,5 @@
     <rule ref="PSR2.Files.EndFileNewline.TooMany" />
 	<rule ref="PSR2.Files.EndFileNewline.NoneFound" />
 	<rule ref="PSR2.Methods.FunctionCallSignature.SpaceBeforeOpenBracket" />
+	<rule ref="PSR2.Classes.PropertyDeclaration.VarUsed" />
 </ruleset>
