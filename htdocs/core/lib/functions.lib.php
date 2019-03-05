@@ -8063,7 +8063,7 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
         
     }
     
-    return $return.$displayMode;
+    return $return;
 }
 
 
