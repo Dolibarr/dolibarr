@@ -568,7 +568,7 @@ if ($action == 'confirm_refuse')
         }
 
     } else {
-        header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.'&error=NoMotifRefuse');
+        header('Location: '.$_SERVER["PHP_SELF"].'?id='.$id.'&error=NoMotifRefuse');
         exit;
     }
 }
