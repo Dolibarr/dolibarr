@@ -61,7 +61,7 @@ if (defined('THEME_ONLY_CONSTANT')) return;
 
 session_cache_limiter('public');
 
-require_once '/../../main.inc.php';
+require_once '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 // Load user to have $user->conf loaded (not done into main because of NOLOGIN constant defined)
