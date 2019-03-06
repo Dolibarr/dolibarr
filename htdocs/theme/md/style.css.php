@@ -1819,7 +1819,7 @@ foreach($mainmenuusedarray as $val)
 			$found=1;
 			break;
 		}
-		else if (file_exists($dirroot."/".$val."/img/".$val.".png"))    // Retro compatibilité
+		elseif (file_exists($dirroot."/".$val."/img/".$val.".png"))    // Retro compatibilité
 		{
 		    $url=dol_buildpath('/'.$val.'/img/'.$val.'.png', 1);
 		    $found=1;

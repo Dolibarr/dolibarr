@@ -580,7 +580,7 @@ foreach($object->fields as $key => $val)
 	if ($key == 'fk_statut') $cssforfield.=($cssforfield?' ':'').'center';
 	if (! empty($arrayfields['t.'.$key]['checked']))
 	{
-        print getTitleFieldOfList($arrayfields['t.'.$key]['label'], 0, $_SERVER['PHP_SELF'], 't.'.$key, '', $param, ($cssforfield?'class="'.$cssforfield.'"':''), $sortfield, $sortorder, ($cssforfield?$cssforfield.' ':''))."\n";
+        print getTitleFieldOfList($arrayfields['t.'.$key]['label'], 0, $_SERVER['PHP_SELF'], 't.'.$key, '', $param, '', $sortfield, $sortorder, ($cssforfield?$cssforfield.' ':''))."\n";
 	}
 }
 // Extra fields

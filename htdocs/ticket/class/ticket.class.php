@@ -528,9 +528,12 @@ class Ticket extends CommonObject
                 $this->severity_label = $label_severity;
 
                 $this->datec = $this->db->jdate($obj->datec);
+                $this->date_creation = $this->db->jdate($obj->datec);
                 $this->date_read = $this->db->jdate($obj->date_read);
+                $this->date_validation = $this->db->jdate($obj->date_read);
                 $this->date_close = $this->db->jdate($obj->date_close);
                 $this->tms = $this->db->jdate($obj->tms);
+                $this->date_modification = $this->db->jdate($obj->tms);
 
                 $this->fetch_optionals();
 
