@@ -677,11 +677,12 @@ class FormFile
 			$out.= '<tr class="liste_titre">';
 
 			$addcolumforpicto=($delallowed || $printer || $morepicto);
-			$out.= '<th colspan="'.(3+($addcolumforpicto?1:0)).'" class="formdoc liste_titre maxwidthonsmartphone center">';
+			$out.= '<th colspasort($modellist);an="'.(3+($addcolumforpicto?1:0)).'" class="formdoc liste_titre maxwidthonsmartphone center">';
 
 			// Model
 			if (! empty($modellist))
 			{
+				asort($modellist);
 				$out.= '<span class="hideonsmartphone">'.$langs->trans('Model').' </span>';
 				if (is_array($modellist) && count($modellist) == 1)    // If there is only one element
 				{
