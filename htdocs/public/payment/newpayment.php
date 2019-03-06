@@ -898,7 +898,7 @@ if ($source == 'order')
 
     $stripe = new Stripe($db);
     $stripeacc = $stripe->getStripeAccount($service);							// Stripe OAuth connect account of dolibarr user (no network access here)
-    $stripecu = $stripe->getStripeCustomerAccount($object->socid, $servicestatus);	// Get thirdparty cu_...
+    $stripecu = $stripe->customerStripe($object->fk_soc, $stripeacc, $servicestatus, 1);
 	//  for dev only
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("PaymentIntent");
 	print '</td><td class="CTableRow'.($var?'1':'2').'">';
@@ -1049,7 +1049,7 @@ if ($source == 'invoice')
 
     $stripe = new Stripe($db);
     $stripeacc = $stripe->getStripeAccount($service);								// Stripe OAuth connect account of dolibarr user (no network access here)
-    $stripecu = $stripe->getStripeCustomerAccount($object->socid, $servicestatus);		// Get thirdparty cu_...
+    $stripecu = $stripe->customerStripe($object->fk_soc, $stripeacc, $servicestatus, 1);
 	//  for dev only
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("PaymentIntent");
 	print '</td><td class="CTableRow'.($var?'1':'2').'">';
@@ -1588,7 +1588,7 @@ if ($source == 'donation')
 
     $stripe = new Stripe($db);
     $stripeacc = $stripe->getStripeAccount($service);								// Stripe OAuth connect account of dolibarr user (no network access here)
-    $stripecu = $stripe->getStripeCustomerAccount($object->fk_soc, $servicestatus);		// Get thirdparty cu_...
+    $stripecu = $stripe->customerStripe($object->fk_soc, $stripeacc, $servicestatus, 1);
 	//  for dev only
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("PaymentIntent");
 	print '</td><td class="CTableRow'.($var?'1':'2').'">';
