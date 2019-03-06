@@ -62,7 +62,7 @@ class mod_holiday_madonna extends ModelNumRefHolidays
 	 *
 	 *	@return     string      text description
 	 */
-    function info()
+    public function info()
     {
     	global $langs;
       	return $langs->trans("SimpleNumRefModelDesc", $this->prefix);
@@ -74,7 +74,7 @@ class mod_holiday_madonna extends ModelNumRefHolidays
 	 *
 	 *	@return     string      Example
 	 */
-	function getExample()
+	public function getExample()
 	{
 		return $this->prefix."0501-0001";
 	}
@@ -85,7 +85,7 @@ class mod_holiday_madonna extends ModelNumRefHolidays
 	 *
 	 *	@return     boolean     false if conflit, true if ok
 	 */
-	function canBeActivated()
+	public function canBeActivated()
 	{
 		global $conf,$langs,$db;
 
@@ -120,7 +120,7 @@ class mod_holiday_madonna extends ModelNumRefHolidays
 	 *	@param	Object		$holiday	Holiday object
 	 *	@return string      			Value if OK, 0 if KO
 	 */
-	function getNextValue($objsoc, $holiday)
+	public function getNextValue($objsoc, $holiday)
 	{
 		global $db,$conf;
 
@@ -154,7 +154,7 @@ class mod_holiday_madonna extends ModelNumRefHolidays
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Return next value
 	 *
@@ -162,7 +162,7 @@ class mod_holiday_madonna extends ModelNumRefHolidays
 	 *	@param	Object		$objforref	Holiday object
 	 *	@return string      			Value if OK, 0 if KO
 	 */
-	function holiday_get_num($fuser, $objforref)
+	public function holiday_get_num($fuser, $objforref)
 	{
         // phpcs:enable
 		return $this->getNextValue($fuser, $objforref);

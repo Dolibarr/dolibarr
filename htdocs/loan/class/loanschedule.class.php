@@ -354,22 +354,21 @@ class LoanSchedule extends CommonObject
 	 *  @param  int		$notrigger		0=launch triggers after, 1=disable triggers
 	 *  @return int						<0 if KO, >0 if OK
 	 */
-	public function delete($user, $notrigger = 0)
+    public function delete($user, $notrigger = 0)
 	{
 		global $conf, $langs;
 		$error=0;
 
 		$this->db->begin();
 
-	    if (! $error)
-		{
+        if (! $error) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX.$this->table_element;
 			$sql.= " WHERE rowid=".$this->id;
 
 			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
-		}
+        }
 
 		if (! $error)
 		{
@@ -403,7 +402,7 @@ class LoanSchedule extends CommonObject
 			$this->db->commit();
 			return 1;
 		}
-	}
+    }
 
 	/**
 	 * Calculate Monthly Payments

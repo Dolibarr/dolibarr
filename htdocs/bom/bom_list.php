@@ -62,7 +62,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 dol_include_once('/bom/class/bom.class.php');
 
 // Load translation files required by the page
-$langs->loadLangs(array("bom@bom", "other"));
+$langs->loadLangs(array("mrp", "other"));
 
 $action     = GETPOST('action', 'aZ09')?GETPOST('action', 'aZ09'):'view';				// The action 'add', 'create', 'edit', 'update', 'view', ...
 $massaction = GETPOST('massaction', 'alpha');											// The bulk action (combo box choice into lists)
@@ -199,7 +199,7 @@ $now=dol_now();
 
 //$help_url="EN:Module_BillOfMaterials|FR:Module_BillOfMaterials_FR|ES:Módulo_BillOfMaterials";
 $help_url='';
-$title = $langs->trans('ListOf', $langs->transnoentitiesnoconv("BillOfMaterialss"));
+$title = $langs->trans('ListOfBOMs');
 
 
 // Build and execute select
@@ -478,19 +478,19 @@ while ($i < min($num, $limit))
 		if (isset($obj->$key)) $object->$key = $obj->$key;
 	}
 
-	// Show here line of result
-	print '<tr class="oddeven">';
-	foreach($object->fields as $key => $val)
-	{
+    // Show here line of result
+    print '<tr class="oddeven">';
+    foreach($object->fields as $key => $val)
+    {
 	    $cssforfield='';
 	    if (in_array($val['type'], array('date', 'datetime', 'timestamp'))) $cssforfield.=($cssforfield?' ':'').'center';
 	    elseif ($key == 'status') $cssforfield.=($cssforfield?' ':'').'center';
 
-	    if (in_array($val['type'], array('timestamp'))) $cssforfield.=($cssforfield?' ':'').'nowrap';
-	    elseif ($key == 'ref') $cssforfield.=($cssforfield?' ':'').'nowrap';
+        if (in_array($val['type'], array('timestamp'))) $cssforfield.=($cssforfield?' ':'').'nowrap';
+        elseif ($key == 'ref') $cssforfield.=($cssforfield?' ':'').'nowrap';
 
-	    if (! empty($arrayfields['t.'.$key]['checked']))
-		{
+        if (! empty($arrayfields['t.'.$key]['checked']))
+        {
 			print '<td';
 			if ($cssforfield || $val['css']) print ' class="';
 			print $cssforfield;
@@ -506,8 +506,8 @@ while ($i < min($num, $limit))
 				if (! $i) $totalarray['pos'][$totalarray['nbfield']]='t.'.$key;
 				$totalarray['val']['t.'.$key] += $obj->$key;
 			}
-		}
-	}
+        }
+    }
 	// Extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 	// Fields from hook

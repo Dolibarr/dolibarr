@@ -58,20 +58,20 @@ class AdvanceTargetingMailing extends CommonObject
 	 */
 	public $id;
 
-	var $name;
-	var $entity;
-	var $fk_element;
-	var $type_element;
-	var $filtervalue;
-	var $fk_user_author;
-	var $datec='';
-	var $fk_user_mod;
-	var $tms='';
+    public $name;
+    public $entity;
+    public $fk_element;
+    public $type_element;
+    public $filtervalue;
+    public $fk_user_author;
+    public $datec='';
+    public $fk_user_mod;
+    public $tms='';
 
-	var $select_target_type = array();
-	var $type_statuscommprospect=array();
-	var $thirdparty_lines;
-	var $contact_lines;
+    public $select_target_type = array();
+    public $type_statuscommprospect=array();
+    public $thirdparty_lines;
+    public $contact_lines;
 
 
 	/**
@@ -79,7 +79,7 @@ class AdvanceTargetingMailing extends CommonObject
 	 *
 	 *  @param  DoliDb		$db		Database handler
 	 */
-	function __construct($db)
+    public function __construct($db)
 	{
 		global $langs;
 		$langs->load('customers');
@@ -108,7 +108,7 @@ class AdvanceTargetingMailing extends CommonObject
 	 *  @param  int		$notrigger   0=launch triggers after, 1=disable triggers
 	 *  @return int      		   	 <0 if KO, Id of created object if OK
 	 */
-	function create($user, $notrigger = 0)
+    public function create($user, $notrigger = 0)
 	{
 		global $conf, $langs;
 		$error=0;
@@ -202,7 +202,7 @@ class AdvanceTargetingMailing extends CommonObject
 	 *  @param	int		$id    Id object
 	 *  @return int          	<0 if KO, >0 if OK
 	 */
-	function fetch($id)
+    public function fetch($id)
 	{
 		global $langs;
 		$sql = "SELECT";
@@ -253,14 +253,14 @@ class AdvanceTargetingMailing extends CommonObject
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Load object in memory from the database
 	 *
 	 *  @param	int		$id    Id object
 	 *  @return int          	<0 if KO, >0 if OK
 	 */
-	function fetch_by_mailing($id = 0)
+    public function fetch_by_mailing($id = 0)
 	{
         // phpcs:enable
 		global $langs;
@@ -319,7 +319,7 @@ class AdvanceTargetingMailing extends CommonObject
 
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Load object in memory from the database
 	 *
@@ -327,7 +327,7 @@ class AdvanceTargetingMailing extends CommonObject
 	 *  @param	string	$type_element	Type target
 	 *  @return int          			<0 if KO, >0 if OK
 	 */
-	function fetch_by_element($id = 0, $type_element = 'mailing')
+    public function fetch_by_element($id = 0, $type_element = 'mailing')
 	{
         // phpcs:enable
 		global $langs;
@@ -390,7 +390,7 @@ class AdvanceTargetingMailing extends CommonObject
 	 *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
 	 *  @return int     		   	 <0 if KO, >0 if OK
 	 */
-	function update($user, $notrigger = 0)
+    public function update($user, $notrigger = 0)
 	{
 		global $conf, $langs;
 		$error=0;
@@ -469,7 +469,7 @@ class AdvanceTargetingMailing extends CommonObject
 	 *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
 	 *  @return	int					 <0 if KO, >0 if OK
 	 */
-	function delete($user, $notrigger = 0)
+    public function delete($user, $notrigger = 0)
 	{
 		global $conf, $langs;
 		$error=0;
@@ -528,7 +528,7 @@ class AdvanceTargetingMailing extends CommonObject
 	 * 	@param		array		$arrayquery		All element to Query
 	 * 	@return		int			<0 if KO, >0 if OK
 	 */
-	function savequery($user, $arrayquery)
+    public function savequery($user, $arrayquery)
 	{
 		global $langs,$conf;
 
@@ -548,14 +548,14 @@ class AdvanceTargetingMailing extends CommonObject
 
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Load object in memory from database
 	 *
 	 * 	@param		array		$arrayquery	All element to Query
 	 * 	@return		int			<0 if KO, >0 if OK
 	 */
-	function query_thirdparty($arrayquery)
+    public function query_thirdparty($arrayquery)
 	{
         // phpcs:enable
 		global $langs,$conf;
@@ -699,7 +699,7 @@ class AdvanceTargetingMailing extends CommonObject
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Load object in memory from database
 	 *
@@ -707,7 +707,7 @@ class AdvanceTargetingMailing extends CommonObject
 	 * 	@param		int			$withThirdpartyFilter	add contact with tridparty filter
 	 * 	@return		int			<0 if KO, >0 if OK
 	 */
-	function query_contact($arrayquery, $withThirdpartyFilter = 0)
+    public function query_contact($arrayquery, $withThirdpartyFilter = 0)
 	{
         // phpcs:enable
 		global $langs,$conf;

@@ -53,7 +53,7 @@ class Categories extends DolibarrApi
     /**
      * Constructor
      */
-    function __construct()
+    public function __construct()
     {
         global $db, $conf;
         $this->db = $db;
@@ -70,7 +70,7 @@ class Categories extends DolibarrApi
      *
      * @throws 	RestException
      */
-    function get($id)
+    public function get($id)
     {
         if (! DolibarrApiAccess::$user->rights->categorie->lire) {
             throw new RestException(401);
@@ -103,7 +103,7 @@ class Categories extends DolibarrApi
      *
      * @throws RestException
      */
-    function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $type = '', $sqlfilters = '')
+    public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $type = '', $sqlfilters = '')
     {
         global $db, $conf;
 
@@ -173,7 +173,7 @@ class Categories extends DolibarrApi
      * @param array $request_data   Request data
      * @return int  ID of category
      */
-    function post($request_data = null)
+    public function post($request_data = null)
     {
         if(! DolibarrApiAccess::$user->rights->categorie->creer) {
             throw new RestException(401);
@@ -198,7 +198,7 @@ class Categories extends DolibarrApi
      * @param array $request_data   Datas
      * @return int
      */
-    function put($id, $request_data = null)
+    public function put($id, $request_data = null)
     {
         if(! DolibarrApiAccess::$user->rights->categorie->creer) {
             throw new RestException(401);
@@ -234,7 +234,7 @@ class Categories extends DolibarrApi
      * @param int $id   Category ID
      * @return array
      */
-    function delete($id)
+    public function delete($id)
     {
         if(! DolibarrApiAccess::$user->rights->categorie->supprimer) {
             throw new RestException(401);
@@ -261,15 +261,16 @@ class Categories extends DolibarrApi
     }
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
     /**
      * Clean sensible object datas
      *
      * @param   Categorie  $object    Object to clean
      * @return    array    Array of cleaned object properties
      */
-    function _cleanObjectDatas($object)
+    protected function _cleanObjectDatas($object)
     {
-
+        // phpcs:enable
         $object = parent::_cleanObjectDatas($object);
 
         // Remove fields not relevent to categories
@@ -324,7 +325,7 @@ class Categories extends DolibarrApi
      *
      * @throws RestException
      */
-    function _validate($data)
+    private function _validate($data)
     {
         $category = array();
         foreach (Categories::$FIELDS as $field) {

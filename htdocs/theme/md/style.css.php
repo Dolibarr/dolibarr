@@ -327,7 +327,9 @@ input {
 	padding-left: 5px;
 }
 select {
-	padding: 4px;
+	padding-top: 4px;
+	padding-right: 4px;
+	padding-bottom: 4px;
 	padding-left: 2px;
 }
 input, select {
@@ -756,6 +758,9 @@ select.flat.selectlimit {
 .nomarginleft {
 	margin-left: 0px !important;
 }
+.marginbottomonly {
+	margin-bottom: 10px !important;
+}
 .selectlimit, .selectlimit:focus {
     border-left: none !important;
     border-top: none !important;
@@ -967,6 +972,7 @@ select.selectarrowonleft option {
 	.minwidth50imp  { min-width: 50px !important; }
     .minwidth75imp  { min-width: 75px !important; }
     .minwidth100imp { min-width: 100px !important; }
+    .minwidth150imp { min-width: 150px !important; }
     .minwidth200imp { min-width: 200px !important; }
     .minwidth300imp { min-width: 300px !important; }
     .minwidth400imp { min-width: 300px !important; }
@@ -980,20 +986,21 @@ select.selectarrowonleft option {
 	.minwidth50imp  { min-width: 50px !important; }
     .minwidth75imp  { min-width: 70px !important; }
     .minwidth100imp { min-width: 80px !important; }
-    .minwidth200imp { min-width: 100px !important; }
-    .minwidth300imp { min-width: 100px !important; }
-    .minwidth400imp { min-width: 100px !important; }
-    .minwidth500imp { min-width: 100px !important; }
+    .minwidth150imp { min-width: 100px !important; }
+    .minwidth200imp { min-width: 110px !important; }
+    .minwidth300imp { min-width: 120px !important; }
+    .minwidth400imp { min-width: 150px !important; }
+    .minwidth500imp { min-width: 250px !important; }
 }
 
 /* Force values for small screen 767 */
 @media only screen and (max-width: 767px)
 {
 	body {
-		font-size: <?php print $fontsize+3; ?>px;
+		font-size: <?php print is_numeric($fontsize) ? ($fontsize+3).'px' : $fontsize; ?>;
 	}
 	div.refidno {
-		font-size: <?php print $fontsize+3; ?>px !important;
+		font-size: <?php print is_numeric($fontsize) ? ($fontsize+3).'px' : $fontsize; ?> !important;
 	}
 }
 
@@ -1034,14 +1041,11 @@ select.selectarrowonleft option {
 		padding-top: 4px;
 		padding-bottom: 5px;
 	}
+
 	input, input[type=text], input[type=password], select, textarea     {
 		min-width: 20px;
     	min-height: 1.4em;
     	line-height: 1.4em;
-		font-size: <?php print $fontsize+3; ?>px;
-    	/* padding: .4em .1em; */
-    	/* border-bottom: 1px solid #BBB; */
-    	/* max-width: inherit; why this */
      }
 
     .hideonsmartphone { display: none; }
@@ -1056,11 +1060,12 @@ select.selectarrowonleft option {
     .maxwidth400onsmartphone { max-width: 400px; }
 	.minwidth50imp  { min-width: 50px !important; }
 	.minwidth75imp  { min-width: 60px !important; }
-    .minwidth100imp { min-width: 60px !important; }
-    .minwidth200imp { min-width: 60px !important; }
-    .minwidth300imp { min-width: 60px !important; }
-    .minwidth400imp { min-width: 60px !important; }
-    .minwidth500imp { min-width: 60px !important; }
+    .minwidth100imp { min-width: 80px !important; }
+    .minwidth150imp { min-width: 90px !important; }
+    .minwidth200imp { min-width: 100px !important; }
+    .minwidth300imp { min-width: 120px !important; }
+    .minwidth400imp { min-width: 150px !important; }
+    .minwidth500imp { min-width: 250px !important; }
     .titlefield { width: auto; }
     .titlefieldcreate { width: auto; }
 
@@ -1814,6 +1819,12 @@ foreach($mainmenuusedarray as $val)
 			$found=1;
 			break;
 		}
+		elseif (file_exists($dirroot."/".$val."/img/".$val.".png"))    // Retro compatibilité
+		{
+		    $url=dol_buildpath('/'.$val.'/img/'.$val.'.png', 1);
+		    $found=1;
+		    break;
+		}
 	}
 	// Img file not found
 	if (! $found)
@@ -2298,6 +2309,14 @@ div.tabBar {
 div.tabBar div.titre {
 	padding-top: 10px;
 }
+
+/*
+div.tabBar.tabBarNoTop {
+    padding-top: 0;
+    border-top: 0;
+}
+*/
+
 div.tabBarWithBottom {
 	padding-bottom: 18px;
 	border-bottom: 1px solid #aaa;
@@ -2746,6 +2765,10 @@ table.liste th, table.noborder th, table.noborder tr.liste_titre td {
 table.noborder td, div.noborder form, div.noborder form div, table.tableforservicepart1 td, table.tableforservicepart2 td {
 	padding: 4px 6px 4px 6px;			/* t r b l */
 }
+form.tagtable {
+	padding: unset !important;
+    border: unset !important;
+}
 
 table.liste td, table.noborder td, div.noborder form div {
 	padding: 8px 6px 8px 6px;			/* t r b l */
@@ -3060,11 +3083,11 @@ div.liste_titre_bydiv {
 	padding: 2px 0px 2px 0;
 	width: calc(100% - 1px);
 }
-tr.liste_titre, tr.liste_titre_sel, form.liste_titre, form.liste_titre_sel, table.dataTable.tr
+tr.liste_titre, tr.liste_titre_sel, form.liste_titre, form.liste_titre_sel, table.dataTable.tr, tagtr.liste_titre
 {
 	height: 26px !important;
 }
-div.liste_titre_bydiv, .liste_titre div.tagtr, tr.liste_titre, tr.liste_titre_sel, form.liste_titre, form.liste_titre_sel, table.dataTable thead tr
+div.liste_titre_bydiv, .liste_titre div.tagtr, tr.liste_titre, tr.liste_titre_sel, .tagtr.liste_titre, .tagtr.liste_titre_sel, form.liste_titre, form.liste_titre_sel, table.dataTable thead tr
 {
 	background: rgb(<?php echo $colorbacktitle1; ?>);
 	font-weight: <?php echo $useboldtitle?'bold':'normal'; ?>;
@@ -3192,26 +3215,40 @@ div .tdtop {
 
 /* Prepare to remove class pair - impair */
 
-.noborder > tbody > tr:nth-child(even):not(.liste_titre), .liste > tbody > tr:nth-child(even):not(.liste_titre) {
+.noborder > tbody > tr:nth-child(even):not(.liste_titre), .liste > tbody > tr:nth-child(even):not(.liste_titre),
+div:not(.fichecenter):not(.fichehalfleft):not(.ficheaddleft) > .border > tbody > tr:nth-of-type(even):not(.liste_titre), .liste > tbody > tr:nth-of-type(even):not(.liste_titre),
+div:not(.fichecenter):not(.fichehalfleft):not(.ficheaddleft) .oddeven.tagtr:nth-of-type(even):not(.liste_titre)
+{
 	background: linear-gradient(to bottom, rgb(<?php echo $colorbacklineimpair1; ?>) 85%, rgb(<?php echo $colorbacklineimpair2; ?>) 100%);
 	background: -o-linear-gradient(bottom, rgb(<?php echo $colorbacklineimpair1; ?>) 85%, rgb(<?php echo $colorbacklineimpair2; ?>) 100%);
 	background: -moz-linear-gradient(bottom, rgb(<?php echo $colorbacklineimpair1; ?>) 85%, rgb(<?php echo $colorbacklineimpair2; ?>) 100%);
 	background: -webkit-linear-gradient(bottom, rgb(<?php echo $colorbacklineimpair1; ?>) 85%, rgb(<?php echo $colorbacklineimpair2; ?>) 100%);
 	background: -ms-linear-gradient(bottom, rgb(<?php echo $colorbacklineimpair1; ?>) 85%, rgb(<?php echo $colorbacklineimpair2; ?>) 100%);
 }
-.noborder > tbody > tr:nth-child(even):not(:last-child) td:not(.liste_titre), .liste > tbody > tr:nth-child(even):not(:last-child) td:not(.liste_titre) {
+.noborder > tbody > tr:nth-child(even):not(:last-child) td:not(.liste_titre), .liste > tbody > tr:nth-child(even):not(:last-child) td:not(.liste_titre),
+.noborder .tagtr:nth-child(even):not(:last-child) .oddeven.tagtd:not(.liste_titre)
+{
 	border-bottom: 1px solid #ddd;
 }
 
-.noborder > tbody > tr:nth-child(odd):not(.liste_titre), .liste > tbody > tr:nth-child(odd):not(.liste_titre) {
+.noborder > tbody > tr:nth-child(odd):not(.liste_titre), .liste > tbody > tr:nth-child(odd):not(.liste_titre),
+div:not(.fichecenter):not(.fichehalfleft):not(.ficheaddleft) > .border > tbody > tr:nth-of-type(odd):not(.liste_titre), .liste > tbody > tr:nth-of-type(odd):not(.liste_titre),
+div:not(.fichecenter):not(.fichehalfleft):not(.ficheaddleft) .oddeven.tagtr:nth-of-type(odd):not(.liste_titre)
+{
 	background: linear-gradient(to bottom, rgb(<?php echo $colorbacklinepair1; ?>) 85%, rgb(<?php echo $colorbacklinepair2; ?>) 100%);
 	background: -o-linear-gradient(bottom, rgb(<?php echo $colorbacklinepair1; ?>) 85%, rgb(<?php echo $colorbacklinepair2; ?>) 100%);
 	background: -moz-linear-gradient(bottom, rgb(<?php echo $colorbacklinepair1; ?>) 85%, rgb(<?php echo $colorbacklinepair2; ?>) 100%);
 	background: -webkit-linear-gradient(bottom, rgb(<?php echo $colorbacklinepair1; ?>) 85%, rgb(<?php echo $colorbacklinepair2; ?>) 100%);
 	background: -ms-linear-gradient(bottom, rgb(<?php echo $colorbacklinepair1; ?>) 85%, rgb(<?php echo $colorbacklinepair2; ?>) 100%);
 }
-.noborder > tbody > tr:nth-child(odd):not(:last-child) td:not(.liste_titre), .liste > tbody > tr:nth-child(odd):not(:last-child) td:not(.liste_titre) {
+.noborder > tbody > tr:nth-child(odd):not(:last-child) td:not(.liste_titre), .liste > tbody > tr:nth-child(odd):not(:last-child) td:not(.liste_titre),
+.noborder .tagtr:nth-child(odd):not(:last-child) .oddeven.tagtd:not(.liste_titre)
+{
 	border-bottom: 1px solid #ddd;
+}
+
+ul.noborder li:nth-child(even):not(.liste_titre) {
+	background-color: rgb(<?php echo $colorbacklinepair2; ?>) !important;
 }
 
 

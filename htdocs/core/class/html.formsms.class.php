@@ -76,7 +76,7 @@ class FormSms
      *
      *  @param		DoliDB		$db      Database handler
      */
-    function __construct($db)
+    public function __construct($db)
     {
         $this->db = $db;
 
@@ -92,7 +92,7 @@ class FormSms
         $this->withbodyreadonly=0;
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *	Show the form to input an sms.
      *
@@ -100,7 +100,7 @@ class FormSms
      *  @param int $showform Show form tags and submit button (recommanded is to use with value 0)
      *	@return	void
      */
-    function show_form($morecss = 'titlefield', $showform = 1)
+    public function show_form($morecss = 'titlefield', $showform = 1)
     {
      // phpcs:enable
         global $conf, $langs, $user, $form;

@@ -30,12 +30,12 @@ function bomAdminPrepareHead()
 {
 	global $langs, $conf;
 
-	$langs->load("bom@bom");
+	$langs->load("mrp");
 
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = dol_buildpath("/bom/admin/setup.php", 1);
+	$head[$h][0] = DOL_URL_ROOT."/admin/bom.php";
 	$head[$h][1] = $langs->trans("Settings");
 	$head[$h][2] = 'settings';
 	$h++;
@@ -72,7 +72,7 @@ function bomPrepareHead($object)
 {
     global $db, $langs, $conf;
 
-    $langs->load("bom@bom");
+    $langs->load("mrp");
 
     $h = 0;
     $head = array();
@@ -118,7 +118,7 @@ function bomPrepareHead($object)
     //$this->tabs = array(
     //	'entity:-tabname:Title:@bom:/bom/mypage.php?id=__ID__'
     //); // to remove a tab
-    complete_head_from_modules($conf, $langs, $object, $head, $h, 'bom@bom');
+    complete_head_from_modules($conf, $langs, $object, $head, $h, 'bom');
 
     return $head;
 }

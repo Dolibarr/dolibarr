@@ -994,8 +994,8 @@ if (empty($action) || $action == 'view') {
 	print "<td>" . $langs->trans("SubledgerAccount") . "</td>";
 	print "<td>" . $langs->trans("LabelOperation") . "</td>";
 	print "<td>" . $langs->trans("PaymentMode") . "</td>";
-	print "<td align='right'>" . $langs->trans("Debit") . "</td>";
-	print "<td align='right'>" . $langs->trans("Credit") . "</td>";
+	print "<td class='right'>" . $langs->trans("Debit") . "</td>";
+	print "<td class='right'>" . $langs->trans("Credit") . "</td>";
 	print "</tr>\n";
 
 	$r = '';
@@ -1044,8 +1044,8 @@ if (empty($action) || $action == 'view') {
 				print $reflabel;
 				print "</td>";
 				print "<td>" . $val["type_payment"] . "</td>";
-				print "<td align='right'>" . ($mt >= 0 ? price($mt) : '') . "</td>";
-				print "<td align='right'>" . ($mt < 0 ? price(- $mt) : '') . "</td>";
+				print "<td class='right'>" . ($mt >= 0 ? price($mt) : '') . "</td>";
+				print "<td class='right'>" . ($mt < 0 ? price(- $mt) : '') . "</td>";
 				print "</tr>";
 			}
 		}
@@ -1126,8 +1126,8 @@ if (empty($action) || $action == 'view') {
 					print "</td>";
 					print "<td>" . $reflabel . "</td>";
 					print "<td>" . $val["type_payment"] . "</td>";
-					print "<td align='right'>" . ($mt < 0 ? price(- $mt) : '') . "</td>";
-					print "<td align='right'>" . ($mt >= 0 ? price($mt) : '') . "</td>";
+					print "<td class='right'>" . ($mt < 0 ? price(- $mt) : '') . "</td>";
+					print "<td class='right'>" . ($mt >= 0 ? price($mt) : '') . "</td>";
 					print "</tr>";
 				}
 			}
@@ -1163,8 +1163,8 @@ if (empty($action) || $action == 'view') {
 					print "</td>";
 					print "<td>" . $reflabel . "</td>";
 					print "<td>" . $val["type_payment"] . "</td>";
-					print "<td align='right'>" . ($mt < 0 ? price(- $mt) : '') . "</td>";
-					print "<td align='right'>" . ($mt >= 0 ? price($mt) : '') . "</td>";
+					print "<td class='right'>" . ($mt < 0 ? price(- $mt) : '') . "</td>";
+					print "<td class='right'>" . ($mt >= 0 ? price($mt) : '') . "</td>";
 					print "</tr>";
 				}
 			}

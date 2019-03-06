@@ -248,7 +248,7 @@ if ($action != 'export_csv')
 	print_liste_field_titre("Debit", $_SERVER['PHP_SELF'], "t.debit", "", $param, 'class="right"', $sortfield, $sortorder);
 	print_liste_field_titre("Credit", $_SERVER['PHP_SELF'], "t.credit", "", $param, 'class="right"', $sortfield, $sortorder);
 	print_liste_field_titre("Balance", $_SERVER["PHP_SELF"], "", $param, "", 'class="right"', $sortfield, $sortorder);
-	print_liste_field_titre('', $_SERVER["PHP_SELF"], "", $param, "", 'width="60" align="center"', $sortfield, $sortorder);
+	print_liste_field_titre('', $_SERVER["PHP_SELF"], "", $param, "", 'width="60" class="center"', $sortfield, $sortorder);
 	print "</tr>\n";
 
 	$total_debit = 0;
@@ -296,7 +296,7 @@ if ($action != 'export_csv')
 		print '<td class="right">' . price($line->debit) . '</td>';
 		print '<td class="right">' . price($line->credit) . '</td>';
 		print '<td class="right">' . price($line->credit - $line->debit) . '</td>';
-		print '<td align="center">' . $link;
+		print '<td class="center">' . $link;
 		print '</td>';
 		print "</tr>\n";
 

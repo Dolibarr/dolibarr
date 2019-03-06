@@ -57,7 +57,7 @@ class CommandeTest extends PHPUnit_Framework_TestCase
      *
      * @return CommandeTest
      */
-    function __construct()
+    public function __construct()
     {
     	parent::__construct();
 

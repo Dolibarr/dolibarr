@@ -2617,8 +2617,8 @@ if ($action == 'create')
 	}
 
 	if (!empty($soc->id)) $absolute_discount = $soc->getAvailableDiscounts();
-	$note_public = $object->getDefaultCreateValueFor('note_public', (is_object($objectsrc)?$objectsrc->note_public:null));
-	$note_private = $object->getDefaultCreateValueFor('note_private', ((! empty($origin) && ! empty($originid) && is_object($objectsrc))?$objectsrc->note_private:null));
+	$note_public = $object->getDefaultCreateValueFor('note_public', ((! empty($origin) && ! empty($originid) && is_object($objectsrc) && !empty($conf->global->FACTURE_REUSE_NOTES_ON_CREATE_FROM))?$objectsrc->note_public:null));
+	$note_private = $object->getDefaultCreateValueFor('note_private', ((! empty($origin) && ! empty($originid) && is_object($objectsrc) && !empty($conf->global->FACTURE_REUSE_NOTES_ON_CREATE_FROM))?$objectsrc->note_private:null));
 
 	if (! empty($conf->use_javascript_ajax))
 	{

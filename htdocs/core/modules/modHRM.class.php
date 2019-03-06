@@ -131,7 +131,7 @@ class modHRM extends DolibarrModules
 	 * @param string $options Enabling module ('', 'noboxes')
 	 * @return int if OK, 0 if KO
 	 */
-	function init($options = '')
+	public function init($options = '')
 	{
 		// Permissions
 		$this->remove($options);

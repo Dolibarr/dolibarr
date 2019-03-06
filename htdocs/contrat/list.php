@@ -498,14 +498,14 @@ if (! empty($arrayfields['state.nom']['checked']))
 // Country
 if (! empty($arrayfields['country.code_iso']['checked']))
 {
-	print '<td class="liste_titre" align="center">';
-	print $form->select_country($search_country, 'search_country', '', 0, 'maxwidth100');
+	print '<td class="liste_titre center">';
+	print $form->select_country($search_country, 'search_country', '', 0, 'minwidth100imp maxwidth100');
 	print '</td>';
 }
 // Company type
 if (! empty($arrayfields['typent.code']['checked']))
 {
-	print '<td class="liste_titre maxwidthonsmartphone" align="center">';
+	print '<td class="liste_titre maxwidthonsmartphone center">';
 	print $form->selectarray("search_type_thirdparty", $formcompany->typent_array(0), $search_type_thirdparty, 0, 0, 0, '', 0, 0, 0, (empty($conf->global->SOCIETE_SORT_ON_TYPEENT)?'ASC':$conf->global->SOCIETE_SORT_ON_TYPEENT));
 	print '</td>';
 }
@@ -547,7 +547,7 @@ if (! empty($arrayfields['c.tms']['checked']))
 // First end date
 if (! empty($arrayfields['lower_planned_end_date']['checked']))
 {
-		print '<td class="liste_titre nowraponall" align="center">';
+		print '<td class="liste_titre nowraponall center">';
 		$arrayofoperators=array('0'=>'','='=>'=','<='=>'<=','>='=>'>=');
 		print $form->selectarray('search_op2df', $arrayofoperators, $search_op2df, 0);
 		print '</br>';
@@ -561,7 +561,7 @@ if (! empty($arrayfields['status']['checked']))
 {
 	print '<td class="liste_titre right" colspan="4"></td>';
 }
-print '<td class="liste_titre" align="middle">';
+print '<td class="liste_titre center">';
 $searchpicto=$form->showFilterButtons();
 print $searchpicto;
 print '</td>';
@@ -576,27 +576,32 @@ if (! empty($arrayfields['s.email']['checked']))             print_liste_field_t
 if (! empty($arrayfields['s.town']['checked']))              print_liste_field_titre($arrayfields['s.town']['label'], $_SERVER["PHP_SELF"], 's.town', '', $param, '', $sortfield, $sortorder);
 if (! empty($arrayfields['s.zip']['checked']))               print_liste_field_titre($arrayfields['s.zip']['label'], $_SERVER["PHP_SELF"], 's.zip', '', $param, '', $sortfield, $sortorder);
 if (! empty($arrayfields['state.nom']['checked']))           print_liste_field_titre($arrayfields['state.nom']['label'], $_SERVER["PHP_SELF"], "state.nom", "", $param, '', $sortfield, $sortorder);
-if (! empty($arrayfields['country.code_iso']['checked']))    print_liste_field_titre($arrayfields['country.code_iso']['label'], $_SERVER["PHP_SELF"], "country.code_iso", "", $param, 'align="center"', $sortfield, $sortorder);
-if (! empty($arrayfields['typent.code']['checked']))         print_liste_field_titre($arrayfields['typent.code']['label'], $_SERVER["PHP_SELF"], "typent.code", "", $param, 'align="center"', $sortfield, $sortorder);
+if (! empty($arrayfields['country.code_iso']['checked']))    print_liste_field_titre($arrayfields['country.code_iso']['label'], $_SERVER["PHP_SELF"], "country.code_iso", "", $param, '', $sortfield, $sortorder, 'center ');
+if (! empty($arrayfields['typent.code']['checked']))         print_liste_field_titre($arrayfields['typent.code']['label'], $_SERVER["PHP_SELF"], "typent.code", "", $param, '', $sortfield, $sortorder, 'center ');
 if (! empty($arrayfields['sale_representative']['checked'])) print_liste_field_titre($arrayfields['sale_representative']['label'], $_SERVER["PHP_SELF"], "", "", "$param", '', $sortfield, $sortorder);
-if (! empty($arrayfields['c.date_contrat']['checked']))      print_liste_field_titre($arrayfields['c.date_contrat']['label'], $_SERVER["PHP_SELF"], "c.date_contrat", "", "$param", 'align="center"', $sortfield, $sortorder);
+if (! empty($arrayfields['c.date_contrat']['checked']))      print_liste_field_titre($arrayfields['c.date_contrat']['label'], $_SERVER["PHP_SELF"], "c.date_contrat", "", "$param", '', $sortfield, $sortorder, 'center ');
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 // Hook fields
 $parameters=array('arrayfields'=>$arrayfields,'param'=>$param,'sortfield'=>$sortfield,'sortorder'=>$sortorder);
 $reshook=$hookmanager->executeHooks('printFieldListTitle', $parameters);    // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
-if (! empty($arrayfields['c.datec']['checked']))     print_liste_field_titre($arrayfields['c.datec']['label'], $_SERVER["PHP_SELF"], "c.datec", "", $param, 'align="center" class="nowrap"', $sortfield, $sortorder);
-if (! empty($arrayfields['c.tms']['checked']))       print_liste_field_titre($arrayfields['c.tms']['label'], $_SERVER["PHP_SELF"], "c.tms", "", $param, 'align="center" class="nowrap"', $sortfield, $sortorder);
-if (! empty($arrayfields['lower_planned_end_date']['checked']))       print_liste_field_titre($arrayfields['lower_planned_end_date']['label'], $_SERVER["PHP_SELF"], "lower_planned_end_date", "", $param, 'align="center" class="nowrap"', $sortfield, $sortorder);
-if (! empty($arrayfields['status']['checked']))
-{
+if (! empty($arrayfields['c.datec']['checked'])) {
+    print_liste_field_titre($arrayfields['c.datec']['label'], $_SERVER["PHP_SELF"], "c.datec", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
+}
+if (! empty($arrayfields['c.tms']['checked'])){
+    print_liste_field_titre($arrayfields['c.tms']['label'], $_SERVER["PHP_SELF"], "c.tms", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
+}
+if (! empty($arrayfields['lower_planned_end_date']['checked'])) {
+    print_liste_field_titre($arrayfields['lower_planned_end_date']['label'], $_SERVER["PHP_SELF"], "lower_planned_end_date", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
+}
+if (! empty($arrayfields['status']['checked'])) {
 	print_liste_field_titre($staticcontratligne->LibStatut(0, 3), '', '', '', '', 'width="16"');
 	print_liste_field_titre($staticcontratligne->LibStatut(4, 3, 0), '', '', '', '', 'width="16"');
 	print_liste_field_titre($staticcontratligne->LibStatut(4, 3, 1), '', '', '', '', 'width="16"');
 	print_liste_field_titre($staticcontratligne->LibStatut(5, 3), '', '', '', '', 'width="16"');
 }
-print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', 'align="center"', $sortfield, $sortorder, 'maxwidthsearch ');
+print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
 print "</tr>\n";
 
 while ($i < min($num, $limit))
@@ -608,8 +613,7 @@ while ($i < min($num, $limit))
 	$contracttmp->ref_customer=$obj->ref_customer;
 	$contracttmp->ref_supplier=$obj->ref_supplier;
 
-	if ($obj->socid > 0)
-	{
+	if ($obj->socid > 0) {
 		$result=$socstatic->fetch($obj->socid);
 	}
 
@@ -619,8 +623,7 @@ while ($i < min($num, $limit))
 		print '<td class="nowrap">';
 		print $contracttmp->getNomUrl(1);
 		if ($obj->nb_late) print img_warning($langs->trans("Late"));
-		if (!empty($obj->note_private) || !empty($obj->note_public))
-		{
+		if (!empty($obj->note_private) || !empty($obj->note_public)) {
 			print ' <span class="note">';
 			print '<a href="'.DOL_URL_ROOT.'/contrat/note.php?id='.$obj->rowid.'&save_lastsearch_values=1">'.img_picto($langs->trans("ViewPrivateNote"), 'note').'</a>';
 			print '</span>';
@@ -681,7 +684,7 @@ while ($i < min($num, $limit))
 	// Country
 	if (! empty($arrayfields['country.code_iso']['checked']))
 	{
-		print '<td align="center">';
+		print '<td class="center">';
 		$tmparray=getCountry($obj->fk_pays, 'all');
 		print $tmparray['label'];
 		print '</td>';
@@ -690,7 +693,7 @@ while ($i < min($num, $limit))
 	// Type ent
 	if (! empty($arrayfields['typent.code']['checked']))
 	{
-		print '<td align="center">';
+		print '<td class="center">';
 		if (count($typenArray)==0) $typenArray = $formcompany->typent_array(1);
 		print $typenArray[$obj->typent_code];
 		print '</td>';
@@ -705,8 +708,8 @@ while ($i < min($num, $limit))
 			$listsalesrepresentatives=$socstatic->getSalesRepresentatives($user);
 			if ($listsalesrepresentatives < 0) dol_print_error($db);
 			$nbofsalesrepresentative=count($listsalesrepresentatives);
-			if ($nbofsalesrepresentative > 3)   // We print only number
-			{
+            if ($nbofsalesrepresentative > 3) {
+                // We print only number
 				print '<a href="'.DOL_URL_ROOT.'/societe/commerciaux.php?socid='.$socstatic->id.'">';
 				print $nbofsalesrepresentative;
 				print '</a>';
@@ -743,7 +746,7 @@ while ($i < min($num, $limit))
 	// Date
 	if (! empty($arrayfields['c.date_contrat']['checked']))
 	{
-		print '<td align="center">'.dol_print_date($db->jdate($obj->date_contrat), 'day', 'tzuser').'</td>';
+		print '<td class="center">'.dol_print_date($db->jdate($obj->date_contrat), 'day', 'tzuser').'</td>';
 	}
 	// Extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
@@ -754,7 +757,7 @@ while ($i < min($num, $limit))
 	// Date creation
 	if (! empty($arrayfields['c.datec']['checked']))
 	{
-		print '<td align="center" class="nowrap">';
+		print '<td class="center nowrap">';
 		print dol_print_date($db->jdate($obj->date_creation), 'dayhour', 'tzuser');
 		print '</td>';
 		if (! $i) $totalarray['nbfield']++;
@@ -762,7 +765,7 @@ while ($i < min($num, $limit))
 	// Date modification
 	if (! empty($arrayfields['c.tms']['checked']))
 	{
-		print '<td align="center" class="nowrap">';
+		print '<td class="center nowrap">';
 		print dol_print_date($db->jdate($obj->date_update), 'dayhour', 'tzuser');
 		print '</td>';
 		if (! $i) $totalarray['nbfield']++;
@@ -770,7 +773,7 @@ while ($i < min($num, $limit))
 	// Date lower end date
 	if (! empty($arrayfields['lower_planned_end_date']['checked']))
 	{
-		print '<td align="center" class="nowrapforall">';
+		print '<td class="center nowrapforall">';
 		print dol_print_date($db->jdate($obj->lower_planned_end_date), 'day', 'tzuser');
 		print '</td>';
 		if (! $i) $totalarray['nbfield']++;
@@ -778,13 +781,13 @@ while ($i < min($num, $limit))
 	// Status
 	if (! empty($arrayfields['status']['checked']))
 	{
-		print '<td align="center">'.($obj->nb_initial>0?$obj->nb_initial:'').'</td>';
-		print '<td align="center">'.($obj->nb_running>0?$obj->nb_running:'').'</td>';
-		print '<td align="center">'.($obj->nb_expired>0?$obj->nb_expired:'').'</td>';
-		print '<td align="center">'.($obj->nb_closed>0 ?$obj->nb_closed:'').'</td>';
+		print '<td class="center">'.($obj->nb_initial>0?$obj->nb_initial:'').'</td>';
+		print '<td class="center">'.($obj->nb_running>0?$obj->nb_running:'').'</td>';
+		print '<td class="center">'.($obj->nb_expired>0?$obj->nb_expired:'').'</td>';
+		print '<td class="center">'.($obj->nb_closed>0 ?$obj->nb_closed:'').'</td>';
 	}
 	// Action column
-	print '<td class="nowrap" align="center">';
+	print '<td class="nowrap center">';
 	if ($massactionbutton || $massaction)   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 	{
 		$selected=0;

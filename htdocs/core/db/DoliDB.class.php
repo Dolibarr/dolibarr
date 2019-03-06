@@ -75,7 +75,7 @@ abstract class DoliDB implements Database
 	 *	@param	string	$resko          resultat si test non egal
 	 *	@return	string          		SQL string
 	 */
-	function ifsql($test, $resok, $resko)
+    public function ifsql($test, $resok, $resko)
 	{
 		return 'IF('.$test.','.$resok.','.$resko.')';
 	}
@@ -87,7 +87,7 @@ abstract class DoliDB implements Database
 	 *   @param	    int		$param      	Date TMS to convert
 	 *   @return	string      			Date in a string YYYY-MM-DD HH:MM:SS
 	 */
-	function idate($param)
+    public function idate($param)
 	{
 		// TODO GMT $param should be gmt, so we should add tzouptut to 'gmt'
 		return dol_print_date($param, "%Y-%m-%d %H:%M:%S");
@@ -98,7 +98,7 @@ abstract class DoliDB implements Database
 	 *
 	 *	@return	    string	lasterrno
 	 */
-	function lasterrno()
+    public function lasterrno()
 	{
 		return $this->lasterrno;
 	}
@@ -108,7 +108,7 @@ abstract class DoliDB implements Database
 	 *
 	 * @return	    int         1 if transaction successfuly opened or already opened, 0 if error
 	 */
-	function begin()
+    public function begin()
 	{
 		if (! $this->transaction_opened)
 		{
@@ -135,7 +135,7 @@ abstract class DoliDB implements Database
 	 * @param	string	$log		Add more log to default log line
 	 * @return	int         		1 if validation is OK or transaction level no started, 0 if ERROR
 	 */
-	function commit($log = '')
+    public function commit($log = '')
 	{
 		dol_syslog('', 0, -1);
 		if ($this->transaction_opened<=1)
@@ -165,7 +165,7 @@ abstract class DoliDB implements Database
 	 * 	@param	string			$log		Add more log to default log line
 	 * 	@return	resource|int         		1 si annulation ok ou transaction non ouverte, 0 en cas d'erreur
 	 */
-	function rollback($log = '')
+    public function rollback($log = '')
 	{
 		dol_syslog('', 0, -1);
 		if ($this->transaction_opened<=1)
@@ -189,7 +189,7 @@ abstract class DoliDB implements Database
 	 *	@param	int		$offset     Numero of line from where starting fetch
 	 *	@return	string      		String with SQL syntax to add a limit and offset
 	 */
-	function plimit($limit = 0, $offset = 0)
+    public function plimit($limit = 0, $offset = 0)
 	{
 		global $conf;
 		if (empty($limit)) return "";
@@ -203,7 +203,7 @@ abstract class DoliDB implements Database
 	 *
 	 *	@return	        array  		Version array
 	 */
-	function getVersionArray()
+    public function getVersionArray()
 	{
 		return preg_split("/[\.,-]/", $this->getVersion());
 	}
@@ -213,7 +213,7 @@ abstract class DoliDB implements Database
 	 *
 	 *	@return	string					Last query
 	 */
-	function lastquery()
+    public function lastquery()
 	{
 		return $this->lastquery;
 	}
@@ -225,7 +225,7 @@ abstract class DoliDB implements Database
 	 * @param	string		$sortorder		Sort order, separated by comma. Example: 'ASC,DESC';
 	 * @return	string						String to provide syntax of a sort sql string
 	 */
-	function order($sortfield = null, $sortorder = null)
+    public function order($sortfield = null, $sortorder = null)
 	{
 		if (! empty($sortfield))
 		{
@@ -264,7 +264,7 @@ abstract class DoliDB implements Database
 	 *
 	 *	@return	    string		Last error
 	 */
-	function lasterror()
+    public function lasterror()
 	{
 		return $this->lasterror;
 	}
@@ -278,7 +278,7 @@ abstract class DoliDB implements Database
 	 *	@param	bool				$gm			1=Input informations are GMT values, otherwise local to server TZ
 	 *	@return	int|string						Date TMS or ''
 	 */
-	function jdate($string, $gm = false)
+    public function jdate($string, $gm = false)
 	{
 		// TODO GMT must set param gm to true by default
 		if ($string==0 || $string=="0000-00-00 00:00:00") return '';
@@ -293,7 +293,7 @@ abstract class DoliDB implements Database
 	 *
 	 *	@return	    string	lastqueryerror
 	 */
-	function lastqueryerror()
+    public function lastqueryerror()
 	{
 		return $this->lastqueryerror;
 	}

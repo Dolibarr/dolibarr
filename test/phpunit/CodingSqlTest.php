@@ -70,7 +70,7 @@ class CodingSqlTest extends PHPUnit_Framework_TestCase
      *
      * @return SecurityTest
      */
-    function __construct()
+    public function __construct()
     {
     	parent::__construct();
 

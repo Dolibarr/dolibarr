@@ -102,7 +102,7 @@ class Establishment extends CommonObject
 	 *
 	 * @param	DoliDB		$db		Database handler
 	 */
-	function __construct($db)
+	public function __construct($db)
 	{
 		$this->db = $db;
 
@@ -116,7 +116,7 @@ class Establishment extends CommonObject
 	 *	@param		User	$user   User making creation
 	 *	@return 	int				<0 if KO, >0 if OK
 	 */
-	function create($user)
+	public function create($user)
 	{
 		global $conf, $langs;
 
@@ -187,12 +187,12 @@ class Establishment extends CommonObject
 	 *	@param	User	$user		User making update
 	 *	@return	int					<0 if KO, >0 if OK
 	 */
-	function update($user)
+	public function update($user)
 	{
 		global $langs;
 
-		// Check parameters
-		if (empty($this->name))
+        // Check parameters
+        if (empty($this->name))
         {
             $this->error='ErrorBadParameter';
             return -1;
@@ -229,7 +229,7 @@ class Establishment extends CommonObject
 	* @param	int		$id		Id of record to load
 	* @return	int				<0 if KO, >0 if OK
 	*/
-	function fetch($id)
+	public function fetch($id)
 	{
 		$sql = "SELECT e.rowid, e.name, e.address, e.zip, e.town, e.status, e.fk_country as country_id, e.entity,";
 		$sql.= ' c.code as country_code, c.label as country';
@@ -271,7 +271,7 @@ class Establishment extends CommonObject
 	*	@param	int		$id		Id of record to delete
 	*	@return	int				<0 if KO, >0 if OK
 	*/
-	function delete($id)
+	public function delete($id)
 	{
 		$this->db->begin();
 
@@ -298,12 +298,12 @@ class Establishment extends CommonObject
 	 * @param	int		$mode   	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
 	 * @return  string   		   	Label
 	 */
-	function getLibStatut($mode = 0)
+	public function getLibStatut($mode = 0)
 	{
 		return $this->LibStatut($this->status, $mode);
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Give a label from a status
 	 *
@@ -311,7 +311,7 @@ class Establishment extends CommonObject
 	 *  @param  int		$mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
 	 *  @return string      		Label
 	 */
-	function LibStatut($status, $mode = 0)
+	public function LibStatut($status, $mode = 0)
 	{
         // phpcs:enable
 		global $langs;
@@ -352,7 +352,7 @@ class Establishment extends CommonObject
 	 * @param	int		$id      Id of record
 	 * @return	void
 	 */
-	function info($id)
+	public function info($id)
 	{
 		$sql = 'SELECT e.rowid, e.datec, e.fk_user_author, e.tms, e.fk_user_mod, e.entity';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'establishment as e';
@@ -391,14 +391,14 @@ class Establishment extends CommonObject
 			dol_print_error($this->db);
 		}
 	}
-	
+
 	/**
 	 * Get on record Establishment
 	 *
 	 * @param	int		$id      Id of record
 	 * @return	Object
 	 */
-	function getEstablishment($id)
+	public function getEstablishment($id)
 	{
 		$sql = 'SELECT e.rowid, e.name, e.datec, e.fk_user_author, e.tms, e.fk_user_mod, e.entity';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'establishment as e';
@@ -429,7 +429,7 @@ class Establishment extends CommonObject
      *  @param      int     $withpicto      0=No picto, 1=Include picto into link, 2=Only picto
      *  @return     string                  String with URL
      */
-    function getNomUrl($withpicto = 0)
+    public function getNomUrl($withpicto = 0)
     {
         global $langs;
 
@@ -447,7 +447,7 @@ class Establishment extends CommonObject
         if ($withpicto != 2) $result.=$link.$this->name.$linkend;
         return $result;
     }
-	
+
 	/**
      *  Return clicable name (with picto eventually)
      *
@@ -455,13 +455,13 @@ class Establishment extends CommonObject
      *  @param      int     $withpicto      0=No picto, 1=Include picto into link, 2=Only picto
      *  @return     string                  String with URL
      */
-    function getNomUrlParent($id = 0, $withpicto = 0)
+    public function getNomUrlParent($id = 0, $withpicto = 0)
     {
         global $langs, $conf;
 
         $result='';
-		
-		$obj = $this->getEstablishment(($id>0)?$id:$conf->entity);
+
+        $obj = $this->getEstablishment(($id>0)?$id:$conf->entity);
 
         $link = '<a href="'.DOL_URL_ROOT.'/hrm/establishment/card.php?id='.$obj->rowid.'">';
         $linkend='</a>';
@@ -481,7 +481,7 @@ class Establishment extends CommonObject
      *
      *	@return		string		country code
      */
-    function getCountryCode()
+    public function getCountryCode()
     {
         global $mysoc;
 

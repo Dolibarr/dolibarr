@@ -532,8 +532,8 @@ if ($id)
 			if ($fieldlist[$field]=='pcg_version' || $fieldlist[$field]=='fk_pcg_version') { $valuetoshow=$langs->trans("Pcg_version"); }
 
 			if ($valuetoshow != '') {
-				print '<td align="'.$align.'">';
-				if (! empty($tabhelp[$id][$value]) && preg_match('/^http(s*):/i', $tabhelp[$id][$value])) {
+				print '<td class="'.$class.'">';
+                if (! empty($tabhelp[$id][$value]) && preg_match('/^http(s*):/i', $tabhelp[$id][$value])) {
                     print '<a href="'.$tabhelp[$id][$value].'" target="_blank">'.$valuetoshow.' '.img_help(1, $valuetoshow).'</a>';
                 } elseif (! empty($tabhelp[$id][$value])) {
                     print $form->textwithpicto($valuetoshow, $tabhelp[$id][$value]);
@@ -662,23 +662,29 @@ if ($id)
 			*/
 			$valuetoshow=ucfirst($fieldlist[$field]);   // By defaut
 			$valuetoshow=$langs->trans($valuetoshow);   // try to translate
-			if ($fieldlist[$field]=='code')            { $valuetoshow=$langs->trans("Code"); }
-			if ($fieldlist[$field]=='libelle' || $fieldlist[$field]=='label')
-			{
-				$valuetoshow=$langs->trans("Label");
-			   	if ($id != 25) $valuetoshow.="*";
-			}
-			if ($fieldlist[$field]=='country')         { $valuetoshow=$langs->trans("Country"); }
-			if ($fieldlist[$field]=='country_id') { $showfield=0; }
-			if ($fieldlist[$field]=='fk_pcg_version')  { $valuetoshow=$langs->trans("Pcg_version"); }
+			if ($fieldlist[$field]=='code') {
+                $valuetoshow=$langs->trans("Code");
+            }
+            if ($fieldlist[$field]=='libelle' || $fieldlist[$field]=='label') {
+                $valuetoshow=$langs->trans("Label");
+                if ($id != 25) $valuetoshow.="*";
+            }
+            if ($fieldlist[$field]=='country') {
+                $valuetoshow=$langs->trans("Country");
+            }
+            if ($fieldlist[$field]=='country_id') {
+                $showfield=0;
+            }
+            if ($fieldlist[$field]=='fk_pcg_version') {
+                $valuetoshow=$langs->trans("Pcg_version");
+            }
 
 			// Affiche nom du champ
-			if ($showfield)
-			{
-				print getTitleFieldOfList($valuetoshow, 0, $_SERVER["PHP_SELF"], ($sortable?$fieldlist[$field]:''), ($page?'page='.$page.'&':''), $param, "align=".$align, $sortfield, $sortorder);
+			if ($showfield) {
+				print getTitleFieldOfList($valuetoshow, 0, $_SERVER["PHP_SELF"], ($sortable?$fieldlist[$field]:''), ($page?'page='.$page.'&':''), $param, "", $sortfield, $sortorder, $class.' ');
 			}
 		}
-		print getTitleFieldOfList($langs->trans("Status"), 0, $_SERVER["PHP_SELF"], "active", ($page?'page='.$page.'&':''), $param, 'align="center"', $sortfield, $sortorder);
+		print getTitleFieldOfList($langs->trans("Status"), 0, $_SERVER["PHP_SELF"], "active", ($page?'page='.$page.'&':''), $param, '', $sortfield, $sortorder, 'center ');
 		print getTitleFieldOfList('');
 		print getTitleFieldOfList('');
 		print '</tr>';
@@ -757,7 +763,7 @@ if ($id)
 							$class='tddict';
 							if ($fieldlist[$field] == 'tracking') $class.=' tdoverflowauto';
 							// Show value for field
-							if ($showfield) print '<!-- '.$fieldlist[$field].' --><td align="'.$align.'" class="'.$class.'">'.$valuetoshow.'</td>';
+							if ($showfield) print '<!-- '.$fieldlist[$field].' --><td class="'.$class.'">'.$valuetoshow.'</td>';
 						}
 					}
 
@@ -769,17 +775,17 @@ if ($id)
 					$url.='&';
 
 					// Active
-					print '<td align="center" class="nowrap">';
+					print '<td class="center nowrap">';
 					if ($canbedisabled) print '<a href="'.$url.'action='.$acts[$obj->active].'">'.$actl[$obj->active].'</a>';
 					else print $langs->trans("AlwaysActive");
 					print "</td>";
 
 					// Modify link
-					if ($canbemodified) print '<td align="center"><a class="reposition" href="'.$url.'action=edit">'.img_edit().'</a></td>';
+					if ($canbemodified) print '<td class="center"><a class="reposition" href="'.$url.'action=edit">'.img_edit().'</a></td>';
 					else print '<td>&nbsp;</td>';
 
 					// Delete link
-					if ($iserasable) print '<td align="center"><a href="'.$url.'action=delete">'.img_delete().'</a></td>';
+					if ($iserasable) print '<td class="center"><a href="'.$url.'action=delete">'.img_delete().'</a></td>';
 					else print '<td>&nbsp;</td>';
 
 					print "</tr>\n";
@@ -852,7 +858,7 @@ function fieldListAccountModel($fieldlist, $obj = '', $tabname = '', $context = 
 			}
 		}
 		elseif ($fieldlist[$field] == 'type_cdr') {
-			if ($fieldlist[$field] == 'type_cdr') print '<td align="center">';
+			if ($fieldlist[$field] == 'type_cdr') print '<td class="center">';
 			else print '<td>';
 			if ($fieldlist[$field] == 'type_cdr') {
 				print $form->selectarray($fieldlist[$field], array(0=>$langs->trans('None'), 1=>$langs->trans('AtEndOfMonth'), 2=>$langs->trans('CurrentNext')), (! empty($obj->{$fieldlist[$field]})?$obj->{$fieldlist[$field]}:''));

@@ -47,7 +47,7 @@ class RejetPrelevement
 	 *  @param	DoliDb	$db			Database handler
 	 *  @param 	User	$user       Objet user
 	 */
-	function __construct($db, $user)
+	public function __construct($db, $user)
 	{
 		global $langs;
 
@@ -82,7 +82,7 @@ class RejetPrelevement
 	 * @param 	int			$facturation		Facturation
 	 * @return	void
 	 */
-	function create($user, $id, $motif, $date_rejet, $bonid, $facturation = 0)
+	public function create($user, $id, $motif, $date_rejet, $bonid, $facturation = 0)
 	{
 		global $langs,$conf;
 
@@ -198,14 +198,14 @@ class RejetPrelevement
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Send email to all users that has asked the withdraw request
 	 *
 	 * 	@param	Facture		$fac			Invoice object
 	 * 	@return	void
 	 */
-	function _send_email($fac)
+	private function _send_email($fac)
 	{
         // phpcs:enable
 		global $langs;
@@ -334,7 +334,7 @@ class RejetPrelevement
 	 *    @param    int		$rowid       id of invoice to retrieve
 	 *    @return	int
 	 */
-	function fetch($rowid)
+	public function fetch($rowid)
 	{
 
 		$sql = "SELECT pr.date_rejet as dr, motif, afacturer";

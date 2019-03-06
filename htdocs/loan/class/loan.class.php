@@ -66,7 +66,7 @@ class Loan extends CommonObject
 	public $date_creation;
 	public $date_modification;
 	public $date_validation;
-	
+
 	public $insurance_amount;
 
 	/**
@@ -95,7 +95,7 @@ class Loan extends CommonObject
 	 *
 	 * @param	DoliDB		$db		Database handler
 	 */
-	function __construct($db)
+	public function __construct($db)
 	{
 		$this->db = $db;
 	}
@@ -106,7 +106,7 @@ class Loan extends CommonObject
 	 *  @param	int		$id		 id object
 	 *  @return int				 <0 error , >=0 no error
 	 */
-	function fetch($id)
+	public function fetch($id)
 	{
 		$sql = "SELECT l.rowid, l.label, l.capital, l.datestart, l.dateend, l.nbterm, l.rate, l.note_private, l.note_public, l.insurance_amount,";
 		$sql.= " l.paid, l.accountancy_account_capital, l.accountancy_account_insurance, l.accountancy_account_interest, l.fk_projet as fk_project";
@@ -162,7 +162,7 @@ class Loan extends CommonObject
 	 *  @param	User	$user	User making creation
 	 *  @return int				<0 if KO, id if OK
 	 */
-	function create($user)
+	public function create($user)
 	{
 		global $conf, $langs;
 
@@ -255,7 +255,7 @@ class Loan extends CommonObject
 	 *  @param	User	$user	Object user making delete
 	 *  @return int 			<0 if KO, >0 if OK
 	 */
-	function delete($user)
+	public function delete($user)
 	{
 		$error=0;
 
@@ -325,7 +325,7 @@ class Loan extends CommonObject
 	 *  @param	User	$user	User who modified
 	 *  @return int				<0 if error, >0 if ok
 	 */
-	function update($user)
+	public function update($user)
 	{
 		$this->db->begin();
 
@@ -364,14 +364,14 @@ class Loan extends CommonObject
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Tag loan as payed completely
 	 *
 	 *  @param	User	$user	Object user making change
 	 *  @return	int				<0 if KO, >0 if OK
 	 */
-	function set_paid($user)
+	public function set_paid($user)
 	{
         // phpcs:enable
 		$sql = "UPDATE ".MAIN_DB_PREFIX."loan SET";
@@ -393,12 +393,12 @@ class Loan extends CommonObject
 	 *  @param  integer	$alreadypaid	0=No payment already done, >0=Some payments were already done (we recommand to put here amount payed if you have it, 1 otherwise)
 	 *  @return string					Label
 	 */
-	function getLibStatut($mode = 0, $alreadypaid = -1)
+	public function getLibStatut($mode = 0, $alreadypaid = -1)
 	{
 		return $this->LibStatut($this->paid, $mode, $alreadypaid);
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Return label for given status
 	 *
@@ -407,7 +407,7 @@ class Loan extends CommonObject
 	 *  @param  integer	$alreadypaid	0=No payment already done, >0=Some payments were already done (we recommand to put here amount payed if you have it, 1 otherwise)
 	 *  @return string					Label
 	 */
-	function LibStatut($statut, $mode = 0, $alreadypaid = -1)
+	public function LibStatut($statut, $mode = 0, $alreadypaid = -1)
 	{
         // phpcs:enable
 		global $langs;
@@ -460,7 +460,7 @@ class Loan extends CommonObject
 	 *  @param	int		$maxlen			Label max length
 	 *  @return	string					Chaine with URL
 	 */
-	function getNomUrl($withpicto = 0, $maxlen = 0)
+	public function getNomUrl($withpicto = 0, $maxlen = 0)
 	{
 		global $langs;
 
@@ -490,7 +490,7 @@ class Loan extends CommonObject
 	 *
 	 *  @return	void
 	 */
-	function initAsSpecimen()
+	public function initAsSpecimen()
 	{
 	    global $user, $langs, $conf;
 
@@ -518,7 +518,7 @@ class Loan extends CommonObject
 	 *
 	 *  @return		int		Amount of payment already done, <0 if KO
 	 */
-	function getSumPayment()
+	public function getSumPayment()
 	{
 		$table='payment_loan';
 		$field='fk_loan';
@@ -552,7 +552,7 @@ class Loan extends CommonObject
 	 *  @param	int			$id		Id of record
 	 *  @return	integer|null
 	 */
-	function info($id)
+	public function info($id)
 	{
 		$sql = 'SELECT l.rowid, l.datec, l.fk_user_author, l.fk_user_modif,';
 		$sql.= ' l.tms';
@@ -597,5 +597,5 @@ class Loan extends CommonObject
 			$this->error=$this->db->lasterror();
 			return -1;
 		}
-	}
+    }
 }

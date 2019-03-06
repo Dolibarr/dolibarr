@@ -1471,8 +1471,10 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 		    // BOM
 		    if (! empty($conf->bom->enabled) || ! empty($conf->mrp->enabled))
 		    {
+		        $langs->load("mrp");
+
 		        $newmenu->add("", $langs->trans("BOM"), 0, $user->rights->service->lire, '', $mainmenu, 'service');
-		        $newmenu->add("/bom/bom_card.php?leftmenu=bom&amp;action=create", $langs->trans("NewBom"), 1, $user->rights->bom->write);
+		        $newmenu->add("/bom/bom_card.php?leftmenu=bom&amp;action=create", $langs->trans("NewBOM"), 1, $user->rights->bom->write);
 		        $newmenu->add("/bom/bom_list.php?leftmenu=bom", $langs->trans("List"), 1, $user->rights->bom->read);
 		    }
 		}

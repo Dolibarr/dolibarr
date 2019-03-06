@@ -63,8 +63,8 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 	 *
 	 *  @param		DoliDB		$db      Database handler
 	 */
-	function __construct($db)
-	{
+    public function __construct($db)
+    {
 		global $conf, $langs, $mysoc;
 
 		// Load translation files required by the page
@@ -99,7 +99,7 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 		// Recupere emetteur
 		$this->emetteur=$mysoc;
 		if (! $this->emetteur->country_code) $this->emetteur->country_code=substr($langs->defaultlang, -2);    // Par defaut, si n'etait pas defini
-	}
+    }
 
 
 	/**
@@ -108,8 +108,8 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 	 * @param	Translate	$langs      Lang object to use for output
 	 * @return	string      			Description
 	 */
-	function info($langs)
-	{
+    public function info($langs)
+    {
 		global $conf, $langs;
 
 		// Load translation files required by the page
@@ -188,11 +188,11 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 		$texte.= '</form>';
 
 		return $texte;
-	}
+    }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *	Function to build a document on disk using the generic odt module.
+	 *  Function to build a document on disk using the generic odt module.
 	 *
 	 *	@param		Facture		$object				Object source to build document
 	 *	@param		Translate	$outputlangs		Lang output object
@@ -202,8 +202,8 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 	 *  @param		int			$hideref			Do not show ref
 	 *	@return		int         					1 if OK, <=0 if KO
 	 */
-	function write_file($object, $outputlangs, $srctemplatepath, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
-	{
+    public function write_file($object, $outputlangs, $srctemplatepath, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
+    {
         // phpcs:enable
 		global $user,$langs,$conf,$mysoc,$hookmanager;
 
@@ -521,5 +521,5 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 		}
 
 		return -1;
-	}
+    }
 }

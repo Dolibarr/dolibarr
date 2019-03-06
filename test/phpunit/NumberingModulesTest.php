@@ -57,7 +57,7 @@ class NumberingModulesTest extends PHPUnit_Framework_TestCase
 	 *
 	 * @return NumberingModulesTest
 	 */
-	function __construct()
+	public function __construct()
 	{
 		parent::__construct();
 
@@ -74,7 +74,7 @@ class NumberingModulesTest extends PHPUnit_Framework_TestCase
 	}
 
 	// Static methods
-  	public static function setUpBeforeClass()
+    public static function setUpBeforeClass()
     {
     	global $conf,$user,$langs,$db;
 
@@ -113,7 +113,7 @@ class NumberingModulesTest extends PHPUnit_Framework_TestCase
 	 *
 	 * @return	void
 	 */
-	protected function tearDown()
+    protected function tearDown()
     {
     	print __METHOD__."\n";
     }
