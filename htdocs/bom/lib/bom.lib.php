@@ -88,7 +88,7 @@ function bomPrepareHead($object)
         $nbNote = 0;
         if (!empty($object->note_private)) $nbNote++;
         if (!empty($object->note_public)) $nbNote++;
-        $head[$h][0] = DOL_URL_ROOT.'/bom/bom_note.php?id=".$object->id;
+        $head[$h][0] = DOL_URL_ROOT.'/bom/bom_note.php?id='.$object->id;
         $head[$h][1] = $langs->trans('Notes');
         if ($nbNote > 0) $head[$h][1].= ' <span class="badge">'.$nbNote.'</span>';
         $head[$h][2] = 'note';
@@ -100,13 +100,13 @@ function bomPrepareHead($object)
     $upload_dir = $conf->bom->dir_output . "/bom/" . dol_sanitizeFileName($object->ref);
     $nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
     $nbLinks=Link::count($db, $object->element, $object->id);
-    $head[$h][0] = DOL_URL_ROOT."/bom/bom_document.php?id=".$object->id;
+    $head[$h][0] = DOL_URL_ROOT.'/bom/bom_document.php?id='.$object->id;
     $head[$h][1] = $langs->trans('Documents');
     if (($nbFiles+$nbLinks) > 0) $head[$h][1].= ' <span class="badge">'.($nbFiles+$nbLinks).'</span>';
     $head[$h][2] = 'document';
     $h++;
 
-    $head[$h][0] = DOL_URL_ROOT."/bom/bom_agenda.php?id=".$object->id;
+    $head[$h][0] = DOL_URL_ROOT.'/bom/bom_agenda.php?id='.$object->id;
     $head[$h][1] = $langs->trans("Events");
     $head[$h][2] = 'agenda';
     $h++;
