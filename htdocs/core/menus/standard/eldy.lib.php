@@ -183,23 +183,33 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 	);
 
 	// MRP
-	$tmpentry = array(
-	    'enabled'=>(! empty($conf->bom->enabled) || ! empty($conf->mrp->enabled)),
-	    'perms'=>(! empty($user->rights->bom->read) || ! empty($user->rights->mrp->read)),
-	    'module'=>'bom|mrp',
+	$menu_arr[] = array(
+	    'name' => 'TMenuMRP',
+	    'link' => '/bom/bom_list.php?mainmenu=mrp&amp;leftmenu=',
+	    'title' => $langs->trans("TMenuMRP"),
+	    'level' => 0,
+	    'enabled' => $showmode = isVisibleToUserType
+            (
+    	        $type_user,
+    	        $tmpentry = array(
+    	            'enabled'=>(! empty($conf->bom->enabled) || ! empty($conf->mrp->enabled)),
+    	            'perms'=>(! empty($user->rights->bom->read) || ! empty($user->rights->mrp->read)),
+    	            'module'=>'bom|mrp',
+    	        ),
+    	        $listofmodulesforexternal
+	        ),
+	    'target' => $atarget,
+	    'mainmenu' => "mrp",
+	    'leftmenu' => '',
+	    'position' => 30,
+	    'id' => $id,
+	    'idsel' => 'mrp',
+	    'classname' =>  $classname = ( $_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "project" ) ? 'class="tmenusel"' : 'class="tmenu"',
+	    'prefix' => '',
+	    'session' => ( ( $_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "project" ) ? 0 : 1 ),
+	    'loadLangs' => array("projects"),
+	    'submenus' => array(),
 	);
-	$showmode=isVisibleToUserType($type_user, $tmpentry, $listofmodulesforexternal);
-	if ($showmode)
-	{
-	    $classname="";
-	    if ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "mrp") { $classname='class="tmenusel"'; $_SESSION['idmenu']=''; }
-	    else $classname = 'class="tmenu"';
-	    $idsel='products';
-
-	    $chaine=$langs->trans("TMenuMRP");
-
-	    $menu->add('/bom/bom_list.php?mainmenu=mrp&amp;leftmenu=', $chaine, 0, $showmode, $atarget, "bom", '', 30, $id, $idsel, $classname);
-	}
 
 	// Projects
 	$menu_arr[] = array(
@@ -328,9 +338,9 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 		'idsel' => 'bank',
 		'classname' =>  $classname = ( $_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "bank" ) ? 'class="tmenusel"' : 'class="tmenu"',
 		'prefix' => '',
-		
+
 		'session' => ( ( $_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "bank" ) ? 0 : 1 ),
-		
+
 		'loadLangs' => array("compta","banks"),
 		'submenus' => array(),
 	);
@@ -359,9 +369,9 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 		'idsel' => 'accountancy',
 		'classname' =>  $classname = ( $_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "accountancy" ) ? 'class="tmenusel"' : 'class="tmenu"',
 		'prefix' => '',
-		
+
 		'session' => ( ( $_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "accountancy" ) ? 0 : 1 ),
-		
+
 		'loadLangs' => array("compta"),
 		'submenus' => array(),
 	);
@@ -390,9 +400,9 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 		'idsel' => 'hrm',
 		'classname' =>  $classname = ( $_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "hrm" ) ? 'class="tmenusel"' : 'class="tmenu"',
 		'prefix' => '',
-		
+
 		'session' => ( ( $_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "hrm" ) ? 0 : 1 ),
-		
+
 		'loadLangs' => array("holiday"),
 		'submenus' => array(),
 	);
@@ -421,31 +431,31 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 		'idsel' => 'tools',
 		'classname' =>  $classname = ( $_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "tools" ) ? 'class="tmenusel"' : 'class="tmenu"',
 		'prefix' => '',
-		
+
 		'session' => ( ( $_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "tools" ) ? 0 : 1 ),
-		
+
 		'loadLangs' => array("other"),
 		'submenus' => array(),
 	);
-	
+
 	// Add menus
 	foreach($menu_arr as $key => $smenu)
 	{
 		$smenu = (object) $smenu;
-		
+
 		if( $smenu->enabled )
 		{
 			if($langs->session)
 			{
 				$_SESSION['idmenu']='';
 			}
-			
+
 			// Load Langue
 			if(! empty($smenu->loadLangs))
 			{
 				$langs->loadLangs($smenu->loadLangs);
 			}
-			
+
 			// Trans title
 			$mtitle = '';
 			if(is_array($smenu->title))

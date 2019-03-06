@@ -118,6 +118,14 @@ div.mainmenu.products::before {
     font-size: 1.5em;
 }
 
+div.mainmenu.mrp::before {
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
+    content: "\f468";
+    color: white;
+    font-size: 1.5em;
+}
+
 div.mainmenu.project::before {
     font-family: "Font Awesome 5 Free";
     font-weight: 900;
