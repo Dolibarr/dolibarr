@@ -1235,11 +1235,11 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
     {
         // Recherche histo sur actioncomm
         if (is_object($objcon) && $objcon->id) {
-            $sql = "SELECT DISTINCT a.id, a.label as note,";
+            $sql = "SELECT DISTINCT a.id, a.label as label,";
         }
         else
         {
-            $sql = "SELECT a.id, a.label as note,";
+            $sql = "SELECT a.id, a.label as label,";
         }
         $sql.= " a.datep as dp,";
         $sql.= " a.datep2 as dp2,";
@@ -1257,9 +1257,9 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u on u.rowid = a.fk_user_action";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_actioncomm as c ON a.fk_action = c.id";
 
-        $force_filter_contact = FALSE;
+        $force_filter_contact = false;
         if (is_object($objcon) && $objcon->id) {
-            $force_filter_contact = TRUE;
+            $force_filter_contact = true;
             $sql.= " INNER JOIN ".MAIN_DB_PREFIX."actioncomm_resources as r ON a.id = r.fk_actioncomm";
             $sql.= " AND r.element_type = '" . $db->escape($objcon->table_element) . "' AND r.fk_element = " . $objcon->id;
         }
@@ -1277,7 +1277,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
         elseif (is_object($filterobj) && get_class($filterobj) == 'Ticket') $sql.= ", ".MAIN_DB_PREFIX."ticket as o";
 
         $sql.= " WHERE a.entity IN (".getEntity('agenda').")";
-        if ($force_filter_contact === FALSE) {
+        if ($force_filter_contact === false) {
             if (is_object($filterobj) && in_array(get_class($filterobj), array('Societe', 'Client', 'Fournisseur')) && $filterobj->id) $sql.= " AND a.fk_soc = ".$filterobj->id;
             elseif (is_object($filterobj) && get_class($filterobj) == 'Project' && $filterobj->id) $sql.= " AND a.fk_project = ".$filterobj->id;
             elseif (is_object($filterobj) && get_class($filterobj) == 'Adherent')
@@ -1333,7 +1333,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
     {
         $langs->load("mails");
 
-        $sql2 = "SELECT m.rowid as id, m.titre as note, mc.date_envoi as dp, mc.date_envoi as dp2, '100' as percent, 'mailing' as type";
+        $sql2 = "SELECT m.rowid as id, m.titre as label, mc.date_envoi as dp, mc.date_envoi as dp2, '100' as percent, 'mailing' as type";
         $sql2.= ", '' as fk_element, '' as elementtype, '' as contact_id";
         $sql2.= ", 'AC_EMAILING' as acode, '' as alabel, '' as apicto";
         $sql2.= ", u.rowid as user_id, u.login as user_login, u.photo as user_photo, u.firstname as user_firstname, u.lastname as user_lastname"; // User that valid action
@@ -1387,7 +1387,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
                     'id'=>$obj->id,
                     'datestart'=>$db->jdate($obj->dp),
                     'dateend'=>$db->jdate($obj->dp2),
-                    'note'=>$obj->note,
+                    'note'=>$obj->label,
                     'percent'=>$obj->percent,
 
                     'userid'=>$obj->user_id,
@@ -1415,7 +1415,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
                     'id'=>$obj->id,
                     'datestart'=>$db->jdate($obj->dp),
                     'dateend'=>$db->jdate($obj->dp2),
-                    'note'=>$obj->note,
+                    'note'=>$obj->label,
                     'percent'=>$obj->percent,
                     'acode'=>$obj->acode,
 
