@@ -256,6 +256,8 @@ class DoliDBMysqli extends DoliDB
 
         $query = trim($query);
 
+        if (empty($query)) return null;
+
 	    if (! in_array($query, array('BEGIN','COMMIT','ROLLBACK'))) dol_syslog('sql='.$query, LOG_DEBUG);
 
         if (! $this->database_name)
