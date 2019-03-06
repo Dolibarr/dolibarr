@@ -91,8 +91,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 		'link' => '/adherents/index.php?mainmenu=members&amp;leftmenu=',
 		'title' => "MenuMembers",
 		'level' => 0,
-		'enabled' => $showmode = isVisibleToUserType
-						(
+		'enabled' => $showmode = isVisibleToUserType(
 							$type_user,
 							$tmpentry = array(
 								'enabled' => (! empty($conf->adherent->enabled) ) ,
@@ -120,8 +119,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 		'link' => '/societe/index.php?mainmenu=companies&amp;leftmenu=',
 		'title' => "ThirdParties",
 		'level' => 0,
-		'enabled' => $showmode = isVisibleToUserType
-						(
+		'enabled' => $showmode = isVisibleToUserType(
 							$type_user,
 							$tmpentry = array(
 								'enabled'=> (	( ! empty($conf->societe->enabled) &&
@@ -155,11 +153,10 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 					? ( array("TMenuProducts" , " | " ,"TMenuServices") )
 					: (! empty($conf->product->enabled)? "TMenuProducts" : "TMenuServices" ),
 		'level' => 0,
-		'enabled' => $showmode = isVisibleToUserType
-						(
+		'enabled' => $showmode = isVisibleToUserType(
 							$type_user,
 							$tmpentry = array(
-								'enabled'=> (	( ! empty($conf->societe->enabled) &&
+								'enabled'=> (( ! empty($conf->societe->enabled) &&
 													( empty($conf->global->SOCIETE_DISABLE_PROSPECTS) || empty($conf->global->SOCIETE_DISABLE_CUSTOMERS) )
 												)
 												|| ! empty($conf->fournisseur->enabled)
@@ -188,8 +185,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 	    'link' => '/bom/bom_list.php?mainmenu=mrp&amp;leftmenu=',
 	    'title' => $langs->trans("TMenuMRP"),
 	    'level' => 0,
-	    'enabled' => $showmode = isVisibleToUserType
-            (
+	    'enabled' => $showmode = isVisibleToUserType(
     	        $type_user,
     	        $tmpentry = array(
     	            'enabled'=>(! empty($conf->bom->enabled) || ! empty($conf->mrp->enabled)),
@@ -219,8 +215,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 					? (($conf->global->PROJECT_USE_OPPORTUNITIES == 2)?"Leads":"Projects")
 					: "LeadsOrProjects",
 		'level' => 0,
-		'enabled' => $showmode = isVisibleToUserType
-						(
+		'enabled' => $showmode = isVisibleToUserType(
 							$type_user,
 							$tmpentry = array(
 								'enabled'=> ( ! empty($conf->projet->enabled) ? 1 : 0),
@@ -248,8 +243,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 		'link' => '/comm/index.php?mainmenu=commercial&amp;leftmenu=',
 		'title' => "Commercial",
 		'level' => 0,
-		'enabled' => $showmode = isVisibleToUserType
-						(
+		'enabled' => $showmode = isVisibleToUserType(
 							$type_user,
 							$tmpentry = array(
 								'enabled'=>(! empty($conf->propal->enabled) ||
@@ -283,8 +277,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 		'link' => '/compta/index.php?mainmenu=billing&amp;leftmenu=',
 		'title' =>  "MenuFinancial",
 		'level' => 0,
-		'enabled' => $showmode = isVisibleToUserType
-						(
+		'enabled' => $showmode = isVisibleToUserType(
 							$type_user,
 							$tmpentry = array(
 								'enabled'=>(! empty($conf->facture->enabled) ||
@@ -320,8 +313,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 		'link' => '/compta/bank/list.php?mainmenu=bank&amp;leftmenu=',
 		'title' =>  "MenuBankCash",
 		'level' => 0,
-		'enabled' => $showmode = isVisibleToUserType
-						(
+		'enabled' => $showmode = isVisibleToUserType(
 							$type_user,
 							$tmpentry = array(
 								'enabled'=>(! empty($conf->banque->enabled) || ! empty($conf->prelevement->enabled)),
@@ -351,8 +343,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 		'link' => '/accountancy/index.php?mainmenu=accountancy&amp;leftmenu=',
 		'title' =>  "MenuAccountancy",
 		'level' => 0,
-		'enabled' => $showmode = isVisibleToUserType
-						(
+		'enabled' => $showmode = isVisibleToUserType(
 							$type_user,
 							$tmpentry = array(
 								'enabled'=>(! empty($conf->comptabilite->enabled) || ! empty($conf->accounting->enabled) || ! empty($conf->asset->enabled)),
@@ -382,8 +373,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 		'link' => '/hrm/index.php?mainmenu=hrm&amp;leftmenu=',
 		'title' =>  "HRM",
 		'level' => 0,
-		'enabled' => $showmode = isVisibleToUserType
-						(
+		'enabled' => $showmode = isVisibleToUserType(
 							$type_user,
 							$tmpentry = array(
 								'enabled'=>(! empty($conf->hrm->enabled) || ! empty($conf->holiday->enabled) || ! empty($conf->deplacement->enabled) || ! empty($conf->expensereport->enabled)),
@@ -413,8 +403,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 		'link' => '/core/tools.php?mainmenu=tools&amp;leftmenu=',
 		'title' =>  "Tools",
 		'level' => 0,
-		'enabled' => $showmode = isVisibleToUserType
-						(
+		'enabled' => $showmode = isVisibleToUserType(
 							$type_user,
 							$tmpentry = array(
 								'enabled'=>1,
