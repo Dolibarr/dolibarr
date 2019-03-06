@@ -56,7 +56,7 @@ $pagenext = $page + 1;
 //if (! $sortorder) $sortorder="DESC";
 
 // Initialize technical objects
-$object = new BillOfMaterials($db);
+$object = new BOM($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->bom->dir_output . '/temp/massgeneration/'.$user->id;
 $hookmanager->initHooks(array('bomlist'));     // Note that conf->hooks_modules contains array
@@ -146,7 +146,7 @@ if (empty($reshook))
 	}
 
 	// Mass actions
-	$objectclass='BillOfMaterials';
+	$objectclass='BOM';
 	$objectlabel='BillOfMaterials';
 	$permtoread = $user->rights->bom->read;
 	$permtodelete = $user->rights->bom->delete;
