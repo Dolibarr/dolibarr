@@ -271,7 +271,7 @@ else {
 		    }
 		    else
 		    {
-		        $ajaxoptions = array();
+		        $ajaxoptions = array('update' => array('remise_percent' => 'discount'));
 		        $alsoproductwithnosupplierprice=1;
 		    }
 
