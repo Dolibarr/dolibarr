@@ -42,7 +42,7 @@ $contextpage= GETPOST('contextpage', 'aZ')?GETPOST('contextpage', 'aZ'):'bomcard
 $backtopage = GETPOST('backtopage', 'alpha');
 
 // Initialize technical objects
-$object=new BillOfMaterials($db);
+$object=new BOM($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction=$conf->bom->dir_output . '/temp/massgeneration/'.$user->id;
 $hookmanager->initHooks(array('bomcard', 'globalcard'));     // Note that conf->hooks_modules contains array
@@ -86,10 +86,10 @@ if (empty($reshook))
 
     $permissiontoadd = $user->rights->bom->write;
     $permissiontodelete = $user->rights->bom->delete || ($permissiontoadd && $object->status == 0);
-    $backurlforlist = dol_buildpath('/bom/bom_list.php', 1);
+    $backurlforlist = DOL_URL_ROOT.'/bom/bom_list.php';
     if (empty($backtopage)) {
         if (empty($id)) $backtopage = $backurlforlist;
-        else $backtopage = dol_buildpath('/bom/bom_card.php', 1).($id > 0 ? $id : '__ID__');
+        else $backtopage = DOL_URL_ROOT.'/bom/bom_card.php?id='.$id;
     }
 	$triggermodname = 'BILLOFMATERIALS_BILLOFMATERIALS_MODIFY';	// Name of trigger action code to execute when we modify record
 
