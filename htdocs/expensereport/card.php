@@ -2172,7 +2172,7 @@ else
 
 								// Quantity
 								print '<td style="text-align:right;">';
-								print '<input type="number" min="0" class="maxwidth100" name="qty" value="'.dol_escape_htmltag($line->qty).'" />';
+								print '<input type="number" min="0" class="right maxwidth50" name="qty" value="'.dol_escape_htmltag($line->qty).'" />';
 								print '</td>';
 
 								if ($action != 'editline')
