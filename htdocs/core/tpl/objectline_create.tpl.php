@@ -596,6 +596,28 @@ if (! empty($usemargins) && $user->rights->margins->creer)
 
 /* JQuery for product free or predefined select */
 jQuery(document).ready(function() {
+	jQuery("#price_ht").keyup(function(event) {
+		// console.log(event.which);		// discard event tag and arrows
+		if (event.which != 9 && (event.which < 37 ||event.which > 40) && jQuery("#price_ht").val() != '') {
+			jQuery("#price_ttc").val('');
+			jQuery("#multicurrency_subprice").val('');
+		}
+	});
+	jQuery("#price_ttc").keyup(function(event) {
+		// console.log(event.which);		// discard event tag and arrows
+		if (event.which != 9 && (event.which < 37 || event.which > 40) && jQuery("#price_ttc").val() != '') {
+			jQuery("#price_ht").val('');
+			jQuery("#multicurrency_subprice").val('');
+		}
+	});
+	jQuery("#multicurrency_subprice").keyup(function(event) {
+		// console.log(event.which);		// discard event tag and arrows
+		if (event.which != 9 && (event.which < 37 || event.which > 40) && jQuery("#price_ttc").val() != '') {
+			jQuery("#price_ht").val('');
+			jQuery("#price_ttc").val('');
+		}
+	});
+
 	$("#prod_entry_mode_free").on( "click", function() {
 		setforfree();
 	});
@@ -662,10 +684,7 @@ jQuery(document).ready(function() {
       		$.post('<?php echo DOL_URL_ROOT; ?>/fourn/ajax/getSupplierPrices.php?bestpricefirst=1', { 'idprod': $(this).val() }, function(data) {
     	    	if (data && data.length > 0)
     	    	{
-        	  		var options = '';
-        	  		var defaultkey = '';
-        	  		var defaultprice = '';
-    	      		var bestpricefound = 0;
+        	  		var options = ''; var defaultkey = ''; var defaultprice = ''; var bestpricefound = 0;
 
     	      		var bestpriceid = 0; var bestpricevalue = 0;
     	      		var pmppriceid = 0; var pmppricevalue = 0;
@@ -796,61 +815,29 @@ jQuery(document).ready(function() {
 	<?php if (GETPOST('prod_entry_mode') == 'predef') { // When we submit with a predef product and it fails we must start with predef ?>
 		setforpredef();
 	<?php } ?>
-
 });
 
 /* Function to set fields from choice */
 function setforfree() {
 	console.log("Call setforfree. We show most fields");
-	jQuery("#search_idprod").val('');
-	jQuery("#idprod").val('');
 	jQuery("#idprodfournprice").val('0');	// Set cursor on not selected product
-	jQuery("#search_idprodfournprice").val('');
 	jQuery("#prod_entry_mode_free").prop('checked',true).change();
 	jQuery("#prod_entry_mode_predef").prop('checked',false).change();
-	jQuery("#price_ht").show();
-	jQuery("#multicurrency_price_ht").show();
-	jQuery("#price_ttc").show();	// May not exist
-	jQuery("#fourn_ref").show();
-	jQuery("#tva_tx").show();
-	jQuery("#buying_price").val('').show();
+	jQuery("#search_idprod, #idprod, #search_idprodfournprice, #buying_price").val('');
+	jQuery("#price_ht, #multicurrency_price_ht, #price_ttc, #price_ttc, #fourn_ref, #tva_tx, #buying_price, #title_vat, #title_up_ht, #title_up_ht_currency, #title_up_ttc, #title_up_ttc_currency").show();
+	jQuery("#np_marginRate, #np_markRate, .np_marginRate, .np_markRate, #units, #title_units").show();
 	jQuery("#fournprice_predef").hide();
-	jQuery("#title_vat").show();
-	jQuery("#title_up_ht").show();
-	jQuery("#title_up_ht_currency").show();
-	jQuery("#title_up_ttc").show();
-	jQuery("#title_up_ttc_currency").show();
-	jQuery("#np_marginRate").show();	// May not exist
-	jQuery("#np_markRate").show();	// May not exist
-	jQuery(".np_marginRate").show();	// May not exist
-	jQuery(".np_markRate").show();	// May not exist
-	jQuery("#units, #title_units").show();
 }
 function setforpredef() {
 	console.log("Call setforpredef. We hide some fields and show dates");
 	jQuery("#select_type").val(-1);
-
 	jQuery("#prod_entry_mode_free").prop('checked',false).change();
 	jQuery("#prod_entry_mode_predef").prop('checked',true).change();
-	jQuery("#price_ht").val('').hide();
-	jQuery("#multicurrency_price_ht").hide();
-	jQuery("#price_ttc").hide();	// May not exist
-	jQuery("#fourn_ref").hide();
-	jQuery("#tva_tx").hide();
+	jQuery("#price_ht").val('')
+	jQuery("#price_ht, #multicurrency_price_ht, #price_ttc, #fourn_ref, #tva_tx, #title_vat, #title_up_ht, #title_up_ht_currency, #title_up_ttc, #title_up_ttc_currency").hide();
+	jQuery("#np_marginRate, #np_markRate, .np_marginRate, .np_markRate, #units, #title_units").hide();
 	jQuery("#buying_price").show();
-	jQuery("#title_vat").hide();
-	jQuery("#title_up_ht").hide();
-	jQuery("#title_up_ht_currency").hide();
-	jQuery("#title_up_ttc").hide();
-	jQuery("#title_up_ttc_currency").hide();
-	jQuery("#np_marginRate").hide();	// May not exist
-	jQuery("#np_markRate").hide();	// May not exist
-	jQuery(".np_marginRate").hide();	// May not exist
-	jQuery(".np_markRate").hide();	// May not exist
-	jQuery("#units, #title_units").hide();
-
-	jQuery('#trlinefordates').show();
-	jQuery('.divlinefordates').show();
+	jQuery('#trlinefordates, .divlinefordates').show();
 }
 
 </script>

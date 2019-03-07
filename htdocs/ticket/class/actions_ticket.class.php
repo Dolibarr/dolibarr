@@ -116,9 +116,9 @@ class ActionsTicket
         /*
          * Add file in email form
          */
-        if (GETPOST('addfile')) {
+        if (GETPOST('addfile', 'alpha')) {
             // altairis : allow files from public interface
-            if (GETPOST('track_id')) {
+            if (GETPOST('track_id', 'alpha')) {
                 $res = $object->fetch('', '', GETPOST('track_id', 'alpha'));
             }
 
@@ -140,7 +140,7 @@ class ActionsTicket
         /*
          * Remove file in email form
          */
-        if (GETPOST('removedfile')) {
+        if (GETPOST('removedfile', 'alpha')) {
             // altairis : allow files from public interface
             if (GETPOST('track_id')) {
                 $res = $object->fetch('', '', GETPOST('track_id', 'alpha'));
@@ -160,7 +160,7 @@ class ActionsTicket
             ////}
         }
 
-        if (GETPOST('add','alpha') && $user->rights->ticket->write) {
+        if (GETPOST('add', 'alpha') && $user->rights->ticket->write) {
             $error = 0;
 
             if (!GETPOST("subject")) {

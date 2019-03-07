@@ -230,3 +230,10 @@ ALTER TABLE llx_bom_bom ADD INDEX idx_bom_bom_fk_product (fk_product);
 ALTER TABLE llx_bom_bomline ADD INDEX idx_bom_bomline_rowid (rowid);
 ALTER TABLE llx_bom_bomline ADD INDEX idx_bom_bomline_fk_product (fk_product);
 ALTER TABLE llx_bom_bomline ADD INDEX idx_bom_bomline_fk_bom (fk_bom);
+
+ALTER TABLE llx_facturedet_rec ADD COLUMN buy_price_ht double(24,8) DEFAULT 0;
+ALTER TABLE llx_facturedet_rec ADD COLUMN fk_product_fournisseur_price integer DEFAULT NULL;
+
+ALTER TABLE llx_facturedet_rec ADD COLUMN fk_user_author integer;
+ALTER TABLE llx_facturedet_rec ADD COLUMN fk_user_modif integer;
+

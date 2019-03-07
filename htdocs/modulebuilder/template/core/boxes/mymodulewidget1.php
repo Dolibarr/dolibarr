@@ -186,7 +186,7 @@ class mymodulewidget1 extends ModeleBoxes
 					'tr' => 'class="left"',
 					'text' => ''
 				),
-				0 => array( // TR
+				1 => array( // TR
 					'tr' => 'class="left"',
 					'text' => ''
 				)

@@ -352,7 +352,7 @@ class FormTicket
         {
             $formproject=new FormProjets($this->db);
             print '<tr><td><label for="project"><span class="">' . $langs->trans("Project") . '</span></label></td><td>';
-            print $formproject->select_projects(-1, GETPOST('projectid','int'), 'projectid', 0, 0, 1, 1);
+            print $formproject->select_projects(-1, GETPOST('projectid', 'int'), 'projectid', 0, 0, 1, 1);
             print '</td></tr>';
         }
 

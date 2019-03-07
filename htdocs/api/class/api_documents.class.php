@@ -274,7 +274,7 @@ class Documents extends DolibarrApi
 
 			$upload_dir = $conf->societe->multidir_output[$object->entity] . "/" . $object->id;
 		}
-		else if ($modulepart == 'adherent' || $modulepart == 'member')
+		elseif ($modulepart == 'adherent' || $modulepart == 'member')
 		{
 			require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 
@@ -290,7 +290,7 @@ class Documents extends DolibarrApi
 
 			$upload_dir = $conf->adherent->dir_output . "/" . get_exdir(0, 0, 0, 1, $object, 'member');
 		}
-		else if ($modulepart == 'propal' || $modulepart == 'proposal')
+		elseif ($modulepart == 'propal' || $modulepart == 'proposal')
 		{
 			require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 
@@ -306,7 +306,7 @@ class Documents extends DolibarrApi
 
 			$upload_dir = $conf->propal->multidir_output[$object->entity] . "/" . get_exdir(0, 0, 0, 1, $object, 'propal');
 		}
-		else if ($modulepart == 'commande' || $modulepart == 'order')
+		elseif ($modulepart == 'commande' || $modulepart == 'order')
 		{
 			require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 
@@ -322,7 +322,7 @@ class Documents extends DolibarrApi
 
 			$upload_dir = $conf->commande->dir_output . "/" . get_exdir(0, 0, 0, 1, $object, 'commande');
 		}
-		else if ($modulepart == 'shipment' || $modulepart == 'expedition')
+		elseif ($modulepart == 'shipment' || $modulepart == 'expedition')
 		{
 			require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
 
@@ -338,7 +338,7 @@ class Documents extends DolibarrApi
 
 			$upload_dir = $conf->expedition->dir_output . "/sending/" . get_exdir(0, 0, 0, 1, $object, 'shipment');
 		}
-		else if ($modulepart == 'facture' || $modulepart == 'invoice')
+		elseif ($modulepart == 'facture' || $modulepart == 'invoice')
 		{
 			require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 
@@ -354,7 +354,7 @@ class Documents extends DolibarrApi
 
 			$upload_dir = $conf->facture->dir_output . "/" . get_exdir(0, 0, 0, 1, $object, 'invoice');
 		}
-        else if ($modulepart == 'produit' || $modulepart == 'product')
+        elseif ($modulepart == 'produit' || $modulepart == 'product')
 		{
 			require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
@@ -370,7 +370,7 @@ class Documents extends DolibarrApi
 
 			$upload_dir = $conf->product->dir_output . "/" . get_exdir(0, 0, 0, 1, $object, 'product');
 		}
-		else if ($modulepart == 'agenda' || $modulepart == 'action' || $modulepart == 'event')
+		elseif ($modulepart == 'agenda' || $modulepart == 'action' || $modulepart == 'event')
 		{
 			require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 
@@ -600,7 +600,8 @@ class Documents extends DolibarrApi
 	 * @return  array
 	 * @throws  RestException
 	 */
-	private function _validate_file($data) {
+    private function _validate_file($data)
+    {
         // phpcs:enable
 		$result = array();
 		foreach (Documents::$DOCUMENT_FIELDS as $field) {

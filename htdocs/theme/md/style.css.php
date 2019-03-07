@@ -1764,6 +1764,10 @@ div.mainmenu.products {
 	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/products.png', 1) ?>);
 }
 
+div.mainmenu.mrp {
+	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/products.png', 1) ?>);
+}
+
 div.mainmenu.project {
 	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/project.png', 1) ?>);
 }
@@ -1819,7 +1823,7 @@ foreach($mainmenuusedarray as $val)
 			$found=1;
 			break;
 		}
-		else if (file_exists($dirroot."/".$val."/img/".$val.".png"))    // Retro compatibilité
+		elseif (file_exists($dirroot."/".$val."/img/".$val.".png"))    // Retro compatibilité
 		{
 		    $url=dol_buildpath('/'.$val.'/img/'.$val.'.png', 1);
 		    $found=1;

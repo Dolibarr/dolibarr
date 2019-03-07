@@ -96,7 +96,7 @@ if ((! $versionfrom || preg_match('/version/', $versionfrom)) && (! $versionto |
 	// Test if batch mode
 	$sapi_type = php_sapi_name();
 	$script_file = basename(__FILE__);
-	$path=dirname(__FILE__).'/';
+	$path=__DIR__.'/';
 	if (substr($sapi_type, 0, 3) == 'cli')
 	{
 		print 'Syntax from command line: '.$script_file." x.y.z a.b.c [MAIN_MODULE_NAME1_TO_ENABLE,MAIN_MODULE_NAME2_TO_ENABLE...]\n";

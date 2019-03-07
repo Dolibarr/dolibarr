@@ -22,7 +22,6 @@
  */
 
 
-
 /**
  * Convert a page content to have correct links (based on DOL_URL_ROOT) into an html content.
  * Used to ouput the page on the Preview from backoffice.
@@ -661,7 +660,7 @@ function dolSavePageContent($filetpl, $object, $objectpage)
 
 	$tplcontent ='';
 	$tplcontent.= "<?php // BEGIN PHP\n";
-	$tplcontent.= '$websitekey=basename(dirname(__FILE__)); if (empty($websitepagefile)) $websitepagefile=__FILE__;'."\n";
+	$tplcontent.= '$websitekey=basename(__DIR__); if (empty($websitepagefile)) $websitepagefile=__FILE__;'."\n";
 	$tplcontent.= "if (! defined('USEDOLIBARRSERVER') && ! defined('USEDOLIBARREDITOR')) { require_once './master.inc.php'; } // Not already loaded"."\n";
 	$tplcontent.= "require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';\n";
 	$tplcontent.= "require_once DOL_DOCUMENT_ROOT.'/core/website.inc.php';\n";
@@ -731,7 +730,7 @@ function dolSaveIndexPage($pathofwebsite, $fileindex, $filetpl, $filewrapper)
 	dol_delete_file($fileindex);
 	$indexcontent = '<?php'."\n";
 	$indexcontent.= "// BEGIN PHP File generated to provide an index.php as Home Page or alias redirector - DO NOT MODIFY - It is just a generated wrapper.\n";
-	$indexcontent.= '$websitekey=basename(dirname(__FILE__)); if (empty($websitepagefile)) $websitepagefile=__FILE__;'."\n";
+	$indexcontent.= '$websitekey=basename(__DIR__); if (empty($websitepagefile)) $websitepagefile=__FILE__;'."\n";
 	$indexcontent.= "if (! defined('USEDOLIBARRSERVER') && ! defined('USEDOLIBARREDITOR')) { require_once './master.inc.php'; } // Load master if not already loaded\n";
 	$indexcontent.= 'if (! empty($_GET[\'pageref\']) || ! empty($_GET[\'pagealiasalt\']) || ! empty($_GET[\'pageid\'])) {'."\n";
 	$indexcontent.= "	require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';\n";
