@@ -419,11 +419,11 @@ if (!empty($date_start) && !empty($date_stop))
                 //if (!empty($data['fk_facture'])) $html_class = 'facid-'.$data['fk_facture'];
                 //elseif (!empty($data['fk_paiement'])) $html_class = 'payid-'.$data['fk_paiement'];
                 print '<tr class="oddeven '.$html_class.'">';
-                print "<td align=\"center\">";
+                print "<td class=\"center\">";
                 print dol_print_date($data['date'], 'day');
                 print "</td>\n";
-                print '<td aling="left">'.$langs->trans($data['item']).'</td>';
-                print '<td aling="left">'.$data['ref'].'</td>';
+                print '<td class="left">'.$langs->trans($data['item']).'</td>';
+                print '<td class="left">'.$data['ref'].'</td>';
 
                 // File link
                 print '<td><a href='.DOL_URL_ROOT.'/'.$data['link'].">".$data['name']."</a></td>\n";

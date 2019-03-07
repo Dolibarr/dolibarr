@@ -6651,7 +6651,7 @@ class Form
 						$objp = $this->db->fetch_object($resqllist);
 
 						print '<tr class="oddeven">';
-						print '<td aling="left">';
+						print '<td class="left">';
 						print '<input type="radio" name="idtolinkto" value=' . $objp->rowid . '>';
 						print '</td>';
 						print '<td class="center">' . $objp->ref . '</td>';
