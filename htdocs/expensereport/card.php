@@ -2215,7 +2215,7 @@ else
 
 					// Select date
 					print '<td align="center">';
-					print $form->selectDate($date?$date:-1, 'date');
+					print $form->selectDate($date?$date:-1, 'date', 0, 0, 0, '', 1, 1);
 					print '</td>';
 
 					// Select project
