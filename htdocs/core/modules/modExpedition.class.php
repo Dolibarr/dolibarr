@@ -283,6 +283,8 @@ class modExpedition extends DolibarrModules
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 		$keyforselect='expeditiondet'; $keyforelement='shipment_line'; $keyforaliasextra='extra2';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
+		$keyforselect='product'; $keyforelement='product'; $keyforaliasextra='extraprod';
+		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 
 		$this->export_sql_start[$r]='SELECT DISTINCT ';
 		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'expedition as c';
@@ -295,6 +297,7 @@ class modExpedition extends DolibarrModules
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'expeditiondet_extrafields as extra2 ON ed.rowid = extra2.fk_object';
 		$this->export_sql_end[$r] .=' , '.MAIN_DB_PREFIX.'commandedet as cd';
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'product as p on cd.fk_product = p.rowid';
+		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'product_extrafields as extraprod ON p.rowid = extraprod.fk_object';
 		if ($idcontacts && ! empty($conf->global->SHIPMENT_ADD_CONTACTS_IN_EXPORT))
 		{
 		  $this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'element_contact as ee ON ee.element_id = cd.fk_commande AND ee.fk_c_type_contact IN ('.$idcontacts.')';
