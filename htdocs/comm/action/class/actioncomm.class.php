@@ -270,7 +270,7 @@ class ActionComm extends CommonObject
         	$this->userassigned[$tmpid]=array('id'=>$tmpid, 'transparency'=>$this->transparency);
         }
 
-        if (is_object($this->contact) && isset($this->contact->id) && $this->contact->id > 0 && ! ($this->contactid > 0)) $this->contactid = $this->contact->id;		// For backward compatibility. Using this->contact->xx is deprecated
+        //if (is_object($this->contact) && isset($this->contact->id) && $this->contact->id > 0 && ! ($this->contactid > 0)) $this->contactid = $this->contact->id;		// For backward compatibility. Using this->contact->xx is deprecated
 
 
         $userownerid=$this->userownerid;
@@ -656,7 +656,7 @@ class ActionComm extends CommonObject
                 $this->fk_project			= $obj->fk_project;		// To have fetch_project method working
 
                 $this->societe->id			= $obj->fk_soc;			// deprecated
-                $this->contact->id			= $obj->fk_contact;		// deprecated
+                //$this->contact->id			= $obj->fk_contact;		// deprecated
 
                 $this->fk_element			= $obj->elementid;
                 $this->elementid			= $obj->elementid;
@@ -867,7 +867,7 @@ class ActionComm extends CommonObject
         }
 
         $socid=($this->socid?$this->socid:((isset($this->societe->id) && $this->societe->id > 0) ? $this->societe->id : 0));
-        $contactid=($this->contactid?$this->contactid:((isset($this->contact->id) && $this->contact->id > 0) ? $this->contact->id : 0));
+        $contactid=($this->contactid?$this->contactid:0);
 		$userownerid=($this->userownerid?$this->userownerid:0);
 		$userdoneid=($this->userdoneid?$this->userdoneid:0);
 
