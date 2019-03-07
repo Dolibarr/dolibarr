@@ -18,12 +18,11 @@
 
 use Luracast\Restler\RestException;
 
-dol_include_once('/bom/class/bom.class.php');
-
+require_once DOL_DOCUMENT_ROOT.'/bom/class/bom.class.php';
 
 
 /**
- * \file    bom/class/api_bom.class.php
+ * \file    bom/class/api_boms.class.php
  * \ingroup bom
  * \brief   File for API management of bom.
  */
@@ -31,36 +30,32 @@ dol_include_once('/bom/class/bom.class.php');
 /**
  * API class for bom bom
  *
- * @smart-auto-routing false
  * @access protected
  * @class  DolibarrApiAccess {@requires user,external}
  */
-class BillOfMaterialsApi extends DolibarrApi
+class BOMs extends DolibarrApi
 {
     /**
      * @var array   $FIELDS     Mandatory fields, checked when create and update object
      */
     static $FIELDS = array(
-        'name',
+        'label'
     );
 
 
     /**
-     * @var BillOfMaterials $bom {@type BillOfMaterials}
+     * @var BOM $bom {@type BOM}
      */
     public $bom;
 
     /**
      * Constructor
-     *
-     * @url     GET /
-     *
      */
     public function __construct()
     {
 		global $db, $conf;
 		$this->db = $db;
-        $this->bom = new BillOfMaterials($this->db);
+        $this->bom = new BOM($this->db);
     }
 
     /**
@@ -71,7 +66,7 @@ class BillOfMaterialsApi extends DolibarrApi
      * @param 	int 	$id ID of bom
      * @return 	array|mixed data without useless information
 	 *
-     * @url	GET boms/{id}
+     * @url	GET {id}
      * @throws 	RestException
      */
     public function get($id)
@@ -82,7 +77,7 @@ class BillOfMaterialsApi extends DolibarrApi
 
         $result = $this->bom->fetch($id);
         if( ! $result ) {
-            throw new RestException(404, 'BillOfMaterials not found');
+            throw new RestException(404, 'BOM not found');
         }
 
 		if( ! DolibarrApi::_checkAccessToResource('bom', $this->bom->id)) {
@@ -106,8 +101,6 @@ class BillOfMaterialsApi extends DolibarrApi
      * @return  array                               Array of order objects
      *
      * @throws RestException
-     *
-     * @url	GET /boms/
      */
     public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '')
     {
@@ -134,7 +127,7 @@ class BillOfMaterialsApi extends DolibarrApi
         //if ($mode == 1) $sql.= " AND s.client IN (1, 3)";
         //if ($mode == 2) $sql.= " AND s.client IN (2, 3)";
 
-        $tmpobject = new BillOfMaterials($db);
+        $tmpobject = new BOM($db);
         if ($tmpobject->ismultientitymanaged) $sql.= ' AND t.entity IN ('.getEntity('bom').')';
         if ($restictonsocid && (!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) || $search_sale > 0) $sql.= " AND t.fk_soc = sc.fk_soc";
         if ($restictonsocid && $socid) $sql.= " AND t.fk_soc = ".$socid;
@@ -172,7 +165,7 @@ class BillOfMaterialsApi extends DolibarrApi
             while ($i < $num)
             {
                 $obj = $db->fetch_object($result);
-                $bom_static = new BillOfMaterials($db);
+                $bom_static = new BOM($db);
                 if($bom_static->fetch($obj->rowid)) {
                     $obj_ret[] = $this->_cleanObjectDatas($bom_static);
                 }
@@ -193,8 +186,6 @@ class BillOfMaterialsApi extends DolibarrApi
      *
      * @param array $request_data   Request datas
      * @return int  ID of bom
-     *
-     * @url	POST boms/
      */
     public function post($request_data = null)
     {
@@ -208,7 +199,7 @@ class BillOfMaterialsApi extends DolibarrApi
             $this->bom->$field = $value;
         }
         if( ! $this->bom->create(DolibarrApiAccess::$user)) {
-            throw new RestException(500);
+            throw new RestException(500, "Error creating BOM", array_merge(array($this->bom->error), $this->bom->errors));
         }
         return $this->bom->id;
     }
@@ -218,9 +209,8 @@ class BillOfMaterialsApi extends DolibarrApi
      *
      * @param int   $id             Id of bom to update
      * @param array $request_data   Datas
-     * @return int
      *
-     * @url	PUT boms/{id}
+     * @return int
      */
     public function put($id, $request_data = null)
     {
@@ -230,7 +220,7 @@ class BillOfMaterialsApi extends DolibarrApi
 
         $result = $this->bom->fetch($id);
         if( ! $result ) {
-            throw new RestException(404, 'BillOfMaterials not found');
+            throw new RestException(404, 'BOM not found');
         }
 
 		if( ! DolibarrApi::_checkAccessToResource('bom', $this->bom->id)) {
@@ -238,46 +228,49 @@ class BillOfMaterialsApi extends DolibarrApi
 		}
 
         foreach($request_data as $field => $value) {
+            if ($field == 'id') continue;
             $this->bom->$field = $value;
         }
 
-        if($this->bom->update($id, DolibarrApiAccess::$user))
+        if($this->bom->update($id, DolibarrApiAccess::$user) > 0)
+        {
             return $this->get($id);
-
-        return false;
+        }
+        else
+        {
+            throw new RestException(500, $this->commande->error);
+        }
     }
 
     /**
      * Delete bom
      *
-     * @param   int     $id   BillOfMaterials ID
+     * @param   int     $id   BOM ID
      * @return  array
-     *
-     * @url	DELETE bom/{id}
      */
     public function delete($id)
     {
-    	if(! DolibarrApiAccess::$user->rights->bom->delete) {
+    	if (! DolibarrApiAccess::$user->rights->bom->delete) {
 			throw new RestException(401);
 		}
         $result = $this->bom->fetch($id);
-        if( ! $result ) {
-            throw new RestException(404, 'BillOfMaterials not found');
+        if (! $result) {
+            throw new RestException(404, 'BOM not found');
         }
 
-        if( ! DolibarrApi::_checkAccessToResource('bom', $this->bom->id)) {
+        if (! DolibarrApi::_checkAccessToResource('bom', $this->bom->id)) {
             throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
         }
 
-		if( !$this->bom->delete(DolibarrApiAccess::$user, 0))
+		if (! $this->bom->delete(DolibarrApiAccess::$user))
         {
-            throw new RestException(500);
+            throw new RestException(500, 'Error when deleting BOM : '.$this->bom->error);
         }
 
          return array(
             'success' => array(
                 'code' => 200,
-                'message' => 'BillOfMaterials deleted'
+                'message' => 'BOM deleted'
             )
         );
     }
@@ -287,8 +280,8 @@ class BillOfMaterialsApi extends DolibarrApi
     /**
      * Clean sensible object datas
      *
-     * @param   object  $object    Object to clean
-     * @return    array    Array of cleaned object properties
+     * @param   object  $object     Object to clean
+     * @return  array               Array of cleaned object properties
      */
     protected function _cleanObjectDatas($object)
     {
@@ -308,15 +301,15 @@ class BillOfMaterialsApi extends DolibarrApi
     /**
      * Validate fields before create or update object
      *
-     * @param array $data   Data to validate
-     * @return array
+     * @param	array		$data   Array of data to validate
+     * @return	array
      *
-     * @throws RestException
+     * @throws	RestException
      */
     private function _validate($data)
     {
         $bom = array();
-        foreach (BillOfMaterialsApi::$FIELDS as $field) {
+        foreach (BOMs::$FIELDS as $field) {
             if (!isset($data[$field]))
                 throw new RestException(400, "$field field missing");
             $bom[$field] = $data[$field];

@@ -723,7 +723,7 @@ class Facture extends CommonInvoice
 			}
 
 			/*
-			 * Insert lines of predefined invoices
+			 * Insert lines of template invoices
 			 */
 			if (! $error && $this->fac_rec > 0)
 			{
@@ -749,7 +749,32 @@ class Facture extends CommonInvoice
 					$localtax1_tx = $_facrec->lines[$i]->localtax1_tx;
 					$localtax2_tx = $_facrec->lines[$i]->localtax2_tx;
 
-    $result_insert = $this->addline(
+					$fk_product_fournisseur_price = empty($_facrec->lines[$i]->fk_product_fournisseur_price)?null:$_facrec->lines[$i]->fk_product_fournisseur_price;
+					$buyprice = empty($_facrec->lines[$i]->buyprice)?0:$_facrec->lines[$i]->buyprice;
+					// If buyprice not defined from template invoice, we try to guess the best value
+					if (! $buyprice && $_facrec->lines[$i]->fk_product > 0)
+                    {
+                        require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
+                        $producttmp = new ProductFournisseur($this->db);
+                        $producttmp->fetch($_facrec->lines[$i]->fk_product);
+
+                        // If margin module defined on costprice, we try the costprice
+                        // If not defined or if module margin defined and pmp and stock module enabled, we try pmp price
+                        // else we get the best supplier price
+                        if ($conf->global->MARGIN_TYPE == 'costprice' && ! empty($producttmp->cost_price)) $buyprice = $producttmp->cost_price;
+                        elseif (! empty($conf->stock->enabled) && ($conf->global->MARGIN_TYPE == 'costprice' || $conf->global->MARGIN_TYPE == 'pmp') && ! empty($producttmp->pmp)) $buyprice = $producttmp->pmp;
+                        else {
+                            if ($producttmp->find_min_price_product_fournisseur($_facrec->lines[$i]->fk_product) > 0)
+                            {
+                                if ($producttmp->product_fourn_price_id > 0)
+                                {
+                                    $buyprice = price2num($producttmp->fourn_unitprice * (1 - $producttmp->fourn_remise_percent/100) + $producttmp->fourn_remise, 'MU');
+                                }
+                            }
+                        }
+                    }
+
+					$result_insert = $this->addline(
 						$_facrec->lines[$i]->desc,
 						$_facrec->lines[$i]->subprice,
 						$_facrec->lines[$i]->qty,
@@ -771,8 +796,8 @@ class Facture extends CommonInvoice
 						'',
 						0,
 						0,
-						null,
-						0,
+					    $fk_product_fournisseur_price,
+						$buyprice,
 						$_facrec->lines[$i]->label,
 						empty($_facrec->lines[$i]->array_options)?null:$_facrec->lines[$i]->array_options,
 						$_facrec->lines[$i]->situation_percent,
@@ -4273,9 +4298,9 @@ class Facture extends CommonInvoice
 	/**
 	 * Function used to replace a thirdparty id with another one.
 	 *
-	 * @param DoliDB $db Database handler
-	 * @param int $origin_id Old thirdparty id
-	 * @param int $dest_id New thirdparty id
+	 * @param  DoliDB  $db             Database handler
+	 * @param  int     $origin_id      Old thirdparty id
+	 * @param  int     $dest_id        New thirdparty id
 	 * @return bool
 	 */
 	public static function replaceThirdparty(DoliDB $db, $origin_id, $dest_id)

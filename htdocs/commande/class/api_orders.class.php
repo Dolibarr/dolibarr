@@ -16,9 +16,9 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
- use Luracast\Restler\RestException;
+use Luracast\Restler\RestException;
 
- require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
+require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 
 /**
  * API class for orders
@@ -544,7 +544,7 @@ class Orders extends DolibarrApi
 		}
 
         if( ! $this->commande->delete(DolibarrApiAccess::$user)) {
-            throw new RestException(500, 'Error when delete order : '.$this->commande->error);
+            throw new RestException(500, 'Error when deleting order : '.$this->commande->error);
         }
 
         return array(

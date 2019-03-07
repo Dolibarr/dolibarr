@@ -1561,7 +1561,7 @@ class Product extends CommonObject
      * @param	Societe		$thirdparty_buyer		Buyer
      * @param	int			$pqp					Id of product per price if a selection was done of such a price
      * @return	array								Array of price information
-     * @see get_buyprice()
+     * @see get_buyprice(), find_min_price_product_fournisseur()
      */
     public function getSellPrice($thirdparty_seller, $thirdparty_buyer, $pqp = 0)
     {
@@ -1672,8 +1672,8 @@ class Product extends CommonObject
      * @param  int    $product_id     Filter on a particular product id
      * @param  string $fourn_ref      Filter on a supplier price ref. 'none' to exclude ref in search.
      * @param  int    $fk_soc         If of supplier
-     * @return int                         <-1 if KO, -1 if qty not enough, 0 if OK but nothing found, id_product if OK and found. May also initialize some properties like (->ref_supplier, buyprice, fourn_pu, vatrate_supplier...)
-     * @see getSellPrice()
+     * @return int                    <-1 if KO, -1 if qty not enough, 0 if OK but nothing found, id_product if OK and found. May also initialize some properties like (->ref_supplier, buyprice, fourn_pu, vatrate_supplier...)
+     * @see getSellPrice(), find_min_price_product_fournisseur()
      */
     public function get_buyprice($prodfournprice, $qty, $product_id = 0, $fourn_ref = '', $fk_soc = 0)
     {

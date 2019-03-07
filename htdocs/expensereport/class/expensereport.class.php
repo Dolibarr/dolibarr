@@ -116,6 +116,11 @@ class ExpenseReport extends CommonObject
 	const STATUS_VALIDATED = 2;
 
 	/**
+	 * Classified canceled
+	 */
+	const STATUS_CANCELED = 4;
+
+	/**
 	 * Classified approved
 	 */
 	const STATUS_APPROVED = 5;
@@ -1442,12 +1447,12 @@ class ExpenseReport extends CommonObject
         // phpcs:enable
 		$error = 0;
         $this->date_cancel = $this->db->idate(gmmktime());
-        if ($this->fk_statut != 4)
+        if ($this->fk_statut != ExpenseReport::STATUS_CANCELED)
         {
 			$this->db->begin();
 
             $sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
-            $sql.= " SET fk_statut = 4, fk_user_cancel = ".$fuser->id;
+            $sql.= " SET fk_statut = ".ExpenseReport::STATUS_CANCELED.", fk_user_cancel = ".$fuser->id;
             $sql.= ", date_cancel='".$this->db->idate($this->date_cancel)."'";
             $sql.= " ,detail_cancel='".$this->db->escape($detail)."'";
             $sql.= ' WHERE rowid = '.$this->id;
@@ -1676,10 +1681,10 @@ class ExpenseReport extends CommonObject
 	/**
 	 * addline
 	 *
-	 * @param    real        $qty                Qty
+	 * @param    float       $qty                Qty
 	 * @param    double      $up                 Value init
 	 * @param    int         $fk_c_type_fees     Type payment
-	 * @param    double      $vatrate            Vat rate
+	 * @param    string      $vatrate            Vat rate (Can be '10' or '10 (ABC)')
 	 * @param    string      $date               Date
 	 * @param    string      $comments           Description
 	 * @param    int         $fk_project         Project id
@@ -1703,8 +1708,8 @@ class ExpenseReport extends CommonObject
 			if (empty($fk_project)) $fk_project = 0;
 
 			$qty = price2num($qty);
-			if (!preg_match('/\((.*)\)/', $vatrate)) {
-				$vatrate = price2num($vatrate);               // $txtva can have format '5.0(XXX)' or '5'
+			if (! preg_match('/\s*\((.*)\)/', $vatrate)) {
+				$vatrate = price2num($vatrate);               // $txtva can have format '5.0 (XXX)' or '5'
 			}
 			$up = price2num($up);
 
@@ -1715,7 +1720,7 @@ class ExpenseReport extends CommonObject
 			$localtaxes_type=getLocalTaxesFromRate($vatrate, 0, $mysoc, $this->thirdparty);
 
 			$vat_src_code = '';
-			if (preg_match('/\((.*)\)/', $vatrate, $reg))
+			if (preg_match('/\s*\((.*)\)/', $vatrate, $reg))
 			{
 				$vat_src_code = $reg[1];
 				$vatrate = preg_replace('/\s*\(.*\)/', '', $vatrate);    // Remove code into vatrate.
@@ -1727,6 +1732,7 @@ class ExpenseReport extends CommonObject
 			$tmp = calcul_price_total($qty, $up, 0, $vatrate, 0, 0, 0, 'TTC', 0, $type, $seller, $localtaxes_type);
 
 			$this->line->value_unit = $up;
+			$this->line->vat_src_code = $vat_src_code;
 			$this->line->vatrate = price2num($vatrate);
 			$this->line->total_ttc = $tmp[2];
 			$this->line->total_ht = $tmp[0];
@@ -1928,9 +1934,9 @@ class ExpenseReport extends CommonObject
      * @param   int         $rowid                  Line to edit
      * @param   int         $type_fees_id           Type payment
      * @param   int         $projet_id              Project id
-     * @param   double      $vatrate                Vat rate. Can be '8.5* (8.5NPROM...)'
+     * @param   double      $vatrate                Vat rate. Can be '8.5' or '8.5* (8.5NPROM...)'
      * @param   string      $comments               Description
-     * @param   real        $qty                    Qty
+     * @param   float       $qty                    Qty
      * @param   double      $value_unit             Value init
      * @param   int         $date                   Date
      * @param   int         $expensereport_id       Expense report id
