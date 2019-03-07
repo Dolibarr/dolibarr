@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 if (! defined('NOREQUIRESOC'))    define('NOREQUIRESOC', '1');
 if (! defined('NOCSRFCHECK'))     define('NOCSRFCHECK', 1);
@@ -288,27 +288,27 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 		
 		<h2 id="helper">Use status helper function</h2>
 		<p>Using the dolGetStatus function provide in core/lib/functions.lib.php. This function is recommended for code uniformisation and easy maintain</p>
-		<?php 
+		<?php
 		$saveGlobalConf = $conf->global->MAIN_STATUS_USES_CSS;
 		$conf->global->MAIN_STATUS_USES_CSS = 1;
 		?>
 		<h4>Using hidden global conf MAIN_STATUS_USES_CSS=1</h4>
 		<p><?php print dolGetStatus('your label for accessibility', 'your label', 'your label <u>with</u> <em>html</em>', 'status4') ?></p>
-		<p><?php print dolGetStatus('your label for accessibility', 'your label', 'your label <u>with</u> <em>html</em>', 'status4',1) ?></p>
-		<p><?php print dolGetStatus('your label for accessibility', 'your label', 'your label <u>with</u> <em>html</em>', 'status4',2) ?></p>
-		<p><?php print dolGetStatus('your label for accessibility', 'your label', 'your label <u>with</u> <em>html</em>', 'status4',3) ?></p>
-		<p><?php print dolGetStatus('your label for accessibility', 'your label', 'your label <u>with</u> <em>html</em>', 'status4',4) ?></p>
-		<p><?php print dolGetStatus('your label for accessibility', 'your label', 'your label <u>with</u> <em>html</em>', 'status4',5) ?></p>
-		<p><?php print dolGetStatus('your label for accessibility', 'your label', 'your label <u>with</u> <em>html</em>', 'status4',6) ?></p>
+		<p><?php print dolGetStatus('your label for accessibility', 'your label', 'your label <u>with</u> <em>html</em>', 'status4', 1) ?></p>
+		<p><?php print dolGetStatus('your label for accessibility', 'your label', 'your label <u>with</u> <em>html</em>', 'status4', 2) ?></p>
+		<p><?php print dolGetStatus('your label for accessibility', 'your label', 'your label <u>with</u> <em>html</em>', 'status4', 3) ?></p>
+		<p><?php print dolGetStatus('your label for accessibility', 'your label', 'your label <u>with</u> <em>html</em>', 'status4', 4) ?></p>
+		<p><?php print dolGetStatus('your label for accessibility', 'your label', 'your label <u>with</u> <em>html</em>', 'status4', 5) ?></p>
+		<p><?php print dolGetStatus('your label for accessibility', 'your label', 'your label <u>with</u> <em>html</em>', 'status4', 6) ?></p>
 
 		<?php $conf->global->MAIN_STATUS_USES_CSS = 0; ?>
 		<h4>Disabled hidden global conf : MAIN_STATUS_USES_CSS=0</h4>
-		<p><?php print dolGetStatus('your label for accessibility', 'your label', 'your label <u>with</u> <em>html</em>', 'status4',1) ?></p>
-		<p><?php print dolGetStatus('your label for accessibility', 'your label', 'your label <u>with</u> <em>html</em>', 'status4',2) ?></p>
-		<p><?php print dolGetStatus('your label for accessibility', 'your label', 'your label <u>with</u> <em>html</em>', 'status4',3) ?></p>
-		<p><?php print dolGetStatus('your label for accessibility', 'your label', 'your label <u>with</u> <em>html</em>', 'status4',4) ?></p>
-		<p><?php print dolGetStatus('your label for accessibility', 'your label', 'your label <u>with</u> <em>html</em>', 'status4',5) ?></p>
-		<p><?php print dolGetStatus('your label for accessibility', 'your label', 'your label <u>with</u> <em>html</em>', 'status4',6) ?></p>
+		<p><?php print dolGetStatus('your label for accessibility', 'your label', 'your label <u>with</u> <em>html</em>', 'status4', 1) ?></p>
+		<p><?php print dolGetStatus('your label for accessibility', 'your label', 'your label <u>with</u> <em>html</em>', 'status4', 2) ?></p>
+		<p><?php print dolGetStatus('your label for accessibility', 'your label', 'your label <u>with</u> <em>html</em>', 'status4', 3) ?></p>
+		<p><?php print dolGetStatus('your label for accessibility', 'your label', 'your label <u>with</u> <em>html</em>', 'status4', 4) ?></p>
+		<p><?php print dolGetStatus('your label for accessibility', 'your label', 'your label <u>with</u> <em>html</em>', 'status4', 5) ?></p>
+		<p><?php print dolGetStatus('your label for accessibility', 'your label', 'your label <u>with</u> <em>html</em>', 'status4', 6) ?></p>
 
 		<?php $conf->global->MAIN_STATUS_USES_CSS = $saveGlobalConf; ?>
 		

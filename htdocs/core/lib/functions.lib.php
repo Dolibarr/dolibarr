@@ -7971,7 +7971,7 @@ function dolGetBadge($label, $html = '', $type = 'primary', $mode = '', $url = '
         $TCompiledAttr[] = $key.'="'.$value.'"';
     }
     
-    $compiledAttributes = !empty($TCompiledAttr)?implode(' ',$TCompiledAttr):'';
+    $compiledAttributes = !empty($TCompiledAttr)?implode(' ', $TCompiledAttr):'';
     
     $tag = !empty($url)?'a':'span';
 
@@ -8043,14 +8043,12 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
         else{ // $displayMode >= 6
             $return = $htmlLabel .' '. $htmlImg;
         }
-        
     }
     // Use new badge
     elseif(!empty($conf->global->MAIN_STATUS_USES_CSS) && !empty($displayMode)){
         
         $statusLabelShort = !empty($statusLabelShort)?$statusLabelShort:$statusLabel;
         
-   
         if($displayMode == 3){
             $return = dolGetBadge($statusLabel, '', $statusType, 'dot');
         }
@@ -8060,7 +8058,6 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
         else{
             $return = dolGetBadge($statusLabel, $html, $statusType);
         }
-        
     }
     
     return $return;
@@ -8128,7 +8125,7 @@ function dolGetButtonAction($label, $html = '', $actionType = 'default', $url = 
         $TCompiledAttr[] = $key.'="'.$value.'"';
     }
     
-    $compiledAttributes = !empty($TCompiledAttr)?implode(' ',$TCompiledAttr):'';
+    $compiledAttributes = !empty($TCompiledAttr)?implode(' ', $TCompiledAttr):'';
     
     $tag = !empty($attr['href'])?'a':'span';
     

@@ -2200,11 +2200,11 @@ function colorStringToArray($stringcolor, $colorifnotfound = array(88,88,88))
 }
 
 /**
- * @param string $color
- * @param boolean $allow_white
+ * @param string $color the color you need to valid
+ * @param boolean $allow_white in case of white isn't valid
  * @return boolean
  */
-function colorValidateHex($color, $allow_white = false)
+function colorValidateHex($color, $allow_white = true)
 {
     
     if(!$allow_white && ($color === '#fff' || $color === '#ffffff') ) return false;
@@ -2218,8 +2218,8 @@ function colorValidateHex($color, $allow_white = false)
 
 
 /**
- * @param string $hex
- * @param integer $steps
+ * @param string $hex color in hex
+ * @param integer $steps Steps should be between -255 and 255. Negative = darker, positive = lighter
  * @return string
  */
 function colorAdjustBrightness($hex, $steps)
@@ -2230,7 +2230,7 @@ function colorAdjustBrightness($hex, $steps)
     // Normalize into a six character long hex string
     $hex = str_replace('#', '', $hex);
     if (strlen($hex) == 3) {
-        $hex = str_repeat(substr($hex,0,1), 2).str_repeat(substr($hex,1,1), 2).str_repeat(substr($hex,2,1), 2);
+        $hex = str_repeat(substr($hex, 0, 1), 2).str_repeat(substr($hex, 1, 1), 2).str_repeat(substr($hex, 2, 1), 2);
     }
     
     // Split into three parts: R, G and B
@@ -2239,7 +2239,7 @@ function colorAdjustBrightness($hex, $steps)
     
     foreach ($color_parts as $color) {
         $color   = hexdec($color); // Convert to decimal
-        $color   = max(0,min(255,$color + $steps)); // Adjust color
+        $color   = max(0, min(255, $color + $steps)); // Adjust color
         $return .= str_pad(dechex($color), 2, '0', STR_PAD_LEFT); // Make two char hex code
     }
     
@@ -2247,7 +2247,7 @@ function colorAdjustBrightness($hex, $steps)
 }
 
 /**
- * @param string $hex
+ * @param string $hex color in hex
  * @param integer $percent 0 to 100
  * @return string
  */
@@ -2258,7 +2258,7 @@ function colorDarker($hex, $percent)
 }
 
 /**
- * @param string $hex
+ * @param string $hex color in hex
  * @param integer $percent 0 to 100
  * @return string
  */
@@ -2270,9 +2270,9 @@ function colorLighten($hex, $percent)
 
 
 /**
- * @param string $hex
+ * @param string $hex color in hex
  * @param float $alpha 0 to 1
- * @param bool $returnArray :
+ * @param bool $returnArray
  * @return string
  */
 function colorHexToRgb($hex, $alpha = false, $returnArray = false)
@@ -2286,10 +2286,10 @@ function colorHexToRgb($hex, $alpha = false, $returnArray = false)
     $rgb['b'] = hexdec($length == 6 ? substr($hex, 4, 2) : ($length == 3 ? str_repeat(substr($hex, 2, 1), 2) : 0));
     if ( $alpha !== false ) {
         $rgb['a'] = floatval($alpha);
-        $string = 'rgba('.implode(',', $rgb ).')';
+        $string = 'rgba('.implode(',', $rgb).')';
     }
     else{
-        $string = 'rgb('.implode(',', $rgb ).')';
+        $string = 'rgb('.implode(',', $rgb).')';
     }
     
     if($returnArray){
