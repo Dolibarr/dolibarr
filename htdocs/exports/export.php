@@ -759,6 +759,7 @@ if ($step == 3 && $datatoexport)
 
 	// un formulaire en plus pour recuperer les filtres
 	print '<form action="'.$_SERVER["PHP_SELF"].'?step=4&action=submitFormField&datatoexport='.$datatoexport.'" name="FilterField" method="post">';
+    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans("Entities").'</td>';
