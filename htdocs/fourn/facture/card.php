@@ -949,7 +949,8 @@ if (empty($reshook))
 									$lines[$i]->fk_unit,
 									$lines[$i]->id,
 									0,
-									$lines[$i]->ref_supplier
+									$lines[$i]->ref_supplier,
+									$lines[$i]->special_code
 								);
 
 								if ($result < 0)
