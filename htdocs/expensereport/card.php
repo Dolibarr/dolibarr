@@ -2076,8 +2076,22 @@ else
 							print '</td>';
 							print '<td style="text-align:left;">'.dol_escape_htmltag($line->comments).'</td>';
 							print '<td style="text-align:right;">'.vatrate($line->vatrate, true).'</td>';
-							print '<td style="text-align:right;">'.price($line->value_unit_ht).'</td>';
+                            // Unit price HT
+							print '<td style="text-align:right;">';
+							if (! empty($line->value_unit_ht))
+							{
+							    print price($line->value_unit_ht);
+							}
+							else
+							{
+							    $tmpvat = price2num(preg_replace('/\s*\(.*\)/', '', $line->vatrate));
+							    $pricenettoshow = price2num($line->value_unit / (1 + $tmpvat / 100), 'MU');
+							    print $pricenettoshow;
+							}
+							print '</td>';
+
 							print '<td style="text-align:right;">'.price($line->value_unit).'</td>';
+
 							print '<td style="text-align:right;">'.dol_escape_htmltag($line->qty).'</td>';
 
 							if ($action != 'editline')
@@ -2148,12 +2162,12 @@ else
 
 								// Unit price
 								print '<td style="text-align:right;">';
-								print '<input type="text" min="0" class="maxwidth100" id="value_unit_ht" name="value_unit_ht" value="'.dol_escape_htmltag($line->value_unit_ht).'" />';
+								print '<input type="text" min="0" class="right maxwidth50" id="value_unit_ht" name="value_unit_ht" value="'.dol_escape_htmltag(price2num($line->value_unit_ht)).'" />';
 								print '</td>';
 
 								// Unit price with tax
 								print '<td style="text-align:right;">';
-								print '<input type="text" min="0" class="maxwidth100" id="value_unit" name="value_unit" value="'.dol_escape_htmltag($line->value_unit).'" />';
+								print '<input type="text" min="0" class="right maxwidth50" id="value_unit" name="value_unit" value="'.dol_escape_htmltag(price2num($line->value_unit)).'" />';
 								print '</td>';
 
 								// Quantity
