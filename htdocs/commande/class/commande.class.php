@@ -3460,6 +3460,12 @@ class Commande extends CommonOrder
 		    $labelstatutShort = $langs->trans('StatusOrderDelivered');
 		    $statuttrans='status6';
 		}
+		else{
+		    $labelstatut = $langs->trans('Unknown');
+		    $labelstatutShort = '';
+		    $statuttrans='';
+		    $mode = 0;
+		}
 		
 		return dolGetStatus($labelstatut, $labelstatutShort, '', $statuttrans, $mode);
 	}
