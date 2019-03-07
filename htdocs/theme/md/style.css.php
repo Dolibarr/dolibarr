@@ -1246,9 +1246,6 @@ div.login_block {
 	z-index: 90;
 }
 
-body.sidebar-collapse .side-nav {
-	display: none;
-}
 
 
 div.backgroundsemitransparent {
@@ -5721,6 +5718,27 @@ border-top-right-radius: 6px;
 }
 
 
+/*
+*	Slide animation
+*/
+
+
+.side-nav-vert, #id-right {
+	transition: padding-left 0.5s ease, margin-left 0.5s ease;
+}
+
+.side-nav, .login_block {
+	transition: left 0.5s ease;
+}
+
+
+body.sidebar-collapse .side-nav, body.sidebar-collapse .login_block {
+	left: -228px;
+}
+
+body.sidebar-collapse .side-nav-vert, body.sidebar-collapse #id-right {
+	margin-left: 0;padding-left:0
+}
 
 <?php
 if (is_object($db)) $db->close();
