@@ -109,4 +109,4 @@ UserLogoff=User logout
 UserLogged=User logged
 DateEmployment=Employment Start Date
 DateEmploymentEnd=Employment End Date
-CantDisableYourself=You can disable your own user record
+CantDisableYourself=You can't disable your own user record

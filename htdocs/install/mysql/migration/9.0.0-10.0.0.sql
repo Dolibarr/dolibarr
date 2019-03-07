@@ -58,6 +58,8 @@ CREATE TABLE llx_pos_cash_fence(
 
 -- For 10.0
 
+DROP TABLE llx_cotisation;
+
 ALTER TABLE llx_loan ADD COLUMN insurance_amount double(24,8) DEFAULT 0;
 
 ALTER TABLE llx_facture DROP INDEX idx_facture_uk_facnumber;
