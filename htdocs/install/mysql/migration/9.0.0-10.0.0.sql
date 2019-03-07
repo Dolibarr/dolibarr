@@ -237,3 +237,6 @@ ALTER TABLE llx_facturedet_rec ADD COLUMN fk_product_fournisseur_price integer D
 ALTER TABLE llx_facturedet_rec ADD COLUMN fk_user_author integer;
 ALTER TABLE llx_facturedet_rec ADD COLUMN fk_user_modif integer;
 
+ALTER TABLE llx_expensereport_det MODIFY COLUMN value_unit double(24,8) NOT NULL;
+ALTER TABLE llx_expensereport_det ADD COLUMN subprice double(24,8) NOT NULL after qty;
+
