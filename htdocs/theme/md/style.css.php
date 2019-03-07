@@ -1246,6 +1246,11 @@ div.login_block {
 	z-index: 90;
 }
 
+body.sidebar-collapse .side-nav {
+	display: none;
+}
+
+
 div.backgroundsemitransparent {
 	background:rgba(255,255,255,0.6);
 	padding-left: 10px;

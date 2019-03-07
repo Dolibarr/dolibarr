@@ -1221,6 +1221,11 @@ td.showDragHandle {
 	box-shadow: 3px 0 6px -2px #eee;
 	background: rgb(<?php echo $colorbackvmenu1; ?>);
 }
+
+body.sidebar-collapse .side-nav {
+	display: none;
+}
+
 div.blockvmenulogo
 {
 	border-bottom: 0 !important;
