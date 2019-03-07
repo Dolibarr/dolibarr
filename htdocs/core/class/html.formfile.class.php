@@ -682,6 +682,7 @@ class FormFile
 			// Model
 			if (! empty($modellist))
 			{
+				asort($modellist);
 				$out.= '<span class="hideonsmartphone">'.$langs->trans('Model').' </span>';
 				if (is_array($modellist) && count($modellist) == 1)    // If there is only one element
 				{
