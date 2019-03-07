@@ -22,7 +22,7 @@ if (! defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
     box-sizing: border-box;
 }
 
-.badge-pill {
+.badge-pill, .tabs .badge {
     padding-right: .6em;
     padding-left: .6em;
     border-radius: 10rem;
@@ -58,7 +58,7 @@ a.badge-primary:focus, a.badge-primary:hover {
 }
 
 /* SECONDARY */
-.badge-secondary {
+.badge-secondary, .tabs .badge {
     color: #fff !important;
     background-color: <?php print $badgeSecondary; ?>;
 }

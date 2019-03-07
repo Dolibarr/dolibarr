@@ -497,7 +497,7 @@ print '</table>';
 print '</form>';
 print '<br>';
 
-if (GETPOST('info','int') > 0)
+if (GETPOST('info', 'int') > 0)
 {
     if (function_exists('password_hash'))
     {
