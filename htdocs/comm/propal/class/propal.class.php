@@ -3193,15 +3193,15 @@ class Propal extends CommonObject
 			$this->labelstatut_short[4]=$langs->trans("PropalStatusBilledShort");
 		}
 
-		$statuttrans='';
-		if ($statut==self::STATUS_DRAFT) $statuttrans='status0';
-		elseif ($statut==self::STATUS_VALIDATED) $statuttrans='status1';
-		elseif ($statut==self::STATUS_SIGNED) $statuttrans='status3';
-		elseif ($statut==self::STATUS_NOTSIGNED) $statuttrans='status5';
-		elseif ($statut==self::STATUS_BILLED) $statuttrans='status6';
+		$statusType='';
+		if ($statut==self::STATUS_DRAFT) $statusType='status0';
+		elseif ($statut==self::STATUS_VALIDATED) $statusType='status1';
+		elseif ($statut==self::STATUS_SIGNED) $statusType='status3';
+		elseif ($statut==self::STATUS_NOTSIGNED) $statusType='status5';
+		elseif ($statut==self::STATUS_BILLED) $statusType='status6';
 
 		
-		return dolGetStatus($this->labelstatut[$statut], $this->labelstatut_short[$statut], '', $statuttrans, $mode);
+		return dolGetStatus($this->labelstatut[$statut], $this->labelstatut_short[$statut], '', $statusType, $mode);
 		
 		
 	}
