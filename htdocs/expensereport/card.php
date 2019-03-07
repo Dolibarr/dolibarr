@@ -36,6 +36,7 @@ require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT . '/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/expensereport.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/price.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/modules/expensereport/modules_expensereport.php';
 require_once DOL_DOCUMENT_ROOT . '/expensereport/class/expensereport.class.php';
 require_once DOL_DOCUMENT_ROOT . '/expensereport/class/paymentexpensereport.class.php';
@@ -106,6 +107,8 @@ $permissiondellink = $user->rights->expensereport->creer; 	// Used by the includ
 $permissionedit = $user->rights->expensereport->creer; 		// Used by the include of actions_lineupdown.inc.php
 
 
+$upload_dir = $conf->expensereport->dir_output.'/'.dol_sanitizeFileName($object->ref);
+
 
 
 /*
@@ -138,6 +141,10 @@ if (empty($reshook))
     	$qty=1;
     	$fk_c_type_fees=-1;
 	}
+
+	include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
+
+	if (GETPOST('sendit', 'alpha')) $action='';
 
     include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; 	// Must be include, not include_once
 
@@ -216,7 +223,7 @@ if (empty($reshook))
     	    if ($ret < 0) $error++;
     	}
 
-    	if (empty($conf->global->EXPENSEREPORT_ALLOW_OVERLAPPING_PERIODS) && $object->periode_existe($fuser, $object->date_debut, $object->date_fin))
+    	if (! $error && empty($conf->global->EXPENSEREPORT_ALLOW_OVERLAPPING_PERIODS) && $object->periode_existe($fuser, $object->date_debut, $object->date_fin))
     	{
     		$error++;
     		setEventMessages($langs->trans("ErrorDoubleDeclaration"), null, 'errors');
@@ -672,10 +679,6 @@ if (empty($reshook))
    			$action='';
    		}
    	}
-   	else
-   	{
-   		setEventMessages($object->error, $object->errors, 'errors');
-   	}
 
     if ($action == "confirm_refuse" && GETPOST('confirm', 'alpha')=="yes" && $id > 0 && $user->rights->expensereport->approve)
     {
@@ -794,10 +797,6 @@ if (empty($reshook))
     	    setEventMessages($langs->trans("FailedtoSetToDeny"), null, 'warnings');
     	    $action='';
     	}
-    }
-    else
-    {
-    	setEventMessages($object->error, $object->errors, 'errors');
     }
 
     //var_dump($user->id == $object->fk_user_validator);exit;
@@ -1085,14 +1084,16 @@ if (empty($reshook))
     		$action='';
     	}
     }
-    else
-    {
-    	setEventMessages($object->error, $object->errors, 'errors');
-    }
 
     if ($action == "addline" && $user->rights->expensereport->creer)
     {
     	$error = 0;
+
+    	// First save uploaded file
+    	if (! empty($_FILES))
+    	{
+
+    	}
 
 		// if VAT is not used in Dolibarr, set VAT rate to 0 because VAT rate is necessary.
     	if (empty($vatrate)) $vatrate = "0.000";
@@ -1150,7 +1151,8 @@ if (empty($reshook))
 
 			// Insert line
 			$result = $object->addline($qty, $value_unit, $fk_c_type_fees, $vatrate, $date, $comments, $fk_projet, $fk_c_exp_tax_cat, $type);
-			if ($result > 0) {
+			if ($result > 0)
+			{
 				$ret = $object->fetch($object->id); // Reload to get new records
 
 				if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
@@ -1998,7 +2000,7 @@ else
 				$actiontouse='updateline';
 				if (($object->fk_statut==0 || $object->fk_statut==99) && $action != 'editline') $actiontouse='addline';
 
-				print '<form name="expensereport" action="'.$_SERVER["PHP_SELF"].'" method="post">';
+				print '<form name="expensereport" action="'.$_SERVER["PHP_SELF"].'" enctype="multipart/form-data" method="post" >';
 				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 				print '<input type="hidden" name="action" value="'.$actiontouse.'">';
 				print '<input type="hidden" name="id" value="'.$object->id.'">';
@@ -2193,8 +2195,62 @@ else
 				}
 
 				// Add a line
-				if (($object->fk_statut==0 || $object->fk_statut==99) && $action != 'editline' && $user->rights->expensereport->creer)
+				if (($object->fk_statut == ExpenseReport::STATUS_DRAFT || $object->fk_statut == ExpenseReport::STATUS_REFUSED) && $action != 'editline' && $user->rights->expensereport->creer)
 				{
+				    $colspan = 10;
+				    if (! empty($conf->global->MAIN_USE_EXPENSE_IK)) $colspan++;
+				    if (! empty($conf->projet->enabled)) $colspan++;
+				    if ($action != 'editline') $colspan++;
+
+				    print '<tr class="liste_titre">';
+				    print '<td colspan="'.$colspan.'" class="liste_titre">';
+				    print $langs->trans("UploadANewFileNow");
+				    print '</td></tr>';
+
+				    print '<tr class="oddeven">';
+				    print '<td colspan="'.$colspan.'">';
+
+				    $modulepart = 'expensereport';
+				    $permission = $user->rights->expensereport->creer;
+
+				    $formfile=new FormFile($db);
+
+				    // We define var to enable the feature to add prefix of uploaded files
+				    $savingdocmask='';
+				    if (empty($conf->global->MAIN_DISABLE_SUGGEST_REF_AS_PREFIX))
+				    {
+				        //var_dump($modulepart);
+				        if (in_array($modulepart, array('facture_fournisseur','commande_fournisseur','facture','commande','propal','supplier_proposal','ficheinter','contract','expedition','project','project_task','expensereport','tax', 'produit', 'product_batch')))
+				        {
+				            $savingdocmask=dol_sanitizeFileName($object->ref).'-__file__';
+				        }
+				        /*if (in_array($modulepart,array('member')))
+				         {
+				         $savingdocmask=$object->login.'___file__';
+				         }*/
+				    }
+
+				    // Show upload form (document and links)
+				    $formfile->form_attach_new_file(
+				        $_SERVER["PHP_SELF"].'?id='.$object->id,
+				        'none',
+				        0,
+				        0,
+				        $permission,
+				        $conf->browser->layout == 'phone' ? 40 : 60,
+				        $object,
+				        '',
+				        1,
+				        $savingdocmask,
+				        0,
+				        'formuserfile',
+				        'accept',
+				        '',
+				        1
+				        );
+
+				    print '</td></tr>';
+
 					print '<tr class="liste_titre">';
 					print '<td></td>';
 					print '<td align="center">'.$langs->trans('Date').'</td>';
@@ -2211,6 +2267,7 @@ else
 
 					print '<tr class="oddeven">';
 
+					// Line number
 					print '<td></td>';
 
 					// Select date
@@ -2226,7 +2283,7 @@ else
 						print '</td>';
 					}
 
-					if (!empty($conf->global->MAIN_USE_EXPENSE_IK))
+					if (! empty($conf->global->MAIN_USE_EXPENSE_IK))
 					{
 						print '<td class="fk_c_exp_tax_cat">';
 						$params = array('fk_expense' => $object->id);
@@ -2241,7 +2298,7 @@ else
 
 					// Add comments
 					print '<td>';
-					print '<textarea class="flat_ndf centpercent" name="comments">'.dol_escape_htmltag($comments).'</textarea>';
+					print '<textarea class="flat_ndf centpercent" name="comments" rows="'.ROWS_2.'">'.dol_escape_htmltag($comments).'</textarea>';
 					print '</td>';
 
 					// Select VAT
@@ -2275,6 +2332,16 @@ else
 					print '<td align="center"><input type="submit" value="'.$langs->trans("Add").'" name="bouton" class="button"></td>';
 
 					print '</tr>';
+
+					if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
+					{
+    					print '<tr class="oddeven"><td colspan="'.$colspan.'">';
+    					print $langs->trans("AttachTheNewLineToTheDocument");
+
+    					print '...';
+
+    					print '</td></tr>';
+					}
 				} // Fin si c'est payé/validé
 
 				print '</table>';

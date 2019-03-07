@@ -165,7 +165,7 @@ class ExpenseReport extends CommonObject
      */
     public function create($user, $notrigger = 0)
     {
-        global $conf;
+        global $conf, $langs;
 
         $now = dol_now();
 
@@ -174,7 +174,7 @@ class ExpenseReport extends CommonObject
         // Check parameters
         if (empty($this->date_debut) || empty($this->date_fin))
         {
-            $this->error='ErrorFieldRequired';
+            $this->error=$langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Date'));
             return -1;
         }
 
