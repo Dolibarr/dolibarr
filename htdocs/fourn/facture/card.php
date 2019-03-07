@@ -925,7 +925,10 @@ if (empty($reshook))
 									0,
 									$lines[$i]->array_options,
 									$lines[$i]->fk_unit,
-									$lines[$i]->id
+									$lines[$i]->id,
+									0,
+									'',
+									$lines[$i]->special_code
 								);
 
 								if ($result < 0)
