@@ -29,9 +29,9 @@
  */
 abstract class Stats
 {
-	protected $db;
-	var $_lastfetchdate=array();	// Dates of cache file read by methods
-	var $cachefilesuffix='';		// Suffix to add to name of cache file (to avoid file name conflicts)
+    protected $db;
+    private $_lastfetchdate=array();	// Dates of cache file read by methods
+    public $cachefilesuffix='';		// Suffix to add to name of cache file (to avoid file name conflicts)
 
 	/**
 	 * Return nb of elements by month for several years
