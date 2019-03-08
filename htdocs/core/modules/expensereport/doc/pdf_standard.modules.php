@@ -32,7 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-
+require_once DOL_DOCUMENT_ROOT.'/user/class/userbankaccount.class.php';
 
 
 /**
@@ -748,7 +748,7 @@ class pdf_standard extends ModeleExpenseReport
 
 			// Show recipient
 			$posy=50;
-			$posx=100;
+			$posx=10;
 
 			// Show recipient frame
 			$pdf->SetTextColor(0, 0, 0);
@@ -761,12 +761,17 @@ class pdf_standard extends ModeleExpenseReport
 			if ($object->fk_user_author > 0) {
 				$userfee=new User($this->db);
 				$userfee->fetch($object->fk_user_author); $posy+=3;
+				$account=new UserBankAccount($this->db);
+				$account->fetch($object->fk_user_author);
 				$pdf->SetXY($posx+2, $posy);
 				$pdf->SetFont('', '', 10);
 				$pdf->MultiCell(96, 4, $outputlangs->transnoentities("AUTHOR")." : ".dolGetFirstLastname($userfee->firstname, $userfee->lastname), 0, 'L');
 				$posy+=5;
 				$pdf->SetXY($posx+2, $posy);
-				$pdf->MultiCell(96, 4, $outputlangs->transnoentities("DateCreation")." : ".dol_print_date($object->date_create, "day", false, $outputlangs), 0, 'L');
+				$pdf->MultiCell(96, 4, $outputlangs->transnoentities("IBAN")." : ".$outputlangs->convToOutputCharset($account->iban), 0, 'L');
+				$posy+=5;
+				$pdf->SetXY($posx+2, $posy);
+				$pdf->MultiCell(96, 4, $outputlangs->transnoentities("DateCreation")." : ".dol_print_date($object->date_create, "day", false, $outputlangs), 0, 'L');				
 			}
 
 			if ($object->fk_statut==99) {
