@@ -528,9 +528,12 @@ class Ticket extends CommonObject
                 $this->severity_label = $label_severity;
 
                 $this->datec = $this->db->jdate($obj->datec);
+                $this->date_creation = $this->db->jdate($obj->datec);
                 $this->date_read = $this->db->jdate($obj->date_read);
+                $this->date_validation = $this->db->jdate($obj->date_read);
                 $this->date_close = $this->db->jdate($obj->date_close);
                 $this->tms = $this->db->jdate($obj->tms);
+                $this->date_modification = $this->db->jdate($obj->tms);
 
                 $this->fetch_optionals();
 
@@ -1396,19 +1399,22 @@ class Ticket extends CommonObject
     {
         global $conf, $langs;
 
-        if ($this->statut != 9) { // no closed
+        if ($this->statut != self::STATUS_CANCELED) { // no closed
             $this->db->begin();
 
             $sql = "UPDATE " . MAIN_DB_PREFIX . "ticket";
             $sql .= " SET fk_statut = 1, date_read='" . $this->db->idate(dol_now()) . "'";
             $sql .= " WHERE rowid = " . $this->id;
 
-            dol_syslog(get_class($this) . "::markAsRead sql=" . $sql);
+            dol_syslog(get_class($this) . "::markAsRead");
             $resql = $this->db->query($sql);
             if ($resql) {
+                $this->actionmsg = $langs->trans('TicketLogMesgReadBy', $this->ref, $user->getFullName($langs));
+                $this->actionmsg2 = $langs->trans('TicketLogMesgReadBy', $this->ref, $user->getFullName($langs));
+
                 if (!$error && !$notrigger) {
                     // Call trigger
-                    $result=$this->call_trigger('TICKET_MARK_READ', $user);
+                    $result=$this->call_trigger('TICKET_MODIFY', $user);
                     if ($result < 0) {
                         $error++;
                     }
@@ -1490,52 +1496,6 @@ class Ticket extends CommonObject
         }
     }
 
-    /**
-     *   Create log for the ticket
-     *         1- create entry into database for message storage
-     *         2- if trigger, send an email to ticket contacts
-     *
-     *   @param  User   $user    	User that create
-     *   @param  string $message 	Log message
-     *   @param  int    $noemail 	0=send email after, 1=disable emails
-     *   @return int             	<0 if KO, >0 if OK
-     */
-    public function createTicketLog(User $user, $message, $noemail = 0)
-    {
-        global $conf, $langs;
-
-        $error = 0;
-
-        $this->db->begin();
-
-        // Clean parameters
-        $this->message = trim($this->message);
-
-        // Check parameters
-        if (!$message) {
-            $this->error = 'ErrorBadValueForParameter';
-            return -1;
-        }
-
-        // TODO Should call the trigger TICKET_MODIFY with $this->context with all data to record event
-        // so the event is stored by the agenda/event trigger
-
-        if (!$error) {
-            $this->db->commit();
-
-            if ($conf->global->TICKET_ACTIVATE_LOG_BY_EMAIL && !$noemail) {
-                $this->sendLogByEmail($user, $message);
-            }
-
-            return 1;
-        }
-        else
-        {
-            $this->db->rollback();
-
-            return -1;
-        }
-    }
 
     /**
      *  Send notification of changes by email

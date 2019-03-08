@@ -24,6 +24,8 @@
 
 require_once DOL_DOCUMENT_ROOT .'/core/modules/export/modules_export.php';
 
+// avoid timeout for big export
+set_time_limit(0);
 
 /**
  *	Class to build export files with format CSV

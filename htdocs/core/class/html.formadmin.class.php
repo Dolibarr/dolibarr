@@ -62,7 +62,9 @@ class FormAdmin
     public function select_language($selected = '', $htmlname = 'lang_id', $showauto = 0, $filter = null, $showempty = '', $showwarning = 0, $disabled = 0, $morecss = '', $showcode = 0, $forcecombo = 0)
 	{
 		// phpcs:enable
-		global $langs;
+		global $conf, $langs;
+
+		if (!empty($conf->global->MAIN_DEFAULT_LANGUAGE_FILTER)) $filter[$conf->global->MAIN_DEFAULT_LANGUAGE_FILTER] = 1;
 
 		$langs_available=$langs->get_available_languages(DOL_DOCUMENT_ROOT, 12);
 

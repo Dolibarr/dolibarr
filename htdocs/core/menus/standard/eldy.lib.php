@@ -5,7 +5,7 @@
  * Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2018      Ferran Marcet        <fmarcet@2byte.es>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2019  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -65,265 +65,403 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
     	$menu->add('#', '', 0, $showmode, $atarget, "xxx", '', 0, $id, $idsel, $classname);
 	}
 
+    $menu_arr = array();
 	// Home
-	$showmode=1;
-	$classname="";
-	if ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "home") { $classname='class="tmenusel"'; $_SESSION['idmenu']=''; }
-	else $classname = 'class="tmenu"';
-	$idsel='home';
-
-	$titlehome = $langs->trans("Home");
-	if (! empty($conf->global->THEME_TOPMENU_DISABLE_IMAGE)) $titlehome = '&nbsp; <span class="fa fa-home"></span> &nbsp;';
-	$menu->add('/index.php?mainmenu=home&amp;leftmenu=home', $titlehome, 0, $showmode, $atarget, "home", '', 10, $id, $idsel, $classname);
+	$menu_arr[] = array(
+		'name' => 'Home',
+		'link' => '/index.php?mainmenu=home&amp;leftmenu=home',
+		'title' => (! empty($conf->global->THEME_TOPMENU_DISABLE_IMAGE)? '&nbsp; <span class="fa fa-home"></span> &nbsp;' : "Home") ,
+		'level' => 0,
+		'enabled' => $showmode = 1,
+		'target' => $atarget,
+		'mainmenu' => "home",
+		'leftmenu' => '',
+		'position' => 10,
+		'id' => $id,
+		'idsel' => 'home',
+		'classname' =>  $classname = ( $_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "home" ) ? 'class="tmenusel"' : 'class="tmenu"',
+		'prefix' => '',
+		'session' => ( ( $_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "home" ) ? 0 : 1 ),
+		'loadLangs' => array(),
+		'submenus' => array(),
+	);
 
 	// Members
-	$tmpentry = array(
-        'enabled'=>(! empty($conf->adherent->enabled)),
-        'perms'=>(! empty($user->rights->adherent->lire)),
-        'module'=>'adherent',
-    );
-	$showmode=isVisibleToUserType($type_user, $tmpentry, $listofmodulesforexternal);
-	if ($showmode)
-	{
-		$classname="";
-		if ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "members") { $classname='class="tmenusel"'; $_SESSION['idmenu']=''; }
-		else $classname = 'class="tmenu"';
-		$idsel='members';
-
-		$menu->add('/adherents/index.php?mainmenu=members&amp;leftmenu=', $langs->trans("MenuMembers"), 0, $showmode, $atarget, "members", '', 18, $id, $idsel, $classname);
-	}
+	$menu_arr[] = array(
+		'name' => 'Members',
+		'link' => '/adherents/index.php?mainmenu=members&amp;leftmenu=',
+		'title' => "MenuMembers",
+		'level' => 0,
+		'enabled' => $showmode = isVisibleToUserType(
+							$type_user,
+							$tmpentry = array(
+								'enabled' => (! empty($conf->adherent->enabled) ) ,
+								'perms' => (! empty($user->rights->adherent->lire) ),
+								'module' => 'adherent',
+							),
+							$listofmodulesforexternal
+						),
+		'target' => $atarget,
+		'mainmenu' => "members",
+		'leftmenu' => '',
+		'position' => 18,
+		'id' => $id,
+		'idsel' => 'members',
+		'classname' =>  $classname = ( $_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "members" ) ? 'class="tmenusel"' : 'class="tmenu"',
+		'prefix' => '',
+		'session' => ( ( $_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "members" ) ? 0 : 1 ),
+		'loadLangs' => array(),
+		'submenus' => array(),
+	);
 
 	// Third parties
-	$tmpentry = array(
-        'enabled'=>(( ! empty($conf->societe->enabled) && (empty($conf->global->SOCIETE_DISABLE_PROSPECTS) || empty($conf->global->SOCIETE_DISABLE_CUSTOMERS))) || ! empty($conf->fournisseur->enabled)),
-        'perms'=>(! empty($user->rights->societe->lire) || ! empty($user->rights->fournisseur->lire)),
-        'module'=>'societe|fournisseur',
-    );
-	$showmode=isVisibleToUserType($type_user, $tmpentry, $listofmodulesforexternal);
-	if ($showmode)
-	{
-	    // Load translation files required by the page
-        $langs->loadLangs(array("companies","suppliers"));
-
-		$classname="";
-		if ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "companies") { $classname='class="tmenusel"'; $_SESSION['idmenu']=''; }
-		else $classname = 'class="tmenu"';
-		$idsel='companies';
-
-		$menu->add('/societe/index.php?mainmenu=companies&amp;leftmenu=', $langs->trans("ThirdParties"), 0, $showmode, $atarget, "companies", '', 20, $id, $idsel, $classname);
-	}
+	$menu_arr[] = array(
+		'name' => 'Companies',
+		'link' => '/societe/index.php?mainmenu=companies&amp;leftmenu=',
+		'title' => "ThirdParties",
+		'level' => 0,
+		'enabled' => $showmode = isVisibleToUserType(
+							$type_user,
+							$tmpentry = array(
+								'enabled'=> (	( ! empty($conf->societe->enabled) &&
+													( empty($conf->global->SOCIETE_DISABLE_PROSPECTS) || empty($conf->global->SOCIETE_DISABLE_CUSTOMERS) )
+												)
+												|| ! empty($conf->fournisseur->enabled)
+											),
+								'perms'=> (! empty($user->rights->societe->lire) || ! empty($user->rights->fournisseur->lire)),
+								'module'=>'societe|fournisseur',
+							),
+							$listofmodulesforexternal
+						),
+		'target' => $atarget,
+		'mainmenu' => "companies",
+		'leftmenu' => '',
+		'position' => 20,
+		'id' => $id,
+		'idsel' => 'companies',
+		'classname' =>  $classname = ( $_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "companies" ) ? 'class="tmenusel"' : 'class="tmenu"',
+		'prefix' => '',
+		'session' => ( ( $_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "companies" ) ? 0 : 1 ),
+		'loadLangs' => array("companies","suppliers"),
+		'submenus' => array(),
+	);
 
 	// Products-Services
-	$tmpentry = array(
-        'enabled'=>(! empty($conf->product->enabled) || ! empty($conf->service->enabled)),
-        'perms'=>(! empty($user->rights->produit->lire) || ! empty($user->rights->service->lire)),
-        'module'=>'product|service',
-    );
-	$showmode=isVisibleToUserType($type_user, $tmpentry, $listofmodulesforexternal);
-	if ($showmode)
-	{
-		$langs->load("products");
-
-		$classname="";
-		if ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "products") { $classname='class="tmenusel"'; $_SESSION['idmenu']=''; }
-		else $classname = 'class="tmenu"';
-		$idsel='products';
-
-		$chaine="";
-		if (! empty($conf->product->enabled)) {
-			$chaine.=$langs->trans("TMenuProducts");
-		}
-		if (! empty($conf->product->enabled) && ! empty($conf->service->enabled)) {
-			$chaine.=" | ";
-		}
-		if (! empty($conf->service->enabled)) {
-			$chaine.=$langs->trans("TMenuServices");
-		}
-
-		$menu->add('/product/index.php?mainmenu=products&amp;leftmenu=', $chaine, 0, $showmode, $atarget, "products", '', 30, $id, $idsel, $classname);
-	}
+	$menu_arr[] = array(
+		'name' => 'Products',
+		'link' => '/product/index.php?mainmenu=products&amp;leftmenu=',
+		'title' => (! empty($conf->product->enabled) && ! empty($conf->service->enabled))
+					? ( array("TMenuProducts" , " | " ,"TMenuServices") )
+					: (! empty($conf->product->enabled)? "TMenuProducts" : "TMenuServices" ),
+		'level' => 0,
+		'enabled' => $showmode = isVisibleToUserType(
+							$type_user,
+							$tmpentry = array(
+								'enabled'=> (( ! empty($conf->societe->enabled) &&
+													( empty($conf->global->SOCIETE_DISABLE_PROSPECTS) || empty($conf->global->SOCIETE_DISABLE_CUSTOMERS) )
+												)
+												|| ! empty($conf->fournisseur->enabled)
+											),
+								'perms'=> (! empty($user->rights->societe->lire) || ! empty($user->rights->fournisseur->lire)),
+								'module'=>'product|service',
+							),
+							$listofmodulesforexternal
+						),
+		'target' => $atarget,
+		'mainmenu' => "products",
+		'leftmenu' => '',
+		'position' => 30,
+		'id' => $id,
+		'idsel' => 'products',
+		'classname' =>  $classname = ( $_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "products" ) ? 'class="tmenusel"' : 'class="tmenu"',
+		'prefix' => '',
+		'session' => ( ( $_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "products" ) ? 0 : 1 ),
+		'loadLangs' => array("products"),
+		'submenus' => array(),
+	);
 
 	// MRP
-	$tmpentry = array(
-	    'enabled'=>(! empty($conf->bom->enabled) || ! empty($conf->mrp->enabled)),
-	    'perms'=>(! empty($user->rights->bom->read) || ! empty($user->rights->mrp->read)),
-	    'module'=>'bom|mrp',
+	$menu_arr[] = array(
+	    'name' => 'TMenuMRP',
+	    'link' => '/bom/bom_list.php?mainmenu=mrp&amp;leftmenu=',
+	    'title' => $langs->trans("TMenuMRP"),
+	    'level' => 0,
+	    'enabled' => $showmode = isVisibleToUserType(
+    	        $type_user,
+    	        $tmpentry = array(
+    	            'enabled'=>(! empty($conf->bom->enabled) || ! empty($conf->mrp->enabled)),
+    	            'perms'=>(! empty($user->rights->bom->read) || ! empty($user->rights->mrp->read)),
+    	            'module'=>'bom|mrp',
+    	        ),
+    	        $listofmodulesforexternal
+	        ),
+	    'target' => $atarget,
+	    'mainmenu' => "mrp",
+	    'leftmenu' => '',
+	    'position' => 30,
+	    'id' => $id,
+	    'idsel' => 'mrp',
+	    'classname' =>  $classname = ( $_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "project" ) ? 'class="tmenusel"' : 'class="tmenu"',
+	    'prefix' => '',
+	    'session' => ( ( $_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "project" ) ? 0 : 1 ),
+	    'loadLangs' => array("projects"),
+	    'submenus' => array(),
 	);
-	$showmode=isVisibleToUserType($type_user, $tmpentry, $listofmodulesforexternal);
-	if ($showmode)
-	{
-	    $classname="";
-	    if ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "mrp") { $classname='class="tmenusel"'; $_SESSION['idmenu']=''; }
-	    else $classname = 'class="tmenu"';
-	    $idsel='products';
-
-	    $chaine=$langs->trans("TMenuMRP");
-
-	    $menu->add('/bom/bom_list.php?mainmenu=mrp&amp;leftmenu=', $chaine, 0, $showmode, $atarget, "bom", '', 30, $id, $idsel, $classname);
-	}
 
 	// Projects
-	$tmpentry=array('enabled'=>(! empty($conf->projet->enabled)),
-	'perms'=>(! empty($user->rights->projet->lire)),
-	'module'=>'projet');
-	$showmode=isVisibleToUserType($type_user, $tmpentry, $listofmodulesforexternal);
-	if ($showmode)
-	{
-		$langs->load("projects");
-
-		$classname="";
-		if ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "project") { $classname='class="tmenusel"'; $_SESSION['idmenu']=''; }
-		else $classname = 'class="tmenu"';
-		$idsel='project';
-
-		$title = $langs->trans("LeadsOrProjects");	// Leads and opportunities by default
-		$showmodel = $showmodep = $showmode;
-		if (empty($conf->global->PROJECT_USE_OPPORTUNITIES))
-		{
-			$title = $langs->trans("Projects");
-			$showmodel = 0;
-		}
-		if ($conf->global->PROJECT_USE_OPPORTUNITIES == 2) {
-			$title = $langs->trans("Leads");
-			$showmodep = 0;
-		}
-
-		$menu->add('/projet/index.php?mainmenu=project&amp;leftmenu=', $title, 0, $showmode, $atarget, "project", '', 35, $id, $idsel, $classname);
-		//$menu->add('/projet/index.php?mainmenu=project&amp;leftmenu=&search_opp_status=openedopp', $langs->trans("ListLeads"), 0, $showmodel & $conf->global->PROJECT_USE_OPPORTUNITIES, $atarget, "project", '', 70, $id, $idsel, $classname);
-		//$menu->add('/projet/index.php?mainmenu=project&amp;leftmenu=&search_opp_status=notopenedopp', $langs->trans("ListProjects"), 0, $showmodep, $atarget, "project", '', 70, $id, $idsel, $classname);
-	}
+	$menu_arr[] = array(
+		'name' => 'Projet',
+		'link' => '/projet/index.php?mainmenu=project&amp;leftmenu=',
+		'title' => (empty($conf->global->PROJECT_USE_OPPORTUNITIES) || $conf->global->PROJECT_USE_OPPORTUNITIES == 2 )
+					? (($conf->global->PROJECT_USE_OPPORTUNITIES == 2)?"Leads":"Projects")
+					: "LeadsOrProjects",
+		'level' => 0,
+		'enabled' => $showmode = isVisibleToUserType(
+							$type_user,
+							$tmpentry = array(
+								'enabled'=> ( ! empty($conf->projet->enabled) ? 1 : 0),
+								'perms'=> (! empty($user->rights->projet->lire) ? 1 : 0),
+								'module'=>'projet',
+							),
+							$listofmodulesforexternal
+						),
+		'target' => $atarget,
+		'mainmenu' => "project",
+		'leftmenu' => '',
+		'position' => 35,
+		'id' => $id,
+		'idsel' => 'project',
+		'classname' =>  $classname = ( $_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "project" ) ? 'class="tmenusel"' : 'class="tmenu"',
+		'prefix' => '',
+		'session' => ( ( $_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "project" ) ? 0 : 1 ),
+		'loadLangs' => array("projects"),
+		'submenus' => array(),
+	);
 
 	// Commercial
-	$menuqualified=0;
-	if (! empty($conf->propal->enabled)) $menuqualified++;
-	if (! empty($conf->commande->enabled)) $menuqualified++;
-	if (! empty($conf->supplier_order->enabled)) $menuqualified++;
-	if (! empty($conf->supplier_proposal->enabled)) $menuqualified++;
-	if (! empty($conf->contrat->enabled)) $menuqualified++;
-	if (! empty($conf->ficheinter->enabled)) $menuqualified++;
-	$tmpentry = array(
-	    'enabled'=>$menuqualified,
-	    'perms'=>(! empty($user->rights->societe->lire) || ! empty($user->rights->societe->contact->lire)),
-        'module'=>'propal|commande|supplier_order|contrat|ficheinter',
-    );
-	$showmode=isVisibleToUserType($type_user, $tmpentry, $listofmodulesforexternal);
-	if ($showmode)
-	{
-		$langs->load("commercial");
-
-		$classname="";
-		if ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "commercial") { $classname='class="tmenusel"'; $_SESSION['idmenu']=''; }
-		else $classname = 'class="tmenu"';
-		$idsel='commercial';
-
-		$menu->add('/comm/index.php?mainmenu=commercial&amp;leftmenu=', $langs->trans("Commercial"), 0, $showmode, $atarget, "commercial", "", 40, $id, $idsel, $classname);
-	}
+	$menu_arr[] = array(
+		'name' => 'Commercial',
+		'link' => '/comm/index.php?mainmenu=commercial&amp;leftmenu=',
+		'title' => "Commercial",
+		'level' => 0,
+		'enabled' => $showmode = isVisibleToUserType(
+							$type_user,
+							$tmpentry = array(
+								'enabled'=>(! empty($conf->propal->enabled) ||
+										! empty($conf->commande->enabled) ||
+										! empty($conf->supplier_order->enabled) ||
+										! empty($conf->supplier_proposal->enabled) ||
+										! empty($conf->contrat->enabled) ||
+										! empty($conf->ficheinter->enabled)
+										)?1:0,
+								'perms'=>(! empty($user->rights->societe->lire) || ! empty($user->rights->societe->contact->lire)),
+								'module'=>'propal|commande|supplier_order|contrat|ficheinter',
+							),
+							$listofmodulesforexternal
+						),
+		'target' => $atarget,
+		'mainmenu' => "commercial",
+		'leftmenu' => '',
+		'position' => 40,
+		'id' => $id,
+		'idsel' => 'commercial',
+		'classname' =>  $classname = ( $_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "commercial" ) ? 'class="tmenusel"' : 'class="tmenu"',
+		'prefix' => '',
+		'session' => ( ( $_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "commercial" ) ? 0 : 1 ),
+		'loadLangs' => array("commercial"),
+		'submenus' => array(),
+	);
 
 	// Billing - Financial
-	$menuqualified=0;
-	if (! empty($conf->facture->enabled)) $menuqualified++;
-	if (! empty($conf->don->enabled)) $menuqualified++;
-	if (! empty($conf->tax->enabled)) $menuqualified++;
-	if (! empty($conf->salaries->enabled)) $menuqualified++;
-	if (! empty($conf->supplier_invoice->enabled)) $menuqualified++;
-	if (! empty($conf->loan->enabled)) $menuqualified++;
-	$tmpentry = array(
-	    'enabled'=>$menuqualified,
-	    'perms'=>(! empty($user->rights->facture->lire) || ! empty($user->rights->don->lire) || ! empty($user->rights->tax->charges->lire) || ! empty($user->rights->salaries->read) || ! empty($user->rights->fournisseur->facture->lire) || ! empty($user->rights->loan->read)),
-        'module'=>'facture|supplier_invoice|don|tax|salaries|loan',
-    );
-	$showmode=isVisibleToUserType($type_user, $tmpentry, $listofmodulesforexternal);
-	if ($showmode)
-	{
-		$langs->load("compta");
-
-		$classname="";
-		if ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "billing") { $classname='class="tmenusel"'; $_SESSION['idmenu']=''; }
-		else $classname = 'class="tmenu"';
-		$idsel='billing';
-
-		$menu->add('/compta/index.php?mainmenu=billing&amp;leftmenu=', $langs->trans("MenuFinancial"), 0, $showmode, $atarget, "billing", '', 50, $id, $idsel, $classname);
-	}
+	$menu_arr[] = array(
+		'name' => 'Compta',
+		'link' => '/compta/index.php?mainmenu=billing&amp;leftmenu=',
+		'title' =>  "MenuFinancial",
+		'level' => 0,
+		'enabled' => $showmode = isVisibleToUserType(
+							$type_user,
+							$tmpentry = array(
+								'enabled'=>(! empty($conf->facture->enabled) ||
+										! empty($conf->don->enabled) ||
+										! empty($conf->tax->enabled) ||
+										! empty($conf->salaries->enabled) ||
+										! empty($conf->supplier_invoice->enabled) ||
+										! empty($conf->loan->enabled)
+										)?1:0,
+								'perms'=>(! empty($user->rights->facture->lire) || ! empty($user->rights->don->contact->lire)
+											|| ! empty($user->rights->tax->charges->lire) || ! empty($user->rights->salaries->read)
+											|| ! empty($user->rights->fournisseur->facture->lire) || ! empty($user->rights->loan->read)),
+								'module'=>'facture|supplier_invoice|don|tax|salaries|loan',
+							),
+							$listofmodulesforexternal
+						),
+		'target' => $atarget,
+		'mainmenu' => "billing",
+		'leftmenu' => '',
+		'position' => 50,
+		'id' => $id,
+		'idsel' => 'billing',
+		'classname' =>  $classname = ( $_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "billing" ) ? 'class="tmenusel"' : 'class="tmenu"',
+		'prefix' => '',
+		'session' => ( ( $_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "billing" ) ? 0 : 1 ),
+		'loadLangs' => array("compta"),
+		'submenus' => array(),
+	);
 
 	// Bank
-	$tmpentry = array(
-        'enabled'=>(! empty($conf->banque->enabled) || ! empty($conf->prelevement->enabled)),
-	    'perms'=>(! empty($user->rights->banque->lire) || ! empty($user->rights->prelevement->lire)),
-        'module'=>'banque|prelevement',
-    );
-	$showmode=isVisibleToUserType($type_user, $tmpentry, $listofmodulesforexternal);
-	if ($showmode)
-	{
-	    // Load translation files required by the page
-        $langs->loadLangs(array("compta","banks"));
+	$menu_arr[] = array(
+		'name' => 'Bank',
+		'link' => '/compta/bank/list.php?mainmenu=bank&amp;leftmenu=',
+		'title' =>  "MenuBankCash",
+		'level' => 0,
+		'enabled' => $showmode = isVisibleToUserType(
+							$type_user,
+							$tmpentry = array(
+								'enabled'=>(! empty($conf->banque->enabled) || ! empty($conf->prelevement->enabled)),
+								'perms'=>(! empty($user->rights->banque->lire) || ! empty($user->rights->prelevement->lire)),
+								'module'=>'banque|prelevement',
+							),
+							$listofmodulesforexternal
+						),
+		'target' => $atarget,
+		'mainmenu' => "bank",
+		'leftmenu' => '',
+		'position' => 52,
+		'id' => $id,
+		'idsel' => 'bank',
+		'classname' =>  $classname = ( $_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "bank" ) ? 'class="tmenusel"' : 'class="tmenu"',
+		'prefix' => '',
 
-		$classname="";
-		if ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "bank") { $classname='class="tmenusel"'; $_SESSION['idmenu']=''; }
-		else $classname = 'class="tmenu"';
-		$idsel='bank';
+		'session' => ( ( $_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "bank" ) ? 0 : 1 ),
 
-		$menu->add('/compta/bank/list.php?mainmenu=bank&amp;leftmenu=', $langs->trans("MenuBankCash"), 0, $showmode, $atarget, "bank", '', 52, $id, $idsel, $classname);
-	}
+		'loadLangs' => array("compta","banks"),
+		'submenus' => array(),
+	);
 
 	// Accounting
-	$menuqualified=0;
-	if (! empty($conf->comptabilite->enabled)) $menuqualified++;
-	if (! empty($conf->accounting->enabled)) $menuqualified++;
-	if (! empty($conf->asset->enabled)) $menuqualified++;
-	$tmpentry = array(
-	    'enabled'=>$menuqualified,
-	    'perms'=>(! empty($user->rights->compta->resultat->lire) || ! empty($user->rights->accounting->mouvements->lire) || ! empty($user->rights->asset->read)),
-        'module'=>'comptabilite|accounting',
-    );
-	$showmode=isVisibleToUserType($type_user, $tmpentry, $listofmodulesforexternal);
-	if ($showmode)
-	{
-		$langs->load("compta");
+	$menu_arr[] = array(
+		'name' => 'Accounting',
+		'link' => '/accountancy/index.php?mainmenu=accountancy&amp;leftmenu=',
+		'title' =>  "MenuAccountancy",
+		'level' => 0,
+		'enabled' => $showmode = isVisibleToUserType(
+							$type_user,
+							$tmpentry = array(
+								'enabled'=>(! empty($conf->comptabilite->enabled) || ! empty($conf->accounting->enabled) || ! empty($conf->asset->enabled)),
+								'perms'=>(! empty($user->rights->compta->resultat->lire) || ! empty($user->rights->accounting->mouvements->lire) || ! empty($user->rights->asset->read)),
+								'comptabilite|accounting',
+							),
+							$listofmodulesforexternal
+						),
+		'target' => $atarget,
+		'mainmenu' => "accountancy",
+		'leftmenu' => '',
+		'position' => 54,
+		'id' => $id,
+		'idsel' => 'accountancy',
+		'classname' =>  $classname = ( $_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "accountancy" ) ? 'class="tmenusel"' : 'class="tmenu"',
+		'prefix' => '',
 
-		$classname="";
-		if ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "accountancy") { $classname='class="tmenusel"'; $_SESSION['idmenu']=''; }
-		else $classname = 'class="tmenu"';
-		$idsel='accountancy';
+		'session' => ( ( $_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "accountancy" ) ? 0 : 1 ),
 
-		$menu->add('/accountancy/index.php?mainmenu=accountancy&amp;leftmenu=', $langs->trans("MenuAccountancy"), 0, $showmode, $atarget, "accountancy", '', 54, $id, $idsel, $classname);
-	}
+		'loadLangs' => array("compta"),
+		'submenus' => array(),
+	);
 
 	// HRM
-	$tmpentry = array(
-        'enabled'=>(! empty($conf->hrm->enabled) || ! empty($conf->holiday->enabled) || ! empty($conf->deplacement->enabled) || ! empty($conf->expensereport->enabled)),
-	    'perms'=>(! empty($user->rights->hrm->employee->read) || ! empty($user->rights->holiday->write) || ! empty($user->rights->deplacement->lire) || ! empty($user->rights->expensereport->lire)),
-        'module'=>'hrm|holiday|deplacement|expensereport',
-    );
-	$showmode=isVisibleToUserType($type_user, $tmpentry, $listofmodulesforexternal);
-	if ($showmode)
-	{
-		$langs->load("holiday");
+	$menu_arr[] = array(
+		'name' => 'HRM',
+		'link' => '/hrm/index.php?mainmenu=hrm&amp;leftmenu=',
+		'title' =>  "HRM",
+		'level' => 0,
+		'enabled' => $showmode = isVisibleToUserType(
+							$type_user,
+							$tmpentry = array(
+								'enabled'=>(! empty($conf->hrm->enabled) || ! empty($conf->holiday->enabled) || ! empty($conf->deplacement->enabled) || ! empty($conf->expensereport->enabled)),
+								'perms'=>(! empty($user->rights->hrm->employee->read) || ! empty($user->rights->holiday->write) || ! empty($user->rights->deplacement->lire) || ! empty($user->rights->expensereport->lire)),
+								'module'=>'hrm|holiday|deplacement|expensereport',
+							),
+							$listofmodulesforexternal
+						),
+		'target' => $atarget,
+		'mainmenu' => "hrm",
+		'leftmenu' => '',
+		'position' => 80,
+		'id' => $id,
+		'idsel' => 'hrm',
+		'classname' =>  $classname = ( $_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "hrm" ) ? 'class="tmenusel"' : 'class="tmenu"',
+		'prefix' => '',
 
-		$classname="";
-		if ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "hrm") { $classname='class="tmenusel"'; $_SESSION['idmenu']=''; }
-		else $classname = 'class="tmenu"';
-		$idsel='hrm';
+		'session' => ( ( $_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "hrm" ) ? 0 : 1 ),
 
-		$menu->add('/hrm/index.php?mainmenu=hrm&amp;leftmenu=', $langs->trans("HRM"), 0, $showmode, $atarget, "hrm", '', 80, $id, $idsel, $classname);
-	}
+		'loadLangs' => array("holiday"),
+		'submenus' => array(),
+	);
 
 	// Tools
-	$tmpentry = array(
-	    'enabled'=>1,
-	    'perms'=>1,
-        'module'=>'',
-    );
-	$showmode=isVisibleToUserType($type_user, $tmpentry, $listofmodulesforexternal);
-	if ($showmode)
+	$menu_arr[] = array(
+		'name' => 'Tools',
+		'link' => '/core/tools.php?mainmenu=tools&amp;leftmenu=',
+		'title' =>  "Tools",
+		'level' => 0,
+		'enabled' => $showmode = isVisibleToUserType(
+							$type_user,
+							$tmpentry = array(
+								'enabled'=>1,
+								'perms'=>1,
+								'module'=>'',
+							),
+							$listofmodulesforexternal
+						),
+		'target' => $atarget,
+		'mainmenu' => "tools",
+		'leftmenu' => '',
+		'position' => 90,
+		'id' => $id,
+		'idsel' => 'tools',
+		'classname' =>  $classname = ( $_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "tools" ) ? 'class="tmenusel"' : 'class="tmenu"',
+		'prefix' => '',
+
+		'session' => ( ( $_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "tools" ) ? 0 : 1 ),
+
+		'loadLangs' => array("other"),
+		'submenus' => array(),
+	);
+
+	// Add menus
+	foreach($menu_arr as $key => $smenu)
 	{
-		$langs->load("other");
+		$smenu = (object) $smenu;
 
-		$classname="";
-		if ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "tools") { $classname='class="tmenusel"'; $_SESSION['idmenu']=''; }
-		else $classname = 'class="tmenu"';
-		$idsel='tools';
+		if( $smenu->enabled )
+		{
+			if($langs->session)
+			{
+				$_SESSION['idmenu']='';
+			}
 
-		$menu->add('/core/tools.php?mainmenu=tools&amp;leftmenu=', $langs->trans("Tools"), 0, $showmode, $atarget, "tools", '', 90, $id, $idsel, $classname);
+			// Load Langue
+			if(! empty($smenu->loadLangs))
+			{
+				$langs->loadLangs($smenu->loadLangs);
+			}
+
+			// Trans title
+			$mtitle = '';
+			if(is_array($smenu->title))
+			{
+				foreach($smenu->title as $item)
+				{
+					$mtitle .=  $langs->trans($item);
+				}
+			}
+			else
+			{
+				$mtitle =  $langs->trans($smenu->title);
+			}
+			// Add item
+			$menu->add($smenu->link, $mtitle, $smenu->level, $smenu->enabled, $smenu->target, $smenu->mainmenu, $smenu->leftmenu, $smenu->position, $smenu->id, $smenu->idsel, $smenu->classname, $smenu->prefix);
+		}
 	}
 
 	// Show personalized menus

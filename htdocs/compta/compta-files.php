@@ -25,15 +25,14 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/salaries/class/paymentsalary.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
-require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
+require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
+require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 
-$langs->loadLangs(array("accountancy","bills"));
+$langs->loadLangs(array("accountancy", "bills", "companies"));
 
 $date_start =GETPOST('date_start', 'alpha');
 $date_startDay= GETPOST('date_startday', 'int');
@@ -49,7 +48,7 @@ $date_stop=($date_stopDay)?dol_mktime(0, 0, 0, $date_stopMonth, $date_stopDay, $
 $action =GETPOST('action', 'alpha');
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('comptafileslist','globallist'));
+$hookmanager->initHooks(array('comptafileslist', 'globallist'));
 
 // Load variable for pagination
 $limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
@@ -92,7 +91,7 @@ $filesarray=array();
 $result=false;
 if(($action=="searchfiles" || $action=="dl" ) && $date_start && $date_stop) {
     $wheretail=" '".$db->idate($date_start)."' AND '".$db->idate($date_stop)."'";
-    $sql="SELECT rowid as id, ref as ref,paye as paid, total_ttc, fk_soc, datef as date, 'Invoice' as item FROM ".MAIN_DB_PREFIX."facture";
+    $sql="SELECT rowid as id, ref as ref, paye as paid, total_ttc, fk_soc, datef as date, 'Invoice' as item FROM ".MAIN_DB_PREFIX."facture";
     $sql.=" WHERE datef between ".$wheretail;
     $sql.=" AND entity IN (".($entity==1?'0,1':$entity).')';
     $sql.=" AND fk_statut <> ".Facture::STATUS_DRAFT;
@@ -189,6 +188,7 @@ if(($action=="searchfiles" || $action=="dl" ) && $date_start && $date_stop) {
                 //var_dump($upload_dir);
                 if (count($files) < 1)
                 {
+                    $nofile['id']=$objd->id;
                     $nofile['date']=$db->idate($objd->date);
                     $nofile['paid']=$objd->paid;
                     $nofile['amount']=$objd->total_ttc;
@@ -202,6 +202,7 @@ if(($action=="searchfiles" || $action=="dl" ) && $date_start && $date_stop) {
                 {
                     foreach ($files as $key => $file)
                     {
+                        $file['id']=$objd->id;
                         $file['date']=$db->idate($objd->date);
                         $file['paid']=$objd->paid;
                         $file['amount']=$objd->total_ttc;
@@ -236,6 +237,12 @@ if(($action=="searchfiles" || $action=="dl" ) && $date_start && $date_stop) {
 
 if ($result && $action == "dl")
 {
+    if (! extension_loaded('zip'))
+    {
+        setEventMessages('PHPZIPExtentionNotLoaded', null, 'errors');
+        exit;
+    }
+
     $dirfortmpfile = ($conf->accounting->dir_temp ? $conf->accounting->dir_temp : $conf->compta->dir_temp);
 
     dol_mkdir($dirfortmpfile);

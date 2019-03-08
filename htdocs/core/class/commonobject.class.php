@@ -6378,6 +6378,7 @@ abstract class CommonObject
 				}
 
 				if (($mode == 'create' || $mode == 'edit') && abs($visibility) != 1 && abs($visibility) != 3) continue;	// <> -1 and <> 1 and <> 3 = not visible on forms, only on list
+				elseif($mode == 'view' && empty($visibility)) continue;
 				if (empty($perms)) continue;
 
 				// Load language if required
