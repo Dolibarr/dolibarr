@@ -892,6 +892,7 @@ class Contrat extends CommonObject
 		$sql.= ", ".(!empty($this->ref_ext)?("'".$this->db->escape($this->ref_ext)."'"):"NULL");
 		$sql.= ")";
 		$resql=$this->db->query($sql);
+
 		if ($resql)
 		{
 			$error=0;
@@ -908,9 +909,8 @@ class Contrat extends CommonObject
 			if ($result > 0)
 			{
 				$modCodeContract = new $module();
-
-				if (!empty($modCodeContract->code_auto)) {
-					// Mise a jour ref
+				if (! empty($modCodeContract->code_auto)) {
+					// Force the ref to a draft value if numbering module is an automatic numbering
 					$sql = 'UPDATE '.MAIN_DB_PREFIX."contrat SET ref='(PROV".$this->id.")' WHERE rowid=".$this->id;
 					if ($this->db->query($sql))
 					{
@@ -919,9 +919,6 @@ class Contrat extends CommonObject
 							$this->ref="(PROV".$this->id.")";
 						}
 					}
-				} else {
-					$error++;
-					$this->error='Failed to get PROV number';
 				}
 			}
 
@@ -1389,7 +1386,7 @@ class Contrat extends CommonObject
 			if (empty($remise_percent)) $remise_percent=0;
 
 			$localtaxes_type=getLocalTaxesFromRate($txtva, 0, $this->societe, $mysoc);
-			
+
 			// Clean vat code
 			$vat_src_code='';
 			if (preg_match('/\((.*)\)/', $txtva, $reg))
@@ -1397,7 +1394,7 @@ class Contrat extends CommonObject
 				$vat_src_code = $reg[1];
 				$txtva = preg_replace('/\s*\(.*\)/', '', $txtva);    // Remove code into vatrate.
 			}
-			
+
 			// Calcul du total TTC et de la TVA pour la ligne a partir de
 			// qty, pu, remise_percent et txtva
 			// TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
