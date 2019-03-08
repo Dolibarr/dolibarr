@@ -32,6 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/userbankaccount.class.php';
 
 
@@ -767,9 +768,6 @@ class pdf_standard extends ModeleExpenseReport
 				$pdf->SetXY($posx+2, $posy);
 				$pdf->SetFont('', '', 10);
 				$pdf->MultiCell(96, 4, $outputlangs->transnoentities("AUTHOR")." : ".dolGetFirstLastname($userfee->firstname, $userfee->lastname), 0, 'L');
-				$posy+=5;
-				$pdf->SetXY($posx+2, $posy);
-				$pdf->MultiCell(96, 4, $outputlangs->transnoentities("Bank")." : ".$account->bank, 0, 'L');
 				$posy+=5;
 				$pdf->SetXY($posx+2, $posy);
 				$pdf->MultiCell(96, 4, $outputlangs->transnoentities("IBAN")." : ".$account->iban, 0, 'L');
