@@ -2253,7 +2253,7 @@ function colorAdjustBrightness($hex, $steps)
  */
 function colorDarker($hex, $percent)
 {
-    $steps = intval(255 * $percent / 100 ) * -1;
+    $steps = intval(255 * $percent / 100) * -1;
     return colorAdjustBrightness($hex, $steps);
 }
 
@@ -2264,7 +2264,7 @@ function colorDarker($hex, $percent)
  */
 function colorLighten($hex, $percent)
 {
-    $steps = intval(255 * $percent / 100 );
+    $steps = intval(255 * $percent / 100);
     return colorAdjustBrightness($hex, $steps);
 }
 
@@ -2272,7 +2272,7 @@ function colorLighten($hex, $percent)
 /**
  * @param string $hex color in hex
  * @param float $alpha 0 to 1
- * @param bool $returnArray
+ * @param bool $returnArray set to 1 to return an array instead of string
  * @return string
  */
 function colorHexToRgb($hex, $alpha = false, $returnArray = false)

@@ -8131,4 +8131,3 @@ function dolGetButtonAction($label, $html = '', $actionType = 'default', $url = 
     
     return '<div class="inline-block divButAction"><'.$tag.' '.$compiledAttributes.'>'.$html.'</'.$tag.'></div>';
 }
-
