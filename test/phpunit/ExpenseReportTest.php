@@ -131,9 +131,6 @@ class ExpenseReportTest extends PHPUnit_Framework_TestCase
         $langs=$this->savlangs;
         $db=$this->savdb;
 
-        // Set supplier and product to use
-        $socid=1;
-
         // Create supplier order with a too low quantity
         $localobject=new ExpenseReport($db);
         $localobject->initAsSpecimen();         // Init a specimen with lines
@@ -143,7 +140,7 @@ class ExpenseReportTest extends PHPUnit_Framework_TestCase
 
         $result=$localobject->create($user);
         print __METHOD__." result=".$result."\n";
-        $this->assertEquals(-1, $result);       // must be -1 because of missing mandatory fields
+        $this->assertEquals(-1, $result, "Error on test ExpenseReport create 1 : ".$localobject->error);       // must be -1 because of missing mandatory fields
 
         $sql="DELETE FROM ".MAIN_DB_PREFIX."expensereport where ref=''";
         $db->query($sql);
@@ -156,7 +153,7 @@ class ExpenseReportTest extends PHPUnit_Framework_TestCase
 
         $result=$localobject2->create($user);
         print __METHOD__." result=".$result."\n";
-        $this->assertGreaterThanOrEqual(0, $result, "Error: ".$localobject2->error);
+        $this->assertGreaterThanOrEqual(0, $result, "Error on test ExpenseReport create 2 : ".$localobject2->error);
 
         return $result;
     }
