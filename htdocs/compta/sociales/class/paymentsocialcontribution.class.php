@@ -122,14 +122,14 @@ class PaymentSocialContribution extends CommonObject
 		}
 
 		// Clean parameters
-		if (isset($this->fk_charge)) $this->fk_charge=trim($this->fk_charge);
+		if (isset($this->fk_charge)) $this->fk_charge= (int) $this->fk_charge;
 		if (isset($this->amount)) $this->amount=trim($this->amount);
-		if (isset($this->fk_typepaiement)) $this->fk_typepaiement=trim($this->fk_typepaiement);
+		if (isset($this->fk_typepaiement)) $this->fk_typepaiement= (int) $this->fk_typepaiement;
 		if (isset($this->num_paiement)) $this->num_paiement=trim($this->num_paiement);
 		if (isset($this->note)) $this->note=trim($this->note);
-		if (isset($this->fk_bank)) $this->fk_bank=trim($this->fk_bank);
-		if (isset($this->fk_user_creat)) $this->fk_user_creat=trim($this->fk_user_creat);
-		if (isset($this->fk_user_modif)) $this->fk_user_modif=trim($this->fk_user_modif);
+		if (isset($this->fk_bank)) $this->fk_bank= (int) $this->fk_bank;
+		if (isset($this->fk_user_creat)) $this->fk_user_creat= (int) $this->fk_user_creat;
+		if (isset($this->fk_user_modif)) $this->fk_user_modif= (int) $this->fk_user_modif;
 
         $totalamount = 0;
         foreach ($this->amounts as $key => $value)  // How payment is dispatch
@@ -299,14 +299,14 @@ class PaymentSocialContribution extends CommonObject
 
 		// Clean parameters
 
-		if (isset($this->fk_charge)) $this->fk_charge=trim($this->fk_charge);
+		if (isset($this->fk_charge)) $this->fk_charge= (int) $this->fk_charge;
 		if (isset($this->amount)) $this->amount=trim($this->amount);
-		if (isset($this->fk_typepaiement)) $this->fk_typepaiement=trim($this->fk_typepaiement);
+		if (isset($this->fk_typepaiement)) $this->fk_typepaiement= (int) $this->fk_typepaiement;
 		if (isset($this->num_paiement)) $this->num_paiement=trim($this->num_paiement);
 		if (isset($this->note)) $this->note=trim($this->note);
-		if (isset($this->fk_bank)) $this->fk_bank=trim($this->fk_bank);
-		if (isset($this->fk_user_creat)) $this->fk_user_creat=trim($this->fk_user_creat);
-		if (isset($this->fk_user_modif)) $this->fk_user_modif=trim($this->fk_user_modif);
+		if (isset($this->fk_bank)) $this->fk_bank= (int) $this->fk_bank;
+		if (isset($this->fk_user_creat)) $this->fk_user_creat= (int) $this->fk_user_creat;
+		if (isset($this->fk_user_modif)) $this->fk_user_modif= (int) $this->fk_user_modif;
 
 
 
@@ -337,10 +337,10 @@ class PaymentSocialContribution extends CommonObject
 		$resql = $this->db->query($sql);
 		if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 
-		if (! $error)
-		{
-			if (! $notrigger)
-			{
+		//if (! $error)
+		//{
+		//	if (! $notrigger)
+		//	{
 				// Uncomment this and change MYOBJECT to your own tag if you
 				// want this action call a trigger.
 
@@ -350,8 +350,8 @@ class PaymentSocialContribution extends CommonObject
 				//$result=$interface->run_triggers('MYOBJECT_MODIFY',$this,$user,$langs,$conf);
 				//if ($result < 0) { $error++; $this->errors=$interface->errors; }
 				//// End call triggers
-			}
-		}
+		//	}
+		//}
 
 		// Commit or rollback
 		if ($error)
@@ -478,13 +478,6 @@ class PaymentSocialContribution extends CommonObject
 		{
 			$this->error=$object->error;
 			$error++;
-		}
-
-		if (! $error)
-		{
-
-
-
 		}
 
 		unset($object->context['createfromclone']);
