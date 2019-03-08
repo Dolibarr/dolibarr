@@ -769,10 +769,10 @@ class pdf_standard extends ModeleExpenseReport
 				$pdf->MultiCell(96, 4, $outputlangs->transnoentities("AUTHOR")." : ".dolGetFirstLastname($userfee->firstname, $userfee->lastname), 0, 'L');
 				$posy+=5;
 				$pdf->SetXY($posx+2, $posy);
-				$pdf->MultiCell(96, 4, $outputlangs->transnoentities("Bank")." : ".$outputlangs->convToOutputCharset($account->bank), 0, 'L');
+				$pdf->MultiCell(96, 4, $outputlangs->transnoentities("Bank")." : ".$account->bank, 0, 'L');
 				$posy+=5;
 				$pdf->SetXY($posx+2, $posy);
-				$pdf->MultiCell(96, 4, $outputlangs->transnoentities("IBAN")." : ".$outputlangs->convToOutputCharset($account->iban), 0, 'L');
+				$pdf->MultiCell(96, 4, $outputlangs->transnoentities("IBAN")." : ".$account->iban, 0, 'L');
 				$posy+=5;
 				$pdf->SetXY($posx+2, $posy);
 				$pdf->MultiCell(96, 4, $outputlangs->transnoentities("DateCreation")." : ".dol_print_date($object->date_create, "day", false, $outputlangs), 0, 'L');
