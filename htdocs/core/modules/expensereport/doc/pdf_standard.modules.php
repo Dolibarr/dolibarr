@@ -760,12 +760,16 @@ class pdf_standard extends ModeleExpenseReport
 			// Informations for trip (dates and users workflow)
 			if ($object->fk_user_author > 0) {
 				$userfee=new User($this->db);
-				$userfee->fetch($object->fk_user_author); $posy+=3;
+				$userfee->fetch($object->fk_user_author);
 				$account=new UserBankAccount($this->db);
 				$account->fetch($object->fk_user_author);
+				$posy+=3;
 				$pdf->SetXY($posx+2, $posy);
 				$pdf->SetFont('', '', 10);
 				$pdf->MultiCell(96, 4, $outputlangs->transnoentities("AUTHOR")." : ".dolGetFirstLastname($userfee->firstname, $userfee->lastname), 0, 'L');
+				$posy+=5;
+				$pdf->SetXY($posx+2, $posy);
+				$pdf->MultiCell(96, 4, $outputlangs->transnoentities("Bank")." : ".$outputlangs->convToOutputCharset($account->bank), 0, 'L');
 				$posy+=5;
 				$pdf->SetXY($posx+2, $posy);
 				$pdf->MultiCell(96, 4, $outputlangs->transnoentities("IBAN")." : ".$outputlangs->convToOutputCharset($account->iban), 0, 'L');
