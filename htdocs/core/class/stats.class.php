@@ -30,7 +30,7 @@
 abstract class Stats
 {
     protected $db;
-    private $_lastfetchdate=array();	// Dates of cache file read by methods
+    protected $_lastfetchdate=array();	// Dates of cache file read by methods
     public $cachefilesuffix='';		// Suffix to add to name of cache file (to avoid file name conflicts)
 
 	/**
