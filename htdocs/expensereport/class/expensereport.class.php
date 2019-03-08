@@ -229,7 +229,11 @@ class ExpenseReport extends CommonObject
 
             $sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element." SET ref='".$this->db->escape($this->ref)."' WHERE rowid=".$this->id;
             $resql=$this->db->query($sql);
-            if (!$resql) $error++;
+            if (!$resql)
+            {
+                $this->error = $this->db->lasterror();
+                $error++;
+            }
 
             if (is_array($this->lines) && count($this->lines)>0)
             {
@@ -238,7 +242,7 @@ class ExpenseReport extends CommonObject
 	                $newndfline=new ExpenseReportLine($this->db);
 	                $newndfline=$this->lines[$i];
 	                $newndfline->fk_expensereport=$this->id;
-	                if ($result >= 0)
+	                if (! $error)
 	                {
 	                    $result=$newndfline->insert();
 	                }
@@ -2560,7 +2564,7 @@ class ExpenseReportLine
      */
     public function insert($notrigger = 0, $fromaddline = false)
     {
-        global $langs,$user,$conf;
+        global $langs, $user, $conf;
 
         $error=0;
 

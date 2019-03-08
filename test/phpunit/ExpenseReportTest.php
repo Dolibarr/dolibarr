@@ -136,7 +136,7 @@ class ExpenseReportTest extends PHPUnit_Framework_TestCase
 
         // Create supplier order with a too low quantity
         $localobject=new ExpenseReport($db);
-        $localobject->initAsSpecimen();         // Init a speciment with lines
+        $localobject->initAsSpecimen();         // Init a specimen with lines
         $localobject->status = 0;
         $localobject->fk_statut = 0;
         $localobject->date_fin = null;  // Force bad value
@@ -150,13 +150,13 @@ class ExpenseReportTest extends PHPUnit_Framework_TestCase
 
         // Create supplier order
         $localobject2=new ExpenseReport($db);
-        $localobject2->initAsSpecimen();        // Init a speciment with lines
+        $localobject2->initAsSpecimen();        // Init a specimen with lines
         $localobject2->status = 0;
         $localobject2->fk_statut = 0;
 
         $result=$localobject2->create($user);
         print __METHOD__." result=".$result."\n";
-        $this->assertGreaterThanOrEqual(0, $result);
+        $this->assertGreaterThanOrEqual(0, $result, "Error: ".$localobject2->error);
 
         return $result;
     }
