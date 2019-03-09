@@ -731,8 +731,8 @@ class pdf_standard extends ModeleExpenseReport
 			$expense_receiver .= ($expense_receiver ? "\n" : '' ).$outputlangs->convToOutputCharset($receiver->address);
 			$expense_receiver .= ($expense_receiver ? "\n" : '' ).$outputlangs->convToOutputCharset($receiver->zip).' '.$outputlangs->convToOutputCharset($receiver->town);
 			$expense_receiver .= "\n";
-			if ($this->receiver->email) $expense_receiver .= ($expense_receiver ? "\n" : '' ).$outputlangs->transnoentities("Email")." : ".$outputlangs->convToOutputCharset($receiver->email);
-			if ($this->receiver_account->iban) $expense_receiver .= ($expense_receiver ? "\n" : '' ).$outputlangs->transnoentities("IBAN")." : ".$outputlangs->convToOutputCharset($receiver_account->iban);
+			if ($receiver->email) $expense_receiver .= ($expense_receiver ? "\n" : '' ).$outputlangs->transnoentities("Email")." : ".$outputlangs->convToOutputCharset($receiver->email);
+			if ($receiver_account->iban) $expense_receiver .= ($expense_receiver ? "\n" : '' ).$outputlangs->transnoentities("IBAN")." : ".$outputlangs->convToOutputCharset($receiver_account->iban);
 
 			// Show sender
 			$posy=50;
@@ -767,7 +767,7 @@ class pdf_standard extends ModeleExpenseReport
 			} else {
 				$pdf->SetXY($posx+2, $posy+3);
 				$pdf->SetFont('', 'B', $default_font_size);
-				$pdf->MultiCell(80, 4, $outputlangs->convToOutputCharset($this->receiver->name), 0, 'L');
+				$pdf->MultiCell(80, 4, $outputlangs->convToOutputCharset($receiver->name), 0, 'L');
 				$pdf->SetXY($posx+2, $posy+8);
 				$pdf->SetFont('', '', $default_font_size - 1);
 				$pdf->MultiCell(80, 4, $expense_receiver, 0, 'L');
