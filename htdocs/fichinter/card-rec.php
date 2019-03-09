@@ -817,23 +817,20 @@ $date_next_execution = (GETPOST('remonth') ? dol_mktime(
 			$i = 0;
 			print '<table class="noborder" width="100%">';
 			print '<tr class="liste_titre">';
-            print_liste_field_titre($langs->trans("Ref"), $_SERVER['PHP_SELF'], "f.titre", "", "", 'width="200px"', $sortfiled, $sortorder, 'left ');
-
-            print_liste_field_titre($langs->trans("Company"), $_SERVER['PHP_SELF'], "s.nom", "", "", 'width="200px"', $sortfiled, $sortorder, 'left ');
+            print_liste_field_titre("Ref", $_SERVER['PHP_SELF'], "f.titre", "", "", 'width="200px"', $sortfield, $sortorder, 'left ');
+            print_liste_field_titre("Company", $_SERVER['PHP_SELF'], "s.nom", "", "", 'width="200px"', $sortfield, $sortorder, 'left ');
             if (! empty($conf->contrat->enabled)) {
-                print_liste_field_titre($langs->trans("Contract"), $_SERVER['PHP_SELF'], "f.fk_contrat", "", "", 'width="100px"', $sortfiled, $sortorder, 'left ');
+                print_liste_field_titre("Contract", $_SERVER['PHP_SELF'], "f.fk_contrat", "", "", 'width="100px"', $sortfield, $sortorder, 'left ');
             }
-
             if (! empty($conf->projet->enabled)) {
-                print_liste_field_titre($langs->trans("Project"), $_SERVER['PHP_SELF'], "f.fk_project", "", "", 'width="100px"', $sortfiled, $sortorder, 'left ');
+                print_liste_field_titre("Project", $_SERVER['PHP_SELF'], "f.fk_project", "", "", 'width="100px"', $sortfield, $sortorder, 'left ');
             }
-            print_liste_field_titre($langs->trans("Duration"), $_SERVER['PHP_SELF'], 'f.duree', '', '', 'width="50px"', $sortfiled, $sortorder, 'right ');
+            print_liste_field_titre("Duration", $_SERVER['PHP_SELF'], 'f.duree', '', '', 'width="50px"', $sortfield, $sortorder, 'right ');
             // Recurring or not
-            print_liste_field_titre($langs->trans("Frequency"), $_SERVER['PHP_SELF'], "f.frequency", "", "", 'width="100px"', $sortfiled, $sortorder, 'center ');
-            print_liste_field_titre($langs->trans("NbOfGenerationDone"), $_SERVER['PHP_SELF'], "f.nb_gen_done", "", "", 'width="100px"', $sortfiled, $sortorder, 'center ');
-
-            print_liste_field_titre($langs->trans("DateLastGeneration"), $_SERVER['PHP_SELF'], "f.date_last_gen", "", "", 'width="100px"', $sortfiled, $sortorder, 'center ');
-            print_liste_field_titre($langs->trans("NextDateToIntervention"), $_SERVER['PHP_SELF'], "f.date_when", "", "", 'width="100px"', $sortfiled, $sortorder, 'center ');
+            print_liste_field_titre("Frequency", $_SERVER['PHP_SELF'], "f.frequency", "", "", 'width="100px"', $sortfield, $sortorder, 'center ');
+            print_liste_field_titre("NbOfGenerationDone", $_SERVER['PHP_SELF'], "f.nb_gen_done", "", "", 'width="100px"', $sortfield, $sortorder, 'center ');
+            print_liste_field_titre("DateLastGeneration", $_SERVER['PHP_SELF'], "f.date_last_gen", "", "", 'width="100px"', $sortfield, $sortorder, 'center ');
+            print_liste_field_titre("NextDateToIntervention", $_SERVER['PHP_SELF'], "f.date_when", "", "", 'width="100px"', $sortfield, $sortorder, 'center ');
 			print '<th width="100px"></th>';
 			print "</tr>\n";
 
