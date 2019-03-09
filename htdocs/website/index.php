@@ -2132,7 +2132,14 @@ if (! GETPOST('hide_websitemenu'))
 		if (GETPOST('editsource', 'alpha') || GETPOST('editcontent', 'alpha'))
 		{
 			$htmltext=$langs->transnoentitiesnoconv("YouCanEditHtmlSource").'<br>';
-			print $form->textwithpicto($langs->trans("SyntaxHelp"), $htmltext, 1, 'help', 'inline-block', 1, 2, 'tooltipsubstitution');
+            if ($conf->browser->layout == 'phone')
+            {
+                print $form->textwithpicto('', $htmltext, 1, 'help', 'inline-block', 1, 2, 'tooltipsubstitution');
+            }
+            else
+            {
+                print $form->textwithpicto($langs->trans("SyntaxHelp"), $htmltext, 1, 'help', 'inline-block', 1, 2, 'tooltipsubstitution');
+            }
 		}
 		print '</div>';	// end websitehelp
 
