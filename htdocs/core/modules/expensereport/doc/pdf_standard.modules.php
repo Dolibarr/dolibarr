@@ -727,11 +727,12 @@ class pdf_standard extends ModeleExpenseReport
 			$receiver_account=new UserBankAccount($this->db);
 			$receiver_account->fetch($object->fk_user_author);
 			$expense_receiver = '';
-			$expense_receiver .= ($expense_receiver ? "\n" : '' ).$outputlangs->convToOutputCharset($this->receiver->address);
-			$expense_receiver .= ($expense_receiver ? "\n" : '' ).$outputlangs->convToOutputCharset($this->receiver->zip).' '.$outputlangs->convToOutputCharset($this->receiver->town);
+			$expense_receiver .= ($expense_receiver ? "\n" : '' ).$outputlangs->convToOutputCharset(dolGetFirstLastname($receiver->firstname, $receiver->lastname));
+			$expense_receiver .= ($expense_receiver ? "\n" : '' ).$outputlangs->convToOutputCharset($receiver->address);
+			$expense_receiver .= ($expense_receiver ? "\n" : '' ).$outputlangs->convToOutputCharset($receiver->zip).' '.$outputlangs->convToOutputCharset($receiver->town);
 			$expense_receiver .= "\n";
-			if ($this->receiver->email) $expense_receiver .= ($expense_receiver ? "\n" : '' ).$outputlangs->transnoentities("Email")." : ".$outputlangs->convToOutputCharset($this->receiver->email);
-			if ($this->receiver_account->iban) $expense_receiver .= ($expense_receiver ? "\n" : '' ).$outputlangs->transnoentities("IBAN")." : ".$outputlangs->convToOutputCharset($this->receiver_account->iban);
+			if ($this->receiver->email) $expense_receiver .= ($expense_receiver ? "\n" : '' ).$outputlangs->transnoentities("Email")." : ".$outputlangs->convToOutputCharset($receiver->email);
+			if ($this->receiver_account->iban) $expense_receiver .= ($expense_receiver ? "\n" : '' ).$outputlangs->transnoentities("IBAN")." : ".$outputlangs->convToOutputCharset($receiver_account->iban);
 
 			// Show sender
 			$posy=50;
@@ -754,12 +755,21 @@ class pdf_standard extends ModeleExpenseReport
 			$pdf->SetFont('', 'B', $default_font_size);
 			$pdf->MultiCell(80, 4, $outputlangs->convToOutputCharset($this->emetteur->name), 0, 'L');
 
+
 			// Show sender information
-			$pdf->SetXY($posx+2, $posy+8);
-			$pdf->SetFont('', '', $default_font_size - 1);
 			if (empty($conf->global->EXPENSEREPORT_INVERT_SENDER_RECIPIENT)) {
+				$pdf->SetXY($posx+2, $posy+3);
+				$pdf->SetFont('', 'B', $default_font_size);
+				$pdf->MultiCell(80, 4, $outputlangs->convToOutputCharset($this->emetteur->name), 0, 'L');
+				$pdf->SetXY($posx+2, $posy+8);
+				$pdf->SetFont('', '', $default_font_size - 1);
 				$pdf->MultiCell(80, 4, $carac_emetteur, 0, 'L');
 			} else {
+				$pdf->SetXY($posx+2, $posy+3);
+				$pdf->SetFont('', 'B', $default_font_size);
+				$pdf->MultiCell(80, 4, $outputlangs->convToOutputCharset($this->receiver->name), 0, 'L');
+				$pdf->SetXY($posx+2, $posy+8);
+				$pdf->SetFont('', '', $default_font_size - 1);
 				$pdf->MultiCell(80, 4, $expense_receiver, 0, 'L');
 			}
 
