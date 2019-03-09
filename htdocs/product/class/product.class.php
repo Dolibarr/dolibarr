@@ -4792,7 +4792,7 @@ class Product extends CommonObject
      *
      * @param  Product $object Object product or service
      * @param  string  $type   Barcode type (ean, isbn, ...)
-     * @return void
+     * @return string
      */
     public function get_barcode($object, $type = '')
     {
