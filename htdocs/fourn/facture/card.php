@@ -927,7 +927,10 @@ if (empty($reshook))
 									0,
 									$lines[$i]->array_options,
 									$lines[$i]->fk_unit,
-									$lines[$i]->id
+									$lines[$i]->id,
+									0,
+									'',
+									$lines[$i]->special_code
 								);
 
 								if ($result < 0)
@@ -3014,8 +3017,13 @@ else
 					print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=edit">'.$langs->trans('Modify').'</a></div>';
 				}
 
+				$discount = new DiscountAbsolute($db);
+				$result = $discount->fetch(0, 0, $object->id);
+
 	 	 		// Reopen a standard paid invoice
-				if (($object->type == FactureFournisseur::TYPE_STANDARD || $object->type == FactureFournisseur::TYPE_REPLACEMENT) && ($object->statut == 2 || $object->statut == 3))				// A paid invoice (partially or completely)
+				if (($object->type == FactureFournisseur::TYPE_STANDARD || $object->type == FactureFournisseur::TYPE_REPLACEMENT
+					|| ($object->type == FactureFournisseur::TYPE_CREDIT_NOTE && empty($discount->id)))
+					&& ($object->statut == 2 || $object->statut == 3))				// A paid invoice (partially or completely)
 				{
 					if (! $facidnext && $object->close_code != 'replaced' && $user->rights->fournisseur->facture->creer)	// Not replaced by another invoice
 					{

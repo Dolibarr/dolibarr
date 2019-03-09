@@ -212,11 +212,22 @@ class Users extends DolibarrApi
 
 		foreach ($request_data as $field => $value)
 		{
-            if ($field == 'id') continue;
-		    $this->useraccount->$field = $value;
+			if ($field == 'id') continue;
+			// The status must be updated using setstatus() because it
+			// is not handled by the update() method.
+			if ($field == 'statut') {
+				$result = $this->useraccount->setstatus($value);
+				if ($result < 0) {
+				   throw new RestException(500, 'Error when updating status of user: '.$this->useraccount->error);
+				}
+			} else {
+			   $this->useraccount->$field = $value;
+			}
 		}
 
-		if ($this->useraccount->update(DolibarrApiAccess::$user) > 0)
+		// If there is no error, update() returns the number of affected
+		// rows so if the update is a no op, the return value is zezo.
+		if ($this->useraccount->update(DolibarrApiAccess::$user) >= 0)
 		{
 			return $this->get($id);
 		}

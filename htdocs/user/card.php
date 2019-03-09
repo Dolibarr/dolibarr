@@ -84,9 +84,11 @@ $socid=0;
 if ($user->societe_id > 0) $socid = $user->societe_id;
 $feature2='user';
 if ($user->id == $id) { $feature2=''; $canreaduser=1; } // A user can always read its own card
-if (!$canreaduser) {
+
+if (! $canreaduser) {
 	$result = restrictedArea($user, 'user', $id, 'user&user', $feature2);
 }
+
 if ($user->id <> $id && ! $canreaduser) accessforbidden();
 
 // Load translation files required by page
@@ -853,7 +855,7 @@ if ($action == 'create' || $action == 'adduserldap')
 		print '<td>';
 		print $form->selectyesno('admin',GETPOST('admin'),1);
 
-		if (! empty($conf->multicompany->enabled) && ! $user->entity && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE))
+		if (! empty($conf->multicompany->enabled) && ! $user->entity)
 		{
 			if (! empty($conf->use_javascript_ajax))
 			{
@@ -1990,7 +1992,7 @@ else
 				{
 					print $form->selectyesno('admin',$object->admin,1);
 
-					if (! empty($conf->multicompany->enabled) && ! $user->entity && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE))
+					if (! empty($conf->multicompany->enabled) && ! $user->entity)
 					{
 						if ($conf->use_javascript_ajax)
 						{

@@ -219,7 +219,9 @@ class Adherent extends CommonObject
 
 		// Substitutions
 		$substitutionarray=array(
-			'__CIVILITY__'=>$this->getCivilityLabel(),
+		    '__ID__'=>$this->id,
+		    '__MEMBER_ID__'=>$this->id,
+		    '__CIVILITY__'=>$this->getCivilityLabel(),
 			'__FIRSTNAME__'=>$msgishtml?dol_htmlentitiesbr($this->firstname):$this->firstname,
 			'__LASTNAME__'=>$msgishtml?dol_htmlentitiesbr($this->lastname):$this->lastname,
 			'__FULLNAME__'=>$msgishtml?dol_htmlentitiesbr($this->getFullName($langs)):$this->getFullName($langs),
@@ -576,7 +578,7 @@ class Adherent extends CommonObject
 					$lthirdparty=new Societe($this->db);
 					$result=$lthirdparty->fetch($this->fk_soc);
 
-					if ($result >= 0)
+					if ($result > 0)
 					{
 						$lthirdparty->address=$this->address;
 						$lthirdparty->zip=$this->zip;
@@ -598,7 +600,7 @@ class Adherent extends CommonObject
 							$error++;
 						}
 					}
-					else
+					elseif ($result < 0)
 					{
 						$this->error=$lthirdparty->error;
 						$error++;
@@ -687,7 +689,6 @@ class Adherent extends CommonObject
 			$this->db->rollback();
 			return -1;
 		}
-
 	}
 
 	/**

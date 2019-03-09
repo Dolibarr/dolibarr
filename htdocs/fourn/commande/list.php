@@ -55,7 +55,7 @@ $search_deliveryyear=GETPOST("search_deliveryyear","int");
 $search_deliverymonth=GETPOST("search_deliverymonth","int");
 $search_deliveryday=GETPOST("search_deliveryday","int");
 
-$sall=GETPOST('search_all', 'alphanohtml');
+$sall=trim((GETPOST('search_all', 'alphanohtml')!='')?GETPOST('search_all', 'alphanohtml'):GETPOST('sall', 'alphanohtml'));
 $search_product_category=GETPOST('search_product_category','int');
 $search_ref=GETPOST('search_ref');
 $search_refsupp=GETPOST('search_refsupp');
@@ -482,7 +482,7 @@ $sql.= " typent.code as typent_code,";
 $sql.= " state.code_departement as state_code, state.nom as state_name,";
 $sql.= " cf.rowid, cf.ref, cf.ref_supplier, cf.fk_statut, cf.billed, cf.total_ht, cf.tva as total_tva, cf.total_ttc, cf.fk_user_author, cf.date_commande as date_commande, cf.date_livraison as date_delivery,";
 $sql.= ' cf.date_creation as date_creation, cf.tms as date_update,';
-$sql.= " p.rowid as project_id, p.ref as project_ref,";
+$sql.= " p.rowid as project_id, p.ref as project_ref, p.title as project_title,";
 $sql.= " u.firstname, u.lastname, u.photo, u.login";
 // Add fields from extrafields
 foreach ($extrafields->attribute_label as $key => $val) $sql.=($extrafields->attribute_type[$key] != 'separate' ? ",ef.".$key.' as options_'.$key : '');
@@ -988,6 +988,7 @@ if ($resql)
 		{
 			$projectstatic->id=$obj->project_id;
 			$projectstatic->ref=$obj->project_ref;
+			$projectstatic->title=$obj->project_title;
 			print '<td>';
 			if ($obj->project_id > 0) print $projectstatic->getNomUrl(1);
 			print '</td>';

@@ -33,10 +33,14 @@ class DiscountAbsolute
 
     public $id;					// Id discount
     public $fk_soc;
-    public $discount_type;			// 0 => customer discount, 1 => supplier discount
-    public $amount_ht;				//
+
+    public $discount_type;		// 0 => customer discount, 1 => supplier discount
+    public $amount_ht;			//
     public $amount_tva;			//
     public $amount_ttc;			//
+    public $multicurrency_amount_ht;
+    public $multicurrency_amount_tva;
+    public $multicurrency_amount_ttc;
     public $tva_tx;				// Vat rate
     public $fk_user;				// Id utilisateur qui accorde la remise
     public $description;			// Description libre

@@ -504,7 +504,7 @@ while ((($y < $yend) || ($y == $yend && $m <= $mend)) && $mcursor < 1000)	// $mc
     if ($i > 2)
     {
         print '<tr class="liste_total">';
-        print '<td align="right"><a href="quadri_detail.php?leftmenu=tax_vat&q='.($m/3).'&year='.$y.'">'.$langs->trans("SubTotal").'</a>:</td>';
+        print '<td align="right"><a href="quadri_detail.php?leftmenu=tax_vat&q='.round($m/3).'&year='.$y.'">'.$langs->trans("SubTotal").'</a>:</td>';
         print '<td class="nowrap" align="right">'.price(price2num($subtotalcoll,'MT')).'</td>';
         print '<td class="nowrap" align="right">'.price(price2num($subtotalpaye,'MT')).'</td>';
         print '<td class="nowrap" align="right">'.price(price2num($subtotal,'MT')).'</td>';

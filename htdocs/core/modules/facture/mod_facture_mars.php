@@ -178,6 +178,7 @@ class mod_facture_mars extends ModeleNumRefFactures
             $sql.= " FROM ".MAIN_DB_PREFIX."facture";
             $sql.= " WHERE facnumber LIKE '".$prefix."____-".$num."'";
             $sql.= " AND entity IN (".getEntity('invoicenumber').")";
+	    $sql.= " ORDER BY ref DESC";
 
             dol_syslog(get_class($this)."::getNextValue", LOG_DEBUG);
             $resql=$db->query($sql);
