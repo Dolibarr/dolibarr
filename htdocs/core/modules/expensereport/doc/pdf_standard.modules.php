@@ -721,6 +721,18 @@ class pdf_standard extends ModeleExpenseReport
 			// Web
 			if ($this->emetteur->url) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Web")." : ".$outputlangs->convToOutputCharset($this->emetteur->url);
 
+			// Receiver Properties
+			$receiver=new User($this->db);
+			$receiver->fetch($object->fk_user_author);
+			$receiver_account=new UserBankAccount($this->db);
+			$receiver_account->fetch($object->fk_user_author);
+			$expense_receiver = '';
+			$expense_receiver .= ($expense_receiver ? "\n" : '' ).$outputlangs->convToOutputCharset($this->receiver->address);
+			$expense_receiver .= ($expense_receiver ? "\n" : '' ).$outputlangs->convToOutputCharset($this->receiver->zip).' '.$outputlangs->convToOutputCharset($this->receiver->town);
+			$expense_receiver .= "\n";
+			if ($this->receiver->email) $expense_receiver .= ($expense_receiver ? "\n" : '' ).$outputlangs->transnoentities("Email")." : ".$outputlangs->convToOutputCharset($this->receiver->email);
+			if ($this->receiver_account->iban) $expense_receiver .= ($expense_receiver ? "\n" : '' ).$outputlangs->transnoentities("IBAN")." : ".$outputlangs->convToOutputCharset($this->receiver_account->iban);
+
 			// Show sender
 			$posy=50;
 			$posx=$this->marge_gauche;
@@ -745,7 +757,11 @@ class pdf_standard extends ModeleExpenseReport
 			// Show sender information
 			$pdf->SetXY($posx+2, $posy+8);
 			$pdf->SetFont('', '', $default_font_size - 1);
-			$pdf->MultiCell(80, 4, $carac_emetteur, 0, 'L');
+			if (empty($conf->global->EXPENSEREPORT_INVERT_SENDER_RECIPIENT)) {
+				$pdf->MultiCell(80, 4, $carac_emetteur, 0, 'L');
+			} else {
+				$pdf->MultiCell(80, 4, $expense_receiver, 0, 'L');
+			}
 
 			// Show recipient
 			$posy=50;

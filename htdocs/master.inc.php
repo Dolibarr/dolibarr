@@ -227,6 +227,7 @@ if (! defined('NOREQUIREDB') && ! defined('NOREQUIRESOC'))
 
 	// For some countries, we need to invert our address with customer address
 	if ($mysoc->country_code == 'DE' && ! isset($conf->global->MAIN_INVERT_SENDER_RECIPIENT)) $conf->global->MAIN_INVERT_SENDER_RECIPIENT=1;
+	if ($mysoc->country_code == 'DE' && ! isset($conf->global->EXPENSEREPORT_INVERT_SENDER_RECIPIENT)) $conf->global->EXPENSEREPORT_INVERT_SENDER_RECIPIENT=1;
 }
 
 
