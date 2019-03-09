@@ -4159,23 +4159,23 @@ class Product extends CommonObject
         if ($type == 2) {
             switch ($mode)
             {
-            case 0:
-                return ($status == 0 ? $langs->trans('ProductStatusNotOnBatch') : $langs->trans('ProductStatusOnBatch'));
-            case 1:
-                return ($status == 0 ? $langs->trans('ProductStatusNotOnBatchShort') : $langs->trans('ProductStatusOnBatchShort'));
-            case 2:
-                return $this->LibStatut($status, 3, 2).' '.$this->LibStatut($status, 1, 2);
-            case 3:
-                if ($status == 0) {
-                    return img_picto($langs->trans('ProductStatusNotOnBatch'), 'statut5');
-                }
-                return img_picto($langs->trans('ProductStatusOnBatch'), 'statut4');
-            case 4:
-                return $this->LibStatut($status, 3, 2).' '.$this->LibStatut($status, 0, 2);
-            case 5:
-                return $this->LibStatut($status, 1, 2).' '.$this->LibStatut($status, 3, 2);
-            default:
-                return $langs->trans('Unknown');
+            	case 0:
+                	return ($status == 0 ? $langs->trans('ProductStatusNotOnBatch') : $langs->trans('ProductStatusOnBatch'));
+            	case 1:
+                	return ($status == 0 ? $langs->trans('ProductStatusNotOnBatchShort') : $langs->trans('ProductStatusOnBatchShort'));
+            	case 2:
+                	return $this->LibStatut($status, 3, 2).' '.$this->LibStatut($status, 1, 2);
+            	case 3:
+                	if ($status == 0) {
+                    	return img_picto($langs->trans('ProductStatusNotOnBatch'), 'statut5');
+                	}
+                	return img_picto($langs->trans('ProductStatusOnBatch'), 'statut4');
+            	case 4:
+                	return $this->LibStatut($status, 3, 2).' '.$this->LibStatut($status, 0, 2);
+            	case 5:
+                	return $this->LibStatut($status, 1, 2).' '.$this->LibStatut($status, 3, 2);
+            	default:
+                	return $langs->trans('Unknown');
             }
         }
         if ($mode == 0) {
