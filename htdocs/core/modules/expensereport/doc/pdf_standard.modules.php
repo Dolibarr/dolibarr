@@ -749,12 +749,6 @@ class pdf_standard extends ModeleExpenseReport
 			$pdf->MultiCell(82, $hautcadre, "", 0, 'R', 1);
 			$pdf->SetTextColor(0, 0, 60);
 
-			// Show sender name
-			$pdf->SetXY($posx+2, $posy+3);
-			$pdf->SetFont('', 'B', $default_font_size);
-			$pdf->MultiCell(80, 4, $outputlangs->convToOutputCharset($this->emetteur->name), 0, 'L');
-
-
 			// Show sender information
 			if (empty($conf->global->EXPENSEREPORT_INVERT_SENDER_RECIPIENT)) {
 				$pdf->SetXY($posx+2, $posy+3);
