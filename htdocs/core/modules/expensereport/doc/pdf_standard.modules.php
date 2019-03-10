@@ -114,19 +114,6 @@ class pdf_standard extends ModeleExpenseReport
 	 */
 	public $emetteur;
 
-	/**
-	 * Receiver
-	 * @var User object that receives the money
-	 */
-	public $receiver;
-
-	/**
-	 * Receiver Account
-	 * @var User_account object that receives the money
-	 */
-
-	public $receiver_account;
-
 
     /**
      *  Constructor
@@ -738,14 +725,16 @@ class pdf_standard extends ModeleExpenseReport
 			if ($this->emetteur->url) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Web")." : ".$outputlangs->convToOutputCharset($this->emetteur->url);
 
 			// Receiver Properties
+			$receiver=new User($this->db);
+			$receiver->fetch($object->fk_user_author);
 			$receiver_account=new UserBankAccount($this->db);
 			$receiver_account->fetch($object->fk_user_author);
 			$expense_receiver = '';
-			$expense_receiver .= ($expense_receiver ? "\n" : '' ).$outputlangs->convToOutputCharset(dolGetFirstLastname($this->receiver->firstname, $receiver->lastname));
-			$expense_receiver .= ($expense_receiver ? "\n" : '' ).$outputlangs->convToOutputCharset($this->receiver->address);
-			$expense_receiver .= ($expense_receiver ? "\n" : '' ).$outputlangs->convToOutputCharset($this->receiver->zip).' '.$outputlangs->convToOutputCharset($this->receiver->town);
+			$expense_receiver .= ($expense_receiver ? "\n" : '' ).$outputlangs->convToOutputCharset(dolGetFirstLastname($receiver->firstname, $receiver->lastname));
+			$expense_receiver .= ($expense_receiver ? "\n" : '' ).$outputlangs->convToOutputCharset($receiver->address);
+			$expense_receiver .= ($expense_receiver ? "\n" : '' ).$outputlangs->convToOutputCharset($receiver->zip).' '.$outputlangs->convToOutputCharset($receiver->town);
 			$expense_receiver .= "\n";
-			if ($receiver->email) $expense_receiver .= ($expense_receiver ? "\n" : '' ).$outputlangs->transnoentities("Email")." : ".$outputlangs->convToOutputCharset($this->receiver->email);
+			if ($receiver->email) $expense_receiver .= ($expense_receiver ? "\n" : '' ).$outputlangs->transnoentities("Email")." : ".$outputlangs->convToOutputCharset($receiver->email);
 			if ($receiver_account->iban) $expense_receiver .= ($expense_receiver ? "\n" : '' ).$outputlangs->transnoentities("IBAN")." : ".$outputlangs->convToOutputCharset($receiver_account->iban);
 
 			// Show sender
