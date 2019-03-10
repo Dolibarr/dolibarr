@@ -444,6 +444,17 @@ function dol_is_dir($folder)
 }
 
 /**
+ * Return if path is empty
+ *
+ * @param   string		$dir		Path of Directory
+ * @return  boolean     		    True or false
+ */
+function dol_is_dir_empty($dir) {
+    if (!is_readable($dir)) return false;
+    return (count(scandir($dir)) == 2);
+}
+
+/**
  * Return if path is a file
  *
  * @param   string		$pathoffile		Path of file
@@ -2654,7 +2665,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		}
 		if (! empty($conf->productbatch->enabled)) $original_file=$conf->productbatch->multidir_output[$entity].'/'.$original_file;
 	}
-	
+
 	// Wrapping for stock movements
 	elseif ($modulepart == 'movement' || $modulepart == 'mouvement')
 	{
