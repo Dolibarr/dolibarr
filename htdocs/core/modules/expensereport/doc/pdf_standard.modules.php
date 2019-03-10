@@ -801,6 +801,8 @@ class pdf_standard extends ModeleExpenseReport
 
 			if ($object->fk_statut==99) {
 				if ($object->fk_user_refuse > 0) {
+					$userfee=new User($this->db);
+					$userfee->fetch($object->fk_user_refuse); $posy+=6;
 					$pdf->SetXY($posx+2, $posy);
 					$pdf->MultiCell(96, 4, $outputlangs->transnoentities("REFUSEUR")." : ".dolGetFirstLastname($userfee->firstname, $userfee->lastname), 0, 'L');
 					$posy+=5;
