@@ -726,7 +726,6 @@ class pdf_standard extends ModeleExpenseReport
 			$receiver_account=new UserBankAccount($this->db);
 			$receiver_account->fetch($object->fk_user_author);
 			$expense_receiver = '';
-			//$expense_receiver .= ($expense_receiver ? "\n" : '' ).$outputlangs->convToOutputCharset(dolGetFirstLastname($receiver->firstname, $receiver->lastname));
 			$expense_receiver .= ($expense_receiver ? "\n" : '' ).$outputlangs->convToOutputCharset($receiver->address);
 			$expense_receiver .= ($expense_receiver ? "\n" : '' ).$outputlangs->convToOutputCharset($receiver->zip).' '.$outputlangs->convToOutputCharset($receiver->town);
 			$expense_receiver .= "\n";
@@ -760,7 +759,7 @@ class pdf_standard extends ModeleExpenseReport
 			} else {
 				$pdf->SetXY($posx+2, $posy+3);
 				$pdf->SetFont('', 'B', $default_font_size);
-				$pdf->MultiCell(80, 4, $outputlangs->convToOutputCharset($receiver->firstname." ".$receiver->lastname), 0, 'L');
+				$pdf->MultiCell(80, 4, $outputlangs->convToOutputCharset(dolGetFirstLastname($receiver->firstname, $receiver->lastname)), 0, 'L');
 				$pdf->SetXY($posx+2, $posy+8);
 				$pdf->SetFont('', '', $default_font_size - 1);
 				$pdf->MultiCell(80, 4, $expense_receiver, 0, 'L');
