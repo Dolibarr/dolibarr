@@ -446,10 +446,11 @@ function dol_is_dir($folder)
 /**
  * Return if path is empty
  *
- * @param   string		$dir		Path of Directory
- * @return  boolean     		    True or false
+ * @param   string      $dir        Path of Directory
+ * @return  boolean                 True or false
  */
-function dol_is_dir_empty($dir) {
+function dol_is_dir_empty($dir)
+{
     if (!is_readable($dir)) return false;
     return (count(scandir($dir)) == 2);
 }
