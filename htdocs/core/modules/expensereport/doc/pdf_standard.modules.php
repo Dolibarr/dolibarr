@@ -113,6 +113,8 @@ class pdf_standard extends ModeleExpenseReport
 	 * @var Company object that emits
 	 */
 	public $emetteur;
+	public $receiver;
+	public $receiver_account;
 
 
     /**
