@@ -242,3 +242,5 @@ ALTER TABLE llx_facturedet_rec ADD COLUMN fk_user_modif integer;
 ALTER TABLE llx_expensereport_det MODIFY COLUMN value_unit double(24,8) NOT NULL;
 ALTER TABLE llx_expensereport_det ADD COLUMN subprice double(24,8) DEFAULT 0 NOT NULL after qty;
 
+ALTER TABLE `llx_product_attribute_combination` ADD INDEX(` fk_product_parent `);
+ALTER TABLE `llx_product_attribute_combination` ADD INDEX(` fk_product_child `);
