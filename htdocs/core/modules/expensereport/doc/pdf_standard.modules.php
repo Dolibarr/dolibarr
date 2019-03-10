@@ -31,6 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/userbankaccount.class.php';
@@ -157,7 +158,6 @@ class pdf_standard extends ModeleExpenseReport
 
 		// Get source company
 		$this->emetteur=$mysoc;
-		$this->receiver=$user;
 
 		if (empty($this->emetteur->country_code)) $this->emetteur->country_code=substr($langs->defaultlang, -2);    // By default, if was not defined
 
@@ -210,7 +210,7 @@ class pdf_standard extends ModeleExpenseReport
     public function write_file($object, $outputlangs, $srctemplatepath = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
         // phpcs:enable
-		global $user, $receiver, $receiver_account, $langs, $conf, $mysoc, $db, $hookmanager;
+		global $user, $langs, $conf, $mysoc, $db, $hookmanager;
 
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
@@ -726,7 +726,7 @@ class pdf_standard extends ModeleExpenseReport
 			$receiver_account=new UserBankAccount($this->db);
 			$receiver_account->fetch($object->fk_user_author);
 			$expense_receiver = '';
-			$expense_receiver .= ($expense_receiver ? "\n" : '' ).$outputlangs->convToOutputCharset(dolGetFirstLastname($receiver->firstname, $receiver->lastname));
+			//$expense_receiver .= ($expense_receiver ? "\n" : '' ).$outputlangs->convToOutputCharset(dolGetFirstLastname($receiver->firstname, $receiver->lastname));
 			$expense_receiver .= ($expense_receiver ? "\n" : '' ).$outputlangs->convToOutputCharset($receiver->address);
 			$expense_receiver .= ($expense_receiver ? "\n" : '' ).$outputlangs->convToOutputCharset($receiver->zip).' '.$outputlangs->convToOutputCharset($receiver->town);
 			$expense_receiver .= "\n";
@@ -781,15 +781,12 @@ class pdf_standard extends ModeleExpenseReport
 
 			// Informations for trip (dates and users workflow)
 			if ($object->fk_user_author > 0) {
-				$account=new UserBankAccount($this->db);
-				$account->fetch($object->fk_user_author);
+				$userfee=new User($this->db);
+				$userfee->fetch($object->fk_user_author); $posy+=6;
 				$posy+=3;
 				$pdf->SetXY($posx+2, $posy);
 				$pdf->SetFont('', '', 10);
-				$pdf->MultiCell(96, 4, $outputlangs->transnoentities("AUTHOR")." : ".dolGetFirstLastname($user->firstname, $user->lastname), 0, 'L');
-				$posy+=5;
-				$pdf->SetXY($posx+2, $posy);
-				$pdf->MultiCell(96, 4, $outputlangs->transnoentities("IBAN")." : ".$account->iban, 0, 'L');
+				$pdf->MultiCell(96, 4, $outputlangs->transnoentities("AUTHOR")." : ".dolGetFirstLastname($userfee->firstname, $userfee->lastname), 0, 'L');
 				$posy+=5;
 				$pdf->SetXY($posx+2, $posy);
 				$pdf->MultiCell(96, 4, $outputlangs->transnoentities("DateCreation")." : ".dol_print_date($object->date_create, "day", false, $outputlangs), 0, 'L');
