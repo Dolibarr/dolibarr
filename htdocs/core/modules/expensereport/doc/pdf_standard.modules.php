@@ -737,7 +737,7 @@ class pdf_standard extends ModeleExpenseReport
 			$posy=50;
 			$posx=$this->marge_gauche;
 			$hautcadre=40;
-			// if (! empty($conf->global->MAIN_INVERT_SENDER_RECIPIENT)) $posx=118;
+			if (! empty($conf->global->MAIN_INVERT_SENDER_RECIPIENT)) $posx=118;
 
 			// Show sender frame
 			$pdf->SetTextColor(0, 0, 0);
@@ -771,6 +771,8 @@ class pdf_standard extends ModeleExpenseReport
 				$pdf->SetFont('', '', $default_font_size - 1);
 				$pdf->MultiCell(80, 4, $expense_receiver, 0, 'L');
 			}
+
+			if (! empty($conf->global->MAIN_INVERT_SENDER_RECIPIENT)) $posx=$this->marge_gauche;
 
 			// Show recipient
 			$posy=50;
