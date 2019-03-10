@@ -229,25 +229,30 @@ class ExpenseReport extends CommonObject
 
             $sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element." SET ref='".$this->db->escape($this->ref)."' WHERE rowid=".$this->id;
             $resql=$this->db->query($sql);
-            if (!$resql) $error++;
-
-            if (is_array($this->lines) && count($this->lines)>0)
+            if (!$resql)
             {
-	            foreach ($this->lines as $i => $val)
-	            {
-	                $newndfline=new ExpenseReportLine($this->db);
-	                $newndfline=$this->lines[$i];
-	                $newndfline->fk_expensereport=$this->id;
-	                if ($result >= 0)
-	                {
-	                    $result=$newndfline->insert();
-	                }
-	                if ($result < 0)
-	                {
-	                    $error++;
-	                    break;
-	                }
-	            }
+                $this->error = $this->db->lasterror();
+                $error++;
+            }
+
+            if (! $error)
+            {
+                if (is_array($this->lines) && count($this->lines)>0)
+                {
+    	            foreach ($this->lines as $i => $val)
+    	            {
+    	                //$newndfline=new ExpenseReportLine($this->db);
+    	                $newndfline=$this->lines[$i];
+    	                $newndfline->fk_expensereport=$this->id;
+    	                $result=$newndfline->insert();
+        	            if ($result < 0)
+        	            {
+        	                $this->error = $newndfline->error;
+        	                $error++;
+        	                break;
+        	            }
+    	            }
+                }
             }
 
             if (! $error)
@@ -2560,7 +2565,7 @@ class ExpenseReportLine
      */
     public function insert($notrigger = 0, $fromaddline = false)
     {
-        global $langs,$user,$conf;
+        global $langs, $user, $conf;
 
         $error=0;
 
@@ -2634,10 +2639,10 @@ class ExpenseReportLine
 	/**
 	 * Function to get total amount in expense reports for a same rule
 	 *
-	 * @param ExpenseReportRule $rule		object rule to check
-	 * @param int				$fk_user	user author id
-	 * @param string			$mode		day|EX_DAY / month|EX_MON / year|EX_YEA to get amount
-	 * @return amount
+	 * @param  ExpenseReportRule $rule		object rule to check
+	 * @param  int				 $fk_user	user author id
+	 * @param  string			 $mode		day|EX_DAY / month|EX_MON / year|EX_YEA to get amount
+	 * @return amount                       Amount
 	 */
 	public function getExpAmount(ExpenseReportRule $rule, $fk_user, $mode = 'day')
 	{
@@ -2650,10 +2655,10 @@ class ExpenseReportLine
 		if (!empty($this->id)) $sql.= ' AND d.rowid <> '.$this->id;
 		$sql .= ' AND d.fk_c_type_fees = '.$rule->fk_c_type_fees;
 		if ($mode == 'day' || $mode == 'EX_DAY') $sql .= ' AND d.date = \''.dol_print_date($this->date, '%Y-%m-%d').'\'';
-		elseif ($mode == 'mon' || $mode == 'EX_MON') $sql .= ' AND DATE_FORMAT(d.date, \'%Y-%m\') = \''.dol_print_date($this->date, '%Y-%m').'\'';
-		elseif ($mode == 'year' || $mode == 'EX_YEA') $sql .= ' AND DATE_FORMAT(d.date, \'%Y\') = \''.dol_print_date($this->date, '%Y').'\'';
+		elseif ($mode == 'mon' || $mode == 'EX_MON') $sql .= ' AND DATE_FORMAT(d.date, \'%Y-%m\') = \''.dol_print_date($this->date, '%Y-%m').'\'';    // @TODO DATE_FORMAT is forbidden
+		elseif ($mode == 'year' || $mode == 'EX_YEA') $sql .= ' AND DATE_FORMAT(d.date, \'%Y\') = \''.dol_print_date($this->date, '%Y').'\'';         // @TODO DATE_FORMAT is forbidden
 
-		dol_syslog('ExpenseReportLine::getExpAmountByDay sql='.$sql);
+		dol_syslog('ExpenseReportLine::getExpAmount');
 
 		$resql = $this->db->query($sql);
 		if ($resql)
@@ -2670,19 +2675,18 @@ class ExpenseReportLine
 			dol_print_error($this->db);
 		}
 
-
 		return $amount + $this->total_ttc;
 	}
 
     /**
      * update
      *
-     * @param   User    $fuser      User
-     * @return  int                 <0 if KO, >0 if OK
+     * @param   User    $user      User
+     * @return  int                <0 if KO, >0 if OK
      */
-    public function update($fuser)
+    public function update(User $user)
     {
-        global $fuser,$langs,$conf;
+        global $langs,$conf;
 
         $error=0;
 

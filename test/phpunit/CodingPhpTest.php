@@ -220,7 +220,7 @@ class CodingPhpTest extends PHPUnit_Framework_TestCase
                    $ok=false;
                    break;
             }
-            $this->assertTrue($ok, 'Found a use of print_liste_field_titre with fist parameter that is a translated value instead of just the translation key in file '.$file['fullname'].'. Bad.');
+            $this->assertTrue($ok, 'Found a use of print_liste_field_titre with first parameter that is a translated value instead of just the translation key in file '.$file['fullname'].'. Bad.');
 
 
             // Test we don't have <br />

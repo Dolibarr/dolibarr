@@ -30,7 +30,7 @@
 abstract class Stats
 {
     protected $db;
-    private $_lastfetchdate=array();	// Dates of cache file read by methods
+    protected $lastfetchdate=array();	// Dates of cache file read by methods
     public $cachefilesuffix='';		// Suffix to add to name of cache file (to avoid file name conflicts)
 
 	/**
@@ -70,7 +70,7 @@ abstract class Stats
 			{
 				$foundintocache=1;
 
-				$this->_lastfetchdate[get_class($this).'_'.__FUNCTION__]=$filedate;
+				$this->lastfetchdate[get_class($this).'_'.__FUNCTION__]=$filedate;
 			}
 			else
 			{
@@ -117,7 +117,7 @@ abstract class Stats
 			if (! empty($conf->global->MAIN_UMASK)) $newmask=$conf->global->MAIN_UMASK;
 			@chmod($newpathofdestfile, octdec($newmask));
 
-			$this->_lastfetchdate[get_class($this).'_'.__FUNCTION__]=$nowgmt;
+			$this->lastfetchdate[get_class($this).'_'.__FUNCTION__]=$nowgmt;
 		}
 
 		// return array(array('Month',val1,val2,val3),...)
@@ -164,7 +164,7 @@ abstract class Stats
         	{
         		$foundintocache=1;
 
-        		$this->_lastfetchdate[get_class($this).'_'.__FUNCTION__]=$filedate;
+        		$this->lastfetchdate[get_class($this).'_'.__FUNCTION__]=$filedate;
         	}
         	else
         	{
@@ -215,7 +215,7 @@ abstract class Stats
 				@chmod($newpathofdestfile, octdec($newmask));
 			}
 			else dol_syslog("Failed to write cache file", LOG_ERR);
-			$this->_lastfetchdate[get_class($this).'_'.__FUNCTION__]=$nowgmt;
+			$this->lastfetchdate[get_class($this).'_'.__FUNCTION__]=$nowgmt;
 		}
 
 		return $data;
@@ -290,7 +290,7 @@ abstract class Stats
         	{
         		$foundintocache=1;
 
-        		$this->_lastfetchdate[get_class($this).'_'.__FUNCTION__]=$filedate;
+        		$this->lastfetchdate[get_class($this).'_'.__FUNCTION__]=$filedate;
         	}
         	else
         	{
@@ -323,7 +323,7 @@ abstract class Stats
 				if (! empty($conf->global->MAIN_UMASK)) $newmask=$conf->global->MAIN_UMASK;
 				@chmod($newpathofdestfile, octdec($newmask));
 			}
-			$this->_lastfetchdate[get_class($this).'_'.__FUNCTION__]=$nowgmt;
+			$this->lastfetchdate[get_class($this).'_'.__FUNCTION__]=$nowgmt;
 		}
 
 		return $data;
