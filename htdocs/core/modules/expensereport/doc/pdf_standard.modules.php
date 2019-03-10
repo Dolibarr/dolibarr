@@ -122,7 +122,7 @@ class pdf_standard extends ModeleExpenseReport
      */
     public function __construct($db)
     {
-		global $conf, $langs, $mysoc;
+		global $conf, $langs, $mysoc, $user;
 
 		// Translations
 		$langs->loadLangs(array("main", "trips", "projects"));
@@ -157,6 +157,7 @@ class pdf_standard extends ModeleExpenseReport
 
 		// Get source company
 		$this->emetteur=$mysoc;
+		$this->receiver=$user;
 		if (empty($this->emetteur->country_code)) $this->emetteur->country_code=substr($langs->defaultlang, -2);    // By default, if was not defined
 
 		// Define position of columns
@@ -722,8 +723,6 @@ class pdf_standard extends ModeleExpenseReport
 			if ($this->emetteur->url) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Web")." : ".$outputlangs->convToOutputCharset($this->emetteur->url);
 
 			// Receiver Properties
-			$receiver=new User($this->db);
-			$receiver->fetch($object->fk_user_author);
 			$receiver_account=new UserBankAccount($this->db);
 			$receiver_account->fetch($object->fk_user_author);
 			$expense_receiver = '';
@@ -786,14 +785,12 @@ class pdf_standard extends ModeleExpenseReport
 
 			// Informations for trip (dates and users workflow)
 			if ($object->fk_user_author > 0) {
-				$userfee=new User($this->db);
-				$userfee->fetch($object->fk_user_author);
 				$account=new UserBankAccount($this->db);
 				$account->fetch($object->fk_user_author);
 				$posy+=3;
 				$pdf->SetXY($posx+2, $posy);
 				$pdf->SetFont('', '', 10);
-				$pdf->MultiCell(96, 4, $outputlangs->transnoentities("AUTHOR")." : ".dolGetFirstLastname($userfee->firstname, $userfee->lastname), 0, 'L');
+				$pdf->MultiCell(96, 4, $outputlangs->transnoentities("AUTHOR")." : ".dolGetFirstLastname($user->firstname, $user->lastname), 0, 'L');
 				$posy+=5;
 				$pdf->SetXY($posx+2, $posy);
 				$pdf->MultiCell(96, 4, $outputlangs->transnoentities("IBAN")." : ".$account->iban, 0, 'L');
@@ -804,8 +801,6 @@ class pdf_standard extends ModeleExpenseReport
 
 			if ($object->fk_statut==99) {
 				if ($object->fk_user_refuse > 0) {
-					$userfee=new User($this->db);
-					$userfee->fetch($object->fk_user_refuse); $posy+=6;
 					$pdf->SetXY($posx+2, $posy);
 					$pdf->MultiCell(96, 4, $outputlangs->transnoentities("REFUSEUR")." : ".dolGetFirstLastname($userfee->firstname, $userfee->lastname), 0, 'L');
 					$posy+=5;
