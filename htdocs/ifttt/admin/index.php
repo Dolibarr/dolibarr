@@ -72,7 +72,7 @@ print '<table class="noborder" width="100%">';
 
 print '<tr class="liste_titre">';
 print "<td>".$langs->trans("Parameter")."</td>";
-print '<td align="center">'.$langs->trans("Value")."</td>";
+print '<td class="center">'.$langs->trans("Value")."</td>";
 print "<td>&nbsp;</td>";
 print "</tr>";
 
@@ -81,13 +81,13 @@ print '<td>'.$langs->trans("ProductionMode").'</td>';
 $production_mode=(empty($conf->global->IFTTT_PRODUCTION_MODE)?false:true);
 if ($production_mode)
 {
-    print '<td align="center"><a href="'.$_SERVER['PHP_SELF'].'?action=setproductionmode&value='.($i+1).'&status=0">';
+    print '<td class="center"><a href="'.$_SERVER['PHP_SELF'].'?action=setproductionmode&value='.($i+1).'&status=0">';
     print img_picto($langs->trans("Activated"), 'switch_on');
     print '</a></td>';
 }
 else
 {
-    print '<td align="center"><a href="'.$_SERVER['PHP_SELF'].'?action=setproductionmode&value='.($i+1).'&status=1">';
+    print '<td class="center"><a href="'.$_SERVER['PHP_SELF'].'?action=setproductionmode&value='.($i+1).'&status=1">';
     print img_picto($langs->trans("Disabled"), 'switch_off');
     print '</a></td>';
 }
