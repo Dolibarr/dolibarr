@@ -113,7 +113,18 @@ class pdf_standard extends ModeleExpenseReport
 	 * @var Company object that emits
 	 */
 	public $emetteur;
+
+	/**
+	 * Receiver
+	 * @var User object that receives the money
+	 */
 	public $receiver;
+
+	/**
+	 * Receiver Account
+	 * @var User_account object that receives the money
+	 */
+
 	public $receiver_account;
 
 
@@ -160,6 +171,7 @@ class pdf_standard extends ModeleExpenseReport
 		// Get source company
 		$this->emetteur=$mysoc;
 		$this->receiver=$user;
+
 		if (empty($this->emetteur->country_code)) $this->emetteur->country_code=substr($langs->defaultlang, -2);    // By default, if was not defined
 
 		// Define position of columns
@@ -211,7 +223,7 @@ class pdf_standard extends ModeleExpenseReport
     public function write_file($object, $outputlangs, $srctemplatepath = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
         // phpcs:enable
-		global $user, $langs, $conf, $mysoc, $db, $hookmanager;
+		global $user, $receiver, $receiver_account, $langs, $conf, $mysoc, $db, $hookmanager;
 
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
@@ -630,7 +642,8 @@ class pdf_standard extends ModeleExpenseReport
 	 */
 	private function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
 	{
-		global $conf, $langs, $hookmanager;
+		// global $conf, $langs, $hookmanager;
+		global $user, $receiver, $receiver_account, $langs, $conf, $mysoc, $db, $hookmanager;
 
 		// Load traductions files requiredby by page
 		$outputlangs->loadLangs(array("main", "trips", "companies"));
@@ -728,11 +741,11 @@ class pdf_standard extends ModeleExpenseReport
 			$receiver_account=new UserBankAccount($this->db);
 			$receiver_account->fetch($object->fk_user_author);
 			$expense_receiver = '';
-			$expense_receiver .= ($expense_receiver ? "\n" : '' ).$outputlangs->convToOutputCharset(dolGetFirstLastname($receiver->firstname, $receiver->lastname));
-			$expense_receiver .= ($expense_receiver ? "\n" : '' ).$outputlangs->convToOutputCharset($receiver->address);
-			$expense_receiver .= ($expense_receiver ? "\n" : '' ).$outputlangs->convToOutputCharset($receiver->zip).' '.$outputlangs->convToOutputCharset($receiver->town);
+			$expense_receiver .= ($expense_receiver ? "\n" : '' ).$outputlangs->convToOutputCharset(dolGetFirstLastname($this->receiver->firstname, $receiver->lastname));
+			$expense_receiver .= ($expense_receiver ? "\n" : '' ).$outputlangs->convToOutputCharset($this->receiver->address);
+			$expense_receiver .= ($expense_receiver ? "\n" : '' ).$outputlangs->convToOutputCharset($this->receiver->zip).' '.$outputlangs->convToOutputCharset($this->receiver->town);
 			$expense_receiver .= "\n";
-			if ($receiver->email) $expense_receiver .= ($expense_receiver ? "\n" : '' ).$outputlangs->transnoentities("Email")." : ".$outputlangs->convToOutputCharset($receiver->email);
+			if ($receiver->email) $expense_receiver .= ($expense_receiver ? "\n" : '' ).$outputlangs->transnoentities("Email")." : ".$outputlangs->convToOutputCharset($this->receiver->email);
 			if ($receiver_account->iban) $expense_receiver .= ($expense_receiver ? "\n" : '' ).$outputlangs->transnoentities("IBAN")." : ".$outputlangs->convToOutputCharset($receiver_account->iban);
 
 			// Show sender
