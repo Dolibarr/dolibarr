@@ -1059,10 +1059,6 @@ select.selectarrowonleft option {
         text-overflow: ellipsis;
         white-space: nowrap;
     }
-	div.titre {
-		/* margin-top: 12px; */
-		/* line-height: 2em; */
-	}
     .border tbody tr, .border tbody tr td, div.tabBar table.border tr, div.tabBar table.border tr td, div.tabBar div.border .table-border-row, div.tabBar div.border .table-key-border-col, div.tabBar div.border .table-val-border-col {
     	height: 40px !important;
     }
@@ -3671,13 +3667,14 @@ label.radioprivate {
 }
 
 div.titre {
-	font-family: <?php print $fontlist ?>;
 	font-size: 1.1em;
-	/* font-weight: bold; */
-	color: rgb(<?php print $colortexttitlenotab; ?>);
 	text-decoration: none;
 	padding-top: 5px;
     padding-bottom: 5px;
+}
+div.titre, .secondary {
+	font-family: <?php print $fontlist ?>;
+	color: rgb(<?php print $colortexttitlenotab; ?>);
 }
 
 #dolpaymenttable { min-width: 320px; font-size: 16px; }	/* Width must have min to make stripe input area visible. Lower than 320 makes input area crazy for credit card that need zip code */
