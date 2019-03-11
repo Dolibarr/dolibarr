@@ -117,9 +117,9 @@ if (empty($reshook))
     		$object->description = GETPOST('nouveauxcommentaires', 'nohtml');
     		$object->mail_admin = GETPOST('nouvelleadresse', 'alpha');
     		$object->date_fin = $expiredate;
-    		$object->allow_comments = GETPOST('cancomment','alpha') == 'on' ? true : false;
-    		$object->allow_spy = GETPOST('canseeothersvote','alpha') == 'on' ? true : false;
-    		$object->mailsonde = GETPOST('mailsonde','alpha') == 'on' ? true : false;
+    		$object->allow_comments = GETPOST('cancomment', 'alpha') == 'on' ? true : false;
+    		$object->allow_spy = GETPOST('canseeothersvote', 'alpha') == 'on' ? true : false;
+    		$object->mailsonde = GETPOST('mailsonde', 'alpha') == 'on' ? true : false;
 
     		$res=$object->update($user);
     		if ($res < 0)
