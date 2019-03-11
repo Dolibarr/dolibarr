@@ -1602,7 +1602,13 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 		// Login name with photo and tooltip
 		$mode=-1;
 		$toprightmenu.='<div class="inline-block nowrap"><div class="inline-block login_block_elem login_block_elem_name" style="padding: 0px;">';
-		$toprightmenu.=$user->getNomUrl($mode, '', 1, 0, 11, 0, ($user->firstname ? 'firstname' : -1), 'atoplogin');
+		
+		if(empty($conf->global->MAIN_TOP_MENU_DROPDOWN)){
+		  $toprightmenu.=$user->getNomUrl($mode, '', 1, 0, 11, 0, ($user->firstname ? 'firstname' : -1), 'atoplogin');
+		}
+		else{
+		    $toprightmenu.= top_menu_user($user, $langs);
+		}
 		$toprightmenu.='</div></div>';
 
 		$toprightmenu.='</div>'."\n";
@@ -1713,6 +1719,68 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 	if (empty($conf->dol_hide_leftmenu) && empty($conf->dol_use_jmobile)) print '<!-- Begin div id-container --><div id="id-container" class="id-container'.($morecss?' '.$morecss:'').'">';
 }
 
+
+
+function top_menu_user(user $user, $langs){
+    
+    $userImage = $userDropDownImage = '';
+    if (! empty($user->photo))
+    {
+        $userImage = Form::showphoto('userphoto', $user, 0, 0, 0, 'photouserphoto userphoto', 'small', 0, 1);
+        $userDropDownImage = Form::showphoto('userphoto', $user, 0, 0, 0, 'dropdown-user-image', 'small', 0, 1);
+    }
+ 
+    
+    $btnUser = '
+    <div class="userimg atoplogin dropdown user user-menu open">
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+            '.$userImage.'
+            <span class="hidden-xs">'.($user->firstname ? $user->firstname : $user->login).'</span>
+        </a>
+        <div class="dropdown-menu">
+            <!-- User image -->
+            <div class="user-header">
+                '.$userDropDownImage.'
+                
+                <p>
+                    '.$user->getFullName($langs).'
+                    <small>'.dol_print_date($user->date_creation).'</small>
+                </p>
+            </div>
+
+            <!-- Menu Body -->
+            <div class="user-body">
+                <div class="row">
+                    <div class="col-xs-4 text-center">
+                        <a href="#">btn01</a>
+                    </div>
+                    <div class="col-xs-4 text-center">
+                        <a href="#">btn02</a>
+                    </div>
+                    <div class="col-xs-4 text-center">
+                        <a href="#">btn03</a>
+                    </div>
+                </div>
+                <!-- /.row -->
+            </div>
+            
+            <!-- Menu Footer-->
+            <div class="user-footer">
+                <div class="pull-left">
+                    <a href="#" class="btn btn-default btn-flat">Profile</a>
+                </div>
+                <div class="pull-right">
+                    <a href="#" class="btn btn-default btn-flat">Sign out</a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    ';
+    
+    
+    return $btnUser;
+}
 
 /**
  *  Show left menu bar
