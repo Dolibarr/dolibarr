@@ -427,7 +427,7 @@ textarea.centpercent {
 	cursor: not-allowed;
 }
 
-<?php include dol_buildpath($path.'/theme/'.$theme.'/_badges.css.php', 0); ?>
+<?php include dol_buildpath($path.'/theme/'.$theme.'/badges.inc.php', 0); ?>
 
 .borderrightlight
 {
@@ -1488,7 +1488,7 @@ a.tmenuimage:hover{
 
 <?php if (empty($dol_hide_topmenu)) { ?>
     <?php if (! defined('DISABLE_FONT_AWSOME') && !empty($conf->global->MAIN_USE_FONT_AWESOME_5)) { ?>
-        <?php include dol_buildpath($path.'/theme/'.$theme.'/_main_menu_fa_icons.css.php', 0); ?>
+        <?php include dol_buildpath($path.'/theme/'.$theme.'/main_menu_fa_icons.inc.php', 0); ?>
     <?php } else { ?>
         div.mainmenu.home{
             background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/home_over.png', 1) ?>);
@@ -3578,7 +3578,7 @@ div.ui-tooltip.mytooltip {
 	-o-box-shadow:     0.5px 0.5px 4px 0px rgba(0, 0, 0, 0.5);
 	box-shadow:        0.5px 0.5px 4px 0px rgba(0, 0, 0, 0.5);
 	filter:progid:DXImageTransform.Microsoft.Shadow(color=#656565, Direction=134, Strength=5);
-	background: <?php print $toolTipBgColor; ?> !important;  
+	background: <?php print $toolTipBgColor; ?> !important;
 	color : <?php print $toolTipFontColor; ?>;
 }
 

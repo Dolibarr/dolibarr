@@ -21,12 +21,20 @@
  */
 
 /**
- *		\file       htdocs/theme/eldy/theme_vars.css.php
- *		\brief      File for CSS style sheet Eldy
+ *	\file       htdocs/theme/eldy/theme_vars.inc.php
+ *	\brief      File to declare variables of CSS style sheet
+ *  \ingroup    core
+ *
+ *  To include file, do this:
+ *              $var_file = DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
+ *              if (is_readable($var_file)) include $var_file;
  */
 
-if (defined('THEME_ONLY_CONSTANT')) return;
-
+global $theme_bordercolor, $theme_datacolor, $theme_bgcolor, $theme_bgcoloronglet;
+$theme_bordercolor = array(235,235,224);
+$theme_datacolor = array(array(136,102,136), array(0,130,110), array(140,140,220), array(190,120,120), array(190,190,100), array(115,125,150), array(100,170,20), array(250,190,30), array(150,135,125), array(85,135,150), array(150,135,80), array(150,80,150));
+$theme_bgcolor = array(hexdec('F4'),hexdec('F4'),hexdec('F4'));
+$theme_bgcoloronglet = array(hexdec('DE'),hexdec('E7'),hexdec('EC'));
 
 // Colors
 $colorbackhmenu1='60,70,100';      // topmenu

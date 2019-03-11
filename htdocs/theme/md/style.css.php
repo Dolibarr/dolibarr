@@ -37,30 +37,16 @@ if (! defined('NOLOGIN'))         define('NOLOGIN', 1);          // File must be
 if (! defined('NOREQUIREHTML'))   define('NOREQUIREHTML', 1);
 if (! defined('NOREQUIREAJAX'))   define('NOREQUIREAJAX', '1');
 
-// Colors
-$colorbackhmenu1='90,50,120';      // topmenu
-$colorbackvmenu1='255,255,255';      // vmenu
-$colortopbordertitle1='';           // top border of tables-lists title. not defined = default to colorbackhmenu1
-$colorbacktitle1='240,240,240';      // title of tables-lists
-$colorbacktabcard1='255,255,255';  // card
-$colorbacktabactive='234,234,234';
-$colorbacklineimpair1='255,255,255';    // line impair
-$colorbacklineimpair2='255,255,255';    // line impair
-$colorbacklinepair1='248,248,248';    // line pair
-$colorbacklinepair2='246,246,246';    // line pair
-$colorbacklinepairhover='230,237,244';    // line pair
-$colorbacklinebreak='214,218,220';
-$colorbackbody='248,248,248';
-$colortexttitlenotab='90,90,90';
-$colortexttitle='20,20,20';
-$colortext='0,0,0';
-$colortextlink='0,0,120';
-$fontsize='14';
-$fontsizesmaller='11';
 
+define('ISLOADEDBYSTEELSHEET', '1');
+
+
+require __DIR__ . '/theme_vars.inc.php';
 if (defined('THEME_ONLY_CONSTANT')) return;
 
+
 session_cache_limiter('public');
+
 
 require_once '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
