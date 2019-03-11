@@ -363,7 +363,7 @@ if (empty($reshook))
 								// Extrafields
 								$extrafieldsline = new ExtraFields($db);
 								$extralabelsline = $extrafieldsline->fetch_name_optionals_label($object->table_element_line);
-								$array_options = $extrafieldsline->getOptionalsFromPost($extralabelsline, $predef);
+								$array_options = $extrafieldsline->getOptionalsFromPost($object->table_element_line, $predef);
 
                     $result = $object->addline(
 									$user,
@@ -508,7 +508,7 @@ if (empty($reshook))
 			// Extrafields
 			$extrafieldsline = new ExtraFields($db);
 			$extralabelsline = $extrafieldsline->fetch_name_optionals_label($object->table_element_line);
-			$array_options = $extrafieldsline->getOptionalsFromPost($extralabelsline);
+			$array_options = $extrafieldsline->getOptionalsFromPost($object->table_element_line);
 
         $result=$object->addline(
 				$user,
@@ -620,7 +620,7 @@ if (empty($reshook))
 		// Extrafields
 		$extrafieldsline = new ExtraFields($db);
 		$extralabelsline = $extrafieldsline->fetch_name_optionals_label($object->table_element_line);
-		$array_options = $extrafieldsline->getOptionalsFromPost($extralabelsline);
+		$array_options = $extrafieldsline->getOptionalsFromPost($object->table_element_line);
 		$objectline->array_options = $array_options;
 
 		$result = $objectline->update($user);
