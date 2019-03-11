@@ -3334,6 +3334,9 @@ span.dashboardlineindicator, span.dashboardlineindicatorlate {
 	font-size: 120%;
 	font-weight: normal;
 }
+a.dashboardlineindicatorlate:hover {
+	text-decoration: none;
+}
 .dashboardlineindicatorlate img {
 	width: 16px;
 }

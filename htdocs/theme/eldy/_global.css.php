@@ -1398,7 +1398,7 @@ li.tmenusel::after, li.tmenu:hover::after{
 	border-color:  transparent transparent #ffffff transparent;
 }
 /*
-// add a bottom arrow
+// Add a bottom arrow
 li.tmenusel::before, li.tmenu:hover::before{
 	content: "";
 	position:absolute;
@@ -3179,6 +3179,9 @@ span.boxstatsindicator {
 span.dashboardlineindicator, span.dashboardlineindicatorlate {
 	font-size: 130%;
 	font-weight: normal;
+}
+a.dashboardlineindicatorlate:hover {
+	text-decoration: none;
 }
 .dashboardlineindicatorlate img {
 	width: 16px;
