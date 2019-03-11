@@ -51,7 +51,8 @@ $langs->loadLangs(array("admin", "cron"));
  */
 
 // Check the key, avoid that a stranger starts cron
-$key = GETPOST('securitykey', 'alpha');
+if (!isset($_SERVER["HTTP_HOST"])) $key = $argv[1];
+else $key = GETPOST('securitykey', 'alpha');
 if (empty($key))
 {
 	echo 'Securitykey is required. Check setup of cron jobs module.';
@@ -63,7 +64,8 @@ if($key != $conf->global->CRON_KEY)
 	exit;
 }
 // Check the key, avoid that a stranger starts cron
-$userlogin = GETPOST('userlogin', 'alpha');
+if (!isset($_SERVER["HTTP_HOST"])) $userlogin = $argv[2];
+else $userlogin = GETPOST('userlogin', 'alpha');
 if (empty($userlogin))
 {
 	echo 'Userlogin is required.';
