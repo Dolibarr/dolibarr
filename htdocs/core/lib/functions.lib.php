@@ -7989,7 +7989,7 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
     if($displayMode==0){
         $return = !empty($html)?$html:$statusLabel;
     }
-    elseif($displayMode===1){
+    elseif($displayMode==1){
         $return = !empty($html)?$html:(!empty($statusLabelShort)?$statusLabelShort:$statusLabel);
     }
     // use status with images

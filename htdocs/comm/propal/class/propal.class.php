@@ -3193,20 +3193,14 @@ class Propal extends CommonObject
 			$this->labelstatut_short[4]=$langs->trans("PropalStatusBilledShort");
 		}
 
-		$statuttrans='';
-		if ($statut==self::STATUS_DRAFT) $statuttrans='statut0';
-		elseif ($statut==self::STATUS_VALIDATED) $statuttrans='statut1';
-		elseif ($statut==self::STATUS_SIGNED) $statuttrans='statut3';
-		elseif ($statut==self::STATUS_NOTSIGNED) $statuttrans='statut5';
-		elseif ($statut==self::STATUS_BILLED) $statuttrans='statut6';
-
-		if ($mode == 0)	return $this->labelstatut[$statut];
-		elseif ($mode == 1)	return $this->labelstatut_short[$statut];
-		elseif ($mode == 2)	return img_picto($this->labelstatut_short[$statut], $statuttrans).' '.$this->labelstatut_short[$statut];
-		elseif ($mode == 3)	return img_picto($this->labelstatut[$statut], $statuttrans);
-		elseif ($mode == 4)	return img_picto($this->labelstatut[$statut], $statuttrans).' '.$this->labelstatut[$statut];
-		elseif ($mode == 5)	return '<span class="hideonsmartphone">'.$this->labelstatut_short[$statut].' </span>'.img_picto($this->labelstatut[$statut], $statuttrans);
-		elseif ($mode == 6)	return '<span class="hideonsmartphone">'.$this->labelstatut[$statut].' </span>'.img_picto($this->labelstatut[$statut], $statuttrans);
+		$statusType='';
+		if ($statut==self::STATUS_DRAFT) $statusType='status0';
+		elseif ($statut==self::STATUS_VALIDATED) $statusType='status1';
+		elseif ($statut==self::STATUS_SIGNED) $statusType='status3';
+		elseif ($statut==self::STATUS_NOTSIGNED) $statusType='status5';
+		elseif ($statut==self::STATUS_BILLED) $statusType='status6';
+		
+		return dolGetStatus($this->labelstatut[$statut], $this->labelstatut_short[$statut], '', $statusType, $mode);
 	}
 
 
