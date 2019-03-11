@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2006-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -249,12 +249,13 @@ $form=new Form($db);
 llxHeader('', $langs->trans("MembersCards"));
 
 print load_fiche_titre($langs->trans("LinkToGeneratedPages"));
-print '<br>';
 
-print $langs->trans("LinkToGeneratedPagesDesc").'<br>';
+print '<span class="opacitymedium">'.$langs->trans("LinkToGeneratedPagesDesc").'</span><br>';
 print '<br>';
 
 dol_htmloutput_errors($mesg);
+
+print '<br>';
 
 print img_picto('', 'puce').' '.$langs->trans("DocForAllMembersCards", ($conf->global->ADHERENT_CARD_TYPE?$conf->global->ADHERENT_CARD_TYPE:$langs->transnoentitiesnoconv("None"))).' ';
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
@@ -272,7 +273,8 @@ asort($arrayoflabels);
 print $form->selectarray('model', $arrayoflabels, (GETPOST('model')?GETPOST('model'):$conf->global->ADHERENT_CARD_TYPE), 1, 0, 0, '', 0, 0, 0, '', '', 1);
 print '<br><input class="button" type="submit" value="'.$langs->trans("BuildDoc").'">';
 print '</form>';
-print '<br>';
+
+print '<br><br>';
 
 print img_picto('', 'puce').' '.$langs->trans("DocForOneMemberCards", ($conf->global->ADHERENT_CARD_TYPE?$conf->global->ADHERENT_CARD_TYPE:$langs->transnoentitiesnoconv("None"))).' ';
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
@@ -290,7 +292,8 @@ print $form->selectarray('model', $arrayoflabels, (GETPOST('model')?GETPOST('mod
 print '<br>'.$langs->trans("Login").': <input size="10" type="text" name="foruserlogin" value="'.GETPOST('foruserlogin').'">';
 print '<br><input class="button" type="submit" value="'.$langs->trans("BuildDoc").'">';
 print '</form>';
-print '<br>';
+
+print '<br><br>';
 
 print img_picto('', 'puce').' '.$langs->trans("DocForLabels", $conf->global->ADHERENT_ETIQUETTE_TYPE).' ';
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
@@ -307,7 +310,6 @@ asort($arrayoflabels);
 print $form->selectarray('modellabel', $arrayoflabels, (GETPOST('modellabel')?GETPOST('modellabel'):$conf->global->ADHERENT_ETIQUETTE_TYPE), 1, 0, 0, '', 0, 0, 0, '', '', 1);
 print '<br><input class="button" type="submit" value="'.$langs->trans("BuildDoc").'">';
 print '</form>';
-print '<br>';
 
 // End of page
 llxFooter();

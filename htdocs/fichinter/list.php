@@ -383,7 +383,7 @@ if ($resql)
 	// Status
 	if (! empty($arrayfields['f.fk_statut']['checked']))
 	{
-		print '<td class="liste_titre" align="right">';
+		print '<td class="liste_titre right">';
 		$tmp = $objectstatic->LibStatut(0);		// To load $this->statuts_short
 		$liststatus=$objectstatic->statuts_short;
 		if (empty($conf->global->FICHINTER_CLASSIFY_BILLED)) unset($liststatus[2]);   // Option deprecated. In a future, billed must be managed with a dedicated field to 0 or 1
@@ -403,7 +403,7 @@ if ($resql)
 	{
 	    print '<td class="liste_titre">&nbsp;</td>';
 	}
-	print '<td class="liste_titre" align="right">';
+	print '<td class="liste_titre right">';
 	$searchpicto=$form->showFilterButtons();
 	print $searchpicto;
 	print '</td>';
@@ -420,13 +420,13 @@ if ($resql)
 	$parameters=array('arrayfields'=>$arrayfields,'param'=>$param,'sortfield'=>$sortfield,'sortorder'=>$sortorder);
 	$reshook=$hookmanager->executeHooks('printFieldListTitle', $parameters);    // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
-	if (! empty($arrayfields['f.datec']['checked']))     print_liste_field_titre($arrayfields['f.datec']['label'], $_SERVER["PHP_SELF"], "f.datec", "", $param, 'align="center" class="nowrap"', $sortfield, $sortorder);
-	if (! empty($arrayfields['f.tms']['checked']))       print_liste_field_titre($arrayfields['f.tms']['label'], $_SERVER["PHP_SELF"], "f.tms", "", $param, 'align="center" class="nowrap"', $sortfield, $sortorder);
-	if (! empty($arrayfields['f.fk_statut']['checked'])) print_liste_field_titre($arrayfields['f.fk_statut']['label'], $_SERVER["PHP_SELF"], "f.fk_statut", "", $param, 'align="right"', $sortfield, $sortorder);
+	if (! empty($arrayfields['f.datec']['checked']))     print_liste_field_titre($arrayfields['f.datec']['label'], $_SERVER["PHP_SELF"], "f.datec", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
+	if (! empty($arrayfields['f.tms']['checked']))       print_liste_field_titre($arrayfields['f.tms']['label'], $_SERVER["PHP_SELF"], "f.tms", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
+	if (! empty($arrayfields['f.fk_statut']['checked'])) print_liste_field_titre($arrayfields['f.fk_statut']['label'], $_SERVER["PHP_SELF"], "f.fk_statut", "", $param, '', $sortfield, $sortorder, 'right ');
 	if (! empty($arrayfields['fd.description']['checked'])) print_liste_field_titre($arrayfields['fd.description']['label'], $_SERVER["PHP_SELF"], '');
-	if (! empty($arrayfields['fd.date']['checked']))        print_liste_field_titre($arrayfields['fd.date']['label'], $_SERVER["PHP_SELF"], "fd.date", "", $param, 'align="center"', $sortfield, $sortorder);
-	if (! empty($arrayfields['fd.duree']['checked']))       print_liste_field_titre($arrayfields['fd.duree']['label'], $_SERVER["PHP_SELF"], "fd.duree", "", $param, 'align="right"', $sortfield, $sortorder);
-	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', 'align="center"', $sortfield, $sortorder, 'maxwidthsearch ');
+	if (! empty($arrayfields['fd.date']['checked']))        print_liste_field_titre($arrayfields['fd.date']['label'], $_SERVER["PHP_SELF"], "fd.date", "", $param, '', $sortfield, $sortorder, 'center ');
+	if (! empty($arrayfields['fd.duree']['checked']))       print_liste_field_titre($arrayfields['fd.duree']['label'], $_SERVER["PHP_SELF"], "fd.duree", "", $param, '', $sortfield, $sortorder, 'right ');
+	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
 	print "</tr>\n";
 
 	$total = 0;
@@ -469,7 +469,7 @@ if ($resql)
 			}
 
 			// Other picto tool
-			print '<td width="16" align="right" class="nobordernopadding hideonsmartphone">';
+			print '<td width="16" class="right nobordernopadding hideonsmartphone">';
 			$filename=dol_sanitizeFileName($obj->ref);
 			$filedir=$conf->ficheinter->dir_output . '/' . dol_sanitizeFileName($obj->ref);
 			$urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->rowid;
@@ -504,7 +504,7 @@ if ($resql)
 		// Date creation
 		if (! empty($arrayfields['f.datec']['checked']))
 		{
-			print '<td align="center">';
+			print '<td class="center">';
 			print dol_print_date($db->jdate($obj->date_creation), 'dayhour', 'tzuser');
 			print '</td>';
 			if (! $i) $totalarray['nbfield']++;
@@ -512,7 +512,7 @@ if ($resql)
 		// Date modification
 		if (! empty($arrayfields['f.tms']['checked']))
 		{
-			print '<td align="center">';
+			print '<td class="center">';
 			print dol_print_date($db->jdate($obj->date_update), 'dayhour', 'tzuser');
 			print '</td>';
 			if (! $i) $totalarray['nbfield']++;
@@ -520,7 +520,7 @@ if ($resql)
 		// Status
 		if (! empty($arrayfields['f.fk_statut']['checked']))
 		{
-			print '<td align="right">'.$objectstatic->LibStatut($obj->fk_statut, 5).'</td>';
+			print '<td class="right">'.$objectstatic->LibStatut($obj->fk_statut, 5).'</td>';
 			if (! $i) $totalarray['nbfield']++;
 		}
 		// Fields of detail of line
@@ -531,18 +531,18 @@ if ($resql)
 		}
 		if (! empty($arrayfields['fd.date']['checked']))
 		{
-		    print '<td align="center">'.dol_print_date($db->jdate($obj->dp), 'dayhour')."</td>\n";
+		    print '<td class="center">'.dol_print_date($db->jdate($obj->dp), 'dayhour')."</td>\n";
 		    if (! $i) $totalarray['nbfield']++;
 		}
 		if (! empty($arrayfields['fd.duree']['checked']))
 		{
-		    print '<td align="right">'.convertSecondToTime($obj->duree, 'allhourmin').'</td>';
+		    print '<td class="right">'.convertSecondToTime($obj->duree, 'allhourmin').'</td>';
 		    if (! $i) $totalarray['nbfield']++;
 		    if (! $i) $totalarray['totaldurationfield']=$totalarray['nbfield'];
 		    $totalarray['totalduration']+=$obj->duree;
 		}
 		// Action column
-		print '<td class="nowrap" align="center">';
+		print '<td class="nowrap center">';
 		if ($massactionbutton || $massaction)   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 		{
 			$selected=0;
@@ -571,7 +571,7 @@ if ($resql)
 				if ($num < $limit && empty($offset)) print '<td class="left">'.$langs->trans("Total").'</td>';
 				else print '<td class="left">'.$langs->trans("Totalforthispage").'</td>';
 			}
-			elseif ($totalarray['totaldurationfield'] == $i) print '<td align="right">'.convertSecondToTime($totalarray['totalduration'], 'allhourmin').'</td>';
+			elseif ($totalarray['totaldurationfield'] == $i) print '<td class="right">'.convertSecondToTime($totalarray['totalduration'], 'allhourmin').'</td>';
 			else print '<td></td>';
 		}
 		print '</tr>';

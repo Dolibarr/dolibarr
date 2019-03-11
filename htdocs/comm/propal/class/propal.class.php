@@ -3523,13 +3523,13 @@ class Propal extends CommonObject
 			if ($option == '') {
 				$url = DOL_URL_ROOT.'/comm/propal/card.php?id='.$this->id. $get_params;
 			}
-			if ($option == 'compta') {  // deprecated
+			elseif ($option == 'compta') {  // deprecated
 				$url = DOL_URL_ROOT.'/comm/propal/card.php?id='.$this->id. $get_params;
 			}
-			if ($option == 'expedition') {
+			elseif ($option == 'expedition') {
 				$url = DOL_URL_ROOT.'/expedition/propal.php?id='.$this->id. $get_params;
 			}
-			if ($option == 'document') {
+			elseif ($option == 'document') {
 				$url = DOL_URL_ROOT.'/comm/propal/document.php?id='.$this->id. $get_params;
 			}
 
@@ -3643,68 +3643,68 @@ class PropaleLigne extends CommonObjectLine
 	 */
 	public $table_element='propaldet';
 
-	var $oldline;
+    public $oldline;
 
 	// From llx_propaldet
-	var $fk_propal;
-	var $fk_parent_line;
-	var $desc;          	// Description ligne
-	var $fk_product;		// Id produit predefini
+    public $fk_propal;
+    public $fk_parent_line;
+    public $desc;          	// Description ligne
+    public $fk_product;		// Id produit predefini
 	/**
 	 * @deprecated
 	 * @see product_type
 	 */
-	var $fk_product_type;
+    public $fk_product_type;
 	/**
 	 * Product type.
 	 * @var int
 	 * @see Product::TYPE_PRODUCT, Product::TYPE_SERVICE
 	 */
-	var $product_type = Product::TYPE_PRODUCT;
+    public $product_type = Product::TYPE_PRODUCT;
 
-	var $qty;
-	var $tva_tx;
-	var $subprice;
-	var $remise_percent;
-	var $fk_remise_except;
+    public $qty;
+    public $tva_tx;
+    public $subprice;
+    public $remise_percent;
+    public $fk_remise_except;
 
-	var $rang = 0;
+    public $rang = 0;
 
-	var $fk_fournprice;
-	var $pa_ht;
-	var $marge_tx;
-	var $marque_tx;
+    public $fk_fournprice;
+    public $pa_ht;
+    public $marge_tx;
+    public $marque_tx;
 
-	var $special_code;	// Tag for special lines (exlusive tags)
+    public $special_code;	// Tag for special lines (exlusive tags)
 	// 1: frais de port
 	// 2: ecotaxe
 	// 3: option line (when qty = 0)
 
-	var $info_bits = 0;	// Liste d'options cumulables:
+    public $info_bits = 0;	// Liste d'options cumulables:
 	// Bit 0: 	0 si TVA normal - 1 si TVA NPR
 	// Bit 1:	0 ligne normale - 1 si ligne de remise fixe
 
-	var $total_ht;			// Total HT  de la ligne toute quantite et incluant la remise ligne
-	var $total_tva;			// Total TVA  de la ligne toute quantite et incluant la remise ligne
-	var $total_ttc;			// Total TTC de la ligne toute quantite et incluant la remise ligne
+    public $total_ht;			// Total HT  de la ligne toute quantite et incluant la remise ligne
+    public $total_tva;			// Total TVA  de la ligne toute quantite et incluant la remise ligne
+    public $total_ttc;			// Total TTC de la ligne toute quantite et incluant la remise ligne
 
 	/**
 	 * @deprecated
 	 * @see $remise_percent, $fk_remise_except
 	 */
-	var $remise;
+    public $remise;
 	/**
 	 * @deprecated
 	 * @see subprice
 	 */
-	var $price;
+    public $price;
 
 	// From llx_product
 	/**
 	 * @deprecated
 	 * @see product_ref
 	 */
-	var $ref;
+    public $ref;
 	/**
 	 * Product reference
 	 * @var string
@@ -3714,7 +3714,7 @@ class PropaleLigne extends CommonObjectLine
 	 * @deprecated
 	 * @see product_label
 	 */
-	var $libelle;
+    public $libelle;
 	/**
 	 *  Product label
 	 * @var string
@@ -3726,25 +3726,25 @@ class PropaleLigne extends CommonObjectLine
 	 */
 	public $product_desc;
 
-	var $localtax1_tx;		// Local tax 1
-	var $localtax2_tx;		// Local tax 2
-	var $localtax1_type;	// Local tax 1 type
-	var $localtax2_type;	// Local tax 2 type
-	var $total_localtax1;  	// Line total local tax 1
-	var $total_localtax2;	// Line total local tax 2
+    public $localtax1_tx;		// Local tax 1
+    public $localtax2_tx;		// Local tax 2
+    public $localtax1_type;	// Local tax 1 type
+    public $localtax2_type;	// Local tax 2 type
+    public $total_localtax1;  	// Line total local tax 1
+    public $total_localtax2;	// Line total local tax 2
 
-	var $date_start;
-	var $date_end;
+    public $date_start;
+    public $date_end;
 
-	var $skip_update_total; // Skip update price total for special lines
+    public $skip_update_total; // Skip update price total for special lines
 
 	// Multicurrency
-	var $fk_multicurrency;
-	var $multicurrency_code;
-	var $multicurrency_subprice;
-	var $multicurrency_total_ht;
-	var $multicurrency_total_tva;
-	var $multicurrency_total_ttc;
+    public $fk_multicurrency;
+    public $multicurrency_code;
+    public $multicurrency_subprice;
+    public $multicurrency_total_ht;
+    public $multicurrency_total_tva;
+    public $multicurrency_total_ttc;
 
 	/**
 	 * 	Class line Contructor

@@ -1025,10 +1025,6 @@ select.selectarrowonleft option {
 	div.fiche {
 		    margin-top: <?php print ($dol_hide_topmenu?'12':'6'); ?>px !important;
 	}
-	div.titre {
-		/* margin-top: 12px; */
-		/* line-height: 2em; */
-	}
     .border tbody tr, .border tbody tr td, div.tabBar table.border tr {
     	height: 40px !important;
     }
@@ -3584,15 +3580,16 @@ label.radioprivate {
 }
 
 div.titre {
-	font-family: <?php print $fontlist ?>;
 	font-size: 14px;
-	/* font-weight: bold; */
-	color: rgb(<?php print $colortexttitlenotab; ?>);
 	text-decoration: none;
 	padding-top: 5px;
     padding-bottom: 5px;
 	/* text-shadow: 1px 1px 2px #FFFFFF; */
 	<?php print (empty($conf->dol_optimize_smallscreen)?'':'margin-top: 4px;'); ?>
+}
+div.titre, .secondary {
+	font-family: <?php print $fontlist ?>;
+	color: rgb(<?php print $colortexttitlenotab; ?>);
 }
 
 #dolpaymenttable { min-width: 320px; font-size: 16px; }	/* Width must have min to make stripe input area visible. Lower than 320 makes input area crazy for credit card that need zip code */

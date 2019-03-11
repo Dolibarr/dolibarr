@@ -104,7 +104,6 @@ textarea.cke_source:focus
 	box-shadow: none;
 }
 
-
 textarea {
 	border-radius: 0;
 	border-top:solid 1px rgba(0,0,0,.2);
@@ -803,10 +802,6 @@ select.selectarrowonleft option {
         text-overflow: ellipsis;
         white-space: nowrap;
     }
-	div.titre {
-		/* margin-top: 12px; */
-		/* line-height: 2em; */
-	}
     .border tbody tr, .border tbody tr td, div.tabBar table.border tr, div.tabBar table.border tr td, div.tabBar div.border .table-border-row, div.tabBar div.border .table-key-border-col, div.tabBar div.border .table-val-border-col {
     	height: 40px !important;
     }
@@ -1041,7 +1036,7 @@ div.fiche {
 
 div.fiche {
 	margin-<?php print $left; ?>: <?php print (GETPOST('optioncss', 'aZ09') == 'print'?6:(empty($conf->dol_optimize_smallscreen)?'30':'6')); ?>px;
-	margin-<?php print $right; ?>: <?php print (GETPOST('optioncss', 'aZ09') == 'print'?6:(empty($conf->dol_optimize_smallscreen)?'29':'6')); ?>px;
+	margin-<?php print $right; ?>: <?php print (GETPOST('optioncss', 'aZ09') == 'print'?6:(empty($conf->dol_optimize_smallscreen)?'28':'6')); ?>px;
 	<?php if (! empty($dol_hide_leftmenu)) print 'margin-bottom: 12px;'."\n"; ?>
 	<?php if (! empty($dol_hide_leftmenu)) print 'margin-top: 12px;'."\n"; ?>
 }
@@ -1612,7 +1607,7 @@ a.tmenuimage:hover{
                 $found=1;
                 break;
             }
-    		else if (file_exists($dirroot."/".$val."/img/".$val.".png"))    // Retro compatibilité
+    		elseif (file_exists($dirroot."/".$val."/img/".$val.".png"))    // Retro compatibilité
     		{
     			$url=dol_buildpath('/'.$val.'/img/'.$val.'.png', 1);
     			$found=1;
@@ -3444,13 +3439,14 @@ label.radioprivate {
 }
 
 div.titre {
-	font-family: <?php print $fontlist ?>;
 	font-size: 1.1em;
-	/* font-weight: bold; */
-	color: rgb(<?php print $colortexttitlenotab; ?>);
 	text-decoration: none;
 	padding-top: 5px;
     padding-bottom: 5px;
+}
+div.titre, .secondary {
+	font-family: <?php print $fontlist ?>;
+	color: rgb(<?php print $colortexttitlenotab; ?>);
 }
 
 #dolpaymenttable { min-width: 320px; font-size: 16px; }	/* Width must have min to make stripe input area visible. Lower than 320 makes input area crazy for credit card that need zip code */

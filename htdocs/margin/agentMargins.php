@@ -132,6 +132,8 @@ dol_fiche_end();
 
 print '</form>';
 
+$invoice_status_except_list = array(Facture::STATUS_DRAFT, Facture::STATUS_ABANDONED);
+
 $sql = "SELECT";
 $sql.= " s.rowid as socid, s.nom as name, s.code_client, s.client,";
 $sql.= " u.rowid as agent, u.login, u.lastname, u.firstname,";
@@ -153,7 +155,7 @@ if (! empty($conf->global->AGENT_CONTACT_TYPE))
 	$sql.= " AND ((e.fk_socpeople IS NULL AND sc.fk_user = u.rowid) OR (e.fk_socpeople IS NOT NULL AND e.fk_socpeople = u.rowid))";
 else
 	$sql .= " AND sc.fk_user = u.rowid";
-$sql.= " AND f.fk_statut > 0";
+$sql.= " AND f.fk_statut NOT IN (" . implode(', ', $invoice_status_except_list) . ")";
 $sql.= ' AND s.entity IN ('.getEntity('societe').')';
 $sql.= " AND d.fk_facture = f.rowid";
 if ($agentid > 0) {

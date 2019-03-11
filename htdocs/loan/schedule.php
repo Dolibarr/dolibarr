@@ -160,12 +160,12 @@ print '</th>';
 print '</tr>';
 
 print '<tr class="liste_titre">';
-Print '<th width="5%" class="center">'.$langs->trans("Term").'</th>';
-Print '<th width="5%" class="center">'.$langs->trans("Date").'</th>';
+print '<th width="5%" class="center">'.$langs->trans("Term").'</th>';
+print '<th width="5%" class="center">'.$langs->trans("Date").'</th>';
 print '<th width="15%" class="center">'.$langs->trans("Insurance");
-Print '<th width="15%" class="center">'.$langs->trans("InterestAmount").'</th>';
-Print '<th width="10%" class="center">'.$langs->trans("Amount").'</th>';
-Print '<th width="40%" class="center">'.$langs->trans("CapitalRemain");
+print '<th width="15%" class="center">'.$langs->trans("InterestAmount").'</th>';
+print '<th width="10%" class="center">'.$langs->trans("Amount").'</th>';
+print '<th width="40%" class="center">'.$langs->trans("CapitalRemain");
 print ' ('.price2num($object->capital).')';
 print '<input type="hidden" name="hi_capital0" id ="hi_capital0" value="'.$object->capital.'">';
 print '</th>';

@@ -49,7 +49,7 @@ class Opensurveysondage extends CommonObject
     public $id_sondage;
     /**
      * @deprecated
-     * @see description
+     * @see $description
      */
     public $commentaires;
 
@@ -519,6 +519,7 @@ class Opensurveysondage extends CommonObject
 
         $this->id_sondage='';
         $this->commentaires='Comment of the specimen survey';
+        $this->description='Comment of the specimen survey';
         $this->mail_admin='';
         $this->nom_admin='';
         $this->titre='This is a specimen survey';
@@ -606,6 +607,7 @@ class Opensurveysondage extends CommonObject
     {
         $this->id_sondage = trim($this->id_sondage);
         $this->commentaires = trim($this->commentaires);
+        $this->description = trim($this->description);
         $this->mail_admin = trim($this->mail_admin);
         $this->nom_admin = trim($this->nom_admin);
         $this->titre = trim($this->titre);

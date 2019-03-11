@@ -30,7 +30,7 @@
  * @param	string		$content			Content to replace
  * @param	int			$removephppart		0=Replace PHP sections with a PHP badge. 1=Remove completely PHP sections.
  * @return	boolean							True if OK
- * @see dolWebsiteOutput for function used to replace content in a web server context
+ * @see dolWebsiteOutput() for function used to replace content in a web server context
  */
 function dolWebsiteReplacementOfLinks($website, $content, $removephppart = 0)
 {
@@ -139,7 +139,7 @@ function dolStripPhpCode($str, $replacewith = '')
  *
  * @param   string  $content    Content string
  * @return  void
- * @see	dolWebsiteReplacementOfLinks  for function used to replace content in the backoffice context when USEDOLIBARREDITOR is not on
+ * @see	dolWebsiteReplacementOfLinks()  for function used to replace content in the backoffice context when USEDOLIBARREDITOR is not on
  */
 function dolWebsiteOutput($content)
 {

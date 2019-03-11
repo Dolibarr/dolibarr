@@ -232,7 +232,7 @@ if ($object->id > 0)
 	print '<table width="100%" class="nobordernopadding"><tr><td>';
 	print $langs->trans('PaymentConditions');
 	print '<td>';
-	if (($action != 'editconditions') && $user->rights->societe->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editconditions&amp;socid='.$object->id.'">'.img_edit($langs->trans('SetConditions'), 1).'</a></td>';
+	if (($action != 'editconditions') && $user->rights->societe->creer) print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editconditions&amp;socid='.$object->id.'">'.img_edit($langs->trans('SetConditions'), 1).'</a></td>';
 	print '</tr></table>';
 	print '</td><td>';
 	if ($action == 'editconditions')
@@ -251,7 +251,7 @@ if ($object->id > 0)
 	print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
 	print $langs->trans('PaymentMode');
 	print '<td>';
-	if (($action != 'editmode') && $user->rights->societe->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editmode&amp;socid='.$object->id.'">'.img_edit($langs->trans('SetMode'), 1).'</a></td>';
+	if (($action != 'editmode') && $user->rights->societe->creer) print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editmode&amp;socid='.$object->id.'">'.img_edit($langs->trans('SetMode'), 1).'</a></td>';
 	print '</tr></table>';
 	print '</td><td>';
 	if ($action == 'editmode')
@@ -269,7 +269,7 @@ if ($object->id > 0)
 	print '<tr><td class="nowrap">';
 	print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
 	print $langs->trans("CustomerRelativeDiscountShort");
-	print '<td><td align="right">';
+	print '<td><td class="right">';
 	if ($user->rights->societe->creer && !$user->societe_id > 0)
 	{
 		print '<a href="'.DOL_URL_ROOT.'/comm/remise.php?id='.$object->id.'">'.img_edit($langs->trans("Modify")).'</a>';
@@ -283,7 +283,7 @@ if ($object->id > 0)
 	print '<table width="100%" class="nobordernopadding">';
 	print '<tr><td class="nowrap">';
 	print $langs->trans("CustomerAbsoluteDiscountShort");
-	print '<td><td align="right">';
+	print '<td><td class="right">';
 	if ($user->rights->societe->creer && !$user->societe_id > 0)
 	{
 		print '<a href="'.DOL_URL_ROOT.'/comm/remx.php?id='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?socid='.$object->id).'">'.img_edit($langs->trans("Modify")).'</a>';
@@ -442,7 +442,7 @@ if ($object->id > 0)
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
 	print '<td colspan="4"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("Summary").'</td>';
-	print '<td align="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/fourn/recap-fourn.php?socid='.$object->id.'">'.$langs->trans("ShowSupplierPreview").'</a></td></tr></table></td>';
+	print '<td class="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/fourn/recap-fourn.php?socid='.$object->id.'">'.$langs->trans("ShowSupplierPreview").'</a></td></tr></table></td>';
 	print '</tr>';
 	print '</table>';
 	print '<br>';
@@ -471,7 +471,7 @@ if ($object->id > 0)
 
         print '<table class="noborder" width="100%">';
         print '<tr class="liste_titre'.(($num == 0) ? ' nobottom':'').'">';
-        print '<td colspan="3">'.$langs->trans("ProductsAndServices").'</td><td align="right">';
+        print '<td colspan="3">'.$langs->trans("ProductsAndServices").'</td><td class="right">';
         print '<a class="notasortlink" href="'.DOL_URL_ROOT.'/fourn/product/list.php?fourn_id='.$object->id.'">'.$langs->trans("AllProductReferencesOfSupplier").' <span class="badge">'.$object->nbOfProductRefs().'</span>';
         print '</a></td></tr>';
 
@@ -498,8 +498,8 @@ if ($object->id > 0)
 				print '<td class="maxwidthonsmartphone">';
 				print dol_trunc(dol_htmlentities($objp->label), 30);
 				print '</td>';
-				//print '<td align="right" class="nowrap">'.dol_print_date($objp->tms, 'day').'</td>';
-				print '<td align="right">';
+				//print '<td class="right" class="nowrap">'.dol_print_date($objp->tms, 'day').'</td>';
+				print '<td class="right">';
 				//print (isset($objp->unitprice) ? price($objp->unitprice) : '');
 				if (isset($objp->price))
 				{
@@ -546,8 +546,8 @@ if ($object->id > 0)
 	            print '<tr class="liste_titre">';
 	            print '<td colspan="3">';
 	            print '<table class="nobordernopadding centpercent"><tr><td>'.$langs->trans("LastSupplierProposals", ($num<$MAXLIST?"":$MAXLIST)).'</td>';
-	            print '<td align="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/supplier_proposal/list.php?socid='.$object->id.'">'.$langs->trans("AllPriceRequests").' <span class="badge">'.$num.'</span></td>';
-	            print '<td width="20px" align="right"><a href="'.DOL_URL_ROOT.'/supplier_proposal/stats/index.php?mode=supplier&socid='.$object->id.'">'.img_picto($langs->trans("Statistics"), 'stats').'</a></td>';
+	            print '<td class="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/supplier_proposal/list.php?socid='.$object->id.'">'.$langs->trans("AllPriceRequests").' <span class="badge">'.$num.'</span></td>';
+	            print '<td width="20px" class="right"><a href="'.DOL_URL_ROOT.'/supplier_proposal/stats/index.php?mode=supplier&socid='.$object->id.'">'.img_picto($langs->trans("Statistics"), 'stats').'</a></td>';
 	            print '</tr></table>';
 	            print '</td></tr>';
 	        }
@@ -565,7 +565,7 @@ if ($object->id > 0)
 	            $proposalstatic->total_ttc = $obj->total_ttc;
 	            print $proposalstatic->getNomUrl(1);
 	            print '</td>';
-	            print '<td align="center" width="80">';
+	            print '<td class="center" width="80">';
 	            if ($obj->dc)
 	            {
 	                print dol_print_date($db->jdate($obj->dc), 'day');
@@ -575,7 +575,7 @@ if ($object->id > 0)
 	                print "-";
 	            }
 	            print '</td>';
-	            print '<td align="right" class="nowrap">'.$proposalstatic->LibStatut($obj->fk_statut, 5).'</td>';
+	            print '<td class="right" class="nowrap">'.$proposalstatic->LibStatut($obj->fk_statut, 5).'</td>';
 	            print '</tr>';
 	            $i++;
 	        }
@@ -649,8 +649,8 @@ if ($object->id > 0)
 			    print '<tr class="liste_titre">';
     			print '<td colspan="3">';
     			print '<table class="nobordernopadding" width="100%"><tr><td>'.$langs->trans("LastSupplierOrders", ($num<$MAXLIST?"":$MAXLIST)).'</td>';
-    			print '<td align="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/fourn/commande/list.php?socid='.$object->id.'">'.$langs->trans("AllOrders").' <span class="badge">'.$num.'</span></td>';
-                print '<td width="20px" align="right"><a href="'.DOL_URL_ROOT.'/commande/stats/index.php?mode=supplier&socid='.$object->id.'">'.img_picto($langs->trans("Statistics"), 'stats').'</a></td>';
+    			print '<td class="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/fourn/commande/list.php?socid='.$object->id.'">'.$langs->trans("AllOrders").' <span class="badge">'.$num.'</span></td>';
+                print '<td width="20px" class="right"><a href="'.DOL_URL_ROOT.'/commande/stats/index.php?mode=supplier&socid='.$object->id.'">'.img_picto($langs->trans("Statistics"), 'stats').'</a></td>';
     			print '</tr></table>';
     			print '</td></tr>';
 			}
@@ -668,7 +668,7 @@ if ($object->id > 0)
                 $orderstatic->total_ttc = $obj->total_ttc;
                 print $orderstatic->getNomUrl(1);
                 print '</td>';
-				print '<td align="center" width="80">';
+				print '<td class="center" width="80">';
 				if ($obj->dc)
 				{
 					print dol_print_date($db->jdate($obj->dc), 'day');
@@ -678,7 +678,7 @@ if ($object->id > 0)
 					print "-";
 				}
 				print '</td>';
-				print '<td align="right" class="nowrap">'.$orderstatic->LibStatut($obj->fk_statut, 5).'</td>';
+				print '<td class="right" class="nowrap">'.$orderstatic->LibStatut($obj->fk_statut, 5).'</td>';
 				print '</tr>';
 				$i++;
 			}
@@ -721,8 +721,8 @@ if ($object->id > 0)
 
 			    print '<tr class="liste_titre">';
     			print '<td colspan="4">';
-    			print '<table class="nobordernopadding" width="100%"><tr><td>'.$langs->trans('LastSuppliersBills', ($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/fourn/facture/list.php?socid='.$object->id.'">'.$langs->trans('AllBills').' <span class="badge">'.$num.'</span></td>';
-                print '<td width="20px" align="right"><a href="'.DOL_URL_ROOT.'/compta/facture/stats/index.php?mode=supplier&socid='.$object->id.'">'.img_picto($langs->trans("Statistics"), 'stats').'</a></td>';
+    			print '<table class="nobordernopadding" width="100%"><tr><td>'.$langs->trans('LastSuppliersBills', ($num<=$MAXLIST?"":$MAXLIST)).'</td><td class="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/fourn/facture/list.php?socid='.$object->id.'">'.$langs->trans('AllBills').' <span class="badge">'.$num.'</span></td>';
+                print '<td width="20px" class="right"><a href="'.DOL_URL_ROOT.'/compta/facture/stats/index.php?mode=supplier&socid='.$object->id.'">'.img_picto($langs->trans("Statistics"), 'stats').'</a></td>';
     			print '</tr></table>';
     			print '</td></tr>';
 			}
@@ -745,9 +745,9 @@ if ($object->id > 0)
 				print $obj->ref_supplier?' - '.$obj->ref_supplier:'';
 				print ($obj->libelle?' - ':'').dol_trunc($obj->libelle, 14);
 				print '</td>';
-				print '<td align="center" class="nowrap">'.dol_print_date($db->jdate($obj->df), 'day').'</td>';
-				print '<td align="right" class="nowrap">'.price($obj->amount).'</td>';
-				print '<td align="right" class="nowrap">';
+				print '<td class="center nowrap">'.dol_print_date($db->jdate($obj->df), 'day').'</td>';
+				print '<td class="right nowrap">'.price($obj->amount).'</td>';
+				print '<td class="right nowrap">';
 				print $facturestatic->LibStatut($obj->paye, $obj->fk_statut, 5, $obj->am);
 				print '</td>';
 				print '</tr>';

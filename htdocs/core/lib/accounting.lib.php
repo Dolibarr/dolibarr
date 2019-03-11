@@ -145,7 +145,7 @@ function length_accounta($accounta)
  *	@param 	string				$period         Period of report
  *	@param 	string				$periodlink     Link to switch period
  *	@param 	string				$description    Description
- *	@param 	timestamp|integer	$builddate      Date generation
+ *	@param 	integer	            $builddate      Date of generation
  *	@param 	string				$exportlink     Link for export or ''
  *	@param	array				$moreparam		Array with list of params to add into form
  *	@param	string				$calcmode		Calculation mode

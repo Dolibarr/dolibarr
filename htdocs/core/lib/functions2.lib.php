@@ -1453,7 +1453,7 @@ function weight_convert($weight, &$from_unit, $to_unit)
  *	@param	array	$tab        Array (key=>value) with all parameters to save
  *	@return int         		<0 if KO, >0 if OK
  *
- *	@see		dolibarr_get_const, dolibarr_set_const, dolibarr_del_const
+ *	@see		dolibarr_get_const(), dolibarr_set_const(), dolibarr_del_const()
  */
 function dol_set_user_param($db, $conf, &$user, $tab)
 {
@@ -1553,7 +1553,7 @@ function version_os()
  * 	Return PHP version
  *
  * 	@return		string			PHP version
- *  @see		versionphparray
+ *  @see		versionphparray()
  */
 function version_php()
 {
@@ -1564,7 +1564,7 @@ function version_php()
  * 	Return Dolibarr version
  *
  * 	@return		string			Dolibarr version
- *  @see		versiondolibarrarray
+ *  @see		versiondolibarrarray()
  */
 function version_dolibarr()
 {
@@ -2137,7 +2137,7 @@ function getElementProperties($element_type)
  *
  * @param	int     	$element_id 	Element id
  * @param	string  	$element_type 	Element type
- * @param	ref     	$element_ref 	Element ref (Use this if element_id but not both)
+ * @param	string     	$element_ref 	Element ref (Use this or element_id but not both)
  * @return 	int|object 					object || 0 || -1 if error
  */
 function fetchObjectByElement($element_id, $element_type, $element_ref = '')
@@ -2167,7 +2167,7 @@ function fetchObjectByElement($element_id, $element_type, $element_ref = '')
  *  @param	array	$arraycolor			Array
  *  @param	string	$colorifnotfound	Color code to return if entry not defined or not a RGB format
  *  @return	string						RGB hex value (without # before). For example: 'FF00FF', '01FF02'
- *  @see	colorStringToArray
+ *  @see	colorStringToArray()
  */
 function colorArrayToHex($arraycolor, $colorifnotfound = '888888')
 {
@@ -2184,11 +2184,12 @@ function colorArrayToHex($arraycolor, $colorifnotfound = '888888')
  *  @param	string	$stringcolor		String with hex (FFFFFF) or comma RGB ('255,255,255')
  *  @param	array	$colorifnotfound	Color code array to return if entry not defined
  *  @return	string						RGB hex value (without # before). For example: FF00FF
- *  @see	colorArrayToHex
+ *  @see	colorArrayToHex()
  */
 function colorStringToArray($stringcolor, $colorifnotfound = array(88,88,88))
 {
 	if (is_array($stringcolor)) return $stringcolor;	// If already into correct output format, we return as is
+	$reg=array();
 	$tmp=preg_match('/^#?([0-9a-fA-F][0-9a-fA-F])([0-9a-fA-F][0-9a-fA-F])([0-9a-fA-F][0-9a-fA-F])$/', $stringcolor, $reg);
 	if (! $tmp)
 	{
@@ -2253,7 +2254,7 @@ function colorAdjustBrightness($hex, $steps)
  */
 function colorDarker($hex, $percent)
 {
-    $steps = intval(255 * $percent / 100 ) * -1;
+    $steps = intval(255 * $percent / 100) * -1;
     return colorAdjustBrightness($hex, $steps);
 }
 
@@ -2264,7 +2265,7 @@ function colorDarker($hex, $percent)
  */
 function colorLighten($hex, $percent)
 {
-    $steps = intval(255 * $percent / 100 );
+    $steps = intval(255 * $percent / 100);
     return colorAdjustBrightness($hex, $steps);
 }
 
@@ -2272,7 +2273,7 @@ function colorLighten($hex, $percent)
 /**
  * @param string $hex color in hex
  * @param float $alpha 0 to 1
- * @param bool $returnArray
+ * @param bool $returnArray set to 1 to return an array instead of string
  * @return string
  */
 function colorHexToRgb($hex, $alpha = false, $returnArray = false)
