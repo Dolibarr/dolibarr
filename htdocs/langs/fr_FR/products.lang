@@ -146,6 +146,7 @@ RowMaterial=Matière première
 CloneProduct=Cloner produit/service
 ConfirmCloneProduct=Êtes-vous sûr de vouloir cloner le produit ou service <b>%s</b> ?
 CloneContentProduct=Cloner les informations générales du produit/service
+CloneCategoriesProduct=Cloner les catégories associées
 ClonePricesProduct=Cloner les prix
 CloneCompositionProduct=Cloner le produits packagés
 CloneCombinationsProduct=Cloner les variantes

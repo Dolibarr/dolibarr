@@ -3611,6 +3611,32 @@ class Product extends CommonObject
         return 1;
     }
 
+
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+    /**
+     *  copy related categories to another product
+     *
+     * @param  int $fromId Id produit source
+     * @param  int $toId   Id produit cible
+     * @return int                 < 0 si erreur, > 0 si ok
+     */
+	function clone_categories($fromId, $toId)
+	{
+		$this->db->begin();
+
+		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'categorie_product (fk_categorie, fk_product)';
+		$sql.= " SELECT fk_categorie, $toId FROM ".MAIN_DB_PREFIX."categorie_product";
+		$sql.= " WHERE fk_product = '".$fromId."'";
+
+		if (! $this->db->query($sql))
+		{
+			$this->db->rollback();
+			return -1;
+		}
+
+		$this->db->commit();
+		return 1;
+	}
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *  Recopie les fournisseurs et prix fournisseurs d'un produit/service sur un autre
