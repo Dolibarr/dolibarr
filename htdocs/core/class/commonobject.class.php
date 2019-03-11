@@ -399,9 +399,24 @@ abstract class CommonObject
 	 */
 	public $location_incoterms;
 
+	/**
+	 * @var string The name
+	 */
 	public $name;
+
+    /**
+     * @var string The lastname
+     */
 	public $lastname;
+
+    /**
+     * @var string The firstname
+     */
 	public $firstname;
+
+    /**
+     * @var string The civility code, not an integer
+     */
 	public $civility_id;
 
 	// Dates
