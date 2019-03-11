@@ -32,7 +32,7 @@
  *	@param   string		$chain		string to encode
  *	@param   string		$key		rule to use for delta ('0', '1' or 'myownkey')
  *	@return  string					encoded string
- *  @see dol_decode
+ *  @see dol_decode()
  */
 function dol_encode($chain, $key = '1')
 {
@@ -68,7 +68,7 @@ function dol_encode($chain, $key = '1')
  *	@param   string		$chain		string to decode
  *	@param   string		$key		rule to use for delta ('0', '1' or 'myownkey')
  *	@return  string					decoded string
- *  @see dol_encode
+ *  @see dol_encode()
  */
 function dol_decode($chain, $key = '1')
 {
@@ -176,7 +176,7 @@ function dol_verifyHash($chain, $hash, $type = '0')
  *  @param  string	$dbt_select     Field name for select if not rowid. Not used if objectid is null (optional)
  *  @param	int		$isdraft		1=The object with id=$objectid is a draft
  * 	@return	int						Always 1, die process if not allowed
- *  @see dol_check_secure_access_document
+ *  @see dol_check_secure_access_document()
  */
 function restrictedArea($user, $features, $objectid = 0, $tableandshare = '', $feature2 = '', $dbt_keyfield = 'fk_soc', $dbt_select = 'rowid', $isdraft = 0)
 {
@@ -431,7 +431,7 @@ function restrictedArea($user, $features, $objectid = 0, $tableandshare = '', $f
  * @param string		$dbt_keyfield	Field name for socid foreign key if not fk_soc. Not used if objectid is null (optional)
  * @param string		$dbt_select		Field name for select if not rowid. Not used if objectid is null (optional)
  * @return	bool						True if user has access, False otherwise
- * @see restrictedArea
+ * @see restrictedArea()
  */
 function checkUserAccessToObject($user, $featuresarray, $objectid = 0, $tableandshare = '', $feature2 = '', $dbt_keyfield = '', $dbt_select = 'rowid')
 {

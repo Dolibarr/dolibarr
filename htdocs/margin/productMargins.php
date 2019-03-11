@@ -174,6 +174,8 @@ dol_fiche_end();
 
 print '</form>';
 
+$invoice_status_except_list = array(Facture::STATUS_DRAFT, Facture::STATUS_ABANDONED);
+
 $sql = "SELECT p.label, p.rowid, p.fk_product_type, p.ref, p.entity as pentity,";
 if ($id > 0) $sql.= " d.fk_product,";
 if ($id > 0) $sql.= " f.rowid as facid, f.ref, f.total as total_ht, f.datef, f.paye, f.fk_statut as statut,";
@@ -190,7 +192,7 @@ if (! empty($TSelectedCats)) {
 }
 $sql.= " WHERE f.fk_soc = s.rowid";
 $sql.= ' AND f.entity IN ('.getEntity('invoice').')';
-$sql.= " AND f.fk_statut > 0";
+$sql.= " AND f.fk_statut NOT IN (" . implode(', ', $invoice_status_except_list) . ")";
 $sql.= " AND d.fk_facture = f.rowid";
 if ($id > 0)
 	$sql.= " AND d.fk_product =".$id;

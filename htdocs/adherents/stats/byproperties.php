@@ -58,15 +58,16 @@ llxHeader('', $langs->trans("MembersStatisticsByProperties"), '', '', 0, 0, arra
 
 $title=$langs->trans("MembersStatisticsByProperties");
 
-print load_fiche_titre($title, $mesg);
+print load_fiche_titre($title, '');
 
 dol_mkdir($dir);
 
 $tab='byproperties';
 
 $data = array();
-$sql.="SELECT COUNT(d.rowid) as nb, MAX(d.datevalid) as lastdate, d.morphy as code";
+$sql.="SELECT COUNT(d.rowid) as nb, MAX(d.datevalid) as lastdate, MAX(s.dateadh) as lastsubscriptiondate, d.morphy as code";
 $sql.=" FROM ".MAIN_DB_PREFIX."adherent as d";
+$sql.=" LEFT JOIN ".MAIN_DB_PREFIX."subscription as s ON s.fk_adherent = d.rowid";
 $sql.=" WHERE d.entity IN (".getEntity('adherent').")";
 $sql.=" AND d.statut = 1";
 $sql.=" GROUP BY d.morphy";
@@ -87,7 +88,7 @@ if ($resql)
 		if ($obj->code == 'phy') $foundphy++;
 		if ($obj->code == 'mor') $foundmor++;
 
-		$data[]=array('label'=>$obj->code, 'nb'=>$obj->nb, 'lastdate'=>$db->jdate($obj->lastdate));
+		$data[]=array('label'=>$obj->code, 'nb'=>$obj->nb, 'lastdate'=>$db->jdate($obj->lastdate), 'lastsubscriptiondate'=>$db->jdate($obj->lastsubscriptiondate));
 
 		$i++;
 	}
@@ -120,22 +121,21 @@ print '<table class="liste" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Nature").'</td>';
 print '<td class="right">'.$langs->trans("NbOfMembers").'</td>';
+print '<td align="center">'.$langs->trans("LastMemberDate").'</td>';
 print '<td align="center">'.$langs->trans("LatestSubscriptionDate").'</td>';
 print '</tr>';
 
-if (! $foundphy) $data[]=array('label'=>'phy','nb'=>'0','lastdate'=>'');
-if (! $foundmor) $data[]=array('label'=>'mor','nb'=>'0','lastdate'=>'');
+if (! $foundphy) $data[]=array('label'=>'phy','nb'=>'0','lastdate'=>'', 'lastsubscriptiondate'=>'');
+if (! $foundmor) $data[]=array('label'=>'mor','nb'=>'0','lastdate'=>'', 'lastsubscriptiondate'=>'');
 
-$oldyear=0;
 foreach ($data as $val)
 {
-	$year = $val['year'];
 	print '<tr class="oddeven">';
 	print '<td>'.$memberstatic->getmorphylib($val['label']).'</td>';
 	print '<td class="right">'.$val['nb'].'</td>';
 	print '<td align="center">'.dol_print_date($val['lastdate'], 'dayhour').'</td>';
+	print '<td align="center">'.dol_print_date($val['lastsubscriptiondate'], 'dayhour').'</td>';
 	print '</tr>';
-	$oldyear=$year;
 }
 
 print '</table>';

@@ -31,7 +31,7 @@
  *	@param 	string				$period         Period of report
  *	@param 	string				$periodlink     Link to switch period
  *	@param 	string				$description    Description
- *	@param 	timestamp|integer	$builddate      Date generation
+ *	@param 	integer	            $builddate      Date generation
  *	@param 	string				$exportlink     Link for export or ''
  *	@param	array				$moreparam		Array with list of params to add into form
  *	@param	string				$calcmode		Calculation mode
@@ -42,11 +42,11 @@ function report_header($reportname, $notused, $period, $periodlink, $description
 {
 	global $langs;
 
-	if (empty($hselected)) $hselected='report';
-
 	print "\n\n<!-- start banner of report -->\n";
 
 	if(! empty($varlink)) $varlink = '?'.$varlink;
+
+	$head = array();
 
 	$h=0;
 	$head[$h][0] = $_SERVER["PHP_SELF"].$varlink;

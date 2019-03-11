@@ -87,14 +87,8 @@ Licenses
 
 ### Main code
 
-![GPLv3 logo](img/gplv3.png)
-
-GPLv3 or (at your option) any later version.
-
-See file COPYING for more information.
+GPLv3 or (at your option) any later version. See file COPYING for more information.
 
 #### Documentation
 
-All texts and readmes.
-
-![GFDL logo](img/gfdl.png)
+All texts and readmes are licensed under GFDL.

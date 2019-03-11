@@ -818,7 +818,7 @@ if ($resql)
 		// Duration
 		if ((string) $type == '1' && ! empty($arrayfields['p.duration']['checked']))
 		{
-			print '<td class="center">';
+			print '<td class="center nowraponall">';
 
 			if (preg_match('/([^a-z]+)[a-z]$/i', $obj->duration))
 			{

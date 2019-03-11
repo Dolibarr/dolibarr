@@ -71,7 +71,7 @@ if ($resql)
 	$i = 0;
 
 	print '<table class="noborder" width="100%">';
-	print '<tr class="liste_titre"><td>'.$langs->trans("Orders").'</td><td align="center">'.$langs->trans("Nb").'</td><td>&nbsp;</td>';
+	print '<tr class="liste_titre"><td>'.$langs->trans("Orders").'</td><td class="center">'.$langs->trans("Nb").'</td><td>&nbsp;</td>';
 	print "</tr>\n";
 
 	while ($i < $num)
@@ -80,8 +80,8 @@ if ($resql)
 
 		print '<tr class="oddeven">';
 		print '<td>'.$commandestatic->LibStatut($row[1]).'</td>';
-		print '<td align="center">'.$row[0].'</td>';
-		print '<td align="center"><a href="'.DOL_URL_ROOT.'/fourn/commande/list.php?statut='.$row[1].'">'.$commandestatic->LibStatut($row[1], 3).'</a></td>';
+		print '<td class="center">'.$row[0].'</td>';
+		print '<td class="center"><a href="'.DOL_URL_ROOT.'/fourn/commande/list.php?statut='.$row[1].'">'.$commandestatic->LibStatut($row[1], 3).'</a></td>';
 
 		print "</tr>\n";
 		$i++;
@@ -139,14 +139,14 @@ if (! empty($conf->fournisseur->enabled))
 				$companystatic->client=0;
 				print $companystatic->getNomUrl(1, '', 16);
 				print '</td>';
-				print '<td align="right" class="nowrap">'.price($obj->total_ttc).'</td></tr>';
+				print '<td class="right nowrap">'.price($obj->total_ttc).'</td></tr>';
 				$i++;
 				$total += $obj->total_ttc;
 			}
 			if ($total>0)
 			{
 
-				print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td colspan="2" align="right">'.price($total)."</td></tr>";
+				print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td colspan="2" class="right">'.price($total)."</td></tr>";
 			}
 			print "</table>";
 			print "<br>\n";
@@ -197,14 +197,14 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture-
 				$companystatic->client=0;
 				print $companystatic->getNomUrl(1, '', 16);
 				print '</td>';
-				print '<td align="right">'.price($obj->total_ttc).'</td>';
+				print '<td class="right">'.price($obj->total_ttc).'</td>';
 				print '</tr>';
 				$tot_ttc+=$obj->total_ttc;
 				$i++;
 			}
 
 			print '<tr class="liste_total"><td class="left">'.$langs->trans("Total").'</td>';
-			print '<td colspan="2" align="right">'.price($tot_ttc).'</td>';
+			print '<td colspan="2" class="right">'.price($tot_ttc).'</td>';
 			print '</tr>';
 
 			print "</table>";
@@ -250,7 +250,7 @@ if ($resql)
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
 	print '<td colspan="2">'.$langs->trans("BoxTitleLastSuppliers", min($max, $num))."</td>\n";
-	print '<td align="right">'.$langs->trans("DateModification")."</td>\n";
+	print '<td class="right">'.$langs->trans("DateModification")."</td>\n";
 	print "</tr>\n";
 
 	while ($obj = $db->fetch_object($resql) )
@@ -259,7 +259,7 @@ if ($resql)
 		print '<td><a href="card.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowSupplier"), "company").'</a>';
 		print "&nbsp;<a href=\"card.php?socid=".$obj->socid."\">".$obj->name."</a></td>\n";
 		print '<td class="left">'.$obj->code_fournisseur.'&nbsp;</td>';
-		print '<td align="right">'.dol_print_date($db->jdate($obj->tms), 'day').'</td>';
+		print '<td class="right">'.dol_print_date($db->jdate($obj->tms), 'day').'</td>';
 		print "</tr>\n";
 	}
 	print "</table>\n";
@@ -298,7 +298,7 @@ if (count($companystatic->SupplierCategories))
 		print '</td>'."\n";
 		// TODO this page not exist
 		/*
-		print '<td align="right">';
+		print '<td class="right">';
 		print '<a href="stats.php?cat='.$rowid.'">('.$langs->trans("Stats").')</a>';
 		print "</tr>\n";
 		*/

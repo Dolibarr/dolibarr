@@ -747,7 +747,7 @@ class Categorie extends CommonObject
 	 * @param   string     $type       Type of category ('customer', 'supplier', 'contact', 'product', 'member')
 	 * @param   int        $onlyids    Return only ids of objects (consume less memory)
 	 * @return  array|int              -1 if KO, array of instance of object if OK
-	 * @see containsObject
+	 * @see containsObject()
 	 */
 	public function getObjectsInCateg($type, $onlyids = 0)
 	{
@@ -794,7 +794,7 @@ class Categorie extends CommonObject
 	 * @param   string $type      		Type of category ('customer', 'supplier', 'contact', 'product', 'member')
 	 * @param   int    $object_id 		Id of the object to search
 	 * @return  int                     Number of occurrences
-	 * @see getObjectsInCateg
+	 * @see getObjectsInCateg()
 	 */
 	public function containsObject($type, $object_id)
 	{
