@@ -7900,29 +7900,31 @@ function roundUpToNextMultiple($n, $x = 5)
 }
 
 /**
- * @param string $label     label of badge no html : use in alt attribute for accessibility
- * @param string $html      optional : label of badge with html
- * @param string $type      type of badge : Primary Secondary Success Danger Warning Info Light Dark status0 status1 status2 status3 status4 status5 status6 status7 status8 status9
- * @param string $mode      default '' , pill, dot
- * @param string $url       the url for link
- * @param array $params     various params for future : recommended rather than adding more fuction arguments
- * @return string   html badge
+ * Function dolGetBadge
+ *
+ * @param   string  $label      label of badge no html : use in alt attribute for accessibility
+ * @param   string  $html       optional : label of badge with html
+ * @param   string  $type       type of badge : Primary Secondary Success Danger Warning Info Light Dark status0 status1 status2 status3 status4 status5 status6 status7 status8 status9
+ * @param   string  $mode       default '' , pill, dot
+ * @param   string  $url        the url for link
+ * @param   array   $params     various params for future : recommended rather than adding more fuction arguments
+ * @return  string              Html badge
  */
 function dolGetBadge($label, $html = '', $type = 'primary', $mode = '', $url = '', $params = array())
 {
-    
+
     $attr=array(
         'class'=>'badge'.(!empty($mode)?' badge-'.$mode:'').(!empty($type)?' badge-'.$type:'')
     );
-    
+
     if(empty($html)){
         $html = $label;
     }
-    
+
     if(!empty($url)){
         $attr['href'] = $url;
     }
-    
+
     if($mode==='dot')
     {
         $attr['class'].= ' classfortooltip';
@@ -7930,7 +7932,7 @@ function dolGetBadge($label, $html = '', $type = 'primary', $mode = '', $url = '
         $attr['aria-label'] = $label;
         $html='';
     }
-    
+
     // Override attr
     if(!empty($params['attr']) && is_array($params['attr'])){
         foreach($params['attr']as $key => $value){
@@ -7939,17 +7941,17 @@ function dolGetBadge($label, $html = '', $type = 'primary', $mode = '', $url = '
     }
 
     // TODO: add hook
-    
+
     // escape all attribute
     $attr = array_map('dol_escape_htmltag', $attr);
-    
+
     $TCompiledAttr = array();
     foreach($attr as $key => $value){
         $TCompiledAttr[] = $key.'="'.$value.'"';
     }
-    
+
     $compiledAttributes = !empty($TCompiledAttr)?implode(' ', $TCompiledAttr):'';
-    
+
     $tag = !empty($url)?'a':'span';
 
     return '<'.$tag.' '.$compiledAttributes.'>'.$html.'</'.$tag.'>';
@@ -7957,14 +7959,16 @@ function dolGetBadge($label, $html = '', $type = 'primary', $mode = '', $url = '
 
 
 /**
- * @param string $statusLabel       label of badge no html : use in alt attribute for accessibility
- * @param string $statusLabelShort  short label of badge no html
- * @param string $html              optional : label of badge with html
- * @param string $statusType        status0 status1 status2 status3 status4 status5 status6 status7 status8 status9 : image name or badge name
- * @param int	$displayMode         for retrocompatibility  0=Long label, 1=Short label, 2=Picto + Short label, 3=Picto, 4=Picto + Long label, 5=Short label + Picto, 6=Long label + Picto
- * @param string $url               the url for link
- * @param array $params         various params for future : recommended rather than adding more function arguments
- * @return string html status
+ * Function dolGetStatus
+ *
+ * @param   string  $statusLabel       Label of badge no html : use in alt attribute for accessibility
+ * @param   string  $statusLabelShort  Short label of badge no html
+ * @param   string  $html              Optional : label of badge with html
+ * @param   string  $statusType        status0 status1 status2 status3 status4 status5 status6 status7 status8 status9 : image name or badge name
+ * @param   int	    $displayMode       0=Long label, 1=Short label, 2=Picto + Short label, 3=Picto, 4=Picto + Long label, 5=Short label + Picto, 6=Long label + Picto
+ * @param   string  $url               The url for link
+ * @param   array   $params            Various params for future : recommended rather than adding more function arguments
+ * @return  string                     Html status string
  */
 function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $statusType = 'status0', $displayMode = 0, $url = '', $params = array())
 {
@@ -7983,49 +7987,47 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
         ,'status8' => 'statut8'
         ,'status9' => 'statut9'
     );
-    
+
     // TODO : add a hook
-    
-    if($displayMode==0){
+
+    if ($displayMode == 0) {
         $return = !empty($html)?$html:$statusLabel;
     }
-    elseif($displayMode==1){
+    elseif ($displayMode == 1) {
         $return = !empty($html)?$html:(!empty($statusLabelShort)?$statusLabelShort:$statusLabel);
     }
     // use status with images
-    elseif(empty($conf->global->MAIN_STATUS_USES_CSS)){
+    elseif (empty($conf->global->MAIN_STATUS_USES_CSS)){
         $return = '';
         $htmlLabel      = '<span class="hideonsmartphone">'.(!empty($html)?$html:$statusLabel).'</span>';
         $htmlLabelShort = '<span class="hideonsmartphone">'.(!empty($html)?$html:(!empty($statusLabelShort)?$statusLabelShort:$statusLabel)).'</span>';
-        
+
         if(!empty($statusImg[$statusType])){
             $htmlImg = img_picto($statusLabel, $statusImg[$statusType]);
         }else{
             $htmlImg = img_picto($statusLabel, $statusType);
         }
-       
- 
-        if($displayMode === 2){
+
+        if ($displayMode === 2) {
             $return =  $htmlImg .' '. $htmlLabel;
         }
-        elseif($displayMode === 3){
+        elseif ($displayMode === 3) {
             $return = $htmlImg;
         }
-        elseif($displayMode === 4){
+        elseif ($displayMode === 4) {
             $return =  $htmlImg .' '. $htmlLabel;
         }
-        elseif($displayMode === 5){
+        elseif ($displayMode === 5) {
             $return = $htmlLabelShort .' '. $htmlImg;
         }
-        else{ // $displayMode >= 6
+        else { // $displayMode >= 6
             $return = $htmlLabel .' '. $htmlImg;
         }
     }
     // Use new badge
-    elseif(!empty($conf->global->MAIN_STATUS_USES_CSS) && !empty($displayMode)){
-        
+    elseif (!empty($conf->global->MAIN_STATUS_USES_CSS) && !empty($displayMode)) {
         $statusLabelShort = !empty($statusLabelShort)?$statusLabelShort:$statusLabel;
-        
+
         if($displayMode == 3){
             $return = dolGetBadge($statusLabel, '', $statusType, 'dot');
         }
@@ -8036,30 +8038,30 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
             $return = dolGetBadge($statusLabel, $html, $statusType);
         }
     }
-    
+
     return $return;
 }
 
 
 /**
- * @param string $label     label of button no html : use in alt attribute for accessibility $html is not empty
- * @param string $html      optional : content with html
- * @param string $actionType      default, delete, danger
- * @param string $url       the url for link
- * @param string $id        attribute id of button
- * @param int $userRight    user action right
- * @param array $params     various params for future : recommended rather than adding more function arguments
- * @return string html button
+ * Function dolGetButtonAction
+ *
+ * @param string    $label      label of button no html : use in alt attribute for accessibility $html is not empty
+ * @param string    $html       optional : content with html
+ * @param string    $actionType default, delete, danger
+ * @param string    $url        the url for link
+ * @param string    $id         attribute id of button
+ * @param int       $userRight  user action right
+ * @param array     $params     various params for future : recommended rather than adding more function arguments
+ * @return string               html button
  */
 function dolGetButtonAction($label, $html = '', $actionType = 'default', $url = '', $id = '', $userRight = 1, $params = array())
 {
-
-    
     $class = 'butAction' ;
     if($actionType == 'danger' || $actionType == 'delete'){
         $class = 'butActionDelete' ;
     }
-    
+
     $attr=array(
         'class' => $class
         ,'href' => empty($url)?'':$url
@@ -8070,41 +8072,41 @@ function dolGetButtonAction($label, $html = '', $actionType = 'default', $url = 
     }else{
         $attr['aria-label'] = $label;
     }
-    
+
 
     if(empty($userRight)){
         $attr['class'] = 'butActionRefused';
         $attr['href'] = '';
     }
-    
+
     if(empty($id)){
         $attr['id'] = $id;
     }
-    
+
     // Override attr
     if(!empty($params['attr']) && is_array($params['attr'])){
         foreach($params['attr'] as $key => $value){
             $attr[$key] = $value;
         }
     }
-    
+
     if(isset($attr['href']) && empty($attr['href'])){
         unset($attr['href']);
     }
-    
+
     // TODO : add a hook
-    
+
     // escape all attribute
     $attr = array_map('dol_escape_htmltag', $attr);
-    
+
     $TCompiledAttr = array();
     foreach($attr as $key => $value){
         $TCompiledAttr[] = $key.'="'.$value.'"';
     }
-    
+
     $compiledAttributes = !empty($TCompiledAttr)?implode(' ', $TCompiledAttr):'';
-    
+
     $tag = !empty($attr['href'])?'a':'span';
-    
+
     return '<div class="inline-block divButAction"><'.$tag.' '.$compiledAttributes.'>'.$html.'</'.$tag.'></div>';
 }
