@@ -31,7 +31,7 @@ require_once DOL_DOCUMENT_ROOT . '/core/lib/functions2.lib.php';
  *
  *  @param		array		$versionarray		Tableau de version (vermajeur,vermineur,autre)
  *  @return     string        			      	Chaine version
- *  @see versioncompare
+ *  @see versioncompare()
  */
 function versiontostring($versionarray)
 {
@@ -55,7 +55,7 @@ function versiontostring($versionarray)
  *	@return     int          			       	-4,-3,-2,-1 if versionarray1<versionarray2 (value depends on level of difference)
  * 												0 if same
  * 												1,2,3,4 if versionarray1>versionarray2 (value depends on level of difference)
- *  @see versiontostring
+ *  @see versiontostring()
  */
 function versioncompare($versionarray1, $versionarray2)
 {
@@ -432,7 +432,7 @@ function run_sql($sqlfile, $silent = 1, $entity = '', $usesavepoint = 1, $handle
  *	@param	    int			$entity		Multi company id, -1 for all entities
  *	@return     int         			<0 if KO, >0 if OK
  *
- *	@see		dolibarr_get_const, dolibarr_set_const, dol_set_user_param
+ *	@see		dolibarr_get_const(), dolibarr_set_const(), dol_set_user_param()
  */
 function dolibarr_del_const($db, $name, $entity = 1)
 {
@@ -472,7 +472,7 @@ function dolibarr_del_const($db, $name, $entity = 1)
  *	@param	    int			$entity		Multi company id
  *	@return     string      			Valeur de la constante
  *
- *	@see		dolibarr_del_const, dolibarr_set_const, dol_set_user_param
+ *	@see		dolibarr_del_const(), dolibarr_set_const(), dol_set_user_param()
  */
 function dolibarr_get_const($db, $name, $entity = 1)
 {
@@ -507,7 +507,7 @@ function dolibarr_get_const($db, $name, $entity = 1)
  *	@param	    int			$entity		Multi company id (0 means all entities)
  *	@return     int         			-1 if KO, 1 if OK
  *
- *	@see		dolibarr_del_const, dolibarr_get_const, dol_set_user_param
+ *	@see		dolibarr_del_const(), dolibarr_get_const(), dol_set_user_param()
  */
 function dolibarr_set_const($db, $name, $value, $type = 'chaine', $visible = 0, $note = '', $entity = 1)
 {
