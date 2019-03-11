@@ -27,7 +27,7 @@ CREATE TABLE llx_expensereport_det
    comments text NOT NULL,
    product_type integer DEFAULT -1,
    qty real NOT NULL,
-   subprice						double(24,8),					-- P.U. HT (example 100)
+   subprice						double(24,8) DEFAULT 0 NOT NULL, -- P.U. HT (example 100)
    value_unit                   double(24,8) NOT NULL,          -- P.U. TTC (example 120)
    remise_percent real,
    vat_src_code					varchar(10)  DEFAULT '',		-- Vat code used as source of vat fields. Not strict foreign key here.

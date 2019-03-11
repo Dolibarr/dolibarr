@@ -1858,3 +1858,4 @@ MAIN_OPTIMIZEFORTEXTBROWSER=Simplify interface for blind person
 MAIN_OPTIMIZEFORTEXTBROWSERDesc=Enable this option if you are a blind person, or if you use the application from a text browser like Lynx or Links.
 ThisValueCanOverwrittenOnUserLevel=This value can be overwritten by each user from its user page - tab '%s'
 DefaultCustomerType=Default thirdparty type for "New customer" creation form
+ABankAccountMustBeDefinedOnPaymentModeSetup=Note: The bank account must be defined on the module of each payment mode (Paypal, Stripe, ...) to have this feature working.

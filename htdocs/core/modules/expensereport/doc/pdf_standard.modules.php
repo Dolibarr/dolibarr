@@ -31,7 +31,9 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/userbankaccount.class.php';
 
 
@@ -121,7 +123,7 @@ class pdf_standard extends ModeleExpenseReport
      */
     public function __construct($db)
     {
-		global $conf, $langs, $mysoc;
+		global $conf, $langs, $mysoc, $user;
 
 		// Translations
 		$langs->loadLangs(array("main", "trips", "projects"));
@@ -156,6 +158,7 @@ class pdf_standard extends ModeleExpenseReport
 
 		// Get source company
 		$this->emetteur=$mysoc;
+
 		if (empty($this->emetteur->country_code)) $this->emetteur->country_code=substr($langs->defaultlang, -2);    // By default, if was not defined
 
 		// Define position of columns
@@ -626,7 +629,8 @@ class pdf_standard extends ModeleExpenseReport
 	 */
 	private function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
 	{
-		global $conf, $langs, $hookmanager;
+		// global $conf, $langs, $hookmanager;
+		global $user, $receiver, $receiver_account, $langs, $conf, $mysoc, $db, $hookmanager;
 
 		// Load traductions files requiredby by page
 		$outputlangs->loadLangs(array("main", "trips", "companies"));
@@ -711,14 +715,22 @@ class pdf_standard extends ModeleExpenseReport
 			$carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->convToOutputCharset($this->emetteur->address);
 			$carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->convToOutputCharset($this->emetteur->zip).' '.$outputlangs->convToOutputCharset($this->emetteur->town);
 			$carac_emetteur .= "\n";
-			// Phone
 			if ($this->emetteur->phone) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Phone")." : ".$outputlangs->convToOutputCharset($this->emetteur->phone);
-			// Fax
 			if ($this->emetteur->fax) $carac_emetteur .= ($carac_emetteur ? ($this->emetteur->tel ? " - " : "\n") : '' ).$outputlangs->transnoentities("Fax")." : ".$outputlangs->convToOutputCharset($this->emetteur->fax);
-			// EMail
 			if ($this->emetteur->email) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Email")." : ".$outputlangs->convToOutputCharset($this->emetteur->email);
-			// Web
 			if ($this->emetteur->url) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Web")." : ".$outputlangs->convToOutputCharset($this->emetteur->url);
+
+			// Receiver Properties
+			$receiver=new User($this->db);
+			$receiver->fetch($object->fk_user_author);
+			$receiver_account=new UserBankAccount($this->db);
+			$receiver_account->fetch($object->fk_user_author);
+			$expense_receiver = '';
+			$expense_receiver .= ($expense_receiver ? "\n" : '' ).$outputlangs->convToOutputCharset($receiver->address);
+			$expense_receiver .= ($expense_receiver ? "\n" : '' ).$outputlangs->convToOutputCharset($receiver->zip).' '.$outputlangs->convToOutputCharset($receiver->town);
+			$expense_receiver .= "\n";
+			if ($receiver->email) $expense_receiver .= ($expense_receiver ? "\n" : '' ).$outputlangs->transnoentities("Email")." : ".$outputlangs->convToOutputCharset($receiver->email);
+			if ($receiver_account->iban) $expense_receiver .= ($expense_receiver ? "\n" : '' ).$outputlangs->transnoentities("IBAN")." : ".$outputlangs->convToOutputCharset($receiver_account->iban);
 
 			// Show sender
 			$posy=50;
@@ -736,15 +748,24 @@ class pdf_standard extends ModeleExpenseReport
 			$pdf->MultiCell(82, $hautcadre, "", 0, 'R', 1);
 			$pdf->SetTextColor(0, 0, 60);
 
-			// Show sender name
-			$pdf->SetXY($posx+2, $posy+3);
-			$pdf->SetFont('', 'B', $default_font_size);
-			$pdf->MultiCell(80, 4, $outputlangs->convToOutputCharset($this->emetteur->name), 0, 'L');
-
 			// Show sender information
-			$pdf->SetXY($posx+2, $posy+8);
-			$pdf->SetFont('', '', $default_font_size - 1);
-			$pdf->MultiCell(80, 4, $carac_emetteur, 0, 'L');
+			if (empty($conf->global->EXPENSEREPORT_INVERT_SENDER_RECIPIENT)) {
+				$pdf->SetXY($posx+2, $posy+3);
+				$pdf->SetFont('', 'B', $default_font_size);
+				$pdf->MultiCell(80, 4, $outputlangs->convToOutputCharset($this->emetteur->name), 0, 'L');
+				$pdf->SetXY($posx+2, $posy+8);
+				$pdf->SetFont('', '', $default_font_size - 1);
+				$pdf->MultiCell(80, 4, $carac_emetteur, 0, 'L');
+			} else {
+				$pdf->SetXY($posx+2, $posy+3);
+				$pdf->SetFont('', 'B', $default_font_size);
+				$pdf->MultiCell(80, 4, $outputlangs->convToOutputCharset(dolGetFirstLastname($receiver->firstname, $receiver->lastname)), 0, 'L');
+				$pdf->SetXY($posx+2, $posy+8);
+				$pdf->SetFont('', '', $default_font_size - 1);
+				$pdf->MultiCell(80, 4, $expense_receiver, 0, 'L');
+			}
+
+			if (! empty($conf->global->MAIN_INVERT_SENDER_RECIPIENT)) $posx=$this->marge_gauche;
 
 			// Show recipient
 			$posy=50;
@@ -760,18 +781,14 @@ class pdf_standard extends ModeleExpenseReport
 			// Informations for trip (dates and users workflow)
 			if ($object->fk_user_author > 0) {
 				$userfee=new User($this->db);
-				$userfee->fetch($object->fk_user_author); $posy+=3;
-				$account=new UserBankAccount($this->db);
-				$account->fetch($object->fk_user_author);
+				$userfee->fetch($object->fk_user_author); $posy+=6;
+				$posy+=3;
 				$pdf->SetXY($posx+2, $posy);
 				$pdf->SetFont('', '', 10);
 				$pdf->MultiCell(96, 4, $outputlangs->transnoentities("AUTHOR")." : ".dolGetFirstLastname($userfee->firstname, $userfee->lastname), 0, 'L');
 				$posy+=5;
 				$pdf->SetXY($posx+2, $posy);
-				$pdf->MultiCell(96, 4, $outputlangs->transnoentities("IBAN")." : ".$account->iban, 0, 'L');
-				$posy+=5;
-				$pdf->SetXY($posx+2, $posy);
-				$pdf->MultiCell(96, 4, $outputlangs->transnoentities("DateCreation")." : ".dol_print_date($object->date_create, "day", false, $outputlangs), 0, 'L');				
+				$pdf->MultiCell(96, 4, $outputlangs->transnoentities("DateCreation")." : ".dol_print_date($object->date_create, "day", false, $outputlangs), 0, 'L');
 			}
 
 			if ($object->fk_statut==99) {
