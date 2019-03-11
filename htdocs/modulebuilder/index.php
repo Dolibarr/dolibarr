@@ -1226,7 +1226,7 @@ if ($module == 'initmodule')
 }
 elseif ($module == 'deletemodule')
 {
-	print '<form name="delete">';
+	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" name="delete">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="confirm_delete">';
 	print '<input type="hidden" name="module" value="deletemodule">';
@@ -1514,7 +1514,7 @@ elseif (! empty($module))
 				print '<br>';
 
 
-				print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+				print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 				print '<input type="hidden" name="action" value="addlanguage">';
 				print '<input type="hidden" name="file" value="'.dol_escape_htmltag($file).'">';
@@ -1820,20 +1820,18 @@ elseif (! empty($module))
 							//var_dump($reflectorpropdefault);
 
 							print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-
-							print '<input class="button" type="submit" name="regenerateclasssql" value="'.$langs->trans("RegenerateClassAndSql").'">';
-							print '<input class="button" type="submit" name="regeneratemissing" value="'.$langs->trans("RegenerateMissingFiles").'">';
-							print '<br><br>';
-
-
-							print load_fiche_titre($langs->trans("Properties"), '', '');
-
-
 							print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 							print '<input type="hidden" name="action" value="addproperty">';
 							print '<input type="hidden" name="tab" value="objects">';
 							print '<input type="hidden" name="module" value="'.dol_escape_htmltag($module.($forceddirread?'@'.$dirread:'')).'">';
 							print '<input type="hidden" name="tabobj" value="'.dol_escape_htmltag($tabobj).'">';
+
+							print '<input class="button" type="submit" name="regenerateclasssql" value="'.$langs->trans("RegenerateClassAndSql").'">';
+							print '<input class="button" type="submit" name="regeneratemissing" value="'.$langs->trans("RegenerateMissingFiles").'">';
+							print '<br><br>';
+
+							print load_fiche_titre($langs->trans("Properties"), '', '');
+
 
 							print '<div class="div-table-responsive">';
 							print '<table class="noborder">';
@@ -2834,7 +2832,8 @@ elseif (! empty($module))
 
 			print '<br>';
 
-			print '<form name="generatepackage">';
+			print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" name="generatepackage">';
+			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<input type="hidden" name="action" value="generatepackage">';
 			print '<input type="hidden" name="tab" value="'.dol_escape_htmltag($tab).'">';
 			print '<input type="hidden" name="module" value="'.dol_escape_htmltag($module).'">';
@@ -2857,7 +2856,8 @@ elseif (! empty($module))
 
 			print '<br>';
 
-			print '<form name="generatedoc">';
+			print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" name="generatedoc">';
+			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<input type="hidden" name="action" value="generatedoc">';
 			print '<input type="hidden" name="tab" value="'.dol_escape_htmltag($tab).'">';
 			print '<input type="hidden" name="module" value="'.dol_escape_htmltag($module).'">';
