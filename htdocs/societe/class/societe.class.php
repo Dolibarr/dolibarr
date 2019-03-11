@@ -1962,7 +1962,11 @@ class Societe extends CommonObject
 			if (! $this->db->query($sql) )
 			{
 				dol_syslog(get_class($this)."::add_commercial Erreur");
+                return -2;
 			}
+			return 1;
+		}
+		return -1;
 		}
 	}
 
