@@ -782,7 +782,7 @@ class pdf_standard extends ModeleExpenseReport
 			// Informations for trip (dates and users workflow)
 			if ($object->fk_user_author > 0) {
 				$userfee=new User($this->db);
-				$userfee->fetch($object->fk_user_author); $posy+=6;
+				$userfee->fetch($object->fk_user_author);
 				$posy+=3;
 				$pdf->SetXY($posx+2, $posy);
 				$pdf->SetFont('', '', 10);
