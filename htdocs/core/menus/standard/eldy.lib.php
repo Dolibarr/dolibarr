@@ -201,10 +201,10 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 	    'position' => 30,
 	    'id' => $id,
 	    'idsel' => 'mrp',
-	    'classname' =>  $classname = ( $_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "project" ) ? 'class="tmenusel"' : 'class="tmenu"',
+	    'classname' =>  $classname = ( $_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "mrp" ) ? 'class="tmenusel"' : 'class="tmenu"',
 	    'prefix' => '',
-	    'session' => ( ( $_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "project" ) ? 0 : 1 ),
-	    'loadLangs' => array("projects"),
+	    'session' => ( ( $_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "mrp" ) ? 0 : 1 ),
+	    'loadLangs' => array("mrp"),
 	    'submenus' => array(),
 	);
 
@@ -433,9 +433,9 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 	{
 		$smenu = (object) $smenu;
 
-		if( $smenu->enabled )
+		if ($smenu->enabled)
 		{
-			if($langs->session)
+			if ($smenu->session)
 			{
 				$_SESSION['idmenu']='';
 			}

@@ -1,7 +1,7 @@
 <?php if (! defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
 /* <style type="text/css" > */
 
-.mainmenu::before{  
+.mainmenu::before{
     /* font part */
     font-family: "Font Awesome 5 Free";
     font-weight: 900;
@@ -21,54 +21,52 @@ div.mainmenu.menu {
 	background-image: none;
 }
 
-div.mainmenu.menu::before {	
+div.mainmenu.menu::before {
 content: "\f0c9";
 }
 
 
-.mainmenu.home::before{
+div.mainmenu.home::before{
 	content: "\f015";
-} 
+}
 
-.mainmenu.billing::before {
+div.mainmenu.billing::before {
     content: "\f0d6";
 }
 
-.mainmenu.accountancy::before {
+div.mainmenu.accountancy::before {
     content: "\f0d6";
 }
 
-.mainmenu.agenda::before {
+div.mainmenu.agenda::before {
     content: "\f073";
 }
 
-.mainmenu.bank::before {
+div.mainmenu.bank::before {
     content: "\f19c";
 }
 
-<?php if($conf->global->MAIN_FEATURES_LEVEL == 2){ ?>
+<?php if ($conf->global->MAIN_FEATURES_LEVEL == 2) { ?>
 /* TESTING USAGE OF SVG WITHOUT FONT */
-.mainmenu.cashdesk{
+div.mainmenu.cashdesk{
     line-height: 26px;
 }
 
-.mainmenu.cashdesk .tmenuimage{
-
+div.mainmenu.cashdesk .tmenuimage {
     line-height: 26px;
     display: inline-block;
     vertical-align: middle;
     height: <?php echo $topMenuFontSize; ?>;
 	background-color: #<?php echo $colortextbackhmenu; ?>;
     width: 100%;
-	
+
     -webkit-mask: url(./img/fontawesome/cash-register-solid.svg) no-repeat 50% 50%; /* for old webkit browser */
     mask: url(./img/fontawesome/cash-register-solid.svg) no-repeat 50% 50%;
-    
 }
 
-<?php }else{ ?>
+<?php } else { ?>
 
-.mainmenu.cashdesk::before {
+div.mainmenu.cashdesk::before {
     content: "\f788";
 }
 
@@ -76,54 +74,58 @@ content: "\f0c9";
 
 
 
-.mainmenu.takepos::before {
+div.mainmenu.takepos::before {
     content: "\f217";
 }
 
-.mainmenu.companies::before {
+div.mainmenu.companies::before {
     content: "\f1ad";
 }
 
-.mainmenu.commercial::before {
+div.mainmenu.commercial::before {
     content: "\f508";
 }
 
-.mainmenu.ecm::before {
+div.mainmenu.ecm::before {
     content: "\f07c";
 }
 
-.mainmenu.externalsite::before {
+div.mainmenu.externalsite::before {
     content: "\f360";
 }
 
-.mainmenu.ftp::before {
+div.mainmenu.ftp::before {
     content: "\f362";
 }
 
-.mainmenu.hrm::before {
+div.mainmenu.hrm::before {
     content: "\f5ca";
 }
 
-.mainmenu.members::before {
+div.mainmenu.members::before {
     content: "\f0c0";
 }
 
-.mainmenu.products::before {
+div.mainmenu.products::before {
     content: "\f468";
 }
 
-.mainmenu.project::before {
+div.mainmenu.mrp::before {
+    content: "\f468";
+}
+
+div.mainmenu.project::before {
     content: "\f0e8";
 }
 
-.mainmenu.ticket::before {
+div.mainmenu.ticket::before {
     content: "\f3ff";
 }
 
-.mainmenu.tools::before {
+div.mainmenu.tools::before {
     content: "\f0ad";
 }
 
-.mainmenu.website::before {
+div.mainmenu.website::before {
     content: "\f542";
 }
