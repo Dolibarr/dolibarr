@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2015		Alexandre Spangaro	<aspangaro@open-dsi.fr>
- * Copyright (C) 2015		Juanjo Menent		<jmenent@2byte.es>
+/* Copyright (C) 2015       Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2015       Juanjo Menent           <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,9 +17,9 @@
  */
 
 /**
- *      \file       htdocs/don/admin/donation_extrafields.php
- *		\ingroup    donations
- *		\brief      Page to setup extra fields of donations
+ *  \file       htdocs/don/admin/donation_extrafields.php
+ *  \ingroup    donations
+ *  \brief      Page to setup extra fields of donations
  */
 
 require '../../main.inc.php';
