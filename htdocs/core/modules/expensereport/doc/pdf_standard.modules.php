@@ -34,6 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
+require_once DOL_DOCUMENT_ROOT .'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/userbankaccount.class.php';
 
 
@@ -630,7 +631,7 @@ class pdf_standard extends ModeleExpenseReport
 	private function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
 	{
 		// global $conf, $langs, $hookmanager;
-		global $user, $receiver, $receiver_account, $langs, $conf, $mysoc, $db, $hookmanager;
+		global $user, $langs, $conf, $mysoc, $db, $hookmanager;
 
 		// Load traductions files requiredby by page
 		$outputlangs->loadLangs(array("main", "trips", "companies"));
@@ -781,7 +782,7 @@ class pdf_standard extends ModeleExpenseReport
 			// Informations for trip (dates and users workflow)
 			if ($object->fk_user_author > 0) {
 				$userfee=new User($this->db);
-				$userfee->fetch($object->fk_user_author); $posy+=6;
+				$userfee->fetch($object->fk_user_author);
 				$posy+=3;
 				$pdf->SetXY($posx+2, $posy);
 				$pdf->SetFont('', '', 10);

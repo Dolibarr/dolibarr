@@ -39,7 +39,7 @@ external documents stored in the *Appendices* directory accompanying this docume
 [options="header",format="csv"]
 |=== 
 Author, Date, Version
-John Doe, Date YYY-MM-DD, Version 1.0
+John Doe, Date YYYY-MM-DD, Version 1.0
 |===
 
 

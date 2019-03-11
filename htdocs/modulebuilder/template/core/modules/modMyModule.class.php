@@ -91,14 +91,14 @@ class modMyModule extends DolibarrModules
             'substitutions' => 1,
             // Set this to 1 if module has its own menus handler directory (core/menus)
             'menus' => 0,
-            // Set this to 1 if module has its own theme directory (theme)
-            'theme' => 0,
             // Set this to 1 if module overwrite template dir (core/tpl)
             'tpl' => 0,
             // Set this to 1 if module has its own barcode directory (core/modules/barcode)
             'barcode' => 0,
             // Set this to 1 if module has its own models directory (core/modules/xxx)
             'models' => 0,
+            // Set this to 1 if module has its own theme directory (theme)
+            'theme' => 0,
             // Set this to relative path of css file if module has its own css file
             'css' => array(
                 '/mymodule/css/mymodule.css.php',

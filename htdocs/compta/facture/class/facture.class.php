@@ -4269,7 +4269,6 @@ class Facture extends CommonInvoice
 	 * Checks if the invoice is the last in its cycle
 	 *
 	 * @return bool Last of the cycle status
-	 *
 	 */
     public function is_last_in_cycle()
 	{
@@ -4299,8 +4298,8 @@ class Facture extends CommonInvoice
 	 * Function used to replace a thirdparty id with another one.
 	 *
 	 * @param  DoliDB  $db             Database handler
-	 * @param  int     $origin_id      Old thirdparty id
-	 * @param  int     $dest_id        New thirdparty id
+	 * @param  int     $origin_id      Old third-party id
+	 * @param  int     $dest_id        New third-party id
 	 * @return bool
 	 */
 	public static function replaceThirdparty(DoliDB $db, $origin_id, $dest_id)
@@ -4390,13 +4389,13 @@ class FactureLigne extends CommonInvoiceLine
 	// From llx_product
 	/**
 	 * @deprecated
-	 * @see product_ref
+	 * @see $product_ref
 	 */
 	public $ref;				// Product ref (deprecated)
 	public $product_ref;       // Product ref
 	/**
 	 * @deprecated
-	 * @see product_label
+	 * @see $product_label
 	 */
 	public $libelle;      		// Product label (deprecated)
 	public $product_label;     // Product label

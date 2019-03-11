@@ -194,8 +194,8 @@ function user_prepare_head($object)
 /**
  * Prepare array with list of tabs
  *
- * @param 	Group $object		Object group
- * @return	array				Array of tabs
+ * @param 	UserGroup $object		Object group
+ * @return	array				    Array of tabs
  */
 function group_prepare_head($object)
 {
