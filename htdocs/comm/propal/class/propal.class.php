@@ -3199,11 +3199,8 @@ class Propal extends CommonObject
 		elseif ($statut==self::STATUS_SIGNED) $statusType='status3';
 		elseif ($statut==self::STATUS_NOTSIGNED) $statusType='status5';
 		elseif ($statut==self::STATUS_BILLED) $statusType='status6';
-
 		
 		return dolGetStatus($this->labelstatut[$statut], $this->labelstatut_short[$statut], '', $statusType, $mode);
-		
-		
 	}
 
 
