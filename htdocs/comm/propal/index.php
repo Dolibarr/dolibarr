@@ -172,16 +172,18 @@ if (! empty($conf->propal->enabled))
 	$resql=$db->query($sql);
 	if ($resql)
 	{
-		print '<div class="div-table-responsive-no-min">';
-		print '<table class="noborder" width="100%">';
-		print '<tr class="liste_titre">';
-		print '<td colspan="2">'.$langs->trans("DraftPropals").'</td></tr>';
-		$langs->load("propal");
 		$num = $db->num_rows($resql);
 		if ($num)
 		{
+			print '<div class="div-table-responsive-no-min">';
+			print '<table class="noborder" width="100%">';
+			print '<tr class="liste_titre">';
+			$langs->load("propal");
+			print '<td colspan="2">'.$langs->trans("DraftPropals").' <a href="'.DOL_URL_ROOT.'/comm/propal/list.php?viewstatut=0"><span class="badge">'.$num.'</span></a></td></tr>';
+
 			$i = 0;
-			while ($i < $num)
+			$nbofloop=min($num, (empty($conf->global->MAIN_MAXLIST_OVERLOAD)?5:$conf->global->MAIN_MAXLIST_OVERLOAD));
+			while ($i < $nbofloop)
 			{
 				$obj = $db->fetch_object($resql);
 				print '<tr class="oddeven">';
@@ -199,9 +201,17 @@ if (! empty($conf->propal->enabled))
 				print '</tr>';
 				$i++;
 			}
+			if ($num > $nbofloop)
+			{
+				print '<tr class="liste_total"><td colspan="2" align="right">'.$langs->trans("XMoreLines", ($num - $nbofloop))."</td></tr>";
+			}
+			elseif ($total>0)
+			{
+				print '<tr class="liste_total"><td align="right">'.$langs->trans("Total").'</td><td align="right">'.price($total)."</td></tr>";
+			}
+			print "</table>";
+			print "</div><br>";
 		}
-		print "</table>";
-		print "</div><br>";
 	}
 }
 
@@ -320,7 +330,7 @@ if (! empty($conf->propal->enabled) && $user->rights->propale->lire)
 			print '<table class="noborder" width="100%">';
 			print '<tr class="liste_titre"><td colspan="5">'.$langs->trans("ProposalsOpened").' <a href="'.DOL_URL_ROOT.'/comm/propal/list.php?viewstatut=1"><span class="badge">'.$num.'</span></a></td></tr>';
 
-			$nbofloop=min($num, (empty($conf->global->MAIN_MAXLIST_OVERLOAD)?500:$conf->global->MAIN_MAXLIST_OVERLOAD));
+			$nbofloop=min($num, (empty($conf->global->MAIN_MAXLIST_OVERLOAD)?5:$conf->global->MAIN_MAXLIST_OVERLOAD));
 			while ($i < $nbofloop)
 			{
 				$obj = $db->fetch_object($result);
@@ -365,11 +375,11 @@ if (! empty($conf->propal->enabled) && $user->rights->propale->lire)
 			}
 			if ($num > $nbofloop)
 			{
-				print '<tr class="liste_total"><td colspan="5">'.$langs->trans("XMoreLines", ($num - $nbofloop))."</td></tr>";
+				print '<tr class="liste_total"><td colspan="5" align="right">'.$langs->trans("XMoreLines", ($num - $nbofloop))."</td></tr>";
 			}
 			elseif ($total>0)
 			{
-				print '<tr class="liste_total"><td colspan="3">'.$langs->trans("Total")."</td><td align=\"right\">".price($total)."</td><td>&nbsp;</td></tr>";
+				print '<tr class="liste_total"><td colspan="3" align="right">'.$langs->trans("Total")."</td><td align=\"right\">".price($total)."</td><td>&nbsp;</td></tr>";
 			}
 			print "</table>";
 			print "</div><br>";
