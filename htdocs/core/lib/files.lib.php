@@ -55,7 +55,7 @@ function dol_basename($pathfile)
  *  @param	string		$relativename	For recursive purpose only. Must be "" at first call.
  *  @param	string		$donotfollowsymlinks	Do not follow symbolic links
  *  @return	array						Array of array('name'=>'xxx','fullname'=>'/abc/xxx','date'=>'yyy','size'=>99,'type'=>'dir|file',...)
- *  @see dol_dir_list_indatabase
+ *  @see dol_dir_list_in_database()
  */
 function dol_dir_list($path, $types = "all", $recursive = 0, $filter = "", $excludefilter = null, $sortcriteria = "name", $sortorder = SORT_ASC, $mode = 0, $nohook = 0, $relativename = "", $donotfollowsymlinks = 0)
 {
@@ -225,7 +225,7 @@ function dol_dir_list($path, $types = "all", $recursive = 0, $filter = "", $excl
  *  @param	string		$sortorder		Sort order (SORT_ASC, SORT_DESC)
  *	@param	int			$mode			0=Return array minimum keys loaded (faster), 1=Force all keys like description
  *  @return	array						Array of array('name'=>'xxx','fullname'=>'/abc/xxx','type'=>'dir|file',...)
- *  @see dol_dir_list
+ *  @see dol_dir_list()
  */
 function dol_dir_list_in_database($path, $filter = "", $excludefilter = null, $sortcriteria = "name", $sortorder = SORT_ASC, $mode = 0)
 {
@@ -444,6 +444,18 @@ function dol_is_dir($folder)
 }
 
 /**
+ * Return if path is empty
+ *
+ * @param   string		$dir		Path of Directory
+ * @return  boolean     		    True or false
+ */
+function dol_is_dir_empty($dir)
+{
+    if (!is_readable($dir)) return false;
+    return (count(scandir($dir)) == 2);
+}
+
+/**
  * Return if path is a file
  *
  * @param   string		$pathoffile		Path of file
@@ -516,7 +528,7 @@ function dol_dir_is_emtpy($folder)
  *
  * 	@param	string	$file		Filename
  * 	@return int					<0 if KO, Number of lines in files if OK
- *  @see dol_nboflines
+ *  @see dol_nboflines()
  */
 function dol_count_nb_of_line($file)
 {
@@ -577,7 +589,7 @@ function dol_filemtime($pathoffile)
  * @param	int		$newmask			Mask for new file (0 by default means $conf->global->MAIN_UMASK). Example: '0666'
  * @param	int		$indexdatabase		1=index new file into database.
  * @return	int							<0 if error, 0 if nothing done (dest file already exists), >0 if OK
- * @see		dol_copy dolReplaceRegExInFile
+ * @see		dol_copy() dolReplaceRegExInFile()
  */
 function dolReplaceInFile($srcfile, $arrayreplacement, $destfile = '', $newmask = 0, $indexdatabase = 0)
 {
@@ -647,7 +659,7 @@ function dolReplaceInFile($srcfile, $arrayreplacement, $destfile = '', $newmask 
  * @param	int		$newmask			Mask for new file (0 by default means $conf->global->MAIN_UMASK). Example: '0666'
  * @param	int		$indexdatabase		Index new file into database.
  * @return	int							<0 if error, 0 if nothing done (dest file already exists), >0 if OK
- * @see		dol_copy dolReplaceInFile
+ * @see		dol_copy() dolReplaceInFile()
  */
 function dolReplaceRegExInFile($srcfile, $arrayreplacement, $destfile = '', $newmask = 0, $indexdatabase = 0)
 {
@@ -662,7 +674,7 @@ function dolReplaceRegExInFile($srcfile, $arrayreplacement, $destfile = '', $new
  * @param	int		$newmask			Mask for new file (0 by default means $conf->global->MAIN_UMASK). Example: '0666'
  * @param 	int		$overwriteifexists	Overwrite file if exists (1 by default)
  * @return	int							<0 if error, 0 if nothing done (dest file already exists and overwriteifexists=0), >0 if OK
- * @see		dol_delete_file
+ * @see		dol_delete_file() dolCopyDir()
  */
 function dol_copy($srcfile, $destfile, $newmask = 0, $overwriteifexists = 1)
 {
@@ -718,7 +730,7 @@ function dol_copy($srcfile, $destfile, $newmask = 0, $overwriteifexists = 1)
  * @param 	int		$overwriteifexists	Overwrite file if exists (1 by default)
  * @param	array	$arrayreplacement	Array to use to replace filenames with another one during the copy (works only on file names, not on directory names).
  * @return	int							<0 if error, 0 if nothing done (all files already exists and overwriteifexists=0), >0 if OK
- * @see		dol_copy
+ * @see		dol_copy()
  */
 function dolCopyDir($srcfile, $destfile, $newmask, $overwriteifexists, $arrayreplacement = null)
 {
@@ -810,7 +822,7 @@ function dolCopyDir($srcfile, $destfile, $newmask, $overwriteifexists, $arrayrep
  * @param   int     $testvirus          Do an antivirus test. Move is canceled if a virus is found.
  * @param	int		$indexdatabase		Index new file into database.
  * @return  boolean 		            True if OK, false if KO
- * @see dol_move_uploaded_file
+ * @see dol_move_uploaded_file()
  */
 function dol_move($srcfile, $destfile, $newmask = 0, $overwriteifexists = 1, $testvirus = 0, $indexdatabase = 1)
 {
@@ -992,7 +1004,7 @@ function dolCheckVirus($src_file)
  * 	@param	int		$nohook				Disable all hooks
  * 	@param	string	$varfiles			_FILES var name
  *	@return int       			  		>0 if OK, <0 or string if KO
- *  @see    dol_move
+ *  @see    dol_move()
  */
 function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disablevirusscan = 0, $uploaderrorcode = 0, $nohook = 0, $varfiles = 'addedfile')
 {
@@ -1046,7 +1058,7 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
 			$checkvirusarray=dolCheckVirus($src_file);
 			if (count($checkvirusarray))
 			{
-			   dol_syslog('Files.lib::dol_move_uploaded_file File "'.$src_file.'" (target name "'.$dest_file.'") KO with antivirus: result='.$result.' errors='.join(',', $checkvirusarray), LOG_WARNING);
+			   dol_syslog('Files.lib::dol_move_uploaded_file File "'.$src_file.'" (target name "'.$dest_file.'") KO with antivirus: errors='.join(',', $checkvirusarray), LOG_WARNING);
 			   return 'ErrorFileIsInfectedWithAVirus: '.join(',', $checkvirusarray);
 			}
 		}
@@ -1135,7 +1147,7 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
  *  @param	boolean	$allowdotdot	Allow to delete file path with .. inside. Never use this, it is reserved for migration purpose.
  *  @param	int		$indexdatabase	Try to remove also index entries.
  *  @return boolean         		True if no error (file is deleted or if glob is used and there's nothing to delete), False if error
- *  @see dol_delete_dir
+ *  @see dol_delete_dir()
  */
 function dol_delete_file($file, $disableglob = 0, $nophperrors = 0, $nohook = 0, $object = null, $allowdotdot = false, $indexdatabase = 1)
 {
@@ -1245,7 +1257,7 @@ function dol_delete_file($file, $disableglob = 0, $nophperrors = 0, $nohook = 0,
  *  @param	string	$dir            Directory to delete
  *  @param  int		$nophperrors    Disable all PHP output errors
  *  @return boolean         		True if success, false if error
- *  @see dol_delete_file dol_copy
+ *  @see dol_delete_file() dolCopyDir()
  */
 function dol_delete_dir($dir, $nophperrors = 0)
 {
@@ -1320,7 +1332,7 @@ function dol_delete_dir_recursive($dir, $count = 0, $nophperrors = 0, $onlysub =
  *
  *  @param	object	$object		Object to clean
  *  @return	int					0 if error, 1 if OK
- *  @see dol_convert_file
+ *  @see dol_convert_file()
  */
 function dol_delete_preview($object)
 {
@@ -2105,7 +2117,7 @@ function dol_most_recent_file($dir, $regexfilter = '', $excludefilter = array('(
  * @param	string	$refname			Ref of object to check permission for external users (autodetect if not provided)
  * @param   string  $mode               Check permission for 'read' or 'write'
  * @return	mixed						Array with access information : 'accessallowed' & 'sqlprotectagainstexternals' & 'original_file' (as a full path name)
- * @see restrictedArea
+ * @see restrictedArea()
  */
 function dol_check_secure_access_document($modulepart, $original_file, $entity, $fuser = '', $refname = '', $mode = 'read')
 {
@@ -2124,6 +2136,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 	if ($modulepart == 'users') $modulepart='user';
 
 	dol_syslog('modulepart='.$modulepart.' original_file='.$original_file.' entity='.$entity);
+
 	// We define $accessallowed and $sqlprotectagainstexternals
 	$accessallowed=0;
 	$sqlprotectagainstexternals='';
@@ -2131,8 +2144,6 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 
 	// Find the subdirectory name as the reference. For exemple original_file='10/myfile.pdf' -> refname='10'
 	if (empty($refname)) $refname=basename(dirname($original_file)."/");
-
-	$relative_original_file = $original_file;
 
 	// Define possible keys to use for permission check
 	$lire='lire'; $read='read'; $download='download';
@@ -2654,7 +2665,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		}
 		if (! empty($conf->productbatch->enabled)) $original_file=$conf->productbatch->multidir_output[$entity].'/'.$original_file;
 	}
-	
+
 	// Wrapping for stock movements
 	elseif ($modulepart == 'movement' || $modulepart == 'mouvement')
 	{

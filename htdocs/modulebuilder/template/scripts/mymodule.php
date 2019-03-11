@@ -18,9 +18,9 @@
  */
 
 /**
- *      \file       htdocs/modulebuilder/template/scripts/myobject.php
+ *      \file       htdocs/modulebuilder/template/scripts/mymodule.php
  *		\ingroup    mymodule
- *      \brief      This file is an example for a command line script to work on MyObject
+ *      \brief      This file is an example for a command line script for module MyModule
  */
 
 $sapi_type = php_sapi_name();
@@ -81,8 +81,8 @@ $db->begin();
 
 
 // Examples for manipulating class MyObject
-dol_include_once("/mymodule/class/myobject.class.php");
-$myobject=new MyObject($db);
+//dol_include_once("/mymodule/class/myobject.class.php");
+//$myobject=new MyObject($db);
 
 // Example for inserting creating object in database
 /*
