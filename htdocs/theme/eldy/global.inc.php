@@ -5728,4 +5728,4 @@ div.tabsElem a.tab {
 }
 
 
-<?php include dol_buildpath($path.'/theme/'.$theme.'/_dropdown.css.php', 0); ?>
+<?php include dol_buildpath($path.'/theme/'.$theme.'/dropdown.css.php', 0); ?>
