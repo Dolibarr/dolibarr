@@ -2183,7 +2183,7 @@ function colorArrayToHex($arraycolor, $colorifnotfound = '888888')
  *
  *  @param	string	$stringcolor		String with hex (FFFFFF) or comma RGB ('255,255,255')
  *  @param	array	$colorifnotfound	Color code array to return if entry not defined
- *  @return	string						RGB hex value (without # before). For example: FF00FF
+ *  @return	array   					RGB hex value (without # before). For example: FF00FF
  *  @see	colorArrayToHex()
  */
 function colorStringToArray($stringcolor, $colorifnotfound = array(88,88,88))
@@ -2274,7 +2274,7 @@ function colorLighten($hex, $percent)
  * @param string $hex color in hex
  * @param float $alpha 0 to 1
  * @param bool $returnArray set to 1 to return an array instead of string
- * @return string
+ * @return string|array
  */
 function colorHexToRgb($hex, $alpha = false, $returnArray = false)
 {
