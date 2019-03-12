@@ -1732,13 +1732,17 @@ function top_menu_user(user $user, $langs){
         $userImage = Form::showphoto('userphoto', $user, 0, 0, 0, 'photouserphoto userphoto', 'small', 0, 1);
         $userDropDownImage = Form::showphoto('userphoto', $user, 0, 0, 0, 'dropdown-user-image', 'small', 0, 1);
     }
- 
-    // login infos
+    
     $dropdownBody = '';
+
+
+    $dropdownBody.= '<span id="topmenuloginmoreinfo-btn">'.$langs->trans("ShowMoreInfos").'</span>';
+    $dropdownBody.= '<div id="topmenuloginmoreinfo" >';
+    
+    // login infos
     if (!empty($user->admin)){
         $dropdownBody.= '<br><b>' . $langs->trans("Administrator").'</b>: '.yn($user->admin);
     }
-        
     if (! empty($user->socid) )	// Add thirdparty for external users
     {
         $thirdpartystatic = new Societe($db);
@@ -1749,25 +1753,23 @@ function top_menu_user(user $user, $langs){
     $type=($user->socid?$langs->trans("External").$company:$langs->trans("Internal"));
     $dropdownBody.= '<br><b>' . $langs->trans("Type") . ':</b> ' . $type;
     $dropdownBody.= '<br><b>' . $langs->trans("Status").'</b>: '.$user->getLibStatut(0);
-
-
-        $dropdownBody.= '<div id="toplogin-moreinfo" >';
-        $dropdownBody.= '<br><u>'.$langs->trans("Connection").'</u>';
-        $dropdownBody.= '<br><b>'.$langs->trans("IPAddress").'</b>: '.$_SERVER["REMOTE_ADDR"];
-        if (! empty($conf->global->MAIN_MODULE_MULTICOMPANY)) $dropdownBody.= '<br><b>'.$langs->trans("ConnectedOnMultiCompany").':</b> '.$conf->entity.' (user entity '.$user->entity.')';
-        $dropdownBody.= '<br><b>'.$langs->trans("AuthenticationMode").':</b> '.$_SESSION["dol_authmode"].(empty($dolibarr_main_demo)?'':' (demo)');
-        $dropdownBody.= '<br><b>'.$langs->trans("ConnectedSince").':</b> '.dol_print_date($user->datelastlogin, "dayhour", 'tzuser');
-        $dropdownBody.= '<br><b>'.$langs->trans("PreviousConnexion").':</b> '.dol_print_date($user->datepreviouslogin, "dayhour", 'tzuser');
-        $dropdownBody.= '<br><b>'.$langs->trans("CurrentTheme").':</b> '.$conf->theme;
-        $dropdownBody.= '<br><b>'.$langs->trans("CurrentMenuManager").':</b> '.$menumanager->name;
-        $s=picto_from_langcode($langs->getDefaultLang());
-        $dropdownBody.= '<br><b>'.$langs->trans("CurrentUserLanguage").':</b> '.($s?$s.' ':'').$langs->getDefaultLang();
-        $dropdownBody.= '<br><b>'.$langs->trans("Browser").':</b> '.$conf->browser->name.($conf->browser->version?' '.$conf->browser->version:'').' ('.$_SERVER['HTTP_USER_AGENT'].')';
-        $dropdownBody.= '<br><b>'.$langs->trans("Layout").':</b> '.$conf->browser->layout;
-        $dropdownBody.= '<br><b>'.$langs->trans("Screen").':</b> '.$_SESSION['dol_screenwidth'].' x '.$_SESSION['dol_screenheight'];
-        if ($conf->browser->layout == 'phone') $dropdownBody.= '<br><b>'.$langs->trans("Phone").':</b> '.$langs->trans("Yes");
-        if (! empty($_SESSION["disablemodules"])) $dropdownBody.= '<br><b>'.$langs->trans("DisabledModules").':</b> <br>'.join(', ', explode(',', $_SESSION["disablemodules"]));
     
+    $dropdownBody.= '<br><u>'.$langs->trans("Connection").'</u>';
+    $dropdownBody.= '<br><b>'.$langs->trans("IPAddress").'</b>: '.$_SERVER["REMOTE_ADDR"];
+    if (! empty($conf->global->MAIN_MODULE_MULTICOMPANY)) $dropdownBody.= '<br><b>'.$langs->trans("ConnectedOnMultiCompany").':</b> '.$conf->entity.' (user entity '.$user->entity.')';
+    $dropdownBody.= '<br><b>'.$langs->trans("AuthenticationMode").':</b> '.$_SESSION["dol_authmode"].(empty($dolibarr_main_demo)?'':' (demo)');
+    $dropdownBody.= '<br><b>'.$langs->trans("ConnectedSince").':</b> '.dol_print_date($user->datelastlogin, "dayhour", 'tzuser');
+    $dropdownBody.= '<br><b>'.$langs->trans("PreviousConnexion").':</b> '.dol_print_date($user->datepreviouslogin, "dayhour", 'tzuser');
+    $dropdownBody.= '<br><b>'.$langs->trans("CurrentTheme").':</b> '.$conf->theme;
+    $dropdownBody.= '<br><b>'.$langs->trans("CurrentMenuManager").':</b> '.$menumanager->name;
+    $langFlag=picto_from_langcode($langs->getDefaultLang());
+    $dropdownBody.= '<br><b>'.$langs->trans("CurrentUserLanguage").':</b> '.($langFlag?$langFlag.' ':'').$langs->getDefaultLang();
+    $dropdownBody.= '<br><b>'.$langs->trans("Browser").':</b> '.$conf->browser->name.($conf->browser->version?' '.$conf->browser->version:'').' ('.$_SERVER['HTTP_USER_AGENT'].')';
+    $dropdownBody.= '<br><b>'.$langs->trans("Layout").':</b> '.$conf->browser->layout;
+    $dropdownBody.= '<br><b>'.$langs->trans("Screen").':</b> '.$_SESSION['dol_screenwidth'].' x '.$_SESSION['dol_screenheight'];
+    if ($conf->browser->layout == 'phone') $dropdownBody.= '<br><b>'.$langs->trans("Phone").':</b> '.$langs->trans("Yes");
+    if (! empty($_SESSION["disablemodules"])) $dropdownBody.= '<br><b>'.$langs->trans("DisabledModules").':</b> <br>'.join(', ', explode(',', $_SESSION["disablemodules"]));
+    $dropdownBody.= '</div>';
     
     // Execute hook
     $parameters=array('user'=>$user, 'langs' => $langs);
@@ -1784,14 +1786,14 @@ function top_menu_user(user $user, $langs){
     
     
     
-    $logoutLink ='<a accesskey="l" href="'.DOL_URL_ROOT.'/user/logout.php" class="button-top-menu-dropdown" >'.$langs->trans("Logout").'</a>';
+    $logoutLink ='<a accesskey="l" href="'.DOL_URL_ROOT.'/user/logout.php" class="button-top-menu-dropdown" ><i class="fa fa-sign-out-alt"></i> '.$langs->trans("Logout").'</a>';
     $profilLink ='<a accesskey="l" href="'.DOL_URL_ROOT.'/user/card.php?id='.$user->id.'" class="button-top-menu-dropdown" >'.$langs->trans("Card").'</a>';
     
     
     $profilName = $user->getFullName($langs).' ('.$user->login.')';
     
     if($user->admin){
-        $profilName = '<i class="far fa-star" title="'.$langs->trans("Administrator").'" ></i> '.$profilName;
+        $profilName = '<i class="far fa-star classfortooltip" title="'.$langs->trans("Administrator").'" ></i> '.$profilName;
     }
     
     $btnUser = '
@@ -1807,7 +1809,7 @@ function top_menu_user(user $user, $langs){
 
                 <p>
                     '.$profilName.'
-                    <br/><small>'.dol_print_date(time()).$user->date_creation.'</small>
+                    <br/><small class="classfortooltip" title="'.$langs->trans("PreviousConnexion").'" ><i class="fa user-clock"></i> '.dol_print_date($user->datepreviouslogin, "dayhour", 'tzuser').'</small>
                 </p>
             </div>
 
@@ -1822,11 +1824,13 @@ function top_menu_user(user $user, $langs){
                 <div class="pull-right">
                     '.$logoutLink.'
                 </div>
+                <div style="clear:both;"></div>
             </div>
 
         </div>
     </div>
-    <script>
+<script>
+$( document ).ready(function() {
     $(document).on("click", function(event) {
         if (!$(event.target).closest("#topmenu-login-dropdown").length) {
             // Hide the menus.
@@ -1839,7 +1843,12 @@ function top_menu_user(user $user, $langs){
         $("#topmenu-login-dropdown").toggleClass("open");
     });
 
-   </script>
+    $("#topmenuloginmoreinfo-btn").on("click", function() {
+        $("#topmenuloginmoreinfo").slideToggle();
+    });
+
+});
+</script>
     ';
     
     

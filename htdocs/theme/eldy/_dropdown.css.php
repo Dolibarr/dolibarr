@@ -6,7 +6,7 @@ if (! defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
 */
  
 
-.open>.dropdown-menu {
+.open>.dropdown-menu{ /*, #topmenu-login-dropdown:hover .dropdown-menu*/
     display: block;
 }
 
@@ -43,7 +43,7 @@ if (! defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
 * MENU Dropdown 
 */
  
-.tmenu .open.dropdown, .login_block .open.dropdown{
+.tmenu .open.dropdown, .login_block .open.dropdown, .tmenu .open.dropdown, .login_block .dropdown:hover{
     background: rgba(0, 0, 0, 0.1);
 }
 .tmenu .dropdown-menu, .login_block .dropdown-menu {
@@ -100,7 +100,7 @@ if (! defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
     padding: 10px;
 }
 
-.dropdown-menu > .user-footer:after {
+.user-footer:after {
     clear: both;
 }
 
@@ -108,8 +108,25 @@ if (! defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
     padding: 15px;
     border-bottom: 1px solid #f4f4f4;
     border-top: 1px solid #dddddd;
+    white-space: normal;
 }
 
+#topmenu-login-dropdown{
+padding: 0 5px 0 5px;
+}
+
+#topmenuloginmoreinfo-btn{
+    display: block;
+    text-aling: right;
+    color:#666;
+    cursor: pointer;
+}
+
+#topmenuloginmoreinfo{
+    display: none;
+    clear: both;
+    font-size: 0.9em;
+}
 
 .button-top-menu-dropdown {
     display: inline-block;
@@ -133,7 +150,7 @@ if (! defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
     border-radius: 4px;
 }
 
-.dropdown-menu > .user-footer .button-top-menu-dropdown {
+.user-footer .button-top-menu-dropdown {
     color: #666666;
     border-radius: 0;
     -webkit-box-shadow: none;

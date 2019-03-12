@@ -1818,7 +1818,8 @@ div.login_block {
 	<?php } ?>
 }
 div.login_block a {
-	color: #<?php echo $colortextbackvmenu; ?>;
+	color: #<?php echo $colortextbackhmenu; ?>;
+	display: inline-block;
 }
 div.login_block table {
 	display: inline;
