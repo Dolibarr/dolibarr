@@ -322,7 +322,6 @@ PaymentNumber=Payment number
 RemoveDiscount=Remove discount
 WatermarkOnDraftBill=Watermark on draft invoices (nothing if empty)
 InvoiceNotChecked=No invoice selected
-CloneInvoice=Clone invoice
 ConfirmCloneInvoice=Are you sure you want to clone this invoice <b>%s</b>?
 DisabledBecauseReplacedInvoice=Action disabled because invoice has been replaced
 DescTaxAndDividendsArea=This area presents a summary of all payments made for special expenses. Only records with payments during the fixed year are included here.

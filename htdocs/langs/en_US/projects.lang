@@ -131,7 +131,6 @@ TaskIsNotAssignedToUser=Task not assigned to user. Use button '<strong>%s</stron
 ErrorTimeSpentIsEmpty=Time spent is empty
 ThisWillAlsoRemoveTasks=This action will also delete all tasks of project (<b>%s</b> tasks at the moment) and all inputs of time spent.
 IfNeedToUseOtherObjectKeepEmpty=If some objects (invoice, order, ...), belonging to another third party, must be linked to the project to create, keep this empty to have the project being multi third parties.
-CloneProject=Clone project
 CloneTasks=Clone tasks
 CloneContacts=Clone contacts
 CloneNotes=Clone notes

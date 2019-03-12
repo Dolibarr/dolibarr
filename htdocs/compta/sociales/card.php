@@ -419,7 +419,7 @@ if ($id > 0)
 
 			);
 
-			print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('CloneTax'), $langs->trans('ConfirmCloneTax', $object->ref), 'confirm_clone', $formclone, 'yes');
+			print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneTax', $object->ref), 'confirm_clone', $formclone, 'yes');
 		}
 
 		// Confirmation de la suppression de la charge
