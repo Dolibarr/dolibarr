@@ -5305,10 +5305,14 @@ class Form
 							// Note: We don't need monthNames, monthNamesShort, dayNames, dayNamesShort, dayNamesMin, they are set globally on datepicker component in lib_head.js.php
 							if (empty($conf->global->MAIN_POPUP_CALENDAR_ON_FOCUS))
 							{
-							$retstring.="
-								showOn: 'button',
-								buttonImage: '".DOL_URL_ROOT."/theme/".$conf->theme."/img/object_calendarday.png',
-								buttonImageOnly: true";
+								$imgpath = dol_buildpath($conf->theme."/theme/".$conf->theme."/img/object_calendarday.png");
+								require_once(DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php');
+								if ( ! dol_is_file($imgpath)) $imgurl = DOL_URL_ROOT."/theme/".$conf->theme."/img/object_calendarday.png";
+								else $imgurl = dol_buildpath($conf->theme."/theme/".$conf->theme."/img/object_calendarday.png",1);
+								$retstring.="
+									showOn: 'button',
+									buttonImage: '".$imgurl."',
+									buttonImageOnly: true";
 							}
 							$retstring.="
 							}) });";
