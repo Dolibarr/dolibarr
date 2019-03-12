@@ -89,20 +89,20 @@ if (empty($reshook))
         if (empty($id)) $backtopage = $backurlforlist;
         else $backtopage = DOL_URL_ROOT.'/bom/bom_card.php?id='.$id;
     }
-	$triggermodname = 'BILLOFMATERIALS_BILLOFMATERIALS_MODIFY';	// Name of trigger action code to execute when we modify record
+	$triggermodname = 'BOM_MODIFY';	// Name of trigger action code to execute when we modify record
 
 	// Actions cancel, add, update, delete or clone
 	include DOL_DOCUMENT_ROOT.'/core/actions_addupdatedelete.inc.php';
 
 	// Actions when linking object each other
-	include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php';		// Must be include, not include_once
+	include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php';
 
 	// Actions when printing a doc from card
 	include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
 
 	// Actions to send emails
-	$trigger_name='BILLOFMATERIALS_SENTBYMAIL';
-	$autocopy='MAIN_MAIL_AUTOCOPY_BILLOFMATERIALS_TO';
+	$trigger_name='BOM_SENTBYMAIL';
+	$autocopy='MAIN_MAIL_AUTOCOPY_BOM_TO';
 	$trackid='bom'.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 }
@@ -208,7 +208,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     $res = $object->fetch_optionals();
 
 	$head = bomPrepareHead($object);
-	dol_fiche_head($head, 'card', $langs->trans("NewBOM"), -1, 'bom');
+	dol_fiche_head($head, 'card', $langs->trans("BillOfMaterials"), -1, 'bom');
 
 	$formconfirm = '';
 

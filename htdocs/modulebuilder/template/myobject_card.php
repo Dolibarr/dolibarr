@@ -130,7 +130,7 @@ if (empty($reshook))
     include DOL_DOCUMENT_ROOT.'/core/actions_addupdatedelete.inc.php';
 
     // Actions when linking object each other
-    include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php';		// Must be include, not include_once
+    include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php';
 
     // Actions when printing a doc from card
     include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
