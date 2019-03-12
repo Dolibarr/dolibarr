@@ -725,7 +725,7 @@ class pdf_standard extends ModeleExpenseReport
 			$receiver=new User($this->db);
 			$receiver->fetch($object->fk_user_author);
 			$receiver_account=new UserBankAccount($this->db);
-			$receiver_account->fetch($object->fk_user_author);
+			$receiver_account->fetch(0, '', $object->fk_user_author);
 			$expense_receiver = '';
 			$expense_receiver .= ($expense_receiver ? "\n" : '' ).$outputlangs->convToOutputCharset($receiver->address);
 			$expense_receiver .= ($expense_receiver ? "\n" : '' ).$outputlangs->convToOutputCharset($receiver->zip).' '.$outputlangs->convToOutputCharset($receiver->town);
