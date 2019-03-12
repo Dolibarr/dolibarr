@@ -332,7 +332,7 @@ print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sort
 // Add code for pre mass action (confirmation or email presend form)
 $topicmail="SendBillOfMaterialsRef";
 $modelmail="bom";
-$objecttmp=new BillOfMaterials($db);
+$objecttmp=new BOM($db);
 $trackid='xxxx'.$object->id;
 include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 

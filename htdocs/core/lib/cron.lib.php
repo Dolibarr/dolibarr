@@ -93,7 +93,7 @@ function dol_print_cron_urls()
 
 	// Cron launch
 	print '<div class="div-table-responsive-no-min">';
-	print '<u>'.$langs->trans("URLToLaunchCronJobs").':</u><br>';
+	print $langs->trans("URLToLaunchCronJobs").':<br>';
 	$url=$urlwithroot.'/public/cron/cron_run_jobs.php?'.(empty($conf->global->CRON_KEY)?'':'securitykey='.$conf->global->CRON_KEY.'&').'userlogin='.$user->login;
 	print img_picto('', 'object_globe.png').' <a href="'.$url.'" target="_blank">'.$url."</a><br>\n";
 	print ' '.$langs->trans("OrToLaunchASpecificJob").'<br>';
@@ -101,10 +101,10 @@ function dol_print_cron_urls()
 	print img_picto('', 'object_globe.png').' <a href="'.$url.'" target="_blank">'.$url."</a><br>\n";
     print '</div>';
     print '<br>';
-    
+
 	$logintouse = 'firstadmin';
 	if ($user->admin) $logintouse = $user->login;
-	
+
 	print '<u>'.$langs->trans("FileToLaunchCronJobs").':</u><br>';
 
 	$file='/scripts/cron/cron_run_jobs.php'.' '.(empty($conf->global->CRON_KEY)?'securitykey':''.$conf->global->CRON_KEY.'').' '.$logintouse.' [cronjobid]';
@@ -129,6 +129,6 @@ function dol_print_cron_urls()
     		print $langs->trans("CronExplainHowToRunWin");
     	}
 	}
-	
+
 	return 0;
 }

@@ -27,7 +27,7 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/bom/class/bom.class.php';
-require_once DOL_DOCUMENT_ROOT.'/bom/lib/bom_bom.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/bom/lib/bom.lib.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("mrp","other"));

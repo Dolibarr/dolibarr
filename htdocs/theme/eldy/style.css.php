@@ -24,7 +24,7 @@
  *		\file       htdocs/theme/eldy/style.css.php
  *		\brief      File for CSS style sheet Eldy
  */
- 
+
 //if (! defined('NOREQUIREUSER')) define('NOREQUIREUSER','1');	// Not disabled because need to load personalized language
 //if (! defined('NOREQUIREDB'))   define('NOREQUIREDB','1');	// Not disabled to increase speed. Language code is found on url.
 if (! defined('NOREQUIRESOC'))    define('NOREQUIRESOC', '1');
@@ -39,11 +39,10 @@ if (! defined('NOREQUIREAJAX'))   define('NOREQUIREAJAX', '1');
 
 define('ISLOADEDBYSTEELSHEET', '1');
 
-require_once __DIR__ . '/theme_vars.php';
 
-
-
+require __DIR__ . '/theme_vars.inc.php';
 if (defined('THEME_ONLY_CONSTANT')) return;
+
 
 session_cache_limiter('public');
 
@@ -236,10 +235,7 @@ print 'toolTipFontColor='.$toolTipFontColor."\n";
 print '*/'."\n";
 
 
-
-
-require_once __DIR__ . '/_global.css.php';
-
+require __DIR__ . '/global.inc.php';
 
 
 if (is_object($db)) $db->close();
