@@ -35,9 +35,12 @@ $backtopage = GETPOST('backtopage', 'alpha');
 /*
  * Actions
  */
-if ($action=="update"){
-    $res1=dolibarr_set_const($db, 'MODULEBUILDER_SPECIFIC_README', GETPOST('MODULEBUILDER_SPECIFIC_README'), 'chaine', 0, '', $conf->entity);
-    if ($res1 < 0) {
+if ($action=="update")
+{
+    $res1=dolibarr_set_const($db, 'MODULEBUILDER_SPECIFIC_README', GETPOST('MODULEBUILDER_SPECIFIC_README', 'none'), 'chaine', 0, '', $conf->entity);
+    $res2=dolibarr_set_const($db, 'MODULEBUILDER_ASCIIDOCTOR', GETPOST('MODULEBUILDER_ASCIIDOCTOR', 'nohtml'), 'chaine', 0, '', $conf->entity);
+    $res3=dolibarr_set_const($db, 'MODULEBUILDER_ASCIIDOCTORPDF', GETPOST('MODULEBUILDER_ASCIIDOCTORPDF', 'nohtml'), 'chaine', 0, '', $conf->entity);
+    if ($res1 < 0 || $res2 < 0 || $res3 < 0) {
         setEventMessages('ErrorFailedToSaveDate', null, 'errors');
         $db->rollback();
     }
@@ -130,6 +133,23 @@ print '<td>';
 print '<textarea class="centpercent" rows="20" name="MODULEBUILDER_SPECIFIC_README">'.$conf->global->MODULEBUILDER_SPECIFIC_README.'</textarea>';
 print '</td>';
 print '</tr>';
+
+print '<tr class="oddeven">';
+print '<td class="tdtop">' . $langs->trans("AsciiToHtmlConverter") . '</td>';
+print '<td>';
+print '<input type="text" name="MODULEBUILDER_ASCIIDOCTOR" value="'.$conf->global->MODULEBUILDER_ASCIIDOCTOR.'">';
+print ' '.$langs->trans("Example").': asciidoc, asciidoctor';
+print '</td>';
+print '</tr>';
+
+print '<tr class="oddeven">';
+print '<td class="tdtop">' . $langs->trans("AsciiToPdfConverter") . '</td>';
+print '<td>';
+print '<input type="text" name="MODULEBUILDER_ASCIIDOCTORPDF" value="'.$conf->global->MODULEBUILDER_ASCIIDOCTORPDF.'">';
+print ' '.$langs->trans("Example").': asciidoctor-pdf';
+print '</td>';
+print '</tr>';
+
 print '</table>';
 
 print '<center><input type="submit" class="button" value="'.$langs->trans("Save").'" name="Button"></center>';
