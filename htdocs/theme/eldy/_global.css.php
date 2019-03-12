@@ -362,6 +362,9 @@ th .button {
 textarea.centpercent {
 	width: 96%;
 }
+.small, small {
+    font-size: 85%;
+}
 .center {
     text-align: center;
     margin: 0px auto;
@@ -374,6 +377,12 @@ textarea.centpercent {
 }
 .justify {
 	text-align: justify;
+}
+.pull-left {
+    float: left!important;
+}
+.pull-right {
+    float: right!important;
 }
 .nowrap {
 	white-space: <?php print ($dol_optimize_smallscreen?'normal':'nowrap'); ?>;

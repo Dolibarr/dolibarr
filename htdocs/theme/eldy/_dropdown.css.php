@@ -9,6 +9,7 @@ if (! defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
 .open>.dropdown-menu {
     display: block;
 }
+
 .dropdown-menu {
     box-shadow: none;
     border-color: #eee;
@@ -42,14 +43,21 @@ if (! defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
 * MENU Dropdown 
 */
  
+.tmenu .open.dropdown, .login_block .open.dropdown{
+    background: rgba(0, 0, 0, 0.1);
+}
 .tmenu .dropdown-menu, .login_block .dropdown-menu {
     position: absolute;
     right: 0;
     left: auto;
+    line-height:1.3em;
 }
 .tmenu .dropdown-menu, .login_block  .dropdown-menu .user-body {
     border-bottom-right-radius: 4px;
     border-bottom-left-radius: 4px;
+}
+.user-body {
+    color: #333;
 }
 .side-nav-vert .user-menu .dropdown-menu {
     border-top-right-radius: 0;
@@ -70,17 +78,6 @@ if (! defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
     text-align: center;
 }
 
- 
-.dropdown-menu > li.user-header > img {
-    z-index: 5;
-    height: 90px;
-    width: 90px;
-    border: 3px solid;
-    border-color: transparent;
-    border-color: rgba(255, 255, 255, 0.2);
-}
-
-
 .dropdown-user-image {
     border-radius: 50%;
     vertical-align: middle;
@@ -98,4 +95,52 @@ if (! defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
     background: rgb(<?php echo $colorbackhmenu1 ?>);
 }
 
+.dropdown-menu > .user-footer {
+    background-color: #f9f9f9;
+    padding: 10px;
+}
+
+.dropdown-menu > .user-footer:after {
+    clear: both;
+}
+
+.dropdown-menu > .user-body {
+    padding: 15px;
+    border-bottom: 1px solid #f4f4f4;
+    border-top: 1px solid #dddddd;
+}
+
+
+.button-top-menu-dropdown {
+    display: inline-block;
+    padding: 6px 12px;
+    margin-bottom: 0;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.42857143;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    -ms-touch-action: manipulation;
+    touch-action: manipulation;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    background-image: none;
+    border: 1px solid transparent;
+    border-radius: 4px;
+}
+
+.dropdown-menu > .user-footer .button-top-menu-dropdown {
+    color: #666666;
+    border-radius: 0;
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
+    border-width: 1px;
+    background-color: #f4f4f4;
+    border-color: #ddd;
+}
  
