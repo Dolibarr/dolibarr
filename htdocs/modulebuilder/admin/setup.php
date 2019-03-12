@@ -81,10 +81,7 @@ $form = new Form($db);
 
 llxHeader('', $langs->trans("ModulebuilderSetup"));
 
-$linkback = '';
-if (GETPOST('withtab', 'alpha')) {
-    $linkback = '<a href="' . ($backtopage ? $backtopage : DOL_URL_ROOT . '/admin/modules.php') . '">' . $langs->trans("BackToModuleList") . '</a>';
-}
+$linkback = '<a href="' . ($backtopage ? $backtopage : DOL_URL_ROOT . '/admin/modules.php') . '">' . $langs->trans("BackToModuleList") . '</a>';
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -103,7 +100,7 @@ print '<br>';
 print '<table class="noborder" width="100%">';
 
 print '<tr class="liste_titre">';
-print '<td>' . $langs->trans("Key") . '</td>';
+print '<td style="width: 30%">' . $langs->trans("Key") . '</td>';
 print '<td>' . $langs->trans("Value") . '</td>';
 print "</tr>\n";
 
@@ -122,20 +119,6 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
 	        print '<a href="' . $_SERVER['PHP_SELF'] . '?action=set_MODULEBUILDER_USE_ABOUT">' . img_picto($langs->trans("Disabled"), 'off') . '</a>';
 	    } else {
 	        print '<a href="' . $_SERVER['PHP_SELF'] . '?action=del_MODULEBUILDER_USE_ABOUT">' . img_picto($langs->trans("Enabled"), 'on') . '</a>';
-	    }
-	}
-	print '</td></tr>';
-
-	print '<tr class="oddeven">';
-	print '<td>' . $langs->trans("UseDocFolder") . '</td>';
-	print '<td class="center">';
-	if ($conf->use_javascript_ajax) {
-	    print ajax_constantonoff('MODULEBUILDER_USE_DOCFOLDER');
-	} else {
-	    if (empty($conf->global->MODULEBUILDER_USE_DOCFOLDER)) {
-	        print '<a href="' . $_SERVER['PHP_SELF'] . '?action=set_MODULEBUILDER_USE_DOCFOLDER">' . img_picto($langs->trans("Disabled"), 'off') . '</a>';
-	    } else {
-	        print '<a href="' . $_SERVER['PHP_SELF'] . '?action=del_MODULEBUILDER_USE_DOCFOLDER">' . img_picto($langs->trans("Enabled"), 'on') . '</a>';
 	    }
 	}
 	print '</td></tr>';
