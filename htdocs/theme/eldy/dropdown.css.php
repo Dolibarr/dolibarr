@@ -42,6 +42,9 @@ if (! defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
 /*
 * MENU Dropdown 
 */
+.login_block.usedropdown .logout-btn{
+    display: none;
+}
  
 .tmenu .open.dropdown, .login_block .open.dropdown, .tmenu .open.dropdown, .login_block .dropdown:hover{
     background: rgba(0, 0, 0, 0.1);
@@ -112,7 +115,10 @@ if (! defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
 }
 
 #topmenu-login-dropdown{
-padding: 0 5px 0 5px;
+    padding: 0 5px 0 5px;
+}
+#topmenu-login-dropdown a:hover{
+    text-decoration: none;
 }
 
 #topmenuloginmoreinfo-btn{

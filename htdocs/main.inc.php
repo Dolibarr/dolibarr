@@ -1594,7 +1594,10 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 			}
 		}
 
-		print '<div class="login_block">'."\n";
+		$loginBlockMoreClass = '';
+		if(!empty($conf->global->MAIN_TOP_MENU_DROPDOWN)){ $loginBlockMoreClass = 'usedropdown'; }
+		
+		print '<div class="login_block '.$loginBlockMoreClass.'">'."\n";
 
 		// Add login user link
 		$toprightmenu.='<div class="login_block_user">';
@@ -1701,8 +1704,9 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 			}
 		}
 
+		
 		// Logout link
-		$toprightmenu.=@Form::textwithtooltip('', $logouthtmltext, 2, 1, $logouttext, 'login_block_elem', 2);
+		$toprightmenu.=@Form::textwithtooltip('', $logouthtmltext, 2, 1, $logouttext, 'login_block_elem logout-btn', 2);
 
 		$toprightmenu.='</div>';
 
