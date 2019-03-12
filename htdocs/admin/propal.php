@@ -526,7 +526,7 @@ print '</table>';
 if (empty($conf->facture->enabled))
 {
 	print '<br>';
-	print load_fiche_titre($langs->trans("SuggestedPaymentModesIfNotDefinedInInvoice"),'','');
+	print load_fiche_titre($langs->trans("SuggestedPaymentModesIfNotDefinedInProposal"),'','');
 
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />';
