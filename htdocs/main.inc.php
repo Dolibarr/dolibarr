@@ -1736,7 +1736,7 @@ function top_menu_user(user $user, $langs){
     $dropdownBody = '';
 
 
-    $dropdownBody.= '<span id="topmenuloginmoreinfo-btn">'.$langs->trans("ShowMoreInfos").'</span>';
+    $dropdownBody.= '<span id="topmenuloginmoreinfo-btn"><i class="fa fa-caret-right"></i> '.$langs->trans("ShowMoreInfos").'</span>';
     $dropdownBody.= '<div id="topmenuloginmoreinfo" >';
     
     // login infos
