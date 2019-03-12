@@ -523,7 +523,7 @@ print '</table>';
 /*
  *  Payment mode
  */
-if (! empty($conf->banque->enabled) && empty($conf->facture->enabled))
+if (empty($conf->facture->enabled))
 {
 	print '<br>';
 	print load_fiche_titre($langs->trans("SuggestedPaymentModesIfNotDefinedInInvoice"),'','');
