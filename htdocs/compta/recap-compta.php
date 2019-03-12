@@ -252,22 +252,22 @@ if ($id > 0)
 
 				print '<tr class="oddeven '.$html_class.'">';
 
-				print "<td align=\"center\">";
+				print "<td class=\"center\">";
 				if (!empty($data['fk_facture'])) print dol_print_date($data['date'], 'day');
 				elseif (!empty($data['fk_paiement'])) print dol_print_date($data['date'], 'dayhour');
 				print "</td>\n";
 
 				print '<td>'.$data['link']."</td>\n";
 
-				print '<td aling="left">'.$data['status'].'</td>';
+				print '<td class="left">'.$data['status'].'</td>';
 
 				print '<td class="right">'.(($data['amount'] > 0) ? price(abs($data['amount'])) : '')."</td>\n";
-				
+
 				$totalDebit += ($data['amount'] > 0) ? abs($data['amount']) : 0;
-				
+
 				print '<td class="right">'.(($data['amount'] > 0) ? '' : price(abs($data['amount'])))."</td>\n";
 				$totalCredit += ($data['amount'] > 0) ? 0 : abs($data['amount']);
-				
+
 				// Balance
 				print '<td class="right">'.price($data['balance'])."</td>\n";
 

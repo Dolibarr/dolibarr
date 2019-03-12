@@ -1326,7 +1326,7 @@ else
 
                 if ($action == 'edit' && $object->statut == Holiday::STATUS_DRAFT)
                 {
-                    print '<div align="center">';
+                    print '<div class="center">';
                     if ($cancreate && $object->statut == Holiday::STATUS_DRAFT)
                     {
                         print '<input type="submit" value="'.$langs->trans("Save").'" class="button">';

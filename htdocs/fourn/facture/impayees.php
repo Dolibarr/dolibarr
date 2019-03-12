@@ -189,13 +189,13 @@ if ($user->rights->fournisseur->facture->lire)
 		print '<tr class="liste_titre">';
 		print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "f.rowid", "", $param, "", $sortfield, $sortorder);
 		print_liste_field_titre("RefSupplier", $_SERVER["PHP_SELF"], "f.ref_supplier", "", $param, "", $sortfield, $sortorder);
-		print_liste_field_titre("Date", $_SERVER["PHP_SELF"], "f.datef", "", $param, 'align="center"', $sortfield, $sortorder);
-		print_liste_field_titre("DateDue", $_SERVER["PHP_SELF"], "f.date_lim_reglement", "", $param, 'align="center"', $sortfield, $sortorder);
+		print_liste_field_titre("Date", $_SERVER["PHP_SELF"], "f.datef", "", $param, '', $sortfield, $sortorder, 'center ');
+		print_liste_field_titre("DateDue", $_SERVER["PHP_SELF"], "f.date_lim_reglement", "", $param, '', $sortfield, $sortorder, 'center ');
 		print_liste_field_titre("Company", $_SERVER["PHP_SELF"], "s.nom", "", $param, "", $sortfield, $sortorder);
-		print_liste_field_titre("AmountHT", $_SERVER["PHP_SELF"], "f.total_ht", "", $param, 'align="right"', $sortfield, $sortorder);
-		print_liste_field_titre("AmountTTC", $_SERVER["PHP_SELF"], "f.total_ttc", "", $param, 'align="right"', $sortfield, $sortorder);
-		print_liste_field_titre("AlreadyPaid", $_SERVER["PHP_SELF"], "am", "", $param, 'align="right"', $sortfield, $sortorder);
-		print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "fk_statut,paye,am", "", $param, 'align="right"', $sortfield, $sortorder);
+		print_liste_field_titre("AmountHT", $_SERVER["PHP_SELF"], "f.total_ht", "", $param, '', $sortfield, $sortorder, 'right ');
+		print_liste_field_titre("AmountTTC", $_SERVER["PHP_SELF"], "f.total_ttc", "", $param, '', $sortfield, $sortorder, 'right ');
+		print_liste_field_titre("AlreadyPaid", $_SERVER["PHP_SELF"], "am", "", $param, '', $sortfield, $sortorder, 'right ');
+		print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "fk_statut,paye,am", "", $param, '', $sortfield, $sortorder, 'right ');
 		print "</tr>\n";
 
 		// Lines with filter fields
@@ -206,14 +206,14 @@ if ($user->rights->fournisseur->facture->lire)
 		print '<input class="flat" size="8" type="text" name="search_ref_supplier" value="'.$search_ref_supplier.'"></td>';
 		print '<td class="liste_titre">&nbsp;</td>';
 		print '<td class="liste_titre">&nbsp;</td>';
-		print '<td class="liste_titre" align="left">';
+		print '<td class="liste_titre left">';
 		print '<input class="flat" type="text" size="6" name="search_company" value="'.$search_company.'">';
-		print '</td><td class="liste_titre" align="right">';
+		print '</td><td class="liste_titre right">';
 		print '<input class="flat" type="text" size="8" name="search_amount_no_tax" value="'.$search_amount_no_tax.'">';
-		print '</td><td class="liste_titre" align="right">';
+		print '</td><td class="liste_titre right">';
 		print '<input class="flat" type="text" size="8" name="search_amount_all_tax" value="'.$search_amount_all_tax.'">';
 		print '</td>';
-        print '<td class="liste_titre" align="right">';
+        print '<td class="liste_titre right">';
         $searchpicto=$form->showFilterAndCheckAddButtons(0);
         print $searchpicto;
         print '</td>';
@@ -245,8 +245,8 @@ if ($user->rights->fournisseur->facture->lire)
 
 				print '<td class="nowrap">'.dol_trunc($objp->ref_supplier, 12).'</td>';
 
-				print '<td class="nowrap" align="center">'.dol_print_date($db->jdate($objp->df), 'day')."</td>\n";
-				print '<td class="nowrap" align="center">'.dol_print_date($db->jdate($objp->datelimite), 'day');
+				print '<td class="nowrap center">'.dol_print_date($db->jdate($objp->df), 'day')."</td>\n";
+				print '<td class="nowrap center">'.dol_print_date($db->jdate($objp->datelimite), 'day');
 				if ($facturestatic->hasDelay()) {
 					print img_warning($langs->trans("Late"));
 				}
@@ -258,12 +258,12 @@ if ($user->rights->fournisseur->facture->lire)
 				print $companystatic->getNomUrl(1, 'supplier', 32);
 				print '</td>';
 
-				print "<td align=\"right\">".price($objp->total_ht)."</td>";
-				print "<td align=\"right\">".price($objp->total_ttc)."</td>";
-				print "<td align=\"right\">".price($objp->am)."</td>";
+				print "<td class=\"right\">".price($objp->total_ht)."</td>";
+				print "<td class=\"right\">".price($objp->total_ttc)."</td>";
+				print "<td class=\"right\">".price($objp->am)."</td>";
 
 				// Show invoice status
-				print '<td align="right" class="nowrap">';
+				print '<td class="right nowrap">';
 				print $facturestatic->LibStatut($objp->paye, $objp->fk_statut, 5, $objp->am);
 				print '</td>';
 
@@ -276,11 +276,11 @@ if ($user->rights->fournisseur->facture->lire)
 			}
 
 			print '<tr class="liste_total">';
-			print "<td colspan=\"5\" align=\"left\">".$langs->trans("Total").": </td>";
-			print "<td align=\"right\"><b>".price($total_ht)."</b></td>";
-			print "<td align=\"right\"><b>".price($total_ttc)."</b></td>";
-			print "<td align=\"right\"><b>".price($total_paid)."</b></td>";
-			print '<td align="center">&nbsp;</td>';
+			print "<td colspan=\"5\" class=\"left\">".$langs->trans("Total").": </td>";
+			print "<td class=\"right\"><b>".price($total_ht)."</b></td>";
+			print "<td class=\"right\"><b>".price($total_ttc)."</b></td>";
+			print "<td class=\"right\"><b>".price($total_paid)."</b></td>";
+			print '<td class="center">&nbsp;</td>';
 			print "</tr>\n";
 		}
 

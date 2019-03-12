@@ -18,7 +18,7 @@
  */
 
 /**
- * \file    modulebuilder/template/core/boxes/mymodulewidget1.php
+ * \file    htdocs/modulebuilder/template/core/boxes/mymodulewidget1.php
  * \ingroup mymodule
  * \brief   Widget provided by MyModule
  *
@@ -186,7 +186,7 @@ class mymodulewidget1 extends ModeleBoxes
 					'tr' => 'class="left"',
 					'text' => ''
 				),
-				0 => array( // TR
+				1 => array( // TR
 					'tr' => 'class="left"',
 					'text' => ''
 				)

@@ -395,6 +395,7 @@ if ((! defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && ! empty($conf->
 	{
 		dol_syslog("Invalid token, so we disable POST and some GET parameters - referer=".$_SERVER['HTTP_REFERER'].", action=".GETPOST('action', 'aZ09').", _GET|POST['token']=".GETPOST('token', 'alpha').", _SESSION['token']=".$_SESSION['token'], LOG_WARNING);
 		//print 'Unset POST by CSRF protection in main.inc.php.';	// Do not output anything because this create problems when using the BACK button on browsers.
+        if ($conf->global->MAIN_FEATURES_LEVEL>1) setEventMessages('Unset POST by CSRF protection in main.inc.php.', null, 'warnings');
 		unset($_POST);
 		unset($_GET['confirm']);
 	}
@@ -1284,7 +1285,7 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 		{
 			print '<!-- Includes CSS for font awesome -->'."\n";
 			print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/theme/common/fontawesome/css/font-awesome.min.css'.($ext?'?'.$ext:'').'">'."\n";
-			if (! empty($conf->global->MAIN_USE_FONT_AWESOME_5))
+			if (empty($conf->global->MAIN_DISABLE_FONT_AWESOME_5))
 			{
                 print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/theme/common/fontawesome-5/css/all.min.css'.($ext?'?'.$ext:'').'">'."\n";
                 print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/theme/common/fontawesome-5/css/v4-shims.min.css'.($ext?'?'.$ext:'').'">'."\n";

@@ -281,7 +281,7 @@ class ProjectStats extends Stats
 			{
 				$foundintocache=1;
 
-				$this->_lastfetchdate[get_class($this).'_'.__FUNCTION__]=$filedate;
+				$this->lastfetchdate[get_class($this).'_'.__FUNCTION__]=$filedate;
 			}
 			else
 			{
@@ -332,7 +332,7 @@ class ProjectStats extends Stats
 				@chmod($newpathofdestfile, octdec($newmask));
 			}
 			else dol_syslog("Failed to write cache file", LOG_ERR);
-			$this->_lastfetchdate[get_class($this).'_'.__FUNCTION__]=$nowgmt;
+			$this->lastfetchdate[get_class($this).'_'.__FUNCTION__]=$nowgmt;
 		}
 
 		return $data;
@@ -401,7 +401,7 @@ class ProjectStats extends Stats
 			if ($filedate >= ($nowgmt - $cachedelay)) {
 				$foundintocache = 1;
 
-				$this->_lastfetchdate[get_class($this) . '_' . __FUNCTION__] = $filedate;
+				$this->lastfetchdate[get_class($this) . '_' . __FUNCTION__] = $filedate;
 			} else {
 				dol_syslog(get_class($this) . '::' . __FUNCTION__ . " cache file " . $newpathofdestfile . " is not found or older than now - cachedelay (" . $nowgmt . " - " . $cachedelay . ") so we can't use it.");
 			}
@@ -443,7 +443,7 @@ class ProjectStats extends Stats
 				$newmask = $conf->global->MAIN_UMASK;
 			@chmod($newpathofdestfile, octdec($newmask));
 
-			$this->_lastfetchdate[get_class($this) . '_' . __FUNCTION__] = $nowgmt;
+			$this->lastfetchdate[get_class($this) . '_' . __FUNCTION__] = $nowgmt;
 		}
 
 		return $data;

@@ -662,8 +662,8 @@ require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
 	}
   
 $stripe = new Stripe($db);
-$stripeacc = $stripe->getStripeAccount($service);								// Stripe OAuth connect account of dolibarr user (no network access here)
-$stripecu = $stripe->getStripeCustomerAccount($object->socid, $servicestatus);		// Get thirdparty cu_...
+$stripeacc = $stripe->getStripeAccount($service);
+$stripecu = $stripe->customerStripe($order->thirdparty, $stripeacc, $servicestatus, 1)->id;
 	//  for dev only
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("PaymentIntent");
 	print '</td><td class="CTableRow'.($var?'1':'2').'">';
@@ -813,8 +813,8 @@ require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
 	}
   
 $stripe = new Stripe($db);
-$stripeacc = $stripe->getStripeAccount($service);								// Stripe OAuth connect account of dolibarr user (no network access here)
-$stripecu = $stripe->getStripeCustomerAccount($object->socid, $servicestatus);		// Get thirdparty cu_...
+$stripeacc = $stripe->getStripeAccount($service);
+$stripecu = $stripe->customerStripe($invoice->thirdparty, $stripeacc, $servicestatus, 1)->id;
 	//  for dev only
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("PaymentIntent");
 	print '</td><td class="CTableRow'.($var?'1':'2').'">';
@@ -1270,6 +1270,7 @@ if ($source == 'donation')
   
 	if ($don->morphy == 'mor' && ! empty($don->societe)) print $don->societe;
 	else print $don->getFullName($langs);
+  print $don->thirdparty->name;
 	print '</b>';
   print '</td></tr>'."\n";
 
@@ -1349,8 +1350,8 @@ require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
 	}
   
 $stripe = new Stripe($db);
-$stripeacc = $stripe->getStripeAccount($service);								// Stripe OAuth connect account of dolibarr user (no network access here)
-$stripecu = $stripe->getStripeCustomerAccount($object->fk_soc, $servicestatus);		// Get thirdparty cu_...
+$stripeacc = $stripe->getStripeAccount($service);
+$stripecu = $stripe->customerStripe($don->thirdparty, $stripeacc, $servicestatus, 1)->id;
 	//  for dev only
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("PaymentIntent");
 	print '</td><td class="CTableRow'.($var?'1':'2').'">';

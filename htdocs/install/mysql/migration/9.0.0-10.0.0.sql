@@ -58,6 +58,8 @@ CREATE TABLE llx_pos_cash_fence(
 
 -- For 10.0
 
+DROP TABLE llx_cotisation;
+
 ALTER TABLE llx_loan ADD COLUMN insurance_amount double(24,8) DEFAULT 0;
 
 ALTER TABLE llx_facture DROP INDEX idx_facture_uk_facnumber;
@@ -230,3 +232,16 @@ ALTER TABLE llx_bom_bom ADD INDEX idx_bom_bom_fk_product (fk_product);
 ALTER TABLE llx_bom_bomline ADD INDEX idx_bom_bomline_rowid (rowid);
 ALTER TABLE llx_bom_bomline ADD INDEX idx_bom_bomline_fk_product (fk_product);
 ALTER TABLE llx_bom_bomline ADD INDEX idx_bom_bomline_fk_bom (fk_bom);
+
+ALTER TABLE llx_facturedet_rec ADD COLUMN buy_price_ht double(24,8) DEFAULT 0;
+ALTER TABLE llx_facturedet_rec ADD COLUMN fk_product_fournisseur_price integer DEFAULT NULL;
+
+ALTER TABLE llx_facturedet_rec ADD COLUMN fk_user_author integer;
+ALTER TABLE llx_facturedet_rec ADD COLUMN fk_user_modif integer;
+
+ALTER TABLE llx_expensereport_det MODIFY COLUMN value_unit double(24,8) NOT NULL;
+ALTER TABLE llx_expensereport_det ADD COLUMN subprice double(24,8) DEFAULT 0 NOT NULL after qty;
+
+ALTER TABLE llx_product_attribute_combination ADD INDEX idx_product_att_com_product_parent (fk_product_parent);
+ALTER TABLE llx_product_attribute_combination ADD INDEX idx_product_att_com_product_child (fk_product_child);
+

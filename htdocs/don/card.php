@@ -746,7 +746,7 @@ if ($object->socid) {
 		print '<td>'.$langs->trans("RefPayment").'</td>';
 		print '<td>'.$langs->trans("Date").'</td>';
 		print '<td>'.$langs->trans("Type").'</td>';
-   		print '<td align="right">'.$langs->trans("Amount").'</td>';
+   		print '<td class="right">'.$langs->trans("Amount").'</td>';
    		print '</tr>';
 
 		while ($i < $num)
@@ -758,7 +758,7 @@ if ($object->socid) {
 			print '<td>'.dol_print_date($db->jdate($objp->dp), 'day')."</td>\n";
 		    $labeltype=$langs->trans("PaymentType".$objp->type_code)!=("PaymentType".$objp->type_code)?$langs->trans("PaymentType".$objp->type_code):$objp->paiement_type;
             print "<td>".$labeltype.' '.$objp->num_payment."</td>\n";
-			print '<td align="right">'.price($objp->amount)."</td>\n";
+			print '<td class="right">'.price($objp->amount)."</td>\n";
 			print "</tr>";
 			$totalpaid += $objp->amount;
 			$i++;
@@ -766,13 +766,13 @@ if ($object->socid) {
 
 		if ($object->paid == 0)
 		{
-			print "<tr><td colspan=\"3\" align=\"right\">".$langs->trans("AlreadyPaid")." :</td><td align=\"right\">".price($totalpaid)."</td></tr>\n";
-			print "<tr><td colspan=\"3\" align=\"right\">".$langs->trans("AmountExpected")." :</td><td align=\"right\">".price($object->amount)."</td></tr>\n";
+			print "<tr><td colspan=\"3\" class=\"right\">".$langs->trans("AlreadyPaid")." :</td><td class=\"right\">".price($totalpaid)."</td></tr>\n";
+			print "<tr><td colspan=\"3\" class=\"right\">".$langs->trans("AmountExpected")." :</td><td class=\"right\">".price($object->amount)."</td></tr>\n";
 
 			$remaintopay = $object->amount - $totalpaid;
 
-			print "<tr><td colspan=\"3\" align=\"right\">".$langs->trans("RemainderToPay")." :</td>";
-			print '<td align="right"'.($resteapayeraffiche?' class="amountremaintopay"':'').'><b>'.price($remaintopay)."</b></td></tr>\n";
+			print "<tr><td colspan=\"3\" class=\"right\">".$langs->trans("RemainderToPay")." :</td>";
+			print '<td class="right"'.($resteapayeraffiche?' class="amountremaintopay"':'').'><b>'.price($remaintopay)."</b></td></tr>\n";
 		}
 		print "</table>";
 		$db->free($resql);

@@ -34,6 +34,13 @@ if (! defined('NOLOGIN'))        define('NOLOGIN', '1');
 $entity=(! empty($_GET['entity']) ? (int) $_GET['entity'] : (! empty($_POST['entity']) ? (int) $_POST['entity'] : 1));
 if (is_numeric($entity)) define("DOLENTITY", $entity);
 
+// Error if CLI mode
+if (php_sapi_name() == "cli")
+{
+    echo "Error: This page can't be used as a CLI script. For the CLI version of script, launch cron_run_job.php available into scripts/cron/ directory.\n";
+    exit(-1);
+}
+
 // librarie core
 // Dolibarr environment
 require '../../main.inc.php';
@@ -45,6 +52,8 @@ global $langs, $conf;
 
 // Language Management
 $langs->loadLangs(array("admin", "cron"));
+
+
 
 /*
  * View

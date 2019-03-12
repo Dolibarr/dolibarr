@@ -816,7 +816,7 @@ function confirmConstantAction(action, url, code, input, box, entity, yesButton,
 
 
 /**
- * Function to output a dialog bog for copy/paste
+ * Function to output a dialog box for copy/paste
  *
  * @param	string	text	Text to put into copy/paste area
  * @param	string	text2	Text to put under the copy/paste area

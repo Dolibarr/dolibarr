@@ -35,12 +35,12 @@ class ExpenseReportStats extends Stats
 	 */
 	public $table_element;
 
-    var $socid;
-    var $userid;
+    public $socid;
+    public $userid;
 
-    var $from;
-    var $field;
-    var $where;
+    public $from;
+    public $field;
+    public $where;
 
 	/**
 	 * Constructor

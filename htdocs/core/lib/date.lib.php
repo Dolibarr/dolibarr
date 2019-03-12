@@ -149,7 +149,7 @@ function dol_time_plus_duree($time, $duration_value, $duration_unit)
  * @param      int		$iMinutes   	Minutes
  * @param      int		$iSeconds   	Seconds
  * @return     int						Time into seconds
- * @see convertSecondToTime
+ * @see convertSecondToTime()
  */
 function convertTime2Seconds($iHours = 0, $iMinutes = 0, $iSeconds = 0)
 {
@@ -177,7 +177,7 @@ function convertTime2Seconds($iHours = 0, $iMinutes = 0, $iSeconds = 0)
  *      @param      int		$lengthOfWeek   Length of week (default 7)
  *    	@return     string		 		 	Formated text of duration
  * 	                                		Example: 0 return 00:00, 3600 return 1:00, 86400 return 1d, 90000 return 1 Day 01:00
- *      @see convertTime2Seconds
+ *      @see convertTime2Seconds()
  */
 function convertSecondToTime($iSecond, $format = 'all', $lengthOfDay = 86400, $lengthOfWeek = 7)
 {
@@ -325,7 +325,7 @@ function dolSqlDateFilter($datefield, $day_date, $month_date, $year_date)
  *  @return	int					Date as a timestamp
  *		                		19700101020000 -> 7200 with gm=1
  *
- *  @see    dol_print_date, dol_mktime, dol_getdate
+ *  @see    dol_print_date(), dol_mktime(), dol_getdate()
  */
 function dol_stringtotime($string, $gm = 1)
 {
@@ -603,7 +603,7 @@ function dol_get_first_day_week($day, $month, $year, $gm = false)
  *  @param      string		$countrycode        Country code
  *	@param      int			$lastday            Last day is included, 0: no, 1:yes
  *	@return   	int								Nombre de jours feries
- *  @see num_between_day, num_open_day
+ *  @see num_between_day(), num_open_day()
  */
 function num_public_holiday($timestampStart, $timestampEnd, $countrycode = 'FR', $lastday = 0)
 {
@@ -809,7 +809,7 @@ function num_public_holiday($timestampStart, $timestampEnd, $countrycode = 'FR',
 		    // Easter sunday
 
 		    // Monday after easter
-    $date_eastermonday = mktime(
+            $date_eastermonday = mktime(
 		        date("H", $date_paques),
 		        date("i", $date_paques),
 		        date("s", $date_paques),
@@ -895,7 +895,7 @@ function num_public_holiday($timestampStart, $timestampEnd, $countrycode = 'FR',
  *	@param	   int			$timestampEnd       Timestamp end UTC
  *	@param     int			$lastday            Last day is included, 0: no, 1:yes
  *	@return    int								Number of days
- *  @see also num_public_holiday, num_open_day
+ *  @seealso num_public_holiday(), num_open_day()
  */
 function num_between_day($timestampStart, $timestampEnd, $lastday = 0)
 {
@@ -925,7 +925,7 @@ function num_between_day($timestampStart, $timestampEnd, $lastday = 0)
  *  @param		int			$halfday			Tag to define half day when holiday start and end
  *  @param      string		$country_code       Country code (company country code if not defined)
  *	@return    	int								Number of days or hours
- *  @see also num_between_day, num_public_holiday
+ *  @seealso num_between_day(), num_public_holiday()
  */
 function num_open_day($timestampStart, $timestampEnd, $inhour = 0, $lastday = 0, $halfday = 0, $country_code = '')
 {

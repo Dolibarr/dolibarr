@@ -77,9 +77,10 @@ class FormFile
 	 *  @param	string		$htmlname		Name and id of HTML form ('formuserfile' by default, 'formuserfileecm' when used to upload a file in ECM)
 	 *  @param	string		$accept			Specifies the types of files accepted (This is not a security check but an user interface facility. eg '.pdf,image/*' or '.png,.jpg' or 'video/*')
 	 *	@param	string		$sectiondir		If upload must be done inside a particular directory (is sectiondir defined, sectionid must not be)
+	 *  @param  int         $usewithoutform 0=Default, 1=Disable <form> and style to use in existing area
 	 * 	@return	int							<0 if KO, >0 if OK
 	 */
-	public function form_attach_new_file($url, $title = '', $addcancel = 0, $sectionid = 0, $perm = 1, $size = 50, $object = '', $options = '', $useajax = 1, $savingdocmask = '', $linkfiles = 1, $htmlname = 'formuserfile', $accept = '', $sectiondir = '')
+	public function form_attach_new_file($url, $title = '', $addcancel = 0, $sectionid = 0, $perm = 1, $size = 50, $object = '', $options = '', $useajax = 1, $savingdocmask = '', $linkfiles = 1, $htmlname = 'formuserfile', $accept = '', $sectiondir = '', $usewithoutform = 0)
 	{
         // phpcs:enable
 		global $conf,$langs, $hookmanager;
@@ -114,10 +115,13 @@ class FormFile
 			if (empty($title)) $title=$langs->trans("AttachANewFile");
 			if ($title != 'none') $out.=load_fiche_titre($title, null, null);
 
-			$out .= '<form name="'.$htmlname.'" id="'.$htmlname.'" action="'.$url.'" enctype="multipart/form-data" method="POST">';
-			$out .= '<input type="hidden" id="'.$htmlname.'_section_dir" name="section_dir" value="'.$sectiondir.'">';
-			$out .= '<input type="hidden" id="'.$htmlname.'_section_id"  name="section_id" value="'.$sectionid.'">';
-			$out .= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			if (empty($usewithoutform))
+			{
+    			$out .= '<form name="'.$htmlname.'" id="'.$htmlname.'" action="'.$url.'" enctype="multipart/form-data" method="POST">';
+    			$out .= '<input type="hidden" id="'.$htmlname.'_section_dir" name="section_dir" value="'.$sectiondir.'">';
+    			$out .= '<input type="hidden" id="'.$htmlname.'_section_id"  name="section_id" value="'.$sectionid.'">';
+    			$out .= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			}
 
 			$out .= '<table width="100%" class="nobordernopadding">';
 			$out .= '<tr>';
@@ -176,13 +180,7 @@ class FormFile
 			if ($savingdocmask)
             {
             	//add a global variable for disable the auto renaming on upload
-                if (! empty($conf->global->MAIN_DOC_UPLOAD_NOT_RENAME_BY_DEFAULT))
-                {
-                    $rename='';
-                }
-                else {
-                    $rename='checked';
-                }
+                $rename=(empty($conf->global->MAIN_DOC_UPLOAD_NOT_RENAME_BY_DEFAULT)?'checked':'');
 
                 $out .= '<tr>';
    	            if (! empty($options)) $out .= '<td>'.$options.'</td>';
@@ -194,8 +192,11 @@ class FormFile
 
 			$out .= "</table>";
 
-			$out .= '</form>';
-			if (empty($sectionid)) $out .= '<br>';
+			if (empty($usewithoutform))
+			{
+    			$out .= '</form>';
+	       		if (empty($sectionid)) $out .= '<br>';
+			}
 
 			$out .= "\n<!-- End form attach new file -->\n";
 
@@ -205,12 +206,16 @@ class FormFile
 				$langs->load('link');
 				$title = $langs->trans("LinkANewFile");
 				$out .= load_fiche_titre($title, null, null);
-				$out .= '<form name="'.$htmlname.'_link" id="'.$htmlname.'_link" action="'.$url.'" method="POST">';
-				$out .= '<input type="hidden" id="'.$htmlname.'_link_section_dir" name="link_section_dir" value="">';
-				$out .= '<input type="hidden" id="'.$htmlname.'_link_section_id"  name="link_section_id" value="'.$sectionid.'">';
-				$out .= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
-				$out .= '<div class="valignmiddle" >';
+				if (empty($usewithoutform))
+				{
+    				$out .= '<form name="'.$htmlname.'_link" id="'.$htmlname.'_link" action="'.$url.'" method="POST">';
+    				$out .= '<input type="hidden" id="'.$htmlname.'_link_section_dir" name="link_section_dir" value="">';
+    				$out .= '<input type="hidden" id="'.$htmlname.'_link_section_id"  name="link_section_id" value="'.$sectionid.'">';
+    				$out .= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+				}
+
+				$out .= '<div class="valignmiddle">';
 				$out .= '<div class="inline-block" style="padding-right: 10px;">';
 				if (! empty($conf->global->OPTIMIZEFORTEXTBROWSER)) $out .= '<label for="link">'.$langs->trans("URLToLink") . ':</label> ';
 				$out .= '<input type="text" name="link" class="flat minwidth400imp" id="link" placeholder="'.dol_escape_htmltag($langs->trans("URLToLink")).'">';
@@ -227,8 +232,11 @@ class FormFile
 				$out .= '>';
 				$out .= '</div>';
 				$out .= '</div>';
-				$out .= '<div class="clearboth"></div>';
-				$out .= '</form><br>';
+				if (empty($usewithoutform))
+				{
+    				$out .= '<div class="clearboth"></div>';
+                    $out .= '</form><br>';
+				}
 
 				$out .= "\n<!-- End form link new url -->\n";
 			}
@@ -237,7 +245,7 @@ class FormFile
 			$res = $hookmanager->executeHooks('formattachOptions', $parameters, $object);
 			if (empty($res))
 			{
-				print '<div class="attacharea attacharea'.$htmlname.'">';
+			    print '<div class="'.($usewithoutform?'inline-block valignmiddle':'attacharea attacharea'.$htmlname).'">';
 				print $out;
 				print '</div>';
 			}
@@ -682,6 +690,7 @@ class FormFile
 			// Model
 			if (! empty($modellist))
 			{
+				asort($modellist);
 				$out.= '<span class="hideonsmartphone">'.$langs->trans('Model').' </span>';
 				if (is_array($modellist) && count($modellist) == 1)    // If there is only one element
 				{

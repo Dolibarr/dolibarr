@@ -74,7 +74,7 @@ class Project extends CommonObject
 	/**
 	 * @var string
 	 * @deprecated
-	 * @see title
+	 * @see $title
 	 */
 	public $titre;
 
@@ -107,7 +107,7 @@ class Project extends CommonObject
 	/**
 	 * @var int Creation date
 	 * @deprecated
-	 * @see date_c
+	 * @see $date_c
 	 */
 	public $datec;
 
@@ -119,7 +119,7 @@ class Project extends CommonObject
 	/**
 	 * @var int Modification date
 	 * @deprecated
-	 * @see date_m
+	 * @see $date_m
 	 */
 	public $datem;
 
@@ -1535,12 +1535,12 @@ class Project extends CommonObject
     /**
 	 *    Shift project task date from current date to delta
 	 *
-	 *    @param	timestamp		$old_project_dt_start	old project start date
-	 *    @return	int				1 if OK or < 0 if KO
+	 *    @param	integer		$old_project_dt_start	Old project start date
+	 *    @return	int				                    1 if OK or < 0 if KO
 	 */
     public function shiftTaskDate($old_project_dt_start)
     {
-		global $user,$langs,$conf;
+		global $user, $langs, $conf;
 
 		$error=0;
 
