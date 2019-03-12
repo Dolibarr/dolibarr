@@ -186,15 +186,16 @@ function convertSecondToTime($iSecond, $format = 'all', $lengthOfDay = 86400, $l
 	if (empty($lengthOfDay))  $lengthOfDay = 86400;         // 1 day = 24 hours
     if (empty($lengthOfWeek)) $lengthOfWeek = 7;            // 1 week = 7 days
 
-    if ($format == 'all' || $format == 'allwithouthour' || $format == 'allhour' || $format == 'allhourmin' || $format == 'allhourminsec')
+    if ($format == 'all' || $format == 'allwithouthour' || $format == 'allhour' || $format == 'allhourmin' || $format == 'allhourminsec' || $format == 'alldayhour' || $format == 'allday' || $format == 'alldaydecimal')
 	{
 		if ((int) $iSecond === 0) return '0';	// This is to avoid having 0 return a 12:00 AM for en_US
 
         $sTime='';
         $sDay=0;
         $sWeek=0;
+//        var_dump($iSecond , $lengthOfDay, $sDay);exit;
 
-		if ($iSecond >= $lengthOfDay)
+        if ($iSecond >= $lengthOfDay)
 		{
 			for($i = $iSecond; $i >= $lengthOfDay; $i -= $lengthOfDay )
 			{
@@ -204,6 +205,8 @@ function convertSecondToTime($iSecond, $format = 'all', $lengthOfDay = 86400, $l
 			$dayTranslate = $langs->trans("Day");
 			if ($iSecond >= ($lengthOfDay*2)) $dayTranslate = $langs->trans("Days");
 		}
+
+//        var_dump($iSecond , $lengthOfDay, $sDay);exit;
 
 		if ($lengthOfWeek < 7)
 		{
@@ -245,15 +248,36 @@ function convertSecondToTime($iSecond, $format = 'all', $lengthOfDay = 86400, $l
 		{
 			return sprintf("%02d", ($sWeek*$lengthOfWeek*24 + $sDay*24 + (int) floor($iSecond/3600)));
 		}
+		elseif ($format == 'alldayhour')
+        {
+            $total_days = $sWeek * $lengthOfWeek + $sDay;
+            if ($total_days > 0)
+            {
+                $sTime = $total_days;
+                if ($total_days > 1) $sTime.= ' '.$langs->trans("Days");
+                else $sTime.= ' '.$langs->trans("Day");
+            }
+
+            if ($iSecond > 0) $sTime.= ' '.dol_print_date($iSecond, 'hourduration', true);
+        }
+		elseif ($format == 'allday')
+        {
+            return $sWeek * $lengthOfWeek + $sDay;
+        }
+		elseif ($format == 'alldaydecimal')
+        {
+            return ($sWeek * $lengthOfWeek + $sDay) + ($iSecond/$lengthOfDay);
+        }
 	}
 	elseif ($format == 'hour')	// only hour part
 	{
 		$sTime=dol_print_date($iSecond, '%H', true);
 	}
-	elseif ($format == 'fullhour')
+	elseif ($format == 'fullhour' || $format == 'fullmin')
 	{
 		if (!empty($iSecond)) {
-			$iSecond=$iSecond/3600;
+            if ($format == 'fullhour') $iSecond=$iSecond/3600;
+            else $iSecond=$iSecond/60;
 		}
 		else {
 			$iSecond=0;

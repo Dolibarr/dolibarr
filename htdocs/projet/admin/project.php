@@ -277,6 +277,16 @@ elseif ($action == 'updateoptions')
 		$projectToSelect = GETPOST('projectToSelect', 'alpha');
 		dolibarr_set_const($db, 'PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY', $projectToSelect, 'chaine', 0, '', $conf->entity);	//Allow to disable this configuration if empty value
 	}
+	if (GETPOST('PROJECT_WORKING_HOURS_PER_DAY'))
+    {
+        $projectNumberWorkingHoursPerDay = GETPOST('projectNumberWorkingHoursPerDay', 'int');
+        dolibarr_set_const($db, 'PROJECT_WORKING_HOURS_PER_DAY', $projectNumberWorkingHoursPerDay, 'chaine', 0, '', $conf->entity);
+    }
+	if (GETPOST('PROJECT_WORKING_DAYS_PER_WEEKS'))
+    {
+        $projectNumberWorkingDaysPerWeeks = GETPOST('projectNumberWorkingDaysPerWeeks', 'int');
+        dolibarr_set_const($db, 'PROJECT_WORKING_DAYS_PER_WEEKS', $projectNumberWorkingDaysPerWeeks, 'chaine', 0, '', $conf->entity);
+    }
 }
 
 
@@ -904,6 +914,40 @@ print '<input type="text" id="projectToSelect" name="projectToSelect" value="'.$
 print $form->textwithpicto('', $langs->trans('AllowToLinkFromOtherCompany'));
 print '<input type="submit" class="button" name="PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY" value="'.$langs->trans("Modify").'">';
 print '</td>';
+print '</tr>';
+
+
+
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans("ProjectUseDecimalDay").'</td>';
+print '<td class="right" width="60" colspan="2">';
+//print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
+//print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+//print '<input type="hidden" name="action" value="set_PROJECT_USE_DECIMAL_DAY">';
+print $form->textwithpicto(ajax_constantonoff('PROJECT_USE_DECIMAL_DAY', array('disabled' => array(0 => '.projectNumberWorkingHoursPerDay', 1 => '.projectNumberWorkingDaysPerWeeks'))), $langs->trans('ProjectUseDecimalDayHelp'));
+//print '</form>';
+print '</td>';
+print '</tr>';
+
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans("ProjectNumberWorkingHoursPerDay").'</td>';
+print '<td class="right" width="60" colspan="2">';
+$disabled = (empty($conf->global->PROJECT_USE_DECIMAL_DAY)) ? 'disabled="disabled"': '';
+print '<input '.$disabled.' type="text" class="projectNumberWorkingHoursPerDay" size="5" name="projectNumberWorkingHoursPerDay" value="'.$conf->global->PROJECT_WORKING_HOURS_PER_DAY.'" placeholder="7" />';
+print '<input '.$disabled.' type="submit" class="button projectNumberWorkingHoursPerDay" name="PROJECT_WORKING_HOURS_PER_DAY" value="'.$langs->trans("Modify").'">';
+print '</td>';
+print '</tr>';
+
+
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans("ProjectNumberWorkingDaysPerWeeks").'</td>';
+print '<td class="right" width="60" colspan="2">';
+$disabled = (empty($conf->global->PROJECT_USE_DECIMAL_DAY)) ? 'disabled="disabled"': '';
+print '<input '.$disabled.' type="text" class="projectNumberWorkingDaysPerWeeks" size="5" name="projectNumberWorkingDaysPerWeeks" value="'.$conf->global->PROJECT_WORKING_DAYS_PER_WEEKS.'" placeholder="5" />';
+print '<input '.$disabled.' type="submit" class="button projectNumberWorkingDaysPerWeeks" name="PROJECT_WORKING_DAYS_PER_WEEKS" value="'.$langs->trans("Modify").'">';
+print '</td>';
+print '</tr>';
+
 
 print '</table>';
 

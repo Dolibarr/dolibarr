@@ -5542,19 +5542,32 @@ class Form
     public function select_duration($prefix, $iSecond = '', $disabled = 0, $typehour = 'select', $minunderhours = 0, $nooutput = 0)
 	{
         // phpcs:enable
-		global $langs;
+		global $langs,$conf;
 
 		$retstring='';
 
-		$hourSelected=0; $minSelected=0;
+        $working_hours_per_day=!empty($conf->global->PROJECT_WORKING_HOURS_PER_DAY) ? $conf->global->PROJECT_WORKING_HOURS_PER_DAY : 7;
+        $working_days_per_weeks=!empty($conf->global->PROJECT_WORKING_DAYS_PER_WEEKS) ? $conf->global->PROJECT_WORKING_DAYS_PER_WEEKS : 5;
+
+        $hourSelected=0; $minSelected=0;
 
 		// Hours
 		if ($iSecond != '')
 		{
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
-			$hourSelected = convertSecondToTime($iSecond, 'allhour');
-			$minSelected = convertSecondToTime($iSecond, 'min');
+			if ($typehour == 'days')
+            {
+//                var_dump($iSecond, convertSecondToTime($iSecond, 'alldaydecimal'));exit;
+
+                $daySelected = convertSecondToTime($iSecond, 'alldaydecimal', $working_hours_per_day*3600, $working_days_per_weeks);
+                $minSelected = convertSecondToTime($iSecond, 'fullmin');
+            }
+			else
+            {
+                $hourSelected = convertSecondToTime($iSecond, 'allhour');
+                $minSelected = convertSecondToTime($iSecond, 'min');
+            }
 		}
 
 		if ($typehour=='select' )
@@ -5575,14 +5588,42 @@ class Form
 		{
 			$retstring.='<input placeholder="'.$langs->trans('HourShort').'" type="number" min="0" size="1" name="'.$prefix.'hour"'.($disabled?' disabled':'').' class="flat maxwidth50 inputhour" value="'.(($hourSelected != '')?((int) $hourSelected):'').'">';
 		}
+		elseif ($typehour == 'days')
+        {
+            global $conf;
+
+            $retstring.= '<input placeholder="" id="'.$prefix.'days" data-working-hours-per-day="'.$conf->global->PROJECT_WORKING_HOURS_PER_DAY.'" type="text" name="'.$prefix.'days" '.($disabled?' disabled':'').' class="flat maxwidth50" value="'.$daySelected.'" >';
+            $retstring.= '
+                <script type="text/javascript">
+                    $(function() {
+                        $("#'.$prefix.'days").blur(function(ev) {
+                            var whpd = $(this).data("working-hours-per-day");
+                            var value = parseFloat($(this).val().replace(",", "."));
+                            if (isNaN(value)) {
+                                $(this).val("");
+                                $("#'.$prefix.'min").val("").prop("");
+                                console.log($(this));
+                            } else {
+                                var fullmin = whpd * 60 * value;
+                                $("#'.$prefix.'min").val(fullmin);
+                            }
+                        });
+                    });
+                </script>
+            ';
+        }
 		else return 'BadValueForParameterTypeHour';
 
-		if ($typehour!='text') $retstring.=' '.$langs->trans('HourShort');
-		else $retstring.='<span class="hideonsmartphone">:</span>';
+        if ($typehour == 'days') $retstring.=' '.$langs->trans('Days');
+        elseif ($typehour!='text') $retstring.=' '.$langs->trans('HourShort');
+        else $retstring.='<span class="hideonsmartphone">:</span>';
 
 		// Minutes
-		if ($minunderhours) $retstring.='<br>';
-		else $retstring.='<span class="hideonsmartphone">&nbsp;</span>';
+        if ($typehour != 'days')
+        {
+            if ($minunderhours) $retstring.='<br>';
+            else $retstring.='<span class="hideonsmartphone">&nbsp;</span>';
+        }
 
 		if ($typehour=='select' || $typehour=='textselect')
 		{
@@ -5599,8 +5640,12 @@ class Form
 		{
 			$retstring.='<input placeholder="'.$langs->trans('MinuteShort').'" type="number" min="0" size="1" name="'.$prefix.'min"'.($disabled?' disabled':'').' class="flat maxwidth50 inputminute" value="'.(($minSelected != '')?((int) $minSelected):'').'">';
 		}
+		elseif ($typehour == 'days')
+        {
+            $retstring.= '<input type="hidden" id="'.$prefix.'min" name="'.$prefix.'min" value="'.$minSelected.'" >';
+        }
 
-		if ($typehour!='text') $retstring.=' '.$langs->trans('MinuteShort');
+		if ($typehour!='text' && $typehour!='days') $retstring.=' '.$langs->trans('MinuteShort');
 
 		//$retstring.="&nbsp;";
 

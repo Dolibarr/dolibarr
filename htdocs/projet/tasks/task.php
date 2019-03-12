@@ -401,7 +401,7 @@ if ($id > 0 || ! empty($ref))
 
 			// Planned workload
 			print '<tr><td>'.$langs->trans("PlannedWorkload").'</td><td>';
-			print $form->select_duration('planned_workload', $object->planned_workload, 0, 'text');
+			print $form->select_duration('planned_workload', $object->planned_workload, 0, (empty($conf->global->PROJECT_USE_DECIMAL_DAY) ? 'text' : 'days'));
 			print '</td></tr>';
 
 			// Progress declared

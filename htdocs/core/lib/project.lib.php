@@ -351,6 +351,20 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 {
 	global $user, $bc, $langs, $conf, $db;
 	global $projectstatic, $taskstatic;
+//	global $plannedworkloadoutputformat, $timespentoutputformat, $working_plannedworkloadoutputformat, $working_timespentoutputformat, $working_hours_per_day_in_seconds, $working_days_per_weeks;
+
+    $plannedworkloadoutputformat='allhourmin';
+    $timespentoutputformat='allhourmin';
+    if (! empty($conf->global->PROJECT_PLANNED_WORKLOAD_FORMAT)) $plannedworkloadoutputformat=$conf->global->PROJECT_PLANNED_WORKLOAD_FORMAT;
+    if (! empty($conf->global->PROJECT_TIMES_SPENT_FORMAT)) $timespentoutputformat=$conf->global->PROJECT_TIME_SPENT_FORMAT;
+
+    $working_plannedworkloadoutputformat='alldayhour';
+    $working_timespentoutputformat='alldayhour';
+
+    $working_hours_per_day=!empty($conf->global->PROJECT_WORKING_HOURS_PER_DAY) ? $conf->global->PROJECT_WORKING_HOURS_PER_DAY : 7;
+    $working_days_per_weeks=!empty($conf->global->PROJECT_WORKING_DAYS_PER_WEEKS) ? $conf->global->PROJECT_WORKING_DAYS_PER_WEEKS : 5;
+
+    $working_hours_per_day_in_seconds = 3600 * $working_hours_per_day;
 
 	$lastprojectid=0;
 
@@ -503,20 +517,18 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 				if ($taskstatic->hasDelay()) print img_warning($langs->trans("Late"));
 				print '</td>';
 
-				$plannedworkloadoutputformat='allhourmin';
-				$timespentoutputformat='allhourmin';
-				if (! empty($conf->global->PROJECT_PLANNED_WORKLOAD_FORMAT)) $plannedworkloadoutputformat=$conf->global->PROJECT_PLANNED_WORKLOAD_FORMAT;
-				if (! empty($conf->global->PROJECT_TIMES_SPENT_FORMAT)) $timespentoutputformat=$conf->global->PROJECT_TIME_SPENT_FORMAT;
-
 				// Planned Workload (in working hours)
 				print '<td align="right">';
 				$fullhour=convertSecondToTime($lines[$i]->planned_workload, $plannedworkloadoutputformat);
-				$workingdelay=convertSecondToTime($lines[$i]->planned_workload, 'all', 86400, 7);	// TODO Replace 86400 and 7 to take account working hours per day and working day per weeks
 				if ($lines[$i]->planned_workload != '')
 				{
 					print $fullhour;
-					// TODO Add delay taking account of working hours per day and working day per week
-					//if ($workingdelay != $fullhour) print '<br>('.$workingdelay.')';
+                    if (!empty($conf->global->PROJECT_USE_DECIMAL_DAY))
+                    {
+                        $workingdelay=convertSecondToTime($lines[$i]->planned_workload, $working_plannedworkloadoutputformat, $working_hours_per_day_in_seconds, $working_days_per_weeks);
+                        // TODO Add delay taking account of working hours per day and working day per week
+                        if ($workingdelay != $fullhour) print '<br>('.$workingdelay.')';
+                    }
 				}
 				//else print '--:--';
 				print '</td>';
@@ -525,7 +537,18 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 				print '<td align="right">';
 				if ($showlineingray) print '<i>';
 				else print '<a href="'.DOL_URL_ROOT.'/projet/tasks/time.php?id='.$lines[$i]->id.($showproject?'':'&withproject=1').'">';
-				if ($lines[$i]->duration) print convertSecondToTime($lines[$i]->duration, $timespentoutputformat);
+				if ($lines[$i]->duration)
+                {
+                    $fullhour = convertSecondToTime($lines[$i]->duration, $timespentoutputformat);
+                    print $fullhour;
+
+                    if (!empty($conf->global->PROJECT_USE_DECIMAL_DAY))
+                    {
+                        $workingdelay=convertSecondToTime($lines[$i]->duration, $working_timespentoutputformat, $working_hours_per_day_in_seconds, $working_days_per_weeks);
+                        // TODO Add delay taking account of working hours per day and working day per week
+                        if ($workingdelay != $fullhour) print '<br>('.$workingdelay.')';
+                    }
+                }
 				else print '--:--';
 				if ($showlineingray) print '</i>';
 				else print '</a>';
@@ -606,11 +629,23 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 		print '<td></td>';
 		print '<td></td>';
 		print '<td align="right" class="nowrap liste_total">';
-		print convertSecondToTime($total_projectlinesa_planned, 'allhourmin');
+        $fulltime = convertSecondToTime($total_projectlinesa_planned, $plannedworkloadoutputformat);
+        print $fulltime;
+        if (!empty($conf->global->PROJECT_USE_DECIMAL_DAY))
+        {
+            $workingdelay=convertSecondToTime($total_projectlinesa_planned, $working_plannedworkloadoutputformat, $working_hours_per_day_in_seconds, $working_days_per_weeks);	// TODO Replace 86400 and 7 to take account working hours per day and working day per weeks
+            if ($workingdelay != $fulltime) print '<br>('.$workingdelay.')';
+        }
 		print '</td>';
 		print '<td align="right" class="nowrap liste_total">';
 		if ($projectidfortotallink > 0) print '<a href="'.DOL_URL_ROOT.'/projet/tasks/time.php?projectid='.$projectidfortotallink.($showproject?'':'&withproject=1').'">';
-		print convertSecondToTime($total_projectlinesa_spent, 'allhourmin');
+        $fulltime = convertSecondToTime($total_projectlinesa_spent, $timespentoutputformat);
+        print $fulltime;
+        if (!empty($conf->global->PROJECT_USE_DECIMAL_DAY))
+        {
+            $workingdelay=convertSecondToTime($total_projectlinesa_spent, $working_timespentoutputformat, $working_hours_per_day_in_seconds, $working_days_per_weeks);	// TODO Replace 86400 and 7 to take account working hours per day and working day per weeks
+            if ($workingdelay != $fulltime) print '<br>('.$workingdelay.')';
+        }
 		if ($projectidfortotallink > 0) print '</a>';
 		print '</td>';
 		print '<td align="right" class="nowrap liste_total">';

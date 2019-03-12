@@ -526,7 +526,7 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 
 		// Planned workload
 		print '<tr><td>'.$langs->trans("PlannedWorkload").'</td><td>';
-		print $form->select_duration('planned_workload', $planned_workload?$planned_workload : 0, 0, 'text');
+		print $form->select_duration('planned_workload', $planned_workload?$planned_workload : 0, 0, (empty($conf->global->PROJECT_USE_DECIMAL_DAY) ? 'text' : 'days'));
 		print '</td></tr>';
 
 		// Progress
