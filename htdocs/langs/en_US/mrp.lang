@@ -1,6 +1,7 @@
+MenuBOM=Bills Of Materials
 BOMsSetup=Setup of module BOM
-ListOfBOMs=List of BOMs
-NewBOM=New BOM
+ListOfBOMs=List of Bills Of Materials
+NewBOM=New bill of material
 ProductBOMHelp=Product to create with this BOM
 BOMsNumberingModules=BOMs numbering templates
 BOMsModelModule=BOMS document templates

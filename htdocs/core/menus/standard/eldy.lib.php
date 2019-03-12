@@ -1587,7 +1587,7 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 				$newmenu->add("/expedition/stats/index.php?leftmenu=sendings", $langs->trans("Statistics"), 1, $user->rights->expedition->lire);
 			}
 
-      // Receptions
+            // Receptions
 			if (! empty($conf->reception->enabled))
 			{
 				$langs->load("receptions");
@@ -1611,7 +1611,7 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 		    {
 		        $langs->load("mrp");
 
-		        $newmenu->add("", $langs->trans("BOM"), 0, $user->rights->service->lire, '', $mainmenu, 'service');
+		        $newmenu->add("", $langs->trans("MenuBOM"), 0, $user->rights->service->lire, '', $mainmenu, 'service');
 		        $newmenu->add("/bom/bom_card.php?leftmenu=bom&amp;action=create", $langs->trans("NewBOM"), 1, $user->rights->bom->write);
 		        $newmenu->add("/bom/bom_list.php?leftmenu=bom", $langs->trans("List"), 1, $user->rights->bom->read);
 		    }
