@@ -22,7 +22,7 @@ div.mainmenu.menu {
 }
 
 div.mainmenu.menu::before {
-content: "\f0c9";
+	content: "\f0c9";
 }
 
 
@@ -31,11 +31,11 @@ div.mainmenu.home::before{
 }
 
 div.mainmenu.billing::before {
-    content: "\f0d6";
+    content: "\f3d1";
 }
 
 div.mainmenu.accountancy::before {
-    content: "\f0d6";
+    content: "\f53d";
 }
 
 div.mainmenu.agenda::before {
@@ -48,7 +48,7 @@ div.mainmenu.bank::before {
 
 <?php if ($conf->global->MAIN_FEATURES_LEVEL == 2) { ?>
 /* TESTING USAGE OF SVG WITHOUT FONT */
-div.mainmenu.cashdesk{
+div.mainmenu.cashdesk {
     line-height: 26px;
 }
 
@@ -59,7 +59,6 @@ div.mainmenu.cashdesk .tmenuimage {
     height: <?php echo $topMenuFontSize; ?>;
 	background-color: #<?php echo $colortextbackhmenu; ?>;
     width: 100%;
-
     -webkit-mask: url(./img/fontawesome/cash-register-solid.svg) no-repeat 50% 50%; /* for old webkit browser */
     mask: url(./img/fontawesome/cash-register-solid.svg) no-repeat 50% 50%;
 }
@@ -73,9 +72,8 @@ div.mainmenu.cashdesk::before {
 <?php } ?>
 
 
-
 div.mainmenu.takepos::before {
-    content: "\f217";
+    content: "\f788";
 }
 
 div.mainmenu.companies::before {
@@ -111,7 +109,7 @@ div.mainmenu.products::before {
 }
 
 div.mainmenu.mrp::before {
-    content: "\f468";
+    content: "\f474";
 }
 
 div.mainmenu.project::before {
