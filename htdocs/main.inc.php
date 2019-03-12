@@ -1787,7 +1787,7 @@ function top_menu_user(user $user, $langs){
     
     
     $logoutLink ='<a accesskey="l" href="'.DOL_URL_ROOT.'/user/logout.php" class="button-top-menu-dropdown" ><i class="fa fa-sign-out-alt"></i> '.$langs->trans("Logout").'</a>';
-    $profilLink ='<a accesskey="l" href="'.DOL_URL_ROOT.'/user/card.php?id='.$user->id.'" class="button-top-menu-dropdown" >'.$langs->trans("Card").'</a>';
+    $profilLink ='<a accesskey="l" href="'.DOL_URL_ROOT.'/user/card.php?id='.$user->id.'" class="button-top-menu-dropdown" ><i class="fa fa-user"></i>  '.$langs->trans("Card").'</a>';
     
     
     $profilName = $user->getFullName($langs).' ('.$user->login.')';
@@ -1809,7 +1809,7 @@ function top_menu_user(user $user, $langs){
 
                 <p>
                     '.$profilName.'
-                    <br/><small class="classfortooltip" title="'.$langs->trans("PreviousConnexion").'" ><i class="fa user-clock"></i> '.dol_print_date($user->datepreviouslogin, "dayhour", 'tzuser').'</small>
+                    <br/><small class="classfortooltip" title="'.$langs->trans("PreviousConnexion").'" ><i class="fa fa-user-clock"></i> '.dol_print_date($user->datepreviouslogin, "dayhour", 'tzuser').'</small>
                 </p>
             </div>
 
