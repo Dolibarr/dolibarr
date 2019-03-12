@@ -2985,7 +2985,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 			)
 		)) {
 		    $fa='fa';
-		    if (! empty($conf->global->MAIN_USE_FONT_AWESOME_5)) $fa='fas';
+		    if (empty($conf->global->MAIN_DISABLE_FONT_AWESOME_5)) $fa='fas';
 		    $fakey = $pictowithoutext;
 			$facolor = ''; $fasize = '';
 			$marginleftonlyshort = 2;
@@ -3021,14 +3021,14 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 			elseif ($pictowithoutext == 'edit') {
 				$fakey = 'fa-pencil';
 				$facolor = '#444';
-				if (! empty($conf->global->MAIN_USE_FONT_AWESOME_5)) $fakey = 'fa-pencil-alt';
+				if (empty($conf->global->MAIN_DISABLE_FONT_AWESOME_5)) $fakey = 'fa-pencil-alt';
 			}
 			elseif ($pictowithoutext == 'filter') {
 				$fakey = 'fa-'.$pictowithoutext;
 			}
 			elseif ($pictowithoutext == 'grip_title' || $pictowithoutext == 'grip') {
 				$fakey = 'fa-arrows';
-				if (! empty($conf->global->MAIN_USE_FONT_AWESOME_5)) $fakey = 'fa-arrows-alt';
+				if (empty($conf->global->MAIN_DISABLE_FONT_AWESOME_5)) $fakey = 'fa-arrows-alt';
 			}
 			elseif ($pictowithoutext == 'listlight') {
 				$fakey = 'fa-download';
@@ -3062,7 +3062,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 			elseif ($pictowithoutext == 'sign-out')     {
                 $fakey = 'fa-sign-out';
 			    $marginleftonlyshort=0;
-			    if (! empty($conf->global->MAIN_USE_FONT_AWESOME_5)) $fakey = 'fa-sign-out-alt';
+			    if (empty($conf->global->MAIN_DISABLE_FONT_AWESOME_5)) $fakey = 'fa-sign-out-alt';
 			}
 			elseif ($pictowithoutext == 'unlink')     {
 				$fakey = 'fa-chain-broken';
@@ -3081,7 +3081,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 			}
 			elseif (in_array($pictowithoutext, array('skype', 'twitter', 'facebook', 'linkedin'))) {
 			    $fakey = 'fa-'.$pictowithoutext;
-			    if (! empty($conf->global->MAIN_USE_FONT_AWESOME_5)) $fa = 'fab';
+			    if (empty($conf->global->MAIN_DISABLE_FONT_AWESOME_5)) $fa = 'fab';
 			}
 			elseif ($pictowithoutext == 'split') {
 			    $fakey = 'fa-code-fork';

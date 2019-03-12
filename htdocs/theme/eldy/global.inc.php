@@ -1487,7 +1487,7 @@ a.tmenuimage:hover{
 /* Do not load menu img for other if hidden to save bandwidth */
 
 <?php if (empty($dol_hide_topmenu)) { ?>
-    <?php if (! defined('DISABLE_FONT_AWSOME') && !empty($conf->global->MAIN_USE_FONT_AWESOME_5)) { ?>
+    <?php if (! defined('DISABLE_FONT_AWSOME') && empty($conf->global->MAIN_DISABLE_FONT_AWESOME_5)) { ?>
         <?php include dol_buildpath($path.'/theme/'.$theme.'/main_menu_fa_icons.inc.php', 0); ?>
     <?php } else { ?>
         div.mainmenu.home{
@@ -1551,6 +1551,10 @@ a.tmenuimage:hover{
             background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/products_over.png', 1) ?>);
         }
 
+        div.mainmenu.mrp {
+            background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/products_over.png', 1) ?>);
+        }
+
         div.mainmenu.project {
             background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/project_over.png', 1) ?>);
         }
@@ -1588,7 +1592,7 @@ a.tmenuimage:hover{
 
     $generic=1;
     // Put here list of menu entries when the div.mainmenu.menuentry was previously defined
-    $divalreadydefined=array('home','companies','products','commercial','externalsite','accountancy','project','tools','members','agenda','ftp','holiday','hrm','bookmark','cashdesk','takepos','ecm','geoipmaxmind','gravatar','clicktodial','paypal','stripe','webservices','website');
+    $divalreadydefined=array('home','companies','products','mrp','commercial','externalsite','accountancy','project','tools','members','agenda','ftp','holiday','hrm','bookmark','cashdesk','takepos','ecm','geoipmaxmind','gravatar','clicktodial','paypal','stripe','webservices','website');
     // Put here list of menu entries we are sure we don't want
     $divnotrequired=array('multicurrency','salaries','ticket','margin','opensurvey','paybox','expensereport','incoterm','prelevement','propal','workflow','notification','supplier_proposal','cron','product','productbatch','expedition');
     foreach($mainmenuusedarray as $val)
@@ -1617,25 +1621,27 @@ a.tmenuimage:hover{
         // Img file not found
         if (! $found)
         {
-            $url=dol_buildpath($path.'/theme/'.$theme.'/img/menus/generic'.$generic."_over.png", 1);
-            $found=1;
-            if ($generic < 4) $generic++;
             print "/* A mainmenu entry was found but img file ".$val.".png not found (check /".$val."/img/".$val.".png), so we use a generic one */\n";
+            if (! defined('DISABLE_FONT_AWSOME') && empty($conf->global->MAIN_DISABLE_FONT_AWESOME_5)) {
+                print 'div.mainmenu.'.$val.'::before {
+                    content: "\f249";
+                }';
+            }
+            else
+            {
+                $url=dol_buildpath($path.'/theme/'.$theme.'/img/menus/generic'.(min($generic,4))."_over.png", 1);
+                print "div.mainmenu.generic".$generic." {\n";
+                print "	background-image: url(".$url.");\n";
+                print "}\n";
+            }
+            $generic++;
         }
-        if ($found)
+        else
         {
             print "div.mainmenu.".$val." {\n";
             print "	background-image: url(".$url.");\n";
             print "}\n";
         }
-    }
-    $j=0;
-    while ($j++ < 4)
-    {
-        $url=dol_buildpath($path.'/theme/'.$theme.'/img/menus/generic'.$j."_over.png", 1);
-        print "div.mainmenu.generic".$j." {\n";
-        print "	background-image: url(".$url.");\n";
-        print "}\n";
     }
     // End of part to add more div class css
     ?>
