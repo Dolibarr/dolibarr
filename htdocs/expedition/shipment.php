@@ -362,7 +362,7 @@ if ($id > 0 || ! empty($ref))
 		print $langs->trans('DateDeliveryPlanned');
 		print '</td>';
 
-		if ($action != 'editdate_livraison') print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdate_livraison&amp;id='.$object->id.'">'.img_edit($langs->trans('SetDeliveryDate'), 1).'</a></td>';
+		if ($action != 'editdate_livraison') print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdate_livraison&amp;id='.$object->id.'">'.img_edit($langs->trans('SetDeliveryDate'), 1).'</a></td>';
 		print '</tr></table>';
 		print '</td><td colspan="2">';
 		if ($action == 'editdate_livraison')
@@ -394,7 +394,7 @@ if ($id > 0 || ! empty($ref))
         print $langs->trans('SendingMethod');
         print '</td>';
         if ($action != 'editshippingmethod' && $user->rights->expedition->creer)
-            print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editshippingmethod&amp;id='.$object->id.'">'.img_edit($langs->trans('SetShippingMode'), 1).'</a></td>';
+            print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editshippingmethod&amp;id='.$object->id.'">'.img_edit($langs->trans('SetShippingMode'), 1).'</a></td>';
         print '</tr></table>';
         print '</td><td colspan="2">';
         if ($action == 'editshippingmethod') {
@@ -414,7 +414,7 @@ if ($id > 0 || ! empty($ref))
             print $langs->trans('Warehouse');
             print '</td>';
             if ($action != 'editwarehouse' && $user->rights->commande->creer)
-                print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editwarehouse&amp;id='.$object->id.'">'.img_edit($langs->trans('SetWarehouse'), 1).'</a></td>';
+                print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editwarehouse&amp;id='.$object->id.'">'.img_edit($langs->trans('SetWarehouse'), 1).'</a></td>';
             print '</tr></table>';
             print '</td><td colspan="2">';
             if ($action == 'editwarehouse') {
@@ -433,7 +433,7 @@ if ($id > 0 || ! empty($ref))
 		print $langs->trans('PaymentConditionsShort');
 		print '</td>';
 
-		if ($action != 'editconditions' && ! empty($object->brouillon)) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editconditions&amp;id='.$object->id.'">'.img_edit($langs->trans('SetConditions'),1).'</a></td>';
+		if ($action != 'editconditions' && ! empty($object->brouillon)) print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editconditions&amp;id='.$object->id.'">'.img_edit($langs->trans('SetConditions'),1).'</a></td>';
 		print '</tr></table>';
 		print '</td><td colspan="2">';
 		if ($action == 'editconditions')
@@ -451,7 +451,7 @@ if ($id > 0 || ! empty($ref))
 		print '<table class="nobordernopadding" width="100%"><tr><td>';
 		print $langs->trans('PaymentMode');
 		print '</td>';
-		if ($action != 'editmode' && ! empty($object->brouillon)) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editmode&amp;id='.$object->id.'">'.img_edit($langs->trans('SetMode'),1).'</a></td>';
+		if ($action != 'editmode' && ! empty($object->brouillon)) print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editmode&amp;id='.$object->id.'">'.img_edit($langs->trans('SetMode'),1).'</a></td>';
 		print '</tr></table>';
 		print '</td><td colspan="2">';
 		if ($action == 'editmode')
@@ -470,7 +470,7 @@ if ($id > 0 || ! empty($ref))
 		print $langs->trans('AvailabilityPeriod');
 		print '</td>';
 		if ($action != 'editavailability')
-			print '<td align="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editavailability&amp;id=' . $object->id . '">' . img_edit($langs->trans('SetAvailability'), 1) . '</a></td>';
+			print '<td class="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editavailability&amp;id=' . $object->id . '">' . img_edit($langs->trans('SetAvailability'), 1) . '</a></td>';
 		print '</tr></table>';
 		print '</td><td colspan="3">';
 		if ($action == 'editavailability') {
@@ -486,7 +486,7 @@ if ($id > 0 || ! empty($ref))
 		print $langs->trans('Source');
 		print '</td>';
 		if ($action != 'editdemandreason')
-			print '<td align="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editdemandreason&amp;id=' . $object->id . '">' . img_edit($langs->trans('SetDemandReason'), 1) . '</a></td>';
+			print '<td class="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editdemandreason&amp;id=' . $object->id . '">' . img_edit($langs->trans('SetDemandReason'), 1) . '</a></td>';
 		print '</tr></table>';
 		print '</td><td colspan="3">';
 		if ($action == 'editdemandreason') {
@@ -518,7 +518,7 @@ if ($id > 0 || ! empty($ref))
 		    print '<tr><td>';
 		    print '<table width="100%" class="nobordernopadding"><tr><td>';
 		    print $langs->trans('IncotermLabel');
-		    print '<td><td align="right">';
+		    print '<td><td class="right">';
 		    if ($user->rights->commande->creer) print '<a href="'.$_SERVER['PHP_SELF'].'/expedition/shipment.php?id='.$object->id.'&action=editincoterm">'.img_edit().'</a>';
 		    else print '&nbsp;';
 		    print '</td></tr></table>';
@@ -628,12 +628,12 @@ if ($id > 0 || ! empty($ref))
 
 			print '<tr class="liste_titre">';
 			print '<td>'.$langs->trans("Description").'</td>';
-			print '<td align="center">'.$langs->trans("QtyOrdered").'</td>';
-			print '<td align="center">'.$langs->trans("QtyShipped").'</td>';
-			print '<td align="center">'.$langs->trans("KeepToShip").'</td>';
+			print '<td class="center">'.$langs->trans("QtyOrdered").'</td>';
+			print '<td class="center">'.$langs->trans("QtyShipped").'</td>';
+			print '<td class="center">'.$langs->trans("KeepToShip").'</td>';
 			if (! empty($conf->stock->enabled))
 			{
-				print '<td align="center">'.$langs->trans("RealStock").'</td>';
+				print '<td class="center">'.$langs->trans("RealStock").'</td>';
 			}
 			else
 			{
@@ -730,18 +730,18 @@ if ($id > 0 || ! empty($ref))
 				}
 
 				// Qty ordered
-				print '<td align="center">' . $objp->qty . '</td>';
+				print '<td class="center">' . $objp->qty . '</td>';
 
 				// Qty already shipped
 				$qtyProdCom=$objp->qty;
-				print '<td align="center">';
+				print '<td class="center">';
 				// Nb of sending products for this line of order
 				$qtyAlreadyShipped = (! empty($object->expeditions[$objp->rowid])?$object->expeditions[$objp->rowid]:0);
 				print $qtyAlreadyShipped;
 				print '</td>';
 
 				// Qty remains to ship
-				print '<td align="center">';
+				print '<td class="center">';
 				if ($type == 0 || ! empty($conf->global->STOCK_SUPPORTS_SERVICES))
 				{
 					$toBeShipped[$objp->fk_product] = $objp->qty - $qtyAlreadyShipped;
@@ -763,7 +763,7 @@ if ($id > 0 || ! empty($ref))
 
 				if ($objp->fk_product > 0 && ($type == Product::TYPE_PRODUCT || ! empty($conf->global->STOCK_SUPPORTS_SERVICES)) && ! empty($conf->stock->enabled))
 				{
-					print '<td align="center">';
+					print '<td class="center">';
 					print $product->stock_reel;
 					if ($product->stock_reel < $toBeShipped[$objp->fk_product])
 					{
@@ -797,10 +797,10 @@ if ($id > 0 || ! empty($ref))
 								$img=img_warning($langs->trans("StockTooLow"));
 							}
 							print '<tr class="oddeven"><td>&nbsp; &nbsp; &nbsp; -> <a href="'.DOL_URL_ROOT."/product/card.php?id=".$value['id'].'">'.$value['fullpath'].'</a> ('.$value['nb'].')</td>';
-							print '<td align="center"> '.$value['nb_total'].'</td>';
+							print '<td class="center"> '.$value['nb_total'].'</td>';
 							print '<td>&nbsp</td>';
 							print '<td>&nbsp</td>';
-							print '<td align="center">'.$value['stock'].' '.$img.'</td></tr>'."\n";
+							print '<td class="center">'.$value['stock'].' '.$img.'</td></tr>'."\n";
 						}
 					}
 				}
@@ -892,7 +892,7 @@ if ($id > 0 || ! empty($ref))
 					}
 					//print '</td>';
 				}
-				//print '<td align="center">';
+				//print '<td class="center">';
 				print '<input type="submit" class="butAction" named="save" value="'.$langs->trans("CreateShipment").'">';
 				if ($toBeShippedTotal <= 0)
 				{

@@ -71,7 +71,7 @@ print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td colspan="2">'.$langs->trans("AvailableFormats").'</td>';
 print '<td>'.$langs->trans("LibraryShort").'</td>';
-print '<td align="right">'.$langs->trans("LibraryVersion").'</td>';
+print '<td class="right">'.$langs->trans("LibraryVersion").'</td>';
 print '</tr>';
 
 include_once DOL_DOCUMENT_ROOT.'/core/modules/export/modules_export.php';
@@ -91,7 +91,7 @@ foreach($liste as $key => $val)
 	$label=$liste[$key];
 	print '<td>'.$form->textwithpicto($label, $text).'</td>';
 	print '<td>'.$model->getLibLabelForKey($key).'</td>';
-	print '<td class="nowrap" align="right">'.$model->getLibVersionForKey($key).'</td>';
+	print '<td class="nowrap right">'.$model->getLibVersionForKey($key).'</td>';
 	print '</tr>';
 }
 

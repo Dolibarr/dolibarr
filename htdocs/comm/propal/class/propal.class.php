@@ -108,7 +108,7 @@ class Propal extends CommonObject
 
 	/**
 	 * @deprecated
-	 * @see date_creation
+	 * @see $date_creation
 	 */
 	public $datec;
 
@@ -120,7 +120,7 @@ class Propal extends CommonObject
 
 	/**
 	 * @deprecated
-	 * @see date_validation
+	 * @see $date_validation
 	 */
 	public $datev;
 
@@ -138,7 +138,7 @@ class Propal extends CommonObject
 
 	/**
 	 * @deprecated
-	 * @see date
+	 * @see $date
 	 */
 	public $datep;
 	public $date_livraison;
@@ -150,17 +150,17 @@ class Propal extends CommonObject
 
 	/**
 	 * @deprecated
-	 * @see total_ht
+	 * @see $total_ht
 	 */
 	public $price;
 	/**
 	 * @deprecated
-	 * @see total_tva
+	 * @see $total_tva
 	 */
 	public $tva;
 	/**
 	 * @deprecated
-	 * @see total_ttc
+	 * @see $total_ttc
 	 */
 	public $total;
 
@@ -432,7 +432,7 @@ class Propal extends CommonObject
      * 		@param		double		$pu_ht_devise		Unit price in currency
      * 		@param		int    		$fk_remise_except	Id discount if line is from a discount
      *    	@return    	int         	    			>0 if OK, <0 if KO
-     *    	@see       	add_product
+     *    	@see       	add_product()
      */
     public function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1 = 0.0, $txlocaltax2 = 0.0, $fk_product = 0, $remise_percent = 0.0, $price_base_type = 'HT', $pu_ttc = 0.0, $info_bits = 0, $type = 0, $rang = -1, $special_code = 0, $fk_parent_line = 0, $fk_fournprice = 0, $pa_ht = 0, $label = '', $date_start = '', $date_end = '', $array_options = 0, $fk_unit = null, $origin = '', $origin_id = 0, $pu_ht_devise = 0, $fk_remise_except = 0)
 	{
@@ -1199,7 +1199,7 @@ class Propal extends CommonObject
 	 *
 	 *	@param 		User	$user	User that create
 	 *	@return    	int				Id of the new object if ok, <0 if ko
-	 *	@see       	create
+	 *	@see       	create()
 	 */
     public function create_from($user)
 	{
@@ -3193,20 +3193,14 @@ class Propal extends CommonObject
 			$this->labelstatut_short[4]=$langs->trans("PropalStatusBilledShort");
 		}
 
-		$statuttrans='';
-		if ($statut==self::STATUS_DRAFT) $statuttrans='statut0';
-		elseif ($statut==self::STATUS_VALIDATED) $statuttrans='statut1';
-		elseif ($statut==self::STATUS_SIGNED) $statuttrans='statut3';
-		elseif ($statut==self::STATUS_NOTSIGNED) $statuttrans='statut5';
-		elseif ($statut==self::STATUS_BILLED) $statuttrans='statut6';
+		$statusType='';
+		if ($statut==self::STATUS_DRAFT) $statusType='status0';
+		elseif ($statut==self::STATUS_VALIDATED) $statusType='status1';
+		elseif ($statut==self::STATUS_SIGNED) $statusType='status3';
+		elseif ($statut==self::STATUS_NOTSIGNED) $statusType='status5';
+		elseif ($statut==self::STATUS_BILLED) $statusType='status6';
 
-		if ($mode == 0)	return $this->labelstatut[$statut];
-		elseif ($mode == 1)	return $this->labelstatut_short[$statut];
-		elseif ($mode == 2)	return img_picto($this->labelstatut_short[$statut], $statuttrans).' '.$this->labelstatut_short[$statut];
-		elseif ($mode == 3)	return img_picto($this->labelstatut[$statut], $statuttrans);
-		elseif ($mode == 4)	return img_picto($this->labelstatut[$statut], $statuttrans).' '.$this->labelstatut[$statut];
-		elseif ($mode == 5)	return '<span class="hideonsmartphone">'.$this->labelstatut_short[$statut].' </span>'.img_picto($this->labelstatut[$statut], $statuttrans);
-		elseif ($mode == 6)	return '<span class="hideonsmartphone">'.$this->labelstatut[$statut].' </span>'.img_picto($this->labelstatut[$statut], $statuttrans);
+		return dolGetStatus($this->labelstatut[$statut], $this->labelstatut_short[$statut], '', $statusType, $mode);
 	}
 
 
@@ -3655,7 +3649,7 @@ class PropaleLigne extends CommonObjectLine
     public $fk_product;		// Id produit predefini
 	/**
 	 * @deprecated
-	 * @see product_type
+	 * @see $product_type
 	 */
     public $fk_product_type;
 	/**
@@ -3683,7 +3677,7 @@ class PropaleLigne extends CommonObjectLine
 	// 2: ecotaxe
 	// 3: option line (when qty = 0)
 
-    public $info_bits = 0;	// Liste d'options cumulables:
+    public $info_bits = 0;	// Some other info:
 	// Bit 0: 	0 si TVA normal - 1 si TVA NPR
 	// Bit 1:	0 ligne normale - 1 si ligne de remise fixe
 
@@ -3698,14 +3692,14 @@ class PropaleLigne extends CommonObjectLine
     public $remise;
 	/**
 	 * @deprecated
-	 * @see subprice
+	 * @see $subprice
 	 */
     public $price;
 
 	// From llx_product
 	/**
 	 * @deprecated
-	 * @see product_ref
+	 * @see $product_ref
 	 */
     public $ref;
 	/**
@@ -3715,7 +3709,7 @@ class PropaleLigne extends CommonObjectLine
 	public $product_ref;
 	/**
 	 * @deprecated
-	 * @see product_label
+	 * @see $product_label
 	 */
     public $libelle;
 	/**
@@ -3731,8 +3725,8 @@ class PropaleLigne extends CommonObjectLine
 
     public $localtax1_tx;		// Local tax 1
     public $localtax2_tx;		// Local tax 2
-    public $localtax1_type;	// Local tax 1 type
-    public $localtax2_type;	// Local tax 2 type
+    public $localtax1_type;	    // Local tax 1 type
+    public $localtax2_type;	    // Local tax 2 type
     public $total_localtax1;  	// Line total local tax 1
     public $total_localtax2;	// Line total local tax 2
 

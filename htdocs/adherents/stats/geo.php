@@ -244,7 +244,7 @@ else
 // Show graphics
 if (count($arrayjs) && $mode == 'memberbycountry')
 {
-    $color_file = DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/graph-color.php';
+    $color_file = DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
     if (is_readable($color_file)) include_once $color_file;
 
     // Assume we've already included the proper headers so just call our script inline

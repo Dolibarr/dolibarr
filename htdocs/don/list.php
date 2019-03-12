@@ -1,9 +1,9 @@
 <?php
-/* Copyright (C) 2001-2003	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2004-2018	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
- * Copyright (C) 2013		Cédric Salvador			<csalvador@gpcsolutions.fr>
- * Copyright (C) 2019		Thibault FOUCART		<support@ptibogxiv.net>
+/* Copyright (C) 2001-2003  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2018  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2013       Cédric Salvador         <csalvador@gpcsolutions.fr>
+ * Copyright (C) 2019       Thibault FOUCART        <support@ptibogxiv.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,9 +20,9 @@
  */
 
 /**
- *	\file       htdocs/don/list.php
- *	\ingroup    donations
- *	\brief      List of donations
+ *  \file       htdocs/don/list.php
+ *  \ingroup    donations
+ *  \brief      List of donations
  */
 
 require '../main.inc.php';
@@ -178,18 +178,18 @@ if ($resql)
     print '<td class="liste_titre">';
     print '<input class="flat" size="10" type="text" name="search_name" value="'.$search_name.'">';
     print '</td>';
-    print '<td class="liste_titre" align="left">';
+    print '<td class="liste_titre left">';
     print '&nbsp;';
     print '</td>';
     if (! empty($conf->projet->enabled))
     {
-        print '<td class="liste_titre" align="right">';
+        print '<td class="liste_titre right">';
         print '&nbsp;';
         print '</td>';
     }
-    print '<td class="liste_titre" align="right"><input name="search_amount" class="flat" type="text" size="8" value="'.$search_amount.'"></td>';
-    print '<td class="liste_titre" align="right"></td>';
-    print '<td class="liste_titre" align="right">';
+    print '<td class="liste_titre right"><input name="search_amount" class="flat" type="text" size="8" value="'.$search_amount.'"></td>';
+    print '<td class="liste_titre right"></td>';
+    print '<td class="liste_titre right">';
     $searchpicto=$form->showFilterAndCheckAddButtons(0);
     print $searchpicto;
     print '</td>';
@@ -199,14 +199,14 @@ if ($resql)
 	print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "d.rowid", "", $param, "", $sortfield, $sortorder);
 	print_liste_field_titre("Company", $_SERVER["PHP_SELF"], "d.societe", "", $param, "", $sortfield, $sortorder);
 	print_liste_field_titre("Name", $_SERVER["PHP_SELF"], "d.lastname", "", $param, "", $sortfield, $sortorder);
-	print_liste_field_titre("Date", $_SERVER["PHP_SELF"], "d.datedon", "", $param, 'align="center"', $sortfield, $sortorder);
+	print_liste_field_titre("Date", $_SERVER["PHP_SELF"], "d.datedon", "", $param, '', $sortfield, $sortorder, 'center ');
 	if (! empty($conf->projet->enabled))
 	{
 	    $langs->load("projects");
 	    print_liste_field_titre("Project", $_SERVER["PHP_SELF"], "fk_projet", "", $param, "", $sortfield, $sortorder);
 	}
-	print_liste_field_titre("Amount", $_SERVER["PHP_SELF"], "d.amount", "", $param, 'align="right"', $sortfield, $sortorder);
-	print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "d.fk_statut", "", $param, 'align="right"', $sortfield, $sortorder);
+	print_liste_field_titre("Amount", $_SERVER["PHP_SELF"], "d.amount", "", $param, '', $sortfield, $sortorder, 'right ');
+	print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "d.fk_statut", "", $param, '', $sortfield, $sortorder, 'right ');
 	print_liste_field_titre('');
 	print "</tr>\n";
 
@@ -222,7 +222,7 @@ if ($resql)
 		print "<td>".$donationstatic->getNomUrl(1)."</td>\n";
         print "<td>".$objp->societe."</td>\n";
 		print "<td>".$donationstatic->getFullName($langs)."</td>\n";
-		print '<td align="center">'.dol_print_date($db->jdate($objp->datedon), 'day').'</td>';
+		print '<td class="center">'.dol_print_date($db->jdate($objp->datedon), 'day').'</td>';
 		if (! empty($conf->projet->enabled))
 		{
 			print "<td>";
@@ -238,20 +238,20 @@ if ($resql)
 			else print '&nbsp;';
 			print "</td>\n";
 		}
-		print '<td align="right">'.price($objp->amount).'</td>';
-		print '<td align="right">'.$donationstatic->LibStatut($objp->statut, 5).'</td>';
+		print '<td class="right">'.price($objp->amount).'</td>';
+		print '<td class="right">'.$donationstatic->LibStatut($objp->statut, 5).'</td>';
         print '<td></td>';
 		print "</tr>";
 		$i++;
 	}
-	print "</table>";
-	print '</div>';
+    print "</table>";
+    print '</div>';
     print "</form>\n";
     $db->free($resql);
 }
 else
 {
-	dol_print_error($db);
+    dol_print_error($db);
 }
 
 llxFooter();
