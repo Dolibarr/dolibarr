@@ -78,7 +78,7 @@ if ($action == 'updateMask')
     }
 }
 
-if ($action == 'specimen')
+else if ($action == 'specimen')
 {
     $modele=GETPOST('module','alpha');
 
@@ -164,7 +164,7 @@ else if ($action == 'setmod')
     dolibarr_set_const($db, "FACTURE_ADDON",$value,'chaine',0,'',$conf->entity);
 }
 
-if ($action == 'setribchq')
+else if ($action == 'setribchq')
 {
 	$rib = GETPOST('rib','alpha');
 	$chq = GETPOST('chq','alpha');
@@ -184,7 +184,7 @@ if ($action == 'setribchq')
     }
 }
 
-if ($action == 'set_FACTURE_DRAFT_WATERMARK')
+else if ($action == 'set_FACTURE_DRAFT_WATERMARK')
 {
 	$draft = GETPOST('FACTURE_DRAFT_WATERMARK','alpha');
 
@@ -202,7 +202,7 @@ if ($action == 'set_FACTURE_DRAFT_WATERMARK')
     }
 }
 
-if ($action == 'set_INVOICE_FREE_TEXT')
+else if ($action == 'set_INVOICE_FREE_TEXT')
 {
 	$freetext = GETPOST('INVOICE_FREE_TEXT','none');	// No alpha here, we want exact string
 
@@ -220,7 +220,7 @@ if ($action == 'set_INVOICE_FREE_TEXT')
     }
 }
 
-if ($action == 'setforcedate')
+else if ($action == 'setforcedate')
 {
 	$forcedate = GETPOST('forcedate','alpha');
 
@@ -238,20 +238,20 @@ if ($action == 'setforcedate')
     }
 }
 
-if ($action == 'setDefaultPDFModulesByType')
+else if ($action == 'setDefaultPDFModulesByType')
 {
     $invoicetypemodels =  GETPOST('invoicetypemodels');
-    
+
     if(!empty($invoicetypemodels) && is_array($invoicetypemodels))
     {
         $error = 0;
-        
+
         foreach ($invoicetypemodels as $type => $value)
         {
             $res = dolibarr_set_const($db, 'FACTURE_ADDON_PDF_'.intval($type),$value,'chaine',0,'',$conf->entity);
             if (! $res > 0) $error++;
         }
-        
+
         if (! $error)
         {
             setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
@@ -621,7 +621,7 @@ if(!empty($conf->global->INVOICE_USE_DEFAULT_DOCUMENT)) // Hidden conf
     print '<td>'.$langs->trans("Name").'</td>';
     print '<td align="right"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
     print "</tr>\n";
-    
+
     $listtype=array(
         Facture::TYPE_STANDARD=>$langs->trans("InvoiceStandard"),
         Facture::TYPE_REPLACEMENT=>$langs->trans("InvoiceReplacement"),
@@ -632,7 +632,7 @@ if(!empty($conf->global->INVOICE_USE_DEFAULT_DOCUMENT)) // Hidden conf
     {
         $listtype[Facture::TYPE_SITUATION] = $langs->trans("InvoiceSituation");
     }
-    
+
     foreach ($listtype as $type => $trans)
     {
         $thisTypeConfName = 'FACTURE_ADDON_PDF_'.$type;
@@ -642,7 +642,7 @@ if(!empty($conf->global->INVOICE_USE_DEFAULT_DOCUMENT)) // Hidden conf
         print '<td colspan="2" >'.$form->selectarray('invoicetypemodels['.$type.']', ModelePDFFactures::liste_modeles($db), $current,0,0, 0).'</td>';
         print "</tr>\n";
     }
-    
+
     print '</table>';
     print "</form>";
 }

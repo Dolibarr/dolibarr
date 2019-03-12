@@ -70,7 +70,7 @@ if ($action == 'updateMask')
 	}
 }
 
-if ($action == 'specimen')
+else if ($action == 'specimen')
 {
 	$modele=GETPOST('module','alpha');
 
@@ -115,7 +115,27 @@ if ($action == 'specimen')
 	}
 }
 
-if ($action == 'set_PROPALE_DRAFT_WATERMARK')
+else if ($action == 'setribchq')
+{
+	$rib = GETPOST('rib','alpha');
+	$chq = GETPOST('chq','alpha');
+
+	$res = dolibarr_set_const($db, "FACTURE_RIB_NUMBER",$rib,'chaine',0,'',$conf->entity);
+	$res = dolibarr_set_const($db, "FACTURE_CHQ_NUMBER",$chq,'chaine',0,'',$conf->entity);
+
+	if (! $res > 0) $error++;
+
+	if (! $error)
+	{
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	}
+	else
+	{
+		setEventMessages($langs->trans("Error"), null, 'errors');
+	}
+}
+
+else if ($action == 'set_PROPALE_DRAFT_WATERMARK')
 {
 	$draft = GETPOST('PROPALE_DRAFT_WATERMARK','alpha');
 
@@ -132,7 +152,7 @@ if ($action == 'set_PROPALE_DRAFT_WATERMARK')
 	}
 }
 
-if ($action == 'set_PROPOSAL_FREE_TEXT')
+else if ($action == 'set_PROPOSAL_FREE_TEXT')
 {
 	$freetext = GETPOST('PROPOSAL_FREE_TEXT','none');	// No alpha here, we want exact string
 
@@ -150,7 +170,7 @@ if ($action == 'set_PROPOSAL_FREE_TEXT')
 	}
 }
 
-if ($action == 'setdefaultduration')
+else if ($action == 'setdefaultduration')
 {
 	$res = dolibarr_set_const($db, "PROPALE_VALIDITY_DURATION",$value,'chaine',0,'',$conf->entity);
 
@@ -166,7 +186,7 @@ if ($action == 'setdefaultduration')
 	}
 }
 
-if ($action == 'set_BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL')
+else if ($action == 'set_BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL')
 {
     $res = dolibarr_set_const($db, "BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL",$value,'chaine',0,'',$conf->entity);
 
@@ -183,7 +203,7 @@ if ($action == 'set_BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL')
 }
 
 // Activate a model
-if ($action == 'set')
+else if ($action == 'set')
 {
 	$ret = addDocumentModel($value, $type, $label, $scandir);
 }
@@ -499,6 +519,106 @@ foreach ($dirmodels as $reldir)
 }
 
 print '</table>';
+
+/*
+ *  Payment mode
+ */
+if (! empty($conf->banque->enabled) && empty($conf->facture->enabled))
+{
+	print '<br>';
+	print load_fiche_titre($langs->trans("SuggestedPaymentModesIfNotDefinedInInvoice"),'','');
+
+	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />';
+
+	print '<table class="noborder" width="100%">';
+
+	print '<tr class="liste_titre">';
+	print '<td>';
+	print '<input type="hidden" name="action" value="setribchq">';
+	print $langs->trans("PaymentMode").'</td>';
+	print '<td align="right"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
+	print "</tr>\n";
+
+	print '<tr class="oddeven">';
+	print "<td>".$langs->trans("SuggestPaymentByRIBOnAccount")."</td>";
+	print "<td>";
+	if (! empty($conf->banque->enabled))
+	{
+		$sql = "SELECT rowid, label";
+		$sql.= " FROM ".MAIN_DB_PREFIX."bank_account";
+		$sql.= " WHERE clos = 0";
+		$sql.= " AND courant = 1";
+		$sql.= " AND entity IN (".getEntity('bank_account').")";
+		$resql=$db->query($sql);
+		if ($resql)
+		{
+			$num = $db->num_rows($resql);
+			$i = 0;
+			if ($num > 0)
+			{
+				print '<select name="rib" class="flat" id="rib">';
+				print '<option value="0">'.$langs->trans("DoNotSuggestPaymentMode").'</option>';
+				while ($i < $num)
+				{
+					$row = $db->fetch_row($resql);
+
+					print '<option value="'.$row[0].'"';
+					print $conf->global->FACTURE_RIB_NUMBER == $row[0] ? ' selected':'';
+					print '>'.$row[1].'</option>';
+
+					$i++;
+				}
+				print "</select>";
+			}
+			else
+			{
+				print "<i>".$langs->trans("NoActiveBankAccountDefined")."</i>";
+			}
+		}
+	}
+	else
+	{
+		print $langs->trans("BankModuleNotActive");
+	}
+	print "</td></tr>";
+
+	print '<tr class="oddeven">';
+	print "<td>".$langs->trans("SuggestPaymentByChequeToAddress")."</td>";
+	print "<td>";
+	print '<select class="flat" name="chq" id="chq">';
+	print '<option value="0">'.$langs->trans("DoNotSuggestPaymentMode").'</option>';
+	print '<option value="-1"'.($conf->global->FACTURE_CHQ_NUMBER?' selected':'').'>'.$langs->trans("MenuCompanySetup").' ('.($mysoc->name?$mysoc->name:$langs->trans("NotDefined")).')</option>';
+
+	$sql = "SELECT rowid, label";
+	$sql.= " FROM ".MAIN_DB_PREFIX."bank_account";
+	$sql.= " WHERE clos = 0";
+	$sql.= " AND courant = 1";
+	$sql.= " AND entity IN (".getEntity('bank_account').")";
+
+	$resql=$db->query($sql);
+	if ($resql)
+	{
+		$num = $db->num_rows($resql);
+		$i = 0;
+		while ($i < $num)
+		{
+
+			$row = $db->fetch_row($resql);
+
+			print '<option value="'.$row[0].'"';
+			print $conf->global->FACTURE_CHQ_NUMBER == $row[0] ? ' selected':'';
+			print '>'.$langs->trans("OwnerOfBankAccount",$row[1]).'</option>';
+
+			$i++;
+		}
+	}
+	print "</select>";
+	print "</td></tr>";
+	print "</table>";
+	print "</form>";
+}
+
 print '<br>';
 
 
