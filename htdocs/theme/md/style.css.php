@@ -1815,16 +1815,17 @@ foreach($mainmenuusedarray as $val)
 	// Img file not found
 	if (! $found)
 	{
-	    print "/* A mainmenu entry was found but img file ".$val.".png not found (check /".$val."/img/".$val.".png), so we use a generic one */\n";
 	    if (! defined('DISABLE_FONT_AWSOME') && empty($conf->global->MAIN_DISABLE_FONT_AWESOME_5)) {
+	        print "/* A mainmenu entry was found but img file ".$val.".png not found (check /".$val."/img/".$val.".png), so we use a generic one */\n";
 	        print 'div.mainmenu.'.$val.'::before {
                     content: "\f249";
                 }';
 	    }
 	    else
 	    {
+	        print "/* A mainmenu entry was found but img file ".$val.".png not found (check /".$val."/img/".$val.".png), so we use a generic one */\n";
 	        $url=dol_buildpath($path.'/theme/'.$theme.'/img/menus/generic'.(min($generic,4))."_over.png", 1);
-	        print "div.mainmenu.generic".$generic." {\n";
+	        print "div.mainmenu.".$val." {\n";
 	        print "	background-image: url(".$url.");\n";
 	        print "}\n";
 	    }
@@ -5729,6 +5730,10 @@ border-top-right-radius: 6px;
 	}
 }
 
+
+<?php if (! defined('DISABLE_FONT_AWSOME') && empty($conf->global->MAIN_DISABLE_FONT_AWESOME_5)) { ?>
+        <?php include dol_buildpath($path.'/theme/'.$theme.'/main_menu_fa_icons.inc.php', 0); ?>
+<?php } ?>
 
 
 <?php
