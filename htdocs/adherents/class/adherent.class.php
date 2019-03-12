@@ -572,6 +572,22 @@ class Adherent extends CommonObject
 		$sql.= ", fk_user_mod = ".($user->id>0?$user->id:'null');	// Can be null because member can be create by a guest
 		$sql.= " WHERE rowid = ".$this->id;
 
+		// If we change the type of membership, we set also label of new type
+		if (! empty($this->oldcopy) && $this->typeid != $this->oldcopy->typeid)
+		{
+			$sql2 = "SELECT libelle as label";
+			$sql2.= " FROM ".MAIN_DB_PREFIX."adherent_type";
+			$sql2.= " WHERE rowid = ".$this->typeid;
+			$resql2 = $this->db->query($sql2);
+			if ($resql2)
+			{
+			    while ($obj=$this->db->fetch_object($resql2))
+			    {
+				$this->type=$obj->label;
+			    }
+			}
+		}
+		
 		dol_syslog(get_class($this)."::update update member", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
@@ -1281,9 +1297,12 @@ class Adherent extends CommonObject
 				$this->public			= $obj->public;
 
 				$this->datec			= $this->db->jdate($obj->datec);
+                $this->date_creation    = $this->db->jdate($obj->datec);
 				$this->datem			= $this->db->jdate($obj->datem);
+                $this->date_modification= $this->db->jdate($obj->datem);
 				$this->datefin			= $this->db->jdate($obj->datefin);
 				$this->datevalid		= $this->db->jdate($obj->datev);
+                $this->date_validation	= $this->db->jdate($obj->datev);
 				$this->birth			= $this->db->jdate($obj->birthday);
 
 				$this->note_private		= $obj->note_private;

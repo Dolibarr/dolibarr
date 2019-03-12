@@ -183,6 +183,7 @@ dol_fiche_end();
 $arrayfields=array();
 $massactionbutton='';
 
+$invoice_status_except_list = array(Facture::STATUS_DRAFT, Facture::STATUS_ABANDONED);
 
 $sql = "SELECT";
 $sql .= " f.ref, f.rowid as invoiceid, d.rowid as invoicedetid, d.buy_price_ht, d.total_ht, d.subprice, d.label, d.description , d.qty";
@@ -190,7 +191,7 @@ $sql .= " ,d.fk_product";
 $sql .= " FROM " . MAIN_DB_PREFIX . "facture as f ";
 $sql .= " INNER JOIN " . MAIN_DB_PREFIX . "facturedet as d  ON d.fk_facture = f.rowid";
 $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product as p ON d.fk_product = p.rowid";
-$sql .= " WHERE f.fk_statut > 0";
+$sql .= " WHERE f.fk_statut NOT IN (" . implode(', ', $invoice_status_except_list) . ")";
 $sql .= " AND f.entity IN (" . getEntity('invoice') . ") ";
 if (! empty($startdate)) $sql .= " AND f.datef >= '" . $db->idate($startdate) . "'";
 if (! empty($enddate))   $sql .= " AND f.datef <= '" . $db->idate($enddate) . "'";
@@ -286,16 +287,16 @@ if ($result) {
 			print $objp->description;
 		}
 		print '</td>';
-		print '<td align="right">';
+		print '<td class="right">';
 		print price($objp->subprice);
 		print '</td>';
-		print '<td align="right">';
+		print '<td class="right">';
 		print '<input type="text" name="buyingprice_' . $objp->invoicedetid . '" id="buyingprice_' . $objp->invoicedetid . '" size="6" value="' . price($objp->buy_price_ht) . '" class="right flat">';
 		print '</td>';
-		print '<td align="right">';
+		print '<td class="right">';
 		print $objp->qty;
 		print '</td>';
-		print '<td align="right">';
+		print '<td class="right">';
 		print price($objp->total_ht);
 		print '</td>';
 		print '<td></td>';

@@ -1207,7 +1207,7 @@ class Cronjob extends CommonObject
 	 * Reprogram a job
 	 *
 	 * @param  string		$userlogin      User login
-	 * @param  timestamp    $now            Date returned by dol_now()
+	 * @param  integer      $now            Date returned by dol_now()
 	 * @return int					        <0 if KO, >0 if OK
 	 */
 	public function reprogram_jobs($userlogin, $now)

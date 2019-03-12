@@ -374,7 +374,7 @@ print '<input class="flat" size="4" type="text" name="search_ref" value="'.dol_e
 print '</td>';
 
 // Create date
-print '<td class="liste_titre" align="center">';
+print '<td class="liste_titre center">';
 print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="search_month_create" value="'.dol_escape_htmltag($search_month_create).'">';
 $formother->select_year($search_year_create, 'search_year_create', 1, $min_year, 0);
 print '</td>';
@@ -394,14 +394,14 @@ if ($id && ! GETPOSTISSET('search_employee'))
 if (! empty($user->rights->holiday->read_all))	// Can see all
 {
 	if (GETPOSTISSET('search_employee')) $search_employee=GETPOST('search_employee', 'int');
-	print '<td class="liste_titre maxwidthonsmartphone" align="left">';
+	print '<td class="liste_titre maxwidthonsmartphone left">';
 	print $form->select_dolusers($search_employee, "search_employee", 1, "", $disabled, '', '', 0, 0, 0, $morefilter, 0, '', 'maxwidth200');
     print '</td>';
 }
 else
 {
 	if (GETPOSTISSET('search_employee')) $search_employee=GETPOST('search_employee', 'int');
-    print '<td class="liste_titre maxwidthonsmartphone" align="left">';
+    print '<td class="liste_titre maxwidthonsmartphone left">';
     print $form->select_dolusers($search_employee, "search_employee", 1, "", $disabled, 'hierarchyme', '', 0, 0, 0, $morefilter, 0, '', 'maxwidth200');
     print '</td>';
 }
@@ -409,7 +409,7 @@ else
 // Approve
 if ($user->rights->holiday->read_all)
 {
-    print '<td class="liste_titre maxwidthonsmartphone" align="left">';
+    print '<td class="liste_titre maxwidthonsmartphone left">';
 
     $validator = new UserGroup($db);
     $excludefilter=$user->admin?'':'u.rowid <> '.$user->id;
@@ -445,24 +445,24 @@ print '</td>';
 print '<td class="liste_titre">&nbsp;</td>';
 
 // Start date
-print '<td class="liste_titre" align="center">';
+print '<td class="liste_titre center">';
 print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="search_month_start" value="'.dol_escape_htmltag($search_month_start).'">';
 $formother->select_year($search_year_start, 'search_year_start', 1, $min_year, $max_year);
 print '</td>';
 
 // End date
-print '<td class="liste_titre" align="center">';
+print '<td class="liste_titre center">';
 print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="search_month_end" value="'.dol_escape_htmltag($search_month_end).'">';
 $formother->select_year($search_year_end, 'search_year_end', 1, $min_year, $max_year);
 print '</td>';
 
 // Status
-print '<td class="liste_titre maxwidthonsmartphone maxwidth200" align="right">';
+print '<td class="liste_titre maxwidthonsmartphone maxwidth200 right">';
 $holiday->selectStatutCP($search_statut, 'search_statut');
 print '</td>';
 
 // Actions
-print '<td class="liste_titre" align="right">';
+print '<td class="liste_titre right">';
 $searchpicto=$form->showFilterAndCheckAddButtons(0);
 print $searchpicto;
 print '</td>';
@@ -471,32 +471,31 @@ print "</tr>\n";
 
 print '<tr class="liste_titre">';
 print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "cp.ref", "", $param, '', $sortfield, $sortorder);
-print_liste_field_titre("DateCreateCP", $_SERVER["PHP_SELF"], "cp.date_create", "", $param, 'align="center"', $sortfield, $sortorder);
+print_liste_field_titre("DateCreateCP", $_SERVER["PHP_SELF"], "cp.date_create", "", $param, '', $sortfield, $sortorder, 'center ');
 print_liste_field_titre("Employee", $_SERVER["PHP_SELF"], "cp.fk_user", "", $param, '', $sortfield, $sortorder);
 print_liste_field_titre("ValidatorCP", $_SERVER["PHP_SELF"], "cp.fk_validator", "", $param, '', $sortfield, $sortorder);
 print_liste_field_titre("Type", $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder);
-print_liste_field_titre("NbUseDaysCPShort", $_SERVER["PHP_SELF"], '', '', $pram, 'align="right"', $sortfield, $sortorder);
-print_liste_field_titre("DateDebCP", $_SERVER["PHP_SELF"], "cp.date_debut", "", $param, 'align="center"', $sortfield, $sortorder);
-print_liste_field_titre("DateFinCP", $_SERVER["PHP_SELF"], "cp.date_fin", "", $param, 'align="center"', $sortfield, $sortorder);
-print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "cp.statut", "", $param, 'align="right"', $sortfield, $sortorder);
-print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], "", '', $param, 'align="center"', $sortfield, $sortorder, 'maxwidthsearch ')."\n";
+print_liste_field_titre("NbUseDaysCPShort", $_SERVER["PHP_SELF"], '', '', $pram, '', $sortfield, $sortorder, 'right ');
+print_liste_field_titre("DateDebCP", $_SERVER["PHP_SELF"], "cp.date_debut", "", $param, '', $sortfield, $sortorder, 'center ');
+print_liste_field_titre("DateFinCP", $_SERVER["PHP_SELF"], "cp.date_fin", "", $param, '', $sortfield, $sortorder, 'center ');
+print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "cp.statut", "", $param, '', $sortfield, $sortorder, 'right ');
+print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
 print "</tr>\n";
 
 $listhalfday=array('morning'=>$langs->trans("Morning"),"afternoon"=>$langs->trans("Afternoon"));
 
 
 // If we ask a dedicated card and not allow to see it, we forc on user.
-if ($id && empty($user->rights->holiday->read_all) && ! in_array($id, $childids))
-{
+if ($id && empty($user->rights->holiday->read_all) && ! in_array($id, $childids)) {
 	$langs->load("errors");
 	print '<tr class="oddeven opacitymediuem"><td colspan="10">'.$langs->trans("NotEnoughPermissions").'</td></tr>';
 	$result = 0;
 }
-// Lines
 elseif (! empty($holiday->holiday) && !empty($mysoc->country_id))
 {
-	$userstatic = new User($db);
-	$approbatorstatic = new User($db);
+    // Lines
+    $userstatic = new User($db);
+    $approbatorstatic = new User($db);
 
 	$typeleaves=$holiday->getTypes(1, -1);
 
@@ -538,22 +537,22 @@ elseif (! empty($holiday->holiday) && !empty($mysoc->country_id))
 		$labeltypeleavetoshow = ($langs->trans($typeleaves[$infos_CP['fk_type']]['code'])!=$typeleaves[$infos_CP['fk_type']]['code'] ? $langs->trans($typeleaves[$infos_CP['fk_type']]['code']) : $typeleaves[$infos_CP['fk_type']]['label']);
 		print empty($typeleaves[$infos_CP['fk_type']]['label']) ? $langs->trans("TypeWasDisabledOrRemoved", $infos_CP['fk_type']) : $labeltypeleavetoshow;
 		print '</td>';
-		print '<td align="right">';
+		print '<td class="right">';
 		$nbopenedday=num_open_day($infos_CP['date_debut_gmt'], $infos_CP['date_fin_gmt'], 0, 1, $infos_CP['halfday']);
 		print $nbopenedday.' '.$langs->trans('DurationDays');
 		print '</td>';
-		print '<td align="center">';
+		print '<td class="center">';
 		print dol_print_date($infos_CP['date_debut'], 'day');
 		print ' <span class="opacitymedium">('.$langs->trans($listhalfday[$starthalfday]).')</span>';
 		print '</td>';
-		print '<td align="center">';
+		print '<td class="center">';
 		print dol_print_date($infos_CP['date_fin'], 'day');
 		print ' <span class="opacitymedium">('.$langs->trans($listhalfday[$endhalfday]).')</span>';
 		print '</td>';
-		print '<td align="right">'.$holidaystatic->LibStatut($infos_CP['statut'], 5).'</td>';
+		print '<td class="right">'.$holidaystatic->LibStatut($infos_CP['statut'], 5).'</td>';
 
 	    // Action column
-	    print '<td class="nowrap" align="center">';
+	    print '<td class="nowrap center">';
 		if ($massactionbutton || $massaction)   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 	    {
 		    $selected=0;

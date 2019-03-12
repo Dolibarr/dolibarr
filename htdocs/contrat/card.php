@@ -457,7 +457,7 @@ if (empty($reshook))
 		// Extrafields
 		$extrafieldsline = new ExtraFields($db);
 		$extralabelsline = $extrafieldsline->fetch_name_optionals_label($object->table_element_line);
-		$array_options = $extrafieldsline->getOptionalsFromPost($extralabelsline, $predef);
+		$array_options = $extrafieldsline->getOptionalsFromPost($object->table_element_line, $predef);
 		// Unset extrafield
 		if (is_array($extralabelsline)) {
 			// Get extra fields
@@ -737,7 +737,7 @@ if (empty($reshook))
 			// Extrafields
 			$extrafieldsline = new ExtraFields($db);
 			$extralabelsline = $extrafieldsline->fetch_name_optionals_label($objectline->table_element);
-			$array_options = $extrafieldsline->getOptionalsFromPost($extralabelsline, $predef);
+			$array_options = $extrafieldsline->getOptionalsFromPost($object->table_element_line, $predef);
 			$objectline->array_options=$array_options;
 
 			// TODO verifier price_min si fk_product et multiprix
@@ -1562,12 +1562,12 @@ else
 
 				print '<tr class="liste_titre'.($cursorline?' liste_titre_add':'').'">';
 				print '<td>'.$langs->trans("ServiceNb", $cursorline).'</td>';
-				print '<td width="80" align="center">'.$langs->trans("VAT").'</td>';
+				print '<td width="80" class="center">'.$langs->trans("VAT").'</td>';
 				print '<td width="80" class="right">'.$langs->trans("PriceUHT").'</td>';
 				if (!empty($conf->multicurrency->enabled)) {
 					print '<td width="80" class="right">'.$langs->trans("PriceUHTCurrency").'</td>';
 				}
-				print '<td width="30" align="center">'.$langs->trans("Qty").'</td>';
+				print '<td width="30" class="center">'.$langs->trans("Qty").'</td>';
 				if ($conf->global->PRODUCT_USE_UNITS) print '<td width="30" class="left">'.$langs->trans("Unit").'</td>';
 				print '<td width="50" class="right">'.$langs->trans("ReductionShort").'</td>';
 				if (! empty($conf->margin->enabled) && ! empty($conf->global->MARGIN_SHOW_ON_CONTRACT)) print '<td width="50" class="right">'.$langs->trans("BuyingPrice").'</td>';
@@ -1614,7 +1614,7 @@ else
 						print '<td>'.img_object($langs->trans("ShowProductOrService"), ($objp->product_type ? 'service' : 'product')).' '.dol_htmlentitiesbr($objp->description)."</td>\n";
 					}
 					// TVA
-					print '<td align="center">';
+					print '<td class="center">';
 					print vatrate($objp->tva_tx.($objp->vat_src_code?(' ('.$objp->vat_src_code.')'):''), '%', $objp->info_bits);
 					print '</td>';
 					// Price
@@ -1624,7 +1624,7 @@ else
 						print '<td class="linecoluht_currency nowrap right">'.price($objp->multicurrency_subprice).'</td>';
 					}
 					// Quantite
-					print '<td align="center">'.$objp->qty.'</td>';
+					print '<td class="center">'.$objp->qty.'</td>';
 					// Unit
 					if($conf->global->PRODUCT_USE_UNITS) print '<td class="left">'.$langs->trans($object->lines[$cursorline-1]->getLabelOfUnit()).'</td>';
 					// Remise
@@ -1638,7 +1638,7 @@ else
 					}
 
 					// Margin
-					if (! empty($conf->margin->enabled) && ! empty($conf->global->MARGIN_SHOW_ON_CONTRACT)) print '<td align="right" class="nowrap">'.price($objp->pa_ht).'</td>';
+					if (! empty($conf->margin->enabled) && ! empty($conf->global->MARGIN_SHOW_ON_CONTRACT)) print '<td class="right nowrap">'.price($objp->pa_ht).'</td>';
 
 					// Icon move, update et delete (statut contrat 0=brouillon,1=valide,2=ferme)
 					print '<td class="nowrap right">';
@@ -1750,7 +1750,7 @@ else
 					print $form->load_tva("eltva_tx", $objp->tva_tx.($objp->vat_src_code?(' ('.$objp->vat_src_code.')'):''), $mysoc, $object->thirdparty, $objp->fk_product, $objp->info_bits, $objp->product_type, 0, 1);
 					print '</td>';
 					print '<td class="right"><input size="5" type="text" name="elprice" value="'.price($objp->subprice).'"></td>';
-					print '<td align="center"><input size="2" type="text" name="elqty" value="'.$objp->qty.'"></td>';
+					print '<td class="center"><input size="2" type="text" name="elqty" value="'.$objp->qty.'"></td>';
 					if ($conf->global->PRODUCT_USE_UNITS)
 					{
 						print '<td class="left">';
@@ -1764,7 +1764,7 @@ else
 						if ($objp->fk_product) print '<select id="fournprice" name="fournprice"></select>';
 						print '<input id="buying_price" type="text" size="5" name="buying_price" value="'.price($objp->pa_ht, 0, '', 0).'"></td>';
 					}
-					print '<td align="center">';
+					print '<td class="center">';
 					print '<input type="submit" class="button" name="save" value="'.$langs->trans("Modify").'">';
 					print '<br><input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
 					print '</td>';
@@ -1930,7 +1930,7 @@ else
 				if (! empty($objp->comment)) print " &nbsp;-&nbsp; ".$objp->comment;
 				print '</td>';
 
-				print '<td align="center">&nbsp;</td>';
+				print '<td class="center">&nbsp;</td>';
 
 				print '</tr>';
 				print '</table>';

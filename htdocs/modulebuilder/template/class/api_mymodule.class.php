@@ -31,7 +31,6 @@ dol_include_once('/mymodule/class/myobject.class.php');
 /**
  * API class for mymodule myobject
  *
- * @smart-auto-routing false
  * @access protected
  * @class  DolibarrApiAccess {@requires user,external}
  */
@@ -205,7 +204,7 @@ class MyModuleApi extends DolibarrApi
             $this->myobject->$field = $value;
         }
         if( ! $this->myobject->create(DolibarrApiAccess::$user)) {
-            throw new RestException(500);
+            throw new RestException(500, "Error creating MyObject", array_merge(array($this->myobject->error), $this->myobject->errors));
         }
         return $this->myobject->id;
     }
@@ -235,13 +234,18 @@ class MyModuleApi extends DolibarrApi
         }
 
         foreach($request_data as $field => $value) {
+            if ($field == 'id') continue;
             $this->myobject->$field = $value;
         }
 
-        if($this->myobject->update($id, DolibarrApiAccess::$user))
+        if ($this->myobject->update($id, DolibarrApiAccess::$user) > 0)
+        {
             return $this->get($id);
-
-        return false;
+        }
+        else
+        {
+            throw new RestException(500, $this->myobject->error);
+        }
     }
 
     /**
@@ -254,21 +258,21 @@ class MyModuleApi extends DolibarrApi
      */
     public function delete($id)
     {
-        if(! DolibarrApiAccess::$user->rights->myobject->delete) {
+        if (! DolibarrApiAccess::$user->rights->myobject->delete) {
             throw new RestException(401);
         }
         $result = $this->myobject->fetch($id);
-        if( ! $result ) {
+        if (! $result) {
             throw new RestException(404, 'MyObject not found');
         }
 
-        if( ! DolibarrApi::_checkAccessToResource('myobject', $this->myobject->id)) {
+        if (! DolibarrApi::_checkAccessToResource('myobject', $this->myobject->id)) {
             throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
         }
 
-        if( !$this->myobject->delete(DolibarrApiAccess::$user, 0))
+        if (! $this->myobject->delete(DolibarrApiAccess::$user))
         {
-            throw new RestException(500);
+            throw new RestException(500, 'Error when deleting MyObject : '.$this->myobject->error);
         }
 
          return array(
@@ -280,14 +284,16 @@ class MyModuleApi extends DolibarrApi
     }
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
     /**
      * Clean sensible object datas
      *
      * @param   object  $object    Object to clean
      * @return    array    Array of cleaned object properties
      */
-    private function _cleanObjectDatas($object)
+    protected function _cleanObjectDatas($object)
     {
+        // phpcs:enable
         $object = parent::_cleanObjectDatas($object);
 
         /*unset($object->note);
@@ -303,10 +309,10 @@ class MyModuleApi extends DolibarrApi
     /**
      * Validate fields before create or update object
      *
-     * @param array $data   Data to validate
-     * @return array
+     * @param	array		$data   Array of data to validate
+     * @return	array
      *
-     * @throws RestException
+     * @throws	RestException
      */
     private function _validate($data)
     {

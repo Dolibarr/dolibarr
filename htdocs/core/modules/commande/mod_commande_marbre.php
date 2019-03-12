@@ -43,13 +43,6 @@ class mod_commande_marbre extends ModeleNumRefCommandes
 	public $error='';
 
 	/**
-	 * @var string
-	 * @deprecated
-	 * @see name
-	 */
-	public $nom='Marbre';
-
-	/**
 	 * @var string name
 	 */
 	public $name='Marbre';

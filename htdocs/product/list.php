@@ -797,7 +797,7 @@ if ($resql)
 		// Label
 		if (! empty($arrayfields['p.label']['checked']))
 		{
-			print '<td class="tdoverflowmax200">'.dol_trunc($obj->label, 40).'</td>';
+			print '<td class="tdoverflowmax200">'.dol_trunc($obj->label, 70).'</td>';
 			if (! $i) $totalarray['nbfield']++;
 		}
 
@@ -818,7 +818,7 @@ if ($resql)
 		// Duration
 		if ((string) $type == '1' && ! empty($arrayfields['p.duration']['checked']))
 		{
-			print '<td class="center">';
+			print '<td class="center nowraponall">';
 
 			if (preg_match('/([^a-z]+)[a-z]$/i', $obj->duration))
 			{

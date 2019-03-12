@@ -915,11 +915,13 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
     /**
      * Gives the last date of activation
      *
-     * @return timestamp       Date of last activation
+     * @return timestamp|string       Date of last activation
      */
     public function getLastActivationDate()
     {
         global $conf;
+
+        $err = 0;
 
         $sql = "SELECT tms FROM ".MAIN_DB_PREFIX."const";
         $sql.= " WHERE ".$this->db->decrypt('name')." = '".$this->db->escape($this->const_name)."'";
@@ -927,9 +929,12 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
         dol_syslog(get_class($this)."::getLastActiveDate", LOG_DEBUG);
         $resql=$this->db->query($sql);
-        if (! $resql) {
+        if (! $resql)
+        {
             $err++;
-        } else {
+        }
+        else
+        {
             $obj=$this->db->fetch_object($resql);
             if ($obj) {
                 return $this->db->jdate($obj->tms);
@@ -949,15 +954,20 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
     {
         global $conf;
 
-        $sql = "SELECT tms, note FROM ".MAIN_DB_PREFIX."const";
-        $sql.= " WHERE ".$this->db->decrypt('name')." = '".$this->db->escape($this->const_name)."'";
-        $sql.= " AND entity IN (0, ".$conf->entity.")";
+        $err = 0;
+
+		$sql = "SELECT tms, note FROM ".MAIN_DB_PREFIX."const";
+		$sql.= " WHERE ".$this->db->decrypt('name')." = '".$this->db->escape($this->const_name)."'";
+		$sql.= " AND entity IN (0, ".$conf->entity.")";
 
         dol_syslog(get_class($this)."::getLastActiveDate", LOG_DEBUG);
         $resql=$this->db->query($sql);
-        if (! $resql) {
+        if (! $resql)
+        {
             $err++;
-        } else {
+        }
+        else
+        {
             $obj=$this->db->fetch_object($resql);
             $tmp=array();
             if ($obj->note) {
@@ -972,13 +982,15 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
     }
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
     /**
      * Insert constants for module activation
      *
      * @return int Error count (0 if OK)
      */
-    private function _active()
+    protected function _active()
     {
+        // phpcs:enable
         global $conf, $user;
 
         $err = 0;
@@ -1013,13 +1025,15 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
     }
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
     /**
      * Module deactivation
      *
      * @return int Error count (0 if OK)
      */
-    private function _unactive()
+    protected function _unactive()
     {
+        // phpcs:enable
         global $conf;
 
         $err = 0;
@@ -1038,7 +1052,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
     }
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps,PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
     /**
      * Create tables and keys required by module.
      * Files module.sql and module.key.sql with create table and create keys
@@ -1048,7 +1062,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
      * @param  string $reldir Relative directory where to scan files
      * @return int             <=0 if KO, >0 if OK
      */
-    private function _load_tables($reldir)
+    protected function _load_tables($reldir)
     {
         // phpcs:enable
         global $conf;
@@ -1152,7 +1166,8 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
             }
         }
 
-        if (! $dirfound) { dol_syslog("A module ask to load sql files into ".$reldir." but this directory was not found.", LOG_WARNING);
+        if (! $dirfound) {
+            dol_syslog("A module ask to load sql files into ".$reldir." but this directory was not found.", LOG_WARNING);
         }
         return $ok;
     }

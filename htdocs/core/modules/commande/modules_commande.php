@@ -66,10 +66,8 @@ abstract class ModelePDFCommandes extends CommonDocGenerator
 
 
 /**
- *  \class      ModeleNumRefCommandes
- *  \brief      Classe mere des modeles de numerotation des references de commandes
+ *  Parent class to manage numbering of Sale Orders
  */
-
 abstract class ModeleNumRefCommandes
 {
 	/**

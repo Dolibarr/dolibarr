@@ -166,7 +166,7 @@ if ($object->id > 0)
 	print '<div class="underbanner clearboth"></div>';
 
 	// Affichage fiche action en mode visu
-	print '<table class="border" width="100%">';
+	print '<table class="border tableforfield centpercent">';
 
 	// Type
 	if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))
@@ -237,7 +237,7 @@ if ($object->id > 0)
 
 	print '</table>';
 
-	print '<table class="border" width="100%">';
+	print '<table class="border tableforfield centpercent">';
 
 	// Build file list
 	$filearray=dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC), 1);

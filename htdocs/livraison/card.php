@@ -459,7 +459,7 @@ else
 
 			// Client
 			print '<tr><td width="20%">'.$langs->trans("Customer").'</td>';
-			print '<td align="3">'.$soc->getNomUrl(1).'</td>';
+			print '<td colspan="3">'.$soc->getNomUrl(1).'</td>';
 			print "</tr>";
             */
 
@@ -496,7 +496,7 @@ else
 			print $langs->trans('DateReceived');
 			print '</td>';
 
-			if ($action != 'editdate_livraison') print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdate_livraison&amp;id='.$object->id.'">'.img_edit($langs->trans('SetDeliveryDate'), 1).'</a></td>';
+			if ($action != 'editdate_livraison') print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdate_livraison&amp;id='.$object->id.'">'.img_edit($langs->trans('SetDeliveryDate'), 1).'</a></td>';
 			print '</tr></table>';
 			print '</td><td colspan="2">';
 			if ($action == 'editdate_livraison')
@@ -521,7 +521,7 @@ else
 				print '<tr><td>';
 		        print '<table width="100%" class="nobordernopadding"><tr><td>';
 		        print $langs->trans('IncotermLabel');
-		        print '<td><td align="right">';
+		        print '<td><td class="right">';
 		        if ($user->rights->expedition->livraison->creer) print '<a href="'.DOL_URL_ROOT.'/livraison/card.php?id='.$object->id.'&action=editincoterm">'.img_edit().'</a>';
 		        else print '&nbsp;';
 		        print '</td></tr></table>';
@@ -598,8 +598,8 @@ else
 
 				print '<tr class="liste_titre">';
 				print '<td>'.$langs->trans("Products").'</td>';
-				print '<td align="center">'.$langs->trans("QtyOrdered").'</td>';
-				print '<td align="center">'.$langs->trans("QtyReceived").'</td>';
+				print '<td class="center">'.$langs->trans("QtyOrdered").'</td>';
+				print '<td class="center">'.$langs->trans("QtyReceived").'</td>';
 				print "</tr>\n";
 			}
 			while ($i < $num_prod)
@@ -662,8 +662,8 @@ else
 					print "</td>\n";
 				}
 
-				print '<td align="center">'.$object->lines[$i]->qty_asked.'</td>';
-				print '<td align="center">'.$object->lines[$i]->qty_shipped.'</td>';
+				print '<td class="center">'.$object->lines[$i]->qty_asked.'</td>';
+				print '<td class="center">'.$object->lines[$i]->qty_shipped.'</td>';
 
 				print "</tr>";
 
