@@ -1642,7 +1642,7 @@ else
 
 				if ($action == 'setdraft')
 				{
-				    $formconfirm=$form->formconfirm($_SERVER["PHP_SELF"]."?id=".$id, $langs->trans("BrouillonnerTrip"), $langs->trans("ConfirmBrouillonnerTrip"), "confirm_brouillonner", "", "", 1);
+				    $formconfirm=$form->formconfirm($_SERVER["PHP_SELF"]."?id=".$id, $langs->trans("BrouillonnerTrip"), $langs->trans("ConfirmBrouillonnerTrip"), "confirm_setdraft", "", "", 1);
 				}
 
 				if ($action == 'refuse')		// Deny
