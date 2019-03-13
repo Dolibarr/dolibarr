@@ -62,7 +62,7 @@ $toolTipFontColor='#333';
 
 // Badges colors
 $badgePrimary   ='#007bff';
-$badgeSecondary ='#6c757d';
+$badgeSecondary ='#999999';
 $badgeSuccess   ='#28a745';
 $badgeDanger    ='#dc3545';
 $badgeWarning   ='#ffc107';
