@@ -705,9 +705,8 @@ class Utils
 				$result = ($resarray['result'] == 0) ? 1 : 0;
 
 				// Build PDF doc
-				$command=$conf->global->MODULEBUILDER_ASCIIDOCTORPDF.' '.$destfile.' -n -o '.$dirofmoduledoc.'/'.$FILENAMEDOC;
+				$command=$conf->global->MODULEBUILDER_ASCIIDOCTORPDF.' '.$destfile.' -n -o '.$dirofmoduledoc.'/'.$FILENAMEDOCPDF;
 				$outfile=$dirofmoduletmp.'/outpdf.tmp';
-
 				$resarray = $utils->executeCLI($command, $outfile);
 				if ($resarray['result'] != '0')
 				{
