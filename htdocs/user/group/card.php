@@ -35,12 +35,15 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 $canreadperms=($user->admin || $user->rights->user->user->lire);
 $caneditperms=($user->admin || $user->rights->user->user->creer);
 $candisableperms=($user->admin || $user->rights->user->user->supprimer);
+$feature2 = 'user';
+
 // Advanced permissions
 if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS))
 {
     $canreadperms=($user->admin || $user->rights->user->group_advance->read);
     $caneditperms=($user->admin || $user->rights->user->group_advance->write);
     $candisableperms=($user->admin || $user->rights->user->group_advance->delete);
+    $feature2 = 'group_advance';
 }
 
 // Load translation files required by page
@@ -55,7 +58,7 @@ $contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'groupcard'
 $userid     = GETPOST('user', 'int');
 
 // Security check
-$result = restrictedArea($user, 'user', $id, 'usergroup&usergroup', 'user');
+$result = restrictedArea($user, 'user', $id, 'usergroup&usergroup', $feature2);
 
 // Users/Groups management only in master entity if transverse mode
 if (! empty($conf->multicompany->enabled) && $conf->entity > 1 && $conf->global->MULTICOMPANY_TRANSVERSE_MODE)

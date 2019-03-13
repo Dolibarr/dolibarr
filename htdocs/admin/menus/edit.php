@@ -144,9 +144,9 @@ if ($action == 'add')
     }
 
     $leftmenu=''; $mainmenu='';
-    if (GETPOST('menuId', 'alpha') && ! is_numeric(GETPOST('menuId', 'alpha')))
+    if (GETPOST('menuId', 'alpha', 3) && ! is_numeric(GETPOST('menuId', 'alpha', 3)))
     {
-	    $tmp=explode('&', GETPOST('menuId', 'alpha'));
+	    $tmp=explode('&', GETPOST('menuId', 'alpha', 3));
 	    foreach($tmp as $s)
 	    {
 	    	if (preg_match('/fk_mainmenu=/',$s))
@@ -214,13 +214,13 @@ if ($action == 'add')
         $menu->target=GETPOST('target','alpha');
         $menu->user=GETPOST('user','alpha');
         $menu->mainmenu=GETPOST('propertymainmenu','alpha');
-        if (is_numeric(GETPOST('menuId','int')))
+        if (is_numeric(GETPOST('menuId', 'alpha', 3)))
         {
-        	$menu->fk_menu=GETPOST('menuId','int');
+        	$menu->fk_menu=GETPOST('menuId', 'alpha', 3);
         }
         else
        {
-	       	if (GETPOST('type','alpha') == 'top') $menu->fk_menu=0;
+	       	if (GETPOST('type', 'alpha') == 'top') $menu->fk_menu=0;
 	       	else $menu->fk_menu=-1;
         	$menu->fk_mainmenu=$mainmenu;
         	$menu->fk_leftmenu=$leftmenu;

@@ -563,6 +563,22 @@ class Adherent extends CommonObject
 		$sql.= ", fk_user_mod = ".($user->id>0?$user->id:'null');	// Can be null because member can be create by a guest
 		$sql.= " WHERE rowid = ".$this->id;
 
+		// If we change the type of membership, we set also label of new type
+		if (! empty($this->oldcopy) && $this->typeid != $this->oldcopy->typeid)
+		{
+			$sql2 = "SELECT libelle as label";
+			$sql2.= " FROM ".MAIN_DB_PREFIX."adherent_type";
+			$sql2.= " WHERE rowid = ".$this->typeid;
+			$resql2 = $this->db->query($sql2);
+			if ($resql2)
+			{
+			    while ($obj=$this->db->fetch_object($resql2))
+			    {
+				$this->type=$obj->label;
+			    }
+			}
+		}
+		
 		dol_syslog(get_class($this)."::update update member", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
@@ -2756,9 +2772,13 @@ class Adherent extends CommonObject
 					{
 						$adherent->fetch_thirdparty();
 
+						// Language code to use ($languagecodeformember) is default language of thirdparty, if no thirdparty, the language found from country of member then country of thirdparty, and if still not found we use the language of company.
+						$languagefromcountrycode = getLanguageCodeFromCountryCode($adherent->country_code ? $adherent->country_code : $adherent->thirdparty->country_code);
+						$languagecodeformember = (empty($adherent->thirdparty->default_lang) ? ($languagefromcountrycode ? $languagefromcountrycode : $mysoc->default_lang) : $adherent->thirdparty->default_lang);
+
 						// Send reminder email
 						$outputlangs = new Translate('', $conf);
-						$outputlangs->setDefaultLang(empty($adherent->thirdparty->default_lang) ? $mysoc->default_lang : $adherent->thirdparty->default_lang);
+						$outputlangs->setDefaultLang($languagecodeformember);
 						$outputlangs->loadLangs(array("main", "members"));
 						dol_syslog("sendReminderForExpiredSubscription Language for member id ".$adherent->id." set to ".$outputlangs->defaultlang." mysoc->default_lang=".$mysoc->default_lang);
 

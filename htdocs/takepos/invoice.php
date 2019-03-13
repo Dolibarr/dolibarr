@@ -189,7 +189,7 @@ if ($action=="order" and $placeid!=0){
 ?>
 <style>
 .selected {
-	color: red;
+	font-weight: bold;
 }
 .order {
 	color: limegreen;
@@ -198,6 +198,7 @@ if ($action=="order" and $placeid!=0){
 <script language="javascript">
 var selectedline=0;
 var selectedtext="";
+var placeid=<?php echo $placeid;?>;
 $(document).ready(function(){
     $('table tbody tr').click(function(){
 		$('table tbody tr').removeClass("selected");
@@ -224,11 +225,36 @@ if ($action=="order" and $order_receipt_printer2!=""){
 	});
 <?php
 }
-if ($action=="search"){
-	?>
-	$('#search').focus();
-	<?php
+if ($action == "search") {
+    ?>
+    $('#search').focus();
+    <?php
 }
+
+?>
+});
+
+$(document).ready(function(){
+    $('table tbody tr').click(function(){
+        $('table tbody tr').removeClass("selected");
+        $(this).addClass("selected");
+        if (selectedline==this.id) return; // If is already selected
+          else selectedline=this.id;
+        selectedtext=$('#'+selectedline).find("td:first").html();
+    });
+<?php
+
+if ($action == "temp" and $ticket_printer1 != "") {
+    ?>
+    $.ajax({
+        type: "POST",
+        url: 'http://<?php print $conf->global->TAKEPOS_PRINT_SERVER; ?>:8111/print',
+        data: '<?php
+        print $header_soc . $header_ticket . $body_ticket . $ticket_printer1 . $ticket_total . $footer_ticket; ?>'
+    });
+    <?php
+}
+
 ?>
 });
 
@@ -249,7 +275,7 @@ function TakeposPrinting(id){
 }
 </script>
 <?php
-print '<div class="div-table-responsive-no-min">';
+print '<div class="div-table-responsive-no-min invoice">';
 print '<table id="tablelines" class="noborder noshadow" width="100%">';
 print '<tr class="liste_titre nodrag nodrop">';
 print '<td class="linecoldescription">'.$langs->trans('Description').'</td>';
@@ -261,7 +287,7 @@ if ($placeid>0) foreach ($invoice->lines as $line)
 	print '<tr class="drag drop oddeven';
 	if ($line->special_code=="3") print ' order';
 	print '" id="'.$line->rowid.'">';
-	print '<td>'.$line->product_label.$line->desc.'</td>';
+	print '<td align="left">'.$line->product_label.$line->desc.'</td>';
 	print '<td align="right">'.$line->qty.'</td>';
 	print '<td align="right">'.price($line->total_ttc).'</td>';
 	print '</tr>';
@@ -271,14 +297,14 @@ print '<p style="font-size:120%;" align="right"><b>'.$langs->trans('TotalTTC');
 if($conf->global->TAKEPOS_BAR_RESTAURANT) print " ".$langs->trans('Place')." ".$place;
 print ': '.price($invoice->total_ttc, 1, '', 1, - 1, - 1, $conf->currency).'&nbsp;</b></p>';
 
-//if ($invoice->socid != $conf->global->CASHDESK_ID_THIRDPARTY){
+if ($invoice->socid != $conf->global->CASHDESK_ID_THIRDPARTY){
     $soc = new Societe($db);
     if ($invoice->socid > 0) $soc->fetch($invoice->socid);
     else $soc->fetch($conf->global->CASHDESK_ID_THIRDPARTY);
     print '<p style="font-size:120%;" align="right">';
     print $langs->trans("Customer").': '.$soc->name;
     print '</p>';
-//}
+}
 if ($action=="valid"){
 	print '<p style="font-size:120%;" align="center"><b>'.$invoice->facnumber." ".$langs->trans('BillShortStatusValidated').'</b></p>';
 	if ($conf->global->TAKEPOSCONNECTOR) print '<center><button type="button" onclick="TakeposPrinting('.$placeid.');">'.$langs->trans('PrintTicket').'</button><center>';
