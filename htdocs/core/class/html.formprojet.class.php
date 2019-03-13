@@ -2,6 +2,7 @@
 /* Copyright (c) 2013 Florian Henry  <florian.henry@open-concept.pro>
  * Copyright (C) 2015 Marcos García  <marcosgdf@gmail.com>
  * Copyright (C) 2018 Charlene Benke <charlie@patas-monkey.com>
+ * Copyright (C) 2019 Ferran Marcet  <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -153,7 +154,7 @@ class FormProjets
 		$outarray=array();
 
 		$hideunselectables = false;
-		if (! empty($conf->global->CONTRACT_HIDE_UNSELECTABLES)) $hideunselectables = true;
+		if (! empty($conf->global->PROJECT_HIDE_UNSELECTABLES)) $hideunselectables = true;
 
 		$projectsListId = false;
 		if (empty($user->rights->projet->all->lire))
