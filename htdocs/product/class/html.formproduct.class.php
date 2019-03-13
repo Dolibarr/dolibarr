@@ -337,8 +337,8 @@ class FormProduct
 				$return .= '<option value="0">' . $langs->trans("Default") . '</option>';
 
 			foreach ($measuringUnits->records as $lines) {
-				$return .= '<option value="' . $lines->code . '"';
-				if ($lines->code == $default) {
+				$return .= '<option value="' . $lines->id . '"';
+				if ($lines->id == $default) {
 					$return .= ' selected';
 				}
 				// $return.= '>'.$value.'</option>';
