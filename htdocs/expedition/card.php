@@ -2207,7 +2207,7 @@ elseif ($id || $ref)
     			            $shipment_static->fetch($shipmentline_var['shipment_id']);
     			            print $shipment_static->getNomUrl(1);
     			            print ' - '.$shipmentline_var['qty_shipped'];
-    			            $htmltext=$langs->trans("DateValidation").' : '.(empty($shipmentline_var['date_valid'])?$langs->trans("Draft"):dol_print_date($shipmentline_var['date_valid'], 'dayhour'));
+    			            $htmltext=$langs->trans("DateValidation").' : '.(empty($shipmentline_var['date_valid'])?$langs->trans("Draft"):dol_print_date($db->jdate($shipmentline_var['date_valid']), 'dayhour'));
     			            if (! empty($conf->stock->enabled) && $shipmentline_var['warehouse'] > 0)
     			            {
     			                $warehousestatic->fetch($shipmentline_var['warehouse']);
