@@ -1790,9 +1790,9 @@ function dol_print_date($time, $format = '', $tzoutput = 'tzserver', $outputlang
 	if (preg_match('/^([0-9]+)\-([0-9]+)\-([0-9]+) ?([0-9]+)?:?([0-9]+)?:?([0-9]+)?/i', $time, $reg)
 	|| preg_match('/^([0-9][0-9][0-9][0-9])([0-9][0-9])([0-9][0-9])([0-9][0-9])([0-9][0-9])([0-9][0-9])$/i', $time, $reg))	// Deprecated. Ex: 1970-01-01, 1970-01-01 01:00:00, 19700101010000
 	{
-		// TODO Remove this.
-		// This part of code should not be used.
+		// TODO Remove this. This part of code should not be used.
 		dol_syslog("Functions.lib::dol_print_date function call with deprecated value of time in page ".$_SERVER["PHP_SELF"], LOG_ERR);
+		//if (function_exists('debug_print_backtrace')) debug_print_backtrace();
 		// Date has format 'YYYY-MM-DD' or 'YYYY-MM-DD HH:MM:SS' or 'YYYYMMDDHHMMSS'
 		$syear	= (! empty($reg[1]) ? $reg[1] : '');
 		$smonth	= (! empty($reg[2]) ? $reg[2] : '');
@@ -1801,7 +1801,7 @@ function dol_print_date($time, $format = '', $tzoutput = 'tzserver', $outputlang
 		$smin	= (! empty($reg[5]) ? $reg[5] : '');
 		$ssec	= (! empty($reg[6]) ? $reg[6] : '');
 
-		$time=dol_mktime($shour, $smin, $ssec, $smonth, $sday, $syear, true);
+		$time=²($shour, $smin, $ssec, $smonth, $sday, $syear, true);
 		$ret=adodb_strftime($format, $time+$offsettz+$offsetdst, $to_gmt);
 	}
 	else
