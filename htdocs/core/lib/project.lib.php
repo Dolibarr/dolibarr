@@ -351,15 +351,16 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 {
 	global $user, $bc, $langs, $conf, $db;
 	global $projectstatic, $taskstatic;
-//	global $plannedworkloadoutputformat, $timespentoutputformat, $working_plannedworkloadoutputformat, $working_timespentoutputformat, $working_hours_per_day_in_seconds, $working_days_per_weeks;
 
     $plannedworkloadoutputformat='allhourmin';
     $timespentoutputformat='allhourmin';
     if (! empty($conf->global->PROJECT_PLANNED_WORKLOAD_FORMAT)) $plannedworkloadoutputformat=$conf->global->PROJECT_PLANNED_WORKLOAD_FORMAT;
     if (! empty($conf->global->PROJECT_TIMES_SPENT_FORMAT)) $timespentoutputformat=$conf->global->PROJECT_TIME_SPENT_FORMAT;
 
-    $working_plannedworkloadoutputformat='alldayhour';
-    $working_timespentoutputformat='alldayhour';
+    $working_plannedworkloadoutputformat='all';
+    $working_timespentoutputformat='all';
+    if (! empty($conf->global->PROJECT_WORKING_PLANNED_WORKLOAD_FORMAT)) $working_plannedworkloadoutputformat=$conf->global->PROJECT_WORKING_PLANNED_WORKLOAD_FORMAT;
+    if (! empty($conf->global->PROJECT_WORKING_TIMES_SPENT_FORMAT)) $working_timespentoutputformat=$conf->global->PROJECT_WORKING_TIMES_SPENT_FORMAT;
 
     $working_hours_per_day=!empty($conf->global->PROJECT_WORKING_HOURS_PER_DAY) ? $conf->global->PROJECT_WORKING_HOURS_PER_DAY : 7;
     $working_days_per_weeks=!empty($conf->global->PROJECT_WORKING_DAYS_PER_WEEKS) ? $conf->global->PROJECT_WORKING_DAYS_PER_WEEKS : 5;
