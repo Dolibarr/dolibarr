@@ -1801,7 +1801,7 @@ function dol_print_date($time, $format = '', $tzoutput = 'tzserver', $outputlang
 		$smin	= (! empty($reg[5]) ? $reg[5] : '');
 		$ssec	= (! empty($reg[6]) ? $reg[6] : '');
 
-		$time=²($shour, $smin, $ssec, $smonth, $sday, $syear, true);
+		$time=dol_mktime($shour, $smin, $ssec, $smonth, $sday, $syear, true);
 		$ret=adodb_strftime($format, $time+$offsettz+$offsetdst, $to_gmt);
 	}
 	else
