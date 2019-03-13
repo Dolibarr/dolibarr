@@ -467,7 +467,9 @@ while ($i < min($num, $limit))
 			print $val['css'];
 			if ($cssforfield || $val['css']) print '"';
 			print '>';
-			print $object->showOutputField($val, $key, $obj->$key, '');
+			if ($key == 'status') print $object->getLibStatut(5);
+			elseif (in_array($val['type'], array('date','datetime','timestamp'))) print $object->showOutputField($val, $key, $db->jdate($obj->$key), '');
+			else print $object->showOutputField($val, $key, $obj->$key, '');
 			print '</td>';
 			if (! $i) $totalarray['nbfield']++;
 			if (! empty($val['isameasure']))
