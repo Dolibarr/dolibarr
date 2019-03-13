@@ -524,7 +524,7 @@ if ($id > 0 || ! empty($ref))
                 $fullhour = convertSecondToTime($object->planned_workload, $plannedworkloadoutputformat);
                 print $fullhour;
 
-                if (!empty($conf->global->PROJECT_USE_DECIMAL_DAY))
+                if (!empty($conf->global->PROJECT_ENABLE_WORKING_TIME))
                 {
                     $workingdelay=convertSecondToTime($object->planned_workload, $working_plannedworkloadoutputformat, $working_hours_per_day_in_seconds, $working_days_per_weeks);
                     if ($workingdelay != $fullhour) print '<br>('.$workingdelay.')';

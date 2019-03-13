@@ -917,15 +917,10 @@ print '</td>';
 print '</tr>';
 
 
-
 print '<tr class="oddeven">';
-print '<td>'.$langs->trans("ProjectUseDecimalDay").'</td>';
+print '<td>'.$langs->trans("ProjectEnableWorkingTime").'</td>';
 print '<td class="right" width="60" colspan="2">';
-//print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
-//print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-//print '<input type="hidden" name="action" value="set_PROJECT_USE_DECIMAL_DAY">';
-print $form->textwithpicto(ajax_constantonoff('PROJECT_USE_DECIMAL_DAY', array('disabled' => array(0 => '.projectNumberWorkingHoursPerDay', 1 => '.projectNumberWorkingDaysPerWeeks'))), $langs->trans('ProjectUseDecimalDayHelp'));
-//print '</form>';
+print ajax_constantonoff('PROJECT_ENABLE_WORKING_TIME', array('disabled' => array(0 => '.projectNumberWorkingHoursPerDay', 1 => '.projectNumberWorkingDaysPerWeeks'), 'del' => array(0 => 'PROJECT_USE_DECIMAL_DAY') ));
 print '</td>';
 print '</tr>';
 
@@ -945,6 +940,13 @@ print '<td class="right" width="60" colspan="2">';
 $disabled = (empty($conf->global->PROJECT_USE_DECIMAL_DAY)) ? 'disabled="disabled"': '';
 print '<input '.$disabled.' type="text" class="projectNumberWorkingDaysPerWeeks" size="5" name="projectNumberWorkingDaysPerWeeks" value="'.$conf->global->PROJECT_WORKING_DAYS_PER_WEEKS.'" placeholder="5" />';
 print '<input '.$disabled.' type="submit" class="button projectNumberWorkingDaysPerWeeks" name="PROJECT_WORKING_DAYS_PER_WEEKS" value="'.$langs->trans("Modify").'">';
+print '</td>';
+print '</tr>';
+
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans("ProjectUseDecimalDay").'</td>';
+print '<td class="right" width="60" colspan="2">';
+print $form->textwithpicto(ajax_constantonoff('PROJECT_USE_DECIMAL_DAY'), $langs->trans('ProjectUseDecimalDayHelp'));
 print '</td>';
 print '</tr>';
 
