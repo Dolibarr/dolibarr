@@ -49,3 +49,4 @@ AmountAtEndOfPeriod=Montant en fin de période (jour, mois ou année)
 TheoricalAmount=Montant théorique
 RealAmount=Montant réel
 CashFenceDone=Clôture de caisse faite pour la période
+TicketVatGrouped=Grouper la TVA par taux dans les tickets

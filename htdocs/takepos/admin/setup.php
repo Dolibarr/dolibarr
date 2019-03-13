@@ -61,6 +61,7 @@ if (GETPOST('action', 'alpha') == 'set')
 
 	$res = dolibarr_set_const($db, "TAKEPOSCONNECTOR", GETPOST('TAKEPOSCONNECTOR', 'alpha'), 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "TAKEPOS_BAR_RESTAURANT", GETPOST('TAKEPOS_BAR_RESTAURANT', 'alpha'), 'chaine', 0, '', $conf->entity);
+	$res = dolibarr_set_const($db, "TAKEPOS_TICKET_VAT_GROUPPED", GETPOST('TAKEPOS_TICKET_VAT_GROUPPED', 'alpha'), 'chaine', 0, '', $conf->entity);
     $res = dolibarr_set_const($db, "TAKEPOS_PRINT_SERVER", GETPOST('TAKEPOS_PRINT_SERVER', 'alpha'), 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "TAKEPOS_ORDER_PRINTERS", GETPOST('TAKEPOS_ORDER_PRINTERS', 'alpha'), 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "TAKEPOS_ORDER_NOTES", GETPOST('TAKEPOS_ORDER_NOTES', 'alpha'), 'chaine', 0, '', $conf->entity);
@@ -146,6 +147,7 @@ if ($conf->global->TAKEPOSCONNECTOR){
 	print '</td></tr>';
 }
 
+
 // Bar Restaurant mode
 print '<tr class="oddeven"><td>';
 print 'Bar Restaurant';
@@ -166,6 +168,12 @@ if ($conf->global->TAKEPOS_BAR_RESTAURANT && $conf->global->TAKEPOSCONNECTOR){
 	print $form->selectyesno("TAKEPOS_ORDER_NOTES", $conf->global->TAKEPOS_ORDER_NOTES, 1);
 	print '</td></tr>';
 }
+
+print '<tr class="oddeven"><td>';
+print $langs->trans('TicketVatGrouped');
+print '<td colspan="2">';
+print $form->selectyesno("TAKEPOS_TICKET_VAT_GROUPPED", $conf->global->TAKEPOS_TICKET_VAT_GROUPPED, 1);
+print "</td></tr>\n";
 
 // Payment numpad
 print '<tr class="oddeven"><td>';
@@ -225,7 +233,7 @@ print "</tr>\n";
 
 print '<tr class="oddeven"><td width=\"50%\">'.$langs->trans("CashDeskThirdPartyForSell").'</td>';
 print '<td colspan="2">';
-print $form->select_company($conf->global->CASHDESK_ID_THIRDPARTY, 'socid', 's.client in (1,3) AND s.status = 1', 1, 0, 0, array(), 0);
+print $form->select_company($conf->global->CASHDESK_ID_THIRDPARTY, 'socid', 's.client in (1, 3) AND s.status = 1', 1, 0, 0, array(), 0);
 print '</td></tr>';
 if (! empty($conf->banque->enabled))
 {
