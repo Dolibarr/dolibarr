@@ -78,7 +78,7 @@ if ($action == 'updateMask')
     }
 }
 
-else if ($action == 'specimen')
+elseif ($action == 'specimen')
 {
     $modele=GETPOST('module', 'alpha');
 
@@ -164,7 +164,7 @@ elseif ($action == 'setmod')
     dolibarr_set_const($db, "FACTURE_ADDON", $value, 'chaine', 0, '', $conf->entity);
 }
 
-else if ($action == 'setribchq')
+elseif ($action == 'setribchq')
 {
 	$rib = GETPOST('rib', 'alpha');
 	$chq = GETPOST('chq', 'alpha');
@@ -184,7 +184,7 @@ else if ($action == 'setribchq')
     }
 }
 
-else if ($action == 'set_FACTURE_DRAFT_WATERMARK')
+elseif ($action == 'set_FACTURE_DRAFT_WATERMARK')
 {
 	$draft = GETPOST('FACTURE_DRAFT_WATERMARK', 'alpha');
 
@@ -202,7 +202,7 @@ else if ($action == 'set_FACTURE_DRAFT_WATERMARK')
     }
 }
 
-else if ($action == 'set_INVOICE_FREE_TEXT')
+elseif ($action == 'set_INVOICE_FREE_TEXT')
 {
 	$freetext = GETPOST('INVOICE_FREE_TEXT', 'none');	// No alpha here, we want exact string
 
@@ -220,7 +220,7 @@ else if ($action == 'set_INVOICE_FREE_TEXT')
     }
 }
 
-else if ($action == 'setforcedate')
+elseif ($action == 'setforcedate')
 {
 	$forcedate = GETPOST('forcedate', 'alpha');
 
@@ -238,7 +238,7 @@ else if ($action == 'setforcedate')
     }
 }
 
-else if ($action == 'setDefaultPDFModulesByType')
+elseif ($action == 'setDefaultPDFModulesByType')
 {
     $invoicetypemodels =  GETPOST('invoicetypemodels');
 
