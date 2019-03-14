@@ -446,11 +446,11 @@ $menus[$r++]=array('title'=>$langs->trans("FreeZone"),
 $menus[$r++]=array('title'=>$langs->trans("Customer"),
 					'action'=>'Customer();');
 $menus[$r++]=array('title'=>$langs->trans("BackOffice"),
-                   'action'=>'window.open(\''.DOL_URL_ROOT.'\', \'backoffice\');');
+					'action'=>'window.open(\''.(empty(DOL_URL_ROOT)?'/':DOL_URL_ROOT).'\', \'_self\');');
 $menus[$r++]=array('title'=>$langs->trans("ValidateBill"),
 					'action'=>'CloseBill();');
 $menus[$r++]=array('title'=>$langs->trans("Logout"),
-                   'action'=>'window.location.href=\''.DOL_URL_ROOT.'/user/logout.php\';');
+					'action'=>'window.location.href=\''.DOL_URL_ROOT.'/user/logout.php\';');
 
 //BAR RESTAURANT specified menu
 if($conf->global->TAKEPOS_BAR_RESTAURANT){
