@@ -933,7 +933,7 @@ if (empty($reshook))
     	}
     }
 
-    if ($action == "confirm_brouillonner" && GETPOST('confirm', 'alpha')=="yes" && $id > 0 && $user->rights->expensereport->creer)
+    if ($action == "confirm_setdraft" && GETPOST('confirm', 'alpha')=="yes" && $id > 0 && $user->rights->expensereport->creer)
     {
     	$object = new ExpenseReport($db);
     	$object->fetch($id);
@@ -1640,9 +1640,9 @@ else
 					$formconfirm=$form->formconfirm($_SEVER["PHP_SELF"]."?id=".$id, $langs->trans("Cancel"), "", "confirm_cancel", $array_input, "", 1);
 				}
 
-				if ($action == 'brouillonner')
+				if ($action == 'setdraft')
 				{
-				    $formconfirm=$form->formconfirm($_SERVER["PHP_SELF"]."?id=".$id, $langs->trans("BrouillonnerTrip"), $langs->trans("ConfirmBrouillonnerTrip"), "confirm_brouillonner", "", "", 1);
+				    $formconfirm=$form->formconfirm($_SERVER["PHP_SELF"]."?id=".$id, $langs->trans("BrouillonnerTrip"), $langs->trans("ConfirmBrouillonnerTrip"), "confirm_setdraft", "", "", 1);
 				}
 
 				if ($action == 'refuse')		// Deny
@@ -2431,7 +2431,7 @@ if ($action != 'create' && $action != 'edit')
 			// Modify
 			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&id='.$object->id.'">'.$langs->trans('Modify').'</a></div>';
 
-			// Brouillonner (le statut refusée est identique à brouillon)
+			// setdraft (le statut refusée est identique à brouillon)
 			//print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=brouillonner&id='.$id.'">'.$langs->trans('BROUILLONNER').'</a>';
 			// Enregistrer depuis le statut "Refusée"
 			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=save_from_refuse&id='.$object->id.'">'.$langs->trans('ValidateAndSubmit').'</a></div>';
@@ -2442,8 +2442,8 @@ if ($action != 'create' && $action != 'edit')
 	{
 		if ($user->id == $object->fk_user_author || $user->id == $object->fk_user_valid)
 		{
-			// Brouillonner
-			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=brouillonner&id='.$object->id.'">'.$langs->trans('SetToDraft').'</a></div>';
+			// setdraft
+			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=setdraft&id='.$object->id.'">'.$langs->trans('SetToDraft').'</a></div>';
 		}
 	}
 
@@ -2456,8 +2456,8 @@ if ($action != 'create' && $action != 'edit')
 	{
 		if (in_array($object->fk_user_author, $user->getAllChildIds(1)))
 		{
-			// Brouillonner
-			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=brouillonner&id='.$object->id.'">'.$langs->trans('SetToDraft').'</a></div>';
+			// set draft
+			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=setdraft&id='.$object->id.'">'.$langs->trans('SetToDraft').'</a></div>';
 		}
 	}
 

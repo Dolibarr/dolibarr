@@ -4168,7 +4168,7 @@ class Product extends CommonObject
                 case 2:
                     return $this->LibStatut($status, 3, 2).' '.$this->LibStatut($status, 1, 2);
                 case 3:
-                    return dolGetStatus($langs->trans('ProductStatusNotOnBatch'), '','',empty($status)?'status5':'status4',3,'dot');
+                    return dolGetStatus($langs->trans('ProductStatusNotOnBatch'), '', '', empty($status)?'status5':'status4', 3, 'dot');
                 case 4:
                     return $this->LibStatut($status, 3, 2).' '.$this->LibStatut($status, 0, 2);
                 case 5:
@@ -4213,11 +4213,11 @@ class Product extends CommonObject
         
         
         if($mode>6){
-            return dolGetStatus($langs->trans('Unknown'),'', '', 'status0', 0);
+            return dolGetStatus($langs->trans('Unknown'), '', '', 'status0', 0);
         }
         else{
             return dolGetStatus($labelstatut, $labelstatutShort, '', $statuttrans, $mode);
-        } 
+        }
     }
 
 
