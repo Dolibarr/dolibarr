@@ -28,43 +28,43 @@
  */
 class DolEditor
 {
-    var $tool;      // Store the selected tool
+    public $tool;      // Store the selected tool
 
-	// If using fckeditor
-	var $editor;
+    // If using fckeditor
+    public $editor;
 
-	// If not using fckeditor
-	var $content;
-	var $htmlname;
-	var $toolbarname;
-	var $toolbarstartexpanded;
-	var $rows;
-	var $cols;
-	var $height;
-	var $width;
-	var $readonly;
+    // If not using fckeditor
+    public $content;
+    public $htmlname;
+    public $toolbarname;
+    public $toolbarstartexpanded;
+    public $rows;
+    public $cols;
+    public $height;
+    public $width;
+    public $readonly;
 
 
     /**
-     *      Create an object to build an HTML area to edit a large string content
+     *  Create an object to build an HTML area to edit a large string content
      *
-     *      @param 	string	$htmlname		        		HTML name of WYSIWIG field
-     *      @param 	string	$content		        		Content of WYSIWIG field
-     *      @param	int		$width							Width in pixel of edit area (auto by default)
-     *      @param 	int		$height			       		 	Height in pixel of edit area (200px by default)
-     *      @param 	string	$toolbarname	       		 	Name of bar set to use ('Full', 'dolibarr_notes[_encoded]', 'dolibarr_details[_encoded]'=the less featured, 'dolibarr_mailings[_encoded]', 'dolibarr_readonly').
-     *      @param  string	$toolbarlocation       			Where bar is stored :
-     *                       		             			'In' each window has its own toolbar
-     *                              		      			'Out:name' share toolbar into the div called 'name'
-     *      @param  boolean	$toolbarstartexpanded  			Bar is visible or not at start
-	 *		@param	int		$uselocalbrowser				Enabled to add links to local object with local browser. If false, only external images can be added in content.
-	 *      @param  boolean|string	$okforextendededitor    True=Allow usage of extended editor tool if qualified (like ckeditor). If 'textarea', force use of simple textarea. If 'ace', force use of Ace.
-	 *      												Warning: If you use 'ace', don't forget to also include ace.js in page header. Also, the button "save" must have class="buttonforacesave".
-     *      @param  int		$rows                   		Size of rows for textarea tool
-	 *      @param  string	$cols                   		Size of cols for textarea tool (textarea number of cols '70' or percent 'x%')
-	 *      @param	int		$readonly						0=Read/Edit, 1=Read only
+     *  @param 	string	$htmlname		        		HTML name of WYSIWIG field
+     *  @param 	string	$content		        		Content of WYSIWIG field
+     *  @param	int		$width							Width in pixel of edit area (auto by default)
+     *  @param 	int		$height			       		 	Height in pixel of edit area (200px by default)
+     *  @param 	string	$toolbarname	       		 	Name of bar set to use ('Full', 'dolibarr_notes[_encoded]', 'dolibarr_details[_encoded]'=the less featured, 'dolibarr_mailings[_encoded]', 'dolibarr_readonly').
+     *  @param  string	$toolbarlocation       			Where bar is stored :
+     *                       		                    'In' each window has its own toolbar
+     *                              		            'Out:name' share toolbar into the div called 'name'
+     *  @param  boolean	$toolbarstartexpanded  			Bar is visible or not at start
+	 *  @param	int		$uselocalbrowser				Enabled to add links to local object with local browser. If false, only external images can be added in content.
+	 *  @param  boolean|string	$okforextendededitor    True=Allow usage of extended editor tool if qualified (like ckeditor). If 'textarea', force use of simple textarea. If 'ace', force use of Ace.
+	 *                                                  Warning: If you use 'ace', don't forget to also include ace.js in page header. Also, the button "save" must have class="buttonforacesave".
+     *  @param  int		$rows                   		Size of rows for textarea tool
+	 *  @param  string	$cols                   		Size of cols for textarea tool (textarea number of cols '70' or percent 'x%')
+	 *  @param	int		$readonly						0=Read/Edit, 1=Read only
 	 */
-    function __construct($htmlname, $content, $width = '', $height = 200, $toolbarname = 'Basic', $toolbarlocation = 'In', $toolbarstartexpanded = false, $uselocalbrowser = true, $okforextendededitor = true, $rows = 0, $cols = 0, $readonly = 0)
+    public function __construct($htmlname, $content, $width = '', $height = 200, $toolbarname = 'Basic', $toolbarlocation = 'In', $toolbarstartexpanded = false, $uselocalbrowser = true, $okforextendededitor = true, $rows = 0, $cols = 0, $readonly = 0)
     {
     	global $conf,$langs;
 
@@ -137,7 +137,7 @@ class DolEditor
     	}
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *	Output edit area inside the HTML stream.
      *	Output depends on this->tool (fckeditor, ckeditor, textarea, ...)
@@ -149,7 +149,7 @@ class DolEditor
      *  @param	string	$option				 For ACE editor, set the source language ('html', 'php', 'javascript', ...)
      *  @return	void|string
      */
-    function Create($noprint = 0, $morejs = '', $disallowAnyContent = true, $titlecontent = '', $option = '')
+    public function Create($noprint = 0, $morejs = '', $disallowAnyContent = true, $titlecontent = '', $option = '')
     {
         // phpcs:enable
     	global $conf,$langs;

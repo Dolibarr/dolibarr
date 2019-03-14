@@ -17,7 +17,7 @@
  * Copyright (C) 2012-2015  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2014       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2018       Ferran Marcet           <fmarcet@2byte.es>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2019  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2018       Nicolas ZABOURI	        <info@inovea-conseil.com>
  * Copyright (C) 2018       Christophe Battarel     <christophe@altairis.fr>
  * Copyright (C) 2018       Josep Lluis Amador      <joseplluis@lliuretic.cat>
@@ -102,7 +102,7 @@ class Form
 	 * @param	string	$paramid		Key of parameter for id ('id', 'socid')
 	 * @return	string					HTML edit field
 	 */
-	function editfieldkey($text, $htmlname, $preselected, $object, $perm, $typeofdata = 'string', $moreparam = '', $fieldrequired = 0, $notabletag = 0, $paramid = 'id')
+    public function editfieldkey($text, $htmlname, $preselected, $object, $perm, $typeofdata = 'string', $moreparam = '', $fieldrequired = 0, $notabletag = 0, $paramid = 'id')
 	{
 		global $conf,$langs;
 
@@ -164,7 +164,7 @@ class Form
 	 * @param	string	$paramid		Key of parameter for id ('id', 'socid')
 	 * @return  string					HTML edit field
 	 */
-	function editfieldval($text, $htmlname, $value, $object, $perm, $typeofdata = 'string', $editvalue = '', $extObject = null, $custommsg = null, $moreparam = '', $notabletag = 0, $formatfunc = '', $paramid = 'id')
+    public function editfieldval($text, $htmlname, $value, $object, $perm, $typeofdata = 'string', $editvalue = '', $extObject = null, $custommsg = null, $moreparam = '', $notabletag = 0, $formatfunc = '', $paramid = 'id')
 	{
 		global $conf,$langs,$db;
 
@@ -441,7 +441,7 @@ class Form
 	 *	@see	Use function textwithpicto if you can.
 	 *  TODO Move this as static as soon as everybody use textwithpicto or @Form::textwithtooltip
 	 */
-	function textwithtooltip($text, $htmltext, $tooltipon = 1, $direction = 0, $img = '', $extracss = '', $notabs = 2, $incbefore = '', $noencodehtmltext = 0, $tooltiptrigger = '', $forcenowrap = 0)
+    public function textwithtooltip($text, $htmltext, $tooltipon = 1, $direction = 0, $img = '', $extracss = '', $notabs = 2, $incbefore = '', $noencodehtmltext = 0, $tooltiptrigger = '', $forcenowrap = 0)
 	{
 		global $conf;
 
@@ -526,7 +526,7 @@ class Form
 	 *  @param	int		$forcenowrap		Force no wrap between text and picto (works with notabs=2 only)
 	 * 	@return	string						HTML code of text, picto, tooltip
 	 */
-	function textwithpicto($text, $htmltext, $direction = 1, $type = 'help', $extracss = '', $noencodehtmltext = 0, $notabs = 2, $tooltiptrigger = '', $forcenowrap = 0)
+    public function textwithpicto($text, $htmltext, $direction = 1, $type = 'help', $extracss = '', $noencodehtmltext = 0, $notabs = 2, $tooltiptrigger = '', $forcenowrap = 0)
 	{
 		global $conf, $langs;
 
@@ -553,11 +553,11 @@ class Form
 		{
 			if ($type == 'info' || $type == 'help') return $text;
 		}
-		// If info or help with smartphone, show only text (tooltip on lick does not works with dialog on smaprtphone)
-		if (! empty($conf->dol_no_mouse_hover) && ! empty($tooltiptrigger))
-		{
-			if ($type == 'info' || $type == 'help') return $text;
-		}
+		// If info or help with smartphone, show only text (tooltip on click does not works with dialog on smaprtphone)
+		//if (! empty($conf->dol_no_mouse_hover) && ! empty($tooltiptrigger))
+		//{
+			//if ($type == 'info' || $type == 'help') return '<a href="'..'">'.$text.''</a>';
+		//}
 
 		$img='';
 		if ($type == 'info') $img = img_help(0, $alt);
@@ -578,7 +578,7 @@ class Form
 	 * @param   int     $alwaysvisible  1=select button always visible
 	 * @return	string					Select list
 	 */
-	function selectMassAction($selected, $arrayofaction, $alwaysvisible = 0)
+    public function selectMassAction($selected, $arrayofaction, $alwaysvisible = 0)
 	{
 		global $conf,$langs,$hookmanager;
 
@@ -663,7 +663,7 @@ class Form
 		return $ret;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Return combo list of activated countries, into language of user
 	 *
@@ -678,7 +678,7 @@ class Form
 	 *  @param	int		$addspecialentries	1=Add dedicated entries for group of countries (like 'European Economic Community', ...)
 	 *  @return string           			HTML string with select
 	 */
-	function select_country($selected = '', $htmlname = 'country_id', $htmloption = '', $maxlength = 0, $morecss = 'minwidth300', $usecodeaskey = '', $showempty = 1, $disablefavorites = 0, $addspecialentries = 0)
+    public function select_country($selected = '', $htmlname = 'country_id', $htmloption = '', $maxlength = 0, $morecss = 'minwidth300', $usecodeaskey = '', $showempty = 1, $disablefavorites = 0, $addspecialentries = 0)
 	{
         // phpcs:enable
 		global $conf,$langs,$mysoc;
@@ -778,7 +778,7 @@ class Form
 		return $out;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Return select list of incoterms
 	 *
@@ -791,7 +791,7 @@ class Form
 	 *  @param	array	$events					Event options to run on change. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
 	 *  @return string           				HTML string with select and input
 	 */
-	function select_incoterms($selected = '', $location_incoterms = '', $page = '', $htmlname = 'incoterm_id', $htmloption = '', $forcecombo = 1, $events = array())
+    public function select_incoterms($selected = '', $location_incoterms = '', $page = '', $htmlname = 'incoterm_id', $htmloption = '', $forcecombo = 1, $events = array())
 	{
         // phpcs:enable
 		global $conf,$langs;
@@ -872,7 +872,7 @@ class Form
 		return $out;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Return list of types of lines (product or service)
 	 * 	Example: 0=product, 1=service, 9=other (for external module)
@@ -884,7 +884,7 @@ class Form
 	 * 	@param	integer	$forceall		1=Force to show products and services in combo list, whatever are activated modules, 0=No force, 2=Force to show only Products, 3=Force to show only services, -1=Force none (and set hidden field to 'service')
 	 *  @return	void
 	 */
-	function select_type_of_lines($selected = '', $htmlname = 'type', $showempty = 0, $hidetext = 0, $forceall = 0)
+    public function select_type_of_lines($selected = '', $htmlname = 'type', $showempty = 0, $hidetext = 0, $forceall = 0)
 	{
         // phpcs:enable
 		global $db,$langs,$user,$conf;
@@ -929,13 +929,13 @@ class Form
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Load into cache cache_types_fees, array of types of fees
 	 *
 	 *	@return     int             Nb of lines loaded, <0 if KO
 	 */
-	function load_cache_types_fees()
+    public function load_cache_types_fees()
 	{
         // phpcs:enable
 		global $langs;
@@ -978,7 +978,7 @@ class Form
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Return list of types of notes
 	 *
@@ -987,7 +987,7 @@ class Form
 	 * 	@param	int			$showempty		Add an empty field
 	 * 	@return	void
 	 */
-	function select_type_fees($selected = '', $htmlname = 'type', $showempty = 0)
+    public function select_type_fees($selected = '', $htmlname = 'type', $showempty = 0)
 	{
         // phpcs:enable
 		global $user, $langs;
@@ -1018,7 +1018,7 @@ class Form
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Return HTML code to select a company.
 	 *
@@ -1031,13 +1031,13 @@ class Form
 	 *  @return		string								Return select box for thirdparty.
 	 *  @deprecated	3.8 Use select_company instead. For exemple $form->select_thirdparty(GETPOST('socid'),'socid','',0) => $form->select_company(GETPOST('socid'),'socid','',1,0,0,array(),0)
 	 */
-	function select_thirdparty($selected = '', $htmlname = 'socid', $filter = '', $limit = 20, $ajaxoptions = array(), $forcecombo = 0)
+    public function select_thirdparty($selected = '', $htmlname = 'socid', $filter = '', $limit = 20, $ajaxoptions = array(), $forcecombo = 0)
 	{
         // phpcs:enable
    		return $this->select_thirdparty_list($selected, $htmlname, $filter, 1, 0, $forcecombo, array(), '', 0, $limit);
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Output html form to select a third party
 	 *
@@ -1057,7 +1057,7 @@ class Form
 	 * 	@param  bool	$multiple				add [] in the name of element and add 'multiple' attribut (not working with ajax_autocompleter)
 	 * 	@return	string							HTML string with select box for thirdparty.
 	 */
-	function select_company($selected = '', $htmlname = 'socid', $filter = '', $showempty = '', $showtype = 0, $forcecombo = 0, $events = array(), $limit = 0, $morecss = 'minwidth100', $moreparam = '', $selected_input_value = '', $hidelabel = 1, $ajaxoptions = array(), $multiple = false)
+    public function select_company($selected = '', $htmlname = 'socid', $filter = '', $showempty = '', $showtype = 0, $forcecombo = 0, $events = array(), $limit = 0, $morecss = 'minwidth100', $moreparam = '', $selected_input_value = '', $hidelabel = 1, $ajaxoptions = array(), $multiple = false)
 	{
         // phpcs:enable
 		global $conf,$user,$langs;
@@ -1101,7 +1101,7 @@ class Form
 		return $out;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Output html form to select a third party.
 	 *  Note, you must use the select_company to get the component to select a third party. This function must only be called by select_company.
@@ -1121,7 +1121,7 @@ class Form
 	 *	@param  bool	$multiple       add [] in the name of element and add 'multiple' attribut
 	 * 	@return	string					HTML string with
 	 */
-	function select_thirdparty_list($selected = '', $htmlname = 'socid', $filter = '', $showempty = '', $showtype = 0, $forcecombo = 0, $events = array(), $filterkey = '', $outputmode = 0, $limit = 0, $morecss = 'minwidth100', $moreparam = '', $multiple = false)
+    public function select_thirdparty_list($selected = '', $htmlname = 'socid', $filter = '', $showempty = '', $showtype = 0, $forcecombo = 0, $events = array(), $filterkey = '', $outputmode = 0, $limit = 0, $morecss = 'minwidth100', $moreparam = '', $multiple = false)
 	{
         // phpcs:enable
 		global $conf,$user,$langs;
@@ -1284,18 +1284,18 @@ class Form
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *    	Return HTML combo list of absolute discounts
+	 *  Return HTML combo list of absolute discounts
 	 *
-	 *    	@param	string	$selected       Id remise fixe pre-selectionnee
-	 *    	@param  string	$htmlname       Nom champ formulaire
-	 *    	@param  string	$filter         Criteres optionnels de filtre
-	 * 		@param	int		$socid			Id of thirdparty
-	 * 		@param	int		$maxvalue		Max value for lines that can be selected
-	 * 		@return	int						Return number of qualifed lines in list
+	 *  @param	string	$selected       Id remise fixe pre-selectionnee
+	 *  @param  string	$htmlname       Nom champ formulaire
+	 *  @param  string	$filter         Criteres optionnels de filtre
+	 *  @param	int		$socid			Id of thirdparty
+	 *  @param	int		$maxvalue		Max value for lines that can be selected
+	 *  @return	int						Return number of qualifed lines in list
 	 */
-	function select_remises($selected, $htmlname, $filter, $socid, $maxvalue = 0)
+    public function select_remises($selected, $htmlname, $filter, $socid, $maxvalue = 0)
 	{
         // phpcs:enable
 		global $langs,$conf;
@@ -1361,33 +1361,33 @@ class Form
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *	Return list of all contacts (for a third party or all)
+	 *  Return list of all contacts (for a third party or all)
 	 *
-	 *	@param	int		$socid      	Id ot third party or 0 for all
-	 *	@param  string	$selected   	Id contact pre-selectionne
-	 *	@param  string	$htmlname  	    Name of HTML field ('none' for a not editable field)
-	 *	@param  int		$showempty      0=no empty value, 1=add an empty value, 2=add line 'Internal' (used by user edit), 3=add an empty value only if more than one record into list
-	 *	@param  string	$exclude        List of contacts id to exclude
-	 *	@param	string	$limitto		Disable answers that are not id in this array list
-	 *	@param	integer	$showfunction   Add function into label
-	 *	@param	string	$moreclass		Add more class to class style
-	 *	@param	integer	$showsoc	    Add company into label
-	 * 	@param	int		$forcecombo		Force to use combo box
+	 *  @param	int		$socid      	Id ot third party or 0 for all
+	 *  @param  string	$selected   	Id contact pre-selectionne
+	 *  @param  string	$htmlname  	    Name of HTML field ('none' for a not editable field)
+	 *  @param  int		$showempty      0=no empty value, 1=add an empty value, 2=add line 'Internal' (used by user edit), 3=add an empty value only if more than one record into list
+	 *  @param  string	$exclude        List of contacts id to exclude
+	 *  @param	string	$limitto		Disable answers that are not id in this array list
+	 *  @param	integer	$showfunction   Add function into label
+	 *  @param	string	$moreclass		Add more class to class style
+	 *  @param	integer	$showsoc	    Add company into label
+	 *  @param	int		$forcecombo		Force to use combo box
 	 *  @param	array	$events			Event options. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
 	 *  @param	bool	$options_only	Return options only (for ajax treatment)
 	 *  @param	string	$moreparam		Add more parameters onto the select tag. For example 'style="width: 95%"' to avoid select2 component to go over parent container
 	 *  @param	string	$htmlid			Html id to use instead of htmlname
-	 *	@return	int						<0 if KO, Nb of contact in list if OK
+	 *  @return	int						<0 if KO, Nb of contact in list if OK
 	 *  @deprected						You can use selectcontacts directly (warning order of param was changed)
 	 */
-	function select_contacts($socid, $selected = '', $htmlname = 'contactid', $showempty = 0, $exclude = '', $limitto = '', $showfunction = 0, $moreclass = '', $showsoc = 0, $forcecombo = 0, $events = array(), $options_only = false, $moreparam = '', $htmlid = '')
-	{
+    public function select_contacts($socid, $selected = '', $htmlname = 'contactid', $showempty = 0, $exclude = '', $limitto = '', $showfunction = 0, $moreclass = '', $showsoc = 0, $forcecombo = 0, $events = array(), $options_only = false, $moreparam = '', $htmlid = '')
+    {
         // phpcs:enable
 		print $this->selectcontacts($socid, $selected, $htmlname, $showempty, $exclude, $limitto, $showfunction, $moreclass, $options_only, $showsoc, $forcecombo, $events, $moreparam, $htmlid);
 		return $this->num;
-	}
+    }
 
 	/**
 	 *	Return HTML code of the SELECT of list of all contacts (for a third party or all).
@@ -1412,8 +1412,8 @@ class Form
 	 *  @param	bool		$multiple		add [] in the name of element and add 'multiple' attribut
 	 *	@return	 int						<0 if KO, Nb of contact in list if OK
 	 */
-	function selectcontacts($socid, $selected = '', $htmlname = 'contactid', $showempty = 0, $exclude = '', $limitto = '', $showfunction = 0, $moreclass = '', $options_only = false, $showsoc = 0, $forcecombo = 0, $events = array(), $moreparam = '', $htmlid = '', $multiple = false)
-	{
+    public function selectcontacts($socid, $selected = '', $htmlname = 'contactid', $showempty = 0, $exclude = '', $limitto = '', $showfunction = 0, $moreclass = '', $options_only = false, $showsoc = 0, $forcecombo = 0, $events = array(), $moreparam = '', $htmlid = '', $multiple = false)
+    {
 		global $conf,$langs,$hookmanager,$action;
 
 		$langs->load('companies');
@@ -1543,7 +1543,7 @@ class Form
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Return select list of users
 	 *
@@ -1559,13 +1559,13 @@ class Form
 	 *  @deprecated		Use select_dolusers instead
 	 *  @see select_dolusers()
 	 */
-	function select_users($selected = '', $htmlname = 'userid', $show_empty = 0, $exclude = null, $disabled = 0, $include = '', $enableonly = '', $force_entity = '0')
+    public function select_users($selected = '', $htmlname = 'userid', $show_empty = 0, $exclude = null, $disabled = 0, $include = '', $enableonly = '', $force_entity = '0')
 	{
         // phpcs:enable
 		print $this->select_dolusers($selected, $htmlname, $show_empty, $exclude, $disabled, $include, $enableonly, $force_entity);
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Return select list of users
 	 *
@@ -1589,7 +1589,7 @@ class Form
 	 * 	@return	string					HTML select string
 	 *  @see select_dolgroups
 	 */
-	function select_dolusers($selected = '', $htmlname = 'userid', $show_empty = 0, $exclude = null, $disabled = 0, $include = '', $enableonly = '', $force_entity = '0', $maxlength = 0, $showstatus = 0, $morefilter = '', $show_every = 0, $enableonlytext = '', $morecss = '', $noactive = 0, $outputmode = 0, $multiple = false)
+    public function select_dolusers($selected = '', $htmlname = 'userid', $show_empty = 0, $exclude = null, $disabled = 0, $include = '', $enableonly = '', $force_entity = '0', $maxlength = 0, $showstatus = 0, $morefilter = '', $show_every = 0, $enableonlytext = '', $morecss = '', $noactive = 0, $outputmode = 0, $multiple = false)
 	{
         // phpcs:enable
 		global $conf,$user,$langs;
@@ -1774,7 +1774,7 @@ class Form
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Return select list of users. Selected users are stored into session.
 	 *  List of users are provided into $_SESSION['assignedtouser'].
@@ -1797,7 +1797,7 @@ class Form
 	 * 	@return	string					HTML select string
 	 *  @see select_dolgroups
 	 */
-	function select_dolusers_forevent($action = '', $htmlname = 'userid', $show_empty = 0, $exclude = null, $disabled = 0, $include = '', $enableonly = '', $force_entity = '0', $maxlength = 0, $showstatus = 0, $morefilter = '', $showproperties = 0, $listofuserid = array(), $listofcontactid = array(), $listofotherid = array())
+    public function select_dolusers_forevent($action = '', $htmlname = 'userid', $show_empty = 0, $exclude = null, $disabled = 0, $include = '', $enableonly = '', $force_entity = '0', $maxlength = 0, $showstatus = 0, $morefilter = '', $showproperties = 0, $listofuserid = array(), $listofcontactid = array(), $listofotherid = array())
 	{
         // phpcs:enable
 		global $conf, $user, $langs;
@@ -1864,7 +1864,7 @@ class Form
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Return list of products for customer in Ajax if Ajax activated or go to select_produits_list
 	 *
@@ -1890,7 +1890,7 @@ class Form
 	 *  @param 		array 		$selected_combinations 	Selected combinations. Format: array([attrid] => attrval, [...])
 	 *  @return		void
 	 */
-	function select_produits($selected = '', $htmlname = 'productid', $filtertype = '', $limit = 20, $price_level = 0, $status = 1, $finished = 2, $selected_input_value = '', $hidelabel = 0, $ajaxoptions = array(), $socid = 0, $showempty = '1', $forcecombo = 0, $morecss = '', $hidepriceinlabel = 0, $warehouseStatus = '', $selected_combinations = array())
+    public function select_produits($selected = '', $htmlname = 'productid', $filtertype = '', $limit = 20, $price_level = 0, $status = 1, $finished = 2, $selected_input_value = '', $hidelabel = 0, $ajaxoptions = array(), $socid = 0, $showempty = '1', $forcecombo = 0, $morecss = '', $hidepriceinlabel = 0, $warehouseStatus = '', $selected_combinations = array())
 	{
         // phpcs:enable
 		global $langs,$conf;
@@ -2008,7 +2008,7 @@ class Form
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Return list of products for a customer
 	 *
@@ -2032,7 +2032,7 @@ class Form
 	 *										    'warehouseinternal' = select products from warehouses for internal correct/transfer only
 	 *  @return     array    				    Array of keys for json
 	 */
-	function select_produits_list($selected = '', $htmlname = 'productid', $filtertype = '', $limit = 20, $price_level = 0, $filterkey = '', $status = 1, $finished = 2, $outputmode = 0, $socid = 0, $showempty = '1', $forcecombo = 0, $morecss = '', $hidepriceinlabel = 0, $warehouseStatus = '')
+    public function select_produits_list($selected = '', $htmlname = 'productid', $filtertype = '', $limit = 20, $price_level = 0, $filterkey = '', $status = 1, $finished = 2, $outputmode = 0, $socid = 0, $showempty = '1', $forcecombo = 0, $morecss = '', $hidepriceinlabel = 0, $warehouseStatus = '')
 	{
         // phpcs:enable
 		global $langs,$conf,$user,$db;
@@ -2561,7 +2561,7 @@ class Form
 		$optJson = array('key'=>$outkey, 'value'=>$outref, 'label'=>$outval, 'label2'=>$outlabel, 'desc'=>$outdesc, 'type'=>$outtype, 'price_ht'=>$outprice_ht, 'price_ttc'=>$outprice_ttc, 'pricebasetype'=>$outpricebasetype, 'tva_tx'=>$outtva_tx, 'qty'=>$outqty, 'discount'=>$outdiscount, 'duration_value'=>$outdurationvalue, 'duration_unit'=>$outdurationunit);
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Return list of products for customer (in Ajax if Ajax activated or go to select_produits_fournisseurs_list)
 	 *
@@ -2576,7 +2576,7 @@ class Form
 	 *  @param	string	$morecss		More CSS
 	 *	@return	void
 	 */
-	function select_produits_fournisseurs($socid, $selected = '', $htmlname = 'productid', $filtertype = '', $filtre = '', $ajaxoptions = array(), $hidelabel = 0, $alsoproductwithnosupplierprice = 0, $morecss = '')
+    public function select_produits_fournisseurs($socid, $selected = '', $htmlname = 'productid', $filtertype = '', $filtre = '', $ajaxoptions = array(), $hidelabel = 0, $alsoproductwithnosupplierprice = 0, $morecss = '')
 	{
         // phpcs:enable
 		global $langs,$conf;
@@ -2605,7 +2605,7 @@ class Form
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Return list of suppliers products
 	 *
@@ -2622,7 +2622,7 @@ class Form
 	 *  @param	string	$morecss		Add more CSS
 	 *  @return array           		Array of keys for json
 	 */
-	function select_produits_fournisseurs_list($socid, $selected = '', $htmlname = 'productid', $filtertype = '', $filtre = '', $filterkey = '', $statut = -1, $outputmode = 0, $limit = 100, $alsoproductwithnosupplierprice = 0, $morecss = '')
+    public function select_produits_fournisseurs_list($socid, $selected = '', $htmlname = 'productid', $filtertype = '', $filtre = '', $filterkey = '', $statut = -1, $outputmode = 0, $limit = 100, $alsoproductwithnosupplierprice = 0, $morecss = '')
 	{
         // phpcs:enable
 		global $langs,$conf,$db;
@@ -2751,23 +2751,23 @@ class Form
 					}
 					if ($objp->quantity == 1)
 					{
-						$opt.= price($objp->fprice, 1, $langs, 0, 0, -1, $conf->currency)."/";
-						$outval.= price($objp->fprice, 0, $langs, 0, 0, -1, $conf->currency)."/";
+						$opt.= price($objp->fprice * (!empty($conf->global->DISPLAY_DISCOUNTED_SUPPLIER_PRICE)?(1 - $objp->remise_percent / 100):1), 1, $langs, 0, 0, -1, $conf->currency)."/";
+						$outval.= price($objp->fprice * (!empty($conf->global->DISPLAY_DISCOUNTED_SUPPLIER_PRICE)?(1 - $objp->remise_percent / 100):1), 0, $langs, 0, 0, -1, $conf->currency)."/";
 						$opt.= $langs->trans("Unit");	// Do not use strtolower because it breaks utf8 encoding
 						$outval.=$langs->transnoentities("Unit");
 					}
 					else
 					{
-						$opt.= price($objp->fprice, 1, $langs, 0, 0, -1, $conf->currency)."/".$objp->quantity;
-						$outval.= price($objp->fprice, 0, $langs, 0, 0, -1, $conf->currency)."/".$objp->quantity;
+						$opt.= price($objp->fprice * (!empty($conf->global->DISPLAY_DISCOUNTED_SUPPLIER_PRICE)?(1 - $objp->remise_percent / 100):1), 1, $langs, 0, 0, -1, $conf->currency)."/".$objp->quantity;
+						$outval.= price($objp->fprice * (!empty($conf->global->DISPLAY_DISCOUNTED_SUPPLIER_PRICE)?(1 - $objp->remise_percent / 100):1), 0, $langs, 0, 0, -1, $conf->currency)."/".$objp->quantity;
 						$opt.= ' '.$langs->trans("Units");	// Do not use strtolower because it breaks utf8 encoding
 						$outval.= ' '.$langs->transnoentities("Units");
 					}
 
 					if ($objp->quantity >= 1)
 					{
-						$opt.=" (".price($objp->unitprice, 1, $langs, 0, 0, -1, $conf->currency)."/".$langs->trans("Unit").")";	// Do not use strtolower because it breaks utf8 encoding
-						$outval.=" (".price($objp->unitprice, 0, $langs, 0, 0, -1, $conf->currency)."/".$langs->transnoentities("Unit").")";	// Do not use strtolower because it breaks utf8 encoding
+						$opt.=" (".price($objp->unitprice * (!empty($conf->global->DISPLAY_DISCOUNTED_SUPPLIER_PRICE)?(1 - $objp->remise_percent / 100):1), 1, $langs, 0, 0, -1, $conf->currency)."/".$langs->trans("Unit").")";	// Do not use strtolower because it breaks utf8 encoding
+						$outval.=" (".price($objp->unitprice * (!empty($conf->global->DISPLAY_DISCOUNTED_SUPPLIER_PRICE)?(1 - $objp->remise_percent / 100):1), 0, $langs, 0, 0, -1, $conf->currency)."/".$langs->transnoentities("Unit").")";	// Do not use strtolower because it breaks utf8 encoding
 					}
 					if ($objp->remise_percent >= 1)
 					{
@@ -2846,7 +2846,7 @@ class Form
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Return list of suppliers prices for a product
 	 *
@@ -2855,7 +2855,7 @@ class Form
 	 *  @param      int		$selected_supplier  Pre-selected supplier if more than 1 result
 	 *  @return	    void
 	 */
-	function select_product_fourn_price($productid, $htmlname = 'productfournpriceid', $selected_supplier = '')
+    public function select_product_fourn_price($productid, $htmlname = 'productfournpriceid', $selected_supplier = '')
 	{
         // phpcs:enable
 		global $langs,$conf;
@@ -2863,7 +2863,7 @@ class Form
 		$langs->load('stocks');
 
 		$sql = "SELECT p.rowid, p.label, p.ref, p.price, p.duration, pfp.fk_soc,";
-		$sql.= " pfp.ref_fourn, pfp.rowid as idprodfournprice, pfp.price as fprice, pfp.quantity, pfp.unitprice,";
+		$sql.= " pfp.ref_fourn, pfp.rowid as idprodfournprice, pfp.price as fprice, pfp.remise_percent, pfp.quantity, pfp.unitprice,";
 		$sql.= " pfp.fk_supplier_price_expression, pfp.fk_product, pfp.tva_tx, s.nom as name";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product as p";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as pfp ON p.rowid = pfp.fk_product";
@@ -2923,7 +2923,7 @@ class Form
 					}
 					if ($objp->quantity == 1)
 					{
-						$opt.= price($objp->fprice, 1, $langs, 0, 0, -1, $conf->currency)."/";
+						$opt.= price($objp->fprice * (!empty($conf->global->DISPLAY_DISCOUNTED_SUPPLIER_PRICE)?(1 - $objp->remise_percent / 100):1), 1, $langs, 0, 0, -1, $conf->currency)."/";
 					}
 
 					$opt.= $objp->quantity.' ';
@@ -2939,7 +2939,7 @@ class Form
 					if ($objp->quantity > 1)
 					{
 						$opt.=" - ";
-						$opt.= price($objp->unitprice, 1, $langs, 0, 0, -1, $conf->currency)."/".$langs->trans("Unit");
+						$opt.= price($objp->unitprice * (!empty($conf->global->DISPLAY_DISCOUNTED_SUPPLIER_PRICE)?(1 - $objp->remise_percent / 100):1), 1, $langs, 0, 0, -1, $conf->currency)."/".$langs->trans("Unit");
 					}
 					if ($objp->duration) $opt .= " - ".$objp->duration;
 					$opt .= "</option>\n";
@@ -2959,7 +2959,7 @@ class Form
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *    Return list of delivery address
 	 *
@@ -2969,7 +2969,7 @@ class Form
 	 *    @param    int		$showempty         	Add an empty field
 	 *    @return	integer|null
 	 */
-	function select_address($selected, $socid, $htmlname = 'address_id', $showempty = 0)
+    public function select_address($selected, $socid, $htmlname = 'address_id', $showempty = 0)
 	{
         // phpcs:enable
 		// looking for users
@@ -3013,13 +3013,13 @@ class Form
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *      Load into cache list of payment terms
 	 *
 	 *      @return     int             Nb of lines loaded, <0 if KO
 	 */
-	function load_cache_conditions_paiements()
+    public function load_cache_conditions_paiements()
 	{
         // phpcs:enable
 		global $langs;
@@ -3062,13 +3062,13 @@ class Form
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *      Charge dans cache la liste des délais de livraison possibles
 	 *
 	 *      @return     int             Nb of lines loaded, <0 if KO
 	 */
-	function load_cache_availability()
+    public function load_cache_availability()
 	{
         // phpcs:enable
 		global $langs;
@@ -3120,7 +3120,7 @@ class Form
 	 *		@param	int		$addempty		Add empty entry
 	 *		@return	void
 	 */
-	function selectAvailabilityDelay($selected = '', $htmlname = 'availid', $filtertype = '', $addempty = 0)
+    public function selectAvailabilityDelay($selected = '', $htmlname = 'availid', $filtertype = '', $addempty = 0)
 	{
 		global $langs,$user;
 
@@ -3152,7 +3152,7 @@ class Form
 	 *
 	 *      @return     int             Nb of lines loaded, <0 if KO
 	 */
-	function loadCacheInputReason()
+    public function loadCacheInputReason()
 	{
 		global $langs;
 
@@ -3206,7 +3206,7 @@ class Form
 	 *	@param	int		$addempty		 Add an empty entry
 	 *	@return	void
 	 */
-	function selectInputReason($selected = '', $htmlname = 'demandreasonid', $exclude = '', $addempty = 0)
+    public function selectInputReason($selected = '', $htmlname = 'demandreasonid', $exclude = '', $addempty = 0)
 	{
 		global $langs,$user;
 
@@ -3234,13 +3234,13 @@ class Form
 		if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *      Charge dans cache la liste des types de paiements possibles
 	 *
 	 *      @return     int                 Nb of lines loaded, <0 if KO
 	 */
-	function load_cache_types_paiements()
+    public function load_cache_types_paiements()
 	{
         // phpcs:enable
 		global $langs;
@@ -3288,7 +3288,7 @@ class Form
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *      Return list of payment modes.
 	 *      Constant MAIN_DEFAULT_PAYMENT_TERM_ID can used to set default value but scope is all application, probably not what you want.
@@ -3302,7 +3302,7 @@ class Form
 	 * 		@param	string	$morecss			Add more CSS on select tag
 	 *		@return	void
 	 */
-	function select_conditions_paiements($selected = 0, $htmlname = 'condid', $filtertype = -1, $addempty = 0, $noinfoadmin = 0, $morecss = '')
+    public function select_conditions_paiements($selected = 0, $htmlname = 'condid', $filtertype = -1, $addempty = 0, $noinfoadmin = 0, $morecss = '')
 	{
         // phpcs:enable
 		global $langs, $user, $conf;
@@ -3334,7 +3334,7 @@ class Form
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *      Return list of payment methods
 	 *
@@ -3349,7 +3349,7 @@ class Form
 	 *      @param  string  $morecss        Add more CSS on select tag
 	 * 		@return	void
 	 */
-	function select_types_paiements($selected = '', $htmlname = 'paiementtype', $filtertype = '', $format = 0, $empty = 1, $noadmininfo = 0, $maxlength = 0, $active = 1, $morecss = '')
+    public function select_types_paiements($selected = '', $htmlname = 'paiementtype', $filtertype = '', $format = 0, $empty = 1, $noadmininfo = 0, $maxlength = 0, $active = 1, $morecss = '')
 	{
         // phpcs:enable
 		global $langs,$user;
@@ -3403,7 +3403,7 @@ class Form
 	 *  @param  string	$htmlname       Nom de la zone select
 	 * 	@return	string					Code of HTML select to chose tax or not
 	 */
-	function selectPriceBaseType($selected = '', $htmlname = 'price_base_type')
+    public function selectPriceBaseType($selected = '', $htmlname = 'price_base_type')
 	{
 		global $langs;
 
@@ -3441,7 +3441,7 @@ class Form
 	 *  @param  string	$moreattrib        To add more attribute on select
 	 * 	@return	void
 	 */
-	function selectShippingMethod($selected = '', $htmlname = 'shipping_method_id', $filtre = '', $useempty = 0, $moreattrib = '')
+    public function selectShippingMethod($selected = '', $htmlname = 'shipping_method_id', $filtre = '', $useempty = 0, $moreattrib = '')
 	{
 		global $langs, $conf, $user;
 
@@ -3494,7 +3494,7 @@ class Form
 	 *    @param    int		$addempty    1=Add an empty value in list, 2=Add an empty value in list only if there is more than 2 entries.
 	 *    @return	void
 	 */
-	function formSelectShippingMethod($page, $selected = '', $htmlname = 'shipping_method_id', $addempty = 0)
+    public function formSelectShippingMethod($page, $selected = '', $htmlname = 'shipping_method_id', $addempty = 0)
 	{
 		global $langs, $db;
 
@@ -3525,7 +3525,7 @@ class Form
 	 *
 	 * @return    string                     HTML select
 	 */
-	function selectSituationInvoices($selected = '', $socid = 0)
+    public function selectSituationInvoices($selected = '', $socid = 0)
 	{
 		global $langs;
 
@@ -3579,7 +3579,7 @@ class Form
 	 *      @param	int		$showempty		Add a nempty line
 	 * 		@return	string                  HTML select
 	 */
-	function selectUnits($selected = '', $htmlname = 'units', $showempty = 0)
+    public function selectUnits($selected = '', $htmlname = 'units', $showempty = 0)
 	{
 		global $langs;
 
@@ -3617,7 +3617,7 @@ class Form
 		return $return;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Return a HTML select list of bank accounts
 	 *
@@ -3630,7 +3630,7 @@ class Form
 	 *  @param	int		$showcurrency		Show currency in label
 	 * 	@return	int							<0 if error, Num of bank account found if OK (0, 1, 2, ...)
 	 */
-	function select_comptes($selected = '', $htmlname = 'accountid', $statut = 0, $filtre = '', $useempty = 0, $moreattrib = '', $showcurrency = 0)
+    public function select_comptes($selected = '', $htmlname = 'accountid', $statut = 0, $filtre = '', $useempty = 0, $moreattrib = '', $showcurrency = 0)
 	{
         // phpcs:enable
 		global $langs, $conf;
@@ -3692,6 +3692,75 @@ class Form
 	}
 
 	/**
+	 *  Return a HTML select list of establishment
+	 *
+	 *  @param	string	$selected           Id establishment pre-selected
+	 *  @param  string	$htmlname           Name of select zone
+	 *  @param  int		$statut             Status of searched establishment (0=open, 1=closed, 2=both)
+	 *  @param  string	$filtre             To filter list
+	 *  @param  int		$useempty           1=Add an empty value in list, 2=Add an empty value in list only if there is more than 2 entries.
+	 *  @param  string	$moreattrib         To add more attribute on select
+	 * 	@return	int							<0 if error, Num of establishment found if OK (0, 1, 2, ...)
+	 */
+	public function selectEstablishments($selected = '', $htmlname = 'entity', $statut = 0, $filtre = '', $useempty = 0, $moreattrib = '')
+	{
+        // phpcs:enable
+		global $langs, $conf;
+
+		$langs->load("admin");
+		$num = 0;
+
+		$sql = "SELECT rowid, name, fk_country, status, entity";
+		$sql.= " FROM ".MAIN_DB_PREFIX."establishment";
+		$sql.= " WHERE 1=1";
+		if ($statut != 2) $sql.= " AND status = '".$statut."'";
+		if ($filtre) $sql.=" AND ".$filtre;
+		$sql.= " ORDER BY name";
+
+		dol_syslog(get_class($this)."::select_establishment", LOG_DEBUG);
+		$result = $this->db->query($sql);
+		if ($result)
+		{
+			$num = $this->db->num_rows($result);
+			$i = 0;
+			if ($num)
+			{
+				print '<select id="select'.$htmlname.'" class="flat selectestablishment" name="'.$htmlname.'"'.($moreattrib?' '.$moreattrib:'').'>';
+				if ($useempty == 1 || ($useempty == 2 && $num > 1))
+				{
+					print '<option value="-1">&nbsp;</option>';
+				}
+
+				while ($i < $num)
+				{
+					$obj = $this->db->fetch_object($result);
+					if ($selected == $obj->rowid)
+					{
+						print '<option value="'.$obj->rowid.'" selected>';
+					}
+					else
+					{
+						print '<option value="'.$obj->rowid.'">';
+					}
+					print trim($obj->name);
+					if ($statut == 2 && $obj->status == 1) print ' ('.$langs->trans("Closed").')';
+					print '</option>';
+					$i++;
+				}
+				print "</select>";
+			}
+			else
+			{
+				if ($statut == 0) print '<span class="opacitymedium">'.$langs->trans("NoActiveEstablishmentDefined").'</span>';
+				else print '<span class="opacitymedium">'.$langs->trans("NoEstablishmentFound").'</span>';
+			}
+		}
+		else {
+			dol_print_error($this->db);
+		}
+	}
+
+	/**
 	 *    Display form to select bank account
 	 *
 	 *    @param	string	$page        Page
@@ -3700,7 +3769,7 @@ class Form
 	 *    @param    int		$addempty    1=Add an empty value in list, 2=Add an empty value in list only if there is more than 2 entries.
 	 *    @return	void
 	 */
-	function formSelectAccount($page, $selected = '', $htmlname = 'fk_account', $addempty = 0)
+    public function formSelectAccount($page, $selected = '', $htmlname = 'fk_account', $addempty = 0)
 	{
 		global $langs;
 		if ($htmlname != "none") {
@@ -3725,7 +3794,7 @@ class Form
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *    Return list of categories having choosed type
 	 *
@@ -3738,7 +3807,7 @@ class Form
 	 *    @return	string
 	 *    @see select_categories
 	 */
-	function select_all_categories($type, $selected = '', $htmlname = "parent", $maxlength = 64, $excludeafterid = 0, $outputmode = 0)
+    public function select_all_categories($type, $selected = '', $htmlname = "parent", $maxlength = 64, $excludeafterid = 0, $outputmode = 0)
 	{
         // phpcs:enable
 		global $conf, $langs;
@@ -3812,7 +3881,7 @@ class Form
 		return $output;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *     Show a confirmation HTML form or AJAX popup
 	 *
@@ -3829,7 +3898,7 @@ class Form
 	 *     @deprecated
 	 *     @see formconfirm()
 	 */
-	function form_confirm($page, $title, $question, $action, $formquestion = '', $selectedchoice = "", $useajax = 0, $height = 170, $width = 500)
+    public function form_confirm($page, $title, $question, $action, $formquestion = '', $selectedchoice = "", $useajax = 0, $height = 170, $width = 500)
 	{
         // phpcs:enable
         dol_syslog(__METHOD__ . ': using form_confirm is deprecated. Use formconfim instead.', LOG_WARNING);
@@ -3860,7 +3929,7 @@ class Form
 	 *     @param	int			$disableformtag		1=Disable form tag. Can be used if we are already inside a <form> section.
 	 *     @return 	string      	    			HTML ajax code if a confirm ajax popup is required, Pure HTML code if it's an html form
 	 */
-	function formconfirm($page, $title, $question, $action, $formquestion = '', $selectedchoice = '', $useajax = 0, $height = 210, $width = 500, $disableformtag = 0)
+    public function formconfirm($page, $title, $question, $action, $formquestion = '', $selectedchoice = '', $useajax = 0, $height = 210, $width = 500, $disableformtag = 0)
 	{
 		global $langs,$conf;
 		global $useglobalvars;
@@ -4126,7 +4195,7 @@ class Form
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *    Show a form to select a project
 	 *
@@ -4140,7 +4209,7 @@ class Form
 	 *    @param    int     $nooutput           No print is done. String is returned.
 	 *    @return	string                      Return html content
 	 */
-	function form_project($page, $socid, $selected = '', $htmlname = 'projectid', $discard_closed = 0, $maxlength = 20, $forcefocus = 0, $nooutput = 0)
+    public function form_project($page, $socid, $selected = '', $htmlname = 'projectid', $discard_closed = 0, $maxlength = 20, $forcefocus = 0, $nooutput = 0)
 	{
         // phpcs:enable
 		global $langs;
@@ -4186,7 +4255,7 @@ class Form
 		return $out;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Show a form to select payment conditions
 	 *
@@ -4196,7 +4265,7 @@ class Form
 	 *	@param	int		$addempty		Add empty entry
 	 *  @return	void
 	 */
-	function form_conditions_reglement($page, $selected = '', $htmlname = 'cond_reglement_id', $addempty = 0)
+    public function form_conditions_reglement($page, $selected = '', $htmlname = 'cond_reglement_id', $addempty = 0)
 	{
         // phpcs:enable
 		global $langs;
@@ -4221,7 +4290,7 @@ class Form
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Show a form to select a delivery delay
 	 *
@@ -4231,7 +4300,7 @@ class Form
 	 *	@param	int		$addempty		Ajoute entree vide
 	 *  @return	void
 	 */
-	function form_availability($page, $selected = '', $htmlname = 'availability', $addempty = 0)
+    public function form_availability($page, $selected = '', $htmlname = 'availability', $addempty = 0)
 	{
         // phpcs:enable
 		global $langs;
@@ -4257,17 +4326,17 @@ class Form
 	}
 
 	/**
-	 *	Output HTML form to select list of input reason (events that triggered an object creation, like after sending an emailing, making an advert, ...)
+	 *  Output HTML form to select list of input reason (events that triggered an object creation, like after sending an emailing, making an advert, ...)
 	 *  List found into table c_input_reason loaded by loadCacheInputReason
 	 *
 	 *  @param  string	$page        	Page
 	 *  @param  string	$selected    	Id condition pre-selectionne
 	 *  @param  string	$htmlname    	Name of select html field
-	 *	@param	int		$addempty		Add empty entry
+	 *  @param	int		$addempty		Add empty entry
 	 *  @return	void
-	 */
-	function formInputReason($page, $selected = '', $htmlname = 'demandreason', $addempty = 0)
-	{
+     */
+    public function formInputReason($page, $selected = '', $htmlname = 'demandreason', $addempty = 0)
+    {
 		global $langs;
 		if ($htmlname != "none")
 		{
@@ -4297,7 +4366,7 @@ class Form
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *    Show a form + html select a date
 	 *
@@ -4310,7 +4379,7 @@ class Form
 	 *    @return	string
 	 *    @see		selectDate
 	 */
-	function form_date($page, $selected, $htmlname, $displayhour = 0, $displaymin = 0, $nooutput = 0)
+    public function form_date($page, $selected, $htmlname, $displayhour = 0, $displaymin = 0, $nooutput = 0)
 	{
         // phpcs:enable
 		global $langs;
@@ -4340,7 +4409,7 @@ class Form
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Show a select form to choose a user
 	 *
@@ -4351,7 +4420,7 @@ class Form
 	 *  @param  array	$include        List of users id to include
 	 *  @return	void
 	 */
-	function form_users($page, $selected = '', $htmlname = 'userid', $exclude = '', $include = '')
+    public function form_users($page, $selected = '', $htmlname = 'userid', $exclude = '', $include = '')
 	{
         // phpcs:enable
 		global $langs;
@@ -4380,7 +4449,7 @@ class Form
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *    Show form with payment mode
 	 *
@@ -4392,7 +4461,7 @@ class Form
 	 *    @param   int     $addempty       1=Add empty entry
 	 *    @return	void
 	 */
-	function form_modes_reglement($page, $selected = '', $htmlname = 'mode_reglement_id', $filtertype = '', $active = 1, $addempty = 0)
+    public function form_modes_reglement($page, $selected = '', $htmlname = 'mode_reglement_id', $filtertype = '', $active = 1, $addempty = 0)
 	{
         // phpcs:enable
 		global $langs;
@@ -4417,7 +4486,7 @@ class Form
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *    Show form with multicurrency code
 	 *
@@ -4426,7 +4495,7 @@ class Form
 	 *    @param    string	$htmlname    	Name of select html field
 	 *    @return	void
 	 */
-	function form_multicurrency_code($page, $selected = '', $htmlname = 'multicurrency_code')
+    public function form_multicurrency_code($page, $selected = '', $htmlname = 'multicurrency_code')
 	{
         // phpcs:enable
 		global $langs;
@@ -4446,7 +4515,7 @@ class Form
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *    Show form with multicurrency rate
 	 *
@@ -4456,7 +4525,7 @@ class Form
 	 *    @param    string  $currency       Currency code to explain the rate
 	 *    @return	void
 	 */
-	function form_multicurrency_rate($page, $rate = '', $htmlname = 'multicurrency_tx', $currency = '')
+    public function form_multicurrency_rate($page, $rate = '', $htmlname = 'multicurrency_tx', $currency = '')
 	{
         // phpcs:enable
 		global $langs, $mysoc, $conf;
@@ -4489,7 +4558,7 @@ class Form
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Show a select box with available absolute discounts
 	 *
@@ -4505,7 +4574,7 @@ class Form
 	 *  @param	int		$discount_type	0 => customer discount, 1 => supplier discount
 	 *  @return	void
 	 */
-	function form_remise_dispo($page, $selected, $htmlname, $socid, $amount, $filter = '', $maxvalue = 0, $more = '', $hidelist = 0, $discount_type = 0)
+    public function form_remise_dispo($page, $selected, $htmlname, $socid, $amount, $filter = '', $maxvalue = 0, $more = '', $hidelist = 0, $discount_type = 0)
 	{
         // phpcs:enable
 		global $conf,$langs;
@@ -4586,18 +4655,18 @@ class Form
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
-	/**
-	 *    Show forms to select a contact
-	 *
-	 *    @param	string		$page        	Page
-	 *    @param	Societe		$societe		Filter on third party
-	 *    @param    int			$selected    	Id contact pre-selectionne
-	 *    @param    string		$htmlname    	Name of HTML select. If 'none', we just show contact link.
-	 *    @return	void
-	 */
-	function form_contacts($page, $societe, $selected = '', $htmlname = 'contactid')
-	{
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+    /**
+     *  Show forms to select a contact
+     *
+     *  @param	string		$page        	Page
+     *  @param	Societe		$societe		Filter on third party
+     *  @param    int			$selected    	Id contact pre-selectionne
+     *  @param    string		$htmlname    	Name of HTML select. If 'none', we just show contact link.
+     *  @return	void
+     */
+    public function form_contacts($page, $societe, $selected = '', $htmlname = 'contactid')
+    {
         // phpcs:enable
 		global $langs, $conf;
 
@@ -4632,7 +4701,7 @@ class Form
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Output html select to select thirdparty
 	 *
@@ -4647,7 +4716,7 @@ class Form
 	 *  @param  int     $nooutput       No print output. Return it only.
 	 *  @return	void
 	 */
-	function form_thirdparty($page, $selected = '', $htmlname = 'socid', $filter = '', $showempty = 0, $showtype = 0, $forcecombo = 0, $events = array(), $nooutput = 0)
+    public function form_thirdparty($page, $selected = '', $htmlname = 'socid', $filter = '', $showempty = 0, $showtype = 0, $forcecombo = 0, $events = array(), $nooutput = 0)
 	{
         // phpcs:enable
 		global $langs;
@@ -4681,7 +4750,7 @@ class Form
 		else print $out;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *    Retourne la liste des devises, dans la langue de l'utilisateur
 	 *
@@ -4690,7 +4759,7 @@ class Form
      *    @deprecated
 	 *    @return	void
 	 */
-	function select_currency($selected = '', $htmlname = 'currency_id')
+    public function select_currency($selected = '', $htmlname = 'currency_id')
 	{
         // phpcs:enable
 		print $this->selectCurrency($selected, $htmlname);
@@ -4703,7 +4772,7 @@ class Form
 	 *  @param  string	$htmlname    name of HTML select list
 	 * 	@return	string
 	 */
-	function selectCurrency($selected = '', $htmlname = 'currency_id')
+    public function selectCurrency($selected = '', $htmlname = 'currency_id')
 	{
 		global $conf,$langs,$user;
 
@@ -4746,7 +4815,7 @@ class Form
 	 *  @param  integer	$useempty    1=Add empty line
 	 * 	@return	string
 	 */
-	function selectMultiCurrency($selected = '', $htmlname = 'multicurrency_code', $useempty = 0)
+    public function selectMultiCurrency($selected = '', $htmlname = 'multicurrency_code', $useempty = 0)
 	{
 		global $db,$conf,$langs,$user;
 
@@ -4794,14 +4863,14 @@ class Form
 		return $out;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *	Load into the cache vat rates of a country
+	 *  Load into the cache vat rates of a country
 	 *
-	 *	@param	string	$country_code		Country code with quotes ("'CA'", or "'CA,IN,...'")
-	 *	@return	int							Nb of loaded lines, 0 if already loaded, <0 if KO
+	 *  @param	string	$country_code		Country code with quotes ("'CA'", or "'CA,IN,...'")
+	 *  @return	int							Nb of loaded lines, 0 if already loaded, <0 if KO
 	 */
-	function load_cache_vatrates($country_code)
+    public function load_cache_vatrates($country_code)
 	{
         // phpcs:enable
 		global $langs;
@@ -4861,7 +4930,7 @@ class Form
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Output an HTML select vat rate.
 	 *  The name of this function should be selectVat. We keep bad name for compatibility purpose.
@@ -4883,7 +4952,7 @@ class Form
 	 *  @param  int          $mode                0=Use vat rate as key in combo list, 1=Add VAT code after vat rate into key, -1=Use id of vat line as key
 	 *  @return	string
 	 */
-	function load_tva($htmlname = 'tauxtva', $selectedrate = '', $societe_vendeuse = '', $societe_acheteuse = '', $idprod = 0, $info_bits = 0, $type = '', $options_only = false, $mode = 0)
+    public function load_tva($htmlname = 'tauxtva', $selectedrate = '', $societe_vendeuse = '', $societe_acheteuse = '', $idprod = 0, $info_bits = 0, $type = '', $options_only = false, $mode = 0)
 	{
         // phpcs:enable
 		global $langs,$conf,$mysoc;
@@ -5058,7 +5127,7 @@ class Form
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *  Show a HTML widget to input a date or combo list for day, month, years and optionaly hours and minutes.
 	 *  Fields are preselected with :
@@ -5083,7 +5152,7 @@ class Form
      *  @deprecated
 	 *  @see    form_date, select_month, select_year, select_dayofweek
 	 */
-    function select_date($set_time = '', $prefix = 're', $h = 0, $m = 0, $empty = 0, $form_name = "", $d = 1, $addnowlink = 0, $nooutput = 0, $disabled = 0, $fullday = '', $addplusone = '', $adddateof = '')
+    public function select_date($set_time = '', $prefix = 're', $h = 0, $m = 0, $empty = 0, $form_name = "", $d = 1, $addnowlink = 0, $nooutput = 0, $disabled = 0, $fullday = '', $addplusone = '', $adddateof = '')
     {
         // phpcs:enable
         $retstring = $this->selectDate($set_time, $prefix, $h, $m, $empty, $form_name, $d, $addnowlink, $disabled, $fullday, $addplusone, $adddateof);
@@ -5116,7 +5185,7 @@ class Form
 	 * 	@return string                      Html for selectDate
 	 *  @see    form_date, select_month, select_year, select_dayofweek
 	 */
-	function selectDate($set_time = '', $prefix = 're', $h = 0, $m = 0, $empty = 0, $form_name = "", $d = 1, $addnowlink = 0, $disabled = 0, $fullday = '', $addplusone = '', $adddateof = '')
+    public function selectDate($set_time = '', $prefix = 're', $h = 0, $m = 0, $empty = 0, $form_name = "", $d = 1, $addnowlink = 0, $disabled = 0, $fullday = '', $addplusone = '', $adddateof = '')
 	{
 		global $conf,$langs;
 
@@ -5465,9 +5534,9 @@ class Form
 		return $retstring;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
-	/**
-	 *	Function to show a form to select a duration on a page
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+    /**
+     *  Function to show a form to select a duration on a page
 	 *
 	 *	@param	string	$prefix   		Prefix for input fields
 	 *	@param  int	$iSecond  		    Default preselected duration (number of seconds or '')
@@ -5479,7 +5548,7 @@ class Form
 	 * 	@param	int	$nooutput		    Do not output html string but return it
 	 *  @return	string|void
 	 */
-	function select_duration($prefix, $iSecond = '', $disabled = 0, $typehour = 'select', $minunderhours = 0, $nooutput = 0)
+    public function select_duration($prefix, $iSecond = '', $disabled = 0, $typehour = 'select', $minunderhours = 0, $nooutput = 0)
 	{
         // phpcs:enable
 		global $langs;
@@ -5567,7 +5636,7 @@ class Form
 	 * @return	string								Return HTML string
 	 * @see selectForFormsList select_thirdparty
 	 */
-	function selectForForms($objectdesc, $htmlname, $preselectedvalue, $showempty = '', $searchkey = '', $placeholder = '', $morecss = '', $moreparams = '', $forcecombo = 0)
+    public function selectForForms($objectdesc, $htmlname, $preselectedvalue, $showempty = '', $searchkey = '', $placeholder = '', $morecss = '', $moreparams = '', $forcecombo = 0)
 	{
 		global $conf, $user;
 
@@ -5637,7 +5706,7 @@ class Form
 	 * @return	string								Return HTML string
 	 * @see selectForForms
 	 */
-	function selectForFormsList($objecttmp, $htmlname, $preselectedvalue, $showempty = '', $searchkey = '', $placeholder = '', $morecss = '', $moreparams = '', $forcecombo = 0, $outputmode = 0)
+    public function selectForFormsList($objecttmp, $htmlname, $preselectedvalue, $showempty = '', $searchkey = '', $placeholder = '', $morecss = '', $moreparams = '', $forcecombo = 0, $outputmode = 0)
 	{
 		global $conf, $langs, $user;
 
@@ -5774,7 +5843,7 @@ class Form
 	 * 	@return	string								HTML select string.
 	 *  @see multiselectarray, selectArrayAjax, selectArrayFilter
 	 */
-	static function selectarray($htmlname, $array, $id = '', $show_empty = 0, $key_in_label = 0, $value_as_key = 0, $moreparam = '', $translate = 0, $maxlen = 0, $disabled = 0, $sort = '', $morecss = '', $addjscombo = 0, $moreparamonempty = '', $disablebademail = 0, $nohtmlescape = 0)
+	public static function selectarray($htmlname, $array, $id = '', $show_empty = 0, $key_in_label = 0, $value_as_key = 0, $moreparam = '', $translate = 0, $maxlen = 0, $disabled = 0, $sort = '', $morecss = '', $addjscombo = 0, $moreparamonempty = '', $disablebademail = 0, $nohtmlescape = 0)
 	{
 		global $conf, $langs;
 
@@ -5884,7 +5953,7 @@ class Form
 	 * 	@return	string   						HTML select string
 	 *  @see selectArrayFilter, ajax_combobox in ajax.lib.php
 	 */
-	static function selectArrayAjax($htmlname, $url, $id = '', $moreparam = '', $moreparamtourl = '', $disabled = 0, $minimumInputLength = 1, $morecss = '', $callurlonselect = 0, $placeholder = '', $acceptdelayedhtml = 0)
+	public static function selectArrayAjax($htmlname, $url, $id = '', $moreparam = '', $moreparamtourl = '', $disabled = 0, $minimumInputLength = 1, $morecss = '', $callurlonselect = 0, $placeholder = '', $acceptdelayedhtml = 0)
 	{
 		global $conf, $langs;
 		global $delayedhtmlcontent;
@@ -5968,11 +6037,11 @@ class Form
 		return $out;
 	}
 
-	/**
-	 *	Return a HTML select string, built from an array of key+value, but content returned into select is defined into $array parameter.
-	 *  Note: Do not apply langs->trans function on returned content of Ajax service, content may be entity encoded twice.
-	 *
-	 *	@param	string	$htmlname       		Name of html select area
+    /**
+     *  Return a HTML select string, built from an array of key+value, but content returned into select is defined into $array parameter.
+     *  Note: Do not apply langs->trans function on returned content of Ajax service, content may be entity encoded twice.
+     *
+     *  @param  string	$htmlname               Name of html select area
 	 *	@param	string	$array					Array (key=>array('text'=>'A text', 'url'=>'An url'), ...)
 	 *	@param	string	$id             		Preselected key
 	 *	@param  string	$moreparam      		Add more parameters onto the select tag
@@ -5983,10 +6052,10 @@ class Form
 	 *  @param  int     $callurlonselect        If set to 1, some code is added so an url return by the ajax is called when value is selected.
 	 *  @param  string  $placeholder            String to use as placeholder
 	 *  @param  integer $acceptdelayedhtml      1 = caller is requesting to have html js content not returned but saved into global $delayedhtmlcontent (so caller can show it at end of page to avoid flash FOUC effect)
-	 * 	@return	string   						HTML select string
+	 *  @return	string   						HTML select string
 	 *  @see selectArrayAjax, ajax_combobox in ajax.lib.php
 	 */
-	static function selectArrayFilter($htmlname, $array, $id = '', $moreparam = '', $disableFiltering = 0, $disabled = 0, $minimumInputLength = 1, $morecss = '', $callurlonselect = 0, $placeholder = '', $acceptdelayedhtml = 0)
+	public static function selectArrayFilter($htmlname, $array, $id = '', $moreparam = '', $disableFiltering = 0, $disabled = 0, $minimumInputLength = 1, $morecss = '', $callurlonselect = 0, $placeholder = '', $acceptdelayedhtml = 0)
 	{
 		global $conf, $langs;
 		global $delayedhtmlcontent;
@@ -6104,7 +6173,7 @@ class Form
 	 *	@return	string					HTML multiselect string
 	 *  @see selectarray, selectArrayAjax, selectArrayFilter
 	 */
-	static function multiselectarray($htmlname, $array, $selected = array(), $key_in_label = 0, $value_as_key = 0, $morecss = '', $translate = 0, $width = 0, $moreattrib = '', $elemtype = '', $placeholder = '', $addjscombo = -1)
+	public static function multiselectarray($htmlname, $array, $selected = array(), $key_in_label = 0, $value_as_key = 0, $morecss = '', $translate = 0, $width = 0, $moreattrib = '', $elemtype = '', $placeholder = '', $addjscombo = -1)
 	{
 		global $conf, $langs;
 
@@ -6214,7 +6283,7 @@ class Form
 	 *	@return	string					HTML multiselect string
 	 *  @see selectarray
 	 */
-	static function multiSelectArrayWithCheckbox($htmlname, &$array, $varpage)
+	public static function multiSelectArrayWithCheckbox($htmlname, &$array, $varpage)
 	{
 		global $conf,$langs,$user;
 
@@ -6302,7 +6371,7 @@ class Form
 	 *  @param		int		$rendermode		0=Default, use multiselect. 1=Emulate multiselect (recommended)
 	 * 	@return		string					String with categories
 	 */
-	function showCategories($id, $type, $rendermode = 0)
+    public function showCategories($id, $type, $rendermode = 0)
 	{
 		global $db;
 
@@ -6347,7 +6416,7 @@ class Form
 	 *  @param  array           $compatibleImportElementsList  Array of compatibles elements object for "import from" action
 	 *  @return	int							      <0 if KO, >=0 if OK
 	 */
-	function showLinkedObjectBlock($object, $morehtmlright = '', $compatibleImportElementsList = false)
+    public function showLinkedObjectBlock($object, $morehtmlright = '', $compatibleImportElementsList = false)
 	{
 		global $conf,$langs,$hookmanager;
 		global $bc;
@@ -6495,7 +6564,7 @@ class Form
 	 *  @param	array			$excludelinksto		Do not show links of this type, for exemple array('order') or array('supplier_order'). null or array() if no exclusion.
 	 *  @return	string								<0 if KO, >0 if OK
 	 */
-	function showLinkToObjectBlock($object, $restrictlinksto = array(), $excludelinksto = array())
+    public function showLinkToObjectBlock($object, $restrictlinksto = array(), $excludelinksto = array())
 	{
 		global $conf, $langs, $hookmanager;
 		global $bc;
@@ -6591,7 +6660,7 @@ class Form
 						$objp = $this->db->fetch_object($resqllist);
 
 						print '<tr class="oddeven">';
-						print '<td aling="left">';
+						print '<td class="left">';
 						print '<input type="radio" name="idtolinkto" value=' . $objp->rowid . '>';
 						print '</td>';
 						print '<td class="center">' . $objp->ref . '</td>';
@@ -6668,7 +6737,7 @@ class Form
 	 *  @param	int      	$useempty		1=Add empty line
 	 *	@return	string						See option
 	 */
-	function selectyesno($htmlname, $value = '', $option = 0, $disabled = false, $useempty = 0)
+    public function selectyesno($htmlname, $value = '', $option = 0, $disabled = false, $useempty = 0)
 	{
 		global $langs;
 
@@ -6700,7 +6769,7 @@ class Form
 
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Return list of export templates
 	 *
@@ -6710,7 +6779,7 @@ class Form
 	 *  @param  int		$useempty          Affiche valeur vide dans liste
 	 *  @return	void
 	 */
-	function select_export_model($selected = '', $htmlname = 'exportmodelid', $type = '', $useempty = 0)
+    public function select_export_model($selected = '', $htmlname = 'exportmodelid', $type = '', $useempty = 0)
 	{
         // phpcs:enable
 		$sql = "SELECT rowid, label";
@@ -6768,7 +6837,7 @@ class Form
 	 *	  @param	string	$morehtmlright	More html code to show after ref.
 	 * 	  @return	string    				Portion HTML with ref + navigation buttons
 	 */
-	function showrefnav($object, $paramid, $morehtml = '', $shownav = 1, $fieldid = 'rowid', $fieldref = 'ref', $morehtmlref = '', $moreparam = '', $nodbprefix = 0, $morehtmlleft = '', $morehtmlstatus = '', $morehtmlright = '')
+    public function showrefnav($object, $paramid, $morehtml = '', $shownav = 1, $fieldid = 'rowid', $fieldref = 'ref', $morehtmlref = '', $moreparam = '', $nodbprefix = 0, $morehtmlleft = '', $morehtmlstatus = '', $morehtmlright = '')
 	{
 		global $langs,$conf,$hookmanager;
 
@@ -6918,7 +6987,7 @@ class Form
 	 * 		@param	int		$width			Width of photo
 	 * 	  	@return string    				HTML code to output barcode
 	 */
-	function showbarcode(&$object, $width = 100)
+    public function showbarcode(&$object, $width = 100)
 	{
 		global $conf;
 
@@ -6955,7 +7024,7 @@ class Form
 	 *      @param	string		$forcecapture		Force parameter capture on HTML input file element to ask a smartphone to allow to open camera to take photo. Auto if empty.
 	 * 	  	@return string    						HTML code to output photo
 	 */
-	static function showphoto($modulepart, $object, $width = 100, $height = 0, $caneditfield = 0, $cssclass = 'photowithmargin', $imagesize = '', $addlinktofullsize = 1, $cache = 0, $forcecapture = '')
+	public static function showphoto($modulepart, $object, $width = 100, $height = 0, $caneditfield = 0, $cssclass = 'photowithmargin', $imagesize = '', $addlinktofullsize = 1, $cache = 0, $forcecapture = '')
 	{
 		global $conf,$langs;
 
@@ -7098,7 +7167,7 @@ class Form
 		return $ret;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Return select list of groups
 	 *
@@ -7114,7 +7183,7 @@ class Form
 	 *  @return	string
 	 *  @see select_dolusers
 	 */
-	function select_dolgroups($selected = '', $htmlname = 'groupid', $show_empty = 0, $exclude = '', $disabled = 0, $include = '', $enableonly = '', $force_entity = '0', $multiple = false)
+    public function select_dolgroups($selected = '', $htmlname = 'groupid', $show_empty = 0, $exclude = '', $disabled = 0, $include = '', $enableonly = '', $force_entity = '0', $multiple = false)
 	{
         // phpcs:enable
 		global $conf,$user,$langs;
@@ -7210,7 +7279,7 @@ class Form
 	 *
 	 *  @return	string
 	 */
-	function showFilterButtons()
+    public function showFilterButtons()
 	{
 		global $conf, $langs;
 
@@ -7229,7 +7298,7 @@ class Form
 	 *  @param  int     $calljsfunction            0=default. 1=call function initCheckForSelect() after changing status of checkboxes
 	 *  @return	string
 	 */
-	function showCheckAddButtons($cssclass = 'checkforaction', $calljsfunction = 0)
+    public function showCheckAddButtons($cssclass = 'checkforaction', $calljsfunction = 0)
 	{
 		global $conf, $langs;
 
@@ -7268,7 +7337,7 @@ class Form
 	 *  @param  int     $calljsfunction            0=default. 1=call function initCheckForSelect() after changing status of checkboxes
 	 *  @return	string
 	 */
-	function showFilterAndCheckAddButtons($addcheckuncheckall = 0, $cssclass = 'checkforaction', $calljsfunction = 0)
+    public function showFilterAndCheckAddButtons($addcheckuncheckall = 0, $cssclass = 'checkforaction', $calljsfunction = 0)
 	{
 		$out.=$this->showFilterButtons();
 		if ($addcheckuncheckall)
@@ -7290,7 +7359,7 @@ class Form
 	 * @param	array	$params                param to give
 	 * @return	string
 	 */
-	function selectExpenseCategories($selected = '', $htmlname = 'fk_c_exp_tax_cat', $useempty = 0, $excludeid = array(), $target = '', $default_selected = 0, $params = array())
+    public function selectExpenseCategories($selected = '', $htmlname = 'fk_c_exp_tax_cat', $useempty = 0, $excludeid = array(), $target = '', $default_selected = 0, $params = array())
 	{
 		global $db, $conf, $langs, $user;
 
@@ -7379,7 +7448,7 @@ class Form
 	 * @param	integer	$useempty    1=Add empty line
 	 * @return	string
 	 */
-	function selectExpenseRanges($selected = '', $htmlname = 'fk_range', $useempty = 0)
+    public function selectExpenseRanges($selected = '', $htmlname = 'fk_range', $useempty = 0)
 	{
 		global $db,$conf,$langs;
 
@@ -7416,7 +7485,7 @@ class Form
 	 * @param	integer	$useid       0=use 'code' as key, 1=use 'id' as key
 	 * @return	string
 	 */
-	function selectExpense($selected = '', $htmlname = 'fk_c_type_fees', $useempty = 0, $allchoice = 1, $useid = 0)
+    public function selectExpense($selected = '', $htmlname = 'fk_c_type_fees', $useempty = 0, $allchoice = 1, $useid = 0)
 	{
 		global $db,$langs;
 
@@ -7445,6 +7514,6 @@ class Form
 			dol_print_error($db);
 		}
 
-		return $out;
-	}
+        return $out;
+    }
 }

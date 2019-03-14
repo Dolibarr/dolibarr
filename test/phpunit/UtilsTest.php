@@ -57,9 +57,9 @@ class UtilsTest extends PHPUnit_Framework_TestCase
      *
      * @return UserTest
      */
-    function __construct()
+    public function __construct()
     {
-    	parent::__construct();
+        parent::__construct();
 
         //$this->sharedFixture
         global $conf,$user,$langs,$db;

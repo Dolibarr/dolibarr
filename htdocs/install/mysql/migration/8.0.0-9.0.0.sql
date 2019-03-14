@@ -48,6 +48,9 @@ create table llx_facture_rec_extrafields
   import_key                varchar(14)
 ) ENGINE=innodb;
 
+ALTER TABLE llx_actioncomm ADD COLUMN email_subject varchar(255) after email_msgid;
+ALTER TABLE llx_actioncomm ADD COLUMN email_tocc varchar(255) after email_to;
+ALTER TABLE llx_actioncomm ADD COLUMN email_tobcc varchar(255) after email_tocc;
 
 -- For 9.0
 ALTER TABLE llx_extrafields ADD COLUMN help text NULL;

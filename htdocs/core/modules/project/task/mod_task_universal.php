@@ -59,7 +59,7 @@ class mod_task_universal extends ModeleNumRefTask
      *
      *  @return     string      Texte descripif
      */
-	function info()
+    public function info()
     {
     	global $conf,$langs;
 
@@ -100,7 +100,7 @@ class mod_task_universal extends ModeleNumRefTask
      *
      *  @return     string      Example
      */
-    function getExample()
+    public function getExample()
     {
     	global $conf,$langs,$mysoc;
 
@@ -123,7 +123,7 @@ class mod_task_universal extends ModeleNumRefTask
 	*  @param   Task		$object	    Object task
 	*  @return  string					Value if OK, 0 if KO
 	*/
-    function getNextValue($objsoc, $object)
+    public function getNextValue($objsoc, $object)
     {
 		global $db,$conf;
 
@@ -145,7 +145,7 @@ class mod_task_universal extends ModeleNumRefTask
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *  Return next reference not yet used as a reference
      *
@@ -153,7 +153,7 @@ class mod_task_universal extends ModeleNumRefTask
      *  @param  Task		$object	    Object task
      *  @return string      			Next not used reference
      */
-    function project_get_num($objsoc = 0, $object = '')
+    public function project_get_num($objsoc = 0, $object = '')
     {
         // phpcs:enable
         return $this->getNextValue($objsoc, $object);

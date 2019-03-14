@@ -59,7 +59,7 @@ class mod_expedition_safor extends ModelNumRefExpedition
 	 *
 	 *	@return     string      text description
 	 */
-    function info()
+    public function info()
     {
     	global $langs;
       	return $langs->trans("SimpleNumRefModelDesc", $this->prefix);
@@ -71,7 +71,7 @@ class mod_expedition_safor extends ModelNumRefExpedition
 	 *
 	 *	@return     string      Example
 	 */
-	function getExample()
+    public function getExample()
 	{
 		return $this->prefix."0501-0001";
 	}
@@ -82,7 +82,7 @@ class mod_expedition_safor extends ModelNumRefExpedition
 	 *
 	 *	@return     boolean     false if conflit, true if ok
 	 */
-	function canBeActivated()
+    public function canBeActivated()
 	{
 		global $conf,$langs,$db;
 
@@ -117,7 +117,7 @@ class mod_expedition_safor extends ModelNumRefExpedition
 	 *	@param	Object		$shipment	Shipment object
 	 *	@return string      			Value if OK, 0 if KO
 	 */
-	function getNextValue($objsoc, $shipment)
+    public function getNextValue($objsoc, $shipment)
 	{
 		global $db,$conf;
 
@@ -150,7 +150,7 @@ class mod_expedition_safor extends ModelNumRefExpedition
 		return $this->prefix.$yymm."-".$num;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Return next free value
 	 *
@@ -158,7 +158,7 @@ class mod_expedition_safor extends ModelNumRefExpedition
 	 *	@param	Object		$objforref	Shipment object
 	 *	@return string      			Next free value
 	 */
-	function expedition_get_num($objsoc, $objforref)
+    public function expedition_get_num($objsoc, $objforref)
 	{
         // phpcs:enable
 		return $this->getNextValue($objsoc, $objforref);

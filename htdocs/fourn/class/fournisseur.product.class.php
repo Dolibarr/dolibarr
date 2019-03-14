@@ -107,7 +107,7 @@ class ProductFournisseur extends Product
      *
      *  @param		DoliDB		$db      Database handler
      */
-    function __construct($db)
+    public function __construct($db)
     {
         global $langs;
 
@@ -118,14 +118,14 @@ class ProductFournisseur extends Product
 
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *    Remove all prices for this couple supplier-product
      *
      *    @param	int		$id_fourn   Supplier Id
      *    @return   int         		< 0 if error, > 0 if ok
      */
-    function remove_fournisseur($id_fourn)
+    public function remove_fournisseur($id_fourn)
     {
         // phpcs:enable
         $ok=1;
@@ -156,14 +156,14 @@ class ProductFournisseur extends Product
     }
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      * 	Remove a price for a couple supplier-product
      *
      * 	@param	int		$rowid		Line id of price
      *	@return	int					<0 if KO, >0 if OK
      */
-    function remove_product_fournisseur_price($rowid)
+    public function remove_product_fournisseur_price($rowid)
     {
         // phpcs:enable
         global $conf, $user;
@@ -202,7 +202,7 @@ class ProductFournisseur extends Product
     }
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *    Modify the purchase price for a supplier
      *
@@ -231,7 +231,7 @@ class ProductFournisseur extends Product
      *    @param  	int		    $fk_barcode_type     	        Barcode type
      *    @return	int								<0 if KO, >=0 if OK
      */
-    function update_buyprice($qty, $buyprice, $user, $price_base_type, $fourn, $availability, $ref_fourn, $tva_tx, $charges = 0, $remise_percent = 0, $remise = 0, $newnpr = 0, $delivery_time_days = 0, $supplier_reputation = '', $localtaxes_array = array(), $newdefaultvatcode = '', $multicurrency_buyprice = 0, $multicurrency_price_base_type = 'HT', $multicurrency_tx = 1, $multicurrency_code = '', $desc_fourn = '', $barcode='', $fk_barcode_type='')
+    public function update_buyprice($qty, $buyprice, $user, $price_base_type, $fourn, $availability, $ref_fourn, $tva_tx, $charges = 0, $remise_percent = 0, $remise = 0, $newnpr = 0, $delivery_time_days = 0, $supplier_reputation = '', $localtaxes_array = array(), $newdefaultvatcode = '', $multicurrency_buyprice = 0, $multicurrency_price_base_type = 'HT', $multicurrency_tx = 1, $multicurrency_code = '', $desc_fourn = '', $barcode='', $fk_barcode_type='')
     {
         // phpcs:enable
         global $conf, $langs;
@@ -479,7 +479,7 @@ class ProductFournisseur extends Product
         }
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *    Loads the price information of a provider
      *
@@ -487,7 +487,7 @@ class ProductFournisseur extends Product
      *    @param    int     $ignore_expression  Ignores the math expression for calculating price and uses the db value instead
      *    @return   int 					    < 0 if KO, 0 if OK but not found, > 0 if OK
      */
-    function fetch_product_fournisseur_price($rowid, $ignore_expression = 0)
+    public function fetch_product_fournisseur_price($rowid, $ignore_expression = 0)
     {
         // phpcs:enable
         global $conf;
@@ -573,7 +573,7 @@ class ProductFournisseur extends Product
     }
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *    List all supplier prices of a product
      *
@@ -584,7 +584,7 @@ class ProductFournisseur extends Product
      *    @param	int		$offset		Offset
      *    @return	array				Array of Products with new properties to define supplier price
      */
-    function list_product_fournisseur_price($prodid, $sortfield = '', $sortorder = '', $limit = 0, $offset = 0)
+    public function list_product_fournisseur_price($prodid, $sortfield = '', $sortorder = '', $limit = 0, $offset = 0)
     {
         // phpcs:enable
         global $conf;
@@ -682,7 +682,7 @@ class ProductFournisseur extends Product
         }
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *  Load properties for minimum price
      *
@@ -691,7 +691,7 @@ class ProductFournisseur extends Product
      *  @param	int		$socid		get min price for specific supplier
      *  @return int					<0 if KO, 0=Not found of no product id provided, >0 if OK
      */
-    function find_min_price_product_fournisseur($prodid, $qty = 0, $socid = 0)
+    public function find_min_price_product_fournisseur($prodid, $qty = 0, $socid = 0)
     {
         // phpcs:enable
         global $conf;
@@ -826,7 +826,7 @@ class ProductFournisseur extends Product
      *  @param  int     $expression_id	Expression
      *  @return int                 	<0 if KO, >0 if OK
      */
-    function setSupplierPriceExpression($expression_id)
+    public function setSupplierPriceExpression($expression_id)
     {
         global $conf;
 
@@ -864,7 +864,7 @@ class ProductFournisseur extends Product
      *	@return	string					String with supplier price
 	 *  TODO Remove this method. Use getNomUrl directly.
      */
-    function getSocNomUrl($withpicto = 0, $option = 'supplier', $maxlen = 0, $notooltip = 0)
+    public function getSocNomUrl($withpicto = 0, $option = 'supplier', $maxlen = 0, $notooltip = 0)
     {
         $thirdparty = new Fournisseur($this->db);
         $thirdparty->fetch($this->fourn_id);
@@ -872,7 +872,7 @@ class ProductFournisseur extends Product
         return $thirdparty->getNomUrl($withpicto, $option, $maxlen, $notooltip);
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *	Display price of product
      *
@@ -884,7 +884,7 @@ class ProductFournisseur extends Product
      *                                    to display in table format.
      *  @return string                    String with supplier price
      */
-    function display_price_product_fournisseur($showunitprice = 1, $showsuptitle = 1, $maxlen = 0, $notooltip = 0, $productFournList = array())
+    public function display_price_product_fournisseur($showunitprice = 1, $showsuptitle = 1, $maxlen = 0, $notooltip = 0, $productFournList = array())
     {
         // phpcs:enable
         global $langs;
@@ -937,7 +937,7 @@ class ProductFournisseur extends Product
      *    @param	int     $offset                 Offset
      *    @return	array   Array of Log prices
      */
-    function listProductFournisseurPriceLog($product_fourn_price_id, $sortfield = '', $sortorder = '', $limit = 0, $offset = 0)
+    public function listProductFournisseurPriceLog($product_fourn_price_id, $sortfield = '', $sortorder = '', $limit = 0, $offset = 0)
     {
         global $conf;
 
@@ -983,7 +983,7 @@ class ProductFournisseur extends Product
      *                                          to display in table format.
      *  @return string  HTML String with supplier price
      */
-    function displayPriceProductFournisseurLog($productFournLogList = array())
+    public function displayPriceProductFournisseurLog($productFournLogList = array())
     {
         global $langs;
 
@@ -1017,7 +1017,7 @@ class ProductFournisseur extends Product
      *  @param  int     $save_lastsearch_value    	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
      *	@return	string								String with URL
      */
-    function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
+    public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
     {
         global $db, $conf, $langs;
 
@@ -1072,7 +1072,7 @@ class ProductFournisseur extends Product
 
         return $result;
     }
-    
+
     /**
      * Private function to log price history
      *

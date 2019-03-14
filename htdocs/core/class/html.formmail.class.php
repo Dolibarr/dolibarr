@@ -78,7 +78,7 @@ class FormMail extends Form
 	/**
 	 * @var int
 	 * @deprecated Fill withto with array before calling method.
-	 * @see withto
+	 * @see $withto
 	 */
 	public $withtosocid;
 
@@ -121,7 +121,7 @@ class FormMail extends Form
 	 *
 	 *  @param	DoliDB	$db      Database handler
 	 */
-	function __construct($db)
+	public function __construct($db)
 	{
 		$this->db = $db;
 
@@ -151,13 +151,13 @@ class FormMail extends Form
 		$this->withfckeditor=-1;	// -1 = Auto
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Clear list of attached files in send mail form (also stored in session)
 	 *
 	 * @return	void
 	 */
-	function clear_attached_files()
+	public function clear_attached_files()
 	{
         // phpcs:enable
 		global $conf,$user;
@@ -174,7 +174,7 @@ class FormMail extends Form
 		unset($_SESSION["listofmimes".$keytoavoidconflict]);
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Add a file into the list of attached files (stored in SECTION array)
 	 *
@@ -183,7 +183,7 @@ class FormMail extends Form
 	 * @param 	string   $type   Mime type (can be dol_mimetype($file))
 	 * @return	void
 	 */
-	function add_attached_files($path, $file = '', $type = '')
+	public function add_attached_files($path, $file = '', $type = '')
 	{
         // phpcs:enable
 		$listofpaths=array();
@@ -208,14 +208,14 @@ class FormMail extends Form
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Remove a file from the list of attached files (stored in SECTION array)
 	 *
 	 * @param  	string	$keytodelete     Key in file array (0, 1, 2, ...)
 	 * @return	void
 	 */
-	function remove_attached_files($keytodelete)
+	public function remove_attached_files($keytodelete)
 	{
         // phpcs:enable
 		$listofpaths=array();
@@ -238,13 +238,13 @@ class FormMail extends Form
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Return list of attached files (stored in SECTION array)
 	 *
 	 * @return	array       array('paths'=> ,'names'=>, 'mimes'=> )
 	 */
-	function get_attached_files()
+	public function get_attached_files()
 	{
         // phpcs:enable
 		$listofpaths=array();
@@ -258,7 +258,7 @@ class FormMail extends Form
 		return array('paths'=>$listofpaths, 'names'=>$listofnames, 'mimes'=>$listofmimes);
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Show the form to input an email
 	 *  this->withfile: 0=No attaches files, 1=Show attached files, 2=Can add new attached files
@@ -268,13 +268,13 @@ class FormMail extends Form
 	 *	@param	string	$removefileaction	Name of action when removing file attachments
 	 *	@return	void
 	 */
-	function show_form($addfileaction = 'addfile', $removefileaction = 'removefile')
+	public function show_form($addfileaction = 'addfile', $removefileaction = 'removefile')
 	{
         // phpcs:enable
 		print $this->get_form($addfileaction, $removefileaction);
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Get the form to input an email
 	 *  this->withfile: 0=No attaches files, 1=Show attached files, 2=Can add new attached files
@@ -285,7 +285,7 @@ class FormMail extends Form
 	 *	@param	string	$removefileaction	Name of action when removing file attachments
 	 *	@return string						Form to show
 	 */
-	function get_form($addfileaction = 'addfile', $removefileaction = 'removefile')
+	public function get_form($addfileaction = 'addfile', $removefileaction = 'removefile')
 	{
         // phpcs:enable
 		global $conf, $langs, $user, $hookmanager, $form;
@@ -1056,12 +1056,12 @@ class FormMail extends Form
 		//if (! $this->errorstomail) $this->errorstomail=$this->frommail;
 		$errorstomail = (! empty($conf->global->MAIN_MAIL_ERRORS_TO) ? $conf->global->MAIN_MAIL_ERRORS_TO : $this->errorstomail);
 		if ($this->witherrorstoreadonly) {
-			$out.= '<tr><td>'.$langs->trans("MailErrorsTo").'</td><td>';
-			$out = '<input type="hidden" id="errorstomail" name="errorstomail" value="'.$errorstomail.'" />';
+			$out= '<tr><td>'.$langs->trans("MailErrorsTo").'</td><td>';
+			$out.= '<input type="hidden" id="errorstomail" name="errorstomail" value="'.$errorstomail.'" />';
 			$out.= $errorstomail;
 			$out.= "</td></tr>\n";
 		} else {
-			$out.= '<tr><td>'.$langs->trans("MailErrorsTo").'</td><td>';
+			$out= '<tr><td>'.$langs->trans("MailErrorsTo").'</td><td>';
 			$out.= '<input size="30" id="errorstomail" name="errorstomail" value="'.$errorstomail.'" />';
 			$out.= "</td></tr>\n";
 		}
@@ -1130,24 +1130,23 @@ class FormMail extends Form
 	}
 
 	/**
-	 *      Return templates of email with type = $type_template or type = 'all'.
-	 *      This search into table c_email_templates. Used by the get_form function.
+	 *  Return templates of email with type = $type_template or type = 'all'.
+	 *  This search into table c_email_templates. Used by the get_form function.
 	 *
-	 * 		@param	DoliDB		$db				Database handler
-	 * 		@param	string		$type_template	Get message for model/type=$type_template, type='all' also included.
-	 *      @param	string		$user			Get template public or limited to this user
-	 *      @param	Translate	$outputlangs	Output lang object
-	 *      @param	int			$id				Id of template to find, or -1 for first found with position 0, or 0 for first found whatever is position (priority order depends on lang provided or not) or -2 for exact match with label (no answer if not found)
-	 *      @param  int         $active         1=Only active template, 0=Only disabled, -1=All
-	 *      @param	string		$label			Label of template
-	 *      @return ModelMail|integer			One instance of ModelMail or -1 if error
+	 *  @param	DoliDB		$db				Database handler
+	 *  @param	string		$type_template	Get message for model/type=$type_template, type='all' also included.
+	 *  @param	string		$user			Get template public or limited to this user
+	 *  @param	Translate	$outputlangs	Output lang object
+	 *  @param	int			$id				Id of template to find, or -1 for first found with position 0, or 0 for first found whatever is position (priority order depends on lang provided or not) or -2 for exact match with label (no answer if not found)
+	 *  @param  int         $active         1=Only active template, 0=Only disabled, -1=All
+	 *  @param	string		$label			Label of template
+	 *  @return ModelMail|integer			One instance of ModelMail or -1 if error
 	 */
 	public function getEMailTemplate($db, $type_template, $user, $outputlangs, $id = 0, $active = 1, $label = '')
 	{
-		$ret = new ModelMail();
+        $ret = new ModelMail();
 
-		if ($id == -2 && empty($label))
-		{
+		if ($id == -2 && empty($label)) {
 			$this->error = 'LabelIsMandatoryWhenIdIs-2';
 			return -1;
 		}
@@ -1318,9 +1317,9 @@ class FormMail extends Form
 	 * @param	CommonObject	$object		   Object to use
 	 * @param   Translate  		$outputlangs   Object lang
 	 * @return	void
-	 * @see getCommonSubstitutionArray
+	 * @see getCommonSubstitutionArray()
 	 */
-	function setSubstitFromObject($object, $outputlangs)
+	public function setSubstitFromObject($object, $outputlangs)
 	{
 		global $conf, $user;
 
@@ -1377,7 +1376,7 @@ class FormMail extends Form
 	 * @param	Object	$object		Object if applicable
 	 * @return	array               Array of substitution values for emails.
 	 */
-	static function getAvailableSubstitKey($mode = 'formemail', $object = null)
+	public static function getAvailableSubstitKey($mode = 'formemail', $object = null)
 	{
 		global $conf, $langs;
 

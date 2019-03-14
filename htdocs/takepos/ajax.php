@@ -49,9 +49,10 @@ if ($action=="getProducts") {
     echo json_encode($prods);
 }
 
-if ($action=="search") {
+elseif ($action=="search") {
     $sql = 'SELECT * FROM '.MAIN_DB_PREFIX.'product';
     $sql .= ' WHERE entity IN ('.getEntity('product').')';
+    $sql .= ' AND tosell = 1';
     $sql .= natural_search(array('label','barcode'), $term);
     $resql = $db->query($sql);
     $rows = array();

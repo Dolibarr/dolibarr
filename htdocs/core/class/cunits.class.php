@@ -66,7 +66,7 @@ class CUnits // extends CommonObject
      *
      *  @param      DoliDb		$db      Database handler
      */
-    function __construct($db)
+    public function __construct($db)
     {
         $this->db = $db;
     }
@@ -79,7 +79,7 @@ class CUnits // extends CommonObject
      *  @param      int		$notrigger   0=launch triggers after, 1=disable triggers
      *  @return     int      		   	 <0 if KO, Id of created object if OK
      */
-    function create($user, $notrigger = 0)
+    public function create($user, $notrigger = 0)
     {
     	global $conf, $langs;
 		$error=0;
@@ -170,7 +170,7 @@ class CUnits // extends CommonObject
      *  @param		string	$unit_type	unit type
      *  @return     int		<0 if KO, >0 if OK
      */
-    function fetch($id, $code = '', $short_label = '', $unit_type = '')
+    public function fetch($id, $code = '', $short_label = '', $unit_type = '')
     {
     	global $langs;
 
@@ -310,7 +310,7 @@ class CUnits // extends CommonObject
      *  @param      int		$notrigger	 0=launch triggers after, 1=disable triggers
      *  @return     int     		   	 <0 if KO, >0 if OK
      */
-    function update($user = null, $notrigger = 0)
+    public function update($user = null, $notrigger = 0)
     {
     	global $conf, $langs;
 		$error=0;
@@ -383,7 +383,7 @@ class CUnits // extends CommonObject
      *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
 	 *  @return	int					 <0 if KO, >0 if OK
 	 */
-	function delete($user, $notrigger = 0)
+	public function delete($user, $notrigger = 0)
 	{
 		global $conf, $langs;
 		$error=0;

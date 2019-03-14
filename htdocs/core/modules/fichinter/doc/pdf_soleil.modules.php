@@ -116,7 +116,7 @@ class pdf_soleil extends ModelePDFFicheinter
 	 *
 	 *  @param		DoliDB		$db      Database handler
 	 */
-	function __construct($db)
+	public function __construct($db)
 	{
 		global $conf,$langs,$mysoc;
 
@@ -151,7 +151,7 @@ class pdf_soleil extends ModelePDFFicheinter
 		$this->posxdesc=$this->marge_gauche+1;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Function to build pdf onto disk
 	 *
@@ -163,7 +163,7 @@ class pdf_soleil extends ModelePDFFicheinter
 	 *  @param		int				$hideref			Do not show ref
 	 *  @return		int									1=OK, 0=KO
 	 */
-	function write_file($object, $outputlangs, $srctemplatepath = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0)
+	public function write_file($object, $outputlangs, $srctemplatepath = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
         // phpcs:enable
 		global $user,$langs,$conf,$mysoc,$db,$hookmanager;
@@ -338,15 +338,12 @@ class pdf_soleil extends ModelePDFFicheinter
 						// Description of product line
 						$curX = $this->posxdesc-1;
 
-						// Description of product line
-                                                if (empty($conf->global->FICHINTER_DATE_WITHOUT_HOUR))
-                                                {
-						        $txt=$outputlangs->transnoentities("Date")." : ".dol_print_date($objectligne->datei, 'dayhour', false, $outputlangs, true);
-                                                }
-                                                else
-                                                {
-                                                        $txt=$outputlangs->transnoentities("Date")." : ".dol_print_date($objectligne->datei, 'day', false, $outputlangs, true);
-                                                }
+                        // Description of product line
+                        if (empty($conf->global->FICHINTER_DATE_WITHOUT_HOUR)) {
+                            $txt=$outputlangs->transnoentities("Date")." : ".dol_print_date($objectligne->datei, 'dayhour', false, $outputlangs, true);
+                        } else {
+                            $txt=$outputlangs->transnoentities("Date")." : ".dol_print_date($objectligne->datei, 'day', false, $outputlangs, true);
+                        }
 
 						if ($objectligne->duration > 0)
 						{
@@ -496,7 +493,7 @@ class pdf_soleil extends ModelePDFFicheinter
 	 *   @param		int			$hidebottom		Hide bottom bar of array
 	 *   @return	void
 	 */
-	function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop = 0, $hidebottom = 0)
+	private function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop = 0, $hidebottom = 0)
 	{
 		global $conf;
 
@@ -556,7 +553,7 @@ class pdf_soleil extends ModelePDFFicheinter
 	 *  @param  Translate	$outputlangs	Object lang for output
 	 *  @return	void
 	 */
-	function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
+	private function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
 	{
 		global $conf,$langs;
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
@@ -732,7 +729,7 @@ class pdf_soleil extends ModelePDFFicheinter
 	 *      @param	int			$hidefreetext		1=Hide free text
 	 *      @return	integer
 	 */
-	function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
+	private function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
 	{
 		global $conf;
 		$showdetails=$conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;

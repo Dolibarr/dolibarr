@@ -77,8 +77,7 @@ if ($action == 'updateMask')
         setEventMessages($langs->trans("Error"), null, 'errors');
     }
 }
-
-if ($action == 'specimen')
+elseif ($action == 'specimen')
 {
     $modele=GETPOST('module', 'alpha');
 
@@ -122,7 +121,6 @@ if ($action == 'specimen')
     	dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
     }
 }
-
 // Activate a model
 elseif ($action == 'set')
 {
@@ -137,7 +135,6 @@ elseif ($action == 'del')
         if ($conf->global->FACTURE_ADDON_PDF == "$value") dolibarr_del_const($db, 'FACTURE_ADDON_PDF', $conf->entity);
 	}
 }
-
 // Set default model
 elseif ($action == 'setdoc')
 {
@@ -155,7 +152,6 @@ elseif ($action == 'setdoc')
 		$ret = addDocumentModel($value, $type, $label, $scandir);
 	}
 }
-
 elseif ($action == 'setmod')
 {
     // TODO Verifier si module numerotation choisi peut etre active
@@ -163,8 +159,7 @@ elseif ($action == 'setmod')
 
     dolibarr_set_const($db, "FACTURE_ADDON", $value, 'chaine', 0, '', $conf->entity);
 }
-
-if ($action == 'setribchq')
+elseif ($action == 'setribchq')
 {
 	$rib = GETPOST('rib', 'alpha');
 	$chq = GETPOST('chq', 'alpha');
@@ -183,8 +178,7 @@ if ($action == 'setribchq')
         setEventMessages($langs->trans("Error"), null, 'errors');
     }
 }
-
-if ($action == 'set_FACTURE_DRAFT_WATERMARK')
+elseif ($action == 'set_FACTURE_DRAFT_WATERMARK')
 {
 	$draft = GETPOST('FACTURE_DRAFT_WATERMARK', 'alpha');
 
@@ -202,7 +196,7 @@ if ($action == 'set_FACTURE_DRAFT_WATERMARK')
     }
 }
 
-if ($action == 'set_INVOICE_FREE_TEXT')
+elseif ($action == 'set_INVOICE_FREE_TEXT')
 {
 	$freetext = GETPOST('INVOICE_FREE_TEXT', 'none');	// No alpha here, we want exact string
 
@@ -219,8 +213,7 @@ if ($action == 'set_INVOICE_FREE_TEXT')
         setEventMessages($langs->trans("Error"), null, 'errors');
     }
 }
-
-if ($action == 'setforcedate')
+elseif ($action == 'setforcedate')
 {
 	$forcedate = GETPOST('forcedate', 'alpha');
 
@@ -237,8 +230,7 @@ if ($action == 'setforcedate')
         setEventMessages($langs->trans("Error"), null, 'errors');
     }
 }
-
-if ($action == 'setDefaultPDFModulesByType')
+elseif ($action == 'setDefaultPDFModulesByType')
 {
     $invoicetypemodels =  GETPOST('invoicetypemodels');
 

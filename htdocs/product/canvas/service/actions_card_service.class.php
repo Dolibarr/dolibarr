@@ -28,15 +28,15 @@ include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
  */
 class ActionsCardService
 {
-    var $targetmodule;
-    var $canvas;
-    var $card;
+    public $targetmodule;
+    public $canvas;
+    public $card;
 
     //! Template container
-	var $tpl = array();
+	public $tpl = array();
 
 	// List of fiels for action=list
-	var $field_list =array();
+	public $field_list =array();
     public $list_datas = array();
 
 
@@ -48,7 +48,7 @@ class ActionsCardService
      *    @param   string	$canvas         Name of canvas
      *    @param   string	$card           Name of tab (sub-canvas)
 	 */
-	function __construct($db, $targetmodule, $canvas, $card)
+	public function __construct($db, $targetmodule, $canvas, $card)
 	{
 		$this->db 				= $db;
 		$this->targetmodule     = $targetmodule;
@@ -63,7 +63,7 @@ class ActionsCardService
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
 	 *    Assign custom values for canvas (for example into this->tpl to be used by templates)
 	 *
@@ -72,7 +72,7 @@ class ActionsCardService
 	 *    @param	string	$ref		Ref of object
 	 *    @return	void
 	 */
-	function assign_values(&$action, $id = 0, $ref = '')
+	public function assign_values(&$action, $id = 0, $ref = '')
 	{
         // phpcs:enable
 		global $limit, $offset, $sortfield, $sortorder;
@@ -274,7 +274,7 @@ class ActionsCardService
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * 	Fetch datas list and save into ->list_datas
 	 *
@@ -284,7 +284,7 @@ class ActionsCardService
 	 *  @param	string	$sortorder	Sort order ('ASC' or 'DESC')
 	 *  @return	void
 	 */
-	function LoadListDatas($limit, $offset, $sortfield, $sortorder)
+	public function LoadListDatas($limit, $offset, $sortfield, $sortorder)
 	{
         // phpcs:enable
 		global $conf;

@@ -28,18 +28,18 @@ include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
  */
 class box_graph_orders_permonth extends ModeleBoxes
 {
-	var $boxcode="orderspermonth";
-	var $boximg="object_order";
-	var $boxlabel="BoxCustomersOrdersPerMonth";
-	var $depends = array("commande");
+    public $boxcode="orderspermonth";
+    public $boximg="object_order";
+    public $boxlabel="BoxCustomersOrdersPerMonth";
+    public $depends = array("commande");
 
 	/**
      * @var DoliDB Database handler.
      */
     public $db;
 
-	var $info_box_head = array();
-	var $info_box_contents = array();
+    public $info_box_head = array();
+    public $info_box_contents = array();
 
 
 	/**
@@ -48,7 +48,7 @@ class box_graph_orders_permonth extends ModeleBoxes
 	 * 	@param	DoliDB	$db			Database handler
 	 *  @param	string	$param		More parameters
 	 */
-	function __construct($db, $param)
+	public function __construct($db, $param)
 	{
 		global $user;
 
@@ -63,7 +63,7 @@ class box_graph_orders_permonth extends ModeleBoxes
 	 *  @param	int		$max        Maximum number of records to load
      *  @return	void
 	 */
-	function loadBox($max = 5)
+	public function loadBox($max = 5)
 	{
 		global $conf, $user, $langs, $db;
 
@@ -273,14 +273,14 @@ class box_graph_orders_permonth extends ModeleBoxes
 	}
 
 	/**
-	 *	Method to show box
+	 *  Method to show box
 	 *
-	 *	@param	array	$head       Array with properties of box title
-	 *	@param  array	$contents   Array with properties of box lines
+	 *  @param	array	$head       Array with properties of box title
+	 *  @param  array	$contents   Array with properties of box lines
 	 *  @param	int		$nooutput	No print, only return string
-	 *	@return	string
+	 *  @return	string
 	 */
-    function showBox($head = null, $contents = null, $nooutput = 0)
+    public function showBox($head = null, $contents = null, $nooutput = 0)
     {
 		return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
 	}

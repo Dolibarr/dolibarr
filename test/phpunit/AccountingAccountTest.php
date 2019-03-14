@@ -57,9 +57,9 @@ class AccountingAccountTest extends PHPUnit\Framework\TestCase
      *
      * @return AccountingAccountTest
      */
-    function __construct()
+    public function __construct()
     {
-    	parent::__construct();
+        parent::__construct();
 
         //$this->sharedFixture
         global $conf,$user,$langs,$db;
@@ -187,19 +187,19 @@ class AccountingAccountTest extends PHPUnit\Framework\TestCase
      */
     public function testAccountingAccountUpdate($localobject)
     {
-    	global $conf,$user,$langs,$db;
-    	$conf=$this->savconf;
-    	$user=$this->savuser;
-    	$langs=$this->savlangs;
-    	$db=$this->savdb;
+        global $conf,$user,$langs,$db;
+        $conf=$this->savconf;
+        $user=$this->savuser;
+        $langs=$this->savlangs;
+        $db=$this->savdb;
 
-    	$localobject->label='New label';
-    	$result=$localobject->update($user);
+        $localobject->label='New label';
+        $result=$localobject->update($user);
 
-    	print __METHOD__." id=".$id." result=".$result."\n";
-    	$this->assertLessThan($result, 0);
+        print __METHOD__." id=".$id." result=".$result."\n";
+        $this->assertLessThan($result, 0);
 
-    	return $localobject->id;
+        return $localobject->id;
     }
 
     /**

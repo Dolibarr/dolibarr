@@ -57,7 +57,7 @@ class CMailFileTest extends PHPUnit_Framework_TestCase
      *
      * @return CMailFile
      */
-    function __construct()
+    public function __construct()
     {
     	parent::__construct();
 

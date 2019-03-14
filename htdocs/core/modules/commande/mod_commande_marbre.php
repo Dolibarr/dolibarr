@@ -43,13 +43,6 @@ class mod_commande_marbre extends ModeleNumRefCommandes
 	public $error='';
 
 	/**
-	 * @var string
-	 * @deprecated
-	 * @see name
-	 */
-	public $nom='Marbre';
-
-	/**
 	 * @var string name
 	 */
 	public $name='Marbre';
@@ -60,7 +53,7 @@ class mod_commande_marbre extends ModeleNumRefCommandes
      *
      *  @return     string      Text with description
      */
-    function info()
+    public function info()
     {
     	global $langs;
       	return $langs->trans("SimpleNumRefModelDesc", $this->prefix);
@@ -72,7 +65,7 @@ class mod_commande_marbre extends ModeleNumRefCommandes
 	 *
 	 *  @return     string      Example
 	 */
-	function getExample()
+	public function getExample()
 	{
 		return $this->prefix."0501-0001";
 	}
@@ -84,7 +77,7 @@ class mod_commande_marbre extends ModeleNumRefCommandes
 	 *
 	 *  @return     boolean     false si conflit, true si ok
 	 */
-	function canBeActivated()
+	public function canBeActivated()
 	{
 		global $conf,$langs,$db;
 
@@ -119,7 +112,7 @@ class mod_commande_marbre extends ModeleNumRefCommandes
 	 *  @param  Object		$object		Object we need next value for
 	 *  @return string      			Value if KO, <0 if KO
 	 */
-	function getNextValue($objsoc, $object)
+	public function getNextValue($objsoc, $object)
 	{
 		global $db,$conf;
 
@@ -155,7 +148,7 @@ class mod_commande_marbre extends ModeleNumRefCommandes
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Return next free value
 	 *
@@ -163,7 +156,7 @@ class mod_commande_marbre extends ModeleNumRefCommandes
 	 * 	@param	string		$objforref	Object for number to search
 	 *  @return string      			Next free value
 	 */
-	function commande_get_num($objsoc, $objforref)
+	public function commande_get_num($objsoc, $objforref)
 	{
         // phpcs:enable
 		return $this->getNextValue($objsoc, $objforref);

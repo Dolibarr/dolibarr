@@ -60,8 +60,8 @@ class mod_livraison_saphir extends ModeleNumRefDeliveryOrder
      *
      *  @return     string      Texte descripif
      */
-	function info()
-	{
+    public function info()
+    {
     	global $conf, $langs;
 
 		$langs->load("bills");
@@ -100,7 +100,7 @@ class mod_livraison_saphir extends ModeleNumRefDeliveryOrder
      *
      *  @return     string      Example
      */
-    function getExample()
+    public function getExample()
     {
      	global $conf,$langs,$mysoc;
 
@@ -124,7 +124,7 @@ class mod_livraison_saphir extends ModeleNumRefDeliveryOrder
 	 *  @param  Object		$object			Object delivery
 	 *  @return string      				Value if OK, 0 if KO
 	 */
-    function getNextValue($objsoc, $object)
+    public function getNextValue($objsoc, $object)
     {
 		global $db,$conf;
 
@@ -152,13 +152,13 @@ class mod_livraison_saphir extends ModeleNumRefDeliveryOrder
 	 * 	@param	string		$objforref	Object for number to search
      *  @return string      			Next free value
      */
-    function getNumRef($objsoc, $objforref)
+    public function getNumRef($objsoc, $objforref)
     {
         return $this->getNextValue($objsoc, $objforref);
     }
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *  Return next free ref
      *
@@ -166,7 +166,7 @@ class mod_livraison_saphir extends ModeleNumRefDeliveryOrder
      *  @param  Object		$object			Objet livraison
      *  @return string      				Texte descripif
      */
-    function livraison_get_num($objsoc = 0, $object = '')
+    public function livraison_get_num($objsoc = 0, $object = '')
     {
         // phpcs:enable
         return $this->getNextValue($objsoc, $object);

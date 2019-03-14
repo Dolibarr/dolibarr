@@ -36,24 +36,24 @@ class Interfaces
      */
     public $db;
 
-	var $dir;				// Directory with all core and external triggers files
+    public $dir;				// Directory with all core and external triggers files
 
     /**
-	 * @var string[] Error codes (or messages)
-	 */
-	public $errors = array();
+     * @var string[] Error codes (or messages)
+     */
+    public $errors = array();
 
     /**
      *	Constructor
      *
      *  @param		DoliDB		$db      Database handler
      */
-    function __construct($db)
+    public function __construct($db)
     {
         $this->db = $db;
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *   Function called when a Dolibarr business event occurs
      *   This function call all qualified triggers.
@@ -65,15 +65,15 @@ class Interfaces
      *   @param     Conf		$conf       Objet conf
      *   @return    int         			Nb of triggers ran if no error, -Nb of triggers with errors otherwise.
      */
-    function run_triggers($action, $object, $user, $langs, $conf)
+    public function run_triggers($action, $object, $user, $langs, $conf)
     {
         // phpcs:enable
         // Check parameters
         if (! is_object($object) || ! is_object($conf))	// Error
         {
-        	$this->error='function run_triggers called with wrong parameters action='.$action.' object='.is_object($object).' user='.is_object($user).' langs='.is_object($langs).' conf='.is_object($conf);
+            $this->error='function run_triggers called with wrong parameters action='.$action.' object='.is_object($object).' user='.is_object($user).' langs='.is_object($langs).' conf='.is_object($conf);
             dol_syslog(get_class($this).'::run_triggers '.$this->error, LOG_ERR);
-        	$this->errors[]=$this->error;
+            $this->errors[]=$this->error;
             return -1;
         }
         if (! is_object($langs))	// Warning
@@ -93,10 +93,10 @@ class Interfaces
         $files = array();
         $modules = array();
         $orders = array();
-		$i=0;
+        $i=0;
 
 
-		$dirtriggers=array_merge(array('/core/triggers'), $conf->modules_parts['triggers']);
+        $dirtriggers=array_merge(array('/core/triggers'), $conf->modules_parts['triggers']);
         foreach($dirtriggers as $reldir)
         {
             $dir=dol_buildpath($reldir, 0);
@@ -113,9 +113,9 @@ class Interfaces
                 {
                     if (is_readable($newdir."/".$file) && preg_match('/^interface_([0-9]+)_([^_]+)_(.+)\.class\.php$/i', $file, $reg))
                     {
-						$part1=$reg[1];
-						$part2=$reg[2];
-						$part3=$reg[3];
+                        $part1=$reg[1];
+                        $part2=$reg[2];
+                        $part3=$reg[3];
 
                         $nbfile++;
 
@@ -177,22 +177,22 @@ class Interfaces
             $objMod = new $modName($this->db);
             if ($objMod)
             {
-            	$result=0;
+                $result=0;
 
-				if (method_exists($objMod, 'runTrigger'))	// New method to implement
-				{
-	                //dol_syslog(get_class($this)."::run_triggers action=".$action." Launch runTrigger for file '".$files[$key]."'", LOG_DEBUG);
-	                $result=$objMod->runTrigger($action, $object, $user, $langs, $conf);
-				}
-				elseif (method_exists($objMod, 'run_trigger'))	// Deprecated method
-				{
-	                dol_syslog(get_class($this)."::run_triggers action=".$action." Launch old method run_trigger (rename your trigger into runTrigger) for file '".$files[$key]."'", LOG_WARNING);
-					$result=$objMod->run_trigger($action, $object, $user, $langs, $conf);
-				}
-				else
-				{
-	                dol_syslog(get_class($this)."::run_triggers action=".$action." A trigger was declared for class ".get_class($objMod)." but method runTrigger was not found", LOG_ERR);
-				}
+                if (method_exists($objMod, 'runTrigger'))	// New method to implement
+                {
+                    //dol_syslog(get_class($this)."::run_triggers action=".$action." Launch runTrigger for file '".$files[$key]."'", LOG_DEBUG);
+                    $result=$objMod->runTrigger($action, $object, $user, $langs, $conf);
+                }
+                elseif (method_exists($objMod, 'run_trigger'))	// Deprecated method
+                {
+                    dol_syslog(get_class($this)."::run_triggers action=".$action." Launch old method run_trigger (rename your trigger into runTrigger) for file '".$files[$key]."'", LOG_WARNING);
+                    $result=$objMod->run_trigger($action, $object, $user, $langs, $conf);
+                }
+                else
+                {
+                    dol_syslog(get_class($this)."::run_triggers action=".$action." A trigger was declared for class ".get_class($objMod)." but method runTrigger was not found", LOG_ERR);
+                }
 
                 if ($result > 0)
                 {
@@ -217,7 +217,7 @@ class Interfaces
                 }
             }
             else
-			{
+            {
                 dol_syslog(get_class($this)."::run_triggers action=".$action." Failed to instantiate trigger for file '".$files[$key]."'", LOG_ERR);
             }
         }
@@ -238,10 +238,10 @@ class Interfaces
      *  Return list of triggers. Function used by admin page htdoc/admin/triggers.
      *  List is sorted by trigger filename so by priority to run.
      *
-     *	@param	array		$forcedirtriggers		null=All default directories. This parameter is used by modulebuilder module only.
+     *  @param	array		$forcedirtriggers		null=All default directories. This parameter is used by modulebuilder module only.
      * 	@return	array								Array list of triggers
      */
-    function getTriggersList($forcedirtriggers = null)
+    public function getTriggersList($forcedirtriggers = null)
     {
         global $conf, $langs, $db;
 
@@ -256,7 +256,7 @@ class Interfaces
         $dirtriggers=array_merge(array('/core/triggers/'), $conf->modules_parts['triggers']);
         if (is_array($forcedirtriggers))
         {
-        	$dirtriggers=$forcedirtriggers;
+            $dirtriggers=$forcedirtriggers;
         }
 
         foreach($dirtriggers as $reldir)
@@ -276,9 +276,9 @@ class Interfaces
                     {
                         if (preg_match('/\.back$/', $file)) continue;
 
-						$part1=$reg[1];
-						$part2=$reg[2];
-						$part3=$reg[3];
+                        $part1=$reg[1];
+                        $part2=$reg[2];
+                        $part3=$reg[3];
 
                         $modName = 'Interface'.ucfirst($reg[3]);
                         //print "file=$file"; print "modName=$modName"; exit;
@@ -319,8 +319,8 @@ class Interfaces
 
             if (! class_exists($modName))
             {
-				print 'Error: A trigger file was found but its class "'.$modName.'" was not found.'."<br>\n";
-            	continue;
+                print 'Error: A trigger file was found but its class "'.$modName.'" was not found.'."<br>\n";
+                continue;
             }
 
             $objMod = new $modName($db);
@@ -342,7 +342,7 @@ class Interfaces
                 $triggers[$j]['module']=strtolower($module);
             }
 
-			// We set info of modules
+            // We set info of modules
             $triggers[$j]['picto'] = $objMod->picto?img_object('', $objMod->picto):img_object('', 'generic');
             $triggers[$j]['file'] = $files[$key];
             $triggers[$j]['fullpath'] = $fullpath[$key];

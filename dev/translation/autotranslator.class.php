@@ -50,7 +50,7 @@ class autoTranslator
      * @param   string $_apikey         Api key
      * @return void
      */
-    function __construct($_destlang, $_refLang, $_langDir, $_limittofile, $_apikey)
+    public function __construct($_destlang, $_refLang, $_langDir, $_limittofile, $_apikey)
     {
 
 		// Set enviorment variables
@@ -346,5 +346,5 @@ class autoTranslator
 		//print "OK ".join('',$src_texts).' => '.$rep."\n";
 
 		return $rep;
-	}
+    }
 }

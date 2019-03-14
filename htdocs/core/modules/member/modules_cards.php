@@ -40,7 +40,7 @@ class ModelePDFCards
 	public $error='';
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Return list of active generation modules
 	 *
@@ -48,7 +48,7 @@ class ModelePDFCards
 	 *	@param	integer	$maxfilenamelength	Max length of value to show
 	 *	@return	array						List of templates
 	 */
-	function liste_modeles($db, $maxfilenamelength = 0)
+	public function liste_modeles($db, $maxfilenamelength = 0)
 	{
         // phpcs:enable
 		global $conf;

@@ -479,7 +479,7 @@ if (empty($reshook))
 	    }
 	}
 	// TODO add alternative status
-	/*else if ($action == 'reopen' && (! empty($user->rights->expedition->creer) || ! empty($user->rights->expedition->shipping_advance->validate)))
+	/*elseif ($action == 'reopen' && (! empty($user->rights->expedition->creer) || ! empty($user->rights->expedition->shipping_advance->validate)))
 	{
 	    $result = $object->setStatut(0);
 	    if ($result < 0)
@@ -1106,9 +1106,9 @@ if ($action == 'create')
             {
                 print '<tr class="liste_titre">';
                 print '<td>'.$langs->trans("Description").'</td>';
-                print '<td align="center">'.$langs->trans("QtyOrdered").'</td>';
-                print '<td align="center">'.$langs->trans("QtyShipped").'</td>';
-                print '<td align="center">'.$langs->trans("QtyToShip");
+                print '<td class="center">'.$langs->trans("QtyOrdered").'</td>';
+                print '<td class="center">'.$langs->trans("QtyShipped").'</td>';
+                print '<td class="center">'.$langs->trans("QtyToShip");
 				if (empty($conf->productbatch->enabled))
 				{
 	                print ' <br>(<a href="#" id="autofill">'.$langs->trans("Fill").'</a>';
@@ -1197,13 +1197,13 @@ if ($action == 'create')
                 }
 
                 // Qty
-                print '<td align="center">'.$line->qty;
+                print '<td class="center">'.$line->qty;
                 print '<input name="qtyasked'.$indiceAsked.'" id="qtyasked'.$indiceAsked.'" type="hidden" value="'.$line->qty.'">';
                 print '</td>';
                 $qtyProdCom=$line->qty;
 
                 // Qty already shipped
-                print '<td align="center">';
+                print '<td class="center">';
                 $quantityDelivered = $object->expeditions[$line->id];
                 print $quantityDelivered;
                 print '<input name="qtydelivered'.$indiceAsked.'" id="qtydelivered'.$indiceAsked.'" type="hidden" value="'.$quantityDelivered.'">';
@@ -1232,7 +1232,7 @@ if ($action == 'create')
 					if (empty($conf->productbatch->enabled) || ! $product->hasbatch())
 					{
 						// Quantity to send
-						print '<td align="center">';
+						print '<td class="center">';
 						if ($line->product_type == Product::TYPE_PRODUCT || ! empty($conf->global->STOCK_SUPPORTS_SERVICES))
 						{
                             if (GETPOST('qtyl'.$indiceAsked, 'int')) $deliverableQty=GETPOST('qtyl'.$indiceAsked, 'int');
@@ -1292,8 +1292,8 @@ if ($action == 'create')
 									}
 									print "<tr class=\"oddeven\"><td>&nbsp; &nbsp; &nbsp; ->
 										<a href=\"".DOL_URL_ROOT."/product/card.php?id=".$value['id']."\">".$value['fullpath']."
-										</a> (".$value['nb'].")</td><td align=\"center\"> ".$value['nb_total']."</td><td>&nbsp</td><td>&nbsp</td>
-										<td align=\"center\">".$value['stock']." ".$img."</td></tr>";
+										</a> (".$value['nb'].")</td><td class=\"center\"> ".$value['nb_total']."</td><td>&nbsp</td><td>&nbsp</td>
+										<td class=\"center\">".$value['stock']." ".$img."</td></tr>";
 								}
 							}
 						}
@@ -1326,7 +1326,7 @@ if ($action == 'create')
 								$batchStock = + $dbatch->qty;		// To get a numeric
 								$deliverableQty = min($quantityToBeDelivered, $batchStock);
 								print '<!-- subj='.$subj.'/'.$nbofsuggested.' --><tr '.((($subj + 1) == $nbofsuggested)?$bc[$var]:'').'>';
-								print '<td colspan="3" ></td><td align="center">';
+								print '<td colspan="3" ></td><td class="center">';
 								print '<input name="qtyl'.$indiceAsked.'_'.$subj.'" id="qtyl'.$indiceAsked.'_'.$subj.'" type="text" size="4" value="'.$deliverableQty.'">';
 								print '</td>';
 
@@ -1357,7 +1357,7 @@ if ($action == 'create')
 						else
 						{
 						    print '<!-- Case there is no details of lot at all -->';
-						    print '<tr class="oddeven"><td colspan="3"></td><td align="center">';
+						    print '<tr class="oddeven"><td colspan="3"></td><td class="center">';
 							print '<input name="qtyl'.$indiceAsked.'_'.$subj.'" id="qtyl'.$indiceAsked.'_'.$subj.'" type="text" size="4" value="0" disabled="disabled"> ';
 							print '</td>';
 
@@ -1397,7 +1397,7 @@ if ($action == 'create')
 								$deliverableQty = max(0, $deliverableQty);
 								// Quantity to send
 								print '<!-- subj='.$subj.'/'.$nbofsuggested.' --><tr '.((($subj + 1) == $nbofsuggested)?$bc[$var]:'').'>';
-								print '<td colspan="3" ></td><td align="center"><!-- qty to ship (no lot management for product line indiceAsked='.$indiceAsked.') -->';
+								print '<td colspan="3" ></td><td class="center"><!-- qty to ship (no lot management for product line indiceAsked='.$indiceAsked.') -->';
 								if ($line->product_type == Product::TYPE_PRODUCT || ! empty($conf->global->STOCK_SUPPORTS_SERVICES))
 								{
 									print '<input name="qtyl'.$indiceAsked.'_'.$subj.'" id="qtyl'.$indiceAsked.'" type="text" size="4" value="'.$deliverableQty.'">';
@@ -1450,8 +1450,8 @@ if ($action == 'create')
 									print '<tr class"oddeven"><td>';
 									print "&nbsp; &nbsp; &nbsp; ->
 									<a href=\"".DOL_URL_ROOT."/product/card.php?id=".$value['id']."\">".$value['fullpath']."
-									</a> (".$value['nb'].")</td><td align=\"center\"> ".$value['nb_total']."</td><td>&nbsp</td><td>&nbsp</td>
-									<td align=\"center\">".$value['stock']." ".$img."</td>";
+									</a> (".$value['nb'].")</td><td class=\"center\"> ".$value['nb_total']."</td><td>&nbsp</td><td>&nbsp</td>
+									<td class=\"center\">".$value['stock']." ".$img."</td>";
 									print "</tr>";
 								}
 							}
@@ -1488,7 +1488,7 @@ if ($action == 'create')
 									$batchStock = + $dbatch->qty;		// To get a numeric
 									$deliverableQty = min($quantityToBeDelivered, $batchStock);
 									if ($deliverableQty < 0) $deliverableQty = 0;
-									print '<!-- subj='.$subj.'/'.$nbofsuggested.' --><tr '.((($subj + 1) == $nbofsuggested)?$bc[$var]:'').'><td colspan="3"></td><td align="center">';
+									print '<!-- subj='.$subj.'/'.$nbofsuggested.' --><tr '.((($subj + 1) == $nbofsuggested)?$bc[$var]:'').'><td colspan="3"></td><td class="center">';
 									print '<input name="qtyl'.$indiceAsked.'_'.$subj.'" id="qtyl'.$indiceAsked.'_'.$subj.'" type="text" size="4" value="'.$deliverableQty.'">';
 									print '</td>';
 
@@ -1520,7 +1520,7 @@ if ($action == 'create')
 					if ($subj == 0) // Line not shown yet, we show it
 					{
 					    print '<!-- line not shown yet, we show it -->';
-						print '<tr class="oddeven"><td colspan="3" ></td><td align="center">';
+						print '<tr class="oddeven"><td colspan="3" ></td><td class="center">';
 						if ($line->product_type == Product::TYPE_PRODUCT || ! empty($conf->global->STOCK_SUPPORTS_SERVICES))
 						{
 						    $disabled='';
@@ -1782,7 +1782,7 @@ elseif ($id || $ref)
 		print $langs->trans('DateDeliveryPlanned');
 		print '</td>';
 
-		if ($action != 'editdate_livraison') print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdate_livraison&amp;id='.$object->id.'">'.img_edit($langs->trans('SetDeliveryDate'), 1).'</a></td>';
+		if ($action != 'editdate_livraison') print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdate_livraison&amp;id='.$object->id.'">'.img_edit($langs->trans('SetDeliveryDate'), 1).'</a></td>';
 		print '</tr></table>';
 		print '</td><td colspan="2">';
 		if ($action == 'editdate_livraison')
@@ -1921,7 +1921,7 @@ elseif ($id || $ref)
 		print $langs->trans('SendingMethod');
 		print '</td>';
 
-		if ($action != 'editshipping_method_id') print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editshipping_method_id&amp;id='.$object->id.'">'.img_edit($langs->trans('SetSendingMethod'), 1).'</a></td>';
+		if ($action != 'editshipping_method_id') print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editshipping_method_id&amp;id='.$object->id.'">'.img_edit($langs->trans('SetSendingMethod'), 1).'</a></td>';
 		print '</tr></table>';
 		print '</td><td colspan="2">';
 		if ($action == 'editshipping_method_id')
@@ -1958,7 +1958,7 @@ elseif ($id || $ref)
 			print '<tr><td>';
 	        print '<table width="100%" class="nobordernopadding"><tr><td>';
 	        print $langs->trans('IncotermLabel');
-	        print '<td><td align="right">';
+	        print '<td><td class="right">';
 	        if ($user->rights->expedition->creer) print '<a href="'.DOL_URL_ROOT.'/expedition/card.php?id='.$object->id.'&action=editincoterm">'.img_edit().'</a>';
 	        else print '&nbsp;';
 	        print '</td></tr></table>';
@@ -2003,22 +2003,22 @@ elseif ($id || $ref)
 		// Adds a line numbering column
 		if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER))
 		{
-			print '<td width="5" align="center">&nbsp;</td>';
+			print '<td width="5" class="center">&nbsp;</td>';
 		}
 		// Product/Service
 		print '<td>'.$langs->trans("Products").'</td>';
 		// Qty
-		print '<td align="center">'.$langs->trans("QtyOrdered").'</td>';
+		print '<td class="center">'.$langs->trans("QtyOrdered").'</td>';
 		if ($origin && $origin_id > 0)
 		{
-			print '<td align="center">'.$langs->trans("QtyInOtherShipments").'</td>';
+			print '<td class="center">'.$langs->trans("QtyInOtherShipments").'</td>';
 		}
 		if ($action == 'editline')
 		{
 			$editColspan = 3;
 			if (empty($conf->stock->enabled)) $editColspan--;
 			if (empty($conf->productbatch->enabled)) $editColspan--;
-			print '<td align="center" colspan="'. $editColspan . '">';
+			print '<td class="center" colspan="'. $editColspan . '">';
 			if ($object->statut <= 1)
 			{
 				print $langs->trans("QtyToShip").' - ';
@@ -2041,11 +2041,11 @@ elseif ($id || $ref)
 		{
 			if ($object->statut <= 1)
 			{
-				print '<td align="center">'.$langs->trans("QtyToShip").'</td>';
+				print '<td class="center">'.$langs->trans("QtyToShip").'</td>';
 			}
 			else
 			{
-				print '<td align="center">'.$langs->trans("QtyShipped").'</td>';
+				print '<td class="center">'.$langs->trans("QtyShipped").'</td>';
 			}
 			if (! empty($conf->stock->enabled))
 			{
@@ -2057,9 +2057,9 @@ elseif ($id || $ref)
 				print '<td class="left">'.$langs->trans("Batch").'</td>';
 			}
 		}
-		print '<td align="center">'.$langs->trans("CalculatedWeight").'</td>';
-		print '<td align="center">'.$langs->trans("CalculatedVolume").'</td>';
-		//print '<td align="center">'.$langs->trans("Size").'</td>';
+		print '<td class="center">'.$langs->trans("CalculatedWeight").'</td>';
+		print '<td class="center">'.$langs->trans("CalculatedVolume").'</td>';
+		//print '<td class="center">'.$langs->trans("Size").'</td>';
 		if ($object->statut == 0)
 		{
 			print '<td class="linecoledit"></td>';
@@ -2118,7 +2118,7 @@ elseif ($id || $ref)
         		    if ($obj)
         		    {
         		        // $obj->rowid is rowid in $origin."det" table
-        		        $alreadysent[$obj->rowid][$obj->shipmentline_id]=array('shipment_ref'=>$obj->shipment_ref, 'shipment_id'=>$obj->shipment_id, 'warehouse'=>$obj->fk_entrepot, 'qty_shipped'=>$obj->qty_shipped, 'date_valid'=>$obj->date_valid, 'date_delivery'=>$obj->date_delivery);
+        		        $alreadysent[$obj->rowid][$obj->shipmentline_id]=array('shipment_ref'=>$obj->shipment_ref, 'shipment_id'=>$obj->shipment_id, 'warehouse'=>$obj->fk_entrepot, 'qty_shipped'=>$obj->qty_shipped, 'date_valid'=>$db->jdate($obj->date_valid), 'date_delivery'=>$db->jdate($obj->date_delivery));
         		    }
         		    $i++;
     		    }
@@ -2135,7 +2135,7 @@ elseif ($id || $ref)
 			// Adds a line numbering column
 			if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER))
 			{
-				print '<td align="center">'.($i+1).'</td>';
+				print '<td class="center">'.($i+1).'</td>';
 			}
 
 			// Predefined product or service
@@ -2187,12 +2187,12 @@ elseif ($id || $ref)
 			}
 
 			// Qty ordered
-			print '<td align="center">'.$lines[$i]->qty_asked.'</td>';
+			print '<td class="center">'.$lines[$i]->qty_asked.'</td>';
 
 			// Qty in other shipments (with shipment and warehouse used)
     		if ($origin && $origin_id > 0)
     		{
-    			print '<td align="center" class="nowrap">';
+    			print '<td class="center" class="nowrap">';
     			foreach ($alreadysent as $key => $val)
     			{
     			    if ($lines[$i]->fk_origin_line == $key)
@@ -2223,7 +2223,7 @@ elseif ($id || $ref)
 			if ($action == 'editline' && $lines[$i]->id == $line_id)
 			{
 				// edit mode
-				print '<td colspan="'.$editColspan.'" align="center"><table class="nobordernopadding">';
+				print '<td colspan="'.$editColspan.'" class="center"><table class="nobordernopadding">';
 				if (is_array($lines[$i]->detail_batch) && count($lines[$i]->detail_batch) > 0)
 				{
 					print '<!-- case edit 1 -->';
@@ -2305,7 +2305,7 @@ elseif ($id || $ref)
 			else
 			{
 				// Qty to ship or shipped
-				print '<td align="center">'.$lines[$i]->qty_shipped.'</td>';
+				print '<td class="center">'.$lines[$i]->qty_shipped.'</td>';
 
 				// Warehouse source
 				if (! empty($conf->stock->enabled))
@@ -2366,30 +2366,30 @@ elseif ($id || $ref)
 			}
 
 			// Weight
-			print '<td align="center">';
+			print '<td class="center">';
 			if ($lines[$i]->fk_product_type == Product::TYPE_PRODUCT) print $lines[$i]->weight*$lines[$i]->qty_shipped.' '.measuring_units_string($lines[$i]->weight_units, "weight");
 			else print '&nbsp;';
 			print '</td>';
 
 			// Volume
-			print '<td align="center">';
+			print '<td class="center">';
 			if ($lines[$i]->fk_product_type == Product::TYPE_PRODUCT) print $lines[$i]->volume*$lines[$i]->qty_shipped.' '.measuring_units_string($lines[$i]->volume_units, "volume");
 			else print '&nbsp;';
 			print '</td>';
 
 			// Size
-			//print '<td align="center">'.$lines[$i]->volume*$lines[$i]->qty_shipped.' '.measuring_units_string($lines[$i]->volume_units,"volume").'</td>';
+			//print '<td class="center">'.$lines[$i]->volume*$lines[$i]->qty_shipped.' '.measuring_units_string($lines[$i]->volume_units,"volume").'</td>';
 
 			if ($action == 'editline' && $lines[$i]->id == $line_id)
 			{
-				print '<td align="center" colspan="2" valign="middle">';
+				print '<td class="center" colspan="2" valign="middle">';
 				print '<input type="submit" class="button" id="savelinebutton" name="save" value="' . $langs->trans("Save") . '"><br>';
 				print '<input type="submit" class="button" id="cancellinebutton" name="cancel" value="' . $langs->trans("Cancel") . '"><br>';
 			}
 			elseif ($object->statut == 0)
 			{
 				// edit-delete buttons
-				print '<td class="linecoledit" align="center">';
+				print '<td class="linecoledit center">';
 				print '<a href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&amp;action=editline&amp;lineid=' . $lines[$i]->id . '">' . img_edit() . '</a>';
 				print '</td>';
 				print '<td class="linecoldelete" width="10">';

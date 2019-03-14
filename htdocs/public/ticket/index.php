@@ -45,10 +45,11 @@ $langs->loadLangs(array('companies', 'other', 'ticket', 'errors'));
 $track_id = GETPOST('track_id', 'alpha');
 $action = GETPOST('action', 'alpha');
 
-/***************************************************
- * VIEW
- *
- ****************************************************/
+
+/*
+ * View
+ */
+
 $form = new Form($db);
 $formticket = new FormTicket($db);
 
@@ -62,9 +63,9 @@ if (!$conf->global->TICKET_ENABLE_PUBLIC_INTERFACE) {
     print '<div style="margin: 0 auto; width:60%">';
     print '<p style="text-align: center">' . ($conf->global->TICKET_PUBLIC_TEXT_HOME ? $conf->global->TICKET_PUBLIC_TEXT_HOME : $langs->trans("TicketPublicDesc")) . '</p>';
     print '<div class="ticketform">';
-    print '<div class="index_create"><a href="create_ticket.php" class="button orange bigrounded"><strong>&nbsp;' . dol_escape_htmltag($langs->trans("CreateTicket")) . '</strong></a></div>';
-    print '<div class="index_display"><a href="list.php" class="button blue bigrounded"><strong>&nbsp;' . dol_escape_htmltag($langs->trans("ShowListTicketWithTrackId")) . '</strong></a></div>';
-    print '<div class="index_display"><a href="view.php" class="button blue bigrounded"><strong>&nbsp;' . dol_escape_htmltag($langs->trans("ShowTicketWithTrackId")) . '</strong></a></div>';
+    print '<a href="create_ticket.php" class=""><div class="index_create orange bigrounded">' . dol_escape_htmltag($langs->trans("CreateTicket")) . '</div></a>';
+    print '<a href="list.php" class=""><div class="index_display blue bigrounded">' . dol_escape_htmltag($langs->trans("ShowListTicketWithTrackId")) . '</div></a>';
+    print '<a href="view.php" class=""><div class="index_display blue bigrounded">' . dol_escape_htmltag($langs->trans("ShowTicketWithTrackId")) . '</div></a>';
     print '<div style="clear:both;"></div>';
     print '</div>';
     print '</div>';
