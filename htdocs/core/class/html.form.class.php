@@ -2784,7 +2784,8 @@ class Form
 						$opt .= " - ".dol_trunc($objp->name, 8);
 						$outval.=" - ".dol_trunc($objp->name, 8);
 					}
-                    if (! empty($conf->barcode->enabled) && !empty($objp->barcode)){
+                    if (! empty($conf->barcode->enabled) && !empty($objp->barcode) && ! empty($conf->global->BARCODE_USE_BARCODE_FOR_SUPPLIER_PRICES))
+                    {
                         $opt .= " - ".$objp->barcode;
                         $outval.=" - ".$objp->barcode;
                     }
