@@ -5592,7 +5592,7 @@ class Form
         {
             global $conf;
 
-            $retstring.= '<input placeholder="" id="'.$prefix.'days" data-working-hours-per-day="'.$conf->global->PROJECT_WORKING_HOURS_PER_DAY.'" type="text" name="'.$prefix.'days" '.($disabled?' disabled':'').' class="flat maxwidth50" value="'.$daySelected.'" >';
+            $retstring.= '<input placeholder="" id="'.$prefix.'days" data-working-hours-per-day="'.$working_hours_per_day.'" type="text" name="'.$prefix.'days" '.($disabled?' disabled':'').' class="flat maxwidth50" value="'.$daySelected.'" >';
             $retstring.= '
                 <script type="text/javascript">
                     $(function() {
