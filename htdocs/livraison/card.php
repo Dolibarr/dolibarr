@@ -608,7 +608,7 @@ else
 				$reshook = $hookmanager->executeHooks('printObjectLine', $parameters, $object, $action);
 				if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
-				if (empty($reshook)) 
+				if (empty($reshook))
 				{
 					print '<tr class="oddeven">';
 					if ($object->lines[$i]->fk_product > 0)
@@ -635,7 +635,7 @@ else
 						{
 							$label = (!empty($object->lines[$i]->label) ? $object->lines[$i]->label : $object->lines[$i]->product_label);
 						}
-						
+
 						print '<td>';
 
 						// Affiche ligne produit

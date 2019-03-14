@@ -1368,7 +1368,7 @@ if ($action == 'create')
 							    print '<tr class="oddeven"><td colspan="3"></td><td align="center">';
 							    print '<input name="qtyl'.$indiceAsked.'_'.$subj.'" id="qtyl'.$indiceAsked.'_'.$subj.'" type="text" size="4" value="0" disabled="disabled"> ';
 							    print '</td>';
-							    
+
 							    print '<td align="left">';
 							    print img_warning().' '.$langs->trans("NoProductToShipFoundIntoStock", $staticwarehouse->libelle);
 							    print '</td></tr>';
@@ -1424,7 +1424,6 @@ if ($action == 'create')
 
 											print '<!-- Show details of stock -->';
 											print '('.$stock.')';
-
 										}
 										else
 										{
@@ -1525,7 +1524,6 @@ if ($action == 'create')
 									}
 								}
 							}
-
 						}
 						if ($subj == 0) // Line not shown yet, we show it
 						{
