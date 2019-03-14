@@ -69,7 +69,6 @@ if ($action == 'updateMask')
 		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
 }
-
 elseif ($action == 'specimen')
 {
 	$modele=GETPOST('module', 'alpha');
@@ -114,7 +113,6 @@ elseif ($action == 'specimen')
 		dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
 	}
 }
-
 elseif ($action == 'setribchq')
 {
 	$rib = GETPOST('rib', 'alpha');
@@ -134,7 +132,6 @@ elseif ($action == 'setribchq')
 		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
 }
-
 elseif ($action == 'set_PROPALE_DRAFT_WATERMARK')
 {
 	$draft = GETPOST('PROPALE_DRAFT_WATERMARK', 'alpha');
@@ -151,7 +148,6 @@ elseif ($action == 'set_PROPALE_DRAFT_WATERMARK')
 		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
 }
-
 elseif ($action == 'set_PROPOSAL_FREE_TEXT')
 {
 	$freetext = GETPOST('PROPOSAL_FREE_TEXT', 'none');	// No alpha here, we want exact string
@@ -169,7 +165,6 @@ elseif ($action == 'set_PROPOSAL_FREE_TEXT')
 		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
 }
-
 elseif ($action == 'setdefaultduration')
 {
 	$res = dolibarr_set_const($db, "PROPALE_VALIDITY_DURATION", $value, 'chaine', 0, '', $conf->entity);
@@ -201,13 +196,11 @@ elseif ($action == 'set_BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL')
         setEventMessages($langs->trans("Error"), null, 'errors');
     }
 }
-
 // Activate a model
 elseif ($action == 'set')
 {
 	$ret = addDocumentModel($value, $type, $label, $scandir);
 }
-
 elseif ($action == 'del')
 {
 	$ret = delDocumentModel($value, $type);
@@ -476,7 +469,7 @@ foreach ($dirmodels as $reldir)
 	                            print '</td>';
 
 	                           // Info
-	                            $htmltooltip =    ''.$langs->trans("Name").': '.$module->name;
+	                            $htmltooltip = $langs->trans("Name").': '.$module->name;
 	                            $htmltooltip.='<br>'.$langs->trans("Type").': '.($module->type?$module->type:$langs->trans("Unknown"));
 	                            if ($module->type == 'pdf')
 	                            {
