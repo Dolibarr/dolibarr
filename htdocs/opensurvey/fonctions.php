@@ -207,6 +207,7 @@ function ajouter_sondage()
 	$opensurveysondage = new Opensurveysondage($db);
 	$opensurveysondage->id_sondage = $sondage;
 	$opensurveysondage->commentaires = $_SESSION['commentaires'];
+	$opensurveysondage->description = $_SESSION['commentaires'];
 	$opensurveysondage->mail_admin = $_SESSION['adresse'];
 	$opensurveysondage->nom_admin = $_SESSION['nom'];
 	$opensurveysondage->titre = $_SESSION['titre'];

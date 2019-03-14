@@ -232,7 +232,6 @@ ACCOUNTING_ACCOUNT_CUSTOMER=Accounting account used for customer third parties
 ACCOUNTING_ACCOUNT_CUSTOMER_Desc=The dedicated accounting account defined on third party card will be used for Subledger accounting only. This one will be used for General Ledger and as default value of Subledger accounting if dedicated customer accounting account on third party is not defined.
 ACCOUNTING_ACCOUNT_SUPPLIER=Accounting account used for vendor third parties
 ACCOUNTING_ACCOUNT_SUPPLIER_Desc=The dedicated accounting account defined on third party card will be used for Subledger accounting only. This one will be used for General Ledger and as default value of Subledger accounting if dedicated vendor accounting account on third party is not defined.
-CloneTax=Clone a social/fiscal tax
 ConfirmCloneTax=Confirm the clone of a social/fiscal tax
 CloneTaxForNextMonth=Clone it for next month
 SimpleReport=Simple report

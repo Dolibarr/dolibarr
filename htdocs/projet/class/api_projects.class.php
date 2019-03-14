@@ -46,7 +46,7 @@ class Projects extends DolibarrApi
     /**
      * Constructor
      */
-    function __construct()
+    public function __construct()
     {
         global $db, $conf;
         $this->db = $db;
@@ -64,7 +64,7 @@ class Projects extends DolibarrApi
      *
      * @throws 	RestException
      */
-    function get($id)
+    public function get($id)
     {
         if(! DolibarrApiAccess::$user->rights->projet->lire) {
             throw new RestException(401);
@@ -98,7 +98,7 @@ class Projects extends DolibarrApi
      * @param string           $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
      * @return  array                               Array of project objects
      */
-    function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $sqlfilters = '')
+    public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $sqlfilters = '')
     {
         global $db, $conf;
 
@@ -180,7 +180,7 @@ class Projects extends DolibarrApi
      * @param   array   $request_data   Request data
      * @return  int     ID of project
      */
-    function post($request_data = null)
+    public function post($request_data = null)
     {
         if(! DolibarrApiAccess::$user->rights->projet->creer) {
             throw new RestException(401, "Insuffisant rights");
@@ -215,7 +215,7 @@ class Projects extends DolibarrApi
      *
      * @url	GET {id}/tasks
      */
-    function getLines($id, $includetimespent = 0)
+    public function getLines($id, $includetimespent = 0)
     {
         if (! DolibarrApiAccess::$user->rights->projet->lire) {
             throw new RestException(401);
@@ -258,7 +258,7 @@ class Projects extends DolibarrApi
      *
      * @return int
      */
-    function getRoles($id, $userid = 0)
+    public function getRoles($id, $userid = 0)
     {
         global $db;
 
@@ -303,7 +303,7 @@ class Projects extends DolibarrApi
      * @return int
      */
     /*
-    function postLine($id, $request_data = null)
+    public function postLine($id, $request_data = null)
     {
         if(! DolibarrApiAccess::$user->rights->projet->creer) {
             throw new RestException(401);
@@ -366,7 +366,7 @@ class Projects extends DolibarrApi
      * @return object
      */
     /*
-    function putLine($id, $lineid, $request_data = null)
+    public function putLine($id, $lineid, $request_data = null)
     {
         if(! DolibarrApiAccess::$user->rights->projet->creer) {
             throw new RestException(401);
@@ -423,7 +423,7 @@ class Projects extends DolibarrApi
      *
      * @return int
      */
-    function put($id, $request_data = null)
+    public function put($id, $request_data = null)
     {
         if (! DolibarrApiAccess::$user->rights->projet->creer) {
             throw new RestException(401);
@@ -459,7 +459,7 @@ class Projects extends DolibarrApi
      *
      * @return  array
      */
-    function delete($id)
+    public function delete($id)
     {
         if (! DolibarrApiAccess::$user->rights->projet->supprimer) {
             throw new RestException(401);
@@ -503,7 +503,7 @@ class Projects extends DolibarrApi
      *   "notrigger": 0
      * }
      */
-    function validate($id, $notrigger = 0)
+    public function validate($id, $notrigger = 0)
     {
         if(! DolibarrApiAccess::$user->rights->projet->creer) {
             throw new RestException(401);
@@ -534,15 +534,16 @@ class Projects extends DolibarrApi
     }
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
     /**
      * Clean sensible object datas
      *
      * @param   object  $object    Object to clean
      * @return    array    Array of cleaned object properties
      */
-    function _cleanObjectDatas($object)
+    protected function _cleanObjectDatas($object)
     {
-
+        // phpcs:enable
         $object = parent::_cleanObjectDatas($object);
 
         unset($object->titre);
@@ -591,7 +592,7 @@ class Projects extends DolibarrApi
      * @return  array
      * @throws  RestException
      */
-    function _validate($data)
+    private function _validate($data)
     {
         $object = array();
         foreach (self::$FIELDS as $field) {

@@ -7,7 +7,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/syslog/logHandler.php';
  */
 class mod_syslog_chromephp extends LogHandler implements LogHandlerInterface
 {
-	var $code = 'chromephp';
+    public $code = 'chromephp';
 
 	/**
 	 * 	Return name of logger
@@ -50,7 +50,7 @@ class mod_syslog_chromephp extends LogHandler implements LogHandlerInterface
 
 		return ($this->isActive() == 1)?'':$langs->trans('ClassNotFoundIntoPathWarning', 'ChromePhp.class.php');
 	}
-	
+
 	/**
 	 * Is the module active ?
 	 *
@@ -159,7 +159,7 @@ class mod_syslog_chromephp extends LogHandler implements LogHandlerInterface
 		    $res = @include_once 'ChromePhp.php';
 		    if (! $res) $res=@include_once 'ChromePhp.class.php';
 			set_include_path($oldinclude);
-			
+
 			ob_start();	// To be sure headers are not flushed until all page is completely processed
 			if ($content['level'] == LOG_ERR) ChromePhp::error($content['message']);
 			elseif ($content['level'] == LOG_WARNING) ChromePhp::warn($content['message']);

@@ -32,21 +32,21 @@ include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
  */
 class box_members extends ModeleBoxes
 {
-	var $boxcode="lastmembers";
-	var $boximg="object_user";
-	var $boxlabel="BoxLastMembers";
-	var $depends = array("adherent");
+    public $boxcode="lastmembers";
+    public $boximg="object_user";
+    public $boxlabel="BoxLastMembers";
+    public $depends = array("adherent");
 
 	/**
      * @var DoliDB Database handler.
      */
     public $db;
 
-	var $param;
-	var $enabled = 1;
+    public $param;
+    public $enabled = 1;
 
-	var $info_box_head = array();
-	var $info_box_contents = array();
+    public $info_box_head = array();
+    public $info_box_contents = array();
 
 
 	/**
@@ -55,7 +55,7 @@ class box_members extends ModeleBoxes
 	 *  @param  DoliDB	$db      	Database handler
      *  @param	string	$param		More parameters
 	 */
-	function __construct($db, $param = '')
+	public function __construct($db, $param = '')
 	{
 		global $conf, $user;
 
@@ -74,7 +74,7 @@ class box_members extends ModeleBoxes
 	 *  @param	int		$max        Maximum number of records to load
      *  @return	void
 	 */
-	function loadBox($max = 5)
+	public function loadBox($max = 5)
 	{
 		global $user, $langs, $db, $conf;
 		$langs->load("boxes");
@@ -178,7 +178,7 @@ class box_members extends ModeleBoxes
 	 *  @param	int		$nooutput	No print, only return string
 	 *	@return	string
 	 */
-    function showBox($head = null, $contents = null, $nooutput = 0)
+    public function showBox($head = null, $contents = null, $nooutput = 0)
     {
 		return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
 	}

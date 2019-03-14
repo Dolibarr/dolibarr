@@ -363,7 +363,7 @@ if (empty($reshook))
 								// Extrafields
 								$extrafieldsline = new ExtraFields($db);
 								$extralabelsline = $extrafieldsline->fetch_name_optionals_label($object->table_element_line);
-								$array_options = $extrafieldsline->getOptionalsFromPost($extralabelsline, $predef);
+								$array_options = $extrafieldsline->getOptionalsFromPost($object->table_element_line, $predef);
 
                     $result = $object->addline(
 									$user,
@@ -508,7 +508,7 @@ if (empty($reshook))
 			// Extrafields
 			$extrafieldsline = new ExtraFields($db);
 			$extralabelsline = $extrafieldsline->fetch_name_optionals_label($object->table_element_line);
-			$array_options = $extrafieldsline->getOptionalsFromPost($extralabelsline);
+			$array_options = $extrafieldsline->getOptionalsFromPost($object->table_element_line);
 
         $result=$object->addline(
 				$user,
@@ -620,7 +620,7 @@ if (empty($reshook))
 		// Extrafields
 		$extrafieldsline = new ExtraFields($db);
 		$extralabelsline = $extrafieldsline->fetch_name_optionals_label($object->table_element_line);
-		$array_options = $extrafieldsline->getOptionalsFromPost($extralabelsline);
+		$array_options = $extrafieldsline->getOptionalsFromPost($object->table_element_line);
 		$objectline->array_options = $array_options;
 
 		$result = $objectline->update($user);
@@ -1013,8 +1013,8 @@ if ($action == 'create')
 
         	// Amount
         	/* Hide amount because we only copy services so amount may differ than source
-        	print '<tr><td>' . $langs->trans('TotalHT') . '</td><td>' . price($objectsrc->total_ht) . '</td></tr>';
-        	print '<tr><td>' . $langs->trans('TotalVAT') . '</td><td>' . price($objectsrc->total_tva) . "</td></tr>";
+        	print '<tr><td>' . $langs->trans('AmountHT') . '</td><td>' . price($objectsrc->total_ht) . '</td></tr>';
+        	print '<tr><td>' . $langs->trans('AmountVAT') . '</td><td>' . price($objectsrc->total_tva) . "</td></tr>";
         	if ($mysoc->localtax1_assuj == "1" || $objectsrc->total_localtax1 != 0) 		// Localtax1 RE
         	{
         		print '<tr><td>' . $langs->transcountry("AmountLT1", $mysoc->country_code) . '</td><td>' . price($objectsrc->total_localtax1) . "</td></tr>";
@@ -1025,13 +1025,13 @@ if ($action == 'create')
         		print '<tr><td>' . $langs->transcountry("AmountLT2", $mysoc->country_code) . '</td><td>' . price($objectsrc->total_localtax2) . "</td></tr>";
         	}
 
-        	print '<tr><td>' . $langs->trans('TotalTTC') . '</td><td>' . price($objectsrc->total_ttc) . "</td></tr>";
+        	print '<tr><td>' . $langs->trans('AmountTTC') . '</td><td>' . price($objectsrc->total_ttc) . "</td></tr>";
 
         	if (!empty($conf->multicurrency->enabled))
         	{
-        		print '<tr><td>' . $langs->trans('MulticurrencyTotalHT') . '</td><td>' . price($objectsrc->multicurrency_total_ht) . '</td></tr>';
-        		print '<tr><td>' . $langs->trans('MulticurrencyTotalVAT') . '</td><td>' . price($objectsrc->multicurrency_total_tva) . "</td></tr>";
-        		print '<tr><td>' . $langs->trans('MulticurrencyTotalTTC') . '</td><td>' . price($objectsrc->multicurrency_total_ttc) . "</td></tr>";
+        		print '<tr><td>' . $langs->trans('MulticurrencyAmountHT') . '</td><td>' . price($objectsrc->multicurrency_total_ht) . '</td></tr>';
+        		print '<tr><td>' . $langs->trans('MulticurrencyAmountVAT') . '</td><td>' . price($objectsrc->multicurrency_total_tva) . "</td></tr>";
+        		print '<tr><td>' . $langs->trans('MulticurrencyAmountTTC') . '</td><td>' . price($objectsrc->multicurrency_total_ttc) . "</td></tr>";
         	}
         	*/
         }
@@ -1170,7 +1170,7 @@ elseif ($id > 0 || ! empty($ref))
 							// => 1),
 							array('type' => 'other','name' => 'socid','label' => $langs->trans("SelectThirdParty"),'value' => $form->select_company(GETPOST('socid', 'int'), 'socid', '', '', 0, 0, null, 0, 'minwidth200')));
 		// Paiement incomplet. On demande si motif = escompte ou autre
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('CloneIntervention'), $langs->trans('ConfirmCloneIntervention', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneIntervention', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
 	}
 
 	if (!$formconfirm)
@@ -1282,7 +1282,7 @@ elseif ($id > 0 || ! empty($ref))
 		print '</td>';
 		if ($action != 'contrat')
 		{
-			print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=contrat&amp;id='.$object->id.'">';
+			print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=contrat&amp;id='.$object->id.'">';
 			print img_edit($langs->trans('SetContract'), 1);
 			print '</a></td>';
 		}
@@ -1393,8 +1393,8 @@ elseif ($id > 0 || ! empty($ref))
 
 				print '<tr class="liste_titre">';
 				print '<td class="liste_titre">'.$langs->trans('Description').'</td>';
-				print '<td class="liste_titre" align="center">'.$langs->trans('Date').'</td>';
-				print '<td class="liste_titre" align="right">'.(empty($conf->global->FICHINTER_WITHOUT_DURATION)?$langs->trans('Duration'):'').'</td>';
+				print '<td class="liste_titre center">'.$langs->trans('Date').'</td>';
+				print '<td class="liste_titre right">'.(empty($conf->global->FICHINTER_WITHOUT_DURATION)?$langs->trans('Duration'):'').'</td>';
 				print '<td class="liste_titre">&nbsp;</td>';
 				print '<td class="liste_titre">&nbsp;</td>';
 				print '<td class="liste_titre">&nbsp;</td>';
@@ -1414,10 +1414,10 @@ elseif ($id > 0 || ! empty($ref))
 					print dol_htmlentitiesbr($objp->description);
 
 					// Date
-					print '<td align="center" width="150">'.(empty($conf->global->FICHINTER_DATE_WITHOUT_HOUR)?dol_print_date($db->jdate($objp->date_intervention), 'dayhour'):dol_print_date($db->jdate($objp->date_intervention), 'day')).'</td>';
+					print '<td class="center" width="150">'.(empty($conf->global->FICHINTER_DATE_WITHOUT_HOUR)?dol_print_date($db->jdate($objp->date_intervention), 'dayhour'):dol_print_date($db->jdate($objp->date_intervention), 'day')).'</td>';
 
 					// Duration
-					print '<td align="right" width="150">'.(empty($conf->global->FICHINTER_WITHOUT_DURATION)?convertSecondToTime($objp->duree):'').'</td>';
+					print '<td class="right" width="150">'.(empty($conf->global->FICHINTER_WITHOUT_DURATION)?convertSecondToTime($objp->duree):'').'</td>';
 
 					print "</td>\n";
 
@@ -1425,16 +1425,16 @@ elseif ($id > 0 || ! empty($ref))
 					// Icone d'edition et suppression
 					if ($object->statut == 0  && $user->rights->ficheinter->creer)
 					{
-						print '<td align="center">';
+						print '<td class="center">';
 						print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=editline&amp;line_id='.$objp->rowid.'#'.$objp->rowid.'">';
 						print img_edit();
 						print '</a>';
 						print '</td>';
-						print '<td align="center">';
+						print '<td class="center">';
 						print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=ask_deleteline&amp;line_id='.$objp->rowid.'">';
 						print img_delete();
 						print '</a></td>';
-						print '<td align="center">';
+						print '<td class="center">';
 						if ($num > 1)
 						{
 							if ($i > 0)
@@ -1484,7 +1484,7 @@ elseif ($id > 0 || ! empty($ref))
 					print '</td>';
 
 					// Date d'intervention
-					print '<td align="center" class="nowrap">';
+					print '<td class="center nowrap">';
                     if (!empty($conf->global->FICHINTER_DATE_WITHOUT_HOUR)) {
                         print $form->selectDate($db->jdate($objp->date_intervention), 'di', 0, 0, 0, "date_intervention");
                     } else {
@@ -1493,7 +1493,7 @@ elseif ($id > 0 || ! empty($ref))
 					print '</td>';
 
                     // Duration
-                    print '<td align="right">';
+                    print '<td class="right">';
                     if (empty($conf->global->FICHINTER_WITHOUT_DURATION)) {
                         $selectmode = 'select';
                         if (!empty($conf->global->INTERVENTION_ADDLINE_FREEDUREATION))
@@ -1502,7 +1502,7 @@ elseif ($id > 0 || ! empty($ref))
                     }
                     print '</td>';
 
-                    print '<td align="center" colspan="5" valign="center"><input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
+                    print '<td class="center" colspan="5" valign="center"><input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
 					print '<br><input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></td>';
 					print '</tr>' . "\n";
 
@@ -1532,8 +1532,8 @@ elseif ($id > 0 || ! empty($ref))
     				print '<td>';
     				print '<a name="add"></a>'; // ancre
     				print $langs->trans('Description').'</td>';
-    				print '<td align="center">'.$langs->trans('Date').'</td>';
-    				print '<td align="right">'.(empty($conf->global->FICHINTER_WITHOUT_DURATION)?$langs->trans('Duration'):'').'</td>';
+    				print '<td class="center">'.$langs->trans('Date').'</td>';
+    				print '<td class="right">'.(empty($conf->global->FICHINTER_WITHOUT_DURATION)?$langs->trans('Duration'):'').'</td>';
       				print '<td colspan="3">&nbsp;</td>';
     				print "</tr>\n";
 				}
@@ -1549,7 +1549,7 @@ elseif ($id > 0 || ! empty($ref))
                 print '</td>';
 
                 // Date intervention
-                print '<td align="center" class="nowrap">';
+                print '<td class="center nowrap">';
 				$now=dol_now();
 				$timearray=dol_getdate($now);
 				if (! GETPOST('diday', 'int')) {
@@ -1565,7 +1565,7 @@ elseif ($id > 0 || ! empty($ref))
 				print '</td>';
 
                 // Duration
-                print '<td align="right">';
+                print '<td class="right">';
                 if (empty($conf->global->FICHINTER_WITHOUT_DURATION)) {
                     $selectmode = 'select';
                     if (!empty($conf->global->INTERVENTION_ADDLINE_FREEDUREATION)) {
@@ -1575,7 +1575,7 @@ elseif ($id > 0 || ! empty($ref))
                 }
                 print '</td>';
 
-                print '<td align="center" valign="middle" colspan="3"><input type="submit" class="button" value="'.$langs->trans('Add').'" name="addline"></td>';
+                print '<td class="center" valign="middle" colspan="3"><input type="submit" class="button" value="'.$langs->trans('Add').'" name="addline"></td>';
 				print '</tr>';
 
 				//Line extrafield

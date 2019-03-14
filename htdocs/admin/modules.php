@@ -457,10 +457,10 @@ if ($nbofactivatedmodules <= 1) $moreinfo .= ' '.img_warning($langs->trans("YouM
 print load_fiche_titre($langs->trans("ModulesSetup"), $moreinfo, 'title_setup');
 
 // Start to show page
-if ($mode=='common')      print '<span class="opacitymedium">'.$langs->trans("ModulesDesc")."</span><br>\n";
-if ($mode=='marketplace') print '<span class="opacitymedium">'.$langs->trans("ModulesMarketPlaceDesc")."</span><br>\n";
-if ($mode=='deploy')      print '<span class="opacitymedium">'.$langs->trans("ModulesDeployDesc", $langs->transnoentitiesnoconv("AvailableModules"))."</span><br>\n";
-if ($mode=='develop')     print '<span class="opacitymedium">'.$langs->trans("ModulesDevelopDesc")."</span><br>\n";
+if ($mode=='common')      print '<span class="opacitymedium hideonsmartphone">'.$langs->trans("ModulesDesc")."</span><br>\n";
+if ($mode=='marketplace') print '<span class="opacitymedium hideonsmartphone">'.$langs->trans("ModulesMarketPlaceDesc")."</span><br>\n";
+if ($mode=='deploy')      print '<span class="opacitymedium hideonsmartphone">'.$langs->trans("ModulesDeployDesc", $langs->transnoentitiesnoconv("AvailableModules"))."</span><br>\n";
+if ($mode=='develop')     print '<span class="opacitymedium hideonsmartphone">'.$langs->trans("ModulesDevelopDesc")."</span><br>\n";
 
 $head = modules_prepare_head();
 

@@ -1035,28 +1035,29 @@ if ($source == 'invoice')
 	print '<input type="hidden" name="fulltag" value="'.$fulltag.'">';
 	print '</td></tr>'."\n";
   
-    if (! empty($conf->stripe->enabled) && empty($object->paye) && ($paymentmethod == 'stripe') ) {
+  if (! empty($conf->stripe->enabled) && empty($object->paye) && ($paymentmethod == 'stripe') ) 
+  {
     require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';	
     
     $service = 'StripeLive';
-	$servicestatus = 1;
-  
-	if (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox', 'alpha'))
-	{
-	$service = 'StripeTest';
-	$servicestatus = 0;
-	}
+    $servicestatus = 1;
+
+    if (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox', 'alpha'))
+    {
+    $service = 'StripeTest';
+    $servicestatus = 0;
+    }
 
     $stripe = new Stripe($db);
     $stripeacc = $stripe->getStripeAccount($service);								// Stripe OAuth connect account of dolibarr user (no network access here)
     $stripecu = $stripe->customerStripe($invoice->thirdparty, $stripeacc, $servicestatus, 1);
-	//  for dev only
-	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("PaymentIntent");
-	print '</td><td class="CTableRow'.($var?'1':'2').'">';
+    //  for dev only
+    print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("PaymentIntent");
+    print '</td><td class="CTableRow'.($var?'1':'2').'">';
     $paymentintent=$stripe->getPaymentIntent($object, $stripecu, $stripeacc, $servicestatus);
     print '<b>'.$paymentintent->id.'</b>';
-	print '</td></tr>'."\n";
-}
+    print '</td></tr>'."\n";
+  }
 
 	// Shipping address
 	$shipToName=$invoice->thirdparty->name;

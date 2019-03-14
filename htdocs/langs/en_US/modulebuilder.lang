@@ -2,7 +2,7 @@
 ModuleBuilderDesc=This tool must be used by only by experienced users or developers. It gives you utilities to build or edit your own module.<br>Documentation for alternative <a href="%s" target="_blank">manual development is here</a>.
 EnterNameOfModuleDesc=Enter name of the module/application to create with no spaces. Use uppercase to separate words (For example: MyModule, EcommerceForShop, SyncWithMySystem...)
 EnterNameOfObjectDesc=Enter name of the object to create with no spaces. Use uppercase to separate words (For example: MyObject, Student, Teacher...). The CRUD class file, but also API file, pages to list/add/edit/delete object and SQL files will be generated.
-ModuleBuilderDesc2=Path where modules are generated/edited (first alternative directory defined into %s): <strong>%s</strong>
+ModuleBuilderDesc2=Path where modules are generated/edited (first directory for external modules defined into %s): <strong>%s</strong>
 ModuleBuilderDesc3=Generated/editable modules found: <strong>%s</strong>
 ModuleBuilderDesc4=A module is detected as 'editable' when the file <strong>%s</strong> exists in root of module directory
 NewModule=New module
@@ -40,7 +40,7 @@ PageForAgendaTab=PHP page for event tab
 PageForDocumentTab=PHP page for document tab
 PageForNoteTab=PHP page for note tab
 PathToModulePackage=Path to zip of module/application package
-PathToModuleDocumentation=Path to file of module/application documentation
+PathToModuleDocumentation=Path to file of module/application documentation (%s)
 SpaceOrSpecialCharAreNotAllowed=Spaces or special characters are not allowed.
 FileNotYetGenerated=File not yet generated
 RegenerateClassAndSql=Erase and regenerate class and sql files
@@ -76,7 +76,7 @@ ListOfMenusEntries=List of menu entries
 ListOfPermissionsDefined=List of defined permissions
 SeeExamples=See examples here
 EnabledDesc=Condition to have this field active (Examples: 1 or $conf->global->MYMODULE_MYOPTION)
-VisibleDesc=Is the field visible ? (Examples: 0=Never visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only. Using a negative value means field is not shown by default on list but can be selected for viewing). It can be an expression, for example: preg_match('/public/', $_SERVER['PHP_SELF'])?0:1
+VisibleDesc=Is the field visible ? (Examples: 0=Never visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create). Using a negative value means field is not shown by default on list but can be selected for viewing). It can be an expression, for example: preg_match('/public/', $_SERVER['PHP_SELF'])?0:1
 IsAMeasureDesc=Can the value of field be cumulated to get a total into list? (Examples: 1 or 0)
 SearchAllDesc=Is the field used to make a search from the quick search tool? (Examples: 1 or 0)
 SpecDefDesc=Enter here all documentation you want to provide with your module that is not already defined by other tabs. You can use .md or better, the rich .asciidoc syntax.
@@ -101,3 +101,7 @@ UseDocFolder=Disable the documentation folder
 UseSpecificReadme=Use a specific ReadMe
 RealPathOfModule=Real path of module
 ContentCantBeEmpty=Content of file can't be empty
+WidgetDesc=You can generate and edit here the widgets that will be embedded with your module.
+CLIDesc=You can generate here some command line scripts you want to provide with your module.
+CLIFile=CLI File
+NoCLIFile=No CLI files

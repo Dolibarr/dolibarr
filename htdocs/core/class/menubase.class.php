@@ -91,7 +91,7 @@ class Menubase
 	 *  @param		DoliDB		$db 		    Database handler
      *  @param     	string		$menu_handler	Menu handler
      */
-    function __construct($db, $menu_handler = '')
+    public function __construct($db, $menu_handler = '')
     {
         $this->db = $db;
         $this->menu_handler = $menu_handler;
@@ -105,7 +105,7 @@ class Menubase
      *      @param      User	$user       User that create
      *      @return     int      			<0 if KO, Id of record if OK
      */
-    function create($user = null)
+    public function create($user = null)
     {
         global $conf, $langs;
 
@@ -245,7 +245,7 @@ class Menubase
      *  @param  int		$notrigger	    0=no, 1=yes (no update trigger)
      *  @return int 		        	<0 if KO, >0 if OK
      */
-    function update($user = null, $notrigger = 0)
+    public function update($user = null, $notrigger = 0)
     {
         global $conf, $langs;
 
@@ -310,7 +310,7 @@ class Menubase
      *   @param		User    $user       User that load
      *   @return	int         		<0 if KO, >0 if OK
      */
-    function fetch($id, $user = null)
+    public function fetch($id, $user = null)
     {
         global $langs;
 
@@ -384,7 +384,7 @@ class Menubase
      *	@param	User	$user       User that delete
      *	@return	int					<0 if KO, >0 if OK
      */
-    function delete($user)
+    public function delete($user)
     {
         global $conf, $langs;
 
@@ -410,7 +410,7 @@ class Menubase
      *
      *  @return	void
      */
-    function initAsSpecimen()
+    public function initAsSpecimen()
     {
         $this->id=0;
 
@@ -443,7 +443,7 @@ class Menubase
      * 	@param  array	$tabMenu       If array with menu entries already loaded, we put this array here (in most cases, it's empty)
      * 	@return	array					Return array with menu entries for top menu
      */
-    function menuTopCharger($mymainmenu, $myleftmenu, $type_user, $menu_handler, &$tabMenu)
+    public function menuTopCharger($mymainmenu, $myleftmenu, $type_user, $menu_handler, &$tabMenu)
     {
         global $langs, $user, $conf;	// To export to dol_eval function
         global $mainmenu,$leftmenu;		// To export to dol_eval function
@@ -472,7 +472,7 @@ class Menubase
      * 	@param  array	$tabMenu       Array with menu entries already loaded
      * 	@return Menu    		       	Menu array for particular mainmenu value or full tabArray
      */
-    function menuLeftCharger($newmenu, $mymainmenu, $myleftmenu, $type_user, $menu_handler, &$tabMenu)
+    public function menuLeftCharger($newmenu, $mymainmenu, $myleftmenu, $type_user, $menu_handler, &$tabMenu)
     {
         global $langs, $user, $conf; 	// To export to dol_eval function
         global $mainmenu,$leftmenu; 	// To export to dol_eval function
@@ -480,16 +480,16 @@ class Menubase
         $mainmenu=$mymainmenu;  // To export to dol_eval function
         $leftmenu=$myleftmenu;  // To export to dol_eval function
 
-		// Detect what is top mainmenu id
+        // Detect what is top mainmenu id
         $menutopid='';
         foreach($tabMenu as $key => $val)
         {
-        	// Define menutopid of mainmenu
-        	if (empty($menutopid) && $val['type'] == 'top' && $val['mainmenu'] == $mainmenu)
-        	{
-        		$menutopid=$val['rowid'];
-        		break;
-        	}
+            // Define menutopid of mainmenu
+            if (empty($menutopid) && $val['type'] == 'top' && $val['mainmenu'] == $mainmenu)
+            {
+                $menutopid=$val['rowid'];
+                break;
+            }
         }
 
         // We initialize newmenu with first already found menu entries
@@ -561,7 +561,7 @@ class Menubase
      *  @param  array	$tabMenu        Array to store new entries found (in most cases, it's empty, but may be alreay filled)
      *  @return int     		        >0 if OK, <0 if KO
      */
-    function menuLoad($mymainmenu, $myleftmenu, $type_user, $menu_handler, &$tabMenu)
+    public function menuLoad($mymainmenu, $myleftmenu, $type_user, $menu_handler, &$tabMenu)
     {
         global $langs, $user, $conf; // To export to dol_eval function
         global $mainmenu, $leftmenu; // To export to dol_eval function
@@ -577,10 +577,10 @@ class Menubase
         if ($type_user == 0) $sql.= " AND m.usertype IN (0,2)";
         if ($type_user == 1) $sql.= " AND m.usertype IN (1,2)";
         $sql.= " ORDER BY m.position, m.rowid";
-		//print $sql;
+        //print $sql;
 
-		//$tmp1=microtime(true);
-		//print '>>> 1 0<br>';
+        //$tmp1=microtime(true);
+        //print '>>> 1 0<br>';
         dol_syslog(get_class($this)."::menuLoad mymainmenu=".$mymainmenu." myleftmenu=".$myleftmenu." type_user=".$type_user." menu_handler=".$menu_handler." tabMenu size=".count($tabMenu)."", LOG_DEBUG);
         $resql = $this->db->query($sql);
         if ($resql)
@@ -647,8 +647,8 @@ class Menubase
                             $title = $langs->trans($menu['titre']);
                         }
                     }
-					//$tmp4=microtime(true);
-					//print '>>> 3 '.($tmp4 - $tmp3).'<br>';
+                    //$tmp4=microtime(true);
+                    //print '>>> 3 '.($tmp4 - $tmp3).'<br>';
 
                     // We complete tabMenu
                     $tabMenu[$b]['rowid']       = $menu['rowid'];

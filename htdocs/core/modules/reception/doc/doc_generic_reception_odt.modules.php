@@ -58,8 +58,8 @@ class doc_generic_reception_odt extends ModelePdfReception
 	 *
 	 *  @param		DoliDB		$db      Database handler
 	 */
-	function __construct($db)
-	{
+    public function __construct($db)
+    {
 		global $conf,$langs,$mysoc;
 
 		$langs->load("main");
@@ -94,18 +94,18 @@ class doc_generic_reception_odt extends ModelePdfReception
 		// Recupere emetteur
 		$this->emetteur=$mysoc;
 		if (! $this->emetteur->country_code) $this->emetteur->country_code=substr($langs->defaultlang, -2);    // By default if not defined
-	}
+    }
 
 
-	/**
-	 *	Return description of a module
-	 *
-	 *	@param	Translate	$langs      Lang object to use for output
-	 *	@return string       			Description
-	 */
-	function info($langs)
-	{
-		global $conf,$langs;
+    /**
+     *  Return description of a module
+     *
+     *  @param	Translate	$langs      Lang object to use for output
+     *  @return string       			Description
+     */
+    public function info($langs)
+    {
+        global $conf,$langs;
 
 		$langs->load("companies");
 		$langs->load("errors");
@@ -183,22 +183,22 @@ class doc_generic_reception_odt extends ModelePdfReception
 		$texte.= '</form>';
 
 		return $texte;
-	}
+    }
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *	Function to build a document on disk using the generic odt module.
+	 *  Function to build a document on disk using the generic odt module.
 	 *
-	 *	@param		Reception	$object				Object source to build document
-	 *	@param		Translate	$outputlangs		Lang output object
+	 *  @param		Reception	$object				Object source to build document
+	 *  @param		Translate	$outputlangs		Lang output object
 	 * 	@param		string		$srctemplatepath	Full path of source filename for generator using a template file
 	 *  @param		int			$hidedetails		Do not show line details
 	 *  @param		int			$hidedesc			Do not show desc
 	 *  @param		int			$hideref			Do not show ref
 	 *	@return		int         					1 if OK, <=0 if KO
 	 */
-	function write_file($object, $outputlangs, $srctemplatepath, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
-	{
+    public function write_file($object, $outputlangs, $srctemplatepath, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
+    {
 		// phpcs:enable
 		global $user,$langs,$conf,$mysoc,$hookmanager;
 

@@ -88,7 +88,7 @@ class DolGraph
 	 *
 	 * @param	string	$library		'jflot' (default) or 'artichow' (no more supported)
 	 */
-	function __construct($library = 'jflot')
+	public function __construct($library = 'jflot')
 	{
 		global $conf;
 		global $theme_bordercolor, $theme_datacolor, $theme_bgcolor, $theme_bgcoloronglet;
@@ -116,7 +116,7 @@ class DolGraph
 		$this->datacolor = array(array(120,130,150), array(160,160,180), array(190,190,220));
 		$this->bgcolor = array(235,235,224);
 
-		$color_file = DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/graph-color.php';
+		$color_file = DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
 		if (is_readable($color_file))
 		{
 			include_once $color_file;
@@ -128,130 +128,130 @@ class DolGraph
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Set Y precision
 	 *
 	 * @param 	float	$which_prec		Precision
 	 * @return 	boolean
 	 */
-	function SetPrecisionY($which_prec)
+	public function SetPrecisionY($which_prec)
 	{
         // phpcs:enable
 		$this->PrecisionY = $which_prec;
 		return true;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Utiliser SetNumTicks ou SetHorizTickIncrement mais pas les 2
 	 *
 	 * @param 	float 		$xi		Xi
 	 * @return	boolean				True
 	 */
-	function SetHorizTickIncrement($xi)
+	public function SetHorizTickIncrement($xi)
 	{
         // phpcs:enable
 		$this->horizTickIncrement = $xi;
 		return true;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Utiliser SetNumTicks ou SetHorizTickIncrement mais pas les 2
 	 *
 	 * @param 	float 		$xt		Xt
 	 * @return	boolean				True
 	 */
-	function SetNumXTicks($xt)
+	public function SetNumXTicks($xt)
 	{
         // phpcs:enable
 		$this->SetNumXTicks = $xt;
 		return true;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Set label interval to reduce number of labels
 	 *
 	 * @param 	float 		$x		Label interval
 	 * @return	boolean				True
 	 */
-	function SetLabelInterval($x)
+	public function SetLabelInterval($x)
 	{
         // phpcs:enable
 		$this->labelInterval = $x;
 		return true;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Hide X grid
 	 *
 	 * @param	boolean		$bool	XGrid or not
 	 * @return	boolean				true
 	 */
-	function SetHideXGrid($bool)
+	public function SetHideXGrid($bool)
 	{
         // phpcs:enable
 		$this->hideXGrid = $bool;
 		return true;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Hide Y grid
 	 *
 	 * @param	boolean		$bool	YGrid or not
 	 * @return	boolean				true
 	 */
-	function SetHideYGrid($bool)
+	public function SetHideYGrid($bool)
 	{
         // phpcs:enable
 		$this->hideYGrid = $bool;
 		return true;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Set y label
 	 *
 	 * @param 	string	$label		Y label
 	 * @return	boolean|null				True
 	 */
-	function SetYLabel($label)
+	public function SetYLabel($label)
 	{
         // phpcs:enable
 		$this->YLabel = $label;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Set width
 	 *
 	 * @param 	int		$w			Width
 	 * @return	boolean|null				True
 	 */
-	function SetWidth($w)
+	public function SetWidth($w)
 	{
         // phpcs:enable
 		$this->width = $w;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Set title
 	 *
 	 * @param 	string	$title		Title
 	 * @return	void
 	 */
-	function SetTitle($title)
+	public function SetTitle($title)
 	{
         // phpcs:enable
 		$this->title = $title;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Set data
 	 *
@@ -259,172 +259,172 @@ class DolGraph
 	 * @return	void
 	 * @see draw_jflot for syntax of data array
 	 */
-	function SetData($data)
+	public function SetData($data)
 	{
         // phpcs:enable
 		$this->data = $data;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Set data
 	 *
 	 * @param 	array	$datacolor		Data color array(array(R,G,B),array(R,G,B)...)
 	 * @return	void
 	 */
-	function SetDataColor($datacolor)
+	public function SetDataColor($datacolor)
 	{
         // phpcs:enable
 		$this->datacolor = $datacolor;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Set type
 	 *
 	 * @param 	array	$type		Array with type for each serie. Example: array('pie'), array('lines',...,'bars')
 	 * @return	void
 	 */
-	function SetType($type)
+	public function SetType($type)
 	{
         // phpcs:enable
 		$this->type = $type;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Set legend
 	 *
 	 * @param 	array	$legend		Legend. Example: array('seriename1','seriname2',...)
 	 * @return	void
 	 */
-	function SetLegend($legend)
+	public function SetLegend($legend)
 	{
         // phpcs:enable
 		$this->Legend = $legend;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Set min width
 	 *
 	 * @param 	int		$legendwidthmin		Min width
 	 * @return	void
 	 */
-	function SetLegendWidthMin($legendwidthmin)
+	public function SetLegendWidthMin($legendwidthmin)
 	{
         // phpcs:enable
 		$this->LegendWidthMin = $legendwidthmin;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Set max value
 	 *
 	 * @param 	int		$max			Max value
 	 * @return	void
 	 */
-	function SetMaxValue($max)
+    public function SetMaxValue($max)
 	{
         // phpcs:enable
 		$this->MaxValue = $max;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Get max value
 	 *
 	 * @return	int		Max value
 	 */
-	function GetMaxValue()
+    public function GetMaxValue()
 	{
         // phpcs:enable
 		return $this->MaxValue;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Set min value
 	 *
 	 * @param 	int		$min			Min value
 	 * @return	void
 	 */
-	function SetMinValue($min)
+    public function SetMinValue($min)
 	{
         // phpcs:enable
 		$this->MinValue = $min;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Get min value
 	 *
 	 * @return	int		Max value
 	 */
-	function GetMinValue()
+    public function GetMinValue()
 	{
         // phpcs:enable
 		return $this->MinValue;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Set height
 	 *
 	 * @param 	int		$h				Height
 	 * @return	void
 	 */
-	function SetHeight($h)
+    public function SetHeight($h)
 	{
         // phpcs:enable
 		$this->height = $h;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Set shading
 	 *
 	 * @param 	string	$s				Shading
 	 * @return	void
 	 */
-	function SetShading($s)
+    public function SetShading($s)
 	{
         // phpcs:enable
 		$this->SetShading = $s;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Set shading
 	 *
 	 * @param 	string	$s				Shading
 	 * @return	void
 	 */
-	function SetCssPrefix($s)
+    public function SetCssPrefix($s)
 	{
         // phpcs:enable
 		$this->cssprefix = $s;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Reset bg color
 	 *
 	 * @return	void
 	 */
-	function ResetBgColor()
+    public function ResetBgColor()
 	{
         // phpcs:enable
 		unset($this->bgcolor);
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Reset bgcolorgrid
 	 *
 	 * @return	void
 	 */
-	function ResetBgColorGrid()
+    public function ResetBgColorGrid()
 	{
         // phpcs:enable
 		unset($this->bgcolorgrid);
@@ -435,7 +435,7 @@ class DolGraph
 	 *
 	 * @return	string		Error
 	 */
-	function isGraphKo()
+    public function isGraphKo()
 	{
 		return $this->error;
 	}
@@ -446,7 +446,7 @@ class DolGraph
 	 * @param	int		$showlegend		1=Show legend (default), 0=Hide legend
 	 * @return	void
 	 */
-	function setShowLegend($showlegend)
+    public function setShowLegend($showlegend)
 	{
 		$this->showlegend=$showlegend;
 	}
@@ -457,7 +457,7 @@ class DolGraph
 	 * @param	int		$showpointvalue		1=Show value for each point, as tooltip or inline (default), 0=Hide value
 	 * @return	void
 	 */
-	function setShowPointValue($showpointvalue)
+    public function setShowPointValue($showpointvalue)
 	{
 		$this->showpointvalue=$showpointvalue;
 	}
@@ -468,21 +468,21 @@ class DolGraph
 	 * @param	int		$showpercent		1=Show percent for each point, as tooltip or inline, 0=Hide percent (default)
 	 * @return	void
 	 */
-	function setShowPercent($showpercent)
+    public function setShowPercent($showpercent)
 	{
 		$this->showpercent=$showpercent;
 	}
 
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Define background color of complete image
 	 *
 	 * @param	array	$bg_color		array(R,G,B) ou 'onglet' ou 'default'
 	 * @return	void
 	 */
-	function SetBgColor($bg_color = array(255,255,255))
+    public function SetBgColor($bg_color = array(255,255,255))
 	{
         // phpcs:enable
 		global $theme_bgcolor,$theme_bgcoloronglet;
@@ -505,14 +505,14 @@ class DolGraph
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Define background color of grid
 	 *
 	 * @param	array	$bg_colorgrid		array(R,G,B) ou 'onglet' ou 'default'
 	 * @return	void
 	 */
-	function SetBgColorGrid($bg_colorgrid = array(255,255,255))
+    public function SetBgColorGrid($bg_colorgrid = array(255,255,255))
 	{
         // phpcs:enable
 		global $theme_bgcolor,$theme_bgcoloronglet;
@@ -535,25 +535,25 @@ class DolGraph
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Reset data color
 	 *
 	 * @return	void
 	 */
-	function ResetDataColor()
-	{
+    public function ResetDataColor()
+    {
         // phpcs:enable
-		unset($this->datacolor);
-	}
+        unset($this->datacolor);
+    }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
-	/**
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+    /**
 	 * Get max value
 	 *
 	 * @return	int		Max value
 	 */
-	function GetMaxValueInData()
+    public function GetMaxValueInData()
 	{
         // phpcs:enable
 		$k = 0;
@@ -574,13 +574,13 @@ class DolGraph
 		return $vals[0];
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Return min value of all data
 	 *
 	 * @return	int		Min value of all data
 	 */
-	function GetMinValueInData()
+    public function GetMinValueInData()
 	{
         // phpcs:enable
 		$k = 0;
@@ -601,13 +601,13 @@ class DolGraph
 		return $vals[0];
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Return max value of all data
 	 *
 	 * @return 	int		Max value of all data
 	 */
-	function GetCeilMaxValue()
+    public function GetCeilMaxValue()
 	{
         // phpcs:enable
 		$max = $this->GetMaxValueInData();
@@ -626,13 +626,13 @@ class DolGraph
 		return $res;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Return min value of all data
 	 *
 	 * @return 	double		Max value of all data
 	 */
-	function GetFloorMinValue()
+    public function GetFloorMinValue()
 	{
         // phpcs:enable
 		$min = $this->GetMinValueInData();
@@ -658,7 +658,7 @@ class DolGraph
 	 * @param	string	$fileurl	Url path to show image if saved onto disk
 	 * @return	integer|null
 	 */
-	function draw($file, $fileurl = '')
+    public function draw($file, $fileurl = '')
 	{
 		if (empty($file))
 		{
@@ -1127,7 +1127,7 @@ class DolGraph
 	 * @param	int			$shownographyet 	Show graph to say there is not enough data
 	 * @return	string							HTML string to show graph
 	 */
-	function show($shownographyet = 0)
+    public function show($shownographyet = 0)
 	{
 		global $langs;
 
@@ -1149,7 +1149,7 @@ class DolGraph
 	 * @param	string	$defaultsize	Value we want as default size
 	 * @return	int						Value of width or height to use by default
 	 */
-	static function getDefaultGraphSizeForStats($direction, $defaultsize = '')
+	public static function getDefaultGraphSizeForStats($direction, $defaultsize = '')
 	{
 		global $conf;
 

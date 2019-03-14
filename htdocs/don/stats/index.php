@@ -253,7 +253,7 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 	arsort($arrayyears);
 	print $form->selectarray('year', $arrayyears, $year, 0);
 	print '</td></tr>';
-	print '<tr><td align="center" colspan="2"><input type="submit" name="submit" class="button" value="'.$langs->trans("Refresh").'"></td></tr>';
+	print '<tr><td class="center" colspan="2"><input type="submit" name="submit" class="button" value="'.$langs->trans("Refresh").'"></td></tr>';
 	print '</table>';
 	print '</form>';
 	print '<br><br>';
@@ -262,10 +262,10 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 print '<div class="div-table-responsive-no-min">';
 print '<table class="border" width="100%">';
 print '<tr height="24">';
-print '<td align="center">'.$langs->trans("Year").'</td>';
-print '<td align="center">'.$langs->trans("NbOfSendings").'</td>';
-/*print '<td align="center">'.$langs->trans("AmountTotal").'</td>';
-print '<td align="center">'.$langs->trans("AmountAverage").'</td>';*/
+print '<td class="center">'.$langs->trans("Year").'</td>';
+print '<td class="center">'.$langs->trans("NbOfSendings").'</td>';
+/*print '<td class="center">'.$langs->trans("AmountTotal").'</td>';
+print '<td class="center">'.$langs->trans("AmountAverage").'</td>';*/
 print '</tr>';
 
 $oldyear=0;
@@ -276,19 +276,19 @@ foreach ($data as $val)
 	{ // If we have empty year
 		$oldyear--;
 		print '<tr height="24">';
-		print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$oldyear.'&amp;mode='.$mode.'">'.$oldyear.'</a></td>';
+		print '<td class="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$oldyear.'&amp;mode='.$mode.'">'.$oldyear.'</a></td>';
 
-		print '<td align="right">0</td>';
-		/*print '<td align="right">0</td>';
-		print '<td align="right">0</td>';*/
+		print '<td class="right">0</td>';
+		/*print '<td class="right">0</td>';
+		print '<td class="right">0</td>';*/
 		print '</tr>';
 	}
 
 	print '<tr height="24">';
-	print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&amp;mode='.$mode.'">'.$year.'</a></td>';
-	print '<td align="right">'.$val['nb'].'</td>';
-	/*print '<td align="right">'.price(price2num($val['total'],'MT'),1).'</td>';
-	print '<td align="right">'.price(price2num($val['avg'],'MT'),1).'</td>';*/
+	print '<td class="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&amp;mode='.$mode.'">'.$year.'</a></td>';
+	print '<td class="right">'.$val['nb'].'</td>';
+	/*print '<td class="right">'.price(price2num($val['total'],'MT'),1).'</td>';
+	print '<td class="right">'.price(price2num($val['avg'],'MT'),1).'</td>';*/
 	print '</tr>';
 	$oldyear=$year;
 }
@@ -301,7 +301,7 @@ print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 
 // Show graphs
-print '<table class="border" width="100%"><tr class="pair nohover"><td align="center">';
+print '<table class="border" width="100%"><tr class="pair nohover"><td class="center">';
 if ($mesg) { print $mesg; }
 else {
     print $px1->show();
@@ -323,8 +323,8 @@ dol_fiche_end();
 // TODO USe code similar to commande/stats/index.php instead of this one.
 /*
 print '<table class="border" width="100%">';
-print '<tr><td align="center">'.$langs->trans("Year").'</td>';
-print '<td width="40%" align="center">'.$langs->trans("NbOfSendings").'</td></tr>';
+print '<tr><td class="center">'.$langs->trans("Year").'</td>';
+print '<td width="40%" class="center">'.$langs->trans("NbOfSendings").'</td></tr>';
 
 $sql = "SELECT count(*) as nb, date_format(date_expedition,'%Y') as dm";
 $sql.= " FROM ".MAIN_DB_PREFIX."expedition";
@@ -343,7 +343,7 @@ if ($resql)
         $nbproduct = $row[0];
         $year = $row[1];
         print "<tr>";
-        print '<td align="center"><a href="month.php?year='.$year.'">'.$year.'</a></td><td align="center">'.$nbproduct.'</td></tr>';
+        print '<td class="center"><a href="month.php?year='.$year.'">'.$year.'</a></td><td class="center">'.$nbproduct.'</td></tr>';
         $i++;
     }
 }

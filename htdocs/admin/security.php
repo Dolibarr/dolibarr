@@ -212,7 +212,7 @@ if (is_resource($handle))
 {
     while (($file = readdir($handle))!==false)
     {
-        if (preg_match('/(modGeneratePass[a-z]+)\.class\.php/i', $file, $reg))
+        if (preg_match('/(modGeneratePass[a-z]+)\.class\.php$/i', $file, $reg))
         {
             // Charging the numbering class
             $classname = $reg[1];
@@ -398,7 +398,6 @@ print '<td align="center">'.$langs->trans("Action").'</td>';
 print '</tr>';
 
 // Disable clear password in database
-
 print '<tr class="oddeven">';
 print '<td colspan="3">'.$langs->trans("DoNotStoreClearPassword").'</td>';
 print '<td align="center" width="60">';
@@ -413,6 +412,8 @@ if (! $conf->global->DATABASE_PWD_ENCRYPTED)
 	print '<a href="security.php?action=activate_encrypt">'.$langs->trans("Activate").'</a>';
 	print "</td>";
 }
+
+// Database conf file encryption
 if (! empty($conf->global->DATABASE_PWD_ENCRYPTED))
 {
 	print '<td align="center" width="100">';
@@ -494,9 +495,21 @@ print '</tr>';
 
 print '</table>';
 print '</form>';
+print '<br>';
 
-
-//print '<tr><td colspan="2" align="center"><input type="submit" class="button" value="'.$langs->trans("Save").'"></td></tr>';
+if (GETPOST('info', 'int') > 0)
+{
+    if (function_exists('password_hash'))
+    {
+        print $langs->trans("Note: The function password_hash exists on your PHP")."<br>\n";
+    }
+    else
+    {
+        print $langs->trans("Note: The function password_hash does not exists on your PHP")."<br>\n";
+    }
+    print 'MAIN_SECURITY_HASH_ALGO = '.$conf->global->MAIN_SECURITY_HASH_ALGO."<br>\n";
+    print 'MAIN_SECURITY_SALT = '.$conf->global->MAIN_SECURITY_SALT."<br>\n";
+}
 
 print '</div>';
 

@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2019   Thibault FOUCART        <support@ptibogxiv.net>
- * Copyright (C) 2019	Laurent Destailleur		<eldy@users.sourceforge.net>
+/* Copyright (C) 2019       Thibault FOUCART        <support@ptibogxiv.net>
+ * Copyright (C) 2019       Laurent Destailleur     <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,10 +44,10 @@ class Donations extends DolibarrApi
     /**
      * Constructor
      */
-    function __construct()
+    public function __construct()
     {
-		global $db, $conf;
-		$this->db = $db;
+        global $db, $conf;
+        $this->db = $db;
         $this->don = new Don($this->db);
     }
 
@@ -58,10 +58,10 @@ class Donations extends DolibarrApi
      *
      * @param       int         $id         ID of order
      * @return 	array|mixed data without useless information
-	 *
+     *
      * @throws 	RestException
      */
-    function get($id)
+    public function get($id)
     {
 		if(! DolibarrApiAccess::$user->rights->don->lire) {
 			throw new RestException(401);
@@ -89,17 +89,17 @@ class Donations extends DolibarrApi
      *
      * Get a list of donations
      *
-     * @param string	     $sortfield	        Sort field
-     * @param string	     $sortorder	        Sort order
-     * @param int		       $limit		        Limit for list
-     * @param int		       $page		        Page number
-     * @param string   	   $thirdparty_ids	    Thirdparty ids to filter orders of. {@example '1' or '1,2,3'} {@pattern /^[0-9,]*$/i}
-     * @param string       $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
-     * @return  array                               Array of order objects
+     * @param string    $sortfield          Sort field
+     * @param string    $sortorder          Sort order
+     * @param int       $limit              Limit for list
+     * @param int       $page               Page number
+     * @param string    $thirdparty_ids     Thirdparty ids to filter orders of. {@example '1' or '1,2,3'} {@pattern /^[0-9,]*$/i}
+     * @param string    $sqlfilters         Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
+     * @return  array                       Array of order objects
      *
      * @throws RestException
      */
-    function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $sqlfilters = '')
+    public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $sqlfilters = '')
     {
         global $db, $conf;
 
@@ -115,7 +115,7 @@ class Donations extends DolibarrApi
         $sql.= ' WHERE t.entity IN ('.getEntity('don').')';
         if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) ) $sql.= " AND t.fk_soc = sc.fk_soc";
         if ($thirdparty_ids) $sql.= " AND t.fk_soc = ".$thirdparty_ids." ";
-        
+
         // Add sql filters
         if ($sqlfilters)
         {
@@ -140,7 +140,7 @@ class Donations extends DolibarrApi
 
         dol_syslog("API Rest request");
         $result = $db->query($sql);
-        
+
         if ($result)
         {
             $num = $db->num_rows($result);
@@ -164,7 +164,7 @@ class Donations extends DolibarrApi
         if( ! count($obj_ret)) {
             throw new RestException(404, 'No donation found');
         }
-        
+
 		return $obj_ret;
     }
 
@@ -174,15 +174,15 @@ class Donations extends DolibarrApi
      * @param   array   $request_data   Request data
      * @return  int     ID of order
      */
-    function post($request_data = null)
+    public function post($request_data = null)
     {
-        if(! DolibarrApiAccess::$user->rights->don->creer) {
-			throw new RestException(401, "Insuffisant rights");
-		}
+        if (! DolibarrApiAccess::$user->rights->don->creer) {
+            throw new RestException(401, "Insuffisant rights");
+        }
         // Check mandatory fields
         $result = $this->_validate($request_data);
 
-        foreach($request_data as $field => $value) {
+        foreach ($request_data as $field => $value) {
             $this->don->$field = $value;
         }
         /*if (isset($request_data["lines"])) {
@@ -208,7 +208,7 @@ class Donations extends DolibarrApi
      *
      * @return int
      */
-    function put($id, $request_data = null)
+    public function put($id, $request_data = null)
     {
         if (! DolibarrApiAccess::$user->rights->don->creer) {
 			throw new RestException(401);
@@ -222,7 +222,7 @@ class Donations extends DolibarrApi
 		if (! DolibarrApi::_checkAccessToResource('donation', $this->don->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
-        foreach($request_data as $field => $value) {
+        foreach ($request_data as $field => $value) {
             if ($field == 'id') continue;
             $this->don->$field = $value;
         }
@@ -243,7 +243,7 @@ class Donations extends DolibarrApi
      * @param   int     $id         Order ID
      * @return  array
      */
-    function delete($id)
+    public function delete($id)
     {
         if(! DolibarrApiAccess::$user->rights->don->supprimer) {
 			throw new RestException(401);
@@ -291,7 +291,7 @@ class Donations extends DolibarrApi
      *
      * @return  array
      */
-    function validate($id, $idwarehouse = 0, $notrigger = 0)
+    public function validate($id, $idwarehouse = 0, $notrigger = 0)
     {
         if(! DolibarrApiAccess::$user->rights->don->creer) {
 			throw new RestException(401);
@@ -326,15 +326,16 @@ class Donations extends DolibarrApi
         return $this->_cleanObjectDatas($this->don);
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
     /**
      * Clean sensible object datas
      *
      * @param   object  $object    Object to clean
      * @return    array    Array of cleaned object properties
      */
-    function _cleanObjectDatas($object)
+    protected function _cleanObjectDatas($object)
     {
-
+        // phpcs:enable
         $object = parent::_cleanObjectDatas($object);
 
         unset($object->note);
@@ -354,7 +355,7 @@ class Donations extends DolibarrApi
      * @return  array
      * @throws  RestException
      */
-    function _validate($data)
+    private function _validate($data)
     {
         $don = array();
         foreach (Orders::$FIELDS as $field) {

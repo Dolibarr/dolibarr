@@ -286,7 +286,7 @@ print $formaccounting->select_account($search_accountancy_code_end, 'search_acco
 print '</div>';
 print '</td>';
 print '<td class="liste_titre"></td>';
-print '<td class="liste_titre" align="center">';
+print '<td class="liste_titre center">';
 print $langs->trans('From') . ': ';
 print $form->selectDate($search_date_start, 'search_date_start', 0, 0, 1);
 print '<br>';
@@ -297,7 +297,7 @@ print '<td class="liste_titre"><input type="text" size="7" class="flat" name="se
 print '<td class="liste_titre"><input type="text" size="7" class="flat" name="search_label_operation" value="' . dol_escape_htmltag($search_label_operation) . '"/></td>';
 print '<td class="liste_titre right"><input type="text" class="flat" name="search_debit" size="4" value="'.dol_escape_htmltag($search_debit).'"></td>';
 print '<td class="liste_titre right"><input type="text" class="flat" name="search_credit" size="4" value="'.dol_escape_htmltag($search_credit).'"></td>';
-print '<td class="liste_titre" align="center"><input type="text" name="search_ledger_code" size="3" value="' . dol_escape_htmltag($search_ledger_code) . '"></td>';
+print '<td class="liste_titre center"><input type="text" name="search_ledger_code" size="3" value="' . dol_escape_htmltag($search_ledger_code) . '"></td>';
 print '<td class="liste_titre right" colspan="2">';
 $searchpicto=$form->showFilterAndCheckAddButtons(0);
 print $searchpicto;
@@ -305,14 +305,14 @@ print '</td>';
 
 print '<tr class="liste_titre">';
 print_liste_field_titre("AccountAccountingShort", $_SERVER['PHP_SELF']);
-print_liste_field_titre("TransactionNumShort", $_SERVER['PHP_SELF'], "t.piece_num", "", $param, 'class="right"', $sortfield, $sortorder);
-print_liste_field_titre("Docdate", $_SERVER['PHP_SELF'], "t.doc_date", "", $param, 'align="center"', $sortfield, $sortorder);
+print_liste_field_titre("TransactionNumShort", $_SERVER['PHP_SELF'], "t.piece_num", "", $param, '', $sortfield, $sortorder, 'right ');
+print_liste_field_titre("Docdate", $_SERVER['PHP_SELF'], "t.doc_date", "", $param, '', $sortfield, $sortorder, 'center ');
 print_liste_field_titre("Piece", $_SERVER['PHP_SELF'], "t.doc_ref", "", $param, "", $sortfield, $sortorder);
 print_liste_field_titre("Label");
-print_liste_field_titre("Debit", $_SERVER['PHP_SELF'], "t.debit", "", $param, 'class="right"', $sortfield, $sortorder);
-print_liste_field_titre("Credit", $_SERVER['PHP_SELF'], "t.credit", "", $param, 'class="right"', $sortfield, $sortorder);
-print_liste_field_titre("Codejournal", $_SERVER['PHP_SELF'], "t.code_journal", "", $param, 'align="center"', $sortfield, $sortorder);
-print_liste_field_titre('', $_SERVER["PHP_SELF"], "", $param, "", 'width="60" align="center"', $sortfield, $sortorder);
+print_liste_field_titre("Debit", $_SERVER['PHP_SELF'], "t.debit", "", $param, '', $sortfield, $sortorder, 'right ');
+print_liste_field_titre("Credit", $_SERVER['PHP_SELF'], "t.credit", "", $param, '', $sortfield, $sortorder, 'right ');
+print_liste_field_titre("Codejournal", $_SERVER['PHP_SELF'], "t.code_journal", "", $param, '', $sortfield, $sortorder, 'center ');
+print_liste_field_titre('', $_SERVER["PHP_SELF"], "", $param, "", 'width="60"', $sortfield, $sortorder, 'center ');
 print "</tr>\n";
 
 print '</tr>';
@@ -364,7 +364,7 @@ while ($i < min($num, $limit))
 	print '<tr class="oddeven">';
 	print '<td>&nbsp;</td>';
 	print '<td class="right"><a href="./card.php?piece_num=' . $line->piece_num . '">'.$line->piece_num.'</a></td>';
-	print '<td align="center">' . dol_print_date($line->doc_date, 'day') . '</td>';
+	print '<td class="center">' . dol_print_date($line->doc_date, 'day') . '</td>';
 
 	// TODO Add a link according to doc_type and fk_doc
 	print '<td class="nowrap">';
@@ -384,9 +384,9 @@ while ($i < min($num, $limit))
 	$accountingjournal = new AccountingJournal($db);
 	$result = $accountingjournal->fetch('', $line->code_journal);
 	$journaltoshow = (($result > 0)?$accountingjournal->getNomUrl(0, 0, 0, '', 0) : $line->code_journal);
-	print '<td align="center">' . $journaltoshow . '</td>';
+	print '<td class="center">' . $journaltoshow . '</td>';
 
-	print '<td align="center">';
+	print '<td class="center">';
 	print '<a href="'.DOL_URL_ROOT.'/accountancy/bookkeeping/card.php?piece_num=' . $line->piece_num . '">' . img_edit() . '</a>&nbsp;';
 	print '<a href="' . $_SERVER['PHP_SELF'] . '?action=delmouv&mvt_num=' . $line->piece_num . $param . '&page=' . $page . '">' . img_delete() . '</a>';
 	print '</td>';

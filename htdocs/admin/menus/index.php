@@ -237,7 +237,7 @@ $h++;
 
 dol_fiche_head($head, 'editor', $langs->trans("Menus"), -1);
 
-print $langs->trans("MenusEditorDesc")."<br>\n";
+print '<span class="opacitymedium">'.$langs->trans("MenusEditorDesc")."</span><br>\n";
 print "<br>\n";
 
 

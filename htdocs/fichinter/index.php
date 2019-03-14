@@ -128,7 +128,7 @@ if ($resql)
     }
     if ($conf->use_javascript_ajax)
     {
-        print '<tr class="impair"><td align="center" colspan="2">';
+        print '<tr class="impair"><td class="center" colspan="2">';
 
         include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
         $dolgraph = new DolGraph();
@@ -150,7 +150,7 @@ if ($resql)
         {
             print '<tr class="oddeven">';
             print '<td>'.$fichinterstatic->LibStatut($status, $bool, 0).'</td>';
-            print '<td align="right"><a href="list.php?viewstatut='.$status.'">'.(isset($vals[$status.$bool])?$vals[$status.$bool]:0).' ';
+            print '<td class="right"><a href="list.php?viewstatut='.$status.'">'.(isset($vals[$status.$bool])?$vals[$status.$bool]:0).' ';
             print $fichinterstatic->LibStatut($status, $bool, 3);
             print '</a>';
             print '</td>';
@@ -160,8 +160,8 @@ if ($resql)
         }
     }
     //if ($totalinprocess != $total)
-    //print '<tr class="liste_total"><td>'.$langs->trans("Total").' ('.$langs->trans("CustomersOrdersRunning").')</td><td align="right">'.$totalinprocess.'</td></tr>';
-    print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td align="right">'.$total.'</td></tr>';
+    //print '<tr class="liste_total"><td>'.$langs->trans("Total").' ('.$langs->trans("CustomersOrdersRunning").')</td><td class="right">'.$totalinprocess.'</td></tr>';
+    print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td class="right">'.$total.'</td></tr>';
     print "</table><br>";
 }
 else
@@ -263,7 +263,7 @@ if ($resql)
 			print '&nbsp;';
 			print '</td>';
 
-			print '<td width="16" align="right" class="nobordernopadding hideonsmartphone">';
+			print '<td width="16" class="right nobordernopadding hideonsmartphone">';
 			$filename=dol_sanitizeFileName($obj->ref);
 			$filedir=$conf->commande->dir_output . '/' . dol_sanitizeFileName($obj->ref);
 			$urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->rowid;
@@ -274,7 +274,7 @@ if ($resql)
 
 			print '<td><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"), "company").' '.$obj->name.'</a></td>';
 			print '<td>'.dol_print_date($db->jdate($obj->datem), 'day').'</td>';
-			print '<td align="right">'.$fichinterstatic->LibStatut($obj->fk_statut, 5).'</td>';
+			print '<td class="right">'.$fichinterstatic->LibStatut($obj->fk_statut, 5).'</td>';
 			print '</tr>';
 			$i++;
 		}
@@ -331,7 +331,7 @@ if (! empty($conf->ficheinter->enabled))
 				print '&nbsp;';
 				print '</td>';
 
-				print '<td width="16" align="right" class="nobordernopadding hideonsmartphone">';
+				print '<td width="16" class="right nobordernopadding hideonsmartphone">';
 				$filename=dol_sanitizeFileName($obj->ref);
 				$filedir=$conf->commande->dir_output . '/' . dol_sanitizeFileName($obj->ref);
 				$urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->rowid;
@@ -342,7 +342,7 @@ if (! empty($conf->ficheinter->enabled))
 
 				print '<td><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"), "company").' '.dol_trunc($obj->name, 24).'</a></td>';
 
-				print '<td align="right">'.$fichinterstatic->LibStatut($obj->fk_statut, 5).'</td>';
+				print '<td class="right">'.$fichinterstatic->LibStatut($obj->fk_statut, 5).'</td>';
 
 				print '</tr>';
 				$i++;

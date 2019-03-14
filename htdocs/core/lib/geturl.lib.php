@@ -78,6 +78,11 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
     	curl_setopt($ch, CURLOPT_POST, 1);	// POST
     	curl_setopt($ch, CURLOPT_POSTFIELDS, $param);	// Setting param x=a&y=z as POST fields
     }
+    elseif ($postorget == 'POSTALREADYFORMATED')
+    {
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST'); // HTTP request is 'POST' but param string is taken as it is
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $param);	// param = content of post, like a xml string
+    }
     elseif ($postorget == 'PUT')
     {
     	curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT'); // HTTP request is 'PUT'

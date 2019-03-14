@@ -38,9 +38,6 @@ $query= GETPOST('query', 'alpha');
  * View
  */
 
-header('Cache-Control: max-age=604800, public, must-revalidate');
-header('Pragma: cache');
-
 if ($query=="cat")
 {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
@@ -63,7 +60,7 @@ if ($query=="cat")
 		{
 			$filename=$obj['photo'];
 		}
-		$file=DOL_URL_ROOT.'/viewimage.php?modulepart=category&entity='.$object->entity.'&file='.urlencode($pdir.$filename);
+		$file=DOL_URL_ROOT.'/viewimage.php?cache=1&modulepart=category&entity='.$object->entity.'&file='.urlencode($pdir.$filename);
 		header('Location: '.$file);
 		exit;
 	}
@@ -80,7 +77,7 @@ elseif ($query=="pro")
 	preg_match('@src="([^"]+)"@', $image, $match);
 	$file = array_pop($match);
 	if ($file=="") header('Location: ../../public/theme/common/nophoto.png');
-	else header('Location: '.$file);
+	else header('Location: '.$file.'&cache=1');
 }
 else
 {

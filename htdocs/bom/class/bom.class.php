@@ -1,6 +1,5 @@
 <?php
-/* Copyright (C) 2017  Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) ---Put here your own copyright and developer email---
+/* Copyright (C) 2019  Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +18,7 @@
 /**
  * \file        class/bom.class.php
  * \ingroup     bom
- * \brief       This file is a CRUD class file for BillOfMaterials (Create/Read/Update/Delete)
+ * \brief       This file is a CRUD class file for BOM (Create/Read/Update/Delete)
  */
 
 // Put here all includes required by your class file
@@ -28,9 +27,9 @@ require_once DOL_DOCUMENT_ROOT . '/core/class/commonobject.class.php';
 //require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 
 /**
- * Class for BillOfMaterials
+ * Class for BOM
  */
-class BillOfMaterials extends CommonObject
+class BOM extends CommonObject
 {
 	/**
 	 * @var string ID to identify managed object
@@ -45,7 +44,7 @@ class BillOfMaterials extends CommonObject
 	/**
 	 * @var int  Does bom support multicompany module ? 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 	 */
-	public $ismultientitymanaged = 0;
+	public $ismultientitymanaged = 1;
 
 	/**
 	 * @var int  Does bom support extrafields ? 0=No, 1=Yes
@@ -55,14 +54,22 @@ class BillOfMaterials extends CommonObject
 	/**
 	 * @var string String with name of icon for bom. Must be the part after the 'object_' into object_bom.png
 	 */
-	public $picto = 'bom@bom';
+	public $picto = 'bom';
+
+
+	public $table_element_line = 'bom_bomline';
+
+
+	const STATUS_DRAFT = 0;
+	const STATUS_VALIDATED = 1;
+	const STATUS_DISABLED = -1;
 
 
 	/**
 	 *  'type' if the field format.
 	 *  'label' the translation key.
 	 *  'enabled' is a condition when the field must be managed.
-	 *  'visible' says if field is visible in list (Examples: 0=Not visible, 1=Visible on list and create/update/view forms, 2=Visible on list only. Using a negative value means field is not shown by default on list but can be selected for viewing)
+	 *  'visible' says if field is visible in list (Examples: 0=Not visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create). Using a negative value means field is not shown by default on list but can be selected for viewing)
 	 *  'notnull' is set to 1 if not null in database. Set to -1 if we must set data to null if empty ('' or 0).
 	 *  'default' is a default value for creation (can still be replaced by the global setup of default values)
 	 *  'index' if we want an index in database.
@@ -83,19 +90,21 @@ class BillOfMaterials extends CommonObject
 	 */
 	public $fields=array(
 		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-1, 'position'=>1, 'notnull'=>1, 'index'=>1, 'comment'=>"Id",),
-		'ref' => array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>1, 'visible'=>1, 'position'=>10, 'notnull'=>1, 'index'=>1, 'searchall'=>1, 'comment'=>"Reference of object", 'showoncombobox'=>'1',),
-		'label' => array('type'=>'varchar(255)', 'label'=>'Label', 'enabled'=>1, 'visible'=>1, 'position'=>30, 'notnull'=>-1, 'searchall'=>1, 'help'=>"Help text", 'showoncombobox'=>'1',),
+	    'ref' => array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>1, 'visible'=>4, 'position'=>10, 'notnull'=>1, 'default'=>'(PROV)', 'index'=>1, 'searchall'=>1, 'comment'=>"Reference of BOM", 'showoncombobox'=>'1',),
+		'label' => array('type'=>'varchar(255)', 'label'=>'Label', 'enabled'=>1, 'visible'=>1, 'position'=>30, 'notnull'=>1, 'searchall'=>1, 'showoncombobox'=>'1',),
 		'description' => array('type'=>'text', 'label'=>'Description', 'enabled'=>1, 'visible'=>-1, 'position'=>60, 'notnull'=>-1,),
 		'note_public' => array('type'=>'html', 'label'=>'NotePublic', 'enabled'=>1, 'visible'=>-1, 'position'=>61, 'notnull'=>-1,),
 		'note_private' => array('type'=>'html', 'label'=>'NotePrivate', 'enabled'=>1, 'visible'=>-1, 'position'=>62, 'notnull'=>-1,),
 		'date_creation' => array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-2, 'position'=>500, 'notnull'=>1,),
 		'tms' => array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'visible'=>-2, 'position'=>501, 'notnull'=>1,),
-		'fk_user_creat' => array('type'=>'integer', 'label'=>'UserAuthor', 'enabled'=>1, 'visible'=>-2, 'position'=>510, 'notnull'=>1, 'foreignkey'=>'llx_user.rowid',),
+	    'date_valid' => array('type'=>'datetime', 'label'=>'DateValid', 'enabled'=>1, 'visible'=>-2, 'position'=>502, 'notnull'=>0,),
+	    'fk_user_creat' => array('type'=>'integer', 'label'=>'UserValidation', 'enabled'=>1, 'visible'=>-2, 'position'=>510, 'notnull'=>1, 'foreignkey'=>'llx_user.rowid',),
 		'fk_user_modif' => array('type'=>'integer', 'label'=>'UserModif', 'enabled'=>1, 'visible'=>-2, 'position'=>511, 'notnull'=>-1,),
-		'import_key' => array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'position'=>1000, 'notnull'=>-1,),
-		'status' => array('type'=>'integer', 'label'=>'Status', 'enabled'=>1, 'visible'=>1, 'position'=>1000, 'notnull'=>1, 'index'=>1, 'arrayofkeyval'=>array('0'=>'Brouillon', '1'=>'Actif', '-1'=>'Inactif')),
-		'fk_product' => array('type'=>'integer:Product:product/class/product.class.php', 'label'=>'Product', 'enabled'=>1, 'visible'=>1, 'position'=>50, 'notnull'=>-1, 'index'=>1,),
-		'qty' => array('type'=>'double(24,8)', 'label'=>'Quantity', 'enabled'=>1, 'visible'=>1, 'position'=>55, 'notnull'=>-1, 'isameasure'=>'1',),
+	    'fk_user_valid' => array('type'=>'integer', 'label'=>'UserValidation', 'enabled'=>1, 'visible'=>-2, 'position'=>512, 'notnull'=>0,),
+	    'import_key' => array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'position'=>1000, 'notnull'=>-1,),
+		'fk_product' => array('type'=>'integer:Product:product/class/product.class.php', 'label'=>'Product', 'enabled'=>1, 'visible'=>1, 'position'=>50, 'notnull'=>1, 'index'=>1, 'help'=>'ProductBOMHelp'),
+		'qty' => array('type'=>'real', 'label'=>'Quantity', 'enabled'=>1, 'visible'=>1, 'default'=>1, 'position'=>55, 'notnull'=>1, 'isameasure'=>'1',),
+	    'status' => array('type'=>'integer', 'label'=>'Status', 'enabled'=>1, 'visible'=>2, 'position'=>1000, 'notnull'=>1, 'default'=>0, 'index'=>1, 'arrayofkeyval'=>array('0'=>'Draft', '1'=>'Enabled', '-1'=>'Disabled')),
 	);
 	public $rowid;
 	public $ref;
@@ -112,7 +121,6 @@ class BillOfMaterials extends CommonObject
 	public $fk_product;
 	public $qty;
 	// END MODULEBUILDER PROPERTIES
-
 
 
 	// If this object has a subtable with lines
@@ -276,14 +284,14 @@ class BillOfMaterials extends CommonObject
 	 *
 	 * @return int         <0 if KO, 0 if not found, >0 if OK
 	 */
-	/*public function fetchLines()
+	public function fetchLines()
 	{
 		$this->lines=array();
 
-		// Load lines with object BillOfMaterialsLine
+		// Load lines with object BOMLine
 
 		return count($this->lines)?1:0;
-	}*/
+	}
 
 	/**
 	 * Load list of objects in memory from the database.
@@ -388,6 +396,189 @@ class BillOfMaterials extends CommonObject
 		//return $this->deleteCommon($user, $notrigger, 1);
 	}
 
+
+	/**
+	 *	Validate bom
+	 *
+	 *	@param		User	$user     		User making status change
+	 *  @param		int		$notrigger		1=Does not execute triggers, 0= execute triggers
+	 *	@return  	int						<=0 if OK, 0=Nothing done, >0 if KO
+	 */
+	public function valid($user, $notrigger = 0)
+	{
+	    global $conf, $langs;
+	    require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+
+	    $error=0;
+
+	    // Protection
+	    if ($this->statut == self::STATUS_VALIDATED)
+	    {
+	        dol_syslog(get_class($this)."::valid action abandonned: already validated", LOG_WARNING);
+	        return 0;
+	    }
+
+	    /*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->bom->create))
+	        || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->bom->bom_advance->validate))))
+	    {
+	        $this->error='NotEnoughPermissions';
+	        dol_syslog(get_class($this)."::valid ".$this->error, LOG_ERR);
+	        return -1;
+	    }*/
+
+	    $now=dol_now();
+
+	    $this->db->begin();
+
+	    // Define new ref
+	    if (! $error && (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref))) // empty should not happened, but when it occurs, the test save life
+	    {
+	        $num = $this->getNextNumRef();
+	    }
+	    else
+	    {
+	        $num = $this->ref;
+	    }
+	    $this->newref = $num;
+
+	    // Validate
+	    $sql = "UPDATE ".MAIN_DB_PREFIX."bom_bom";
+	    $sql.= " SET ref = '".$this->db->escape($num)."',";
+	    $sql.= " status = ".self::STATUS_VALIDATED.",";
+	    $sql.= " date_valid='".$this->db->idate($now)."',";
+	    $sql.= " fk_user_valid = ".$user->id;
+	    $sql.= " WHERE rowid = ".$this->id;
+
+	    dol_syslog(get_class($this)."::valid()", LOG_DEBUG);
+	    $resql=$this->db->query($sql);
+	    if (! $resql)
+	    {
+	        dol_print_error($this->db);
+	        $this->error=$this->db->lasterror();
+	        $error++;
+	    }
+
+	    if (! $error && ! $notrigger)
+	    {
+	        // Call trigger
+	        $result=$this->call_trigger('BOM_VALIDATE', $user);
+	        if ($result < 0) $error++;
+	        // End call triggers
+	    }
+
+	    if (! $error)
+	    {
+	        $this->oldref = $this->ref;
+
+	        // Rename directory if dir was a temporary ref
+	        if (preg_match('/^[\(]?PROV/i', $this->ref))
+	        {
+	            // On renomme repertoire ($this->ref = ancienne ref, $num = nouvelle ref)
+	            // in order not to lose the attachments
+	            $oldref = dol_sanitizeFileName($this->ref);
+	            $newref = dol_sanitizeFileName($num);
+	            $dirsource = $conf->bom->dir_output.'/'.$oldref;
+	            $dirdest = $conf->bom->dir_output.'/'.$newref;
+	            if (file_exists($dirsource))
+	            {
+	                dol_syslog(get_class($this)."::valid() rename dir ".$dirsource." into ".$dirdest);
+
+	                if (@rename($dirsource, $dirdest))
+	                {
+	                    dol_syslog("Rename ok");
+	                    // Rename docs starting with $oldref with $newref
+	                    $listoffiles=dol_dir_list($conf->bom->dir_output.'/'.$newref, 'files', 1, '^'.preg_quote($oldref, '/'));
+	                    foreach($listoffiles as $fileentry)
+	                    {
+	                        $dirsource=$fileentry['name'];
+	                        $dirdest=preg_replace('/^'.preg_quote($oldref, '/').'/', $newref, $dirsource);
+	                        $dirsource=$fileentry['path'].'/'.$dirsource;
+	                        $dirdest=$fileentry['path'].'/'.$dirdest;
+	                        @rename($dirsource, $dirdest);
+	                    }
+	                }
+	            }
+	        }
+	    }
+
+	    // Set new ref and current status
+	    if (! $error)
+	    {
+	        $this->ref = $num;
+	        $this->status = self::STATUS_VALIDATED;
+	    }
+
+	    if (! $error)
+	    {
+	        $this->db->commit();
+	        return 1;
+	    }
+	    else
+	    {
+	        $this->db->rollback();
+	        return -1;
+	    }
+	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *	Set draft status
+	 *
+	 *	@param	User	$user			Object user that modify
+	 *	@return	int						<0 if KO, >0 if OK
+	 */
+	public function setDraft($user)
+	{
+	    //phpcs:enable
+	    global $conf,$langs;
+
+	    $error=0;
+
+	    // Protection
+	    if ($this->status <= self::STATUS_DRAFT)
+	    {
+	        return 0;
+	    }
+
+	    /*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->bom->write))
+	        || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->bom->bom_advance->validate))))
+	    {
+	        $this->error='Permission denied';
+	        return -1;
+	    }*/
+
+	    $this->db->begin();
+
+	    $sql = "UPDATE ".MAIN_DB_PREFIX."bom";
+	    $sql.= " SET status = ".self::STATUS_DRAFT;
+	    $sql.= " WHERE rowid = ".$this->id;
+
+	    dol_syslog(get_class($this)."::setDraft", LOG_DEBUG);
+	    if ($this->db->query($sql))
+	    {
+	        if (!$error) {
+	            // Call trigger
+	            $result=$this->call_trigger('BOM_UNVALIDATE', $user);
+	            if ($result < 0) $error++;
+	        }
+
+	        if (!$error) {
+	            $this->status=self::STATUS_DRAFT;
+	            $this->db->commit();
+	            return 1;
+	        }else {
+	            $this->db->rollback();
+	            return -1;
+	        }
+	    }
+	    else
+	    {
+	        $this->error=$this->db->error();
+	        $this->db->rollback();
+	        return -1;
+	    }
+	}
+
 	/**
 	 *  Return a link to the object card (with optionaly the picto)
 	 *
@@ -398,7 +589,7 @@ class BillOfMaterials extends CommonObject
      *  @param  int     $save_lastsearch_value    	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
 	 *	@return	string								String with URL
 	 */
-	function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
+	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
 	{
 		global $db, $conf, $langs, $hookmanager;
         global $dolibarr_main_authentication, $dolibarr_main_demo;
@@ -487,7 +678,7 @@ class BillOfMaterials extends CommonObject
 		if (empty($this->labelstatus))
 		{
 			global $langs;
-			//$langs->load("bom");
+			//$langs->load("mrp");
 			$this->labelstatus[1] = $langs->trans('Enabled');
 			$this->labelstatus[0] = $langs->trans('Disabled');
 		}
@@ -588,7 +779,8 @@ class BillOfMaterials extends CommonObject
 	 */
 	public function initAsSpecimen()
 	{
-		$this->initAsSpecimenCommon();
+	    $this->initAsSpecimenCommon();
+	    $this->date = $this->date_creation;
 	}
 
 
@@ -625,9 +817,9 @@ class BillOfMaterials extends CommonObject
 
 
 /**
- * Class for BillOfMaterialsLine
+ * Class for BOMLine
  */
-class BillOfMaterialsLine extends CommonObject
+class BOMLine extends CommonObject
 {
 	/**
 	 * @var string ID to identify managed object
@@ -850,23 +1042,9 @@ class BillOfMaterialsLine extends CommonObject
 	public function fetch($id, $ref = null)
 	{
 		$result = $this->fetchCommon($id, $ref);
-		if ($result > 0 && ! empty($this->table_element_line)) $this->fetchLines();
+		//if ($result > 0 && ! empty($this->table_element_line)) $this->fetchLines();
 		return $result;
 	}
-
-	/**
-	 * Load object lines in memory from the database
-	 *
-	 * @return int         <0 if KO, 0 if not found, >0 if OK
-	 */
-	/*public function fetchLines()
-	{
-		$this->lines=array();
-
-		// Load lines with object BillOfMaterialsLineLine
-
-		return count($this->lines)?1:0;
-	}*/
 
 	/**
 	 * Load list of objects in memory from the database.
@@ -979,11 +1157,11 @@ class BillOfMaterialsLine extends CommonObject
      *  @param	int  	$notooltip					1=Disable tooltip
      *  @param  string  $morecss            		Add more css on link
      *  @param  int     $save_lastsearch_value    	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
-	 *	@return	string								String with URL
-	 */
-	function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
-	{
-		global $db, $conf, $langs, $hookmanager;
+     *  @return	string								String with URL
+     */
+    public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
+    {
+        global $db, $conf, $langs, $hookmanager;
         global $dolibarr_main_authentication, $dolibarr_main_demo;
         global $menumanager;
 
@@ -1043,7 +1221,7 @@ class BillOfMaterialsLine extends CommonObject
 		else $result .= $hookmanager->resPrint;
 
 		return $result;
-	}
+    }
 
 	/**
 	 *  Return label of the status
@@ -1070,7 +1248,7 @@ class BillOfMaterialsLine extends CommonObject
 		if (empty($this->labelstatus))
 		{
 			global $langs;
-			//$langs->load("bom");
+			//$langs->load("mrp");
 			$this->labelstatus[1] = $langs->trans('Enabled');
 			$this->labelstatus[0] = $langs->trans('Disabled');
 		}
@@ -1179,7 +1357,7 @@ class BillOfMaterialsLine extends CommonObject
 	 * Action executed by scheduler
 	 * CAN BE A CRON TASK. In such a case, parameters come from the schedule job setup field 'Parameters'
 	 *
-	 * @return	int			0 if OK, <>0 if KO (this function is used also by cron so only 0 is OK)
+	 * @return  int	        0 if OK, <>0 if KO (this function is used also by cron so only 0 is OK)
 	 */
 	//public function doScheduledJob($param1, $param2, ...)
 	public function doScheduledJob()

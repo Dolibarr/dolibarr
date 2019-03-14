@@ -49,7 +49,7 @@ class FormContract
     }
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Show a combo list with contracts qualified for a third party
 	 *
@@ -60,8 +60,8 @@ class FormContract
 	 *	@param	int		$showempty	Show empty line
 	 *	@return int         		Nbr of project if OK, <0 if KO
 	 */
-	function select_contract($socid = -1, $selected = '', $htmlname = 'contrattid', $maxlength = 16, $showempty = 1)
-	{
+    public function select_contract($socid = -1, $selected = '', $htmlname = 'contrattid', $maxlength = 16, $showempty = 1)
+    {
         // phpcs:enable
 		global $db,$user,$conf,$langs;
 
@@ -164,21 +164,21 @@ class FormContract
 			dol_print_error($db);
 			return -1;
 		}
-	}
+    }
 
-	/**
-	 *	Show a form to select a contract
-	 *
-	 *  @param	int		$page       Page
-	 *	@param	int		$socid      Id third party (-1=all, 0=only contracts not linked to a third party, id=contracts not linked or linked to third party id)
-	 *	@param  int		$selected   Id contract preselected
-	 *	@param  string	$htmlname   Nom de la zone html
-	 *	@param	int		$maxlength	Maximum length of label
-	 *	@param	int		$showempty	Show empty line
-	 *	@return int                 Nbr of project if OK, <0 if KO
-	 */
-	function formSelectContract($page, $socid = -1, $selected = '', $htmlname = 'contrattid', $maxlength = 16, $showempty = 1)
-	{
+    /**
+     *  Show a form to select a contract
+     *
+     *  @param  int     $page       Page
+     *  @param  int     $socid      Id third party (-1=all, 0=only contracts not linked to a third party, id=contracts not linked or linked to third party id)
+     *  @param  int     $selected   Id contract preselected
+     *  @param  string  $htmlname   Nom de la zone html
+     *  @param  int     $maxlength	Maximum length of label
+     *  @param  int     $showempty	Show empty line
+     *  @return int                 Nbr of project if OK, <0 if KO
+     */
+    public function formSelectContract($page, $socid = -1, $selected = '', $htmlname = 'contrattid', $maxlength = 16, $showempty = 1)
+    {
         global $langs;
 
         print "\n";

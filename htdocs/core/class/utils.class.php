@@ -32,15 +32,15 @@ class Utils
      */
     public $db;
 
-	var $output;   // Used by Cron method to return message
-	var $result;   // Used by Cron method to return data
+    public $output;   // Used by Cron method to return message
+    public $result;   // Used by Cron method to return data
 
 	/**
 	 *	Constructor
 	 *
 	 *  @param	DoliDB	$db		Database handler
 	 */
-	function __construct($db)
+	public function __construct($db)
 	{
 		$this->db = $db;
 	}
@@ -53,7 +53,7 @@ class Utils
 	 *  @param	string		$choice		Choice of purge mode ('tempfiles', '' or 'tempfilesold' to purge temp older than 24h, 'allfiles', 'logfile')
 	 *  @return	int						0 if OK, < 0 if KO (this function is used also by cron so only 0 is OK)
 	 */
-	function purgeFiles($choice = 'tempfilesold')
+	public function purgeFiles($choice = 'tempfilesold')
 	{
 		global $conf, $langs, $dolibarr_main_data_root;
 
@@ -182,7 +182,7 @@ class Utils
 	 *  @param	int		    $execmethod		   0=Use default method (that is 1 by default), 1=Use the PHP 'exec', 2=Use the 'popen' method
 	 *  @return	int						       0 if OK, < 0 if KO (this function is used also by cron so only 0 is OK)
 	 */
-	function dumpDatabase($compression = 'none', $type = 'auto', $usedefault = 1, $file = 'auto', $keeplastnfiles = 0, $execmethod = 0)
+	public function dumpDatabase($compression = 'none', $type = 'auto', $usedefault = 1, $file = 'auto', $keeplastnfiles = 0, $execmethod = 0)
 	{
 		global $db, $conf, $langs, $dolibarr_main_data_root;
 		global $dolibarr_main_db_name, $dolibarr_main_db_host, $dolibarr_main_db_user, $dolibarr_main_db_port, $dolibarr_main_db_pass;
@@ -501,7 +501,7 @@ class Utils
 	 * @param	int		$execmethod		0=Use default method (that is 1 by default), 1=Use the PHP 'exec', 2=Use the 'popen' method
 	 * @return	array					array('result'=>...,'output'=>...,'error'=>...). result = 0 means OK.
 	 */
-	function executeCLI($command, $outputfile, $execmethod = 0)
+	public function executeCLI($command, $outputfile, $execmethod = 0)
 	{
 		global $conf, $langs;
 
@@ -570,7 +570,7 @@ class Utils
 	 * @param 	string	$module		Module name
 	 * @return	int					<0 if KO, >0 if OK
 	 */
-	function generateDoc($module)
+	public function generateDoc($module)
 	{
 		global $conf, $langs;
 		global $dirins;
@@ -611,7 +611,8 @@ class Utils
 		if (count($arrayversion))
 		{
 			$FILENAMEASCII=strtolower($module).'.asciidoc';
-			$FILENAMEDOC=strtolower($module).'.html';			// TODO Use/text PDF
+			$FILENAMEDOC=strtolower($module).'.html';
+			$FILENAMEDOCPDF=strtolower($module).'.pdf';
 
 			$dirofmodule = dol_buildpath(strtolower($module), 0);
 			$dirofmoduledoc = dol_buildpath(strtolower($module), 0).'/doc';
@@ -627,8 +628,7 @@ class Utils
 					return -1;
 				}
 
-				$conf->global->MODULEBUILDER_ASCIIDOCTOR='asciidoctor';
-				if (empty($conf->global->MODULEBUILDER_ASCIIDOCTOR))
+				if (empty($conf->global->MODULEBUILDER_ASCIIDOCTOR) && empty($conf->global->MODULEBUILDER_ASCIIDOCTORPDF))
 				{
 				    $this->error = 'Setup of module ModuleBuilder not complete';
 				    return -1;
@@ -690,15 +690,27 @@ class Utils
                 $currentdir = getcwd();
                 chdir($dirofmodule);
 
+                require_once DOL_DOCUMENT_ROOT.'/core/class/utils.class.php';
+                $utils = new Utils($db);
+
+                // Build HTML doc
 				$command=$conf->global->MODULEBUILDER_ASCIIDOCTOR.' '.$destfile.' -n -o '.$dirofmoduledoc.'/'.$FILENAMEDOC;
 				$outfile=$dirofmoduletmp.'/out.tmp';
 
-				require_once DOL_DOCUMENT_ROOT.'/core/class/utils.class.php';
-				$utils = new Utils($db);
 				$resarray = $utils->executeCLI($command, $outfile);
 				if ($resarray['result'] != '0')
 				{
 					$this->error = $resarray['error'].' '.$resarray['output'];
+				}
+				$result = ($resarray['result'] == 0) ? 1 : 0;
+
+				// Build PDF doc
+				$command=$conf->global->MODULEBUILDER_ASCIIDOCTORPDF.' '.$destfile.' -n -o '.$dirofmoduledoc.'/'.$FILENAMEDOCPDF;
+				$outfile=$dirofmoduletmp.'/outpdf.tmp';
+				$resarray = $utils->executeCLI($command, $outfile);
+				if ($resarray['result'] != '0')
+				{
+				    $this->error = $resarray['error'].' '.$resarray['output'];
 				}
 				$result = ($resarray['result'] == 0) ? 1 : 0;
 
@@ -737,7 +749,7 @@ class Utils
 	 *
 	 * @return	int						0 if OK, < 0 if KO
 	 */
-    function compressSyslogs()
+    public function compressSyslogs()
     {
 		global $conf;
 
@@ -843,7 +855,7 @@ class Utils
 
 		$this->output = 'Archive log files (keeping last SYSLOG_FILE_SAVES='.$nbSaves.' files) done.';
 		return 0;
-	}
+    }
 
 	/**	Backup the db OR just a table without mysqldump binary, with PHP only (does not require any exec permission)
 	 *	Author: David Walsh (http://davidwalsh.name/backup-mysql-database-php)
@@ -855,7 +867,7 @@ class Utils
 	 *	@param	string	$tables			Table name or '*' for all
 	 *	@return	int						<0 if KO, >0 if OK
 	 */
-	function backupTables($outputfile, $tables = '*')
+	public function backupTables($outputfile, $tables = '*')
 	{
 		global $db, $langs;
 		global $errormsg;

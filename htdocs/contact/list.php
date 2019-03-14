@@ -584,7 +584,7 @@ if (! empty($arrayfields['p.town']['checked']))
 if (! empty($arrayfields['country.code_iso']['checked']))
 {
 	print '<td class="liste_titre center">';
-	print $form->select_country($search_country, 'search_country', '', 0, 'maxwidth100');
+	print $form->select_country($search_country, 'search_country', '', 0, 'minwidth100imp maxwidth100');
 	print '</td>';
 }
 if (! empty($arrayfields['p.phone']['checked']))

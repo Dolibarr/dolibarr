@@ -171,7 +171,7 @@ class Expedition extends CommonObject
 	 *
 	 *  @param		DoliDB		$db      Database handler
 	 */
-	function __construct($db)
+	public function __construct($db)
 	{
 		global $conf;
 
@@ -207,7 +207,7 @@ class Expedition extends CommonObject
 	 *	@param	Societe		$soc	Thirdparty object
 	 *	@return string				Free reference for contract
 	 */
-	function getNextNumRef($soc)
+	public function getNextNumRef($soc)
 	{
 		global $langs, $conf;
 		$langs->load("sendings");
@@ -264,7 +264,7 @@ class Expedition extends CommonObject
 	 * 	@param		int		$notrigger	1=Does not execute triggers, 0= execute triggers
 	 *  @return int 				<0 si erreur, id expedition creee si ok
 	 */
-	function create($user, $notrigger = 0)
+	public function create($user, $notrigger = 0)
 	{
 		global $conf, $hookmanager;
 
@@ -434,7 +434,7 @@ class Expedition extends CommonObject
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Create a expedition line
 	 *
@@ -444,7 +444,7 @@ class Expedition extends CommonObject
 	 * @param	array	$array_options		extrafields array
 	 * @return	int							<0 if KO, line_id if OK
 	 */
-	function create_line($entrepot_id, $origin_line_id, $qty, $array_options = 0)
+	public function create_line($entrepot_id, $origin_line_id, $qty, $array_options = 0)
 	{
         //phpcs:enable
 		$expeditionline = new ExpeditionLigne($this->db);
@@ -462,7 +462,7 @@ class Expedition extends CommonObject
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Create the detail (eat-by date) of the expedition line
 	 *
@@ -470,7 +470,7 @@ class Expedition extends CommonObject
 	 * @param	array		$array_options		extrafields array
 	 * @return	int							<0 if KO, >0 if OK
 	 */
-	function create_line_batch($line_ext, $array_options = 0)
+	public function create_line_batch($line_ext, $array_options = 0)
 	{
         // phpcs:enable
 		$error = 0;
@@ -520,14 +520,14 @@ class Expedition extends CommonObject
 	 * 	@param	string	$ref_int	Internal reference of other object
 	 *	@return int			        >0 if OK, 0 if not found, <0 if KO
 	 */
-	function fetch($id, $ref = '', $ref_ext = '', $ref_int = '')
+	public function fetch($id, $ref = '', $ref_ext = '', $ref_int = '')
 	{
 		global $conf;
 
 		// Check parameters
 		if (empty($id) && empty($ref) && empty($ref_ext) && empty($ref_int)) return -1;
 
-		$sql = "SELECT e.rowid, e.ref, e.fk_soc as socid, e.date_creation, e.ref_customer, e.ref_ext, e.ref_int, e.fk_user_author, e.fk_statut, e.fk_projet, e.billed";
+		$sql = "SELECT e.rowid, e.ref, e.fk_soc as socid, e.date_creation, e.ref_customer, e.ref_ext, e.ref_int, e.fk_user_author, e.fk_statut, e.fk_projet as fk_project, e.billed";
 		$sql.= ", e.weight, e.weight_units, e.size, e.size_units, e.width, e.height";
 		$sql.= ", e.date_expedition as date_expedition, e.model_pdf, e.fk_address, e.date_delivery";
 		$sql.= ", e.fk_shipping_method, e.tracking_number";
@@ -575,7 +575,7 @@ class Expedition extends CommonObject
 				$this->origin               = ($obj->origin?$obj->origin:'commande'); // For compatibility
 				$this->origin_id            = $obj->origin_id;
 				$this->billed               = $obj->billed;
-				$this->fk_project	    = $obj->fk_projet;
+				$this->fk_project	        = $obj->fk_project;
 
 				$this->trueWeight           = $obj->weight;
 				$this->weight_units         = $obj->weight_units;
@@ -646,7 +646,7 @@ class Expedition extends CommonObject
 	 *  @param		int			$notrigger	1=Does not execute triggers, 0= execute triggers
 	 *  @return     int						<0 if OK, >0 if KO
 	 */
-	function valid($user, $notrigger = 0)
+	public function valid($user, $notrigger = 0)
 	{
 		global $conf, $langs;
 
@@ -862,14 +862,14 @@ class Expedition extends CommonObject
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Create a delivery receipt from a shipment
 	 *
 	 *	@param	User	$user       User
 	 *  @return int  				<0 if KO, >=0 if OK
 	 */
-	function create_delivery($user)
+	public function create_delivery($user)
 	{
         // phpcs:enable
 		global $conf;
@@ -908,7 +908,7 @@ class Expedition extends CommonObject
 	 * @param	array	$array_options		extrafields array
 	 * @return	int							<0 if KO, >0 if OK
 	 */
-	function addline($entrepot_id, $id, $qty, $array_options = 0)
+	public function addline($entrepot_id, $id, $qty, $array_options = 0)
 	{
 		global $conf, $langs;
 
@@ -971,7 +971,7 @@ class Expedition extends CommonObject
 		$this->lines[$num] = $line;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Add a shipment line with batch record
 	 *
@@ -979,7 +979,7 @@ class Expedition extends CommonObject
 	 * @param	array		$array_options		extrafields array
 	 * @return	int						<0 if KO, >0 if OK
 	 */
-	function addline_batch($dbatch, $array_options = 0)
+	public function addline_batch($dbatch, $array_options = 0)
 	{
         // phpcs:enable
 		global $conf,$langs;
@@ -1048,7 +1048,7 @@ class Expedition extends CommonObject
 	 *  @param  int		$notrigger	    0=launch triggers after, 1=disable triggers
 	 *  @return int 			       	<0 if KO, >0 if OK
 	 */
-	function update($user = null, $notrigger = 0)
+	public function update($user = null, $notrigger = 0)
 	{
 		global $conf;
 		$error=0;
@@ -1152,7 +1152,7 @@ class Expedition extends CommonObject
 	 *
 	 * 	@return	int		>0 if OK, 0 if deletion done but failed to delete files, <0 if KO
 	 */
-	function delete()
+	public function delete()
 	{
 		global $conf, $langs, $user;
 
@@ -1360,13 +1360,13 @@ class Expedition extends CommonObject
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Load lines
 	 *
 	 *	@return	int		>0 if OK, Otherwise if KO
 	 */
-	function fetch_lines()
+	public function fetch_lines()
 	{
         // phpcs:enable
 		global $conf, $mysoc;
@@ -1548,7 +1548,7 @@ class Expedition extends CommonObject
 	 *  @param		int		$lineid			Id of line to delete
 	 *  @return     int         			>0 if OK, <0 if KO
 	 */
-	function deleteline($user, $lineid)
+	public function deleteline($user, $lineid)
 	{
 		global $user;
 
@@ -1593,7 +1593,7 @@ class Expedition extends CommonObject
 	 *  @param      int     	$save_lastsearch_value		-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
 	 *	@return     string          						String with URL
 	 */
-	function getNomUrl($withpicto = 0, $option = '', $max = 0, $short = 0, $notooltip = 0, $save_lastsearch_value = -1)
+	public function getNomUrl($withpicto = 0, $option = '', $max = 0, $short = 0, $notooltip = 0, $save_lastsearch_value = -1)
 	{
 		global $langs;
 
@@ -1643,12 +1643,12 @@ class Expedition extends CommonObject
 	 *	@param      int		$mode      	0=Long label, 1=Short label, 2=Picto + Short label, 3=Picto, 4=Picto + Long label, 5=Short label + Picto
 	 *	@return     string      		Libelle
 	 */
-	function getLibStatut($mode = 0)
+	public function getLibStatut($mode = 0)
 	{
 		return $this->LibStatut($this->statut, $mode);
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Return label of a status
 	 *
@@ -1656,7 +1656,7 @@ class Expedition extends CommonObject
 	 * @param      int		$mode       0=Long label, 1=Short label, 2=Picto + Short label, 3=Picto, 4=Picto + Long label, 5=Short label + Picto
 	 * @return     string				Label of status
 	 */
-	function LibStatut($statut, $mode)
+	public function LibStatut($statut, $mode)
 	{
         // phpcs:enable
 		global $langs;
@@ -1700,7 +1700,7 @@ class Expedition extends CommonObject
 	 *
 	 *  @return	void
 	 */
-	function initAsSpecimen()
+	public function initAsSpecimen()
 	{
 		global $langs;
 
@@ -1772,7 +1772,7 @@ class Expedition extends CommonObject
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Set the planned delivery date
 	 *
@@ -1780,7 +1780,7 @@ class Expedition extends CommonObject
 	 *	@param      timestamp		$date_livraison     Date de livraison
 	 *	@return     int         						<0 if KO, >0 if OK
 	 */
-	function set_date_livraison($user, $date_livraison)
+	public function set_date_livraison($user, $date_livraison)
 	{
         // phpcs:enable
 		if ($user->rights->expedition->creer)
@@ -1808,13 +1808,13 @@ class Expedition extends CommonObject
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Fetch deliveries method and return an array. Load array this->meths(rowid=>label).
 	 *
 	 * 	@return	void
 	 */
-	function fetch_delivery_methods()
+	public function fetch_delivery_methods()
 	{
         // phpcs:enable
 		global $langs;
@@ -1836,14 +1836,14 @@ class Expedition extends CommonObject
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Fetch all deliveries method and return an array. Load array this->listmeths.
 	 *
 	 *  @param  id      $id     only this carrier, all if none
 	 *  @return void
 	 */
-	function list_delivery_methods($id = '')
+	public function list_delivery_methods($id = '')
 	{
         // phpcs:enable
 		global $langs;
@@ -1872,7 +1872,7 @@ class Expedition extends CommonObject
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Update/create delivery method.
 	 *
@@ -1880,7 +1880,7 @@ class Expedition extends CommonObject
 	 *
 	 *  @return void
 	 */
-	function update_delivery_method($id = '')
+	public function update_delivery_method($id = '')
 	{
         // phpcs:enable
 		if ($id=='')
@@ -1902,7 +1902,7 @@ class Expedition extends CommonObject
 		if ($resql < 0) dol_print_error($this->db, '');
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Activate delivery method.
 	 *
@@ -1910,7 +1910,7 @@ class Expedition extends CommonObject
 	 *
 	 *  @return void
 	 */
-	function activ_delivery_method($id)
+	public function activ_delivery_method($id)
 	{
         // phpcs:enable
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'c_shipment_mode SET active=1';
@@ -1919,7 +1919,7 @@ class Expedition extends CommonObject
 		$resql = $this->db->query($sql);
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  DesActivate delivery method.
 	 *
@@ -1927,7 +1927,7 @@ class Expedition extends CommonObject
 	 *
 	 *  @return void
 	 */
-	function disable_delivery_method($id)
+	public function disable_delivery_method($id)
 	{
         // phpcs:enable
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'c_shipment_mode SET active=0';
@@ -1943,7 +1943,7 @@ class Expedition extends CommonObject
 	 * @param	string	$value		Value
 	 * @return	void
 	 */
-	function getUrlTrackingStatus($value = '')
+	public function getUrlTrackingStatus($value = '')
 	{
 		if (! empty($this->shipping_method_id))
 		{
@@ -1977,7 +1977,7 @@ class Expedition extends CommonObject
 	 *
 	 *	@return     int     <0 if KO, >0 if OK
 	 */
-	function setClosed()
+	public function setClosed()
 	{
 		global $conf,$langs,$user;
 
@@ -2123,13 +2123,13 @@ class Expedition extends CommonObject
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Classify the shipping as invoiced (used when WORKFLOW_BILL_ON_SHIPMENT is on)
 	 *
 	 *	@return     int     <0 if ko, >0 if ok
 	 */
-	function set_billed()
+	public function set_billed()
 	{
         // phpcs:enable
 		global $user;
@@ -2174,7 +2174,7 @@ class Expedition extends CommonObject
 	 *
 	 *	@return     int     <0 if KO, 0 if already open, >0 if OK
 	 */
-	function reOpen()
+	public function reOpen()
 	{
 		global $conf,$langs,$user;
 
@@ -2273,14 +2273,13 @@ class Expedition extends CommonObject
 				}
 			}
 
-			if (! $error)
-			{
+            if (! $error) {
 				// Call trigger
 				$result=$this->call_trigger('SHIPPING_REOPEN', $user);
 				if ($result < 0) {
 					$error++;
 				}
-   			}
+            }
 		} else {
 			$error++;
 			$this->errors[]=$this->db->lasterror();
@@ -2510,7 +2509,7 @@ class ExpeditionLigne extends CommonObjectLine
      *
      *  @param		DoliDB		$db      Database handler
      */
-	function __construct($db)
+	public function __construct($db)
 	{
 		$this->db=$db;
 	}
@@ -2521,7 +2520,7 @@ class ExpeditionLigne extends CommonObjectLine
 	 *  @param  int		$rowid          Id line order
 	 *  @return	int						<0 if KO, >0 if OK
 	 */
-	function fetch($rowid)
+	public function fetch($rowid)
 	{
 		$sql = 'SELECT ed.rowid, ed.fk_expedition, ed.fk_entrepot, ed.fk_origin_line, ed.qty, ed.rang';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as ed';
@@ -2556,7 +2555,7 @@ class ExpeditionLigne extends CommonObjectLine
 	 *	@param      int		$notrigger		1 = disable triggers
 	 *	@return     int						<0 if KO, line id >0 if OK
 	 */
-	function insert($user = null, $notrigger = 0)
+	public function insert($user = null, $notrigger = 0)
 	{
 		global $langs, $conf;
 
@@ -2638,7 +2637,7 @@ class ExpeditionLigne extends CommonObjectLine
 	 *	@param		int		$notrigger		0=launch triggers after, 1=disable triggers
 	 * 	@return		int		>0 if OK, <0 if KO
 	 */
-	function delete($user = null, $notrigger = 0)
+	public function delete($user = null, $notrigger = 0)
 	{
 		global $conf;
 
@@ -2715,7 +2714,7 @@ class ExpeditionLigne extends CommonObjectLine
 	 *	@param		int		$notrigger		1 = disable triggers
 	 *  @return		int					< 0 if KO, > 0 if OK
 	 */
-	function update($user = null, $notrigger = 0)
+	public function update($user = null, $notrigger = 0)
 	{
 		global $conf;
 

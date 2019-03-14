@@ -42,7 +42,7 @@ abstract class ModelePdfExpedition extends CommonDocGenerator
 	public $error='';
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Return list of active generation models
 	 *
@@ -50,7 +50,7 @@ abstract class ModelePdfExpedition extends CommonDocGenerator
      *  @param  integer	$maxfilenamelength  Max length of value to show
      *  @return	array						List of templates
 	 */
-	static function liste_modeles($db, $maxfilenamelength = 0)
+	public static function liste_modeles($db, $maxfilenamelength = 0)
 	{
         // phpcs:enable
 		global $conf;
@@ -80,7 +80,7 @@ abstract class ModelNumRefExpedition
 	 *
 	 *  @return		boolean     true if model can be used
 	 */
-	function isEnabled()
+    public function isEnabled()
 	{
 		return true;
 	}
@@ -90,7 +90,7 @@ abstract class ModelNumRefExpedition
 	 *
 	 *	@return     string      text description
 	 */
-	function info()
+    public function info()
 	{
 		global $langs;
 		$langs->load("sendings");
@@ -102,7 +102,7 @@ abstract class ModelNumRefExpedition
 	 *
 	 *	@return     string      Example
 	 */
-	function getExample()
+    public function getExample()
 	{
 		global $langs;
 		$langs->load("sendings");
@@ -114,7 +114,7 @@ abstract class ModelNumRefExpedition
 	 *
 	 *	@return     boolean     false if conflict, true if ok
 	 */
-	function canBeActivated()
+    public function canBeActivated()
 	{
 		return true;
 	}
@@ -126,7 +126,7 @@ abstract class ModelNumRefExpedition
 	 *	@param	Object		$shipment	Shipment object
 	 *	@return	string					Value
 	 */
-	function getNextValue($objsoc, $shipment)
+    public function getNextValue($objsoc, $shipment)
 	{
 		global $langs;
 		return $langs->trans("NotAvailable");
@@ -137,7 +137,7 @@ abstract class ModelNumRefExpedition
 	 *
 	 *	@return     string      Value
 	 */
-	function getVersion()
+    public function getVersion()
 	{
 		global $langs;
 		$langs->load("admin");

@@ -71,7 +71,7 @@ class CommActionRapport
 	 * @param	int		$month	Month
 	 * @param	int		$year	Year
 	 */
-	function __construct($db, $month, $year)
+	public function __construct($db, $month, $year)
 	{
 		global $conf, $langs;
 
@@ -99,16 +99,16 @@ class CommActionRapport
         $this->subject=$langs->transnoentitiesnoconv("ActionsReport").' '.$this->year."-".$this->month;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
-	/**
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+    /**
      *      Write the object to document file to disk
      *
      *      @param	int			$socid			Thirdparty id
      *      @param  int			$catid			Cat id
      *      @param  Translate	$outputlangs    Lang object for output language
      *      @return int             			1=OK, 0=KO
-	 */
-	function write_file($socid = 0, $catid = 0, $outputlangs = '')
+     */
+	public function write_file($socid = 0, $catid = 0, $outputlangs = '')
 	{
         // phpcs:enable
 		global $user,$conf,$langs,$hookmanager;
@@ -210,7 +210,7 @@ class CommActionRapport
      * @param	Translate   $outputlangs	Object langs
 	 * @return  int							1
 	 */
-	function _pages(&$pdf, $outputlangs)
+	private function _pages(&$pdf, $outputlangs)
 	{
 		global $conf;
 
@@ -335,7 +335,7 @@ class CommActionRapport
 	 * 	@param	int			$pagenb			Page nb
 	 *  @return	integer
 	 */
-	function _pagehead(&$pdf, $outputlangs, $pagenb)
+	private function _pagehead(&$pdf, $outputlangs, $pagenb)
 	{
 		global $conf,$langs;
 

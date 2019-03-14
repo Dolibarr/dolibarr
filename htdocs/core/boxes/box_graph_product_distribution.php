@@ -29,20 +29,20 @@ include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
  */
 class box_graph_product_distribution extends ModeleBoxes
 {
-	var $boxcode="productdistribution";
-	var $boximg="object_product";
-	var $boxlabel="BoxProductDistribution";
-	var $depends = array("product|service","facture|propal|commande");
+    public $boxcode="productdistribution";
+    public $boximg="object_product";
+    public $boxlabel="BoxProductDistribution";
+    public $depends = array("product|service","facture|propal|commande");
 
 	/**
      * @var DoliDB Database handler.
      */
     public $db;
 
-	var $param;
+    public $param;
 
-	var $info_box_head = array();
-	var $info_box_contents = array();
+    public $info_box_head = array();
+    public $info_box_contents = array();
 
 
 	/**
@@ -51,7 +51,7 @@ class box_graph_product_distribution extends ModeleBoxes
 	 * 	@param	DoliDB	$db			Database handler
 	 *  @param	string	$param		More parameters
 	 */
-	function __construct($db, $param)
+	public function __construct($db, $param)
 	{
 		global $user, $conf;
 
@@ -70,7 +70,7 @@ class box_graph_product_distribution extends ModeleBoxes
 	 *  @param	int		$max        Maximum number of records to load
      *  @return	void
 	 */
-	function loadBox($max = 5)
+	public function loadBox($max = 5)
 	{
 		global $conf, $user, $langs, $db;
 
@@ -416,7 +416,7 @@ class box_graph_product_distribution extends ModeleBoxes
 	 *  @param	int		$nooutput	No print, only return string
 	 *	@return	string
 	 */
-    function showBox($head = null, $contents = null, $nooutput = 0)
+    public function showBox($head = null, $contents = null, $nooutput = 0)
     {
 		return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
 	}

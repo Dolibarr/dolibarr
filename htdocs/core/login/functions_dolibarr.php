@@ -109,8 +109,8 @@ function check_user_password_dolibarr($usertotest, $passwordtotest, $entitytotes
 				}
 				else
 				{
-					dol_syslog("functions_dolibarr::check_user_password_dolibarr Authentification ko bad password for '".$usertotest."'");
-					sleep(2);      // Anti brut force protection
+				    sleep(2);      // Anti brut force protection
+				    dol_syslog("functions_dolibarr::check_user_password_dolibarr Authentification ko bad password for '".$usertotest."', cryptType=".$cryptType);
 
 					// Load translation files required by the page
                     $langs->loadLangs(array('main', 'errors'));
