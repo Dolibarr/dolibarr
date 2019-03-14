@@ -64,22 +64,21 @@ top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
 $categorie = new Categorie($db);
 $categories = $categorie->get_full_arbo('product');
 
-$maincategories = array_filter($categories, function ($item) {
-	if (($item['level']==1) !== false && ($item['visible']==1) !== false) {
-        return true;
+$maincategories = array();
+$subcategories = array();
+foreach($categories as $key => $categorycursor)
+{
+    if ($categorycursor['level'] == 1)
+    {
+        $maincategories[$key] = $categorycursor;
     }
-    return false;
-});
+    else
+    {
+        $subcategories[$key] = $categorycursor;
+    }
+}
 
 sort($maincategories);
-
-$subcategories = array_filter($categories, function ($item) {
-	if (($item['level']!=1) !== false && ($item['visible']==1) !== false) {
-        return true;
-    }
-    return false;
-});
-
 sort($subcategories);
 ?>
 
@@ -487,6 +486,10 @@ if (!empty($reshook)) {
 ?>
 		<div class="div3">
 <?php
+
+$MAXCATEG = 16;
+$MAXPRODUCT = 32;
+
 $i = 0;
 foreach($menus as $menu) {
 	$i++;
@@ -501,15 +504,16 @@ foreach($menus as $menu) {
 ?>
 		</div>
 	</div>
+
 	<div class="row2">
 		<div class="div4">
 	<?php
 	$count=0;
-	while ($count<16)
+	while ($count < $MAXCATEG)
 	{
 	?>
-			<div class='wrapper' <?php if ($count==14) echo 'onclick="MoreCategories(\'less\');"'; elseif ($count==15) echo 'onclick="MoreCategories(\'more\');"'; else echo 'onclick="LoadProducts('.$count.');"';?> id='catdiv<?php echo $count;?>'>
-				<img class='imgwrapper' <?php if ($count==14) echo 'src="img/arrow-prev-top.png"'; if ($count==15) echo 'src="img/arrow-next-top.png"';?> width="100%" height="85%" id='catimg<?php echo $count;?>'/>
+			<div class='wrapper' <?php if ($count==($MAXCATEG-2)) echo 'onclick="MoreCategories(\'less\');"'; elseif ($count==($MAXCATEG-1)) echo 'onclick="MoreCategories(\'more\');"'; else echo 'onclick="LoadProducts('.$count.');"';?> id='catdiv<?php echo $count;?>'>
+				<img class='imgwrapper' <?php if ($count==($MAXCATEG-2)) echo 'src="img/arrow-prev-top.png"'; if ($count==($MAXCATEG-1)) echo 'src="img/arrow-next-top.png"';?> width="100%" height="100%" id="catimg<?php echo $count;?>" />
 				<div class='description'>
 					<div class='description_content' id='catdesc<?php echo $count;?>'></div>
 				</div>
@@ -522,22 +526,22 @@ foreach($menus as $menu) {
 		</div>
 
 		<div class="div5">
-<?php
-$count=0;
-while ($count<32)
-{
-?>
-			<div class='wrapper2' id='prodiv<?php echo $count;?>' <?php if ($count==30) {?> onclick="MoreProducts('less');" <?php } if ($count==31) {?> onclick="MoreProducts('more');" <?php } else echo 'onclick="ClickProduct('.$count.');"';?>>
-				<img class='imgwrapper' <?php if ($count==30) echo 'src="img/arrow-prev-top.png"'; if ($count==31) echo 'src="img/arrow-next-top.png"';?> width="100%" height="85%" id='proimg<?php echo $count;?>'/>
-				<div class='description'>
-					<div class='description_content' id='prodesc<?php echo $count;?>'></div>
-				</div>
-				<div class="catwatermark" id='prowatermark<?php echo $count;?>'>+</div>
-			</div>
-<?php
-    $count++;
-}
-?>
+    <?php
+    $count=0;
+    while ($count < $MAXPRODUCT)
+    {
+    ?>
+    			<div class='wrapper2' id='prodiv<?php echo $count;?>' <?php if ($count==($MAXPRODUCT-2)) {?> onclick="MoreProducts('less');" <?php } if ($count==($MAXPRODUCT-1)) {?> onclick="MoreProducts('more');" <?php } else echo 'onclick="ClickProduct('.$count.');"';?>>
+    				<img class='imgwrapper' <?php if ($count==($MAXPRODUCT-2)) echo 'src="img/arrow-prev-top.png"'; if ($count==($MAXPRODUCT-1)) echo 'src="img/arrow-next-top.png"';?> width="100%" height="100%" id="proimg<?php echo $count;?>" />
+    				<div class='description'>
+    					<div class='description_content' id='prodesc<?php echo $count;?>'></div>
+    				</div>
+    				<div class="catwatermark" id='prowatermark<?php echo $count;?>'>+</div>
+    			</div>
+    <?php
+        $count++;
+    }
+    ?>
 		</div>
 	</div>
 </div>

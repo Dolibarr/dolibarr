@@ -909,7 +909,7 @@ class Categorie extends CommonObject
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 * Return childs of a category
+	 * Return direct childs of a category
 	 *
 	 * @return	array|int   <0 KO, array ok
 	 */
@@ -922,7 +922,7 @@ class Categorie extends CommonObject
 		$res  = $this->db->query($sql);
 		if ($res)
 		{
-			$cats = array ();
+			$cats = array();
 			while ($rec = $this->db->fetch_array($res))
 			{
 				$cat = new Categorie($this->db);
@@ -940,7 +940,7 @@ class Categorie extends CommonObject
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 * 	Load this->motherof that is array(id_son=>id_parent, ...)
+	 * 	Load the array this->motherof that is array(id_son=>id_parent, ...)
 	 *
 	 *	@return		int		<0 if KO, >0 if OK
 	 */
@@ -1007,9 +1007,9 @@ class Categorie extends CommonObject
 		$sql = "SELECT DISTINCT c.rowid, c.label, c.description, c.color, c.fk_parent, c.visible";	// Distinct reduce pb with old tables with duplicates
 		if (! empty($conf->global->MAIN_MULTILANGS)) $sql.= ", t.label as label_trans, t.description as description_trans";
 		$sql.= " FROM ".MAIN_DB_PREFIX."categorie as c";
-		if (! empty($conf->global->MAIN_MULTILANGS)) $sql.= " LEFT  JOIN ".MAIN_DB_PREFIX."categorie_lang as t ON t.fk_category=c.rowid AND t.lang='".$current_lang."'";
+		if (! empty($conf->global->MAIN_MULTILANGS)) $sql.= " LEFT  JOIN ".MAIN_DB_PREFIX."categorie_lang as t ON t.fk_category=c.rowid AND t.lang='".$this->db->escape($current_lang)."'";
 		$sql .= " WHERE c.entity IN (" . getEntity('category') . ")";
-		$sql .= " AND c.type = " . $type;
+		$sql .= " AND c.type = " . (int) $type;
 
 		dol_syslog(get_class($this)."::get_full_arbo get category list", LOG_DEBUG);
 		$resql = $this->db->query($sql);

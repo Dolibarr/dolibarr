@@ -1421,7 +1421,6 @@ if ($action == 'create')
 
 											print '<!-- Show details of stock -->';
 											print '('.$stock.')';
-
 										}
 										else
 										{
@@ -1522,7 +1521,6 @@ if ($action == 'create')
 									}
 								}
 							}
-
 						}
 						if ($subj == 0) // Line not shown yet, we show it
 						{
