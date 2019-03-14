@@ -634,8 +634,8 @@ class ProductFournisseur extends Product
                 $prodfourn->fourn_tva_npr					= $record["info_bits"];
                 $prodfourn->fk_supplier_price_expression    = $record["fk_supplier_price_expression"];
 				$prodfourn->supplier_reputation    = $record["supplier_reputation"];
-				$prodfourn->date_creation          = $this->db->jdate($record['datec']);
-				$prodfourn->date_modification      = $this->db->jdate($record['tms']);
+				$prodfourn->fourn_date_creation          = $this->db->jdate($record['datec']);
+				$prodfourn->fourn_date_modification      = $this->db->jdate($record['tms']);
 
                 $prodfourn->fourn_multicurrency_price       = $record["multicurrency_price"];
                 $prodfourn->fourn_multicurrency_unitprice   = $record["multicurrency_unitprice"];

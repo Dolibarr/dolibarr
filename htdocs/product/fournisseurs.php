@@ -798,10 +798,11 @@ SCRIPT;
 				print_liste_field_titre("DiscountQtyMin", $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'right ');
 				print_liste_field_titre("NbDaysToDelivery", $_SERVER["PHP_SELF"], "pfp.delivery_time_days", "", $param, '', $sortfield, $sortorder, 'right ');
 				print_liste_field_titre("ReputationForThisProduct", $_SERVER["PHP_SELF"], "pfp.supplier_reputation", "", $param, '', $sortfield, $sortorder, 'center ');
-				 if($conf->barcode->enabled) {
+				 if ($conf->barcode->enabled) {
                     print_liste_field_titre("BarcodeValue", $_SERVER["PHP_SELF"], "pfp.barcode", "", $param, 'align="center"', $sortfield, $sortorder);
                     print_liste_field_titre("BarcodeType", $_SERVER["PHP_SELF"], "pfp.fk_barcode_type", "", $param, 'align="center"', $sortfield, $sortorder);
                 }				
+				print_liste_field_titre("DateModification",$_SERVER["PHP_SELF"],"pfp.tms","",$param,'align="right"',$sortfield,$sortorder);
 				print_liste_field_titre('');
 				print "</tr>\n";
 
@@ -893,13 +894,11 @@ SCRIPT;
 						}
 						print'</td>';
 
-                        if($conf->barcode->enabled) {
+						if ($conf->barcode->enabled) {
                             // Barcode
                             print '<td align="right">';
                             print $productfourn->barcode;
                             print '</td>';
-
-
 
                             // Barcode type
                             print '<td align="center">';
@@ -908,8 +907,13 @@ SCRIPT;
                             $productfourn->fetch_barcode();
                             print $productfourn->barcode_type_label?$productfourn->barcode_type_label:($productfourn->barcode?'<div class="warning">'.$langs->trans("SetDefaultBarcodeType").'<div>':'');
                             print '</td>';
-                        }
+						}
 
+						// Date
+						print '<td align="right">';
+						print dol_print_date($productfourn->date_modification, "dayhour");
+						print '</td>';
+						
 						if (is_object($hookmanager))
 						{
 							$parameters=array('id_pfp'=>$productfourn->product_fourn_price_id,'id_fourn'=>$id_fourn,'prod_id'=>$object->id);
