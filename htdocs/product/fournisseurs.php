@@ -754,7 +754,7 @@ SCRIPT;
                     print_liste_field_titre("Currency", $_SERVER["PHP_SELF"], "", "", $param, 'align="right"', $sortfield, $sortorder);
                 }
 				print_liste_field_titre("DiscountQtyMin",$_SERVER["PHP_SELF"],'','',$param,'align="right"',$sortfield,$sortorder);
-				print_liste_field_titre("PriceUpdate",$_SERVER["PHP_SELF"],"pfp.date_modification","",$param,'align="right"',$sortfield,$sortorder);
+				print_liste_field_titre("PriceUpdate",$_SERVER["PHP_SELF"],"pfp.tms","",$param,'align="right"',$sortfield,$sortorder);
 				print_liste_field_titre("NbDaysToDelivery",$_SERVER["PHP_SELF"],"pfp.delivery_time_days","",$param,'align="right"',$sortfield,$sortorder);
 				print_liste_field_titre("ReputationForThisProduct",$_SERVER["PHP_SELF"],"pfp.supplier_reputation","",$param,'align="center"',$sortfield,$sortorder);
 				print_liste_field_titre('');
