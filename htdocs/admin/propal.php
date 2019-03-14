@@ -519,7 +519,7 @@ print '</table>';
 if (empty($conf->facture->enabled))
 {
 	print '<br>';
-	print load_fiche_titre($langs->trans("SuggestedPaymentModesIfNotDefinedInProposal"),'','');
+	print load_fiche_titre($langs->trans("SuggestedPaymentModesIfNotDefinedInProposal"), '', '');
 
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />';
@@ -601,7 +601,7 @@ if (empty($conf->facture->enabled))
 
 			print '<option value="'.$row[0].'"';
 			print $conf->global->FACTURE_CHQ_NUMBER == $row[0] ? ' selected':'';
-			print '>'.$langs->trans("OwnerOfBankAccount",$row[1]).'</option>';
+			print '>'.$langs->trans("OwnerOfBankAccount", $row[1]).'</option>';
 
 			$i++;
 		}
