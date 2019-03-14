@@ -494,9 +494,9 @@ class ProductFournisseur extends Product
 
         $sql = "SELECT pfp.rowid, pfp.price, pfp.quantity, pfp.unitprice, pfp.remise_percent, pfp.remise, pfp.tva_tx, pfp.default_vat_code, pfp.info_bits as fourn_tva_npr, pfp.fk_availability,";
         $sql.= " pfp.fk_soc, pfp.ref_fourn, pfp.desc_fourn, pfp.fk_product, pfp.charges, pfp.fk_supplier_price_expression, pfp.delivery_time_days,";
-        $sql.= " pfp.supplier_reputation, pfp.fk_user, pfp.datec";
-        $sql.= " ,pfp.multicurrency_price, pfp.multicurrency_unitprice, pfp.multicurrency_tx, pfp.fk_multicurrency, pfp.multicurrency_code";
-        if($conf->barcode->enabled) $sql.=" ,pfp.barcode, pfp.fk_barcode_type";
+        $sql.= " pfp.supplier_reputation, pfp.fk_user, pfp.datec,";
+        $sql.= " pfp.multicurrency_price, pfp.multicurrency_unitprice, pfp.multicurrency_tx, pfp.fk_multicurrency, pfp.multicurrency_code,";
+        $sql.="  pfp.barcode, pfp.fk_barcode_type";
         $sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price as pfp";
         $sql.= " WHERE pfp.rowid = ".$rowid;
 
