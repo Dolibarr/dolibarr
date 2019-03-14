@@ -750,7 +750,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 
 			// Duration - Time spent
 			print '<td>';
-			print $form->select_duration('timespent_duration', ($_POST['timespent_duration']?$_POST['timespent_duration']:''), 0, 'text');
+			print $form->select_duration('timespent_duration', ($_POST['timespent_duration']?$_POST['timespent_duration']:''), 0, (empty($conf->global->PROJECT_USE_DECIMAL_DAY) ? 'text' : 'days'));
 			print '</td>';
 
 			// Progress declared
@@ -1064,7 +1064,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 
 			// Duration - Time spent
 			print '<td>';
-			print $form->select_duration('timespent_duration', ($_POST['timespent_duration']?$_POST['timespent_duration']:''), 0, 'text');
+			print $form->select_duration('timespent_duration', ($_POST['timespent_duration']?$_POST['timespent_duration']:''), 0, (empty($conf->global->PROJECT_USE_DECIMAL_DAY) ? 'text' : 'days'));
 			print '</td>';
 
 			// Progress declared
@@ -1176,6 +1176,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
     	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', 'width="80"', $sortfield, $sortorder, 'center maxwidthsearch ');
 		print "</tr>\n";
 
+        include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 		$tasktmp = new Task($db);
 		$tmpinvoice = new Facture($db);
 
@@ -1183,7 +1184,17 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 
 		$childids = $user->getAllChildIds();
 
-		$total = 0;
+        $task_duration_outputformat='allhourmin';
+        if (! empty($conf->global->PROJECT_TASK_DURATION_FORMAT)) $task_duration_outputformat=$conf->global->PROJECT_TASK_DURATION_FORMAT;
+        $working_task_duration_outputformat='all';
+        if (! empty($conf->global->PROJECT_WORKING_TASK_DURATION_FORMAT)) $working_task_duration_outputformat=$conf->global->PROJECT_WORKING_TASK_DURATION_FORMAT;
+
+        $working_hours_per_day=!empty($conf->global->PROJECT_WORKING_HOURS_PER_DAY) ? $conf->global->PROJECT_WORKING_HOURS_PER_DAY : 7;
+        $working_days_per_weeks=!empty($conf->global->PROJECT_WORKING_DAYS_PER_WEEKS) ? $conf->global->PROJECT_WORKING_DAYS_PER_WEEKS : 5;
+
+        $working_hours_per_day_in_seconds = 3600 * $working_hours_per_day;
+
+        $total = 0;
 		$totalvalue = 0;
 		$totalarray=array();
 		foreach ($tasks as $task_time)
@@ -1300,11 +1311,18 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
     			if ($action == 'editline' && $_GET['lineid'] == $task_time->rowid)
     			{
     				print '<input type="hidden" name="old_duration" value="'.$task_time->task_duration.'">';
-    				print $form->select_duration('new_duration', $task_time->task_duration, 0, 'text');
+    				print $form->select_duration('new_duration', $task_time->task_duration, 0, (empty($conf->global->PROJECT_USE_DECIMAL_DAY) ? 'text' : 'days'));
     			}
     			else
     			{
-    				print convertSecondToTime($task_time->task_duration, 'allhourmin');
+                    $fulltime = convertSecondToTime($task_time->task_duration, $task_duration_outputformat);
+                    print $fulltime;
+                    $workingdelay=convertSecondToTime($task_time->task_duration, $working_task_duration_outputformat, $working_hours_per_day_in_seconds, $working_days_per_weeks);
+                    if ($workingdelay != $fulltime)
+                    {
+                        if (!empty($fulltime)) print '<br>';
+                        print '('.$workingdelay.')';
+                    }
     			}
     			print '</td>';
     			if (! $i) $totalarray['nbfield']++;
@@ -1517,7 +1535,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 			        if ($action == 'splitline' && $_GET['lineid'] == $task_time->rowid)
 			        {
 			            print '<input type="hidden" name="old_duration" value="'.$task_time->task_duration.'">';
-			            print $form->select_duration('new_duration', $task_time->task_duration, 0, 'text');
+			            print $form->select_duration('new_duration', $task_time->task_duration, 0, (empty($conf->global->PROJECT_USE_DECIMAL_DAY) ? 'text' : 'days'));
 			        }
 			        else
 			        {
@@ -1665,7 +1683,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 			        if ($action == 'splitline' && $_GET['lineid'] == $task_time->rowid)
 			        {
 			            print '<input type="hidden" name="old_duration_2" value="0">';
-			            print $form->select_duration('new_duration_2', 0, 0, 'text');
+			            print $form->select_duration('new_duration_2', 0, 0, (empty($conf->global->PROJECT_USE_DECIMAL_DAY) ? 'text' : 'days'));
 			        }
 			        else
 			        {
@@ -1725,7 +1743,21 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 		            if ($num < $limit && empty($offset)) print '<td class="left">'.$langs->trans("Total").'</td>';
 		            else print '<td class="left">'.$langs->trans("Totalforthispage").'</td>';
 		        }
-		        elseif ($totalarray['totaldurationfield'] == $i) print '<td class="right">'.convertSecondToTime($totalarray['totalduration'], 'allhourmin').'</td>';
+		        elseif ($totalarray['totaldurationfield'] == $i)
+                {
+                    print '<td class="right">';
+                    $fulltime = convertSecondToTime($totalarray['totalduration'], $task_duration_outputformat);
+                    print $fulltime;
+
+                    $workingdelay=convertSecondToTime($totalarray['totalduration'], $working_task_duration_outputformat, $working_hours_per_day_in_seconds, $working_days_per_weeks);
+                    if ($workingdelay != $fulltime)
+                    {
+                        if (!empty($fulltime)) print '<br>';
+                        print '('.$workingdelay.')';
+                    }
+
+                    print '</td>';
+                }
 		        elseif ($totalarray['totalvaluefield'] == $i) print '<td class="right">'.price($totalarray['totalvalue']).'</td>';
 		        //elseif ($totalarray['totalvaluebilledfield'] == $i) print '<td class="center">'.price($totalarray['totalvaluebilled']).'</td>';
 		        else print '<td></td>';
