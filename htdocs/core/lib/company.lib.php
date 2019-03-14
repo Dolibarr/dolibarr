@@ -800,15 +800,15 @@ function show_projects($conf, $langs, $db, $object, $backtopage = '', $nocreatel
                         }
                         print '</td>';
                         // Opp status
-                        print '<td align="center">';
+                        print '<td class="center">';
             			if ($obj->opp_status_code) print $langs->trans("OppStatus".$obj->opp_status_code);
             			print '</td>';
 			            // Opp percent
-            			print '<td align="right">';
+            			print '<td class="right">';
             			if ($obj->opp_percent) print price($obj->opp_percent, 1, '', 1, 0).'%';
             			print '</td>';
                         // Status
-                        print '<td align="right">'.$projecttmp->getLibStatut(5).'</td>';
+                        print '<td class="right">'.$projecttmp->getLibStatut(5).'</td>';
 
                         print '</tr>';
                     }
@@ -887,7 +887,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
     't.name'=>array('label'=>"Name", 'checked'=>1, 'position'=>10),
     't.poste'=>array('label'=>"PostOrFunction", 'checked'=>1, 'position'=>20),
     't.address'=>array('label'=>(empty($conf->dol_optimize_smallscreen) ? $langs->trans("Address").' / '.$langs->trans("Phone").' / '.$langs->trans("Email") : $langs->trans("Address")), 'checked'=>1, 'position'=>30),
-    't.statut'=>array('label'=>"Status", 'checked'=>1, 'position'=>40, 'align'=>'center'),
+    't.statut'=>array('label'=>"Status", 'checked'=>1, 'position'=>40, 'class'=>'center'),
     );
     // Extra fields
     if (is_array($extrafields->attributes[$contactstatic->table_element]['label']) && count($extrafields->attributes[$contactstatic->table_element]['label']))

@@ -37,7 +37,7 @@ require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_expression.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
-
+if(!empty($conf->barcode->enabled)) dol_include_once('/core/class/html.formbarcode.class.php');
 // Load translation files required by the page
 $langs->loadLangs(array('products', 'suppliers', 'bills', 'margins'));
 
@@ -158,6 +158,8 @@ if (empty($reshook))
 		$delivery_time_days = GETPOST('delivery_time_days', 'int') ? GETPOST('delivery_time_days', 'int') : '';
 		$supplier_reputation = GETPOST('supplier_reputation');
 		$supplier_description = GETPOST('supplier_description', 'alpha');
+        $barcode=GETPOST('barcode', 'alpha');
+        $fk_barcode_type=GETPOST('fk_barcode_type', 'int');
 
 		if ($tva_tx == '')
 		{
@@ -258,9 +260,9 @@ if (empty($reshook))
                 	$multicurrency_price = price2num(GETPOST("multicurrency_price", 'alpha'));
                 	$multicurrency_code = GETPOST("multicurrency_code", 'alpha');
 
-                    $ret = $object->update_buyprice($quantity, $newprice, $user, $_POST["price_base_type"], $supplier, $_POST["oselDispo"], $ref_fourn, $tva_tx, $_POST["charges"], $remise_percent, 0, $npr, $delivery_time_days, $supplier_reputation, array(), '', $multicurrency_price, $_POST["multicurrency_price_base_type"], $multicurrency_tx, $multicurrency_code, $supplier_description);
+                    $ret = $object->update_buyprice($quantity, $newprice, $user, $_POST["price_base_type"], $supplier, $_POST["oselDispo"], $ref_fourn, $tva_tx, $_POST["charges"], $remise_percent, 0, $npr, $delivery_time_days, $supplier_reputation, array(), '', $multicurrency_price, $_POST["multicurrency_price_base_type"], $multicurrency_tx, $multicurrency_code, $supplier_description, $barcode, $fk_barcode_type);
                 } else {
-                    $ret = $object->update_buyprice($quantity, $newprice, $user, $_POST["price_base_type"], $supplier, $_POST["oselDispo"], $ref_fourn, $tva_tx, $_POST["charges"], $remise_percent, 0, $npr, $delivery_time_days, $supplier_reputation, array(), '', 0, 'HT', 1, '', $supplier_description);
+                    $ret = $object->update_buyprice($quantity, $newprice, $user, $_POST["price_base_type"], $supplier, $_POST["oselDispo"], $ref_fourn, $tva_tx, $_POST["charges"], $remise_percent, 0, $npr, $delivery_time_days, $supplier_reputation, array(), '', 0, 'HT', 1, '', $supplier_description, $barcode, $fk_barcode_type);
                 }
 				if ($ret < 0)
 				{
@@ -666,7 +668,23 @@ SCRIPT;
 				print '<tr><td>'.$langs->trans("SupplierReputation").'</td><td>';
 				echo $form->selectarray('supplier_reputation', $object->reputations, $supplier_reputation?$supplier_reputation:$object->supplier_reputation);
 				print '</td></tr>';
+                if(!empty($conf->barcode->enabled)) {
 
+				// Option to define a transport cost on supplier price
+                    print '<tr>';
+                    print '<td>' . $langs->trans('BarcodeValue') . '</td>';
+                    print '<td><input class="flat" name="barcode"  value="'.($rowid ? $object->fourn_barcode : '').'"></td>';
+                    print '</tr>';
+                    $formbarcode = new FormBarCode($db);
+
+                    // Barcode type
+                    print '<tr>';
+                    print '<td>' . $langs->trans('BarcodeType') . '</td>';
+                    print '<td>';
+                    print $formbarcode->selectBarcodeType(($rowid ? $object->fourn_fk_barcode_type : ''), 'fk_barcode_type', 1);
+                    print '</td>';
+                    print '</tr>';
+                }
 				// Option to define a transport cost on supplier price
 				if ($conf->global->PRODUCT_CHARGES)
 				{
@@ -780,6 +798,11 @@ SCRIPT;
 				print_liste_field_titre("DiscountQtyMin", $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'right ');
 				print_liste_field_titre("NbDaysToDelivery", $_SERVER["PHP_SELF"], "pfp.delivery_time_days", "", $param, '', $sortfield, $sortorder, 'right ');
 				print_liste_field_titre("ReputationForThisProduct", $_SERVER["PHP_SELF"], "pfp.supplier_reputation", "", $param, '', $sortfield, $sortorder, 'center ');
+				 if ($conf->barcode->enabled) {
+                    print_liste_field_titre("BarcodeValue", $_SERVER["PHP_SELF"], "pfp.barcode", "", $param, 'align="center"', $sortfield, $sortorder);
+                    print_liste_field_titre("BarcodeType", $_SERVER["PHP_SELF"], "pfp.fk_barcode_type", "", $param, 'align="center"', $sortfield, $sortorder);
+                }				
+				print_liste_field_titre("DateModification",$_SERVER["PHP_SELF"],"pfp.tms","",$param,'align="right"',$sortfield,$sortorder);
 				print_liste_field_titre('');
 				print "</tr>\n";
 
@@ -871,6 +894,26 @@ SCRIPT;
 						}
 						print'</td>';
 
+						if ($conf->barcode->enabled) {
+                            // Barcode
+                            print '<td align="right">';
+                            print $productfourn->barcode;
+                            print '</td>';
+
+                            // Barcode type
+                            print '<td align="center">';
+
+                            $productfourn->barcode_type = !empty($productfourn->fk_barcode_type) ? $productfourn->fk_barcode_type:0;
+                            $productfourn->fetch_barcode();
+                            print $productfourn->barcode_type_label?$productfourn->barcode_type_label:($productfourn->barcode?'<div class="warning">'.$langs->trans("SetDefaultBarcodeType").'<div>':'');
+                            print '</td>';
+						}
+
+						// Date
+						print '<td align="right">';
+						print dol_print_date($productfourn->date_modification, "dayhour");
+						print '</td>';
+						
 						if (is_object($hookmanager))
 						{
 							$parameters=array('id_pfp'=>$productfourn->product_fourn_price_id,'id_fourn'=>$id_fourn,'prod_id'=>$object->id);
