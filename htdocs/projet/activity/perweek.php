@@ -114,6 +114,16 @@ else
 $object=new Task($db);
 
 
+$timespentoutputformat='allhourmin';
+if (! empty($conf->global->PROJECT_TIMES_SPENT_FORMAT)) $timespentoutputformat=$conf->global->PROJECT_TIME_SPENT_FORMAT;
+$working_timespentoutputformat='all';
+if (! empty($conf->global->PROJECT_WORKING_TIMES_SPENT_FORMAT)) $working_timespentoutputformat=$conf->global->PROJECT_WORKING_TIMES_SPENT_FORMAT;
+
+$working_hours_per_day=!empty($conf->global->PROJECT_WORKING_HOURS_PER_DAY) ? $conf->global->PROJECT_WORKING_HOURS_PER_DAY : 7;
+$working_days_per_weeks=!empty($conf->global->PROJECT_WORKING_DAYS_PER_WEEKS) ? $conf->global->PROJECT_WORKING_DAYS_PER_WEEKS : 5;
+
+$working_hours_per_day_in_seconds = 3600 * $working_hours_per_day;
+
 /*
  * Actions
  */
@@ -240,11 +250,22 @@ if ($action == 'addtime' && $user->rights->projet->lire)
 				$amountoadd=$timetoadd[$taskid][$key];
 				if (! empty($amountoadd))
 				{
-					$tmpduration=explode(':', $amountoadd);
-					$newduration=0;
-					if (! empty($tmpduration[0])) $newduration+=($tmpduration[0] * 3600);
-					if (! empty($tmpduration[1])) $newduration+=($tmpduration[1] * 60);
-					if (! empty($tmpduration[2])) $newduration+=($tmpduration[2]);
+
+                    if (!empty($conf->global->PROJECT_USE_DECIMAL_DAY))
+                    {
+                        $tmpduration=price2num($amountoadd);
+                        if (!empty($conf->global->PROJECT_ENABLE_WORKING_TIME)) $newduration= $tmpduration * $working_hours_per_day_in_seconds;
+                        else $newduration= $tmpduration * 24 * 60 * 60;
+                    }
+                    else
+                    {
+                        $tmpduration=explode(':', $amountoadd);
+                        $newduration=0;
+                        if (! empty($tmpduration[0])) $newduration+=($tmpduration[0] * 3600);
+                        if (! empty($tmpduration[1])) $newduration+=($tmpduration[1] * 60);
+                        if (! empty($tmpduration[2])) $newduration+=($tmpduration[2]);
+                    }
+
 
 					if ($newduration > 0)
 					{
@@ -673,7 +694,17 @@ if (count($tasksarray) > 0)
 			if ($timeonothertasks)
 			{
 				print '<span class="timesheetalreadyrecorded" title="texttoreplace"><input type="text" class="center smallpadd" size="2" disabled="" id="timespent[-1]['.$idw.']" name="task[-1]['.$idw.']" value="';
-				print convertSecondToTime($timeonothertasks, 'allhourmin');
+				$fullhour =  convertSecondToTime($timeonothertasks, $timespentoutputformat);
+                print $fullhour;
+				if (!empty($conf->global->PROJECT_ENABLE_WORKING_TIME))
+                {
+                    $workingdelay=convertSecondToTime($timeonothertasks, $working_timespentoutputformat, $working_hours_per_day_in_seconds, $working_days_per_weeks);
+                    if ($workingdelay != $fullhour)
+                    {
+                        if (!empty($fullhour)) print '<br>';
+                        print '('.$workingdelay.')';
+                    }
+                }
 				print '"></span>';
 			}
 			print '</td>';

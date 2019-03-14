@@ -1203,6 +1203,16 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
 
 	$numlines=count($lines);
 
+    $timespentoutputformat='allhourmin';
+    if (! empty($conf->global->PROJECT_TIMES_SPENT_FORMAT)) $timespentoutputformat=$conf->global->PROJECT_TIME_SPENT_FORMAT;
+    $working_timespentoutputformat='all';
+    if (! empty($conf->global->PROJECT_WORKING_TIMES_SPENT_FORMAT)) $working_timespentoutputformat=$conf->global->PROJECT_WORKING_TIMES_SPENT_FORMAT;
+
+    $working_hours_per_day=!empty($conf->global->PROJECT_WORKING_HOURS_PER_DAY) ? $conf->global->PROJECT_WORKING_HOURS_PER_DAY : 7;
+    $working_days_per_weeks=!empty($conf->global->PROJECT_WORKING_DAYS_PER_WEEKS) ? $conf->global->PROJECT_WORKING_DAYS_PER_WEEKS : 5;
+
+    $working_hours_per_day_in_seconds = 3600 * $working_hours_per_day;
+
 	$lastprojectid=0;
 	$workloadforid=array();
 	$totalforeachday=array();
@@ -1326,7 +1336,20 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
 
 				// Planned Workload
 				print '<td align="right" class="leftborder plannedworkload">';
-				if ($lines[$i]->planned_workload) print convertSecondToTime($lines[$i]->planned_workload, 'allhourmin');
+				if ($lines[$i]->planned_workload)
+                {
+                    $fullhour = convertSecondToTime($lines[$i]->planned_workload, $timespentoutputformat);
+                    print $fullhour;
+                    if (!empty($conf->global->PROJECT_ENABLE_WORKING_TIME))
+                    {
+                        $workingdelay=convertSecondToTime($lines[$i]->planned_workload, $working_timespentoutputformat, $working_hours_per_day_in_seconds, $working_days_per_weeks);
+                        if ($workingdelay != $fullhour)
+                        {
+                            if (!empty($fullhour)) print '<br>';
+                            print '('.$workingdelay.')';
+                        }
+                    }
+                }
 				else print '--:--';
 				print '</td>';
 
@@ -1341,7 +1364,17 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
 				if ($lines[$i]->duration)
 				{
 					print '<a href="'.DOL_URL_ROOT.'/projet/tasks/time.php?id='.$lines[$i]->id.'">';
-					print convertSecondToTime($lines[$i]->duration, 'allhourmin');
+                    $fullhour = convertSecondToTime($lines[$i]->duration, $timespentoutputformat);
+                    print $fullhour;
+                    if (!empty($conf->global->PROJECT_ENABLE_WORKING_TIME))
+                    {
+                        $workingdelay=convertSecondToTime($lines[$i]->duration, $working_timespentoutputformat, $working_hours_per_day_in_seconds, $working_days_per_weeks);
+                        if ($workingdelay != $fullhour)
+                        {
+                            if (!empty($fullhour)) print '<br>';
+                            print '('.$workingdelay.')';
+                        }
+                    }
 					print '</a>';
 				}
 				else print '--:--';
@@ -1350,7 +1383,20 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
 				// Time spent by user
 				print '<td align="right">';
 				$tmptimespent=$taskstatic->getSummaryOfTimeSpent($fuser->id);
-				if ($tmptimespent['total_duration']) print convertSecondToTime($tmptimespent['total_duration'], 'allhourmin');
+				if ($tmptimespent['total_duration'])
+                {
+                    $fullhour = convertSecondToTime($tmptimespent['total_duration'], $timespentoutputformat);
+                    print $fullhour;
+                    if (!empty($conf->global->PROJECT_ENABLE_WORKING_TIME))
+                    {
+                        $workingdelay=convertSecondToTime($tmptimespent['total_duration'], $working_timespentoutputformat, $working_hours_per_day_in_seconds, $working_days_per_weeks);
+                        if ($workingdelay != $fullhour)
+                        {
+                            if (!empty($fullhour)) print '<br>';
+                            print '('.$workingdelay.')';
+                        }
+                    }
+                }
 				else print '--:--';
 				print "</td>\n";
 
@@ -1373,7 +1419,10 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
 				//var_dump($projectstatic->weekWorkLoadPerTask);
 
 				// Fields to show current time
-				$tableCell=''; $modeinput='hours';
+				$tableCell='';
+                if (empty($conf->global->PROJECT_USE_DECIMAL_DAY)) $modeinput='hours';
+                else $modeinput='timeChar';
+
 				for ($idw = 0; $idw < 7; $idw++)
 				{
 					$tmpday=dol_time_plus_duree($firstdaytoshow, $idw, 'd');
@@ -1388,7 +1437,11 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
 					$totalforeachday[$tmpday]+=$dayWorkLoad;
 
 					$alreadyspent='';
-					if ($dayWorkLoad > 0) $alreadyspent=convertSecondToTime($dayWorkLoad, 'allhourmin');
+					if ($dayWorkLoad > 0)
+                    {
+                        if (empty($conf->global->PROJECT_USE_DECIMAL_DAY)) $alreadyspent=convertSecondToTime($dayWorkLoad, 'allhourmin');
+                        else $alreadyspent=convertSecondToTime($dayWorkLoad, 'fulldaydecimal', $working_hours_per_day_in_seconds, $working_days_per_weeks);
+                    }
 					$alttitle=$langs->trans("AddHereTimeSpentForDay", $tmparray['day'], $tmparray['mon']);
 
 					global $numstartworkingday, $numendworkingday;
