@@ -7,7 +7,7 @@
  * Copyright (C) 2008      Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
  * Copyright (C) 2010-2014 Juanjo Menent               <jmenent@2byte.es>
  * Copyright (C) 2013      Alexandre Spangaro          <aspangaro@open-dsi.fr>
- * Copyright (C) 2015-2019  Frédéric France            <frederic.france@netlogic.fr>
+ * Copyright (C) 2015-2019 Frédéric France             <frederic.france@netlogic.fr>
  * Copyright (C) 2015      Marcos García               <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -386,7 +386,7 @@ if ($object->id > 0)
     	print '<tr><td class="nowrap">';
     	print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
     	print $langs->trans("CustomerRelativeDiscountShort");
-    	print '<td><td align="right">';
+    	print '<td><td class="right">';
     	if ($user->rights->societe->creer && !$user->societe_id > 0)
     	{
     		print '<a href="'.DOL_URL_ROOT.'/comm/remise.php?id='.$object->id.'">'.img_edit($langs->trans("Modify")).'</a>';
@@ -400,7 +400,7 @@ if ($object->id > 0)
     	print '<table width="100%" class="nobordernopadding">';
     	print '<tr><td class="nowrap">';
     	print $langs->trans("CustomerAbsoluteDiscountShort");
-    	print '<td><td align="right">';
+    	print '<td><td class="right">';
     	if ($user->rights->societe->creer && !$user->societe_id > 0)
     	{
     		print '<a href="'.DOL_URL_ROOT.'/comm/remx.php?id='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?socid='.$object->id).'">'.img_edit($langs->trans("Modify")).'</a>';
