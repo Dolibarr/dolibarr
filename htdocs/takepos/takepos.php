@@ -65,21 +65,25 @@ $categorie = new Categorie($db);
 $categories = $categorie->get_full_arbo('product');
 
 $maincategories = array_filter($categories, function ($item) {
-    if (($item['level']==1) !== false) {
+	if (($item['level']==1) !== false && ($item['visible']==1) !== false) {
         return true;
     }
     return false;
 });
+
+sort($maincategories);
 
 $subcategories = array_filter($categories, function ($item) {
-    if (($item['level']!=1) !== false) {
+	if (($item['level']!=1) !== false && ($item['visible']==1) !== false) {
         return true;
     }
     return false;
 });
+
+sort($subcategories);
 ?>
 
-var categories = <?php echo json_encode($categories); ?>;
+var categories = <?php echo json_encode($maincategories); ?>;
 var subcategories = <?php echo json_encode($subcategories); ?>;
 
 var currentcat;
@@ -151,7 +155,7 @@ function LoadProducts(position, issubcat=false){
 
 	idata=0; //product data counter
 	$.getJSON('./ajax.php?action=getProducts&category='+currentcat, function(data) {
-		while (idata < 30 && ishow < 30) {
+		while (ishow < 30) {
 			if (typeof (data[idata]) == "undefined") {
 				$("#prodesc"+ishow).text("");
 				$("#proimg"+ishow).attr("src","genimg/empty.png");
@@ -191,7 +195,7 @@ function MoreProducts(moreorless){
 		}
 		idata=30*pageproducts; //product data counter
 		ishow=0; //product to show counter
-		while (idata < (30*pageproducts)+30) {
+		while (ishow < 30) {
 			if (typeof (data[idata]) == "undefined") {
 				$("#prodesc"+ishow).text("");
 				$("#proimg"+ishow).attr("src","genimg/empty.png");
