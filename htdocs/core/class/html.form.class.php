@@ -5558,9 +5558,7 @@ class Form
 
 			if ($typehour == 'days')
             {
-//                var_dump($iSecond, convertSecondToTime($iSecond, 'alldaydecimal'));exit;
-
-                $daySelected = convertSecondToTime($iSecond, 'alldaydecimal', $working_hours_per_day*3600, $working_days_per_weeks);
+                $daySelected = convertSecondToTime($iSecond, 'fulldaydecimal', $working_hours_per_day*3600, $working_days_per_weeks);
                 $minSelected = convertSecondToTime($iSecond, 'fullmin');
             }
 			else
