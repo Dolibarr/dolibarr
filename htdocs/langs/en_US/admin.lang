@@ -1249,6 +1249,7 @@ SupplierPaymentSetup=Vendor payments setup
 PropalSetup=Commercial proposals module setup
 ProposalsNumberingModules=Commercial proposal numbering models
 ProposalsPDFModules=Commercial proposal documents models
+SuggestedPaymentModesIfNotDefinedInProposal=Suggested payments mode on proposal by default if not defined for proposal
 FreeLegalTextOnProposal=Free text on commercial proposals
 WatermarkOnDraftProposal=Watermark on draft commercial proposals (none if empty)
 BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL=Ask for bank account destination of proposal
