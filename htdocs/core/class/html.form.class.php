@@ -2663,7 +2663,7 @@ class Form
 			if (count($scrit) > 1) $sql.=")";
 			if (! empty($conf->barcode->enabled)){
                 $sql.= " OR p.barcode LIKE '".$this->db->escape($prefix.$filterkey)."%'";
-                if (! empty($conf->global->BARCODE_USE_BARCODE_FOR_SUPPLIER_PRICES)) $sql.= " OR pfp.barcode LIKE '".$this->db->escape($prefix.$filterkey)."%'";
+                $sql.= " OR pfp.barcode LIKE '".$this->db->escape($prefix.$filterkey)."%'";
             }
 			$sql.=')';
 		}
@@ -2784,7 +2784,7 @@ class Form
 						$opt .= " - ".dol_trunc($objp->name, 8);
 						$outval.=" - ".dol_trunc($objp->name, 8);
 					}
-                    if (! empty($conf->barcode->enabled) && !empty($objp->barcode) && ! empty($conf->global->BARCODE_USE_BARCODE_FOR_SUPPLIER_PRICES))
+                    if (! empty($conf->barcode->enabled) && !empty($objp->barcode))
                     {
                         $opt .= " - ".$objp->barcode;
                         $outval.=" - ".$objp->barcode;
