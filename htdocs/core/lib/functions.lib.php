@@ -3005,10 +3005,20 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 			}
 			elseif ($pictowithoutext == 'off') {
 				$fakey = 'fa-square-o';
+				if (empty($conf->global->MAIN_DISABLE_FONT_AWESOME_5))
+				{
+				    $fakey = 'fa-square';
+				    $fa='far';
+				}
 				$fasize = '1.3em';
 			}
 			elseif ($pictowithoutext == 'on') {
 				$fakey = 'fa-check-square-o';
+				if (empty($conf->global->MAIN_DISABLE_FONT_AWESOME_5))
+				{
+				    $fakey = 'fa-check-square';
+				    $fa='far';
+				}
 				$fasize = '1.3em';
 			}
 			elseif ($pictowithoutext == 'bank') {
@@ -4385,7 +4395,7 @@ function price($amount, $form = 0, $outlangs = '', $trunc = 1, $rounding = -1, $
 	{
 		if ($currency_code == 'auto') $currency_code=$conf->currency;
 
-		$listofcurrenciesbefore=array('USD','GBP','AUD','MXN','PEN','CNY');
+		$listofcurrenciesbefore=array('USD','GBP','AUD','HKD','MXN','PEN','CNY');
 		$listoflanguagesbefore=array('nl_NL');
 		if (in_array($currency_code, $listofcurrenciesbefore) || in_array($outlangs->defaultlang, $listoflanguagesbefore))
 		{
