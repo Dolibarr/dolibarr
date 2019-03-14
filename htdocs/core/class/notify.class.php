@@ -459,7 +459,7 @@ class Notify
 								$dir_output = $conf->fournisseur->commande->dir_output;
 								$object_type = 'order_supplier';
 								$mesg = $outputlangs->transnoentitiesnoconv("Hello").",\n\n";
-								$mesg.= $outputlangs->transnoentitiesnoconv("EMailTextOrderValidatedBy", $newref, $user->getFullName($langs));
+								$mesg.= $outputlangs->transnoentitiesnoconv("EMailTextOrderValidatedBy", $newref, $user->getFullName($outputlangs));
 								$mesg.= "\n\n".$outputlangs->transnoentitiesnoconv("Sincerely").".\n\n";
 								break;
 							case 'ORDER_SUPPLIER_APPROVE':
@@ -467,7 +467,7 @@ class Notify
 								$dir_output = $conf->fournisseur->commande->dir_output;
 								$object_type = 'order_supplier';
 								$mesg = $outputlangs->transnoentitiesnoconv("Hello").",\n\n";
-								$mesg.= $outputlangs->transnoentitiesnoconv("EMailTextOrderApprovedBy", $newref, $user->getFullName($langs));
+								$mesg.= $outputlangs->transnoentitiesnoconv("EMailTextOrderApprovedBy", $newref, $user->getFullName($outputlangs));
 								$mesg.= "\n\n".$outputlangs->transnoentitiesnoconv("Sincerely").".\n\n";
 								break;
 							case 'ORDER_SUPPLIER_REFUSE':
@@ -475,7 +475,7 @@ class Notify
 								$dir_output = $conf->fournisseur->commande->dir_output;
 								$object_type = 'order_supplier';
 								$mesg = $outputlangs->transnoentitiesnoconv("Hello").",\n\n";
-								$mesg.= $outputlangs->transnoentitiesnoconv("EMailTextOrderRefusedBy", $newref, $user->getFullName($langs));
+								$mesg.= $outputlangs->transnoentitiesnoconv("EMailTextOrderRefusedBy", $newref, $user->getFullName($outputlangs));
 								$mesg.= "\n\n".$outputlangs->transnoentitiesnoconv("Sincerely").".\n\n";
 								break;
 							case 'SHIPPING_VALIDATE':

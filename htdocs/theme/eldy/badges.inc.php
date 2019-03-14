@@ -25,13 +25,13 @@ if (! defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
 .badge-pill, .tabs .badge {
     padding-right: .6em;
     padding-left: .6em;
-    border-radius: 10rem;
+    border-radius: 0.25rem;
 }
 
 .badge-dot {
     padding: 0;
     border-radius: 50%;
-    padding: 0.6em;
+    padding: 0.25rem;
     vertical-align: middle;
 }
 
@@ -39,8 +39,10 @@ a.badge:focus, a.badge:hover {
     text-decoration: none;
 }
 
-
-
+.liste_titre .badge {
+    background-color: <?php print $badgeSecondary; ?>;
+    color: #fff;
+}
 
 
 /* PRIMARY */
@@ -155,7 +157,7 @@ a.badge-dark:focus, a.badge-dark:hover {
     background-color: <?php print colorDarker($badgeDark, 10); ?>;
 }
 
-/* 
+/*
 * STATUS BADGES
 */
 
@@ -164,32 +166,32 @@ a.badge-dark:focus, a.badge-dark:hover {
 <?php for ($i = 0; $i <= 9; $i++){
 
     print "\n/* STATUS".$i." */\n";
-    
+
     $thisBadgeBackgroundColor = $thisBadgeBorderColor = ${'badgeStatus'.$i};
 
-    
+
     $TBadgeBorderOnly = array(0,3,5,7);
     $thisBadgeTextColor = colorIsLight(${'badgeStatus'.$i})?'#212529':'#ffffff';
     if(in_array($i, $TBadgeBorderOnly)){
         $thisBadgeTextColor = '#212529';
         $thisBadgeBackgroundColor = "#fff";
     }
-    
+
     print ".badge-status".$i." {\n";
     print "        color: ".$thisBadgeTextColor." !important;\n";
-    
+
     if(in_array($i, $TBadgeBorderOnly)){
         print "        border-color: ".$thisBadgeBorderColor.";\n";
     }
-    
+
     print "        background-color: ".$thisBadgeBackgroundColor.";\n";
     print "}\n";
-    
+
     print ".badge-status".$i.".focus, .badge-status".$i.":focus {\n";
     print "    outline: 0;\n";
     print "    box-shadow: 0 0 0 0.2rem ".colorHexToRgb($thisBadgeBackgroundColor, 0.5).";\n";
     print "}\n";
-    
+
     print ".badge-status".$i.":focus, .badge-status".$i.":hover {\n";
     print "    color: ".$thisBadgeTextColor." !important;\n";
     print "    background-color: ".colorDarker($thisBadgeBackgroundColor, 10).";\n";

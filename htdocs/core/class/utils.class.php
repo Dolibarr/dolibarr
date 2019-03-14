@@ -611,7 +611,8 @@ class Utils
 		if (count($arrayversion))
 		{
 			$FILENAMEASCII=strtolower($module).'.asciidoc';
-			$FILENAMEDOC=strtolower($module).'.html';			// TODO Use/text PDF
+			$FILENAMEDOC=strtolower($module).'.html';
+			$FILENAMEDOCPDF=strtolower($module).'.pdf';
 
 			$dirofmodule = dol_buildpath(strtolower($module), 0);
 			$dirofmoduledoc = dol_buildpath(strtolower($module), 0).'/doc';
@@ -627,8 +628,7 @@ class Utils
 					return -1;
 				}
 
-				$conf->global->MODULEBUILDER_ASCIIDOCTOR='asciidoctor';
-				if (empty($conf->global->MODULEBUILDER_ASCIIDOCTOR))
+				if (empty($conf->global->MODULEBUILDER_ASCIIDOCTOR) && empty($conf->global->MODULEBUILDER_ASCIIDOCTORPDF))
 				{
 				    $this->error = 'Setup of module ModuleBuilder not complete';
 				    return -1;
@@ -690,15 +690,27 @@ class Utils
                 $currentdir = getcwd();
                 chdir($dirofmodule);
 
+                require_once DOL_DOCUMENT_ROOT.'/core/class/utils.class.php';
+                $utils = new Utils($db);
+
+                // Build HTML doc
 				$command=$conf->global->MODULEBUILDER_ASCIIDOCTOR.' '.$destfile.' -n -o '.$dirofmoduledoc.'/'.$FILENAMEDOC;
 				$outfile=$dirofmoduletmp.'/out.tmp';
 
-				require_once DOL_DOCUMENT_ROOT.'/core/class/utils.class.php';
-				$utils = new Utils($db);
 				$resarray = $utils->executeCLI($command, $outfile);
 				if ($resarray['result'] != '0')
 				{
 					$this->error = $resarray['error'].' '.$resarray['output'];
+				}
+				$result = ($resarray['result'] == 0) ? 1 : 0;
+
+				// Build PDF doc
+				$command=$conf->global->MODULEBUILDER_ASCIIDOCTORPDF.' '.$destfile.' -n -o '.$dirofmoduledoc.'/'.$FILENAMEDOCPDF;
+				$outfile=$dirofmoduletmp.'/outpdf.tmp';
+				$resarray = $utils->executeCLI($command, $outfile);
+				if ($resarray['result'] != '0')
+				{
+				    $this->error = $resarray['error'].' '.$resarray['output'];
 				}
 				$result = ($resarray['result'] == 0) ? 1 : 0;
 

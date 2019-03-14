@@ -63,6 +63,10 @@ if ($action == 'add' && ! empty($permissiontoadd))
 		if (! empty($object->fields[$key]['foreignkey']) && $value == '-1') $value='';					// This is an explicit foreign key field
 
 		$object->$key=$value;
+		if ($val['notnull'] > 0 && $object->$key == '' && ! is_null($val['default']) && $val['default'] == '(PROV)')
+		{
+		    $object->$key = '(PROV)';
+		}
 		if ($val['notnull'] > 0 && $object->$key == '' && is_null($val['default']))
 		{
 			$error++;
@@ -75,7 +79,7 @@ if ($action == 'add' && ! empty($permissiontoadd))
 		$result=$object->create($user);
 		if ($result > 0)
 		{
-			// Creation OK
+		    // Creation OK
 			$urltogo=$backtopage?str_replace('__ID__', $result, $backtopage):$backurlforlist;
 			header("Location: ".$urltogo);
 			exit;

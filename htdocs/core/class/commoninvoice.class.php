@@ -517,7 +517,6 @@ abstract class CommonInvoice extends CommonObject
 		
 		
 		return dolGetStatus($labelstatut, $labelstatutShort, '', $statusType, $mode);
-		
 	}
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
