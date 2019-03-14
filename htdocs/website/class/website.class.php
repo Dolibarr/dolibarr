@@ -593,11 +593,11 @@ class Website extends CommonObject
 			{
 				// Delete old file
 				$filetplold=$pathofwebsitenew.'/page'.$pageid.'.tpl.php';
-				dol_syslog("We regenerate alias page new name=".$filealias.", old name=".$fileoldalias);
 				dol_delete_file($filetplold);
 
 				// Create new file
 				$objectpagenew = $objectpageold->createFromClone($user, $pageid, $objectpageold->pageurl, '', 0, $object->id, 1);
+
 				//print $pageid.' = '.$objectpageold->pageurl.' -> '.$objectpagenew->id.' = '.$objectpagenew->pageurl.'<br>';
 				if (is_object($objectpagenew) && $objectpagenew->pageurl)
 				{
@@ -632,7 +632,7 @@ class Website extends CommonObject
 		    if (! $res > 0)
 		    {
 		        $error++;
-		        setEventMessages($objectpage->error, $objectpage->errors, 'errors');
+		        setEventMessages($object->error, $object->errors, 'errors');
 		    }
 
 		    if (! $error)
@@ -645,6 +645,8 @@ class Website extends CommonObject
 		    	$result = dolSaveIndexPage($pathofwebsitenew, $fileindex, $filetpl, $filewrapper);
 		    }
 		}
+
+		unset($object->context['createfromclone']);
 
 		// End
 		if (!$error) {

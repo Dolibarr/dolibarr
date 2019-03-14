@@ -59,18 +59,18 @@ $search_deliveryday=GETPOST("search_deliveryday","int");
 $sall=trim((GETPOST('search_all', 'alphanohtml')!='')?GETPOST('search_all', 'alphanohtml'):GETPOST('sall', 'alphanohtml'));
 
 $search_product_category=GETPOST('search_product_category','int');
-$search_ref=GETPOST('search_ref');
-$search_refsupp=GETPOST('search_refsupp');
+$search_ref=GETPOST('search_ref','alpha');
+$search_refsupp=GETPOST('search_refsupp','alpha');
 $search_company=GETPOST('search_company','alpha');
 $search_town=GETPOST('search_town','alpha');
 $search_zip=GETPOST('search_zip','alpha');
-$search_state=trim(GETPOST("search_state"));
+$search_state=trim(GETPOST("search_state",'alpha'));
 $search_country=GETPOST("search_country",'int');
 $search_type_thirdparty=GETPOST("search_type_thirdparty",'int');
 $search_user=GETPOST('search_user','int');
 $search_request_author=GETPOST('search_request_author','alpha');
-$search_ht=GETPOST('search_ht');
-$search_ttc=GETPOST('search_ttc');
+$search_ht=GETPOST('search_ht','alpha');
+$search_ttc=GETPOST('search_ttc','alpha');
 $search_status=(GETPOST('search_status','alpha')!=''?GETPOST('search_status','alpha'):GETPOST('statut','alpha'));	// alpha and not intbecause it can be '6,7'
 $optioncss = GETPOST('optioncss','alpha');
 $socid = GETPOST('socid','int');
@@ -483,7 +483,7 @@ $sql.= " typent.code as typent_code,";
 $sql.= " state.code_departement as state_code, state.nom as state_name,";
 $sql.= " cf.rowid, cf.ref, cf.ref_supplier, cf.fk_statut, cf.billed, cf.total_ht, cf.tva as total_tva, cf.total_ttc, cf.fk_user_author, cf.date_commande as date_commande, cf.date_livraison as date_delivery,";
 $sql.= ' cf.date_creation as date_creation, cf.tms as date_update,';
-$sql.= " p.rowid as project_id, p.ref as project_ref,";
+$sql.= " p.rowid as project_id, p.ref as project_ref, p.title as project_title,";
 $sql.= " u.firstname, u.lastname, u.photo, u.login";
 // Add fields from extrafields
 foreach ($extrafields->attribute_label as $key => $val) $sql.=($extrafields->attribute_type[$key] != 'separate' ? ",ef.".$key.' as options_'.$key : '');
@@ -999,6 +999,7 @@ if ($resql)
 		{
 			$projectstatic->id=$obj->project_id;
 			$projectstatic->ref=$obj->project_ref;
+			$projectstatic->title=$obj->project_title;
 			print '<td>';
 			if ($obj->project_id > 0) print $projectstatic->getNomUrl(1);
 			print '</td>';

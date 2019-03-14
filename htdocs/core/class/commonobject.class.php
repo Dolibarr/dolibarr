@@ -312,6 +312,12 @@ abstract class CommonObject
 	public $modelpdf;
 
 	/**
+	 * @var string
+	 * Contains relative path of last generated main file
+	 */
+	public $last_main_doc;
+
+	/**
 	 * @var int Bank account ID
 	 * @see SetBankAccount()
 	 */
@@ -4611,10 +4617,15 @@ abstract class CommonObject
 						if (! empty($obj->update_main_doc_field)) $update_main_doc_field=1;
 						if ($update_main_doc_field && ! empty($this->table_element))
 						{
-							$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element." SET last_main_doc = '".($ecmfile->filepath.'/'.$ecmfile->filename)."'";
+							$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element." SET last_main_doc = '".$this->db->escape($ecmfile->filepath.'/'.$ecmfile->filename)."'";
 							$sql.= ' WHERE rowid = '.$this->id;
+
 							$resql = $this->db->query($sql);
 							if (! $resql) dol_print_error($this->db);
+							else
+							{
+							    $this->last_main_doc = $ecmfile->filepath.'/'.$ecmfile->filename;
+							}
 						}
 					}
 				}
@@ -4940,7 +4951,7 @@ abstract class CommonObject
 			   		if ($this->array_options[$key] === '') $mandatorypb=true;
 			   		if ($mandatorypb)
 			   		{
-			   			dol_syslog($this->error);
+			   		    dol_syslog("Mandatory extra field ".$key." is empty");
 			   			$this->errors[]=$langs->trans('ErrorFieldRequired', $attributeLabel);
 			   			return -1;
 			   		}
@@ -6272,10 +6283,13 @@ abstract class CommonObject
 				// Show only the key field in params
 				if (is_array($params) && array_key_exists('onlykey',$params) && $key != $params['onlykey']) continue;
 
+				// @TODO Add test also on 'enabled' (different than 'list' that is 'visibility')
 				$enabled = 1;
-				if ($enabled && isset($extrafields->attributes[$this->table_element]['list'][$key]))
+
+				$visibility = 1;
+				if ($visibility && isset($extrafields->attributes[$this->table_element]['list'][$key]))
 				{
-					$enabled = dol_eval($extrafields->attributes[$this->table_element]['list'][$key], 1);
+				    $visibility = dol_eval($extrafields->attributes[$this->table_element]['list'][$key], 1);
 				}
 
 				$perms = 1;
@@ -6284,7 +6298,8 @@ abstract class CommonObject
 					$perms = dol_eval($extrafields->attributes[$this->table_element]['perms'][$key], 1);
 				}
 
-				if (($mode == 'create' || $mode == 'edit') && abs($enabled) != 1 && abs($enabled) != 3) continue;	// <> -1 and <> 1 and <> 3 = not visible on forms, only on list
+				if (($mode == 'create' || $mode == 'edit') && abs($visibility) != 1 && abs($visibility) != 3) continue;	// <> -1 and <> 1 and <> 3 = not visible on forms, only on list
+				elseif($mode == 'view' && empty($visibility)) continue;
 				if (empty($perms)) continue;
 
 				// Load language if required

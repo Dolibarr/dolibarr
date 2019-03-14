@@ -385,7 +385,7 @@ class BlockedLog
 		$this->object_data=new stdClass();
 		// Add fields to exclude
 		$arrayoffieldstoexclude = array(
-			'table_element','fields','ref_previous','ref_next','origin','origin_id','oldcopy','picto','error','errors','modelpdf','civility_id','contact','contact_id',
+			'table_element','fields','ref_previous','ref_next','origin','origin_id','oldcopy','picto','error','errors','modelpdf','last_main_doc','civility_id','contact','contact_id',
 			'table_element_line','ismultientitymanaged','isextrafieldmanaged',
 			'linkedObjectsIds','linkedObjects','fk_delivery_address',
 			'context',

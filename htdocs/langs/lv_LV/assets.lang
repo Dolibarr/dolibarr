@@ -1,0 +1,59 @@
+# Copyright (C) 2018      Alexandre Spangaro   <aspangaro@zendsi.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+#
+# Generic
+#
+Assets = Aktīvi
+NewAsset = Jauns aktīvs
+AccountancyCodeAsset = Grāmatvedības kods (aktīvs)
+AccountancyCodeDepreciationAsset = Grāmatvedības kods (nolietojuma aktīvu konts)
+AccountancyCodeDepreciationExpense = Grāmatvedības kods (nolietojuma izmaksu konts)
+NewAssetType=Jauns aktīvu veids
+AssetsTypeSetup=Aktīvu veidu iestatīšana
+AssetTypeModified=Pamatlīdzekļu veids pārveidots
+AssetType=Aktīva veids
+AssetsLines=Aktīvi
+DeleteType=Dzēst
+DeleteAnAssetType=Dzēst aktīva veidu
+ConfirmDeleteAssetType=Vai tiešām vēlaties dzēst šo aktīvu veidu?
+ShowTypeCard=Rādīt veidu "%s"
+
+# Module label 'ModuleAssetsName'
+ModuleAssetsName = Aktīvi
+# Module description 'ModuleAssetsDesc'
+ModuleAssetsDesc = Aktīvu apraksts
+
+#
+# Admin page
+#
+AssetsSetup = Aktīvu uzstādīšana
+Settings = Iestatījumi
+AssetsSetupPage = Aktīvu iestatīšanas lapa
+ExtraFieldsAssetsType = Papildu atribūti (Assets type)
+AssetsType=Aktīva veids
+AssetsTypeId=Aktīva veida id
+AssetsTypeLabel=Aktīva veida nosaukums
+AssetsTypes=Aktīvu veidi
+
+#
+# Menu
+#
+MenuAssets = Aktīvi
+MenuNewAsset = Jauns aktīvs
+MenuTypeAssets = Ierakstiet aktīvus
+MenuListAssets = Saraksts
+MenuNewTypeAssets = Jauns veids
+MenuListTypeAssets = Saraksts

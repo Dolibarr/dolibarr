@@ -625,7 +625,7 @@ while ($i < min($num,$limit))
 	$userAccess = $projectstatic->restrictedProjectArea($user);    // why this ?
 	if ($userAccess >= 0)
 	{
-		print '<tr class="oddeven">';
+		print '<tr data-rowid="'.$object->id.'" class="oddeven">';
 
 		// Ref
 		if (! empty($arrayfields['t.ref']['checked']))

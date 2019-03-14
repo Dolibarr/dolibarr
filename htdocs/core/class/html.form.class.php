@@ -516,7 +516,7 @@ class Form
 	 *	@param	string	$text				Text to show
 	 *	@param  string	$htmltext	     	Content of tooltip
 	 *	@param	int		$direction			1=Icon is after text, -1=Icon is before text, 0=no icon
-	 * 	@param	string	$type				Type of picto ('info', 'help', 'warning', 'superadmin', 'mypicto@mymodule', ...) or image filepath
+	 * 	@param	string	$type				Type of picto ('info', 'help', 'warning', 'superadmin', 'mypicto@mymodule', ...) or image filepath or 'none'
 	 *  @param  string	$extracss           Add a CSS style to td, div or span tag
 	 *  @param  int		$noencodehtmltext   Do not encode into html entity the htmltext
 	 *  @param	int		$notabs				0=Include table and tr tags, 1=Do not include table and tr tags, 2=use div, 3=use span
@@ -551,18 +551,19 @@ class Form
 		{
 			if ($type == 'info' || $type == 'help') return $text;
 		}
-		// If info or help with smartphone, show only text (tooltip on lick does not works with dialog on smaprtphone)
-		if (! empty($conf->dol_no_mouse_hover) && ! empty($tooltiptrigger))
-		{
-			if ($type == 'info' || $type == 'help') return $text;
-		}
+		// If info or help with smartphone, show only text (tooltip on click does not works with dialog on smaprtphone)
+		//if (! empty($conf->dol_no_mouse_hover) && ! empty($tooltiptrigger))
+		//{
+			//if ($type == 'info' || $type == 'help') return '<a href="'..'">'.$text.''</a>';
+		//}
 
+		$img='';
 		if ($type == 'info') $img = img_help(0, $alt);
 		elseif ($type == 'help') $img = img_help(($tooltiptrigger != '' ? 2 : 1), $alt);
 		elseif ($type == 'superadmin') $img = img_picto($alt, 'redstar');
 		elseif ($type == 'admin') $img = img_picto($alt, 'star');
 		elseif ($type == 'warning') $img = img_warning($alt);
-		else $img = img_picto($alt, $type);
+		elseif ($type != 'none') $img = img_picto($alt, $type);   // $type can be an image path
 
 		return $this->textwithtooltip($text, $htmltext, (($tooltiptrigger && ! $img)?3:2), $direction, $img, $extracss, $notabs, '', $noencodehtmltext, $tooltiptrigger, $forcenowrap);
 	}
@@ -1981,7 +1982,7 @@ class Form
 		}
 		else
 		{
-			print $this->select_produits_list($selected,$htmlname,$filtertype,$limit,$price_level,'',$status,$finished,0,$socid,$showempty,$forcecombo,$morecss,$hidepriceinlabel, $warehouseStatus);
+			print $this->select_produits_list($selected, $htmlname, $filtertype, $limit, $price_level, '', $status, $finished, 0, $socid, $showempty, $forcecombo, $morecss, $hidepriceinlabel, $warehouseStatus);
 		}
 	}
 
@@ -2173,6 +2174,10 @@ class Form
 			{
 				if ($showempty && ! is_numeric($showempty)) $textifempty=$langs->trans($showempty);
 				else $textifempty.=$langs->trans("All");
+			}
+			else
+			{
+			    if ($showempty && ! is_numeric($showempty)) $textifempty=$langs->trans($showempty);
 			}
 			if ($showempty) $out.='<option value="0" selected>'.$textifempty.'</option>';
 
@@ -4671,7 +4676,7 @@ class Form
 
 		$out='';
 		$out.= '<select class="flat" name="'.$htmlname.'" id="'.$htmlname.'">';
-		if ($useempty) $out .= '<option value=""></option>';
+		if ($useempty) $out .= '<option value="">&nbsp;</option>';
 		// If company current currency not in table, we add it into list. Should always be available.
 		if (! in_array($conf->currency, $TCurrency))
 		{
@@ -6090,7 +6095,7 @@ class Form
 				foreach ($array as $key => $value)
 				{
 					$out.= '<option value="'.$key.'"';
-					if (is_array($selected) && ! empty($selected) && in_array($key, $selected) && !empty($key))
+					if (is_array($selected) && ! empty($selected) && in_array($key, $selected) && ((string) $key != ''))
 					{
 						$out.= ' selected';
 					}

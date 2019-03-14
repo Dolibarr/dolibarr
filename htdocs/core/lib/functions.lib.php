@@ -616,7 +616,7 @@ if (! function_exists('dol_getprefix'))
     /**
      *  Return a prefix to use for this Dolibarr instance, for session/cookie names or email id.
      *  The prefix for session is unique in a web context only and is unique for instance and avoid conflict
-     *  between multi-instances, even when having two instances with one root dir or two instances in virtual servers.
+     *  between multi-instances, even when having two instances with same root dir or two instances in same virtual servers.
      *  The prefix for email is unique if MAIL_PREFIX_FOR_EMAIL_ID is set to a value, otherwise value may be same than other instance.
      *
      *  @param  string  $mode                   '' (prefix for session name) or 'email' (prefix for email id)
@@ -634,16 +634,16 @@ if (! function_exists('dol_getprefix'))
 				if ($conf->global->MAIL_PREFIX_FOR_EMAIL_ID != 'SERVER_NAME') return $conf->global->MAIL_PREFIX_FOR_EMAIL_ID;
 				else if (isset($_SERVER["SERVER_NAME"])) return $_SERVER["SERVER_NAME"];
 			}
-			return dol_hash(DOL_DOCUMENT_ROOT.DOL_URL_ROOT);
+			return dol_hash(DOL_DOCUMENT_ROOT.DOL_URL_ROOT, '3');
 		}
 
 		if (isset($_SERVER["SERVER_NAME"]) && isset($_SERVER["DOCUMENT_ROOT"]))
 		{
-			return dol_hash($_SERVER["SERVER_NAME"].$_SERVER["DOCUMENT_ROOT"].DOL_DOCUMENT_ROOT.DOL_URL_ROOT);
-			// Use this for a "readable" cookie name
+			return dol_hash($_SERVER["SERVER_NAME"].$_SERVER["DOCUMENT_ROOT"].DOL_DOCUMENT_ROOT.DOL_URL_ROOT, '3');
+			// Use this for a "readable" key
 			//return dol_sanitizeFileName($_SERVER["SERVER_NAME"].$_SERVER["DOCUMENT_ROOT"].DOL_DOCUMENT_ROOT.DOL_URL_ROOT);
 		}
-		return dol_hash(DOL_DOCUMENT_ROOT.DOL_URL_ROOT);
+		return dol_hash(DOL_DOCUMENT_ROOT.DOL_URL_ROOT, '3');
 	}
 }
 
@@ -5858,8 +5858,8 @@ function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $ob
 		{
 			$substitutionarray['__ID__'] = '__ID__';
 			$substitutionarray['__REF__'] = '__REF__';
-			$substitutionarray['__REFCLIENT__'] = '__REFCLIENT__';
-			$substitutionarray['__REFSUPPLIER__'] = '__REFSUPPLIER__';
+			$substitutionarray['__REF_CLIENT__'] = '__REF_CLIENT__';
+			$substitutionarray['__REF_SUPPLIER__'] = '__REF_SUPPLIER__';
 			$substitutionarray['__EXTRAFIELD_XXX__'] = '__EXTRAFIELD_XXX__';
 
 			$substitutionarray['__THIRDPARTY_ID__'] = '__THIRDPARTY_ID__';
@@ -5905,6 +5905,10 @@ function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $ob
 		{
 			$substitutionarray['__ID__'] = $object->id;
 			$substitutionarray['__REF__'] = $object->ref;
+			$substitutionarray['__REF_CLIENT__'] = (isset($object->ref_client) ? $object->ref_client : (isset($object->ref_customer) ? $object->ref_customer : null));
+			$substitutionarray['__REF_SUPPLIER__'] = (isset($object->ref_supplier) ? $object->ref_supplier : null);
+			$substitutionarray['__SUPPLIER_ORDER_DATE_DELIVERY__'] = (isset($object->date_livraison) ? dol_print_date($object->date_livraison, 'day', 0, $outputlangs): '');
+			// For backward compatibility
 			$substitutionarray['__REFCLIENT__'] = (isset($object->ref_client) ? $object->ref_client : (isset($object->ref_customer) ? $object->ref_customer : null));
 			$substitutionarray['__REFSUPPLIER__'] = (isset($object->ref_supplier) ? $object->ref_supplier : null);
 
@@ -6825,7 +6829,8 @@ function picto_from_langcode($codelang, $moreatt = '')
 }
 
 /**
- * Return default language from country code
+ * Return default language from country code.
+ * Return null if not found.
  *
  * @param 	string 	$countrycode	Country code like 'US', 'FR', 'CA', ...
  * @return	string					Value of locale like 'en_US', 'fr_FR', ...
@@ -6833,6 +6838,8 @@ function picto_from_langcode($codelang, $moreatt = '')
 function getLanguageCodeFromCountryCode($countrycode)
 {
 	global $mysoc;
+
+	if (empty($countrycode)) return null;
 
 	if (strtoupper($countrycode) == 'MQ') return 'fr_CA';
 	if (strtoupper($countrycode) == 'SE') return 'sv_SE';	// se_SE is Sami/Sweden, and we want in priority sv_SE for SE country

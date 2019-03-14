@@ -53,10 +53,13 @@ class DiscountAbsolute
 	 */
     public $fk_soc;
 
-    public $discount_type;			// 0 => customer discount, 1 => supplier discount
-    public $amount_ht;				//
+    public $discount_type;		// 0 => customer discount, 1 => supplier discount
+    public $amount_ht;			//
     public $amount_tva;			//
     public $amount_ttc;			//
+    public $multicurrency_amount_ht;
+    public $multicurrency_amount_tva;
+    public $multicurrency_amount_ttc;
     public $tva_tx;				// Vat rate
 
     /**

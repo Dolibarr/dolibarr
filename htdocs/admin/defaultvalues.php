@@ -352,7 +352,6 @@ if ($result)
 	{
 		$obj = $db->fetch_object($result);
 
-
 		print "\n";
 
 		print '<tr class="oddeven">';
@@ -383,10 +382,7 @@ if ($result)
     		print '</td>';
 		}
 
-		if (! empty($conf->multicompany->enabled) && !$user->entity)
-		{
-		    print '<td></td>';
-		}
+	    print '<td></td>';
 
 		// Actions
 		print '<td align="center">';
@@ -415,7 +411,6 @@ else
 {
     dol_print_error($db);
 }
-
 
 print '</table>';
 print '</div>';

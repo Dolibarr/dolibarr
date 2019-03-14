@@ -44,6 +44,7 @@ class Entrepot extends CommonObject
 	public $table_element='entrepot';
 
 	public $picto='stock';
+	public $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
 	/**
 	 * Warehouse closed, inactive
@@ -327,6 +328,16 @@ class Entrepot extends CommonObject
 	{
 		global $conf;
 
+		dol_syslog(get_class($this)."::fetch id=".$id." ref=".$ref);
+
+		// Check parameters
+		if (! $id && ! $ref)
+		{
+			$this->error='ErrorWrongParameters';
+			dol_syslog(get_class($this)."::fetch ".$this->error);
+			return -1;
+		}
+
 		$sql  = "SELECT rowid, fk_parent, ref as label, description, statut, lieu, address, zip, town, fk_pays as country_id";
 		$sql .= " FROM ".MAIN_DB_PREFIX."entrepot";
 		if ($id)
@@ -339,7 +350,6 @@ class Entrepot extends CommonObject
 			if ($ref) $sql.= " AND ref = '".$this->db->escape($ref)."'";
 		}
 
-		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result)
 		{

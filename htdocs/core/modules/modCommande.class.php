@@ -201,6 +201,14 @@ class modCommande extends DolibarrModules
 			'cd.tva_tx'=>"LineVATRate",'cd.qty'=>"LineQty",'cd.total_ht'=>"LineTotalHT",'cd.total_tva'=>"LineTotalVAT",'cd.total_ttc'=>"LineTotalTTC",
 			'p.rowid'=>'ProductId','p.ref'=>'ProductRef','p.label'=>'ProductLabel'
 		);
+		if (! empty($conf->multicurrency->enabled))
+		{
+		    $this->export_fields_array[$r]['c.multicurrency_code'] = 'Currency';
+		    $this->export_fields_array[$r]['c.multicurrency_tx'] = 'CurrencyRate';
+		    $this->export_fields_array[$r]['c.multicurrency_total_ht'] = 'MulticurrencyAmountHT';
+		    $this->export_fields_array[$r]['c.multicurrency_total_tva'] = 'MulticurrencyAmountVAT';
+		    $this->export_fields_array[$r]['c.multicurrency_total_ttc'] = 'MulticurrencyAmountTTC';
+		}
 		//$this->export_TypeFields_array[$r]=array(
 		//	's.rowid'=>"List:societe:nom",'s.nom'=>'Text','s.address'=>'Text','s.zip'=>'Text','s.town'=>'Text','co.label'=>'List:c_country:label:label',
 		//	'co.code'=>'Text','s.phone'=>'Text','s.siren'=>'Text','s.siret'=>'Text','s.ape'=>'Text','s.idprof4'=>'Text','c.ref'=>"Text",'c.ref_client'=>"Text",
@@ -215,7 +223,7 @@ class modCommande extends DolibarrModules
 			'c.date_commande'=>"Date",'c.date_livraison'=>"Date",'c.amount_ht'=>"Numeric",'c.remise_percent'=>"Numeric",'c.total_ht'=>"Numeric",
 			'c.total_ttc'=>"Numeric",'c.facture'=>"Boolean",'c.fk_statut'=>'Status','c.note_public'=>"Text",'c.date_livraison'=>'Date','pj.ref'=>'Text',
 			'cd.description'=>"Text",'cd.product_type'=>'Boolean','cd.tva_tx'=>"Numeric",'cd.qty'=>"Numeric",'cd.total_ht'=>"Numeric",'cd.total_tva'=>"Numeric",
-			'cd.total_ttc'=>"Numeric",'p.rowid'=>'List:product:ref','p.ref'=>'Text','p.label'=>'Text','d.nom'=>'Text'
+			'cd.total_ttc'=>"Numeric",'p.rowid'=>'List:product:ref::product','p.ref'=>'Text','p.label'=>'Text','d.nom'=>'Text'
 		);
 		$this->export_entities_array[$r]=array(
 			's.rowid'=>"company",'s.nom'=>'company','s.address'=>'company','s.zip'=>'company','s.town'=>'company','d.nom'=>'company','co.label'=>'company',

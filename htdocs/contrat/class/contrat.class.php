@@ -913,6 +913,7 @@ class Contrat extends CommonObject
 		$sql.= ", ".(!empty($this->ref_ext)?("'".$this->db->escape($this->ref_ext)."'"):"NULL");
 		$sql.= ")";
 		$resql=$this->db->query($sql);
+
 		if ($resql)
 		{
 			$error=0;
@@ -930,8 +931,8 @@ class Contrat extends CommonObject
 			{
 				$modCodeContract = new $module();
 
-				if (!empty($modCodeContract->code_auto)) {
-					// Update ref
+				if (! empty($modCodeContract->code_auto)) {
+					// Force the ref to a draft value if numbering module is an automatic numbering
 					$sql = 'UPDATE '.MAIN_DB_PREFIX."contrat SET ref='(PROV".$this->id.")' WHERE rowid=".$this->id;
 					if ($this->db->query($sql))
 					{
@@ -940,9 +941,6 @@ class Contrat extends CommonObject
 							$this->ref="(PROV".$this->id.")";
 						}
 					}
-				} else {
-					$error++;
-					$this->error='Failed to get PROV number';
 				}
 			}
 
@@ -2388,8 +2386,6 @@ class Contrat extends CommonObject
 
 		dol_include_once('/projet/class/project.class.php');
 
-		$this->context['createfromclone'] = 'createfromclone';
-
 		$error = 0;
 
 		$this->fetch($this->id);
@@ -2440,6 +2436,7 @@ class Contrat extends CommonObject
 		}
 
 		// Create clone
+		$clonedObj->context['createfromclone'] = 'createfromclone';
 		$result = $clonedObj->create($user);
 		if ($result < 0) {
 			$error ++;
@@ -2479,7 +2476,7 @@ class Contrat extends CommonObject
 			}
 		}
 
-		unset($this->context['createfromclone']);
+		unset($clonedObj->context['createfromclone']);
 
 		// End
 		if (! $error) {

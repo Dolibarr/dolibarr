@@ -582,20 +582,23 @@ class Propalmergepdfproduct extends CommonObject
 		// ...
 
 		// Create clone
+		$object->context['createfromclone']='createfromclone';
 		$result=$object->create($user);
 
 		// Other options
 		if ($result < 0)
 		{
 			$this->error=$object->error;
+			$this->errors=array_merge($this->errors, $object->errors);
 			$error++;
 		}
 
 		if (! $error)
 		{
 
-
 		}
+
+		unset($object->context['createfromclone']);
 
 		// End
 		if (! $error)

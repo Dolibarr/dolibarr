@@ -252,12 +252,24 @@ if ($action == 'delete')
     print $form->formconfirm("index.php?menu_handler=".$menu_handler."&menuId=".GETPOST('menuId','int'),$langs->trans("DeleteMenu"),$langs->trans("ConfirmDeleteMenu",$obj->titre),"confirm_delete");
 }
 
+$newcardbutton='';
+if ($user->admin)
+{
+    $newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/admin/menus/edit.php?menuId=0&action=create&menu_handler='.urlencode($menu_handler).'&backtopage='.urlencode($_SERVER['PHP_SELF']).'"><span class="valignmiddle">'.$langs->trans('New').'</span>';
+    $newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
+    $newcardbutton.= '</a>';
+}
 
 print '<form name="newmenu" class="nocellnopadd" action="'.$_SERVER["PHP_SELF"].'">';
 print '<input type="hidden" action="change_menu_handler">';
 print $langs->trans("MenuHandler").': ';
 print $formadmin->select_menu_families($menu_handler.(preg_match('/_menu/',$menu_handler)?'':'_menu'),'menu_handler',array_merge($dirstandard,$dirsmartphone));
 print ' &nbsp; <input type="submit" class="button" value="'.$langs->trans("Refresh").'">';
+
+print '<div class="floatright">';
+print $newcardbutton;
+print '</div>';
+
 print '</form>';
 
 print '<br>';
@@ -392,14 +404,6 @@ if ($conf->use_javascript_ajax)
     	print '</table>';
 	}
 
-	print '</div>';
-
-
-	/*
-	 * Boutons actions
-	 */
-	print '<div class="tabsAction">';
-	print '<a class="butAction" href="'.DOL_URL_ROOT.'/admin/menus/edit.php?menuId=0&amp;action=create&amp;menu_handler='.urlencode($menu_handler).'">'.$langs->trans("NewMenu").'</a>';
 	print '</div>';
 }
 else

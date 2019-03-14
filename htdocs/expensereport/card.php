@@ -2137,7 +2137,7 @@ else
 
 								// VAT
 								print '<td style="text-align:right;">';
-								print $form->load_tva('vatrate', (isset($_POST["vatrate"])?$_POST["vatrate"]:$line->vatrate), $mysoc, '');
+								print $form->load_tva('vatrate', (isset($_POST["vatrate"])?$_POST["vatrate"]:$line->vatrate), $mysoc, '', 0, 0, '', false, 1);
 								print '</td>';
 
 								// Unit price

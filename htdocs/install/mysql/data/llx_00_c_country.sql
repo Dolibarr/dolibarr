@@ -274,4 +274,5 @@ INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (24
 INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (244,'ME','MNE','Monténégro',1,0);
 INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (245,'BL','BLM','Saint-Barthélemy',1,0);
 INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (246,'MF','MAF','Saint-Martin',1,0);
+INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (247,'XK','XKX','Kosovo',1,0);
 

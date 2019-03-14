@@ -261,14 +261,14 @@ print '</td></tr>';
 
 print '<tr class="oddeven"><td>';
 print $langs->trans("BankAccount").'</td><td>';
-print $form->select_comptes($conf->global->STRIPE_BANK_ACCOUNT_FOR_PAYMENTS, 'STRIPE_BANK_ACCOUNT_FOR_PAYMENTS', 0, '', 1);
+$form->select_comptes($conf->global->STRIPE_BANK_ACCOUNT_FOR_PAYMENTS, 'STRIPE_BANK_ACCOUNT_FOR_PAYMENTS', 0, '', 1);
 print '</td></tr>';
 
 if ($conf->global->MAIN_FEATURES_LEVEL >= 2)	// What is this for ?
 {
 	print '<tr class="oddeven"><td>';
 	print $langs->trans("BankAccountForBankTransfer").'</td><td>';
-	print $form->select_comptes($conf->global->STRIPE_BANK_ACCOUNT_FOR_BANKTRANSFERS, 'STRIPE_BANK_ACCOUNT_FOR_BANKTRANSFERS', 0, '', 1);
+	$form->select_comptes($conf->global->STRIPE_BANK_ACCOUNT_FOR_BANKTRANSFERS, 'STRIPE_BANK_ACCOUNT_FOR_BANKTRANSFERS', 0, '', 1);
 	print '</td></tr>';
 }
 

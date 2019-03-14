@@ -29,27 +29,6 @@ Other licenses apply for some included dependencies. See [COPYRIGHT](https://git
 
 ## INSTALLING
 
-### Download
-
-Releases can be downloaded from [official website](https://www.dolibarr.org/).
-
-### Install from composer
-
-If you do not already have Composer installed, you may do so by following the instructions at [getcomposer.org](https://getcomposer.org/). On Linux and macOS, you may run the following commands:
-
-```bash
-curl -sS https://getcomposer.org/installer | php
-mv composer.phar /usr/local/bin/composer
-```
-
-On Windows, you can download and run https://getcomposer.org/Composer-Setup.exe
-
-You can then create a new project
-
-```bash
-composer create-project dolibarr/dolibarr erp
-```
-
 ### Simple setup
 
 If you have low technical skills and you're looking to install Dolibarr ERP/CRM in just a few clicks, you can use one of the packaged versions:
@@ -58,16 +37,23 @@ If you have low technical skills and you're looking to install Dolibarr ERP/CRM 
 - DoliDeb for Debian or Ubuntu
 - DoliRpm for Redhat, Fedora, OpenSuse, Mandriva or Mageia
 
+Releases can be downloaded from [official website](https://www.dolibarr.org/).
+
 ### Advanced setup
 
 You can use a Web server and a supported database (MariaDB, MySQL or PostgreSQL) to install the standard version.
 
-- Uncompress the downloaded archive
-- Copy the "dolibarr" directory and all its files inside your web server root or anywhere you'd like and set up your web server to use "*dolibarr/htdocs*" as root for a new web server virtual host (second choice need to be server administrator)
-- Create an empty `htdocs/conf/conf.php` file and set permissions for your web server user (*write* permissions will be removed once install is finished)
+- Uncompress the downloaded .zip archive to copy the "dolibarr/htdocs" directory and all its files inside your web server root or get the files directly from GitHub (recommanded if you known git): 
+
+  git clone https://github.com/dolibarr/dolibarr -b x.y     (where x.y is main version like 3.6, 9.0, ...)
+
+- Set up your web server to use "*dolibarr/htdocs*" as root if your web server does not have an already defined directory to point to. 
+ 
+- Create an empty `htdocs/conf/conf.php` file and set *write* permissions for your web server user (*write* permission will be removed once install is finished)
+
 - From your browser, go to the dolibarr "install/" page
 
-    The URL will depends on choices made in the first step:
+    The URL will depends on how you web setup was setup to point to your dolibarr installation. It may looks like:
 
         http://localhost/dolibarr/htdocs/install/
         

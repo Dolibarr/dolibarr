@@ -89,21 +89,17 @@ class box_project extends ModeleBoxes
 		    include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 		    $projectstatic = new Project($this->db);
 
-		    $socid=$user->societe_id;
+		    $socid=0;
+		    //if ($user->societe_id > 0) $socid = $user->societe_id;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
 
-    		// Get list of project id allowed to user (in a string list separated by coma)
+            // Get list of project id allowed to user (in a string list separated by coma)
 		    $projectsListId='';
-    		if (! $user->rights->projet->all->lire) $projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,0,1,$socid);
+    		if (! $user->rights->projet->all->lire) $projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 1, $socid);
 
 		    $sql = "SELECT p.rowid, p.ref, p.title, p.fk_statut, p.public";
 			$sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
-            if($user->socid) $sql.= " INNER JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid=p.fk_soc";
-			$sql.= " WHERE p.entity IN (".getEntity('project').')';
-            if (! $user->rights->projet->all->lire) $sql.= " AND p.rowid IN (".$projectsListId.")";     // public and assigned to, or restricted to company for external users
-			if ($user->socid) $sql.= " AND s.rowid = ".$user->socid;
-            $sql.= " AND p.fk_statut = 1"; // Seulement les projets ouverts
-            if ($socid) $sql.= " AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
-            if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND ((s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id.") OR (s.rowid IS NULL))";
+            $sql.= " WHERE p.fk_statut = 1"; // Only open projects
+            if (! $user->rights->projet->all->lire) $sql.= " AND p.rowid IN (".$projectsListId.")"; // public and assigned to, or restricted to company for external users
 
             $sql.= " ORDER BY p.datec DESC";
 			//$sql.= $db->plimit($max, 0);
