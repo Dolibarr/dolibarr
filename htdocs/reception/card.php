@@ -438,7 +438,7 @@ if (empty($reshook))
 	    }
 	}
 	// TODO add alternative status
-	/*else if ($action == 'reopen' && (! empty($user->rights->reception->creer) || ! empty($user->rights->reception->reception_advance->validate)))
+	/*elseif ($action == 'reopen' && (! empty($user->rights->reception->creer) || ! empty($user->rights->reception->reception_advance->validate)))
 	{
 	    $result = $object->setStatut(0);
 	    if ($result < 0)
