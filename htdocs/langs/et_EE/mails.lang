@@ -11,7 +11,9 @@ MailFrom=Saatja
 MailErrorsTo=Vead aadressile
 MailReply=Vasta
 MailTo=Vastuvõtja(d)
+MailToUsers=To user(s)
 MailCC=Koopia
+MailToCCUsers=Copy to users(s)
 MailCCC=Puhverdatud koopia
 MailTopic=E-kirja teema
 MailText=Sõnum
@@ -164,4 +166,4 @@ InGoingEmailSetup=Incoming email setup
 OutGoingEmailSetupForEmailing=Outgoing email setup (for mass emailing)
 DefaultOutgoingEmailSetup=Default outgoing email setup
 Information=Informatsioon
-
+ContactsWithThirdpartyFilter=Contacts avec filtre client

@@ -1,8 +1,9 @@
 <?php
-/* Copyright (C) 2017		Alexandre Spangaro		<aspangaro@zendsi.com>
+/* Copyright (C) 2017		Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2017		Olivier Geffroy			<jeff@jeffinfo.com>
  * Copyright (C) 2017		Saasprov				<saasprov@gmail.com>
  * Copyright (C) 2018		ptibogxiv				<support@ptibogxiv.net>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,15 +33,12 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 
 $servicename='Stripe';
 
-$langs->load("admin");
-$langs->load("other");
-$langs->load("paypal");
-$langs->load("paybox");
-$langs->load("stripe");
+// Load translation files required by the page
+$langs->loadLangs(array('admin', 'other', 'paypal', 'paybox', 'stripe'));
 
 if (! $user->admin) accessforbidden();
 
-$action = GETPOST('action','alpha');
+$action = GETPOST('action', 'alpha');
 
 
 if ($action == 'setvalue' && $user->admin)
@@ -73,12 +71,13 @@ if ($action == 'setvalue' && $user->admin)
 	$result = dolibarr_set_const($db, "STRIPE_BANK_ACCOUNT_FOR_PAYMENTS", GETPOST('STRIPE_BANK_ACCOUNT_FOR_PAYMENTS', 'int'), 'chaine', 0, '', $conf->entity);
 	if (! $result > 0)
 		$error ++;
-	$result = dolibarr_set_const($db, "STRIPE_BANK_ACCOUNT_FOR_BANKTRANSFERS", GETPOST('STRIPE_BANK_ACCOUNT_FOR_BANKTRANSFERS', 'int'), 'chaine', 0, '', $conf->entity);
+    $result = dolibarr_set_const($db, "STRIPE_USER_ACCOUNT_FOR_ACTIONS", GETPOST('STRIPE_USER_ACCOUNT_FOR_ACTIONS', 'int'), 'chaine', 0, '', $conf->entity);
+    if (! $result > 0) {
+        $error ++;
+    }
+    $result = dolibarr_set_const($db, "STRIPE_BANK_ACCOUNT_FOR_BANKTRANSFERS", GETPOST('STRIPE_BANK_ACCOUNT_FOR_BANKTRANSFERS', 'int'), 'chaine', 0, '', $conf->entity);
 	if (! $result > 0)
 		$error ++;
-  $result = dolibarr_set_const($db, "STRIPE_MINIMAL_3DSECURE", GETPOST('STRIPE_MINIMAL_3DSECURE', 'int'), 'chaine', 0, '', $conf->entity);
-	if (! $result > 0)
-		$error ++;  
 	$result = dolibarr_set_const($db, "ONLINE_PAYMENT_CSS_URL", GETPOST('ONLINE_PAYMENT_CSS_URL', 'alpha'), 'chaine', 0, '', $conf->entity);
 	if (! $result > 0)
 		$error ++;
@@ -95,9 +94,9 @@ if ($action == 'setvalue' && $user->admin)
 	if (! $result > 0)
 		$error ++;
 	// Stock decrement
-	$result = dolibarr_set_const($db, "ONLINE_PAYMENT_WAREHOUSE", (GETPOST('ONLINE_PAYMENT_WAREHOUSE', 'alpha') > 0 ? GETPOST('ONLINE_PAYMENT_WAREHOUSE', 'alpha') : ''), 'chaine', 0, '', $conf->entity);
-	if (! $result > 0)
-		$error ++;
+	//$result = dolibarr_set_const($db, "ONLINE_PAYMENT_WAREHOUSE", (GETPOST('ONLINE_PAYMENT_WAREHOUSE', 'alpha') > 0 ? GETPOST('ONLINE_PAYMENT_WAREHOUSE', 'alpha') : ''), 'chaine', 0, '', $conf->entity);
+	//if (! $result > 0)
+	//	$error ++;
 
 	// Payment token for URL
 	$result = dolibarr_set_const($db, "PAYMENT_SECURITY_TOKEN", GETPOST('PAYMENT_SECURITY_TOKEN', 'alpha'), 'chaine', 0, '', $conf->entity);
@@ -118,11 +117,9 @@ if ($action == 'setvalue' && $user->admin)
 
 if ($action=="setlive")
 {
-	$liveenable = GETPOST('value','int');
-	$res = dolibarr_set_const($db, "STRIPE_LIVE", $liveenable,'yesno',0,'',$conf->entity);
-	if (! $res > 0) $error++;
-	if (! $error)
-	{
+	$liveenable = GETPOST('value', 'int');
+	$res = dolibarr_set_const($db, "STRIPE_LIVE", $liveenable, 'yesno', 0, '', $conf->entity);
+	if ($res > 0) {
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	}
 	else
@@ -140,10 +137,10 @@ if ($action=="setlive")
 $form=new Form($db);
 $formproduct=new FormProduct($db);
 
-llxHeader('',$langs->trans("StripeSetup"));
+llxHeader('', $langs->trans("StripeSetup"));
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
-print load_fiche_titre($langs->trans("ModuleSetup").' Stripe',$linkback);
+print load_fiche_titre($langs->trans("ModuleSetup").' Stripe', $linkback);
 
 $head=stripeadmin_prepare_head();
 
@@ -166,18 +163,12 @@ print "</tr>\n";
 print '<tr class="oddeven">';
 print '<td class="titlefield">';
 print $langs->trans("StripeLiveEnabled").'</td><td>';
-if (!empty($conf->global->STRIPE_LIVE))
-{
-	print '<a href="'.$_SERVER['PHP_SELF'].'?action=setlive&value=0">';
-	print img_picto($langs->trans("Activated"),'switch_on');
-	print '</a>';
-}
-else
-{
-	print '<a href="'.$_SERVER['PHP_SELF'].'?action=setlive&value=1">';
-	print img_picto($langs->trans("Disabled"),'switch_off');
-	print '</a>';
-}
+  if ($conf->use_javascript_ajax) {
+    print ajax_constantonoff('STRIPE_LIVE');
+  } else {
+    $arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+    print $form->selectarray("STRIPE_LIVE", $arrval, $conf->global->STRIPE_LIVE);
+  }
 print '</td></tr>';
 
 if (empty($conf->stripeconnect->enabled))
@@ -195,9 +186,14 @@ if (empty($conf->stripeconnect->enabled))
 	print '</td></tr>';
 
 	print '<tr class="oddeven"><td>';
-	print '<span>'.$langs->trans("STRIPE_TEST_WEBHOOK_KEY").'</span></td><td>';
-	print '<input class="minwidth300" type="text" name="STRIPE_TEST_WEBHOOK_KEY" value="'.$conf->global->STRIPE_TEST_WEBHOOK_KEY.'">';
+	print '<span class="titlefield fieldrequired">'.$langs->trans("STRIPE_TEST_WEBHOOK_KEY").'</span></td><td>';
+	print '<input class="minwidth500" type="text" name="STRIPE_TEST_WEBHOOK_KEY" value="'.$conf->global->STRIPE_TEST_WEBHOOK_KEY.'">';
 	print ' &nbsp; '.$langs->trans("Example").': whsec_xxxxxxxxxxxxxxxxxxxxxxxx';
+	$out = img_picto('', 'object_globe.png').' '.$langs->trans("ToOfferALinkForTestWebhook").'<br>';
+  $url = dol_buildpath('/public/stripe/ipn.php?test', 2);
+	$out.= '<input type="text" id="onlinetestwebhookurl" class="quatrevingtpercent" value="'.$url.'">';
+	$out.= ajax_autoselect("onlinetestwebhookurl", 0);
+	print '<br>'.$out;
 	print '</td></tr>';
 } else {
 	print '<tr class="oddeven"><td>'.$langs->trans("StripeConnect").'</td>';
@@ -225,9 +221,14 @@ if (empty($conf->stripeconnect->enabled))
 	print '</td></tr>';
 
 	print '<tr class="oddeven"><td>';
-	print '<span>'.$langs->trans("STRIPE_LIVE_WEBHOOK_KEY").'</span></td><td>';
-	print '<input class="minwidth300" type="text" name="STRIPE_LIVE_WEBHOOK_KEY" value="'.$conf->global->STRIPE_LIVE_WEBHOOK_KEY.'">';
+	print '<span class="titlefield fieldrequired">'.$langs->trans("STRIPE_LIVE_WEBHOOK_KEY").'</span></td><td>';
+	print '<input class="minwidth500" type="text" name="STRIPE_LIVE_WEBHOOK_KEY" value="'.$conf->global->STRIPE_LIVE_WEBHOOK_KEY.'">';
 	print ' &nbsp; '.$langs->trans("Example").': whsec_xxxxxxxxxxxxxxxxxxxxxxxx';
+  $out = img_picto('', 'object_globe.png').' '.$langs->trans("ToOfferALinkForLiveWebhook").'<br>';
+  $url = dol_buildpath('/public/stripe/ipn.php', 2);
+	$out.= '<input type="text" id="onlinelivewebhookurl" class="quatrevingtpercent" value="'.$url.'">';
+	$out.= ajax_autoselect("onlinelivewebhookurl", 0);
+	print '<br>'.$out;
 	print '</td></tr>';
 }
 else
@@ -255,31 +256,59 @@ print ' &nbsp; '.$langs->trans("Example").': '.$mysoc->name;
 print '</td></tr>';
 
 print '<tr class="oddeven"><td>';
+print $langs->trans("StripeUserAccountForActions").'</td><td>';
+print $form->select_dolusers($conf->global->STRIPE_USER_ACCOUNT_FOR_ACTIONS, 'STRIPE_USER_ACCOUNT_FOR_ACTIONS', 0);
+print '</td></tr>';
+
+print '<tr class="oddeven"><td>';
 print $langs->trans("BankAccount").'</td><td>';
-print $form->select_comptes($conf->global->STRIPE_BANK_ACCOUNT_FOR_PAYMENTS, 'STRIPE_BANK_ACCOUNT_FOR_PAYMENTS', 0, '', 1);
+$form->select_comptes($conf->global->STRIPE_BANK_ACCOUNT_FOR_PAYMENTS, 'STRIPE_BANK_ACCOUNT_FOR_PAYMENTS', 0, '', 1);
 print '</td></tr>';
 
 if ($conf->global->MAIN_FEATURES_LEVEL >= 2)	// What is this for ?
 {
 	print '<tr class="oddeven"><td>';
 	print $langs->trans("BankAccountForBankTransfer").'</td><td>';
-	print $form->select_comptes($conf->global->STRIPE_BANK_ACCOUNT_FOR_BANKTRANSFERS, 'STRIPE_BANK_ACCOUNT_FOR_BANKTRANSFERS', 0, '', 1);
+	$form->select_comptes($conf->global->STRIPE_BANK_ACCOUNT_FOR_BANKTRANSFERS, 'STRIPE_BANK_ACCOUNT_FOR_BANKTRANSFERS', 0, '', 1);
 	print '</td></tr>';
 }
 
-// Minimal amount for force 3Dsecure if it's optionnal
-print '<tr class="oddeven"><td>';
-print $langs->trans("STRIPE_MINIMAL_3DSECURE").'</td><td>';
-print '<input class="flat" name="STRIPE_MINIMAL_3DSECURE" size="3" value="' .$conf->global->STRIPE_MINIMAL_3DSECURE . '">'.$langs->getCurrencySymbol($conf->currency).'</td></tr>';
-
-if ($conf->global->MAIN_FEATURES_LEVEL >= 2)	// What is this for ?
+// Activate Payment Request API
+if ($conf->global->MAIN_FEATURES_LEVEL >= 2)	// TODO Not used by current code
 {
-	// Stock for automatic decrement
-	print '<tr class="oddeven"><td>';
-	print $langs->trans("ONLINE_PAYMENT_WAREHOUSE").'</td><td>';
-	print $formproduct->selectWarehouses($conf->global->ONLINE_PAYMENT_WAREHOUSE,'ONLINE_PAYMENT_WAREHOUSE','',1,$disabled);
+  print '<tr class="oddeven"><td>';
+	print $langs->trans("STRIPE_PAYMENT_REQUEST_API").'</td><td>';
+  if ($conf->use_javascript_ajax) {
+    print ajax_constantonoff('STRIPE_PAYMENT_REQUEST_API');
+  } else {
+    $arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+    print $form->selectarray("STRIPE_PAYMENT_REQUEST_API", $arrval, $conf->global->STRIPE_PAYMENT_REQUEST_API);
+  }
 	print '</td></tr>';
 }
+
+// Activate SEPA DIRECT_DEBIT
+if ($conf->global->MAIN_FEATURES_LEVEL >= 2)	// TODO Not used by current code
+{
+	print '<tr class="oddeven"><td>';
+	print $langs->trans("STRIPE_SEPA_DIRECT_DEBIT").'</td><td>';
+  if ($conf->use_javascript_ajax) {
+    print ajax_constantonoff('STRIPE_SEPA_DIRECT_DEBIT');
+  } else {
+    $arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+    print $form->selectarray("STRIPE_SEPA_DIRECT_DEBIT", $arrval, $conf->global->STRIPE_SEPA_DIRECT_DEBIT);
+  }
+	print '</td></tr>';
+}
+
+// Warehouse for automatic decrement
+//if ($conf->global->MAIN_FEATURES_LEVEL >= 2)	// warehouse to reduce stock for online payment
+//{
+//	print '<tr class="oddeven"><td>';
+//	print $langs->trans("ONLINE_PAYMENT_WAREHOUSE").'</td><td>';
+//	print $formproduct->selectWarehouses($conf->global->ONLINE_PAYMENT_WAREHOUSE, 'ONLINE_PAYMENT_WAREHOUSE', '', 1, $disabled);
+//	print '</td></tr>';
+//}
 
 print '<tr class="oddeven"><td>';
 print $langs->trans("CSSUrlForPaymentForm").'</td><td>';
@@ -289,26 +318,26 @@ print '</td></tr>';
 
 print '<tr class="oddeven"><td>';
 print $langs->trans("MessageForm").'</td><td>';
-$doleditor=new DolEditor('ONLINE_PAYMENT_MESSAGE_FORM',$conf->global->ONLINE_PAYMENT_MESSAGE_FORM,'',100,'dolibarr_details','In',false,true,true,ROWS_2,'90%');
+$doleditor=new DolEditor('ONLINE_PAYMENT_MESSAGE_FORM', $conf->global->ONLINE_PAYMENT_MESSAGE_FORM, '', 100, 'dolibarr_details', 'In', false, true, true, ROWS_2, '90%');
 $doleditor->Create();
 print '</td></tr>';
 
 print '<tr class="oddeven"><td>';
 print $langs->trans("MessageOK").'</td><td>';
-$doleditor=new DolEditor('ONLINE_PAYMENT_MESSAGE_OK',$conf->global->ONLINE_PAYMENT_MESSAGE_OK,'',100,'dolibarr_details','In',false,true,true,ROWS_2,'90%');
+$doleditor=new DolEditor('ONLINE_PAYMENT_MESSAGE_OK', $conf->global->ONLINE_PAYMENT_MESSAGE_OK, '', 100, 'dolibarr_details', 'In', false, true, true, ROWS_2, '90%');
 $doleditor->Create();
 print '</td></tr>';
 
 print '<tr class="oddeven"><td>';
 print $langs->trans("MessageKO").'</td><td>';
-$doleditor=new DolEditor('ONLINE_PAYMENT_MESSAGE_KO',$conf->global->ONLINE_PAYMENT_MESSAGE_KO,'',100,'dolibarr_details','In',false,true,true,ROWS_2,'90%');
+$doleditor=new DolEditor('ONLINE_PAYMENT_MESSAGE_KO', $conf->global->ONLINE_PAYMENT_MESSAGE_KO, '', 100, 'dolibarr_details', 'In', false, true, true, ROWS_2, '90%');
 $doleditor->Create();
 print '</td></tr>';
 
 print '<tr class="oddeven"><td>';
 print $langs->trans("ONLINE_PAYMENT_SENDEMAIL").'</td><td>';
-print '<input size="32" type="email" name="ONLINE_PAYMENT_SENDEMAIL" value="'.$conf->global->ONLINE_PAYMENT_SENDEMAIL.'">';
-print ' &nbsp; '.$langs->trans("Example").': myemail@myserver.com';
+print '<input size="32" type="text" name="ONLINE_PAYMENT_SENDEMAIL" value="'.$conf->global->ONLINE_PAYMENT_SENDEMAIL.'">';
+print ' &nbsp; '.$langs->trans("Example").': myemail@myserver.com, Payment service &lt;myemail2@myserver2.com&gt;';
 print '</td></tr>';
 
 // Payment token for URL
@@ -321,7 +350,12 @@ print '</td></tr>';
 
 print '<tr class="oddeven"><td>';
 print $langs->trans("SecurityTokenIsUnique").'</td><td>';
-print $form->selectyesno("PAYMENT_SECURITY_TOKEN_UNIQUE",(empty($conf->global->PAYMENT_SECURITY_TOKEN)?0:$conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE),1);
+if ($conf->use_javascript_ajax) {
+    print ajax_constantonoff('PAYMENT_SECURITY_TOKEN_UNIQUE');
+} else {
+    $arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+    print $form->selectarray("PAYMENT_SECURITY_TOKEN_UNIQUE", $arrval, $conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE);
+}
 print '</td></tr>';
 
 print '</table>';
@@ -354,7 +388,6 @@ if (! empty($conf->use_javascript_ajax))
 	print '</script>';
 }
 
-
+// End of page
 llxFooter();
 $db->close();
-

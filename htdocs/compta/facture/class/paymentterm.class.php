@@ -28,23 +28,38 @@
  */
 class PaymentTerm // extends CommonObject
 {
-	var $db;							//!< To store db handler
-	var $error;							//!< To return error code (or message)
-	var $errors=array();				//!< To return several error codes (or messages)
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
+
+	/**
+	 * @var string[] Error codes (or messages)
+	 */
+	public $errors = array();
+
 	//public  $element='c_payment_term';			//!< Id that identify managed objects
 	//public  $table_element='c_payment_term';	//!< Name of table without prefix where object is stored
-	var $context =array();
+	public $context =array();
 
-    var $id;
+    /**
+	 * @var int ID
+	 */
+	public $id;
 
-	var $code;
-	var $sortorder;
-	var $active;
-	var $libelle;
-	var $libelle_facture;
-	var $type_cdr;
-	var $nbjour;
-	var $decalage;
+	public $code;
+	public $sortorder;
+	public $active;
+	public $libelle;
+	public $libelle_facture;
+	public $type_cdr;
+	public $nbjour;
+	public $decalage;
 
 
 
@@ -54,7 +69,7 @@ class PaymentTerm // extends CommonObject
      *
 	 * 	@param	DoliDB		$db			Database handler
      */
-    function __construct($db)
+    public function __construct($db)
     {
         $this->db = $db;
     }
@@ -67,7 +82,7 @@ class PaymentTerm // extends CommonObject
      *      @param      int		$notrigger	    0=launch triggers after, 1=disable triggers
      *      @return     int       			  	<0 if KO, Id of created object if OK
      */
-    function create($user, $notrigger=0)
+    public function create($user, $notrigger = 0)
     {
     	global $conf, $langs;
 		$error=0;
@@ -120,18 +135,17 @@ class PaymentTerm // extends CommonObject
         {
             $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."c_payment_term");
 
-			if (! $notrigger)
-			{
-	            // Uncomment this and change MYOBJECT to your own tag if you
-	            // want this action call a trigger.
+	        // Uncomment this and change MYOBJECT to your own tag if you
+	        // want this action call a trigger.
+			//if (! $notrigger) {
 
-	            //// Call triggers
-	            //include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-	            //$interface=new Interfaces($this->db);
-	            //$result=$interface->run_triggers('MYOBJECT_CREATE',$this,$user,$langs,$conf);
-	            //if ($result < 0) { $error++; $this->errors=$interface->errors; }
-	            //// End call triggers
-			}
+	        //    // Call triggers
+	        //    include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
+	        //    $interface=new Interfaces($this->db);
+	        //    $result=$interface->run_triggers('MYOBJECT_CREATE',$this,$user,$langs,$conf);
+	        //    if ($result < 0) { $error++; $this->errors=$interface->errors; }
+	        //    // End call triggers
+			//}
         }
 
         // Commit or rollback
@@ -159,12 +173,12 @@ class PaymentTerm // extends CommonObject
      *    @param      int		$id     Id object
      *    @return     int         		<0 if KO, >0 if OK
      */
-    function fetch($id)
+    public function fetch($id)
     {
     	global $langs;
         $sql = "SELECT";
 		$sql.= " t.rowid,";
-		$sql.= " t.entity";
+		$sql.= " t.entity,";
 
 		$sql.= " t.code,";
 		$sql.= " t.sortorder,";
@@ -197,8 +211,6 @@ class PaymentTerm // extends CommonObject
 				$this->type_cdr = $obj->type_cdr;
 				$this->nbjour = $obj->nbjour;
 				$this->decalage = $obj->decalage;
-
-
             }
             $this->db->free($resql);
 
@@ -217,7 +229,7 @@ class PaymentTerm // extends CommonObject
      *
      *    @return     int         <0 if KO, >0 if OK
      */
-	function getDefaultId()
+	public function getDefaultId()
 	{
 		global $langs;
 
@@ -250,13 +262,13 @@ class PaymentTerm // extends CommonObject
 
 
 	/**
-     *      Update database
+     *  Update database
      *
-     *      @param      User	$user        	User that modify
-     *      @param      int		$notrigger	    0=launch triggers after, 1=disable triggers
-     *      @return     int       			  	<0 if KO, >0 if OK
+     *  @param      User	$user        	User that modify
+     *  @param      int		$notrigger	    0=launch triggers after, 1=disable triggers
+     *  @return     int       			  	<0 if KO, >0 if OK
      */
-	function update($user=null, $notrigger=0)
+	public function update($user = null, $notrigger = 0)
 	{
 		global $conf, $langs;
 
@@ -296,21 +308,16 @@ class PaymentTerm // extends CommonObject
 		$resql = $this->db->query($sql);
 		if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 
-		if (! $error)
-		{
-			if (! $notrigger)
-			{
-				// Uncomment this and change MYOBJECT to your own tag if you
-				// want this action call a trigger.
-
+		// Uncomment this and change MYOBJECT to your own tag if you
+		// want this action call a trigger.
+		//if (! $error && ! $notrigger) {
 				// Call triggers
 				//include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
 				//$interface=new Interfaces($this->db);
 				//$result=$interface->run_triggers('MYOBJECT_MODIFY',$this,$user,$langs,$conf);
 				//if ($result < 0) { $error++; $this->errors=$interface->errors; }
 				// End call triggers
-			}
-		}
+		//}
 
 		// Commit or rollback
 		if ($error)
@@ -338,7 +345,7 @@ class PaymentTerm // extends CommonObject
 	 *  @param      int		$notrigger	0=launch triggers after, 1=disable triggers
 	 *	@return		int					<0 if KO, >0 if OK
 	 */
-	function delete($user, $notrigger=0)
+	public function delete($user, $notrigger = 0)
 	{
 		global $conf, $langs;
 		$error=0;
@@ -352,21 +359,16 @@ class PaymentTerm // extends CommonObject
 		$resql = $this->db->query($sql);
     	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 
-		if (! $error)
-		{
-			if (! $notrigger)
-			{
-				// Uncomment this and change MYOBJECT to your own tag if you
-		        // want this action call a trigger.
-
+		// Uncomment this and change MYOBJECT to your own tag if you
+		// want this action call a trigger.
+		//if (! $error && ! $notrigger) {
 		        //// Call triggers
 		        //include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
 		        //$interface=new Interfaces($this->db);
 		        //$result=$interface->run_triggers('MYOBJECT_DELETE',$this,$user,$langs,$conf);
 		        //if ($result < 0) { $error++; $this->errors=$interface->errors; }
 		        //// End call triggers
-			}
-		}
+		//}
 
         // Commit or rollback
 		if ($error)
@@ -389,20 +391,18 @@ class PaymentTerm // extends CommonObject
 
 
 	/**
-	 *		Load an object from its id and create a new one in database
+	 *  Load an object from its id and create a new one in database
 	 *
-	 *		@param      int		$fromid     Id of object to clone
-	 * 	 	@return		int					New id of clone
+	 *  @param      int		$fromid     Id of object to clone
+	 *  @return		int					New id of clone
 	 */
-	function createFromClone($fromid)
+	public function createFromClone($fromid)
 	{
 		global $user,$langs;
 
 		$error=0;
 
 		$object=new PaymentTerm($this->db);
-
-		$object->context['createfromclone'] = 'createfromclone';
 
 		$this->db->begin();
 
@@ -415,6 +415,7 @@ class PaymentTerm // extends CommonObject
 		// ...
 
 		// Create clone
+		$object->context['createfromclone'] = 'createfromclone';
 		$result=$object->create($user);
 
 		// Other options
@@ -424,14 +425,7 @@ class PaymentTerm // extends CommonObject
 			$error++;
 		}
 
-		if (! $error)
-		{
-
-
-
-		}
-
-		unset($this->context['createfromclone']);
+		unset($object->context['createfromclone']);
 
 		// End
 		if (! $error)
@@ -447,15 +441,15 @@ class PaymentTerm // extends CommonObject
 	}
 
 
-	/**
+    /**
      *  Initialise an instance with random values.
      *  Used to build previews or test instances.
      *	id must be 0 if object instance is a specimen.
      *
      *  @return	void
-	 */
-	function initAsSpecimen()
-	{
+     */
+    public function initAsSpecimen()
+    {
 		$this->id=0;
 
 		$this->code='';
@@ -467,5 +461,4 @@ class PaymentTerm // extends CommonObject
 		$this->nbjour='';
 		$this->decalage='';
 	}
-
 }

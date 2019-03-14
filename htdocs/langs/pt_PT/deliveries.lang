@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - deliveries
-Delivery=Entrega
+Delivery=Distribuição
 DeliveryRef=Ref. de entrega
-DeliveryCard=Ficha da nota de receção
+DeliveryCard=Ficha de recibo
 DeliveryOrder=Ordem de entrega
 DeliveryDate=Data da entrega
 CreateDeliveryOrder=Gerar recibo de entrega

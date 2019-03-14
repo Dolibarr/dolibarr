@@ -1,5 +1,5 @@
 -- ===================================================================
--- Copyright (C) 2015-2016 Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
+-- Copyright (C) 2015-2016 Alexandre Spangaro	<aspangaro@open-dsi.fr>
 -- Copyright (C) 2016	   Jamal Elbaz			<jamelbaz@gmail.pro>
 --
 -- This program is free software; you can redistribute it and/or modify

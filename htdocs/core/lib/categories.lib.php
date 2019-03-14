@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2011 Regis Houssin  <regis.houssin@capnetworks.com>
+/* Copyright (C) 2011 Regis Houssin  <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,12 +29,12 @@
  * @param	string	$type		Type of category
  * @return  array				Array of tabs to show
  */
-function categories_prepare_head($object,$type)
+function categories_prepare_head($object, $type)
 {
 	global $langs, $conf, $user;
 
-	$langs->load("categories");
-	$langs->load("products");
+	// Load translation files required by the page
+    $langs->loadLangs(array('categories', 'products'));
 
 	$h = 0;
 	$head = array();
@@ -48,7 +48,7 @@ function categories_prepare_head($object,$type)
 	$head[$h][1] = $langs->trans("Photos");
 	$head[$h][2] = 'photos';
 	$h++;
-	
+
 	if (! empty($conf->global->MAIN_MULTILANGS))
 	{
     	$head[$h][0] = DOL_URL_ROOT.'/categories/traduction.php?id='.$object->id.'&amp;type='.$type;
@@ -56,14 +56,14 @@ function categories_prepare_head($object,$type)
     	$head[$h][2] = 'translation';
     	$h++;
 	}
-	
+
     // Show more tabs from modules
     // Entries must be declared in modules descriptor with line
     // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
     // $this->tabs = array('entity:-tabname);   												to remove a tab
-    complete_head_from_modules($conf,$langs,$object,$head,$h,'categories_'.$type);
+    complete_head_from_modules($conf, $langs, $object, $head, $h, 'categories_'.$type);
 
-    complete_head_from_modules($conf,$langs,$object,$head,$h,'categories_'.$type,'remove');
+    complete_head_from_modules($conf, $langs, $object, $head, $h, 'categories_'.$type, 'remove');
 
 	return $head;
 }
@@ -87,7 +87,7 @@ function categoriesadmin_prepare_head()
 	$head[$h][1] = $langs->trans("Setup");
 	$head[$h][2] = 'setup';
 	$h++;
-	
+
 	$head[$h][0] = DOL_URL_ROOT.'/categories/admin/categorie_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFieldsCategories");
 	$head[$h][2] = 'attributes_categories';
@@ -97,11 +97,9 @@ function categoriesadmin_prepare_head()
 	// Entries must be declared in modules descriptor with line
 	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
 	// $this->tabs = array('entity:-tabname);   												to remove a tab
-	complete_head_from_modules($conf,$langs,null,$head,$h,'categoriesadmin');
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'categoriesadmin');
 
-	complete_head_from_modules($conf,$langs,null,$head,$h,'categoriesadmin','remove');
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'categoriesadmin', 'remove');
 
 	return $head;
 }
-
-

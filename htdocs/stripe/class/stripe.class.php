@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2018 	PtibogXIV        <support@ptibogxiv.net>
+/* Copyright (C) 2018-2019 	Thibault FOUCART       <support@ptibogxiv.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,15 +28,39 @@ require_once DOL_DOCUMENT_ROOT.'/stripe/config.php';						// This set stripe glo
  */
 class Stripe extends CommonObject
 {
+	/**
+	 * @var int ID
+	 */
 	public $rowid;
-	public $fk_soc;
+
+	/**
+	 * @var int Thirdparty ID
+	 */
+    public $fk_soc;
+
+    /**
+     * @var int ID
+     */
 	public $fk_key;
+
+	/**
+	 * @var int ID
+	 */
 	public $id;
+
 	public $mode;
+
+	/**
+	 * @var int Entity
+	 */
 	public $entity;
+
 	public $statut;
+
 	public $type;
+
 	public $code;
+
 	public $message;
 
 	/**
@@ -47,7 +71,6 @@ class Stripe extends CommonObject
 	public function __construct($db)
 	{
 		$this->db = $db;
-
 	}
 
 
@@ -57,7 +80,7 @@ class Stripe extends CommonObject
 	 * @param 	string	$mode		'StripeTest' or 'StripeLive'
 	 * @return 	string				Stripe account 'acc_....' or '' if no OAuth token found
 	 */
-	public function getStripeAccount($mode='StripeTest')
+	public function getStripeAccount($mode = 'StripeTest')
 	{
 		global $conf;
 
@@ -68,17 +91,14 @@ class Stripe extends CommonObject
 
 		dol_syslog(get_class($this) . "::fetch", LOG_DEBUG);
 		$result = $this->db->query($sql);
-    	if ($result)
-		{
-			if ($this->db->num_rows($result))
-			{
+    	if ($result) {
+			if ($this->db->num_rows($result)) {
 				$obj = $this->db->fetch_object($result);
     			$tokenstring=$obj->tokenstring;
 
     			$tmparray = dol_json_decode($tokenstring);
     			$key = $tmparray->stripe_user_id;
-    		}
-    		else {
+    		} else {
     			$tokenstring='';
     		}
     	}
@@ -97,10 +117,8 @@ class Stripe extends CommonObject
 	 * @param	int		$status		Status
 	 * @return	string				Stripe customer ref 'cu_xxxxxxxxxxxxx' or ''
 	 */
-	public function getStripeCustomerAccount($id, $status=0)
+	public function getStripeCustomerAccount($id, $status = 0)
 	{
-		global $conf;
-
 		include_once DOL_DOCUMENT_ROOT.'/societe/class/societeaccount.class.php';
 		$societeaccount = new SocieteAccount($this->db);
 		return $societeaccount->getCustomerAccount($id, 'stripe', $status);		// Get thirdparty cus_...
@@ -116,7 +134,7 @@ class Stripe extends CommonObject
 	 * @param	int		$createifnotlinkedtostripe		1=Create the stripe customer and the link if the thirdparty is not yet linked to a stripe customer
 	 * @return 	\Stripe\StripeCustomer|null 			Stripe Customer or null if not found
 	 */
-	public function customerStripe(Societe $object, $key='', $status=0, $createifnotlinkedtostripe=0)
+	public function customerStripe(Societe $object, $key = '', $status = 0, $createifnotlinkedtostripe = 0)
 	{
 		global $conf, $user;
 
@@ -135,7 +153,7 @@ class Stripe extends CommonObject
 		$sql.= " AND sa.site = 'stripe' AND sa.status = ".((int) $status);
 		$sql.= " AND key_account IS NOT NULL AND key_account <> ''";
 
-		dol_syslog(get_class($this) . "::fetch search stripe customer id for thirdparty id=".$object->id, LOG_DEBUG);
+		dol_syslog(get_class($this) . "::customerStripe search stripe customer id for thirdparty id=".$object->id, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
@@ -143,6 +161,13 @@ class Stripe extends CommonObject
 			{
 				$obj = $this->db->fetch_object($resql);
 				$tiers = $obj->key_account;
+
+				dol_syslog(get_class($this) . "::customerStripe found stripe customer key_account = ".$tiers);
+
+				// Force to use the correct API key
+				global $stripearrayofkeysbyenv;
+				\Stripe\Stripe::setApiKey($stripearrayofkeysbyenv[$status]['secret_key']);
+
 				try {
 					if (empty($key)) {				// If the Stripe connect account not set, we use common API usage
 						$customer = \Stripe\Customer::retrieve("$tiers");
@@ -157,16 +182,33 @@ class Stripe extends CommonObject
 			}
 			elseif ($createifnotlinkedtostripe)
 			{
+			    $ipaddress = getUserRemoteIP();
+
 				$dataforcustomer = array(
 					"email" => $object->email,
-					"business_vat_id" => $object->tva_intra,
 					"description" => $object->name,
-					"metadata" => array('dol_id'=>$object->id, 'dol_version'=>DOL_VERSION, 'dol_entity'=>$conf->entity, 'ipaddress'=>(empty($_SERVER['REMOTE_ADDR'])?'':$_SERVER['REMOTE_ADDR']))
+					"metadata" => array('dol_id'=>$object->id, 'dol_version'=>DOL_VERSION, 'dol_entity'=>$conf->entity, 'ipaddress'=>$ipaddress)
 				);
+
+				$vatcleaned = $object->tva_intra ? $object->tva_intra : null;
+
+				$taxinfo = array('type'=>'vat');
+				if ($vatcleaned)
+				{
+					$taxinfo["tax_id"] = $vatcleaned;
+				}
+				// We force data to "null" if not defined as expected by Stripe
+				if (empty($vatcleaned)) $taxinfo=null;
+
+				$dataforcustomer["tax_info"] = $taxinfo;
 
 				//$a = \Stripe\Stripe::getApiKey();
 				//var_dump($a);var_dump($key);exit;
 				try {
+					// Force to use the correct API key
+					global $stripearrayofkeysbyenv;
+					\Stripe\Stripe::setApiKey($stripearrayofkeysbyenv[$status]['secret_key']);
+
 					if (empty($key)) {				// If the Stripe connect account not set, we use common API usage
 						$customer = \Stripe\Customer::create($dataforcustomer);
 					} else {
@@ -195,6 +237,135 @@ class Stripe extends CommonObject
 		return $customer;
 	}
 
+    /**
+	 * Get the Stripe payment intent
+	 *
+	 * @param	Societe	$object							    Object to pay with Stripe
+	 * @param	string 	$customer							Stripe customer ref 'cus_xxxxxxxxxxxxx' via customerStripe()
+	 * @param	string	$key							    ''=Use common API. If not '', it is the Stripe connect account 'acc_....' to use Stripe connect
+	 * @param	int		$status							    Status (0=test, 1=live)
+	 * @param	int		$usethirdpartyemailforreceiptemail	1=use thirdparty email for receipt
+	 * @param	int		$mode		                        automatic=automatic payment, manual=need confirmation
+	 * @return 	\Stripe\PaymentIntent|null 			        Stripe PaymentIntent or null if not found
+	 */
+	public function getPaymentIntent($object, $customer, $key = null, $status = 0, $usethirdpartyemailforreceiptemail = 0, $mode = 'automatic')
+	{
+		global $conf, $user, $mysoc;
+
+		if (empty($object->id))
+		{
+			dol_syslog("object not loaded");
+			return null;
+		}
+
+		$error = 0;
+
+		if (empty($status)) $service = 'StripeTest';
+		else $service = 'StripeLive';
+
+		$paymentintent = null;
+
+		$sql = "SELECT pi.ext_payment_id, pi.entity, pi.fk_facture, pi.sourcetype, pi.ext_payment_site";			// key_account is cus_....
+		$sql.= " FROM " . MAIN_DB_PREFIX . "prelevement_facture_demande as pi";
+		$sql.= " WHERE pi.fk_facture = " . $object->id;
+		$sql.= " AND pi.sourcetype = '" . $object->element . "'";
+		$sql.= " AND pi.entity IN (".getEntity('societe').")";
+		$sql.= " AND pi.ext_payment_site = '" . $service . "'";
+
+		dol_syslog(get_class($this) . "::customerStripe search stripe customer id for thirdparty id=".$object->id, LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$num = $this->db->num_rows($resql);
+			if ($num)
+			{
+				$obj = $this->db->fetch_object($resql);
+				$intent = $obj->ext_payment_id;
+
+				dol_syslog(get_class($this) . "::customerStripe found record");
+
+				// Force to use the correct API key
+				global $stripearrayofkeysbyenv;
+				\Stripe\Stripe::setApiKey($stripearrayofkeysbyenv[$status]['secret_key']);
+
+				try {
+					if (empty($key)) {				// If the Stripe connect account not set, we use common API usage
+						$paymentintent = \Stripe\PaymentIntent::retrieve($intent);
+					} else {
+						$paymentintent = \Stripe\PaymentIntent::retrieve($intent, array("stripe_account" => $key));
+					}
+				}
+				catch(Exception $e)
+				{
+					$this->error = $e->getMessage();
+				}
+			}
+			else //if ($createifnotlinkedtostripe)
+			{
+                $arrayzerounitcurrency=array('BIF', 'CLP', 'DJF', 'GNF', 'JPY', 'KMF', 'KRW', 'MGA', 'PYG', 'RWF', 'VND', 'VUV', 'XAF', 'XOF', 'XPF');
+                if (! in_array($object->multicurrency_code, $arrayzerounitcurrency)) $stripeamount=$object->multicurrency_total_ttc * 100;
+                else $stripeamount = $object->multicurrency_total_ttc;
+
+                $fee = round(($object->total_ttc * ($conf->global->STRIPE_APPLICATION_FEE_PERCENT / 100) + $conf->global->STRIPE_APPLICATION_FEE) * 100);
+			    if ($fee >= ($conf->global->STRIPE_APPLICATION_FEE_MAXIMAL * 100) && $conf->global->STRIPE_APPLICATION_FEE_MAXIMAL>$conf->global->STRIPE_APPLICATION_FEE_MINIMAL) {
+					$fee = round($conf->global->STRIPE_APPLICATION_FEE_MAXIMAL * 100);
+				} elseif ($fee < ($conf->global->STRIPE_APPLICATION_FEE_MINIMAL * 100)) {
+					$fee = round($conf->global->STRIPE_APPLICATION_FEE_MINIMAL * 100);
+				}
+
+                $description=$object->element.$object->ref;
+
+				$dataforintent = array(
+					"amount" => $stripeamount,
+					"currency" => $object->multicurrency_code,
+                    "customer"  => $customer,
+                    "allowed_source_types" => ["card"],
+                    "statement_descriptor" => dol_trunc(dol_trunc(dol_string_unaccent($mysoc->name), 8, 'right', 'UTF-8', 1).' '.$description, 22, 'right', 'UTF-8', 1),     // 22 chars that appears on bank receipt
+					"metadata" => array('dol_type'=>$object->element, 'dol_id'=>$object->id, 'dol_version'=>DOL_VERSION, 'dol_entity'=>$conf->entity, 'ipaddress'=>(empty($_SERVER['REMOTE_ADDR'])?'':$_SERVER['REMOTE_ADDR']))
+				);
+
+				if ($conf->entity!=$conf->global->STRIPECONNECT_PRINCIPAL && $fee>0)
+				{
+					$dataforintent["application_fee"] = $fee;
+				}
+				if ($usethirdpartyemailforreceiptemail && $object->thirdparty->email)
+				{
+				    $dataforintent["receipt_email"] = $object->thirdparty->email;
+				}
+
+				try {
+					// Force to use the correct API key
+					global $stripearrayofkeysbyenv;
+					\Stripe\Stripe::setApiKey($stripearrayofkeysbyenv[$status]['secret_key']);
+
+					if (empty($key)) {				// If the Stripe connect account not set, we use common API usage
+						$paymentintent = \Stripe\PaymentIntent::create($dataforintent, array("idempotency_key" => "$description"));
+					} else {
+						$paymentintent = \Stripe\PaymentIntent::create($dataforintent, array("idempotency_key" => "$description","stripe_account" => $key));
+					}
+                    $now=dol_now();
+					$sql = "INSERT INTO " . MAIN_DB_PREFIX . "prelevement_facture_demande (fk_soc, date_demande, fk_user_demande, ext_payment_id, fk_facture, sourcetype, entity, ext_payment_site)";
+					$sql .= " VALUES ('".$object->socid."','".$this->db->idate($now)."', '0', '".$this->db->escape($paymentintent->id)."', ".$object->id.", '".$object->element."', " . $conf->entity . ", '" . $service . "')";
+					$resql = $this->db->query($sql);
+					if (! $resql)
+					{
+						$this->error = $this->db->lasterror();
+                        dol_syslog(get_class($this) . "::PaymentIntent not insert with id=".$paymentintent->id);
+					}
+				}
+				catch(Exception $e)
+				{
+					$this->error = $e->getMessage();
+				}
+			}
+		}
+		else
+		{
+			dol_print_error($this->db);
+		}
+
+		return $paymentintent;
+	}
+
 	/**
 	 * Get the Stripe card of a company payment mode (with option to create it on Stripe if not linked yet)
 	 *
@@ -205,7 +376,7 @@ class Stripe extends CommonObject
 	 * @param	int						$createifnotlinkedtostripe		1=Create the stripe card and the link if the card is not yet linked to a stripe card
 	 * @return 	\Stripe\StripeCard|null 								Stripe Card or null if not found
 	 */
-	public function cardStripe($cu, CompanyPaymentMode $object, $stripeacc='', $status=0, $createifnotlinkedtostripe=0)
+	public function cardStripe($cu, CompanyPaymentMode $object, $stripeacc = '', $status = 0, $createifnotlinkedtostripe = 0)
 	{
 		global $conf, $user;
 
@@ -217,7 +388,7 @@ class Stripe extends CommonObject
 		//$sql.= " AND sa.entity IN (".getEntity('societe').")";
 		$sql.= " AND sa.type = 'card'";
 
-		dol_syslog(get_class($this) . "::fetch search stripe card id for paymentmode id=".$object->id.", stripeacc=".$stripeacc, LOG_DEBUG);
+		dol_syslog(get_class($this) . "::fetch search stripe card id for paymentmode id=".$object->id.", stripeacc=".$stripeacc.", status=".$status.", createifnotlinkedtostripe=".$createifnotlinkedtostripe, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
@@ -225,7 +396,7 @@ class Stripe extends CommonObject
 			{
 				$obj = $this->db->fetch_object($resql);
 				$cardref = $obj->stripe_card_ref;
-				dol_syslog("*************".$cardref);
+				dol_syslog(get_class($this) . "::cardStripe cardref=".$cardref);
 				if ($cardref)
 				{
 					try {
@@ -241,7 +412,6 @@ class Stripe extends CommonObject
 						$this->error = $e->getMessage();
 						dol_syslog($this->error, LOG_WARNING);
 					}
-
 				}
 				elseif ($createifnotlinkedtostripe)
 				{
@@ -258,6 +428,7 @@ class Stripe extends CommonObject
 
 					//$a = \Stripe\Stripe::getApiKey();
 					//var_dump($a);var_dump($stripeacc);exit;
+					dol_syslog("Try to create card dataforcard = ".dol_json_encode($dataforcard));
 					try {
 						if (empty($stripeacc)) {				// If the Stripe connect account not set, we use common API usage
 							$card = $cu->sources->create($dataforcard);
@@ -303,18 +474,19 @@ class Stripe extends CommonObject
 	/**
 	 * Create charge with public/payment/newpayment.php, stripe/card.php, cronjobs or REST API
 	 *
-	 * @param int 		$amount									Amount to pay
-	 * @param string 	$currency								EUR, GPB...
-	 * @param string 	$origin									Object type to pay (order, invoice, contract...)
-	 * @param int 		$item									Object id to pay
-	 * @param string 	$source									src_xxxxx or card_xxxxx
-	 * @param string 	$customer								Stripe customer ref 'cus_xxxxxxxxxxxxx' via customerStripe()
-	 * @param string 	$account								Stripe account ref 'acc_xxxxxxxxxxxxx' via  getStripeAccount()
+	 * @param	int 	$amount									Amount to pay
+	 * @param	string 	$currency								EUR, GPB...
+	 * @param	string 	$origin									Object type to pay (order, invoice, contract...)
+	 * @param	int 	$item									Object id to pay
+	 * @param	string 	$source									src_xxxxx or card_xxxxx
+	 * @param	string 	$customer								Stripe customer ref 'cus_xxxxxxxxxxxxx' via customerStripe()
+	 * @param	string 	$account								Stripe account ref 'acc_xxxxxxxxxxxxx' via  getStripeAccount()
 	 * @param	int		$status									Status (0=test, 1=live)
 	 * @param	int		$usethirdpartyemailforreceiptemail		Use thirdparty email as receipt email
+	 * @param	boolean	$capture								Set capture flag to true (take payment) or false (wait)
 	 * @return Stripe
 	 */
-	public function createPaymentStripe($amount, $currency, $origin, $item, $source, $customer, $account, $status=0, $usethirdpartyemailforreceiptemail=0)
+	public function createPaymentStripe($amount, $currency, $origin, $item, $source, $customer, $account, $status = 0, $usethirdpartyemailforreceiptemail = 0, $capture = true)
 	{
 		global $conf;
 
@@ -355,32 +527,39 @@ class Stripe extends CommonObject
 			$order = new Commande($this->db);
 			$order->fetch($item);
 			$ref = $order->ref;
-			$description = "ORD=" . $ref . ".CUS=" . $societe->id;
+			$description = "ORD=" . $ref . ".CUS=" . $societe->id.".PM=stripe";
 		} elseif ($origin == invoice) {
 			$invoice = new Facture($this->db);
 			$invoice->fetch($item);
 			$ref = $invoice->ref;
-			$description = "INV=" . $ref . ".CUS=" . $societe->id;
+			$description = "INV=" . $ref . ".CUS=" . $societe->id.".PM=stripe";
 		}
 
 		$metadata = array(
 			"dol_id" => "" . $item . "",
 			"dol_type" => "" . $origin . "",
 			"dol_thirdparty_id" => "" . $societe->id . "",
+			'dol_thirdparty_name' => $societe->name,
 			'dol_version'=>DOL_VERSION,
 			'dol_entity'=>$conf->entity,
 			'ipaddress'=>(empty($_SERVER['REMOTE_ADDR'])?'':$_SERVER['REMOTE_ADDR'])
 		);
 		$return = new Stripe($this->db);
 		try {
+			// Force to use the correct API key
+			global $stripearrayofkeysbyenv;
+			\Stripe\Stripe::setApiKey($stripearrayofkeysbyenv[$status]['secret_key']);
+
 			if (empty($conf->stripeconnect->enabled))
 			{
 				if (preg_match('/acct_/i', $source))
 				{
-					$charge = \Stripe\Charge::create(array(
+                    $charge = \Stripe\Charge::create(array(
 						"amount" => "$stripeamount",
 						"currency" => "$currency",
-						// "statement_descriptor" => " ",
+						"statement_descriptor" => dol_trunc(dol_trunc(dol_string_unaccent($mysoc->name), 8, 'right', 'UTF-8', 1).' '.$description, 22, 'right', 'UTF-8', 1),     // 22 chars that appears on bank receipt
+						"description" => "Stripe payment: ".$description,
+						"capture"  => $capture,
 						"metadata" => $metadata,
 						"source" => "$source"
 					));
@@ -388,8 +567,9 @@ class Stripe extends CommonObject
 					$paymentarray = array(
 						"amount" => "$stripeamount",
 						"currency" => "$currency",
-						// "statement_descriptor" => " ",
-						"description" => "$description",
+						"statement_descriptor" => dol_trunc(dol_trunc(dol_string_unaccent($mysoc->name), 8, 'right', 'UTF-8', 1).' '.$description, 22, 'right', 'UTF-8', 1),     // 22 chars that appears on bank receipt
+						"description" => "Stripe payment: ".$description,
+						"capture"  => $capture,
 						"metadata" => $metadata,
 						"source" => "$source",
 						"customer" => "$customer"
@@ -403,25 +583,34 @@ class Stripe extends CommonObject
 					$charge = \Stripe\Charge::create($paymentarray, array("idempotency_key" => "$ref"));
 				}
 			} else {
-
-				$fee = round(($amount * ($conf->global->STRIPE_APPLICATION_FEE_PERCENT / 100) + $conf->global->STRIPE_APPLICATION_FEE) * 100);
-				if ($fee < ($conf->global->STRIPE_APPLICATION_FEE_MINIMAL * 100)) {
+                $fee = round(($object->total_ttc * ($conf->global->STRIPE_APPLICATION_FEE_PERCENT / 100) + $conf->global->STRIPE_APPLICATION_FEE) * 100);
+			    if ($fee >= ($conf->global->STRIPE_APPLICATION_FEE_MAXIMAL * 100) && $conf->global->STRIPE_APPLICATION_FEE_MAXIMAL>$conf->global->STRIPE_APPLICATION_FEE_MINIMAL) {
+					$fee = round($conf->global->STRIPE_APPLICATION_FEE_MAXIMAL * 100);
+				}
+                elseif ($fee < ($conf->global->STRIPE_APPLICATION_FEE_MINIMAL * 100)) {
 					$fee = round($conf->global->STRIPE_APPLICATION_FEE_MINIMAL * 100);
 				}
 
-				$charge = \Stripe\Charge::create(array(
-				"amount" => "$stripeamount",
-				"currency" => "$currency",
-				// "statement_descriptor" => " ",
-				"description" => "$description",
-				"metadata" => $metadata,
-				"source" => "$source",
-				"customer" => "$customer",
-				"application_fee" => "$fee"
-				), array(
-				"idempotency_key" => "$ref",
-				"stripe_account" => "$account"
-				));
+        		$paymentarray = array(
+					"amount" => "$stripeamount",
+					"currency" => "$currency",
+					"statement_descriptor" => dol_trunc(dol_trunc(dol_string_unaccent($mysoc->name), 8, 'right', 'UTF-8', 1).' '.$description, 22, 'right', 'UTF-8', 1),     // 22 chars that appears on bank receipt
+					"description" => "Stripe payment: ".$description,
+					"capture"  => $capture,
+					"metadata" => $metadata,
+					"source" => "$source",
+					"customer" => "$customer"
+				);
+				if ($conf->entity!=$conf->global->STRIPECONNECT_PRINCIPAL && $fee>0)
+				{
+					$paymentarray["application_fee"] = $fee;
+				}
+				if ($societe->email && $usethirdpartyemailforreceiptemail)
+				{
+					$paymentarray["receipt_email"] = $societe->email;
+				}
+
+				$charge = \Stripe\Charge::create($paymentarray, array("idempotency_key" => "$ref","stripe_account" => "$account"));
 			}
 			if (isset($charge->id)) {}
 
@@ -485,5 +674,4 @@ class Stripe extends CommonObject
 		}
 		return $return;
 	}
-
 }

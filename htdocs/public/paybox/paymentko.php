@@ -22,8 +22,8 @@
  *		\brief      File to show page after a failed payment
  */
 
-define("NOLOGIN",1);		// This means this output page does not require to be logged.
-define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
+define("NOLOGIN", 1);		// This means this output page does not require to be logged.
+define("NOCSRFCHECK", 1);	// We accept to go on this page from external web site.
 
 // For MultiCompany module.
 // Do not use GETPOST here, function is not defined and define must be done before including main.inc.php
@@ -37,17 +37,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 
 // Security check
-if (empty($conf->paybox->enabled)) accessforbidden('',0,0,1);
+if (empty($conf->paybox->enabled)) accessforbidden('', 0, 0, 1);
 
-$langs->load("main");
-$langs->load("other");
-$langs->load("dict");
-$langs->load("bills");
-$langs->load("companies");
-$langs->load("paybox");
-$langs->load("paypal");
-$langs->load("stripe");
-
+$langs->loadLangs(array("main", "other", "dict", "bills", "companies", "paybox", "paypal", "stripe"));
 
 $object = new stdClass();   // For triggers
 
@@ -89,7 +81,7 @@ if (! empty($_SESSION['ipaddress']))      // To avoid to make action twice
     // Appel des triggers
     include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
     $interface=new Interfaces($db);
-    $result=$interface->run_triggers('PAYBOX_PAYMENT_OK',$object,$user,$langs,$conf);
+    $result=$interface->run_triggers('PAYBOX_PAYMENT_OK', $object, $user, $langs, $conf);
     if ($result < 0) { $error++; $errors=$interface->errors; }
     // Fin appel triggers
 
@@ -162,7 +154,7 @@ if (! empty($conf->global->$key)) print $conf->global->$key;
 print "\n</div>\n";
 
 
-htmlPrintOnlinePaymentFooter($mysoc,$langs,0,$suffix);
+htmlPrintOnlinePaymentFooter($mysoc, $langs, 0, $suffix);
 
 
 llxFooter('', 'public');

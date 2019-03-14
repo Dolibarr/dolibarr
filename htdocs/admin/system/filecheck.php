@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2005-2016  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2007       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
- * Copyright (C) 2007-2012  Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2007-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2015       Frederic France         <frederic.france@free.fr>
  * Copyright (C) 2017       Nicolas ZABOURI         <info@inovea-conseil.com>
  *
@@ -44,7 +44,7 @@ $error=0;
 
 llxHeader();
 
-print load_fiche_titre($langs->trans("FileCheckDolibarr"),'','title_setup');
+print load_fiche_titre($langs->trans("FileCheckDolibarr"), '', 'title_setup');
 
 print $langs->trans("FileCheckDesc").'<br><br>';
 
@@ -59,11 +59,11 @@ print '<tr class="oddeven"><td width="300">'.$langs->trans("VersionProgram").'</
 if (empty($conf->global->MAIN_VERSION_LAST_UPGRADE)) {
     // Compare version with last install database version (upgrades never occured)
     if (DOL_VERSION != $conf->global->MAIN_VERSION_LAST_INSTALL)
-        print ' '.img_warning($langs->trans("RunningUpdateProcessMayBeRequired",DOL_VERSION,$conf->global->MAIN_VERSION_LAST_INSTALL));
+        print ' '.img_warning($langs->trans("RunningUpdateProcessMayBeRequired", DOL_VERSION, $conf->global->MAIN_VERSION_LAST_INSTALL));
 } else {
     // Compare version with last upgrade database version
     if (DOL_VERSION != $conf->global->MAIN_VERSION_LAST_UPGRADE)
-        print ' '.img_warning($langs->trans("RunningUpdateProcessMayBeRequired",DOL_VERSION,$conf->global->MAIN_VERSION_LAST_UPGRADE));
+        print ' '.img_warning($langs->trans("RunningUpdateProcessMayBeRequired", DOL_VERSION, $conf->global->MAIN_VERSION_LAST_UPGRADE));
 }
 print '</td></tr>'."\n";
 print '</table>';
@@ -75,7 +75,7 @@ print '<br>';
 $file_list = array('missing' => array(), 'updated' => array());
 
 // Local file to compare to
-$xmlshortfile = GETPOST('xmlshortfile')?GETPOST('xmlshortfile'):'/install/filelist-'.DOL_VERSION.'.xml';
+$xmlshortfile = GETPOST('xmlshortfile', 'alpha')?GETPOST('xmlshortfile', 'alpha'):'/install/filelist-'.DOL_VERSION.(empty($conf->global->MAIN_FILECHECK_LOCAL_SUFFIX)?'':$conf->global->MAIN_FILECHECK_LOCAL_SUFFIX).'.xml';
 $xmlfile = DOL_DOCUMENT_ROOT.$xmlshortfile;
 // Remote file to compare to
 $xmlremote = GETPOST('xmlremote');
@@ -223,7 +223,7 @@ if (! $error && $xml)
         // Complete with list of new files
         foreach ($scanfiles as $keyfile => $valfile)
         {
-            $tmprelativefilename=preg_replace('/^'.preg_quote(DOL_DOCUMENT_ROOT,'/').'/','', $valfile['fullname']);
+            $tmprelativefilename=preg_replace('/^'.preg_quote(DOL_DOCUMENT_ROOT, '/').'/', '', $valfile['fullname']);
             if (! in_array($tmprelativefilename, $file_list['insignature']))
             {
                 $md5newfile=@md5_file($valfile['fullname']);    // Can fails if we don't have permission to open/read file
@@ -275,8 +275,8 @@ if (! $error && $xml)
         $out.='<td>' . $langs->trans("Filename") . '</td>';
         $out.='<td align="center">' . $langs->trans("ExpectedChecksum") . '</td>';
         $out.='<td align="center">' . $langs->trans("CurrentChecksum") . '</td>';
-        $out.='<td align="right">' . $langs->trans("Size") . '</td>';
-        $out.='<td align="right">' . $langs->trans("DateModification") . '</td>';
+        $out.='<td class="right">' . $langs->trans("Size") . '</td>';
+        $out.='<td class="right">' . $langs->trans("DateModification") . '</td>';
         $out.='</tr>'."\n";
         $tmpfilelist2 = dol_sort_array($file_list['updated'], 'filename');
         if (is_array($tmpfilelist2) && count($tmpfilelist2))
@@ -292,8 +292,8 @@ if (! $error && $xml)
 	            $out.='<td align="center">'.$file['md5'].'</td>' . "\n";
 	            $size = dol_filesize(DOL_DOCUMENT_ROOT.'/'.$file['filename']);
 	            $totalsize += $size;
-	            $out.='<td align="right">'.dol_print_size($size).'</td>' . "\n";
-	            $out.='<td align="right">'.dol_print_date(dol_filemtime(DOL_DOCUMENT_ROOT.'/'.$file['filename']),'dayhour').'</td>' . "\n";
+	            $out.='<td class="right">'.dol_print_size($size).'</td>' . "\n";
+	            $out.='<td class="right">'.dol_print_date(dol_filemtime(DOL_DOCUMENT_ROOT.'/'.$file['filename']), 'dayhour').'</td>' . "\n";
 	            $out.="</tr>\n";
 	        }
             $out.='<tr class="liste_total">';
@@ -301,13 +301,13 @@ if (! $error && $xml)
             $out.='<td>'.$langs->trans("Total").'</td>' . "\n";
             $out.='<td align="center"></td>' . "\n";
             $out.='<td align="center"></td>' . "\n";
-            $out.='<td align="right">'.dol_print_size($totalsize).'</td>' . "\n";
-            $out.='<td align="right"></td>' . "\n";
+            $out.='<td class="right">'.dol_print_size($totalsize).'</td>' . "\n";
+            $out.='<td class="right"></td>' . "\n";
             $out.="</tr>\n";
         }
         else
         {
-            $out.='<tr class="oddeven"><td colspan="5" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+            $out.='<tr class="oddeven"><td colspan="6" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
         }
         $out.='</table>';
         $out.='</div>';
@@ -325,8 +325,8 @@ if (! $error && $xml)
         $out.='<td>' . $langs->trans("Filename") . '</td>';
         $out.='<td align="center">' . $langs->trans("ExpectedChecksum") . '</td>';
         $out.='<td align="center">' . $langs->trans("CurrentChecksum") . '</td>';
-        $out.='<td align="right">' . $langs->trans("Size") . '</td>';
-        $out.='<td align="right">' . $langs->trans("DateModification") . '</td>';
+        $out.='<td class="right">' . $langs->trans("Size") . '</td>';
+        $out.='<td class="right">' . $langs->trans("DateModification") . '</td>';
         $out.='</tr>'."\n";
         $tmpfilelist3 = dol_sort_array($file_list['added'], 'filename');
         if (is_array($tmpfilelist3) && count($tmpfilelist3))
@@ -337,13 +337,18 @@ if (! $error && $xml)
                 $i++;
                 $out.='<tr class="oddeven">';
                 $out.='<td>'.$i.'</td>' . "\n";
-                $out.='<td>'.$file['filename'].'</td>' . "\n";
+                $out.='<td>'.$file['filename'];
+                if (! preg_match('/^win/i', PHP_OS)) {
+                	$htmltext=$langs->trans("YouCanDeleteFileOnServerWith", 'rm '.DOL_DOCUMENT_ROOT.$file['filename']);    // The slash is included int file['filename']
+                	$out.=' '.$form->textwithpicto('', $htmltext, 1, 'help', '', 0, 2, 'helprm'.$i);
+                }
+                $out.='</td>' . "\n";
                 $out.='<td align="center">'.$file['expectedmd5'].'</td>' . "\n";
                 $out.='<td align="center">'.$file['md5'].'</td>' . "\n";
                 $size = dol_filesize(DOL_DOCUMENT_ROOT.'/'.$file['filename']);
                 $totalsize += $size;
-                $out.='<td align="right">'.dol_print_size($size).'</td>' . "\n";
-                $out.='<td align="right">'.dol_print_date(dol_filemtime(DOL_DOCUMENT_ROOT.'/'.$file['filename']),'dayhour').'</td>' . "\n";
+                $out.='<td class="right">'.dol_print_size($size).'</td>' . "\n";
+                $out.='<td class="right">'.dol_print_date(dol_filemtime(DOL_DOCUMENT_ROOT.'/'.$file['filename']), 'dayhour').'</td>' . "\n";
                 $out.="</tr>\n";
             }
             $out.='<tr class="liste_total">';
@@ -351,8 +356,8 @@ if (! $error && $xml)
             $out.='<td>'.$langs->trans("Total").'</td>' . "\n";
             $out.='<td align="center"></td>' . "\n";
             $out.='<td align="center"></td>' . "\n";
-            $out.='<td align="right">'.dol_print_size($totalsize).'</td>' . "\n";
-            $out.='<td align="right"></td>' . "\n";
+            $out.='<td class="right">'.dol_print_size($totalsize).'</td>' . "\n";
+            $out.='<td class="right"></td>' . "\n";
             $out.="</tr>\n";
         }
         else
@@ -366,11 +371,11 @@ if (! $error && $xml)
         // Show warning
         if (empty($tmpfilelist) && empty($tmpfilelist2) && empty($tmpfilelist3))
         {
-            setEventMessage($langs->trans("FileIntegrityIsStrictlyConformedWithReference"));
+            setEventMessages($langs->trans("FileIntegrityIsStrictlyConformedWithReference"), null, 'mesgs');
         }
         else
         {
-            setEventMessage($langs->trans("FileIntegritySomeFilesWereRemovedOrModified"), 'warnings');
+            setEventMessages($langs->trans("FileIntegritySomeFilesWereRemovedOrModified"), null, 'warnings');
         }
     }
     else
@@ -391,7 +396,7 @@ if (! $error && $xml)
 
     asort($checksumconcat); // Sort list of checksum
     //var_dump($checksumconcat);
-    $checksumget = md5(join(',',$checksumconcat));
+    $checksumget = md5(join(',', $checksumconcat));
     $checksumtoget = trim((string) $xml->dolibarr_htdocs_dir_checksum);
 
     /*var_dump(count($file_list['added']));
@@ -422,7 +427,7 @@ if (! $error && $xml)
     	$outcurrentchecksum = '<span class="'.$resultcode.'">'.$checksumget.'</span>';
     }
 
-    print_fiche_titre($langs->trans("GlobalChecksum")).'<br>';
+    print load_fiche_titre($langs->trans("GlobalChecksum")).'<br>';
     print $langs->trans("ExpectedChecksum").' = '. $outexpectedchecksum .'<br>';
     print $langs->trans("CurrentChecksum").' = '. $outcurrentchecksum;
 
@@ -433,12 +438,8 @@ if (! $error && $xml)
     print $out;
 }
 
-
-
-
+// End of page
 llxFooter();
-
 $db->close();
 
 exit($error);
-

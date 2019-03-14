@@ -31,7 +31,7 @@ require_once dirname(__FILE__).'/../../htdocs/supplier_proposal/class/supplier_p
 
 if (empty($user->id))
 {
-	print "Load permissions for admin user nb 1\n";
+	print "Load permissions for user nb 1 (that should be admin)\n";
 	$user->fetch(1);
 
 	//$user->addrights(0, 'supplier_proposal');
@@ -61,8 +61,10 @@ class SupplierProposalTest extends PHPUnit_Framework_TestCase
 	 *
 	 * @return PropalTest
 	 */
-	function __construct()
+	public function __construct()
 	{
+        parent::__construct();
+
 		//$this->sharedFixture
 		global $conf,$user,$langs,$db;
 		$this->savconf=$conf;
@@ -76,7 +78,7 @@ class SupplierProposalTest extends PHPUnit_Framework_TestCase
 	}
 
 	// Static methods
-  	public static function setUpBeforeClass()
+    public static function setUpBeforeClass()
     {
     	global $conf,$user,$langs,$db;
 		$db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
@@ -110,7 +112,12 @@ class SupplierProposalTest extends PHPUnit_Framework_TestCase
 
 		print __METHOD__."\n";
 		//print $db->getVersion()."\n";
+
+		// Set permission not set by default sql sample
+		$user->addrights(0, 'supplier_proposal');
+		$user->getrights('supplier_proposal', 1);
     }
+
 	/**
 	 * End phpunit tests
 	 *
@@ -196,8 +203,8 @@ class SupplierProposalTest extends PHPUnit_Framework_TestCase
     /**
      * testSupplierProposalValid
      *
-     * @param	Proposal	$localobject	Proposal
-     * @return	Proposal
+     * @param	SupplierProposal	$localobject	Proposal
+     * @return	SupplierProposal
      *
      * @depends	testSupplierProposalAddLine
      * The depends says test is run only if previous is ok
@@ -210,7 +217,14 @@ class SupplierProposalTest extends PHPUnit_Framework_TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-    	$result=$localobject->valid($user);
+		$result = $user->addrights(0, 'supplier_proposal');
+		$this->assertLessThan($result, 0);
+
+		$result = $user->getrights('supplier_proposal', 1);
+		//$this->assertLessThan($result, 0);
+
+		$result=$localobject->valid($user);
+		$this->assertLessThan($result, 0);
 
     	print __METHOD__." id=".$localobject->id." result=".$result."\n";
     	$this->assertLessThan($result, 0);
@@ -220,7 +234,7 @@ class SupplierProposalTest extends PHPUnit_Framework_TestCase
    /**
      * testSupplierProposalOther
      *
-     * @param	Proposal	$localobject	Proposal
+     * @param	SupplierProposal	$localobject	Proposal
      * @return	int
      *
      * @depends testSupplierProposalValid
@@ -271,5 +285,4 @@ class SupplierProposalTest extends PHPUnit_Framework_TestCase
     	$this->assertLessThan($result, 0);
     	return $result;
     }
-
 }

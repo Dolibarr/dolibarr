@@ -1,6 +1,4 @@
 # Dolibarr language file - Source file is en_US - projects
 ProjectsArea=Project Omgeving
 OpenedProjects=Open projecten
-OpenedTasks=Open taken
-ListOrdersAssociatedProject=Lijst van klantbestellingen die aan dit project gekoppeld zijn
 ProjectModifiedInDolibarr=Project %s gewijzigd

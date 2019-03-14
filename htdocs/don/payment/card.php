@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2015       Alexandre Spangaro	  	<aspangaro.dolibarr@gmail.com>
+/* Copyright (C) 2015       Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,13 +29,12 @@ require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/facture/modules_facture.php';
 if (! empty($conf->banque->enabled)) require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
-$langs->load('bills');
-$langs->load('banks');
-$langs->load('companies');
+// Load translation files required by the page
+$langs->loadLangs(array("bills","banks","companies"));
 
 // Security check
-$id=GETPOST('rowid')?GETPOST('rowid','int'):GETPOST('id','int');
-$action=GETPOST('action','aZ09');
+$id=GETPOST('rowid')?GETPOST('rowid', 'int'):GETPOST('id', 'int');
+$action=GETPOST('action', 'aZ09');
 $confirm=GETPOST('confirm');
 if ($user->societe_id) $socid=$user->societe_id;
 // TODO Add rule to restrict access payment
@@ -44,7 +44,7 @@ $object = new PaymentDonation($db);
 if ($id > 0)
 {
 	$result=$object->fetch($id);
-	if (! $result) dol_print_error($db,'Failed to get payment id '.$id);
+	if (! $result) dol_print_error($db, 'Failed to get payment id '.$id);
 }
 
 
@@ -91,7 +91,7 @@ if ($action == 'confirm_valide' && $confirm == 'yes' && $user->rights->don->cree
 			$outputlangs = $langs;
 			if (! empty($_REQUEST['lang_id']))
 			{
-				$outputlangs = new Translate("",$conf);
+				$outputlangs = new Translate("", $conf);
 				$outputlangs->setDefaultLang($_REQUEST['lang_id']);
 			}
 			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
@@ -133,8 +133,7 @@ dol_fiche_head($head, $hselected, $langs->trans("DonationPayment"), -1, 'payment
  */
 if ($action == 'delete')
 {
-	print $form->formconfirm('card.php?id='.$object->id, $langs->trans("DeletePayment"), $langs->trans("ConfirmDeletePayment"), 'confirm_delete','',0,2);
-
+	print $form->formconfirm('card.php?id='.$object->id, $langs->trans("DeletePayment"), $langs->trans("ConfirmDeletePayment"), 'confirm_delete', '', 0, 2);
 }
 
 /*
@@ -142,13 +141,12 @@ if ($action == 'delete')
  */
 if ($action == 'valide')
 {
-	$facid = GETPOST('facid','int');
-	print $form->formconfirm('card.php?id='.$object->id.'&amp;facid='.$facid, $langs->trans("ValidatePayment"), $langs->trans("ConfirmValidatePayment"), 'confirm_valide','',0,2);
-
+	$facid = GETPOST('facid', 'int');
+	print $form->formconfirm('card.php?id='.$object->id.'&amp;facid='.$facid, $langs->trans("ValidatePayment"), $langs->trans("ConfirmValidatePayment"), 'confirm_valide', '', 0, 2);
 }
 
 
-dol_banner_tab($object,'id','',1,'rowid','id');
+dol_banner_tab($object, 'id', '', 1, 'rowid', 'id');
 
 print '<div class="fichecenter">';
 print '<div class="underbanner clearboth"></div>';
@@ -163,7 +161,7 @@ print '</td></tr>';
 */
 
 // Date
-print '<tr><td class="titlefield">'.$langs->trans('Date').'</td><td>'.dol_print_date($object->datep,'day').'</td></tr>';
+print '<tr><td class="titlefield">'.$langs->trans('Date').'</td><td>'.dol_print_date($object->datep, 'day').'</td></tr>';
 
 // Mode
 print '<tr><td>'.$langs->trans('Mode').'</td><td>'.$langs->trans("PaymentType".$object->type_code).'</td></tr>';
@@ -188,7 +186,7 @@ if (! empty($conf->banque->enabled))
     	print '<tr>';
     	print '<td>'.$langs->trans('BankTransactionLine').'</td>';
 		print '<td>';
-		print $bankline->getNomUrl(1,0,'showall');
+		print $bankline->getNomUrl(1, 0, 'showall');
     	print '</td>';
     	print '</tr>';
     }
@@ -219,9 +217,9 @@ if ($resql)
 	print '<br><table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans('Donation').'</td>';
-    print '<td align="right">'.$langs->trans('ExpectedToPay').'</td>';
-	print '<td align="center">'.$langs->trans('Status').'</td>';
-	print '<td align="right">'.$langs->trans('PayedByThisPayment').'</td>';
+    print '<td class="right">'.$langs->trans('ExpectedToPay').'</td>';
+	print '<td class="center">'.$langs->trans('Status').'</td>';
+	print '<td class="right">'.$langs->trans('PayedByThisPayment').'</td>';
 	print "</tr>\n";
 
 	if ($num > 0)
@@ -237,14 +235,14 @@ if ($resql)
 			print $don->getNomUrl(1);
 			print "</td>\n";
 			// Expected to pay
-			print '<td align="right">'.price($objp->d_amount).'</td>';
+			print '<td class="right">'.price($objp->d_amount).'</td>';
 			// Status
-			print '<td align="center">'.$don->getLibStatut(4,$objp->amount).'</td>';
+			print '<td class="center">'.$don->getLibStatut(4, $objp->amount).'</td>';
 			// Amount payed
-			print '<td align="right">'.price($objp->amount).'</td>';
+			print '<td class="right">'.price($objp->amount).'</td>';
 			print "</tr>\n";
-			if ($objp->paid == 1)	// If at least one invoice is paid, disable delete
-			{
+			if ($objp->paid == 1) {
+                // If at least one invoice is paid, disable delete
 				$disable_delete = 1;
 			}
 			$total = $total + $objp->amount;
@@ -294,7 +292,7 @@ if ($_GET['action'] == '')
 		}
 		else
 		{
-			print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("CantRemovePaymentWithOneInvoicePaid")).'">'.$langs->trans('Delete').'</a>';
+			print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("CantRemovePaymentWithOneInvoicePaid")).'">'.$langs->trans('Delete').'</a>';
 		}
 	}
 }

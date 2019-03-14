@@ -29,8 +29,19 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/coreobject.class.php';
  */
 class ExpenseReportRule extends CoreObject
 {
+	/**
+	 * @var string ID to identify managed object
+	 */
 	public $element='expenserule';
+
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
 	public $table_element='expensereport_rules';
+
+	/**
+	 * @var int Field with ID of parent key if this field has a parent
+	 */
 	public $fk_element='fk_expense_rule';
 
 	/**
@@ -137,7 +148,7 @@ class ExpenseReportRule extends CoreObject
 	 * @param type	$fk_user		user of expense
 	 * @return array \ExpenseReportRule
 	 */
-	public static function getAllRule($fk_c_type_fees='', $date='', $fk_user='')
+	public static function getAllRule($fk_c_type_fees = '', $date = '', $fk_user = '')
 	{
 		global $db;
 

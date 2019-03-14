@@ -11,10 +11,10 @@ LaunchProgram=Exécuter %1
 AssocFileExtension=&Associer %1 avec l'extension de fichier %2
 AssocingFileExtension=Associe %1 avec l'extension de fichier %2...
 
-YouWillInstallDoliWamp=Vous allez installer ou mettre à jour DoliWamp (Apache+Mysql+PHP+Dolibarr) sur votre ordinateur.
-ThisAssistantInstallOrUpgrade=Cet assistant installe ou met à jour Dolibarr ERP-CRM et tous ses composants prérequis (Apache, Mysql et PHP) optimisés pour une utilisation de Dolibarr.
-IfYouHaveTechnicalKnowledge=Si vous avez des compétences techniques et envisagez de partager votre Apache, Mysql et PHP avec d'autres applications que Dolibarr, vous ne devriez pas utiliser cet assistant mais faire plutôt une installation manuelle de Dolibarr sur un socle Apache, Mysql et PHP existant.
-ButIfYouLook=Mais si vous recherchez une installation clé en main automatisée, vous êtes sur la bonne voie...
+YouWillInstallDoliWamp=Vous allez installer ou mettre à jour DoliWamp sur votre ordinateur (donc Dolibarr + tous ses composants prérequis comme Apache, Mysql et PHP).
+ThisAssistantInstallOrUpgrade=AVERTISSEMENT: L'utilisation d'un ERP CRM installé sur un ordinateur local peut être dangereuse: si votre ordinateur tombe en panne, vous pouvez perdre toutes vos données. Faites-le si vous êtes prêt à gérer les sauvegardes vous-même sérieusement. Sinon, utilisez plutôt une installation en Saas (voir https://saas.dolibarr.org).
+IfYouHaveTechnicalKnowledge=De plus, si vous avez des compétences techniques et envisagez de partager votre Apache, Mysql et PHP avec d''autres applications que Dolibarr, vous ne devriez pas utiliser cet assistant mais faire plutôt une installation manuelle de Dolibarr sur un serveur existant équipé de Apache, Mysql et PHP.
+ButIfYouLook=Mais si vous recherchez une installation clé en main automatisée sur une poste local, vous êtes sur la bonne voie...
 DoYouWantToStart=Voulez-vous démarrer le processus d'installation/mise à jour ?
 
 TechnicalParameters=Paramètres techniques
@@ -33,7 +33,7 @@ PortAlreadyInUse=Le port %1 semble déjà utilisé. Il est recommandé d'annuler pou
 
 FirefoxDetected=Firefox a été détecté sur votre ordinateur. Voulez-vous en faire votre navigateur par défaut pour Dolibarr ?
 ChromeDetected=Chrome a été détecté sur votre ordinateur. Voulez-vous en faire votre navigateur par défaut pour Dolibarr ?
-ChooseDefaultBrowser=Merci de choisir votre navigateur par défaut. Si vous n'êtes pas sûr, cliquez simplement sur Ouvrir :
+ChooseDefaultBrowser=Merci de choisir votre navigateur par défaut (iexplore.exe, firefox.exe, chrome.exe, MicrosoftEdge.exe...). Si vous n'êtes pas sûr, cliquez simplement sur Ouvrir :
 
 LaunchNow=Lancer Dolibarr maintenant
 
@@ -44,3 +44,5 @@ DoliWampWillStartApacheMysql=L'installeur DoliWamp va maintenant démarrer ou red
 OldVersionFoundAndMoveInNew=Une ancienne version de base a été trouvée et déplacée pour fonctionner avec la nouvelle version de Dolibarr.
 OldVersionFoundButFailedToMoveInNew=Une ancienne version de base a été trouvée mais ne peut être déplacée pour être utilisée avec la nouvelle version de Dolibarr.
 
+DLLMissing=L'installation de votre Windows est incomplète. Il manque le composant "Micrsoft Visual C++ Redistributable for Visual Studio 2012". Installer la version 32-bit (vcredist_x86.exe) d'abord (vous pourrez le trouver à https://www.microsoft.com/fr-fr/download/) puis relancer l'installation de DoliWamp après.
+ContinueAnyway=Continuer malgré tout (le process d'installaton échouera)

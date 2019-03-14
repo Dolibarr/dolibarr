@@ -1,14 +1,10 @@
 # Dolibarr language file - Source file is en_US - trips
-ShowExpenseReport=Mostrar relatório de despesas
 Trips=Os relatórios de despesas
 TripsAndExpenses=Relatórios de despesas
 TripsAndExpensesStatistics=Estatísticas de relatórios de despesas
 TripCard=Despesa de cartão de relatório
-AddTrip=Criar relatório de despesas
 TypeFees=Tipos de benefício
-ShowTrip=Mostrar relatório de despesas
 LastExpenseReports=Últimos relatórios de despesas %s
-AllExpenseReports=Todos os relatórios de despesas
 CompanyVisited=Empresa / Organização visitada
 FeesKilometersOrAmout=Quantidade de quilômetros
 DeleteTrip=Excluir relatório de despesas

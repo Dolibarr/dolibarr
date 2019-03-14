@@ -3,7 +3,7 @@
 /**
  * Copyright (C) 2005	Rodolphe Quiedeville		<rodolphe@quiedeville.org>
  * Copyright (C) 2006	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2017	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2017	Regis Houssin			<regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,9 +41,9 @@ if (! isset($argv[1]) || ! $argv[1]) {
 }
 $now=$argv[1];
 
-require_once($path."../../htdocs/master.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/core/class/ldap.class.php");
-require_once(DOL_DOCUMENT_ROOT."/adherents/class/adherent_type.class.php");
+require_once $path."../../htdocs/master.inc.php";
+require_once DOL_DOCUMENT_ROOT."/core/class/ldap.class.php";
+require_once DOL_DOCUMENT_ROOT."/adherents/class/adherent_type.class.php";
 
 // Global variables
 $version=DOL_VERSION;
@@ -56,7 +56,7 @@ $error=0;
 
 @set_time_limit(0);
 print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." *****\n";
-dol_syslog($script_file." launched with arg ".join(',',$argv));
+dol_syslog($script_file." launched with arg ".join(',', $argv));
 
 /*
 if (! $conf->global->LDAP_SYNCHRO_ACTIVE)
@@ -100,8 +100,8 @@ if ($resql)
 			$info=$membertype->_load_ldap_info();
 			$dn=$membertype->_load_ldap_dn($info);
 
-			$result=$ldap->add($dn,$info,$user);	// Wil fail if already exists
-			$result=$ldap->update($dn,$info,$user,$olddn);
+			$result=$ldap->add($dn, $info, $user);	// Wil fail if already exists
+			$result=$ldap->update($dn, $info, $user, $olddn);
 			if ($result > 0)
 			{
 				print " - ".$langs->trans("OK");

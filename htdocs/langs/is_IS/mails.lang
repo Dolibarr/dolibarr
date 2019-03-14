@@ -11,7 +11,9 @@ MailFrom=Sendandi
 MailErrorsTo=Villur við
 MailReply=Svara
 MailTo=Receiver (s)
+MailToUsers=To user(s)
 MailCC=Afrita á
+MailToCCUsers=Copy to users(s)
 MailCCC=Geymd afrit til
 MailTopic=Netfang þráð
 MailText=Message
@@ -164,4 +166,4 @@ InGoingEmailSetup=Incoming email setup
 OutGoingEmailSetupForEmailing=Outgoing email setup (for mass emailing)
 DefaultOutgoingEmailSetup=Default outgoing email setup
 Information=Information
-
+ContactsWithThirdpartyFilter=Contacts avec filtre client

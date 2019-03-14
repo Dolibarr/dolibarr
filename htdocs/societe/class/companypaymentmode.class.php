@@ -18,7 +18,7 @@
 
 /**
  * \file        class/companypaymentmode.class.php
- * \ingroup     monmodule
+ * \ingroup     company
  * \brief       This file is a CRUD class file for CompanyPaymentMode (Create/Read/Update/Delete)
  */
 
@@ -36,18 +36,22 @@ class CompanyPaymentMode extends CommonObject
 	 * @var string ID to identify managed object
 	 */
 	public $element = 'companypaymentmode';
+
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element = 'societe_rib';
+
 	/**
 	 * @var int  Does companypaymentmode support multicompany module ? 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 	 */
 	public $ismultientitymanaged = 2;
+
 	/**
 	 * @var int  Does companypaymentmode support extrafields ? 0=No, 1=Yes
 	 */
 	public $isextrafieldmanaged = 0;
+
 	/**
 	 * @var string String with name of icon for companypaymentmode. Must be the part after the 'object_' into object_companypaymentmode.png
 	 */
@@ -114,9 +118,22 @@ class CompanyPaymentMode extends CommonObject
 		'import_key' =>array('type'=>'varchar(14)', 'label'=>'Import key', 'enabled'=>1, 'visible'=>-2, 'position'=>105),
 	//'aaa' =>array('type'=>'date', 'label'=>'Ending date', 'enabled'=>0, 'visible'=>-2, 'position'=>185),
 	);
+
+	/**
+	 * @var int ID
+	 */
 	public $rowid;
-	public $fk_soc;
-	public $label;
+
+	/**
+	 * @var int Thirdparty ID
+	 */
+    public $fk_soc;
+
+	/**
+     * @var string company payment mode label
+     */
+    public $label;
+
 	public $bank;
 	public $code_banque;
 	public $code_guichet;
@@ -144,7 +161,12 @@ class CompanyPaymentMode extends CommonObject
 	public $preapproval_key;
 	public $total_amount_of_all_payments;
 	public $stripe_card_ref;
+
+	/**
+	 * @var int Status
+	 */
 	public $status;
+
 	public $starting_date;
 	public $ending_date;
 	public $datec;
@@ -247,6 +269,8 @@ class CompanyPaymentMode extends CommonObject
 	        $this->errors = $object->errors;
 	    }
 
+	    unset($object->context['createfromclone']);
+
 	    // End
 	    if (!$error) {
 	        $this->db->commit();
@@ -325,7 +349,7 @@ class CompanyPaymentMode extends CommonObject
      *  @param  int     $save_lastsearch_value    	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
 	 *	@return	string								String with URL
 	 */
-	function getNomUrl($withpicto=0, $option='', $notooltip=0, $morecss='', $save_lastsearch_value=-1)
+    public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
 	{
 		global $db, $conf, $langs;
         global $dolibarr_main_authentication, $dolibarr_main_demo;
@@ -340,13 +364,13 @@ class CompanyPaymentMode extends CommonObject
         $label.= '<br>';
         $label.= '<b>' . $langs->trans('Ref') . ':</b> ' . $this->ref;
 
-        $url = dol_buildpath('/monmodule/companypaymentmode_card.php',1).'?id='.$this->id;
+        $url = dol_buildpath('/monmodule/companypaymentmode_card.php', 1).'?id='.$this->id;
 
         if ($option != 'nolink')
         {
 	        // Add param to save lastsearch_values or not
 	        $add_save_lastsearch_values=($save_lastsearch_value == 1 ? 1 : 0);
-	        if ($save_lastsearch_value == -1 && preg_match('/list\.php/',$_SERVER["PHP_SELF"])) $add_save_lastsearch_values=1;
+	        if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) $add_save_lastsearch_values=1;
 	        if ($add_save_lastsearch_values) $url.='&save_lastsearch_values=1';
         }
 
@@ -383,7 +407,7 @@ class CompanyPaymentMode extends CommonObject
 	 * @param	string	$alltypes	1=The default is for all payment types instead of per type
 	 * @return  int             	0 if KO, 1 if OK
 	 */
-	function setAsDefault($id=0, $alltypes=0)
+    public function setAsDefault($id = 0, $alltypes = 0)
 	{
 		$sql1 = "SELECT rowid as id, fk_soc, type FROM ".MAIN_DB_PREFIX."societe_rib";
 		$sql1.= " WHERE rowid = ".($id?$id:$this->id);
@@ -443,11 +467,12 @@ class CompanyPaymentMode extends CommonObject
 	 *  @param	int		$mode          0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	 *  @return	string 			       Label of status
 	 */
-	function getLibStatut($mode=0)
+    public function getLibStatut($mode = 0)
 	{
-		return $this->LibStatut($this->status,$mode);
+		return $this->LibStatut($this->status, $mode);
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Return the status
 	 *
@@ -455,45 +480,40 @@ class CompanyPaymentMode extends CommonObject
 	 *  @param  int		$mode          	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
 	 *  @return string 			       	Label of status
 	 */
-	static function LibStatut($status,$mode=0)
+	public static function LibStatut($status, $mode = 0)
 	{
+        // phpcs:enable
 		global $langs;
 
-		if ($mode == 0)
-		{
-			$prefix='';
-			if ($status == 1) return $langs->trans('Enabled');
-			if ($status == 0) return $langs->trans('Disabled');
-		}
-		if ($mode == 1)
+		if ($mode == 0 || $mode == 1)
 		{
 			if ($status == 1) return $langs->trans('Enabled');
-			if ($status == 0) return $langs->trans('Disabled');
+			elseif ($status == 0) return $langs->trans('Disabled');
 		}
-		if ($mode == 2)
+		elseif ($mode == 2)
 		{
-			if ($status == 1) return img_picto($langs->trans('Enabled'),'statut4').' '.$langs->trans('Enabled');
-			if ($status == 0) return img_picto($langs->trans('Disabled'),'statut5').' '.$langs->trans('Disabled');
+			if ($status == 1) return img_picto($langs->trans('Enabled'), 'statut4').' '.$langs->trans('Enabled');
+			elseif ($status == 0) return img_picto($langs->trans('Disabled'), 'statut5').' '.$langs->trans('Disabled');
 		}
-		if ($mode == 3)
+		elseif ($mode == 3)
 		{
-			if ($status == 1) return img_picto($langs->trans('Enabled'),'statut4');
-			if ($status == 0) return img_picto($langs->trans('Disabled'),'statut5');
+			if ($status == 1) return img_picto($langs->trans('Enabled'), 'statut4');
+			elseif ($status == 0) return img_picto($langs->trans('Disabled'), 'statut5');
 		}
-		if ($mode == 4)
+		elseif ($mode == 4)
 		{
-			if ($status == 1) return img_picto($langs->trans('Enabled'),'statut4').' '.$langs->trans('Enabled');
-			if ($status == 0) return img_picto($langs->trans('Disabled'),'statut5').' '.$langs->trans('Disabled');
+			if ($status == 1) return img_picto($langs->trans('Enabled'), 'statut4').' '.$langs->trans('Enabled');
+			elseif ($status == 0) return img_picto($langs->trans('Disabled'), 'statut5').' '.$langs->trans('Disabled');
 		}
-		if ($mode == 5)
+		elseif ($mode == 5)
 		{
-			if ($status == 1) return $langs->trans('Enabled').' '.img_picto($langs->trans('Enabled'),'statut4');
-			if ($status == 0) return $langs->trans('Disabled').' '.img_picto($langs->trans('Disabled'),'statut5');
+			if ($status == 1) return $langs->trans('Enabled').' '.img_picto($langs->trans('Enabled'), 'statut4');
+			elseif ($status == 0) return $langs->trans('Disabled').' '.img_picto($langs->trans('Disabled'), 'statut5');
 		}
-		if ($mode == 6)
+		elseif ($mode == 6)
 		{
-			if ($status == 1) return $langs->trans('Enabled').' '.img_picto($langs->trans('Enabled'),'statut4');
-			if ($status == 0) return $langs->trans('Disabled').' '.img_picto($langs->trans('Disabled'),'statut5');
+			if ($status == 1) return $langs->trans('Enabled').' '.img_picto($langs->trans('Enabled'), 'statut4');
+			elseif ($status == 0) return $langs->trans('Disabled').' '.img_picto($langs->trans('Disabled'), 'statut5');
 		}
 	}
 
@@ -503,7 +523,7 @@ class CompanyPaymentMode extends CommonObject
 	 *	@param  int		$id       Id of order
 	 *	@return	void
 	 */
-	function info($id)
+    public function info($id)
 	{
 		$sql = 'SELECT rowid, date_creation as datec, tms as datem,';
 		$sql.= ' fk_user_creat, fk_user_modif';
@@ -543,7 +563,6 @@ class CompanyPaymentMode extends CommonObject
 			}
 
 			$this->db->free($result);
-
 		}
 		else
 		{
@@ -561,5 +580,4 @@ class CompanyPaymentMode extends CommonObject
 	{
 		$this->initAsSpecimenCommon();
 	}
-
 }

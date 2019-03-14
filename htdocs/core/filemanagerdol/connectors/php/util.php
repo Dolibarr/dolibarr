@@ -82,7 +82,7 @@ function FindBadUtf8($string)
  * @param 	string		$value		Value
  * @return	string
  */
-function ConvertToXmlAttribute( $value )
+function ConvertToXmlAttribute($value)
 {
 	if ( defined('PHP_OS') )
 	{
@@ -110,14 +110,14 @@ function ConvertToXmlAttribute( $value )
  * @param 	array 		$formExtensions		Array of extensions
  * @return 	boolean
  */
-function IsHtmlExtension( $ext, $formExtensions )
+function IsHtmlExtension($ext, $formExtensions)
 {
 	if (!$formExtensions || !is_array($formExtensions) )
 	{
 		return false ;
 	}
 	$lcaseHtmlExtensions = array();
-	foreach ( $formExtensions as $key => $val )
+	foreach ($formExtensions as $key => $val)
 	{
 		$lcaseHtmlExtensions[$key] = strtolower($val);
 	}
@@ -132,7 +132,7 @@ function IsHtmlExtension( $ext, $formExtensions )
  * @param string $filePath absolute path to file
  * @return boolean
  */
-function DetectHtml( $filePath )
+function DetectHtml($filePath)
 {
 	$fp = @fopen($filePath, 'rb');
 
@@ -162,7 +162,7 @@ function DetectHtml( $filePath )
 
 	$tags = array( '<body', '<head', '<html', '<img', '<pre', '<script', '<table', '<title' );
 
-	foreach( $tags as $tag )
+	foreach($tags as $tag)
 	{
 		if( false !== strpos($chunk, $tag) )
 		{
@@ -202,7 +202,7 @@ function DetectHtml( $filePath )
  * @param 	string 	$extension 		File extension
  * @return 	boolean					True or false
  */
-function IsImageValid( $filePath, $extension )
+function IsImageValid($filePath, $extension)
 {
 	if (!@is_readable($filePath)) {
 		return -1;
@@ -238,4 +238,3 @@ function IsImageValid( $filePath, $extension )
 
 	return true;
 }
-

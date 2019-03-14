@@ -20,12 +20,18 @@ if (! empty($extrafieldsobjectkey))	// $extrafieldsobject is the $object->table_
 			{
 				$align=$extrafields->getAlignFlag($key, $extrafieldsobjectkey);
 				print '<td';
-				if ($align) print ' align="'.$align.'"';
-				print '>';
-				$tmpkey='options_'.$key;
-				if (in_array($extrafields->attributes[$extrafieldsobjectkey]['type'][$key], array('date', 'datetime', 'timestamp')))
+                if ($align) print ' class="'.$align.'"';
+                print ' data-key="'.$key.'"';
+                print '>';
+                $tmpkey='options_'.$key;
+				if (in_array($extrafields->attributes[$extrafieldsobjectkey]['type'][$key], array('date', 'datetime', 'timestamp')) && !is_numeric($obj->$tmpkey))
 				{
-					$value = $db->jdate($obj->$tmpkey);
+					$datenotinstring = $obj->$tmpkey;
+					if (! is_numeric($obj->$tmpkey))	// For backward compatibility
+					{
+						$datenotinstring = $db->jdate($datenotinstring);
+					}
+					$value = $datenotinstring;
 				}
 				else
 				{
@@ -35,6 +41,14 @@ if (! empty($extrafieldsobjectkey))	// $extrafieldsobject is the $object->table_
 				print $extrafields->showOutputField($key, $value, '', $extrafieldsobjectkey);
 				print '</td>';
 				if (! $i) $totalarray['nbfield']++;
+
+                if ($extrafields->attributes[$extrafieldsobjectkey]['totalizable'][$key]) {
+                    if (! $i) {
+                        // we keep position for the first line
+                        $totalarray['totalizable'][$key]['pos'] = $totalarray['nbfield'];
+                    }
+                    $totalarray['totalizable'][$key]['total'] += $obj->$tmpkey;
+                }
 				if (! empty($val['isameasure']))
 				{
 					if (! $i) $totalarray['pos'][$totalarray['nbfield']]='ef.'.$tmpkey;

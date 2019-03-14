@@ -56,9 +56,9 @@ function ecm_prepare_dasboard_head($object)
     // Entries must be declared in modules descriptor with line
     // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
     // $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
-    complete_head_from_modules($conf,$langs,$object,$head,$h,'ecm');
+    complete_head_from_modules($conf, $langs, $object, $head, $h, 'ecm');
 
-    complete_head_from_modules($conf,$langs,$object,$head,$h,'ecm','remove');
+    complete_head_from_modules($conf, $langs, $object, $head, $h, 'ecm', 'remove');
 
 	return $head;
 }
@@ -72,7 +72,7 @@ function ecm_prepare_dasboard_head($object)
  * @param	string	$section	Section
  * @return  array				Array of tabs to show
  */
-function ecm_prepare_head($object, $module='ecm', $section='')
+function ecm_prepare_head($object, $module = 'ecm', $section = '')
 {
 	global $langs, $conf, $user;
 	$h = 0;
@@ -140,4 +140,3 @@ function ecm_prepare_head_fm($object)
 
 	return $head;
 }
-

@@ -20,22 +20,11 @@ if (!defined('REQUIRE_JQUERY_BLOCKUI')) define('REQUIRE_JQUERY_BLOCKUI', 1);
 
 
 /**
- *      \file       htdocs/commande/info.php
- *      \ingroup    commande
- * 		\brief      Page des informations d'une commande
+ *      \file       htdocs/admin/dolistore/ajax/image.php
+ *      \ingroup    admin
+ *      \brief      Page des informations dolistore
  */
-$res = 0;
-if (!$res && file_exists("../main.inc.php")) $res = @include("../main.inc.php");
-if (!$res && file_exists("../../main.inc.php")) $res = @include("../../main.inc.php");
-if (!$res && file_exists("../../../main.inc.php")) $res = @include("../../../main.inc.php");
-if (!$res && file_exists("../../../../main.inc.php")) $res = @include("../../../../main.inc.php");
-if (!$res && file_exists("../../../dolibarr/htdocs/main.inc.php"))
-        $res = @include("../../../dolibarr/htdocs/main.inc.php");     // Used on dev env only
-if (!$res && file_exists("../../../../dolibarr/htdocs/main.inc.php"))
-        $res = @include("../../../../dolibarr/htdocs/main.inc.php");   // Used on dev env only
-if (!$res && file_exists("../../../../../dolibarr/htdocs/main.inc.php"))
-        $res = @include("../../../../../dolibarr/htdocs/main.inc.php");   // Used on dev env only
-if (!$res) die("Include of main fails");
+require "../../../main.inc.php";
 
 // CORE
 
@@ -52,8 +41,10 @@ $quality    = GETPOST('quality', 'alpha');
 
 try {
     $url = $conf->global->MAIN_MODULE_DOLISTORE_API_SRV.'/api/images/products/'.$id_product.'/'.$id_image.'/'.$quality;
-    $api        = new PrestaShopWebservice($conf->global->MAIN_MODULE_DOLISTORE_API_SRV,
-        $conf->global->MAIN_MODULE_DOLISTORE_API_KEY, $dolistore->debug_api);
+    $api = new PrestaShopWebservice(
+        $conf->global->MAIN_MODULE_DOLISTORE_API_SRV,
+        $conf->global->MAIN_MODULE_DOLISTORE_API_KEY, $dolistore->debug_api
+    );
     //echo $url;
     $request = $api->executeRequest($url, array(CURLOPT_CUSTOMREQUEST => 'GET'));
     header('Content-type:image');
@@ -62,7 +53,6 @@ try {
     // Here we are dealing with errors
     $trace = $e->getTrace();
     if ($trace[0]['args'][0] == 404) die('Bad ID');
-    else if ($trace[0]['args'][0] == 401) die('Bad auth key');
+    elseif ($trace[0]['args'][0] == 401) die('Bad auth key');
     else die('Can not access to '.$conf->global->MAIN_MODULE_DOLISTORE_API_SRV);
 }
-

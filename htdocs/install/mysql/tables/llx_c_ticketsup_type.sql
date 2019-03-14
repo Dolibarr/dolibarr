@@ -15,7 +15,7 @@
 --
 --
 
-create table llx_c_ticketsup_type
+create table llx_c_ticket_type
 (
   rowid			integer AUTO_INCREMENT PRIMARY KEY,
   entity		integer DEFAULT 1,

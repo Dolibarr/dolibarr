@@ -28,10 +28,10 @@ UseDiscountAsService=Là một dịch vụ
 UseDiscountOnTotal=Trên tổng số phụ
 MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Xác định nếu giảm giá toàn cầu được coi là một sản phẩm, một dịch vụ, hoặc chỉ trên tổng số phụ để tính tỷ suất biên lợi nhuận.
 MARGIN_TYPE=Buying/Cost price suggested by default for margin calculation
-MargeType1=Margin on Best supplier price
+MargeType1=Margin on Best vendor price
 MargeType2=Margin on Weighted Average Price (WAP)
 MargeType3=Margin on Cost Price
-MarginTypeDesc=* Margin on best buying price = Selling price - Best supplier price defined on product card<br>* Margin on Weighted Average Price (WAP) = Selling price - Product Weighted Average Price (WAP) or best supplier price if WAP not yet defined<br>* Margin on Cost price = Selling price - Cost price defined on product card or WAP if cost price not defined, or best supplier price if WAP not yet defined
+MarginTypeDesc=* Margin on best buying price = Selling price - Best vendor price defined on product card<br>* Margin on Weighted Average Price (WAP) = Selling price - Product Weighted Average Price (WAP) or best supplier price if WAP not yet defined<br>* Margin on Cost price = Selling price - Cost price defined on product card or WAP if cost price not defined, or best supplier price if WAP not yet defined
 CostPrice=Giá thành
 UnitCharges=Chi phí đơn vị
 Charges=Phí

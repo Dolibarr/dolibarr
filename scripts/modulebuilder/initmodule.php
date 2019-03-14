@@ -41,7 +41,7 @@ if (! isset($argv[1]) || ! $argv[1]) {
 }
 $modulename=$argv[1];
 
-require_once ($path."../../htdocs/master.inc.php");
+require_once $path."../../htdocs/master.inc.php";
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
@@ -156,7 +156,7 @@ if (! $error)
 		'Mon module'=>$modulename,
 		'mon module'=>$modulename,
 		'htdocs/modulebuilder/template'=>strtolower($modulename),
-		'---Put here your own copyright and developer email---'=>dol_print_date($now,'%Y').' '.$user->getFullName($langs).($user->email?' <'.$user->email.'>':'')
+		'---Put here your own copyright and developer email---'=>dol_print_date($now, '%Y').' '.$user->getFullName($langs).($user->email?' <'.$user->email.'>':'')
 		);
 
 
@@ -172,4 +172,3 @@ if (! $error)
 
 print 'Module initialized'."\n";
 exit(0);
-

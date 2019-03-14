@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,15 +39,15 @@ class modFckeditor extends DolibarrModules
 	 *
 	 *   @param      DoliDB		$db      Database handler
 	 */
-	function __construct($db)
+	public function __construct($db)
 	{
 		$this->db = $db;
 		$this->numero = 2000;
 
 		$this->family = "technic";
-		$this->module_position = 20;
+		$this->module_position = '20';
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
-		$this->name = preg_replace('/^mod/i','',get_class($this));
+		$this->name = preg_replace('/^mod/i', '', get_class($this));
 		$this->description = "Editeur WYSIWYG";
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
 		$this->version = 'dolibarr';
@@ -63,7 +63,7 @@ class modFckeditor extends DolibarrModules
 		$this->config_page_url = array("fckeditor.php");
 
 		// Dependencies
-		$this->disabled = (in_array(constant('JS_CKEDITOR'),array('disabled','disabled/'))?1:0);	// A condition to disable module (used for native debian packages)
+		$this->disabled = (in_array(constant('JS_CKEDITOR'), array('disabled','disabled/'))?1:0);	// A condition to disable module (used for native debian packages)
 		$this->depends = array();
 		$this->requiredby = array('modWebsites');
 

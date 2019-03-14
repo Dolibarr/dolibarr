@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2011	Regis Houssin	<regis.houssin@capnetworks.com>
+/* Copyright (C) 2011	Regis Houssin	<regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,7 +43,7 @@ function trip_prepare_head(Deplacement $object)
 	// Entries must be declared in modules descriptor with line
     // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
     // $this->tabs = array('entity:-tabname);   												to remove a tab
-	complete_head_from_modules($conf,$langs,$object,$head,$h,'trip');
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'trip');
 
 	$head[$h][0] = DOL_URL_ROOT.'/compta/deplacement/document.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("Documents");
@@ -55,7 +55,7 @@ function trip_prepare_head(Deplacement $object)
 	$head[$h][2] = 'info';
 	$h++;
 
-	complete_head_from_modules($conf,$langs,$object,$head,$h,'trip','remove');
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'trip', 'remove');
 
 	return $head;
 }

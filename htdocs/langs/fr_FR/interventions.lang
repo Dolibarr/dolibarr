@@ -4,6 +4,7 @@ Interventions=Interventions
 InterventionCard=Fiche intervention
 NewIntervention=Nouvelle intervention
 AddIntervention=Créer intervention
+ChangeIntoRepeatableIntervention=Convertir en intervention récurrente
 ListOfInterventions=Liste des interventions
 ActionsOnFicheInter=Événements sur l'intervention
 LastInterventions=Les %s dernières interventions

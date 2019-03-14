@@ -2,7 +2,7 @@
 /* Copyright (C) 2001-2007  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005       Eric Seigne             <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2014       Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  *
@@ -32,21 +32,21 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/categories.lib.php';
 
-$langs->load("categories");
-$langs->load("bills");
+// Load translation files required by the page
+$langs->loadlangs(array('categories', 'bills'));
 
 
-$id=GETPOST('id','int');
+$id=GETPOST('id', 'int');
 $ref=GETPOST('ref');
 $type=GETPOST('type');
-$action=GETPOST('action','aZ09');
+$action=GETPOST('action', 'aZ09');
 $confirm=GETPOST('confirm');
 
 if (is_numeric($type)) $type=Categorie::$MAP_ID_TO_CODE[$type];	// For backward compatibility
 
 if ($id == "")
 {
-    dol_print_error('','Missing parameter id');
+    dol_print_error('', 'Missing parameter id');
     exit();
 }
 
@@ -69,7 +69,23 @@ if ($id > 0)
 if (isset($_FILES['userfile']) && $_FILES['userfile']['size'] > 0 && $_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
 {
     if ($object->id) {
-	    $object->add_photo($upload_dir, $_FILES['userfile']);
+
+        $file = $_FILES['userfile'];
+        if (is_array($file['name']) && count($file['name']) > 0)
+        {
+            foreach ($file['name'] as $i => $name)
+            {
+                if(empty($file['tmp_name'][$i]) || intval($conf->global->MAIN_UPLOAD_DOC) * 1000 <= filesize($file['tmp_name'][$i]) )
+                {
+                    setEventMessage($file['name'][$i] .' : '. $langs->trans(empty($file['tmp_name'][$i])? 'ErrorFailedToSaveFile' : 'MaxSizeForUploadedFiles'));
+                    unset($file['name'][$i], $file['type'][$i], $file['tmp_name'][$i], $file['error'][$i], $file['size'][$i]);
+                }
+            }
+        }
+
+        if(!empty($file['tmp_name'])) {
+            $object->add_photo($upload_dir, $file);
+        }
     }
 }
 
@@ -88,7 +104,7 @@ if ($action == 'addthumb' && $_GET["file"])
  * View
  */
 
-llxHeader("","",$langs->trans("Categories"));
+llxHeader("", "", $langs->trans("Categories"));
 
 $form = new Form($db);
 $formother = new FormOther($db);
@@ -105,7 +121,7 @@ if ($object->id)
 	elseif ($type == Categorie::TYPE_USER)      $title=$langs->trans("UsersCategoriesShort");
 	else                                        $title=$langs->trans("Category");
 
-	$head = categories_prepare_head($object,$type);
+	$head = categories_prepare_head($object, $type);
 
 
 	dol_fiche_head($head, 'photos', $title, -1, 'category');
@@ -173,7 +189,7 @@ if ($object->id)
 		}
 		else
 		{
-			print '<a class="butActionRefused hideonsmartphone" href="#">';
+			print '<a class="butActionRefused classfortooltip hideonsmartphone" href="#">';
 			print $langs->trans("AddPhoto").'</a>';
 		}
 	}
@@ -199,7 +215,7 @@ if ($object->id)
 		$maxWidth = 160;
 		$maxHeight = 120;
 
-		$pdir = get_exdir($object->id,2,0,0,$object,'category') . $object->id ."/photos/";
+		$pdir = get_exdir($object->id, 2, 0, 0, $object, 'category') . $object->id ."/photos/";
 		$dir = $upload_dir.'/'.$pdir;
 
 		print '<br>';
@@ -240,9 +256,9 @@ if ($object->id)
 			print '<br>';
 
 			// On propose la generation de la vignette si elle n'existe pas et si la taille est superieure aux limites
-			if (!$obj['photo_vignette'] && preg_match('/(\.bmp|\.gif|\.jpg|\.jpeg|\.png)$/i',$obj['photo']) && ($object->imgWidth > $maxWidth || $object->imgHeight > $maxHeight))
+			if (!$obj['photo_vignette'] && preg_match('/(\.bmp|\.gif|\.jpg|\.jpeg|\.png)$/i', $obj['photo']) && ($object->imgWidth > $maxWidth || $object->imgHeight > $maxHeight))
 			{
-				print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=addthumb&amp;type='.$type.'&amp;file='.urlencode($pdir.$viewfilename).'">'.img_picto($langs->trans('GenerateThumb'),'refresh').'&nbsp;&nbsp;</a>';
+				print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=addthumb&amp;type='.$type.'&amp;file='.urlencode($pdir.$viewfilename).'">'.img_picto($langs->trans('GenerateThumb'), 'refresh').'&nbsp;&nbsp;</a>';
 			}
 			if ($user->rights->categorie->creer)
 			{
@@ -273,6 +289,6 @@ else
     print $langs->trans("ErrorUnknown");
 }
 
-
+// End of page
 llxFooter();
 $db->close();
