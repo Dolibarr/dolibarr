@@ -343,14 +343,14 @@ function show_theme($fuser, $edit = 0, $foruserprofile = false)
 		print '<tr>';
 		print '<td>'.$langs->trans("DefaultSkin").'</td>';
 		print '<td>'.$conf->global->MAIN_THEME.'</td>';
-		print '<td align="left" class="nowrap" width="20%"><input id="check_MAIN_THEME" name="check_MAIN_THEME"'.($edit?'':' disabled').' type="checkbox" '.($selected_theme?" checked":"").'> '.$langs->trans("UsePersonalValue").'</td>';
+		print '<td class="nowrap left" width="20%"><input id="check_MAIN_THEME" name="check_MAIN_THEME"'.($edit?'':' disabled').' type="checkbox" '.($selected_theme?" checked":"").'> '.$langs->trans("UsePersonalValue").'</td>';
 		print '<td>&nbsp;</td>';
 		print '</tr>';
 	}
 	else
 	{
 		print '<tr class="liste_titre"><th class="titlefield">'.$langs->trans("DefaultSkin").'</th>';
-		print '<th align="right">';
+		print '<th class="right">';
 		$url='https://www.dolistore.com/lang-en/4-skins';
 		if (preg_match('/fr/i', $langs->defaultlang)) $url='https://www.dolistore.com/fr/4-themes';
 		//if (preg_match('/es/i',$langs->defaultlang)) $url='http://www.dolistore.com/lang-es/4-themes';
@@ -372,7 +372,7 @@ function show_theme($fuser, $edit = 0, $foruserprofile = false)
 
 	print '<tr><td colspan="'.$colspan.'">';
 
-	print '<table class="nobordernopadding" width="100%"><tr><td><div align="center">';
+	print '<table class="nobordernopadding" width="100%"><tr><td><div class="center">';
 
 	$i=0;
 	foreach($dirthemes as $dir)
@@ -432,7 +432,7 @@ function show_theme($fuser, $edit = 0, $foruserprofile = false)
          print '<tr class="oddeven">';
          print '<td>'.$langs->trans("TopMenuDisableImages").'</td>';
          print '<td>'.($conf->global->THEME_TOPMENU_DISABLE_IMAGE?$conf->global->THEME_TOPMENU_DISABLE_IMAGE:$langs->trans("Default")).'</td>';
-         print '<td align="left" class="nowrap" width="20%"><input '.$bc[$var].' name="check_THEME_TOPMENU_DISABLE_IMAGE" id="check_THEME_TOPMENU_DISABLE_IMAGE" type="checkbox" '.(! empty($object->conf->THEME_ELDY_TEXTLINK)?" checked":"");
+         print '<td class="left" class="nowrap" width="20%"><input '.$bc[$var].' name="check_THEME_TOPMENU_DISABLE_IMAGE" id="check_THEME_TOPMENU_DISABLE_IMAGE" type="checkbox" '.(! empty($object->conf->THEME_ELDY_TEXTLINK)?" checked":"");
          print (empty($dolibarr_main_demo) && $edit)?'':' disabled="disabled"';	// Disabled for demo
          print '> '.$langs->trans("UsePersonalValue").'</td>';
          print '<td>';
@@ -477,7 +477,7 @@ function show_theme($fuser, $edit = 0, $foruserprofile = false)
 	    print '<tr class="oddeven">';
 	    print '<td>'.$langs->trans("TopMenuBackgroundColor").'</td>';
         print '<td>'.($conf->global->THEME_ELDY_TOPMENU_BACK1?$conf->global->THEME_ELDY_TOPMENU_BACK1:$langs->trans("Default")).'</td>';
-        print '<td align="left" class="nowrap" width="20%"><input '.$bc[$var].' name="check_THEME_ELDY_TOPMENU_BACK1" id="check_THEME_ELDY_TOPMENU_BACK1" type="checkbox" '.(! empty($object->conf->THEME_ELDY_TOPMENU_BACK1)?" checked":"");
+        print '<td class="nowrap left" width="20%"><input '.$bc[$var].' name="check_THEME_ELDY_TOPMENU_BACK1" id="check_THEME_ELDY_TOPMENU_BACK1" type="checkbox" '.(! empty($object->conf->THEME_ELDY_TOPMENU_BACK1)?" checked":"");
         print (empty($dolibarr_main_demo) && $edit)?'':' disabled="disabled"';	// Disabled for demo
         print '> '.$langs->trans("UsePersonalValue").'</td>';
         print '<td>';
@@ -524,7 +524,7 @@ function show_theme($fuser, $edit = 0, $foruserprofile = false)
 	    print '<tr class="oddeven">';
 	    print '<td>'.$langs->trans("TopMenuBackgroundColor").'</td>';
         print '<td>'.($conf->global->THEME_ELDY_TOPMENU_BACK1?$conf->global->THEME_ELDY_TOPMENU_BACK1:$langs->trans("Default")).'</td>';
-        print '<td align="left" class="nowrap" width="20%"><input '.$bc[$var].' name="check_THEME_ELDY_TOPMENU_BACK1" id="check_THEME_ELDY_TOPMENU_BACK1" type="checkbox" '.(! empty($object->conf->THEME_ELDY_TOPMENU_BACK1)?" checked":"");
+        print '<td class="nowrap left" width="20%"><input '.$bc[$var].' name="check_THEME_ELDY_TOPMENU_BACK1" id="check_THEME_ELDY_TOPMENU_BACK1" type="checkbox" '.(! empty($object->conf->THEME_ELDY_TOPMENU_BACK1)?" checked":"");
         print (empty($dolibarr_main_demo) && $edit)?'':' disabled="disabled"';	// Disabled for demo
         print '> '.$langs->trans("UsePersonalValue").'</td>';
         print '<td>';
@@ -573,7 +573,7 @@ function show_theme($fuser, $edit = 0, $foruserprofile = false)
 		 print '<tr class="oddeven">';
 		 print '<td>'.$langs->trans("TopMenuBackgroundColor").'</td>';
 		 print '<td>'.($conf->global->THEME_ELDY_TOPMENU_BACK1?$conf->global->THEME_ELDY_VERMENU_BACK1:$langs->trans("Default")).'</td>';
-		 print '<td align="left" class="nowrap" width="20%"><input '.$bc[$var].' name="check_THEME_ELDY_VERMENU_BACK1" id="check_THEME_ELDY_VERMENU_BACK1" type="checkbox" '.(! empty($object->conf->THEME_ELDY_TOPMENU_BACK1)?" checked":"");
+		 print '<td class="nowrap left" width="20%"><input '.$bc[$var].' name="check_THEME_ELDY_VERMENU_BACK1" id="check_THEME_ELDY_VERMENU_BACK1" type="checkbox" '.(! empty($object->conf->THEME_ELDY_TOPMENU_BACK1)?" checked":"");
 		 print (empty($dolibarr_main_demo) && $edit)?'':' disabled="disabled"';	// Disabled for demo
 		 print '> '.$langs->trans("UsePersonalValue").'</td>';
 		 print '<td>';
@@ -763,7 +763,7 @@ function show_theme($fuser, $edit = 0, $foruserprofile = false)
 	     print '<tr class="oddeven">';
 	     print '<td>'.$langs->trans("TopMenuBackgroundColor").'</td>';
 	     print '<td>'.($conf->global->THEME_ELDY_TOPMENU_BACK1?$conf->global->THEME_ELDY_TEXTLINK:$langs->trans("Default")).'</td>';
-	     print '<td align="left" class="nowrap" width="20%"><input '.$bc[$var].' name="check_THEME_ELDY_TEXTLINK" id="check_THEME_ELDY_TEXTLINK" type="checkbox" '.(! empty($object->conf->THEME_ELDY_TEXTLINK)?" checked":"");
+	     print '<td class="nowrap left" width="20%"><input '.$bc[$var].' name="check_THEME_ELDY_TEXTLINK" id="check_THEME_ELDY_TEXTLINK" type="checkbox" '.(! empty($object->conf->THEME_ELDY_TEXTLINK)?" checked":"");
 	     print (empty($dolibarr_main_demo) && $edit)?'':' disabled="disabled"';	// Disabled for demo
 	     print '> '.$langs->trans("UsePersonalValue").'</td>';
 	     print '<td>';
@@ -814,7 +814,7 @@ function show_theme($fuser, $edit = 0, $foruserprofile = false)
 	     print '<tr class="oddeven">';
 	     print '<td>'.$langs->trans("HighlightLinesOnMouseHover").'</td>';
 	     print '<td><input '.$bc[$var].' name="check_THEME_ELDY_USE_HOVER" disabled="disabled" type="checkbox" '.($conf->global->THEME_ELDY_USE_HOVER?" checked":"").'></td>';
-	     print '<td align="left" class="nowrap" width="20%"><input '.$bc[$var].' name="check_MAIN_THEME"'.($edit?'':' disabled').' type="checkbox" '.($selected_theme?" checked":"").'> '.$langs->trans("UsePersonalValue").'</td>';
+	     print '<td class="nowrap left" width="20%"><input '.$bc[$var].' name="check_MAIN_THEME"'.($edit?'':' disabled').' type="checkbox" '.($selected_theme?" checked":"").'> '.$langs->trans("UsePersonalValue").'</td>';
 	     print '<td><input '.$bc[$var].' name="check_THEME_ELDY_USE_HOVER"'.($edit?'':' disabled="disabled"').' type="checkbox" '.($hoverdisabled?"":" checked").'>';
 	     print ' &nbsp; ('.$langs->trans("NotSupportedByAllThemes").', '.$langs->trans("PressF5AfterChangingThis").')';
 	     print '</td>';
@@ -857,7 +857,7 @@ function show_theme($fuser, $edit = 0, $foruserprofile = false)
 	     print '<tr class="oddeven">';
 	     print '<td>'.$langs->trans("HighlightLinesOnMouseHover").'</td>';
 	     print '<td><input '.$bc[$var].' name="check_THEME_ELDY_USE_HOVER" disabled="disabled" type="checkbox" '.($conf->global->THEME_ELDY_USE_HOVER?" checked":"").'></td>';
-	     print '<td align="left" class="nowrap" width="20%"><input '.$bc[$var].' name="check_MAIN_THEME"'.($edit?'':' disabled').' type="checkbox" '.($selected_theme?" checked":"").'> '.$langs->trans("UsePersonalValue").'</td>';
+	     print '<td class="nowrap left" width="20%"><input '.$bc[$var].' name="check_MAIN_THEME"'.($edit?'':' disabled').' type="checkbox" '.($selected_theme?" checked":"").'> '.$langs->trans("UsePersonalValue").'</td>';
 	     print '<td><input '.$bc[$var].' name="check_THEME_ELDY_USE_HOVER"'.($edit?'':' disabled="disabled"').' type="checkbox" '.($hoverdisabled?"":" checked").'>';
 	     print ' &nbsp; ('.$langs->trans("NotSupportedByAllThemes").', '.$langs->trans("PressF5AfterChangingThis").')';
 	     print '</td>';
