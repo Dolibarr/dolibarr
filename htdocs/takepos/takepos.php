@@ -446,7 +446,7 @@ $menus[$r++]=array('title'=>$langs->trans("FreeZone"),
 $menus[$r++]=array('title'=>$langs->trans("Customer"),
 					'action'=>'Customer();');
 $menus[$r++]=array('title'=>$langs->trans("BackOffice"),
-					'action'=>'window.open(\''.(empty(DOL_URL_ROOT)?'/':DOL_URL_ROOT).'\', \'_self\');');
+                    'action'=>'window.open(\''.(DOL_URL_ROOT ? DOL_URL_ROOT : '/').'\', \'_self\');');
 $menus[$r++]=array('title'=>$langs->trans("ValidateBill"),
 					'action'=>'CloseBill();');
 $menus[$r++]=array('title'=>$langs->trans("Logout"),
