@@ -450,7 +450,7 @@ $menus[$r++]=array('title'=>$langs->trans("BackOffice"),
 $menus[$r++]=array('title'=>$langs->trans("ValidateBill"),
 					'action'=>'CloseBill();');
 $menus[$r++]=array('title'=>$langs->trans("Logout"),
-					'action'=>'window.location.href=\''.(empty(DOL_URL_ROOT)?'/':DOL_URL_ROOT).'user/logout.php\';');
+					'action'=>'window.location.href=\''.DOL_URL_ROOT.'/user/logout.php\';');
 
 //BAR RESTAURANT specified menu
 if($conf->global->TAKEPOS_BAR_RESTAURANT){
