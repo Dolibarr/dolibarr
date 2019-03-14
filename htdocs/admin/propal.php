@@ -186,6 +186,23 @@ else if ($action == 'setdefaultduration')
 	}
 }
 
+elseif ($action == 'setdefaultdeposit')
+{
+	$res = dolibarr_set_const($db, "PROPALE_DEPOSIT_TYPE", GETPOST('PROPALE_DEPOSIT_TYPE', 'alpha'), 'chaine', 0, '', $conf->entity);
+    $res = dolibarr_set_const($db, "PROPALE_DEPOSIT_VALUE", GETPOST('PROPALE_DEPOSIT_VALUE', 'alpha'), 'chaine', 0, '', $conf->entity);
+
+	if (! $res > 0) $error++;
+
+ 	if (! $error)
+	{
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	}
+	else
+	{
+		setEventMessages($langs->trans("Error"), null, 'errors');
+	}
+}
+
 else if ($action == 'set_BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL')
 {
     $res = dolibarr_set_const($db, "BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL", $value, 'chaine', 0, '', $conf->entity);
@@ -635,13 +652,26 @@ print '<td width="60" align="center">'.$langs->trans("Value")."</td>\n";
 print "<td>&nbsp;</td>\n";
 print "</tr>";
 
-
 print "<form method=\"post\" action=\"".$_SERVER["PHP_SELF"]."\">";
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print "<input type=\"hidden\" name=\"action\" value=\"setdefaultduration\">";
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("DefaultProposalDurationValidity").'</td>';
 print '<td width="60" align="center">'."<input size=\"3\" class=\"flat\" type=\"text\" name=\"value\" value=\"".$conf->global->PROPALE_VALIDITY_DURATION."\"></td>";
+print '<td class="right"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
+print '</tr>';
+print '</form>';
+
+print "<form method=\"post\" action=\"".$_SERVER["PHP_SELF"]."\">";
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print "<input type=\"hidden\" name=\"action\" value=\"setdefaultdeposit\">";
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans("DefaultProposalDeposit").'</td>';
+print '<td class="nowrap" style="padding-left: 5px">';
+$arraylist = array('amount' => $langs->transnoentitiesnoconv('FixAmount'), 'variable' => $langs->transnoentitiesnoconv('VarAmount', $langs->transnoentitiesnoconv('Deposit')));
+print $form->selectarray('PROPALE_DEPOSIT_TYPE', $arraylist, $conf->global->PROPALE_DEPOSIT_TYPE, 0, 0, 0, '', 1);
+print $langs->trans('Value') . ':';
+print "<input size=\"3\" class=\"flat\" type=\"text\" name=\"PROPALE_DEPOSIT_VALUE\" value=\"".$conf->global->PROPALE_DEPOSIT_VALUE."\"></td>";
 print '<td class="right"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
 print '</tr>';
 print '</form>';
@@ -686,7 +716,6 @@ print '</td><td class="right">';
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 print "</td></tr>\n";
 print '</form>';
-
 
 print "<form method=\"post\" action=\"".$_SERVER["PHP_SELF"]."\">";
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
