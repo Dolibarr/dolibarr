@@ -668,7 +668,7 @@ print "<input type=\"hidden\" name=\"action\" value=\"setdefaultdeposit\">";
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("DefaultProposalDeposit").'</td>';
 print '<td class="nowrap" style="padding-left: 5px">';
-$arraylist = array('amount' => $langs->transnoentitiesnoconv('FixAmount'), 'variable' => $langs->transnoentitiesnoconv('VarAmountOneLine', $langs->transnoentitiesnoconv('Deposit')));
+$arraylist = array('amount' => $langs->transnoentitiesnoconv('FixAmount'), 'variable' => $langs->transnoentitiesnoconv('VarAmount', $langs->transnoentitiesnoconv('Deposit')));
 print $form->selectarray('PROPALE_DEPOSIT_TYPE', $arraylist, $conf->global->PROPALE_DEPOSIT_TYPE, 0, 0, 0, '', 1);
 print $langs->trans('Value') . ':';
 print "<input size=\"3\" class=\"flat\" type=\"text\" name=\"PROPALE_DEPOSIT_VALUE\" value=\"".$conf->global->PROPALE_DEPOSIT_VALUE."\"></td>";
