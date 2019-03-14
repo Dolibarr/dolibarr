@@ -78,7 +78,7 @@ class FormMail extends Form
 	/**
 	 * @var int
 	 * @deprecated Fill withto with array before calling method.
-	 * @see withto
+	 * @see $withto
 	 */
 	public $withtosocid;
 
@@ -1317,7 +1317,7 @@ class FormMail extends Form
 	 * @param	CommonObject	$object		   Object to use
 	 * @param   Translate  		$outputlangs   Object lang
 	 * @return	void
-	 * @see getCommonSubstitutionArray
+	 * @see getCommonSubstitutionArray()
 	 */
 	public function setSubstitFromObject($object, $outputlangs)
 	{
