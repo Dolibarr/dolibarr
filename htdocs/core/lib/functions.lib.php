@@ -1790,9 +1790,9 @@ function dol_print_date($time, $format = '', $tzoutput = 'tzserver', $outputlang
 	if (preg_match('/^([0-9]+)\-([0-9]+)\-([0-9]+) ?([0-9]+)?:?([0-9]+)?:?([0-9]+)?/i', $time, $reg)
 	|| preg_match('/^([0-9][0-9][0-9][0-9])([0-9][0-9])([0-9][0-9])([0-9][0-9])([0-9][0-9])([0-9][0-9])$/i', $time, $reg))	// Deprecated. Ex: 1970-01-01, 1970-01-01 01:00:00, 19700101010000
 	{
-		// TODO Remove this.
-		// This part of code should not be used.
+		// TODO Remove this. This part of code should not be used.
 		dol_syslog("Functions.lib::dol_print_date function call with deprecated value of time in page ".$_SERVER["PHP_SELF"], LOG_ERR);
+		//if (function_exists('debug_print_backtrace')) debug_print_backtrace();
 		// Date has format 'YYYY-MM-DD' or 'YYYY-MM-DD HH:MM:SS' or 'YYYYMMDDHHMMSS'
 		$syear	= (! empty($reg[1]) ? $reg[1] : '');
 		$smonth	= (! empty($reg[2]) ? $reg[2] : '');
@@ -2979,7 +2979,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 
 		//if (in_array($picto, array('switch_off', 'switch_on', 'off', 'on')))
         if (empty($srconly) && in_array($pictowithoutext, array(
-				'bank', 'close_title', 'delete', 'edit', 'ellipsis-h', 'filter', 'grip', 'grip_title', 'list', 'listlight', 'off', 'on', 'play', 'playdisabled', 'printer', 'resize',
+				'bank', 'close_title', 'delete', 'edit', 'ellipsis-h', 'filter', 'grip', 'grip_title', 'list', 'listlight', 'note', 'off', 'on', 'play', 'playdisabled', 'printer', 'resize',
                 'note', 'setup', 'sign-out', 'split', 'switch_off', 'switch_on', 'unlink', 'uparrow', '1downarrow', '1uparrow', '1leftarrow', '1rightarrow',
 				'jabber','skype','twitter','facebook','linkedin'
 			)
@@ -3005,10 +3005,20 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 			}
 			elseif ($pictowithoutext == 'off') {
 				$fakey = 'fa-square-o';
+				if (empty($conf->global->MAIN_DISABLE_FONT_AWESOME_5))
+				{
+				    $fakey = 'fa-square';
+				    $fa='far';
+				}
 				$fasize = '1.3em';
 			}
 			elseif ($pictowithoutext == 'on') {
 				$fakey = 'fa-check-square-o';
+				if (empty($conf->global->MAIN_DISABLE_FONT_AWESOME_5))
+				{
+				    $fakey = 'fa-check-square';
+				    $fa='far';
+				}
 				$fasize = '1.3em';
 			}
 			elseif ($pictowithoutext == 'bank') {
@@ -3050,6 +3060,10 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 			}
 			elseif ($pictowithoutext == 'note') {
 				$fakey = 'fa-sticky-note-o';
+				if (empty($conf->global->MAIN_DISABLE_FONT_AWESOME_5))
+				{
+				    $fakey = 'fa-sticky-note'; $fa = 'far';
+				}
 				$facolor = '#999';
 				$marginleftonlyshort=1;
 			}
@@ -4381,7 +4395,7 @@ function price($amount, $form = 0, $outlangs = '', $trunc = 1, $rounding = -1, $
 	{
 		if ($currency_code == 'auto') $currency_code=$conf->currency;
 
-		$listofcurrenciesbefore=array('USD','GBP','AUD','MXN','PEN','CNY');
+		$listofcurrenciesbefore=array('USD','GBP','AUD','HKD','MXN','PEN','CNY');
 		$listoflanguagesbefore=array('nl_NL');
 		if (in_array($currency_code, $listofcurrenciesbefore) || in_array($outlangs->defaultlang, $listoflanguagesbefore))
 		{

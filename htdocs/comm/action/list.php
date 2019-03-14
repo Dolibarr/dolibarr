@@ -691,11 +691,11 @@ if ($resql)
 		// Date creation
 		if (! empty($arrayfields['a.datec']['checked'])) {
 			// Status/Percent
-			print '<td align="center" class="nowrap">'.dol_print_date($obj->datec, 'dayhour').'</td>';
+			print '<td align="center" class="nowrap">'.dol_print_date($db->jdate($obj->datec), 'dayhour').'</td>';
 		}
 		// Date update
 		if (! empty($arrayfields['a.tms']['checked'])) {
-			print '<td align="center" class="nowrap">'.dol_print_date($obj->datem, 'dayhour').'</td>';
+			print '<td align="center" class="nowrap">'.dol_print_date($db->jdate($obj->datem), 'dayhour').'</td>';
 		}
 		if (! empty($arrayfields['a.percent']['checked'])) {
 			// Status/Percent

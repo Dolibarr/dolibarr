@@ -226,8 +226,8 @@ if (! empty($conf->holiday->enabled) && $user->rights->holiday->read)
                 $starthalfday=($obj->halfday == -1 || $obj->halfday == 2)?'afternoon':'morning';
                 $endhalfday=($obj->halfday == 1 || $obj->halfday == 2)?'morning':'afternoon';
 
-                print '<td>'.dol_print_date($obj->date_start, 'day').' '.$langs->trans($listhalfday[$starthalfday]);
-                print '<td>'.dol_print_date($obj->date_end, 'day').' '.$langs->trans($listhalfday[$endhalfday]);
+                print '<td>'.dol_print_date($db->jdate($obj->date_start), 'day').' '.$langs->trans($listhalfday[$starthalfday]);
+                print '<td>'.dol_print_date($db->jdate($obj->date_end), 'day').' '.$langs->trans($listhalfday[$endhalfday]);
                 print '<td class="right">'.dol_print_date($db->jdate($obj->dm), 'day').'</td>';
                 print '<td>'.$holidaystatic->LibStatut($obj->status, 3).'</td>';
                 print '</tr>';

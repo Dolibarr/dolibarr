@@ -944,7 +944,7 @@ class Translate
 	 *  If mb_convert_encoding is not available, return currency code.
 	 *
 	 *  @param	string	$currency_code		Currency code
-	 *  @param	integer	$forceloadall		1=Force to load all currencies into cache. We know we need to use all of them. By default read and cache only required currency.
+	 *  @param	integer	$forceloadall		1=Force to load all currencies into cache. We know we need to use all of them. By default read and cache only the requested currency.
 	 *  @return	string						Currency symbol encoded into UTF8
 	 */
     public function getCurrencySymbol($currency_code, $forceloadall = 0)

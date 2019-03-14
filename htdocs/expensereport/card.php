@@ -1606,7 +1606,7 @@ else
 				        array('type' => 'other','name' => 'fk_user_author','label' => $langs->trans("SelectTargetUser"),'value' => $form->select_dolusers((GETPOST('fk_user_author', 'int')> 0 ? GETPOST('fk_user_author', 'int') : $user->id), 'fk_user_author', 0, null, 0, $criteriaforfilter))
                     );
 				    // Paiement incomplet. On demande si motif = escompte ou autre
-				    $formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('CloneExpenseReport'), $langs->trans('ConfirmCloneExpenseReport', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
+				    $formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneExpenseReport', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
 				}
 
 				if ($action == 'save')

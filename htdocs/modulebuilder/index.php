@@ -930,7 +930,7 @@ if ($dirins && $action == 'generatepackage')
 
 if ($dirins && $action == 'generatedoc')
 {
-	$FILENAMEDOC=strtolower($module).'.html';			// TODO Use/text PDF
+	$FILENAMEDOC=strtolower($module).'.html';
 	$dirofmodule = dol_buildpath(strtolower($module), 0).'/doc';
 	$outputfiledoc = $dirofmodule.'/'.$FILENAMEDOC;
 
@@ -946,6 +946,7 @@ if ($dirins && $action == 'generatedoc')
 		setEventMessages($util->error, $util->errors, 'errors');
 	}
 }
+
 
 // Save file
 if ($action == 'savefile' && empty($cancel))
@@ -2814,9 +2815,11 @@ elseif (! empty($module))
 				$outputfilezip = dol_buildpath($modulelowercase, 0).'/bin/'.$FILENAMEZIP;
 
 				$FILENAMEDOC=$modulelowercase.'.html';
+				$FILENAMEDOCPDF=$modulelowercase.'.pdf';
 				$outputfiledoc = dol_buildpath($modulelowercase, 0).'/doc/'.$FILENAMEDOC;
 				$outputfiledocurl = dol_buildpath($modulelowercase, 1).'/doc/'.$FILENAMEDOC;
-				// TODO Use/test PDF
+				$outputfiledocpdf = dol_buildpath($modulelowercase, 0).'/doc/'.$FILENAMEDOCPDF;
+				$outputfiledocurlpdf = dol_buildpath($modulelowercase, 1).'/doc/'.$FILENAMEDOCPDF;
 			}
 
 			print '<br>';
@@ -2842,7 +2845,8 @@ elseif (! empty($module))
 
 			print '<br><br><br>';
 
-			print '<span class="fa fa-file-o"></span> '. $langs->trans("PathToModuleDocumentation") . ' : ';
+			// HTML
+			print '<span class="fa fa-file-o"></span> '. $langs->trans("PathToModuleDocumentation", "HTML") . ' : ';
 			if (! dol_is_file($outputfiledoc)) print '<strong>'.$langs->trans("FileNotYetGenerated").'</strong>';
 			else {
 				print '<strong>';
@@ -2851,6 +2855,19 @@ elseif (! empty($module))
 				print '</a>';
 				print '</strong>';
 				print ' ('.$langs->trans("GeneratedOn").' '.dol_print_date(dol_filemtime($outputfiledoc), 'dayhour').')';
+			}
+			print '</strong><br>';
+
+			// PDF
+			print '<span class="fa fa-file-o"></span> '. $langs->trans("PathToModuleDocumentation", "PDF") . ' : ';
+			if (! dol_is_file($outputfiledocpdf)) print '<strong>'.$langs->trans("FileNotYetGenerated").'</strong>';
+			else {
+			    print '<strong>';
+			    print '<a href="'.$outputfiledocurlpdf.'" target="_blank">';
+			    print $outputfiledocpdf;
+			    print '</a>';
+			    print '</strong>';
+			    print ' ('.$langs->trans("GeneratedOn").' '.dol_print_date(dol_filemtime($outputfiledocpdf), 'dayhour').')';
 			}
 			print '</strong><br>';
 
