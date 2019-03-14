@@ -799,10 +799,10 @@ SCRIPT;
 				print_liste_field_titre("NbDaysToDelivery", $_SERVER["PHP_SELF"], "pfp.delivery_time_days", "", $param, '', $sortfield, $sortorder, 'right ');
 				print_liste_field_titre("ReputationForThisProduct", $_SERVER["PHP_SELF"], "pfp.supplier_reputation", "", $param, '', $sortfield, $sortorder, 'center ');
 				 if ($conf->barcode->enabled) {
-                    print_liste_field_titre("BarcodeValue", $_SERVER["PHP_SELF"], "pfp.barcode", "", $param, 'align="center"', $sortfield, $sortorder);
-                    print_liste_field_titre("BarcodeType", $_SERVER["PHP_SELF"], "pfp.fk_barcode_type", "", $param, 'align="center"', $sortfield, $sortorder);
+                    print_liste_field_titre("BarcodeValue", $_SERVER["PHP_SELF"], "pfp.barcode", "", $param, '', $sortfield, $sortorder, 'center ');
+                    print_liste_field_titre("BarcodeType", $_SERVER["PHP_SELF"], "pfp.fk_barcode_type", "", $param, '', $sortfield, $sortorder, 'center );
                 }				
-				print_liste_field_titre("DateModification",$_SERVER["PHP_SELF"],"pfp.tms","",$param,'align="right"',$sortfield,$sortorder);
+				print_liste_field_titre("DateModification", $_SERVER["PHP_SELF"], "pfp.tms", "", $param, '', $sortfield, $sortorder, 'right ');
 				print_liste_field_titre('');
 				print "</tr>\n";
 
