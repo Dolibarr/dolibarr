@@ -1391,6 +1391,8 @@ class ActionComm extends CommonObject
      */
     function build_exportfile($format,$type,$cachedelay,$filename,$filters)
     {
+    	global $hookmanager;
+
         // phpcs:enable
         global $conf,$langs,$dolibarr_main_url_root,$mysoc;
 
