@@ -1456,6 +1456,11 @@ class ActionComm extends CommonObject
             $sql.= " FROM (".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."actioncomm as a)";
             $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u on u.rowid = a.fk_user_author";	// Link to get author of event for export
             $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on s.rowid = a.fk_soc";
+
+			$parameters=array('filters' => $filters);
+			$reshook=$hookmanager->executeHooks('printFieldListFrom', $parameters);    // Note that $action and $object may have been modified by hook
+			$sql.=$hookmanager->resPrint;
+
 			// We must filter on assignement table
 			if ($filters['logint']) $sql.=", ".MAIN_DB_PREFIX."actioncomm_resources as ar";
 			$sql.= " WHERE a.fk_action=c.id";
@@ -1501,7 +1506,13 @@ class ActionComm extends CommonObject
                     elseif ($result < 0 || $condition == '=') $sql.= " AND ar.fk_element = 0";
                 }
             }
+
             $sql.= " AND a.datep IS NOT NULL";		// To exclude corrupted events and avoid errors in lightning/sunbird import
+
+			$parameters=array('filters' => $filters);
+			$reshook=$hookmanager->executeHooks('printFieldListWhere', $parameters);    // Note that $action and $object may have been modified by hook
+			$sql.=$hookmanager->resPrint;
+
             $sql.= " ORDER by datep";
             //print $sql;exit;
 
