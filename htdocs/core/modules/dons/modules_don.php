@@ -2,7 +2,7 @@
 /* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005      Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005      Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,24 +34,29 @@ require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
  */
 abstract class ModeleDon extends CommonDocGenerator
 {
-    var $error='';
+    /**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *  Return list of active generation modules
      *
-     *  @param	DoliDB	$db     			Database handler
-     *  @param  integer	$maxfilenamelength  Max length of value to show
+     *  @param	DoliDB  $db     			Database handler
+     *  @param  integer $maxfilenamelength  Max length of value to show
      *  @return	array						List of templates
      */
-    static function liste_modeles($db,$maxfilenamelength=0)
+    public static function liste_modeles($db, $maxfilenamelength = 0)
     {
+        // phpcs:enable
         global $conf;
 
         $type='donation';
         $liste=array();
 
         include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-        $liste=getListOfModels($db,$type,$maxfilenamelength);
+        $liste=getListOfModels($db, $type, $maxfilenamelength);
 
         return $liste;
     }
@@ -63,14 +68,17 @@ abstract class ModeleDon extends CommonDocGenerator
  */
 abstract class ModeleNumRefDons
 {
-    var $error='';
+    /**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 
     /**
      * 	Return if a module can be used or not
      *
      *  @return		boolean     true if module can be used
      */
-    function isEnabled()
+    public function isEnabled()
     {
         return true;
     }
@@ -80,7 +88,7 @@ abstract class ModeleNumRefDons
      *
      *  @return     string      Texte descripif
      */
-    function info()
+    public function info()
     {
         global $langs;
         $langs->load("bills");
@@ -92,7 +100,7 @@ abstract class ModeleNumRefDons
      *
      *  @return     string      Example
      */
-    function getExample()
+    public function getExample()
     {
         global $langs;
         $langs->load("bills");
@@ -105,7 +113,7 @@ abstract class ModeleNumRefDons
      *
      *  @return     boolean     false si conflit, true si ok
      */
-    function canBeActivated()
+    public function canBeActivated()
     {
         return true;
     }
@@ -115,7 +123,7 @@ abstract class ModeleNumRefDons
      *
      *  @return     string      Valeur
      */
-    function getNextValue()
+    public function getNextValue()
     {
         global $langs;
         return $langs->trans("NotAvailable");
@@ -126,7 +134,7 @@ abstract class ModeleNumRefDons
      *
      *  @return     string      Valeur
      */
-    function getVersion()
+    public function getVersion()
     {
         global $langs;
         $langs->load("admin");
@@ -138,4 +146,3 @@ abstract class ModeleNumRefDons
         return $langs->trans("NotAvailable");
     }
 }
-

@@ -1,9 +1,9 @@
 <?php
 /* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2012      Marcos García        <marcosgdf@gmail.com>
- * Copyright (C) 2017      Ferran Marcet       	 <fmarcet@2byte.es>
+ * Copyright (C) 2017      Ferran Marcet       	<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,14 +32,12 @@ if (! empty($conf->projet->enabled)) {
 	require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
 }
 
-$langs->load("orders");
-$langs->load("suppliers");
-$langs->load("companies");
-$langs->load('stocks');
+// Load translation files required by the page
+$langs->loadLangs(array("suppliers", "orders", "companies", "stocks"));
 
-$id = GETPOST('facid','int')?GETPOST('facid','int'):GETPOST('id','int');
+$id = GETPOST('facid', 'int')?GETPOST('facid', 'int'):GETPOST('id', 'int');
 $ref = GETPOST('ref');
-$action = GETPOST('action','aZ09');
+$action = GETPOST('action', 'aZ09');
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
@@ -62,7 +60,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php';	// Must be include, 
  * View
  */
 $help_url='EN:Module_Suppliers_Orders|FR:CommandeFournisseur|ES:Módulo_Pedidos_a_proveedores';
-llxHeader('',$langs->trans("Order"),$help_url);
+llxHeader('', $langs->trans("Order"), $help_url);
 
 $form = new Form($db);
 
@@ -155,7 +153,6 @@ if ($id > 0 || ! empty($ref))
     }
 }
 
-
+// End of page
 llxFooter();
-
 $db->close();

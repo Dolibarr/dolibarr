@@ -57,9 +57,11 @@ class AdminLibTest extends PHPUnit_Framework_TestCase
      *
      * @return AdminLibTest
      */
-    function __construct()
+    public function __construct()
     {
-        //$this->sharedFixture
+    	parent::__construct();
+
+    	//$this->sharedFixture
         global $conf,$user,$langs,$db;
         $this->savconf=$conf;
         $this->savuser=$user;
@@ -127,18 +129,18 @@ class AdminLibTest extends PHPUnit_Framework_TestCase
         $langs=$this->savlangs;
         $db=$this->savdb;
 
-        $result=versioncompare(array(3,1,-4),array(3,1,1));
+        $result=versioncompare(array(3,1,-4), array(3,1,1));
         print __METHOD__." result=".$result."\n";
-        $this->assertEquals(-3,$result);
-        $result=versioncompare(array(3,1,0),array(3,1,1));
+        $this->assertEquals(-3, $result);
+        $result=versioncompare(array(3,1,0), array(3,1,1));
         print __METHOD__." result=".$result."\n";
-        $this->assertEquals(-3,$result);
-        $result=versioncompare(array(3,1,0),array(3,2,0));
+        $this->assertEquals(-3, $result);
+        $result=versioncompare(array(3,1,0), array(3,2,0));
         print __METHOD__." result=".$result."\n";
-        $this->assertEquals(-2,$result);
-        $result=versioncompare(array(3,1,0),array(3,1,0));
+        $this->assertEquals(-2, $result);
+        $result=versioncompare(array(3,1,0), array(3,1,0));
         print __METHOD__." result=".$result."\n";
-        $this->assertEquals(0,$result);
+        $this->assertEquals(0, $result);
 
         return $result;
     }
@@ -164,5 +166,4 @@ class AdminLibTest extends PHPUnit_Framework_TestCase
 		$moduledescriptor->init();
 		$conf->setValues($db);
     }
-
 }

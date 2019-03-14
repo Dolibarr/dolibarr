@@ -11,7 +11,9 @@ MailFrom=Tên người gửi
 MailErrorsTo=Lỗi để
 MailReply=Trả lời
 MailTo=Thu (s)
+MailToUsers=To user(s)
 MailCC=Sao chép vào
+MailToCCUsers=Copy to users(s)
 MailCCC=Bản cache để
 MailTopic=Thư điện tử chủ đề
 MailText=Tin nhắn
@@ -164,4 +166,4 @@ InGoingEmailSetup=Incoming email setup
 OutGoingEmailSetupForEmailing=Outgoing email setup (for mass emailing)
 DefaultOutgoingEmailSetup=Default outgoing email setup
 Information=Thông tin
-
+ContactsWithThirdpartyFilter=Contacts avec filtre client

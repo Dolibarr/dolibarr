@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2017		Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2017-2018	Regis Houssin		<regis.houssin@capnetworks.com>
+/* Copyright (C) 2017-2018	Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2017-2018	Regis Houssin		<regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,8 +17,13 @@
  */
 
 /**
- *       \file       htdocs/admin/defaultvalues.php
- *       \brief      Page to set default values used used in a create form
+ *       \file      htdocs/admin/defaultvalues.php
+ *       \brief     Page to set default values used used in a create form
+ *       			Default values are stored into $user->default_values[url]['createform']['querystring'|'_noquery_'][paramkey]=paramvalue
+ *       			Default filters are stored into $user->default_values[url]['filters']['querystring'|'_noquery_'][paramkey]=paramvalue
+ *       			Default sort order are stored into $user->default_values[url]['sortorder']['querystring'|'_noquery_'][paramkey]=paramvalue
+ *       			Default focus are stored into $user->default_values[url]['focus']['querystring'|'_noquery_'][paramkey]=paramvalue
+ *       			Mandatory fields are stored into $user->default_values[url]['mandatory']['querystring'|'_noquery_'][paramkey]=paramvalue
  */
 
 require '../main.inc.php';
@@ -26,24 +31,20 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 
-$langs->load("companies");
-$langs->load("products");
-$langs->load("admin");
-$langs->load("sms");
-$langs->load("other");
-$langs->load("errors");
+// Load translation files required by the page
+$langs->loadLangs(array('companies', 'products', 'admin', 'sms', 'other', 'errors'));
 
 if (!$user->admin) accessforbidden();
 
-$id=GETPOST('rowid','int');
-$action=GETPOST('action','alpha');
+$id=GETPOST('rowid', 'int');
+$action=GETPOST('action', 'alpha');
 
-$mode = GETPOST('mode')?GETPOST('mode'):'createform';   // 'createform', 'filters', 'sortorder', 'focus'
+$mode = GETPOST('mode', 'aZ09')?GETPOST('mode', 'aZ09'):'createform';   // 'createform', 'filters', 'sortorder', 'focus'
 
-$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
-$sortfield = GETPOST("sortfield",'alpha');
-$sortorder = GETPOST("sortorder",'alpha');
-$page = GETPOST("page",'int');
+$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
+$sortfield = GETPOST("sortfield", 'alpha');
+$sortorder = GETPOST("sortorder", 'alpha');
+$page = GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
@@ -52,7 +53,7 @@ if (! $sortfield) $sortfield='page,param';
 if (! $sortorder) $sortorder='ASC';
 
 $defaulturl = GETPOST('defaulturl');
-$defaultkey = GETPOST('defaultkey','alpha');
+$defaultkey = GETPOST('defaultkey', 'alpha');
 $defaultvalue = GETPOST('defaultvalue');
 
 $defaulturl=preg_replace('/^\//', '', $defaulturl);
@@ -69,17 +70,17 @@ $hookmanager->initHooks(array('admindefaultvalues','globaladmin'));
  * Actions
  */
 
-if (GETPOST('cancel','alpha')) { $action='list'; $massaction=''; }
-if (! GETPOST('confirmmassaction','alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction=''; }
+if (GETPOST('cancel', 'alpha')) { $action='list'; $massaction=''; }
+if (! GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction=''; }
 
 $parameters=array('socid'=>$socid);
-$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+$reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
 // Purge search criteria
-if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // All tests are required to be compatible with all browsers
+if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All tests are required to be compatible with all browsers
 {
     $defaulturl='';
     $defaultkey='';
@@ -184,7 +185,7 @@ $form=new Form($db);
 $formadmin = new FormAdmin($db);
 
 $wikihelp='EN:Setup|FR:Paramétrage|ES:Configuración';
-llxHeader('',$langs->trans("Setup"),$wikihelp);
+llxHeader('', $langs->trans("Setup"), $wikihelp);
 
 $param='&mode='.$mode;
 
@@ -193,14 +194,14 @@ if (empty($conf->global->MAIN_ENABLE_DEFAULT_VALUES))
 {
     // Button off, click to enable
     $enabledisablehtml.= '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setMAIN_ENABLE_DEFAULT_VALUES&value=1'.$param.'">';
-    $enabledisablehtml.= img_picto($langs->trans("Disabled"),'switch_off');
+    $enabledisablehtml.= img_picto($langs->trans("Disabled"), 'switch_off');
     $enabledisablehtml.= '</a>';
 }
 else
 {
     // Button on, click to disable
     $enabledisablehtml.= '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setMAIN_ENABLE_DEFAULT_VALUES&value=0'.$param.'">';
-    $enabledisablehtml.= img_picto($langs->trans("Activated"),'switch_on');
+    $enabledisablehtml.= img_picto($langs->trans("Activated"), 'switch_on');
     $enabledisablehtml.= '</a>';
 }
 
@@ -234,9 +235,9 @@ if ($mode == 'sortorder')
 {
     print info_admin($langs->trans("WarningSettingSortOrder")).'<br>';
 }
-if ($mode == 'focus')
+if ($mode == 'mandatory')
 {
-    print info_admin($langs->trans("FeatureNotYetAvailable")).'<br>';
+	print info_admin($langs->trans("FeatureSupportedOnTextFieldsOnly")).'<br>';
 }
 
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -249,9 +250,9 @@ print '<tr class="liste_titre">';
 // Page
 $texthelp=$langs->trans("PageUrlForDefaultValues");
 if ($mode == 'createform') $texthelp.=$langs->trans("PageUrlForDefaultValuesCreate", 'societe/card.php', 'societe/card.php?abc=val1&def=val2');
-else $texthelp.=$langs->trans("PageUrlForDefaultValuesList", 'societe/list.php', 'societe/card.php?abc=val1&def=val2');
+else $texthelp.=$langs->trans("PageUrlForDefaultValuesList", 'societe/list.php', 'societe/list.php?abc=val1&def=val2');
 $texturl=$form->textwithpicto($langs->trans("Url"), $texthelp);
-print_liste_field_titre($texturl,$_SERVER["PHP_SELF"],'page,param','',$param,'',$sortfield,$sortorder);
+print_liste_field_titre($texturl, $_SERVER["PHP_SELF"], 'page,param', '', $param, '', $sortfield, $sortorder);
 // Field
 $texthelp=$langs->trans("TheKeyIsTheNameOfHtmlField");
 if ($mode != 'sortorder')
@@ -263,9 +264,9 @@ else
     $texthelp='field or alias.field';
     $textkey=$form->textwithpicto($langs->trans("Field"), $texthelp);
 }
-print_liste_field_titre($textkey,$_SERVER["PHP_SELF"],'param','',$param,'',$sortfield,$sortorder);
+print_liste_field_titre($textkey, $_SERVER["PHP_SELF"], 'param', '', $param, '', $sortfield, $sortorder);
 // Value
-if ($mode != 'focus')
+if ($mode != 'focus' && $mode != 'mandatory')
 {
     if ($mode != 'sortorder')
     {
@@ -286,9 +287,10 @@ if ($mode != 'focus')
     print_liste_field_titre($textvalue, $_SERVER["PHP_SELF"], 'value', '', $param, '', $sortfield, $sortorder);
 }
 // Entity
-if (! empty($conf->multicompany->enabled) && !$user->entity) print_liste_field_titre("Entity",$_SERVER["PHP_SELF"],'entity,page','',$param,'',$sortfield,$sortorder);
+if (! empty($conf->multicompany->enabled) && !$user->entity) print_liste_field_titre("Entity", $_SERVER["PHP_SELF"], 'entity,page', '', $param, '', $sortfield, $sortorder);
+else print_liste_field_titre("", $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder);
 // Actions
-print '<td align="center"></td>';
+print_liste_field_titre("", $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder);
 print "</tr>\n";
 
 
@@ -298,14 +300,14 @@ print "\n";
 print '<tr class="oddeven">';
 // Page
 print '<td>';
-print '<input type="text" class="flat minwidth200 maxwidthonsmartphone" name="defaulturl" value="">';
+print '<input type="text" class="flat minwidth200 maxwidthonsmartphone" name="defaulturl" value="'.dol_escape_htmltag(GETPOST('defaulturl', 'alphanohtml')).'">';
 print '</td>'."\n";
 // Field
 print '<td>';
-print '<input type="text" class="flat maxwidth100onsmartphone" name="defaultkey" value="">';
+print '<input type="text" class="flat maxwidth100onsmartphone" name="defaultkey" value="'.dol_escape_htmltag(GETPOST('defaultkey', 'alphanohtml')).'">';
 print '</td>';
 // Value
-if ($mode != 'focus')
+if ($mode != 'focus' && $mode != 'mandatory')
 {
     print '<td>';
     print '<input type="text" class="flat maxwidth100onsmartphone" name="defaultvalue" value="">';
@@ -315,15 +317,16 @@ if ($mode != 'focus')
 if (! empty($conf->multicompany->enabled) && !$user->entity)
 {
 	print '<td>';
-	print '<input type="text" class="flat" size="1" name="entity" value="'.$conf->entity.'">';
+	print '<input type="text" class="flat" size="1" disabled name="entity" value="'.$conf->entity.'">';	// We see environment, but to change it we must switch on other entity
 	print '</td>';
-	print '<td align="center">';
 }
 else
 {
-	print '<td align="center">';
+	print '<td class="center">';
 	print '<input type="hidden" name="entity" value="'.$conf->entity.'">';
+	print '</td>';
 }
+print '<td class="center">';
 $disabled='';
 if (empty($conf->global->MAIN_ENABLE_DEFAULT_VALUES)) $disabled=' disabled="disabled"';
 print '<input type="submit" class="button"'.$disabled.' value="'.$langs->trans("Add").'" name="add">';
@@ -349,7 +352,6 @@ if ($result)
 	{
 		$obj = $db->fetch_object($result);
 
-
 		print "\n";
 
 		print '<tr class="oddeven">';
@@ -367,7 +369,7 @@ if ($result)
 		print '</td>'."\n";
 
 		// Value
-		if ($mode != 'focus')
+		if ($mode != 'focus' && $mode != 'mandatory')
 		{
     		print '<td>';
     		/*print '<input type="hidden" name="const['.$i.'][rowid]" value="'.$obj->rowid.'">';
@@ -380,8 +382,10 @@ if ($result)
     		print '</td>';
 		}
 
+	    print '<td></td>';
+
 		// Actions
-		print '<td align="center">';
+		print '<td class="center">';
 		if ($action != 'edit' || GETPOST('rowid') != $obj->rowid)
 		{
     		print '<a href="'.$_SERVER['PHP_SELF'].'?rowid='.$obj->rowid.'&entity='.$obj->entity.'&mode='.$mode.'&action=edit'.((empty($user->entity) && $debug)?'&debug=1':'').'">'.img_edit().'</a>';
@@ -408,7 +412,6 @@ else
     dol_print_error($db);
 }
 
-
 print '</table>';
 print '</div>';
 
@@ -416,7 +419,6 @@ dol_fiche_end();
 
 print "</form>\n";
 
-
+// End of page
 llxFooter();
-
 $db->close();

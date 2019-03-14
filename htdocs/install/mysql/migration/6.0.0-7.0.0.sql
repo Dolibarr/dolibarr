@@ -36,6 +36,11 @@ ALTER TABLE llx_accounting_account DROP FOREIGN KEY fk_accountingaccount_fk_pcg_
 -- Drop foreign key, so next alter will be a success
 -- VMYSQLUTF8UNICODECI ALTER TABLE llx_accounting_account DROP FOREIGN KEY fk_accounting_account_fk_pcg_version;
 
+-- VMYSQL4.1 SET sql_mode = 'ALLOW_INVALID_DATES';
+-- VMYSQL4.1 update llx_accounting_account set tms = datec where DATE(STR_TO_DATE(tms, '%Y-%m-%d')) IS NULL;
+-- VMYSQL4.1 SET sql_mode = 'NO_ZERO_DATE';
+-- VMYSQL4.1 update llx_accounting_account set tms = datec where DATE(STR_TO_DATE(tms, '%Y-%m-%d')) IS NULL;
+
 -- VMYSQLUTF8UNICODECI ALTER TABLE llx_accounting_account MODIFY fk_pcg_version VARCHAR(20) CHARACTER SET utf8;
 -- VMYSQLUTF8UNICODECI ALTER TABLE llx_accounting_account MODIFY fk_pcg_version VARCHAR(20) COLLATE utf8_unicode_ci;
 -- VMYSQLUTF8UNICODECI ALTER TABLE llx_accounting_system MODIFY pcg_version VARCHAR(20) CHARACTER SET utf8;
@@ -293,6 +298,7 @@ ALTER TABLE llx_website_account ADD INDEX idx_website_account_login (login);
 ALTER TABLE llx_website_account ADD INDEX idx_website_account_import_key (import_key);
 ALTER TABLE llx_website_account ADD INDEX idx_website_account_status (status);
 ALTER TABLE llx_website_account ADD INDEX idx_website_account_fk_soc (fk_soc);
+ALTER TABLE llx_website_account ADD INDEX idx_website_account_fk_website (fk_website);
 
 ALTER TABLE llx_website_account ADD UNIQUE INDEX uk_website_account_login_website_soc(login, fk_website, fk_soc);
 
@@ -461,15 +467,18 @@ ALTER TABLE llx_extrafields ADD COLUMN enabled varchar(255) DEFAULT '1';
 ALTER TABLE llx_extrafields ADD COLUMN tms timestamp;
 
 -- We fix value of 'list' from 0 to 1 for all extrafields created before this migration
-UPDATE llx_extrafields SET list = 1 WHERE list = 0 AND fk_user_author IS NULL and fk_user_modif IS NULL and datec IS NULL;		
-UPDATE llx_extrafields SET list = 3 WHERE type = 'separate' AND list != 3;		
+--VMYSQL4.1 UPDATE llx_extrafields SET list = 1 WHERE list = 0 AND fk_user_author IS NULL and fk_user_modif IS NULL and datec IS NULL;		
+--VMYSQL4.1 UPDATE llx_extrafields SET list = 3 WHERE type = 'separate' AND list <> 3;		
+--VPGSQL8.2 UPDATE llx_extrafields SET list = 1 WHERE list::integer = 0 AND fk_user_author IS NULL and fk_user_modif IS NULL and datec IS NULL;		
+--VPGSQL8.2 UPDATE llx_extrafields SET list = 3 WHERE type = 'separate' AND list::integer <> 3;		
 
-ALTER TABLE llx_extrafields MODIFY COLUMN list integer DEFAULT 1;
+--VMYSQL4.1 ALTER TABLE llx_extrafields MODIFY COLUMN list integer DEFAULT 1;
+--VPGSQL8.2 ALTER TABLE llx_extrafields MODIFY COLUMN list integer DEFAULT 1 USING list::integer;
 --VPGSQL8.2 ALTER TABLE llx_extrafields ALTER COLUMN list SET DEFAULT 1;
 
 ALTER TABLE llx_extrafields MODIFY COLUMN langs varchar(64);
 
-ALTER TABLE llx_holiday_config MODIFY COLUMN name varchar(128);
+ALTER TABLE llx_holiday_config MODIFY COLUMN name varchar(128) NOT NULL;
 ALTER TABLE llx_holiday_config ADD UNIQUE INDEX idx_holiday_config (name);
 
 ALTER TABLE llx_societe MODIFY COLUMN ref_ext varchar(255);
@@ -665,9 +674,9 @@ ALTER TABLE llx_blockedlog ADD COLUMN user_fullname	varchar(255);
 ALTER TABLE llx_blockedlog MODIFY COLUMN ref_object varchar(255);
 
 -- SPEC : use database type 'double' to store monetary values
-ALTER TABLE llx_blockedlog MODIFY COLUMN amounts double(24,8);
-ALTER TABLE llx_chargessociales MODIFY COLUMN amount double(24,8);
-ALTER TABLE llx_commande MODIFY COLUMN amount_ht double(24,8);
+ALTER TABLE llx_blockedlog MODIFY COLUMN amounts double(24,8) NOT NULL;
+ALTER TABLE llx_chargesociales MODIFY COLUMN amount double(24,8);
+ALTER TABLE llx_commande MODIFY COLUMN amount_ht double(24,8) default 0;
 ALTER TABLE llx_commande_fournisseur MODIFY COLUMN amount_ht double(24,8);
 ALTER TABLE llx_don MODIFY COLUMN amount double(24,8);
 ALTER TABLE llx_expensereport_rules MODIFY COLUMN amount double(24,8);
@@ -717,3 +726,7 @@ DROP TABLE llx_c_accountancy_category;
 UPDATE llx_cronjob set entity = 1 where entity = 0 and label in ('RecurringInvoices', 'SendEmailsReminders');
 UPDATE llx_cronjob set entity = 0 where entity = 1 and label in ('PurgeDeleteTemporaryFilesShort', 'MakeLocalDatabaseDumpShort');
 
+-- VMYSQL4.3 ALTER TABLE llx_c_shipment_mode MODIFY COLUMN tracking varchar(255) NULL;
+-- VPGSQL8.2 ALTER TABLE llx_c_shipment_mode ALTER COLUMN tracking DROP NOT NULL;
+
+ALTER TABLE llx_paiementfourn ADD COLUMN fk_user_modif integer AFTER fk_user_author;

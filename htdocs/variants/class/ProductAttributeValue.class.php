@@ -52,13 +52,18 @@ class ProductAttributeValue
 	 */
 	public $value;
 
-	public function __construct(DoliDB $db)
-	{
+    /**
+     * Constructor
+     *
+     * @param   DoliDB $db     Database handler
+     */
+    public function __construct(DoliDB $db)
+    {
 		global $conf;
 
 		$this->db = $db;
 		$this->entity = $conf->entity;
-	}
+    }
 
 	/**
 	 * Gets a product attribute value

@@ -1,7 +1,6 @@
 # Dolibarr language file - Source file is en_US - agenda
 Actions=Termine
 LocalAgenda=interner Kalender
-Events=Termine
 EventsNb=Anzahl der Termine
 ListOfActions=Terminliste
 EventOnFullDay=Terminliste

@@ -1,11 +1,11 @@
 <?php
-/* Copyright (C) 2013-2014 Olivier Geffroy      <jeff@jeffinfo.com>
- * Copyright (C) 2013-2014 Florian Henry        <florian.henry@open-concept.pro>
- * Copyright (C) 2013-2017 Alexandre Spangaro   <aspangaro@zendsi.com>
- * Copyright (C) 2014-2015 Ari Elbaz (elarifr)  <github@accedinfo.com>
- * Copyright (C) 2014      Marcos García        <marcosgdf@gmail.com>
- * Copyright (C) 2014      Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2015      Jean-François Ferry  <jfefe@aternatik.fr>
+/* Copyright (C) 2013-2014  Olivier Geffroy         <jeff@jeffinfo.com>
+ * Copyright (C) 2013-2014  Florian Henry           <florian.henry@open-concept.pro>
+ * Copyright (C) 2013-2019  Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2014-2015  Ari Elbaz (elarifr)     <github@accedinfo.com>
+ * Copyright (C) 2014       Marcos García           <marcosgdf@gmail.com>
+ * Copyright (C) 2014       Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,6 +34,7 @@ require_once DOL_DOCUMENT_ROOT . '/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formaccounting.class.php';
 
+// Load translation files required by the page
 $langs->loadLangs(array("compta","bills","admin","accountancy","salaries","loan"));
 
 // Security check
@@ -42,7 +43,7 @@ if (empty($user->rights->accounting->chartofaccount))
 	accessforbidden();
 }
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 
 
 $list_account_main = array (
@@ -54,6 +55,8 @@ $list_account_main = array (
 $list_account = array (
     'ACCOUNTING_PRODUCT_BUY_ACCOUNT',
     'ACCOUNTING_PRODUCT_SOLD_ACCOUNT',
+    'ACCOUNTING_PRODUCT_SOLD_INTRA_ACCOUNT',
+    'ACCOUNTING_PRODUCT_SOLD_EXPORT_ACCOUNT',
     'ACCOUNTING_SERVICE_BUY_ACCOUNT',
     'ACCOUNTING_SERVICE_SOLD_ACCOUNT',
     'ACCOUNTING_VAT_BUY_ACCOUNT',
@@ -62,6 +65,7 @@ $list_account = array (
     'ACCOUNTING_ACCOUNT_SUSPENSE',
     'ACCOUNTING_ACCOUNT_TRANSFER_CASH',
     'DONATION_ACCOUNTINGACCOUNT',
+    'ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT',
     'LOAN_ACCOUNTING_ACCOUNT_CAPITAL',
     'LOAN_ACCOUNTING_ACCOUNT_INTEREST',
     'LOAN_ACCOUNTING_ACCOUNT_INSURANCE'
@@ -75,7 +79,7 @@ $list_account = array (
 $accounting_mode = empty($conf->global->ACCOUNTING_MODE) ? 'RECETTES-DEPENSES' : $conf->global->ACCOUNTING_MODE;
 
 
-if (GETPOST('change_chart'))
+if (GETPOST('change_chart', 'alpha'))
 {
     $chartofaccounts = GETPOST('chartofaccounts', 'int');
 
@@ -92,7 +96,7 @@ if (GETPOST('change_chart'))
 if ($action == 'update') {
 	$error = 0;
 
-	foreach ( $list_account_main as $constname ) {
+	foreach ($list_account_main as $constname) {
 		$constvalue = GETPOST($constname, 'alpha');
 
 		if (! dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
@@ -100,7 +104,7 @@ if ($action == 'update') {
 		}
 	}
 
-	foreach ( $list_account as $constname ) {
+	foreach ($list_account as $constname) {
 	    $constvalue = GETPOST($constname, 'alpha');
 
 	    if (! dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
@@ -152,7 +156,7 @@ foreach ($list_account_main as $key) {
     print $form->textwithpicto($label, $htmltext);
     print '</td>';
     // Value
-    print '<td>';  // Do not force align=right, or it align also the content of the select box
+    print '<td>';  // Do not force class=right, or it align also the content of the select box
     print $formaccounting->select_account($conf->global->$key, $key, 1, '', 1, 1);
     print '</td>';
     print '</tr>';
@@ -175,7 +179,7 @@ foreach ($list_account as $key) {
 	$label = $langs->trans($key);
 	print '<td width="50%">' . $label . '</td>';
 	// Value
-	print '<td>';  // Do not force align=right, or it align also the content of the select box
+	print '<td>';  // Do not force class=right, or it align also the content of the select box
 	print $formaccounting->select_account($conf->global->$key, $key, 1, '', 1, 1);
 	print '</td>';
 	print '</tr>';
@@ -189,5 +193,6 @@ print '<div class="center"><input type="submit" class="button" value="' . $langs
 
 print '</form>';
 
+// End of page
 llxFooter();
 $db->close();

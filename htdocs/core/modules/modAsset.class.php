@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004-2018 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2018      Alexandre Spangaro   <aspangaro@zendsi.com>
+ * Copyright (C) 2018      Alexandre Spangaro   <aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,15 +27,11 @@
 include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 
 
-// The class name should start with a lower case mod for Dolibarr to pick it up
-// so we ignore the Squiz.Classes.ValidClassName.NotCamelCaps rule.
-// @codingStandardsIgnoreStart
 /**
  *  Description and activation class for module FixedAssets
  */
 class modAsset extends DolibarrModules
 {
-	// @codingStandardsIgnoreEnd
 	/**
 	 * Constructor. Define names, constants, directories, boxes, permissions
 	 *
@@ -57,12 +53,12 @@ class modAsset extends DolibarrModules
 		// It is used to group modules by family in module setup page
 		$this->family = "financial";
 		// Module position in the family on 2 digits ('01', '10', '20', ...)
-		$this->module_position = '90';
+		$this->module_position = '70';
 		// Gives the possibility to the module, to provide his own family info and position of this family (Overwrite $this->family and $this->module_position. Avoid this)
 		//$this->familyinfo = array('myownfamily' => array('position' => '01', 'label' => $langs->trans("MyOwnFamily")));
 
 		// Module label (no space allowed), used if translation string 'ModuleAssetsName' not found (MyModue is name of module).
-		$this->name = preg_replace('/^mod/i','',get_class($this));
+		$this->name = preg_replace('/^mod/i', '', get_class($this));
 		// Module description, used if translation string 'ModuleAssetsDesc' not found (MyModue is name of module).
 		$this->description = "Assets module";
 		// Used only if file README.md and README-LL.md not found.
@@ -96,7 +92,7 @@ class modAsset extends DolibarrModules
 		$this->requiredby = array();	// List of module ids to disable if this one is disabled
 		$this->conflictwith = array();	// List of module class names as string this module is in conflict with
 		$this->langfiles = array("assets");
-		$this->phpmin = array(5,3);					// Minimum version of PHP required by module
+		$this->phpmin = array(5,4);					// Minimum version of PHP required by module
 		$this->need_dolibarr_version = array(7,0);	// Minimum version of Dolibarr required by module
 		$this->warnings_activation = array();                     // Warning to show when we activate module. array('always'='text') or array('FR'='textfr','ES'='textes'...)
 		$this->warnings_activation_ext = array();                 // Warning to show when we activate an external module. array('always'='text') or array('FR'='textfr','ES'='textes'...)
@@ -178,9 +174,9 @@ class modAsset extends DolibarrModules
 
 		// Cronjobs (List of cron jobs entries to add when module is enabled)
 		// unit_frequency must be 60 for minute, 3600 for hour, 86400 for day, 604800 for week
-		$this->cronjobs = array(
-			0=>array('label'=>'MyJob label', 'jobtype'=>'method', 'class'=>'/asset/class/asset.class.php', 'objectname'=>'Asset', 'method'=>'doScheduledJob', 'parameters'=>'', 'comment'=>'Comment', 'frequency'=>2, 'unitfrequency'=>3600, 'status'=>0, 'test'=>true)
-		);
+		//$this->cronjobs = array(
+		//	0=>array('label'=>'MyJob label', 'jobtype'=>'method', 'class'=>'/asset/class/asset.class.php', 'objectname'=>'Asset', 'method'=>'doScheduledJob', 'parameters'=>'', 'comment'=>'Comment', 'frequency'=>2, 'unitfrequency'=>3600, 'status'=>0, 'test'=>true)
+		//);
 		// Example: $this->cronjobs=array(0=>array('label'=>'My label', 'jobtype'=>'method', 'class'=>'/dir/class/file.class.php', 'objectname'=>'MyClass', 'method'=>'myMethod', 'parameters'=>'param1, param2', 'comment'=>'Comment', 'frequency'=>2, 'unitfrequency'=>3600, 'status'=>0, 'test'=>true),
 		//                                1=>array('label'=>'My label', 'jobtype'=>'command', 'command'=>'', 'parameters'=>'param1, param2', 'comment'=>'Comment', 'frequency'=>1, 'unitfrequency'=>3600*24, 'status'=>0, 'test'=>true)
 		// );
@@ -234,9 +230,30 @@ class modAsset extends DolibarrModules
 		$this->export_code[$r]=$this->rights_class.'_'.$r;
 		$this->export_label[$r]='AssetsLines';
 		$this->export_permission[$r]=array(array("asset","export"));
-		$this->export_fields_array[$r]=array('a.rowid'=>'Id','a.civility'=>"UserTitle",'a.lastname'=>"Lastname",'a.firstname'=>"Firstname",'a.login'=>"Login",'a.morphy'=>'Nature','a.societe'=>'Company','a.address'=>"Address",'a.zip'=>"Zip",'a.town'=>"Town",'d.nom'=>"State",'co.code'=>"CountryCode",'co.label'=>"Country",'a.phone'=>"PhonePro",'a.phone_perso'=>"PhonePerso",'a.phone_mobile'=>"PhoneMobile",'a.email'=>"Email",'a.birth'=>"Birthday",'a.statut'=>"Status",'a.photo'=>"Photo",'a.note_public'=>"NotePublic",'a.note_private'=>"NotePrivate",'a.datec'=>'DateCreation','a.datevalid'=>'DateValidation','a.tms'=>'DateLastModification','a.datefin'=>'DateEndSubscription','ta.rowid'=>'AssetTypeId','ta.label'=>'AssetTypeLabel','ta.accountancy_code_asset'=>'AccountancyCodeAsset','ta.accountancy_code_depreciation_asset'=>'AccountancyCodeDepreciationAsset','ta.accountancy_code_depreciation_expense'=>'AccountancyCodeDepreciationExpense');
-		$this->export_TypeFields_array[$r]=array('a.civility'=>"Text",'a.lastname'=>"Text",'a.firstname'=>"Text",'a.login'=>"Text",'a.morphy'=>'Text','a.societe'=>'Text','a.address'=>"Text",'a.zip'=>"Text",'a.town'=>"Text",'d.nom'=>"Text",'co.code'=>'Text','co.label'=>"Text",'a.phone'=>"Text",'a.phone_perso'=>"Text",'a.phone_mobile'=>"Text",'a.email'=>"Text",'a.birth'=>"Date",'a.statut'=>"Status",'a.note_public'=>"Text",'a.note_private'=>"Text",'a.datec'=>'Date','a.datevalid'=>'Date','a.tms'=>'Date','a.datefin'=>'Date','ta.rowid'=>'List:asset_type:label','ta.label'=>'Text','ta.accountancy_code_asset'=>'Text','ta.accountancy_code_depreciation_asset'=>'Text','ta.accountancy_code_depreciation_expense'=>'Text');
-		$this->export_entities_array[$r]=array('a.rowid'=>'member','a.civility'=>"member",'a.lastname'=>"member",'a.firstname'=>"member",'a.login'=>"member",'a.morphy'=>'member','a.societe'=>'member','a.address'=>"member",'a.zip'=>"member",'a.town'=>"member",'d.nom'=>"member",'co.code'=>"member",'co.label'=>"member",'a.phone'=>"member",'a.phone_perso'=>"member",'a.phone_mobile'=>"member",'a.email'=>"member",'a.birth'=>"member",'a.statut'=>"member",'a.photo'=>"member",'a.note_public'=>"member",'a.note_private'=>"member",'a.datec'=>'member','a.datevalid'=>'member','a.tms'=>'member','a.datefin'=>'member','ta.rowid'=>'asset_type','ta.label'=>'asset_type''ta.accountancy_code_asset'=>'asset_type''ta.accountancy_code_depreciation_asset'=>'asset_type''ta.accountancy_code_depreciation_expense'=>'asset_type');
+		$this->export_fields_array[$r]=array(
+			'a.rowid'=>'Id','a.civility'=>"UserTitle",'a.lastname'=>"Lastname",'a.firstname'=>"Firstname",'a.login'=>"Login",'a.morphy'=>'Nature',
+			'a.societe'=>'Company','a.address'=>"Address",'a.zip'=>"Zip",'a.town'=>"Town",'d.nom'=>"State",'co.code'=>"CountryCode",'co.label'=>"Country",
+			'a.phone'=>"PhonePro",'a.phone_perso'=>"PhonePerso",'a.phone_mobile'=>"PhoneMobile",'a.email'=>"Email",'a.birth'=>"Birthday",'a.statut'=>"Status",
+			'a.photo'=>"Photo",'a.note_public'=>"NotePublic",'a.note_private'=>"NotePrivate",'a.datec'=>'DateCreation','a.datevalid'=>'DateValidation',
+			'a.tms'=>'DateLastModification','a.datefin'=>'DateEndSubscription','ta.rowid'=>'AssetTypeId','ta.label'=>'AssetTypeLabel',
+			'ta.accountancy_code_asset'=>'AccountancyCodeAsset','ta.accountancy_code_depreciation_asset'=>'AccountancyCodeDepreciationAsset',
+			'ta.accountancy_code_depreciation_expense'=>'AccountancyCodeDepreciationExpense'
+		);
+		$this->export_TypeFields_array[$r]=array(
+			'a.civility'=>"Text",'a.lastname'=>"Text",'a.firstname'=>"Text",'a.login'=>"Text",'a.morphy'=>'Text','a.societe'=>'Text','a.address'=>"Text",
+			'a.zip'=>"Text",'a.town'=>"Text",'d.nom'=>"Text",'co.code'=>'Text','co.label'=>"Text",'a.phone'=>"Text",'a.phone_perso'=>"Text",'a.phone_mobile'=>"Text",
+			'a.email'=>"Text",'a.birth'=>"Date",'a.statut'=>"Status",'a.note_public'=>"Text",'a.note_private'=>"Text",'a.datec'=>'Date','a.datevalid'=>'Date',
+			'a.tms'=>'Date','a.datefin'=>'Date','ta.rowid'=>'List:asset_type:label','ta.label'=>'Text','ta.accountancy_code_asset'=>'Text','ta.accountancy_code_depreciation_asset'=>'Text',
+			'ta.accountancy_code_depreciation_expense'=>'Text'
+		);
+		$this->export_entities_array[$r]=array(
+			'a.rowid'=>'member','a.civility'=>"member",'a.lastname'=>"member",'a.firstname'=>"member",'a.login'=>"member",'a.morphy'=>'member',
+			'a.societe'=>'member','a.address'=>"member",'a.zip'=>"member",'a.town'=>"member",'d.nom'=>"member",'co.code'=>"member",'co.label'=>"member",
+			'a.phone'=>"member",'a.phone_perso'=>"member",'a.phone_mobile'=>"member",'a.email'=>"member",'a.birth'=>"member",'a.statut'=>"member",
+			'a.photo'=>"member",'a.note_public'=>"member",'a.note_private'=>"member",'a.datec'=>'member','a.datevalid'=>'member','a.tms'=>'member',
+			'a.datefin'=>'member','ta.rowid'=>'asset_type','ta.label'=>'asset_type','ta.accountancy_code_asset'=>'asset_type','ta.accountancy_code_depreciation_asset'=>'asset_type',
+			'ta.accountancy_code_depreciation_expense'=>'asset_type'
+		);
 		// Add extra fields
 		$keyforselect='asset'; $keyforelement='asset'; $keyforaliasextra='extra';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
@@ -260,7 +277,13 @@ class modAsset extends DolibarrModules
 		$this->import_entities_array[$r]=array();		// We define here only fields that use another icon that the one defined into import_icon
 		$this->import_tables_array[$r]=array('a'=>MAIN_DB_PREFIX.'asset','extra'=>MAIN_DB_PREFIX.'asset_extrafields');
 		$this->import_tables_creator_array[$r]=array('a'=>'fk_user_author');    // Fields to store import user id
-		$this->import_fields_array[$r]=array('a.civility'=>"UserTitle",'a.lastname'=>"Lastname*",'a.firstname'=>"Firstname",'a.login'=>"Login*","a.pass"=>"Password","a.fk_adherent_type"=>"MemberType*",'a.morphy'=>'Nature*','a.societe'=>'Company','a.address'=>"Address",'a.zip'=>"Zip",'a.town'=>"Town",'a.state_id'=>'StateId','a.country'=>"CountryId",'a.phone'=>"PhonePro",'a.phone_perso'=>"PhonePerso",'a.phone_mobile'=>"PhoneMobile",'a.email'=>"Email",'a.birth'=>"Birthday",'a.statut'=>"Status*",'a.photo'=>"Photo",'a.note_public'=>"NotePublic",'a.note_private'=>"NotePrivate",'a.datec'=>'DateCreation','a.datefin'=>'DateEndSubscription');
+		$this->import_fields_array[$r]=array(
+			'a.civility'=>"UserTitle",'a.lastname'=>"Lastname*",'a.firstname'=>"Firstname",'a.login'=>"Login*","a.pass"=>"Password",
+			"a.fk_adherent_type"=>"MemberType*",'a.morphy'=>'Nature*','a.societe'=>'Company','a.address'=>"Address",'a.zip'=>"Zip",'a.town'=>"Town",
+			'a.state_id'=>'StateId','a.country'=>"CountryId",'a.phone'=>"PhonePro",'a.phone_perso'=>"PhonePerso",'a.phone_mobile'=>"PhoneMobile",
+			'a.email'=>"Email",'a.birth'=>"Birthday",'a.statut'=>"Status*",'a.photo'=>"Photo",'a.note_public'=>"NotePublic",'a.note_private'=>"NotePrivate",
+			'a.datec'=>'DateCreation','a.datefin'=>'DateEndSubscription'
+		);
 		// Add extra fields
 		$sql="SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'asset' AND entity = ".$conf->entity;
 		$resql=$this->db->query($sql);
@@ -275,29 +298,37 @@ class modAsset extends DolibarrModules
 		}
 		// End add extra fields
 		$this->import_fieldshidden_array[$r]=array('extra.fk_object'=>'lastrowid-'.MAIN_DB_PREFIX.'asset');    // aliastable.field => ('user->id' or 'lastrowid-'.tableparent)
-		$this->import_regex_array[$r]=array('a.civility'=>'code@'.MAIN_DB_PREFIX.'c_civility','a.fk_adherent_type'=>'rowid@'.MAIN_DB_PREFIX.'adherent_type','a.morphy'=>'(phy|mor)','a.statut'=>'^[0|1]','a.datec'=>'^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$','a.datefin'=>'^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$');
-		$this->import_examplevalues_array[$r]=array('a.civility'=>"MR",'a.lastname'=>'Smith','a.firstname'=>'John','a.login'=>'jsmith','a.pass'=>'passofjsmith','a.fk_adherent_type'=>'1','a.morphy'=>'"mor" or "phy"','a.societe'=>'JS company','a.address'=>'21 jump street','a.zip'=>'55000','a.town'=>'New York','a.country'=>'1','a.email'=>'jsmith@example.com','a.birth'=>'1972-10-10','a.statut'=>"0 or 1",'a.note_public'=>"This is a public comment on member",'a.note_private'=>"This is private comment on member",'a.datec'=>dol_print_date($now,'%Y-%m__%d'),'a.datefin'=>dol_print_date(dol_time_plus_duree($now, 1, 'y'),'%Y-%m-%d'));
+		$this->import_regex_array[$r]=array(
+			'a.civility'=>'code@'.MAIN_DB_PREFIX.'c_civility','a.fk_adherent_type'=>'rowid@'.MAIN_DB_PREFIX.'adherent_type',
+			'a.morphy'=>'(phy|mor)','a.statut'=>'^[0|1]','a.datec'=>'^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$',
+			'a.datefin'=>'^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$'
+		);
+		$this->import_examplevalues_array[$r]=array(
+			'a.civility'=>"MR",'a.lastname'=>'Smith','a.firstname'=>'John','a.login'=>'jsmith','a.pass'=>'passofjsmith','a.fk_adherent_type'=>'1',
+			'a.morphy'=>'"mor" or "phy"','a.societe'=>'JS company','a.address'=>'21 jump street','a.zip'=>'55000','a.town'=>'New York','a.country'=>'1',
+			'a.email'=>'jsmith@example.com','a.birth'=>'1972-10-10','a.statut'=>"0 or 1",'a.note_public'=>"This is a public comment on member",
+			'a.note_private'=>"This is private comment on member",'a.datec'=>dol_print_date($now,'%Y-%m__%d'),'a.datefin'=>dol_print_date(dol_time_plus_duree($now, 1, 'y'),'%Y-%m-%d')
+		);
 		*/
 	}
 
 	/**
-	 *	Function called when module is enabled.
-	 *	The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
-	 *	It also creates data directories
+	 *  Function called when module is enabled.
+	 *  The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
+	 *  It also creates data directories
 	 *
-	 *	@param      string	$options    Options when enabling module ('', 'noboxes')
-	 *	@return     int             	1 if OK, 0 if KO
+	 *  @param      string	$options    Options when enabling module ('', 'noboxes')
+	 *  @return     int             	1 if OK, 0 if KO
 	 */
-	function init($options='')
-	{
-		global $conf;
+    public function init($options = '')
+    {
+        global $conf;
 
-		// Permissions
-		$this->remove($options);
+        // Permissions
+        $this->remove($options);
 
-		$sql = array();
+        $sql = array();
 
-		return $this->_init($sql,$options);
-	}
-
+        return $this->_init($sql, $options);
+    }
 }

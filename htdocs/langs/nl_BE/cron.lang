@@ -1,5 +1,3 @@
 # Dolibarr language file - Source file is en_US - cron
 EnabledAndDisabled=Geactiveerd en gedeactiveerd
-CronDtStart=Niet voor
-CronDtEnd=Niet na
 CronMethod=Methode

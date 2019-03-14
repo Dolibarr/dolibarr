@@ -3,7 +3,7 @@ PayBoxSetup=Настройка модуля PayBox
 PayBoxDesc=Этот модуль предложить страниц, чтобы платеж по <a href="http://www.paybox.com" target="_blank">Paybox</a> клиентами. Это может быть использовано для свободного платежа или за плату по тому или иному объекту Dolibarr (счетов-фактур, порядка, ...)
 FollowingUrlAreAvailableToMakePayments=После URL, можно предложить страницу к клиенту сделать платеж по Dolibarr объектов
 PaymentForm=Форма оплаты
-WelcomeOnPaymentPage=Добро пожаловать на наш интернет-платежей службы
+WelcomeOnPaymentPage=Welcome to our online payment service
 ThisScreenAllowsYouToPay=На этом экране можно сделать онлайн-платежей для %s.
 ThisIsInformationOnPayment=Это данные по оплате делать
 ToComplete=Для завершения
@@ -20,10 +20,11 @@ ToOfferALinkForOnlinePaymentOnInvoice=URL предложить %s онлайн �
 ToOfferALinkForOnlinePaymentOnContractLine=URL предложить% интернет-платежей с интерфейсом пользователя на контракт линия
 ToOfferALinkForOnlinePaymentOnFreeAmount=URL предложить% интернет-платежей с пользовательским интерфейсом для свободного сумму
 ToOfferALinkForOnlinePaymentOnMemberSubscription=URL предложить оплаты %s онлайн пользовательский интерфейс для членов подписки
+ToOfferALinkForOnlinePaymentOnDonation=URL to offer a %s online payment user interface for payment of donation
 YouCanAddTagOnUrl=Вы также можете добавить URL параметр И <b>тег= <i>значение</i></b> для любой из этих URL (требуется только для свободного платежа), чтобы добавить свой комментарий оплаты метки.
-SetupPayBoxToHavePaymentCreatedAutomatically=Настройте PayBox с <b>URL %s</b> иметь платежей создается автоматически, когда подтверждено paybox.
+SetupPayBoxToHavePaymentCreatedAutomatically=Setup your Paybox with url <b>%s</b> to have payment created automatically when validated by Paybox.
 YourPaymentHasBeenRecorded=Эта страница подтверждает, что ваш платеж был записан. Спасибо.
-YourPaymentHasNotBeenRecorded=Вы платеж не был записан и сделка была отменена. Спасибо.
+YourPaymentHasNotBeenRecorded=Your payment has NOT been recorded and the transaction has been canceled. Thank you.
 AccountParameter=Счет параметры
 UsageParameter=Использование параметров
 InformationToFindParameters=Помогите найти %s информацию об учетной записи

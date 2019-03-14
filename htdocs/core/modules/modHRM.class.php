@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2015 Alexandre Spangaro <aspangaro.dolibarr@gmail.com>
+/* Copyright (C) 2015 Alexandre Spangaro <aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  * \ingroup HRM
  * \brief   Description and activation file for module HRM
  */
-include_once (DOL_DOCUMENT_ROOT . "/core/modules/DolibarrModules.class.php");
+include_once DOL_DOCUMENT_ROOT . "/core/modules/DolibarrModules.class.php";
 
 /**
  * Class to describe and activate the HRM module
@@ -44,7 +44,7 @@ class modHRM extends DolibarrModules
 
 		$this->family = "hr";
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
-		$this->name = preg_replace( '/^mod/i', '', get_class($this));
+		$this->name = preg_replace('/^mod/i', '', get_class($this));
 		$this->description = "Management of employees carrier and feelings (department, employment contract)";
 
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
@@ -66,27 +66,16 @@ class modHRM extends DolibarrModules
 		$this->config_page_url = array('admin_hrm.php@hrm');
 
 		// Dependencies
-		$this->depends = array();
-		$this->requiredby = array(/*"
-			modSalaries,
-			modExpenseReport,
-			modHoliday
-		"*/);
-		$this->conflictwith = array();
-		$this->phpmin = array (
-			5,
-			3
-		); // Minimum version of PHP required by module
-		$this->need_dolibarr_version = array (
-			3,
-			9
-		); // Minimum version of Dolibarr required by module
-		$this->langfiles = array (
-			"hrm"
-		);
+		$this->hidden = false;			// A condition to hide module
+		$this->depends = array();		// List of module class names as string that must be enabled if this module is enabled
+		$this->requiredby = array(/*"modSalaries, modExpenseReport, modHoliday"*/);	// List of module ids to disable if this one is disabled
+		$this->conflictwith = array();	// List of module class names as string this module is in conflict with
+		$this->phpmin = array(5,4);		// Minimum version of PHP required by module
+		$this->need_dolibarr_version = array (3,9); // Minimum version of Dolibarr required by module
+		$this->langfiles = array ("hrm");
 
-		// Dictionnaries
-		$this->dictionnaries=array();
+		// Dictionaries
+		$this->dictionaries=array();
 
 		// Constantes
 		$this->const = array ();
@@ -131,7 +120,6 @@ class modHRM extends DolibarrModules
 		// Menus
 		//-------
 		$this->menu = 1;        // This module add menu entries. They are coded into menu manager.
-
 	}
 
 	/**
@@ -143,13 +131,13 @@ class modHRM extends DolibarrModules
 	 * @param string $options Enabling module ('', 'noboxes')
 	 * @return int if OK, 0 if KO
 	 */
-	function init($options='')
+	public function init($options = '')
 	{
 		// Permissions
 		$this->remove($options);
 
 		$sql = array();
 
-		return $this->_init($sql,$options);
+		return $this->_init($sql, $options);
 	}
 }

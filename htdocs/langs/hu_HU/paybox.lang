@@ -3,7 +3,7 @@ PayBoxSetup=PayBox modul beállítás
 PayBoxDesc=Ez a nodul lehetővé teszi az oldalak számára a <a href="http://www.paybox.com" target="_blank">Paybox</a>-on keresztüli fizetést az ügyfelek számára. Ingyenes fizetési megoldás.
 FollowingUrlAreAvailableToMakePayments=Következő URL-ek elérhetők a vevő részére egy oldal felajánlásához a Dollibar objektumok kifizetéséhez
 PaymentForm=Fizetési ürlap
-WelcomeOnPaymentPage=Üdvözöljük az online fizetési oldalunkon
+WelcomeOnPaymentPage=Welcome to our online payment service
 ThisScreenAllowsYouToPay=Ez az oldal lehetővé teszi az online fizetést %s számára.
 ThisIsInformationOnPayment=Ez az információ a fizetendő tételről
 ToComplete=Befejezni
@@ -20,10 +20,11 @@ ToOfferALinkForOnlinePaymentOnInvoice=URL egy %s online fizetési felhasználói
 ToOfferALinkForOnlinePaymentOnContractLine=URL egy %s online fizetési felhasználói csatolót ajánl egy vevői tétel sorhoz
 ToOfferALinkForOnlinePaymentOnFreeAmount=URL egy %s online fizetési felhasználói csatolót ajánl egy ingyenes összeghez
 ToOfferALinkForOnlinePaymentOnMemberSubscription=URL egy %s online fizetési felhasználói csatolót ajánl egy tag feliratkozáshoz
+ToOfferALinkForOnlinePaymentOnDonation=URL to offer a %s online payment user interface for payment of donation
 YouCanAddTagOnUrl=Hozzáadhat URL paramétereket <b>&tag=<i>érték</i></b> bármely ilyen URL (csak az ingyenes fizetéshez szükséges) a saját fizetési megjegyzés címke hozzáadásához.
-SetupPayBoxToHavePaymentCreatedAutomatically=PayBox beállítása ezzel az url-el <b>%s</b> a fizetések automata létrehozásához a paybox érvényesítése után.
+SetupPayBoxToHavePaymentCreatedAutomatically=Setup your Paybox with url <b>%s</b> to have payment created automatically when validated by Paybox.
 YourPaymentHasBeenRecorded=Ez az oldal megerősíti, hogy a fizetési lett felvéve. Köszönöm.
-YourPaymentHasNotBeenRecorded=Ön fizetést nem került rögzítésre és az ügylet törlésre került. Köszönöm.
+YourPaymentHasNotBeenRecorded=Your payment has NOT been recorded and the transaction has been canceled. Thank you.
 AccountParameter=Számla paraméterek
 UsageParameter=Használat paraméterek
 InformationToFindParameters=Segíts, hogy megtaláld a %s fiókadatokat

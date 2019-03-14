@@ -1,9 +1,7 @@
 # Dolibarr language file - Source file is en_US - exports
-ExportsArea=Zone d'exportation
 ImportArea=Zone d'importation
 NewExport=Nouvelle exportation
 NewImport=Nouvelle importation
-ExportableDatas=Ensemble de données exportables
 ImportableDatas=Ensemble de données Importable
 SelectExportDataSet=Choisissez l'ensemble de données que vous souhaitez exporter ...
 SelectImportDataSet=Choisissez l'ensemble de données que vous souhaitez importer ...
@@ -34,7 +32,6 @@ FormatedExportDesc3=Lorsque les données à exporter sont sélectionnées, vous 
 Sheet=Drap
 NoImportableData=Aucune donnée importable (aucun module avec des définitions permettant d'importer des données)
 SQLUsedForExport=Requête SQL utilisée pour créer un fichier d'exportation
-LineId=Id de ligne
 LineLabel=Étiquette de ligne
 LineDescription=Description de la ligne
 LineUnitPrice=Prix ​​unitaire de la ligne

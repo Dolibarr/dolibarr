@@ -58,3 +58,4 @@ MoreChoices=Introdu mai multe opţiuni pentru votanţi
 SurveyExpiredInfo=Sondaj de opinie închis sau termen pentru vot expirat.
 EmailSomeoneVoted=%sa completat o linie.\nPuteţi găsi sondajul dvs. la linkul: \n%s
 ShowSurvey=Show survey
+UserMustBeSameThanUserUsedToVote=You must have voted and use the same user name that the one used to vote, to post a comment

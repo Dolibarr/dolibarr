@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - ldap
-DomainPassword=Mật khẩu cho tên miền
 YouMustChangePassNextLogon=Mật khẩu cho người <b>dùng% s</b> trên <b>miền% s</b> phải được thay đổi.
 UserMustChangePassNextLogon=Người dùng phải thay đổi mật khẩu trên các tên miền% s
 LDAPInformationsForThisContact=Thông tin trong cơ sở dữ liệu LDAP cho liên hệ này
@@ -25,3 +24,4 @@ MemberTypeSynchronized=Member type synchronized
 ContactSynchronized=Liên hệ đồng bộ
 ForceSynchronize=Lực lượng đồng bộ hóa Dolibarr -> LDAP
 ErrorFailedToReadLDAP=Không thể đọc cơ sở dữ liệu LDAP. Kiểm tra thiết lập mô-đun LDAP và khả năng tiếp cận cơ sở dữ liệu.
+PasswordOfUserInLDAP=Password of user in LDAP

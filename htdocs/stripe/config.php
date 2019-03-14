@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2017		Alexandre Spangaro		<aspangaro@zendsi.com>
+/* Copyright (C) 2017		Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2017		Saasprov				<saasprov@gmail.com>
  * Copyright (C) 2017		Ferran Marcet			<fmarcet@2byte.es.com>
  *
@@ -44,14 +44,15 @@ $stripearrayofkeysbyenv = array(
 );
 
 $stripearrayofkeys = array();
-if (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox','alpha'))
+if (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox', 'alpha'))
 {
-	$stripearrayofkeys = $stripearrayofkeysbyenv[0];
+	$stripearrayofkeys = $stripearrayofkeysbyenv[0];	// Test
 }
 else
 {
-	$stripearrayofkeys = $stripearrayofkeysbyenv[1];
+	$stripearrayofkeys = $stripearrayofkeysbyenv[1];	// Live
 }
 
 \Stripe\Stripe::setApiKey($stripearrayofkeys['secret_key']);
-\Stripe\Stripe::setAppInfo("Stripe", DOL_VERSION, "https://www.dolibarr.org"); // add dolibarr version
+\Stripe\Stripe::setAppInfo("Dolibarr Stripe", DOL_VERSION, "https://www.dolibarr.org"); // add dolibarr version
+\Stripe\Stripe::setApiVersion("2018-11-08"); // force version API

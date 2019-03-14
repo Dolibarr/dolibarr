@@ -1,4 +1,5 @@
 # Dolibarr language file - en_US - Accounting Expert
+Accounting=Accounting
 ACCOUNTING_EXPORT_SEPARATORCSV=匯出檔案的欄位分隔字元
 ACCOUNTING_EXPORT_DATE=匯出檔案日期格式
 ACCOUNTING_EXPORT_PIECE=匯出數量
@@ -39,11 +40,11 @@ AccountWithNonZeroValues=非零值的會計項目
 ListOfAccounts=會計項目清單
 
 MainAccountForCustomersNotDefined=設定中客戶的主要會計項目未定義
-MainAccountForSuppliersNotDefined=設定中供應商的主要會計項目未定義
+MainAccountForSuppliersNotDefined=Main accounting account for vendors not defined in setup
 MainAccountForUsersNotDefined=設定中用戶的主要會計項目未定義
 MainAccountForVatPaymentNotDefined=設定中營業稅的應繳金額的主要會計項目未定義
 
-AccountancyArea=會計區
+AccountancyArea=Accounting area
 AccountancyAreaDescIntro=使用會計模組需要以下步驟：
 AccountancyAreaDescActionOnce=接下來的動作通常只做一次或一年做一次…
 AccountancyAreaDescActionOnceBis=下一步驟為當製作日記簿(記錄到日記帳簿及總分類帳)時，建議由預設會計項目以節省您的時間。
@@ -54,6 +55,7 @@ AccountancyAreaDescChartModel=步驟%s:從%s選單建立會計項目表模組
 AccountancyAreaDescChart=步驟%s: 從選單中建立或檢查會計項目表的內容%s。
 
 AccountancyAreaDescVat=步驟%s: 定義每一項營業稅率的預設會計項目。可使用選單輸入%s。
+AccountancyAreaDescDefault=STEP %s: Define default accounting accounts. For this, use the menu entry %s.
 AccountancyAreaDescExpenseReport=步驟%s: 定義每一費用報表類型的預設會計項目。可使用選單輸入%s。
 AccountancyAreaDescSal=步驟%s: 定義薪資付款的預設會計項目。可使用選單輸入%s。
 AccountancyAreaDescContrib=步驟%s: 定義特定費用(雜項稅捐)的預設會計項目。可使用選單輸入%s。
@@ -89,7 +91,7 @@ MenuProductsAccounts=產品會計項目
 ProductsBinding=產品會計項目
 Ventilation=關聯到各式會計項目
 CustomersVentilation=客戶發票的關聯
-SuppliersVentilation=供應商發票的關聯
+SuppliersVentilation=Vendor invoice binding
 ExpenseReportsVentilation=費用報表的關聯
 CreateMvts=建立新的交易
 UpdateMvts=交易的修改
@@ -97,7 +99,7 @@ ValidTransaction=驗證交易
 WriteBookKeeping=在總帳中記錄交易
 Bookkeeping=總帳
 AccountBalance=項目餘額
-ObjectsRef=Source object ref
+ObjectsRef=參考的來源物件
 CAHTF=稅前總採購供應商
 TotalExpenseReport=總費用報表
 InvoiceLines=關聯的各式發票
@@ -130,12 +132,14 @@ ACCOUNTING_LENGTH_GACCOUNT=會計項目的長度(如果設定為 6，會計項�
 ACCOUNTING_LENGTH_AACCOUNT=合作方會計項目長度(如果設定為 6，會計項目為 401，則會變成 401000)
 ACCOUNTING_MANAGE_ZERO=允許管理會計項目尾數的不同零值。某些國家有此需求(如瑞士)。若為off(預設)，則您可設定2個接下來的參數，要求程式增加虛擬零值。
 BANK_DISABLE_DIRECT_INPUT=不啟用在銀行帳戶中直接記錄交易
+ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=Enable draft export on journal
 
 ACCOUNTING_SELL_JOURNAL=銷貨簿
 ACCOUNTING_PURCHASE_JOURNAL=進貨簿
 ACCOUNTING_MISCELLANEOUS_JOURNAL=其他日記簿
 ACCOUNTING_EXPENSEREPORT_JOURNAL=費用日記簿
 ACCOUNTING_SOCIAL_JOURNAL=交際/社交會計項目
+ACCOUNTING_HAS_NEW_JOURNAL=Has new Journal
 
 ACCOUNTING_ACCOUNT_TRANSFER_CASH=過帳的會計項目
 ACCOUNTING_ACCOUNT_SUSPENSE=等待的會計項目
@@ -185,11 +189,12 @@ ListeMvts=移動清單
 ErrorDebitCredit=借方金額不等貸方金額
 AddCompteFromBK=新增各式會計項目到大類
 ReportThirdParty=合作方會計項目清單
-DescThirdPartyReport=在此查閱合作方中客戶及供應商名單及其的各式會計項目
+DescThirdPartyReport=Consult here the list of the third party customers and vendors and their accounting accounts
 ListAccounts=各式會計項目清單
 UnknownAccountForThirdparty=未知合作方會計項目。我們將使用%s
 UnknownAccountForThirdpartyBlocking=未知合作方會計項目。阻止錯誤
 UnknownAccountForThirdpartyAndWaitingAccountNotDefinedBlocking=未知合作方會計項目及等待會計項目未定義。阻止錯誤
+PaymentsNotLinkedToProduct=Payment not linked to any product / service
 
 Pcgtype=會計項目大類
 Pcgsubtype=會計項目中類
@@ -204,8 +209,8 @@ DescVentilDoneCustomer=在此查閱已開立各式發票客戶的清單及其產
 DescVentilTodoCustomer=關聯發票沒有關聯到產品會計項目
 ChangeAccount=用以下會計項目變更產品/服務的會計項目：
 Vide=-
-DescVentilSupplier=在此查閱供應商發票關聯或未關聯到產品會計項目的清單
-DescVentilDoneSupplier=在此查閱已開立發票供應商的清單及其會計項目
+DescVentilSupplier=Consult here the list of vendor invoice lines bound or not yet bound to a product accounting account
+DescVentilDoneSupplier=Consult here the list of the lines of invoices vendors and their accounting account
 DescVentilTodoExpenseReport=關聯費用報表行數還沒準備好要關聯費用會計項目
 DescVentilExpenseReport=在此查閱費用報表行數是否關聯到費用會計項目的清單
 DescVentilExpenseReportMore=若您在費用報表行數的類別設定會計項目，只要按一鍵<strong>"%s"</strong>，程式將會在您費用報表行及會計項目表的會計項目中進行關聯。若在費用目錄中會計項目未設定，或您仍有某些行數沒有關聯到任何會計項目，您要在選單 "<strong>%s</strong>" 中人工進行關聯。
@@ -215,7 +220,7 @@ ValidateHistory=自動地關聯
 AutomaticBindingDone=自動關聯已完成
 
 ErrorAccountancyCodeIsAlreadyUse=錯誤，您不能刪除此會計項目，因為已使用
-MvtNotCorrectlyBalanced=移動後借貸不平 。借方 = 1%s , 貸方 = 1%s
+MvtNotCorrectlyBalanced=Movement not correctly balanced. Debit = %s | Credit = %s
 FicheVentilation=關聯中卡片
 GeneralLedgerIsWritten=交易已紀錄到總帳中
 GeneralLedgerSomeRecordWasNotRecorded=某些交易未記錄。若沒有其他錯誤，這可能是因為已被記錄。
@@ -234,15 +239,15 @@ AccountingJournal=會計日記簿
 NewAccountingJournal=新會計日記簿
 ShowAccoutingJournal=顯示會計日記簿
 Nature=性質
-AccountingJournalType1=Miscellaneous operations
+AccountingJournalType1=雜項操作
 AccountingJournalType2=各式銷貨
 AccountingJournalType3=各式採購
 AccountingJournalType4=銀行
 AccountingJournalType5=費用報表
-AccountingJournalType8=Inventory
-AccountingJournalType9=Has-new
+AccountingJournalType8=庫存
+AccountingJournalType9=擁有-全新
 ErrorAccountingJournalIsAlreadyUse=此日記簿已使用
-AccountingAccountForSalesTaxAreDefinedInto=Note: Accounting account for Sales tax are defined into menu <b>%s</b> - <b>%s</b>
+AccountingAccountForSalesTaxAreDefinedInto=注意：銷項稅額的會計項目定義到選單 <b>%s</b> - <b>%s</b>
 
 ## Export
 ExportDraftJournal=匯出日記簿草稿
@@ -283,7 +288,7 @@ Formula=公式
 
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=某些必要的設定步驟沒有完成，請完成它們
-ErrorNoAccountingCategoryForThisCountry=此國家 %s 沒有會計項目大類可用(查閱首頁-設定-各式目錄)
+ErrorNoAccountingCategoryForThisCountry=此國家 %s 沒有會計項目大類可用(查閱首頁-設定-各式分類)
 ErrorInvoiceContainsLinesNotYetBounded=您試著記錄發票某行<strong>%s</strong>，但其他行數尚未完成關聯到會計項目。拒絕本張發票全部行數的記錄。
 ErrorInvoiceContainsLinesNotYetBoundedShort=發票中某些行數未關聯到會計項目。
 ExportNotSupported=已設定匯出格式不支援匯出到此頁
@@ -293,4 +298,9 @@ Binded=關聯行數
 ToBind=關聯行
 UseMenuToSetBindindManualy=不能自動檢測，使用選單 <a href="%s">%s</a> 用人工方式關聯
 
+## Import
+ImportAccountingEntries=Accounting entries
+
 WarningReportNotReliable=警告，此報表非依總帳製作的，所以不含總帳中人工修改的交易。若您日記簿是最新的日期，則記帳檢視會比較準確。
+ExpenseReportJournal=Expense Report Journal
+InventoryJournal=Inventory Journal

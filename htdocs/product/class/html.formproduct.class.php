@@ -29,24 +29,29 @@ require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
  */
 class FormProduct
 {
-	var $db;
-	var $error;
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 
 	// Cache arrays
-	var $cache_warehouses=array();
-	var $cache_lot=array();
+	public $cache_warehouses=array();
+	public $cache_lot=array();
 
 
 	/**
-	 *	Constructor
+	 *  Constructor
 	 *
-	 *	@param	DoliDB	$db		Database handler
+	 *  @param  DoliDB  $db     Database handler
 	 */
-	function __construct($db)
+	public function __construct($db)
 	{
 		$this->db = $db;
-
-		return 1;
 	}
 
 
@@ -64,13 +69,13 @@ class FormProduct
 	 * @param	array	$exclude		    warehouses ids to exclude
 	 * @return  int  		    		    Nb of loaded lines, 0 if already loaded, <0 if KO
 	 */
-	function loadWarehouses($fk_product=0, $batch = '', $status='', $sumStock = true, $exclude='')
+	public function loadWarehouses($fk_product = 0, $batch = '', $status = '', $sumStock = true, $exclude = '')
 	{
 		global $conf, $langs;
 
 		if (empty($fk_product) && count($this->cache_warehouses)) return 0;    // Cache already loaded and we do not want a list with information specific to a product
 
-		if (is_array($exclude))	$excludeGroups = implode("','",$exclude);
+		if (is_array($exclude))	$excludeGroups = implode("','", $exclude);
 
 		$warehouseStatus = array();
 
@@ -99,7 +104,7 @@ class FormProduct
 				$sql.= ", ps.reel as stock";
 			}
 		}
-		else if ($sumStock)
+		elseif ($sumStock)
 		{
 			$sql.= ", sum(ps.reel) as stock";
 		}
@@ -116,7 +121,7 @@ class FormProduct
 		$sql.= " WHERE e.entity IN (".getEntity('stock').")";
 		if (count($warehouseStatus))
 		{
-			$sql.= " AND e.statut IN (".$this->db->escape(implode(',',$warehouseStatus)).")";
+			$sql.= " AND e.statut IN (".$this->db->escape(implode(',', $warehouseStatus)).")";
 		}
 		else
 		{
@@ -137,7 +142,7 @@ class FormProduct
 			while ($i < $num)
 			{
 				$obj = $this->db->fetch_object($resql);
-				if ($sumStock) $obj->stock = price2num($obj->stock,5);
+				if ($sumStock) $obj->stock = price2num($obj->stock, 5);
 				$this->cache_warehouses[$obj->rowid]['id'] =$obj->rowid;
 				$this->cache_warehouses[$obj->rowid]['label']=$obj->label;
 				$this->cache_warehouses[$obj->rowid]['parent_id']=$obj->fk_parent;
@@ -160,6 +165,7 @@ class FormProduct
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Return full path to current warehouse in $tab (recursive function)
 	 *
@@ -167,8 +173,9 @@ class FormProduct
 	 * @param	String	$final_label	full label with all parents, separated by ' >> ' (completed on each call)
 	 * @return	String					full label with all parents, separated by ' >> '
 	 */
-	private function get_parent_path($tab, $final_label='') {
-
+    private function get_parent_path($tab, $final_label = '')
+    {
+        //phpcs:enable
 		if(empty($final_label)) $final_label = $tab['label'];
 
 		if(empty($tab['parent_id'])) return $final_label;
@@ -180,7 +187,6 @@ class FormProduct
 		}
 
 		return $final_label;
-
 	}
 
 	/**
@@ -204,11 +210,11 @@ class FormProduct
 	 *  @param  int     $showfullpath   1=Show full path of name (parent ref into label), 0=Show only ref of current warehouse
 	 * 	@return	string					HTML select
 	 */
-	function selectWarehouses($selected='',$htmlname='idwarehouse',$filterstatus='',$empty=0,$disabled=0,$fk_product=0,$empty_label='', $showstock=0, $forcecombo=0, $events=array(), $morecss='minwidth200', $exclude='', $showfullpath=1)
+	public function selectWarehouses($selected = '', $htmlname = 'idwarehouse', $filterstatus = '', $empty = 0, $disabled = 0, $fk_product = 0, $empty_label = '', $showstock = 0, $forcecombo = 0, $events = array(), $morecss = 'minwidth200', $exclude = '', $showfullpath = 1)
 	{
 		global $conf,$langs,$user;
 
-		dol_syslog(get_class($this)."::selectWarehouses $selected, $htmlname, $filterstatus, $empty, $disabled, $fk_product, $empty_label, $showstock, $forcecombo, $morecss",LOG_DEBUG);
+		dol_syslog(get_class($this)."::selectWarehouses $selected, $htmlname, $filterstatus, $empty, $disabled, $fk_product, $empty_label, $showstock, $forcecombo, $morecss", LOG_DEBUG);
 
 		$out='';
 		if (empty($conf->global->ENTREPOT_EXTRA_STATUS)) $filterstatus = '';
@@ -249,7 +255,7 @@ class FormProduct
      *    @param    int     $addempty    1=Add an empty value in list, 2=Add an empty value in list only if there is more than 2 entries.
      *    @return   void
      */
-    function formSelectWarehouses($page, $selected='', $htmlname='warehouse_id', $addempty=0)
+    public function formSelectWarehouses($page, $selected = '', $htmlname = 'warehouse_id', $addempty = 0)
     {
         global $langs;
         if ($htmlname != "none") {
@@ -260,7 +266,7 @@ class FormProduct
             print '<tr><td>';
             print $this->selectWarehouses($selected, $htmlname, '', $addempty);
             print '</td>';
-            print '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
+            print '<td class="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
             print '</tr></table></form>';
         } else {
             if ($selected) {
@@ -274,6 +280,7 @@ class FormProduct
         }
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Output a combo box with list of units
 	 *  pour l'instant on ne definit pas les unites dans la base
@@ -284,48 +291,61 @@ class FormProduct
 	 * 	@param	int			$adddefault			Add empty unit called "Default"
 	 * 	@return	void
 	 */
-	function select_measuring_units($name='measuring_units', $measuring_style='', $default='0', $adddefault=0)
+	public function select_measuring_units($name = 'measuring_units', $measuring_style = '', $default = '0', $adddefault = 0)
 	{
+        //phpcs:enable
 		print $this->load_measuring_units($name, $measuring_style, $default, $adddefault);
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Return a combo box with list of units
 	 *  For the moment, units labels are defined in measuring_units_string
 	 *
-	 *  @param	string		$name                Name of HTML field
+	 *  @param  string		$name                Name of HTML field
 	 *  @param  string		$measuring_style     Unit to show: weight, size, surface, volume
 	 *  @param  string		$default             Force unit
-	 * 	@param	int			$adddefault			Add empty unit called "Default"
-	 * 	@return	string
+	 *  @param  int			$adddefault			Add empty unit called "Default"
+	 *  @return string
 	 */
-	function load_measuring_units($name='measuring_units', $measuring_style='', $default='0', $adddefault=0)
+	public function load_measuring_units($name = 'measuring_units', $measuring_style = '', $default = '0', $adddefault = 0)
 	{
-		global $langs,$conf,$mysoc;
+        //phpcs:enable
+		global $langs, $conf, $mysoc, $db;
 		$langs->load("other");
 
-		$return='';
+		$return = '';
 
-		$measuring_units=array();
-		if ($measuring_style == 'weight') $measuring_units=array(-6=>1,-3=>1,0=>1,3=>1,98=>1,99=>1);
-		else if ($measuring_style == 'size') $measuring_units=array(-3=>1,-2=>1,-1=>1,0=>1,98=>1,99=>1);
-        else if ($measuring_style == 'surface') $measuring_units=array(-6=>1,-4=>1,-2=>1,0=>1,98=>1,99=>1);
-		else if ($measuring_style == 'volume') $measuring_units=array(-9=>1,-6=>1,-3=>1,0=>1,88=>1,89=>1,97=>1,99=>1,/* 98=>1 */);  // Liter is not used as already available with dm3
+		require_once DOL_DOCUMENT_ROOT . '/core/class/cunits.class.php';
+		$measuringUnits = new CUnits($db);
+        $result = $measuringUnits->fetchAll(
+            '',
+            '',
+            0,
+            0,
+            array(
+                't.unit_type' => $measuring_style,
+                't.active' => 1,
+            )
+        );
+		if ($result < 0) {
+			dol_print_error($db);
+			return - 1;
+		} else {
+			$return .= '<select class="flat" name="' . $name . '">';
+			if ($adddefault)
+				$return .= '<option value="0">' . $langs->trans("Default") . '</option>';
 
-		$return.= '<select class="flat" name="'.$name.'">';
-		if ($adddefault) $return.= '<option value="0">'.$langs->trans("Default").'</option>';
-
-		foreach ($measuring_units as $key => $value)
-		{
-			$return.= '<option value="'.$key.'"';
-			if ($key == $default)
-			{
-				$return.= ' selected';
+			foreach ($measuringUnits->records as $lines) {
+				$return .= '<option value="' . $lines->id . '"';
+				if ($lines->id == $default) {
+					$return .= ' selected';
+				}
+				// $return.= '>'.$value.'</option>';
+				$return .= '>' . $langs->transnoentitiesnoconv($lines->label) . '</option>';
 			}
-			//$return.= '>'.$value.'</option>';
-			$return.= '>'.measuring_units_string($key,$measuring_style).'</option>';
+			$return .= '</select>';
 		}
-		$return.= '</select>';
 
 		return $return;
 	}
@@ -348,11 +368,11 @@ class FormProduct
 	 *
 	 * 	@return	string					HTML select
 	 */
-	function selectLotStock($selected='',$htmlname='batch_id',$filterstatus='',$empty=0,$disabled=0,$fk_product=0,$fk_entrepot=0,$objectLines = array(),$empty_label='', $forcecombo=0, $events=array(), $morecss='minwidth200')
+	public function selectLotStock($selected = '', $htmlname = 'batch_id', $filterstatus = '', $empty = 0, $disabled = 0, $fk_product = 0, $fk_entrepot = 0, $objectLines = array(), $empty_label = '', $forcecombo = 0, $events = array(), $morecss = 'minwidth200')
 	{
 		global $langs;
 
-		dol_syslog(get_class($this)."::selectLot $selected, $htmlname, $filterstatus, $empty, $disabled, $fk_product, $fk_entrepot, $empty_label, $showstock, $forcecombo, $morecss",LOG_DEBUG);
+		dol_syslog(get_class($this)."::selectLot $selected, $htmlname, $filterstatus, $empty, $disabled, $fk_product, $fk_entrepot, $empty_label, $showstock, $forcecombo, $morecss", LOG_DEBUG);
 
 		$out='';
 		$productIdArray = array();

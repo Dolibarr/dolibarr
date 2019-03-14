@@ -1,7 +1,7 @@
 -- ========================================================================
 -- Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 -- Copyright (C) 2005-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
--- Copyright (C) 2011      Regis Houssin        <regis.houssin@capnetworks.com>
+-- Copyright (C) 2011      Regis Houssin        <regis.houssin@inodbox.com>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -54,6 +54,8 @@ create table llx_actioncomm
 
   label				varchar(255) NOT NULL,			-- label/title of event or topic of email
   note				text,							-- note of event or content of email
+  
+  calling_duration  integer,                        -- when event is a phone call, duration of phone call
   
   email_subject		varchar(255),					-- when event was an email, we store here the subject. content is stored into note.
   email_msgid		varchar(255),					-- when event was an email, we store here the msgid

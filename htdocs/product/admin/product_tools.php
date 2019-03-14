@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2012	   Regis Houssin       <regis.houssin@capnetworks.com>
+/* Copyright (C) 2012	   Regis Houssin       <regis.houssin@inodbox.com>
  * Copyright (C) 2013-2015 Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -31,13 +31,13 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
 
-$langs->load("admin");
-$langs->load("products");
+// Load translation files required by the page
+$langs->loadLangs(array('admin', 'products'));
 
 // Security check
 if (! $user->admin) accessforbidden();
 
-$action = GETPOST('action','alpha');
+$action = GETPOST('action', 'alpha');
 $oldvatrate=GETPOST('oldvatrate', 'alpha');
 $newvatrate=GETPOST('newvatrate', 'alpha');
 //$price_base_type=GETPOST('price_base_type');
@@ -118,17 +118,17 @@ if ($action == 'convert')
 
 							if ($price_base_type == 'TTC')
 							{
-								$newprice=price2num($objectstatic->multiprices_ttc[$level],'MU');    // Second param must be MU (we want a unit price so 'MU'. If unit price was on 4 decimal, we must keep 4 decimals)
+								$newprice=price2num($objectstatic->multiprices_ttc[$level], 'MU');    // Second param must be MU (we want a unit price so 'MU'. If unit price was on 4 decimal, we must keep 4 decimals)
 								$newminprice=$objectstatic->multiprices_min_ttc[$level];
 							}
 							else
 							{
-								$newprice=price2num($objectstatic->multiprices[$level],'MU');    // Second param must be MU (we want a unit price so 'MU'. If unit price was on 4 decimal, we must keep 4 decimals)
+								$newprice=price2num($objectstatic->multiprices[$level], 'MU');    // Second param must be MU (we want a unit price so 'MU'. If unit price was on 4 decimal, we must keep 4 decimals)
 								$newminprice=$objectstatic->multiprices_min[$level];
 							}
 							if ($newminprice > $newprice) $newminprice=$newprice;
 
-							$newvat=str_replace('*','',$newvatrate);
+							$newvat=str_replace('*', '', $newvatrate);
 							$localtaxes_type=getLocalTaxesFromRate($newvat, 0, $mysoc, $mysoc);
 							$newnpr=$objectstatic->multiprices_recuperableonly[$level];
 							$newdefaultvatcode=$vat_src_code_new;
@@ -149,16 +149,16 @@ if ($action == 'convert')
 						$price_base_type = $objectstatic->price_base_type;	// Get price_base_type of product/service to keep the same for update
 						if ($price_base_type == 'TTC')
 						{
-							$newprice=price2num($objectstatic->price_ttc,'MU');    // Second param must be MU (we want a unit price so 'MU'. If unit price was on 4 decimal, we must keep 4 decimals)
+							$newprice=price2num($objectstatic->price_ttc, 'MU');    // Second param must be MU (we want a unit price so 'MU'. If unit price was on 4 decimal, we must keep 4 decimals)
 							$newminprice=$objectstatic->price_min_ttc;
 						}
 						else
 						{
-							$newprice=price2num($objectstatic->price,'MU');    // Second param must be MU (we want a unit price so 'MU'. If unit price was on 4 decimal, we must keep 4 decimals)
+							$newprice=price2num($objectstatic->price, 'MU');    // Second param must be MU (we want a unit price so 'MU'. If unit price was on 4 decimal, we must keep 4 decimals)
 							$newminprice=$objectstatic->price_min;
 						}
 						if ($newminprice > $newprice) $newminprice=$newprice;
-						$newvat=str_replace('*','',$newvatrate);
+						$newvat=str_replace('*', '', $newvatrate);
 						$localtaxes_type=getLocalTaxesFromRate($newvat, 0, $mysoc, $mysoc);
 						$newnpr=$objectstatic->recuperableonly;
 						$newdefaultvatcode=$vat_src_code_new;
@@ -216,11 +216,11 @@ if ($action == 'convert')
 					//}
 					//else
 					//{
-						$newprice=price2num($obj->price,'MU');    // Second param must be MU (we want a unit price so 'MU'. If unit price was on 4 decimal, we must keep 4 decimals)
+						$newprice=price2num($obj->price, 'MU');    // Second param must be MU (we want a unit price so 'MU'. If unit price was on 4 decimal, we must keep 4 decimals)
 						//$newminprice=$objectstatic2->fourn_price_min;
 					//}
 					//if ($newminprice > $newprice) $newminprice=$newprice;
-					$newvat=str_replace('*','',$newvatrate);
+					$newvat=str_replace('*', '', $newvatrate);
 					$localtaxes_type=getLocalTaxesFromRate($newvat, 0, $mysoc, $mysoc);
 					//$newnpr=$objectstatic2->recuperableonly;
 					$newnpr=0;
@@ -260,14 +260,13 @@ if ($action == 'convert')
 		// Output result
 		if (! $error)
 		{
-			if ($nbrecordsmodified > 0) setEventMessages($langs->trans("RecordsModified",$nbrecordsmodified), null, 'mesgs');
+			if ($nbrecordsmodified > 0) setEventMessages($langs->trans("RecordsModified", $nbrecordsmodified), null, 'mesgs');
 			else setEventMessages($langs->trans("NoRecordFound"), null, 'warnings');
 		}
 		else
 		{
 			setEventMessages($langs->trans("Error"), null, 'errors');
 		}
-
 	}
 }
 
@@ -279,9 +278,9 @@ $form=new Form($db);
 
 $title = $langs->trans('ProductVatMassChange');
 
-llxHeader('',$title);
+llxHeader('', $title);
 
-print load_fiche_titre($title,'','title_setup');
+print load_fiche_titre($title, '', 'title_setup');
 
 print $langs->trans("ProductVatMassChangeDesc").'<br><br>';
 
@@ -293,8 +292,6 @@ if (empty($mysoc->country_code))
 }
 else
 {
-
-	$var=true;
 
 	print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />';
@@ -344,6 +341,6 @@ else
 	print '</form>';
 }
 
+// End of page
 llxFooter();
-
 $db->close();

@@ -31,14 +31,15 @@ ViewWeek=Vista setmanal
 ViewPerUser=Vista d'usuaris
 ViewPerType=Vista per tipus
 AutoActions= Inclusió automàtica a l'agenda
-AgendaAutoActionDesc= Defineix aqui els esdeveniments pels que vols que Dolibarr crei automàticament un esdeveniment en l'agenda. Si no hi ha res seleccionat, només les accions manuals s'inclouran registrades i visibles en l'agenda. El registre automàtic d'accions de negoci fetes pels objectes (validació, canvi d'estat) no es desaran.
-AgendaSetupOtherDesc= Aquesta pàgina permet configurar algunes opcions que permeten exportar una vista de la seva agenda Dolibar a un calendari extern (thunderbird, google calendar, ...)
+AgendaAutoActionDesc= Aquí pots definir esdeveniments que vols que Dolibarr creï automàticament a Agenda. Si no hi ha res comprovat, només s'inclouran les accions manuals als registres i es mostraran a Agenda. El seguiment automàtic de les accions empresarials realitzades en objectes (validació, canvi d'estat) no es desarà.
+AgendaSetupOtherDesc= Aquesta pàgina ofereix opcions per permetre l'exportació dels teus esdeveniments Dolibarr a un calendari extern (thunderbird, google calendar, ...)
 AgendaExtSitesDesc=Aquesta pàgina permet configurar calendaris externs per a la seva visualització en l'agenda de Dolibarr.
 ActionsEvents=Esdeveniments per a què Dolibarr crei una acció de forma automàtica
-EventRemindersByEmailNotEnabled=Els recordatoris d'esdeveniments per correu electrònic no estaven habilitats en la configuració del mòdul d'Agenda.
+EventRemindersByEmailNotEnabled=Els recordatoris d'esdeveniments per correu electrònic no estaven habilitats en la configuració del mòdul %s.
 ##### Agenda event labels #####
 NewCompanyToDolibarr=Tercer %s creat
 ContractValidatedInDolibarr=Contracte %s validat
+CONTRACT_DELETEInDolibarr=Contracte %s eliminat
 PropalClosedSignedInDolibarr=Pressupost %s firmat
 PropalClosedRefusedInDolibarr=Pressupost %s rebutjat
 PropalValidatedInDolibarr=Pressupost %s validat
@@ -53,9 +54,9 @@ MemberValidatedInDolibarr=Soci %s validat
 MemberModifiedInDolibarr=Soci %s modificat
 MemberResiliatedInDolibarr=Membre %s acabat
 MemberDeletedInDolibarr=Soci %s eliminat
-MemberSubscriptionAddedInDolibarr=Subscription %s for member %s added
-MemberSubscriptionModifiedInDolibarr=Subscription %s for member %s modified
-MemberSubscriptionDeletedInDolibarr=Subscription %s for member %s deleted
+MemberSubscriptionAddedInDolibarr=Subscripció %s per a membre %s, afegida
+MemberSubscriptionModifiedInDolibarr=Subscripció %s per a membre %s, modificada
+MemberSubscriptionDeletedInDolibarr=Subscripció %s per a membre %s, eliminada
 ShipmentValidatedInDolibarr=Expedició %s validada
 ShipmentClassifyClosedInDolibarr=Expedició %s classificada com a facturada
 ShipmentUnClassifyCloseddInDolibarr=Expedició %s classificada com a reoberta
@@ -100,7 +101,7 @@ AgendaUrlOptions3=<b>logina=%s</b> ​​per a restringir insercions a les accio
 AgendaUrlOptionsNotAdmin=<b>logina=!%s</b> ​​per a restringir la producció d'accions que no pertanyen a l'usuari <b>%s</b>.
 AgendaUrlOptions4=<b>logint=%s</b> per a restringir la producció d'accions assignades a l'usuari <b>%s</b> (propietari i altres).
 AgendaUrlOptionsProject=<b>project=PROJECT_ID</b> per a restringir la sortida d'accions associades al projecta <b>PROJECT_ID</b>.
-AgendaUrlOptionsNotAutoEvent=<b>notactiontype = systemauto</b> per excloure l'acció automàtica.
+AgendaUrlOptionsNotAutoEvent=<b>notactiontype=systemauto</b> per excloure esdeveniments automàtics.
 AgendaShowBirthdayEvents=Mostra aniversaris dels contactes
 AgendaHideBirthdayEvents=Oculta aniversaris dels contactes
 Busy=Ocupat
@@ -110,9 +111,9 @@ DefaultWorkingHours=Hores de treball per defecte durant el dia (Exemple: 9-18)
 # External Sites ical
 ExportCal=Exportar calendari
 ExtSites=Calendaris externs
-ExtSitesEnableThisTool=Mostrar calendaris externs (definint a la configuració global) a l'agenda. No afecta als calendaris externs definits per l'usuari
+ExtSitesEnableThisTool=Mostra calendaris externs (definit a la configuració global) a Agenda. No afecta els calendaris externs definits pels usuaris.
 ExtSitesNbOfAgenda=Nombre de calendaris
-AgendaExtNb=Calendar no. %s
+AgendaExtNb=Calendari núm. %s
 ExtSiteUrlAgenda=Url d'accés a l'arxiu. ical
 ExtSiteNoLabel=Sense descripció
 VisibleTimeRange=Rang de temps visible

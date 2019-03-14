@@ -58,3 +58,4 @@ MoreChoices=Įveskite daugiau pasirinkimų balsuotojams
 SurveyExpiredInfo=Apklausa uždaryta arba baigiasi balsavimo laikas.
 EmailSomeoneVoted=%s užpildė eilutę.\nJūs galite rasti savo apklausą:\n%s
 ShowSurvey=Rodyti apklausą
+UserMustBeSameThanUserUsedToVote=You must have voted and use the same user name that the one used to vote, to post a comment

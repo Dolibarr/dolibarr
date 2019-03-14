@@ -34,11 +34,11 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
 	exit(-1);
 }
 
-require_once($path."../../htdocs/master.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/compta/prelevement/class/bonprelevement.class.php");
-require_once(DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php");
-require_once(DOL_DOCUMENT_ROOT."/societe/class/societe.class.php");
-require_once(DOL_DOCUMENT_ROOT."/compta/paiement/class/paiement.class.php");
+require_once $path."../../htdocs/master.inc.php";
+require_once DOL_DOCUMENT_ROOT."/compta/prelevement/class/bonprelevement.class.php";
+require_once DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php";
+require_once DOL_DOCUMENT_ROOT."/societe/class/societe.class.php";
+require_once DOL_DOCUMENT_ROOT."/compta/paiement/class/paiement.class.php";
 
 // Global variables
 $version=DOL_VERSION;
@@ -51,7 +51,7 @@ $error=0;
 
 @set_time_limit(0);
 print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." *****\n";
-dol_syslog($script_file." launched with arg ".join(',',$argv));
+dol_syslog($script_file." launched with arg ".join(',', $argv));
 
 $datetimeprev = dol_now();
 
@@ -71,7 +71,7 @@ if (! isset($argv[1])) {	// Check parameters
 
 $withdrawreceipt=new BonPrelevement($db);
 // $conf->global->PRELEVEMENT_CODE_BANQUE and $conf->global->PRELEVEMENT_CODE_GUICHET should be empty
-$result=$withdrawreceipt->create($conf->global->PRELEVEMENT_CODE_BANQUE,$conf->global->PRELEVEMENT_CODE_GUICHET,$argv[1]);
+$result=$withdrawreceipt->create($conf->global->PRELEVEMENT_CODE_BANQUE, $conf->global->PRELEVEMENT_CODE_GUICHET, $argv[1]);
 
 
 $db->close();

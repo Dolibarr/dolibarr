@@ -15,7 +15,7 @@
 --
 --
 
-create table llx_c_ticketsup_severity
+create table llx_c_ticket_severity
 (
   rowid			integer AUTO_INCREMENT PRIMARY KEY,
   entity		integer DEFAULT 1,

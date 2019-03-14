@@ -59,9 +59,11 @@ class CommandeFournisseurTest extends PHPUnit_Framework_TestCase
      *
      * @return CommandeFournisseurTest
      */
-    function __construct()
+    public function __construct()
     {
-        //$this->sharedFixture
+    	parent::__construct();
+
+    	//$this->sharedFixture
         global $conf,$user,$langs,$db;
         $this->savconf=$conf;
         $this->savuser=$user;
@@ -135,7 +137,7 @@ class CommandeFournisseurTest extends PHPUnit_Framework_TestCase
         $societe=new Societe($db);
         $societe->fetch($socid);
         $product=new ProductFournisseur($db);
-        $product->fetch(0,'PIDRESS');
+        $product->fetch(0, 'PIDRESS');
         if ($product->id <= 0) { print "\n".__METHOD__." A product with ref PIDRESS must exists into database"; die(); }
 
         $quantity=10;
@@ -383,5 +385,4 @@ class CommandeFournisseurTest extends PHPUnit_Framework_TestCase
         $this->assertLessThan($result, 0);
         return $result;
     }
-
 }

@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2010-2011	Regis Houssin <regis.houssin@capnetworks.com>
+/* Copyright (C) 2010-2011	Regis Houssin <regis.houssin@inodbox.com>
  * Copyright (C) 2013		Juanjo Menent <jmenent@2byte.es>
  * Copyright (C) 2014       Marcos García <marcosgdf@gmail.com>
  *
@@ -45,7 +45,7 @@ foreach($linkedObjectBlock as $key => $objectlink)
 	<td><?php echo $langs->trans("ExpenseReport"); ?></td>
     <td><?php echo $objectlink->getNomUrl(1); ?></td>
     <td></td>
-	<td align="center"><?php echo dol_print_date($objectlink->date_debut,'day'); ?></td>
+	<td align="center"><?php echo dol_print_date($objectlink->date_debut, 'day'); ?></td>
 	<td align="right"><?php
 		if ($user->rights->expensereport->lire) {
 			$total = $total + $objectlink->total_ht;

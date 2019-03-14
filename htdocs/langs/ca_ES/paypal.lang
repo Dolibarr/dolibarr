@@ -14,7 +14,6 @@ PaypalModeOnlyPaypal=Només PayPal
 ONLINE_PAYMENT_CSS_URL=URL opcional del full d'estil CSS a la pàgina de pagament en línia
 ThisIsTransactionId=Identificador de la transacció: <b>%s</b>
 PAYPAL_ADD_PAYMENT_URL=Afegir la url del pagament Paypal en enviar un document per e-mail
-PredefinedMailContentLink=You can click on the link below to make your payment if it is not already done.<br><br>%s<br><br>
 YouAreCurrentlyInSandboxMode=Actualment esteu en el mode %s "sandbox"
 NewOnlinePaymentReceived=Nou pagament online rebut
 NewOnlinePaymentFailed=S'ha intentat el nou pagament online però ha fallat

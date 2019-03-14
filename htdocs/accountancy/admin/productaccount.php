@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2013-2014 Olivier Geffroy      <jeff@jeffinfo.com>
- * Copyright (C) 2013-2016 Alexandre Spangaro   <aspangaro@zendsi.com>
+ * Copyright (C) 2013-2016 Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2014 	   Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2014 	   Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2015      Ari Elbaz (elarifr)	<github@accedinfo.com>
@@ -34,7 +34,7 @@ require_once DOL_DOCUMENT_ROOT . '/core/class/html.formaccounting.class.php';
 require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingaccount.class.php';
 require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 
-// Load traductions files requiredby by page
+// Load translation files required by the page
 $langs->loadLangs(array("companies","compta","accountancy","products"));
 
 // Security check
@@ -45,7 +45,7 @@ if (! $user->rights->accounting->bind->write)
     accessforbidden();
 
 // search & action GETPOST
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $codeventil_buy = GETPOST('codeventil_buy', 'array');
 $codeventil_sell = GETPOST('codeventil_sell', 'array');
 $chk_prod = GETPOST('chk_prod', 'array');
@@ -62,13 +62,15 @@ $search_current_account_valid = GETPOST('search_current_account_valid', 'alpha')
 if ($search_current_account_valid == '') $search_current_account_valid='withoutvalidaccount';
 
 $accounting_product_mode = GETPOST('accounting_product_mode', 'alpha');
-$btn_changeaccount = GETPOST('changeaccount');
-$btn_changetype = GETPOST('changetype');
+$btn_changeaccount = GETPOST('changeaccount', 'alpha');
+$btn_changetype = GETPOST('changetype', 'alpha');
 
-$limit = GETPOST('limit','int')?GETPOST('limit','int'):(empty($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION)?$conf->liste_limit:$conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION);
-$sortfield = GETPOST("sortfield",'alpha');
-$sortorder = GETPOST("sortorder",'alpha');
-$page = GETPOST("page",'int');
+if (empty($accounting_product_mode)) $accounting_product_mode='ACCOUNTANCY_SELL';
+
+$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):(empty($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION)?$conf->liste_limit:$conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION);
+$sortfield = GETPOST("sortfield", 'alpha');
+$sortorder = GETPOST("sortorder", 'alpha');
+$page = GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
@@ -85,15 +87,15 @@ $arrayfields=array();
  * Actions
  */
 
-if (GETPOST('cancel','alpha')) { $action='list'; $massaction=''; }
-if (! GETPOST('confirmmassaction','alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction=''; }
+if (GETPOST('cancel', 'alpha')) { $action='list'; $massaction=''; }
+if (! GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction=''; }
 
 $parameters=array();
-$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+$reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 // Purge search criteria
-if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // All test are required to be compatible with all browsers
+if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All test are required to be compatible with all browsers
 {
     $search_ref = '';
     $search_label = '';
@@ -111,8 +113,6 @@ if ($action == 'update') {
 				'ACCOUNTANCY_SELL',
 				'ACCOUNTANCY_BUY'
 		);
-
-		$accounting_product_mode = GETPOST('accounting_product_mode', 'alpha');
 
 		if (in_array($accounting_product_mode, $accounting_product_modes)) {
 
@@ -134,7 +134,7 @@ if ($action == 'update') {
 			$arrayofdifferentselectedvalues = array();
 
 			$cpt = 0; $ok = 0; $ko = 0;
-			foreach ( $chk_prod as $productid )
+			foreach ($chk_prod as $productid)
 			{
 				$accounting_account_id = GETPOST('codeventil_' . $productid);
 
@@ -173,7 +173,6 @@ if ($action == 'update') {
 
 				$cpt++;
 			}
-
 		}
 
 		if ($ko) setEventMessages($langs->trans("XLineFailedToBeBinded", $ko), null, 'errors');
@@ -189,7 +188,7 @@ if ($action == 'update') {
 
 $form = new FormAccounting($db);
 
-// Defaut AccountingAccount RowId Product / Service
+// Default AccountingAccount RowId Product / Service
 // at this time ACCOUNTING_SERVICE_SOLD_ACCOUNT & ACCOUNTING_PRODUCT_SOLD_ACCOUNT are account number not accountingacount rowid
 // so we need to get those default value rowid first
 $accounting = new AccountingAccount($db);
@@ -224,11 +223,11 @@ else
 $sql.= ' WHERE p.entity IN ('.getEntity('product').')';
 if ($accounting_product_mode == 'ACCOUNTANCY_BUY') {
     if (strlen(trim($search_current_account))) {
-        $sql .= natural_search("p.accountancy_code_buy",$search_current_account);
+        $sql .= natural_search("p.accountancy_code_buy", $search_current_account);
     }
 } else {
     if (strlen(trim($search_current_account))) {
-        $sql .= natural_search("p.accountancy_code_sell",$search_current_account);
+        $sql .= natural_search("p.accountancy_code_sell", $search_current_account);
     }
 }
 if ($search_current_account_valid == 'withoutvalidaccount')
@@ -241,13 +240,13 @@ if ($search_current_account_valid == 'withvalidaccount')
 }
 // Add search filter like
 if (strlen(trim($search_ref))) {
-	$sql .= natural_search("p.ref",$search_ref);
+	$sql .= natural_search("p.ref", $search_ref);
 }
 if (strlen(trim($search_label))) {
-	$sql .= natural_search("p.label",$search_label);
+	$sql .= natural_search("p.label", $search_label);
 }
 if (strlen(trim($search_desc))) {
-	$sql .= natural_search("p.description",$search_desc);
+	$sql .= natural_search("p.description", $search_desc);
 }
 $sql .= $db->order($sortfield, $sortorder);
 
@@ -308,7 +307,7 @@ if ($result)
 	print '<td>'.$langs->trans('OptionModeProductBuyDesc')."</td></tr>\n";
 	print "</table>\n";
 
-	print '<div align="center"><input type="submit" class="button" value="' . $langs->trans('Refresh') . '" name="changetype"></div>';
+	print '<div class="center"><input type="submit" class="button" value="' . $langs->trans('Refresh') . '" name="changetype"></div>';
 
 	print "<br>\n";
 
@@ -339,7 +338,7 @@ if ($result)
 	print ' '.$langs->trans("or").' '.$form->selectarray('search_current_account_valid', $listofvals, $search_current_account_valid, 1);
 	print '</td>';
 	print '<td class="liste_titre">&nbsp;</td>';
-	print '<td align="center" class="liste_titre">';
+	print '<td class="center liste_titre">';
 	$searchpicto=$form->showFilterButtons();
 	print $searchpicto;
 	print '</td>';
@@ -349,20 +348,20 @@ if ($result)
 	print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "p.ref", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("Label", $_SERVER["PHP_SELF"], "p.label", "", $param, '', $sortfield, $sortorder);
     if (! empty($conf->global->ACCOUNTANCY_SHOW_PROD_DESC)) print_liste_field_titre("Description", $_SERVER["PHP_SELF"], "p.description", "", $param, '', $sortfield, $sortorder);
-    if ($accounting_product_mode == 'ACCOUNTANCY_SELL') print_liste_field_titre("OnSell", $_SERVER["PHP_SELF"], "p.tosell", "", $param, 'align="center"', $sortfield, $sortorder);
-    if ($accounting_product_mode == 'ACCOUNTANCY_BUY')  print_liste_field_titre("OnBuy", $_SERVER["PHP_SELF"], "p.tobuy", "", $param, 'align="center"', $sortfield, $sortorder);
+    if ($accounting_product_mode == 'ACCOUNTANCY_SELL') print_liste_field_titre("OnSell", $_SERVER["PHP_SELF"], "p.tosell", "", $param, '', $sortfield, $sortorder, 'center ');
+    if ($accounting_product_mode == 'ACCOUNTANCY_BUY')  print_liste_field_titre("OnBuy", $_SERVER["PHP_SELF"], "p.tobuy", "", $param, '', $sortfield, $sortorder, 'center ');
    	if ($accounting_product_mode == 'ACCOUNTANCY_BUY') $fieldtosortaccount="p.accountancy_code_buy";
    	else $fieldtosortaccount="p.accountancy_code_sell";
    	print_liste_field_titre("CurrentDedicatedAccountingAccount", $_SERVER["PHP_SELF"], $fieldtosortaccount, "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("AssignDedicatedAccountingAccount");
 	$clickpitco=$form->showCheckAddButtons('checkforselect', 1);
-	print_liste_field_titre($clickpitco, '', '', '', '', 'align="center"');
+	print_liste_field_titre($clickpitco, '', '', '', '', '', '', '', 'center ');
 	print '</tr>';
 
 	$product_static = new Product($db);
 
 	$i=0;
-    while ($i < min($num,$limit))
+    while ($i < min($num, $limit))
     {
 		$obj = $db->fetch_object($result);
 
@@ -397,25 +396,25 @@ if ($result)
 		print $product_static->getNomUrl(1);
 		print '</td>';
 
-		print '<td align="left">'.$obj->label.'</td>';
+		print '<td class="left">'.$obj->label.'</td>';
 
 		if (! empty($conf->global->ACCOUNTANCY_SHOW_PROD_DESC))
 		{
 		    // TODO ADJUST DESCRIPTION SIZE
-    		// print '<td align="left">' . $obj->description . '</td>';
+    		// print '<td class="left">' . $obj->description . '</td>';
     		// TODO: we shoul set a user defined value to adjust user square / wide screen size
     		$trunclengh = empty($conf->global->ACCOUNTING_LENGTH_DESCRIPTION) ? 32 : $conf->global->ACCOUNTING_LENGTH_DESCRIPTION;
     		print '<td style="' . $code_sell_p_l_differ . '">' . nl2br(dol_trunc($obj->description, $trunclengh)) . '</td>';
 		}
 
 		if ($accounting_product_mode == 'ACCOUNTANCY_SELL')
-			print '<td align="center">'.$product_static->getLibStatut(3, 0).'</td>';
+			print '<td class="center">'.$product_static->getLibStatut(3, 0).'</td>';
 
 		if ($accounting_product_mode == 'ACCOUNTANCY_BUY')
-			print '<td align="center">'.$product_static->getLibStatut(3, 1).'</td>';
+			print '<td class="center">'.$product_static->getLibStatut(3, 1).'</td>';
 
 		// Current accounting account
-		print '<td align="left">';
+		print '<td class="left">';
 		if ($accounting_product_mode == 'ACCOUNTANCY_BUY') {
 		    print length_accountg($obj->accountancy_code_buy);
 		    if ($obj->accountancy_code_buy && empty($obj->aaid)) print ' '.img_warning($langs->trans("ValueNotIntoChartOfAccount"));
@@ -431,7 +430,7 @@ if ($result)
 		$defaultvalue='';
 		if ($accounting_product_mode == 'ACCOUNTANCY_BUY') {
     		// Accounting account buy
-			print '<td align="left">';
+			print '<td class="left">';
 			//$defaultvalue=GETPOST('codeventil_' . $product_static->id,'alpha');        This is id and we need a code
 			if (empty($defaultvalue)) $defaultvalue=$compta_prodbuy;
 			$codesell=length_accountg($obj->accountancy_code_buy);
@@ -440,7 +439,7 @@ if ($result)
 			print '</td>';
 		} else {
 			// Accounting account sell
-			print '<td align="left">';
+			print '<td class="left">';
 			//$defaultvalue=GETPOST('codeventil_' . $product_static->id,'alpha');        This is id and we need a code
 			if (empty($defaultvalue)) $defaultvalue=$compta_prodsell;
 			$codesell=length_accountg($obj->accountancy_code_sell);
@@ -451,7 +450,7 @@ if ($result)
 		}
 
 		// Checkbox select
-		print '<td align="center">';
+		print '<td class="center">';
 		print '<input type="checkbox" class="checkforselect" name="chk_prod[]" value="' . $obj->rowid . '"/></td>';
 		print "</tr>";
 		$i ++;
@@ -486,7 +485,7 @@ if ($result)
         </script>';
 
 
-	print '<br><div align="center"><input type="submit" class="butAction" id="changeaccount" name="changeaccount" value="' . $langs->trans("Save") . '"></div>';
+	print '<br><div class="center"><input type="submit" class="butAction" id="changeaccount" name="changeaccount" value="' . $langs->trans("Save") . '"></div>';
 
 	print '</form>';
 
@@ -495,5 +494,6 @@ if ($result)
 	dol_print_error($db);
 }
 
+// End of page
 llxFooter();
 $db->close();

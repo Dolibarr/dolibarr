@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2011-2013 Regis Houssin <regis.houssin@capnetworks.com>
+/* Copyright (C) 2011-2013 Regis Houssin <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,12 @@ if (empty($conf) || ! is_object($conf))
 {
 	print "Error, template page can't be called as URL";
 	exit;
+}
+
+$objectUrl = $object->getNomUrl(0, '', 0, 1);
+if($object->element == 'propal')
+{
+    $objectUrl = DOL_URL_ROOT.'/comm/propal/card.php?id='.$object->id;
 }
 
 ?>
@@ -47,7 +53,7 @@ $(document).ready(function(){
 	        });
 
 	        
-	        var $dialog = $('<form id="' + formId + '" action="<?php print $object->getNomUrl(0,'',0,1); ?>"  method="post" ></form>')
+	        var $dialog = $('<form id="' + formId + '" action="<?php print $objectUrl ; ?>"  method="post" ></form>')
 	        .load( page + " #tablelines", function() {
 
 	        	$("#" + formId + " #tablelines").prop("id", "ajaxloaded_tablelines"); // change id attribute
@@ -68,7 +74,7 @@ $(document).ready(function(){
 	            modal: true,
 	            height: windowHeight,
 	            width: windowWidth,
-	            title: "<?php echo $langs->trans('LinesToImport'); ?>",
+	            title: "<?php echo $langs->transnoentities('LinesToImport'); ?>",
 	            buttons: {
 	                    "<?php echo $langs->trans('Import'); ?>": function() {
 	                      	$( this ).dialog( "close" );

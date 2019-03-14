@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2006		Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2006-2017	Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2006-2017	Regis Houssin		<regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,13 +29,11 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/ldap.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 
-$langs->load("companies");
-$langs->load("members");
-$langs->load("ldap");
-$langs->load("admin");
+// Load translation files required by the page
+$langs->loadLangs(array("companies","members","ldap","admin"));
 
-$rowid = GETPOST('id','int');
-$action = GETPOST('action','aZ09');
+$rowid = GETPOST('id', 'int');
+$action = GETPOST('action', 'aZ09');
 
 // Protection
 $socid=0;
@@ -48,7 +46,7 @@ $object = new Adherent($db);
 $result=$object->fetch($rowid);
 if (! $result)
 {
-	dol_print_error($db,"Failed to get adherent: ".$object->error);
+	dol_print_error($db, "Failed to get adherent: ".$object->error);
 	exit;
 }
 
@@ -68,14 +66,14 @@ if ($action == 'dolibarr2ldap')
 		$dn=$object->_load_ldap_dn($info);
 		$olddn=$dn;	// We can say that old dn = dn as we force synchro
 
-		$result=$ldap->update($dn,$info,$user,$olddn);
+		$result=$ldap->update($dn, $info, $user, $olddn);
 	}
 
 	if ($result >= 0) {
 		setEventMessages($langs->trans("MemberSynchronized"), null, 'mesgs');
 	}
 	else {
-		setEventMessages($ldap->errors, $ldap->error, 'errors');
+		setEventMessages($ldap->error, $ldap->errors, 'errors');
 	}
 }
 
@@ -85,7 +83,7 @@ if ($action == 'dolibarr2ldap')
  *	View
  */
 
-llxHeader('',$langs->trans("Member"),'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros');
+llxHeader('', $langs->trans("Member"), 'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros');
 
 $form = new Form($db);
 
@@ -178,8 +176,8 @@ $result=$ldap->connect_bind();
 if ($result > 0)
 {
 	$info=$object->_load_ldap_info();
-	$dn=$object->_load_ldap_dn($info,1);
-	$search = "(".$object->_load_ldap_dn($info,2).")";
+	$dn=$object->_load_ldap_dn($info, 1);
+	$search = "(".$object->_load_ldap_dn($info, 2).")";
 
 	if (empty($dn))
 	{
@@ -188,7 +186,7 @@ if ($result > 0)
 	}
     else
     {
-    	$records = $ldap->getAttribute($dn,$search);
+    	$records = $ldap->getAttribute($dn, $search);
 
     	//print_r($records);
 
@@ -201,7 +199,7 @@ if ($result > 0)
     		}
     		else
     		{
-    			$result=show_ldap_content($records,0,$records['count'],true);
+    			$result=show_ldap_content($records, 0, $records['count'], true);
     		}
     	}
     	else
@@ -221,5 +219,6 @@ else
 
 print '</table>';
 
+// End of page
 llxFooter();
 $db->close();

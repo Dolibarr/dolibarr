@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2013-2014 Olivier Geffroy		<jeff@jeffinfo.com>
- * Copyright (C) 2013-2014 Alexandre Spangaro	<aspangaro@zendsi.com>
+ * Copyright (C) 2013-2014 Alexandre Spangaro	<aspangaro@open-dsi.fr>
  * Copyright (C) 2014      Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
  *
@@ -29,11 +29,11 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
 
-// Load traductions files requiredby by page
+// Load translation files required by the page
 $langs->loadLangs(array("bills","compta","accountancy","other"));
 
 // Filter
-$year = GETPOST("year",'int');
+$year = GETPOST("year", 'int');
 if ($year == 0) {
 	$year_current = strftime("%Y", time());
 	$year_start = $year_current;
@@ -64,14 +64,29 @@ $result = $db->query($sql);
 if ($result) {
 	$row = $db->fetch_row($result);
 	$nbfac = $row[0];
-	
+
 	$db->free($result);
 }
 
 $y = $year_current;
 
 print '<table class="noborder" width="100%">';
-print '<tr class="liste_titre"><td width=150>' . $langs->trans("Label") . '</td><td align="center">' . $langs->trans("JanuaryMin") . '</td><td align="center">' . $langs->trans("FebruaryMin") . '</td><td align="center">' . $langs->trans("MarchMin") . '</td><td align="center">' . $langs->trans("AprilMin") . '</td><td align="center">' . $langs->trans("MayMin") . '</td><td align="center">' . $langs->trans("JuneMin") . '</td><td align="center">' . $langs->trans("JulyMin") . '</td><td align="center">' . $langs->trans("AugustMin") . '</td><td align="center">' . $langs->trans("SeptemberMin") . '</td><td align="center">' . $langs->trans("OctoberMin") . '</td><td align="center">' . $langs->trans("NovemberMin") . '</td><td align="center">' . $langs->trans("DecemberMin") . '</td><td align="center"><b>Total</b></td></tr>';
+print '<tr class="liste_titre">';
+print '<td width=150>' . $langs->trans("Label") . '</td>';
+print '<td class="center">' . $langs->trans("JanuaryMin") . '</td>';
+print '<td class="center">' . $langs->trans("FebruaryMin") . '</td>';
+print '<td class="center">' . $langs->trans("MarchMin") . '</td>';
+print '<td class="center">' . $langs->trans("AprilMin") . '</td>';
+print '<td class="center">' . $langs->trans("MayMin") . '</td>';
+print '<td class="center">' . $langs->trans("JuneMin") . '</td>';
+print '<td class="center">' . $langs->trans("JulyMin") . '</td>';
+print '<td class="center">' . $langs->trans("AugustMin") . '</td>';
+print '<td class="center">' . $langs->trans("SeptemberMin") . '</td>';
+print '<td class="center">' . $langs->trans("OctoberMin") . '</td>';
+print '<td class="center">' . $langs->trans("NovemberMin") . '</td>';
+print '<td class="center">' . $langs->trans("DecemberMin") . '</td>';
+print '<td class="center"><strong>Total</strong></td>';
+print '</tr>';
 
 $sql = "SELECT bk.numero_compte AS 'compte',";
 $sql .= "  ROUND(SUM(IF(MONTH(bk.doc_date)=1,bk.montant,0)),2) AS 'Janvier',";
@@ -96,27 +111,27 @@ $resql = $db->query($sql);
 if ($resql) {
 	$i = 0;
 	$num = $db->num_rows($resql);
-	
+
 	while ( $i < $num ) {
-		
+
 		$row = $db->fetch_row($resql);
-		
+
 		print '<tr class="oddeven"><td width="14%">' . length_accountg($row[0]) . '</td>';
-		print '<td align="right" width="6.5%">' . price($row[1]) . '</td>';
-		print '<td align="right" width="6.5%">' . price($row[2]) . '</td>';
-		print '<td align="right" width="6.5%">' . price($row[3]) . '</td>';
-		print '<td align="right" width="6.5%">' . price($row[4]) . '</td>';
-		print '<td align="right" width="6.5%">' . price($row[5]) . '</td>';
-		print '<td align="right" width="6.5%">' . price($row[6]) . '</td>';
-		print '<td align="right" width="6.5%">' . price($row[7]) . '</td>';
-		print '<td align="right" width="6.5%">' . price($row[8]) . '</td>';
-		print '<td align="right" width="6.5%">' . price($row[9]) . '</td>';
-		print '<td align="right" width="6.5%">' . price($row[10]) . '</td>';
-		print '<td align="right" width="6.5%">' . price($row[11]) . '</td>';
-		print '<td align="right" width="6.5%">' . price($row[12]) . '</td>';
-		print '<td align="right" width="8%"><b>' . price($row[13]) . '</b></td>';
+		print '<td class="right" width="6.5%">' . price($row[1]) . '</td>';
+		print '<td class="right" width="6.5%">' . price($row[2]) . '</td>';
+		print '<td class="right" width="6.5%">' . price($row[3]) . '</td>';
+		print '<td class="right" width="6.5%">' . price($row[4]) . '</td>';
+		print '<td class="right" width="6.5%">' . price($row[5]) . '</td>';
+		print '<td class="right" width="6.5%">' . price($row[6]) . '</td>';
+		print '<td class="right" width="6.5%">' . price($row[7]) . '</td>';
+		print '<td class="right" width="6.5%">' . price($row[8]) . '</td>';
+		print '<td class="right" width="6.5%">' . price($row[9]) . '</td>';
+		print '<td class="right" width="6.5%">' . price($row[10]) . '</td>';
+		print '<td class="right" width="6.5%">' . price($row[11]) . '</td>';
+		print '<td class="right" width="6.5%">' . price($row[12]) . '</td>';
+		print '<td class="right" width="8%"><strong>' . price($row[13]) . '</strong></td>';
 		print '</tr>';
-		
+
 		$i ++;
 	}
 	$db->free($resql);
@@ -125,5 +140,6 @@ if ($resql) {
 }
 print "</table>\n";
 
+// End of page
 llxFooter();
 $db->close();

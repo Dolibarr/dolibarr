@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2006-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2006-2017 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2006-2017 Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,19 +27,17 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/ldap.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/ldap.lib.php';
 
-$langs->load("users");
-$langs->load("admin");
-$langs->load("companies");
-$langs->load("ldap");
+// Load translation files required by page
+$langs->loadLangs(array('users', 'admin', 'companies', 'ldap'));
 
 $id = GETPOST('id', 'int');
-$contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'userldap';   // To manage different context of search
+$contextpage=GETPOST('contextpage', 'aZ')?GETPOST('contextpage', 'aZ'):'userldap';   // To manage different context of search
 
 // Security check
 $socid=0;
 if ($user->societe_id > 0) $socid = $user->societe_id;
 $feature2 = (($socid && $user->rights->user->self->creer)?'':'user');
-if ($user->id == $id) $feature2=''; // A user can always read its own card
+
 $result = restrictedArea($user, 'user', $id, 'user&user', $feature2);
 
 $object = new User($db);
@@ -56,7 +54,7 @@ $hookmanager->initHooks(array('usercard','userldap','globalcard'));
 
 
 $parameters=array('id'=>$socid);
-$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+$reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 if (empty($reshook))
@@ -100,15 +98,15 @@ dol_fiche_head($head, 'ldap', $title, 0, 'user');
 $linkback = '';
 
 if ($user->rights->user->user->lire || $user->admin) {
-	$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 }
 
-dol_banner_tab($object,'id',$linkback,$user->rights->user->user->lire || $user->admin);
+dol_banner_tab($object, 'id', $linkback, $user->rights->user->user->lire || $user->admin);
 
 print '<div class="fichecenter">';
 print '<div class="underbanner clearboth"></div>';
 
-print '<table class="border" width="100%">';
+print '<table class="border centpercent">';
 
 // Login
 print '<tr><td class="titlefield">'.$langs->trans("Login").'</td>';
@@ -174,7 +172,7 @@ if ($conf->global->LDAP_SYNCHRO_ACTIVE == 'dolibarr2ldap') print "<br>\n";
 // Affichage attributs LDAP
 print load_fiche_titre($langs->trans("LDAPInformationsForThisUser"));
 
-print '<table width="100%" class="noborder">';
+print '<table class="noborder centpercent">';
 
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("LDAPAttributes").'</td>';
@@ -187,9 +185,9 @@ $result=$ldap->connect_bind();
 if ($result > 0)
 {
 	$info=$object->_load_ldap_info();
-	$dn=$object->_load_ldap_dn($info,1);
-	$search = "(".$object->_load_ldap_dn($info,2).")";
-	$records = $ldap->getAttribute($dn,$search);
+	$dn=$object->_load_ldap_dn($info, 1);
+	$search = "(".$object->_load_ldap_dn($info, 2).")";
+	$records = $ldap->getAttribute($dn, $search);
 
 	//print_r($records);
 
@@ -202,7 +200,7 @@ if ($result > 0)
 		}
 		else
 		{
-			$result=show_ldap_content($records,0,$records['count'],true);
+			$result=show_ldap_content($records, 0, $records['count'], true);
 		}
 	}
 	else
@@ -220,5 +218,6 @@ else
 
 print '</table>';
 
+// End of page
 llxFooter();
 $db->close();

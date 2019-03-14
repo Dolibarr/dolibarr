@@ -3,7 +3,7 @@
  * Copyright (C) 2002-2007	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2006		Andre Cianfarani		<acianfa@free.fr>
- * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2014-2015  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -33,15 +33,17 @@ interface Database
 	 * @param   string $resko resultat si test non egal
 	 * @return	string                SQL string
 	 */
-	function ifsql($test, $resok, $resko);
+    public function ifsql($test, $resok, $resko);
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Return datas as an array
 	 *
 	 * @param   resource $resultset Resultset of request
 	 * @return  array                    Array
 	 */
-	function fetch_row($resultset);
+    public function fetch_row($resultset);
+    // phpcs:enable
 
 	/**
 	 * Convert (by PHP) a GM Timestamp date into a string date with PHP server TZ to insert into a date field.
@@ -50,22 +52,23 @@ interface Database
 	 * @param   int		$param 		Date TMS to convert
 	 * @return  string            	Date in a string YYYYMMDDHHMMSS
 	 */
-	function idate($param);
+    public function idate($param);
 
 	/**
 	 * Return last error code
 	 *
 	 * @return  string    lasterrno
 	 */
-	function lasterrno();
+    public function lasterrno();
 
 	/**
 	 * Start transaction
 	 *
 	 * @return  int         1 if transaction successfuly opened or already opened, 0 if error
 	 */
-	function begin();
+    public function begin();
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Create a new database
 	 * Do not use function xxx_create_db (xxx=mysql, ...) as they are deprecated
@@ -77,14 +80,15 @@ interface Database
 	 * @param   string 		$owner 			Username of database owner
 	 * @return  resource                	resource defined if OK, null if KO
 	 */
-	function DDLCreateDb($database, $charset = '', $collation = '', $owner = '');
+    public function DDLCreateDb($database, $charset = '', $collation = '', $owner = '');
+    // phpcs:enable
 
 	/**
 	 * Return version of database server into an array
 	 *
 	 * @return	array        Version array
 	 */
-	function getVersionArray();
+    public function getVersionArray();
 
 	/**
 	 *  Convert a SQL request in Mysql syntax to native syntax
@@ -93,8 +97,9 @@ interface Database
 	 * @param   string $type Type of SQL order ('ddl' for insert, update, select, delete or 'dml' for create, alter...)
 	 * @return  string        SQL request line converted
 	 */
-	static function convertSQLFromMysql($line, $type = 'ddl');
+	public static function convertSQLFromMysql($line, $type = 'ddl');
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Renvoie le nombre de lignes dans le resultat d'une requete INSERT, DELETE ou UPDATE
 	 *
@@ -102,15 +107,17 @@ interface Database
 	 * @return 	int            Nombre de lignes
 	 * @see    	num_rows
 	 */
-	function affected_rows($resultset);
+    public function affected_rows($resultset);
+    // phpcs:enable
 
 	/**
 	 * Return description of last error
 	 *
 	 * @return  string        Error text
 	 */
-	function error();
+    public function error();
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  List tables into a database
 	 *
@@ -118,14 +125,15 @@ interface Database
 	 *  @param	string		$table		Nmae of table filter ('xxx%')
 	 *  @return	array					List of tables in an array
 	 */
-	function DDLListTables($database, $table = '');
+    public function DDLListTables($database, $table = '');
+    // phpcs:enable
 
 	/**
 	 * Return last request executed with query()
 	 *
 	 * @return	string                    Last query
 	 */
-	function lastquery();
+    public function lastquery();
 
 	/**
 	 * Define sort criteria of request
@@ -134,7 +142,7 @@ interface Database
 	 * @param   string $sortorder Sort order
 	 * @return  string            String to provide syntax of a sort sql string
 	 */
-	function order($sortfield = null, $sortorder = null);
+    public function order($sortfield = null, $sortorder = null);
 
 	/**
 	 * Decrypt sensitive data in database
@@ -142,22 +150,24 @@ interface Database
 	 * @param    string $value Value to decrypt
 	 * @return   string                    Decrypted value if used
 	 */
-	function decrypt($value);
+    public function decrypt($value);
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *    Return datas as an array
 	 *
 	 * @param   resource $resultset Resultset of request
 	 * @return  array                    Array
 	 */
-	function fetch_array($resultset);
+    public function fetch_array($resultset);
+    // phpcs:enable
 
 	/**
 	 * Return last error label
 	 *
 	 * @return	string    lasterror
 	 */
-	function lasterror();
+    public function lasterror();
 
 	/**
 	 * Escape a string to insert data
@@ -165,8 +175,9 @@ interface Database
 	 * @param   string $stringtoencode String to escape
 	 * @return  string                        String escaped
 	 */
-	function escape($stringtoencode);
+    public function escape($stringtoencode);
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Get last ID after an insert INSERT
 	 *
@@ -174,14 +185,15 @@ interface Database
 	 * @param   string 	$fieldid 	Field name
 	 * @return  int                	Id of row
 	 */
-	function last_insert_id($tab, $fieldid = 'rowid');
+    public function last_insert_id($tab, $fieldid = 'rowid');
+    // phpcs:enable
 
 	/**
 	 *    Return full path of restore program
 	 *
 	 * @return        string        Full path of restore program
 	 */
-	function getPathOfRestore();
+    public function getPathOfRestore();
 
 	/**
 	 *    Annulation d'une transaction et retour aux anciennes valeurs
@@ -189,18 +201,18 @@ interface Database
 	 * @param	string $log Add more log to default log line
 	 * @return  int                1 si annulation ok ou transaction non ouverte, 0 en cas d'erreur
 	 */
-	function rollback($log = '');
+    public function rollback($log = '');
 
 	/**
 	 * Execute a SQL request and return the resultset
 	 *
 	 * @param   string $query SQL query string
 	 * @param   int $usesavepoint 0=Default mode, 1=Run a savepoint before and a rollback to savepoint if error (this allow to have some request with errors inside global transactions).
-	 *                                    Note that with Mysql, this parameter is not used as Myssql can already commit a transaction even if one request is in error, without using savepoints.
+	 *                            Note that with Mysql, this parameter is not used as Myssql can already commit a transaction even if one request is in error, without using savepoints.
 	 * @param   string $type Type of SQL order ('ddl' for insert, update, select, delete or 'dml' for create, alter...)
 	 * @return  resource                Resultset of answer
 	 */
-	function query($query, $usesavepoint = 0, $type = 'auto');
+    public function query($query, $usesavepoint = 0, $type = 'auto');
 
 	/**
 	 *    Connexion to server
@@ -213,7 +225,7 @@ interface Database
 	 * @return  resource            Database access handler
 	 * @see     close
 	 */
-	function connect($host, $login, $passwd, $name, $port = 0);
+    public function connect($host, $login, $passwd, $name, $port = 0);
 
 	/**
 	 *    Define limits and offset of request
@@ -222,7 +234,7 @@ interface Database
 	 * @param   int $offset Numero of line from where starting fetch
 	 * @return  string            String with SQL syntax to add a limit and offset
 	 */
-	function plimit($limit = 0, $offset = 0);
+    public function plimit($limit = 0, $offset = 0);
 
 	/**
 	 * Return value of server parameters
@@ -230,7 +242,7 @@ interface Database
 	 * @param   string	$filter		Filter list on a particular value
 	 * @return  array				Array of key-values (key=>value)
 	 */
-	function getServerParametersValues($filter = '');
+    public function getServerParametersValues($filter = '');
 
 	/**
 	 * Return value of server status
@@ -238,15 +250,16 @@ interface Database
 	 * @param   string $filter 		Filter list on a particular value
 	 * @return  array				Array of key-values (key=>value)
 	 */
-	function getServerStatusValues($filter = '');
+    public function getServerStatusValues($filter = '');
 
 	/**
 	 * Return collation used in database
 	 *
 	 * @return  string        Collation value
 	 */
-	function getDefaultCollationDatabase();
+    public function getDefaultCollationDatabase();
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Return number of lines for result of a SELECT
 	 *
@@ -254,29 +267,31 @@ interface Database
 	 * @return 	int                        Nb of lines
 	 * @see    	affected_rows
 	 */
-	function num_rows($resultset);
+    public function num_rows($resultset);
+    // phpcs:enable
 
 	/**
 	 * Return full path of dump program
 	 *
 	 * @return        string        Full path of dump program
 	 */
-	function getPathOfDump();
+    public function getPathOfDump();
 
 	/**
 	 * Return version of database client driver
 	 *
 	 * @return            string      Version string
 	 */
-	function getDriverInfo();
+    public function getDriverInfo();
 
 	/**
 	 * Return generic error code of last operation.
 	 *
 	 * @return    string        Error code (Exemples: DB_ERROR_TABLE_ALREADY_EXISTS, DB_ERROR_RECORD_ALREADY_EXISTS...)
 	 */
-	function errno();
+    public function errno();
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Create a table into database
 	 *
@@ -289,23 +304,27 @@ interface Database
 	 * @param        array $keys 			Tableau des champs cles noms => valeur
 	 * @return       int                    <0 if KO, >=0 if OK
 	 */
-	function DDLCreateTable($table, $fields, $primary_key, $type, $unique_keys = null, $fulltext_keys = null, $keys = null);
+    public function DDLCreateTable($table, $fields, $primary_key, $type, $unique_keys = null, $fulltext_keys = null, $keys = null);
+    // phpcs:enable
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Drop a table into database
 	 *
 	 * @param        string $table 			Name of table
 	 * @return       int                    <0 if KO, >=0 if OK
 	 */
-	function DDLDropTable($table);
+    public function DDLDropTable($table);
+    // phpcs:enable
 
 	/**
 	 * Return list of available charset that can be used to store data in database
 	 *
 	 * @return        array        List of Charset
 	 */
-	function getListOfCharacterSet();
+    public function getListOfCharacterSet();
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Create a new field into table
 	 *
@@ -315,8 +334,10 @@ interface Database
 	 * @param    string $field_position 	Optionnel ex.: "after champtruc"
 	 * @return   int                        <0 if KO, >0 if OK
 	 */
-	function DDLAddField($table, $field_name, $field_desc, $field_position = "");
+    public function DDLAddField($table, $field_name, $field_desc, $field_position = "");
+    // phpcs:enable
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Drop a field from table
 	 *
@@ -324,8 +345,10 @@ interface Database
 	 * @param    string $field_name 		Name of field to drop
 	 * @return   int                        <0 if KO, >0 if OK
 	 */
-	function DDLDropField($table, $field_name);
+    public function DDLDropField($table, $field_name);
+    // phpcs:enable
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Update format of a field into a table
 	 *
@@ -334,15 +357,17 @@ interface Database
 	 * @param    string 	$field_desc 	Array with description of field format
 	 * @return   int                        <0 if KO, >0 if OK
 	 */
-	function DDLUpdateField($table, $field_name, $field_desc);
+    public function DDLUpdateField($table, $field_name, $field_desc);
+    // phpcs:enable
 
 	/**
 	 * Return list of available collation that can be used for database
 	 *
 	 * @return        array        			List of Collation
 	 */
-	function getListOfCollation();
+    public function getListOfCollation();
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Return a pointer of line with description of a table or field
 	 *
@@ -350,22 +375,24 @@ interface Database
 	 * @param    string 	$field 			Optionnel : Name of field if we want description of field
 	 * @return   resource            		Resource
 	 */
-	function DDLDescTable($table, $field = "");
+    public function DDLDescTable($table, $field = "");
+    // phpcs:enable
 
 	/**
 	 * Return version of database server
 	 *
 	 * @return            string      		Version string
 	 */
-	function getVersion();
+    public function getVersion();
 
 	/**
 	 * Return charset used to store data in database
 	 *
 	 * @return        string        		Charset
 	 */
-	function getDefaultCharacterSetDatabase();
+    public function getDefaultCharacterSetDatabase();
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Create a user and privileges to connect to database (even if database does not exists yet)
 	 *
@@ -373,14 +400,15 @@ interface Database
 	 * @param    string $dolibarr_main_db_user 	Nom user a creer
 	 * @param    string $dolibarr_main_db_pass 	Mot de passe user a creer
 	 * @param    string $dolibarr_main_db_name 	Database name where user must be granted
-	 * @return   int                            <0 if KO, >=0 if OK
-	 */
-	function DDLCreateUser(
-		$dolibarr_main_db_host,
-		$dolibarr_main_db_user,
-		$dolibarr_main_db_pass,
-		$dolibarr_main_db_name
-	);
+     * @return   int                            <0 if KO, >=0 if OK
+     */
+    public function DDLCreateUser(
+        $dolibarr_main_db_host,
+        $dolibarr_main_db_user,
+        $dolibarr_main_db_pass,
+        $dolibarr_main_db_name
+    );
+    // phpcs:enable
 
 	/**
 	 * Convert (by PHP) a PHP server TZ string date into a Timestamps date (GMT if gm=true)
@@ -391,7 +419,7 @@ interface Database
 	 * @param	bool			$gm			1=Input informations are GMT values, otherwise local to server TZ
 	 * @return	int|string					Date TMS or ''
 	 */
-	function jdate($string, $gm=false);
+    public function jdate($string, $gm = false);
 
 	/**
 	 * Encrypt sensitive data in database
@@ -401,7 +429,7 @@ interface Database
 	 * @param  	int 			$withQuotes 	Return string with quotes
 	 * @return 	string                     		XXX(field) or XXX('value') or field or 'value'
 	 */
-	function encrypt($fieldorvalue, $withQuotes = 0);
+    public function encrypt($fieldorvalue, $withQuotes = 0);
 
 	/**
 	 * Validate a database transaction
@@ -409,23 +437,25 @@ interface Database
 	 * @param   string 			$log 			Add more log to default log line
 	 * @return	int                				1 if validation is OK or transaction level no started, 0 if ERROR
 	 */
-	function commit($log = '');
+    public function commit($log = '');
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * List information of columns into a table.
 	 *
 	 * @param   string 			$table 			Name of table
-	 * @return  array                			Array with inforation on table
-	 */
-	function DDLInfoTable($table);
+     * @return  array                			Array with inforation on table
+     */
+    public function DDLInfoTable($table);
+    // phpcs:enable
 
-	/**
+    /**
 	 * Free last resultset used.
 	 *
 	 * @param  	resource 		$resultset 		Fre cursor
 	 * @return  void
 	 */
-	function free($resultset = null);
+    public function free($resultset = null);
 
 	/**
 	 * Close database connexion
@@ -433,36 +463,41 @@ interface Database
 	 * @return  boolean     					True if disconnect successfull, false otherwise
 	 * @see     connect
 	 */
-	function close();
+    public function close();
 
 	/**
 	 * Return last query in error
 	 *
 	 * @return  string    lastqueryerror
 	 */
-	function lastqueryerror();
+    public function lastqueryerror();
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Return connexion ID
 	 *
 	 * @return  string      Id connexion
 	 */
-	function DDLGetConnectId();
+    public function DDLGetConnectId();
+    // phpcs:enable
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Renvoie la ligne courante (comme un objet) pour le curseur resultset
 	 *
 	 * @param   resource $resultset Curseur de la requete voulue
 	 * @return  Object                    Object result line or false if KO or end of cursor
 	 */
-	function fetch_object($resultset);
+    public function fetch_object($resultset);
+    // phpcs:enable
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Select a database
 	 *
 	 * @param	string $database Name of database
 	 * @return  boolean            true if OK, false if KO
 	 */
-	function select_db($database);
-
+    public function select_db($database);
+    // phpcs:enable
 }

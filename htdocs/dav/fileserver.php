@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2018	Destailleur Laurent	<eldy@users.sourceforge.net>
+ * Copyright (C) 2019	Regis Houssin		<regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,14 +22,14 @@
  *      \brief      Server DAV
  */
 
-if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL','1');
-if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU','1'); // If there is no menu to show
-if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML','1'); // If we don't need to load the html.form.class.php
-if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');
-if (! defined('NOLOGIN'))  		 define("NOLOGIN",1);		// This means this output page does not require to be logged.
-if (! defined('NOCSRFCHECK'))  	 define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
+if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1');
+if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1'); // If there is no menu to show
+if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML', '1'); // If we don't need to load the html.form.class.php
+if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
+if (! defined('NOLOGIN'))  		 define("NOLOGIN", 1);		// This means this output page does not require to be logged.
+if (! defined('NOCSRFCHECK'))  	 define("NOCSRFCHECK", 1);	// We accept to go on this page from external web site.
 
-require ("../main.inc.php");
+require "../main.inc.php";
 require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/dav/dav.class.php';
@@ -37,28 +38,31 @@ require_once DOL_DOCUMENT_ROOT.'/includes/sabre/autoload.php';
 
 
 $user = new User($db);
-if(isset($_SERVER['PHP_AUTH_USER']) && $_SERVER['PHP_AUTH_USER']!='')
+if (isset($_SERVER['PHP_AUTH_USER']) && $_SERVER['PHP_AUTH_USER']!='')
 {
-	$user->fetch('',$_SERVER['PHP_AUTH_USER']);
+	$user->fetch('', $_SERVER['PHP_AUTH_USER']);
 	$user->getrights();
 }
 
+// Load translation files required by the page
 $langs->loadLangs(array("main","other"));
 
 
-if(empty($conf->dav->enabled))
+if (empty($conf->dav->enabled))
 	accessforbidden();
 
 
+$entity = (GETPOST('entity', 'int') ? GETPOST('entity', 'int') : (!empty($conf->entity) ? $conf->entity : 1));
+
 // settings
-$publicDir = $conf->dav->dir_output.'/public';
-$privateDir = $conf->dav->dir_output.'/private';
-$tmpDir = $conf->dav->dir_temp;
+$publicDir = $conf->dav->multidir_output[$entity].'/public';
+$privateDir = $conf->dav->multidir_output[$entity].'/private';
+$ecmDir = $conf->ecm->multidir_output[$entity];
+$tmpDir = $conf->dav->multidir_temp[$entity];
 //var_dump($tmpDir);exit;
 
 // Authentication callback function
-$authBackend = new \Sabre\DAV\Auth\Backend\BasicCallBack(function ($username, $password)
-{
+$authBackend = new \Sabre\DAV\Auth\Backend\BasicCallBack(function ($username, $password) {
 	global $user;
 	global $conf;
 	global $dolibarr_main_authentication;
@@ -73,10 +77,10 @@ $authBackend = new \Sabre\DAV\Auth\Backend\BasicCallBack(function ($username, $p
 	// Authentication mode
 	if (empty($dolibarr_main_authentication))
 		$dolibarr_main_authentication='http,dolibarr';
-	$authmode = explode(',',$dolibarr_main_authentication);
-	$entity = (GETPOST('entity','int') ? GETPOST('entity','int') : (!empty($conf->entity) ? $conf->entity : 1));
+	$authmode = explode(',', $dolibarr_main_authentication);
+	$entity = (GETPOST('entity', 'int') ? GETPOST('entity', 'int') : (!empty($conf->entity) ? $conf->entity : 1));
 
-	if (checkLoginPassEntity($username,$password,$entity,$authmode) != $username)
+	if (checkLoginPassEntity($username, $password, $entity, $authmode) != $username)
 		return false;
 
 	return true;
@@ -97,9 +101,20 @@ $authBackend->setRealm(constant('DOL_APPLICATION_TITLE'));
 $nodes = array();
 
 // Enable directories and features according to DAV setup
-// / Public docs
-if (!empty($conf->global->DAV_ALLOW_PUBLIC_DIR)) $nodes[] = new \Sabre\DAV\FS\Directory($dolibarr_main_data_root. '/dav/public');
-$nodes[] = new \Sabre\DAV\FS\Directory($dolibarr_main_data_root. '/dav/private');
+// Public dir
+if (!empty($conf->global->DAV_ALLOW_PUBLIC_DIR))
+{
+	$nodes[] = new \Sabre\DAV\FS\Directory($publicDir);
+}
+// Private dir
+$nodes[] = new \Sabre\DAV\FS\Directory($privateDir);
+// ECM dir
+if (! empty($conf->ecm->enabled) && ! empty($conf->global->DAV_ALLOW_ECM_DIR))
+{
+	$nodes[] = new \Sabre\DAV\FS\Directory($ecmDir);
+}
+
+
 
 // Principals Backend
 //$principalBackend = new \Sabre\DAVACL\PrincipalBackend\Dolibarr($user,$db);
@@ -124,7 +139,7 @@ if (isset($baseUri)) $server->setBaseUri($baseUri);
 
 // Add authentication function
 if ((empty($conf->global->DAV_ALLOW_PUBLIC_DIR)
-	|| ! preg_match('/'.preg_quote(DOL_URL_ROOT.'/dav/fileserver.php/public','/').'/', $_SERVER["PHP_SELF"]))
+	|| ! preg_match('/'.preg_quote(DOL_URL_ROOT.'/dav/fileserver.php/public', '/').'/', $_SERVER["PHP_SELF"]))
 	&& ! preg_match('/^sabreAction=asset&assetName=[a-zA-Z0-9%\-\/]+\.(png|css|woff|ico|ttf)$/', $_SERVER["QUERY_STRING"])	// URL for Sabre browser resources
 	)
 {
