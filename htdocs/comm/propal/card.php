@@ -1622,6 +1622,13 @@ if ($action == 'create')
 	// Validaty duration
 	print '<tr><td class="fieldrequired">' . $langs->trans("ValidityDuration") . '</td><td><input name="duree_validite" size="5" value="' . $conf->global->PROPALE_VALIDITY_DURATION . '"> ' . $langs->trans("days") . '</td></tr>';
 
+    // Deposit
+	print '<tr><td class="fieldrequired">' . $langs->trans("Deposit") . '</td><td>';
+    $arraylist = array('' => $langs->transnoentitiesnoconv('None'), 'amount' => $langs->transnoentitiesnoconv('FixAmount'), 'variable' => $langs->transnoentitiesnoconv('VarAmountOneLine', $langs->transnoentitiesnoconv('Deposit')));
+    print $form->selectarray('deposit_type', $arraylist, $conf->global->PROPALE_DEPOSIT_TYPE, 0, 0, 0, '', 1);
+    print $langs->trans('Value') . ':';
+    print '<input size="3" class="flat" type="text" name="deposit_value" value="'.$conf->global->PROPALE_DEPOSIT_VALUE.'"></td></tr>';
+    
 	// Terms of payment
 	print '<tr><td class="nowrap fieldrequired">' . $langs->trans('PaymentConditionsShort') . '</td><td>';
 	$form->select_conditions_paiements($soc->cond_reglement_id, 'cond_reglement_id');
