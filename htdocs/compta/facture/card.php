@@ -2846,9 +2846,9 @@ if ($action == 'create')
 			{
 				print '<td class="nowrap" style="padding-left: 5px">';
 				$arraylist = array('amount' => $langs->transnoentitiesnoconv('FixAmount'), 'variable' => $langs->transnoentitiesnoconv('VarAmountOneLine', $langs->transnoentitiesnoconv('Deposit')));
-				print $form->selectarray('typedeposit', $arraylist, GETPOST('typedeposit'), 0, 0, 0, '', 1);
+				print $form->selectarray('typedeposit', $arraylist, $conf->global->PROPALE_DEPOSIT_TYPE, 0, 0, 0, '', 1);
 				print '</td>';
-				print '<td class="nowrap" style="padding-left: 5px">' . $langs->trans('Value') . ':<input type="text" id="valuedeposit" name="valuedeposit" size="3" value="' . GETPOST('valuedeposit', 'int') . '"/>';
+				print '<td class="nowrap" style="padding-left: 5px">' . $langs->trans('Value') . ':<input type="text" id="valuedeposit" name="valuedeposit" size="3" value="' . $conf->global->PROPALE_DEPOSIT_VALUE . '"/>';
 			}
 			print '</td></tr></table>';
 
