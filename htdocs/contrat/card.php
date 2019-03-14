@@ -456,7 +456,7 @@ if (empty($reshook))
 		// Extrafields
 		$extrafieldsline = new ExtraFields($db);
 		$extralabelsline = $extrafieldsline->fetch_name_optionals_label($object->table_element_line);
-		$array_options = $extrafieldsline->getOptionalsFromPost($extralabelsline, $predef);
+		$array_options = $extrafieldsline->getOptionalsFromPost($object->table_element_line, $predef);
 		// Unset extrafield
 		if (is_array($extralabelsline)) {
 			// Get extra fields
@@ -737,7 +737,7 @@ if (empty($reshook))
 			// Extrafields
 			$extrafieldsline = new ExtraFields($db);
 			$extralabelsline = $extrafieldsline->fetch_name_optionals_label($objectline->table_element);
-			$array_options = $extrafieldsline->getOptionalsFromPost($extralabelsline, $predef);
+			$array_options = $extrafieldsline->getOptionalsFromPost($object->table_element_line, $predef);
 			$objectline->array_options=$array_options;
 
 			// TODO verifier price_min si fk_product et multiprix
