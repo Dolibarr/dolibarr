@@ -49,7 +49,7 @@ if ($action=="getProducts") {
     echo json_encode($prods);
 }
 
-else if ($action=="search") {
+elseif ($action=="search") {
     $sql = 'SELECT * FROM '.MAIN_DB_PREFIX.'product';
     $sql .= ' WHERE entity IN ('.getEntity('product').')';
     $sql .= ' AND tosell = 1';
