@@ -143,7 +143,7 @@ if (! GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'a
 
     if (!$db->connected)
     {
-        print '<tr><td colspan="4">'.$langs->trans("ErrorFailedToConnectToDatabase", $conf->db->name).'</td><td align="right">'.$langs->trans('Error').'</td></tr>';
+        print '<tr><td colspan="4">'.$langs->trans("ErrorFailedToConnectToDatabase", $conf->db->name).'</td><td class="right">'.$langs->trans('Error').'</td></tr>';
         dolibarr_install_syslog('upgrade2: failed to connect to database :' . $conf->db->name . ' on ' . $conf->db->host . ' for user ' . $conf->db->user, LOG_ERR);
         $error++;
     }
@@ -3666,13 +3666,13 @@ function migrate_clean_association($db, $langs, $conf, $versionto)
                     if (! $error)
                     {
                         print '<tr><td>'.$langs->trans("MigrationCategorieAssociation").'</td>';
-                        print '<td align="right">'.$langs->trans("RemoveDuplicates").' '.$langs->trans("Success").' ('.$num.'=>'.count($couples).')</td></tr>';
+                        print '<td class="right">'.$langs->trans("RemoveDuplicates").' '.$langs->trans("Success").' ('.$num.'=>'.count($couples).')</td></tr>';
                         $db->commit();
                     }
                     else
                     {
                         print '<tr><td>'.$langs->trans("MigrationCategorieAssociation").'</td>';
-                        print '<td align="right">'.$langs->trans("RemoveDuplicates").' '.$langs->trans("Failed").'</td></tr>';
+                        print '<td class="right">'.$langs->trans("RemoveDuplicates").' '.$langs->trans("Failed").'</td></tr>';
                         $db->rollback();
                     }
                 }
@@ -3680,7 +3680,7 @@ function migrate_clean_association($db, $langs, $conf, $versionto)
             else
             {
                 print '<tr><td>'.$langs->trans("Error").'</td>';
-                print '<td align="right"><div class="error">'.$db->lasterror().'</div></td></tr>';
+                print '<td class="right"><div class="error">'.$db->lasterror().'</div></td></tr>';
             }
         }
     }
