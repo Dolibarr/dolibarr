@@ -563,6 +563,22 @@ class Adherent extends CommonObject
 		$sql.= ", fk_user_mod = ".($user->id>0?$user->id:'null');	// Can be null because member can be create by a guest
 		$sql.= " WHERE rowid = ".$this->id;
 
+		// If we change the type of membership, we set also label of new type
+		if (! empty($this->oldcopy) && $this->typeid != $this->oldcopy->typeid)
+		{
+			$sql2 = "SELECT libelle as label";
+			$sql2.= " FROM ".MAIN_DB_PREFIX."adherent_type";
+			$sql2.= " WHERE rowid = ".$this->typeid;
+			$resql2 = $this->db->query($sql2);
+			if ($resql2)
+			{
+			    while ($obj=$this->db->fetch_object($resql2))
+			    {
+				$this->type=$obj->label;
+			    }
+			}
+		}
+		
 		dol_syslog(get_class($this)."::update update member", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)

@@ -1729,6 +1729,7 @@ class ExpenseReport extends CommonObject
 			$tmp = calcul_price_total($qty, $up, 0, $vatrate, 0, 0, 0, 'TTC', 0, $type, $seller, $localtaxes_type);
 
 			$this->line->value_unit = $up;
+			$this->line->vat_src_code = $vat_src_code;
 			$this->line->vatrate = price2num($vatrate);
 			$this->line->total_ttc = $tmp[2];
 			$this->line->total_ht = $tmp[0];

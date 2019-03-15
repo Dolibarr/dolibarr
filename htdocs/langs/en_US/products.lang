@@ -337,3 +337,4 @@ CloneDestinationReference=Destination product reference
 ErrorCopyProductCombinations=There was an error while copying the product variants
 ErrorDestinationProductNotFound=Destination product not found
 ErrorProductCombinationNotFound=Product variant not found
+ActionAvailableOnVariantProductOnly=Action only available on the variant of product
