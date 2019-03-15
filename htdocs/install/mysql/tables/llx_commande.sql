@@ -65,6 +65,8 @@ create table llx_commande
   fk_cond_reglement			integer,						-- condition de reglement
   fk_mode_reglement			integer,						-- mode de reglement
   
+  deposit					double(24,8) DEFAULT 0,			-- deposit
+  
   date_livraison			date 	  default NULL,
   fk_shipping_method		integer,						-- shipping method id
   fk_warehouse				integer default NULL,
