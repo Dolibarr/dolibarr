@@ -289,6 +289,24 @@ class BOM extends CommonObject
 		$this->lines=array();
 
 		// Load lines with object BOMLine
+        $sql = 'SELECT rowid, fk_product, description, qty, rank WHERE fk_bom = '.$this->id;
+
+        $resql=$this->db->query($sql);
+        if ($resql)
+        {
+            $obj = $this->db->fetch_object($resql);
+            if ($obj)
+            {
+                $newline = new BOMLine($this->db);
+                $newline->id = $obj->rowid;
+                $newline->fk_product = $obj->fk_product;
+                $newline->description = $obj->description;
+                $newline->qty = $obj->qty;
+                $newline->rank = $obj->rank;
+
+                $this->lines[] = $newline;
+            }
+        }
 
 		return count($this->lines)?1:0;
 	}
