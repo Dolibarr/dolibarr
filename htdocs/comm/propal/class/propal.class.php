@@ -143,6 +143,8 @@ class Propal extends CommonObject
 	public $datep;
 	public $date_livraison;
 	public $fin_validite;
+  public $deposit;
+  public $deposit_type;
 
 	public $user_author_id;
 	public $user_valid_id;
@@ -882,7 +884,10 @@ class Propal extends CommonObject
 		$this->fin_validite = $this->date + ($this->duree_validite * 24 * 3600);
 		if (empty($this->availability_id)) $this->availability_id=0;
 		if (empty($this->demand_reason_id)) $this->demand_reason_id=0;
-
+    
+    if (!empty($this->deposit_type) && $this->deposit_type == 'variable' && $this->deposit) $this->deposit=$this->deposit/100;
+    if (empty($this->deposit)) $this->deposit=0;
+    
 		// Multicurrency (test on $this->multicurrency_tx because we should take the default rate only if not using origin rate)
 		if (!empty($this->multicurrency_code) && empty($this->multicurrency_tx)) list($this->fk_multicurrency,$this->multicurrency_tx) = MultiCurrency::getIdAndTxFromCode($this->db, $this->multicurrency_code, $this->date);
 		else $this->fk_multicurrency = MultiCurrency::getIdFromCode($this->db, $this->multicurrency_code);
@@ -1242,7 +1247,8 @@ class Propal extends CommonObject
 		{
 			if ($objsoc->fetch($socid) > 0)
 			{
-			    $object->socid 				= $objsoc->id;
+			    $object->socid 				      = $objsoc->id;
+          $object->deposit            = (! empty($objsoc->deposit) ? $objsoc->deposit : 0);
 			    $object->cond_reglement_id	= (! empty($objsoc->cond_reglement_id) ? $objsoc->cond_reglement_id : 0);
 			    $object->mode_reglement_id	= (! empty($objsoc->mode_reglement_id) ? $objsoc->mode_reglement_id : 0);
 			    $object->fk_delivery_address	= '';
@@ -1364,6 +1370,7 @@ class Propal extends CommonObject
 		$sql.= ", p.fk_input_reason";
 		$sql.= ", p.fk_cond_reglement";
 		$sql.= ", p.fk_mode_reglement";
+    $sql.= ", p.deposit";
 		$sql.= ', p.fk_account';
 		$sql.= ", p.fk_shipping_method";
 		$sql.= ", p.fk_incoterms, p.location_incoterms";
@@ -1408,13 +1415,13 @@ class Propal extends CommonObject
 				$this->total                = $obj->total; // TODO deprecated
 				$this->total_ht             = $obj->total_ht;
 				$this->total_tva            = $obj->tva;
-				$this->total_localtax1		= $obj->localtax1;
-				$this->total_localtax2		= $obj->localtax2;
+				$this->total_localtax1		  = $obj->localtax1;
+				$this->total_localtax2	   	= $obj->localtax2;
 				$this->total_ttc            = $obj->total;
 				$this->socid                = $obj->fk_soc;
 				$this->fk_project           = $obj->fk_project;
 				$this->modelpdf             = $obj->model_pdf;
-				$this->last_main_doc		= $obj->last_main_doc;
+				$this->last_main_doc		    = $obj->last_main_doc;
 				$this->note                 = $obj->note_private; // TODO deprecated
 				$this->note_private         = $obj->note_private;
 				$this->note_public          = $obj->note_public;
@@ -1423,21 +1430,31 @@ class Propal extends CommonObject
 
 				$this->datec                = $this->db->jdate($obj->datec); // TODO deprecated
 				$this->datev                = $this->db->jdate($obj->datev); // TODO deprecated
-				$this->date_creation		= $this->db->jdate($obj->datec); //Creation date
-				$this->date_validation		= $this->db->jdate($obj->datev); //Validation date
-				$this->date_modification	= $this->db->jdate($obj->date_modification); // tms
+				$this->date_creation		    = $this->db->jdate($obj->datec); //Creation date
+				$this->date_validation		  = $this->db->jdate($obj->datev); //Validation date
+				$this->date_modification	  = $this->db->jdate($obj->date_modification); // tms
 				$this->date                 = $this->db->jdate($obj->dp);	// Proposal date
 				$this->datep                = $this->db->jdate($obj->dp);    // deprecated
 				$this->fin_validite         = $this->db->jdate($obj->dfv);
 				$this->date_livraison       = $this->db->jdate($obj->date_livraison);
 				$this->shipping_method_id   = ($obj->fk_shipping_method>0)?$obj->fk_shipping_method:null;
+        if ($obj->deposit > 1) {
+        $this->deposit              = $obj->deposit;
+        $this->deposit_type         = 'amount';
+        } elseif ($obj->deposit > 0) {
+        $this->deposit              = 100*$obj->deposit;
+        $this->deposit_type         = 'variable';
+        } else {
+        $this->deposit              = null;
+        $this->deposit_type         = null;
+        }
 				$this->availability_id      = $obj->fk_availability;
 				$this->availability_code    = $obj->availability_code;
 				$this->availability         = $obj->availability;
 				$this->demand_reason_id     = $obj->fk_input_reason;
 				$this->demand_reason_code   = $obj->demand_reason_code;
 				$this->demand_reason        = $obj->demand_reason;
-				$this->fk_address  			= $obj->fk_delivery_address;
+				$this->fk_address  			    = $obj->fk_delivery_address;
 
 				$this->mode_reglement_id    = $obj->fk_mode_reglement;
 				$this->mode_reglement_code  = $obj->mode_reglement_code;
@@ -1448,20 +1465,20 @@ class Propal extends CommonObject
 				$this->cond_reglement       = $obj->cond_reglement;
 				$this->cond_reglement_doc   = $obj->cond_reglement_libelle_doc;
 
-				$this->extraparams			= (array) json_decode($obj->extraparams, true);
+				$this->extraparams			    = (array) json_decode($obj->extraparams, true);
 
-				$this->user_author_id = $obj->fk_user_author;
-				$this->user_valid_id  = $obj->fk_user_valid;
-				$this->user_close_id  = $obj->fk_user_cloture;
+				$this->user_author_id       = $obj->fk_user_author;
+				$this->user_valid_id        = $obj->fk_user_valid;
+				$this->user_close_id        = $obj->fk_user_cloture;
 
 				//Incoterms
-				$this->fk_incoterms = $obj->fk_incoterms;
-				$this->location_incoterms = $obj->location_incoterms;
-				$this->libelle_incoterms = $obj->libelle_incoterms;
+				$this->fk_incoterms         = $obj->fk_incoterms;
+				$this->location_incoterms   = $obj->location_incoterms;
+				$this->libelle_incoterms    = $obj->libelle_incoterms;
 
 				// Multicurrency
 				$this->fk_multicurrency 		= $obj->fk_multicurrency;
-				$this->multicurrency_code 		= $obj->multicurrency_code;
+				$this->multicurrency_code 	= $obj->multicurrency_code;
 				$this->multicurrency_tx 		= $obj->multicurrency_tx;
 				$this->multicurrency_total_ht 	= $obj->multicurrency_total_ht;
 				$this->multicurrency_total_tva 	= $obj->multicurrency_total_tva;
@@ -1544,6 +1561,7 @@ class Propal extends CommonObject
 		$sql.= " fk_user_author=".(isset($this->user_author_id)?$this->user_author_id:"null").",";
 		$sql.= " fk_user_valid=".(isset($this->user_valid)?$this->user_valid:"null").",";
 		$sql.= " fk_projet=".(isset($this->fk_project)?$this->fk_project:"null").",";
+    $sql.= " deposit=".(isset($this->deposit)?$this->deposit:"null").",";
 		$sql.= " fk_cond_reglement=".(isset($this->cond_reglement_id)?$this->cond_reglement_id:"null").",";
 		$sql.= " fk_mode_reglement=".(isset($this->mode_reglement_id)?$this->mode_reglement_id:"null").",";
 		$sql.= " note_private=".(isset($this->note_private)?"'".$this->db->escape($this->note_private)."'":"null").",";
@@ -2216,6 +2234,68 @@ class Propal extends CommonObject
 				$result=$this->call_trigger('PROPAL_MODIFY', $user);
 				if ($result < 0) $error++;
 				// End call triggers
+			}
+
+			if (! $error)
+			{
+				$this->db->commit();
+				return 1;
+			}
+			else
+			{
+				foreach($this->errors as $errmsg)
+				{
+					dol_syslog(__METHOD__.' Error: '.$errmsg, LOG_ERR);
+					$this->error.=($this->error?', '.$errmsg:$errmsg);
+				}
+				$this->db->rollback();
+				return -1*$error;
+			}
+		}
+		else
+		{
+			return -1;
+		}
+	}
+  
+      // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 * Set customer reference number
+	 *
+	 *	@param      User	$user       Object user that modify
+	 *  @param      string	$type			Type of deposit
+	 *  @param      string	$deposit  Amount of deposit
+	 *  @return     int						<0 if ko, >0 if ok
+	 */
+    public function set_deposit($user, $type, $deposit)
+	{
+        // phpcs:enable
+		if (! empty($user->rights->propal->creer))
+		{
+			$error=0;
+
+			$this->db->begin();
+      
+      if ($type == 'none') {
+      $deposit = 0;
+      } elseif ($type == 'variable') {
+      $deposit = price2num($deposit/100);
+      }
+
+			$sql = "UPDATE ".MAIN_DB_PREFIX."propal SET deposit = ".$deposit;
+			$sql.= " WHERE rowid = ".$this->id." AND fk_statut = ".self::STATUS_DRAFT;
+
+			dol_syslog(__METHOD__, LOG_DEBUG);
+			$resql=$this->db->query($sql);
+			if (!$resql)
+			{
+				$this->errors[]=$this->db->error();
+				$error++;
+			}
+
+			if (! $error)
+			{
+				$this->deposit= $deposit;
 			}
 
 			if (! $error)
