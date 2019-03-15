@@ -2058,9 +2058,9 @@ else
 							if (! empty($conf->projet->enabled))
 							{
 								print '<td>';
-								if ($line->fk_projet > 0)
+								if ($line->fk_project > 0)
 								{
-									$projecttmp->id=$line->fk_projet;
+									$projecttmp->id=$line->fk_project;
 									$projecttmp->ref=$line->projet_ref;
 									print $projecttmp->getNomUrl(1);
 								}
@@ -2135,7 +2135,7 @@ else
 								if (! empty($conf->projet->enabled))
 								{
 									print '<td>';
-									$formproject->select_projects(-1, $line->fk_projet, 'fk_projet', 0, 0, 1, 1, 0, 0, 0, '', 0, 0, 'maxwidth300');
+									$formproject->select_projects(-1, $line->fk_project, 'fk_projet', 0, 0, 1, 1, 0, 0, 0, '', 0, 0, 'maxwidth300');
 									print '</td>';
 								}
 
@@ -2202,12 +2202,54 @@ else
 				    if (! empty($conf->projet->enabled)) $colspan++;
 				    if ($action != 'editline') $colspan++;
 
+				    $nbFiles = $nbLinks = 0;
+				    $arrayoffiles = array();
+				    if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
+				    {
+				        require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+				        require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
+				        require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
+				        $upload_dir = $conf->expensereport->dir_output . "/" . dol_sanitizeFileName($object->ref);
+				        $arrayoffiles=dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png|'.preg_quote(dol_sanitizeFileName($object->ref.'.pdf'), '/').')$');
+				        $nbFiles = count($arrayoffiles);
+				        $nbLinks=Link::count($db, $object->element, $object->id);
+				    }
+
+				    // Add line with link to add new file or attach to an existing file
 				    print '<tr class="liste_titre">';
 				    print '<td colspan="'.$colspan.'" class="liste_titre">';
-				    print $langs->trans("UploadANewFileNow");
+				    print '<a href="" class="commonlink auploadnewfilenow reposition">'.$langs->trans("UploadANewFileNow");
+				    print img_picto($langs->trans("UploadANewFileNow"), 'chevron-down', '', false, 0, 0, '', 'marginleftonly');
+				    print '</a>';
+				    if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
+				    {
+				        print ' &nbsp; - &nbsp; '.'<a href="" class="commonlink aattachtodoc reposition">'.$langs->trans("AttachTheNewLineToTheDocument");
+				        print img_picto($langs->trans("AttachTheNewLineToTheDocument"), 'chevron-down', '', false, 0, 0, '', 'marginleftonly');
+				        print '</a>';
+				    }
+
+				    print '<script language="javascript">'."\n";
+				    print '$(document).ready(function() {
+				        $( ".auploadnewfilenow" ).click(function() {
+				            jQuery(".truploadnewfilenow").toggle();
+                            return false;
+                        });
+				        $( ".aattachtodoc" ).click(function() {
+				            jQuery(".trattachnewfilenow").toggle();
+                            return false;
+                        });';
+				    if (is_array(GETPOST('attachfile','array')) && count(GETPOST('attachfile','array')))
+				    {
+				        print 'jQuery(".trattachnewfilenow").toggle();'."\n";
+				    }
+				    print '
+                    });
+				    ';
+				    print '</script>'."\n";
 				    print '</td></tr>';
 
-				    print '<tr class="oddeven">';
+				    // Add line to upload new file
+				    print '<tr class="oddeven truploadnewfilenow"'.(empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)?' style="display: none"':'').'>';
 				    print '<td colspan="'.$colspan.'">';
 
 				    $modulepart = 'expensereport';
@@ -2250,6 +2292,65 @@ else
 				        );
 
 				    print '</td></tr>';
+
+                    // Add line to select existing file
+				    if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
+				    {
+				        require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+				        require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
+				        require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
+				        $upload_dir = $conf->expensereport->dir_output . "/" . dol_sanitizeFileName($object->ref);
+				        $arrayoffiles=dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png|'.preg_quote(dol_sanitizeFileName($object->ref.'.pdf'), '/').')$');
+				        $nbFiles = count($arrayoffiles);
+				        $nbLinks=Link::count($db, $object->element, $object->id);
+				        if ($nbFiles >= 0)
+				        {
+				            print '<tr class="oddeven trattachnewfilenow"'.(! GETPOSTISSET('sendit') && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)?' style="display: none"':'').'>';
+				            print '<td colspan="'.$colspan.'">';
+				            //print '<span class="opacitymedium">'.$langs->trans("AttachTheNewLineToTheDocument").'</span><br>';
+				            $modulepart='expensereport';$maxheightmini=48;
+				            $relativepath=(! empty($object->ref)?dol_sanitizeFileName($object->ref):'').'/';
+				            foreach($arrayoffiles as $file)
+				            {
+				                print '<div class="inline-block margintoponly marginleftonly marginrightonly center">';
+				                $fileinfo = pathinfo($file['name']);
+				                if (image_format_supported($file['name']) > 0)
+				                {
+				                    $minifile=getImageFileNameForSize($file['name'], '_mini'); // For new thumbs using same ext (in lower case howerver) than original
+				                    //if (! dol_is_file($file['path'].'/'.$minifile)) $minifile=getImageFileNameForSize($file['name'], '_mini', '.png'); // For backward compatibility of old thumbs that were created with filename in lower case and with .png extension
+				                    //print $file['path'].'/'.$minifile.'<br>';
+				                    $urlforhref=getAdvancedPreviewUrl($modulepart, $fileinfo['relativename'].'.'.strtolower($fileinfo['extension']), 1, '&entity='.(!empty($object->entity)?$object->entity:$conf->entity));
+				                    if (empty($urlforhref)) {
+				                        $urlforhref=DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.(!empty($object->entity)?$object->entity:$conf->entity).'&file='.urlencode($fileinfo['relativename'].'.'.strtolower($fileinfo['extension']));
+				                        print '<a href="'.$urlforhref.'" class="aphoto" target="_blank">';
+				                    } else {
+				                        print '<a href="'.$urlforhref['url'].'" class="'.$urlforhref['css'].'" target="'.$urlforhref['target'].'" mime="'.$urlforhref['mime'].'">';
+				                    }
+				                    print '<img class="photo" height="'.$maxheightmini.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.(!empty($object->entity)?$object->entity:$conf->entity).'&file='.urlencode($relativepath.$minifile).'" title="">';
+				                    print '</a>';
+				                }
+				                else print '&nbsp;';
+				                print '<br>';
+				                $checked='';
+				                //var_dump(GETPOST($file['relativename'])); var_dump($file['relativename']); var_dump($_FILES['userfile']['name']);
+				                foreach($_FILES['userfile']['name'] as $tmpfile)
+				                {
+				                    if ($file['relativename'] == (GETPOST('savingdocmask','alpha') ? dol_sanitizeFileName($object->ref.'-') : '').$tmpfile)
+				                    {
+				                        $checked=' checked';
+				                        break;
+				                    }
+				                    elseif ($file['relativename'] && in_array($file['relativename'], GETPOST('attachfile','array'))) {
+				                        $checked=' checked';
+				                        break;
+				                    }
+				                }
+				                print '<input type="checkbox"'.$checked.' name="attachfile[]" value="'.$file['relativename'].'"> '.$file['relativename'];
+				                print '</div>';
+				            }
+				            print '</td></tr>';
+				        }
+				    }
 
 					print '<tr class="liste_titre">';
 					print '<td></td>';
@@ -2332,16 +2433,6 @@ else
 					print '<td align="center"><input type="submit" value="'.$langs->trans("Add").'" name="bouton" class="button"></td>';
 
 					print '</tr>';
-
-					if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
-					{
-    					print '<tr class="oddeven"><td colspan="'.$colspan.'">';
-    					print $langs->trans("AttachTheNewLineToTheDocument");
-
-    					print '...';
-
-    					print '</td></tr>';
-					}
 				} // Fin si c'est payé/validé
 
 				print '</table>';

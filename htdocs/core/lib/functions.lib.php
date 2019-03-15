@@ -2951,7 +2951,7 @@ function dol_trunc($string, $size = 40, $trunc = 'right', $stringencoding = 'UTF
  *  @param		string		$alt				Force alt for bind people
  *  @param		string		$morecss			Add more class css on img tag (For example 'myclascss'). Work only if $moreatt is empty.
  *  @return     string       				    Return img tag
- *  @see        #img_object, #img_picto_common
+ *  @see        img_object(), img_picto_common()
  */
 function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $srconly = 0, $notitle = 0, $alt = '', $morecss = '')
 {
@@ -2981,7 +2981,8 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
         if (empty($srconly) && in_array($pictowithoutext, array(
 				'bank', 'close_title', 'delete', 'edit', 'ellipsis-h', 'filter', 'grip', 'grip_title', 'list', 'listlight', 'note', 'off', 'on', 'play', 'playdisabled', 'printer', 'resize',
                 'note', 'setup', 'sign-out', 'split', 'switch_off', 'switch_on', 'unlink', 'uparrow', '1downarrow', '1uparrow', '1leftarrow', '1rightarrow',
-				'jabber','skype','twitter','facebook','linkedin'
+				'jabber','skype','twitter','facebook','linkedin',
+                'chevron-left','chevron-right','chevron-down','chevron-top'
 			)
 		)) {
 		    $fa='fa';

@@ -148,3 +148,4 @@ nolimitbyEX_EXP=by line (no limitation)
 CarCategory=Category of car
 ExpenseRangeOffset=Offset amount: %s
 RangeIk=Mileage range
+AttachTheNewLineToTheDocument=Attach the new line to an existing document
