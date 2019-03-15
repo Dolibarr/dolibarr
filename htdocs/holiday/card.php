@@ -45,7 +45,8 @@ $ref=GETPOST('ref', 'alpha');
 $fuserid = (GETPOST('fuserid', 'int')?GETPOST('fuserid', 'int'):$user->id);
 
 // Protection if external user
-if ($user->societe_id > 0) accessforbidden();
+if ($user->societe_id) $socid=$user->societe_id;
+$result = restrictedArea($user, 'holiday', $id, 'holiday');
 
 $now=dol_now();
 
