@@ -2288,8 +2288,8 @@ class Societe extends CommonObject
 		}
 		elseif ($mode == 6)
 		{
-			if ($statut==0) return '<span class="hideonsmartphone">'.$langs->trans("ActivityCeased").'</span> '.img_picto($langs->trans("ActivityCeased"), 'statut5', 'class="pictostatus"');
-			elseif ($statut==1) return '<span class="hideonsmartphone">'.$langs->trans("InActivity").'</span> '.img_picto($langs->trans("InActivity"), 'statut4', 'class="pictostatus"');
+			if ($statut==0) return $langs->trans("ActivityCeased").' '.img_picto($langs->trans("ActivityCeased"), 'statut5', 'class="pictostatus"');
+			elseif ($statut==1) return $langs->trans("InActivity").' '.img_picto($langs->trans("InActivity"), 'statut4', 'class="pictostatus"');
 		}
 	}
 
