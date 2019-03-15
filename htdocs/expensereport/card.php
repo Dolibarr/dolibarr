@@ -2076,7 +2076,7 @@ else
 							$labeltype = ($langs->trans(($line->type_fees_code)) == $line->type_fees_code ? $line->type_fees_libelle : $langs->trans($line->type_fees_code));
 							print $labeltype;
 							print '</td>';
-							print '<td class="left">'.dol_escape_htmltag($line->comments).'</td>';
+							print '<td class="left">'.dol_nl2br($line->comments).'</td>';
 							print '<td class="right">'.vatrate($line->vatrate, true).'</td>';
                             // Unit price HT
 							print '<td class="right">';
