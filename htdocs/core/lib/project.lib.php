@@ -917,6 +917,21 @@ function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsr
 	$workloadforid=array();
 	$lineswithoutlevel0=array();
 
+    $plannedworkloadoutputformat='allhourmin';
+    $timespentoutputformat='allhourmin';
+    if (! empty($conf->global->PROJECT_PLANNED_WORKLOAD_FORMAT)) $plannedworkloadoutputformat=$conf->global->PROJECT_PLANNED_WORKLOAD_FORMAT;
+    if (! empty($conf->global->PROJECT_TIMES_SPENT_FORMAT)) $timespentoutputformat=$conf->global->PROJECT_TIME_SPENT_FORMAT;
+
+    $working_plannedworkloadoutputformat='all';
+    $working_timespentoutputformat='all';
+    if (! empty($conf->global->PROJECT_WORKING_PLANNED_WORKLOAD_FORMAT)) $working_plannedworkloadoutputformat=$conf->global->PROJECT_WORKING_PLANNED_WORKLOAD_FORMAT;
+    if (! empty($conf->global->PROJECT_WORKING_TIMES_SPENT_FORMAT)) $working_timespentoutputformat=$conf->global->PROJECT_WORKING_TIMES_SPENT_FORMAT;
+
+    $working_hours_per_day=!empty($conf->global->PROJECT_WORKING_HOURS_PER_DAY) ? $conf->global->PROJECT_WORKING_HOURS_PER_DAY : 7;
+    $working_days_per_weeks=!empty($conf->global->PROJECT_WORKING_DAYS_PER_WEEKS) ? $conf->global->PROJECT_WORKING_DAYS_PER_WEEKS : 5;
+
+    $working_hours_per_day_in_seconds = 3600 * $working_hours_per_day;
+
 	$numlines=count($lines);
 
 	// Create a smaller array with sublevels only to be used later. This increase dramatically performances.
@@ -1036,7 +1051,21 @@ function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsr
 
 				// Planned Workload
 				print '<td align="right" class="leftborder plannedworkload">';
-				if ($lines[$i]->planned_workload) print convertSecondToTime($lines[$i]->planned_workload, 'allhourmin');
+				if ($lines[$i]->planned_workload)
+                {
+                    $fullhour = convertSecondToTime($lines[$i]->planned_workload, $plannedworkloadoutputformat);
+                    print $fullhour;
+
+                    if (!empty($conf->global->PROJECT_ENABLE_WORKING_TIME))
+                    {
+                        $workingdelay=convertSecondToTime($lines[$i]->planned_workload, $working_plannedworkloadoutputformat, $working_hours_per_day_in_seconds, $working_days_per_weeks);
+                        if ($workingdelay != $fullhour)
+                        {
+                            if (!empty($fullhour)) print '<br>';
+                            print '('.$workingdelay.')';
+                        }
+                    }
+                }
 				else print '--:--';
 				print '</td>';
 
@@ -1051,7 +1080,18 @@ function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsr
 				if ($lines[$i]->duration)
 				{
 					print '<a href="'.DOL_URL_ROOT.'/projet/tasks/time.php?id='.$lines[$i]->id.'">';
-					print convertSecondToTime($lines[$i]->duration, 'allhourmin');
+                    $fullhour = convertSecondToTime($lines[$i]->duration, 'allhourmin');
+                    print $fullhour;
+
+                    if (!empty($conf->global->PROJECT_ENABLE_WORKING_TIME))
+                    {
+                        $workingdelay=convertSecondToTime($lines[$i]->duration, $working_timespentoutputformat, $working_hours_per_day_in_seconds, $working_days_per_weeks);
+                        if ($workingdelay != $fullhour)
+                        {
+                            if (!empty($fullhour)) print '<br>';
+                            print '('.$workingdelay.')';
+                        }
+                    }
 					print '</a>';
 				}
 				else print '--:--';
@@ -1060,7 +1100,21 @@ function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsr
 				// Time spent by user
 				print '<td align="right">';
 				$tmptimespent=$taskstatic->getSummaryOfTimeSpent($fuser->id);
-				if ($tmptimespent['total_duration']) print convertSecondToTime($tmptimespent['total_duration'], 'allhourmin');
+				if ($tmptimespent['total_duration'])
+                {
+                    $fullhour = convertSecondToTime($tmptimespent['total_duration'], 'allhourmin');
+                    print $fullhour;
+
+                    if (!empty($conf->global->PROJECT_ENABLE_WORKING_TIME))
+                    {
+                        $workingdelay=convertSecondToTime($tmptimespent['total_duration'], $working_timespentoutputformat, $working_hours_per_day_in_seconds, $working_days_per_weeks);
+                        if ($workingdelay != $fullhour)
+                        {
+                            if (!empty($fullhour)) print '<br>';
+                            print '('.$workingdelay.')';
+                        }
+                    }
+                }
 				else print '--:--';
 				print "</td>\n";
 
@@ -1080,11 +1134,14 @@ function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsr
 					$disabledtask=1;
 				}
 
-				// Form to add new time
-				print '<td class="nowrap leftborder" align="center">';
-				$tableCell = $form->selectDate($preselectedday, $lines[$i]->id, 1, 1, 2, "addtime", 0, 0, $disabledtask);
-				print $tableCell;
-				print '</td>';
+                if (empty($conf->global->PROJECT_USE_DECIMAL_DAY))
+                {
+                    // Form to add new time
+                    print '<td class="nowrap leftborder" align="center">';
+                    $tableCell = $form->selectDate($preselectedday, $lines[$i]->id, 1, 1, 2, "addtime", 0, 0, $disabledtask);
+                    print $tableCell;
+                    print '</td>';
+                }
 
 				$cssonholiday='';
 				if (! $isavailable[$preselectedday]['morning'] && ! $isavailable[$preselectedday]['afternoon'])   $cssonholiday.='onholidayallday ';
@@ -1108,7 +1165,11 @@ function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsr
 				$totalforeachday[$preselectedday]+=$dayWorkLoad;
 
 				$alreadyspent='';
-				if ($dayWorkLoad > 0) $alreadyspent=convertSecondToTime($dayWorkLoad, 'allhourmin');
+				if ($dayWorkLoad > 0)
+                {
+                    if (empty($conf->global->PROJECT_USE_DECIMAL_DAY)) $alreadyspent=convertSecondToTime($dayWorkLoad, 'allhourmin');
+                    else $alreadyspent=convertSecondToTime($dayWorkLoad, 'fulldaydecimal', $working_hours_per_day_in_seconds, $working_days_per_weeks);
+                }
 
 				$idw = 0;
 
@@ -1116,16 +1177,27 @@ function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsr
 				$tableCell.='<span class="timesheetalreadyrecorded" title="texttoreplace"><input type="text" class="center" size="2" disabled id="timespent['.$inc.']['.$idw.']" name="task['.$lines[$i]->id.']['.$idw.']" value="'.$alreadyspent.'"></span>';
 				$tableCell.='<span class="hideonsmartphone"> + </span>';
 				//$tableCell.='&nbsp;&nbsp;&nbsp;';
-				$tableCell.=$form->select_duration($lines[$i]->id.'duration', '', $disabledtask, 'text', 0, 1);
-				//$tableCell.='&nbsp;<input type="submit" class="button"'.($disabledtask?' disabled':'').' value="'.$langs->trans("Add").'">';
+                if (empty($conf->global->PROJECT_USE_DECIMAL_DAY)) $tableCell.=$form->select_duration($lines[$i]->id.'duration', '', $disabledtask, 'text', 0, 1);
+				else $tableCell.='<input type="text" class="center smallpadd inputdays" size="2" id="timeadded['.$inc.']['.$idw.']" name="task['.$lines[$i]->id.']['.$idw.']" value="" cols="2"  maxlength="5">';
+
+                //$tableCell.='&nbsp;<input type="submit" class="button"'.($disabledtask?' disabled':'').' value="'.$langs->trans("Add").'">';
 				print $tableCell;
 
-				$modeinput='hours';
+                if (empty($conf->global->PROJECT_USE_DECIMAL_DAY))
+                {
+                    $modeinput='hours';
+                    $class='.inputhour, .inputminute';
+                }
+                else
+                {
+                    $modeinput='timeChar';
+                    $class='.inputdays';
+                }
 
 				print '<script type="text/javascript">';
 				print "jQuery(document).ready(function () {\n";
-				print " 	jQuery('.inputhour, .inputminute').bind('keyup', function(e) { updateTotal(0, '".$modeinput."') });";
-				print "})\n";
+                print " 	jQuery('".$class."').bind('keyup', function(e) { updateTotal(0, '".$modeinput."') });";
+                print "})\n";
 				print '</script>';
 
 				print '</td>';

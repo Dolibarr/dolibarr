@@ -757,7 +757,8 @@ print '</div>';
 
 print '</form>'."\n\n";
 
-$modeinput='hours';
+if (empty($conf->global->PROJECT_USE_DECIMAL_DAY)) $modeinput='hours';
+else $modeinput='timeChar';
 
 if ($conf->use_javascript_ajax)
 {

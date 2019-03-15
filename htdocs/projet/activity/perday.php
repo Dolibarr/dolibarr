@@ -102,6 +102,15 @@ else
 
 $object=new Task($db);
 
+$timespentoutputformat='allhourmin';
+if (! empty($conf->global->PROJECT_TIMES_SPENT_FORMAT)) $timespentoutputformat=$conf->global->PROJECT_TIME_SPENT_FORMAT;
+$working_timespentoutputformat='all';
+if (! empty($conf->global->PROJECT_WORKING_TIMES_SPENT_FORMAT)) $working_timespentoutputformat=$conf->global->PROJECT_WORKING_TIMES_SPENT_FORMAT;
+
+$working_hours_per_day=!empty($conf->global->PROJECT_WORKING_HOURS_PER_DAY) ? $conf->global->PROJECT_WORKING_HOURS_PER_DAY : 7;
+$working_days_per_weeks=!empty($conf->global->PROJECT_WORKING_DAYS_PER_WEEKS) ? $conf->global->PROJECT_WORKING_DAYS_PER_WEEKS : 5;
+
+$working_hours_per_day_in_seconds = 3600 * $working_hours_per_day;
 
 /*
  * Actions
@@ -221,12 +230,21 @@ if ($action == 'addtime' && $user->rights->projet->lire)
 
 	if (is_array($_POST))
 	{
-		foreach($_POST as $key => $time)
+        if (empty($conf->global->PROJECT_USE_DECIMAL_DAY)) $post = $_POST;
+        else $post = $_POST['task'];
+
+		foreach($post as $key => $time)
 		{
 			if (intval($time) > 0)
 			{
+			    if (!empty($conf->global->PROJECT_USE_DECIMAL_DAY))
+                {
+                    $tmpduration=price2num($time[0]);
+                    if (!empty($conf->global->PROJECT_ENABLE_WORKING_TIME)) $timespent_duration[$key] = $tmpduration * $working_hours_per_day_in_seconds;
+                    else $timespent_duration[$key] = $tmpduration * 24 * 60 * 60;
+                }
 				// Hours or minutes of duration
-				if (preg_match("/([0-9]+)duration(hour|min)/", $key, $matches))
+				elseif (preg_match("/([0-9]+)duration(hour|min)/", $key, $matches))
 				{
 					$id = $matches[1];
 					if ($id > 0)
@@ -481,7 +499,7 @@ print '<td class="liste_titre"></td>';
 print '<td class="liste_titre right"><input type="text" size="4" name="search_declared_progress" value="'.dol_escape_htmltag($search_declared_progress).'"></td>';
 print '<td class="liste_titre"></td>';
 print '<td class="liste_titre"></td>';
-print '<td class="liste_titre"></td>';
+if (empty($conf->global->PROJECT_USE_DECIMAL_DAY)) print '<td class="liste_titre"></td>';
 print '<td class="liste_titre"></td>';
 print '<td class="liste_titre"></td>';
 // Action column
@@ -502,7 +520,7 @@ if ($usertoprocess->id == $user->id) print '<td class="right maxwidth100">'.$lan
 else print '<td class="right maxwidth100">'.$langs->trans("TimeSpentByUser").'</td>';*/
 print '<td class="right maxwidth100">'.$langs->trans("TimeSpent").'<br>('.$langs->trans("Everybody").')</td>';
 print '<td class="right maxwidth100">'.$langs->trans("TimeSpent").($usertoprocess->firstname?'<br>('.$usertoprocess->firstname.')':'').'</td>';
-print '<td class="center leftborder">'.$langs->trans("HourStart").'</td>';
+if (empty($conf->global->PROJECT_USE_DECIMAL_DAY)) print '<td class="center leftborder">'.$langs->trans("HourStart").'</td>';
 
 // By default, we can edit only tasks we are assigned to
 $restrictviewformytask=((! isset($conf->global->PROJECT_TIME_SHOW_TASK_NOT_ASSIGNED)) ? 2 : $conf->global->PROJECT_TIME_SHOW_TASK_NOT_ASSIGNED);
@@ -545,6 +563,7 @@ print '<td class="center"></td>';
 print "</tr>\n";
 
 $colspan = 6+(empty($conf->global->PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT)?0:2);
+if (!empty($conf->global->PROJECT_USE_DECIMAL_DAY)) $colspan--;
 
 if ($conf->use_javascript_ajax)
 {
@@ -638,7 +657,20 @@ if (count($tasksarray) > 0)
 		//if ($timeonothertasks)
 		//{
 			print '<span class="timesheetalreadyrecorded" title="texttoreplace"><input type="text" class="center" size="2" disabled="" id="timespent[-1][0]" name="task[-1][0]" value="';
-			if ($timeonothertasks) print convertSecondToTime($timeonothertasks, 'allhourmin');
+			if ($timeonothertasks)
+            {
+                $fullhour = convertSecondToTime($timeonothertasks, $timespentoutputformat);
+                print $fullhour;
+                if (!empty($conf->global->PROJECT_ENABLE_WORKING_TIME))
+                {
+                    $workingdelay=convertSecondToTime($timeonothertasks, $working_timespentoutputformat, $working_hours_per_day_in_seconds, $working_days_per_weeks);
+                    if ($workingdelay != $fullhour)
+                    {
+                        if (!empty($fullhour)) print '<br>';
+                        print '('.$workingdelay.')';
+                    }
+                }
+            }
 			print '"></span>';
 		//}
 		print '</td>';
@@ -693,7 +725,8 @@ print '</div>';
 
 print '</form>';
 
-$modeinput='hours';
+if (empty($conf->global->PROJECT_USE_DECIMAL_DAY)) $modeinput='hours';
+else $modeinput='timeChar';
 
 if ($conf->use_javascript_ajax)
 {
