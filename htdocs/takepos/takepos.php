@@ -89,6 +89,8 @@ $maincategories = array();
 $subcategories = array();
 foreach($categories as $key => $categorycursor)
 {
+	if (empty($categorycursor['visible'])) continue;	// Hide not visible categories
+
     if ($categorycursor['level'] == $levelofmaincategories)
     {
         $maincategories[$key] = $categorycursor;
