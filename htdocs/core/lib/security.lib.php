@@ -457,7 +457,7 @@ function checkUserAccessToObject($user, $featuresarray, $objectid = 0, $tableand
 		$checkproject = array('projet','project'); // Test for project object
 		$checktask = array('projet_task');
 		$nocheck = array('barcode','stock');	// No test
-		$checkdefault = 'all other not already defined'; // Test on entity and link to third party. Not allowed if link is empty (Ex: invoice, orders...).
+		//$checkdefault = 'all other not already defined'; // Test on entity and link to third party. Not allowed if link is empty (Ex: invoice, orders...).
 
 		// If dbtablename not defined, we use same name for table than module name
 		if (empty($dbtablename))
