@@ -398,6 +398,62 @@ class BOM extends CommonObject
 
 
 	/**
+	 *  Returns the reference to the following non used BOM depending on the active numbering module
+	 *  defined into BOM_ADDON
+	 *
+	 *  @param	Product		$prod 	Object product
+	 *  @return string      		BOM free reference
+	 */
+	public function getNextNumRef($prod)
+	{
+	    global $langs, $conf;
+	    $langs->load("mrp");
+
+	    if (! empty($conf->global->BOM_ADDON))
+	    {
+	        $mybool=false;
+
+	        $file = $conf->global->BOM_ADDON.".php";
+	        $classname = $conf->global->BOM_ADDON;
+
+	        // Include file with class
+	        $dirmodels=array_merge(array('/'), (array) $conf->modules_parts['models']);
+	        foreach ($dirmodels as $reldir)
+	        {
+	            $dir = dol_buildpath($reldir."core/modules/bom/");
+
+	            // Load file with numbering class (if found)
+	            $mybool|=@include_once $dir.$file;
+	        }
+
+	        if ($mybool === false)
+	        {
+	            dol_print_error('', "Failed to include file ".$file);
+	            return '';
+	        }
+
+	        $obj = new $classname();
+	        $numref = $obj->getNextValue($prod, $this);
+
+	        if ($numref != "")
+	        {
+	            return $numref;
+	        }
+	        else
+	        {
+	            $this->error=$obj->error;
+	            //dol_print_error($this->db,get_class($this)."::getNextNumRef ".$obj->error);
+	            return "";
+	        }
+	    }
+	    else
+	    {
+	        print $langs->trans("Error")." ".$langs->trans("Error_BOM_ADDON_NotDefined");
+	        return "";
+	    }
+	}
+
+	/**
 	 *	Validate bom
 	 *
 	 *	@param		User	$user     		User making status change
@@ -433,7 +489,8 @@ class BOM extends CommonObject
 	    // Define new ref
 	    if (! $error && (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref))) // empty should not happened, but when it occurs, the test save life
 	    {
-	        $num = $this->getNextNumRef();
+	        $this->fetch_product();
+	        $num = $this->getNextNumRef($this->product);
 	    }
 	    else
 	    {
