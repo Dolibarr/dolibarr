@@ -144,7 +144,7 @@ if (empty($reshook))
 	// Confirm back to draft status
 	if ($action == 'modif' && $user->rights->reception->creer)
 	{
-		$result = $object->set_draft($user);
+		$result = $object->setDraft($user);
 		if ($result >= 0)
 		{
 			// Define output language

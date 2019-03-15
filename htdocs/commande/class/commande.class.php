@@ -479,7 +479,7 @@ class Commande extends CommonOrder
 	 *	@param	int		$idwarehouse	Warehouse ID to use for stock change (Used only if option STOCK_CALCULATE_ON_VALIDATE_ORDER is on)
 	 *	@return	int						<0 if KO, >0 if OK
 	 */
-    public function set_draft($user, $idwarehouse = -1)
+    public function setDraft($user, $idwarehouse = -1)
     {
         //phpcs:enable
 		global $conf,$langs;

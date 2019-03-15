@@ -18,6 +18,7 @@ Following changes may create regressions for some external modules, but were nec
 * Deprecated function img_phone as been removed. You can use img_picto(..., 'call|call_out') instead.; 
 * Files for variables of themes were renamed from graph-color.php into theme_vars.inc.php to match naming 
   convention of extension .inc.php for files to be included.
+* All methods set_draft() were renamed into setDraft().
 
 
 ***** ChangeLog for 9.0.1 compared to 9.0.0 *****

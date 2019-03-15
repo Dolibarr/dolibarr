@@ -1446,7 +1446,7 @@ if (empty($reshook))
                 }
             }
 
-            $object->set_draft($user, $idwarehouse);
+            $object->setDraft($user, $idwarehouse);
 
 			// Define output language
 			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))

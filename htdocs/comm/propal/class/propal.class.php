@@ -2605,7 +2605,7 @@ class Propal extends CommonObject
 	 *  @param		int		$notrigger	1=Does not execute triggers, 0= execute triggers
 	 *	@return		int					<0 if KO, >0 if OK
 	 */
-    public function set_draft($user, $notrigger = 0)
+    public function setDraft($user, $notrigger = 0)
 	{
         // phpcs:enable
 		$error=0;

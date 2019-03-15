@@ -595,7 +595,6 @@ class BOM extends CommonObject
 	    }
 	}
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Set draft status
 	 *
@@ -604,7 +603,6 @@ class BOM extends CommonObject
 	 */
 	public function setDraft($user)
 	{
-	    //phpcs:enable
 	    global $conf,$langs;
 
 	    $error=0;

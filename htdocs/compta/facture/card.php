@@ -621,7 +621,7 @@ if (empty($reshook))
 			{
 				if (! empty($conf->global->INVOICE_CAN_ALWAYS_BE_EDITED) || ($resteapayer == $object->total_ttc && empty($object->paye)))
 				{
-					$result=$object->set_draft($user, $idwarehouse);
+					$result=$object->setDraft($user, $idwarehouse);
 					if ($result<0) setEventMessages($object->error, $object->errors, 'errors');
 
 					// Define output language
