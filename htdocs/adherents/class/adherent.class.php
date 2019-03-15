@@ -587,7 +587,7 @@ class Adherent extends CommonObject
 			    }
 			}
 		}
-		
+
 		dol_syslog(get_class($this)."::update update member", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
@@ -2149,7 +2149,7 @@ class Adherent extends CommonObject
 	 *  @param	int			$statut      			Id statut
 	 *	@param	int			$need_subscription		1 if member type need subscription, 0 otherwise
 	 *	@param	int     	$date_end_subscription	Date fin adhesion
-	 *  @param  int			$mode        			0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 *  @param  int		    $mode                   0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
 	 *  @return string      						Label
 	 */
 	public function LibStatut($statut, $need_subscription, $date_end_subscription, $mode = 0)
@@ -2209,7 +2209,7 @@ class Adherent extends CommonObject
 		}
 		elseif ($mode == 5)
 		{
-			if ($statut == -1) return $langs->trans("MemberStatusDraft").' '.img_picto($langs->trans('MemberStatusDraft'), 'statut0');
+			if ($statut == -1) return $langs->trans("MemberStatusDraftShort").' '.img_picto($langs->trans('MemberStatusDraft'), 'statut0');
 			elseif ($statut >= 1) {
 				if (! $date_end_subscription)            return '<span class="hideonsmartphone">'.$langs->trans("MemberStatusActiveShort").' </span>'.img_picto($langs->trans('MemberStatusActive'), 'statut1');
 				elseif ($date_end_subscription < time()) return '<span class="hideonsmartphone">'.$langs->trans("MemberStatusActiveLateShort").' </span>'.img_picto($langs->trans('MemberStatusActiveLate'), 'statut3');
