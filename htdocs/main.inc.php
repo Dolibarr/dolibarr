@@ -1096,6 +1096,10 @@ if (! function_exists("llxHeader"))
 		// html header
 		top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
 
+		if ($conf->browser->layout == 'phone'){
+		    $morecssonbody.= ' sidebar-collapse';
+		}
+		
 		print '<body id="mainbody"'.($morecssonbody?' class="'.$morecssonbody.'"':'').'>' . "\n";
 
 		// top menu and left menu area

@@ -963,7 +963,13 @@ td.showDragHandle {
 	border-right: 1px solid #d0d0d0;
 	box-shadow: 3px 0 6px -2px #eee;
 	background: rgb(<?php echo $colorbackvmenu1; ?>);
+	transition: left 0.5s ease;
 }
+
+body.sidebar-collapse .side-nav {
+	display: none;
+}
+
 div.blockvmenulogo
 {
 	border-bottom: 0 !important;
@@ -1006,11 +1012,8 @@ div.vmenu, td.vmenu {
 	background: #FFF;
 	padding-left: 20px;
 	padding-right: 20px;
-}
-.side-nav {
 	position: absolute;
-    z-index: 90;
-    display: none;
+    	z-index: 90;
 }
 div.blockvmenulogo
 {
