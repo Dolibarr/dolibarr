@@ -83,7 +83,7 @@ div.wrapper2{
 	width:12.5%;
 	height:25%;
 	margin:0;
-	padding:1px;
+	/* padding:1px; */
 	border: 0.1em solid;
 	box-shadow: 2px 2px 1px #888;
 	text-align: center;

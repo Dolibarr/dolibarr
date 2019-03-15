@@ -1496,7 +1496,7 @@ else
 			// Tags-Categories
             if ($conf->categorie->enabled)
 			{
-				print '<tr><td class="tdtop">'.$langs->trans("Categories").'</td><td colspan="3">';
+				print '<tr><td>'.$langs->trans("Categories").'</td><td colspan="3">';
 				$cate_arbo = $form->select_all_categories(Categorie::TYPE_PRODUCT, '', 'parent', 64, 0, 1);
 				$c = new Categorie($db);
 				$cats = $c->containing($object->id, Categorie::TYPE_PRODUCT);

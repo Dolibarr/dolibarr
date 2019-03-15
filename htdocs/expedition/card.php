@@ -784,7 +784,8 @@ if (empty($reshook))
 									$stockLocation="entl".$detail_entrepot->line_id;
 									$qty = "qtyl".$detail_entrepot->line_id;
 									$warehouse = GETPOST($stockLocation, 'int');
-									if (!empty($warehouse)) {
+									if (!empty($warehouse))
+									{
 										$line->id = $detail_entrepot->line_id;
 										$line->entrepot_id = $warehouse;
 										$line->qty = GETPOST($qty, 'int');
@@ -1173,7 +1174,7 @@ if ($action == 'create')
 	                    print $form->textwithtooltip($text, $description, 3, '', '', $i);
 
 	                    // Show range
-	                    print_date_range($db->jdate($line->date_start),$db->jdate($line->date_end));
+	                    print_date_range($db->jdate($line->date_start), $db->jdate($line->date_end));
 
 	                    // Add description in form
 	                    if (! empty($conf->global->PRODUIT_DESC_IN_FORM))
@@ -1186,18 +1187,18 @@ if ($action == 'create')
 	                else
 					{
 					    print "<td>";
-	                    if ($type==1) $text = img_object($langs->trans('Service'),'service');
-	                    else $text = img_object($langs->trans('Product'),'product');
+	                    if ($type==1) $text = img_object($langs->trans('Service'), 'service');
+	                    else $text = img_object($langs->trans('Product'), 'product');
 
 	                    if (! empty($line->label)) {
 	                    	$text.= ' <strong>'.$line->label.'</strong>';
-	                    	print $form->textwithtooltip($text,$line->desc,3,'','',$i);
+	                    	print $form->textwithtooltip($text, $line->desc, 3, '', '', $i);
 	                    } else {
 	                    	print $text.' '.nl2br($line->desc);
 	                    }
 
 	                    // Show range
-	                    print_date_range($db->jdate($line->date_start),$db->jdate($line->date_end));
+	                    print_date_range($db->jdate($line->date_start), $db->jdate($line->date_end));
 	                    print "</td>\n";
 	                }
 
@@ -1256,7 +1257,7 @@ if ($action == 'create')
 									// Show warehouse combo list
 									$ent = "entl".$indiceAsked;
 									$idl = "idl".$indiceAsked;
-									$tmpentrepot_id = is_numeric(GETPOST($ent,'int'))?GETPOST($ent,'int'):$warehouse_id;
+									$tmpentrepot_id = is_numeric(GETPOST($ent, 'int'))?GETPOST($ent, 'int'):$warehouse_id;
 									if ($line->fk_product > 0)
 									{
 									    print '<!-- Show warehouse selection -->';
@@ -1344,8 +1345,8 @@ if ($action == 'create')
 
 									$detail='';
 									$detail.= $langs->trans("Batch").': '.$dbatch->batch;
-									$detail.= ' - '.$langs->trans("SellByDate").': '.dol_print_date($dbatch->sellby,"day");
-									$detail.= ' - '.$langs->trans("EatByDate").': '.dol_print_date($dbatch->eatby,"day");
+									$detail.= ' - '.$langs->trans("SellByDate").': '.dol_print_date($dbatch->sellby, "day");
+									$detail.= ' - '.$langs->trans("EatByDate").': '.dol_print_date($dbatch->eatby, "day");
 									$detail.= ' - '.$langs->trans("Qty").': '.$dbatch->qty;
 									$detail.= '<br>';
 									print $detail;

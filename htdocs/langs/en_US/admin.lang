@@ -1860,3 +1860,5 @@ MAIN_OPTIMIZEFORTEXTBROWSERDesc=Enable this option if you are a blind person, or
 ThisValueCanOverwrittenOnUserLevel=This value can be overwritten by each user from its user page - tab '%s'
 DefaultCustomerType=Default thirdparty type for "New customer" creation form
 ABankAccountMustBeDefinedOnPaymentModeSetup=Note: The bank account must be defined on the module of each payment mode (Paypal, Stripe, ...) to have this feature working.
+RootCategoryForProductsToSell=Root category of products to sell
+RootCategoryForProductsToSellDesc=If defined, only products inside this category or childs of this category will be available in the Point Of Sale

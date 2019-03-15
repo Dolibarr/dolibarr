@@ -40,6 +40,11 @@ $action = GETPOST('action', 'alpha');
 
 $langs->loadLangs(array("bills","orders","commercial","cashdesk","receiptprinter"));
 
+$categorie = new Categorie($db);
+
+$MAXCATEG = 16;
+$MAXPRODUCT = 32;
+
 
 /*
  * View
@@ -61,14 +66,30 @@ top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
 <script type="text/javascript" src="js/jquery.colorbox-min.js"></script>
 <script language="javascript">
 <?php
-$categorie = new Categorie($db);
-$categories = $categorie->get_full_arbo('product');
+$categories = $categorie->get_full_arbo('product', 0, (($conf->global->TAKEPOS_ROOT_CATEGORY_ID > 0)?$conf->global->TAKEPOS_ROOT_CATEGORY_ID:0));
+
+//$conf->global->TAKEPOS_ROOT_CATEGORY_ID=0;
+
+// Search root category to know its level
+$levelofrootcategory=0;
+if ($conf->global->TAKEPOS_ROOT_CATEGORY_ID > 0)
+{
+    foreach($categories as $key => $categorycursor)
+    {
+        if ($categorycursor['id'] == $conf->global->TAKEPOS_ROOT_CATEGORY_ID)
+        {
+            $levelofrootcategory = $categorycursor['level'];
+            break;
+        }
+    }
+}
+$levelofmaincategories = $levelofrootcategory + 1;
 
 $maincategories = array();
 $subcategories = array();
 foreach($categories as $key => $categorycursor)
 {
-    if ($categorycursor['level'] == 1)
+    if ($categorycursor['level'] == $levelofmaincategories)
     {
         $maincategories[$key] = $categorycursor;
     }
@@ -486,9 +507,6 @@ if (!empty($reshook)) {
 ?>
 		<div class="div3">
 <?php
-
-$MAXCATEG = 16;
-$MAXPRODUCT = 32;
 
 $i = 0;
 foreach($menus as $menu) {
