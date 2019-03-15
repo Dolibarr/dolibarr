@@ -504,12 +504,12 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 				print "</td>\n";
 
 				// Date start
-				print '<td align="center">';
+				print '<td class="center">';
 				print dol_print_date($lines[$i]->date_start, 'dayhour');
 				print '</td>';
 
 				// Date end
-				print '<td align="center">';
+				print '<td class="center">';
 				$taskstatic->projectstatus = $lines[$i]->projectstatus;
 				$taskstatic->progress = $lines[$i]->progress;
 				$taskstatic->fk_statut = $lines[$i]->status;
@@ -519,7 +519,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 				print '</td>';
 
 				// Planned Workload (in working hours)
-				print '<td align="right">';
+				print '<td class="right">';
 				$fullhour=convertSecondToTime($lines[$i]->planned_workload, $plannedworkloadoutputformat);
 				if ($lines[$i]->planned_workload != '')
 				{
@@ -534,7 +534,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 				print '</td>';
 
 				// Time spent
-				print '<td align="right">';
+				print '<td class="right">';
 				if ($showlineingray) print '<i>';
 				else print '<a href="'.DOL_URL_ROOT.'/projet/tasks/time.php?id='.$lines[$i]->id.($showproject?'':'&withproject=1').'">';
 				if ($lines[$i]->duration)
@@ -554,7 +554,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 				print '</td>';
 
 				// Progress calculated (Note: ->duration is time spent)
-				print '<td align="right">';
+				print '<td class="right">';
 				if ($lines[$i]->planned_workload || $lines[$i]->duration)
 				{
 					if ($lines[$i]->planned_workload) print round(100 * $lines[$i]->duration / $lines[$i]->planned_workload, 2).' %';
@@ -563,7 +563,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 				print '</td>';
 
 				// Progress declared
-				print '<td align="right">';
+				print '<td class="right">';
 				if ($lines[$i]->progress != '')
 				{
 					print $lines[$i]->progress.' %';
@@ -594,7 +594,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 				// Tick to drag and drop
 				if ($addordertick)
 				{
-					print '<td align="center" class="tdlineupdown hideonsmartphone">&nbsp;</td>';
+					print '<td class="tdlineupdown hideonsmartphone center">&nbsp;</td>';
 				}
 
 				print "</tr>\n";
@@ -627,7 +627,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 		print '<td></td>';
 		print '<td></td>';
 		print '<td></td>';
-		print '<td align="right" class="nowrap liste_total">';
+		print '<td class="nowrap liste_total right">';
         $fulltime = convertSecondToTime($total_projectlinesa_planned, $plannedworkloadoutputformat);
         print $fulltime;
         if (!empty($conf->global->PROJECT_ENABLE_WORKING_TIME))
@@ -636,7 +636,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
             if ($workingdelay != $fulltime) print '<br>('.$workingdelay.')';
         }
 		print '</td>';
-		print '<td align="right" class="nowrap liste_total">';
+		print '<td class="nowrap liste_total right">';
 		if ($projectidfortotallink > 0) print '<a href="'.DOL_URL_ROOT.'/projet/tasks/time.php?projectid='.$projectidfortotallink.($showproject?'':'&withproject=1').'">';
         $fulltime = convertSecondToTime($total_projectlinesa_spent, $timespentoutputformat);
         print $fulltime;
@@ -647,7 +647,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
         }
 		if ($projectidfortotallink > 0) print '</a>';
 		print '</td>';
-		print '<td align="right" class="nowrap liste_total">';
+		print '<td class="nowrap liste_total right">';
 		if ($total_projectlinesa_planned) print round(100 * $total_projectlinesa_spent / $total_projectlinesa_planned, 2).' %';
 		print '</td>';
 		print '<td></td>';
@@ -807,7 +807,7 @@ function projectLinesPerAction(&$inc, $parent, $fuser, $lines, &$level, &$projec
 				print "</td>\n";
 
 				// Date
-				print '<td align="center">';
+				print '<td class="center">';
 				print dol_print_date($lines[$i]->timespent_datehour, 'day');
 				print '</td>';
 
@@ -828,7 +828,7 @@ function projectLinesPerAction(&$inc, $parent, $fuser, $lines, &$level, &$projec
 				}
 
 				// Hour
-				print '<td class="nowrap" align="center">';
+				print '<td class="nowrap center">';
 				print dol_print_date($lines[$i]->timespent_datehour, 'hour');
 				print '</td>';
 
@@ -838,7 +838,7 @@ function projectLinesPerAction(&$inc, $parent, $fuser, $lines, &$level, &$projec
 				elseif (! $isavailable[$preselectedday]['afternoon']) $cssonholiday.='onholidayafternoon ';
 
 				// Duration
-				print '<td align="center" class="duration'.($cssonholiday?' '.$cssonholiday:'').'">';
+				print '<td class="duration'.($cssonholiday?' '.$cssonholiday:'').' center">';
 
 				$dayWorkLoad = $lines[$i]->timespent_duration;
 				$totalforeachline[$preselectedday]+=$lines[$i]->timespent_duration;
@@ -859,14 +859,14 @@ function projectLinesPerAction(&$inc, $parent, $fuser, $lines, &$level, &$projec
 				print '</td>';
 
 				// Note
-				print '<td align="center">';
+				print '<td class="center">';
 				print '<textarea name="'.$lines[$i]->id.'note" rows="'.ROWS_2.'" id="'.$lines[$i]->id.'note"'.($disabledtask?' disabled="disabled"':'').'>';
 				print $lines[$i]->timespent_note;
 				print '</textarea>';
 				print '</td>';
 
 				// Warning
-				print '<td align="right">';
+				print '<td class="right">';
 				/*if ((! $lines[$i]->public) && $disabledproject) print $form->textwithpicto('',$langs->trans("UserIsNotContactOfProject"));
 				else if ($disabledtask)
 				{
@@ -1050,7 +1050,7 @@ function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsr
 				print "</td>\n";
 
 				// Planned Workload
-				print '<td align="right" class="leftborder plannedworkload">';
+				print '<td class="leftborder plannedworkload right">';
 				if ($lines[$i]->planned_workload)
                 {
                     $fullhour = convertSecondToTime($lines[$i]->planned_workload, $plannedworkloadoutputformat);
@@ -1070,12 +1070,12 @@ function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsr
 				print '</td>';
 
 				// Progress declared %
-				print '<td align="right">';
+				print '<td class="right">';
 				print $formother->select_percent($lines[$i]->progress, $lines[$i]->id . 'progress');
 				print '</td>';
 
 				// Time spent by everybody
-				print '<td align="right">';
+				print '<td class="right">';
 				// $lines[$i]->duration is a denormalised field = summ of time spent by everybody for task. What we need is time consummed by user
 				if ($lines[$i]->duration)
 				{
@@ -1098,7 +1098,7 @@ function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsr
 				print "</td>\n";
 
 				// Time spent by user
-				print '<td align="right">';
+				print '<td class="right">';
 				$tmptimespent=$taskstatic->getSummaryOfTimeSpent($fuser->id);
 				if ($tmptimespent['total_duration'])
                 {
@@ -1137,7 +1137,7 @@ function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsr
                 if (empty($conf->global->PROJECT_USE_DECIMAL_DAY))
                 {
                     // Form to add new time
-                    print '<td class="nowrap leftborder" align="center">';
+                    print '<td class="nowrap leftborder center">';
                     $tableCell = $form->selectDate($preselectedday, $lines[$i]->id, 1, 1, 2, "addtime", 0, 0, $disabledtask);
                     print $tableCell;
                     print '</td>';
@@ -1203,13 +1203,13 @@ function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsr
 				print '</td>';
 
 				// Note
-				print '<td align="center">';
+				print '<td class="center">';
 				print '<textarea name="'.$lines[$i]->id.'note" rows="'.ROWS_2.'" id="'.$lines[$i]->id.'note"'.($disabledtask?' disabled="disabled"':'').'>';
 				print '</textarea>';
 				print '</td>';
 
 				// Warning
-				print '<td align="right">';
+				print '<td class="right">';
    				if ((! $lines[$i]->public) && $disabledproject) print $form->textwithpicto('', $langs->trans("UserIsNotContactOfProject"));
    				elseif ($disabledtask)
    				{
@@ -1407,7 +1407,7 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
 				print "</td>\n";
 
 				// Planned Workload
-				print '<td align="right" class="leftborder plannedworkload">';
+				print '<td class="leftborder plannedworkload right">';
 				if ($lines[$i]->planned_workload)
                 {
                     $fullhour = convertSecondToTime($lines[$i]->planned_workload, $timespentoutputformat);
@@ -1426,12 +1426,12 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
 				print '</td>';
 
 				// Progress declared %
-				print '<td align="right">';
+				print '<td class="right">';
 				print $formother->select_percent($lines[$i]->progress, $lines[$i]->id . 'progress');
 				print '</td>';
 
 				// Time spent by everybody
-				print '<td align="right">';
+				print '<td class="right">';
 				// $lines[$i]->duration is a denormalised field = summ of time spent by everybody for task. What we need is time consummed by user
 				if ($lines[$i]->duration)
 				{
@@ -1453,7 +1453,7 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
 				print "</td>\n";
 
 				// Time spent by user
-				print '<td align="right">';
+				print '<td class="right">';
 				$tmptimespent=$taskstatic->getSummaryOfTimeSpent($fuser->id);
 				if ($tmptimespent['total_duration'])
                 {
@@ -1540,7 +1540,7 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
 				}
 
 				// Warning
-				print '<td align="right">';
+				print '<td class="right">';
    				if ((! $lines[$i]->public) && $disabledproject) print $form->textwithpicto('', $langs->trans("UserIsNotContactOfProject"));
    				elseif ($disabledtask)
    				{
@@ -1788,36 +1788,36 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 				print '</td>';
 				if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 				{
-					print '<td align="right">';
+					print '<td class="right">';
 					if ($objp->opp_amount) print price($objp->opp_amount, 0, '', 1, -1, -1, $conf->currency);
 					print '</td>';
-					print '<td align="right">';
+					print '<td class="right">';
 					$code = dol_getIdFromCode($db, $objp->opp_status, 'c_lead_status', 'rowid', 'code');
 					if ($code) print $langs->trans("OppStatus".$code);
 					print '</td>';
 				}
 				if (empty($conf->global->PROJECT_HIDE_TASKS))
 				{
-					print '<td align="right">'.$objp->nb.'</td>';
+					print '<td class="right">'.$objp->nb.'</td>';
 
 					$plannedworkload=$objp->planned_workload;
 					$total_plannedworkload+=$plannedworkload;
 					if (! in_array('plannedworkload', $hiddenfields))
 					{
-						print '<td align="right">'.($plannedworkload?convertSecondToTime($plannedworkload):'').'</td>';
+						print '<td class="right">'.($plannedworkload?convertSecondToTime($plannedworkload):'').'</td>';
 					}
 					if (! in_array('declaredprogress', $hiddenfields))
 					{
 						$declaredprogressworkload=$objp->declared_progess_workload;
 						$total_declaredprogressworkload+=$declaredprogressworkload;
-						print '<td align="right">';
+						print '<td class="right">';
 						//print $objp->planned_workload.'-'.$objp->declared_progess_workload."<br>";
 						print ($plannedworkload?round(100*$declaredprogressworkload/$plannedworkload, 0).'%':'');
 						print '</td>';
 					}
 				}
 
-				print '<td align="right">'.$projectstatic->getLibStatut(3).'</td>';
+				print '<td class="right">'.$projectstatic->getLibStatut(3).'</td>';
 				print "</tr>\n";
 
 				$total_task = $total_task + $objp->nb;
@@ -1832,14 +1832,14 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 		print '<td colspan="2">'.$langs->trans("Total")."</td>";
 		if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 		{
-			print '<td class="liste_total" align="right">'.price($total_opp_amount, 0, '', 1, -1, -1, $conf->currency).'</td>';
-			print '<td class="liste_total" align="right">'.$form->textwithpicto(price($ponderated_opp_amount, 0, '', 1, -1, -1, $conf->currency), $langs->trans("OpportunityPonderatedAmountDesc"), 1).'</td>';
+			print '<td class="liste_total right">'.price($total_opp_amount, 0, '', 1, -1, -1, $conf->currency).'</td>';
+			print '<td class="liste_total right">'.$form->textwithpicto(price($ponderated_opp_amount, 0, '', 1, -1, -1, $conf->currency), $langs->trans("OpportunityPonderatedAmountDesc"), 1).'</td>';
 		}
 		if (empty($conf->global->PROJECT_HIDE_TASKS))
 		{
-			print '<td class="liste_total" align="right">'.$total_task.'</td>';
-			if (! in_array('plannedworkload', $hiddenfields))  print '<td class="liste_total" align="right">'.($total_plannedworkload?convertSecondToTime($total_plannedworkload):'').'</td>';
-			if (! in_array('declaredprogress', $hiddenfields)) print '<td class="liste_total" align="right">'.($total_plannedworkload?round(100*$total_declaredprogressworkload/$total_plannedworkload, 0).'%':'').'</td>';
+			print '<td class="liste_total right">'.$total_task.'</td>';
+			if (! in_array('plannedworkload', $hiddenfields))  print '<td class="liste_total right">'.($total_plannedworkload?convertSecondToTime($total_plannedworkload):'').'</td>';
+			if (! in_array('declaredprogress', $hiddenfields)) print '<td class="liste_total right">'.($total_plannedworkload?round(100*$total_declaredprogressworkload/$total_plannedworkload, 0).'%':'').'</td>';
 		}
 		print '<td class="liste_total"></td>';
 		print '</tr>';
@@ -1861,7 +1861,7 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 		print '<table width="100%">';
 		print '<tr>';
 		print '<td>'.$langs->trans("Year").'</td>';
-		print '<td style="text-align:right"><input type="text" size="4" class="flat" name="project_year_filter" value="'.$project_year_filter.'"/>';
+		print '<td class="right"><input type="text" size="4" class="flat" name="project_year_filter" value="'.$project_year_filter.'"/>';
 		print "</tr>\n";
 		print '</table></form>';
 	}

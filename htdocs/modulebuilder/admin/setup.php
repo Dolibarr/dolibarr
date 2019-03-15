@@ -35,9 +35,12 @@ $backtopage = GETPOST('backtopage', 'alpha');
 /*
  * Actions
  */
-if ($action=="update"){
-    $res1=dolibarr_set_const($db, 'MODULEBUILDER_SPECIFIC_README', GETPOST('MODULEBUILDER_SPECIFIC_README'), 'chaine', 0, '', $conf->entity);
-    if ($res1 < 0) {
+if ($action=="update")
+{
+    $res1=dolibarr_set_const($db, 'MODULEBUILDER_SPECIFIC_README', GETPOST('MODULEBUILDER_SPECIFIC_README', 'none'), 'chaine', 0, '', $conf->entity);
+    $res2=dolibarr_set_const($db, 'MODULEBUILDER_ASCIIDOCTOR', GETPOST('MODULEBUILDER_ASCIIDOCTOR', 'nohtml'), 'chaine', 0, '', $conf->entity);
+    $res3=dolibarr_set_const($db, 'MODULEBUILDER_ASCIIDOCTORPDF', GETPOST('MODULEBUILDER_ASCIIDOCTORPDF', 'nohtml'), 'chaine', 0, '', $conf->entity);
+    if ($res1 < 0 || $res2 < 0 || $res3 < 0) {
         setEventMessages('ErrorFailedToSaveDate', null, 'errors');
         $db->rollback();
     }
@@ -81,10 +84,7 @@ $form = new Form($db);
 
 llxHeader('', $langs->trans("ModulebuilderSetup"));
 
-$linkback = '';
-if (GETPOST('withtab', 'alpha')) {
-    $linkback = '<a href="' . ($backtopage ? $backtopage : DOL_URL_ROOT . '/admin/modules.php') . '">' . $langs->trans("BackToModuleList") . '</a>';
-}
+$linkback = '<a href="' . ($backtopage ? $backtopage : DOL_URL_ROOT . '/admin/modules.php') . '">' . $langs->trans("BackToModuleList") . '</a>';
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -103,7 +103,7 @@ print '<br>';
 print '<table class="noborder" width="100%">';
 
 print '<tr class="liste_titre">';
-print '<td>' . $langs->trans("Key") . '</td>';
+print '<td style="width: 30%">' . $langs->trans("Key") . '</td>';
 print '<td>' . $langs->trans("Value") . '</td>';
 print "</tr>\n";
 
@@ -125,20 +125,6 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
 	    }
 	}
 	print '</td></tr>';
-
-	print '<tr class="oddeven">';
-	print '<td>' . $langs->trans("UseDocFolder") . '</td>';
-	print '<td class="center">';
-	if ($conf->use_javascript_ajax) {
-	    print ajax_constantonoff('MODULEBUILDER_USE_DOCFOLDER');
-	} else {
-	    if (empty($conf->global->MODULEBUILDER_USE_DOCFOLDER)) {
-	        print '<a href="' . $_SERVER['PHP_SELF'] . '?action=set_MODULEBUILDER_USE_DOCFOLDER">' . img_picto($langs->trans("Disabled"), 'off') . '</a>';
-	    } else {
-	        print '<a href="' . $_SERVER['PHP_SELF'] . '?action=del_MODULEBUILDER_USE_DOCFOLDER">' . img_picto($langs->trans("Enabled"), 'on') . '</a>';
-	    }
-	}
-	print '</td></tr>';
 }
 
 print '<tr class="oddeven">';
@@ -147,6 +133,23 @@ print '<td>';
 print '<textarea class="centpercent" rows="20" name="MODULEBUILDER_SPECIFIC_README">'.$conf->global->MODULEBUILDER_SPECIFIC_README.'</textarea>';
 print '</td>';
 print '</tr>';
+
+print '<tr class="oddeven">';
+print '<td class="tdtop">' . $langs->trans("AsciiToHtmlConverter") . '</td>';
+print '<td>';
+print '<input type="text" name="MODULEBUILDER_ASCIIDOCTOR" value="'.$conf->global->MODULEBUILDER_ASCIIDOCTOR.'">';
+print ' '.$langs->trans("Example").': asciidoc, asciidoctor';
+print '</td>';
+print '</tr>';
+
+print '<tr class="oddeven">';
+print '<td class="tdtop">' . $langs->trans("AsciiToPdfConverter") . '</td>';
+print '<td>';
+print '<input type="text" name="MODULEBUILDER_ASCIIDOCTORPDF" value="'.$conf->global->MODULEBUILDER_ASCIIDOCTORPDF.'">';
+print ' '.$langs->trans("Example").': asciidoctor-pdf';
+print '</td>';
+print '</tr>';
+
 print '</table>';
 
 print '<center><input type="submit" class="button" value="'.$langs->trans("Save").'" name="Button"></center>';

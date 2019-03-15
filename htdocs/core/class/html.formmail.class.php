@@ -78,7 +78,7 @@ class FormMail extends Form
 	/**
 	 * @var int
 	 * @deprecated Fill withto with array before calling method.
-	 * @see withto
+	 * @see $withto
 	 */
 	public $withtosocid;
 
@@ -1056,12 +1056,12 @@ class FormMail extends Form
 		//if (! $this->errorstomail) $this->errorstomail=$this->frommail;
 		$errorstomail = (! empty($conf->global->MAIN_MAIL_ERRORS_TO) ? $conf->global->MAIN_MAIL_ERRORS_TO : $this->errorstomail);
 		if ($this->witherrorstoreadonly) {
-			$out.= '<tr><td>'.$langs->trans("MailErrorsTo").'</td><td>';
-			$out = '<input type="hidden" id="errorstomail" name="errorstomail" value="'.$errorstomail.'" />';
+			$out= '<tr><td>'.$langs->trans("MailErrorsTo").'</td><td>';
+			$out.= '<input type="hidden" id="errorstomail" name="errorstomail" value="'.$errorstomail.'" />';
 			$out.= $errorstomail;
 			$out.= "</td></tr>\n";
 		} else {
-			$out.= '<tr><td>'.$langs->trans("MailErrorsTo").'</td><td>';
+			$out= '<tr><td>'.$langs->trans("MailErrorsTo").'</td><td>';
 			$out.= '<input size="30" id="errorstomail" name="errorstomail" value="'.$errorstomail.'" />';
 			$out.= "</td></tr>\n";
 		}
@@ -1317,7 +1317,7 @@ class FormMail extends Form
 	 * @param	CommonObject	$object		   Object to use
 	 * @param   Translate  		$outputlangs   Object lang
 	 * @return	void
-	 * @see getCommonSubstitutionArray
+	 * @see getCommonSubstitutionArray()
 	 */
 	public function setSubstitFromObject($object, $outputlangs)
 	{

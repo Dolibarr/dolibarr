@@ -313,7 +313,7 @@ else
 	}
 	else
 	{
-		print "<tr ".$bc[false].'><td colspan="3" class="opacitymedium">'.$langs->trans("NoSubCat")."</td></tr>";
+		print '<tr class="oddeven"><td colspan="3" class="opacitymedium">'.$langs->trans("NoSubCat").'</td></tr>';
 	}
 	print "</table>\n";
 }
@@ -342,10 +342,9 @@ if ($type == Categorie::TYPE_PRODUCT)
 			print '<input type="hidden" name="id" value="'.$object->id.'">';
 			print '<input type="hidden" name="action" value="addintocategory">';
 			print '<table class="noborder" width="100%">';
-			print '<tr class="liste_titre"><td width="40%">';
+			print '<tr class="liste_titre"><td>';
 			print $langs->trans("AddProductServiceIntoCategory").' &nbsp;';
 			print $form->select_produits('', 'elemid', '', 0, 0, -1, 2, '', 1);
-			print '</td><td>';
 			print '<input type="submit" class="button" value="'.$langs->trans("ClassifyInCategory").'"></td>';
 			print '</tr>';
 			print '</table>';
@@ -354,7 +353,7 @@ if ($type == Categorie::TYPE_PRODUCT)
 
 		print "<br>";
 		print "<table class='noborder' width='100%'>\n";
-		print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("ProductsAndServices")." (".count($prods).")</td></tr>\n";
+		print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("ProductsAndServices").' <span class="badge">'.count($prods).'</span></td></tr>'."\n";
 
 		if (count($prods) > 0)
 		{
@@ -376,8 +375,9 @@ if ($type == Categorie::TYPE_PRODUCT)
 				if ($permission)
 				{
 					print "<a href= '".$_SERVER['PHP_SELF']."?".(empty($socid)?'id':'socid')."=".$object->id."&amp;type=".$typeid."&amp;removeelem=".$prod->id."'>";
-					print img_delete($langs->trans("DeleteFromCat")).' ';
-					print $langs->trans("DeleteFromCat")."</a>";
+					print $langs->trans("DeleteFromCat");
+					print img_picto($langs->trans("DeleteFromCat"), 'unlink');
+					print "</a>";
 				}
 				print '</td>';
 				print "</tr>\n";
@@ -385,7 +385,7 @@ if ($type == Categorie::TYPE_PRODUCT)
 		}
 		else
 		{
-			print "<tr ".$bc[false].'><td colspan="2" class="opacitymedium">'.$langs->trans("ThisCategoryHasNoProduct")."</td></tr>";
+			print '<tr class="oddeven"><td colspan="2" class="opacitymedium">'.$langs->trans("ThisCategoryHasNoProduct").'</td></tr>';
 		}
 		print "</table>\n";
 	}
@@ -402,7 +402,7 @@ if ($type == Categorie::TYPE_SUPPLIER)
 	{
 		print "<br>";
 		print '<table class="noborder" width="100%">'."\n";
-		print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Suppliers")." (".count($socs).")</td></tr>\n";
+		print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Suppliers").'  <span class="badge">'.count($socs)."</span></td></tr>\n";
 
 		if (count($socs) > 0)
 		{
@@ -423,8 +423,9 @@ if ($type == Categorie::TYPE_SUPPLIER)
 				if ($permission)
 				{
 					print "<a href= '".$_SERVER['PHP_SELF']."?".(empty($socid)?'id':'socid')."=".$object->id."&amp;type=".$typeid."&amp;removeelem=".$soc->id."'>";
-					print img_delete($langs->trans("DeleteFromCat")).' ';
-					print $langs->trans("DeleteFromCat")."</a>";
+					print $langs->trans("DeleteFromCat");
+					print img_picto($langs->trans("DeleteFromCat"), 'unlink');
+					print "</a>";
 				}
 				print '</td>';
 
@@ -433,7 +434,7 @@ if ($type == Categorie::TYPE_SUPPLIER)
 		}
 		else
 		{
-			print '<tr '.$bc[false].'><td class="opacitymedium">'.$langs->trans("ThisCategoryHasNoSupplier").'</td></tr>';
+			print '<tr class="oddeven"><td class="opacitymedium">'.$langs->trans("ThisCategoryHasNoSupplier").'</td></tr>';
 		}
 		print "</table>\n";
 	}
@@ -450,7 +451,7 @@ if($type == Categorie::TYPE_CUSTOMER)
 	{
 		print "<br>";
 		print '<table class="noborder" width="100%">'."\n";
-		print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Customers")." (".count($socs).")</td></tr>\n";
+		print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Customers").'  <span class="badge">'.count($socs).'</span></td></tr>'."\n";
 
 		if (count($socs) > 0)
 		{
@@ -476,8 +477,9 @@ if($type == Categorie::TYPE_CUSTOMER)
 				if ($permission)
 				{
 					print "<a href= '".$_SERVER['PHP_SELF']."?".(empty($socid)?'id':'socid')."=".$object->id."&amp;type=".$typeid."&amp;removeelem=".$soc->id."'>";
-					print img_delete($langs->trans("DeleteFromCat")).' ';
-					print $langs->trans("DeleteFromCat")."</a>";
+					print $langs->trans("DeleteFromCat");
+					print img_picto($langs->trans("DeleteFromCat"), 'unlink');
+					print "</a>";
 				}
 				print '</td>';
 				print "</tr>\n";
@@ -485,7 +487,7 @@ if($type == Categorie::TYPE_CUSTOMER)
 		}
 		else
 		{
-			print '<tr '.$bc[false].'><td class="opacitymedium">'.$langs->trans("ThisCategoryHasNoCustomer").'</td></tr>';
+			print '<tr class="oddeven"><td class="opacitymedium">'.$langs->trans("ThisCategoryHasNoCustomer").'</td></tr>';
 		}
 		print "</table>\n";
 	}
@@ -505,7 +507,7 @@ if ($type == Categorie::TYPE_MEMBER)
 	{
 		print "<br>";
 		print "<table class='noborder' width='100%'>\n";
-		print '<tr class="liste_titre"><td colspan="4">'.$langs->trans("Member")." (".count($prods).")</td></tr>\n";
+		print '<tr class="liste_titre"><td colspan="4">'.$langs->trans("Member").'  <span class="badge">'.count($prods).'</span></td></tr>'."\n";
 
 		if (count($prods) > 0)
 		{
@@ -529,15 +531,16 @@ if ($type == Categorie::TYPE_MEMBER)
 				if ($permission)
 				{
 					print "<a href= '".$_SERVER['PHP_SELF']."?".(empty($socid)?'id':'socid')."=".$object->id."&amp;type=".$typeid."&amp;removeelem=".$member->id."'>";
-					print img_delete($langs->trans("DeleteFromCat")).' ';
-					print $langs->trans("DeleteFromCat")."</a>";
+					print $langs->trans("DeleteFromCat");
+					print img_picto($langs->trans("DeleteFromCat"), 'unlink');
+					print "</a>";
 				}
 				print "</tr>\n";
 			}
 		}
 		else
 		{
-			print '<tr '.$bc[false].'><td colspan="3" class="opacitymedium">'.$langs->trans("ThisCategoryHasNoMember").'</td></tr>';
+			print '<tr class="oddeven"><td colspan="3" class="opacitymedium">'.$langs->trans("ThisCategoryHasNoMember").'</td></tr>';
 		}
 		print "</table>\n";
 	}
@@ -555,7 +558,7 @@ if ($type == Categorie::TYPE_CONTACT)
 	{
 		print "<br>";
 		print '<table class="noborder" width="100%">'."\n";
-		print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Contact")." (".count($contacts).")</td></tr>\n";
+		print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Contact").' <span class="badge">'.count($contacts).'</span></td></tr>'."\n";
 
 		if (count($contacts) > 0)
 		{
@@ -579,8 +582,9 @@ if ($type == Categorie::TYPE_CONTACT)
 				if ($permission)
 				{
 					print "<a href= '".$_SERVER['PHP_SELF']."?".(empty($socid)?'id':'socid')."=".$object->id."&amp;type=".$typeid."&amp;removeelem=".$contact->id."'>";
-					print img_delete($langs->trans("DeleteFromCat")).' ';
-					print $langs->trans("DeleteFromCat")."</a>";
+					print $langs->trans("DeleteFromCat");
+					print img_picto($langs->trans("DeleteFromCat"), 'unlink');
+					print "</a>";
 				}
 				print '</td>';
 				print "</tr>\n";
@@ -588,7 +592,7 @@ if ($type == Categorie::TYPE_CONTACT)
 		}
 		else
 		{
-			print '<tr '.$bc[false].'><td class="opacitymedium">'.$langs->trans("ThisCategoryHasNoContact").'</td></tr>';
+			print '<tr class="oddeven"><td class="opacitymedium">'.$langs->trans("ThisCategoryHasNoContact").'</td></tr>';
 		}
 		print "</table>\n";
 	}
@@ -608,7 +612,7 @@ if ($type == Categorie::TYPE_ACCOUNT)
     {
         print "<br>";
         print "<table class='noborder' width='100%'>\n";
-        print '<tr class="liste_titre"><td colspan="4">'.$langs->trans("Account")." (".count($accounts).")</td></tr>\n";
+        print '<tr class="liste_titre"><td colspan="4">'.$langs->trans("Account").'  <span class="badge">'.count($accounts).'</span></td></tr>'."\n";
 
         if (count($accounts) > 0)
         {
@@ -631,15 +635,16 @@ if ($type == Categorie::TYPE_ACCOUNT)
                 if ($permission)
                 {
                     print "<a href= '".$_SERVER['PHP_SELF']."?".(empty($socid)?'id':'socid')."=".$object->id."&amp;type=".$typeid."&amp;removeelem=".$account->id."'>";
-                    print img_delete($langs->trans("DeleteFromCat")).' ';
-                    print $langs->trans("DeleteFromCat")."</a>";
+                    print $langs->trans("DeleteFromCat");
+                    print img_picto($langs->trans("DeleteFromCat"), 'unlink');
+                    print "</a>";
                 }
                 print "</tr>\n";
             }
         }
         else
         {
-            print '<tr '.$bc[false].'><td colspan="3" class="opacitymedium">'.$langs->trans("ThisCategoryHasNoAccount").'</td></tr>';
+            print '<tr class="oddeven"><td colspan="3" class="opacitymedium">'.$langs->trans("ThisCategoryHasNoAccount").'</td></tr>';
         }
         print "</table>\n";
     }
@@ -659,7 +664,7 @@ if ($type == Categorie::TYPE_PROJECT)
 	{
 		print "<br>";
 		print "<table class='noborder' width='100%'>\n";
-		print '<tr class="liste_titre"><td colspan="4">'.$langs->trans("Project")." (".count($projects).")</td></tr>\n";
+		print '<tr class="liste_titre"><td colspan="4">'.$langs->trans("Project").' <span class="badge">'.count($projects).'</span></td></tr>'."\n";
 
 		if (count($projects) > 0)
 		{
@@ -682,15 +687,16 @@ if ($type == Categorie::TYPE_PROJECT)
 				if ($permission)
 				{
 					print "<a href= '".$_SERVER['PHP_SELF']."?".(empty($socid)?'id':'socid')."=".$object->id."&amp;type=".$typeid."&amp;removeelem=".$project->id."'>";
-					print img_delete($langs->trans("DeleteFromCat")).' ';
-					print $langs->trans("DeleteFromCat")."</a>";
+					print $langs->trans("DeleteFromCat");
+					print img_picto($langs->trans("DeleteFromCat"), 'unlink');
+					print "</a>";
 				}
 				print "</tr>\n";
 			}
 		}
 		else
 		{
-			print '<tr '.$bc[false].'><td colspan="3" class="opacitymedium">'.$langs->trans("ThisCategoryHasNoProject").'</td></tr>';
+			print '<tr class="oddeven"><td colspan="3" class="opacitymedium">'.$langs->trans("ThisCategoryHasNoProject").'</td></tr>';
 		}
 		print "</table>\n";
 	}

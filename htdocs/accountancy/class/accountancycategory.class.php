@@ -514,7 +514,7 @@ class AccountancyCategory // extends CommonObject
 	/**
 	 * Function to select accounting category of an accounting account present in chart of accounts
 	 *
-	 * @param int $id Id category
+	 * @param int $id      Id of category to know which account to exclude
 	 *
 	 * @return int <0 if KO, 0 if not found, >0 if OK
 	 */
@@ -569,12 +569,13 @@ class AccountancyCategory // extends CommonObject
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 
-		$sql = "SELECT aa.rowid,aa.account_number ";
+		$sql = "SELECT aa.rowid, aa.account_number";
 		$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_account as aa";
 		$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "accounting_system as asy ON aa.fk_pcg_version = asy.pcg_version";
 		$sql .= " AND asy.rowid = " . $conf->global->CHARTOFACCOUNTS;
 		$sql .= " AND aa.active = 1";
 		$sql .= " AND aa.entity = " . $conf->entity;
+        $sql .= " ORDER BY LENGTH(aa.account_number) DESC;";    // LENGTH is ok with mysql and postgresql
 
 		$this->db->begin();
 
@@ -587,10 +588,16 @@ class AccountancyCategory // extends CommonObject
 			return -1;
 		}
 
-		while ( $obj = $this->db->fetch_object($resql))
+		$accountincptsadded=array();
+		while ($obj = $this->db->fetch_object($resql))
 		{
-			if (array_key_exists(length_accountg($obj->account_number), $cpts))
+		    $account_number_formated=length_accountg($obj->account_number);
+		    if (! empty($accountincptsadded[$account_number_formated])) continue;
+
+		    if (array_key_exists($account_number_formated, $cpts))
 			{
+			    $accountincptsadded[$account_number_formated]=1;
+			    // We found an account number that is in list $cpts of account to add
 				$sql = "UPDATE " . MAIN_DB_PREFIX . "accounting_account";
 				$sql .= " SET fk_accounting_category=" . $id_cat;
 				$sql .= " WHERE rowid=".$obj->rowid;

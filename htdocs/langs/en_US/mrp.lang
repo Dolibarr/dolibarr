@@ -1,8 +1,11 @@
+MenuBOM=Bills of material
+BillOfMaterials=Bill of Material
 BOMsSetup=Setup of module BOM
-ListOfBOMs=List of BOMs
-NewBOM=New BOM
+ListOfBOMs=List of bills of material (BOM)
+NewBOM=New bill of material
 ProductBOMHelp=Product to create with this BOM
-BOMsNumberingModules=BOMs numbering templates
+BOMsNumberingModules=BOM numbering templates
 BOMsModelModule=BOMS document templates
-FreeLegalTextOnBOMs=Free text on document of BOMs
-WatermarkOnDraftBOMs=Watermark on draft BOMs
+FreeLegalTextOnBOMs=Free text on document of BOM
+WatermarkOnDraftBOMs=Watermark on draft BOM
+ConfirmCloneBillOfMaterials=Are you sure you want to clone this bill of material ?

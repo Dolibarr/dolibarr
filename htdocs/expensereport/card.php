@@ -66,7 +66,7 @@ $socid = GETPOST('socid', 'int')?GETPOST('socid', 'int'):GETPOST('socid_id', 'in
 // Security check
 $id=GETPOST("id", 'int');
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'expensereport', 0, 'expensereport');
+$result = restrictedArea($user, 'expensereport', $id, 'expensereport');
 
 
 // Hack to use expensereport dir
@@ -933,7 +933,7 @@ if (empty($reshook))
     	}
     }
 
-    if ($action == "confirm_brouillonner" && GETPOST('confirm', 'alpha')=="yes" && $id > 0 && $user->rights->expensereport->creer)
+    if ($action == "confirm_setdraft" && GETPOST('confirm', 'alpha')=="yes" && $id > 0 && $user->rights->expensereport->creer)
     {
     	$object = new ExpenseReport($db);
     	$object->fetch($id);
@@ -1606,7 +1606,7 @@ else
 				        array('type' => 'other','name' => 'fk_user_author','label' => $langs->trans("SelectTargetUser"),'value' => $form->select_dolusers((GETPOST('fk_user_author', 'int')> 0 ? GETPOST('fk_user_author', 'int') : $user->id), 'fk_user_author', 0, null, 0, $criteriaforfilter))
                     );
 				    // Paiement incomplet. On demande si motif = escompte ou autre
-				    $formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('CloneExpenseReport'), $langs->trans('ConfirmCloneExpenseReport', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
+				    $formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneExpenseReport', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
 				}
 
 				if ($action == 'save')
@@ -1640,9 +1640,9 @@ else
 					$formconfirm=$form->formconfirm($_SEVER["PHP_SELF"]."?id=".$id, $langs->trans("Cancel"), "", "confirm_cancel", $array_input, "", 1);
 				}
 
-				if ($action == 'brouillonner')
+				if ($action == 'setdraft')
 				{
-				    $formconfirm=$form->formconfirm($_SERVER["PHP_SELF"]."?id=".$id, $langs->trans("BrouillonnerTrip"), $langs->trans("ConfirmBrouillonnerTrip"), "confirm_brouillonner", "", "", 1);
+				    $formconfirm=$form->formconfirm($_SERVER["PHP_SELF"]."?id=".$id, $langs->trans("BrouillonnerTrip"), $langs->trans("ConfirmBrouillonnerTrip"), "confirm_setdraft", "", "", 1);
 				}
 
 				if ($action == 'refuse')		// Deny
@@ -1892,9 +1892,9 @@ else
 				print '<td class="liste_titre">' . $langs->trans('Date') . '</td>';
 				print '<td class="liste_titre">' . $langs->trans('Type') . '</td>';
 				if (! empty($conf->banque->enabled)) {
-					print '<td class="liste_titre" align="right">' . $langs->trans('BankAccount') . '</td>';
+					print '<td class="liste_titre right">' . $langs->trans('BankAccount') . '</td>';
 				}
-				print '<td class="liste_titre" align="right">' . $langs->trans('Amount') . '</td>';
+				print '<td class="liste_titre right">' . $langs->trans('Amount') . '</td>';
 				print '<td class="liste_titre" width="18">&nbsp;</td>';
 				print '</tr>';
 
@@ -1948,12 +1948,12 @@ else
 								$bankaccountstatic->accountancy_journal = $accountingjournal->getNomUrl(0, 1, 1, '', 1);
 							}
 
-							print '<td align="right">';
+							print '<td class="right">';
 							if ($bankaccountstatic->id)
 								print $bankaccountstatic->getNomUrl(1, 'transactions');
 							print '</td>';
 						}
-				        print '<td align="right">'.price($objp->amount)."</td>";
+				        print '<td class="right">'.price($objp->amount)."</td>";
 				        print '<td></td>';
 				        print "</tr>";
 				        $totalpaid += $objp->amount;
@@ -1975,10 +1975,10 @@ else
 			    	{
 			    		$cssforamountpaymentcomplete = 'amountpaymentneutral';
 			    	}
-			        print '<tr><td colspan="' . $nbcols . '" align="right">'.$langs->trans("AlreadyPaid").':</td><td align="right">'.price($totalpaid).'</td><td></td></tr>';
-			        print '<tr><td colspan="' . $nbcols . '" align="right">'.$langs->trans("AmountExpected").':</td><td align="right">'.price($object->total_ttc).'</td><td></td></tr>';
+			        print '<tr><td colspan="' . $nbcols . '" class="right">'.$langs->trans("AlreadyPaid").':</td><td class="right">'.price($totalpaid).'</td><td></td></tr>';
+			        print '<tr><td colspan="' . $nbcols . '" class="right">'.$langs->trans("AmountExpected").':</td><td class="right">'.price($object->total_ttc).'</td><td></td></tr>';
 
-			        print '<tr><td colspan="' . $nbcols . '" align="right">'.$langs->trans("RemainderToPay").':</td>';
+			        print '<tr><td colspan="' . $nbcols . '" class="right">'.$langs->trans("RemainderToPay").':</td>';
 			        print '<td align="right"'.($resteapayeraffiche?' class="amountremaintopay"':(' class="'.$cssforamountpaymentcomplete.'"')).'>'.price($resteapayeraffiche).'</td><td></td></tr>';
 
 				    $db->free($resql);
@@ -2014,26 +2014,26 @@ else
 					$i = 0;$total = 0;
 
 					print '<tr class="liste_titre">';
-					print '<td style="text-align:center;">'.$langs->trans('LineNb').'</td>';
-					//print '<td style="text-align:center;">'.$langs->trans('Piece').'</td>';
-					print '<td style="text-align:center;">'.$langs->trans('Date').'</td>';
+					print '<td class="center">'.$langs->trans('LineNb').'</td>';
+					//print '<td class="center">'.$langs->trans('Piece').'</td>';
+					print '<td class="center">'.$langs->trans('Date').'</td>';
 					if (! empty($conf->projet->enabled)) print '<td class="minwidth100imp">'.$langs->trans('Project').'</td>';
 					if (!empty($conf->global->MAIN_USE_EXPENSE_IK)) print '<td>'.$langs->trans('CarCategory').'</td>';
-					print '<td style="text-align:center;">'.$langs->trans('Type').'</td>';
-					print '<td style="text-align:left;">'.$langs->trans('Description').'</td>';
-					print '<td style="text-align:right;">'.$langs->trans('VAT').'</td>';
-					print '<td style="text-align:right;">'.$langs->trans('PriceUHT').'</td>';
-					print '<td style="text-align:right;">'.$langs->trans('PriceUTTC').'</td>';
-					print '<td style="text-align:right;">'.$langs->trans('Qty').'</td>';
+					print '<td class="center">'.$langs->trans('Type').'</td>';
+					print '<td class="left">'.$langs->trans('Description').'</td>';
+					print '<td class="right">'.$langs->trans('VAT').'</td>';
+					print '<td class="right">'.$langs->trans('PriceUHT').'</td>';
+					print '<td class="right">'.$langs->trans('PriceUTTC').'</td>';
+					print '<td class="right">'.$langs->trans('Qty').'</td>';
 					if ($action != 'editline')
 					{
-						print '<td style="text-align:right;">'.$langs->trans('AmountHT').'</td>';
-						print '<td style="text-align:right;">'.$langs->trans('AmountTTC').'</td>';
+						print '<td class="right">'.$langs->trans('AmountHT').'</td>';
+						print '<td class="right">'.$langs->trans('AmountTTC').'</td>';
 					}
 					// Ajout des boutons de modification/suppression
 					if (($object->fk_statut < 2 || $object->fk_statut == 99) && $user->rights->expensereport->creer)
 					{
-						print '<td style="text-align:right;"></td>';
+						print '<td class="right"></td>';
 					}
 					print '</tr>';
 
@@ -2045,16 +2045,16 @@ else
 						{
 							print '<tr class="oddeven">';
 
-							print '<td style="text-align:center;">';
+							print '<td class="center">';
 							print $numline;
 							print '</td>';
 
-							/*print '<td style="text-align:center;">';
+							/*print '<td class="center">';
 							print img_picto($langs->trans("Document"), "object_generic");
 							print ' <span>'.$piece_comptable.'</span>';
 							print '</td>';*/
 
-							print '<td style="text-align:center;">'.dol_print_date($db->jdate($line->date), 'day').'</td>';
+							print '<td class="center">'.dol_print_date($db->jdate($line->date), 'day').'</td>';
 							if (! empty($conf->projet->enabled))
 							{
 								print '<td>';
@@ -2076,10 +2076,10 @@ else
 							$labeltype = ($langs->trans(($line->type_fees_code)) == $line->type_fees_code ? $line->type_fees_libelle : $langs->trans($line->type_fees_code));
 							print $labeltype;
 							print '</td>';
-							print '<td style="text-align:left;">'.dol_escape_htmltag($line->comments).'</td>';
-							print '<td style="text-align:right;">'.vatrate($line->vatrate, true).'</td>';
+							print '<td class="left">'.dol_escape_htmltag($line->comments).'</td>';
+							print '<td class="right">'.vatrate($line->vatrate, true).'</td>';
                             // Unit price HT
-							print '<td style="text-align:right;">';
+							print '<td class="right">';
 							if (! empty($line->value_unit_ht))
 							{
 							    print price($line->value_unit_ht);
@@ -2092,20 +2092,20 @@ else
 							}
 							print '</td>';
 
-							print '<td style="text-align:right;">'.price($line->value_unit).'</td>';
+							print '<td class="right">'.price($line->value_unit).'</td>';
 
-							print '<td style="text-align:right;">'.dol_escape_htmltag($line->qty).'</td>';
+							print '<td class="right">'.dol_escape_htmltag($line->qty).'</td>';
 
 							if ($action != 'editline')
 							{
-								print '<td style="text-align:right;">'.price($line->total_ht).'</td>';
-								print '<td style="text-align:right;">'.price($line->total_ttc).'</td>';
+								print '<td class="right">'.price($line->total_ht).'</td>';
+								print '<td class="right">'.price($line->total_ttc).'</td>';
 							}
 
 							// Ajout des boutons de modification/suppression
 							if (($object->fk_statut < ExpenseReport::STATUS_VALIDATED || $object->fk_statut == ExpenseReport::STATUS_REFUSED) && $user->rights->expensereport->creer)
 							{
-								print '<td style="text-align:right;" class="nowrap">';
+								print '<td class="nowrap right">';
 
 								print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=editline&amp;rowid='.$line->rowid.'#'.$line->rowid.'">';
 								print img_edit();
@@ -2158,32 +2158,32 @@ else
 								print '</td>';
 
 								// VAT
-								print '<td style="text-align:right;">';
+								print '<td class="right">';
 								print $form->load_tva('vatrate', (isset($_POST["vatrate"])?$_POST["vatrate"]:$line->vatrate), $mysoc, '', 0, 0, '', false, 1);
 								print '</td>';
 
 								// Unit price
-								print '<td style="text-align:right;">';
+								print '<td class="right">';
 								print '<input type="text" min="0" class="right maxwidth50" id="value_unit_ht" name="value_unit_ht" value="'.dol_escape_htmltag(price2num($line->value_unit_ht)).'" />';
 								print '</td>';
 
 								// Unit price with tax
-								print '<td style="text-align:right;">';
+								print '<td class="right">';
 								print '<input type="text" min="0" class="right maxwidth50" id="value_unit" name="value_unit" value="'.dol_escape_htmltag(price2num($line->value_unit)).'" />';
 								print '</td>';
 
 								// Quantity
-								print '<td style="text-align:right;">';
+								print '<td class="right">';
 								print '<input type="number" min="0" class="right maxwidth50" name="qty" value="'.dol_escape_htmltag($line->qty).'" />';
 								print '</td>';
 
 								if ($action != 'editline')
 								{
-									print '<td style="text-align:right;">'.$langs->trans('AmountHT').'</td>';
-									print '<td style="text-align:right;">'.$langs->trans('AmountTTC').'</td>';
+									print '<td class="right">'.$langs->trans('AmountHT').'</td>';
+									print '<td class="right">'.$langs->trans('AmountTTC').'</td>';
 								}
 
-								print '<td style="text-align:center;">';
+								print '<td class="center">';
 								print '<input type="hidden" name="rowid" value="'.$line->rowid.'">';
 								print '<input type="submit" class="button" name="save" value="'.$langs->trans('Save').'">';
 								print '<br><input type="submit" class="button" name="cancel" value="'.$langs->trans('Cancel').'">';
@@ -2253,15 +2253,15 @@ else
 
 					print '<tr class="liste_titre">';
 					print '<td></td>';
-					print '<td align="center">'.$langs->trans('Date').'</td>';
+					print '<td class="center">'.$langs->trans('Date').'</td>';
 					if (! empty($conf->projet->enabled)) print '<td class="minwidth100imp">'.$langs->trans('Project').'</td>';
 					if (!empty($conf->global->MAIN_USE_EXPENSE_IK)) print '<td>'.$langs->trans('CarCategory').'</td>';
-					print '<td align="center">'.$langs->trans('Type').'</td>';
+					print '<td class="center">'.$langs->trans('Type').'</td>';
 					print '<td>'.$langs->trans('Description').'</td>';
-					print '<td align="right">'.$langs->trans('VAT').'</td>';
-					print '<td align="right">'.$langs->trans('PriceUHT').'</td>';
-					print '<td align="right">'.$langs->trans('PriceUTTC').'</td>';
-					print '<td align="right">'.$langs->trans('Qty').'</td>';
+					print '<td class="right">'.$langs->trans('VAT').'</td>';
+					print '<td class="right">'.$langs->trans('PriceUHT').'</td>';
+					print '<td class="right">'.$langs->trans('PriceUTTC').'</td>';
+					print '<td class="right">'.$langs->trans('Qty').'</td>';
 					print '<td colspan="3"></td>';
 					print '</tr>';
 
@@ -2271,7 +2271,7 @@ else
 					print '<td></td>';
 
 					// Select date
-					print '<td align="center">';
+					print '<td class="center">';
 					print $form->selectDate($date?$date:-1, 'date', 0, 0, 0, '', 1, 1);
 					print '</td>';
 
@@ -2292,7 +2292,7 @@ else
 					}
 
 					// Select type
-					print '<td align="center">';
+					print '<td class="center">';
 					select_type_fees_id($fk_c_type_fees, 'fk_c_type_fees', 1);
 					print '</td>';
 
@@ -2302,34 +2302,34 @@ else
 					print '</td>';
 
 					// Select VAT
-					print '<td align="right">';
+					print '<td class="right">';
 					$defaultvat=-1;
 					if (! empty($conf->global->EXPENSEREPORT_NO_DEFAULT_VAT)) $conf->global->MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS = 'none';
 					print $form->load_tva('vatrate', ($vatrate!=''?$vatrate:$defaultvat), $mysoc, '', 0, 0, '', false, 1);
 					print '</td>';
 
 					// Unit price net
-					print '<td align="right">';
+					print '<td class="right">';
 					print '<input type="text" class="right maxwidth50" id="value_unit_ht" name="value_unit_ht" value="'.dol_escape_htmltag($value_unit_ht).'">';
 					print '</td>';
 
 					// Unit price with tax
-					print '<td align="right">';
+					print '<td class="right">';
 					print '<input type="text" class="right maxwidth50" id="value_unit" name="value_unit" value="'.dol_escape_htmltag($value_unit).'">';
 					print '</td>';
 
 					// Quantity
-					print '<td align="right">';
+					print '<td class="right">';
 					print '<input type="text" min="0" class="right maxwidth50" name="qty" value="'.dol_escape_htmltag($qty?$qty:1).'">';    // We must be able to enter decimal qty
 					print '</td>';
 
 					if ($action != 'editline')
 					{
-						print '<td align="right"></td>';
-						print '<td align="right"></td>';
+						print '<td class="right"></td>';
+						print '<td class="right"></td>';
 					}
 
-					print '<td align="center"><input type="submit" value="'.$langs->trans("Add").'" name="bouton" class="button"></td>';
+					print '<td class="center"><input type="submit" value="'.$langs->trans("Add").'" name="bouton" class="button"></td>';
 
 					print '</tr>';
 
@@ -2431,7 +2431,7 @@ if ($action != 'create' && $action != 'edit')
 			// Modify
 			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&id='.$object->id.'">'.$langs->trans('Modify').'</a></div>';
 
-			// Brouillonner (le statut refusée est identique à brouillon)
+			// setdraft (le statut refusée est identique à brouillon)
 			//print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=brouillonner&id='.$id.'">'.$langs->trans('BROUILLONNER').'</a>';
 			// Enregistrer depuis le statut "Refusée"
 			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=save_from_refuse&id='.$object->id.'">'.$langs->trans('ValidateAndSubmit').'</a></div>';
@@ -2442,8 +2442,8 @@ if ($action != 'create' && $action != 'edit')
 	{
 		if ($user->id == $object->fk_user_author || $user->id == $object->fk_user_valid)
 		{
-			// Brouillonner
-			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=brouillonner&id='.$object->id.'">'.$langs->trans('SetToDraft').'</a></div>';
+			// setdraft
+			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=setdraft&id='.$object->id.'">'.$langs->trans('SetToDraft').'</a></div>';
 		}
 	}
 
@@ -2456,8 +2456,8 @@ if ($action != 'create' && $action != 'edit')
 	{
 		if (in_array($object->fk_user_author, $user->getAllChildIds(1)))
 		{
-			// Brouillonner
-			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=brouillonner&id='.$object->id.'">'.$langs->trans('SetToDraft').'</a></div>';
+			// set draft
+			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=setdraft&id='.$object->id.'">'.$langs->trans('SetToDraft').'</a></div>';
 		}
 	}
 

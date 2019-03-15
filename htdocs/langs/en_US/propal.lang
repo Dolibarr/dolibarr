@@ -56,7 +56,6 @@ CopyPropalFrom=Create commercial proposal by copying existing proposal
 CreateEmptyPropal=Create empty commercial proposal or from list of products/services
 DefaultProposalDurationValidity=Default commercial proposal validity duration (in days)
 UseCustomerContactAsPropalRecipientIfExist=Use contact/address with type 'Contact following-up proposal' if defined instead of third party address as proposal recipient address
-ClonePropal=Clone commercial proposal
 ConfirmClonePropal=Are you sure you want to clone the commercial proposal <b>%s</b>?
 ConfirmReOpenProp=Are you sure you want to open back the commercial proposal <b>%s</b>?
 ProposalsAndProposalsLines=Commercial proposal and lines
