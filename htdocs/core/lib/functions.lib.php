@@ -1493,7 +1493,7 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 	elseif (in_array($object->element, array('facture', 'invoice', 'invoice_supplier', 'chargesociales', 'loan')))
 	{
 		$tmptxt=$object->getLibStatut(6, $object->totalpaye);
-		if (empty($tmptxt) || $tmptxt == $object->getLibStatut(3) || $conf->browser->layout=='phone') $tmptxt=$object->getLibStatut(5, $object->totalpaye);
+		if (empty($tmptxt) || $tmptxt == $object->getLibStatut(3)) $tmptxt=$object->getLibStatut(5, $object->totalpaye);
 		$morehtmlstatus.=$tmptxt;
 	}
 	elseif ($object->element == 'contrat' || $object->element == 'contract')
@@ -8037,7 +8037,7 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
             $return =  $htmlImg .' '. $htmlLabel;
         }
         elseif ($displayMode === 5) {
-            $return = $htmlLabelShort .' '. $htmlImg;
+            $return = $displayMode.$htmlLabelShort .' '. $htmlImg;
         }
         else { // $displayMode >= 6
             $return = $htmlLabel .' '. $htmlImg;

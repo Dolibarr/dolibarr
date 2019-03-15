@@ -472,26 +472,26 @@ abstract class CommonInvoice extends CommonObject
 		$statusType='status0';
 		$prefix='Short';
 		if (! $paye){
-		    if ($status == 0){
+		    if ($status == 0) {
 		        $labelstatut = $langs->trans('BillStatusDraft');
 		        $labelstatutShort = $langs->trans('Bill'.$prefix.'StatusDraft');
 		    }
-		    elseif (($status == 3 || $status == 2) && $alreadypaid <= 0){
+		    elseif (($status == 3 || $status == 2) && $alreadypaid <= 0) {
 		        $labelstatut = $langs->trans('BillStatusClosedUnpaid');
 		        $labelstatutShort = $langs->trans('Bill'.$prefix.'StatusClosedUnpaid');
 		        $statusType='status5';
 		    }
-		    elseif (($status == 3 || $status == 2) && $alreadypaid > 0){
+		    elseif (($status == 3 || $status == 2) && $alreadypaid > 0) {
 		        $labelstatut = $langs->trans('BillStatusClosedPaidPartially');
 		        $labelstatutShort = $langs->trans('Bill'.$prefix.'StatusClosedPaidPartially');
 		        $statusType='status9';
 		    }
-		    elseif ($alreadypaid <= 0){
+		    elseif ($alreadypaid <= 0) {
 		        $labelstatut = $langs->trans('BillStatusNotPaid');
 		        $labelstatutShort = $langs->trans('Bill'.$prefix.'StatusNotPaid');
 		        $statusType='status1';
 		    }
-		    else{
+		    else {
 		        $labelstatut = $langs->trans('BillStatusStarted');
 		        $labelstatutShort = $langs->trans('Bill'.$prefix.'StatusStarted');
 		        $statusType='status3';
@@ -500,7 +500,7 @@ abstract class CommonInvoice extends CommonObject
 		else
 		{
 		    $statusType='status6';
-		    
+
 		    if ($type == self::TYPE_CREDIT_NOTE){
 		        $labelstatut = $langs->trans('BillStatusPaidBackOrConverted');       // credit note
 		        $labelstatutShort = $langs->trans('Bill'.$prefix.'StatusPaidBackOrConverted');       // credit note
@@ -514,8 +514,8 @@ abstract class CommonInvoice extends CommonObject
 		        $labelstatutShort = $langs->trans('Bill'.$prefix.'StatusPaid');
 		    }
 		}
-		
-		
+
+
 		return dolGetStatus($labelstatut, $labelstatutShort, '', $statusType, $mode);
 	}
 
@@ -525,7 +525,7 @@ abstract class CommonInvoice extends CommonObject
 	 *	conditions de reglements de la facture et date de facturation.
 	 *
 	 *	@param      integer	$cond_reglement   	Condition of payment (code or id) to use. If 0, we use current condition.
-	 *  @return     date     			       	Date limite de reglement si ok, <0 si ko
+	 *  @return     integer    			       	Date limite de reglement si ok, <0 si ko
 	 */
     public function calculate_date_lim_reglement($cond_reglement = 0)
 	{
