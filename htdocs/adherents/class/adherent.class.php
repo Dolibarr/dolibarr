@@ -2209,7 +2209,7 @@ class Adherent extends CommonObject
 		}
 		elseif ($mode == 5)
 		{
-			if ($statut == -1) return $langs->trans("MemberStatusDraftShort").' '.img_picto($langs->trans('MemberStatusDraft'), 'statut0');
+		    if ($statut == -1) return '<span class="hideonsmartphone">'.$langs->trans("MemberStatusDraftShort").'</span> '.img_picto($langs->trans('MemberStatusDraft'), 'statut0');
 			elseif ($statut >= 1) {
 				if (! $date_end_subscription)            return '<span class="hideonsmartphone">'.$langs->trans("MemberStatusActiveShort").' </span>'.img_picto($langs->trans('MemberStatusActive'), 'statut1');
 				elseif ($date_end_subscription < time()) return '<span class="hideonsmartphone">'.$langs->trans("MemberStatusActiveLateShort").' </span>'.img_picto($langs->trans('MemberStatusActiveLate'), 'statut3');
@@ -2219,7 +2219,7 @@ class Adherent extends CommonObject
 		}
 		elseif ($mode == 6)
 		{
-			if ($statut == -1) return $langs->trans("MemberStatusDraft").' '.img_picto($langs->trans('MemberStatusDraft'), 'statut0');
+		    if ($statut == -1) return '<span class="hideonsmartphone">'.$langs->trans("MemberStatusDraft").'</span> '.img_picto($langs->trans('MemberStatusDraft'), 'statut0');
 			if ($statut >= 1) {
 				if (! $date_end_subscription)            return '<span class="hideonsmartphone">'.$langs->trans("MemberStatusActive").' </span>'.img_picto($langs->trans('MemberStatusActive'), 'statut1');
 				elseif ($date_end_subscription < time()) return '<span class="hideonsmartphone">'.$langs->trans("MemberStatusActiveLate").' </span>'.img_picto($langs->trans('MemberStatusActiveLate'), 'statut3');
