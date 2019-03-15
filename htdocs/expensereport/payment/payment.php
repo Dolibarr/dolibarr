@@ -289,10 +289,10 @@ if ($action == 'create' || empty($action))
 
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
-	print '<td align="right">'.$langs->trans("Amount").'</td>';
-	print '<td align="right">'.$langs->trans("AlreadyPaid").'</td>';
-	print '<td align="right">'.$langs->trans("RemainderToPay").'</td>';
-	print '<td align="center">'.$langs->trans("Amount").'</td>';
+	print '<td class="right">'.$langs->trans("Amount").'</td>';
+	print '<td class="right">'.$langs->trans("AlreadyPaid").'</td>';
+	print '<td class="right">'.$langs->trans("RemainderToPay").'</td>';
+	print '<td class="center">'.$langs->trans("Amount").'</td>';
 	print "</tr>\n";
 
 	$total=0;
@@ -304,10 +304,10 @@ if ($action == 'create' || empty($action))
 
 		print '<tr class="oddeven">';
 
-		print '<td align="right">'.price($objp->total_ttc)."</td>";
-		print '<td align="right">'.price($sumpaid)."</td>";
-		print '<td align="right">'.price($objp->total_ttc - $sumpaid)."</td>";
-		print '<td align="center">';
+		print '<td class="right">'.price($objp->total_ttc)."</td>";
+		print '<td class="right">'.price($sumpaid)."</td>";
+		print '<td class="right">'.price($objp->total_ttc - $sumpaid)."</td>";
+		print '<td class="center">';
 		if ($sumpaid < $objp->total_ttc)
 		{
 			$namef = "amount_".$objp->id;
@@ -335,11 +335,11 @@ if ($action == 'create' || empty($action))
 	{
 		// Print total
 		print '<tr class="oddeven">';
-		print '<td colspan="2" align="left">'.$langs->trans("Total").':</td>';
-		print "<td align=\"right\"><b>".price($total_ttc)."</b></td>";
-		print "<td align=\"right\"><b>".price($totalrecu)."</b></td>";
-		print "<td align=\"right\"><b>".price($total_ttc - $totalrecu)."</b></td>";
-		print '<td align="center">&nbsp;</td>';
+		print '<td colspan="2" class="left">'.$langs->trans("Total").':</td>';
+		print '<td class="right"><b>'.price($total_ttc).'</b></td>';
+		print '<td class="right"><b>'.price($totalrecu).'</b></td>';
+		print '<td class="right"><b>'.price($total_ttc - $totalrecu).'</b></td>';
+		print '<td class="center">&nbsp;</td>';
 		print "</tr>\n";
 	}
 

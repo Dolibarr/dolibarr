@@ -394,7 +394,7 @@ print '<td class="liste_titre">&nbsp;</td>';
 print '<td class="liste_titre">&nbsp;</td>';
 print '<td class="liste_titre" align="center">';
 print $form->selectarray('search_status', array('0'=>$langs->trans("Disabled"), '1'=>$langs->trans("Enabled"), '-2'=>$langs->trans("EnabledAndDisabled"), '2'=>$langs->trans("Archived")), $search_status, 1);
-print '</td><td class="liste_titre" align="right">';
+print '</td><td class="liste_titre right">';
 $searchpicto=$form->showFilterButtons();
 print $searchpicto;
 print '</td>';
@@ -505,11 +505,11 @@ if ($num > 0)
 		if(!empty($obj->dateend)) {print dol_print_date($db->jdate($obj->dateend), 'dayhour');}
 		print '</td>';
 
-		print '<td align="right">';
+		print '<td class="right">';
 		if (!empty($obj->maxrun)) {print $obj->maxrun;}
 		print '</td>';
 
-		print '<td align="right">';
+		print '<td class="right">';
 		if (!empty($obj->nbrun)) {print $obj->nbrun;} else {print '0';}
 		print '</td>';
 
@@ -554,11 +554,11 @@ if ($num > 0)
 		print '</td>';
 
 		// Status
-		print '<td align="center">';
+		print '<td class="center">';
 		print $object->getLibStatut(3);
 		print '</td>';
 
-		print '<td align="right" class="nowraponall">';
+		print '<td class="nowraponall right">';
 
 		$backtourl = urlencode($_SERVER["PHP_SELF"].'?'.$param.($sortfield?'&sortfield='.$sortfield:'').($sortorder?'&sortorder='.$sortorder:''));
 		if ($user->rights->cron->create)
