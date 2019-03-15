@@ -450,7 +450,17 @@ $( document ).ready(function() {
 
 <?php
 // TakePOS setup check
-if (empty($conf->global->CASHDESK_ID_THIRDPARTY) or empty($conf->global->CASHDESK_ID_BANKACCOUNT_CASH) or empty($conf->global->CASHDESK_ID_BANKACCOUNT_CB)) {
+// TODO
+$sql="SELECT code,libelle FROM ".MAIN_DB_PREFIX."c_paiement WHERE active=1 ORDER BY libelle";
+$resql = $db->query($sql);
+$paiementsModes = array();
+if($resql){
+	while ($obj = $db->fetch_object($resql)){
+		$accountname="CASHDESK_ID_BANKACCOUNT_".$obj->code;
+		if($conf->global->$accountname) array_push($paiementsModes, $obj);
+	}
+}
+if (empty($paiementsModes)) {
 	setEventMessages($langs->trans("ErrorModuleSetupNotComplete"), null, 'errors');
 }
 if (count($maincategories)==0) {
