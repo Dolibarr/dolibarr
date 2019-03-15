@@ -964,36 +964,6 @@ class BOMLine extends CommonObject
 	// END MODULEBUILDER PROPERTIES
 
 
-
-	// If this object has a subtable with lines
-
-	/**
-	 * @var int    Name of subtable line
-	 */
-	//public $table_element_line = 'bomlinedet';
-
-	/**
-	 * @var int    Field with ID of parent key if this field has a parent
-	 */
-	//public $fk_element = 'fk_bomline';
-
-	/**
-	 * @var int    Name of subtable class that manage subtable lines
-	 */
-	//public $class_element_line = 'BillOfMaterialsLineline';
-
-	/**
-	 * @var array  Array of child tables (child tables to delete before deleting a record)
-	 */
-	//protected $childtables=array('bomlinedet');
-
-	/**
-	 * @var BillOfMaterialsLineLine[]     Array of subtable lines
-	 */
-	//public $lines = array();
-
-
-
 	/**
 	 * Constructor
 	 *
@@ -1425,36 +1395,5 @@ class BOMLine extends CommonObject
 	public function initAsSpecimen()
 	{
 		$this->initAsSpecimenCommon();
-	}
-
-
-	/**
-	 * Action executed by scheduler
-	 * CAN BE A CRON TASK. In such a case, parameters come from the schedule job setup field 'Parameters'
-	 *
-	 * @return  int	        0 if OK, <>0 if KO (this function is used also by cron so only 0 is OK)
-	 */
-	//public function doScheduledJob($param1, $param2, ...)
-	public function doScheduledJob()
-	{
-		global $conf, $langs;
-
-		//$conf->global->SYSLOG_FILE = 'DOL_DATA_ROOT/dolibarr_mydedicatedlofile.log';
-
-		$error = 0;
-		$this->output = '';
-		$this->error='';
-
-		dol_syslog(__METHOD__, LOG_DEBUG);
-
-		$now = dol_now();
-
-		$this->db->begin();
-
-		// ...
-
-		$this->db->commit();
-
-		return $error;
 	}
 }
