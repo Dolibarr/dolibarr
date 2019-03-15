@@ -1501,6 +1501,10 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 		if ($object->statut == 0) $morehtmlstatus.=$object->getLibStatut(5);
 		else $morehtmlstatus.=$object->getLibStatut(4);
 	}
+	elseif ($object->element == 'member')
+	{
+	    $morehtmlstatus.=$object->getLibStatut(6);
+	}
 	elseif ($object->element == 'facturerec')
 	{
 		if ($object->frequency == 0) $morehtmlstatus.=$object->getLibStatut(2);
