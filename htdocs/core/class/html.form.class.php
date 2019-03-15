@@ -3805,7 +3805,7 @@ class Form
 	 *    @param    int			$excludeafterid 	Exclude all categories after this leaf in category tree.
 	 *    @param	int			$outputmode			0=HTML select string, 1=Array
 	 *    @return	string
-	 *    @see select_categories
+	 *    @see select_categories()
 	 */
     public function select_all_categories($type, $selected = '', $htmlname = "parent", $maxlength = 64, $excludeafterid = 0, $outputmode = 0)
 	{

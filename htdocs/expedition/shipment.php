@@ -686,7 +686,7 @@ if ($id > 0 || ! empty($ref))
 							if (empty($newlang)) $newlang=$object->thirdparty->default_lang;
 							if (! empty($newlang))
 							{
-								$outputlangs = new Translate("",$conf);
+								$outputlangs = new Translate("", $conf);
 								$outputlangs->setDefaultLang($newlang);
 							}
 
@@ -707,10 +707,10 @@ if ($id > 0 || ! empty($ref))
 						$text.= ' - '.$label;
 						$description=($conf->global->PRODUIT_DESC_IN_FORM?'':dol_htmlentitiesbr($objp->description)).'<br>';
 	                    $description.= $product_static->show_photos('product', $conf->product->multidir_output[$product_static->entity], 1, 1, 0, 0, 0, 80);
-						print $form->textwithtooltip($text,$description,3,'','',$i);
+						print $form->textwithtooltip($text, $description, 3, '', '', $i);
 
 						// Show range
-						print_date_range($db->jdate($objp->date_start),$db->jdate($objp->date_end));
+						print_date_range($db->jdate($objp->date_start), $db->jdate($objp->date_end));
 
 						// Add description in form
 						if (! empty($conf->global->PRODUIT_DESC_IN_FORM))
@@ -723,18 +723,18 @@ if ($id > 0 || ! empty($ref))
 					else
 					{
 						print "<td>";
-						if ($type==1) $text = img_object($langs->trans('Service'),'service');
-						else $text = img_object($langs->trans('Product'),'product');
+						if ($type==1) $text = img_object($langs->trans('Service'), 'service');
+						else $text = img_object($langs->trans('Product'), 'product');
 
 						if (! empty($objp->label)) {
 							$text.= ' <strong>'.$objp->label.'</strong>';
-							print $form->textwithtooltip($text,$objp->description,3,'','',$i);
+							print $form->textwithtooltip($text, $objp->description, 3, '', '', $i);
 						} else {
 							print $text.' '.nl2br($objp->description);
 						}
 
 						// Show range
-						print_date_range($db->jdate($objp->date_start),$db->jdate($objp->date_end));
+						print_date_range($db->jdate($objp->date_start), $db->jdate($objp->date_end));
 						print "</td>\n";
 					}
 

@@ -40,6 +40,11 @@ $action = GETPOST('action', 'alpha');
 
 $langs->loadLangs(array("bills","orders","commercial","cashdesk","receiptprinter"));
 
+$categorie = new Categorie($db);
+
+$MAXCATEG = 16;
+$MAXPRODUCT = 32;
+
 
 /*
  * View
@@ -61,25 +66,40 @@ top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
 <script type="text/javascript" src="js/jquery.colorbox-min.js"></script>
 <script language="javascript">
 <?php
-$categorie = new Categorie($db);
-$categories = $categorie->get_full_arbo('product');
+$categories = $categorie->get_full_arbo('product', 0, (($conf->global->TAKEPOS_ROOT_CATEGORY_ID > 0)?$conf->global->TAKEPOS_ROOT_CATEGORY_ID:0));
 
-$maincategories = array_filter($categories, function ($item) {
-	if (($item['level']==1) !== false && ($item['visible']==1) !== false) {
-        return true;
+//$conf->global->TAKEPOS_ROOT_CATEGORY_ID=0;
+
+// Search root category to know its level
+$levelofrootcategory=0;
+if ($conf->global->TAKEPOS_ROOT_CATEGORY_ID > 0)
+{
+    foreach($categories as $key => $categorycursor)
+    {
+        if ($categorycursor['id'] == $conf->global->TAKEPOS_ROOT_CATEGORY_ID)
+        {
+            $levelofrootcategory = $categorycursor['level'];
+            break;
+        }
     }
-    return false;
-});
+}
+$levelofmaincategories = $levelofrootcategory + 1;
+
+$maincategories = array();
+$subcategories = array();
+foreach($categories as $key => $categorycursor)
+{
+    if ($categorycursor['level'] == $levelofmaincategories)
+    {
+        $maincategories[$key] = $categorycursor;
+    }
+    else
+    {
+        $subcategories[$key] = $categorycursor;
+    }
+}
 
 sort($maincategories);
-
-$subcategories = array_filter($categories, function ($item) {
-	if (($item['level']!=1) !== false && ($item['visible']==1) !== false) {
-        return true;
-    }
-    return false;
-});
-
 sort($subcategories);
 ?>
 
@@ -446,7 +466,7 @@ $menus[$r++]=array('title'=>$langs->trans("FreeZone"),
 $menus[$r++]=array('title'=>$langs->trans("Customer"),
 					'action'=>'Customer();');
 $menus[$r++]=array('title'=>$langs->trans("BackOffice"),
-					'action'=>'window.open(\''.(empty(DOL_URL_ROOT)?'/':DOL_URL_ROOT).'\', \'_self\');');
+                    'action'=>'window.open(\''.(DOL_URL_ROOT ? DOL_URL_ROOT : '/').'\', \'_self\');');
 $menus[$r++]=array('title'=>$langs->trans("ValidateBill"),
 					'action'=>'CloseBill();');
 $menus[$r++]=array('title'=>$langs->trans("Logout"),
@@ -487,6 +507,7 @@ if (!empty($reshook)) {
 ?>
 		<div class="div3">
 <?php
+
 $i = 0;
 foreach($menus as $menu) {
 	$i++;
@@ -501,15 +522,16 @@ foreach($menus as $menu) {
 ?>
 		</div>
 	</div>
+
 	<div class="row2">
 		<div class="div4">
 	<?php
 	$count=0;
-	while ($count<16)
+	while ($count < $MAXCATEG)
 	{
 	?>
-			<div class='wrapper' <?php if ($count==14) echo 'onclick="MoreCategories(\'less\');"'; elseif ($count==15) echo 'onclick="MoreCategories(\'more\');"'; else echo 'onclick="LoadProducts('.$count.');"';?> id='catdiv<?php echo $count;?>'>
-				<img class='imgwrapper' <?php if ($count==14) echo 'src="img/arrow-prev-top.png"'; if ($count==15) echo 'src="img/arrow-next-top.png"';?> width="100%" height="85%" id='catimg<?php echo $count;?>'/>
+			<div class='wrapper' <?php if ($count==($MAXCATEG-2)) echo 'onclick="MoreCategories(\'less\');"'; elseif ($count==($MAXCATEG-1)) echo 'onclick="MoreCategories(\'more\');"'; else echo 'onclick="LoadProducts('.$count.');"';?> id='catdiv<?php echo $count;?>'>
+				<img class='imgwrapper' <?php if ($count==($MAXCATEG-2)) echo 'src="img/arrow-prev-top.png"'; if ($count==($MAXCATEG-1)) echo 'src="img/arrow-next-top.png"';?> width="100%" height="100%" id="catimg<?php echo $count;?>" />
 				<div class='description'>
 					<div class='description_content' id='catdesc<?php echo $count;?>'></div>
 				</div>
@@ -522,22 +544,22 @@ foreach($menus as $menu) {
 		</div>
 
 		<div class="div5">
-<?php
-$count=0;
-while ($count<32)
-{
-?>
-			<div class='wrapper2' id='prodiv<?php echo $count;?>' <?php if ($count==30) {?> onclick="MoreProducts('less');" <?php } if ($count==31) {?> onclick="MoreProducts('more');" <?php } else echo 'onclick="ClickProduct('.$count.');"';?>>
-				<img class='imgwrapper' <?php if ($count==30) echo 'src="img/arrow-prev-top.png"'; if ($count==31) echo 'src="img/arrow-next-top.png"';?> width="100%" height="85%" id='proimg<?php echo $count;?>'/>
-				<div class='description'>
-					<div class='description_content' id='prodesc<?php echo $count;?>'></div>
-				</div>
-				<div class="catwatermark" id='prowatermark<?php echo $count;?>'>+</div>
-			</div>
-<?php
-    $count++;
-}
-?>
+    <?php
+    $count=0;
+    while ($count < $MAXPRODUCT)
+    {
+    ?>
+    			<div class='wrapper2' id='prodiv<?php echo $count;?>' <?php if ($count==($MAXPRODUCT-2)) {?> onclick="MoreProducts('less');" <?php } if ($count==($MAXPRODUCT-1)) {?> onclick="MoreProducts('more');" <?php } else echo 'onclick="ClickProduct('.$count.');"';?>>
+    				<img class='imgwrapper' <?php if ($count==($MAXPRODUCT-2)) echo 'src="img/arrow-prev-top.png"'; if ($count==($MAXPRODUCT-1)) echo 'src="img/arrow-next-top.png"';?> width="100%" height="100%" id="proimg<?php echo $count;?>" />
+    				<div class='description'>
+    					<div class='description_content' id='prodesc<?php echo $count;?>'></div>
+    				</div>
+    				<div class="catwatermark" id='prowatermark<?php echo $count;?>'>+</div>
+    			</div>
+    <?php
+        $count++;
+    }
+    ?>
 		</div>
 	</div>
 </div>
