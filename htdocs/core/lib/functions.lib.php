@@ -1501,10 +1501,6 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 		if ($object->statut == 0) $morehtmlstatus.=$object->getLibStatut(5);
 		else $morehtmlstatus.=$object->getLibStatut(4);
 	}
-	elseif ($object->element == 'member')
-	{
-	    $morehtmlstatus.=$object->getLibStatut(6);
-	}
 	elseif ($object->element == 'facturerec')
 	{
 		if ($object->frequency == 0) $morehtmlstatus.=$object->getLibStatut(2);
@@ -1520,7 +1516,7 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 	}
 	else { // Generic case
 		$tmptxt=$object->getLibStatut(6);
-		if (empty($tmptxt) || $tmptxt == $object->getLibStatut(3) || $conf->browser->layout=='phone') $tmptxt=$object->getLibStatut(5);
+		if (empty($tmptxt) || $tmptxt == $object->getLibStatut(3)) $tmptxt=$object->getLibStatut(5);
 		$morehtmlstatus.=$tmptxt;
 	}
 
@@ -8022,8 +8018,8 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
     // use status with images
     elseif (empty($conf->global->MAIN_STATUS_USES_CSS)){
         $return = '';
-        $htmlLabel      = '<span class="hideonsmartphone">'.(!empty($html)?$html:$statusLabel).'</span>';
-        $htmlLabelShort = '<span class="hideonsmartphone">'.(!empty($html)?$html:(!empty($statusLabelShort)?$statusLabelShort:$statusLabel)).'</span>';
+        $htmlLabel      = (in_array($displayMode, array(1,2,5))?'<span class="hideonsmartphone">':'').(!empty($html)?$html:$statusLabel).(in_array($displayMode, array(1,2,5))?'</span>':'');
+        $htmlLabelShort = (in_array($displayMode, array(1,2,5))?'<span class="hideonsmartphone">':'').(!empty($html)?$html:(!empty($statusLabelShort)?$statusLabelShort:$statusLabel)).(in_array($displayMode, array(1,2,5))?'</span>':'');
 
         if(!empty($statusImg[$statusType])){
             $htmlImg = img_picto($statusLabel, $statusImg[$statusType]);
@@ -8051,13 +8047,13 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
     elseif (!empty($conf->global->MAIN_STATUS_USES_CSS) && !empty($displayMode)) {
         $statusLabelShort = !empty($statusLabelShort)?$statusLabelShort:$statusLabel;
 
-        if($displayMode == 3){
+        if ($displayMode == 3) {
             $return = dolGetBadge($statusLabel, '', $statusType, 'dot');
         }
-        elseif($displayMode === 5){
+        elseif ($displayMode === 5) {
             $return = dolGetBadge($statusLabelShort, $html, $statusType);
         }
-        else{
+        else {
             $return = dolGetBadge($statusLabel, $html, $statusType);
         }
     }
