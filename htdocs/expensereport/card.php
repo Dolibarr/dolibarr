@@ -2238,7 +2238,7 @@ else
 				            jQuery(".trattachnewfilenow").toggle();
                             return false;
                         });';
-				    if (is_array(GETPOST('attachfile','array')) && count(GETPOST('attachfile','array')))
+				    if (is_array(GETPOST('attachfile', 'array')) && count(GETPOST('attachfile', 'array')))
 				    {
 				        print 'jQuery(".trattachnewfilenow").toggle();'."\n";
 				    }
@@ -2335,12 +2335,12 @@ else
 				                //var_dump(GETPOST($file['relativename'])); var_dump($file['relativename']); var_dump($_FILES['userfile']['name']);
 				                foreach($_FILES['userfile']['name'] as $tmpfile)
 				                {
-				                    if ($file['relativename'] == (GETPOST('savingdocmask','alpha') ? dol_sanitizeFileName($object->ref.'-') : '').$tmpfile)
+				                    if ($file['relativename'] == (GETPOST('savingdocmask', 'alpha') ? dol_sanitizeFileName($object->ref.'-') : '').$tmpfile)
 				                    {
 				                        $checked=' checked';
 				                        break;
 				                    }
-				                    elseif ($file['relativename'] && in_array($file['relativename'], GETPOST('attachfile','array'))) {
+				                    elseif ($file['relativename'] && in_array($file['relativename'], GETPOST('attachfile', 'array'))) {
 				                        $checked=' checked';
 				                        break;
 				                    }
