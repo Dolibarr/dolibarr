@@ -856,12 +856,12 @@ class ExpenseReport extends CommonObject
 
                     print '<tr>';
                     print '<td><a href="'.DOL_URL_ROOT.'/expensereport/card.php?id='.$objp->rowid.'">'.$objp->ref_num.'</a></td>';
-                    print '<td align="center">'.dol_print_date($objp->date, 'day').'</td>';
+                    print '<td class="center">'.dol_print_date($objp->date, 'day').'</td>';
                     print '<td>'.$author->getNomUrl(1).'</td>';
                     print '<td>'.$objp->comments.'</td>';
-                    print '<td align="right">'.price($objp->total_ht).'</td>';
-                    print '<td align="right">'.price($objp->total_ttc).'</td>';
-                    print '<td align="right">';
+                    print '<td class="right">'.price($objp->total_ht).'</td>';
+                    print '<td class="right">'.price($objp->total_ttc).'</td>';
+                    print '<td class="right">';
 
                     switch($objp->fk_c_expensereport_status) {
                         case 4:
@@ -895,8 +895,8 @@ class ExpenseReport extends CommonObject
                 }
 
                 print '<tr class="liste_total"><td colspan="4">'.$langs->trans("Number").': '.$i.'</td>';
-                print '<td align="right" width="100">'.$langs->trans("TotalHT").' : '.price($total_HT).'</td>';
-                print '<td align="right" width="100">'.$langs->trans("TotalTTC").' : '.price($total_TTC).'</td>';
+                print '<td class="right" width="100">'.$langs->trans("TotalHT").' : '.price($total_HT).'</td>';
+                print '<td class="right" width="100">'.$langs->trans("TotalTTC").' : '.price($total_TTC).'</td>';
                 print '<td>&nbsp;</td>';
                 print '</tr>';
             }
