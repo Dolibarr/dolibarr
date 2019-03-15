@@ -1939,11 +1939,11 @@ class Societe extends CommonObject
 	 *
 	 *	@param	User	$user		Object user
 	 *	@param	int		$commid		Id of user
-	 *	@return	void
+	 *	@return	int					<0 if KO, >0 if OK
 	 */
     public function add_commercial(User $user, $commid)
 	{
-        // phpcs:enable
+       // phpcs:enable
 		$error=0;
 
 
@@ -1961,14 +1961,18 @@ class Societe extends CommonObject
 			if (! $this->db->query($sql) )
 			{
 				dol_syslog(get_class($this)."::add_commercial Erreur");
+                return -2;
 			}
 			else {
 				$this->context=array('commercial_modified'=>$commid);
 
 				$result=$this->call_trigger('COMPANY_LINK_SALE_REPRESENTATIVE', $user);
-                if ($result < 0) $error++;
+                if ($result < 0) return $result;
+
+                return 1;
 			}
 		}
+		return -1;
 	}
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
