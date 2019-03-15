@@ -798,7 +798,7 @@ SCRIPT;
 				print_liste_field_titre("DiscountQtyMin", $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'right ');
 				print_liste_field_titre("NbDaysToDelivery", $_SERVER["PHP_SELF"], "pfp.delivery_time_days", "", $param, '', $sortfield, $sortorder, 'right ');
 				print_liste_field_titre("ReputationForThisProduct", $_SERVER["PHP_SELF"], "pfp.supplier_reputation", "", $param, '', $sortfield, $sortorder, 'center ');
-				 if ($conf->barcode->enabled) {
+				if ($conf->barcode->enabled) {
                     print_liste_field_titre("BarcodeValue", $_SERVER["PHP_SELF"], "pfp.barcode", "", $param, '', $sortfield, $sortorder, 'center ');
                     print_liste_field_titre("BarcodeType", $_SERVER["PHP_SELF"], "pfp.fk_barcode_type", "", $param, '', $sortfield, $sortorder, 'center ');
                 }

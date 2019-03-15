@@ -54,7 +54,7 @@ if (! empty($conf->projet->enabled)) {
 }
 
 // Load translation files required by the page
-$langs->loadLangs(array("sendings","companies","bills",'deliveries','orders','stocks','other','propal'));
+$langs->loadLangs(array("sendings", "companies", "bills", 'deliveries', 'orders', 'stocks', 'other', 'propal'));
 
 if (!empty($conf->incoterm->enabled)) $langs->load('incoterm');
 if (! empty($conf->productbatch->enabled)) $langs->load('productbatch');
@@ -101,7 +101,7 @@ $extralabelslines=$extrafieldsline->fetch_name_optionals_label($object->table_el
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be include, not include_once
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('expeditioncard','globalcard'));
+$hookmanager->initHooks(array('expeditioncard', 'globalcard'));
 
 $permissiondellink=$user->rights->expedition->livraison->creer;	// Used by the include of actions_dellink.inc.php
 //var_dump($object->lines[0]->detail_batch);
@@ -969,7 +969,7 @@ if ($action == 'create')
             // Date delivery planned
             print '<tr><td>'.$langs->trans("DateDeliveryPlanned").'</td>';
             print '<td colspan="3">';
-            //print dol_print_date($object->date_livraison,"day");	// date_livraison come from order and will be stored into date_delivery planed.
+            //print dol_print_date($object->date_livraison, "day");	// date_livraison come from order and will be stored into date_delivery planed.
             $date_delivery = ($date_delivery?$date_delivery:$object->date_livraison); // $date_delivery comes from GETPOST
             print $form->selectDate($date_delivery?$date_delivery:-1, 'date_delivery', 1, 1, 1);
             print "</td>\n";
@@ -1225,7 +1225,7 @@ if ($action == 'create')
 					{
 						$quantityToBeDelivered = $quantityAsked - $quantityDelivered;
 					}
-	                $warehouse_id = GETPOST('entrepot_id','int');
+	                $warehouse_id = GETPOST('entrepot_id', 'int');
 
 					$warehouseObject = null;
 					if ($warehouse_id > 0 || ! ($line->fk_product > 0) || empty($conf->stock->enabled))     // If warehouse was already selected or if product is not a predefined, we go into this part with no multiwarehouse selection
@@ -1545,7 +1545,7 @@ if ($action == 'create')
 							print '<td class="left">';
 							if ($line->product_type == Product::TYPE_PRODUCT || ! empty($conf->global->STOCK_SUPPORTS_SERVICES))
 							{
-								$warehouse_selected_id = GETPOST('entrepot_id','int');
+								$warehouse_selected_id = GETPOST('entrepot_id', 'int');
 	    						if ($warehouse_selected_id > 0)
 	    						{
 	    							$warehouseObject=new Entrepot($db);
@@ -1835,7 +1835,7 @@ elseif ($id || $ref)
 		if ($totalWeight > 0)
 		{
 			if (!empty($object->trueWeight)) print ' ('.$langs->trans("SumOfProductWeights").': ';
-			//print $totalWeight.' '.measuring_units_string(0,"weight");
+			//print $totalWeight.' '.measuring_units_string(0, "weight");
 			print showDimensionInBestUnit($totalWeight, 0, "weight", $langs, isset($conf->global->MAIN_WEIGHT_DEFAULT_ROUND)?$conf->global->MAIN_WEIGHT_DEFAULT_ROUND:-1, isset($conf->global->MAIN_WEIGHT_DEFAULT_UNIT)?$conf->global->MAIN_WEIGHT_DEFAULT_UNIT:'no');
 			//if (empty($object->trueWeight)) print ' ('.$langs->trans("Calculated").')';
 			if (!empty($object->trueWeight)) print ')';
@@ -1893,7 +1893,7 @@ elseif ($id || $ref)
 		{
 			if ($volumeUnit < 50)
 			{
-			    //print $calculatedVolume.' '.measuring_units_string($volumeUnit,"volume");
+			    //print $calculatedVolume.' '.measuring_units_string($volumeUnit, "volume");
 			    print showDimensionInBestUnit($calculatedVolume, $volumeUnit, "volume", $langs, isset($conf->global->MAIN_VOLUME_DEFAULT_ROUND)?$conf->global->MAIN_VOLUME_DEFAULT_ROUND:-1, isset($conf->global->MAIN_VOLUME_DEFAULT_UNIT)?$conf->global->MAIN_VOLUME_DEFAULT_UNIT:'no');
 			}
 			else print $calculatedVolume.' '.measuring_units_string($volumeUnit, "volume");
@@ -1901,7 +1901,7 @@ elseif ($id || $ref)
 		if ($totalVolume > 0)
 		{
 			if ($calculatedVolume) print ' ('.$langs->trans("SumOfProductVolumes").': ';
-			//print $totalVolume.' '.measuring_units_string(0,"volume");
+			//print $totalVolume.' '.measuring_units_string(0, "volume");
 			print showDimensionInBestUnit($totalVolume, 0, "volume", $langs, isset($conf->global->MAIN_VOLUME_DEFAULT_ROUND)?$conf->global->MAIN_VOLUME_DEFAULT_ROUND:-1, isset($conf->global->MAIN_VOLUME_DEFAULT_UNIT)?$conf->global->MAIN_VOLUME_DEFAULT_UNIT:'no');
 			//if (empty($calculatedVolume)) print ' ('.$langs->trans("Calculated").')';
 			if ($calculatedVolume) print ')';
@@ -2179,8 +2179,8 @@ elseif ($id || $ref)
 					$text=$product_static->getNomUrl(1);
 					$text.= ' - '.$label;
 					$description=(! empty($conf->global->PRODUIT_DESC_IN_FORM)?'':dol_htmlentitiesbr($lines[$i]->description));
-					print $form->textwithtooltip($text,$description,3,'','',$i);
-					print_date_range($lines[$i]->date_start,$lines[$i]->date_end);
+					print $form->textwithtooltip($text, $description, 3, '', '', $i);
+					print_date_range($lines[$i]->date_start, $lines[$i]->date_end);
 					if (! empty($conf->global->PRODUIT_DESC_IN_FORM))
 					{
 						print (! empty($lines[$i]->description) && $lines[$i]->description!=$lines[$i]->product)?'<br>'.dol_htmlentitiesbr($lines[$i]->description):'';
@@ -2195,12 +2195,12 @@ elseif ($id || $ref)
 
 					if (! empty($lines[$i]->label)) {
 						$text.= ' <strong>'.$lines[$i]->label.'</strong>';
-						print $form->textwithtooltip($text,$lines[$i]->description,3,'','',$i);
+						print $form->textwithtooltip($text, $lines[$i]->description, 3, '', '', $i);
 					} else {
 						print $text.' '.nl2br($lines[$i]->description);
 					}
 
-					print_date_range($lines[$i]->date_start,$lines[$i]->date_end);
+					print_date_range($lines[$i]->date_start, $lines[$i]->date_end);
 					print "</td>\n";
 				}
 
@@ -2345,10 +2345,10 @@ elseif ($id || $ref)
 								{
 									$entrepot = new Entrepot($db);
 									$entrepot->fetch($detail_entrepot->entrepot_id);
-									$detail.= $langs->trans("DetailWarehouseFormat",$entrepot->libelle,$detail_entrepot->qty_shipped).'<br/>';
+									$detail.= $langs->trans("DetailWarehouseFormat", $entrepot->libelle, $detail_entrepot->qty_shipped).'<br/>';
 								}
 							}
-							print $form->textwithtooltip(img_picto('', 'object_stock').' '.$langs->trans("DetailWarehouseNumber"),$detail);
+							print $form->textwithtooltip(img_picto('', 'object_stock').' '.$langs->trans("DetailWarehouseNumber"), $detail);
 						}
 						print '</td>';
 					}
@@ -2366,12 +2366,12 @@ elseif ($id || $ref)
 								foreach ($lines[$i]->detail_batch as $dbatch)	// $dbatch is instance of ExpeditionLineBatch
 								{
 									$detail.= $langs->trans("Batch").': '.$dbatch->batch;
-									$detail.= ' - '.$langs->trans("SellByDate").': '.dol_print_date($dbatch->sellby,"day");
-									$detail.= ' - '.$langs->trans("EatByDate").': '.dol_print_date($dbatch->eatby,"day");
+									$detail.= ' - '.$langs->trans("SellByDate").': '.dol_print_date($dbatch->sellby, "day");
+									$detail.= ' - '.$langs->trans("EatByDate").': '.dol_print_date($dbatch->eatby, "day");
 									$detail.= ' - '.$langs->trans("Qty").': '.$dbatch->qty;
 									$detail.= '<br>';
 								}
-								print $form->textwithtooltip(img_picto('', 'object_barcode').' '.$langs->trans("DetailBatchNumber"),$detail);
+								print $form->textwithtooltip(img_picto('', 'object_barcode').' '.$langs->trans("DetailBatchNumber"), $detail);
 							}
 							else
 							{
@@ -2386,18 +2386,18 @@ elseif ($id || $ref)
 
 				// Weight
 				print '<td class="center">';
-				if ($lines[$i]->fk_product_type == Product::TYPE_PRODUCT) print $lines[$i]->weight*$lines[$i]->qty_shipped.' '.measuring_units_string($lines[$i]->weight_units,"weight");
+				if ($lines[$i]->fk_product_type == Product::TYPE_PRODUCT) print $lines[$i]->weight*$lines[$i]->qty_shipped.' '.measuring_units_string($lines[$i]->weight_units, "weight");
 				else print '&nbsp;';
 				print '</td>';
 
 				// Volume
 				print '<td class="center">';
-				if ($lines[$i]->fk_product_type == Product::TYPE_PRODUCT) print $lines[$i]->volume*$lines[$i]->qty_shipped.' '.measuring_units_string($lines[$i]->volume_units,"volume");
+				if ($lines[$i]->fk_product_type == Product::TYPE_PRODUCT) print $lines[$i]->volume*$lines[$i]->qty_shipped.' '.measuring_units_string($lines[$i]->volume_units, "volume");
 				else print '&nbsp;';
 				print '</td>';
 
 				// Size
-				//print '<td class="center">'.$lines[$i]->volume*$lines[$i]->qty_shipped.' '.measuring_units_string($lines[$i]->volume_units,"volume").'</td>';
+				//print '<td class="center">'.$lines[$i]->volume*$lines[$i]->qty_shipped.' '.measuring_units_string($lines[$i]->volume_units, "volume").'</td>';
 
 				if ($action == 'editline' && $lines[$i]->id == $line_id)
 				{
@@ -2405,7 +2405,7 @@ elseif ($id || $ref)
 					print '<input type="submit" class="button" id="savelinebutton" name="save" value="' . $langs->trans("Save") . '"><br>';
 					print '<input type="submit" class="button" id="cancellinebutton" name="cancel" value="' . $langs->trans("Cancel") . '"><br>';
 				}
-				else if ($object->statut == 0)
+				elseif ($object->statut == 0)
 				{
 					// edit-delete buttons
 					print '<td class="linecoledit center">';
@@ -2433,11 +2433,11 @@ elseif ($id || $ref)
 					print '<tr class="oddeven">';
 					if ($action == 'editline' && $lines[$i]->id == $line_id)
 					{
-						print $line->showOptionals($extrafieldsline, 'edit', array('style'=>$bc[$var], 'colspan'=>$colspan),$indiceAsked);
+						print $line->showOptionals($extrafieldsline, 'edit', array('style'=>$bc[$var], 'colspan'=>$colspan), $indiceAsked);
 					}
 					else
 					{
-						print $line->showOptionals($extrafieldsline, 'view', array('style'=>$bc[$var], 'colspan'=>$colspan),$indiceAsked);
+						print $line->showOptionals($extrafieldsline, 'view', array('style'=>$bc[$var], 'colspan'=>$colspan), $indiceAsked);
 					}
 					print '</tr>';
 				}
