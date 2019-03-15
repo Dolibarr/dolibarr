@@ -1330,7 +1330,7 @@ if ($action == 'create')
 								{
 									//var_dump($dbatch);
 									$batchStock = + $dbatch->qty;		// To get a numeric
-									$deliverableQty = min($quantityToBeDelivered,$batchStock);
+									$deliverableQty = min($quantityToBeDelivered, $batchStock);
 									print '<!-- subj='.$subj.'/'.$nbofsuggested.' --><tr '.((($subj + 1) == $nbofsuggested)?$bc[$var]:'').'>';
 									print '<td colspan="3" ></td><td class="center">';
 									print '<input name="qtyl'.$indiceAsked.'_'.$subj.'" id="qtyl'.$indiceAsked.'_'.$subj.'" type="text" size="4" value="'.$deliverableQty.'">';
@@ -1399,7 +1399,7 @@ if ($action == 'create')
 								if ($stock_warehouse->real > 0)
 								{
 									$stock = + $stock_warehouse->real; // Convert it to number
-									$deliverableQty = min($quantityToBeDelivered,$stock);
+									$deliverableQty = min($quantityToBeDelivered, $stock);
 									$deliverableQty = max(0, $deliverableQty);
 									// Quantity to send
 									print '<!-- subj='.$subj.'/'.$nbofsuggested.' --><tr '.((($subj + 1) == $nbofsuggested)?$bc[$var]:'').'>';
@@ -1492,7 +1492,7 @@ if ($action == 'create')
 									{
 										//var_dump($dbatch);
 										$batchStock = + $dbatch->qty;		// To get a numeric
-										$deliverableQty = min($quantityToBeDelivered,$batchStock);
+										$deliverableQty = min($quantityToBeDelivered, $batchStock);
 										if ($deliverableQty < 0) $deliverableQty = 0;
 										print '<!-- subj='.$subj.'/'.$nbofsuggested.' --><tr '.((($subj + 1) == $nbofsuggested)?$bc[$var]:'').'><td colspan="3"></td><td class="center">';
 										print '<input name="qtyl'.$indiceAsked.'_'.$subj.'" id="qtyl'.$indiceAsked.'_'.$subj.'" type="text" size="4" value="'.$deliverableQty.'">';
@@ -1580,7 +1580,7 @@ if ($action == 'create')
 						//$line->fetch_optionals($line->id);
 						$line->array_options = array_merge($line->array_options, $srcLine->array_options);
 						print '<tr class="oddeven">';
-						print $line->showOptionals($extrafieldsline, 'edit', array('style'=>$bc[$var], 'colspan'=>$colspan),$indiceAsked);
+						print $line->showOptionals($extrafieldsline, 'edit', array('style'=>$bc[$var], 'colspan'=>$colspan), $indiceAsked);
 						print '</tr>';
 					}
 
@@ -1984,7 +1984,7 @@ elseif ($id || $ref)
 
 		// Other attributes
 		$parameters = array('colspan' => ' colspan="3"');
-		$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+		$reshook=$hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action);    // Note that $action and $object may have been modified by hook
 		print $hookmanager->resPrint;
 
 		print "</table>";
@@ -2190,8 +2190,8 @@ elseif ($id || $ref)
 				else
 				{
 					print "<td>";
-					if ($lines[$i]->product_type == Product::TYPE_SERVICE) $text = img_object($langs->trans('Service'),'service');
-					else $text = img_object($langs->trans('Product'),'product');
+					if ($lines[$i]->product_type == Product::TYPE_SERVICE) $text = img_object($langs->trans('Service'), 'service');
+					else $text = img_object($langs->trans('Product'), 'product');
 
 					if (! empty($lines[$i]->label)) {
 						$text.= ' <strong>'.$lines[$i]->label.'</strong>';
@@ -2268,7 +2268,7 @@ elseif ($id || $ref)
 						print '<td>' . $formproduct->selectLotStock('', 'batchl'.$line_id.'_0', '', 1, 0, $lines[$i]->fk_product). '</td>';
 						print '</tr>';
 					}
-					else if (! empty($conf->stock->enabled))
+					elseif (! empty($conf->stock->enabled))
 					{
 						if ($lines[$i]->fk_product > 0)
 						{
@@ -2284,7 +2284,7 @@ elseif ($id || $ref)
 								print '<td> - ' . $langs->trans("NA") . '</td>';
 								print '</tr>';
 							}
-							else if (count($lines[$i]->details_entrepot) > 1)
+							elseif (count($lines[$i]->details_entrepot) > 1)
 							{
 								print '<!-- case edit 3 -->';
 								foreach ($lines[$i]->details_entrepot as $detail_entrepot)
@@ -2336,7 +2336,7 @@ elseif ($id || $ref)
 							$entrepot->fetch($lines[$i]->entrepot_id);
 							print $entrepot->getNomUrl(1);
 						}
-						else if (count($lines[$i]->details_entrepot) > 1)
+						elseif (count($lines[$i]->details_entrepot) > 1)
 						{
 							$detail = '';
 							foreach ($lines[$i]->details_entrepot as $detail_entrepot)
