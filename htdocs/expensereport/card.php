@@ -66,7 +66,7 @@ $socid = GETPOST('socid', 'int')?GETPOST('socid', 'int'):GETPOST('socid_id', 'in
 // Security check
 $id=GETPOST("id", 'int');
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'expensereport', 0, 'expensereport');
+$result = restrictedArea($user, 'expensereport', $id, 'expensereport');
 
 
 // Hack to use expensereport dir
