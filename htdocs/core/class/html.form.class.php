@@ -4280,6 +4280,46 @@ class Form
 			}
 		}
 	}
+  
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *	Show a form to select deposit
+	 *
+	 *  @param	int		$page        	Page
+	 *  @param  string	$selected    	Id condition pre-selectionne
+	 *  @param  string	$htmlname    	Name of select html field
+	 *	@param	int		$objectid		Add empty entry
+	 *  @return	void
+	 */
+    public function form_deposit($page, $type = null, $value = null, $htmlname = 'deposit', $objectid = 0)
+	{
+        // phpcs:enable
+		global $conf,$langs;
+		if ($htmlname != "none")
+		{
+			print '<form method="post" action="'.$page.'">';
+			print '<input type="hidden" name="action" value="setdeposit">';
+			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+      $arraylist = array('none' => $langs->transnoentitiesnoconv('None'), 'amount' => $langs->transnoentitiesnoconv('FixAmount'), 'variable' => $langs->transnoentitiesnoconv('VarAmount'));
+			print $this->selectarray('deposit_type', $arraylist, $type, 0, 0, 0, '', 1);
+      print $langs->trans('Value') . ':';
+			print '<input size="3" class="flat" type="text" name="deposit" value="'.price($value).'"><input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+			print '</form>';
+		}
+		else
+		{
+    
+			if ($value > 1)
+			{
+        print price($value, 0, $langs, 1, -1, -1, $conf->currency);
+			} elseif ($value > 0)
+			{
+				print price($value).' %';
+			} else {
+				print $langs->trans("None");
+			}
+		}
+	} 
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
