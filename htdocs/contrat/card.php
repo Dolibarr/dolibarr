@@ -1911,21 +1911,21 @@ else
 				// Si pas encore active
 				if (! $objp->date_debut_reelle) {
 					print $langs->trans("DateStartReal").': ';
-					if ($objp->date_debut_reelle) print dol_print_date($objp->date_debut_reelle, 'day');
+					if ($objp->date_debut_reelle) print dol_print_date($db->jdate($objp->date_debut_reelle), 'day');
 					else print $langs->trans("ContractStatusNotRunning");
 				}
 				// Si active et en cours
 				if ($objp->date_debut_reelle && ! $objp->date_fin_reelle) {
 					print $langs->trans("DateStartReal").': ';
-					print dol_print_date($objp->date_debut_reelle, 'day');
+                    print dol_print_date($db->jdate($objp->date_debut_reelle), 'day');
 				}
 				// Si desactive
 				if ($objp->date_debut_reelle && $objp->date_fin_reelle) {
 					print $langs->trans("DateStartReal").': ';
-					print dol_print_date($objp->date_debut_reelle, 'day');
+                    print dol_print_date($db->jdate($objp->date_debut_reelle), 'day');
 					print ' &nbsp;-&nbsp; ';
 					print $langs->trans("DateEndReal").': ';
-					print dol_print_date($objp->date_fin_reelle, 'day');
+					print dol_print_date($db->jdate($objp->date_fin_reelle), 'day');
 				}
 				if (! empty($objp->comment)) print " &nbsp;-&nbsp; ".$objp->comment;
 				print '</td>';
