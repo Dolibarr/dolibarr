@@ -1866,7 +1866,7 @@ class Adherent extends CommonObject
 
 		$error=0;
 
-		// Check paramaters
+		// Check parameters
 		if ($this->statut == 0)
 		{
 			dol_syslog(get_class($this)."::resiliate statut of member does not allow this", LOG_WARNING);

@@ -81,7 +81,7 @@ div.mainmenu.companies::before {
 }
 
 div.mainmenu.commercial::before {
-    content: "\f508";
+    content: "\f0f2";
 }
 
 div.mainmenu.ecm::before {
@@ -97,7 +97,7 @@ div.mainmenu.ftp::before {
 }
 
 div.mainmenu.hrm::before {
-    content: "\f5ca";
+    content: "\f508";
 }
 
 div.mainmenu.members::before {
@@ -105,11 +105,11 @@ div.mainmenu.members::before {
 }
 
 div.mainmenu.products::before {
-    content: "\f468";
+    content: "\f1b2";
 }
 
 div.mainmenu.mrp::before {
-    content: "\f474";
+    content: "\f1b3";
 }
 
 div.mainmenu.project::before {
