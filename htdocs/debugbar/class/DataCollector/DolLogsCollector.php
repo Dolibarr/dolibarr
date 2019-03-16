@@ -32,7 +32,7 @@ class DolLogsCollector extends MessagesCollector
 		parent::__construct($name);
 
 		$this->path = $path ?: $this->getLogsFile();
-		$this->lines = $conf->global->DEBUGBAR_LOGS_LINES_NUMBER ? $conf->global->DEBUGBAR_LOGS_LINES_NUMBER : 100;
+		$this->lines = $conf->global->DEBUGBAR_LOGS_LINES_NUMBER ? $conf->global->DEBUGBAR_LOGS_LINES_NUMBER : 1000;
 	}
 
 	/**

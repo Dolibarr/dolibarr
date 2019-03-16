@@ -48,7 +48,7 @@ class modDebugBar extends DolibarrModules
 
         // Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
         $this->name = preg_replace('/^mod/i', '', get_class($this));
-        $this->description = "Debug bar";
+        $this->description = "A tool for developper adding a debug bar in your browser.";
         // Possible values for version are: 'development', 'experimental', 'dolibarr' or version
         $this->version = 'dolibarr';
         $this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
@@ -75,7 +75,7 @@ class modDebugBar extends DolibarrModules
         $this->requiredby = array();
 
         // Config pages
-        $this->config_page_url = array();
+        $this->config_page_url = array("debugbar.php");
 
         // Constants
         // Example: $this->const=array(0=>array('MYMODULE_MYNEWCONST1','chaine','myvalue','This is a constant to add',0),

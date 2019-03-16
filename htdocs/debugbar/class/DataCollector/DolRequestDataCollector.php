@@ -17,6 +17,8 @@ class DolRequestDataCollector extends RequestDataCollector
 	{
 		global $langs;
 
+		$langs->load("other");
+
 		return array(
 			$langs->transnoentities('Request') => array(
 				"icon" => "tags",
