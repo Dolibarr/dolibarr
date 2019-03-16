@@ -14,6 +14,7 @@ class DolibarrCollector extends DataCollector implements Renderable, AssetProvid
 	/**
 	 *	Return collector name
 	 *
+	 *  @return string     Name
 	 */
 	public function getName()
 	{
@@ -23,6 +24,7 @@ class DolibarrCollector extends DataCollector implements Renderable, AssetProvid
 	/**
 	 *	Return collected data
 	 *
+	 * @return array       Array
 	 */
 	public function collect()
 	{
@@ -52,6 +54,7 @@ class DolibarrCollector extends DataCollector implements Renderable, AssetProvid
 	/**
 	 *	Return dolibarr info as an HTML string
 	 *
+	 * @return string      HTML string
 	 */
 	protected function getDolibarrInfo()
 	{
@@ -71,6 +74,7 @@ class DolibarrCollector extends DataCollector implements Renderable, AssetProvid
 	/**
 	 *	Return mail info as an HTML string
 	 *
+	 * @return string      HTML string
 	 */
 	protected function getMailInfo()
 	{
@@ -90,6 +94,7 @@ class DolibarrCollector extends DataCollector implements Renderable, AssetProvid
 	/**
 	 *	Return widget settings
 	 *
+	 * @return array       Array
 	 */
 	public function getWidgets()
 	{
@@ -130,6 +135,7 @@ class DolibarrCollector extends DataCollector implements Renderable, AssetProvid
 	/**
 	 *	Return collector assests
 	 *
+	 * @return array       Array
 	 */
 	public function getAssets()
 	{

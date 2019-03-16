@@ -22,8 +22,8 @@ class DolLogsCollector extends MessagesCollector
 	/**
 	 * Constructor
 	 *
-	 * @param string $path
-	 * @param string $name
+	 * @param string $path     Path
+	 * @param string $name     Name
 	 */
 	public function __construct($path = null, $name = 'logs')
 	{
@@ -89,7 +89,7 @@ class DolLogsCollector extends MessagesCollector
 	/**
 	 * Get logs
 	 *
-	 * @param string $path
+	 * @param string $path     Path
 	 * @return array
 	 */
 	public function getStorageLogs($path)
@@ -109,8 +109,8 @@ class DolLogsCollector extends MessagesCollector
 	/**
 	 * Get latest file lines
 	 *
-	 * @param string       $file
-	 * @param int          $lines
+	 * @param string       $file       File
+	 * @param int          $lines      Lines
 	 * @return array       Array
 	 */
 	protected function tailFile($file, $lines)

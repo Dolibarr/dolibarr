@@ -67,8 +67,8 @@ class TraceableDB extends DoliDB
 	/**
 	 * Return datas as an array
 	 *
-	 * @param   resource $resultset Resultset of request
-	 * @return  array                    Array
+	 * @param   resource $resultset    Resultset of request
+	 * @return  array                  Array
 	 */
 	public function fetch_row($resultset)
 	{
@@ -145,6 +145,7 @@ class TraceableDB extends DoliDB
 		return $this->db->convertSQLFromMysql($line);
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Renvoie le nombre de lignes dans le resultat d'une requete INSERT, DELETE ou UPDATE
 	 *
@@ -154,6 +155,7 @@ class TraceableDB extends DoliDB
 	 */
 	public function affected_rows($resultset)
 	{
+	    // phpcs:enable
 		return $this->db->affected_rows($resultset);
 	}
 
@@ -284,11 +286,11 @@ class TraceableDB extends DoliDB
 	/**
 	 * Execute a SQL request and return the resultset
 	 *
-	 * @param   string $query SQL query string
-	 * @param   int $usesavepoint 0=Default mode, 1=Run a savepoint before and a rollback to savepoint if error (this allow to have some request with errors inside global transactions).
-	 *                                    Note that with Mysql, this parameter is not used as Myssql can already commit a transaction even if one request is in error, without using savepoints.
-	 * @param   string $type Type of SQL order ('ddl' for insert, update, select, delete or 'dml' for create, alter...)
-	 * @return  resource                Resultset of answer
+	 * @param   string $query          SQL query string
+	 * @param   int    $usesavepoint   0=Default mode, 1=Run a savepoint before and a rollback to savepoint if error (this allow to have some request with errors inside global transactions).
+	 *                                 Note that with Mysql, this parameter is not used as Myssql can already commit a transaction even if one request is in error, without using savepoints.
+	 * @param   string $type           Type of SQL order ('ddl' for insert, update, select, delete or 'dml' for create, alter...)
+	 * @return  resource               Resultset of answer
 	 */
 	public function query($query, $usesavepoint = 0, $type = 'auto')
 	{
@@ -303,6 +305,8 @@ class TraceableDB extends DoliDB
 
 	/**
 	 * Start query tracing
+	 *
+	 * @return     void
 	 */
 	protected function startTracing()
 	{
@@ -313,8 +317,9 @@ class TraceableDB extends DoliDB
 	/**
 	 * End query tracing
 	 *
-	 * @param     string   $sql       query string
-	 * @param     string   $resql     query result
+	 * @param      string   $sql       query string
+	 * @param      string   $resql     query result
+	 * @return     void
 	 */
 	protected function endTracing($sql, $resql)
 	{
@@ -334,7 +339,7 @@ class TraceableDB extends DoliDB
 	}
 
 	/**
-	 *    Connexion to server
+	 * Connexion to server
 	 *
 	 * @param   string $host database server host
 	 * @param   string $login login
@@ -393,15 +398,17 @@ class TraceableDB extends DoliDB
 		return $this->db->getDefaultCollationDatabase();
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Return number of lines for result of a SELECT
 	 *
-	 * @param   resource $resultset Resulset of requests
-	 * @return 	int                        Nb of lines
+	 * @param   resource $resultset    Resulset of requests
+	 * @return 	int                    Nb of lines
 	 * @see    	affected_rows()
 	 */
 	public function num_rows($resultset)
 	{
+	    // phpcs:enable
 		return $this->db->num_rows($resultset);
 	}
 
@@ -568,6 +575,7 @@ class TraceableDB extends DoliDB
 		return $this->db->DDLCreateUser($dolibarr_main_db_host, $dolibarr_main_db_user, $dolibarr_main_db_pass, $dolibarr_main_db_name);
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Convert (by PHP) a PHP server TZ string date into a Timestamps date (GMT if gm=true)
 	 * 19700101020000 -> 3600 with TZ+1 and gmt=0
@@ -577,8 +585,9 @@ class TraceableDB extends DoliDB
 	 * @param	bool			$gm			1=Input informations are GMT values, otherwise local to server TZ
 	 * @return	int|string					Date TMS or ''
 	 */
-	public function jdate($string, $gm=false)
+	public function jdate($string, $gm = false)
 	{
+	    // phpcs:enable
 		return $this->db->jdate($string, $gm);
 	}
 

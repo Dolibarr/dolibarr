@@ -70,7 +70,8 @@ class DolConfigCollector extends ConfigCollector
 	/**
 	 * Convert an object to array
 	 *
-	 * @return array   Array
+	 * @param  mixed   $obj        Object
+	 * @return array               Array
 	 */
 	protected function object_to_array($obj)
 	{

@@ -10,7 +10,6 @@ dol_include_once('/debugbar/class/TraceableDB.php');
 /**
  * DolQueryCollector class
  */
-
 class DolQueryCollector extends DataCollector implements Renderable, AssetProvider
 {
 	/**
@@ -33,6 +32,7 @@ class DolQueryCollector extends DataCollector implements Renderable, AssetProvid
 	/**
 	 * Return collected data
 	 *
+	 * @return array  Array
 	 */
 	public function collect()
 	{
@@ -72,7 +72,7 @@ class DolQueryCollector extends DataCollector implements Renderable, AssetProvid
 	/**
 	 *	Return collector name
 	 *
-	 *  @param string  Name
+	 *  @return string  Name
 	 */
 	public function getName()
 	{
@@ -82,7 +82,7 @@ class DolQueryCollector extends DataCollector implements Renderable, AssetProvid
 	/**
 	 *	Return widget settings
 	 *
-	 *  @param array      Array
+	 *  @return array      Array
 	 */
 	public function getWidgets()
 	{
@@ -107,7 +107,7 @@ class DolQueryCollector extends DataCollector implements Renderable, AssetProvid
 	/**
 	 *	Return assets
 	 *
-	 *  @param array   Array
+	 *  @return array   Array
 	 */
 	public function getAssets()
 	{
