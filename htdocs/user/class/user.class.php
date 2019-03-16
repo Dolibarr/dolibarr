@@ -70,6 +70,7 @@ class User extends CommonObject
 	public $gender;
 	public $birth;
 	public $email;
+	public $personal_email;
 
 	public $skype;
 	public $twitter;
@@ -92,6 +93,7 @@ class User extends CommonObject
 	public $office_phone;
 	public $office_fax;
 	public $user_mobile;
+    public $personal_mobile;
 	public $admin;
 	public $login;
 	public $api_key;
@@ -134,6 +136,8 @@ class User extends CommonObject
 	 * @var int User ID
 	 */
 	public $fk_user;
+	public $fk_user_expense_validator;
+    public $fk_user_holiday_validator;
 
 	public $clicktodial_url;
 	public $clicktodial_login;
@@ -231,12 +235,12 @@ class User extends CommonObject
 		$login=trim($login);
 
 		// Get user
-		$sql = "SELECT u.rowid, u.lastname, u.firstname, u.employee, u.gender, u.birth, u.email, u.job, u.skype, u.twitter, u.facebook, u.linkedin,";
-		$sql.= " u.signature, u.office_phone, u.office_fax, u.user_mobile,";
+		$sql = "SELECT u.rowid, u.lastname, u.firstname, u.employee, u.gender, u.birth, u.email, u.personal_email, u.job, u.skype, u.twitter, u.facebook, u.linkedin,";
+		$sql.= " u.signature, u.office_phone, u.office_fax, u.user_mobile, u.personal_mobile,";
 		$sql.= " u.address, u.zip, u.town, u.fk_state as state_id, u.fk_country as country_id,";
 		$sql.= " u.admin, u.login, u.note,";
 		$sql.= " u.pass, u.pass_crypted, u.pass_temp, u.api_key,";
-		$sql.= " u.fk_soc, u.fk_socpeople, u.fk_member, u.fk_user, u.ldap_sid,";
+		$sql.= " u.fk_soc, u.fk_socpeople, u.fk_member, u.fk_user, u.ldap_sid, u.fk_user_expense_validator, u.fk_user_holiday_validator,";
 		$sql.= " u.statut, u.lang, u.entity,";
 		$sql.= " u.datec as datec,";
 		$sql.= " u.tms as datem,";
@@ -334,9 +338,11 @@ class User extends CommonObject
 				$this->state        = ($obj->state!='-'?$obj->state:'');
 
 				$this->office_phone	= $obj->office_phone;
-				$this->office_fax = $obj->office_fax;
-				$this->user_mobile = $obj->user_mobile;
+				$this->office_fax   = $obj->office_fax;
+				$this->user_mobile  = $obj->user_mobile;
+                $this->personal_mobile = $obj->personal_mobile;
 				$this->email		= $obj->email;
+                $this->personal_email = $obj->personal_email;
 				$this->skype		= $obj->skype;
 				$this->twitter		= $obj->twitter;
 				$this->facebook		= $obj->facebook;
@@ -371,6 +377,8 @@ class User extends CommonObject
 				$this->contactid            = $obj->fk_socpeople;
 				$this->fk_member            = $obj->fk_member;
 				$this->fk_user        		= $obj->fk_user;
+                $this->fk_user_expense_validator = $obj->fk_user_expense_validator;
+                $this->fk_user_holiday_validator = $obj->fk_user_holiday_validator;
 
 				$this->default_range = $obj->default_range;
 				$this->default_c_exp_tax_cat = $obj->default_c_exp_tax_cat;
@@ -1470,7 +1478,9 @@ class User extends CommonObject
 		$this->office_phone = trim($this->office_phone);
 		$this->office_fax   = trim($this->office_fax);
 		$this->user_mobile  = trim($this->user_mobile);
+        $this->personal_mobile  = trim($this->personal_mobile);
 		$this->email        = trim($this->email);
+        $this->personal_email = trim($this->personal_email);
 
 		$this->skype        = trim($this->skype);
 		$this->twitter      = trim($this->twitter);
@@ -1525,7 +1535,9 @@ class User extends CommonObject
 		$sql.= ", office_phone = '".$this->db->escape($this->office_phone)."'";
 		$sql.= ", office_fax = '".$this->db->escape($this->office_fax)."'";
 		$sql.= ", user_mobile = '".$this->db->escape($this->user_mobile)."'";
+        $sql.= ", personal_mobile = '".$this->db->escape($this->personal_mobile)."'";
 		$sql.= ", email = '".$this->db->escape($this->email)."'";
+        $sql.= ", personal_email = '".$this->db->escape($this->personal_email)."'";
 		$sql.= ", skype = '".$this->db->escape($this->skype)."'";
 		$sql.= ", twitter = '".$this->db->escape($this->twitter)."'";
 		$sql.= ", facebook = '".$this->db->escape($this->facebook)."'";
@@ -1540,6 +1552,8 @@ class User extends CommonObject
 		$sql.= ", photo = ".($this->photo?"'".$this->db->escape($this->photo)."'":"null");
 		$sql.= ", openid = ".($this->openid?"'".$this->db->escape($this->openid)."'":"null");
 		$sql.= ", fk_user = ".($this->fk_user > 0?"'".$this->db->escape($this->fk_user)."'":"null");
+        $sql.= ", fk_user_expense_validator = ".($this->fk_user_expense_validator > 0?"'".$this->db->escape($this->fk_user_expense_validator)."'":"null");
+        $sql.= ", fk_user_holiday_validator = ".($this->fk_user_holiday_validator > 0?"'".$this->db->escape($this->fk_user_holiday_validator)."'":"null");
 		if (isset($this->thm) || $this->thm != '')                 $sql.= ", thm= ".($this->thm != ''?"'".$this->db->escape($this->thm)."'":"null");
 		if (isset($this->tjm) || $this->tjm != '')                 $sql.= ", tjm= ".($this->tjm != ''?"'".$this->db->escape($this->tjm)."'":"null");
 		if (isset($this->salary) || $this->salary != '')           $sql.= ", salary= ".($this->salary != ''?"'".$this->db->escape($this->salary)."'":"null");
@@ -2652,6 +2666,7 @@ class User extends CommonObject
 		$this->gender='man';
 		$this->note='This is a note';
 		$this->email='email@specimen.com';
+        $this->personal_email='personalemail@specimen.com';
 		$this->skype='skypepseudo';
 		$this->twitter='twitterpseudo';
 		$this->facebook='facebookpseudo';
@@ -2659,6 +2674,7 @@ class User extends CommonObject
 		$this->office_phone='0999999999';
 		$this->office_fax='0999999998';
 		$this->user_mobile='0999999997';
+        $this->personal_mobile='0999999996';
 		$this->admin=0;
 		$this->login='dolibspec';
 		$this->pass='dolibspec';
