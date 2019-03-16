@@ -1870,3 +1870,4 @@ GeneralOptions=General Options
 LogsLinesNumber=Number of lines to show on logs tab
 UseDebugBar=Use the debug bar
 DEBUGBAR_LOGS_LINES_NUMBER=Number of last log lines to keep in console
+WarningValueHigherSlowsDramaticalyOutput=Warning, higher values slows dramaticaly output

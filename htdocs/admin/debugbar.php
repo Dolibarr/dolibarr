@@ -92,7 +92,8 @@ print '<td class="right"><input type="submit" class="button" '.$option.' value="
 print "</tr>\n";
 
 print '<tr class="oddeven"><td>'.$langs->trans("DEBUGBAR_LOGS_LINES_NUMBER").'</td>';
-print '<td colspan="2"><input type="text" class="flat" name="DEBUGBAR_LOGS_LINES_NUMBER" value="'.(empty($conf->global->DEBUGBAR_LOGS_LINES_NUMBER)?1000:$conf->global->DEBUGBAR_LOGS_LINES_NUMBER).'">';
+print '<td colspan="2"><input type="text" class="flat" name="DEBUGBAR_LOGS_LINES_NUMBER" value="'.(empty($conf->global->DEBUGBAR_LOGS_LINES_NUMBER) ? 250 : $conf->global->DEBUGBAR_LOGS_LINES_NUMBER).'">';   // This slow seriously output
+print ' '.$langs->trans("WarningValueHigherSlowsDramaticalyOutput");
 print '</td></tr>';
 
 print '</table>';
