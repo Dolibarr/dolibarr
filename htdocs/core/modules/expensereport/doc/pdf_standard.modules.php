@@ -4,6 +4,7 @@
  * Copyright (C) 2016-2018  Philippe Grand          <philippe.grand@atoo-net.com>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2018       Francis Appels          <francis.appels@z-application.com>
+ * Copyright (C) 2019       Markus Welters          <markus@welters.de>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
