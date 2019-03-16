@@ -1,2 +1,0 @@
-#!/bin/sh
-composer git_pre_commit

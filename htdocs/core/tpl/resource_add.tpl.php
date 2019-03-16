@@ -1,7 +1,15 @@
 <!-- BEGIN TEMPLATE resource_add.tpl.php -->
 <?php
 
-require_once(DOL_DOCUMENT_ROOT.'/resource/class/html.formresource.class.php');
+// Protection to avoid direct call of template
+if (empty($conf) || ! is_object($conf))
+{
+	print "Error, template page can't be called as URL";
+	exit;
+}
+
+
+require_once DOL_DOCUMENT_ROOT.'/resource/class/html.formresource.class.php';
 
 $form = new Form($db);
 $formresources = new FormResource($db);
@@ -20,13 +28,13 @@ $out .= '<input type="hidden" name="resource_type" value="'.(empty($resource_typ
 $out .= '<div class="tagtd">'.$langs->trans("SelectResource").'</div>';
 $out .= '<div class="tagtd">';
 $events=array();
-$out .= $formresources->select_resource_list('','fk_resource','',1,1,0,$events,'',2);
+$out .= $formresources->select_resource_list('', 'fk_resource', '', 1, 1, 0, $events, '', 2, null);
 $out .= '</div>';
 
-$out .= '<div class="tagtd"><label>'.$langs->trans('Busy').'</label> '.$form->selectyesno('busy',(isset($_POST['busy'])?$_POST['busy']:1),1).'</div>';
-$out .= '<div class="tagtd"><label>'.$langs->trans('Mandatory').'</label> '.$form->selectyesno('mandatory',(isset($_POST['mandatory'])?$_POST['mandatory']:0),1).'</div>';
+$out .= '<div class="tagtd"><label>'.$langs->trans('Busy').'</label> '.$form->selectyesno('busy', (isset($_POST['busy'])?$_POST['busy']:1), 1).'</div>';
+$out .= '<div class="tagtd"><label>'.$langs->trans('Mandatory').'</label> '.$form->selectyesno('mandatory', (isset($_POST['mandatory'])?$_POST['mandatory']:0), 1).'</div>';
 
-$out .= '<div class="tagtd" align="right">';
+$out .= '<div class="tagtd right">';
 $out .='<input type="submit" id="add-resource-place" class="button" value="'.$langs->trans("Add").'"/>';
 $out .= '</div>';
 

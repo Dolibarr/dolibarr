@@ -23,6 +23,7 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/interfaces.class.php';
 
+// Load translation files required by the page
 $langs->load("admin");
 
 if (!$user->admin) accessforbidden();
@@ -42,11 +43,11 @@ $sortorder='ASC';
  * View
  */
 
-llxHeader("","");
+llxHeader("", "");
 
 $form = new Form($db);
 
-print load_fiche_titre($langs->trans("TriggersAvailable"),'','title_setup');
+print load_fiche_titre($langs->trans("TriggersAvailable"), '', 'title_setup');
 
 print $langs->trans("TriggersDesc")."<br>";
 print "<br>\n";
@@ -65,10 +66,8 @@ print getTitleFieldOfList($langs->trans("Active"), 0, $_SERVER["PHP_SELF"], 'act
 print getTitleFieldOfList('', 0, $_SERVER["PHP_SELF"], 'none', "", $param, ($align?'align="'.$align.'"':''), $sortfield, $sortorder, '', 1)."\n";
 print '</tr>';
 
-$var=True;
 foreach ($triggers as $trigger)
 {
-
 	print '<tr class="oddeven">';
 	print '<td valign="top" width="14" align="center">'.$trigger['picto'].'</td>';
 	print '<td class="tdtop">'.$trigger['file'].'</td>';
@@ -85,6 +84,6 @@ foreach ($triggers as $trigger)
 print '</table>';
 print '</div>';
 
+// End of page
 llxFooter();
-
 $db->close();

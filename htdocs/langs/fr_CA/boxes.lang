@@ -42,7 +42,6 @@ BoxTitleLastModifiedSupplierBills=%s dernières factures de fournisseur modifié
 BoxTitleLatestModifiedSupplierOrders=%s dernières commandes modifiées
 BoxTitleLastModifiedCustomerBills=%s derniers modifications des factures des clients
 BoxTitleLastModifiedCustomerOrders=%s dernières commandes client modifiées
-BoxTitleLastModifiedPropals=%s dernières modifications proposées
 LastXMonthRolling=Le dernier roulement du mois de %s
 ChooseBoxToAdd=Ajouter un widget sur votre tableau de bord
 BoxAdded=Le Widget a été ajouté dans votre tableau de bord

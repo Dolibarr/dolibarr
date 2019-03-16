@@ -57,8 +57,10 @@ class ModulesTest extends PHPUnit_Framework_TestCase
 	 *
 	 * @return BuildDocTest
 	 */
-	function __construct()
+	public function __construct()
 	{
+		parent::__construct();
+
 		//$this->sharedFixture
 		global $conf,$user,$langs,$db;
 		$this->savconf=$conf;
@@ -72,7 +74,7 @@ class ModulesTest extends PHPUnit_Framework_TestCase
 	}
 
 	// Static methods
-  	public static function setUpBeforeClass()
+    public static function setUpBeforeClass()
     {
     	global $conf,$user,$langs,$db;
 		$db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
@@ -127,23 +129,23 @@ class ModulesTest extends PHPUnit_Framework_TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$modulelist=array('Accounting','Adherent','Agenda','Banque','Barcode','Bookmark',
-		'CashDesk','Categorie','ClickToDial','Commande','Comptabilite','Contrat','Cron','Deplacement','DocumentGeneration','Don','DynamicPrices',
-		'ECM','Expedition','Export','ExternalRss','ExternalSite',
+		$modulelist=array('Accounting','Adherent','Agenda','Api','Asset','Banque','Barcode','BlockedLog','Bookmark',
+		'CashDesk','Categorie','ClickToDial','Collab','Commande','Comptabilite','Contrat','Cron','DataPolicy','Dav','Deplacement','DocumentGeneration','Don','DynamicPrices',
+		'ECM','EmailCollector','Expedition','ExpenseReport','Export','ExternalRss','ExternalSite',
 		'Facture','Fckeditor','Ficheinter','Fournisseur','FTP','GeoIPMaxmind','Gravatar','Holiday','HRM','Import','Incoterm','Label','Ldap','Loan',
-		'Mailing','MailmanSpip','Margin',
-		'Notification','Oauth','OpenSurvey','Paybox','Paypal','Prelevement','Product','ProductBatch','Projet','Propale','ReceiptPrinter','Resource',
-		'Salaries','Service','Skype','Societe','Stock','SupplierProposal','Syslog','Tax','User','WebServices','WebServicesClient','Websites','Workflow');
+		'Mailing','MailmanSpip','Margin','ModuleBuilder','MultiCurrency',
+		'Notification','Oauth','OpenSurvey','Paybox','Paypal','Prelevement','Printing','Product','ProductBatch','Projet','Propale','ReceiptPrinter','Resource',
+		'Salaries','Service','SocialNetworks','Societe','Stock','Stripe','SupplierProposal','Syslog','TakePos','Tax','Ticket','User','Variants','WebServices','WebServicesClient','Website','Workflow');
 		foreach($modulelist as $modlabel)
 		{
-    		require_once(DOL_DOCUMENT_ROOT.'/core/modules/mod'.$modlabel.'.class.php');
+    		require_once DOL_DOCUMENT_ROOT.'/core/modules/mod'.$modlabel.'.class.php';
             $class='mod'.$modlabel;
     		$mod=new $class($db);
             $result=$mod->remove();
             $result=$mod->init();
         	$this->assertLessThan($result, 0, $modlabel);
         	print __METHOD__." test remove/init for module ".$modlabel.", result=".$result."\n";
-        	
+
         	if (in_array($modlabel, array('Ldap', 'MailmanSpip')))
         	{
         	    $result=$mod->remove();
@@ -152,5 +154,4 @@ class ModulesTest extends PHPUnit_Framework_TestCase
 
         return 0;
     }
-
 }

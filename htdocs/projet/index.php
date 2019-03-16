@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,15 +26,15 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
+// Load translation files required by the page
+$langs->loadLangs(array('projects', 'companies'));
 
-$langs->load("projects");
-$langs->load("companies");
-
-$search_project_user = GETPOST('search_project_user','int');
-$mine = GETPOST('mode','aZ09')=='mine' ? 1 : 0;
+$search_project_user = GETPOST('search_project_user', 'int');
+$mine = GETPOST('mode', 'aZ09')=='mine' ? 1 : 0;
 if ($search_project_user == $user->id) $mine = 1;
 
 // Security check
@@ -42,24 +42,29 @@ $socid=0;
 //if ($user->societe_id > 0) $socid = $user->societe_id;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
 if (!$user->rights->projet->lire) accessforbidden();
 
-$sortfield = GETPOST("sortfield",'alpha');
-$sortorder = GETPOST("sortorder",'alpha');
+$sortfield = GETPOST("sortfield", 'alpha');
+$sortorder = GETPOST("sortorder", 'alpha');
+
+$max=3;
+
 
 
 /*
  * View
  */
 
-$socstatic=new Societe($db);
+$companystatic=new Societe($db);
 $projectstatic=new Project($db);
 $userstatic=new User($db);
 $form=new Form($db);
+$formfile=new FormFile($db);
 
-$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,($mine?$mine:(empty($user->rights->projet->all->lire)?0:2)),1);
+$projectset = ($mine?$mine:(empty($user->rights->projet->all->lire)?0:2));
+$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, $projetset, 1);
 //var_dump($projectsListId);
 
 
-llxHeader("",$langs->trans("Projects"),"EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos");
+llxHeader("", $langs->trans("Projects"), "EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos");
 
 $title=$langs->trans("ProjectsArea");
 //if ($mine) $title=$langs->trans("MyProjectsArea");
@@ -94,6 +99,7 @@ else
 $listofoppstatus=array(); $listofopplabel=array(); $listofoppcode=array();
 $sql = "SELECT cls.rowid, cls.code, cls.percent, cls.label";
 $sql.= " FROM ".MAIN_DB_PREFIX."c_lead_status as cls";
+$sql.= " WHERE active=1";
 $resql = $db->query($sql);
 if ( $resql )
 {
@@ -159,24 +165,107 @@ print_projecttasks_array($db, $form, $socid, $projectsListId, 0, 0, $listofoppst
 print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 
+// Last modified projects
+$sql = "SELECT p.rowid, p.ref, p.title, p.fk_statut, p.tms as datem,";
+$sql.= " s.rowid as socid, s.nom as name, s.email, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.canvas";
+$sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
+$sql.= " WHERE p.entity IN (".getEntity('project').")";
+if ($mine || empty($user->rights->projet->all->lire)) $sql.= " AND p.rowid IN (".$projectsListId.")";		// If we have this test true, it also means projectset is not 2
+if ($socid)	$sql.= " AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
+$sql.= " ORDER BY p.tms DESC";
+$sql.= $db->plimit($max, 0);
+
+$resql=$db->query($sql);
+if ($resql)
+{
+	print '<table class="noborder" width="100%">';
+	print '<tr class="liste_titre">';
+	print '<th colspan="4">'.$langs->trans("LatestModifiedProjects", $max).'</th></tr>';
+
+	$num = $db->num_rows($resql);
+	if ($num)
+	{
+		$i = 0;
+		$var = true;
+		while ($i < $num)
+		{
+
+			$obj = $db->fetch_object($resql);
+
+			print '<tr class="oddeven">';
+			print '<td width="20%" class="nowrap">';
+
+			$projectstatic->id=$obj->rowid;
+			$projectstatic->ref=$obj->ref;
+			$projectstatic->title=$obj->title;
+			$projectstatic->dateo=$obj->dateo;
+			$projectstatic->datep=$obj->datep;
+			$projectstatic->thirdparty_name=$obj->name;
+
+			$companystatic->id=$obj->socid;
+			$companystatic->name=$obj->name;
+			$companystatic->email=$obj->email;
+			$companystatic->client=$obj->client;
+			$companystatic->fournisseur=$obj->fournisseur;
+			$companystatic->code_client=$obj->code_client;
+			$companystatic->code_fournisseur=$obj->code_fournisseur;
+			$companystatic->canvas=$obj->canvas;
+
+			print '<table class="nobordernopadding"><tr class="nocellnopadd">';
+			print '<td width="96" class="nobordernopadding nowrap">';
+			print $projectstatic->getNomUrl(1);
+			print '</td>';
+
+			print '<td width="16" class="nobordernopadding nowrap">';
+			print '&nbsp;';
+			print '</td>';
+
+			print '<td width="16" class="right nobordernopadding hideonsmartphone">';
+			$filename=dol_sanitizeFileName($obj->ref);
+			$filedir=$conf->commande->dir_output . '/' . dol_sanitizeFileName($obj->ref);
+			$urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->rowid;
+			print $formfile->getDocumentsLink($projectstatic->element, $filename, $filedir);
+			print '</td></tr></table>';
+
+			print '</td>';
+
+			print '<td class="nowrap">';
+			if ($companystatic->id > 0)
+			{
+				print $companystatic->getNomUrl(1, 'company', 16);
+			}
+			print '</td>';
+			print '<td>'.dol_print_date($db->jdate($obj->datem), 'day').'</td>';
+			print '<td class="right">'.$projectstatic->LibStatut($obj->fk_statut, 5).'</td>';
+			print '</tr>';
+			$i++;
+		}
+	}
+	print "</table><br>";
+}
+else dol_print_error($db);
+
+
+// Open project per thirdparty
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
-print_liste_field_titre("OpenedProjectsByThirdparties",$_SERVER["PHP_SELF"],"s.nom","","",'',$sortfield,$sortorder);
-print_liste_field_titre("NbOfProjects","","","","",'align="right"',$sortfield,$sortorder);
+print_liste_field_titre("OpenedProjectsByThirdparties", $_SERVER["PHP_SELF"], "s.nom", "", "", '', $sortfield, $sortorder);
+print_liste_field_titre("NbOfProjects", "", "", "", "", '', $sortfield, $sortorder, 'right ');
 print "</tr>\n";
 
 $sql = "SELECT COUNT(p.rowid) as nb, SUM(p.opp_amount)";
 $sql.= ", s.nom as name, s.rowid as socid";
 $sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
-$sql.= " WHERE p.entity = ".$conf->entity;
+$sql.= " WHERE p.entity IN (".getEntity('project', $conf->entity).")";
 $sql.= " AND p.fk_statut = 1";
-if ($mine || empty($user->rights->projet->all->lire)) $sql.= " AND p.rowid IN (".$projectsListId.")";
-if ($socid)	$sql.= "  AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
+if ($mine || empty($user->rights->projet->all->lire)) $sql.= " AND p.rowid IN (".$projectsListId.")";		// If we have this test true, it also means projectset is not 2
+if ($socid)	$sql.= " AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
 $sql.= " GROUP BY s.nom, s.rowid";
 $sql.= $db->order($sortfield, $sortorder);
 
-$var=true;
 $resql = $db->query($sql);
 if ( $resql )
 {
@@ -191,16 +280,19 @@ if ( $resql )
 		print '<td class="nowrap">';
 		if ($obj->socid)
 		{
-			$socstatic->id=$obj->socid;
-			$socstatic->name=$obj->name;
-			print $socstatic->getNomUrl(1);
+			$companystatic->id=$obj->socid;
+			$companystatic->name=$obj->name;
+			print $companystatic->getNomUrl(1);
 		}
 		else
 		{
 			print $langs->trans("OthersNotLinkedToThirdParty");
 		}
 		print '</td>';
-		print '<td align="right"><a href="'.DOL_URL_ROOT.'/projet/list.php?socid='.$obj->socid.'&search_status=1">'.$obj->nb.'</a></td>';
+		print '<td class="right">';
+		if ($obj->socid) print '<a href="'.DOL_URL_ROOT.'/projet/list.php?socid='.$obj->socid.'&search_status=1">'.$obj->nb.'</a>';
+		else print '<a href="'.DOL_URL_ROOT.'/projet/list.php?search_societe='.urlencode('^$').'&search_status=1">'.$obj->nb.'</a>';
+		print '</td>';
 		print "</tr>\n";
 
 		$i++;
@@ -213,6 +305,7 @@ else
 	dol_print_error($db);
 }
 print "</table>";
+print '</div>';
 
 if (! empty($conf->global->PROJECT_SHOW_PROJECT_LIST_ON_PROJECT_AREA))
 {
@@ -226,7 +319,6 @@ if (! empty($conf->global->PROJECT_SHOW_PROJECT_LIST_ON_PROJECT_AREA))
 
 print '</div></div></div>';
 
-
+// End of page
 llxFooter();
-
 $db->close();

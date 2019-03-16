@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2010-2012 Regis Houssin       <regis.houssin@capnetworks.com>
+/* Copyright (C) 2010-2012 Regis Houssin       <regis.houssin@inodbox.com>
  * Copyright (C) 2010-2016 Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -16,23 +16,36 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
  * Javascript code to activate drag and drop on lines
- * You can use this if you want to be abale to drag and drop rows of a table.
- * You must add id="tablelines" on table level tag and have ($nboflines or count($object->lines) or count($taskarray) > 0)
+ * You can use this if you want to be able to drag and drop rows of a table.
+ * You must add id="tablelines" on table level tag
+ * and $object and $object->id is defined
+ * and $object->fk_element or $fk_element is defined
+ * and have ($nboflines or count($object->lines) or count($taskarray) > 0)
+ * and have $table_element_line = 'tablename' or $object->table_element_line with line to move
+ *
  */
+
+// Protection to avoid direct call of template
+if (empty($object) || ! is_object($object))
+{
+	print "Error, template page can't be called as URL";
+	exit;
+}
+
 ?>
 
-<!-- BEGIN PHP TEMPLATE AJAXROW.TPL.PHP - Script to enable drag and drop on tables -->
+<!-- BEGIN PHP TEMPLATE AJAXROW.TPL.PHP - Script to enable drag and drop on lines of a table -->
 <?php
 $id=$object->id;
-$fk_element=$object->fk_element;
+$fk_element=empty($object->fk_element)?$fk_element:$object->fk_element;
 $table_element_line=(empty($table_element_line)?$object->table_element_line:$table_element_line);
 $nboflines=(isset($object->lines)?count($object->lines):(isset($tasksarray)?count($tasksarray):(empty($nboflines)?0:$nboflines)));
 $forcereloadpage=empty($conf->global->MAIN_FORCE_RELOAD_PAGE)?0:1;
 $tagidfortablednd=(empty($tagidfortablednd)?'tablelines':$tagidfortablednd);
 $filepath=(empty($filepath)?'':$filepath);
 
-if (GETPOST('action','aZ09') != 'editline' && $nboflines > 1) { ?>
-<script type="text/javascript">
+if (GETPOST('action', 'aZ09') != 'editline' && $nboflines > 1) { ?>
+<script>
 $(document).ready(function(){
 	$(".imgupforline").hide();
 	$(".imgdownforline").hide();
@@ -46,8 +59,9 @@ $(document).ready(function(){
 		onDrop: function(table, row) {
 			var reloadpage = "<?php echo $forcereloadpage; ?>";
 			console.log("tableDND onDrop");
-			console.log($("#<?php echo $tagidfortablednd; ?>").tableDnDSerialize());
-			var roworder = cleanSerialize($("#<?php echo $tagidfortablednd; ?>").tableDnDSerialize());
+			console.log(decodeURI($("#<?php echo $tagidfortablednd; ?>").tableDnDSerialize()));
+			$('#<?php echo $tagidfortablednd; ?> tr[data-element=extrafield]').attr('id', '');	// Set extrafields id to empty value in order to ignore them in tableDnDSerialize function
+			var roworder = cleanSerialize(decodeURI($("#<?php echo $tagidfortablednd; ?>").tableDnDSerialize()));
 			var table_element_line = "<?php echo $table_element_line; ?>";
 			var fk_element = "<?php echo $fk_element; ?>";
 			var element_id = "<?php echo $id; ?>";
@@ -63,7 +77,8 @@ $(document).ready(function(){
 					function() {
 						console.log("tableDND end of ajax call");
 						if (reloadpage == 1) {
-							location.href = '<?php echo dol_escape_htmltag($_SERVER['PHP_SELF']).'?'.dol_escape_htmltag($_SERVER['QUERY_STRING']); ?>';
+							//console.log('<?php echo dol_escape_js($_SERVER['QUERY_STRING']); ?>');
+							location.href = '<?php echo dol_escape_js($_SERVER['PHP_SELF']).'?'.dol_escape_js($_SERVER['QUERY_STRING']); ?>';
 						} else {
 							$("#<?php echo $tagidfortablednd; ?> .drag").each(
 									function( intIndex ) {
@@ -75,7 +90,7 @@ $(document).ready(function(){
 					});
 		},
 		onDragClass: "dragClass",
-		dragHandle: "tdlineupdown"
+		dragHandle: "td.tdlineupdown"
 	});
     $(".tdlineupdown").hover( function() { $(this).addClass('showDragHandle'); },
     	function() { $(this).removeClass('showDragHandle'); }

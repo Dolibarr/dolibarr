@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2002  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2006-2013  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2010       Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2010       Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -22,28 +22,25 @@
  *     	\file       htdocs/public/demo/index.php
  *		\ingroup    core
  *		\brief      Entry page to access demo
- *		\author	    Laurent Destailleur
  */
 
-define("NOLOGIN",1);	// This means this output page does not require to be logged.
-define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
+define("NOLOGIN", 1);	// This means this output page does not require to be logged.
+define("NOCSRFCHECK", 1);	// We accept to go on this page from external web site.
 
 require '../../main.inc.php';
 require_once '../../core/lib/functions2.lib.php';
 
-$langs->load("main");
-$langs->load("install");
-$langs->load("other");
+$langs->loadLangs(array("main", "install", "other"));
 
-$conf->dol_hide_topmenu=GETPOST('dol_hide_topmenu','int');
-$conf->dol_hide_leftmenu=GETPOST('dol_hide_leftmenu','int');
-$conf->dol_optimize_smallscreen=GETPOST('dol_optimize_smallscreen','int');
-$conf->dol_no_mouse_hover=GETPOST('dol_no_mouse_hover','int');
-$conf->dol_use_jmobile=GETPOST('dol_use_jmobile','int');
+$conf->dol_hide_topmenu=GETPOST('dol_hide_topmenu', 'int');
+$conf->dol_hide_leftmenu=GETPOST('dol_hide_leftmenu', 'int');
+$conf->dol_optimize_smallscreen=GETPOST('dol_optimize_smallscreen', 'int');
+$conf->dol_no_mouse_hover=GETPOST('dol_no_mouse_hover', 'int');
+$conf->dol_use_jmobile=GETPOST('dol_use_jmobile', 'int');
 
 // Security check
 global $dolibarr_main_demo;
-if (empty($dolibarr_main_demo)) accessforbidden('Parameter dolibarr_main_demo must be defined in conf file with value "default login,default pass" to enable the demo entry page',0,0,1);
+if (empty($dolibarr_main_demo)) accessforbidden('Parameter dolibarr_main_demo must be defined in conf file with value "default login,default pass" to enable the demo entry page', 0, 0, 1);
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $res=$hookmanager->initHooks(array('demo'));
@@ -71,29 +68,29 @@ if (empty($reshook))
 {
 	$demoprofiles=array(
 		array('default'=>'1', 'key'=>'profdemoservonly','label'=>'DemoCompanyServiceOnly',
-		'disablemodules'=>'adherent,barcode,cashdesk,don,expedition,externalsite,incoterm,mailmanspip,margin,prelevement,product,productbatch,stock',
+		'disablemodules'=>'adherent,barcode,cashdesk,don,expedition,externalsite,ftp,incoterm,mailmanspip,margin,prelevement,product,productbatch,stock',
 		//'icon'=>DOL_URL_ROOT.'/public/demo/dolibarr_screenshot8.png',
 		'icon'=>DOL_URL_ROOT.'/public/demo/demo-profile-service.jpg',
 		'url'=>$url
 		),
 		array('default'=>'-1','key'=>'profdemoshopwithdesk','label'=>'DemoCompanyShopWithCashDesk',
-		'disablemodules'=>'adherent,don,externalsite,ficheinter,incoterm,mailmanspip,prelevement,product,productbatch,stock',
+		'disablemodules'=>'adherent,don,externalsite,ficheinter,ftp,incoterm,mailmanspip,prelevement,product,productbatch,stock',
 		'icon'=>DOL_URL_ROOT.'/public/demo/dolibarr_screenshot2.png',
 		'url'=>$url
 		),
 		array('default'=>'0', 'key'=>'profdemoprodstock','label'=>'DemoCompanyProductAndStocks',
-		'disablemodules'=>'adherent,contrat,don,externalsite,ficheinter,mailmanspip,prelevement,service',
+		'disablemodules'=>'adherent,contrat,don,externalsite,ficheinter,ftp,mailmanspip,prelevement,service',
 		//'icon'=>DOL_URL_ROOT.'/public/demo/dolibarr_screenshot2.png',
 		'icon'=>DOL_URL_ROOT.'/public/demo/demo-profile-product.jpg',
 		'url'=>$url
 		),
 		array('default'=>'-1', 'key'=>'profdemofun','label'=>'DemoFundation',
-		'disablemodules'=>'banque,barcode,cashdesk,commande,commercial,compta,comptabilite,contrat,expedition,externalsite,ficheinter,incoterm,mailmanspip,margin,prelevement,product,productbatch,projet,propal,propale,service,societe,stock,tax',
+		'disablemodules'=>'banque,barcode,cashdesk,commande,commercial,compta,comptabilite,contrat,expedition,externalsite,ficheinter,ftp,incoterm,mailmanspip,margin,prelevement,product,productbatch,projet,propal,propale,service,societe,stock,tax',
 		'icon'=>DOL_URL_ROOT.'/public/demo/dolibarr_screenshot6.png',
 		'url'=>$url
 		),
 		array('default'=>'0', 'key'=>'profdemofun2','label'=>'DemoFundation2',
-		'disablemodules'=>'barcode,cashdesk,commande,commercial,compta,comptabilite,contrat,expedition,externalsite,ficheinter,incoterm,mailmanspip,margin,prelevement,product,productbatch,projet,propal,propale,service,societe,stock,tax',
+		'disablemodules'=>'barcode,cashdesk,commande,commercial,compta,comptabilite,contrat,expedition,externalsite,ficheinter,ftp,incoterm,mailmanspip,margin,prelevement,product,productbatch,projet,propal,propale,service,societe,stock,tax',
 		//'icon'=>DOL_URL_ROOT.'/public/demo/dolibarr_screenshot6.png',
 		'icon'=>DOL_URL_ROOT.'/public/demo/demo-profile-foundation.jpg',
 		'url'=>$url
@@ -109,9 +106,9 @@ if (empty($reshook))
 
 	// Visible
 	$alwayscheckedmodules=array('barcode','bookmark','categorie','externalrss','fckeditor','geoipmaxmind','gravatar','memcached','syslog','user','webservices');  // Technical module we always want
-	$alwaysuncheckedmodules=array('dynamicprices','loan','multicurrency','paybox','paypal','stripe','google','printing','scanner','workflow');  // Module we never want
+	$alwaysuncheckedmodules=array('dynamicprices','incoterm','loan','multicurrency','paybox','paypal','stripe','google','printing','scanner','skype','workflow');  // Module we dont want by default
 	// Not visible
-	$alwayshiddencheckedmodules=array('accounting','api','barcode','bookmark','clicktodial','comptabilite','cron','document','domain','externalrss','externalsite','fckeditor','geoipmaxmind','gravatar','label','ldap',
+	$alwayshiddencheckedmodules=array('accounting','api','barcode','blockedlog','bookmark','clicktodial','comptabilite','cron','document','domain','externalrss','externalsite','fckeditor','geoipmaxmind','gravatar','label','ldap',
 									'mailmanspip','notification','oauth','syslog','user','webservices',
 	                                // Extended modules
 	                                'memcached','numberwords','zipautofillfr');
@@ -169,7 +166,7 @@ foreach ($modulesdir as $dir)
                         $modulequalified=1;
 
                         // We discard modules according to features level (PS: if module is activated we always show it)
-                        $const_name = 'MAIN_MODULE_'.strtoupper(preg_replace('/^mod/i','',get_class($objMod)));
+                        $const_name = 'MAIN_MODULE_'.strtoupper(preg_replace('/^mod/i', '', get_class($objMod)));
                         if ($objMod->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2 && empty($conf->global->$const_name)) $modulequalified=0;
                         if ($objMod->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1 && empty($conf->global->$const_name)) $modulequalified=0;
 
@@ -179,8 +176,6 @@ foreach ($modulesdir as $dir)
                             $filename[$i]= $modName;
                             $orders[$i]  = $objMod->family."_".$j;   // Tri par famille puis numero module
                             //print "x".$modName." ".$orders[$i]."\n<br>";
-       						if (isset($categ[$objMod->special])) $categ[$objMod->special]++;					// Array of all different modules categories
-       			            else $categ[$objMod->special]=1;
                             $dirmod[$i] = $dirroot;
                             $j++;
                             $i++;
@@ -204,7 +199,7 @@ asort($orders);
  * Actions
  */
 
-if (GETPOST('action','aZ09') == 'gotodemo')     // Action run when we click on "Start" after selection modules
+if (GETPOST('action', 'aZ09') == 'gotodemo')     // Action run when we click on "Start" after selection modules
 {
 	//print 'ee'.GETPOST("demochoice");
 	$disablestring='';
@@ -224,7 +219,7 @@ if (GETPOST('action','aZ09') == 'gotodemo')     // Action run when we click on "
 	foreach($modules as $val)
 	{
 	    $modulekeyname=strtolower($val->name);
-	    if (empty($_POST[$modulekeyname]) && empty($val->always_enabled) && ! in_array($modulekeyname,$alwayscheckedmodules))
+	    if (empty($_POST[$modulekeyname]) && empty($val->always_enabled) && ! in_array($modulekeyname, $alwayscheckedmodules))
 	    {
 	        $disablestring.=$modulekeyname.',';
 	        if ($modulekeyname=='propale') $disablestring.='propal,';
@@ -234,8 +229,8 @@ if (GETPOST('action','aZ09') == 'gotodemo')     // Action run when we click on "
     // Do redirect to login page
 	if ($disablestring)
 	{
-		if (GETPOST('urlfrom')) $url.=(preg_match('/\?/',$url)?'&amp;':'?').'urlfrom='.urlencode(GETPOST('urlfrom','alpha'));
-		$url.=(preg_match('/\?/',$url)?'&amp;':'?').'disablemodules='.$disablestring;
+		if (GETPOST('urlfrom')) $url.=(preg_match('/\?/', $url)?'&amp;':'?').'urlfrom='.urlencode(GETPOST('urlfrom', 'alpha'));
+		$url.=(preg_match('/\?/', $url)?'&amp;':'?').'disablemodules='.$disablestring;
         //var_dump($url);exit;
 		header("Location: ".$url);
 		exit;
@@ -312,16 +307,16 @@ foreach ($demoprofiles as $profilearray)
 		// Should work with DOL_URL_ROOT='' or DOL_URL_ROOT='/dolibarr'
 		//print "xx".$_SERVER["PHP_SELF"].' '.DOL_URL_ROOT.'<br>';
 
-        $urlfrom=preg_replace('/^'.preg_quote(DOL_URL_ROOT,'/').'/i','',$_SERVER["PHP_SELF"]);
+        $urlfrom=preg_replace('/^'.preg_quote(DOL_URL_ROOT, '/').'/i', '', $_SERVER["PHP_SELF"]);
 		//print $urlfrom;
 
 		if (! empty($profilearray['url']))
 		{
 		    $urlwithmod=$profilearray['url'];
-		    $urlwithmod=$urlwithmod.(preg_match('/\?/',$urlwithmod)?'&amp;':'?').'urlfrom='.urlencode($urlfrom);
+		    $urlwithmod=$urlwithmod.(preg_match('/\?/', $urlwithmod)?'&amp;':'?').'urlfrom='.urlencode($urlfrom);
 		    if (! empty($profilearray['disablemodules']))
 		    {
-		          $urlwithmod=$urlwithmod.(preg_match('/\?/',$urlwithmod)?'&amp;':'?').'disablemodules='.$profilearray['disablemodules'];
+		          $urlwithmod=$urlwithmod.(preg_match('/\?/', $urlwithmod)?'&amp;':'?').'disablemodules='.$profilearray['disablemodules'];
 		    }
 		}
 
@@ -330,7 +325,7 @@ foreach ($demoprofiles as $profilearray)
 		    print '<div class="clearboth"></div>';
 		}
 
-		print '<form method="POST" class="valigntop inline-block" name="form'.$profilearray['key'].'" action="'.$_SERVER["PHP_SELF"].'#a1'.$profilearray['key'].'">'."\n";
+		print '<form method="POST" class="valigntop inline-block" name="form'.$profilearray['key'].'" id="form'.$profilearray['key'].'" action="'.$_SERVER["PHP_SELF"].'#a1'.$profilearray['key'].'">'."\n";
 		print '<input type="hidden" name="action" value="gotodemo">'."\n";
         print '<input type="hidden" name="urlfrom" value="'.dol_escape_htmltag($urlfrom).'">'."\n";
         print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">'."\n";
@@ -341,7 +336,7 @@ foreach ($demoprofiles as $profilearray)
         print '<input type="hidden" name="dol_no_mouse_hover" value="'.$conf->dol_no_mouse_hover.'">'."\n";
         print '<input type="hidden" name="dol_use_jmobile" value="'.$conf->dol_use_jmobile.'">'."\n";
 
-        print '<div summary="Dolibarr online demonstration for profile '.$profilearray['label'].'" class="center inline-block CTable CTableRow'.($i%2==0?'1':'0').'" style="width: 346px;">'."\n";
+        print '<div id="div'.$profilearray['key'].'" summary="Dolibarr online demonstration for profile '.$profilearray['label'].'" class="center inline-block CTable CTableRow'.($i%2==0?'1':'0').'" style="width: 346px;">'."\n";
 
 
         print '<div id="a1'.$profilearray['key'].'" class="demobox '.(empty($profilearray['url'])?'modulelineshow cursorpointer':'nomodulelines').'">';
@@ -370,7 +365,7 @@ foreach ($demoprofiles as $profilearray)
 
     		print '<div class="csscolumns">';
 
-    		$listofdisabledmodules=explode(',',$profilearray['disablemodules']);
+    		$listofdisabledmodules=explode(',', $profilearray['disablemodules']);
     		$j=0;
     		$nbcolsmod=empty($conf->dol_optimize_smallscreen)?4:3;
     		//var_dump($modules);
@@ -381,12 +376,12 @@ foreach ($demoprofiles as $profilearray)
     		    $modulekeyname=strtolower($val->name);
 
     		    $modulequalified=1;
-                if (! empty($val->always_enabled) || in_array($modulekeyname,$alwayshiddenuncheckedmodules)) $modulequalified=0;
+                if (! empty($val->always_enabled) || in_array($modulekeyname, $alwayshiddenuncheckedmodules)) $modulequalified=0;
                 if ($val->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2 && ! $conf->global->$const_name) $modulequalified=0;
                 if ($val->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1 && ! $conf->global->$const_name) $modulequalified=0;
                 if (! $modulequalified) continue;
 
-                if (in_array($modulekeyname,$alwayshiddencheckedmodules))
+                if (in_array($modulekeyname, $alwayshiddencheckedmodules))
                 {
                     print "\n".'<!-- Module '.$modulekeyname.' hidden and always checked -->';
                     print '<input type="hidden" name="'.$modulekeyname.'" value="1">';
@@ -398,8 +393,8 @@ foreach ($demoprofiles as $profilearray)
                     print '<!-- id='.$val->numero.' -->';
                     print '<div class="nowrap">';
                     print '<input type="checkbox" class="checkbox" name="'.$modulekeyname.'" value="1"';
-                    if (in_array($modulekeyname,$alwaysuncheckedmodules)) print ' disabled';
-                    if (! in_array($modulekeyname,$alwaysuncheckedmodules)  && (! in_array($modulekeyname,$listofdisabledmodules) || in_array($modulekeyname,$alwayscheckedmodules))) print ' checked';
+                    if (in_array($modulekeyname, $alwaysuncheckedmodules)) print ' disabled';
+                    if (! in_array($modulekeyname, $alwaysuncheckedmodules)  && (! in_array($modulekeyname, $listofdisabledmodules) || in_array($modulekeyname, $alwayscheckedmodules))) print ' checked';
                     print '> <div class="inline-block demomaxoveflow">'.$val->getName().'</div><br>';
                     print '</div>';
                     //if ($modulo == ($nbcolsmod - 1)) print '</tr>';
@@ -469,7 +464,7 @@ function llxHeaderVierge($title, $head = "")
 
     top_httphead();
 
-    top_htmlhead($head,$title,0,0,array(),array('public/demo/demo.css'));
+    top_htmlhead($head, $title, 0, 0, array(), array('public/demo/demo.css'));
 
     print '<body class="demobody"><div class="demobackgrounddiv">'."\n";
 }
@@ -487,4 +482,3 @@ function llxFooterVierge()
     print "</div></body>\n";
     print "</html>\n";
 }
-

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,31 +31,51 @@ require_once DOL_DOCUMENT_ROOT .'/core/modules/supplier_order/modules_commandefo
  */
 class mod_commande_fournisseur_muguet extends ModeleNumRefSuppliersOrders
 {
-	var $version='dolibarr';		// 'development', 'experimental', 'dolibarr'
-	var $error = '';
-	var $nom = 'Muguet';
-	var $prefix='CF';
+	/**
+     * Dolibarr version of the loaded document
+     * @public string
+     */
+	public $version = 'dolibarr';		// 'development', 'experimental', 'dolibarr'
+
+	/**
+     * @var string Error code (or message)
+     */
+    public $error = '';
+
+	/**
+	 * @var string Nom du modele
+	 * @deprecated
+	 * @see name
+	 */
+	public $nom='Muguet';
+
+	/**
+	 * @var string model name
+	 */
+	public $name='Muguet';
+
+	public $prefix='CF';
 
 
 	/**
 	 * Constructor
 	 */
-	function __construct()
+	public function __construct()
 	{
 	    global $conf;
-	    
+
 	    if ((float) $conf->global->MAIN_VERSION_LAST_INSTALL >= 5.0) $this->prefix = 'PO';   // We use correct standard code "PO = Purchase Order"
 	}
-	
+
     /**
      * 	Return description of numbering module
      *
      *  @return     string      Text with description
      */
-    function info()
+    public function info()
     {
     	global $langs;
-      	return $langs->trans("SimpleNumRefModelDesc",$this->prefix);
+      	return $langs->trans("SimpleNumRefModelDesc", $this->prefix);
     }
 
 
@@ -64,7 +84,7 @@ class mod_commande_fournisseur_muguet extends ModeleNumRefSuppliersOrders
      *
      *  @return     string      Example
      */
-    function getExample()
+    public function getExample()
     {
         return $this->prefix."0501-0001";
     }
@@ -76,7 +96,7 @@ class mod_commande_fournisseur_muguet extends ModeleNumRefSuppliersOrders
      *
      *  @return     boolean     false si conflit, true si ok
      */
-    function canBeActivated()
+    public function canBeActivated()
     {
     	global $conf,$langs,$db;
 
@@ -85,22 +105,22 @@ class mod_commande_fournisseur_muguet extends ModeleNumRefSuppliersOrders
 		$posindice=8;
 		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
         $sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseur";
-		$sql.= " WHERE ref LIKE '".$this->db->escape($this->prefix)."____-%'";
+		$sql.= " WHERE ref LIKE '".$db->escape($this->prefix)."____-%'";
         $sql.= " AND entity = ".$conf->entity;
         $resql=$db->query($sql);
         if ($resql)
         {
             $row = $db->fetch_row($resql);
-            if ($row) { $coyymm = substr($row[0],0,6); $max=$row[0]; }
+            if ($row) { $coyymm = substr($row[0], 0, 6); $max=$row[0]; }
         }
-        if (! $coyymm || preg_match('/'.$this->prefix.'[0-9][0-9][0-9][0-9]/i',$coyymm))
+        if (! $coyymm || preg_match('/'.$this->prefix.'[0-9][0-9][0-9][0-9]/i', $coyymm))
         {
             return true;
         }
         else
         {
 			$langs->load("errors");
-			$this->error=$langs->trans('ErrorNumRefModel',$max);
+			$this->error=$langs->trans('ErrorNumRefModel', $max);
             return false;
         }
     }
@@ -112,7 +132,7 @@ class mod_commande_fournisseur_muguet extends ModeleNumRefSuppliersOrders
 	 *  @param  Object		$object		Object
 	 *  @return string      			Value if OK, 0 if KO
      */
-    function getNextValue($objsoc=0,$object='')
+    public function getNextValue($objsoc = 0, $object = '')
     {
         global $db,$conf;
 
@@ -120,7 +140,7 @@ class mod_commande_fournisseur_muguet extends ModeleNumRefSuppliersOrders
         $posindice=8;
         $sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
         $sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseur";
-		$sql.= " WHERE ref LIKE '".$this->db->escape($this->prefix)."____-%'";
+		$sql.= " WHERE ref LIKE '".$db->escape($this->prefix)."____-%'";
         $sql.= " AND entity = ".$conf->entity;
 
         $resql=$db->query($sql);
@@ -134,15 +154,16 @@ class mod_commande_fournisseur_muguet extends ModeleNumRefSuppliersOrders
 		//$date=time();
         $date=$object->date_commande;   // Not always defined
         if (empty($date)) $date=$object->date;  // Creation date is order date for suppliers orders
-        $yymm = strftime("%y%m",$date);
-        
+        $yymm = strftime("%y%m", $date);
+
         if ($max >= (pow(10, 4) - 1)) $num=$max+1;	// If counter > 9999, we do not format on 4 chars, we take number as it is
-        else $num = sprintf("%04s",$max+1);
+        else $num = sprintf("%04s", $max+1);
 
         return $this->prefix.$yymm."-".$num;
     }
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      * 	Renvoie la reference de commande suivante non utilisee
      *
@@ -150,9 +171,9 @@ class mod_commande_fournisseur_muguet extends ModeleNumRefSuppliersOrders
 	 *  @param  Object	    $object		Object
      *  @return string      			Texte descripif
      */
-    function commande_get_num($objsoc=0,$object='')
+    public function commande_get_num($objsoc = 0, $object = '')
     {
-        return $this->getNextValue($objsoc,$object);
+        // phpcs:enable
+        return $this->getNextValue($objsoc, $object);
     }
 }
-

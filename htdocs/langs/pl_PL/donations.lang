@@ -31,3 +31,4 @@ DONATION_ART200=Pokaż artykuł 200 z CGI, jeśli obawiasz
 DONATION_ART238=Pokaż artykuł 238 z CGI, jeśli obawiasz
 DONATION_ART885=Pokaż artykuł 885 z CGI, jeśli obawiasz
 DonationPayment=Płatności Darowizna
+DonationValidated=Donation %s validated

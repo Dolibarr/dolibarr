@@ -1,5 +1,7 @@
 <?php
 /* Copyright (C) 2013-2014      Jean-François Ferry     <jfefe@aternatik.fr>
+ * Copyright (C) 2018           Nicolas ZABOURI         <info@inovea-conseil.com>
+ * Copyright (C) 2018           Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,41 +19,39 @@
 
 /**
  *      \file       resource/index.php
- *              \ingroup    resource
- *              \brief      Page to manage resource objects
+ *      \ingroup    resource
+ *      \brief      Page to manage resource objects
  */
-
 
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
 
-// Load translations files required by page
-$langs->load("resource");
-$langs->load("companies");
-$langs->load("other");
+// Load translation files required by the page
+$langs->loadLangs(array("resource","companies","other"));
 
 // Get parameters
-$id                     = GETPOST('id','int');
-$action         = GETPOST('action','alpha');
+$id             = GETPOST('id', 'int');
+$action         = GETPOST('action', 'alpha');
 
-$lineid                         = GETPOST('lineid','int');
-$element                        = GETPOST('element','alpha');
-$element_id                     = GETPOST('element_id','int');
-$resource_id            = GETPOST('resource_id','int');
+$lineid         = GETPOST('lineid', 'int');
+$element        = GETPOST('element', 'alpha');
+$element_id     = GETPOST('element_id', 'int');
+$resource_id    = GETPOST('resource_id', 'int');
 
-$sortorder      = GETPOST('sortorder','alpha');
-$sortfield      = GETPOST('sortfield','alpha');
+$sortorder      = GETPOST('sortorder', 'alpha');
+$sortfield      = GETPOST('sortfield', 'alpha');
 
 // Initialize context for list
-$contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'resourcelist';
+$contextpage=GETPOST('contextpage', 'aZ')?GETPOST('contextpage', 'aZ'):'resourcelist';
 
+// Initialize technical objects
 $object = new Dolresource($db);
-
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
 $extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
-$search_array_options=$extrafields->getOptionalsFromPost($extralabels,'','search_');
+$search_array_options=$extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
+if (! is_array($search_array_options)) $search_array_options = array();
 $search_ref=GETPOST("search_ref");
 $search_type=GETPOST("search_type");
 
@@ -70,29 +70,29 @@ if ($search_label != '') 		$param.='&search_label='.$search_label;
 foreach ($search_array_options as $key => $val)
 {
 	$crit=$val;
-	$tmpkey=preg_replace('/search_options_/','',$key);
+	$tmpkey=preg_replace('/search_options_/', '', $key);
 	$typ=$extrafields->attribute_type[$tmpkey];
 	if ($val != '') {
 		$param.='&search_options_'.$tmpkey.'='.urlencode($val);
 	}
-	$mode=0;
-    if (in_array($typ, array('int','double','real'))) $mode=1;    							// Search on a numeric
-    if (in_array($typ, array('sellist')) && $crit != '0' && $crit != '-1') $mode=2;    		// Search on a foreign key int
-    if ($crit != '' && (! in_array($typ, array('select','sellist')) || $crit != '0'))
+	$mode_search=0;
+	if (in_array($typ, array('int','double','real'))) $mode_search=1;								// Search on a numeric
+	if (in_array($typ, array('sellist','link')) && $crit != '0' && $crit != '-1') $mode_search=2;	// Search on a foreign key int
+	if ($crit != '' && (! in_array($typ, array('select','sellist')) || $crit != '0') && (! in_array($typ, array('link')) || $crit != '-1'))
 	{
-		$filter['ef.'.$tmpkey]=natural_search('ef.'.$tmpkey, $crit, $mode);
+		$filter['ef.'.$tmpkey] = natural_search('ef.'.$tmpkey, $crit, $mode_search);
 	}
 }
 if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
 
 
-$hookmanager->initHooks(array('resource_list'));
+$hookmanager->initHooks(array('resourcelist'));
 
 if (empty($sortorder)) $sortorder="ASC";
-if (empty($sortfield)) $sortfield="t.rowid";
+if (empty($sortfield)) $sortfield="t.ref";
 if (empty($arch)) $arch = 0;
 
-$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
+$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
 $page = GETPOST("page");
 $page = is_numeric($page) ? $page : 0;
 $page = $page == -1 ? 0 : $page;
@@ -115,7 +115,7 @@ $arrayfields = array(
 );
 // Extra fields
 if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label)) {
-	foreach ( $extrafields->attribute_label as $key => $val ) {
+	foreach ($extrafields->attribute_label as $key => $val) {
 		$typeofextrafield=$extrafields->attribute_type[$key];
 		if ($typeofextrafield!='separate') {
 			$arrayfields["ef." . $key] = array(
@@ -131,10 +131,11 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
 include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
 // Do we click on purge search criteria ?
-if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // Both test are required to be compatible with all browsers
+if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // Both test are required to be compatible with all browsers
 {
 	$search_ref="";
 	$search_label="";
+	$search_type="";
 	$search_array_options=array();
 	$filter=array();
 }
@@ -144,7 +145,7 @@ if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x',
  */
 
 $parameters=array();
-$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+$reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 
@@ -155,24 +156,13 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 $form=new Form($db);
 
 $pagetitle=$langs->trans('ResourcePageIndex');
-llxHeader('',$pagetitle,'');
+llxHeader('', $pagetitle, '');
 
 // Confirmation suppression resource line
 if ($action == 'delete_resource')
 {
-	print $form->formconfirm($_SERVER['PHP_SELF']."?element=".$element."&element_id=".$element_id."&lineid=".$lineid,$langs->trans("DeleteResource"),$langs->trans("ConfirmDeleteResourceElement"),"confirm_delete_resource",'','',1);
+	print $form->formconfirm($_SERVER['PHP_SELF']."?element=".$element."&element_id=".$element_id."&lineid=".$lineid, $langs->trans("DeleteResource"), $langs->trans("ConfirmDeleteResourceElement"), "confirm_delete_resource", '', '', 1);
 }
-
-// Load object list
-$ret = $object->fetch_all($sortorder, $sortfield, $limit, $offset, $filter);
-if($ret == -1) {
-        dol_print_error($db,$object->error);
-        exit;
-} else {
-    print_barre_liste($pagetitle, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $ret+1, $object->num_all,'title_generic.png');
-}
-
-$var=true;
 
 $varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
 $selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);
@@ -186,6 +176,34 @@ print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
+
+if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
+{
+	$ret = $object->fetch_all('', '', 0, 0, $filter);
+	if($ret == -1) {
+		dol_print_error($db, $object->error);
+		exit;
+	} else  {
+		$nbtotalofrecords = $ret;
+	}
+}
+
+// Load object list
+$ret = $object->fetch_all($sortorder, $sortfield, $limit, $offset, $filter);
+if($ret == -1) {
+	dol_print_error($db, $object->error);
+	exit;
+} else {
+	$newcardbutton='';
+	if ($user->rights->resource->write)
+	{
+		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/resource/card.php?action=create"><span class="valignmiddle">'.$langs->trans('MenuResourceAdd').'</span>';
+		$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
+		$newcardbutton.= '</a>';
+	}
+
+	print_barre_liste($pagetitle, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $ret+1, $nbtotalofrecords, 'title_generic.png', 0, $newcardbutton, '', $limit);
+}
 
 $moreforfilter = '';
 
@@ -206,59 +224,26 @@ if (! empty($arrayfields['ty.label']['checked']))
 	print '</td>';
 }
 // Extra fields
-if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
-{
-	foreach($extrafields->attribute_label as $key => $val)
-	{
-		if (! empty($arrayfields["ef.".$key]['checked']))
-		{
-			$align=$extrafields->getAlignFlag($key);
-			$typeofextrafield=$extrafields->attribute_type[$key];
-			print '<td class="liste_titre'.($align?' '.$align:'').'">';
-			if (in_array($typeofextrafield, array('varchar', 'int', 'double', 'select')))
-			{
-				$crit=$val;
-				$tmpkey=preg_replace('/search_options_/','',$key);
-				$searchclass='';
-				if (in_array($typeofextrafield, array('varchar', 'select'))) $searchclass='searchstring';
-				if (in_array($typeofextrafield, array('int', 'double'))) $searchclass='searchnum';
-				print '<input class="flat'.($searchclass?' '.$searchclass:'').'" size="4" type="text" name="search_options_'.$tmpkey.'" value="'.dol_escape_htmltag($search_array_options['search_options_'.$tmpkey]).'">';
-			}
-			print '</td>';
-		}
-	}
-}
+include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
 // Action column
-print '<td class="liste_titre" align="right">';
+print '<td class="liste_titre right">';
 $searchpicto=$form->showFilterAndCheckAddButtons(0);
 print $searchpicto;
 print '</td>';
 print "</tr>\n";
 
 print '<tr class="liste_titre">';
-if (! empty($arrayfields['t.ref']['checked']))           print_liste_field_titre($arrayfields['t.ref']['label'],$_SERVER["PHP_SELF"],"t.ref","",$param,"",$sortfield,$sortorder);
-if (! empty($arrayfields['ty.label']['checked']))        print_liste_field_titre($arrayfields['ty.label']['label'],$_SERVER["PHP_SELF"],"t.code","",$param,"",$sortfield,$sortorder);
+if (! empty($arrayfields['t.ref']['checked'])) print_liste_field_titre($arrayfields['t.ref']['label'], $_SERVER["PHP_SELF"], "t.ref", "", $param, "", $sortfield, $sortorder);
+if (! empty($arrayfields['ty.label']['checked'])) print_liste_field_titre($arrayfields['ty.label']['label'], $_SERVER["PHP_SELF"], "ty.label", "", $param, "", $sortfield, $sortorder);
 // Extra fields
-if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
-{
-    foreach($extrafields->attribute_label as $key => $val)
-    {
-        if (! empty($arrayfields["ef.".$key]['checked']))
-        {
-            $align=$extrafields->getAlignFlag($key);
-			$sortonfield = "ef.".$key;
-			if (! empty($extrafields->attribute_computed[$key])) $sortonfield='';
-			print_liste_field_titre($extralabels[$key],$_SERVER["PHP_SELF"],$sortonfield,"",$param,($align?'align="'.$align.'"':''),$sortfield,$sortorder);
-        }
-    }
-}
-print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"],"",'','','align="center"',$sortfield,$sortorder,'maxwidthsearch ');
+include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
+print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
 print "</tr>\n";
 
 
 if ($ret)
 {
-    foreach ($object->lines as $resource)
+	foreach ($object->lines as $resource)
     {
         print '<tr class="oddeven">';
 
@@ -278,25 +263,10 @@ if ($ret)
 	        if (! $i) $totalarray['nbfield']++;
         }
         // Extra fields
-        if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
-        {
-        	foreach($extrafields->attribute_label as $key => $val)
-        	{
-        		if (! empty($arrayfields["ef.".$key]['checked']))
-        		{
-        			print '<td';
-        			$align=$extrafields->getAlignFlag($key);
-        			if ($align) print ' align="'.$align.'"';
-        			print '>';
-        			$tmpkey='options_'.$key;
-        			print $extrafields->showOutputField($key, $resource->array_options[$tmpkey], '', 1);
-        			print '</td>';
-	                if (! $i) $totalarray['nbfield']++;
-        		}
-        	}
-        }
+        $obj = (Object) $resource->array_options;
+        include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 
-        print '<td align="center">';
+        print '<td class="center">';
         print '<a href="./card.php?action=edit&id='.$resource->id.'">';
         print img_edit();
         print '</a>';
@@ -320,5 +290,6 @@ else
 print '</table>';
 print "</form>\n";
 
+// End of page
 llxFooter();
 $db->close();

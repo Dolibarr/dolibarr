@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2010-2011 Regis Houssin <regis.houssin@capnetworks.com>
+/* Copyright (C) 2010-2011 Regis Houssin <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -13,8 +13,15 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
- *
  */
+
+// Protection to avoid direct call of template
+if (empty($conf) || ! is_object($conf))
+{
+	print "Error, template page can't be called as URL";
+	exit;
+}
+
 
 $object = $GLOBALS['objcanvas']->control->object;
 
@@ -25,7 +32,7 @@ $object = $GLOBALS['objcanvas']->control->object;
 
 $head = societe_prepare_head($object);
 
-dol_fiche_head($head, 'card', $langs->trans("ThirdParty"),0,'company');
+dol_fiche_head($head, 'card', $langs->trans("ThirdParty"), 0, 'company');
 
 ?>
 
@@ -135,9 +142,9 @@ dol_fiche_head($head, 'card', $langs->trans("ThirdParty"),0,'company');
 	<table class="nobordernopadding allwidth">
 		<tr>
 			<td><?php echo $langs->trans('RIB'); ?></td>
-			<td align="right">
+			<td class="right">
 			<?php if ($user->rights->societe->creer) { ?>
-			<a href="<?php echo DOL_URL_ROOT.'/societe/rib.php?socid='.$this->control->tpl['id']; ?>"><?php echo $this->control->tpl['image_edit']; ?></a>
+			<a href="<?php echo DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$this->control->tpl['id']; ?>"><?php echo $this->control->tpl['image_edit']; ?></a>
 			<?php } else { ?>
 			&nbsp;
 			<?php } ?>
@@ -153,7 +160,7 @@ dol_fiche_head($head, 'card', $langs->trans("ThirdParty"),0,'company');
 	<table class="nobordernopadding allwidth">
 		<tr>
 			<td><?php echo $langs->trans('SalesRepresentatives'); ?></td>
-			<td align="right">
+			<td class="right">
 			<?php if ($user->rights->societe->creer) { ?>
 			<a href="<?php echo DOL_URL_ROOT.'/societe/commerciaux.php?socid='.$this->control->tpl['id']; ?>"><?php echo $this->control->tpl['image_edit']; ?></a>
 			<?php } else { ?>
@@ -201,10 +208,10 @@ dol_fiche_head($head, 'card', $langs->trans("ThirdParty"),0,'company');
  */
 $filedir=$conf->societe->multidir_output[$this->control->tpl['entity']].'/'.$socid;
 $urlsource=$_SERVER["PHP_SELF"]."?socid=".$socid;
-$genallowed=$user->rights->societe->creer;
-$delallowed=$user->rights->societe->supprimer;
+$genallowed=$user->rights->societe->lire;
+$delallowed=$user->rights->societe->creer;
 
-print $formfile->showdocuments('company',$socid,$filedir,$urlsource,$genallowed,$delallowed,'',0,0,0,28,0,'',0,'',$objcanvas->control->object->default_lang);
+print $formfile->showdocuments('company', $socid, $filedir, $urlsource, $genallowed, $delallowed, '', 0, 0, 0, 28, 0, '', 0, '', $objcanvas->control->object->default_lang);
 ?>
 
 </td>
@@ -216,13 +223,13 @@ print $formfile->showdocuments('company',$socid,$filedir,$urlsource,$genallowed,
 
 <?php
 // Subsidiaries list
-$result=show_subsidiaries($conf,$langs,$db,$object);
+$result=show_subsidiaries($conf, $langs, $db, $object);
 
 // Contacts list
-$result=show_contacts($conf,$langs,$db,$object);
+$result=show_contacts($conf, $langs, $db, $object);
 
 // Projects list
-$result=show_projects($conf,$langs,$db,$object);
+$result=show_projects($conf, $langs, $db, $object);
 ?>
 
 <!-- END PHP TEMPLATE -->

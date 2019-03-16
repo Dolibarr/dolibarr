@@ -1,10 +1,12 @@
 <?php
 /* Copyright (C) 2002      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2009      Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2009      Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2014      Florian Henry        <florian.henry@open-concept.pro>
- * Copyright (C) 2015-2017 Alexandre Spangaro   <aspangaro@zendsi.com>
+ * Copyright (C) 2015-2017 Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2016      Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2019      Thibault FOUCART     <support@ptibogxiv.net>
+ * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,52 +36,77 @@ require_once DOL_DOCUMENT_ROOT .'/core/class/commonobject.class.php';
  */
 class Don extends CommonObject
 {
-    public $element='don'; 					// Id that identify managed objects
-    public $table_element='don';			// Name of table without prefix where object is stored
-	public $fk_element = 'fk_donation';
-	protected $ismultientitymanaged = 1;  	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
-    var $picto = 'generic';
-    
-    var $date;
-    var $amount;
-    var $societe;
-    var $address;
-    var $zip;
-    var $town;
-    var $email;
-    var $public;
-    var $fk_project;
-    var $fk_typepayment;
-	var $num_payment;
-	var $date_valid;
+    /**
+	 * @var string ID to identify managed object
+	 */
+	public $element='don';
+
+    /**
+	 * @var string Name of table without prefix where object is stored
+	 */
+	public $table_element='don';
 
 	/**
-	 * @deprecated
-	 * @see note_private, note_public
+	 * @var int Field with ID of parent key if this field has a parent
 	 */
-	var $commentaire;
+	public $fk_element = 'fk_donation';
+
+	/**
+	 * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+	 * @var int
+	 */
+	public $ismultientitymanaged = 1;
+
+    /**
+	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+	 */
+	public $picto = 'generic';
+
+    public $date;
+    public $amount;
+    public $societe;
+
+    /**
+	 * @var string Address
+	 */
+	public $address;
+
+    public $zip;
+    public $town;
+    public $email;
+    public $public;
+
+    /**
+     * @var int ID
+     */
+    public $fk_project;
+
+    /**
+     * @var int ID
+     */
+    public $fk_typepayment;
+
+	public $num_payment;
+	public $date_valid;
+	public $modepaymentid = 0;
+
+	public $labelstatut;
+	public $labelstatutshort;
+
+	/**
+	 * Draft
+	 */
+	const STATUS_DRAFT = 0;
+
 
     /**
      *  Constructor
      *
      *  @param	DoliDB	$db 	Database handler
      */
-    function __construct($db)
+    public function __construct($db)
     {
-        global $langs;
-
-        $this->db = $db;
-        $this->modepaiementid = 0;
-
-        $langs->load("donations");
-        $this->labelstatut[-1]=$langs->trans("Canceled");
-        $this->labelstatut[0]=$langs->trans("DonationStatusPromiseNotValidated");
-        $this->labelstatut[1]=$langs->trans("DonationStatusPromiseValidated");
-        $this->labelstatut[2]=$langs->trans("DonationStatusPaid");
-        $this->labelstatutshort[-1]=$langs->trans("Canceled");
-        $this->labelstatutshort[0]=$langs->trans("DonationStatusPromiseNotValidatedShort");
-        $this->labelstatutshort[1]=$langs->trans("DonationStatusPromiseValidatedShort");
-        $this->labelstatutshort[2]=$langs->trans("DonationStatusPaidShort");
+         $this->db = $db;
     }
 
 
@@ -89,11 +116,12 @@ class Don extends CommonObject
      *  @param	int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long
      *  @return string        		Libelle
      */
-    function getLibStatut($mode=0)
+    public function getLibStatut($mode = 0)
     {
-        return $this->LibStatut($this->statut,$mode);
+        return $this->LibStatut($this->statut, $mode);
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *  Renvoi le libelle d'un statut donne
      *
@@ -101,52 +129,65 @@ class Don extends CommonObject
      *  @param  int		$mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
      *  @return string 			       	Libelle du statut
      */
-    function LibStatut($statut,$mode=0)
+    public function LibStatut($statut, $mode = 0)
     {
-        global $langs;
+        // phpcs:enable
+    	if (empty($this->labelstatut) || empty($this->labelstatutshort))
+    	{
+	    	global $langs;
+	    	$langs->load("donations");
+	    	$this->labelstatut[-1]=$langs->trans("Canceled");
+	    	$this->labelstatut[0]=$langs->trans("DonationStatusPromiseNotValidated");
+	    	$this->labelstatut[1]=$langs->trans("DonationStatusPromiseValidated");
+	    	$this->labelstatut[2]=$langs->trans("DonationStatusPaid");
+	    	$this->labelstatutshort[-1]=$langs->trans("Canceled");
+	    	$this->labelstatutshort[0]=$langs->trans("DonationStatusPromiseNotValidatedShort");
+	    	$this->labelstatutshort[1]=$langs->trans("DonationStatusPromiseValidatedShort");
+	    	$this->labelstatutshort[2]=$langs->trans("DonationStatusPaidShort");
+    	}
 
         if ($mode == 0)
         {
             return $this->labelstatut[$statut];
         }
-        if ($mode == 1)
+        elseif ($mode == 1)
         {
             return $this->labelstatutshort[$statut];
         }
-        if ($mode == 2)
+        elseif ($mode == 2)
         {
-            if ($statut == -1) return img_picto($this->labelstatut[$statut],'statut5').' '.$this->labelstatutshort[$statut];
-            if ($statut == 0)  return img_picto($this->labelstatut[$statut],'statut0').' '.$this->labelstatutshort[$statut];
-            if ($statut == 1)  return img_picto($this->labelstatut[$statut],'statut1').' '.$this->labelstatutshort[$statut];
-            if ($statut == 2)  return img_picto($this->labelstatut[$statut],'statut6').' '.$this->labelstatutshort[$statut];
+            if ($statut == -1) return img_picto($this->labelstatut[$statut], 'statut5').' '.$this->labelstatutshort[$statut];
+            elseif ($statut == 0)  return img_picto($this->labelstatut[$statut], 'statut0').' '.$this->labelstatutshort[$statut];
+            elseif ($statut == 1)  return img_picto($this->labelstatut[$statut], 'statut1').' '.$this->labelstatutshort[$statut];
+            elseif ($statut == 2)  return img_picto($this->labelstatut[$statut], 'statut6').' '.$this->labelstatutshort[$statut];
         }
-        if ($mode == 3)
+        elseif ($mode == 3)
         {
-            if ($statut == -1) return img_picto($this->labelstatut[$statut],'statut5');
-            if ($statut == 0)  return img_picto($this->labelstatut[$statut],'statut0');
-            if ($statut == 1)  return img_picto($this->labelstatut[$statut],'statut1');
-            if ($statut == 2)  return img_picto($this->labelstatut[$statut],'statut6');
+            if ($statut == -1) return img_picto($this->labelstatut[$statut], 'statut5');
+            elseif ($statut == 0)  return img_picto($this->labelstatut[$statut], 'statut0');
+            elseif ($statut == 1)  return img_picto($this->labelstatut[$statut], 'statut1');
+            elseif ($statut == 2)  return img_picto($this->labelstatut[$statut], 'statut6');
         }
-        if ($mode == 4)
+        elseif ($mode == 4)
         {
-            if ($statut == -1) return img_picto($this->labelstatut[$statut],'statut5').' '.$this->labelstatut[$statut];
-            if ($statut == 0)  return img_picto($this->labelstatut[$statut],'statut0').' '.$this->labelstatut[$statut];
-            if ($statut == 1)  return img_picto($this->labelstatut[$statut],'statut1').' '.$this->labelstatut[$statut];
-            if ($statut == 2)  return img_picto($this->labelstatut[$statut],'statut6').' '.$this->labelstatut[$statut];
+            if ($statut == -1) return img_picto($this->labelstatut[$statut], 'statut5').' '.$this->labelstatut[$statut];
+            elseif ($statut == 0)  return img_picto($this->labelstatut[$statut], 'statut0').' '.$this->labelstatut[$statut];
+            elseif ($statut == 1)  return img_picto($this->labelstatut[$statut], 'statut1').' '.$this->labelstatut[$statut];
+            elseif ($statut == 2)  return img_picto($this->labelstatut[$statut], 'statut6').' '.$this->labelstatut[$statut];
         }
-            if ($mode == 5)
+        elseif ($mode == 5)
         {
-            if ($statut == -1) return $this->labelstatutshort[$statut].' '.img_picto($this->labelstatut[$statut],'statut5');
-            if ($statut == 0)  return $this->labelstatutshort[$statut].' '.img_picto($this->labelstatut[$statut],'statut0');
-            if ($statut == 1)  return $this->labelstatutshort[$statut].' '.img_picto($this->labelstatut[$statut],'statut1');
-            if ($statut == 2)  return $this->labelstatutshort[$statut].' '.img_picto($this->labelstatut[$statut],'statut6');
+            if ($statut == -1) return $this->labelstatutshort[$statut].' '.img_picto($this->labelstatut[$statut], 'statut5');
+            elseif ($statut == 0)  return $this->labelstatutshort[$statut].' '.img_picto($this->labelstatut[$statut], 'statut0');
+            elseif ($statut == 1)  return $this->labelstatutshort[$statut].' '.img_picto($this->labelstatut[$statut], 'statut1');
+            elseif ($statut == 2)  return $this->labelstatutshort[$statut].' '.img_picto($this->labelstatut[$statut], 'statut6');
         }
-        if ($mode == 6)
+        elseif ($mode == 6)
         {
-            if ($statut == -1) return $this->labelstatut[$statut].' '.img_picto($this->labelstatut[$statut],'statut5');
-            if ($statut == 0)  return $this->labelstatut[$statut].' '.img_picto($this->labelstatut[$statut],'statut0');
-            if ($statut == 1)  return $this->labelstatut[$statut].' '.img_picto($this->labelstatut[$statut],'statut1');
-            if ($statut == 2)  return $this->labelstatut[$statut].' '.img_picto($this->labelstatut[$statut],'statut6');
+            if ($statut == -1) return $this->labelstatut[$statut].' '.img_picto($this->labelstatut[$statut], 'statut5');
+            elseif ($statut == 0)  return $this->labelstatut[$statut].' '.img_picto($this->labelstatut[$statut], 'statut0');
+            elseif ($statut == 1)  return $this->labelstatut[$statut].' '.img_picto($this->labelstatut[$statut], 'statut1');
+            elseif ($statut == 2)  return $this->labelstatut[$statut].' '.img_picto($this->labelstatut[$statut], 'statut6');
         }
     }
 
@@ -158,12 +199,12 @@ class Don extends CommonObject
      *
      *  @return	void
      */
-    function initAsSpecimen()
+    public function initAsSpecimen()
     {
         global $conf, $user,$langs;
 
         $now = dol_now();
-        
+
         // Charge tableau des id de societe socids
         $socids = array();
 
@@ -217,7 +258,7 @@ class Don extends CommonObject
      *	@param	int	$minimum	Minimum
      *	@return	int				0 if KO, >0 if OK
      */
-    function check($minimum=0)
+    public function check($minimum = 0)
     {
     	global $langs;
     	$langs->load('main');
@@ -230,44 +271,44 @@ class Don extends CommonObject
         {
             if ((dol_strlen(trim($this->lastname)) + dol_strlen(trim($this->firstname))) == 0)
             {
-                $error_string[] = $langs->trans('ErrorFieldRequired',$langs->trans('Company').'/'.$langs->trans('Firstname').'-'.$langs->trans('Lastname'));
+                $error_string[] = $langs->trans('ErrorFieldRequired', $langs->trans('Company').'/'.$langs->trans('Firstname').'-'.$langs->trans('Lastname'));
                 $err++;
             }
         }
 
         if (dol_strlen(trim($this->address)) == 0)
         {
-            $error_string[] = $langs->trans('ErrorFieldRequired',$langs->trans('Address'));
+            $error_string[] = $langs->trans('ErrorFieldRequired', $langs->trans('Address'));
             $err++;
         }
 
         if (dol_strlen(trim($this->zip)) == 0)
         {
-            $error_string[] = $langs->trans('ErrorFieldRequired',$langs->trans('Zip'));
+            $error_string[] = $langs->trans('ErrorFieldRequired', $langs->trans('Zip'));
             $err++;
         }
 
         if (dol_strlen(trim($this->town)) == 0)
         {
-            $error_string[] = $langs->trans('ErrorFieldRequired',$langs->trans('Town'));
+            $error_string[] = $langs->trans('ErrorFieldRequired', $langs->trans('Town'));
             $err++;
         }
 
         if (dol_strlen(trim($this->email)) == 0)
         {
-            $error_string[] = $langs->trans('ErrorFieldRequired',$langs->trans('EMail'));
+            $error_string[] = $langs->trans('ErrorFieldRequired', $langs->trans('EMail'));
             $err++;
         }
 
         $this->amount = trim($this->amount);
 
-        $map = range(0,9);
+        $map = range(0, 9);
         $len=dol_strlen($this->amount);
         for ($i = 0; $i < $len; $i++)
         {
-            if (!isset($map[substr($this->amount, $i, 1)] ))
+            if (!isset($map[substr($this->amount, $i, 1)]))
             {
-                $error_string[] = $langs->trans('ErrorFieldRequired',$langs->trans('Amount'));
+                $error_string[] = $langs->trans('ErrorFieldRequired', $langs->trans('Amount'));
                 $err++;
                 $amount_invalid = 1;
                 break;
@@ -278,14 +319,14 @@ class Don extends CommonObject
         {
             if ($this->amount == 0)
             {
-                $error_string[] = $langs->trans('ErrorFieldRequired',$langs->trans('Amount'));
+                $error_string[] = $langs->trans('ErrorFieldRequired', $langs->trans('Amount'));
                 $err++;
             }
             else
             {
                 if ($this->amount < $minimum && $minimum > 0)
                 {
-                    $error_string[] = $langs->trans('MinimumAmount',$langs->trans('$minimum'));
+                    $error_string[] = $langs->trans('MinimumAmount', $langs->trans('$minimum'));
                     $err++;
                 }
             }
@@ -310,7 +351,7 @@ class Don extends CommonObject
      * @return  int  		        <0 if KO, id of created donation if OK
      * TODO    add numbering module for Ref
      */
-    function create($user, $notrigger=0)
+    public function create($user, $notrigger = 0)
     {
         global $conf, $langs;
 
@@ -332,13 +373,13 @@ class Don extends CommonObject
         $sql.= ", entity";
         $sql.= ", amount";
         $sql.= ", fk_payment";
+        $sql.= ", fk_soc";
         $sql.= ", firstname";
         $sql.= ", lastname";
         $sql.= ", societe";
         $sql.= ", address";
         $sql.= ", zip";
         $sql.= ", town";
-        // $sql.= ", country"; -- Deprecated
         $sql.= ", fk_country";
         $sql.= ", public";
         $sql.= ", fk_projet";
@@ -354,15 +395,16 @@ class Don extends CommonObject
         $sql.= " '".$this->db->idate($now)."'";
         $sql.= ", ".$conf->entity;
         $sql.= ", ".price2num($this->amount);
-        $sql.= ", ".($this->modepaiementid?$this->modepaiementid:"null");
+        $sql.= ", ".($this->modepaymentid?$this->modepaymentid:"null");
+        $sql.= ", '".$this->db->escape($this->socid)."'";
         $sql.= ", '".$this->db->escape($this->firstname)."'";
         $sql.= ", '".$this->db->escape($this->lastname)."'";
         $sql.= ", '".$this->db->escape($this->societe)."'";
         $sql.= ", '".$this->db->escape($this->address)."'";
         $sql.= ", '".$this->db->escape($this->zip)."'";
         $sql.= ", '".$this->db->escape($this->town)."'";
-		$sql.= ", ".$this->country_id;
-        $sql.= ", ".$this->public;
+        $sql.= ", ".($this->country_id > 0 ? $this->country_id : '0');
+        $sql.= ", ".((int) $this->public);
         $sql.= ", ".($this->fk_project > 0?$this->fk_project:"null");
        	$sql.= ", ".(!empty($this->note_private)?("'".$this->db->escape($this->note_private)."'"):"NULL");
 		$sql.= ", ".(!empty($this->note_public)?("'".$this->db->escape($this->note_public)."'"):"NULL");
@@ -374,7 +416,6 @@ class Don extends CommonObject
         $sql.= ", '".$this->db->escape($this->phone_mobile)."'";
         $sql.= ")";
 
-        dol_syslog(get_class($this)."::create", LOG_DEBUG);
         $resql = $this->db->query($sql);
         if ($resql)
         {
@@ -384,12 +425,12 @@ class Don extends CommonObject
             if (!$notrigger)
             {
                 // Call trigger
-                $result=$this->call_trigger('DON_CREATE',$user);
+                $result=$this->call_trigger('DON_CREATE', $user);
                 if ($result < 0) { $error++; }
                 // End call triggers
             }
         }
-		else
+        else
         {
             $this->error = $this->db->lasterror();
             $this->errno = $this->db->lasterrno();
@@ -397,7 +438,7 @@ class Don extends CommonObject
         }
 
 		// Update extrafield
-        if (!$error) {
+        if (! $error) {
         	if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
         	{
         		$result=$this->insertExtraFields();
@@ -410,8 +451,8 @@ class Don extends CommonObject
 
 		if (!$error && !empty($conf->global->MAIN_DISABLEDRAFTSTATUS))
         {
-            $res = $this->setValid($user);
-            if ($res < 0) $error++;
+            //$res = $this->setValid($user);
+            //if ($res < 0) $error++;
         }
 
         if (!$error)
@@ -433,7 +474,7 @@ class Don extends CommonObject
      *  @param      int		$notrigger	Disable triggers
      *  @return     int      		>0 if OK, <0 if KO
      */
-    function update($user, $notrigger=0)
+    public function update($user, $notrigger = 0)
     {
         global $langs, $conf;
 
@@ -457,7 +498,7 @@ class Don extends CommonObject
         $sql .= ",address='".$this->db->escape($this->address)."'";
         $sql .= ",zip='".$this->db->escape($this->zip)."'";
         $sql .= ",town='".$this->db->escape($this->town)."'";
-        $sql .= ",fk_country = ".$this->country_id;
+        $sql .= ",fk_country = ".($this->country_id > 0 ? $this->country_id : '0');
         $sql .= ",public=".$this->public;
         $sql .= ",fk_projet=".($this->fk_project>0?$this->fk_project:'null');
         $sql .= ",note_private=".(!empty($this->note_private)?("'".$this->db->escape($this->note_private)."'"):"NULL");
@@ -477,13 +518,13 @@ class Don extends CommonObject
             if (!$notrigger)
             {
 				// Call trigger
-                $result=$this->call_trigger('DON_MODIFY',$user);
+                $result=$this->call_trigger('DON_MODIFY', $user);
                 if ($result < 0) { $error++; }
                 // End call triggers
             }
 
             // Update extrafield
-            if (!$error)
+            if (! $error)
 			{
               	if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
                	{
@@ -524,7 +565,7 @@ class Don extends CommonObject
      *    @param       int		$notrigger       Disable triggers
      *    @return      int       			      <0 if KO, 0 if not possible, >0 if OK
      */
-    function delete($user, $notrigger=0)
+    public function delete($user, $notrigger = 0)
     {
 		global $user, $conf, $langs;
 		require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
@@ -538,7 +579,7 @@ class Don extends CommonObject
             if (!$notrigger)
             {
                 // Call trigger
-                $result=$this->call_trigger('DON_DELETE',$user);
+                $result=$this->call_trigger('DON_DELETE', $user);
 
                 if ($result < 0) {
                     $error++;
@@ -599,29 +640,30 @@ class Don extends CommonObject
      *      @param      string	$ref        Ref of donation to load
      *      @return     int      			<0 if KO, >0 if OK
      */
-    function fetch($id, $ref='')
+    public function fetch($id, $ref = '')
     {
         global $conf;
 
         $sql = "SELECT d.rowid, d.datec, d.date_valid, d.tms as datem, d.datedon,";
-        $sql.= " d.firstname, d.lastname, d.societe, d.amount, d.fk_statut, d.address, d.zip, d.town, ";
-        $sql.= " d.fk_country, d.country as country_olddata, d.public, d.amount, d.fk_payment, d.paid, d.note_private, d.note_public, cp.libelle, d.email, d.phone, ";
+        $sql.= " d.fk_soc as socid,d.firstname, d.lastname, d.societe, d.amount, d.fk_statut, d.address, d.zip, d.town, ";
+        $sql.= " d.fk_country, d.country as country_olddata, d.public, d.amount, d.fk_payment, d.paid, d.note_private, d.note_public, d.email, d.phone, ";
         $sql.= " d.phone_mobile, d.fk_projet as fk_project, d.model_pdf,";
         $sql.= " p.ref as project_ref,";
+        $sql.= " cp.libelle as payment_label, cp.code as payment_code,";
         $sql.= " c.code as country_code, c.label as country";
         $sql.= " FROM ".MAIN_DB_PREFIX."don as d";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."projet as p ON p.rowid = d.fk_projet";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as cp ON cp.id = d.fk_payment";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON d.fk_country = c.rowid";
-		if (! empty($id))
+        $sql.= " WHERE d.entity IN (".getEntity('donation').")";
+        if (! empty($id))
         {
-        	$sql.= " WHERE d.rowid=".$id;
+        	$sql.= " AND d.rowid=".$id;
         }
-        else if (! empty($ref))
+        elseif (! empty($ref))
         {
-        	$sql.= " WHERE ref='".$this->db->escape($ref)."'";
+        	$sql.= " AND d.ref='".$this->db->escape($ref)."'";
         }
-        $sql.= " AND d.entity = ".$conf->entity;
 
         dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
         $resql=$this->db->query($sql);
@@ -631,46 +673,46 @@ class Don extends CommonObject
             {
                 $obj = $this->db->fetch_object($resql);
 
-                $this->id             = $obj->rowid;
-                $this->ref            = $obj->rowid;
-                $this->datec          = $this->db->jdate($obj->datec);
-                $this->date_valid     = $this->db->jdate($obj->date_valid);
-                $this->datem          = $this->db->jdate($obj->datem);
-                $this->date           = $this->db->jdate($obj->datedon);
-                $this->firstname      = $obj->firstname;
-                $this->lastname       = $obj->lastname;
-                $this->societe        = $obj->societe;
-                $this->statut         = $obj->fk_statut;
-                $this->address        = $obj->address;
-                $this->town           = $obj->town;
-                $this->zip            = $obj->zip;
-                $this->town           = $obj->town;
-                $this->country_id     = $obj->fk_country;
-                $this->country_code   = $obj->country_code;
-                $this->country        = $obj->country;
-                $this->country_olddata= $obj->country_olddata;	// deprecated
-				$this->email          = $obj->email;
-                $this->phone          = $obj->phone;
-                $this->phone_mobile   = $obj->phone_mobile;
-                $this->project        = $obj->project_ref;
-                $this->fk_projet      = $obj->fk_project;   // deprecated
-                $this->fk_project     = $obj->fk_project;
-                $this->public         = $obj->public;
-                $this->modepaymentid  = $obj->fk_payment;
-                $this->modepayment    = $obj->libelle;
-				$this->paid			  = $obj->paid;
-                $this->amount         = $obj->amount;
-                $this->note_private	  = $obj->note_private;
-                $this->note_public	  = $obj->note_public;
-                $this->modelpdf       = $obj->model_pdf;
-                $this->commentaire    = $obj->note;	// deprecated
+                $this->id                 = $obj->rowid;
+                $this->ref                = $obj->rowid;
+                $this->date_creation      = $this->db->jdate($obj->datec);
+                $this->datec              = $this->db->jdate($obj->datec);
+                $this->date_validation    = $this->db->jdate($obj->date_valid);
+                $this->date_valid     	  = $this->db->jdate($obj->date_valid);
+                $this->date_modification  = $this->db->jdate($obj->datem);
+                $this->datem              = $this->db->jdate($obj->datem);
+                $this->date               = $this->db->jdate($obj->datedon);
+                $this->socid              = $obj->socid;
+                $this->firstname          = $obj->firstname;
+                $this->lastname           = $obj->lastname;
+                $this->societe            = $obj->societe;
+                $this->statut             = $obj->fk_statut;
+                $this->address            = $obj->address;
+                $this->zip                = $obj->zip;
+                $this->town               = $obj->town;
+                $this->country_id         = $obj->fk_country;
+                $this->country_code       = $obj->country_code;
+                $this->country            = $obj->country;
+                $this->country_olddata    = $obj->country_olddata;	// deprecated
+                $this->email              = $obj->email;
+                $this->phone              = $obj->phone;
+                $this->phone_mobile       = $obj->phone_mobile;
+                $this->project            = $obj->project_ref;
+                $this->fk_projet          = $obj->fk_project;   // deprecated
+                $this->fk_project         = $obj->fk_project;
+                $this->public             = $obj->public;
+                $this->mode_reglement_id  = $obj->fk_payment;
+                $this->mode_reglement_code= $obj->payment_code;
+                $this->mode_reglement     = $obj->payment_label;
+                $this->paid			      = $obj->paid;
+                $this->amount             = $obj->amount;
+                $this->note_private	      = $obj->note_private;
+                $this->note_public	      = $obj->note_public;
+                $this->modelpdf           = $obj->model_pdf;
 
-				// Retrieve all extrafield for thirdparty
+                // Retreive all extrafield
                 // fetch optionals attributes and labels
-                require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-                $extrafields=new ExtraFields($this->db);
-                $extralabels=$extrafields->fetch_name_optionals_label($this->table_element,true);
-                $this->fetch_optionals($this->id,$extralabels);
+                $this->fetch_optionals();
             }
             return 1;
         }
@@ -679,40 +721,73 @@ class Don extends CommonObject
             dol_print_error($this->db);
             return -1;
         }
-
     }
 
-    /**
+	/**
+	 *	Validate a intervention
+     *
+     *	@param		User		$user		User that validate
+     *  @param		int			$notrigger	1=Does not execute triggers, 0= execute triggers
+     *	@return		int						<0 if KO, >0 if OK
+     */
+	public function setValid($user, $notrigger = 0)
+	{
+		return $this->valid_promesse($this->id, $user->id, $notrigger);
+	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
      *    Validate a promise of donation
      *
      *    @param	int		$id   		id of donation
      *    @param  	int		$userid  	User who validate the donation/promise
+     *    @param	int		$notrigger	Disable triggers
      *    @return   int     			<0 if KO, >0 if OK
      */
-    function valid_promesse($id, $userid)
-    {
+    public function valid_promesse($id, $userid, $notrigger = 0)
+	{
+		// phpcs:enable
+		global $langs, $user;
+
+		$error=0;
+
+		$this->db->begin();
 
         $sql = "UPDATE ".MAIN_DB_PREFIX."don SET fk_statut = 1, fk_user_valid = ".$userid." WHERE rowid = ".$id." AND fk_statut = 0";
 
         $resql=$this->db->query($sql);
         if ($resql)
         {
-            if ( $this->db->affected_rows($resql) )
+            if ($this->db->affected_rows($resql))
             {
-                return 1;
-            }
-            else
-            {
-                return 0;
+            	if (!$notrigger)
+            	{
+            		// Call trigger
+            		$result=$this->call_trigger('DON_VALIDATE', $user);
+            		if ($result < 0) { $error++; }
+            		// End call triggers
+            	}
             }
         }
         else
         {
-            dol_print_error($this->db);
-            return -1;
+            $error++;
+            $this->error = $this->db->lasterror();
+        }
+
+        if (!$error)
+        {
+        	$this->db->commit();
+        	return 1;
+        }
+        else
+        {
+        	$this->db->rollback();
+        	return -1;
         }
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *    Classify the donation as paid, the donation was received
      *
@@ -720,14 +795,15 @@ class Don extends CommonObject
      *    @param    int		$modepayment   	    mode of payment
      *    @return   int      					<0 if KO, >0 if OK
      */
-    function set_paid($id, $modepayment='')
+    public function set_paid($id, $modepayment = 0)
     {
+        // phpcs:enable
         $sql = "UPDATE ".MAIN_DB_PREFIX."don SET fk_statut = 2";
         if ($modepayment)
         {
-            $sql .= ", fk_payment=$modepayment";
+            $sql .= ", fk_payment=".$modepayment;
         }
-        $sql .=  " WHERE rowid = $id AND fk_statut = 1";
+        $sql .=  " WHERE rowid = ".$id." AND fk_statut = 1";
 
         $resql=$this->db->query($sql);
         if ($resql)
@@ -748,14 +824,16 @@ class Don extends CommonObject
         }
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *    Set donation to status cancelled
      *
      *    @param	int		$id   	    id of donation
      *    @return   int     			<0 if KO, >0 if OK
      */
-    function set_cancel($id)
+    public function set_cancel($id)
     {
+        // phpcs:enable
         $sql = "UPDATE ".MAIN_DB_PREFIX."don SET fk_statut = -1 WHERE rowid = ".$id;
 
         $resql=$this->db->query($sql);
@@ -777,14 +855,16 @@ class Don extends CommonObject
         }
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *  Sum of donations
      *
      *	@param	string	$param	1=promesses de dons validees , 2=xxx, 3=encaisses
      *	@return	int				Summ of donations
      */
-    function sum_donations($param)
+    public function sum_donations($param)
     {
+        // phpcs:enable
         global $conf;
 
         $result=0;
@@ -804,13 +884,15 @@ class Don extends CommonObject
         return $result;
     }
 
-	/**
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+    /**
      *	Charge indicateurs this->nb pour le tableau de bord
      *
      *	@return     int         <0 if KO, >0 if OK
      */
-    function load_state_board()
+    public function load_state_board()
     {
+        // phpcs:enable
         global $conf;
 
         $this->nb=array();
@@ -818,7 +900,7 @@ class Don extends CommonObject
         $sql = "SELECT count(d.rowid) as nb";
         $sql.= " FROM ".MAIN_DB_PREFIX."don as d";
         $sql.= " WHERE d.fk_statut > 0";
-        $sql.= " AND d.entity IN (".getEntity('don').")";
+        $sql.= " AND d.entity IN (".getEntity('donation').")";
 
         $resql=$this->db->query($sql);
         if ($resql)
@@ -842,24 +924,24 @@ class Don extends CommonObject
      *	Return clicable name (with picto eventually)
      *
      *	@param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
+     *	@param	int  	$notooltip		1=Disable tooltip
      *	@return	string					Chaine avec URL
      */
-    function getNomUrl($withpicto=0)
+    public function getNomUrl($withpicto = 0, $notooltip = 0)
     {
         global $langs;
 
         $result='';
         $label=$langs->trans("ShowDonation").': '.$this->id;
 
-        $link = '<a href="'.DOL_URL_ROOT.'/don/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+        $linkstart = '<a href="'.DOL_URL_ROOT.'/don/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
         $linkend='</a>';
 
-        $picto='generic';
+        $result .= $linkstart;
+        if ($withpicto) $result.=img_object(($notooltip?'':$label), ($this->picto?$this->picto:'generic'), ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip?0:1);
+        if ($withpicto != 2) $result.= $this->ref;
+        $result .= $linkend;
 
-
-        if ($withpicto) $result.=($link.img_object($label, $picto, 'class="classfortooltip"').$linkend);
-        if ($withpicto && $withpicto != 2) $result.=' ';
-        if ($withpicto != 2) $result.=$link.$this->id.$linkend;
         return $result;
     }
 
@@ -869,7 +951,7 @@ class Don extends CommonObject
 	 * @param	int		$id      Id of record
 	 * @return	void
 	 */
-	function info($id)
+	public function info($id)
 	{
 		$sql = 'SELECT d.rowid, d.datec, d.fk_user_author, d.fk_user_valid,';
 		$sql.= ' d.tms';
@@ -908,4 +990,111 @@ class Don extends CommonObject
 		}
 	}
 
+
+	/**
+	 *  Create a document onto disk according to template module.
+	 *
+	 *  @param	    string		$modele			Force template to use ('' to not force)
+	 *  @param		Translate	$outputlangs	objet lang a utiliser pour traduction
+	 *  @param      int			$hidedetails    Hide details of lines
+	 *  @param      int			$hidedesc       Hide description
+	 *  @param      int			$hideref        Hide ref
+	 *  @return     int         				0 if KO, 1 if OK
+	 */
+	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
+	{
+		global $conf,$langs;
+
+		$langs->load("bills");
+
+		if (! dol_strlen($modele)) {
+
+			$modele = 'html_cerfafr';
+
+			if ($this->modelpdf) {
+				$modele = $this->modelpdf;
+			} elseif (! empty($conf->global->DON_ADDON_MODEL)) {
+				$modele = $conf->global->DON_ADDON_MODEL;
+			}
+		}
+
+		$modelpath = "core/modules/dons/";
+
+		// TODO Restore use of commonGenerateDocument instead of dedicated code here
+		//return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
+
+		// Increase limit for PDF build
+		$err=error_reporting();
+		error_reporting(0);
+		@set_time_limit(120);
+		error_reporting($err);
+
+		$srctemplatepath='';
+
+		// If selected modele is a filename template (then $modele="modelname:filename")
+		$tmp=explode(':', $modele, 2);
+		if (! empty($tmp[1]))
+		{
+			$modele=$tmp[0];
+			$srctemplatepath=$tmp[1];
+		}
+
+		// Search template files
+		$file=''; $classname=''; $filefound=0;
+		$dirmodels=array('/');
+		if (is_array($conf->modules_parts['models'])) $dirmodels=array_merge($dirmodels, $conf->modules_parts['models']);
+		foreach($dirmodels as $reldir)
+		{
+			foreach(array('html','doc','pdf') as $prefix)
+			{
+				$file = $prefix."_".preg_replace('/^html_/', '', $modele).".modules.php";
+
+				// On verifie l'emplacement du modele
+				$file=dol_buildpath($reldir."core/modules/dons/".$file, 0);
+				if (file_exists($file))
+				{
+					$filefound=1;
+					$classname=$prefix.'_'.$modele;
+					break;
+				}
+			}
+			if ($filefound) break;
+		}
+
+		// Charge le modele
+		if ($filefound)
+		{
+			require_once $file;
+
+			$object=$this;
+
+			$classname = $modele;
+			$obj = new $classname($this->db);
+
+			// We save charset_output to restore it because write_file can change it if needed for
+			// output format that does not support UTF8.
+			$sav_charset_output=$outputlangs->charset_output;
+			if ($obj->write_file($object, $outputlangs, $srctemplatepath, $hidedetails, $hidedesc, $hideref) > 0)
+			{
+				$outputlangs->charset_output=$sav_charset_output;
+
+				// we delete preview files
+				require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+				dol_delete_preview($object);
+				return 1;
+			}
+			else
+			{
+				$outputlangs->charset_output=$sav_charset_output;
+				dol_syslog("Erreur dans don_create");
+				dol_print_error($this->db, $obj->error);
+				return 0;
+			}
+		}
+		else
+		{
+			print $langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists", $file);
+			return 0;
+		}
+	}
 }

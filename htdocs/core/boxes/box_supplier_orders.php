@@ -1,7 +1,6 @@
 <?php
-
 /* Copyright (C) 2004-2006 Destailleur Laurent  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2012      Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2015      Frederic France      <frederic.france@free.fr>
  *
@@ -32,15 +31,19 @@ include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
 class box_supplier_orders extends ModeleBoxes
 {
 
-    var $boxcode = "latestsupplierorders";
-    var $boximg = "object_order";
-    var $boxlabel="BoxLatestSupplierOrders";
-    var $depends = array("fournisseur");
+    public $boxcode = "latestsupplierorders";
+    public $boximg = "object_order";
+    public $boxlabel="BoxLatestSupplierOrders";
+    public $depends = array("fournisseur");
 
-    var $db;
-    var $param;
-    var $info_box_head = array();
-    var $info_box_contents = array();
+    /**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+
+    public $param;
+    public $info_box_head = array();
+    public $info_box_contents = array();
 
 
     /**
@@ -49,7 +52,7 @@ class box_supplier_orders extends ModeleBoxes
      *  @param  DoliDB  $db         Database handler
      *  @param  string  $param      More parameters
      */
-    function __construct($db,$param)
+    public function __construct($db, $param)
     {
         global $user;
 
@@ -64,7 +67,7 @@ class box_supplier_orders extends ModeleBoxes
      *  @param	int		$max        Maximum number of records to load
      *  @return	void
      */
-    function loadBox($max = 5)
+    public function loadBox($max = 5)
     {
         global $conf, $user, $langs, $db;
         $langs->load("boxes");
@@ -83,7 +86,7 @@ class box_supplier_orders extends ModeleBoxes
             $sql = "SELECT s.nom as name, s.rowid as socid,";
             $sql.= " s.code_client, s.code_fournisseur,";
             $sql.= " s.logo,";
-            $sql.= " c.ref, c.tms, c.rowid, c.date_commande,";
+            $sql.= " c.rowid, c.ref, c.tms, c.date_commande,";
             $sql.= " c.total_ht,";
             $sql.= " c.tva as total_tva,";
             $sql.= " c.total_ttc,";
@@ -109,28 +112,20 @@ class box_supplier_orders extends ModeleBoxes
                     $objp = $db->fetch_object($result);
                     $date=$db->jdate($objp->date_commande);
 					$datem=$db->jdate($objp->tms);
-                    $thirdpartytmp->id = $objp->socid;
+
+					$supplierorderstatic->id = $objp->rowid;
+					$supplierorderstatic->ref = $objp->ref;
+
+					$thirdpartytmp->id = $objp->socid;
                     $thirdpartytmp->name = $objp->name;
                     $thirdpartytmp->fournisseur = 1;
                     $thirdpartytmp->code_fournisseur = $objp->code_fournisseur;
                     $thirdpartytmp->logo = $objp->logo;
 
-                    $urlo = DOL_URL_ROOT."/fourn/commande/card.php?id=".$objp->rowid;
-                    $urls = DOL_URL_ROOT."/fourn/card.php?socid=".$objp->socid;
-
-                    $tooltip = $langs->trans('SupplierOrder') . ': ' . $objp->ref;
-                    $this->info_box_contents[$line][] = array(
-                        'td' => 'align="left" width="16"',
-                        'logo' => $this->boximg,
-                        'tooltip' => $tooltip,
-                        'url' => $urlo,
-                    );
-
                     $this->info_box_contents[$line][] = array(
                         'td' => '',
-                        'text' => $objp->ref,
-                        'tooltip' => $tooltip,
-                        'url' => $urlo,
+                        'text' => $supplierorderstatic->getNomUrl(1),
+                    	'asis' => 1
                     );
 
                     $this->info_box_contents[$line][] = array(
@@ -146,26 +141,26 @@ class box_supplier_orders extends ModeleBoxes
 
 					$this->info_box_contents[$line][] = array(
                         'td' => 'class="right"',
-                        'text' => dol_print_date($date,'day'),
+                        'text' => dol_print_date($date, 'day'),
                     );
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => 'align="right" width="18"',
-                        'text' => $supplierorderstatic->LibStatut($objp->fk_statut,3),
+                        'td' => 'class="right" width="18"',
+                        'text' => $supplierorderstatic->LibStatut($objp->fk_statut, 3),
                     );
 
                     $line++;
                 }
 
                 if ($num == 0)
-                    $this->info_box_contents[$line][0] = array(
-                        'td' => 'align="center"',
+                    $this->info_box_contents[$line][] = array(
+                        'td' => 'class="center"',
                         'text' => $langs->trans("NoSupplierOrder"),
                     );
 
                 $db->free($result);
             } else {
-                $this->info_box_contents[0][0] = array(
+                $this->info_box_contents[0][] = array(
                     'td' => '',
                     'maxlength'=>500,
                     'text' => ($db->error().' sql='.$sql),
@@ -174,25 +169,23 @@ class box_supplier_orders extends ModeleBoxes
         }
         else
         {
-            $this->info_box_contents[0][0] = array(
-                'td' => 'align="left" class="nohover opacitymedium"',
+            $this->info_box_contents[0][] = array(
+                'td' => 'class="nohover opacitymedium left"',
                 'text' => $langs->trans("ReadPermissionNotAllowed")
             );
         }
     }
 
     /**
-     * 	Method to show box
+     *  Method to show box
      *
-     * 	@param	array	$head       Array with properties of box title
-     * 	@param  array	$contents   Array with properties of box lines
-	 *  @param	int		$nooutput	No print, only return string
-	 *	@return	string
-	 */
-    function showBox($head = null, $contents = null, $nooutput=0)
+     *  @param  array   $head       Array with properties of box title
+     *  @param  array   $contents   Array with properties of box lines
+     *  @param  int     $nooutput   No print, only return string
+     *  @return string
+     */
+    public function showBox($head = null, $contents = null, $nooutput = 0)
     {
         return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
     }
-
 }
-

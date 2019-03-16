@@ -1,5 +1,5 @@
-/* Sample CSS for jsGanttImproved v1.7.3 */
-div.gantt		{ font-family:tahoma, arial, verdana, Sans-serif; font-size:10px; color: #2F2F2F; }
+/* Sample CSS for jsGanttImproved v1.7.5.4 */
+div.gantt		{ font-family:tahoma, arial, verdana, Sans-serif; font-size:10px; color: #656565; }
 
 .gantt table	{ border-collapse: collapse; }
 .gantt td { padding: 0px; }
@@ -42,7 +42,7 @@ td.gspanning				{ border-left: none; border-right: none; }
 .genddate					{ text-align: center; min-width: 70px; max-width: 70px; width: 70px; font-size: 10px; }
 .gtaskheading				{ text-align: center; }
 .gtaskname div, /* needed for IE8 */
-.gtaskname					{ min-width: 170px; max-width: 170px; width: 170px;/* font-size: 9px;*/ border-left: none; }
+.gtaskname					{ min-width: 170px; max-width: 170px; width: 170px; font-size: 9px; border-left: none; }
 
 .gselector					{ text-align: left; white-space: nowrap; min-width: 170px; max-width: 170px; width: 170px; }
 
@@ -62,7 +62,7 @@ span.gfoldercollapse		{ color:#000000; cursor:pointer; font-weight:bold; font-si
 .glineitem					{ background-color: #ffffff; }
 
 /* highlight row (applied to row) */
-.gitemhighlight	td			{ background-image: none; background-color: #fffaaa;}
+.gitemhighlight	td			{ background-image: none; background-color: #fffde5;}
 
 /* task bar caption text styles */
 .gmilecaption,
@@ -98,34 +98,34 @@ span.gfoldercollapse		{ color:#000000; cursor:pointer; font-weight:bold; font-si
 .ggroupblackendpointright	{ overflow: hidden; width:0px; height:0px; top: 2px; border-top: 4px solid black; border-left: 4px solid transparent; border-bottom: 4px solid transparent; border-right: 4px solid transparent; float: right; }
 .ggroupblackcomplete		{ float:left; overflow: hidden; height:3px; filter: alpha(opacity=80); opacity:0.8; background-color:#777777; margin-top:2px; margin-bottom: 2px; }
 .gtaskblue {
-    background: rgb(58,132,195); /* Old browsers */
-    background: linear-gradient(to bottom,  rgba(58,132,195,1) 0%,rgba(65,154,214,1) 20%,rgba(75,184,240,1) 40%,rgba(58,139,194,1) 70%,rgba(38,85,139,1) 100%); /* W3C */
-    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#4bb8f0', endColorstr='#3a84c3',GradientType=0 ); /* IE6-9 */
+	background: rgb(58,132,195); /* Old browsers */
+	background: linear-gradient(to bottom,  rgba(58,132,195,1) 0%,rgba(65,154,214,1) 20%,rgba(75,184,240,1) 40%,rgba(58,139,194,1) 70%,rgba(38,85,139,1) 100%); /* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#4bb8f0', endColorstr='#3a84c3',GradientType=0 ); /* IE6-9 */
 }
 .gtaskred {
-    background: rgb(196,58,58); /* Old browsers */
-    background: linear-gradient(to bottom,  rgba(196,58,58,1) 0%,rgba(211,65,65,1) 20%,rgba(239,76,76,1) 40%,rgba(196,58,58,1) 70%,rgba(135,37,37,1) 100%); /* W3C */
-    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ef4c4c', endColorstr='#c43a3a',GradientType=0 ); /* IE6-9 */
+	background: rgb(196,58,58); /* Old browsers */
+	background: linear-gradient(to bottom,  rgba(196,58,58,1) 0%,rgba(211,65,65,1) 20%,rgba(239,76,76,1) 40%,rgba(196,58,58,1) 70%,rgba(135,37,37,1) 100%); /* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ef4c4c', endColorstr='#c43a3a',GradientType=0 ); /* IE6-9 */
 }
 .gtaskgreen {
-    background: rgb(80,193,58); /* Old browsers */
-    background: linear-gradient(to bottom,  rgba(80,193,58,1) 0%,rgba(88,209,64,1) 20%,rgba(102,237,75,1) 40%,rgba(80,193,58,1) 70%,rgba(53,132,37,1) 100%); /* W3C */
-    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#66ED4B', endColorstr='#50c13a',GradientType=0 ); /* IE6-9 */
+	background: rgb(80,193,58); /* Old browsers */
+	background: linear-gradient(to bottom,  rgba(80,193,58,1) 0%,rgba(88,209,64,1) 20%,rgba(102,237,75,1) 40%,rgba(80,193,58,1) 70%,rgba(53,132,37,1) 100%); /* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#66ED4B', endColorstr='#50c13a',GradientType=0 ); /* IE6-9 */
 }
 .gtaskyellow {
-    background: rgb(247,228,56); /* Old browsers */
-    background: linear-gradient(to bottom,  rgba(247,228,56,1) 0%,rgba(239,239,55,1) 20%,rgba(255,255,58,1) 40%,rgba(242,236,55,1) 70%,rgba(241,218,54,1) 100%); /* W3C */
-    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffff3a', endColorstr='#f7e438',GradientType=0 ); /* IE6-9 */
+	background: rgb(247,228,56); /* Old browsers */
+	background: linear-gradient(to bottom,  rgba(247,228,56,1) 0%,rgba(239,239,55,1) 20%,rgba(255,255,58,1) 40%,rgba(242,236,55,1) 70%,rgba(241,218,54,1) 100%); /* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffff3a', endColorstr='#f7e438',GradientType=0 ); /* IE6-9 */
 }
 .gtaskpurple {
-    background: rgb(193,58,193); /* Old browsers */
-    background: linear-gradient(to bottom,  rgba(193,58,193,1) 0%,rgba(211,65,211,1) 20%,rgba(239,76,239,1) 40%,rgba(193,58,193,1) 70%,rgba(137,38,137,1) 100%); /* W3C */
-    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ef4cef', endColorstr='#892689',GradientType=0 ); /* IE6-9 */
+	background: rgb(193,58,193); /* Old browsers */
+	background: linear-gradient(to bottom,  rgba(193,58,193,1) 0%,rgba(211,65,211,1) 20%,rgba(239,76,239,1) 40%,rgba(193,58,193,1) 70%,rgba(137,38,137,1) 100%); /* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ef4cef', endColorstr='#892689',GradientType=0 ); /* IE6-9 */
 }
 .gtaskpink {
-    background: rgb(249,177,245); /* Old browsers */
-    background: linear-gradient(to bottom,  rgba(249,177,245,1) 0%,rgba(247,192,243,1) 20%,rgba(247,202,244,1) 40%,rgba(249,192,246,1) 70%,rgba(252,174,247,1) 100%); /* W3C */
-    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f7caf4', endColorstr='#fcaef7',GradientType=0 ); /* IE6-9 */
+	background: rgb(249,177,245); /* Old browsers */
+	background: linear-gradient(to bottom,  rgba(249,177,245,1) 0%,rgba(247,192,243,1) 20%,rgba(247,202,244,1) 40%,rgba(249,192,246,1) 70%,rgba(252,174,247,1) 100%); /* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f7caf4', endColorstr='#fcaef7',GradientType=0 ); /* IE6-9 */
 }
 .gtaskbluecomplete,
 .gtaskredcomplete,
@@ -137,21 +137,21 @@ span.gfoldercollapse		{ color:#000000; cursor:pointer; font-weight:bold; font-si
 /* Printer friendly styles - we could use these all the time but they are not as pretty! */
 /* note that "@media print" is not supported in IE6 or 7.  Fully patched IE8 should be OK */
 @media print {
-    .ggroupblack { height:0px; border-top: 7px solid; border-color: #000000; }
-    .gtaskblue { height:0px; border-top: 13px solid; border-color: rgb(58,132,195); }
-    .gtaskred { height:0px; border-top: 13px solid; border-color: rgb(196,58,58); }
-    .gtaskgreen { height:0px; border-top: 13px solid; border-color: rgb(80,193,58); }
-    .gtaskyellow { height:0px; border-top: 13px solid; border-color: rgb(247,228,56); }
-    .gtaskpurple { height:0px; border-top: 13px solid; border-color: rgb(193,58,193); }
-    .gtaskpink { height:0px; border-top: 13px solid; border-color: rgb(249,177,245); }
+	.ggroupblack { height:0px; border-top: 7px solid; border-color: #000000; }
+	.gtaskblue { height:0px; border-top: 13px solid; border-color: rgb(58,132,195); }
+	.gtaskred { height:0px; border-top: 13px solid; border-color: rgb(196,58,58); }
+	.gtaskgreen { height:0px; border-top: 13px solid; border-color: rgb(80,193,58); }
+	.gtaskyellow { height:0px; border-top: 13px solid; border-color: rgb(247,228,56); }
+	.gtaskpurple { height:0px; border-top: 13px solid; border-color: rgb(193,58,193); }
+	.gtaskpink { height:0px; border-top: 13px solid; border-color: rgb(249,177,245); }
 
-    .gtaskbluecomplete,
-    .gtaskredcomplete,
-    .gtaskgreencomplete,
-    .gtaskyellowcomplete,
-    .gtaskpurplecomplete,
-    .gtaskpinkcomplete { height:0px; filter: alpha(opacity=40); opacity:0.4; margin-top: -9px; border-top: 5px solid; border-color: #000000; }
-    .ggroupblackcomplete { height: 0px; filter: alpha(opacity=80); opacity:0.8; margin-top:-5px; border-top:3px solid; border-color:#777777; }
+	.gtaskbluecomplete,
+	.gtaskredcomplete,
+	.gtaskgreencomplete,
+	.gtaskyellowcomplete,
+	.gtaskpurplecomplete,
+	.gtaskpinkcomplete { height:0px; filter: alpha(opacity=40); opacity:0.4; margin-top: -9px; border-top: 5px solid; border-color: #000000; }
+	.ggroupblackcomplete { height: 0px; filter: alpha(opacity=80); opacity:0.8; margin-top:-5px; border-top:3px solid; border-color:#777777; }
 }
 
 /*  END Task bar styles */
@@ -161,11 +161,11 @@ span.gfoldercollapse		{ color:#000000; cursor:pointer; font-weight:bold; font-si
 .gDepFS,
 .gDepSS,
 .gDepSF,
-.gDepFF				{ border-color: #26558b; }
+.gDepFF				{ border-color: #ff0000; }
 .gDepFSArw,
-.gDepSSArw			{ overflow: hidden; width:0px; height:0px; border-bottom: 4px solid transparent; border-left: 4px solid #26558b; border-top: 4px solid transparent; border-right: 4px solid transparent;}
+.gDepSSArw			{ overflow: hidden; width:0px; height:0px; border-bottom: 4px solid transparent; border-left: 4px solid #ff0000; border-top: 4px solid transparent; border-right: 4px solid transparent;}
 .gDepFFArw,
-.gDepSFArw			{ overflow: hidden; width:0px; height:0px; border-bottom: 4px solid transparent; border-left: 4px solid transparent; border-top: 4px solid transparent; border-right: 4px solid #26558b;}
+.gDepSFArw			{ overflow: hidden; width:0px; height:0px; border-bottom: 4px solid transparent; border-left: 4px solid transparent; border-top: 4px solid transparent; border-right: 4px solid #ff0000;}
 .gCurDate			{ border-color: #0000ff; }
 
 
@@ -180,29 +180,30 @@ div.gtaskbarcontainer		{ z-index: 1; position: absolute; top: 0px }
 .gTaskNotes 		{font-size: 11px; font-weight: normal; color: #323232; padding: 0 15px; display: block;}
 .gTIn	 			{padding-top: 10px;}
 
-.gantt				{ min-width: 1064px;	/* 2x LC width */ }
-.gchartcontainer	{ padding-left: 532px;	/* LC width */ }
-.gcontainercol		{ position: relative; float: left; } /* Add a max-height value here if wanted */
-.glistgrid			{ width: 532px; /* LC width */ margin-left: -100%; right: 532px; /* LC width */ padding-right: 0px; padding-left: 0px; padding-bottom: 0px; padding-top: 0px; background-color: #ffffff; overflow: hidden; }
-.glistlbl			{ width: 532px; /* LC width */ margin-left: -100%; right: 532px; /* LC width */ padding-right: 0px; padding-left: 0px; padding-bottom: 0px; padding-top: 0px; background-color: #ffffff; overflow: hidden; }
+.gantt				{ min-width: 632px;	/* 2x LC width */ }
+.gchartcontainer	{ /* padding-left: 532px; LC width */ line-height: 1; /* Overrides inherited CSS (e.g. from Bootstrap) */ }
+.gcontainercol		{ position: relative; } /* Add a max-height value here if wanted */
+.glistgrid			{ width: 532px; /* LC width */ float: left; /* LC width */ padding-right: 0px; padding-left: 0px; padding-bottom: 0px; padding-top: 0px; background-color: #ffffff; overflow: hidden; }
+.glistlbl			{ width: 532px; /* LC width */ float: left; /* LC width */ padding-right: 0px; padding-left: 0px; padding-bottom: 0px; padding-top: 0px; background-color: #ffffff; overflow: hidden; }
 .glabelfooter		{ clear: both; }
 .ggridfooter		{ clear: both; }
 
-/*.rhscrpad			{ width: 150px; position: absolute; top: 0px; height: 1px; }*/
+.rhscrpad			{ width: 150px; position: absolute; top: 0px; height: 1px; }
 
-.gchartgrid			{ width: 100%; padding-right: 0px; padding-left: 0px; padding-bottom: 0px; padding-top: 0px; background-color: #ffffff; position: relative; overflow: auto; min-height: 0%; }
-.gchartlbl			{ width: 100%; padding-right: 0px; padding-left: 0px; padding-bottom: 0px; padding-top: 0px; background-color: #ffffff; position: relative; overflow: hidden; }
+.gchartgrid			{ padding-right: 0px; padding-left: 0px; padding-bottom: 0px; padding-top: 0px; background-color: #ffffff; position: relative; overflow: auto; min-height: 0%; }
+.gchartlbl			{ padding-right: 0px; padding-left: 0px; padding-bottom: 0px; padding-top: 0px; background-color: #ffffff; position: relative; overflow: hidden; }
 
 /* Old Internet Explorer version hacks */
 .gantt						{ _height: 100% }	/* otherwise the chart disappears! */
-div .gantt					{ _width: 1064px; }	/* ie6 fixed width */
+div .gantt					{ /* _width: 1064px; ie6 fixed width */ }
 div.gchartlbl,
-div.gchartgrid				{ _width: 532px; }	/* ie6 fixed width */
+div.gchartgrid				{/* _width: 532px; */}	/* ie6 fixed width */
 div.glistlbl,
 div.glistgrid {
-    *right: 0px;			/* ie7 pulls the content too far left with the negative margin */
-    _right: 532px;			/* but ie6 fixed width needs this */
-    _margin-left: -532px;	/* ie6 fixed width */
+	*right: 0px;			/* ie7 pulls the content too far left with the negative margin */
+	_right: 532px;			/* but ie6 fixed width needs this */
+	_margin-left: -532px;	/* ie6 fixed width */
+	float: left;
 }
 div.gchartgrid { *padding-bottom: 20px; *overflow-y: hidden; } /* variable height design, no need for vertical scroll */
 td.gmajorheading div { *overflow: hidden; } /* stops resizing fixed width columns if the text is too wide */

@@ -12,6 +12,7 @@ Event=Událost
 Events=Události
 EventsNb=Počet událostí
 ListOfActions=Seznam událostí
+EventReports=Event reports
 Location=Umístění
 ToUserOfGroup=Každému uživateli ve skupině
 EventOnFullDay=Událost pro celý den (y)
@@ -34,6 +35,7 @@ AgendaAutoActionDesc= Definujte zde události, pro které chcete vytvořit autom
 AgendaSetupOtherDesc= Tato stránka poskytuje možnosti, jak povolit export vašich akcí do externího kalendáře (Thunderbird, Google kalendář, ...)
 AgendaExtSitesDesc=Tato stránka umožňuje deklarovat externí zdroje kalendářů pro možnost vidět své akce v agendách programu.
 ActionsEvents=Události, pro které Dolibarr vytvoří akci v programu automaticky
+EventRemindersByEmailNotEnabled=Event reminders by email was not enabled into Agenda module setup.
 ##### Agenda event labels #####
 NewCompanyToDolibarr=Subjekt %s vytvořen
 ContractValidatedInDolibarr=Kontrakt %s ověřen
@@ -51,7 +53,9 @@ MemberValidatedInDolibarr=Uživatel %s ověřen
 MemberModifiedInDolibarr=Uživatel %s upraven
 MemberResiliatedInDolibarr=Členské %s ukončeno
 MemberDeletedInDolibarr=Uživatel %s smazán
-MemberSubscriptionAddedInDolibarr=Předplatné pro člena %s přidáno
+MemberSubscriptionAddedInDolibarr=Subscription %s for member %s added
+MemberSubscriptionModifiedInDolibarr=Subscription %s for member %s modified
+MemberSubscriptionDeletedInDolibarr=Subscription %s for member %s deleted
 ShipmentValidatedInDolibarr=Doprava %s ověřena
 ShipmentClassifyClosedInDolibarr=Zásilka %s klasifikováno účtoval
 ShipmentUnClassifyCloseddInDolibarr=Zásilka %s klasifikováno znovuotevření
@@ -65,6 +69,7 @@ OrderApprovedInDolibarr=Objednávka %s schválena
 OrderRefusedInDolibarr=Objednávka %s zamítnuta
 OrderBackToDraftInDolibarr=Objednávka %s vrácena do stavu návrhu
 ProposalSentByEMail=Komerční návrh %s zaslán e-mailem
+ContractSentByEMail=Contract %s sent by EMail
 OrderSentByEMail=Zákaznická objednávka %s zaslána e-mailem
 InvoiceSentByEMail=Zákaznická faktura %s zaslána e-mailem
 SupplierOrderSentByEMail=Dodavatelská objednávka %s zaslána e-mailem
@@ -78,6 +83,14 @@ InvoiceDeleted=faktura smazána
 PRODUCT_CREATEInDolibarr=Product %s created
 PRODUCT_MODIFYInDolibarr=Product %s modified
 PRODUCT_DELETEInDolibarr=Product %s deleted
+EXPENSE_REPORT_CREATEInDolibarr=Expense report %s created
+EXPENSE_REPORT_VALIDATEInDolibarr=Expense report %s validated
+EXPENSE_REPORT_APPROVEInDolibarr=Expense report %s approved
+EXPENSE_REPORT_DELETEInDolibarr=Expense report %s deleted
+EXPENSE_REPORT_REFUSEDInDolibarr=Expense report %s refused
+PROJECT_CREATEInDolibarr=Projekt %s vytvořen
+PROJECT_MODIFYInDolibarr=Projekt %s modifikované
+PROJECT_DELETEInDolibarr=Project %s deleted
 ##### End agenda events #####
 AgendaModelModule=Document templates for event
 DateActionStart=Datum zahájení
@@ -86,7 +99,8 @@ AgendaUrlOptions1=Můžete také přidat následující parametry filtrování v
 AgendaUrlOptions3=<b>logina=%s</b> omezuje výstup na akce vlastněné uživatelem <b>%s</b>.
 AgendaUrlOptionsNotAdmin=<b>logina=!%s</b> to restrict output to actions not owned by user <b>%s</b>.
 AgendaUrlOptions4=<b>logint=%s</b> to restrict output to actions assigned to user <b>%s</b> (owner and others).
-AgendaUrlOptionsProject=<b>projekt=PROJECT_ID</b> omezit výstup na akce spojené s projektem <b>PROJECT_ID</b>.
+AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b> to restrict output to actions linked to project <b>__PROJECT_ID__</b>.
+AgendaUrlOptionsNotAutoEvent=<b>notactiontype=systemauto</b> to exclude automatic event.
 AgendaShowBirthdayEvents=Zobrazit narozeniny kontaktů
 AgendaHideBirthdayEvents=Skrýt narozeniny kontaktů
 Busy=Zaneprázdněný
@@ -98,7 +112,7 @@ ExportCal=Export kalendáře
 ExtSites=Importovat externí kalendáře
 ExtSitesEnableThisTool=Zobrazit externí kalendáře (definováno v globálním nastavení) do agendy. Nemá vliv na externí kalendáře definované uživateli.
 ExtSitesNbOfAgenda=Počet kalendářů
-AgendaExtNb=Kalendář nb %s
+AgendaExtNb=Calendar no. %s
 ExtSiteUrlAgenda=URL pro přístup *.iCal souboru
 ExtSiteNoLabel=Nepodepsáno
 VisibleTimeRange=Viditelný časový rozsah

@@ -1,7 +1,8 @@
 <?php
 /* Copyright (C) 2005		Patrick Rouillon	<patrick@rouillon.net>
  * Copyright (C) 2005-2015	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012	Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012	Regis Houssin		<regis.houssin@inodbox.com>
+ * Copyright (C) 2017      Ferran Marcet       	 <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,14 +30,15 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/fourn.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
+if (! empty($conf->projet->enabled)) {
+	require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
+}
 
-$langs->load("bills");
-$langs->load('other');
-$langs->load("companies");
+$langs->loadLangs(array("bills", "other", "companies"));
 
-$id		= (GETPOST('id','int') ? GETPOST('id','int') : GETPOST('facid','int'));
-$ref	= GETPOST('ref','alpha');
-$action	= GETPOST('action','alpha');
+$id		= (GETPOST('id', 'int') ? GETPOST('id', 'int') : GETPOST('facid', 'int'));
+$ref	= GETPOST('ref', 'alpha');
+$action	= GETPOST('action', 'alpha');
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
@@ -79,7 +81,7 @@ if ($action == 'addcontact' && $user->rights->fournisseur->facture->creer)
 }
 
 // bascule du statut d'un contact
-else if ($action == 'swapstatut' && $user->rights->fournisseur->facture->creer)
+elseif ($action == 'swapstatut' && $user->rights->fournisseur->facture->creer)
 {
 	if ($object->fetch($id))
 	{
@@ -92,7 +94,7 @@ else if ($action == 'swapstatut' && $user->rights->fournisseur->facture->creer)
 }
 
 // Efface un contact
-else if ($action == 'deletecontact' && $user->rights->fournisseur->facture->creer)
+elseif ($action == 'deletecontact' && $user->rights->fournisseur->facture->creer)
 {
 	$object->fetch($id);
 	$result = $object->delete_contact($_GET["lineid"]);
@@ -135,12 +137,12 @@ if ($id > 0 || ! empty($ref))
 		$object->fetch_thirdparty();
 
 		$alreadypaid=$object->getSommePaiement();
-		
+
 		$head = facturefourn_prepare_head($object);
 
 		dol_fiche_head($head, 'contact', $langs->trans('SupplierInvoice'), -1, 'bill');
 
-		$linkback = '<a href="' . DOL_URL_ROOT . '/compta/facture/list.php' . (! empty($socid) ? '?socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
+		$linkback = '<a href="' . DOL_URL_ROOT . '/compta/facture/list.php?restore_lastsearch_values=1' . (! empty($socid) ? '&socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
 
 		$morehtmlref='<div class="refidno">';
     	// Ref supplier
@@ -148,7 +150,8 @@ if ($id > 0 || ! empty($ref))
     	$morehtmlref.=$form->editfieldval("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, 0, 'string', '', null, null, '', 1);
     	// Thirdparty
     	$morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1);
-		// Project
+    	if (empty($conf->global->MAIN_DISABLE_OTHER_LINK) && $object->thirdparty->id > 0) $morehtmlref.=' (<a href="'.DOL_URL_ROOT.'/fourn/facture/list.php?socid='.$object->thirdparty->id.'&search_company='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherBills").'</a>)';
+    	// Project
 		if (! empty($conf->projet->enabled))
 		{
 			$langs->load("projects");
@@ -186,7 +189,7 @@ if ($id > 0 || ! empty($ref))
 		$object->totalpaye = $alreadypaid;   // To give a chance to dol_banner_tab to use already paid amount to show correct status
 
 		dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
-		
+
 		print '<div class="fichecenter">';
 		print '<div class="underbanner clearboth"></div>';
 
@@ -199,13 +202,13 @@ if ($id > 0 || ! empty($ref))
 		{
 			$facreplaced=new FactureFournisseur($db);
 			$facreplaced->fetch($object->fk_facture_source);
-			print ' ('.$langs->transnoentities("ReplaceInvoice",$facreplaced->getNomUrl(1)).')';
+			print ' ('.$langs->transnoentities("ReplaceInvoice", $facreplaced->getNomUrl(1)).')';
 		}
 		if ($object->type == FactureFournisseur::TYPE_CREDIT_NOTE)
 		{
 			$facusing=new FactureFournisseur($db);
 			$facusing->fetch($object->fk_facture_source);
-			print ' ('.$langs->transnoentities("CorrectInvoice",$facusing->getNomUrl(1)).')';
+			print ' ('.$langs->transnoentities("CorrectInvoice", $facusing->getNomUrl(1)).')';
 		}
 
 		$facidavoir=$object->getListIdAvoirFromInvoice();
@@ -227,34 +230,34 @@ if ($id > 0 || ! empty($ref))
 		{
 			$facthatreplace=new FactureFournisseur($db);
 			$facthatreplace->fetch($facidnext);
-			print ' ('.$langs->transnoentities("ReplacedByInvoice",$facthatreplace->getNomUrl(1)).')';
+			print ' ('.$langs->transnoentities("ReplacedByInvoice", $facthatreplace->getNomUrl(1)).')';
 		}
 		print '</td></tr>';
 
 		// Label
-		print '<tr><td>'.$form->editfieldkey("Label",'label',$object->label,$object,0).'</td><td>';
-		print $form->editfieldval("Label",'label',$object->label,$object,0);
+		print '<tr><td>'.$form->editfieldkey("Label", 'label', $object->label, $object, 0).'</td><td>';
+		print $form->editfieldval("Label", 'label', $object->label, $object, 0);
 		print '</td></tr>';
 
         // Amount
-        print '<tr><td>'.$langs->trans('AmountHT').'</td><td>'.price($object->total_ht,1,$langs,0,-1,-1,$conf->currency).'</td></tr>';
-        print '<tr><td>'.$langs->trans('AmountVAT').'</td><td>'.price($object->total_tva,1,$langs,0,-1,-1,$conf->currency).'</td></tr>';
+        print '<tr><td>'.$langs->trans('AmountHT').'</td><td>'.price($object->total_ht, 1, $langs, 0, -1, -1, $conf->currency).'</td></tr>';
+        print '<tr><td>'.$langs->trans('AmountVAT').'</td><td>'.price($object->total_tva, 1, $langs, 0, -1, -1, $conf->currency).'</td></tr>';
 
         // Amount Local Taxes
         //TODO: Place into a function to control showing by country or study better option
         if ($societe->localtax1_assuj=="1") //Localtax1
         {
-            print '<tr><td>'.$langs->transcountry("AmountLT1",$societe->country_code).'</td>';
-            print '<td>'.price($object->total_localtax1,1,$langs,0,-1,-1,$conf->currency).'</td>';
+            print '<tr><td>'.$langs->transcountry("AmountLT1", $societe->country_code).'</td>';
+            print '<td>'.price($object->total_localtax1, 1, $langs, 0, -1, -1, $conf->currency).'</td>';
             print '</tr>';
         }
         if ($societe->localtax2_assuj=="1") //Localtax2
         {
-            print '<tr><td>'.$langs->transcountry("AmountLT2",$societe->country_code).'</td>';
-            print '<td>'.price($object->total_localtax2,1,$langs,0,-1,-1,$conf->currency).'</td>';
+            print '<tr><td>'.$langs->transcountry("AmountLT2", $societe->country_code).'</td>';
+            print '<td>'.price($object->total_localtax2, 1, $langs, 0, -1, -1, $conf->currency).'</td>';
             print '</tr>';
         }
-        print '<tr><td>'.$langs->trans('AmountTTC').'</td><td>'.price($object->total_ttc,1,$langs,0,-1,-1,$conf->currency).'</td></tr>';
+        print '<tr><td>'.$langs->trans('AmountTTC').'</td><td>'.price($object->total_ttc, 1, $langs, 0, -1, -1, $conf->currency).'</td></tr>';
 
 		print "</table>";
 
@@ -264,7 +267,6 @@ if ($id > 0 || ! empty($ref))
 
 		// Contacts lines
 		include DOL_DOCUMENT_ROOT.'/core/tpl/contacts.tpl.php';
-
 	}
 	else
 	{
@@ -272,6 +274,6 @@ if ($id > 0 || ! empty($ref))
 	}
 }
 
-
+// End of page
 llxFooter();
 $db->close();

@@ -1,6 +1,6 @@
 -- ===================================================================
 -- Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+-- Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@ create table llx_tva
   datec           datetime,                   -- Create date
   datep           date,                       -- date de paiement
   datev           date,                       -- date de valeur
-  amount          real NOT NULL DEFAULT 0,
+  amount          double(24,8) NOT NULL DEFAULT 0,
   fk_typepayment  integer NULL,
   num_payment     varchar(50),
   label           varchar(255),

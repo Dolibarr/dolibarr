@@ -31,3 +31,4 @@ DONATION_ART200=تبين المادة 200 من CGI إذا كنت تشعر بال
 DONATION_ART238=تبين المادة 238 من CGI إذا كنت تشعر بالقلق
 DONATION_ART885=تبين المادة 885 من CGI إذا كنت تشعر بالقلق
 DonationPayment=دفع التبرع
+DonationValidated=Donation %s validated

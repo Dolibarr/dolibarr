@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2006-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2006-2017 Regis Houssin        <regis.houssin@capnetworks.com>
+/* Copyright (C) 2006-2012  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2017  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,10 +30,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/ldap.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/ldap.lib.php';
 
-$langs->load("companies");
-$langs->load("ldap");
-$langs->load("users");
-$langs->load("admin");
+// Load translation files required by page
+$langs->loadLangs(array('companies', 'ldap', 'users', 'admin'));
 
 // Users/Groups management only in master entity if transverse mode
 if (! empty($conf->multicompany->enabled) && $conf->entity > 1 && $conf->global->MULTICOMPANY_TRANSVERSE_MODE)
@@ -63,30 +62,31 @@ $object->getrights();
 
 if ($action == 'dolibarr2ldap')
 {
-	$db->begin();
-
 	$ldap=new Ldap();
 	$result=$ldap->connect_bind();
 
-	$info=$object->_load_ldap_info();
-	// Get a gid number for objectclass PosixGroup
-	if(in_array('posixGroup',$info['objectclass']))
-		$info['gidNumber'] = $ldap->getNextGroupGid();
+	if ($result > 0)
+	{
+		$info=$object->_load_ldap_info();
 
-	$dn=$object->_load_ldap_dn($info);
-	$olddn=$dn;	// We can say that old dn = dn as we force synchro
+		// Get a gid number for objectclass PosixGroup
+		if (in_array('posixGroup', $info['objectclass'])) {
+			$info['gidNumber'] = $ldap->getNextGroupGid('LDAP_KEY_GROUPS');
+		}
 
-	$result=$ldap->update($dn,$info,$user,$olddn);
+		$dn=$object->_load_ldap_dn($info);
+		$olddn=$dn;	// We can say that old dn = dn as we force synchro
+
+		$result=$ldap->update($dn, $info, $user, $olddn);
+	}
 
 	if ($result >= 0)
 	{
 		setEventMessages($langs->trans("GroupSynchronized"), null, 'mesgs');
-		$db->commit();
 	}
 	else
 	{
 		setEventMessages($ldap->error, $ldap->errors, 'errors');
-		$db->rollback();
 	}
 }
 
@@ -104,12 +104,14 @@ $head = group_prepare_head($object);
 
 dol_fiche_head($head, 'ldap', $langs->trans("Group"), -1, 'group');
 
-dol_banner_tab($object,'id','',$user->rights->user->user->lire || $user->admin);
+$linkback = '<a href="'.DOL_URL_ROOT.'/user/group/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+
+dol_banner_tab($object, 'id', $linback, $user->rights->user->user->lire || $user->admin);
 
 print '<div class="fichecenter">';
 print '<div class="underbanner clearboth"></div>';
 
-print '<table class="border" width="100%">';
+print '<table class="border centpercent">';
 
 // Name (already in dol_banner, we keep it to have the GlobalGroup picto, but we should move it in dol_banner)
 if (! empty($conf->mutlicompany->enabled))
@@ -118,7 +120,7 @@ if (! empty($conf->mutlicompany->enabled))
     print '<td class="valeur">'.$object->name;
     if (!$object->entity)
     {
-    	print img_picto($langs->trans("GlobalGroup"),'redstar');
+    	print img_picto($langs->trans("GlobalGroup"), 'redstar');
     }
     print "</td></tr>\n";
 }
@@ -166,7 +168,7 @@ if ($conf->global->LDAP_SYNCHRO_ACTIVE == 'dolibarr2ldap') print "<br>\n";
 // Affichage attributs LDAP
 print load_fiche_titre($langs->trans("LDAPInformationsForThisGroup"));
 
-print '<table width="100%" class="noborder">';
+print '<table class="noborder centpercent">';
 
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("LDAPAttributes").'</td>';
@@ -179,9 +181,9 @@ $result=$ldap->connect_bind();
 if ($result > 0)
 {
 	$info=$object->_load_ldap_info();
-	$dn=$object->_load_ldap_dn($info,1);
-	$search = "(".$object->_load_ldap_dn($info,2).")";
-	$records = $ldap->getAttribute($dn,$search);
+	$dn=$object->_load_ldap_dn($info, 1);
+	$search = "(".$object->_load_ldap_dn($info, 2).")";
+	$records = $ldap->getAttribute($dn, $search);
 
 	//var_dump($records);
 
@@ -194,7 +196,7 @@ if ($result > 0)
 		}
 		else
 		{
-			$result=show_ldap_content($records,0,$records['count'],true);
+			$result=show_ldap_content($records, 0, $records['count'], true);
 		}
 	}
 	else
@@ -206,12 +208,11 @@ if ($result > 0)
 }
 else
 {
-	dol_print_error('',$ldap->error);
+	setEventMessages($ldap->error, $ldap->errors, 'errors');
 }
 
 print '</table>';
 
+// End of page
 llxFooter();
-
 $db->close();
-

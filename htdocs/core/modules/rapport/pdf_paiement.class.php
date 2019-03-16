@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2006-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2015		Charles-Fr BENKE  	 <charles.fr@benke.fr>
+ * Copyright (C) 2015-2018 Charlene BENKE  	<charlie@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,11 +37,12 @@ class pdf_paiement
      *
      *  @param      DoliDb		$db      Database handler
 	 */
-	function __construct($db)
+	public function __construct($db)
 	{
 		global $langs,$conf;
-		$langs->load("bills");
-		$langs->load("compta");
+
+		// Load translation files required by the page
+        $langs->loadLangs(array("bills","compta","main"));
 
 		$this->db = $db;
 		$this->description = $langs->transnoentities("ListOfCustomerPayments");
@@ -77,10 +78,12 @@ class pdf_paiement
 			$this->posxinvoiceamount-=10;
 			$this->posxpaymentamount-=20;
 		}
-
+		// which type of document will be generated: clients (client) or providers (fourn) invoices
+		$this->doc_type = "client";
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Fonction generant la rapport sur le disque
 	 *
@@ -90,8 +93,9 @@ class pdf_paiement
 	 *	@param	string	$outputlangs	Lang output object
 	 *	@return	int						<0 if KO, >0 if OK
 	 */
-	function write_file($_dir, $month, $year, $outputlangs)
+	public function write_file($_dir, $month, $year, $outputlangs)
 	{
+        // phpcs:enable
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 		global $conf, $hookmanager, $langs, $user;
@@ -105,7 +109,6 @@ class pdf_paiement
 
 		$this->month=$month;
 		$this->year=$year;
-
 		$dir=$_dir.'/'.$year;
 
 		if (! is_dir($dir))
@@ -113,14 +116,24 @@ class pdf_paiement
 			$result=dol_mkdir($dir);
 			if ($result < 0)
 			{
-				$this->error=$langs->transnoentities("ErrorCanNotCreateDir",$dir);
+				$this->error=$langs->transnoentities("ErrorCanNotCreateDir", $dir);
 				return -1;
 			}
 		}
 
-		$month = sprintf("%02d",$month);
-		$year = sprintf("%04d",$year);
+		$month = sprintf("%02d", $month);
+		$year = sprintf("%04d", $year);
+
 		$file = $dir . "/payments-".$year."-".$month.".pdf";
+        switch ($this->doc_type) {
+            case "client":
+                $file = $dir . "/payments-".$year."-".$month.".pdf";
+                break;
+            case "fourn":
+                $file = $dir . "/supplier_payments-".$year."-".$month.".pdf";
+                break;
+        }
+
 
 		// Add pdfgeneration hook
 		if (! is_object($hookmanager))
@@ -131,7 +144,7 @@ class pdf_paiement
 		$hookmanager->initHooks(array('pdfgeneration'));
 		$parameters=array('file'=>$file,'outputlangs'=>$outputlangs);
 		global $action;
-		$reshook=$hookmanager->executeHooks('beforePDFCreation',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+		$reshook=$hookmanager->executeHooks('beforePDFCreation', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
 
         $pdf=pdf_getInstance($this->format);
         $default_font_size = pdf_getPDFFontSize($outputlangs);	// Must be after pdf_getInstance
@@ -146,10 +159,17 @@ class pdf_paiement
         $num=0;
         $lines=array();
 
-		// count number of lines of payment
-		$sql = "SELECT p.rowid as prowid";
-		$sql.= " FROM ".MAIN_DB_PREFIX."paiement as p";
-		$sql.= " WHERE p.datep BETWEEN '".$this->db->idate(dol_get_first_day($year,$month))."' AND '".$this->db->idate(dol_get_last_day($year,$month))."'";
+        // count number of lines of payment
+        $sql = "SELECT p.rowid as prowid";
+        switch ($this->doc_type) {
+            case "client":
+                $sql.= " FROM ".MAIN_DB_PREFIX."paiement as p";
+                break;
+            case "fourn":
+                $sql.= " FROM ".MAIN_DB_PREFIX."paiementfourn as p";
+                break;
+        }
+		$sql.= " WHERE p.datep BETWEEN '".$this->db->idate(dol_get_first_day($year, $month))."' AND '".$this->db->idate(dol_get_last_day($year, $month))."'";
 		$sql.= " AND p.entity = " . $conf->entity;
 		$result = $this->db->query($sql);
 		if ($result)
@@ -158,35 +178,70 @@ class pdf_paiement
 		}
 
 		// number of bill
-		$sql = "SELECT p.datep as dp, f.facnumber";
-		//$sql .= ", c.libelle as paiement_type, p.num_paiement";
-		$sql.= ", c.code as paiement_code, p.num_paiement";
-		$sql.= ", p.amount as paiement_amount, f.total_ttc as facture_amount";
-		$sql.= ", pf.amount as pf_amount";
-		if (! empty($conf->banque->enabled))
-			$sql.= ", ba.ref as bankaccount";
-		$sql.= ", p.rowid as prowid";
-		$sql.= " FROM ".MAIN_DB_PREFIX."paiement as p, ".MAIN_DB_PREFIX."facture as f,";
-		$sql.= " ".MAIN_DB_PREFIX."c_paiement as c, ".MAIN_DB_PREFIX."paiement_facture as pf,";
-		if (! empty($conf->banque->enabled))
-			$sql.= " ".MAIN_DB_PREFIX."bank as b, ".MAIN_DB_PREFIX."bank_account as ba,";
-		$sql.= " ".MAIN_DB_PREFIX."societe as s";
-		if (! $user->rights->societe->client->voir && ! $socid)
-		{
-			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+		switch ($this->doc_type) {
+			case "client":
+				$sql = "SELECT p.datep as dp, f.ref";
+				//$sql .= ", c.libelle as paiement_type, p.num_paiement";
+				$sql.= ", c.code as paiement_code, p.num_paiement";
+				$sql.= ", p.amount as paiement_amount, f.total_ttc as facture_amount";
+				$sql.= ", pf.amount as pf_amount";
+				if (! empty($conf->banque->enabled))
+					$sql.= ", ba.ref as bankaccount";
+				$sql.= ", p.rowid as prowid";
+				$sql.= " FROM ".MAIN_DB_PREFIX."paiement as p LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as c ON p.fk_paiement = c.id";
+				$sql.= ", ".MAIN_DB_PREFIX."facture as f,";
+				$sql.= " ".MAIN_DB_PREFIX."paiement_facture as pf,";
+				if (! empty($conf->banque->enabled))
+					$sql.= " ".MAIN_DB_PREFIX."bank as b, ".MAIN_DB_PREFIX."bank_account as ba,";
+				$sql.= " ".MAIN_DB_PREFIX."societe as s";
+				if (! $user->rights->societe->client->voir && ! $socid)
+				{
+					$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+				}
+				$sql.= " WHERE f.fk_soc = s.rowid AND pf.fk_facture = f.rowid AND pf.fk_paiement = p.rowid";
+				if (! empty($conf->banque->enabled))
+					$sql.= " AND p.fk_bank = b.rowid AND b.fk_account = ba.rowid ";
+				$sql.= " AND f.entity IN (".getEntity('invoice').")";
+				$sql.= " AND p.datep BETWEEN '".$this->db->idate(dol_get_first_day($year, $month))."' AND '".$this->db->idate(dol_get_last_day($year, $month))."'";
+				if (! $user->rights->societe->client->voir && ! $socid)
+				{
+					$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+				}
+				if (! empty($socid)) $sql .= " AND s.rowid = ".$socid;
+				$sql.= " ORDER BY p.datep ASC, pf.fk_paiement ASC";
+				break;
+			case "fourn":
+				$sql = "SELECT p.datep as dp, f.ref as ref";
+				//$sql .= ", c.libelle as paiement_type, p.num_paiement";
+				$sql.= ", c.code as paiement_code, p.num_paiement";
+				$sql.= ", p.amount as paiement_amount, f.total_ttc as facture_amount";
+				$sql.= ", pf.amount as pf_amount";
+				if (! empty($conf->banque->enabled))
+					$sql.= ", ba.ref as bankaccount";
+				$sql.= ", p.rowid as prowid";
+				$sql.= " FROM ".MAIN_DB_PREFIX."paiementfourn as p LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as c ON p.fk_paiement = c.id";
+				$sql.= ", ".MAIN_DB_PREFIX."facture_fourn as f,";
+				$sql.= " ".MAIN_DB_PREFIX."paiementfourn_facturefourn as pf,";
+				if (! empty($conf->banque->enabled))
+					$sql.= " ".MAIN_DB_PREFIX."bank as b, ".MAIN_DB_PREFIX."bank_account as ba,";
+				$sql.= " ".MAIN_DB_PREFIX."societe as s";
+				if (! $user->rights->societe->client->voir && ! $socid)
+				{
+					$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+				}
+				$sql.= " WHERE f.fk_soc = s.rowid AND pf.fk_facturefourn = f.rowid AND pf.fk_paiementfourn = p.rowid";
+				if (! empty($conf->banque->enabled))
+					$sql.= " AND p.fk_bank = b.rowid AND b.fk_account = ba.rowid ";
+				$sql.= " AND f.entity = ".$conf->entity;
+				$sql.= " AND p.datep BETWEEN '".$this->db->idate(dol_get_first_day($year, $month))."' AND '".$this->db->idate(dol_get_last_day($year, $month))."'";
+				if (! $user->rights->societe->client->voir && ! $socid)
+				{
+					$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+				}
+				if (! empty($socid)) $sql .= " AND s.rowid = ".$socid;
+				$sql.= " ORDER BY p.datep ASC, pf.fk_paiementfourn ASC";
+				break;
 		}
-		$sql.= " WHERE f.fk_soc = s.rowid AND pf.fk_facture = f.rowid AND pf.fk_paiement = p.rowid";
-		if (! empty($conf->banque->enabled))
-			$sql.= " AND p.fk_bank = b.rowid AND b.fk_account = ba.rowid ";
-		$sql.= " AND f.entity = ".$conf->entity;
-		$sql.= " AND p.fk_paiement = c.id ";
-		$sql.= " AND p.datep BETWEEN '".$this->db->idate(dol_get_first_day($year,$month))."' AND '".$this->db->idate(dol_get_last_day($year,$month))."'";
-		if (! $user->rights->societe->client->voir && ! $socid)
-		{
-			$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-		}
-		if (! empty($socid)) $sql .= " AND s.rowid = ".$socid;
-		$sql.= " ORDER BY p.datep ASC, pf.fk_paiement ASC";
 
 		dol_syslog(get_class($this)."::write_file", LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -194,15 +249,13 @@ class pdf_paiement
 		{
 			$num = $this->db->num_rows($result);
 			$i = 0;
-			$var=True;
 
 			while ($i < $num)
 			{
 				$objp = $this->db->fetch_object($result);
-				
 
-				$lines[$i][0] = $objp->facnumber;
-				$lines[$i][1] = dol_print_date($this->db->jdate($objp->dp),"day",false,$outputlangs,true);
+				$lines[$i][0] = $objp->ref;
+				$lines[$i][1] = dol_print_date($this->db->jdate($objp->dp), "day", false, $outputlangs, true);
 				$lines[$i][2] = $langs->transnoentities("PaymentTypeShort".$objp->paiement_code);
 				$lines[$i][3] = $objp->num_paiement;
 				$lines[$i][4] = price($objp->paiement_amount);
@@ -210,6 +263,7 @@ class pdf_paiement
 				$lines[$i][6] = price($objp->pf_amount);
 				$lines[$i][7] = $objp->prowid;
 				$lines[$i][8] = $objp->bankaccount;
+				$lines[$i][9] = $objp->paiement_amount;
 				$i++;
 			}
 		}
@@ -233,7 +287,7 @@ class pdf_paiement
 
 		$pdf->Open();
 		$pagenb=0;
-		$pdf->SetDrawColor(128,128,128);
+		$pdf->SetDrawColor(128, 128, 128);
 
 		$pdf->SetTitle($outputlangs->transnoentities("Payments"));
 		$pdf->SetSubject($outputlangs->transnoentities("Payments"));
@@ -243,24 +297,24 @@ class pdf_paiement
 		if (! empty($conf->global->MAIN_DISABLE_PDF_COMPRESSION)) $pdf->SetCompression(false);
 
 		$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite);   // Left, Top, Right
-		$pdf->SetAutoPageBreak(1,0);
+		$pdf->SetAutoPageBreak(1, 0);
 
 		// New page
 		$pdf->AddPage();
 		$pagenb++;
 		$this->_pagehead($pdf, $pagenb, 1, $outputlangs);
-		$pdf->SetFont('','', 9);
+		$pdf->SetFont('', '', 9);
 		$pdf->MultiCell(0, 3, '');		// Set interline to 3
-		$pdf->SetTextColor(0,0,0);
+		$pdf->SetTextColor(0, 0, 0);
 
 
 		$this->Body($pdf, 1, $lines, $outputlangs);
 
-		if (method_exists($pdf,'AliasNbPages')) $pdf->AliasNbPages();
+		if (method_exists($pdf, 'AliasNbPages')) $pdf->AliasNbPages();
 
 		$pdf->Close();
 
-		$pdf->Output($file,'F');
+		$pdf->Output($file, 'F');
 
 		// Add pdfgeneration hook
 		if (! is_object($hookmanager))
@@ -271,16 +325,22 @@ class pdf_paiement
 		$hookmanager->initHooks(array('pdfgeneration'));
 		$parameters=array('file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs);
 		global $action;
-		$reshook=$hookmanager->executeHooks('afterPDFCreation',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+		$reshook=$hookmanager->executeHooks('afterPDFCreation', $parameters, $this, $action);    // Note that $action and $object may have been modified by some hooks
+		if ($reshook < 0)
+		{
+		    $this->error = $hookmanager->error;
+		    $this->errors = $hookmanager->errors;
+		}
 
 		if (! empty($conf->global->MAIN_UMASK))
 			@chmod($file, octdec($conf->global->MAIN_UMASK));
-		
+
 		$this->result = array('fullpath'=>$file);
-		
+
 		return 1;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 *  Show top header of page.
 	 *
@@ -290,9 +350,10 @@ class pdf_paiement
 	 *  @param  Translate	$outputlangs	Object lang for output
 	 *  @return	void
 	 */
-	function _pagehead(&$pdf, $page, $showaddress, $outputlangs)
+	protected function _pagehead(&$pdf, $page, $showaddress, $outputlangs)
 	{
-		global $langs;
+        // phpcs:enable
+		global $langs, $conf;
 
 		// Do not add the BACKGROUND as this is a report
 		//pdf_pagehead($pdf,$outputlangs,$this->page_hauteur);
@@ -300,16 +361,23 @@ class pdf_paiement
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
 		$title=$conf->global->MAIN_INFO_SOCIETE_NOM;
-		$title.=' - '.$outputlangs->transnoentities("ListOfCustomerPayments");
-		$title.=' - '.dol_print_date(dol_mktime(0,0,0,$this->month,1,$this->year),"%B %Y",false,$outputlangs,true);
-		$pdf->SetFont('','B',$default_font_size + 1);
-		$pdf->SetXY($this->marge_gauche,10);
+        switch($this->doc_type) {
+            case "client":
+                $title.=' - '.$outputlangs->transnoentities("ListOfCustomerPayments");
+                break;
+            case "fourn":
+                $title.=' - '.$outputlangs->transnoentities("ListOfSupplierPayments");
+                break;
+        }
+		$title.=' - '.dol_print_date(dol_mktime(0, 0, 0, $this->month, 1, $this->year), "%B %Y", false, $outputlangs, true);
+		$pdf->SetFont('', 'B', $default_font_size + 1);
+		$pdf->SetXY($this->marge_gauche, 10);
 		$pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->marge_gauche, 2, $title, 0, 'C');
 
-		$pdf->SetFont('','',$default_font_size);
+		$pdf->SetFont('', '', $default_font_size);
 
         $pdf->SetXY($this->posxdate, 16);
-		$pdf->MultiCell(80, 2, $outputlangs->transnoentities("DateBuild")." : ".dol_print_date(time(),"day",false,$outputlangs,true), 0, 'L');
+		$pdf->MultiCell(80, 2, $outputlangs->transnoentities("DateBuild")." : ".dol_print_date(time(), "day", false, $outputlangs, true), 0, 'L');
 
         $pdf->SetXY($this->posxdate+100, 16);
 		$pdf->MultiCell(80, 2, $outputlangs->transnoentities("Page")." : ".$page, 0, 'R');
@@ -346,6 +414,7 @@ class pdf_paiement
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Output body
 	 *
@@ -355,13 +424,17 @@ class pdf_paiement
 	 *	@param	Translate	$outputlangs	Object langs
 	 *	@return	void
 	 */
-	function Body(&$pdf, $page, $lines, $outputlangs)
+	public function Body(&$pdf, $page, $lines, $outputlangs)
 	{
+        // phpcs:enable
+		global $langs;
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
-		$pdf->SetFont('','', $default_font_size - 1);
+		$pdf->SetFont('', '', $default_font_size - 1);
 		$oldprowid = 0;
-		$pdf->SetFillColor(220,220,220);
+		$total_page = 0;
+		$total = 0;
+		$pdf->SetFillColor(220, 220, 220);
 		$yp = 0;
 		$numlines=count($lines);
 		for ($j = 0 ; $j < $numlines ; $j++)
@@ -372,18 +445,22 @@ class pdf_paiement
 				$page++;
 				$pdf->AddPage();
 				$this->_pagehead($pdf, $page, 0, $outputlangs);
-				$pdf->SetFont('','', $default_font_size - 1);
+				$pdf->SetFont('', '', $default_font_size - 1);
 				$yp = 0;
 			}
 			if ($oldprowid <> $lines[$j][7])
 			{
-				if ($yp > $this->tab_height -10)
+				if ($yp > $this->tab_height -15)
 				{
+					$pdf->SetXY($this->posxpaymentamount, $this->tab_top + 10 + $yp);
+					$pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->posxpaymentamount, $this->line_height, $langs->transnoentities('SubTotal')." : ".price($total_page), 0, 'R', 0);
 					$page++;
 					$pdf->AddPage();
 					$this->_pagehead($pdf, $page, 0, $outputlangs);
-					$pdf->SetFont('','', $default_font_size - 1);
+					$pdf->SetFont('', '', $default_font_size - 1);
 					$yp = 0;
+					$total += $total_page;
+					$total_page = 0;
 				}
 
 				$pdf->SetXY($this->posxdate - 1, $this->tab_top + 10 + $yp);
@@ -398,11 +475,12 @@ class pdf_paiement
 				$pdf->SetXY($this->posxpaymentamount, $this->tab_top + 10 + $yp);
 				$pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->posxpaymentamount, $this->line_height, $lines[$j][4], 0, 'R', 1);
 				$yp = $yp + 5;
+				$total_page += $lines[$j][9];
 			}
 
 			// Invoice number
 			$pdf->SetXY($this->posxinvoice, $this->tab_top + 10 + $yp);
-			$pdf->MultiCell($this->posxinvoiceamount - $this->posxbankaccount, $this->line_height, $lines[$j][0], 0, 'L', 0);
+			$pdf->MultiCell($this->posxinvoice - $this->posxbankaccount, $this->line_height, $lines[$j][0], 0, 'L', 0);
 
 			// BankAccount
 			$pdf->SetXY($this->posxbankaccount, $this->tab_top + 10 + $yp);
@@ -422,6 +500,8 @@ class pdf_paiement
 				$oldprowid = $lines[$j][7];
 			}
 		}
+		$total += $total_page;
+		$pdf->SetXY($this->posxpaymentamount, $this->tab_top + 10 + $yp);
+		$pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->posxpaymentamount, $this->line_height, $langs->transnoentities('Total')." : ".price($total), 0, 'R', 0);
 	}
 }
-

@@ -23,7 +23,6 @@ ConfirmCloseService=Êtes-vous sûr de vouloir fermer ce service avec la date <b
 ConfirmActivateService=Êtes-vous sûr de vouloir activer ce service avec la date <b>%s</b>?
 DateContract=Date de contrat
 DateServiceActivate=Date d'activation du service
-ShowContract=Afficher le contrat
 ListOfInactiveServices=Liste des services non actifs
 ListOfExpiredServices=Liste des services actifs périmés
 ListOfRunningServices=Liste des services en cours d'exécution

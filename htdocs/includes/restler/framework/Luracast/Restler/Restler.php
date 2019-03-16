@@ -538,7 +538,7 @@ class Restler extends EventDispatcher
             if ($version && $version <= $this->apiVersion) {
                 $this->requestedApiVersion = $version;
                 $path = explode('/', $path, 2);
-                $path = $path[1];
+                $path = count($path) == 2 ? $path[1] : '';
             }
         } else {
             $this->requestedApiVersion = $this->apiMinimumVersion;
@@ -718,7 +718,8 @@ class Restler extends EventDispatcher
                     . $_SERVER['HTTP_ACCESS_CONTROL_REQUEST_HEADERS']);
 
             header('Access-Control-Allow-Origin: ' .
-                (Defaults::$accessControlAllowOrigin == '*' ? $_SERVER['HTTP_ORIGIN'] : Defaults::$accessControlAllowOrigin));
+                ((Defaults::$accessControlAllowOrigin == '*' && isset($_SERVER['HTTP_ORIGIN']))
+                    ? $_SERVER['HTTP_ORIGIN'] : Defaults::$accessControlAllowOrigin));
             header('Access-Control-Allow-Credentials: true');
 
             exit(0);
@@ -1195,7 +1196,7 @@ class Restler extends EventDispatcher
         foreach ($this->errorClasses as $className) {
             if (method_exists($className, $method)) {
                 $obj = Scope::get($className);
-                if ($obj->$method())
+                if ($obj->$method($exception))
                     $handled = true;
             }
         }
@@ -1398,6 +1399,135 @@ class Restler extends EventDispatcher
     }
 
     /**
+     * protected methods will need at least one authentication class to be set
+     * in order to allow that method to be executed.  When multiple authentication
+     * classes are in use, this function provides better performance by setting
+     * all auth classes through a single function call.
+     *
+     * @param array $classNames     array of associative arrays containing
+     *                              the authentication class name & optional
+     *                              url prefix for mapping.
+     */
+    public function setAuthClasses(array $classNames)
+    {
+        $this->authClasses = array_merge($this->authClasses, array_values($classNames));
+    }
+
+    /**
+     * Add multiple api classes through this method.
+     *
+     * This method provides better performance when large number
+     * of API classes are in use as it processes them all at once,
+     * as opposed to hundreds (or more) addAPIClass calls.
+     *
+     *
+     * All the public methods that do not start with _ (underscore)
+     * will be will be exposed as the public api by default.
+     *
+     * All the protected methods that do not start with _ (underscore)
+     * will exposed as protected api which will require authentication
+     *
+     * @param array $map        array of associative arrays containing
+     *                          the class name & optional url prefix
+     *                          for mapping.
+     *
+     * @return null
+     *
+     * @throws Exception when supplied with invalid class name
+     */
+    public function mapAPIClasses(array $map)
+    {
+        try {
+            if ($this->productionMode && is_null($this->cached)) {
+                $routes = $this->cache->get('routes');
+                if (isset($routes) && is_array($routes)) {
+                    $this->apiVersionMap = $routes['apiVersionMap'];
+                    unset($routes['apiVersionMap']);
+                    Routes::fromArray($routes);
+                    $this->cached = true;
+                } else {
+                    $this->cached = false;
+                }
+            }
+            $maxVersionMethod = '__getMaximumSupportedVersion';
+            if (!$this->productionMode || !$this->cached) {
+                foreach ($map as $className => $resourcePath) {
+                    if (is_numeric($className)) {
+                        $className = $resourcePath;
+                        $resourcePath = null;
+                    }
+                    if (isset(Scope::$classAliases[$className])) {
+                        $className = Scope::$classAliases[$className];
+                    }
+                    if (class_exists($className)) {
+                        if (method_exists($className, $maxVersionMethod)) {
+                            $max = $className::$maxVersionMethod();
+                            for ($i = 1; $i <= $max; $i++) {
+                                $this->apiVersionMap[$className][$i] = $className;
+                            }
+                        } else {
+                            $this->apiVersionMap[$className][1] = $className;
+                        }
+                    }
+                    //versioned api
+                    if (false !== ($index = strrpos($className, '\\'))) {
+                        $name = substr($className, 0, $index)
+                            . '\\v{$version}' . substr($className, $index);
+                    } else {
+                        if (false !== ($index = strrpos($className, '_'))) {
+                            $name = substr($className, 0, $index)
+                                . '_v{$version}' . substr($className, $index);
+                        } else {
+                            $name = 'v{$version}\\' . $className;
+                        }
+                    }
+
+                    for ($version = $this->apiMinimumVersion;
+                         $version <= $this->apiVersion;
+                         $version++) {
+
+                        $versionedClassName = str_replace('{$version}', $version,
+                            $name);
+                        if (class_exists($versionedClassName)) {
+                            Routes::addAPIClass($versionedClassName,
+                                Util::getResourcePath(
+                                    $className,
+                                    $resourcePath
+                                ),
+                                $version
+                            );
+                            if (method_exists($versionedClassName, $maxVersionMethod)) {
+                                $max = $versionedClassName::$maxVersionMethod();
+                                for ($i = $version; $i <= $max; $i++) {
+                                    $this->apiVersionMap[$className][$i] = $versionedClassName;
+                                }
+                            } else {
+                                $this->apiVersionMap[$className][$version] = $versionedClassName;
+                            }
+                        } elseif (isset($this->apiVersionMap[$className][$version])) {
+                            Routes::addAPIClass($this->apiVersionMap[$className][$version],
+                                Util::getResourcePath(
+                                    $className,
+                                    $resourcePath
+                                ),
+                                $version
+                            );
+                        }
+                    }
+                }
+            }
+        } catch (Exception $e) {
+            $e = new Exception(
+                "mapAPIClasses failed. " . $e->getMessage(),
+                $e->getCode(),
+                $e
+            );
+            $this->setSupportedFormats('JsonFormat');
+            $this->message($e);
+        }
+    }
+
+    /**
      * Associated array that maps formats to their respective format class name
      *
      * @return array
@@ -1484,6 +1614,19 @@ class Restler extends EventDispatcher
     public function __destruct()
     {
         if ($this->productionMode && !$this->cached) {
+            if (empty($this->url) && empty($this->requestMethod)) {
+                // url and requestMethod is NOT set:
+                // This can only happen, when an exception was thrown outside of restler, so that the method Restler::handle was NOT called.
+                // In this case, the routes can now be corrupt/incomplete, because we don't know, if all API-classes could be registered
+                // before the exception was thrown. So, don't cache the routes, because the routes can now be corrupt/incomplete!
+                return;
+            }
+            if ($this->exception instanceof RestException && $this->exception->getStage() === 'setup') {
+                // An exception has occured during configuration of restler. Maybe we could not add all API-classes correctly!
+                // So, don't cache the routes, because the routes can now be corrupt/incomplete!
+                return;
+            }
+
             $this->cache->set(
                 'routes',
                 Routes::toArray() +

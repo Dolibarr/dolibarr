@@ -17,8 +17,15 @@
  *
  */
 
-$langs->load("main");
-$langs->load("bills");
+// Protection to avoid direct call of template
+if (empty($langs) || ! is_object($langs))
+{
+	print "Error, template page can't be called as URL";
+	exit;
+}
+
+// Load translation files required by the page
+$langs->loadLangs(array("main","bills"));
 
 ?>
 
@@ -37,7 +44,7 @@ $langs->load("bills");
 		window.open('validation_ticket.php?facid='+id,name, opt);
 	}
 
-	popupTicket(<?php echo GETPOST('facid','int'); ?>,'<?php echo $langs->trans('PrintTicket') ?>');
+	popupTicket(<?php echo GETPOST('facid', 'int'); ?>,'<?php echo $langs->trans('PrintTicket') ?>');
 
 </script>
 

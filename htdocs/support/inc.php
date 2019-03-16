@@ -58,8 +58,11 @@ $conffiletoshowshort = "conf.php";
 $conffile = "../conf/conf.php";
 $conffiletoshow = "htdocs/conf/conf.php";
 // For debian/redhat like systems
-//$conffile = "/etc/dolibarr/conf.php";
-//$conffiletoshow = "/etc/dolibarr/conf.php";
+if (! file_exists($conffile))
+{
+	$conffile = "/etc/dolibarr/conf.php";
+	$conffiletoshow = "/etc/dolibarr/conf.php";
+}
 
 
 // Load conf file if it is already defined
@@ -86,11 +89,11 @@ if (! defined('DONOTLOADCONF') && file_exists($conffile) && filesize($conffile) 
 		$dolibarr_main_document_root_alt=isset($dolibarr_main_document_root_alt)?trim($dolibarr_main_document_root_alt):'';
 
 		// Remove last / or \ on directories or url value
-		if (! empty($dolibarr_main_document_root) && ! preg_match('/^[\\/]+$/',$dolibarr_main_document_root)) $dolibarr_main_document_root=preg_replace('/[\\/]+$/','',$dolibarr_main_document_root);
-		if (! empty($dolibarr_main_url_root)      && ! preg_match('/^[\\/]+$/',$dolibarr_main_url_root))      $dolibarr_main_url_root=preg_replace('/[\\/]+$/','',$dolibarr_main_url_root);
-		if (! empty($dolibarr_main_data_root)     && ! preg_match('/^[\\/]+$/',$dolibarr_main_data_root))     $dolibarr_main_data_root=preg_replace('/[\\/]+$/','',$dolibarr_main_data_root);
-		if (! empty($dolibarr_main_document_root_alt)	&& ! preg_match('/^[\\/]+$/',$dolibarr_main_document_root_alt))	$dolibarr_main_document_root_alt=preg_replace('/[\\/]+$/','',$dolibarr_main_document_root_alt);
-		if (! empty($dolibarr_main_url_root_alt)		&& ! preg_match('/^[\\/]+$/',$dolibarr_main_url_root_alt))		$dolibarr_main_url_root_alt=preg_replace('/[\\/]+$/','',$dolibarr_main_url_root_alt);
+		if (! empty($dolibarr_main_document_root) && ! preg_match('/^[\\/]+$/', $dolibarr_main_document_root)) $dolibarr_main_document_root=preg_replace('/[\\/]+$/', '', $dolibarr_main_document_root);
+		if (! empty($dolibarr_main_url_root)      && ! preg_match('/^[\\/]+$/', $dolibarr_main_url_root))      $dolibarr_main_url_root=preg_replace('/[\\/]+$/', '', $dolibarr_main_url_root);
+		if (! empty($dolibarr_main_data_root)     && ! preg_match('/^[\\/]+$/', $dolibarr_main_data_root))     $dolibarr_main_data_root=preg_replace('/[\\/]+$/', '', $dolibarr_main_data_root);
+		if (! empty($dolibarr_main_document_root_alt)	&& ! preg_match('/^[\\/]+$/', $dolibarr_main_document_root_alt))	$dolibarr_main_document_root_alt=preg_replace('/[\\/]+$/', '', $dolibarr_main_document_root_alt);
+		if (! empty($dolibarr_main_url_root_alt)		&& ! preg_match('/^[\\/]+$/', $dolibarr_main_url_root_alt))		$dolibarr_main_url_root_alt=preg_replace('/[\\/]+$/', '', $dolibarr_main_url_root_alt);
 
 		// Create conf object
 		if (! empty($dolibarr_main_document_root))
@@ -123,12 +126,12 @@ $conf->global->MAIN_LOGTOHTML = 1;
 
 // Define prefix
 if (! isset($dolibarr_main_db_prefix) || ! $dolibarr_main_db_prefix) $dolibarr_main_db_prefix='llx_';
-define('MAIN_DB_PREFIX',(isset($dolibarr_main_db_prefix)?$dolibarr_main_db_prefix:''));
+define('MAIN_DB_PREFIX', (isset($dolibarr_main_db_prefix)?$dolibarr_main_db_prefix:''));
 
 define('DOL_CLASS_PATH', 'class/');                             // Filsystem path to class dir
-define('DOL_DATA_ROOT',(isset($dolibarr_main_data_root)?$dolibarr_main_data_root:''));
+define('DOL_DATA_ROOT', (isset($dolibarr_main_data_root)?$dolibarr_main_data_root:''));
 define('DOL_MAIN_URL_ROOT', (isset($dolibarr_main_url_root)?$dolibarr_main_url_root:''));           // URL relative root
-$uri=preg_replace('/^http(s?):\/\//i','',constant('DOL_MAIN_URL_ROOT'));  // $uri contains url without http*
+$uri=preg_replace('/^http(s?):\/\//i', '', constant('DOL_MAIN_URL_ROOT'));  // $uri contains url without http*
 $suburi = strstr($uri, '/');       // $suburi contains url without domain
 if ($suburi == '/') $suburi = '';   // If $suburi is /, it is now ''
 define('DOL_URL_ROOT', $suburi);    // URL relative root ('', '/dolibarr', ...)
@@ -148,7 +151,7 @@ if (empty($conf->db->user)) $conf->db->user='';
 
 
 // Defini objet langs
-$langs = new Translate('..',$conf);
+$langs = new Translate('..', $conf);
 if (GETPOST('lang', 'aZ09')) $langs->setDefaultLang(GETPOST('lang', 'aZ09'));
 else $langs->setDefaultLang('auto');
 
@@ -198,7 +201,7 @@ function conf($dolibarr_main_document_root)
  * @param	string	$action		Action code
  * @return	void
  */
-function pHeader($soutitre,$next,$action='none')
+function pHeader($soutitre, $next, $action = 'none')
 {
 	global $conf;
 	global $langs;
@@ -208,7 +211,7 @@ function pHeader($soutitre,$next,$action='none')
 	// On force contenu dans format sortie
 	header("Content-type: text/html; charset=".$conf->file->character_set_client);
 	header("X-Content-Type-Options: nosniff");
-	
+
 	print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">'."\n";
 	print '<html manifest="'.DOL_URL_ROOT.'/cache.manifest">'."\n";
 	print '<head>'."\n";
@@ -238,7 +241,7 @@ function pHeader($soutitre,$next,$action='none')
  * @param   string	$setuplang		Language code
  * @return	void
  */
-function pFooter($nonext=0,$setuplang='')
+function pFooter($nonext = 0, $setuplang = '')
 {
 	global $langs;
 	$langs->load("main");
@@ -247,4 +250,3 @@ function pFooter($nonext=0,$setuplang='')
 	print '</body>'."\n";
 	print '</html>'."\n";
 }
-

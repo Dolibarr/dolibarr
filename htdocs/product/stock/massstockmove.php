@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2013-2016 Laurent Destaileur	<ely@users.sourceforge.net>
- * Copyright (C) 2014	   Regis Houssin		<regis.houssin@capnetworks.com>
+/* Copyright (C) 2013-2018 Laurent Destaileur	<ely@users.sourceforge.net>
+ * Copyright (C) 2014	   Regis Houssin		<regis.houssin@inodbox.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,20 +31,18 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 
-$langs->load("products");
-$langs->load("stocks");
-$langs->load("orders");
-$langs->load("productbatch");
+// Load translation files required by the page
+$langs->loadLangs(array('products', 'stocks', 'orders', 'productbatch'));
 
 // Security check
 if ($user->societe_id) {
     $socid = $user->societe_id;
 }
-$result=restrictedArea($user,'produit|service');
+$result=restrictedArea($user, 'produit|service');
 
 //checks if a product has been ordered
 
-$action = GETPOST('action','alpha');
+$action = GETPOST('action', 'alpha');
 $id_product = GETPOST('productid', 'int');
 $id_sw = GETPOST('id_sw', 'int');
 $id_tw = GETPOST('id_tw', 'int');
@@ -52,9 +50,10 @@ $batch = GETPOST('batch');
 $qty = GETPOST('qty');
 $idline = GETPOST('idline');
 
-$sortfield = GETPOST('sortfield','alpha');
-$sortorder = GETPOST('sortorder','alpha');
-$page = GETPOST('page','int');
+$sortfield = GETPOST('sortfield', 'alpha');
+$sortorder = GETPOST('sortorder', 'alpha');
+$page = GETPOST('page', 'int');
+if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 
 if (!$sortfield) {
     $sortfield = 'p.ref';
@@ -63,11 +62,11 @@ if (!$sortfield) {
 if (!$sortorder) {
     $sortorder = 'ASC';
 }
-$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
+$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
 $offset = $limit * $page ;
 
 $listofdata=array();
-if (! empty($_SESSION['massstockmove'])) $listofdata=json_decode($_SESSION['massstockmove'],true);
+if (! empty($_SESSION['massstockmove'])) $listofdata=json_decode($_SESSION['massstockmove'], true);
 
 
 /*
@@ -113,7 +112,8 @@ if ($action == 'addline')
 			if (empty($batch))
 			{
 				$error++;
-				setEventMessages($langs->trans("ErrorTryToMakeMoveOnProductRequiringBatchData"), null, 'errors');
+				$langs->load("errors");
+				setEventMessages($langs->trans("ErrorTryToMakeMoveOnProductRequiringBatchData", $producttmp->ref), null, 'errors');
 			}
 		}
 	}
@@ -161,7 +161,7 @@ if ($action == 'createmovements')
 	if (! GETPOST("label"))
 	{
 		$error++;
-		setEventMessages($langs->trans("ErrorFieldRequired"),$langs->transnoentitiesnoconv("LabelMovement"), null, 'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired"), $langs->transnoentitiesnoconv("MovementLabel"), null, 'errors');
 	}
 
 	$db->begin();
@@ -197,7 +197,7 @@ if ($action == 'createmovements')
 				if (empty($conf->productbatch->enabled) || ! $product->hasbatch())		// If product does not need lot/serial
 				{
 					// Remove stock
-					$result1=$product->correct_stock(
+    $result1=$product->correct_stock(
 		    			$user,
 		    			$id_sw,
 		    			$qty,
@@ -213,7 +213,7 @@ if ($action == 'createmovements')
 					}
 
 					// Add stock
-					$result2=$product->correct_stock(
+    $result2=$product->correct_stock(
 		    			$user,
 		    			$id_tw,
 		    			$qty,
@@ -245,7 +245,7 @@ if ($action == 'createmovements')
 					}
 
 					// Remove stock
-					$result1=$product->correct_stock_batch(
+    $result1=$product->correct_stock_batch(
 		    			$user,
 		    			$id_sw,
 		    			$qty,
@@ -264,7 +264,7 @@ if ($action == 'createmovements')
 					}
 
 					// Add stock
-					$result2=$product->correct_stock_batch(
+    $result2=$product->correct_stock_batch(
 		    			$user,
 		    			$id_tw,
 		    			$qty,
@@ -285,7 +285,7 @@ if ($action == 'createmovements')
 			}
 			else
 			{
-				dol_print_error('',"Bad value saved into sessions");
+				// dol_print_error('',"Bad value saved into sessions");
 				$error++;
 			}
 		}
@@ -331,10 +331,8 @@ $titletoadd=$langs->trans("Select");
 $buttonrecord=$langs->trans("RecordMovement");
 $titletoaddnoent=$langs->transnoentitiesnoconv("Select");
 $buttonrecordnoent=$langs->transnoentitiesnoconv("RecordMovement");
-print $langs->trans("SelectProductInAndOutWareHouse",$titletoaddnoent,$buttonrecordnoent).'<br>';
+print '<span class="opacitymedium">'.$langs->trans("SelectProductInAndOutWareHouse", $titletoaddnoent, $buttonrecordnoent).'</span><br>';
 print '<br>'."\n";
-
-$var=true;
 
 // Form to add a line
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" name="formulaire">';
@@ -342,22 +340,21 @@ print '<input type="hidden" name="token" value="' .$_SESSION['newtoken'] . '">';
 print '<input type="hidden" name="action" value="addline">';
 
 
-print '<div class="div-table-responsive-no-max">';
+print '<div class="div-table-responsive-no-min">';
 print '<table class="liste" width="100%">';
 //print '<div class="tagtable centpercent">';
 
 $param='';
 
 print '<tr class="liste_titre">';
-print getTitleFieldOfList($langs->trans('ProductRef'),0,$_SERVER["PHP_SELF"],'',$param,'','class="tagtd maxwidthonsmartphone"',$sortfield,$sortorder);
-if ($conf->productbatch->enabled)
-{
-	print getTitleFieldOfList($langs->trans('Batch'),0,$_SERVER["PHP_SELF"],'',$param,'','class="tagtd maxwidthonsmartphone"',$sortfield,$sortorder);
+print getTitleFieldOfList($langs->trans('ProductRef'), 0, $_SERVER["PHP_SELF"], '', $param, '', '', $sortfield, $sortorder, 'tagtd maxwidthonsmartphone ');
+if ($conf->productbatch->enabled) {
+	print getTitleFieldOfList($langs->trans('Batch'), 0, $_SERVER["PHP_SELF"], '', $param, '', '', $sortfield, $sortorder, 'tagtd maxwidthonsmartphone ');
 }
-print getTitleFieldOfList($langs->trans('WarehouseSource'),0,$_SERVER["PHP_SELF"],'',$param,'','class="tagtd maxwidthonsmartphone"',$sortfield,$sortorder);
-print getTitleFieldOfList($langs->trans('WarehouseTarget'),0,$_SERVER["PHP_SELF"],'',$param,'','class="tagtd maxwidthonsmartphone"',$sortfield,$sortorder);
-print getTitleFieldOfList($langs->trans('Qty'),0,$_SERVER["PHP_SELF"],'',$param,'','align="center" class="tagtd maxwidthonsmartphone"',$sortfield,$sortorder);
-print getTitleFieldOfList('',0);
+print getTitleFieldOfList($langs->trans('WarehouseSource'), 0, $_SERVER["PHP_SELF"], '', $param, '', '', $sortfield, $sortorder, 'tagtd maxwidthonsmartphone ');
+print getTitleFieldOfList($langs->trans('WarehouseTarget'), 0, $_SERVER["PHP_SELF"], '', $param, '', '', $sortfield, $sortorder, 'tagtd maxwidthonsmartphone ');
+print getTitleFieldOfList($langs->trans('Qty'), 0, $_SERVER["PHP_SELF"], '', $param, '', '', $sortfield, $sortorder, 'center tagtd maxwidthonsmartphone ');
+print getTitleFieldOfList('', 0);
 print '</tr>';
 
 
@@ -366,8 +363,7 @@ print '<tr class="oddeven">';
 print '<td class="titlefield">';
 $filtertype=0;
 if (! empty($conf->global->STOCK_SUPPORTS_SERVICES)) $filtertype='';
-if ($conf->global->PRODUIT_LIMIT_SIZE <= 0)
-{
+if ($conf->global->PRODUIT_LIMIT_SIZE <= 0) {
 	$limit='';
 }
 else
@@ -375,35 +371,33 @@ else
 	$limit = $conf->global->PRODUIT_LIMIT_SIZE;
 }
 
-print $form->select_produits($id_product, 'productid', $filtertype, $limit, 0, -1, 2, '', 0, array(), 0, '1', 0, 'minwidth300imp maxwidth400', 1);
+print $form->select_produits($id_product, 'productid', $filtertype, $limit, 0, -1, 2, '', 0, array(), 0, '1', 0, 'minwidth200imp maxwidth300', 1);
 print '</td>';
 // Batch number
 if ($conf->productbatch->enabled)
 {
 	print '<td>';
-	print '<input type="text" name="batch" class="flat maxwidth50onsmartphone" value="'.$batch.'">';
+	print '<input type="text" name="batch" class="flat maxwidth50" value="'.$batch.'">';
 	print '</td>';
 }
 // In warehouse
 print '<td>';
-print $formproduct->selectWarehouses($id_sw, 'id_sw', 'warehouseopen,warehouseinternal', 1, 0, 0, '', 0, 0, array(), 'minwidth200imp');
+print $formproduct->selectWarehouses($id_sw, 'id_sw', 'warehouseopen,warehouseinternal', 1, 0, 0, '', 0, 0, array(), 'minwidth200imp maxwidth200');
 print '</td>';
 // Out warehouse
 print '<td>';
-print $formproduct->selectWarehouses($id_tw, 'id_tw', 'warehouseopen,warehouseinternal', 1, 0, 0, '', 0, 0, array(), 'minwidth200imp');
+print $formproduct->selectWarehouses($id_tw, 'id_tw', 'warehouseopen,warehouseinternal', 1, 0, 0, '', 0, 0, array(), 'minwidth200imp maxwidth200');
 print '</td>';
 // Qty
-print '<td align="center"><input type="text" size="3" class="flat" name="qty" value="'.$qty.'"></td>';
+print '<td class="center"><input type="text" class="flat maxwidth50" name="qty" value="'.$qty.'"></td>';
 // Button to add line
-print '<td align="right"><input type="submit" class="button" name="addline" value="'.dol_escape_htmltag($titletoadd).'"></td>';
+print '<td class="right"><input type="submit" class="button" name="addline" value="'.dol_escape_htmltag($titletoadd).'"></td>';
 
 print '</tr>';
 
 
 foreach($listofdata as $key => $val)
 {
-
-
 	$productstatic->fetch($val['id_product']);
 	$warehousestatics->fetch($val['id_sw']);
 	$warehousestatict->fetch($val['id_tw']);
@@ -424,8 +418,8 @@ foreach($listofdata as $key => $val)
 	print '<td>';
 	print $warehousestatict->getNomUrl(1);
 	print '</td>';
-	print '<td align="center">'.$val['qty'].'</td>';
-	print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=delline&idline='.$val['id'].'">'.img_delete($langs->trans("Remove")).'</a></td>';
+	print '<td class="center">'.$val['qty'].'</td>';
+	print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=delline&idline='.$val['id'].'">'.img_delete($langs->trans("Remove")).'</a></td>';
 
 	print '</tr>';
 }
@@ -444,18 +438,18 @@ print '<input type="hidden" name="token" value="' .$_SESSION['newtoken'] . '">';
 print '<input type="hidden" name="action" value="createmovements">';
 
 // Button to record mass movement
-$codemove=(isset($_POST["codemove"])?GETPOST("codemove",'alpha'):dol_print_date(dol_now(),'%y%m%d%H%M%S'));
-$labelmovement=GETPOST("label")?GETPOST('label'):$langs->trans("StockTransfer").' '.dol_print_date($now,'%Y-%m-%d %H:%M');
+$codemove=(isset($_POST["codemove"])?GETPOST("codemove", 'alpha'):dol_print_date(dol_now(), '%Y%m%d%H%M%S'));
+$labelmovement=GETPOST("label")?GETPOST('label'):$langs->trans("StockTransfer").' '.dol_print_date($now, '%Y-%m-%d %H:%M');
 
-print '<table class="border" width="100%">';
+print '<table class="noborder" width="100%">';
 	print '<tr>';
-	print '<td class="titlefield">'.$langs->trans("InventoryCode").'</td>';
+	print '<td class="titlefield fieldrequired">'.$langs->trans("InventoryCode").'</td>';
 	print '<td>';
-	print '<input type="text" name="codemove" size="10" value="'.dol_escape_htmltag($codemove).'">';
+	print '<input type="text" name="codemove" size="15" value="'.dol_escape_htmltag($codemove).'">';
 	print '</td>';
 	print '</tr>';
 	print '<tr>';
-	print '<td>'.$langs->trans("LabelMovement").'</td>';
+	print '<td>'.$langs->trans("MovementLabel").'</td>';
 	print '<td>';
 	print '<input type="text" name="label" class="quatrevingtpercent" value="'.dol_escape_htmltag($labelmovement).'">';
 	print '</td>';
@@ -466,7 +460,6 @@ print '<div class="center"><input class="button" type="submit" name="valid" valu
 
 print '</form>';
 
-
+// End of page
 llxFooter();
-
 $db->close();

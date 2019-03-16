@@ -1,8 +1,9 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2013      Florian Henry		<florian.henry@open-concept.pro>
+ * Copyright (C) 2017      Ferran Marcet       	 <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,21 +28,22 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/order.lib.php';
 require_once DOL_DOCUMENT_ROOT .'/commande/class/commande.class.php';
+if (! empty($conf->projet->enabled)) {
+	require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
+}
 
+// Load translation files required by the page
+$langs->loadLangs(array('companies', 'bills', 'orders'));
 
-$langs->load("companies");
-$langs->load("bills");
-$langs->load("orders");
-
-$id = GETPOST('id','int');
-$ref=GETPOST('ref','alpha');
-$socid=GETPOST('socid','int');
-$action=GETPOST('action','alpha');
+$id = GETPOST('id', 'int');
+$ref=GETPOST('ref', 'alpha');
+$socid=GETPOST('socid', 'int');
+$action=GETPOST('action', 'alpha');
 
 // Security check
 $socid=0;
 if ($user->societe_id) $socid=$user->societe_id;
-$result=restrictedArea($user,'commande',$id,'');
+$result=restrictedArea($user, 'commande', $id, '');
 
 
 $object = new Commande($db);
@@ -65,7 +67,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php';	// Must be include, 
  * View
  */
 
-llxHeader('',$langs->trans('Order'),'EN:Customers_Orders|FR:Commandes_Clients|ES:Pedidos de clientes');
+llxHeader('', $langs->trans('Order'), 'EN:Customers_Orders|FR:Commandes_Clients|ES:Pedidos de clientes');
 
 $form = new Form($db);
 
@@ -140,5 +142,6 @@ if ($id > 0 || ! empty($ref))
 }
 
 
+// End of page
 llxFooter();
 $db->close();

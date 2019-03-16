@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2005-2014  Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2014  Regis Houssin       <regis.houssin@capnetworks.com>
+/* Copyright (C) 2005-2018  Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2014  Regis Houssin       <regis.houssin@inodbox.com>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -19,159 +19,179 @@
  */
 
 /**
- * \file       htdocs/core/js/lib_head.js.php
- * \brief      File that include javascript functions (included if option use_javascript activated)
+ * \file		htdocs/core/js/lib_head.js.php
+ * \brief		File that include javascript functions (included if option use_javascript activated)
+ * 				JQuery (providing object $) and JQuery-UI (providing $datepicker) libraries must be loaded before this file.
  */
 
-//if (! defined('NOREQUIREUSER')) define('NOREQUIREUSER','1');	// Not disabled cause need to load personalized language
-//if (! defined('NOREQUIREDB'))   define('NOREQUIREDB','1');
-if (! defined('NOREQUIRESOC'))    define('NOREQUIRESOC','1');
-//if (! defined('NOREQUIRETRAN')) define('NOREQUIRETRAN','1');	// Not disabled cause need to do translations
-if (! defined('NOCSRFCHECK'))     define('NOCSRFCHECK',1);
-if (! defined('NOTOKENRENEWAL'))  define('NOTOKENRENEWAL',1);
-if (! defined('NOLOGIN'))         define('NOLOGIN',1);
-if (! defined('NOREQUIREMENU'))   define('NOREQUIREMENU',1);
-if (! defined('NOREQUIREHTML'))   define('NOREQUIREHTML',1);
-if (! defined('NOREQUIREAJAX'))   define('NOREQUIREAJAX','1');
+if (! defined('NOREQUIRESOC'))    define('NOREQUIRESOC', '1');
+if (! defined('NOCSRFCHECK'))     define('NOCSRFCHECK', 1);
+if (! defined('NOTOKENRENEWAL'))  define('NOTOKENRENEWAL', 1);
+if (! defined('NOLOGIN'))         define('NOLOGIN', 1);
+if (! defined('NOREQUIREMENU'))   define('NOREQUIREMENU', 1);
+if (! defined('NOREQUIREHTML'))   define('NOREQUIREHTML', 1);
+if (! defined('NOREQUIREAJAX'))   define('NOREQUIREAJAX', '1');
 
-session_cache_limiter(FALSE);
+session_cache_limiter('public');
 
 require_once '../../main.inc.php';
 
 // Define javascript type
 top_httphead('text/javascript; charset=UTF-8');
 // Important: Following code is to avoid page request by browser and PHP CPU at each Dolibarr page access.
-if (empty($dolibarr_nocache)) header('Cache-Control: max-age=3600, public, must-revalidate');
+if (empty($dolibarr_nocache)) header('Cache-Control: max-age=10800, public, must-revalidate');
 else header('Cache-Control: no-cache');
+
+
+
+// Define tradMonths javascript array (we define this in datepicker AND in parent page to avoid errors with IE8)
+$tradMonths=array(
+dol_escape_js($langs->transnoentitiesnoconv("Month01")),
+dol_escape_js($langs->transnoentitiesnoconv("Month02")),
+dol_escape_js($langs->transnoentitiesnoconv("Month03")),
+dol_escape_js($langs->transnoentitiesnoconv("Month04")),
+dol_escape_js($langs->transnoentitiesnoconv("Month05")),
+dol_escape_js($langs->transnoentitiesnoconv("Month06")),
+dol_escape_js($langs->transnoentitiesnoconv("Month07")),
+dol_escape_js($langs->transnoentitiesnoconv("Month08")),
+dol_escape_js($langs->transnoentitiesnoconv("Month09")),
+dol_escape_js($langs->transnoentitiesnoconv("Month10")),
+dol_escape_js($langs->transnoentitiesnoconv("Month11")),
+dol_escape_js($langs->transnoentitiesnoconv("Month12"))
+);
+
+$tradMonthsShort=array(
+$langs->trans("MonthShort01"),
+$langs->trans("MonthShort02"),
+$langs->trans("MonthShort03"),
+$langs->trans("MonthShort04"),
+$langs->trans("MonthShort05"),
+$langs->trans("MonthShort06"),
+$langs->trans("MonthShort07"),
+$langs->trans("MonthShort08"),
+$langs->trans("MonthShort09"),
+$langs->trans("MonthShort10"),
+$langs->trans("MonthShort11"),
+$langs->trans("MonthShort12")
+);
+
+$tradDays=array(
+$langs->trans("Sunday"),
+$langs->trans("Monday"),
+$langs->trans("Tuesday"),
+$langs->trans("Wednesday"),
+$langs->trans("Thursday"),
+$langs->trans("Friday"),
+$langs->trans("Saturday")
+);
+
+$tradDaysShort=array(
+$langs->trans("ShortSunday"),
+$langs->trans("ShortMonday"),
+$langs->trans("ShortTuesday"),
+$langs->trans("ShortWednesday"),
+$langs->trans("ShortThursday"),
+$langs->trans("ShortFriday"),
+$langs->trans("ShortSaturday")
+);
+
+$tradDaysMin=array(
+$langs->trans("SundayMin"),
+$langs->trans("MondayMin"),
+$langs->trans("TuesdayMin"),
+$langs->trans("WednesdayMin"),
+$langs->trans("ThursdayMin"),
+$langs->trans("FridayMin"),
+$langs->trans("SaturdayMin")
+);
+
 ?>
+// Javascript libraries for Dolibarr ERP CRM (https://www.dolibarr.org)
 
-/*
- * =================================================================
- * Purpose:
- * Pour la saisie des dates par calendrier Input: base "/theme/eldy" dateFieldID
- * "dateo" Nom du champ format "dd/MM/yyyy" Format issu de Dolibarr de
- * SimpleDateFormat a utiliser pour retour
- * ==================================================================
+// For jQuery date picker
+var tradMonths = <?php echo json_encode($tradMonths) ?>;
+var tradMonthsShort = <?php echo json_encode($tradMonthsShort) ?>;
+var tradDays = <?php echo json_encode($tradDays) ?>;
+var tradDaysShort = <?php echo json_encode($tradDaysShort) ?>;
+var tradDaysMin = <?php echo json_encode($tradDaysMin) ?>;
+
+// For JQuery date picker
+$(document).ready(function() {
+	$.datepicker.setDefaults({
+		autoSize: true,
+		changeMonth: true,
+		changeYear: true,
+		altField: '#timestamp',
+		altFormat: '@'			// Gives a timestamp dateformat
+	});
+});
+
+jQuery(function($){
+	$.datepicker.regional['<?php echo $langs->defaultlang ?>'] = {
+		closeText: '<?php echo $langs->trans("Close2") ?>',
+		prevText: '<?php echo $langs->trans("Previous") ?>',
+		nextText: '<?php echo $langs->trans("Next") ?>',
+		currentText: '<?php echo $langs->trans("Now") ?>',
+		monthNames: tradMonths,
+		monthNamesShort: tradMonthsShort,
+		dayNames: tradDays,
+		dayNamesShort: tradDaysShort,
+		dayNamesMin: tradDaysMin,
+		weekHeader: '<?php echo $langs->trans("Week"); ?>',
+		dateFormat: '<?php echo $langs->trans("FormatDateShortJQuery"); ?>',	/* Note dd/mm/yy means year on 4 digit in jquery format */
+		firstDay: <?php echo (isset($conf->global->MAIN_START_WEEK)?$conf->global->MAIN_START_WEEK:'1'); ?>,
+		isRTL: <?php echo ($langs->trans("DIRECTION")=='rtl'?'true':'false'); ?>,
+		showMonthAfterYear: false,  	/* TODO add specific to country	*/
+ 		yearSuffix: ''			/* TODO add specific to country */
+	};
+	$.datepicker.setDefaults($.datepicker.regional['<?php echo $langs->defaultlang ?>']);
+});
+
+
+
+/**
+ * Set array used for select2 translations
  */
-function showDP(base,dateFieldID,format,codelang)
-{
-	// check to see if another box is already showing
-	var alreadybox=getObjectFromID("DPCancel");
-	if (alreadybox) closeDPBox();	// This erase value of showDP.datefieldID
 
-	// alert("showDP "+codelang);
-	showDP.datefieldID=dateFieldID;	// Must be after the close
+var select2arrayoflanguage = {
+	matches: function (matches) { return matches + " <?php echo dol_escape_js($langs->transnoentitiesnoconv("Select2ResultFoundUseArrows")); ?>"; },
+	noResults: function () { return "<?php echo dol_escape_js($langs->transnoentitiesnoconv("Select2NotFound")); ?>"; },
+	inputTooShort: function (input) {
+		var n = input.minimum;
+		/*console.log(input);
+		console.log(input.minimum);*/
+		if (n > 1) return "<?php echo dol_escape_js($langs->transnoentitiesnoconv("Select2Enter")); ?> " + n + " <?php echo dol_escape_js($langs->transnoentitiesnoconv("Select2MoreCharacters")); ?>";
+			else return "<?php echo dol_escape_js($langs->transnoentitiesnoconv("Select2Enter")); ?> " + n + " <?php echo dol_escape_js($langs->transnoentitiesnoconv("Select2MoreCharacter")); ?>"
+		},
+	loadMore: function (pageNumber) { return "<?php echo dol_escape_js($langs->transnoentitiesnoconv("Select2LoadingMoreResults")); ?>"; },
+	searching: function () { return "<?php echo dol_escape_js($langs->transnoentitiesnoconv("Select2SearchInProgress")); ?>"; }
+};
 
-	var dateField=getObjectFromID(dateFieldID);
 
-	// get positioning
-	var thetop=getTop(dateField)+dateField.offsetHeight;
+/**
+ * For calendar input
+ */
 
-// var xxx=getObjectFromID('bottompage');
-// alert(xxx.style.pixelTop);
-// alert(document.body.clientHeight);
-// alert(document.body.style.offsetTop);
-// alert(thetop);
-// alert(window.innerHeight);
-	if (thetop+160 > window.innerHeight)
-		thetop=thetop-160-20;
-	var theleft=getLeft(dateField);
-	if (theleft+140 > window.innerWidth)
-		theleft= theleft-140+dateField.offsetWidth-15;
-
-	showDP.box=document.createElement("div");
-	showDP.box.className="bodyline";
-	showDP.box.style.display="block";
-	showDP.box.style.zIndex="1000";
-	showDP.box.style.position="absolute";
-	showDP.box.style.top=thetop + "px";
-	showDP.box.style.left=theleft + "px";
-
-	if (dateField.value)	// Si il y avait valeur initiale dans champ
-	{
-		selDate=getDateFromFormat(dateField.value,format);
-		if (selDate)
-		{
-			// Success to parse value in field according to format
-			year=selDate.getFullYear();
-			month=selDate.getMonth()+1;
-			day=selDate.getDate();
-			datetime=selDate.getTime();
-			ymd=formatDate(selDate,'yyyyMMdd');
-		}
-		else
-		{
-			// Failed to parse value in field according to format
-			selDate=new Date();
-			year=selDate.getFullYear();
-			month=selDate.getUTCMonth()+1;
-			day=selDate.getDate();
-			datetime=selDate.getTime();
-			ymd=formatDate(selDate,'yyyyMMdd');
-		}
-	}
+// Returns an object given an id
+function getObjectFromID(id){
+	var theObject;
+	if(document.getElementById)
+		theObject=document.getElementById(id);
 	else
-	{
-		selDate=new Date();
-		year=selDate.getFullYear();
-		month=selDate.getUTCMonth()+1;
-		day=selDate.getDate();
-		datetime=selDate.getTime();
-		ymd=formatDate(selDate,'yyyyMMdd');
-	}
-	loadMonth(base,month,year,ymd,codelang);
-	hideSelectBoxes();
-	document.body.appendChild(showDP.box);
+		theObject=document.all[id];
+	return theObject;
 }
 
-function resetDP(base,dateFieldID,format,codelang)
-{
-	var dateField=getObjectFromID(dateFieldID);
-	dateField.value = formatDate(new Date(), format);
-	dpChangeDay(dateFieldID,format);
-
-	var alreadybox=getObjectFromID("DPCancel");
-	if (alreadybox) showDP(base,dateFieldID,format,codelang);
-}
-
-function loadMonth(base,month,year,ymd,codelang)
-{
-	/* showDP.box.innerHTML="Loading..."; */
-	// alert(codelang);
-	var theURL=base+"datepicker.php?cm=shw&lang="+codelang;
-	theURL+="&m="+encodeURIComponent(month);
-	theURL+="&y="+encodeURIComponent(year);
-	if (selDate)
-	{
-		theURL+="&sd="+ymd;
-	}
-
-	var req=null;
-
-	req=loadXMLDoc(theURL,null,false);
-	if (req.responseText == '') alert('Failed to get URL '.theURL);
- 	// alert(theURL+' - '+req.responseText); // L'url doit avoir la meme racine
-	// que la pages et elements sinon pb de securite.
-	showDP.box.innerHTML=req.responseText;
-}
-
-function closeDPBox()
-{
-	document.body.removeChild(showDP.box);
-	displaySelectBoxes();
-	showDP.box=null;
-	showDP.datefieldID=null;
-}
-
+// Called after selection of a date to save details into detailed fields
 function dpChangeDay(dateFieldID,format)
 {
-	showDP.datefieldID=dateFieldID;
+	//showDP.datefieldID=dateFieldID;
 	console.log("Call dpChangeDay, we save date into detailed fields.");
 
-	var thefield=getObjectFromID(showDP.datefieldID);
-	var thefieldday=getObjectFromID(showDP.datefieldID+"day");
-	var thefieldmonth=getObjectFromID(showDP.datefieldID+"month");
-	var thefieldyear=getObjectFromID(showDP.datefieldID+"year");
+	var thefield=getObjectFromID(dateFieldID);
+	var thefieldday=getObjectFromID(dateFieldID+"day");
+	var thefieldmonth=getObjectFromID(dateFieldID+"month");
+	var thefieldyear=getObjectFromID(dateFieldID+"year");
 
 	var date=getDateFromFormat(thefield.value,format);
 	if (date)
@@ -193,163 +213,6 @@ function dpChangeDay(dateFieldID,format)
 		if(thefieldyear.onchange) thefieldyear.onchange.call(thefieldyear);
 	}
 }
-
-function dpClickDay(year,month,day,format)
-{
-	var thefield=getObjectFromID(showDP.datefieldID);
-	var thefieldday=getObjectFromID(showDP.datefieldID+"day");
-	var thefieldmonth=getObjectFromID(showDP.datefieldID+"month");
-	var thefieldyear=getObjectFromID(showDP.datefieldID+"year");
-
-	var dt = new Date(year, month-1, day);
-
-	thefield.value=formatDate(dt,format);
-	if(thefield.onchange) thefield.onchange.call(thefield);
-
-	thefieldday.value=day;
-	if(thefieldday.onchange) thefieldday.onchange.call(thefieldday);
-	thefieldmonth.value=month;
-	if(thefieldmonth.onchange) thefieldmonth.onchange.call(thefieldmonth);
-	thefieldyear.value=year;
-	if(thefieldyear.onchange) thefieldyear.onchange.call(thefieldyear);
-
-	closeDPBox();
-}
-
-function dpHighlightDay(year,month,day,months){
-	var displayinfo=getObjectFromID("dpExp");
-	displayinfo.innerHTML=months[month-1]+" "+day+", "+year;
-}
-
-// Returns an object given an id
-function getObjectFromID(id){
-	var theObject;
-	if(document.getElementById)
-		theObject=document.getElementById(id);
-	else
-		theObject=document.all[id];
-	return theObject;
-}
-
-// This Function returns the top position of an object
-function getTop(theitem){
-	var offsetTrail = theitem;
-	var offsetTop = 0;
-	while (offsetTrail) {
-		offsetTop += offsetTrail.offsetTop;
-		offsetTrail = offsetTrail.offsetParent;
-	}
-	if (navigator.userAgent.indexOf("Mac") != -1 && typeof document.body.leftMargin != "undefined")
-		offsetTop += document.body.TopMargin;
-	return offsetTop;
-}
-
-// This Function returns the left position of an object
-function getLeft(theitem){
-	var offsetTrail = theitem;
-	var offsetLeft = 0;
-	while (offsetTrail) {
-		offsetLeft += offsetTrail.offsetLeft;
-		offsetTrail = offsetTrail.offsetParent;
-	}
-	if (navigator.userAgent.indexOf("Mac") != -1 && typeof document.body.leftMargin != "undefined")
-		offsetLeft += document.body.leftMargin;
-	return offsetLeft;
-}
-
-
-// Create XMLHttpRequest object and load url
-// Used by calendar or other ajax processes
-// Return req built or false if error
-function loadXMLDoc(url,readyStateFunction,async)
-{
-	// req must be defined by caller with
-	// var req = false;
-
-	// branch for native XMLHttpRequest object (Mozilla, Safari...)
-	if (window.XMLHttpRequest)
-	{
-		req = new XMLHttpRequest();
-
-// if (req.overrideMimeType) {
-// req.overrideMimeType('text/xml');
-// }
-	}
-	// branch for IE/Windows ActiveX version
-	else if (window.ActiveXObject)
-	{
-        try
-        {
-            req = new ActiveXObject("Msxml2.XMLHTTP");
-        }
-        catch (e)
-        {
-            try {
-                req = new ActiveXObject("Microsoft.XMLHTTP");
-            } catch (e) {}
-        }
-	}
-
-	// If XMLHttpRequestObject req is ok, call URL
-	if (! req)
-	{
-    	alert('Cannot create XMLHTTP instance');
-      	return false;
-	}
-
-	if (readyStateFunction) req.onreadystatechange = readyStateFunction;
-	// Exemple of function for readyStateFuncyion:
-	// function ()
-       // {
-       // if ( (req.readyState == 4) && (req.status == 200) ) {
-       // if (req.responseText == 1) { newStatus = 'AAA'; }
-       // if (req.responseText == 0) { newStatus = 'BBB'; }
-       // if (currentStatus != newStatus) {
-       // if (newStatus == "AAA") { obj.innerHTML = 'AAA'; }
-       // else { obj.innerHTML = 'BBB'; }
-       // currentStatus = newStatus;
-       // }
-       // }
-       // }
-	req.open("GET", url, async);
-	req.send(null);
-	return req;
-}
-
-/* To hide/show select Boxes with IE6 (and only IE6 because IE6 has a bug and
- * not put popup completely on the front)
- * Used only bu popup calendar
- */
-function hideSelectBoxes() {
-	var brsVersion = parseInt(window.navigator.appVersion.charAt(0), 10);
-	if (brsVersion <= 6 && window.navigator.userAgent.indexOf("MSIE 6") > -1)
-	{
-		for(var i = 0; i < document.all.length; i++)
-		{
-			if(document.all[i].tagName)
-				if(document.all[i].tagName == "SELECT")
-			  		document.all[i].style.visibility="hidden";
-		}
-	}
-}
-/* To hide/show select Boxes with IE6 (and only IE6 because IE6 has a bug and
- * not put popup completely on the front)
- * Used only bu popup calendar
- */
-function displaySelectBoxes() {
-	var brsVersion = parseInt(window.navigator.appVersion.charAt(0), 10);
-	if (brsVersion <= 6 && window.navigator.userAgent.indexOf("MSIE 6") > -1)
-	{
-	       for(var i = 0; i < document.all.length; i++)
-	       {
-	               if(document.all[i].tagName)
-	                       if(document.all[i].tagName == "SELECT")
-	                               document.all[i].style.visibility="visible";
-	       }
-	}
-}
-
-
 
 /*
  * =================================================================
@@ -414,9 +277,9 @@ function formatDate(date,format)
 
 /*
  * =================================================================
- * Function:
- * getDateFromFormat(date_string, format_string) Purpose: This function takes a
- * date string and a format string. It parses the date string with format and it
+ * Function: getDateFromFormat(date_string, format_string)
+ * Purpose:  This function takes a date string and a format string.
+ * It parses the date string with format and it
  * returns the date as a javascript Date() object. If date does not match
  * format, it returns 0. The format string can use the following tags:
  * Field        | Tags
@@ -472,26 +335,26 @@ function getDateFromFormat(val,format)
         if (substr == "MM" ||substr == "M")
         {
             month=getIntegerInString(val,d,1,2);
-            d -= 2- month.length;
+            if (month) d -= 2- month.length;
         }
         if (substr == "dd")
         {
             day=getIntegerInString(val,d,1,2);
-            d -= 2- day.length;
+            if (day) d -= 2- day.length;
         }
         if (substr == "HH" ||substr == "hh" )
         {
             hour=getIntegerInString(val,d,1,2);
-            d -= 2- hour.length;
+            if (dhouray) d -= 2- hour.length;
         }
         if (substr == "mm"){
             minute=getIntegerInString(val,d,1,2);
-            d -= 2- minute.length;
+            if (minute) d -= 2- minute.length;
         }
         if (substr == "ss")
         {
             seconde=getIntegerInString(val,d,1,2);
-            d -= 2- seconde.length;
+            if (seconde) d -= 2- seconde.length;
         }
 
 		i+=substr.length;
@@ -512,9 +375,8 @@ function getDateFromFormat(val,format)
 
 /*
  * =================================================================
- * Function:
- * stringIsInteger(string)
- * Purpose: Return true if string is an integer
+ * Function: stringIsInteger(string)
+ * Purpose:  Return true if string is an integer
  * ==================================================================
  */
 function stringIsInteger(str)
@@ -532,9 +394,8 @@ function stringIsInteger(str)
 
 /*
  * =================================================================
- * Function:
- * getIntegerInString(string,pos,minlength,maxlength)
- * Purpose: Return part of string from position i that is integer
+ * Function: getIntegerInString(string,pos,minlength,maxlength)
+ * Purpose:  Return part of string from position i that is integer
  * ==================================================================
  */
 function getIntegerInString(str,i,minlength,maxlength)
@@ -551,10 +412,9 @@ function getIntegerInString(str,i,minlength,maxlength)
 
 /*
  * =================================================================
- * Purpose:
- * Clean string to have it url encoded
- * Input: s
- * Author: Laurent Destailleur
+ * Purpose: Clean string to have it url encoded
+ * Input:   s
+ * Author:  Laurent Destailleur
  * Licence: GPL
  * ==================================================================
  */
@@ -565,11 +425,32 @@ function urlencode(s) {
 	return news;
 }
 
+/*
+ * =================================================================
+ * Purpose: Clean string to have it url encoded
+ * Input:   s
+ * Author:  Laurent Destailleur
+ * Licence: GPL
+ * ==================================================================
+ */
+function htmlEntityDecodeJs(inp){
+	var replacements = {'&lt;':'<','&gt;':'>','&sol;':'/','&quot;':'"','&apos;':'\'','&amp;':'&','&nbsp;':' '};
+	if (inp)
+	{
+	  for(var r in replacements){
+	    inp = inp.replace(new RegExp(r,'g'),replacements[r]);
+	  }
+	  return inp.replace(/&#(\d+);/g, function(match, dec) {
+	    return String.fromCharCode(dec);
+	  });
+	}
+	else { return ''; }
+}
+
 
 /*
  * =================================================================
- * Purpose:
- * Applique un delai avant execution. Used for autocompletion of companies.
+ * Purpose: Applique un delai avant execution. Used for autocompletion of companies.
  * Input:   funct, delay
  * Author:  Regis Houssin
  * Licence: GPL
@@ -817,6 +698,7 @@ function confirmConstantAction(action, url, code, input, box, entity, yesButton,
 	}
 }
 
+
 /*
  * =================================================================
  * This is to allow to transform all select box into ajax autocomplete box
@@ -932,8 +814,9 @@ function confirmConstantAction(action, url, code, input, box, entity, yesButton,
 })( jQuery );
 
 
+
 /**
- * Function to output a dialog bog for copy/paste
+ * Function to output a dialog box for copy/paste
  *
  * @param	string	text	Text to put into copy/paste area
  * @param	string	text2	Text to put under the copy/paste area
@@ -990,7 +873,7 @@ function document_preview(file, type, title)
 	if ($.inArray(type, ValidImageTypes) < 0) {
 		var width='85%';
 		var object_width='100%';
-		var height = $( window ).height()*0.90;
+		var height = ($( window ).height() - 60) * 0.90;
 		var object_height='98%';
 
 		show_preview('notimage');
@@ -1034,8 +917,8 @@ function document_preview(file, type, title)
 		if (mode == 'image' && showOriginalSizeButton)
 		{
 			optionsbuttons = {
-			    "<?php echo dol_escape_js($langs->trans("OriginalSize")); ?>": function() { console.log("Click on original size"); jQuery(".ui-dialog-content.ui-widget-content > object").css({ "max-height": "none" }); },
-				"<?php echo dol_escape_js($langs->trans("Close")); ?>": function() { $( this ).dialog( "close" ); }
+			    "<?php echo dol_escape_js($langs->transnoentitiesnoconv("OriginalSize")); ?>": function() { console.log("Click on original size"); jQuery(".ui-dialog-content.ui-widget-content > object").css({ "max-height": "none" }); },
+				"<?php echo dol_escape_js($langs->transnoentitiesnoconv("CloseWindow")); ?>": function() { $( this ).dialog( "close" ); }
 				};
 		}
 
@@ -1165,7 +1048,7 @@ function price2numjs(amount) {
 	// If rounding higher than max shown
 	if (rounding > main_max_dec_shown) rounding = main_max_dec_shown;
 	if (thousand != ',' && thousand != '.') amount = amount.replace(',', '.');
-	amount = amount.replace(' ', '');            // To avoid spaces
+	amount = amount.replace(' ', '');             // To avoid spaces
 	amount = amount.replace(thousand, '');        // Replace of thousand before replace of dec to avoid pb if thousand is .
 	amount = amount.replace(dec, '.');
 	//console.log("amount before="+amount+" rouding="+rounding)
@@ -1177,3 +1060,31 @@ function price2numjs(amount) {
 }
 
 
+<?php
+if (empty($conf->global->MAIN_DISABLE_JQUERY_JNOTIFY) && ! defined('DISABLE_JQUERY_JNOTIFY')) {
+?>
+// Defined properties for JNotify
+$(document).ready(function() {
+	if (typeof $.jnotify == 'function')
+	{
+		$.jnotify.setup({
+			delay: 3000									// the default time to show each notification (in milliseconds)
+			, sticky: false								// determines if the message should be considered "sticky" (user must manually close notification)
+			, closeLabel: "&times;"						// the HTML to use for the "Close" link
+			, showClose: true							// determines if the "Close" link should be shown if notification is also sticky
+			, fadeSpeed: 1000							// the speed to fade messages out (in milliseconds)
+			, slideSpeed: 250                           // the speed used to slide messages out (in milliseconds)
+			, classContainer: "jnotify-container"
+				, classNotification: "jnotify-notification"
+					, classBackground: "jnotify-background"
+						, classClose: "jnotify-close"
+							, classMessage: "jnotify-message"
+								, init: null                                // callback that occurs when the main jnotify container is created
+								, create: null                              // callback that occurs when when the note is created (occurs just before appearing in DOM)
+								, beforeRemove: null                        // callback that occurs when before the notification starts to fade away
+		});
+	}
+});
+<?php } ?>
+
+// End of lib_head.js.php

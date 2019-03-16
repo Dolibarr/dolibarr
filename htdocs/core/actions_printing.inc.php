@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2014-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2014      Frederic France      <frederic.france@free.fr>
+ * Copyright (C) 2014-2018 Frederic France      <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,8 +28,7 @@
 // Filename to print must be provided into 'file' parameter
 
 // Print file
-if ($action == 'print_file' and $user->rights->printing->read) 
-{
+if ($action == 'print_file' && $user->rights->printing->read) {
     $langs->load("printing");
     require_once DOL_DOCUMENT_ROOT . '/core/modules/printing/modules_printing.php';
     $objectprint = new PrintingDriver($db);
@@ -44,27 +43,37 @@ if ($action == 'print_file' and $user->rights->printing->read)
             $printer = new $classname($db);
             //print '<pre>'.print_r($printer, true).'</pre>';
 
-            if (! empty($conf->global->{$printer->active})) 
+            if (! empty($conf->global->{$printer->active}))
             {
                 $printerfound++;
-                
-                $subdir=(GETPOST('printer', 'alpha')=='expedition'?'sending':'');
+
+                $subdir='';
                 $module = GETPOST('printer', 'alpha');
-                if ($module =='commande_fournisseur') {
-                    $module = 'fournisseur';
-                    $subdir = 'commande';
+                switch ($module )
+                {
+                    case 'livraison' :
+                        $subdir = 'receipt';
+                        $module = 'expedition';
+                        break;
+                    case 'expedition' :
+                        $subdir = 'sending';
+                        break;
+                    case 'commande_fournisseur' :
+                        $module = 'fournisseur';
+                        $subdir = 'commande';
+                        break;
                 }
                 try {
-                    $ret = $printer->print_file(GETPOST('file', 'alpha'), $module, $subdir);
+                    $ret = $printer->printFile(GETPOST('file', 'alpha'), $module, $subdir);
                     if ($ret > 0) {
                         //print '<pre>'.print_r($printer->errors, true).'</pre>';
                         setEventMessages($printer->error, $printer->errors, 'errors');
                     }
-                    if ($ret==0) 
+                    if ($ret==0)
                     {
                         //print '<pre>'.print_r($printer->errors, true).'</pre>';
                         setEventMessages($printer->error, $printer->errors);
-                        setEventMessages($langs->trans("FileWasSentToPrinter", basename(GETPOST('file'))).' '.$langs->transnoentitiesnoconv("ViaModule").' '.$printer->name, null);
+                        setEventMessages($langs->transnoentitiesnoconv("FileWasSentToPrinter", basename(GETPOST('file', 'alpha'))).' '.$langs->transnoentitiesnoconv("ViaModule").' '.$printer->name, null);
                     }
                 }
                 catch(Exception $e)
@@ -74,7 +83,7 @@ if ($action == 'print_file' and $user->rights->printing->read)
                 }
             }
         }
-        if ($printerfound==0) setEventMessages($langs->trans("NoActivePrintingModuleFound"), null, 'warnings');
+        if ($printerfound==0) setEventMessages($langs->trans("NoActivePrintingModuleFound", $langs->transnoentities("Module64000Name")), null, 'warnings');
     } else {
         setEventMessages($langs->trans("NoModuleFound"), null, 'warnings');
     }

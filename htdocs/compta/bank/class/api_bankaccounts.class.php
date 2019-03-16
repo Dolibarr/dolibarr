@@ -43,7 +43,7 @@ class BankAccounts extends DolibarrApi
     /**
      * Constructor
      */
-    function __construct()
+    public function __construct()
     {
         global $db;
         $this->db = $db;
@@ -61,11 +61,11 @@ class BankAccounts extends DolibarrApi
      *
      * @throws RestException
      */
-    function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 0, $page = 0, $sqlfilters = '')
+    public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '')
     {
         $list = array();
 
-        if(! DolibarrApiAccess::$user->rights->banque->lire) {
+        if (! DolibarrApiAccess::$user->rights->banque->lire) {
             throw new RestException(401);
         }
 
@@ -121,7 +121,7 @@ class BankAccounts extends DolibarrApi
      *
      * @throws RestException
      */
-    function get($id)
+    public function get($id)
     {
         if (! DolibarrApiAccess::$user->rights->banque->lire) {
             throw new RestException(401);
@@ -142,7 +142,7 @@ class BankAccounts extends DolibarrApi
      * @param array $request_data    Request data
      * @return int ID of account
      */
-    function post($request_data = null)
+    public function post($request_data = null)
     {
         if (! DolibarrApiAccess::$user->rights->banque->configurer) {
             throw new RestException(401);
@@ -173,7 +173,7 @@ class BankAccounts extends DolibarrApi
      * @param array  $request_data    data
      * @return int
      */
-    function put($id, $request_data = null)
+    public function put($id, $request_data = null)
     {
         if (! DolibarrApiAccess::$user->rights->banque->configurer) {
             throw new RestException(401);
@@ -191,9 +191,13 @@ class BankAccounts extends DolibarrApi
         }
 
         if ($account->update(DolibarrApiAccess::$user) > 0)
+        {
             return $this->get($id);
-
-        return false;
+        }
+        else
+        {
+            throw new RestException(500, $account->error);
+        }
     }
 
     /**
@@ -202,7 +206,7 @@ class BankAccounts extends DolibarrApi
      * @param int    $id    ID of account
      * @return array
      */
-    function delete($id)
+    public function delete($id)
     {
         if (! DolibarrApiAccess::$user->rights->banque->configurer) {
             throw new RestException(401);
@@ -233,7 +237,7 @@ class BankAccounts extends DolibarrApi
      *
      * @throws RestException
      */
-    function _validate($data)
+    private function _validate($data)
     {
         $account = array();
         foreach (BankAccounts::$FIELDS as $field) {
@@ -244,14 +248,16 @@ class BankAccounts extends DolibarrApi
         return $account;
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
     /**
      * Clean sensible object datas
      *
      * @param object    $object    Object to clean
      * @return array Array of cleaned object properties
      */
-    function _cleanObjectDatas($object)
+    protected function _cleanObjectDatas($object)
     {
+        // phpcs:enable
         $object = parent::_cleanObjectDatas($object);
 
         unset($object->rowid);
@@ -269,7 +275,7 @@ class BankAccounts extends DolibarrApi
      *
      * @url GET {id}/lines
      */
-    function getLines($id)
+    public function getLines($id)
     {
         $list = array();
 
@@ -321,7 +327,7 @@ class BankAccounts extends DolibarrApi
      *
      * @url POST {id}/lines
      */
-    function addLine($id, $date, $type, $label, $amount, $category=0, $cheque_number='', $cheque_writer='', $cheque_bank='')
+    public function addLine($id, $date, $type, $label, $amount, $category = 0, $cheque_number = '', $cheque_writer = '', $cheque_bank = '')
     {
         if (! DolibarrApiAccess::$user->rights->banque->modifier) {
             throw new RestException(401);
@@ -333,8 +339,16 @@ class BankAccounts extends DolibarrApi
             throw new RestException(404, 'account not found');
         }
 
-        $result = $account->addline($date, $type, $label, $amount, $cheque_number, $category,
-                                    DolibarrApiAccess::$user, $cheque_writer, $cheque_bank);
+        $result = $account->addline(
+            $date,
+            $type,
+            $label,
+            $amount,
+            $cheque_number,
+            $category,
+            DolibarrApiAccess::$user,
+            $cheque_writer, $cheque_bank
+        );
         if ($result < 0) {
             throw new RestException(503, 'Error when adding line to account: ' . $account->error);
         }
@@ -344,7 +358,7 @@ class BankAccounts extends DolibarrApi
     /**
      * Add a link to an account line
      *
-     * @param int    $account_id    ID of account
+     * @param int    $id    		ID of account
      * @param int    $line_id       ID of account line
      * @param int    $url_id        ID to set in the URL {@from body}
      * @param string $url           URL of the link {@from body}
@@ -352,16 +366,16 @@ class BankAccounts extends DolibarrApi
      * @param string $type          Type of link ('payment', 'company', 'member', ...) {@from body}
      * @return int  ID of link
      *
-     * @url POST {account_id}/lines/{line_id}/links
+     * @url POST {id}/lines/{line_id}/links
      */
-    function addLink($account_id, $line_id, $url_id, $url, $label, $type)
+    public function addLink($id, $line_id, $url_id, $url, $label, $type)
     {
         if (! DolibarrApiAccess::$user->rights->banque->modifier) {
             throw new RestException(401);
         }
 
         $account = new Account($this->db);
-        $result = $account->fetch($account_id);
+        $result = $account->fetch($id);
         if (! $result) {
             throw new RestException(404, 'account not found');
         }

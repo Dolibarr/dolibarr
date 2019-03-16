@@ -35,7 +35,7 @@ FormatedExportDesc1=Dette område giver mulighed for at eksportere personlige da
 FormatedExportDesc2=Første trin er at vælge en foruddefineret datasæt, derefter at vælge, hvilke felter du ønsker i dit resultat filer, og hvilken rækkefølge.
 FormatedExportDesc3=Når data for at eksportere er valgt, kan du definere outputfil format du ønsker at eksportere dine data til.
 Sheet=Ark
-NoImportableData=Nr. indføres data (ingen modul med definitioner at tillade data import)
+NoImportableData=Ingen data at importere (intet modul med definitioner, der gør det muligt at importere data)
 FileSuccessfullyBuilt=File generated
 SQLUsedForExport=SQL Anmodning bruges til at bygge eksport-fil
 LineId=Id for linje
@@ -44,7 +44,7 @@ LineDescription=Beskrivelse af linje
 LineUnitPrice=Enhedspris på linje
 LineVATRate=Momssats på linje
 LineQty=Mængde for linje
-LineTotalHT=Beløb efter skat for linje
+LineTotalHT=Beløb ekskl. moms for linje
 LineTotalTTC=Beløb med fradrag af skat for linje
 LineTotalVAT=Momsbeløb for linje
 TypeOfLineServiceOrProduct=Strækningstype (0= produkt, 1= tjeneste)

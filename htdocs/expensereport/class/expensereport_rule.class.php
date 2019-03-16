@@ -21,7 +21,7 @@
  *	\ingroup    expenseik
  *	\brief      File of class to manage expense ik
  */
- 
+
 require_once DOL_DOCUMENT_ROOT.'/core/class/coreobject.class.php';
 
 /**
@@ -29,82 +29,93 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/coreobject.class.php';
  */
 class ExpenseReportRule extends CoreObject
 {
+	/**
+	 * @var string ID to identify managed object
+	 */
 	public $element='expenserule';
+
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
 	public $table_element='expensereport_rules';
+
+	/**
+	 * @var int Field with ID of parent key if this field has a parent
+	 */
 	public $fk_element='fk_expense_rule';
-	
+
 	/**
 	 * date start
-	 * @var date
+	 * @var int|string
 	 */
 	public $dates;
-	
+
 	/**
 	 * date end
-	 * @var date
+	 * @var int|string
 	 */
 	public $datee;
-	
+
 	/**
 	 * amount
 	 * @var double
 	 */
 	public $amount;
-	
+
 	/**
 	 * restrective
 	 * @var int
 	 */
 	public $restrictive;
-	
+
 	/**
 	 * rule for user
 	 * @var int
 	 */
 	public $fk_user;
-	
+
 	/**
 	 * rule for group
 	 * @var int
 	 */
 	public $fk_usergroup;
-	
+
 	/**
 	 * c_type_fees id
 	 * @var int
 	 */
 	public $fk_c_type_fees;
-	
+
 	/**
 	 * code type of expense report
 	 * @var string
 	 */
 	public $code_expense_rules_type;
-	
-	
+
+
 	/**
 	 * rule for all
 	 * @var int
 	 */
 	public $is_for_all;
-	
+
 	/**
 	 * entity
 	 * @var int
 	 */
 	public $entity;
-	
-	
 
-    /**
-     * Attribute object linked with database
-     * @var array
-     */
+
+
+	/**
+	 * Attribute object linked with database
+	 * @var array
+	 */
 	protected $fields=array(
 		'rowid'=>array('type'=>'integer','index'=>true)
 		,'dates'=>array('type'=>'date')
 		,'datee'=>array('type'=>'date')
-	    ,'amount'=>array('type'=>'double')
+		,'amount'=>array('type'=>'double')
 		,'restrictive'=>array('type'=>'integer')
 		,'fk_user'=>array('type'=>'integer')
 		,'fk_usergroup'=>array('type'=>'integer')
@@ -114,33 +125,33 @@ class ExpenseReportRule extends CoreObject
 		,'entity'=>array('type'=>'integer')
 	);
 
-    /**
-     *  Constructor
-     *
-     *  @param      DoliDB		$db      Database handler
-     */
-	public function __construct(DoliDB &$db) 
+	/**
+	 *  Constructor
+	 *
+	 *  @param      DoliDB		$db      Database handler
+	 */
+	public function __construct(DoliDB &$db)
 	{
 		global $conf;
 
-        parent::__construct($db);
+		parent::__construct($db);
 		parent::init();
-		
+
 		$this->errors = array();
 	}
-	
+
 	/**
 	 * Return all rules or filtered by something
-	 * 
+	 *
 	 * @param int	$fk_c_type_fees	type of expense
 	 * @param date	$date			date of expense
 	 * @param type	$fk_user		user of expense
 	 * @return array \ExpenseReportRule
 	 */
-	public static function getAllRule($fk_c_type_fees='', $date='', $fk_user='')
+	public static function getAllRule($fk_c_type_fees = '', $date = '', $fk_user = '')
 	{
 		global $db;
-		
+
 		$rules = array();
 		$sql = 'SELECT er.rowid';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'expensereport_rules er';
@@ -162,9 +173,9 @@ class ExpenseReportRule extends CoreObject
 			$sql.= ' OR er.fk_usergroup IN (SELECT ugu.fk_usergroup FROM '.MAIN_DB_PREFIX.'usergroup_user ugu WHERE ugu.fk_user = '.$fk_user.') )';
 		}
 		$sql.= ' ORDER BY er.is_for_all, er.fk_usergroup, er.fk_user';
-		
+
 		dol_syslog("ExpenseReportRule::getAllRule sql=".$sql);
-		
+
 		$resql = $db->query($sql);
 		if ($resql)
 		{
@@ -179,19 +190,19 @@ class ExpenseReportRule extends CoreObject
 		{
 			dol_print_error($db);
 		}
-		
+
 		return $rules;
 	}
-	
+
 	/**
 	 * Return the label of group for the current object
-	 * 
+	 *
 	 * @return string
 	 */
 	public function getGroupLabel()
 	{
 		include_once DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php';
-		
+
 		if ($this->fk_usergroup > 0)
 		{
 			$group = new UserGroup($this->db);
@@ -205,19 +216,19 @@ class ExpenseReportRule extends CoreObject
 				$this->errors[] = $this->error;
 			}
 		}
-		
+
 		return '';
 	}
-	
+
 	/**
 	 * Return the name of user for the current object
-	 * 
+	 *
 	 * @return string
 	 */
 	public function getUserName()
 	{
 		include_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
-		
+
 		if ($this->fk_user > 0)
 		{
 			$u = new User($this->db);
@@ -231,7 +242,7 @@ class ExpenseReportRule extends CoreObject
 				$this->errors[] = $this->error;
 			}
 		}
-		
+
 		return '';
 	}
 }

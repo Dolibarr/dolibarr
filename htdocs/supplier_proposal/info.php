@@ -1,7 +1,8 @@
 <?php
 /* Copyright (C) 2004		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2006	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
+ * Copyright (C) 2017      Ferran Marcet       	 <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,12 +28,15 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/supplier_proposal/class/supplier_proposal.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/supplier_proposal.lib.php';
+if (! empty($conf->projet->enabled)) {
+	require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
+}
 
-$langs->load('supplier_proposal');
-$langs->load('compta');
+// Load translation files required by the page
+$langs->loadLangs(array('supplier_proposal', 'compta'));
 
-$id=GETPOST('id','int');
-$socid=GETPOST('socid','int');
+$id=GETPOST('id', 'int');
+$socid=GETPOST('socid', 'int');
 
 // Security check
 if (! empty($user->societe_id)) $socid=$user->societe_id;
@@ -45,7 +49,7 @@ $result = restrictedArea($user, 'supplier_proposal', $id);
 
 $form = new Form($db);
 
-llxHeader('',$langs->trans('CommRequest'),'EN:Ask_Price_Supplier|FR:Demande_de_prix_fournisseur');
+llxHeader('', $langs->trans('CommRequest'), 'EN:Ask_Price_Supplier|FR:Demande_de_prix_fournisseur');
 
 $object = new SupplierProposal($db);
 $object->fetch($id);
@@ -58,7 +62,7 @@ $head = supplier_proposal_prepare_head($object);
 dol_fiche_head($head, 'info', $langs->trans('CommRequest'), -1, 'supplier_proposal');
 
 // Supplier proposal card
-$linkback = '<a href="' . DOL_URL_ROOT . '/supplier_proposal/list.php' . (! empty($socid) ? '?socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
+$linkback = '<a href="' . DOL_URL_ROOT . '/supplier_proposal/list.php?restore_lastsearch_values=1' . (! empty($socid) ? '&socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
 
 
 $morehtmlref='<div class="refidno">';
@@ -119,5 +123,6 @@ print '</div>';
 
 dol_fiche_end();
 
+// End of page
 llxFooter();
 $db->close();

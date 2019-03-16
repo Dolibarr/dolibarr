@@ -35,15 +35,13 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
 	exit(-1);
 }
 
-require_once($path."../../htdocs/master.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/date.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/core/class/ldap.class.php");
-require_once(DOL_DOCUMENT_ROOT."/user/class/user.class.php");
-require_once(DOL_DOCUMENT_ROOT."/user/class/usergroup.class.php");
+require_once $path."../../htdocs/master.inc.php";
+require_once DOL_DOCUMENT_ROOT."/core/lib/date.lib.php";
+require_once DOL_DOCUMENT_ROOT."/core/class/ldap.class.php";
+require_once DOL_DOCUMENT_ROOT."/user/class/user.class.php";
+require_once DOL_DOCUMENT_ROOT."/user/class/usergroup.class.php";
 
-$langs->load("main");
-$langs->load("errors");
-
+$langs->loadLangs(array("main", "errors"));
 
 // Global variables
 $version=DOL_VERSION;
@@ -58,7 +56,7 @@ $confirmed=0;
 
 @set_time_limit(0);
 print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." *****\n";
-dol_syslog($script_file." launched with arg ".join(',',$argv));
+dol_syslog($script_file." launched with arg ".join(',', $argv));
 
 // List of fields to get from LDAP
 $required_fields = array(
@@ -81,9 +79,9 @@ if (! isset($argv[1])) {
 foreach($argv as $key => $val)
 {
 	if ($val == 'commitiferror') $forcecommit=1;
-	if (preg_match('/--server=([^\s]+)$/',$val,$reg)) $conf->global->LDAP_SERVER_HOST=$reg[1];
-	if (preg_match('/--excludeuser=([^\s]+)$/',$val,$reg)) $excludeuser=explode(',',$reg[1]);
-	if (preg_match('/-y$/',$val,$reg)) $confirmed=1;
+	if (preg_match('/--server=([^\s]+)$/', $val, $reg)) $conf->global->LDAP_SERVER_HOST=$reg[1];
+	if (preg_match('/--excludeuser=([^\s]+)$/', $val, $reg)) $excludeuser=explode(',', $reg[1]);
+	if (preg_match('/-y$/', $val, $reg)) $confirmed=1;
 }
 
 print "Mails sending disabled (useless in batch mode)\n";
@@ -93,7 +91,7 @@ print "----- Synchronize all records from LDAP database:\n";
 print "host=".$conf->global->LDAP_SERVER_HOST."\n";
 print "port=".$conf->global->LDAP_SERVER_PORT."\n";
 print "login=".$conf->global->LDAP_ADMIN_DN."\n";
-print "pass=".preg_replace('/./i','*',$conf->global->LDAP_ADMIN_PASS)."\n";
+print "pass=".preg_replace('/./i', '*', $conf->global->LDAP_ADMIN_PASS)."\n";
 print "DN to extract=".$conf->global->LDAP_GROUP_DN."\n";
 print 'Filter=('.$conf->global->LDAP_KEY_GROUPS.'=*)'."\n";
 print "----- To Dolibarr database:\n";
@@ -104,7 +102,7 @@ print "login=".$conf->db->user."\n";
 print "database=".$conf->db->name."\n";
 print "----- Options:\n";
 print "commitiferror=".$forcecommit."\n";
-print "Mapped LDAP fields=".join(',',$required_fields)."\n";
+print "Mapped LDAP fields=".join(',', $required_fields)."\n";
 print "\n";
 
 if (! $confirmed)
@@ -130,7 +128,7 @@ if ($result >= 0)
 	// We disable synchro Dolibarr-LDAP
 	$conf->global->LDAP_SYNCHRO_ACTIVE=0;
 
-	$ldaprecords = $ldap->getRecords('*',$conf->global->LDAP_GROUP_DN, $conf->global->LDAP_KEY_GROUPS, $required_fields, 0, array($conf->global->LDAP_GROUP_FIELD_GROUPMEMBERS));
+	$ldaprecords = $ldap->getRecords('*', $conf->global->LDAP_GROUP_DN, $conf->global->LDAP_KEY_GROUPS, $required_fields, 0, array($conf->global->LDAP_GROUP_FIELD_GROUPMEMBERS));
 	if (is_array($ldaprecords))
 	{
 		$db->begin();
@@ -186,16 +184,21 @@ if ($result >= 0)
 			foreach($ldapgroup[$conf->global->LDAP_GROUP_FIELD_GROUPMEMBERS] as $key => $userdn) {
 				if($key === 'count') continue;
 				if(empty($userList[$userdn])) { // Récupération de l'utilisateur
-					$userFilter = explode(',', $userdn);
-					$userKey = $ldap->getAttributeValues('('.$userFilter[0].')', $conf->global->LDAP_KEY_USERS);
+					// Schéma rfc2307: les membres sont listés dans l'attribut memberUid sous form de login uniquement
+					if ($conf->global->LDAP_GROUP_FIELD_GROUPMEMBERS === 'memberUid'){
+						$userKey = array($userdn);
+					} else { // Pour les autres schémas, les membres sont listés sous forme de DN complets
+						$userFilter = explode(',', $userdn);
+						$userKey = $ldap->getAttributeValues('('.$userFilter[0].')', $conf->global->LDAP_KEY_USERS);
+					}
 					if(!is_array($userKey)) continue;
 
 					$fuser = new User($db);
 
 					if($conf->global->LDAP_KEY_USERS == $conf->global->LDAP_FIELD_SID) {
-						$fuser->fetch('','',$userKey[0]); // Chargement du user concerné par le SID
-					} else if($conf->global->LDAP_KEY_USERS == $conf->global->LDAP_FIELD_LOGIN) {
-						$fuser->fetch('',$userKey[0]); // Chargement du user concerné par le login
+						$fuser->fetch('', '', $userKey[0]); // Chargement du user concerné par le SID
+					} elseif ($conf->global->LDAP_KEY_USERS == $conf->global->LDAP_FIELD_LOGIN) {
+						$fuser->fetch('', $userKey[0]); // Chargement du user concerné par le login
 					}
 
 					$userList[$userdn] = $fuser;
@@ -229,20 +232,20 @@ if ($result >= 0)
 		}
 		else
 		{
-			print $langs->transnoentities("ErrorSomeErrorWereFoundRollbackIsDone",$error)."\n";
+			print $langs->transnoentities("ErrorSomeErrorWereFoundRollbackIsDone", $error)."\n";
 			$db->rollback();
 		}
 		print "\n";
 	}
 	else
 	{
-		dol_print_error('',$ldap->error);
+		dol_print_error('', $ldap->error);
 		$error++;
 	}
 }
 else
 {
-	dol_print_error('',$ldap->error);
+	dol_print_error('', $ldap->error);
 	$error++;
 }
 
@@ -260,4 +263,3 @@ function dolValidElement($element)
 {
 	return (trim($element) != '');
 }
-

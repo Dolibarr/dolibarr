@@ -28,7 +28,7 @@ global $conf,$user,$langs,$db;
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/date.lib.php';
-require_once(NUSOAP_PATH.'/nusoap.php');        // Include SOAP
+require_once NUSOAP_PATH.'/nusoap.php';        // Include SOAP
 
 
 if (empty($user->id)) {
@@ -55,12 +55,12 @@ class WebservicesThirdpartyTest extends PHPUnit_Framework_TestCase
     protected $savlangs;
     protected $savdb;
     protected $soapclient;
-    
+
     private $_WS_DOL_URL;
     private $_ns='http://www.dolibarr.org/ns/';
-    
-    
-    
+
+
+
 
     /**
      * Constructor
@@ -68,17 +68,19 @@ class WebservicesThirdpartyTest extends PHPUnit_Framework_TestCase
      *
      * @return DateLibTest
      */
-    function __construct()
+    public function __construct()
     {
-        //$this->sharedFixture
+        parent::__construct();
+
+    	//$this->sharedFixture
         global $conf,$user,$langs,$db;
         $this->savconf=$conf;
         $this->savuser=$user;
         $this->savlangs=$langs;
         $this->savdb=$db;
-        
+
         $this->_WS_DOL_URL = DOL_MAIN_URL_ROOT.'/webservices/server_thirdparty.php';
-        
+
         // Set the WebService URL
         print __METHOD__." create nusoap_client for URL=".$this->_WS_DOL_URL."\n";
         $this->soapclient = new nusoap_client($this->_WS_DOL_URL);
@@ -148,10 +150,10 @@ class WebservicesThirdpartyTest extends PHPUnit_Framework_TestCase
     	$user=$this->savuser;
     	$langs=$this->savlangs;
     	$db=$this->savdb;
-    
+
     	$WS_METHOD  = 'createThirdParty';
-   
-    
+
+
     	// Call the WebService method and store its result in $result.
     	$authentication=array(
     			'dolibarrkey'=>$conf->global->WEBSERVICES_KEY,
@@ -159,17 +161,17 @@ class WebservicesThirdpartyTest extends PHPUnit_Framework_TestCase
     			'login'=>'admin',
     			'password'=>'admin',
     			'entity'=>'');
-    
+
     	$body = array (
-    			"id" => NULL,
+    			"id" => null,
     			"ref" => "name",
     			"ref_ext" => "12",
-    			"fk_user_author" => NULL,
-    			"status" => NULL,
+    			"fk_user_author" => null,
+    			"status" => null,
     			"client" => 1,
     			"supplier" => 0,
-    			"customer_code" => "",
-    			"supplier_code" => "",
+    			"customer_code" => "CU0901-5678",
+    			"supplier_code" => "SU0901-5678",
     			"customer_code_accountancy" => "",
     			"supplier_code_accountancy" => "",
     			"date_creation" => "", // dateTime
@@ -197,13 +199,13 @@ class WebservicesThirdpartyTest extends PHPUnit_Framework_TestCase
     			"vat_used" => "",
     			"vat_number" => ""
     	);
-    	
+
     	// Test URL
     	$result='';
     	$parameters = array('authentication'=>$authentication, 'thirdparty'=>$body);
     	print __METHOD__." call method ".$WS_METHOD."\n";
     	try {
-    		$result = $this->soapclient->call($WS_METHOD,$parameters,$thid->ns,'');
+    		$result = $this->soapclient->call($WS_METHOD, $parameters, $this->ns, '');
     	} catch(SoapFault $exception) {
     		echo $exception;
     		$result=0;
@@ -217,20 +219,20 @@ class WebservicesThirdpartyTest extends PHPUnit_Framework_TestCase
     		print $this->soapclient->response;
     		print "\n";
     	}
-    
+
     	print __METHOD__." result=".$result['result']['result_code']."\n";
-    	$this->assertEquals('OK',$result['result']['result_code']);
-    	$this->assertEquals('name',$result['ref']);    	 
-    
+    	$this->assertEquals('OK', $result['result']['result_code']);
+    	$this->assertEquals('name', $result['ref']);
+
     	return $result;
     }
 
     /**
      * testWSThirdpartygetThirdPartyById
-     * 
+     *
      * Use id to retrieve thirdparty
      * @depends testWSThirdpartycreateThirdParty
-     * 
+     *
      * @param	array	$result		thirdparty created by create method
      * @return	array				thirpdarty updated
      */
@@ -257,7 +259,7 @@ class WebservicesThirdpartyTest extends PHPUnit_Framework_TestCase
         $parameters = array('authentication'=>$authentication, 'id'=>$id);
         print __METHOD__." call method ".$WS_METHOD."\n";
         try {
-            $result = $this->soapclient->call($WS_METHOD,$parameters,$this->_ns,'');
+            $result = $this->soapclient->call($WS_METHOD, $parameters, $this->_ns, '');
         } catch(SoapFault $exception) {
             echo $exception;
             $result=0;
@@ -273,25 +275,25 @@ class WebservicesThirdpartyTest extends PHPUnit_Framework_TestCase
         }
 
         print __METHOD__." result=".$result['result']['result_code']."\n";
-        $this->assertEquals('OK',$result['result']['result_code']);
+        $this->assertEquals('OK', $result['result']['result_code']);
         $this->assertEquals($id, $result['thirdparty']['id']);
         $this->assertEquals('name', $result['thirdparty']['ref']);
         $this->assertEquals('12', $result['thirdparty']['ref_ext']);
         $this->assertEquals('0', $result['thirdparty']['status']);
         $this->assertEquals('1', $result['thirdparty']['client']);
         $this->assertEquals('0', $result['thirdparty']['supplier']);
-        
-        
+
+
         return $result;
     }
-    
+
     /**
      * testWSThirdpartygetThirdPartyByRefExt
      *
      * Use ref_ext to retrieve thirdparty
      *
 	 * @depends testWSThirdpartycreateThirdParty
-	 * 
+	 *
      * @param	array	$result		thirdparty created by create method
      * @return	array				thirdparty
      */
@@ -303,9 +305,9 @@ class WebservicesThirdpartyTest extends PHPUnit_Framework_TestCase
     	$langs=$this->savlangs;
     	$db=$this->savdb;
     	$id = $result['id'];
-    
+
     	$WS_METHOD  = 'getThirdParty';
-    
+
     	// Call the WebService method and store its result in $result.
     	$authentication=array(
     			'dolibarrkey'=>$conf->global->WEBSERVICES_KEY,
@@ -313,13 +315,13 @@ class WebservicesThirdpartyTest extends PHPUnit_Framework_TestCase
     			'login'=>'admin',
     			'password'=>'admin',
     			'entity'=>'');
-    
+
     	// Test URL
     	$result='';
     	$parameters = array('authentication'=>$authentication, 'id'=>'', 'ref'=>'', 'ref_ext'=>'12');
     	print __METHOD__." call method ".$WS_METHOD."\n";
     	try {
-    		$result = $this->soapclient->call($WS_METHOD,$parameters,$this->_ns,'');
+    		$result = $this->soapclient->call($WS_METHOD, $parameters, $this->_ns, '');
     	} catch(SoapFault $exception) {
     		echo $exception;
     		$result=0;
@@ -334,20 +336,20 @@ class WebservicesThirdpartyTest extends PHPUnit_Framework_TestCase
     		print $this->soapclient->response;
     		print "\n";
     	}
-        
+
     	print __METHOD__." result=".$result['result']['result_code']."\n";
-    	$this->assertEquals('OK',$result['result']['result_code']);
+    	$this->assertEquals('OK', $result['result']['result_code']);
     	$this->assertEquals($id, $result['thirdparty']['id']);
     	$this->assertEquals('name', $result['thirdparty']['ref']);
     	$this->assertEquals('12', $result['thirdparty']['ref_ext']);
     	$this->assertEquals('0', $result['thirdparty']['status']);
     	$this->assertEquals('1', $result['thirdparty']['client']);
     	$this->assertEquals('0', $result['thirdparty']['supplier']);
-    
-    
+
+
     	return $result;
     }
-    
+
     /**
      * testWSThirdpartydeleteThirdParty
      *
@@ -364,9 +366,9 @@ class WebservicesThirdpartyTest extends PHPUnit_Framework_TestCase
     	$langs=$this->savlangs;
     	$db=$this->savdb;
     	$id = $result['id'];
-    
+
     	$WS_METHOD  = 'deleteThirdParty';
-    
+
     	// Call the WebService method and store its result in $result.
     	$authentication=array(
     			'dolibarrkey'=>$conf->global->WEBSERVICES_KEY,
@@ -374,12 +376,12 @@ class WebservicesThirdpartyTest extends PHPUnit_Framework_TestCase
     			'login'=>'admin',
     			'password'=>'admin',
     			'entity'=>'');
-    
+
     	$result='';
     	$parameters = array('authentication'=>$authentication, 'id'=>$id, 'ref'=>'', 'ref_ext'=>'');
     	print __METHOD__." call method ".$WS_METHOD."\n";
     	try {
-    		$result = $this->soapclient->call($WS_METHOD,$parameters,$this->_ns,'');
+    		$result = $this->soapclient->call($WS_METHOD, $parameters, $this->_ns, '');
     	} catch(SoapFault $exception) {
     		echo $exception;
     		$result=0;
@@ -394,9 +396,8 @@ class WebservicesThirdpartyTest extends PHPUnit_Framework_TestCase
     	}
 
     	print __METHOD__." result=".$result['result']['result_code']."\n";
-    	$this->assertEquals('OK',$result['result']['result_code']);
-    
+    	$this->assertEquals('OK', $result['result']['result_code']);
+
     	return $result;
     }
-
 }

@@ -27,20 +27,22 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/tax.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 if (! empty($conf->projet->enabled))
 {
-    require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-    require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
+    include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+    include_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
 
-$langs->load("compta");
-$langs->load("bills");
+// Load translation files required by the page
+$langs->loadLangs(array('compta', 'bills'));
 
-$id=GETPOST('id','int');
-$action=GETPOST('action','aZ09');
+$id=GETPOST('id', 'int');
+$action=GETPOST('action', 'aZ09');
 
 // Security check
-$socid = GETPOST('socid','int');
+$socid = GETPOST('socid', 'int');
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'tax', $id, 'chargesociales','charges');
+$result = restrictedArea($user, 'tax', $id, 'chargesociales', 'charges');
+
+$object = new ChargeSociales($db);
 
 
 /*
@@ -66,9 +68,8 @@ if (! empty($conf->projet->enabled)) { $formproject = new FormProjets($db); }
 
 $title = $langs->trans("SocialContribution") . ' - ' . $langs->trans("Info");
 $help_url = 'EN:Module_Taxes_and_social_contributions|FR:Module Taxes et dividendes|ES:M&oacute;dulo Impuestos y cargas sociales (IVA, impuestos)';
-llxHeader("",$title,$help_url);
+llxHeader("", $title, $help_url);
 
-$object = new ChargeSociales($db);
 $object->fetch($id);
 $object->info($id);
 
@@ -97,7 +98,7 @@ if (! empty($conf->projet->enabled))
 }
 $morehtmlref.='</div>';
 
-$linkback = '<a href="' . DOL_URL_ROOT . '/compta/sociales/index.php?restore_lastsearch_values=1">' . $langs->trans("BackToList") . '</a>';
+$linkback = '<a href="' . DOL_URL_ROOT . '/compta/sociales/list.php?restore_lastsearch_values=1">' . $langs->trans("BackToList") . '</a>';
 
 $object->totalpaye = $totalpaye;   // To give a chance to dol_banner_tab to use already paid amount to show correct status
 
@@ -114,6 +115,6 @@ print '</td></tr></table>';
 
 print '</div>';
 
+// End of page
 llxFooter();
-
 $db->close();

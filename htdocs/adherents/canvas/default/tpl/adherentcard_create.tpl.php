@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2010 Regis Houssin  <regis.houssin@capnetworks.com>
+/* Copyright (C) 2010 Regis Houssin  <regis.houssin@inodbox.com>
  * Copyright (C) 2012 Philippe Grand <philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -14,8 +14,15 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
- *
  */
+
+// Protection to avoid direct call of template
+if (empty($conf) || ! is_object($conf))
+{
+	print "Error, template page can't be called as URL";
+	exit;
+}
+
 ?>
 
 <!-- BEGIN PHP TEMPLATE ADHERENTCARD_CREATE.TPL.PHP DEFAULT -->
@@ -23,11 +30,11 @@
 <?php
 print load_fiche_titre($this->control->tpl['title']);
 
-dol_htmloutput_errors((is_numeric($object->error)?'':$object->error),$object->errors);
+dol_htmloutput_errors((is_numeric($object->error)?'':$object->error), $object->errors);
 
-dol_htmloutput_errors((is_numeric($GLOBALS['error'])?'':$GLOBALS['error']),$GLOBALS['errors']);
+dol_htmloutput_errors((is_numeric($GLOBALS['error'])?'':$GLOBALS['error']), $GLOBALS['errors']);
 
-dol_htmloutput_errors($this->control->tpl['error'],$this->control->tpl['errors']);
+dol_htmloutput_errors($this->control->tpl['error'], $this->control->tpl['errors']);
 
 echo $this->control->tpl['ajax_selectcountry']; ?>
 

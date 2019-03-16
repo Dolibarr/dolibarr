@@ -27,7 +27,7 @@
  */
 
 // Just to define version DOL_VERSION
-if (! defined('DOL_INC_FOR_VERSION_ERROR')) define('DOL_INC_FOR_VERSION_ERROR','1');
+if (! defined('DOL_INC_FOR_VERSION_ERROR')) define('DOL_INC_FOR_VERSION_ERROR', '1');
 require_once '../filefunc.inc.php';
 
 
@@ -101,11 +101,11 @@ if (! defined('DONOTLOADCONF') && file_exists($conffile) && filesize($conffile) 
     	$dolibarr_main_document_root_alt=isset($dolibarr_main_document_root_alt)?trim($dolibarr_main_document_root_alt):'';
 
         // Remove last / or \ on directories or url value
-        if (! empty($dolibarr_main_document_root)		&& ! preg_match('/^[\\/]+$/',$dolibarr_main_document_root))		$dolibarr_main_document_root=preg_replace('/[\\/]+$/','',$dolibarr_main_document_root);
-        if (! empty($dolibarr_main_url_root)			&& ! preg_match('/^[\\/]+$/',$dolibarr_main_url_root))			$dolibarr_main_url_root=preg_replace('/[\\/]+$/','',$dolibarr_main_url_root);
-        if (! empty($dolibarr_main_data_root)			&& ! preg_match('/^[\\/]+$/',$dolibarr_main_data_root))			$dolibarr_main_data_root=preg_replace('/[\\/]+$/','',$dolibarr_main_data_root);
-        if (! empty($dolibarr_main_document_root_alt)	&& ! preg_match('/^[\\/]+$/',$dolibarr_main_document_root_alt))	$dolibarr_main_document_root_alt=preg_replace('/[\\/]+$/','',$dolibarr_main_document_root_alt);
-        if (! empty($dolibarr_main_url_root_alt)		&& ! preg_match('/^[\\/]+$/',$dolibarr_main_url_root_alt))		$dolibarr_main_url_root_alt=preg_replace('/[\\/]+$/','',$dolibarr_main_url_root_alt);
+        if (! empty($dolibarr_main_document_root)		&& ! preg_match('/^[\\/]+$/', $dolibarr_main_document_root))		$dolibarr_main_document_root=preg_replace('/[\\/]+$/', '', $dolibarr_main_document_root);
+        if (! empty($dolibarr_main_url_root)			&& ! preg_match('/^[\\/]+$/', $dolibarr_main_url_root))			$dolibarr_main_url_root=preg_replace('/[\\/]+$/', '', $dolibarr_main_url_root);
+        if (! empty($dolibarr_main_data_root)			&& ! preg_match('/^[\\/]+$/', $dolibarr_main_data_root))			$dolibarr_main_data_root=preg_replace('/[\\/]+$/', '', $dolibarr_main_data_root);
+        if (! empty($dolibarr_main_document_root_alt)	&& ! preg_match('/^[\\/]+$/', $dolibarr_main_document_root_alt))	$dolibarr_main_document_root_alt=preg_replace('/[\\/]+$/', '', $dolibarr_main_document_root_alt);
+        if (! empty($dolibarr_main_url_root_alt)		&& ! preg_match('/^[\\/]+$/', $dolibarr_main_url_root_alt))		$dolibarr_main_url_root_alt=preg_replace('/[\\/]+$/', '', $dolibarr_main_url_root_alt);
 
         // Create conf object
         if (! empty($dolibarr_main_document_root))
@@ -138,18 +138,18 @@ $conf->global->MAIN_ENABLE_LOG_TO_HTML = 1;
 
 // Define prefix
 if (! isset($dolibarr_main_db_prefix) || ! $dolibarr_main_db_prefix) $dolibarr_main_db_prefix='llx_';
-define('MAIN_DB_PREFIX',(isset($dolibarr_main_db_prefix)?$dolibarr_main_db_prefix:''));
+define('MAIN_DB_PREFIX', (isset($dolibarr_main_db_prefix)?$dolibarr_main_db_prefix:''));
 
 define('DOL_CLASS_PATH', 'class/');                             // Filsystem path to class dir
-define('DOL_DATA_ROOT',(isset($dolibarr_main_data_root)?$dolibarr_main_data_root:DOL_DOCUMENT_ROOT . '/../documents'));
+define('DOL_DATA_ROOT', (isset($dolibarr_main_data_root)?$dolibarr_main_data_root:DOL_DOCUMENT_ROOT . '/../documents'));
 define('DOL_MAIN_URL_ROOT', (isset($dolibarr_main_url_root)?$dolibarr_main_url_root:''));           // URL relative root
-$uri=preg_replace('/^http(s?):\/\//i','',constant('DOL_MAIN_URL_ROOT'));  // $uri contains url without http*
+$uri=preg_replace('/^http(s?):\/\//i', '', constant('DOL_MAIN_URL_ROOT'));  // $uri contains url without http*
 $suburi = strstr($uri, '/');       // $suburi contains url without domain
 if ($suburi == '/') $suburi = '';   // If $suburi is /, it is now ''
 define('DOL_URL_ROOT', $suburi);    // URL relative root ('', '/dolibarr', ...)
 
 
-if (empty($conf->file->character_set_client))      	$conf->file->character_set_client="UTF-8";
+if (empty($conf->file->character_set_client))      	$conf->file->character_set_client="utf-8";
 if (empty($conf->db->character_set))  				$conf->db->character_set='utf8';
 if (empty($conf->db->dolibarr_main_db_collation))  	$conf->db->dolibarr_main_db_collation='utf8_unicode_ci';
 if (empty($conf->db->dolibarr_main_db_encryption)) 	$conf->db->dolibarr_main_db_encryption=0;
@@ -161,7 +161,7 @@ $conf->file->dol_document_root=array(DOL_DOCUMENT_ROOT);
 if (! empty($dolibarr_main_document_root_alt))
 {
     // dolibarr_main_document_root_alt contains several directories
-    $values=preg_split('/[;,]/',$dolibarr_main_document_root_alt);
+    $values=preg_split('/[;,]/', $dolibarr_main_document_root_alt);
     foreach($values as $value)
     {
         $conf->file->dol_document_root[]=$value;
@@ -169,15 +169,20 @@ if (! empty($dolibarr_main_document_root_alt))
 }
 
 
-// Security check
-if (preg_match('/install.lock/i',$_SERVER["SCRIPT_FILENAME"]))
+// Security check (old method, when directory is renamed /install.lock)
+if (preg_match('/install\.lock/i', $_SERVER["SCRIPT_FILENAME"]))
 {
-    print 'Install pages have been disabled for security reason (directory renamed with .lock suffix).';
+	if (! is_object($langs))
+	{
+		$langs = new Translate('..', $conf);
+		$langs->setDefaultLang('auto');
+	}
+	$langs->load("install");
+	print $langs->trans("YouTryInstallDisabledByDirLock");
     if (! empty($dolibarr_main_url_root))
     {
-        print 'Click on following link. ';
-        print '<a href="'.$dolibarr_main_url_root .'/admin/index.php?mainmenu=home&leftmenu=setup'.(isset($_POST["login"])?'&username='.urlencode($_POST["login"]):'').'">';
-        print 'Click here to go to Dolibarr';
+        print 'Click on following link, <a href="'.$dolibarr_main_url_root .'/admin/index.php?mainmenu=home&leftmenu=setup'.(isset($_POST["login"])?'&username='.urlencode($_POST["login"]):'').'">';
+        print $langs->trans("ClickHereToGoToApp");
         print '</a>';
     }
     exit;
@@ -191,13 +196,18 @@ if (constant('DOL_DATA_ROOT') === null) {
 }
 if (@file_exists($lockfile))
 {
-    print 'Install pages have been disabled for security reason (by lock file install.lock into dolibarr documents directory).<br>';
+	if (! isset($langs) || ! is_object($langs))
+	{
+		$langs = new Translate('..', $conf);
+		$langs->setDefaultLang('auto');
+	}
+	$langs->load("install");
+	print $langs->trans("YouTryInstallDisabledByFileLock");
     if (! empty($dolibarr_main_url_root))
     {
-        print 'Click on following link. ';
-        print 'If you always reach this page, you must remove install.lock file manually.<br>';
+        print $langs->trans("ClickOnLinkOrRemoveManualy").'<br>';
         print '<a href="'.$dolibarr_main_url_root .'/admin/index.php?mainmenu=home&leftmenu=setup'.(isset($_POST["login"])?'&username='.urlencode($_POST["login"]):'').'">';
-        print 'Click here to go to Dolibarr';
+        print $langs->trans("ClickHereToGoToApp");
         print '</a>';
     }
     else
@@ -211,18 +221,18 @@ if (@file_exists($lockfile))
 // Force usage of log file for install and upgrades
 $conf->syslog->enabled=1;
 $conf->global->SYSLOG_LEVEL=constant('LOG_DEBUG');
-if (! defined('SYSLOG_HANDLERS')) define('SYSLOG_HANDLERS','["mod_syslog_file"]');
+if (! defined('SYSLOG_HANDLERS')) define('SYSLOG_HANDLERS', '["mod_syslog_file"]');
 if (! defined('SYSLOG_FILE'))	// To avoid warning on systems with constant already defined
 {
-	if (@is_writable('/tmp')) define('SYSLOG_FILE','/tmp/dolibarr_install.log');
-	else if (! empty($_ENV["TMP"])  && @is_writable($_ENV["TMP"]))  define('SYSLOG_FILE',$_ENV["TMP"].'/dolibarr_install.log');
-	else if (! empty($_ENV["TEMP"]) && @is_writable($_ENV["TEMP"])) define('SYSLOG_FILE',$_ENV["TEMP"].'/dolibarr_install.log');
-	else if (@is_writable('../../../../') && @file_exists('../../../../startdoliwamp.bat')) define('SYSLOG_FILE','../../../../dolibarr_install.log');	// For DoliWamp
-	else if (@is_writable('../../')) define('SYSLOG_FILE','../../dolibarr_install.log');				// For others
+	if (@is_writable('/tmp')) define('SYSLOG_FILE', '/tmp/dolibarr_install.log');
+	elseif (! empty($_ENV["TMP"])  && @is_writable($_ENV["TMP"])) define('SYSLOG_FILE', $_ENV["TMP"].'/dolibarr_install.log');
+	elseif (! empty($_ENV["TEMP"]) && @is_writable($_ENV["TEMP"])) define('SYSLOG_FILE', $_ENV["TEMP"].'/dolibarr_install.log');
+	elseif (@is_writable('../../../../') && @file_exists('../../../../startdoliwamp.bat')) define('SYSLOG_FILE', '../../../../dolibarr_install.log');	// For DoliWamp
+	elseif (@is_writable('../../')) define('SYSLOG_FILE', '../../dolibarr_install.log');				// For others
 	//print 'SYSLOG_FILE='.SYSLOG_FILE;exit;
-	if (defined('SYSLOG_FILE')) $conf->global->SYSLOG_FILE=constant('SYSLOG_FILE');
 }
-if (! defined('SYSLOG_FILE_NO_ERROR')) define('SYSLOG_FILE_NO_ERROR',1);
+if (defined('SYSLOG_FILE')) $conf->global->SYSLOG_FILE=constant('SYSLOG_FILE');
+if (! defined('SYSLOG_FILE_NO_ERROR')) define('SYSLOG_FILE_NO_ERROR', 1);
 // We init log handler for install
 $handlers = array('mod_syslog_file');
 foreach ($handlers as $handler)
@@ -265,7 +275,7 @@ if (function_exists('get_magic_quotes_gpc'))	// magic_quotes_* removed in PHP 5.
 }
 
 // Defini objet langs
-$langs = new Translate('..',$conf);
+$langs = new Translate('..', $conf);
 if (GETPOST('lang', 'aZ09')) $langs->setDefaultLang(GETPOST('lang', 'aZ09'));
 else $langs->setDefaultLang('auto');
 
@@ -317,18 +327,18 @@ function conf($dolibarr_main_document_root)
     // Force usage of log file for install and upgrades
     $conf->syslog->enabled=1;
     $conf->global->SYSLOG_LEVEL=constant('LOG_DEBUG');
-    if (! defined('SYSLOG_HANDLERS')) define('SYSLOG_HANDLERS','["mod_syslog_file"]');
+    if (! defined('SYSLOG_HANDLERS')) define('SYSLOG_HANDLERS', '["mod_syslog_file"]');
     if (! defined('SYSLOG_FILE'))	// To avoid warning on systems with constant already defined
     {
-        if (@is_writable('/tmp')) define('SYSLOG_FILE','/tmp/dolibarr_install.log');
-        else if (! empty($_ENV["TMP"])  && @is_writable($_ENV["TMP"]))  define('SYSLOG_FILE',$_ENV["TMP"].'/dolibarr_install.log');
-        else if (! empty($_ENV["TEMP"]) && @is_writable($_ENV["TEMP"])) define('SYSLOG_FILE',$_ENV["TEMP"].'/dolibarr_install.log');
-        else if (@is_writable('../../../../') && @file_exists('../../../../startdoliwamp.bat')) define('SYSLOG_FILE','../../../../dolibarr_install.log');	// For DoliWamp
-        else if (@is_writable('../../')) define('SYSLOG_FILE','../../dolibarr_install.log');				// For others
+        if (@is_writable('/tmp')) define('SYSLOG_FILE', '/tmp/dolibarr_install.log');
+        elseif (! empty($_ENV["TMP"])  && @is_writable($_ENV["TMP"]))  define('SYSLOG_FILE', $_ENV["TMP"].'/dolibarr_install.log');
+        elseif (! empty($_ENV["TEMP"]) && @is_writable($_ENV["TEMP"])) define('SYSLOG_FILE', $_ENV["TEMP"].'/dolibarr_install.log');
+        elseif (@is_writable('../../../../') && @file_exists('../../../../startdoliwamp.bat')) define('SYSLOG_FILE', '../../../../dolibarr_install.log');	// For DoliWamp
+        elseif (@is_writable('../../')) define('SYSLOG_FILE', '../../dolibarr_install.log');				// For others
         //print 'SYSLOG_FILE='.SYSLOG_FILE;exit;
-        if (defined('SYSLOG_FILE')) $conf->global->SYSLOG_FILE=constant('SYSLOG_FILE');
     }
-    if (! defined('SYSLOG_FILE_NO_ERROR')) define('SYSLOG_FILE_NO_ERROR',1);
+    if (defined('SYSLOG_FILE')) $conf->global->SYSLOG_FILE=constant('SYSLOG_FILE');
+    if (! defined('SYSLOG_FILE_NO_ERROR')) define('SYSLOG_FILE_NO_ERROR', 1);
     // We init log handler for install
     $handlers = array('mod_syslog_file');
     foreach ($handlers as $handler)
@@ -364,14 +374,15 @@ function conf($dolibarr_main_document_root)
  * @param   string      $csstable           Css for table
  * @return	void
  */
-function pHeader($subtitle,$next,$action='set',$param='',$forcejqueryurl='',$csstable='main-inside')
+function pHeader($subtitle, $next, $action = 'set', $param = '', $forcejqueryurl = '', $csstable = 'main-inside')
 {
     global $conf;
     global $langs;
     $langs->load("main");
     $langs->load("admin");
+	$langs->load("install");
 
-    $jquerytheme='smoothness';
+    $jquerytheme='base';
 
     if ($forcejqueryurl)
     {
@@ -391,8 +402,9 @@ function pHeader($subtitle,$next,$action='set',$param='',$forcejqueryurl='',$css
     print '<!DOCTYPE HTML>'."\n";
     print '<html>'."\n";
     print '<head>'."\n";
-    print '<meta charset='.$conf->file->character_set_client.'">'."\n";
+    print '<meta charset="'.$conf->file->character_set_client.'">'."\n";
     print '<meta name="viewport" content="width=device-width, initial-scale=1.0">'."\n";
+    print '<meta name="generator" content="Dolibarr installer">'."\n";
     print '<link rel="stylesheet" type="text/css" href="default.css">'."\n";
 
     print '<!-- Includes CSS for JQuery -->'."\n";
@@ -439,7 +451,7 @@ function pHeader($subtitle,$next,$action='set',$param='',$forcejqueryurl='',$css
  * @param	integer	$withpleasewait		Add also please wait tags
  * @return	void
  */
-function pFooter($nonext=0,$setuplang='',$jscheckfunction='', $withpleasewait=0)
+function pFooter($nonext = 0, $setuplang = '', $jscheckfunction = '', $withpleasewait = 0)
 {
     global $conf,$langs;
 
@@ -496,10 +508,10 @@ function pFooter($nonext=0,$setuplang='',$jscheckfunction='', $withpleasewait=0)
  * @param 	int		$level		Level of log
  * @return	void
  */
-function dolibarr_install_syslog($message, $level=LOG_DEBUG)
+function dolibarr_install_syslog($message, $level = LOG_DEBUG)
 {
-    if (! defined('LOG_DEBUG')) define('LOG_DEBUG',6);
-    dol_syslog($message,$level);
+    if (! defined('LOG_DEBUG')) define('LOG_DEBUG', 6);
+    dol_syslog($message, $level);
 }
 
 /**
@@ -554,7 +566,7 @@ function detect_dolibarr_main_url_root()
 		$dolibarr_main_url_root = $_SERVER["SERVER_URL"] . $_SERVER["DOCUMENT_URI"];
 	} // If SCRIPT_URI, SERVER_URL, DOCUMENT_URI not defined (Ie: Apache 2.0.44 for Windows)
 	else {
-		$proto = 'http';
+        $proto = ( (!empty($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] == 'on') || $_SERVER['SERVER_PORT'] == 443) ? 'https' : 'http';
 		if (!empty($_SERVER["HTTP_HOST"])) {
 			$serverport = $_SERVER["HTTP_HOST"];
 		} else {

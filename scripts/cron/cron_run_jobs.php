@@ -23,11 +23,11 @@
  *  \ingroup    cron
  *  \brief      Execute pendings jobs
  */
-if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL','1'); // Disables token renewal
-if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU','1');
-if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML','1');
-if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');
-if (! defined('NOLOGIN'))        define('NOLOGIN','1');
+if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1'); // Disables token renewal
+if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1');
+if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML', '1');
+if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
+if (! defined('NOLOGIN'))        define('NOLOGIN', '1');
 //if (! defined('NOREQUIRETRAN'))  define('NOREQUIRETRAN','1');
 
 
@@ -35,25 +35,25 @@ $sapi_type = php_sapi_name();
 $script_file = basename(__FILE__);
 $path=dirname(__FILE__).'/';
 
-// Test if batch mode
+// Error if Web mode
 if (substr($sapi_type, 0, 3) == 'cgi') {
 	echo "Error: You are using PHP for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
 	exit(-1);
 }
 
-require_once ($path."../../htdocs/master.inc.php");
-require_once (DOL_DOCUMENT_ROOT."/cron/class/cronjob.class.php");
-require_once (DOL_DOCUMENT_ROOT.'/user/class/user.class.php');
+require_once $path."../../htdocs/master.inc.php";
+require_once DOL_DOCUMENT_ROOT."/cron/class/cronjob.class.php";
+require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 
 // Check parameters
 if (! isset($argv[1]) || ! $argv[1]) {
-	usage($path,$script_file);
+	usage($path, $script_file);
 	exit(-1);
 }
 $key=$argv[1];
 
 if (! isset($argv[2]) || ! $argv[2]) {
-	usage($path,$script_file);
+	usage($path, $script_file);
 	exit(-1);
 }
 
@@ -65,15 +65,32 @@ $version=DOL_VERSION;
 $error=0;
 
 
+
 /*
  * Main
  */
+
+$langs->loadLangs(array('main', 'dict'));
 
 // current date
 $now=dol_now();
 
 @set_time_limit(0);
-print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." ***** userlogin=" . $userlogin . " ***** " . $now . " *****\n";
+print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." ***** userlogin=" . $userlogin . " ***** " . dol_print_date($now, 'dayhourrfc') . " *****\n";
+
+// Check module cron is activated
+if (empty($conf->cron->enabled))
+{
+	print "Error: module Scheduled jobs (cron) not activated\n";
+	exit(-1);
+}
+
+// Check module cron is activated
+if (empty($conf->cron->enabled))
+{
+	print "Error: module Scheduled jobs (cron) not activated\n";
+	exit(-1);
+}
 
 // Check security key
 if ($key != $conf->global->CRON_KEY)
@@ -85,7 +102,7 @@ if ($key != $conf->global->CRON_KEY)
 // If param userlogin is reserved word 'firstadmin'
 if ($userlogin == 'firstadmin')
 {
-    $sql='SELECT login from '.MAIN_DB_PREFIX.'user WHERE admin = 1 and statut = 1 ORDER BY entity LIMIT 1';
+    $sql='SELECT login, entity from '.MAIN_DB_PREFIX.'user WHERE admin = 1 and statut = 1 ORDER BY entity LIMIT 1';
     $resql=$db->query($sql);
     if ($resql)
     {
@@ -93,7 +110,7 @@ if ($userlogin == 'firstadmin')
         if ($obj)
         {
             $userlogin = $obj->login;
-            echo "First admin user found is login '".$userlogin."'\n";
+            echo "First admin user found is login '".$userlogin."', entity ".$obj->entity."\n";
         }
     }
     else dol_print_error($db);
@@ -101,7 +118,7 @@ if ($userlogin == 'firstadmin')
 
 // Check user login
 $user=new User($db);
-$result=$user->fetch('',$userlogin);
+$result=$user->fetch('', $userlogin);
 if ($result < 0)
 {
 	echo "User Error: ".$user->error;
@@ -129,10 +146,16 @@ $object = new Cronjob($db);
 
 $filter=array();
 if (! empty($id)) {
+	if (! is_numeric($id))
+	{
+		echo "Error: Bad value for parameter job id";
+		dol_syslog("cron_run_jobs.php Bad value for parameter job id", LOG_WARNING);
+		exit;
+	}
 	$filter['t.rowid']=$id;
 }
 
-$result = $object->fetch_all('DESC','t.rowid', 0, 0, 1, $filter, 0);
+$result = $object->fetch_all('ASC,ASC,ASC', 't.priority,t.entity,t.rowid', 0, 0, 1, $filter, 0);
 if ($result<0)
 {
 	echo "Error: ".$object->error;
@@ -148,30 +171,33 @@ foreach($object->lines as $val)
 	$qualifiedjobs[] = $val;
 }
 
-// TODO This sequence of code must be shared with code into public/cron/cron_run_jobs.php php page.
+// TODO Duplicate. This sequence of code must be shared with code into public/cron/cron_run_jobs.php php page.
 
 $nbofjobs=count($qualifiedjobs);
 $nbofjobslaunchedok=0;
 $nbofjobslaunchedko=0;
 
-if(is_array($qualifiedjobs) && (count($qualifiedjobs)>0))
+if (is_array($qualifiedjobs) && (count($qualifiedjobs)>0))
 {
 	// Loop over job
 	foreach($qualifiedjobs as $line)
 	{
-	    dol_syslog("cron_run_jobs.php cronjobid: ".$line->id, LOG_DEBUG);
-	    echo "cron_run_jobs.php cronjobid: ".$line->id."\n";
+		dol_syslog("cron_run_jobs.php cronjobid: ".$line->id." priority=".$line->priority." entity=".$line->entity." label=".$line->label, LOG_DEBUG);
+
+		echo "cron_run_jobs.php cronjobid: ".$line->id." priority=".$line->priority." entity=".$line->entity." label=".$line->label;
 
 		//If date_next_jobs is less of current date, execute the program, and store the execution time of the next execution in database
 		if (($line->datenextrun < $now) && (empty($line->datestart) || $line->datestart <= $now) && (empty($line->dateend) || $line->dateend >= $now))
 		{
-			dol_syslog("cron_run_jobs.php:: to run line->datenextrun:".dol_print_date($line->datenextrun,'dayhourrfc')." line->datestart:".dol_print_date($line->datestart,'dayhourrfc')." line->dateend:".dol_print_date($line->dateend,'dayhourrfc')." now:".dol_print_date($now,'dayhourrfc'));
+			echo " - qualified";
+
+			dol_syslog("cron_run_jobs.php line->datenextrun:".dol_print_date($line->datenextrun, 'dayhourrfc')." line->datestart:".dol_print_date($line->datestart, 'dayhourrfc')." line->dateend:".dol_print_date($line->dateend, 'dayhourrfc')." now:".dol_print_date($now, 'dayhourrfc'));
 
 			$cronjob=new Cronjob($db);
 			$result=$cronjob->fetch($line->id);
 			if ($result < 0)
 			{
-				echo "Error cronjob->fetch: ".$cronjob->error."\n";
+				echo "Error cronjobid: ".$line->id." cronjob->fetch: ".$cronjob->error."\n";
 				echo "Failed to fetch job ".$line->id."\n";
 				dol_syslog("cron_run_jobs.php::fetch Error ".$cronjob->error, LOG_ERR);
 				exit(-1);
@@ -180,7 +206,7 @@ if(is_array($qualifiedjobs) && (count($qualifiedjobs)>0))
 			$result=$cronjob->run_jobs($userlogin);
 			if ($result < 0)
 			{
-				echo "Error cronjob->run_job: ".$cronjob->error."\n";
+				echo "Error cronjobid: ".$line->id." cronjob->run_job: ".$cronjob->error."\n";
 				echo "At least one job failed. Go on menu Home-Setup-Admin tools to see result for each job.\n";
 				echo "You can also enable module Log if not yet enabled, run again and take a look into dolibarr.log file\n";
 				dol_syslog("cron_run_jobs.php::run_jobs Error ".$cronjob->error, LOG_ERR);
@@ -191,22 +217,31 @@ if(is_array($qualifiedjobs) && (count($qualifiedjobs)>0))
 				$nbofjobslaunchedok++;
 			}
 
+			echo " - result of run_jobs = ".$result;
+
 			// we re-program the next execution and stores the last execution time for this job
 			$result=$cronjob->reprogram_jobs($userlogin, $now);
 			if ($result<0)
 			{
-				echo "Error cronjob->reprogram_job: ".$cronjob->error."\n";
+				echo "Error cronjobid: ".$line->id." cronjob->reprogram_job: ".$cronjob->error."\n";
 				echo "Enable module Log if not yet enabled, run again and take a look into dolibarr.log file\n";
 				dol_syslog("cron_run_jobs.php::reprogram_jobs Error ".$cronjob->error, LOG_ERR);
 				exit(-1);
 			}
 
+			echo " - reprogrammed\n";
 		}
 		else
 		{
-			dol_syslog("cron_run_jobs.php:: job not qualified line->datenextrun:".dol_print_date($line->datenextrun,'dayhourrfc')." line->datestart:".dol_print_date($line->datestart,'dayhourrfc')." line->dateend:".dol_print_date($line->dateend,'dayhourrfc')." now:".dol_print_date($now,'dayhourrfc'));
+			echo " - not qualified\n";
+
+			dol_syslog("cron_run_jobs.php job not qualified line->datenextrun:".dol_print_date($line->datenextrun, 'dayhourrfc')." line->datestart:".dol_print_date($line->datestart, 'dayhourrfc')." line->dateend:".dol_print_date($line->dateend, 'dayhourrfc')." now:".dol_print_date($now, 'dayhourrfc'));
 		}
 	}
+}
+else
+{
+	echo "cron_run_jobs.php no qualified job found\n";
 }
 
 $db->close();
@@ -216,7 +251,14 @@ exit(0);
 
 
 
-function usage($path,$script_file)
+/**
+ * script cron usage
+ *
+ * @param string $path          path
+ * @param string $script_file   filename
+ * @return void
+ */
+function usage($path, $script_file)
 {
 	global $conf;
 
@@ -229,4 +271,3 @@ function usage($path,$script_file)
 	print "For example, to run pending tasks every 5mn, you can add this line:\n";
 	print "*/5 * * * * ".$path.$script_file." securitykey userlogin > ".DOL_DATA_ROOT."/".$script_file.".log\n";
 }
-

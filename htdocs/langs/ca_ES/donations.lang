@@ -31,3 +31,4 @@ DONATION_ART200=Mostrar article 200 del CGI si s'està interessat
 DONATION_ART238=Mostrar article 238 del CGI si s'està interessat
 DONATION_ART885=Mostrar article 885 del CGI si s'està interssat
 DonationPayment=Pagament de la donació
+DonationValidated=Donation %s validated

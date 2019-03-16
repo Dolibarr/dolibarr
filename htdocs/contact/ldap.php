@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2006-2010	Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2006-2012	Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2006-2017	Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,11 +28,11 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/contact.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/ldap.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/ldap.lib.php';
 
-$langs->load("companies");
-$langs->load("ldap");
+// Load translation files required by the page
+$langs->loadLangs(array('companies', 'ldap'));
 $langs->load("admin");
 
-$action=GETPOST('action','aZ09');
+$action=GETPOST('action', 'aZ09');
 
 // Security check
 $id = GETPOST('id', 'int');
@@ -61,7 +61,7 @@ if ($action == 'dolibarr2ldap')
 	$dn=$object->_load_ldap_dn($info);
 	$olddn=$dn;	// We can say that old dn = dn as we force synchro
 
-	$result=$ldap->update($dn,$info,$user,$olddn);
+	$result=$ldap->update($dn, $info, $user, $olddn);
 
 	if ($result >= 0)
 	{
@@ -82,7 +82,7 @@ if ($action == 'dolibarr2ldap')
 
 $title = (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("Contacts") : $langs->trans("ContactsAddresses"));
 
-llxHeader('',$title,'EN:Module_Third_Parties|FR:Module_Tiers|ES:M&oacute;dulo_Empresas');
+llxHeader('', $title, 'EN:Module_Third_Parties|FR:Module_Tiers|ES:M&oacute;dulo_Empresas');
 
 $form = new Form($db);
 
@@ -90,8 +90,10 @@ $head = contact_prepare_head($object);
 
 dol_fiche_head($head, 'ldap', $title, -1, 'contact');
 
+$linkback = '<a href="'.DOL_URL_ROOT.'/contact/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+
 dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', '');
-    
+
 print '<div class="fichecenter">';
 
 print '<div class="underbanner clearboth"></div>';
@@ -168,9 +170,9 @@ $result=$ldap->connect_bind();
 if ($result > 0)
 {
 	$info=$object->_load_ldap_info();
-	$dn=$object->_load_ldap_dn($info,1);
-	$search = "(".$object->_load_ldap_dn($info,2).")";
-	$records = $ldap->getAttribute($dn,$search);
+	$dn=$object->_load_ldap_dn($info, 1);
+	$search = "(".$object->_load_ldap_dn($info, 2).")";
+	$records = $ldap->getAttribute($dn, $search);
 
 	//var_dump($records);
 
@@ -183,7 +185,7 @@ if ($result > 0)
 		}
 		else
 		{
-			$result=show_ldap_content($records,0,$records['count'],true);
+			$result=show_ldap_content($records, 0, $records['count'], true);
 		}
 	}
 	else
@@ -196,15 +198,11 @@ if ($result > 0)
 }
 else
 {
-	dol_print_error('',$ldap->error);
+	setEventMessages($ldap->error, $ldap->errors, 'errors');
 }
 
 
 print '</table>';
 
-
-
-
 llxFooter();
-
 $db->close();

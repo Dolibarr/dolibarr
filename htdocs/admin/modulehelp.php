@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2017	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2017	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2017	Regis Houssin			<regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,32 +17,22 @@
  */
 
 /**
- *  \file       htdocs/admin/modules.php
+ *  \file       htdocs/admin/modulehelp.php
  *  \brief      Page to activate/disable all modules
  */
 
-//if (! defined('NOREQUIREUSER'))  define('NOREQUIREUSER','1');
-//if (! defined('NOREQUIREDB'))    define('NOREQUIREDB','1');
-//if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC','1');
-//if (! defined('NOREQUIRETRAN'))  define('NOREQUIRETRAN','1');
-//if (! defined('NOCSRFCHECK'))    define('NOCSRFCHECK','1');			// Do not check anti CSRF attack test
-//if (! defined('NOSTYLECHECK'))   define('NOSTYLECHECK','1');			// Do not check style html tag into posted data
-//if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL','1');		// Do not check anti POST attack test
-if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU','1');			// If there is no need to load and show top and left menu
-//if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML','1');			// If we don't need to load the html.form.class.php
-//if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');
-//if (! defined("NOLOGIN"))        define("NOLOGIN",'1');				// If this page is public (can be called outside logged session)
+if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1');			// If there is no need to load and show top and left menu
 
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
-$langs->load("errors");
-$langs->load("admin");
+// Load translation files required by the page
+$langs->loadLangs(array('errors', 'admin'));
 
 $mode=GETPOST('mode', 'alpha');
-$action=GETPOST('action','alpha');
+$action=GETPOST('action', 'alpha');
 $id = GETPOST('id', 'int');
 if (empty($mode)) $mode='desc';
 
@@ -65,7 +55,7 @@ if (! $user->admin)
 $form = new Form($db);
 
 $help_url='EN:First_setup|FR:Premiers_paramétrages|ES:Primeras_configuraciones';
-llxHeader('',$langs->trans("Setup"),$help_url);
+llxHeader('', $langs->trans("Setup"), $help_url);
 
 print '<!-- Force style container -->'."\n".'<style>
 .id-container {
@@ -131,7 +121,7 @@ foreach ($modulesdir as $dir)
     							$modulequalified=1;
 
 		    					// We discard modules according to features level (PS: if module is activated we always show it)
-		    					$const_name = 'MAIN_MODULE_'.strtoupper(preg_replace('/^mod/i','',get_class($objMod)));
+		    					$const_name = 'MAIN_MODULE_'.strtoupper(preg_replace('/^mod/i', '', get_class($objMod)));
 		    					if ($objMod->version == 'development'  && (empty($conf->global->$const_name) && ($conf->global->MAIN_FEATURES_LEVEL < 2))) $modulequalified=0;
 		    					if ($objMod->version == 'experimental' && (empty($conf->global->$const_name) && ($conf->global->MAIN_FEATURES_LEVEL < 1))) $modulequalified=0;
 								if (preg_match('/deprecated/', $objMod->version) && (empty($conf->global->$const_name) && ($conf->global->MAIN_FEATURES_LEVEL >= 0))) $modulequalified=0;
@@ -163,8 +153,6 @@ foreach ($modulesdir as $dir)
 		    						$modules[$i] = $objMod;
 		    			            $filename[$i]= $modName;
 
-		    			            $special = $objMod->special;
-
 		    			            // Gives the possibility to the module, to provide his own family info and position of this family
 		    			            if (is_array($objMod->familyinfo) && !empty($objMod->familyinfo)) {
 		    			            	if (!is_array($familyinfo)) $familyinfo=array();
@@ -174,19 +162,17 @@ foreach ($modulesdir as $dir)
 		    			            	$familykey = $objMod->family;
 		    			            }
 
-		    			            $moduleposition = ($objMod->module_position?$objMod->module_position:'500');
-		    			            if ($moduleposition == 500 && ($objMod->isCoreOrExternalModule() == 'external'))
+		    			            $moduleposition = ($objMod->module_position?$objMod->module_position:'50');
+		    			            if ($moduleposition == '50' && ($objMod->isCoreOrExternalModule() == 'external'))
 		    			            {
-		    			                $moduleposition = 800;
+		    			                $moduleposition = '80';		// External modules at end by default
 		    			            }
-
-		    			            if ($special == 1) $familykey='interface';
 
 		    			            $orders[$i]  = $familyinfo[$familykey]['position']."_".$familykey."_".$moduleposition."_".$j;   // Sort by family, then by module position then number
 		    						$dirmod[$i]  = $dir;
 		    						//print $i.'-'.$dirmod[$i].'<br>';
 		    			            // Set categ[$i]
-		    						$specialstring = isset($specialtostring[$special])?$specialtostring[$special]:'unknown';
+		    						$specialstring = 'unknown';
 		    			            if ($objMod->version == 'development' || $objMod->version == 'experimental') $specialstring='expdev';
 		    						if (isset($categ[$specialstring])) $categ[$specialstring]++;					// Array of all different modules categories
 		    			            else $categ[$specialstring]=1;
@@ -240,8 +226,7 @@ foreach($orders as $tmpkey => $tmpvalue)
     $i++;
 }
 $value = $orders[$key];
-$special = $objMod->special;
-$tab=explode('_',$value);
+$tab=explode('_', $value);
 $familyposition=$tab[0]; $familykey=$tab[1]; $module_position=$tab[2]; $numero=$tab[3];
 
 
@@ -270,7 +255,7 @@ if ($objMod->isCoreOrExternalModule() == 'external')
 $modulename=$objMod->getName();
 $moduledesc=$objMod->getDesc();
 $moduleauthor=$objMod->getPublisher();
-$moduledir=strtolower(preg_replace('/^mod/i','',get_class($objMod)));
+$moduledir=strtolower(preg_replace('/^mod/i', '', get_class($objMod)));
 
 
 print '<div class="centpercent">';
@@ -285,7 +270,7 @@ if (! $modulename)
 	dol_syslog("Error for module ".$key." - Property name of module looks empty", LOG_WARNING);
 }
 
-$const_name = 'MAIN_MODULE_'.strtoupper(preg_replace('/^mod/i','',get_class($objMod)));
+$const_name = 'MAIN_MODULE_'.strtoupper(preg_replace('/^mod/i', '', get_class($objMod)));
 
 // Load all lang files of module
 if (isset($objMod->langfiles) && is_array($objMod->langfiles))
@@ -326,9 +311,11 @@ if ($mode == 'desc')
     $textexternal='';
     if ($objMod->isCoreOrExternalModule() == 'external')
     {
-        $textexternal.='<br><strong>'.$langs->trans("Origin").':</strong> '.$langs->trans("ExternalModule",$dirofmodule);
+        $textexternal.='<br><strong>'.$langs->trans("Origin").':</strong> '.$langs->trans("ExternalModule", $dirofmodule);
         if ($objMod->editor_name != 'dolibarr') $textexternal.='<br><strong>'.$langs->trans("Publisher").':</strong> '.(empty($objMod->editor_name)?$langs->trans("Unknown"):$objMod->editor_name);
-        if (! empty($objMod->editor_url) && ! preg_match('/dolibarr\.org/i',$objMod->editor_url)) $textexternal.='<br><strong>'.$langs->trans("Url").':</strong> <a href="'.$objMod->editor_url.'" target="_blank">'.$objMod->editor_url.'</a>';
+        $editor_url = $objMod->editor_url;
+        if (! preg_match('/^http/', $editor_url)) $editor_url = 'http://'.$editor_url;
+        if (! empty($objMod->editor_url) && ! preg_match('/dolibarr\.org/i', $objMod->editor_url)) $textexternal.='<br><strong>'.$langs->trans("Url").':</strong> <a href="'.$editor_url.'" target="_blank">'.$objMod->editor_url.'</a>';
         $text.=$textexternal;
         $text.='<br>';
     }
@@ -366,7 +353,7 @@ if ($mode == 'desc')
 if ($mode == 'feature')
 {
     $text.='<br><strong>'.$langs->trans("DependsOn").':</strong> ';
-    if (count($objMod->requiredby)) $text.=join(',', $objMod->depends);
+    if (count($objMod->depends)) $text.=join(',', $objMod->depends);
 	else $text.=$langs->trans("None");
     $text.='<br><strong>'.$langs->trans("RequiredBy").':</strong> ';
 	if (count($objMod->requiredby)) $text.=join(',', $objMod->requiredby);
@@ -382,7 +369,7 @@ if ($mode == 'feature')
     	$i=0;
     	foreach($sqlfiles as $val)
     	{
-    		$text.=($i?', ':'').preg_replace('/\.sql$/','',preg_replace('/llx_/','',$val['name']));
+    		$text.=($i?', ':'').preg_replace('/\.sql$/', '', preg_replace('/llx_/', '', $val['name']));
     		$i++;
     	}
     	$text.=')';
@@ -421,9 +408,13 @@ if ($mode == 'feature')
         $i=0;
         foreach($objMod->tabs as $val)
         {
-            $tmp=explode(':',$val,3);
-            $text.=($i?', ':'').$tmp[0].':'.$tmp[1];
-            $i++;
+        	if (is_array($val)) $val=$val['data'];
+        	if (is_string($val))
+        	{
+            	$tmp=explode(':', $val, 3);
+            	$text.=($i?', ':'').$tmp[0].':'.$tmp[1];
+           		$i++;
+        	}
         }
     }
     else $text.=$langs->trans("No");
@@ -508,10 +499,10 @@ if ($mode == 'feature')
     	$i=0;
         foreach($objMod->module_parts['hooks'] as $key => $val)
         {
-        	if ($key == 'entity') continue;
+        	if ($key === 'entity') continue;
 
         	// For special values
-        	if ($key == 'data')
+        	if ($key === 'data')
         	{
         		if (is_array($val))
         		{
@@ -603,7 +594,6 @@ dol_fiche_end();
 
 print '</div>';
 
-
+// End of page
 llxFooter();
-
 $db->close();

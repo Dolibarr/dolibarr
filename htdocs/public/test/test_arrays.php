@@ -1,6 +1,6 @@
 <?php
 //define("NOLOGIN",1);		// This means this output page does not require to be logged.
-define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
+define("NOCSRFCHECK", 1);	// We accept to go on this page from external web site.
 
 require '../../main.inc.php';
 
@@ -30,7 +30,7 @@ if (empty($usedolheader))
 	<link rel="shortcut icon" type="image/x-icon" href="<?php echo DOL_URL_ROOT ?>/theme/eldy/img/favicon.ico"/>
 	<title>Test page</title>
 	<!-- Includes for JQuery (Ajax library) -->
-	<link rel="stylesheet" type="text/css" href="<?php echo DOL_URL_ROOT ?>/includes/jquery/css/smoothness/jquery-ui.css" />
+	<link rel="stylesheet" type="text/css" href="<?php echo DOL_URL_ROOT ?>/includes/jquery/css/base/jquery-ui.css" />
 	<!-- <link rel="stylesheet" type="text/css" href="<?php echo DOL_URL_ROOT ?>/includes/jquery/plugins/datatables/media/css/jquery.dataTables.css" /> -->
 	<link rel="stylesheet" type="text/css" title="default" href="<?php echo DOL_URL_ROOT ?>/theme/eldy/style.css.php<?php echo ($_GET["dol_use_jmobile"] == 1)?'?dol_use_jmobile=1&dol_optimize_smallscreen=1':''; ?>" />
 	<!-- Includes JS for JQuery -->
@@ -69,7 +69,7 @@ else
 	);
     */
 
-	llxHeader('','','','',0,0,$arrayjs,$arraycss);
+	llxHeader('', '', '', '', 0, 0, $arrayjs, $arraycss);
 }
 
 
@@ -174,9 +174,9 @@ if ($showbirthday)  $nav.='<input type="hidden" name="showbirthday" value="1">';
 if ($pid)    $nav.='<input type="hidden" name="projectid" value="'.$pid.'">';
 if ($type)   $nav.='<input type="hidden" name="type" value="'.$type.'">';
 if ($usergroup) $nav.='<input type="hidden" name="usergroup" value="'.$usergroup.'">';
-$nav.=$form->select_date($dateselect, 'dateselect', 0, 0, 1, '', 1, 0, 1);
-$nav.=' <input type="submit" name="submitdateselect" class="button" value="'.$langs->trans("Refresh").'">';
-$nav.='</form>';
+$nav.= $form->selectDate($dateselect, 'dateselect', 0, 0, 1, '', 1, 0);
+$nav.= ' <input type="submit" name="submitdateselect" class="button" value="'.$langs->trans("Refresh").'">';
+$nav.= '</form>';
 
 $limit=10;
 print_barre_liste('Title of my list', 12, $_SERVER["PHP_SELF"], '', '', '', 'Text in middle', 20, 500, '', 0, $nav, '', $limit);
@@ -211,7 +211,7 @@ if (! empty($moreforfilter))
     print '<div class="liste_titre liste_titre_bydiv centpercent">';
     print $moreforfilter;
     $parameters=array();
-    $reshook=$hookmanager->executeHooks('printFieldPreListTitle',$parameters);    // Note that $action and $object may have been modified by hook
+    $reshook=$hookmanager->executeHooks('printFieldPreListTitle', $parameters);    // Note that $action and $object may have been modified by hook
     print $hookmanager->resPrint;
     print '</div>';
 }
@@ -221,9 +221,9 @@ if (! empty($moreforfilter))
 <table class="stripe row-border order-column centpercent tagtable liste<?php echo $moreforfilter?" listwithfilterbefore":""; ?>" id="tablelines3">
 <thead>
 <tr class="liste_titre">
-<?php print getTitleFieldOfList($langs->trans('title1'),0,$_SERVER["PHP_SELF"],'aaa','','','align="left"',$sortfield,$sortorder); ?>
-<?php print getTitleFieldOfList($langs->trans('title2'),0,$_SERVER["PHP_SELF"],'bbb','','','align="right"',$sortfield,$sortorder); ?>
-<?php print getTitleFieldOfList($langs->trans('title3'),0,$_SERVER["PHP_SELF"],'ccc','','','align="center"',$sortfield,$sortorder); ?>
+<?php print getTitleFieldOfList($langs->trans('title1'), 0, $_SERVER["PHP_SELF"], 'aaa', '', '', 'align="left"', $sortfield, $sortorder); ?>
+<?php print getTitleFieldOfList($langs->trans('title2'), 0, $_SERVER["PHP_SELF"], 'bbb', '', '', 'align="right"', $sortfield, $sortorder); ?>
+<?php print getTitleFieldOfList($langs->trans('title3'), 0, $_SERVER["PHP_SELF"], 'ccc', '', '', 'align="center"', $sortfield, $sortorder); ?>
 </tr>
 </thead>
 <tbody>

@@ -3,7 +3,7 @@
  * Copyright (C) 2005       Eric Seigne         <eric.seigne@ryxeo.com>
  * Copyright (C) 2006-2016  Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2007       Patrick Raguin      <patrick.raguin@gmail.com>
- * Copyright (C) 2005-2012  Regis Houssin       <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012  Regis Houssin       <regis.houssin@inodbox.com>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -31,13 +31,14 @@ require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/treeview.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
+// Load translation files required by the page
 $langs->load("categories");
 
 if (! $user->rights->categorie->lire) accessforbidden();
 
-$id=GETPOST('id','int');
-$type=(GETPOST('type','aZ09') ? GETPOST('type','aZ09') : Categorie::TYPE_PRODUCT);
-$catname=GETPOST('catname','alpha');
+$id=GETPOST('id', 'int');
+$type=(GETPOST('type', 'aZ09') ? GETPOST('type', 'aZ09') : Categorie::TYPE_PRODUCT);
+$catname=GETPOST('catname', 'alpha');
 
 if (is_numeric($type)) $type=Categorie::$MAP_ID_TO_CODE[$type];	// For backward compatibility
 
@@ -62,10 +63,13 @@ else                                        { $title=$langs->trans("CategoriesAr
 $arrayofjs=array('/includes/jquery/plugins/jquerytreeview/jquery.treeview.js', '/includes/jquery/plugins/jquerytreeview/lib/jquery.cookie.js');
 $arrayofcss=array('/includes/jquery/plugins/jquerytreeview/jquery.treeview.css');
 
-llxHeader('',$title,'','',0,0,$arrayofjs,$arrayofcss);
+llxHeader('', $title, '', '', 0, 0, $arrayofjs, $arrayofcss);
 
+$newcardbutton = '<a class="butActionNew" href="'.DOL_URL_ROOT.'/categories/card.php?action=create&type='.$type.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?type='.$type).'"><span class="valignmiddle">'.$langs->trans("NewCategory").'</span>';
+$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
+$newcardbutton.= '</a>';
 
-print load_fiche_titre($title);
+print load_fiche_titre($title, $newcardbutton);
 
 //print '<table border="0" width="100%" class="notopnoleftnoright">';
 //print '<tr><td valign="top" width="30%" class="notopnoleft">';
@@ -78,11 +82,13 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 print '<form method="post" action="index.php?type='.$type.'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="type" value="'.$type.'">';
+
+
 print '<table class="noborder nohover" width="100%">';
 print '<tr class="liste_titre">';
 print '<td colspan="3">'.$langs->trans("Search").'</td>';
 print '</tr>';
-print '<tr '.$bc[0].'><td>';
+print '<tr class="oddeven"><td>';
 print $langs->trans("Name").':</td><td><input class="flat inputsearch" type="text" name="catname" value="' . $catname . '"/></td><td><input type="submit" class="button" value="'.$langs->trans("Search").'"></td></tr>';
 /*
 // faire une rech dans une sous categorie uniquement
@@ -111,7 +117,6 @@ if ($catname || $id > 0)
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("FoundCats").'</td></tr>';
 
-	$var=true;
 	foreach ($cats as $cat)
 	{
 		print "\t".'<tr class="oddeven">'."\n";
@@ -122,7 +127,7 @@ if ($catname || $id > 0)
 		$categstatic->type=$cat->type;
 		$categstatic->color=$cat->color;
 		print '<span class="noborderoncategories" '.($categstatic->color?' style="background: #'.$categstatic->color.';"':' style="background: #aaa"').'>';
-		print $categstatic->getNomUrl(1,'');
+		print $categstatic->getNomUrl(1, '');
 		print '</span>';
 		print "</td>\n";
 		print "\t\t<td>";
@@ -156,7 +161,7 @@ foreach($fulltree as $key => $val)
 	$categstatic->ref=$val['label'];
 	$categstatic->color=$val['color'];
 	$categstatic->type=$type;
-	$li=$categstatic->getNomUrl(1,'',60);
+	$li=$categstatic->getNomUrl(1, '', 60);
 	$desc=dol_htmlcleanlastbr($val['description']);
 
 	$data[] = array(
@@ -164,17 +169,19 @@ foreach($fulltree as $key => $val)
 	'fk_menu'=>$val['fk_parent'],
 	'entry'=>'<table class="nobordernopadding centpercent"><tr><td><span class="noborderoncategories" '.($categstatic->color?' style="background: #'.$categstatic->color.';"':' style="background: #aaa"').'>'.$li.'</span></td>'.
 	//'<td width="50%">'.dolGetFirstLineOfText($desc).'</td>'.
-	'<td align="right" width="20px;"><a href="'.DOL_URL_ROOT.'/categories/viewcat.php?id='.$val['id'].'&type='.$type.'">'.img_view().'</a></td>'.
+	'<td class="right" width="20px;"><a href="'.DOL_URL_ROOT.'/categories/viewcat.php?id='.$val['id'].'&type='.$type.'">'.img_view().'</a></td>'.
 	'</tr></table>'
 	);
 }
 
 
+//print_barre_liste('', 0, $_SERVER["PHP_SELF"], '', '', '', '', 0, 0, '', 0, $newcardbutton, '', 0, 1, 1);
+
 print '<table class="liste nohover" width="100%">';
-print '<tr class="liste_titre"><td>'.$langs->trans("Categories").'</td><td></td><td align="right">';
+print '<tr class="liste_titre"><td>'.$langs->trans("Categories").'</td><td></td><td class="right">';
 if (! empty($conf->use_javascript_ajax))
 {
-	print '<div id="iddivjstreecontrol"><a class="notasortlink" href="#">'.img_picto('','object_category').' '.$langs->trans("UndoExpandAll").'</a> | <a class="notasortlink" href="#">'.img_picto('','object_category-expanded').' '.$langs->trans("ExpandAll").'</a></div>';
+	print '<div id="iddivjstreecontrol"><a class="notasortlink" href="#">'.img_picto('', 'object_category').' '.$langs->trans("UndoExpandAll").'</a> | <a class="notasortlink" href="#">'.img_picto('', 'object_category-expanded').' '.$langs->trans("ExpandAll").'</a></div>';
 }
 print '</td></tr>';
 
@@ -183,13 +190,13 @@ $nbofentries=(count($data) - 1);
 if ($nbofentries > 0)
 {
 	print '<tr class="pair"><td colspan="3">';
-	tree_recur($data,$data[0],0);
+	tree_recur($data, $data[0], 0);
 	print '</td></tr>';
 }
 else
 {
 	print '<tr class="pair">';
-	print '<td colspan="3"><table class="nobordernopadding"><tr class="nobordernopadding"><td>'.img_picto_common('','treemenu/branchbottom.gif').'</td>';
+	print '<td colspan="3"><table class="nobordernopadding"><tr class="nobordernopadding"><td>'.img_picto_common('', 'treemenu/branchbottom.gif').'</td>';
 	print '<td valign="middle">';
 	print $langs->trans("NoCategoryYet");
 	print '</td>';
@@ -202,6 +209,6 @@ print "</table>";
 
 print '</div>';
 
+// End of page
 llxFooter();
-
 $db->close();

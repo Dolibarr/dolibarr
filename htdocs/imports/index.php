@@ -24,6 +24,7 @@
 require_once '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/imports/class/import.class.php';
 
+// Load translation files required by the page
 $langs->load("exports");
 
 if (! $user->societe_id == 0)
@@ -39,32 +40,32 @@ $import->load_arrays($user);
 
 $form=new Form($db);
 
-llxHeader('',$langs->trans("ImportArea"),'EN:Module_Imports_En|FR:Module_Imports|ES:M&oacute;dulo_Importaciones');
+llxHeader('', $langs->trans("ImportArea"), 'EN:Module_Imports_En|FR:Module_Imports|ES:M&oacute;dulo_Importaciones');
 
 print load_fiche_titre($langs->trans("ImportArea"));
 
 print $langs->trans("FormatedImportDesc1").'<br>';
-print $langs->trans("FormatedImportDesc2").'<br>';
+//print $langs->trans("FormatedImportDesc2").'<br>';
 print '<br>';
 
 
-print '<div class="fichecenter"><div class="fichehalfleft">';
+//print '<div class="fichecenter"><div class="fichehalfleft">';
 
 
 // List of import set
+/*
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Module").'</td>';
 print '<td>'.$langs->trans("ImportableDatas").'</td>';
 //print '<td>&nbsp;</td>';
 print '</tr>';
-$val=true;
+
 if (count($import->array_import_code))
 {
 	foreach ($import->array_import_code as $key => $value)
 	{
-		$val=!$val;
-		print '<tr '.$bc[$val].'><td>';
+		print '<tr class="oddeven"><td>';
 		print img_object($import->array_import_module[$key]->getName(),$import->array_import_module[$key]->picto).' ';
 		print $import->array_import_module[$key]->getName();
 		print '</td><td>';
@@ -84,28 +85,28 @@ else
 }
 print '</table>';
 print '<br>';
+*/
 
 print '<div class="center">';
 if (count($import->array_import_code))
 {
 	//if ($user->rights->import->run)
 	//{
-	print '<a class="butAction" href="'.DOL_URL_ROOT.'/imports/import.php?leftmenu=import">'.$langs->trans("NewImport").'</a>';
+	print '<a class="butActionNew" href="'.DOL_URL_ROOT.'/imports/import.php?leftmenu=import">'.$langs->trans("NewImport").'<span class="fa fa-plus-circle valignmiddle"></span></a>';
 	//}
 	//else
 	//{
-	//	print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("NewImport").'</a>';
+	//	print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("NewImport").'</a>';
 	//}
 }
 print '</div>';
 print '<br>';
 
 
-print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+//print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 
 
 // List of available import format
-$var=true;
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td colspan="2">'.$langs->trans("AvailableFormats").'</td>';
@@ -119,11 +120,10 @@ $liste=$model->liste_modeles($db);
 
 foreach($liste as $key)
 {
-	
 	print '<tr class="oddeven">';
-	print '<td width="16">'.img_picto_common($model->getDriverLabelForKey($key),$model->getPictoForKey($key)).'</td>';
+	print '<td width="16">'.img_picto_common($model->getDriverLabelForKey($key), $model->getPictoForKey($key)).'</td>';
 	$text=$model->getDriverDescForKey($key);
-	print '<td>'.$form->textwithpicto($model->getDriverLabelForKey($key),$text).'</td>';
+	print '<td>'.$form->textwithpicto($model->getDriverLabelForKey($key), $text).'</td>';
 	print '<td>'.$model->getLibLabelForKey($key).'</td>';
 	print '<td class="nowrap" align="right">'.$model->getLibVersionForKey($key).'</td>';
 	print '</tr>';
@@ -132,9 +132,8 @@ foreach($liste as $key)
 print '</table>';
 
 
-print '</div></div></div>';
+//print '</div></div></div>';
 
-
+// End of page
 llxFooter();
-
 $db->close();

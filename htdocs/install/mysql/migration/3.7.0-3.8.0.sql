@@ -350,7 +350,7 @@ ALTER TABLE llx_projet ADD COLUMN opp_amount double(24,8) DEFAULT NULL;
 
 -- Module AskPriceSupplier --
 CREATE TABLE llx_askpricesupplier (
-  rowid integer NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  rowid integer AUTO_INCREMENT PRIMARY KEY,
   ref varchar(30) NOT NULL,
   entity integer NOT NULL DEFAULT '1',
   ref_ext varchar(255) DEFAULT NULL,
@@ -389,7 +389,7 @@ CREATE TABLE llx_askpricesupplier (
 ) ENGINE=innodb;
 
 CREATE TABLE llx_askpricesupplierdet (
-  rowid integer NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  rowid integer AUTO_INCREMENT PRIMARY KEY,
   fk_askpricesupplier integer NOT NULL,
   fk_parent_line integer DEFAULT NULL,
   fk_product integer DEFAULT NULL,
@@ -666,11 +666,11 @@ ALTER TABLE llx_actioncomm DROP INDEX idx_actioncomm_datea;
 ALTER TABLE llx_actioncomm DROP COLUMN datea2;
 
 -- Email tracking
-ALTER TABLE llx_actioncomm ADD COLUMN email_msgid varchar(256);
-ALTER TABLE llx_actioncomm ADD COLUMN email_from varchar(256);
-ALTER TABLE llx_actioncomm ADD COLUMN email_sender varchar(256);
-ALTER TABLE llx_actioncomm ADD COLUMN email_to varchar(256);
-ALTER TABLE llx_actioncomm ADD COLUMN errors_to varchar(256);
+ALTER TABLE llx_actioncomm ADD COLUMN email_msgid varchar(255);
+ALTER TABLE llx_actioncomm ADD COLUMN email_from varchar(255);
+ALTER TABLE llx_actioncomm ADD COLUMN email_sender varchar(255);
+ALTER TABLE llx_actioncomm ADD COLUMN email_to varchar(255);
+ALTER TABLE llx_actioncomm ADD COLUMN errors_to varchar(255);
 
 -- Recurring events
 ALTER TABLE llx_actioncomm ADD COLUMN recurid varchar(128);

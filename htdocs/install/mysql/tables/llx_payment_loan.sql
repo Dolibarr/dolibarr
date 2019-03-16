@@ -1,5 +1,5 @@
 -- ===================================================================
--- Copyright (C) 2014		Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
+-- Copyright (C) 2014		Alexandre Spangaro   <aspangaro@open-dsi.fr>
 -- Copyright (C) 2015       Frederic France      <frederic.france@free.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
@@ -24,13 +24,13 @@ create table llx_payment_loan
   datec				datetime,         -- creation date
   tms				timestamp,
   datep				datetime,         -- payment date
-  amount_capital	real DEFAULT 0,
-  amount_insurance	real DEFAULT 0,
-  amount_interest	real DEFAULT 0,
+  amount_capital	double(24,8) DEFAULT 0,
+  amount_insurance	double(24,8) DEFAULT 0,
+  amount_interest	double(24,8) DEFAULT 0,
   fk_typepayment	integer NOT NULL,
   num_payment		varchar(50),
-  note_private      text,
-  note_public       text,
+  note_private		text,
+  note_public		text,
   fk_bank			integer NOT NULL,
   fk_user_creat		integer,          -- creation user
   fk_user_modif		integer           -- last modification user

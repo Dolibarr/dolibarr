@@ -29,13 +29,38 @@
  */
 class PriceGlobalVariable
 {
-    var $db;							//!< To store db handler
-    var $error;							//!< To return error code (or message)
-    var $errors=array();				//!< To return several error codes (or messages)
-    var $id;
-    var $code;
-    var $description;
-    var $value;
+    /**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+
+    /**
+     * @var string Error code (or message)
+     */
+    public $error='';
+
+    /**
+     * @var string[] Error codes (or messages)
+     */
+    public $errors = array();
+
+    /**
+     * @var int ID
+     */
+    public $id;
+
+    public $code;
+
+    /**
+     * @var string description
+     */
+    public $description;
+
+    public $value;
+
+    /**
+     * @var string Name of table without prefix where object is stored
+     */
     public $table_element = "c_price_global_variable";
 
     /**
@@ -43,10 +68,9 @@ class PriceGlobalVariable
      *
      *  @param	DoliDb		$db      Database handler
      */
-    function __construct($db)
+    public function __construct($db)
     {
         $this->db = $db;
-        return 1;
     }
 
 
@@ -57,7 +81,7 @@ class PriceGlobalVariable
      *  @param  int		$notrigger   0=launch triggers after, 1=disable triggers
      *  @return int      		   	 <0 if KO, Id of created object if OK
      */
-    function create($user, $notrigger=0)
+    public function create($user, $notrigger = 0)
     {
         $error=0;
 
@@ -74,7 +98,7 @@ class PriceGlobalVariable
 
         $this->db->begin();
 
-        dol_syslog(get_class($this)."::create", LOG_DEBUG);
+        dol_syslog(__METHOD__);
         $resql=$this->db->query($sql);
         if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 
@@ -119,13 +143,13 @@ class PriceGlobalVariable
      *  @param		int		$id    	Id object
      *  @return		int			    < 0 if KO, 0 if OK but not found, > 0 if OK
      */
-    function fetch($id)
+    public function fetch($id)
     {
         $sql = "SELECT code, description, value";
         $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element;
         $sql.= " WHERE rowid = ".$id;
 
-        dol_syslog(get_class($this)."::fetch");
+        dol_syslog(__METHOD__);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -158,7 +182,7 @@ class PriceGlobalVariable
      *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
      *  @return int     		   	 <0 if KO, >0 if OK
      */
-    function update($user=0, $notrigger=0)
+    public function update($user = 0, $notrigger = 0)
     {
         $error=0;
 
@@ -173,30 +197,30 @@ class PriceGlobalVariable
 
         $this->db->begin();
 
-        dol_syslog(get_class($this)."::update");
+        dol_syslog(__METHOD__);
         $resql = $this->db->query($sql);
         if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 
-        if (! $error)
-        {
-            if (! $notrigger)
-            {
-                // Uncomment this and change MYOBJECT to your own tag if you
-                // want this action calls a trigger.
+        // if (! $error)
+        // {
+        //     if (! $notrigger)
+        //     {
+        //         // Uncomment this and change MYOBJECT to your own tag if you
+        //         // want this action calls a trigger.
 
-                //// Call triggers
-                //$result=$this->call_trigger('MYOBJECT_MODIFY',$user);
-                //if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
-                //// End call triggers
-             }
-        }
+        //         //// Call triggers
+        //         //$result=$this->call_trigger('MYOBJECT_MODIFY',$user);
+        //         //if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
+        //         //// End call triggers
+        //     }
+        // }
 
         // Commit or rollback
         if ($error)
         {
             foreach($this->errors as $errmsg)
             {
-                dol_syslog(get_class($this)."::update ".$errmsg, LOG_ERR);
+                dol_syslog(__METHOD__." ".$errmsg, LOG_ERR);
                 $this->error.=($this->error?', '.$errmsg:$errmsg);
             }
             $this->db->rollback();
@@ -218,7 +242,7 @@ class PriceGlobalVariable
      *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
      *  @return	int					 <0 if KO, >0 if OK
      */
-    function delete($rowid, $user, $notrigger=0)
+    public function delete($rowid, $user, $notrigger = 0)
     {
         $error=0;
 
@@ -243,7 +267,7 @@ class PriceGlobalVariable
             $sql = "DELETE FROM ".MAIN_DB_PREFIX.$this->table_element;
             $sql.= " WHERE rowid = ".$rowid;
 
-            dol_syslog(get_class($this)."::delete");
+            dol_syslog(__METHOD__);
             $resql = $this->db->query($sql);
             if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
         }
@@ -253,7 +277,7 @@ class PriceGlobalVariable
         {
             foreach($this->errors as $errmsg)
             {
-                dol_syslog(get_class($this)."::delete ".$errmsg, LOG_ERR);
+                dol_syslog(__METHOD__." ".$errmsg, LOG_ERR);
                 $this->error.=($this->error?', '.$errmsg:$errmsg);
             }
             $this->db->rollback();
@@ -272,7 +296,7 @@ class PriceGlobalVariable
      *
      *	@return	void
      */
-    function initAsSpecimen()
+    public function initAsSpecimen()
     {
         $this->id=0;
         $this->code='';
@@ -285,7 +309,7 @@ class PriceGlobalVariable
      *
      *	@return	void
      */
-    function checkParameters()
+    public function checkParameters()
     {
         // Clean parameters
         if (isset($this->code)) $this->code=trim($this->code);
@@ -300,13 +324,13 @@ class PriceGlobalVariable
      *
      *    @return	array				Array of price global variables
      */
-    function listGlobalVariables()
+    public function listGlobalVariables()
     {
         $sql = "SELECT rowid, code, description, value";
         $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element;
         $sql.= " ORDER BY code";
 
-        dol_syslog(get_class($this)."::listGlobalVariables");
+        dol_syslog(__METHOD__, LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {

@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2011-2013 Regis Houssin <regis.houssin@capnetworks.com>
+/* Copyright (C) 2011-2013 Regis Houssin <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -13,8 +13,15 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
- *
  */
+
+// Protection to avoid direct call of template
+if (empty($conf) || ! is_object($conf))
+{
+	print "Error, template page can't be called as URL";
+	exit;
+}
+
 ?>
 
 <!-- START TEMPLATE FILE UPLOAD MAIN -->

@@ -27,6 +27,7 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_global_variable.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_global_variable_updater.class.php';
 
+// Load translation files required by the page
 $langs->load("products");
 
 $id = GETPOST('id', 'int');
@@ -140,14 +141,17 @@ if (!empty($action) && empty($cancel)) {
     $action = '';
 }
 
+
 /*
  * View
  */
 
-llxHeader("","",$langs->trans("CardProduct".$product->type));
-
-print load_fiche_titre($langs->trans("DynamicPriceConfiguration"));
 $form = new Form($db);
+
+llxHeader("", "", $langs->trans("CardProduct".$product->type));
+
+$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+print load_fiche_titre($langs->trans("DynamicPriceConfiguration"), $linkback, 'title_setup');
 
 print $langs->trans("DynamicPriceDesc").'<br>';
 print '<br>';
@@ -332,9 +336,9 @@ if ($action == 'create_updater' || $action == 'edit_updater') {
     //Parameters
     print '<tr>';
     $help = $langs->trans("GlobalVariableUpdaterHelp".$type).'<br><b>'.$langs->trans("GlobalVariableUpdaterHelpFormat".$type).'</b>';
-    print '<td class="fieldrequired">'.$form->textwithpicto($langs->trans("Parameters"),$help,1).'</td><td>';
+    print '<td class="fieldrequired">'.$form->textwithpicto($langs->trans("Parameters"), $help, 1).'</td><td>';
     require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-    $doleditor=new DolEditor('parameters',empty($price_updaters->parameters)?'':$price_updaters->parameters,'',300,'','',false,false,false,ROWS_8,'90%');
+    $doleditor=new DolEditor('parameters', empty($price_updaters->parameters)?'':$price_updaters->parameters, '', 300, '', '', false, false, false, ROWS_8, '90%');
     $doleditor->Create();
     print '</td></tr>';
     print '</tr>';
@@ -353,5 +357,6 @@ if ($action == 'create_updater' || $action == 'edit_updater') {
     print '</form>';
 }
 
+// End of page
 llxFooter();
 $db->close();

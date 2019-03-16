@@ -48,4 +48,4 @@ SmsInfoNumero= (format internacional ex: +33899701761)
 DelayBeforeSending=Retard abans d'enviar (en minuts)
 SmsNoPossibleSenderFound=No hi ha qui envia. Comprova la configuració del proveïdor de SMS.
 SmsNoPossibleRecipientFound=No hi ha destinataris. Comproveu la configuració del seu proveïdor d'SMS.
-
+DisableStopIfSupported=Desactiveu el missatge STOP (si és compatible)

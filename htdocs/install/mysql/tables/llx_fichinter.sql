@@ -1,6 +1,6 @@
 -- ===================================================================
 -- Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+-- Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -42,6 +42,7 @@ create table llx_fichinter
   note_private		text,
   note_public		text,
   model_pdf			varchar(255),
+  last_main_doc		varchar(255),				-- relative filepath+filename of last main generated document
   import_key        varchar(14),
   extraparams		varchar(255)				-- for other parameters with json format
 )ENGINE=innodb;

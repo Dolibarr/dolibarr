@@ -26,11 +26,9 @@
 // This script is called with a POST method.
 // Directory to scan (full path) is inside POST['dir'].
 
-if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL',1); // Disables token renewal
-//if (! defined('NOREQUIRETRAN')) define('NOREQUIRETRAN','1');
-if (! defined('NOREQUIREMENU')) define('NOREQUIREMENU','1');
-if (! defined('NOREQUIREHTML')) define('NOREQUIREHTML','1');
-//if (! defined('NOREQUIREAJAX')) define('NOREQUIREAJAX','1');
+if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', 1); // Disables token renewal
+if (! defined('NOREQUIREMENU')) define('NOREQUIREMENU', '1');
+if (! defined('NOREQUIREHTML')) define('NOREQUIREHTML', '1');
 
 
 require '../../main.inc.php';
@@ -45,13 +43,12 @@ $auth->syncSignatureWithAuthority();
 
 $block_static = new BlockedLog($db);
 
-$blocks = $block_static->getLog('just_certified', 0, 0, 1) ;
+$blocks = $block_static->getLog('just_certified', 0, 0, 'rowid', 'ASC');
 
 $auth->signature = $block_static->getSignature();
 
 foreach($blocks as &$b) {
 	$auth->blockchain.=$b->signature;
-
 }
 
 $hash = $auth->getBlockchainHash();

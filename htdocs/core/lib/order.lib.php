@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2006-2012	Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2007		Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2010-2012	Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2010-2012	Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2010		Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -48,21 +48,9 @@ function commande_prepare_head(Commande $object)
 		$h++;
 	}
 
-	if (($conf->expedition_bon->enabled && $user->rights->expedition->lire)
-	|| ($conf->livraison_bon->enabled && $user->rights->expedition->livraison->lire))
-	{
-		$head[$h][0] = DOL_URL_ROOT.'/expedition/shipment.php?id='.$object->id;
-		if ($conf->expedition_bon->enabled) $text=$langs->trans("Shipments");
-		if ($conf->expedition_bon->enabled && $conf->livraison_bon->enabled) $text.='/';
-		if ($conf->livraison_bon->enabled)  $text.=$langs->trans("Receivings");
-		$head[$h][1] = $text;
-		$head[$h][2] = 'shipping';
-		$h++;
-	}
-
 	if (empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
 	{
-	    $nbContact = count($object->liste_contact(-1,'internal')) + count($object->liste_contact(-1,'external'));
+	    $nbContact = count($object->liste_contact(-1, 'internal')) + count($object->liste_contact(-1, 'external'));
 	    $head[$h][0] = DOL_URL_ROOT.'/commande/contact.php?id='.$object->id;
 		$head[$h][1] = $langs->trans('ContactsAddresses');
 		if ($nbContact > 0) $head[$h][1].= ' <span class="badge">'.$nbContact.'</span>';
@@ -70,11 +58,29 @@ function commande_prepare_head(Commande $object)
 		$h++;
 	}
 
+	if (($conf->expedition_bon->enabled && $user->rights->expedition->lire)
+	|| ($conf->livraison_bon->enabled && $user->rights->expedition->livraison->lire))
+	{
+		$nbShipments=$object->getNbOfShipments(); $nbReceiption=0;
+		$head[$h][0] = DOL_URL_ROOT.'/expedition/shipment.php?id='.$object->id;
+		$text='';
+		if ($conf->expedition_bon->enabled) $text.=$langs->trans("Shipments");
+		if ($conf->expedition_bon->enabled && $conf->livraison_bon->enabled) $text.='/';
+		if ($conf->livraison_bon->enabled)  $text.=$langs->trans("Receivings");
+		if ($nbShipments > 0 || $nbReceiption > 0) $text.= ' <span class="badge">'.($nbShipments?$nbShipments:0);
+		if ($conf->expedition_bon->enabled && $conf->livraison_bon->enabled) $text.='/';
+		if ($conf->expedition_bon->enabled && $conf->livraison_bon->enabled && ($nbShipments > 0 || $nbReceiption > 0)) $text.= ($nbReceiption?$nbReceiption:0);
+		if ($nbShipments > 0 || $nbReceiption > 0) $text.= '</span>';
+		$head[$h][1] = $text;
+		$head[$h][2] = 'shipping';
+		$h++;
+	}
+
     // Show more tabs from modules
     // Entries must be declared in modules descriptor with line
     // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
     // $this->tabs = array('entity:-tabname);   												to remove a tab
-    complete_head_from_modules($conf,$langs,$object,$head,$h,'order');
+    complete_head_from_modules($conf, $langs, $object, $head, $h, 'order');
 
 	if (empty($conf->global->MAIN_DISABLE_NOTES_TAB))
 	{
@@ -91,7 +97,7 @@ function commande_prepare_head(Commande $object)
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
     require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
 	$upload_dir = $conf->commande->dir_output . "/" . dol_sanitizeFileName($object->ref);
-	$nbFiles = count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview.*\.png)$'));
+	$nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
     $nbLinks=Link::count($db, $object->element, $object->id);
 	$head[$h][0] = DOL_URL_ROOT.'/commande/document.php?id='.$object->id;
 	$head[$h][1] = $langs->trans('Documents');
@@ -104,7 +110,7 @@ function commande_prepare_head(Commande $object)
 	$head[$h][2] = 'info';
 	$h++;
 
-    complete_head_from_modules($conf,$langs,$object,$head,$h,'order','remove');
+    complete_head_from_modules($conf, $langs, $object, $head, $h, 'order', 'remove');
 
     return $head;
 }
@@ -126,7 +132,7 @@ function order_admin_prepare_head()
 	$head[$h][2] = 'general';
 	$h++;
 
-	complete_head_from_modules($conf,$langs,null,$head,$h,'order_admin');
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'order_admin');
 
 	$head[$h][0] = DOL_URL_ROOT.'/admin/order_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFields");
@@ -138,9 +144,7 @@ function order_admin_prepare_head()
 	$head[$h][2] = 'attributeslines';
 	$h++;
 
-	complete_head_from_modules($conf,$langs,null,$head,$h,'order_admin','remove');
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'order_admin', 'remove');
 
 	return $head;
 }
-
-

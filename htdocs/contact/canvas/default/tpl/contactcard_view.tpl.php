@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2010-2012 Regis Houssin <regis.houssin@capnetworks.com>
+/* Copyright (C) 2010-2012 Regis Houssin <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -13,8 +13,15 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
- *
  */
+
+// Protection to avoid direct call of template
+if (empty($conf) || ! is_object($conf))
+{
+	print "Error, template page can't be called as URL";
+	exit;
+}
+
 
 $contact = $GLOBALS['objcanvas']->control->object;
 ?>
@@ -23,7 +30,7 @@ $contact = $GLOBALS['objcanvas']->control->object;
 <?php echo $this->control->tpl['showhead']; ?>
 
 <?php
-dol_htmloutput_errors($this->control->tpl['error'],$this->control->tpl['errors']);
+dol_htmloutput_errors($this->control->tpl['error'], $this->control->tpl['errors']);
 ?>
 
 <?php if (! empty($this->control->tpl['action_create_user'])) echo $this->control->tpl['action_create_user']; ?>
@@ -101,11 +108,6 @@ dol_htmloutput_errors($this->control->tpl['error'],$this->control->tpl['errors']
 	<?php } else { ?>
 	<td colspan="2">&nbsp;</td>
 	<?php } ?>
-</tr>
-
-<tr>
-	<td><?php echo $langs->trans("IM"); ?></td>
-	<td colspan="3"><?php echo $this->control->tpl['jabberid']; ?></td>
 </tr>
 
 <tr>

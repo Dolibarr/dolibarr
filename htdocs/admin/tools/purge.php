@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2006-2017	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2006-2012	Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2006-2012	Regis Houssin		<regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,9 +29,9 @@ $langs->load("admin");
 if (! $user->admin)
 	accessforbidden();
 
-$action=GETPOST('action','alpha');
-$confirm=GETPOST('confirm','alpha');
-$choice=GETPOST('choice','aZ09');
+$action=GETPOST('action', 'alpha');
+$confirm=GETPOST('confirm', 'alpha');
+$choice=GETPOST('choice', 'aZ09');
 
 
 // Define filelog to discard it from purge
@@ -39,14 +39,14 @@ $filelog='';
 if (! empty($conf->syslog->enabled))
 {
 	$filelog=$conf->global->SYSLOG_FILE;
-	$filelog=preg_replace('/DOL_DATA_ROOT/i',DOL_DATA_ROOT,$filelog);
+	$filelog=preg_replace('/DOL_DATA_ROOT/i', DOL_DATA_ROOT, $filelog);
 }
 
 
 /*
  *	Actions
  */
-if ($action=='purge' && ! preg_match('/^confirm/i',$choice) && ($choice != 'allfiles' || $confirm == 'yes') )
+if ($action=='purge' && ! preg_match('/^confirm/i', $choice) && ($choice != 'allfiles' || $confirm == 'yes') )
 {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/utils.class.php';
 	$utils = new Utils($db);
@@ -65,9 +65,9 @@ llxHeader();
 
 $form=new Form($db);
 
-print load_fiche_titre($langs->trans("Purge"),'','title_setup');
+print load_fiche_titre($langs->trans("Purge"), '', 'title_setup');
 
-print $langs->trans("PurgeAreaDesc",$dolibarr_main_data_root).'<br>';
+print $langs->trans("PurgeAreaDesc", $dolibarr_main_data_root).'<br>';
 print '<br>';
 
 
@@ -86,7 +86,7 @@ if (! empty($conf->syslog->enabled))
 	$filelogparam=$filelog;
 	if ($user->admin && preg_match('/^dolibarr.*\.log$/', basename($filelog)))
 	{
-	   $filelogparam ='<a href="'.DOL_URL_ROOT.'/document.php?modulepart=logs&file=';
+	   $filelogparam ='<a class="wordbreak" href="'.DOL_URL_ROOT.'/document.php?modulepart=logs&file=';
 	   $filelogparam.=basename($filelog);
 	   $filelogparam.='">'.$filelog.'</a>';
 	}
@@ -100,7 +100,7 @@ print '> '.$langs->trans("PurgeDeleteTemporaryFiles").'<br><br>';
 
 print '<input type="radio" name="choice" value="confirm_allfiles"';
 print ($choice && $choice=='confirm_allfiles') ? ' checked' : '';
-print '> '.$langs->trans("PurgeDeleteAllFilesInDocumentsDir",$dolibarr_main_data_root).'<br>';
+print '> '.$langs->trans("PurgeDeleteAllFilesInDocumentsDir", $dolibarr_main_data_root).'<br>';
 
 print '</td></tr></table>';
 
@@ -112,14 +112,13 @@ print '</td></tr></table>';
 
 print '</form>';
 
-if (preg_match('/^confirm/i',$choice))
+if (preg_match('/^confirm/i', $choice))
 {
 	print '<br>';
 	$formquestion=array();
 	print $form->formconfirm($_SERVER["PHP_SELF"].'?choice=allfiles', $langs->trans('Purge'), $langs->trans('ConfirmPurge').img_warning().' ', 'purge', $formquestion, 'no', 2);
 }
 
-
+// End of page
 llxFooter();
-
 $db->close();

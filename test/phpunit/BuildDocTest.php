@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2010-2012  Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2012       Regis Houssin       <regis.houssin@capnetworks.com>
+ * Copyright (C) 2012       Regis Houssin       <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -87,8 +87,10 @@ class BuildDocTest extends PHPUnit_Framework_TestCase
      *
      * @return BuildDocTest
      */
-    function __construct()
+    public function __construct()
     {
+        parent::__construct();
+
         //$this->sharedFixture
         global $conf,$user,$langs,$db;
         $this->savconf=$conf;
@@ -172,7 +174,7 @@ class BuildDocTest extends PHPUnit_Framework_TestCase
         $localobjectcom->initAsSpecimen();
 
         $localobject=new Facture($this->savdb);
-        $localobject->createFromOrder($localobjectcom);
+        $localobject->createFromOrder($localobjectcom, $user);
         $localobject->date_lim_reglement = dol_now() + 3600 * 24 *30;
 
         // Crabe (english)
@@ -182,7 +184,7 @@ class BuildDocTest extends PHPUnit_Framework_TestCase
         print __METHOD__." result=".$result."\n";
 
         // Crabe (japanese)
-        $newlangs1=new Translate("",$conf);
+        $newlangs1=new Translate("", $conf);
         $newlangs1->setDefaultLang('ja_JP');
         $localobject->modelpdf='crabe';
         $result = $localobject->generateDocument($localobject->modelpdf, $newlangs1);
@@ -190,7 +192,7 @@ class BuildDocTest extends PHPUnit_Framework_TestCase
         print __METHOD__." result=".$result."\n";
 
         // Crabe (saudiarabia)
-        $newlangs2a=new Translate("",$conf);
+        $newlangs2a=new Translate("", $conf);
         $newlangs2a->setDefaultLang('sa_SA');
         $localobject->modelpdf='crabe';
         $result = $localobject->generateDocument($localobject->modelpdf, $newlangs2a);
@@ -198,7 +200,7 @@ class BuildDocTest extends PHPUnit_Framework_TestCase
         print __METHOD__." result=".$result."\n";
 
         // Crabe (english_saudiarabia)
-        $newlangs2b=new Translate("",$conf);
+        $newlangs2b=new Translate("", $conf);
         $newlangs2b->setDefaultLang('en_SA');
         $localobject->modelpdf='crabe';
         $result = $localobject->generateDocument($localobject->modelpdf, $newlangs2b);
@@ -206,7 +208,7 @@ class BuildDocTest extends PHPUnit_Framework_TestCase
         print __METHOD__." result=".$result."\n";
 
         // Crabe (greek)
-        $newlangs3=new Translate("",$conf);
+        $newlangs3=new Translate("", $conf);
         $newlangs3->setDefaultLang('el_GR');
         $localobject->modelpdf='crabe';
         $result = $localobject->generateDocument($localobject->modelpdf, $newlangs3);
@@ -214,7 +216,7 @@ class BuildDocTest extends PHPUnit_Framework_TestCase
         print __METHOD__." result=".$result."\n";
 
         // Crabe (chinese)
-        $newlangs4=new Translate("",$conf);
+        $newlangs4=new Translate("", $conf);
         $newlangs4->setDefaultLang('zh_CN');
         $localobject->modelpdf='crabe';
         $result = $localobject->generateDocument($localobject->modelpdf, $newlangs4);
@@ -222,7 +224,7 @@ class BuildDocTest extends PHPUnit_Framework_TestCase
         print __METHOD__." result=".$result."\n";
 
         // Crabe (russian)
-        $newlangs5=new Translate("",$conf);
+        $newlangs5=new Translate("", $conf);
         $newlangs5->setDefaultLang('ru_RU');
         $localobject->modelpdf='crabe';
         $result = $localobject->generateDocument($localobject->modelpdf, $newlangs5);
@@ -312,7 +314,7 @@ class BuildDocTest extends PHPUnit_Framework_TestCase
         print __METHOD__." result=".$result."\n";
 
         return 0;
-        }
+    }
 
     /**
      * testPropalBuild

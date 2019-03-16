@@ -12,6 +12,7 @@ Event=イベント
 Events=イベント
 EventsNb=Number of events
 ListOfActions=イベントのリスト
+EventReports=Event reports
 Location=場所
 ToUserOfGroup=To any user in group
 EventOnFullDay=一日のイベント
@@ -34,6 +35,7 @@ AgendaAutoActionDesc= Define here events for which you want Dolibarr to create a
 AgendaSetupOtherDesc= このページでは、外部のカレンダーにあなたのDolibarrイベントのエクスポートを許可するオプションが用意されています（サンダーバード、Googleカレンダー、...）
 AgendaExtSitesDesc=このページでは、Dolibarrの議題にそれらのイベントを表示するにはカレンダーの外部ソースを宣言することができます。
 ActionsEvents=Dolibarrが自動的に議題でアクションを作成する対象のイベント
+EventRemindersByEmailNotEnabled=Event reminders by email was not enabled into Agenda module setup.
 ##### Agenda event labels #####
 NewCompanyToDolibarr=Third party %s created
 ContractValidatedInDolibarr=Contract %s validated
@@ -51,7 +53,9 @@ MemberValidatedInDolibarr=Member %s validated
 MemberModifiedInDolibarr=Member %s modified
 MemberResiliatedInDolibarr=Member %s terminated
 MemberDeletedInDolibarr=Member %s deleted
-MemberSubscriptionAddedInDolibarr=Subscription for member %s added
+MemberSubscriptionAddedInDolibarr=Subscription %s for member %s added
+MemberSubscriptionModifiedInDolibarr=Subscription %s for member %s modified
+MemberSubscriptionDeletedInDolibarr=Subscription %s for member %s deleted
 ShipmentValidatedInDolibarr=Shipment %s validated
 ShipmentClassifyClosedInDolibarr=Shipment %s classified billed
 ShipmentUnClassifyCloseddInDolibarr=Shipment %s classified reopened
@@ -65,6 +69,7 @@ OrderApprovedInDolibarr=注文%sは、承認された
 OrderRefusedInDolibarr=Order %s refused
 OrderBackToDraftInDolibarr=注文%sは、ドラフトの状態に戻って
 ProposalSentByEMail=電子メールで送信商業提案%s
+ContractSentByEMail=Contract %s sent by EMail
 OrderSentByEMail=電子メールで送信、顧客の注文%s
 InvoiceSentByEMail=電子メールで送信顧客の請求書%s
 SupplierOrderSentByEMail=電子メールで送信サプライヤの注文%s
@@ -78,6 +83,14 @@ InvoiceDeleted=Invoice deleted
 PRODUCT_CREATEInDolibarr=Product %s created
 PRODUCT_MODIFYInDolibarr=Product %s modified
 PRODUCT_DELETEInDolibarr=Product %s deleted
+EXPENSE_REPORT_CREATEInDolibarr=Expense report %s created
+EXPENSE_REPORT_VALIDATEInDolibarr=Expense report %s validated
+EXPENSE_REPORT_APPROVEInDolibarr=Expense report %s approved
+EXPENSE_REPORT_DELETEInDolibarr=Expense report %s deleted
+EXPENSE_REPORT_REFUSEDInDolibarr=Expense report %s refused
+PROJECT_CREATEInDolibarr=Project %s created
+PROJECT_MODIFYInDolibarr=Project %s modified
+PROJECT_DELETEInDolibarr=Project %s deleted
 ##### End agenda events #####
 AgendaModelModule=Document templates for event
 DateActionStart=開始日
@@ -86,7 +99,8 @@ AgendaUrlOptions1=また、出力をフィルタリングするには、次の�
 AgendaUrlOptions3=<b>logina=%s</b> to restrict output to actions owned by a user <b>%s</b>.
 AgendaUrlOptionsNotAdmin=<b>logina=!%s</b> to restrict output to actions not owned by user <b>%s</b>.
 AgendaUrlOptions4=<b>logint=%s</b> to restrict output to actions assigned to user <b>%s</b> (owner and others).
-AgendaUrlOptionsProject=<b>project=PROJECT_ID</b> to restrict output to actions associated to project <b>PROJECT_ID</b>.
+AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b> to restrict output to actions linked to project <b>__PROJECT_ID__</b>.
+AgendaUrlOptionsNotAutoEvent=<b>notactiontype=systemauto</b> to exclude automatic event.
 AgendaShowBirthdayEvents=Show birthdays of contacts
 AgendaHideBirthdayEvents=Hide birthdays of contacts
 Busy=Busy
@@ -98,7 +112,7 @@ ExportCal=輸出カレンダー
 ExtSites=外部カレンダーをインポートする
 ExtSitesEnableThisTool=Show external calendars (defined into global setup) into agenda. Does not affect external calendars defined by users.
 ExtSitesNbOfAgenda=カレンダーの数
-AgendaExtNb=カレンダーNB %s
+AgendaExtNb=Calendar no. %s
 ExtSiteUrlAgenda=。iCalファイルにアクセスするためのURL
 ExtSiteNoLabel=全く説明がありません
 VisibleTimeRange=Visible time range

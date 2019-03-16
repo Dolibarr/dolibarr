@@ -17,10 +17,12 @@
  */
 
 /**
- *      \file       build/generate_filecheck_xml.php
+ *      \file       build/generate_filelist_xml.php
  *		\ingroup    dev
  * 		\brief      This script create a xml checksum file
  */
+
+if (! defined('NOREQUIREDB')) define('NOREQUIREDB', '1');	// Do not create database handler $db
 
 $sapi_type = php_sapi_name();
 $script_file = basename(__FILE__);
@@ -32,8 +34,8 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
     exit;
 }
 
-require_once($path."../htdocs/master.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
+require_once $path."../htdocs/master.inc.php";
+require_once DOL_DOCUMENT_ROOT."/core/lib/files.lib.php";
 
 
 /*
@@ -43,23 +45,19 @@ require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 $includecustom=0;
 $includeconstants=array();
 
-if (empty($argv[1]))
-{
-    print "Usage:   ".$script_file." release=x.y.z[-...] [includecustom=1] [includeconstant=CC:MY_CONF_NAME:value]\n";
+if (empty($argv[1])) {
+    print "Usage:   ".$script_file." release=autostable|auto[-mybuild]|x.y.z[-mybuild] [includecustom=1] [includeconstant=CC:MY_CONF_NAME:value]\n";
     print "Example: ".$script_file." release=6.0.0 includecustom=1 includeconstant=FR:INVOICE_CAN_ALWAYS_BE_REMOVED:0 includeconstant=all:MAILING_NO_USING_PHPMAIL:1\n";
     exit -1;
 }
 parse_str($argv[1]);
 
 $i=0;
-while ($i < $argc)
-{
+while ($i < $argc) {
     if (! empty($argv[$i])) parse_str($argv[$i]);
-    if (preg_match('/includeconstant=/',$argv[$i]))
-    {
+    if (preg_match('/includeconstant=/', $argv[$i])) {
         $tmp=explode(':', $includeconstant, 3);
-        if (count($tmp) != 3)
-        {
+        if (count($tmp) != 3) {
             print "Error: Bad parameter includeconstant ".$includeconstant."\n";
             exit -1;
         }
@@ -68,21 +66,41 @@ while ($i < $argc)
     $i++;
 }
 
-if (empty($includecustom))
-{
-    if (DOL_VERSION != $release)
-    {
-        print 'Error: When parameter "includecustom" is not set, version declared into filefunc.in.php ('.DOL_VERSION.') must be exact same value than "release" parameter ('.$release.')'."\n";
-        print "Usage: ".$script_file." release=x.y.z[-...] [includecustom=1]\n";
-        exit -1;
-    }
+if (empty($release)) {
+    print "Error: Missing release paramater\n";
+    print "Usage: ".$script_file." release=autostable|auto[-mybuild]|x.y.z[-mybuild] [includecustom=1] [includeconstant=CC:MY_CONF_NAME:value]\n";
+    exit -1;
 }
-else
-{
-    if (! preg_match('/'.preg_quote(DOL_VERSION,'/').'-/',$release))
-    {
-        print 'Error: When parameter "includecustom" is set, version declared into filefunc.inc.php ('.DOL_VERSION.') must be used with a suffix into "release" parmater (ex: '.DOL_VERSION.'-mydistrib).'."\n";
-        print "Usage: ".$script_file." release=x.y.z[-...] [includecustom=1]\n";
+
+$savrelease = $release;
+
+// If release is auto, we take current version
+$tmpver=explode('-', $release, 2);
+if ($tmpver[0] == 'auto' || $tmpver[0] == 'autostable') {
+    $release=DOL_VERSION;
+    if ($tmpver[1] && $tmpver[0] == 'auto') $release.='-'.$tmpver[1];
+}
+
+if (empty($includecustom)) {
+    $tmpverbis=explode('-', $release, 2);
+    if (empty($tmpverbis[1]) || $tmpver[0] == 'autostable') {
+        if (DOL_VERSION != $tmpverbis[0] && $savrelease != 'auto') {
+            print 'Error: When parameter "includecustom" is not set and there is no suffix in release parameter, version declared into filefunc.in.php ('.DOL_VERSION.') must be exact same value than "release" parameter ('.$tmpverbis[0].')'."\n";
+            print "Usage:   ".$script_file." release=autostable|auto[-mybuild]|x.y.z[-mybuild] [includecustom=1] [includeconstant=CC:MY_CONF_NAME:value]\n";
+            exit -1;
+        }
+    } else {
+        $tmpverter=explode('-', DOL_VERSION, 2);
+        if ($tmpverter[0] != $tmpverbis[0]) {
+            print 'Error: When parameter "includecustom" is not set, version declared into filefunc.in.php ('.DOL_VERSION.') must have value without prefix ('.$tmpverter[0].') that is exact same value than "release" parameter ('.$tmpverbis[0].')'."\n";
+            print "Usage:   ".$script_file." release=autostable|auto[-mybuild]|x.y.z[-mybuild] [includecustom=1] [includeconstant=CC:MY_CONF_NAME:value]\n";
+            exit -1;
+        }
+    }
+} else {
+    if (! preg_match('/'.preg_quote(DOL_VERSION, '/').'-/', $release)) {
+        print 'Error: When parameter "includecustom" is set, version declared into filefunc.inc.php ('.DOL_VERSION.') must be used with a suffix into "release" parameter (ex: '.DOL_VERSION.'-mydistrib).'."\n";
+        print "Usage:   ".$script_file." release=autostable|auto[-mybuild]|x.y.z[-mybuild] [includecustom=1] [includeconstant=CC:MY_CONF_NAME:value]\n";
         exit -1;
     }
 }
@@ -90,10 +108,8 @@ else
 print "Release                        : ".$release."\n";
 print "Include custom in signature    : ".$includecustom."\n";
 print "Include constants in signature : ";
-foreach ($includeconstants as $countrycode => $tmp)
-{
-    foreach($tmp as $constname => $constvalue)
-    {
+foreach ($includeconstants as $countrycode => $tmp) {
+    foreach($tmp as $constname => $constvalue) {
         print $constname.'='.$constvalue." ";
     }
 }
@@ -102,20 +118,18 @@ print "\n";
 //$outputfile=dirname(__FILE__).'/../htdocs/install/filelist-'.$release.'.xml';
 $outputdir=dirname(dirname(__FILE__)).'/htdocs/install';
 print 'Delete current files '.$outputdir.'/filelist*.xml'."\n";
-dol_delete_file($outputdir.'/filelist*.xml',0,1,1);
+dol_delete_file($outputdir.'/filelist*.xml', 0, 1, 1);
 
 $checksumconcat=array();
 
 $outputfile=$outputdir.'/filelist-'.$release.'.xml';
-$fp = fopen($outputfile,'w');
+$fp = fopen($outputfile, 'w');
 fputs($fp, '<?xml version="1.0" encoding="UTF-8" ?>'."\n");
 fputs($fp, '<checksum_list version="'.$release.'" date="'.dol_print_date(dol_now(), 'dayhourrfc').'" generator="'.$script_file.'">'."\n");
 
-foreach ($includeconstants as $countrycode => $tmp)
-{
+foreach ($includeconstants as $countrycode => $tmp) {
     fputs($fp, '<dolibarr_constants country="'.$countrycode.'">'."\n");
-    foreach($tmp as $constname => $constvalue)
-    {
+    foreach($tmp as $constname => $constvalue) {
         $valueforchecksum=(empty($constvalue)?'0':$constvalue);
         $checksumconcat[]=$valueforchecksum;
         fputs($fp, '    <constant name="'.$constname.'">'.$valueforchecksum.'</constant>'."\n");
@@ -131,15 +145,15 @@ $iterator1 = new RecursiveIteratorIterator($dir_iterator1);
 $files = new RegexIterator($iterator1, '#^(?:[A-Z]:)?(?:/(?!(?:'.($includecustom?'':'custom\/|').'documents\/|conf\/|install\/))[^/]+)+/[^/]+\.(?:php|css|html|js|json|tpl|jpg|png|gif|sql|lang)$#i');
 */
 $regextoinclude='\.(php|css|html|js|json|tpl|jpg|png|gif|sql|lang)$';
-$regextoexclude='('.($includecustom?'':'custom|').'documents|conf|install)$';  // Exclude dirs
+$regextoexclude='('.($includecustom?'':'custom|').'documents|conf|install|public\/test|Shared\/PCLZip|nusoap\/lib\/Mail|php\/example|php\/test|geoip\/sample.*\.php|ckeditor\/samples|ckeditor\/adapters)$';  // Exclude dirs
 $files = dol_dir_list(DOL_DOCUMENT_ROOT, 'files', 1, $regextoinclude, $regextoexclude, 'fullname');
 $dir='';
 $needtoclose=0;
 foreach ($files as $filetmp) {
-	$file = $filetmp['fullname'];
-	//$newdir = str_replace(dirname(__FILE__).'/../htdocs', '', dirname($file));
-	$newdir = str_replace(DOL_DOCUMENT_ROOT, '', dirname($file));
-	if ($newdir!=$dir) {
+    $file = $filetmp['fullname'];
+    //$newdir = str_replace(dirname(__FILE__).'/../htdocs', '', dirname($file));
+    $newdir = str_replace(DOL_DOCUMENT_ROOT, '', dirname($file));
+    if ($newdir!=$dir) {
         if ($needtoclose)
             fputs($fp, '  </dir>'."\n");
         fputs($fp, '  <dir name="'.$newdir.'" >'."\n");
@@ -158,7 +172,7 @@ fputs($fp, '</dolibarr_htdocs_dir>'."\n");
 asort($checksumconcat); // Sort list of checksum
 //var_dump($checksumconcat);
 fputs($fp, '<dolibarr_htdocs_dir_checksum>'."\n");
-fputs($fp, md5(join(',',$checksumconcat))."\n");
+fputs($fp, md5(join(',', $checksumconcat))."\n");
 fputs($fp, '</dolibarr_htdocs_dir_checksum>'."\n");
 
 
@@ -178,10 +192,10 @@ $files = dol_dir_list(dirname(__FILE__).'/../scripts/', 'files', 1, $regextoincl
 $dir='';
 $needtoclose=0;
 foreach ($files as $filetmp) {
-	$file = $filetmp['fullname'];
-	//$newdir = str_replace(dirname(__FILE__).'/../scripts', '', dirname($file));
-	$newdir = str_replace(DOL_DOCUMENT_ROOT, '', dirname($file));
-	$newdir = str_replace(dirname(__FILE__).'/../scripts', '', dirname($file));
+    $file = $filetmp['fullname'];
+    //$newdir = str_replace(dirname(__FILE__).'/../scripts', '', dirname($file));
+    $newdir = str_replace(DOL_DOCUMENT_ROOT, '', dirname($file));
+    $newdir = str_replace(dirname(__FILE__).'/../scripts', '', dirname($file));
     if ($newdir!=$dir) {
         if ($needtoclose)
             fputs($fp, '  </dir>'."\n");
@@ -200,7 +214,7 @@ fputs($fp, '</dolibarr_script_dir>'."\n");
 
 asort($checksumconcat); // Sort list of checksum
 fputs($fp, '<dolibarr_script_dir_checksum>'."\n");
-fputs($fp, md5(join(',',$checksumconcat))."\n");
+fputs($fp, md5(join(',', $checksumconcat))."\n");
 fputs($fp, '</dolibarr_script_dir_checksum>'."\n");
 
 fputs($fp, '</checksum_list>'."\n");

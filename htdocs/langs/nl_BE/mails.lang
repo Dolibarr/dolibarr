@@ -1,6 +1,5 @@
 # Dolibarr language file - Source file is en_US - mails
 MailCard=EMailings kaart
-AllRecipientSelected=Alle derde partijen geselecteerd en indien een email was actief.
 ResultOfMailSending=Resultaat van massa EMail versturen
 NbSelected=Nr geselecteerd
 NbIgnored=Nr genegeerd

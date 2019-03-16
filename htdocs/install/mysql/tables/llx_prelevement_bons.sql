@@ -1,6 +1,6 @@
 -- ===================================================================
 -- Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+-- Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@ create table llx_prelevement_bons
   ref            varchar(12),        -- reference
   entity         integer DEFAULT 1 NOT NULL, -- multi company id
   datec          datetime,           -- date de creation
-  amount         real DEFAULT 0,     -- montant total du prelevement
+  amount         double(24,8) DEFAULT 0, -- montant total du prelevement
   statut         smallint DEFAULT 0, -- statut
   credite        smallint DEFAULT 0, -- indique si le prelevement a ete credite
   note           text,

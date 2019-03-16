@@ -293,8 +293,6 @@ class Routes
                 }
                 $url = empty($methodUrl) ? rtrim($resourcePath, '/')
                     : $resourcePath . $methodUrl;
-                $lastPathParam = array_keys($pathParams);
-                $lastPathParam = end($lastPathParam);
                 for ($position = 0; $position < count($params); $position++) {
                     $from = $metadata['param'][$position][$dataName]['from'];
                     if ($from == 'body' && ($httpMethod == 'GET' ||
@@ -307,6 +305,7 @@ class Routes
                 if (empty($pathParams) || $allowAmbiguity) {
                     static::addPath($url, $call, $httpMethod, $version);
                 }
+                $lastPathParam = end($pathParams);
                 foreach ($pathParams as $position) {
                     if (!empty($url))
                         $url .= '/';

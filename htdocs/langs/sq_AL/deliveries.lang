@@ -18,11 +18,11 @@ StatusDeliveryCanceled=Anulluar
 StatusDeliveryDraft=Draft
 StatusDeliveryValidated=Received
 # merou PDF model
-NameAndSignature=Name and Signature :
-ToAndDate=To___________________________________ on ____/_____/__________
+NameAndSignature=Emri dhe Nënshkrimi
+ToAndDate=Për___________________________________ në ____/_____/__________
 GoodStatusDeclaration=Have received the goods above in good condition,
 Deliverer=Deliverer :
-Sender=Sender
+Sender=Dërguesi
 Recipient=Recipient
 ErrorStockIsNotEnough=There's not enough stock
 Shippable=Shippable

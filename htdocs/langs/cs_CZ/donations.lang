@@ -31,3 +31,4 @@ DONATION_ART200=Zobrazit článek 200 od CGI, pokud máte obavy
 DONATION_ART238=Zobrazit článek 238 od CGI, pokud máte obavy
 DONATION_ART885=Zobrazit článek 885 od CGI, pokud máte obavy
 DonationPayment=Platba daru
+DonationValidated=Donation %s validated

@@ -34,9 +34,9 @@
 if ($action == 'builddoc' && $permissioncreate)
 {
 
-    if (is_numeric(GETPOST('model','alpha')))
+    if (is_numeric(GETPOST('model', 'alpha')))
     {
-        $error=$langs->trans("ErrorFieldRequired",$langs->transnoentities("Model"));
+        $error=$langs->trans("ErrorFieldRequired", $langs->transnoentities("Model"));
     }
     else
     {
@@ -50,17 +50,18 @@ if ($action == 'builddoc' && $permissioncreate)
         }*/
 
         // Save last template used to generate document
-    	if (GETPOST('model','alpha'))
+    	if (GETPOST('model', 'alpha'))
     	{
-    	    $object->setDocModel($user, GETPOST('model','alpha'));
+    	    $object->setDocModel($user, GETPOST('model', 'alpha'));
     	}
 
         // Special case to force bank account
         //if (property_exists($object, 'fk_bank'))
         //{
-            if (GETPOST('fk_bank','int')) { // this field may come from an external module
-                $object->fk_bank = GETPOST('fk_bank','int');
-            } else if (! empty($object->fk_account)) {
+            if (GETPOST('fk_bank', 'int')) {
+                // this field may come from an external module
+                $object->fk_bank = GETPOST('fk_bank', 'int');
+            } elseif (! empty($object->fk_account)) {
                 $object->fk_bank = $object->fk_account;
             }
         //}
@@ -68,12 +69,12 @@ if ($action == 'builddoc' && $permissioncreate)
         $outputlangs = $langs;
         $newlang='';
 
-        if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id','aZ09')) $newlang=GETPOST('lang_id','aZ09');
+        if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) $newlang=GETPOST('lang_id', 'aZ09');
         if ($conf->global->MAIN_MULTILANGS && empty($newlang) && isset($object->thirdparty->default_lang)) $newlang=$object->thirdparty->default_lang;  // for proposal, order, invoice, ...
         if ($conf->global->MAIN_MULTILANGS && empty($newlang) && isset($object->default_lang)) $newlang=$object->default_lang;                  // for thirdparty
         if (! empty($newlang))
         {
-            $outputlangs = new Translate("",$conf);
+            $outputlangs = new Translate("", $conf);
             $outputlangs->setDefaultLang($newlang);
         }
 
@@ -91,10 +92,17 @@ if ($action == 'builddoc' && $permissioncreate)
         }
         else
         {
-            setEventMessages($langs->trans("FileGenerated"), null);
+        	if (empty($donotredirect))	// This is set when include is done by bulk action "Bill Orders"
+        	{
+	            setEventMessages($langs->trans("FileGenerated"), null);
 
-            header('Location: '.$_SERVER['REQUEST_URI'].'#builddoc');
-            exit;
+	            $urltoredirect = $_SERVER['REQUEST_URI'];
+	            $urltoredirect = preg_replace('/#builddoc$/', '', $urltoredirect);
+	            $urltoredirect = preg_replace('/action=builddoc&?/', '', $urltoredirect);	// To avoid infinite loop
+
+	            header('Location: '.$urltoredirect.'#builddoc');
+	            exit;
+        	}
         }
     }
 }
@@ -112,10 +120,17 @@ if ($action == 'remove_file' && $permissioncreate)
     }
 
     $langs->load("other");
-    $filetodelete=GETPOST('file','alpha');
+    $filetodelete=GETPOST('file', 'alpha');
     $file =	$upload_dir	. '/' .	$filetodelete;
-    $ret=dol_delete_file($file,0,0,0,$object);
+    $ret=dol_delete_file($file, 0, 0, 0, $object);
     if ($ret) setEventMessages($langs->trans("FileWasRemoved", $filetodelete), null, 'mesgs');
     else setEventMessages($langs->trans("ErrorFailToDeleteFile", $filetodelete), null, 'errors');
-}
 
+    // Make a redirect to avoid to keep the remove_file into the url that create side effects
+    $urltoredirect = $_SERVER['REQUEST_URI'];
+    $urltoredirect = preg_replace('/#builddoc$/', '', $urltoredirect);
+    $urltoredirect = preg_replace('/action=remove_file&?/', '', $urltoredirect);
+
+    header('Location: '.$urltoredirect);
+    exit;
+}

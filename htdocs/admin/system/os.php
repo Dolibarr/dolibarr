@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,7 +35,7 @@ if (!$user->admin)
 
 llxHeader();
 
-print load_fiche_titre($langs->trans("InfoOS"),'','title_setup');
+print load_fiche_titre($langs->trans("InfoOS"), '', 'title_setup');
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
@@ -49,6 +49,6 @@ $osversion=version_os();
 print "<tr $bc[1]><td width=\"240\">".$langs->trans("Version")."</td><td>".$osversion."</td></tr>\n";
 print '</table>';
 
-
+// End of page
 llxFooter();
 $db->close();

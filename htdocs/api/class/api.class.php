@@ -37,7 +37,7 @@ class DolibarrApi
     /**
      * @var Restler     $r	Restler object
      */
-    var $r;
+    public $r;
 
     /**
      * Constructor
@@ -46,9 +46,9 @@ class DolibarrApi
      * @param   string  $cachedir       Cache dir
      * @param   boolean $refreshCache   Update cache
      */
-    function __construct($db, $cachedir='', $refreshCache=false)
+    public function __construct($db, $cachedir = '', $refreshCache = false)
     {
-        global $conf;
+        global $conf, $dolibarr_main_url_root;
 
         if (empty($cachedir)) $cachedir = $conf->api->dir_temp;
         Defaults::$cacheDirectory = $cachedir;
@@ -57,7 +57,16 @@ class DolibarrApi
         $production_mode = ( empty($conf->global->API_PRODUCTION_MODE) ? false : true );
         $this->r = new Restler($production_mode, $refreshCache);
 
+        $urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
+        $urlwithroot=$urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
+
+        $urlwithouturlrootautodetect=preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim(DOL_MAIN_URL_ROOT));
+        $urlwithrootautodetect=$urlwithouturlroot.DOL_URL_ROOT; // This is to use local domain autodetected by dolibarr from url
+
+        $this->r->setBaseUrls($urlwithouturlroot, $urlwithouturlrootautodetect);
         $this->r->setAPIVersion(1);
+        //$this->r->setSupportedFormats('json');
+        //$this->r->setSupportedFormats('jsonFormat');
     }
 
     /**
@@ -78,25 +87,28 @@ class DolibarrApi
         );
     }*/
 
-
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
     /**
      * Clean sensible object datas
      *
      * @param   object  $object	Object to clean
      * @return	array	Array of cleaned object properties
      */
-    function _cleanObjectDatas($object) {
-
+    protected function _cleanObjectDatas($object)
+    {
+        // phpcs:enable
         // Remove $db object property for object
         unset($object->db);
+        unset($object->isextrafieldmanaged);
+		unset($object->ismultientitymanaged);
+		unset($object->restrictiononfksoc);
 
         // Remove linkedObjects. We should already have linkedObjectIds that avoid huge responses
         unset($object->linkedObjects);
 
-        unset($object->lines); // should be ->lines
+        unset($object->lignes); // we don't want lignes, we want only ->lines
 
         unset($object->fields);
-
         unset($object->oldline);
 
         unset($object->error);
@@ -122,12 +134,21 @@ class DolibarrApi
         unset($object->statuts_short);
         unset($object->statuts_logo);
         unset($object->statuts_long);
+        unset($object->labelstatut);
+        unset($object->labelstatut_short);
 
         unset($object->element);
         unset($object->fk_element);
         unset($object->table_element);
         unset($object->table_element_line);
+        unset($object->class_element_line);
         unset($object->picto);
+
+        unset($object->fieldsforcombobox);
+		unset($object->comments);
+
+        unset($object->skip_update_total);
+        unset($object->context);
 
         // Remove the $oldcopy property because it is not supported by the JSON
         // encoder. The following error is generated when trying to serialize
@@ -141,27 +162,53 @@ class DolibarrApi
         unset($object->oldcopy);
 
         // If object has lines, remove $db property
-        if(isset($object->lines) && count($object->lines) > 0)  {
+        if (isset($object->lines) && is_array($object->lines) && count($object->lines) > 0)  {
             $nboflines = count($object->lines);
         	for ($i=0; $i < $nboflines; $i++)
             {
                 $this->_cleanObjectDatas($object->lines[$i]);
+
+                unset($object->lines[$i]->contact);
+                unset($object->lines[$i]->contact_id);
+                unset($object->lines[$i]->country);
+                unset($object->lines[$i]->country_id);
+                unset($object->lines[$i]->country_code);
+                unset($object->lines[$i]->mode_reglement_id);
+                unset($object->lines[$i]->mode_reglement_code);
+                unset($object->lines[$i]->mode_reglement);
+                unset($object->lines[$i]->cond_reglement_id);
+                unset($object->lines[$i]->cond_reglement_code);
+                unset($object->lines[$i]->cond_reglement);
+                unset($object->lines[$i]->fk_delivery_address);
+                unset($object->lines[$i]->fk_projet);
+                unset($object->lines[$i]->thirdparty);
+                unset($object->lines[$i]->user);
+                unset($object->lines[$i]->model_pdf);
+                unset($object->lines[$i]->modelpdf);
+                unset($object->lines[$i]->note_public);
+                unset($object->lines[$i]->note_private);
+                unset($object->lines[$i]->fk_incoterms);
+                unset($object->lines[$i]->libelle_incoterms);
+                unset($object->lines[$i]->location_incoterms);
+                unset($object->lines[$i]->name);
+                unset($object->lines[$i]->lastname);
+                unset($object->lines[$i]->firstname);
+                unset($object->lines[$i]->civility_id);
+                unset($object->lines[$i]->fk_multicurrency);
+                unset($object->lines[$i]->multicurrency_code);
+                unset($object->lines[$i]->shipping_method_id);
             }
         }
 
-        // If object has linked objects, remove $db property
-        /*
-        if(isset($object->linkedObjects) && count($object->linkedObjects) > 0)  {
-            foreach($object->linkedObjects as $type_object => $linked_object) {
-                foreach($linked_object as $object2clean) {
-                    $this->_cleanObjectDatas($object2clean);
-                }
-            }
-        }*/
+        if (! empty($object->thirdparty) && is_object($object->thirdparty))
+        {
+        	$this->_cleanObjectDatas($object->thirdparty);
+        }
 
 		return $object;
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 * Check user access to a resource
 	 *
@@ -173,16 +220,18 @@ class DolibarrApi
 	 * @param string	$feature2		Feature to check, second level of permission (optional). Can be or check with 'level1|level2'.
 	 * @param string	$dbt_keyfield   Field name for socid foreign key if not fk_soc. Not used if objectid is null (optional)
 	 * @param string	$dbt_select     Field name for select if not rowid. Not used if objectid is null (optional)
+     * @return bool
 	 * @throws RestException
 	 */
-	static function _checkAccessToResource($resource, $resource_id=0, $dbtablename='', $feature2='', $dbt_keyfield='fk_soc', $dbt_select='rowid') {
-
+    protected static function _checkAccessToResource($resource, $resource_id = 0, $dbtablename = '', $feature2 = '', $dbt_keyfield = 'fk_soc', $dbt_select = 'rowid')
+    {
+        // phpcs:enable
 		// Features/modules to check
 		$featuresarray = array($resource);
 		if (preg_match('/&/', $resource)) {
 			$featuresarray = explode("&", $resource);
 		}
-		else if (preg_match('/\|/', $resource)) {
+		elseif (preg_match('/\|/', $resource)) {
 			$featuresarray = explode("|", $resource);
 		}
 
@@ -192,21 +241,23 @@ class DolibarrApi
 		}
 
 		return checkUserAccessToObject(DolibarrApiAccess::$user, $featuresarray, $resource_id, $dbtablename, $feature2, $dbt_keyfield, $dbt_select);
-	}
+    }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 * Return if a $sqlfilters parameter is valid
 	 *
 	 * @param  string   $sqlfilters     sqlfilter string
 	 * @return boolean                  True if valid, False if not valid
 	 */
-	function _checkFilters($sqlfilters)
+	protected function _checkFilters($sqlfilters)
 	{
+        // phpcs:enable
 	    //$regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
 	    //$tmp=preg_replace_all('/'.$regexstring.'/', '', $sqlfilters);
 	    $tmp=$sqlfilters;
 	    $ok=0;
-	    $i=0; $nb=count($tmp);
+	    $i=0; $nb=strlen($tmp);
 	    $counter=0;
 	    while ($i < $nb)
 	    {
@@ -223,19 +274,22 @@ class DolibarrApi
 	    return true;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 * Function to forge a SQL criteria
 	 *
 	 * @param  array    $matches       Array of found string by regex search
 	 * @return string                  Forged criteria. Example: "t.field like 'abc%'"
 	 */
-	static function _forge_criteria_callback($matches)
+	protected static function _forge_criteria_callback($matches)
 	{
+        // phpcs:enable
 	    global $db;
 
 	    //dol_syslog("Convert matches ".$matches[1]);
 	    if (empty($matches[1])) return '';
-	    $tmp=explode(':',$matches[1]);
+	    $tmp=explode(':', $matches[1]);
         if (count($tmp) < 3) return '';
 
 	    $tmpescaped=$tmp[2];

@@ -59,7 +59,7 @@ abstract class DoliDB implements Database
 	public $lastqueryerror;
 	/** @var string Last error message */
 	public $lasterror;
-	/** @var int Last error number */
+	/** @var string Last error number. For example: 'DB_ERROR_RECORD_ALREADY_EXISTS', '12345', ... */
 	public $lasterrno;
 
 	/** @var bool Status */
@@ -75,7 +75,7 @@ abstract class DoliDB implements Database
 	 *	@param	string	$resko          resultat si test non egal
 	 *	@return	string          		SQL string
 	 */
-	function ifsql($test,$resok,$resko)
+    public function ifsql($test, $resok, $resko)
 	{
 		return 'IF('.$test.','.$resok.','.$resko.')';
 	}
@@ -84,12 +84,13 @@ abstract class DoliDB implements Database
 	 *   Convert (by PHP) a GM Timestamp date into a string date with PHP server TZ to insert into a date field.
 	 *   Function to use to build INSERT, UPDATE or WHERE predica
 	 *
-	 *   @param	    int		$param      Date TMS to convert
-	 *   @return	string      		Date in a string YYYYMMDDHHMMSS
+	 *   @param	    int		$param      	Date TMS to convert
+	 *   @return	string      			Date in a string YYYY-MM-DD HH:MM:SS
 	 */
-	function idate($param)
+    public function idate($param)
 	{
-		return dol_print_date($param,"%Y%m%d%H%M%S");
+		// TODO GMT $param should be gmt, so we should add tzouptut to 'gmt'
+		return dol_print_date($param, "%Y-%m-%d %H:%M:%S");
 	}
 
 	/**
@@ -97,7 +98,7 @@ abstract class DoliDB implements Database
 	 *
 	 *	@return	    string	lasterrno
 	 */
-	function lasterrno()
+    public function lasterrno()
 	{
 		return $this->lasterrno;
 	}
@@ -107,7 +108,7 @@ abstract class DoliDB implements Database
 	 *
 	 * @return	    int         1 if transaction successfuly opened or already opened, 0 if error
 	 */
-	function begin()
+    public function begin()
 	{
 		if (! $this->transaction_opened)
 		{
@@ -115,15 +116,15 @@ abstract class DoliDB implements Database
 			if ($ret)
 			{
 				$this->transaction_opened++;
-				dol_syslog("BEGIN Transaction",LOG_DEBUG);
-				dol_syslog('',0,1);
+				dol_syslog("BEGIN Transaction", LOG_DEBUG);
+				dol_syslog('', 0, 1);
 			}
 			return $ret;
 		}
 		else
 		{
 			$this->transaction_opened++;
-			dol_syslog('',0,1);
+			dol_syslog('', 0, 1);
 			return 1;
 		}
 	}
@@ -134,16 +135,16 @@ abstract class DoliDB implements Database
 	 * @param	string	$log		Add more log to default log line
 	 * @return	int         		1 if validation is OK or transaction level no started, 0 if ERROR
 	 */
-	function commit($log='')
+    public function commit($log = '')
 	{
-		dol_syslog('',0,-1);
+		dol_syslog('', 0, -1);
 		if ($this->transaction_opened<=1)
 		{
 			$ret=$this->query("COMMIT");
 			if ($ret)
 			{
 				$this->transaction_opened=0;
-				dol_syslog("COMMIT Transaction".($log?' '.$log:''),LOG_DEBUG);
+				dol_syslog("COMMIT Transaction".($log?' '.$log:''), LOG_DEBUG);
 				return 1;
 			}
 			else
@@ -164,14 +165,14 @@ abstract class DoliDB implements Database
 	 * 	@param	string			$log		Add more log to default log line
 	 * 	@return	resource|int         		1 si annulation ok ou transaction non ouverte, 0 en cas d'erreur
 	 */
-	function rollback($log='')
+    public function rollback($log = '')
 	{
-		dol_syslog('',0,-1);
+		dol_syslog('', 0, -1);
 		if ($this->transaction_opened<=1)
 		{
 			$ret=$this->query("ROLLBACK");
 			$this->transaction_opened=0;
-			dol_syslog("ROLLBACK Transaction".($log?' '.$log:''),LOG_DEBUG);
+			dol_syslog("ROLLBACK Transaction".($log?' '.$log:''), LOG_DEBUG);
 			return $ret;
 		}
 		else
@@ -188,7 +189,7 @@ abstract class DoliDB implements Database
 	 *	@param	int		$offset     Numero of line from where starting fetch
 	 *	@return	string      		String with SQL syntax to add a limit and offset
 	 */
-	function plimit($limit=0,$offset=0)
+    public function plimit($limit = 0, $offset = 0)
 	{
 		global $conf;
 		if (empty($limit)) return "";
@@ -202,9 +203,9 @@ abstract class DoliDB implements Database
 	 *
 	 *	@return	        array  		Version array
 	 */
-	function getVersionArray()
+    public function getVersionArray()
 	{
-		return preg_split("/[\.,-]/",$this->getVersion());
+		return preg_split("/[\.,-]/", $this->getVersion());
 	}
 
 	/**
@@ -212,7 +213,7 @@ abstract class DoliDB implements Database
 	 *
 	 *	@return	string					Last query
 	 */
-	function lastquery()
+    public function lastquery()
 	{
 		return $this->lastquery;
 	}
@@ -220,34 +221,34 @@ abstract class DoliDB implements Database
 	/**
 	 * Define sort criteria of request
 	 *
-	 * @param	string	        $sortfield  List of sort fields, separated by comma. Example: 't1.fielda, t2.fieldb'
-	 * @param	'ASC'|'DESC'	$sortorder  Sort order
-	 * @return	string      		        String to provide syntax of a sort sql string
+	 * @param	string		$sortfield		List of sort fields, separated by comma. Example: 't1.fielda,t2.fieldb'
+	 * @param	string		$sortorder		Sort order, separated by comma. Example: 'ASC,DESC';
+	 * @return	string						String to provide syntax of a sort sql string
 	 */
-	function order($sortfield=null,$sortorder=null)
+    public function order($sortfield = null, $sortorder = null)
 	{
 		if (! empty($sortfield))
 		{
 			$return='';
-			$fields=explode(',',$sortfield);
-			$orders=explode(',',$sortorder);
+			$fields=explode(',', $sortfield);
+			$orders=explode(',', $sortorder);
 			$i=0;
 			foreach($fields as $val)
 			{
 				if (! $return) $return.=' ORDER BY ';
 				else $return.=', ';
 
-				$return.=preg_replace('/[^0-9a-z_\.]/i','',$val);
-				
+				$return.=preg_replace('/[^0-9a-z_\.]/i', '', $val);
+
 				$tmpsortorder = trim($orders[$i]);
-				
+
 				// Only ASC and DESC values are valid SQL
 				if (strtoupper($tmpsortorder) === 'ASC') {
 					$return .= ' ASC';
 				} elseif (strtoupper($tmpsortorder) === 'DESC') {
 					$return .= ' DESC';
 				}
-				
+
 				$i++;
 			}
 			return $return;
@@ -263,7 +264,7 @@ abstract class DoliDB implements Database
 	 *
 	 *	@return	    string		Last error
 	 */
-	function lasterror()
+    public function lasterror()
 	{
 		return $this->lasterror;
 	}
@@ -277,12 +278,13 @@ abstract class DoliDB implements Database
 	 *	@param	bool				$gm			1=Input informations are GMT values, otherwise local to server TZ
 	 *	@return	int|string						Date TMS or ''
 	 */
-	function jdate($string, $gm=false)
+    public function jdate($string, $gm = false)
 	{
+		// TODO GMT must set param gm to true by default
 		if ($string==0 || $string=="0000-00-00 00:00:00") return '';
-		$string=preg_replace('/([^0-9])/i','',$string);
+		$string=preg_replace('/([^0-9])/i', '', $string);
 		$tmp=$string.'000000';
-		$date=dol_mktime(substr($tmp,8,2),substr($tmp,10,2),substr($tmp,12,2),substr($tmp,4,2),substr($tmp,6,2),substr($tmp,0,4),$gm);
+		$date=dol_mktime(substr($tmp, 8, 2), substr($tmp, 10, 2), substr($tmp, 12, 2), substr($tmp, 4, 2), substr($tmp, 6, 2), substr($tmp, 0, 4), $gm);
 		return $date;
 	}
 
@@ -291,9 +293,8 @@ abstract class DoliDB implements Database
 	 *
 	 *	@return	    string	lastqueryerror
 	 */
-	function lastqueryerror()
+    public function lastqueryerror()
 	{
 		return $this->lastqueryerror;
 	}
 }
-

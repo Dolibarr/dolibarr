@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2013 Florian Henry  <florian.henry@open-concept.pro>
- * Copyright (C) 2013 Juanjo Menent  <jmenent@2byte.es>
- * Copyright (C) 2015      Frederic France      <frederic.france@free.fr>
+/* Copyright (C) 2013 Florian Henry		<florian.henry@open-concept.pro>
+ * Copyright (C) 2013 Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2015 Frederic France	<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,16 +31,20 @@ include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
  */
 class box_ficheinter extends ModeleBoxes
 {
-	var $boxcode="ficheinter";
-	var $boximg="object_intervention";
-	var $boxlabel="BoxFicheInter";
-	var $depends = array("ficheinter");	// conf->contrat->enabled
+    public $boxcode="ficheinter";
+    public $boximg="object_intervention";
+    public $boxlabel="BoxFicheInter";
+    public $depends = array("ficheinter");	// conf->contrat->enabled
 
-	var $db;
-	var $param;
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
 
-	var $info_box_head = array();
-	var $info_box_contents = array();
+    public $param;
+
+    public $info_box_head = array();
+    public $info_box_contents = array();
 
 
 	/**
@@ -49,7 +53,7 @@ class box_ficheinter extends ModeleBoxes
 	 *  @param  DoliDB  $db         Database handler
 	 *  @param  string  $param      More parameters
 	 */
-	function __construct($db,$param)
+	public function __construct($db, $param)
 	{
 	    global $user;
 
@@ -64,7 +68,7 @@ class box_ficheinter extends ModeleBoxes
 	 *  @param	int		$max        Maximum number of records to load
 	 *  @return	void
 	*/
-	function loadBox($max=10)
+	public function loadBox($max = 10)
 	{
 		global $user, $langs, $db, $conf;
 
@@ -73,9 +77,9 @@ class box_ficheinter extends ModeleBoxes
 		include_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 		$ficheinterstatic=new Fichinter($db);
 
-		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastFicheInter",$max));
+		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastFicheInter", $max));
 
-		if ($user->rights->ficheinter->lire)
+		if (! empty($user->rights->ficheinter->lire))
 		{
 			$sql = "SELECT f.rowid, f.ref, f.fk_soc, f.fk_statut,";
 			$sql.= " f.datec,";
@@ -108,49 +112,57 @@ class box_ficheinter extends ModeleBoxes
 
 					$ficheinterstatic->statut=$objp->fk_statut;
 					$ficheinterstatic->id=$objp->rowid;
+					$ficheinterstatic->ref=$objp->ref;
 
-					$this->info_box_contents[$i][0] = array('td' => 'align="left" width="16"',
-					'logo' => $this->boximg,
-					'url' => DOL_URL_ROOT."/fichinter/card.php?id=".$objp->rowid);
+					$this->info_box_contents[$i][] = array(
+                        'td' => '',
+                        'text' => $ficheinterstatic->getNomUrl(1),
+                        'asis' => 1,
+					);
 
-					$this->info_box_contents[$i][1] = array('td' => '',
-					'text' => ($objp->ref?$objp->ref:$objp->rowid),	// Some interventions have no ref
-					'url' => DOL_URL_ROOT."/fichinter/card.php?id=".$objp->rowid);
+					$this->info_box_contents[$i][] = array(
+                        'td' => 'class="left" width="16"',
+                        'logo' => 'company',
+                        'url' => DOL_URL_ROOT."/comm/card.php?socid=".$objp->socid,
+                    );
 
-					$this->info_box_contents[$i][2] = array('td' => 'align="left" width="16"',
-					'logo' => 'company',
-					'url' => DOL_URL_ROOT."/comm/card.php?socid=".$objp->socid);
+					$this->info_box_contents[$i][] = array(
+                        'td' => '',
+                        'text' => dol_trunc($objp->name, 40),
+                        'url' => DOL_URL_ROOT."/comm/card.php?socid=".$objp->socid,
+                    );
 
-					$this->info_box_contents[$i][3] = array('td' => '',
-					'text' => dol_trunc($objp->name,40),
-					'url' => DOL_URL_ROOT."/comm/card.php?socid=".$objp->socid);
+					$this->info_box_contents[$i][] = array(
+                        'td' => 'class="right"',
+                        'text' => dol_print_date($datec, 'day'),
+                    );
 
-					$this->info_box_contents[$i][4] = array('td' => 'class="right"',
-					'text' => dol_print_date($datec,'day'));
-
-					$this->info_box_contents[$i][5] = array('td' => 'align="right" class="nowrap"',
-					'text' => $ficheinterstatic->getLibStatut(6),
-					'asis'=>1
+					$this->info_box_contents[$i][] = array(
+                        'td' => 'class="nowrap right"',
+                        'text' => $ficheinterstatic->getLibStatut(6),
+                        'asis' => 1,
 					);
 
 					$i++;
 				}
 
-				if ($num==0) $this->info_box_contents[$i][0] = array('td' => 'align="center"','text'=>$langs->trans("NoRecordedInterventions"));
+				if ($num==0) $this->info_box_contents[$i][] = array('td' => 'class="center"','text'=>$langs->trans("NoRecordedInterventions"));
 
 				$db->free($resql);
 			}
 			else
 			{
-				$this->info_box_contents[0][0] = array(  'td' => '',
-				'maxlength'=>500,
-				'text' => ($db->error().' sql='.$sql));
+				$this->info_box_contents[0][] = array(
+                    'td' => '',
+                    'maxlength'=>500,
+                    'text' => ($db->error().' sql='.$sql),
+                );
 			}
 		}
 		else
 		{
-			$this->info_box_contents[0][0] = array(
-			    'td' => 'align="left" class="nohover opacitymedium"',
+			$this->info_box_contents[0][] = array(
+			    'td' => 'class="nohover opacitymedium left"',
 			    'text' => $langs->trans("ReadPermissionNotAllowed")
 			);
 		}
@@ -164,10 +176,8 @@ class box_ficheinter extends ModeleBoxes
 	 *  @param	int		$nooutput	No print, only return string
 	 *	@return	string
 	 */
-    function showBox($head = null, $contents = null, $nooutput=0)
+    public function showBox($head = null, $contents = null, $nooutput = 0)
     {
 		return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
 	}
-
 }
-

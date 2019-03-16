@@ -2,8 +2,9 @@
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2016 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
- * Copyright (C) 2005-2012 Regis Houssin         <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012 Regis Houssin         <regis.houssin@inodbox.com>
  * Copyright (C) 2013      Cédric Salvador       <csalvador@gpcsolutions.fr>
+ * Copyright (C) 2017      Ferran Marcet       	 <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,14 +32,16 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT .'/commande/class/commande.class.php';
+if (! empty($conf->projet->enabled)) {
+	require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
+}
 
+// Load translation files required by the page
+$langs->loadLangs(array('companies', 'other'));
 
-$langs->load('companies');
-$langs->load('other');
-
-$action		= GETPOST('action','aZ09');
+$action		= GETPOST('action', 'aZ09');
 $confirm	= GETPOST('confirm');
-$id			= GETPOST('id','int');
+$id			= GETPOST('id', 'int');
 $ref		= GETPOST('ref');
 
 // Security check
@@ -46,12 +49,12 @@ if ($user->societe_id)
 {
 	$socid = $user->societe_id;
 }
-$result=restrictedArea($user,'commande',$id,'');
+$result=restrictedArea($user, 'commande', $id, '');
 
 // Get parameters
-$sortfield = GETPOST("sortfield",'alpha');
-$sortorder = GETPOST("sortorder",'alpha');
-$page = GETPOST("page",'int');
+$sortfield = GETPOST("sortfield", 'alpha');
+$sortorder = GETPOST("sortorder", 'alpha');
+$page = GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
@@ -65,6 +68,7 @@ $object = new Commande($db);
 /*
  * Actions
  */
+
 if ($object->fetch($id))
 {
 	$object->fetch_thirdparty();
@@ -78,7 +82,7 @@ include_once DOL_DOCUMENT_ROOT . '/core/actions_linkedfiles.inc.php';
  * View
  */
 
-llxHeader('',$langs->trans('Order'),'EN:Customers_Orders|FR:Commandes_Clients|ES:Pedidos de clientes');
+llxHeader('', $langs->trans('Order'), 'EN:Customers_Orders|FR:Commandes_Clients|ES:Pedidos de clientes');
 
 $form = new Form($db);
 
@@ -93,8 +97,8 @@ if ($id > 0 || ! empty($ref))
 		$head = commande_prepare_head($object);
 		dol_fiche_head($head, 'documents', $langs->trans('CustomerOrder'), -1, 'order');
 
-		// Construit liste des fichiers
-		$filearray=dol_dir_list($upload_dir,"files",0,'','(\.meta|_preview.*\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
+		// Build file list
+		$filearray=dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC), 1);
 		$totalsize=0;
 		foreach($filearray as $key => $file)
 		{
@@ -159,7 +163,7 @@ if ($id > 0 || ! empty($ref))
 		print '<table class="border" width="100%">';
 
 		print '<tr><td class="titlefield">'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
-		print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.$totalsize.' '.$langs->trans("bytes").'</td></tr>';
+		print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.dol_print_size($totalsize, 1, 1).'</td></tr>';
 
 		print "</table>\n";
 
@@ -185,6 +189,6 @@ else
 }
 
 
+// End of page
 llxFooter();
-
 $db->close();

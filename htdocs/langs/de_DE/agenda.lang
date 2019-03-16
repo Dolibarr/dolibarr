@@ -12,6 +12,7 @@ Event=Ereignis
 Events=Ereignisse
 EventsNb=Anzahl der Ereignisse
 ListOfActions=Liste Ereignisse
+EventReports=Ereignisbericht
 Location=Ort
 ToUserOfGroup=Für jeden Benutzer in der Gruppe
 EventOnFullDay=Ganztägig
@@ -34,6 +35,7 @@ AgendaAutoActionDesc= Definieren sie hier Ereignisse für die Dolibarr automatis
 AgendaSetupOtherDesc= Diese Seite ermöglicht die Konfiguration anderer Parameter des Tagesordnungsmoduls.
 AgendaExtSitesDesc=Diese Seite erlaubt Ihnen externe Kalender zu konfigurieren.
 ActionsEvents=Veranstaltungen zur automatischen Übernahme in die Agenda
+EventRemindersByEmailNotEnabled=Aufgaben-/Terminerinnerungen via E-Mail sind in den Einstellungen des Agendomoduls nicht aktiviert.
 ##### Agenda event labels #####
 NewCompanyToDolibarr=Partner %s erstellt
 ContractValidatedInDolibarr=Vertrag %s freigegeben
@@ -51,7 +53,9 @@ MemberValidatedInDolibarr=Mitglied %s freigegeben
 MemberModifiedInDolibarr=Mitglied %s geändert
 MemberResiliatedInDolibarr=Mitglied %s aufgehoben
 MemberDeletedInDolibarr=Mitglied %s gelöscht
-MemberSubscriptionAddedInDolibarr=Abonnement für Mitglied %s hinzugefügt
+MemberSubscriptionAddedInDolibarr=Subscription %s for member %s added
+MemberSubscriptionModifiedInDolibarr=Subscription %s for member %s modified
+MemberSubscriptionDeletedInDolibarr=Subscription %s for member %s deleted
 ShipmentValidatedInDolibarr=Lieferung %s freigegeben
 ShipmentClassifyClosedInDolibarr=Lieferung %s als verrechnet markiert
 ShipmentUnClassifyCloseddInDolibarr=Lieferung %s als wiedereröffnet markiert
@@ -65,6 +69,7 @@ OrderApprovedInDolibarr=Bestellen %s genehmigt
 OrderRefusedInDolibarr=Bestellung %s abgelehnt
 OrderBackToDraftInDolibarr=Bestellen %s zurück nach Draft-Status
 ProposalSentByEMail=Angebot %s per E-Mail versendet
+ContractSentByEMail=Vertrag %s via E-Mail gesendet
 OrderSentByEMail=Kundenauftrag %s per E-Mail versendet
 InvoiceSentByEMail=Kundenrechnung %s per E-Mail versendet
 SupplierOrderSentByEMail=Lieferantenbestellung %s per E-Mail versendet
@@ -75,18 +80,27 @@ InterventionSentByEMail=Serviceauftrag %s gesendet via E-Mail
 ProposalDeleted=Angebot gelöscht
 OrderDeleted=Bestellung gelöscht
 InvoiceDeleted=Rechnung gelöscht
-PRODUCT_CREATEInDolibarr=Product %s created
-PRODUCT_MODIFYInDolibarr=Product %s modified
-PRODUCT_DELETEInDolibarr=Product %s deleted
+PRODUCT_CREATEInDolibarr=Produkt %s erstellt
+PRODUCT_MODIFYInDolibarr=Produkt %s aktualisiert
+PRODUCT_DELETEInDolibarr=Produkt %s gelöscht
+EXPENSE_REPORT_CREATEInDolibarr=Spesenabrechnung %s erstellt
+EXPENSE_REPORT_VALIDATEInDolibarr=Ausgabenbericht %s validiert
+EXPENSE_REPORT_APPROVEInDolibarr=Spesenabrechnung %s genehmigt
+EXPENSE_REPORT_DELETEInDolibarr=Spesenabrechnung %s gelöscht
+EXPENSE_REPORT_REFUSEDInDolibarr=Spesenabrechnung %s abgelehnt
+PROJECT_CREATEInDolibarr=Projekt %s erstellt
+PROJECT_MODIFYInDolibarr=Projekt %s geändert
+PROJECT_DELETEInDolibarr=Projekt %s gelöscht
 ##### End agenda events #####
 AgendaModelModule=Dokumentvorlagen für Ereignisse
 DateActionStart=Beginnt
 DateActionEnd=Endet
 AgendaUrlOptions1=Sie können die Ausgabe über folgende Parameter filtern:
 AgendaUrlOptions3=<b>logina=%s</b> begrenzt die Ausgabe auf den Benutzer <b>%s</b> erstellte Ereignissen.
-AgendaUrlOptionsNotAdmin=<b>logina=!%s</b> to restrict output to actions not owned by user <b>%s</b>.
-AgendaUrlOptions4=<b>logint=%s</b> to restrict output to actions assigned to user <b>%s</b> (owner and others).
-AgendaUrlOptionsProject=<b>project=PROJECT_ID</b> begrenzt die Ausgabe auf die dem Projekte <b>PROJECT_ID</b> zugewiesene Ereignissen.
+AgendaUrlOptionsNotAdmin=<b>logina=!%s</b> begrenzt die Ausgabe auf dem Benutzer <b>%s</b> nicht als Eigentümer zugewiesene Aktionen.
+AgendaUrlOptions4=<b>logint=%s</b> begrenzt die Ausgabe auf den Benutzer <b>%s</b> (Eigentümer und andere) zugewiesene Aktionen.
+AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b> to restrict output to actions linked to project <b>__PROJECT_ID__</b>.
+AgendaUrlOptionsNotAutoEvent=<b>notactiontype=systemauto</b> to exclude automatic event.
 AgendaShowBirthdayEvents=Geburtstage von Kontakten anzeigen
 AgendaHideBirthdayEvents=Geburtstage von Kontakten nicht anzeigen
 Busy=Besetzt
@@ -98,7 +112,7 @@ ExportCal=Export Kalender
 ExtSites=Importieren von externen Kalendern
 ExtSitesEnableThisTool=Zeige externe Kalender (im globalen Setup definiert) in der Agenda. Betrifft nicht benutzerdefinierte externe Kalender.
 ExtSitesNbOfAgenda=Anzahl der Kalender
-AgendaExtNb=Kalender Anzahl %s
+AgendaExtNb=Calendar no. %s
 ExtSiteUrlAgenda=URL Adresse um .ical Datei zu erreichen
 ExtSiteNoLabel=Keine Beschreibung
 VisibleTimeRange=Sichtbare Stunden Bereich

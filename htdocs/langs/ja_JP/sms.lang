@@ -48,4 +48,4 @@ SmsInfoNumero= （フォーマット国際例：33899701761）
 DelayBeforeSending=送信する前に、遅延時間（分）
 SmsNoPossibleSenderFound=有効な送信者はありません。 SMSプロバイダの設定を確認してください。
 SmsNoPossibleRecipientFound=利用可能なターゲットはありません。 SMSプロバイダの設定を確認してください。
-
+DisableStopIfSupported=Disable STOP message (if supported)

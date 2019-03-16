@@ -12,6 +12,7 @@ Event=Udalosť
 Events=Udalosti
 EventsNb=Počet udalostí
 ListOfActions=Zoznam udalostí
+EventReports=Event reports
 Location=Umiestnenie
 ToUserOfGroup=Každému užívateľovy v skupine
 EventOnFullDay=Akcie po celý deň (y)
@@ -34,6 +35,7 @@ AgendaAutoActionDesc= Tu definujte udalosti, ktoré má Dolibarr automaticky pri
 AgendaSetupOtherDesc= Táto stránka poskytuje možnosti, ako dať export vašich akcií Dolibarr do externého kalendára (thunderbird, Google kalendár, ...)
 AgendaExtSitesDesc=Táto stránka umožňuje deklarovať externé zdroje kalendárov vidieť svoje akcie do programu Dolibarr.
 ActionsEvents=Udalosti, pre ktoré Dolibarr vytvorí akciu v programe automaticky
+EventRemindersByEmailNotEnabled=Event reminders by email was not enabled into Agenda module setup.
 ##### Agenda event labels #####
 NewCompanyToDolibarr=Tretia strana %s vytvorená
 ContractValidatedInDolibarr=Zmluva %s overená
@@ -51,7 +53,9 @@ MemberValidatedInDolibarr=Užívateľ %s overený
 MemberModifiedInDolibarr=Member %s modified
 MemberResiliatedInDolibarr=Užívateľ %s zrušený
 MemberDeletedInDolibarr=Užívateľ %s zmazaný
-MemberSubscriptionAddedInDolibarr=Predplatné pre užívateľa %s pridané
+MemberSubscriptionAddedInDolibarr=Subscription %s for member %s added
+MemberSubscriptionModifiedInDolibarr=Subscription %s for member %s modified
+MemberSubscriptionDeletedInDolibarr=Subscription %s for member %s deleted
 ShipmentValidatedInDolibarr=Zásielka %s overená
 ShipmentClassifyClosedInDolibarr=Shipment %s classified billed
 ShipmentUnClassifyCloseddInDolibarr=Shipment %s classified reopened
@@ -65,6 +69,7 @@ OrderApprovedInDolibarr=Objednať %s schválený
 OrderRefusedInDolibarr=Objednávka %s odmietnutá
 OrderBackToDraftInDolibarr=Objednať %s vrátiť do stavu návrhu
 ProposalSentByEMail=Komerčné návrh %s zaslaná e-mailom
+ContractSentByEMail=Contract %s sent by EMail
 OrderSentByEMail=%s zákazníkov objednávka zaslaná e-mailom
 InvoiceSentByEMail=%s faktúre Zákazníka zaslaná e-mailom
 SupplierOrderSentByEMail=%s Dodávateľ objednávka zaslaná e-mailom
@@ -78,6 +83,14 @@ InvoiceDeleted=Faktúra zmazaná
 PRODUCT_CREATEInDolibarr=Product %s created
 PRODUCT_MODIFYInDolibarr=Product %s modified
 PRODUCT_DELETEInDolibarr=Product %s deleted
+EXPENSE_REPORT_CREATEInDolibarr=Expense report %s created
+EXPENSE_REPORT_VALIDATEInDolibarr=Expense report %s validated
+EXPENSE_REPORT_APPROVEInDolibarr=Expense report %s approved
+EXPENSE_REPORT_DELETEInDolibarr=Expense report %s deleted
+EXPENSE_REPORT_REFUSEDInDolibarr=Expense report %s refused
+PROJECT_CREATEInDolibarr=Projekt vytvoril %s
+PROJECT_MODIFYInDolibarr=Project %s modified
+PROJECT_DELETEInDolibarr=Project %s deleted
 ##### End agenda events #####
 AgendaModelModule=Document templates for event
 DateActionStart=Dátum začatia
@@ -86,7 +99,8 @@ AgendaUrlOptions1=Môžete tiež pridať nasledujúce parametre filtrovania výs
 AgendaUrlOptions3=<b>logina=%s</b> pre obmedzenie výstupu akciam ktoré vlastní užívateľ <b>%s</b>.
 AgendaUrlOptionsNotAdmin=<b>logina=!%s</b> to restrict output to actions not owned by user <b>%s</b>.
 AgendaUrlOptions4=<b>logint=%s</b> to restrict output to actions assigned to user <b>%s</b> (owner and others).
-AgendaUrlOptionsProject=<b>project=PROJECT_ID</b> pre obmedzenie výstupu akciam prideleným projektu <b>PROJECT_ID</b>.
+AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b> to restrict output to actions linked to project <b>__PROJECT_ID__</b>.
+AgendaUrlOptionsNotAutoEvent=<b>notactiontype=systemauto</b> to exclude automatic event.
 AgendaShowBirthdayEvents=Zobraziť narodeniny kontaktov
 AgendaHideBirthdayEvents=Skryť naroodeniny kontaktov
 Busy=Zaneprázdnený
@@ -98,7 +112,7 @@ ExportCal=Export kalendár
 ExtSites=Importovať externé kalendára
 ExtSitesEnableThisTool=Zobrazit externé kalendáre ( definované v globálnom nastavení ) do agendy. Nemá vplyv na externé kalendáre definované užívateľom.
 ExtSitesNbOfAgenda=Počet kalendárov
-AgendaExtNb=Kalendár nb %s
+AgendaExtNb=Calendar no. %s
 ExtSiteUrlAgenda=URL pre prístup. Súbor iCal
 ExtSiteNoLabel=Nie Popis
 VisibleTimeRange=Vyditelný časový rozsah

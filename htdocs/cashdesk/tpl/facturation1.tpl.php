@@ -2,7 +2,8 @@
 /* Copyright (C) 2007-2008	Jeremie Ollivier	<jeremie.o@laposte.net>
  * Copyright (C) 2011		Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2011		Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2015		Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2015		Regis Houssin		<regis.houssin@inodbox.com>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,9 +20,15 @@
  *
  */
 
-$langs->load("main");
-$langs->load("bills");
-$langs->load("cashdesk");
+// Protection to avoid direct call of template
+if (empty($langs) || ! is_object($langs))
+{
+	print "Error, template page can't be called as URL";
+	exit;
+}
+
+// Load translation files required by the page
+$langs->loadLangs(array("main","bills","cashdesk"));
 
 // Object $form must de defined
 
@@ -79,10 +86,9 @@ $langs->load("cashdesk");
 
 							$label = $tab_designations[$i]['label'];
 
-							print '<option '.$selected.' value="'.$tab_designations[$i]['rowid'].'">'.dol_trunc($tab_designations[$i]['ref'],16).' - '.dol_trunc($label,35,'middle');
+							print '<option '.$selected.' value="'.$tab_designations[$i]['rowid'].'">'.dol_trunc($tab_designations[$i]['ref'], 16).' - '.dol_trunc($label, 35, 'middle');
 							if (! empty($conf->stock->enabled) && !empty($conf_fkentrepot) && $tab_designations[$i]['fk_product_type']==0) print ' ('.$langs->trans("CashDeskStock").': '.(empty($tab_designations[$i]['reel'])?0:$tab_designations[$i]['reel']).')';
 							print '</option>'."\n";
-
 						}
 					?>
 				</select>
@@ -119,7 +125,7 @@ $langs->load("cashdesk");
 
 					$buyer = new Societe($db);
 					if ($_SESSION["CASHDESK_ID_THIRDPARTY"] > 0) $buyer->fetch($_SESSION["CASHDESK_ID_THIRDPARTY"]);
-					echo $form->load_tva('selTva', (isset($_POST["selTva"])?GETPOST("selTva",'alpha',2):$vatrate), $mysoc, $buyer, 0, 0, '', false, -1);
+					echo $form->load_tva('selTva', (isset($_POST["selTva"])?GETPOST("selTva", 'alpha', 2):$vatrate), $mysoc, $buyer, 0, 0, '', false, -1);
 			    ?>
                 </td>
 				<td></td>
@@ -175,7 +181,7 @@ $langs->load("cashdesk");
 			else print '<input class="button bouton_mode_reglement" type="submit" name="btnModeReglement" value="'.$langs->trans("Cash").'" onclick="javascript: verifClic(\'ESP\');" />';
 			print '</div>';
 			print '<div class="inline-block" style="margin: 6px;">';
-			if (empty($_SESSION['CASHDESK_ID_BANKACCOUNT_CHEQUE']) || $_SESSION['CASHDESK_ID_BANKACCOUNT_CHEQUE'] < 0)
+			if (empty($_SESSION['CASHDESK_ID_BANKACCOUNT_CB']) || $_SESSION['CASHDESK_ID_BANKACCOUNT_CB'] < 0)
 			{
 				$langs->load("errors");
 				print '<input class="bouton_mode_reglement_disabled" type="button" name="btnModeReglement" value="'.$langs->trans("CreditCard").'" title="'.dol_escape_htmltag($langs->trans("ErrorModuleSetupNotComplete")).'" />';
@@ -183,7 +189,7 @@ $langs->load("cashdesk");
 			else print '<input class="button bouton_mode_reglement" type="submit" name="btnModeReglement" value="'.$langs->trans("CreditCard").'" onclick="javascript: verifClic(\'CB\');" />';
 			print '</div>';
 			print '<div class="inline-block" style="margin: 6px;">';
-			if (empty($_SESSION['CASHDESK_ID_BANKACCOUNT_CB']) || $_SESSION['CASHDESK_ID_BANKACCOUNT_CB'] < 0)
+			if (empty($_SESSION['CASHDESK_ID_BANKACCOUNT_CHEQUE']) || $_SESSION['CASHDESK_ID_BANKACCOUNT_CHEQUE'] < 0)
 			{
 				$langs->load("errors");
 				print '<input class="bouton_mode_reglement_disabled" type="button" name="btnModeReglement" value="'.$langs->trans("CheckBank").'" title="'.dol_escape_htmltag($langs->trans("ErrorModuleSetupNotComplete")).'" />';
@@ -196,7 +202,7 @@ $langs->load("cashdesk");
 				<input class="button bouton_mode_reglement" type="submit" name="btnModeReglement" value="<?php echo $langs->trans("Reported"); ?>" onclick="javascript: verifClic('DIF');" />
 			<?php
 			print $langs->trans("DateDue").' :';
-			print $form->select_date(-1,'txtDatePaiement',0,0,0,'paymentmode',1,0,1);
+			print $form->selectDate(-1, 'txtDatePaiement', 0, 0, 0, 'paymentmode', 1, 0);
 			print '</div>';
 			?>
 		</div>

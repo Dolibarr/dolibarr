@@ -57,9 +57,11 @@ class CompanyLibTest extends PHPUnit_Framework_TestCase
      *
      * @return AdminLibTest
      */
-    function __construct()
+    public function __construct()
     {
-        //$this->sharedFixture
+    	parent::__construct();
+
+    	//$this->sharedFixture
         global $conf,$user,$langs,$db;
         $this->savconf=$conf;
         $this->savuser=$user;
@@ -129,14 +131,14 @@ class CompanyLibTest extends PHPUnit_Framework_TestCase
 
         $result=currency_name('USD');
         print __METHOD__." result=".$result."\n";
-        $this->assertEquals('US Dollars',$result,'Test to get currency name USD in default language '.$langs->defaultlang);
+        $this->assertEquals('US Dollars', $result, 'Test to get currency name USD in default language '.$langs->defaultlang);
 
         $outputlangs=new Translate('', $conf);
         $outputlangs->setDefaultLang('fr_FR');
 
         $result=currency_name('USD', 1, $outputlangs);
         print __METHOD__." result=".$result."\n";
-        $this->assertEquals('USD - Dollars US',$result,'Test to get currency name USD in default language '.$outputlangs->getDefaultLang());
+        $this->assertEquals('USD - Dollars US', $result, 'Test to get currency name USD in default language '.$outputlangs->getDefaultLang());
 
         return $result;
     }

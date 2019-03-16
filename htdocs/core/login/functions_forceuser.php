@@ -32,7 +32,7 @@
  * @param   int		$entitytotest   Number of instance (always 1 if module multicompany not enabled)
  * @return	string					Login if OK, '' if KO
  */
-function check_user_password_forceuser($usertotest,$passwordtotest,$entitytotest)
+function check_user_password_forceuser($usertotest, $passwordtotest, $entitytotest)
 {
 	// Variable dolibarr_auto_user must be defined in conf.php file
 	global $dolibarr_auto_user;
@@ -44,5 +44,6 @@ function check_user_password_forceuser($usertotest,$passwordtotest,$entitytotest
 
 	if ($_SESSION["dol_loginmesg"]) $login='';
 
+	dol_syslog("functions_forceuser::check_user_password_forceuser ok. forced user = ".$login);
 	return $login;
 }

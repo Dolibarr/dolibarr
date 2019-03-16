@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2015      Frederic France      <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -33,16 +33,20 @@ include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
  */
 class box_produits extends ModeleBoxes
 {
-	var $boxcode="lastproducts";
-	var $boximg="object_product";
-	var $boxlabel="BoxLastProducts";
-	var $depends = array("produit");
+    public $boxcode="lastproducts";
+    public $boximg="object_product";
+    public $boxlabel="BoxLastProducts";
+    public $depends = array("produit");
 
-	var $db;
-	var $param;
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
 
-	var $info_box_head = array();
-	var $info_box_contents = array();
+    public $param;
+
+    public $info_box_head = array();
+    public $info_box_contents = array();
 
 
 	/**
@@ -51,13 +55,16 @@ class box_produits extends ModeleBoxes
 	 *  @param  DoliDB  $db         Database handler
 	 *  @param  string  $param      More parameters
 	 */
-	function __construct($db,$param)
+	public function __construct($db, $param)
 	{
-	    global $user;
+	    global $conf, $user;
 
 	    $this->db=$db;
 
-	    $this->hidden=! ($user->rights->produit->lire || $user->rights->service->lire);
+	    $listofmodulesforexternal=explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL);
+	    $tmpentry=array('enabled'=>(! empty($conf->product->enabled) || ! empty($conf->service->enabled)), 'perms'=>(! empty($user->rights->produit->lire) || ! empty($user->rights->service->lire)), 'module'=>'product|service');
+	    $showmode=isVisibleToUserType(($user->societe_id > 0 ? 1 : 0), $tmpentry, $listofmodulesforexternal);
+	    $this->hidden=($showmode != 1);
 	}
 
 	/**
@@ -66,7 +73,7 @@ class box_produits extends ModeleBoxes
 	 *  @param	int		$max        Maximum number of records to load
      *  @return	void
 	 */
-	function loadBox($max=5)
+	public function loadBox($max = 5)
 	{
 		global $user, $langs, $db, $conf, $hookmanager;
 
@@ -75,20 +82,20 @@ class box_produits extends ModeleBoxes
 		include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 		$productstatic=new Product($db);
 
-		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastProducts",$max));
+		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastProducts", $max));
 
 		if ($user->rights->produit->lire || $user->rights->service->lire)
 		{
 			$sql = "SELECT p.rowid, p.label, p.ref, p.price, p.price_base_type, p.price_ttc, p.fk_product_type, p.tms, p.tosell, p.tobuy, p.fk_price_expression, p.entity";
 			$sql.= " FROM ".MAIN_DB_PREFIX."product as p";
-			$sql.= ' WHERE p.entity IN ('.getEntity($productstatic->element, 1).')';
+			$sql.= ' WHERE p.entity IN ('.getEntity($productstatic->element).')';
 			if (empty($user->rights->produit->lire)) $sql.=' AND p.fk_product_type != 0';
 			if (empty($user->rights->service->lire)) $sql.=' AND p.fk_product_type != 1';
 			// Add where from hooks
 			if (is_object($hookmanager))
 			{
 			    $parameters=array('boxproductlist'=>1);
-			    $reshook=$hookmanager->executeHooks('printFieldListWhere',$parameters);    // Note that $action and $object may have been modified by hook
+			    $reshook=$hookmanager->executeHooks('printFieldListWhere', $parameters);    // Note that $action and $object may have been modified by hook
 			    $sql.=$hookmanager->resPrint;
 			}
 			$sql.= $db->order('p.datec', 'DESC');
@@ -172,18 +179,18 @@ class box_produits extends ModeleBoxes
 
 					$this->info_box_contents[$line][] = array(
                         'td' => 'class="right"',
-                        'text' => dol_print_date($datem,'day'),
+                        'text' => dol_print_date($datem, 'day'),
                     );
 
 					$this->info_box_contents[$line][] = array(
-                        'td' => 'align="right" width="18"',
-                        'text' => '<span class="statusrefsell">'.$productstatic->LibStatut($objp->tosell,3,0).'<span>',
+                        'td' => 'class="right" width="18"',
+                        'text' => '<span class="statusrefsell">'.$productstatic->LibStatut($objp->tosell, 3, 0).'<span>',
 					    'asis' => 1
                     );
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => 'align="right" width="18"',
-                        'text' => '<span class="statusrefbuy">'.$productstatic->LibStatut($objp->tobuy,3,1).'</span>',
+                        'td' => 'class="right" width="18"',
+                        'text' => '<span class="statusrefbuy">'.$productstatic->LibStatut($objp->tobuy, 3, 1).'</span>',
 					    'asis' => 1
                     );
 
@@ -191,7 +198,7 @@ class box_produits extends ModeleBoxes
                 }
                 if ($num==0)
                     $this->info_box_contents[$line][0] = array(
-                        'td' => 'align="center"',
+                        'td' => 'class="center"',
                         'text'=>$langs->trans("NoRecordedProducts"),
                     );
 
@@ -205,24 +212,22 @@ class box_produits extends ModeleBoxes
             }
         } else {
             $this->info_box_contents[0][0] = array(
-                'td' => 'align="left" class="nohover opacitymedium"',
+                'td' => 'class="nohover opacitymedium left"',
                 'text' => $langs->trans("ReadPermissionNotAllowed")
             );
         }
     }
 
-	/**
-	 *	Method to show box
-	 *
-	 *	@param	array	$head       Array with properties of box title
-	 *	@param  array	$contents   Array with properties of box lines
-	 *  @param	int		$nooutput	No print, only return string
-	 *	@return	string
-	 */
-    function showBox($head = null, $contents = null, $nooutput=0)
+    /**
+     *  Method to show box
+     *
+     *  @param	array	$head       Array with properties of box title
+     *  @param  array	$contents   Array with properties of box lines
+     *  @param	int		$nooutput	No print, only return string
+     *  @return	string
+     */
+    public function showBox($head = null, $contents = null, $nooutput = 0)
     {
-		return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
-	}
-
+        return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
+    }
 }
-

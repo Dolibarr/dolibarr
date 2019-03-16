@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2013-2014 Olivier Geffroy      <jeff@jeffinfo.com>
- * Copyright (C) 2013-2017 Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2013-2017 Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2014      Florian Henry        <florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -22,40 +22,6 @@
  * 	\ingroup	Advanced accountancy
  * 	\brief		Library of accountancy functions
  */
-
-/**
- *	Prepare array with list of admin tabs
- *
- *	@param	AccountingAccount	$object		Object instance we show card
- *	@return	array							Array of tabs to show
- */
-function admin_accounting_prepare_head(AccountingAccount $object=null)
-{
-	global $langs, $conf;
-
-	$h = 0;
-	$head = array ();
-
-	$head[$h][0] = dol_buildpath('/accountancy/admin/index.php', 1);
-	$head[$h][1] = $langs->trans("Miscellaneous");
-	$head[$h][2] = 'general';
-	$h ++;
-
-	$head[$h][0] = DOL_URL_ROOT.'/accountancy/admin/export.php';
-	$head[$h][1] = $langs->trans("ExportOptions");
-	$head[$h][2] = 'export';
-	$h ++;
-
-	// Show more tabs from modules
-	// Entries must be declared in modules descriptor with line
-	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__'); to add new tab
-	// $this->tabs = array('entity:-tabname); to remove a tab
-	complete_head_from_modules($conf, $langs, $object, $head, $h, 'accounting_admin');
-
-	complete_head_from_modules($conf, $langs, $object, $head, $h, 'accounting_admin', 'remove');
-
-	return $head;
-}
 
 /**
  *	Prepare array with list of tabs
@@ -94,7 +60,7 @@ function accounting_prepare_head(AccountingAccount $object)
  */
 function clean_account($account)
 {
-	$account = rtrim($account,"0");
+	$account = rtrim($account, "0");
 
 	return $account;
 }
@@ -179,14 +145,14 @@ function length_accounta($accounta)
  *	@param 	string				$period         Period of report
  *	@param 	string				$periodlink     Link to switch period
  *	@param 	string				$description    Description
- *	@param 	timestamp|integer	$builddate      Date generation
+ *	@param 	integer	            $builddate      Date of generation
  *	@param 	string				$exportlink     Link for export or ''
  *	@param	array				$moreparam		Array with list of params to add into form
  *	@param	string				$calcmode		Calculation mode
  *  @param  string              $varlink        Add a variable into the address of the page
  *	@return	void
  */
-function journalHead($nom,$variante,$period,$periodlink,$description,$builddate,$exportlink='',$moreparam=array(),$calcmode='', $varlink='')
+function journalHead($nom, $variante, $period, $periodlink, $description, $builddate, $exportlink = '', $moreparam = array(), $calcmode = '', $varlink = '')
 {
     global $langs;
 
@@ -260,4 +226,3 @@ function journalHead($nom,$variante,$period,$periodlink,$description,$builddate,
 
     print "\n<!-- fin cartouche journal -->\n\n";
 }
-

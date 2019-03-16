@@ -13,6 +13,6 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-INSERT INTO llx_myobject VALUES (
+INSERT INTO llx_mymodule_myobject VALUES (
 	1, 1, 'mydata'
 );

@@ -29,19 +29,27 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 /**
  *		Parent class of emailing target selectors modules
  */
-class MailingTargets    // This can't be abstract as it is used for some method
+class MailingTargets // This can't be abstract as it is used for some method
 {
-    var $db;
-    var $error;
-    var $tooltip='';
-    
+    /**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+
+    /**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
+
+    public $tooltip='';
+
 
     /**
 	 *	Constructor
 	 *
 	 *  @param		DoliDB		$db      Database handler
 	 */
-	function __construct($db)
+    public function __construct($db)
 	{
         $this->db = $db;
 	}
@@ -51,10 +59,10 @@ class MailingTargets    // This can't be abstract as it is used for some method
      *
      * @return     string      Return translation of module label. Try translation of $this->name then translation of 'MailingModuleDesc'.$this->name, or $this->desc if not found
      */
-    function getDesc()
+    public function getDesc()
     {
         global $langs, $form;
-        
+
         $langs->load("mails");
         $transstring="MailingModuleDesc".$this->name;
         $s='';
@@ -72,7 +80,7 @@ class MailingTargets    // This can't be abstract as it is used for some method
      *
      *  @return     integer      Example
      */
-    function getNbOfRecords()
+    public function getNbOfRecords()
     {
         return 0;
     }
@@ -83,7 +91,7 @@ class MailingTargets    // This can't be abstract as it is used for some method
      * @param      string	$sql        Sql request to count
      * @return     int       			Nb of recipient, or <0 if error
      */
-    function getNbOfRecipients($sql)
+    public function getNbOfRecipients($sql)
     {
         $result=$this->db->query($sql);
         if ($result)
@@ -104,19 +112,21 @@ class MailingTargets    // This can't be abstract as it is used for some method
      *
      * @return     string      Retourne zone select
      */
-    function formFilter()
+    public function formFilter()
     {
         return '';
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      * Met a jour nombre de destinataires
      *
      * @param	int		$mailing_id          Id of emailing
      * @return  int			                 < 0 si erreur, nb destinataires si ok
      */
-    function update_nb($mailing_id)
+    public function update_nb($mailing_id)
     {
+        // phpcs:enable
         // Mise a jour nombre de destinataire dans table des mailings
         $sql = "SELECT COUNT(*) nb FROM ".MAIN_DB_PREFIX."mailing_cibles";
         $sql .= " WHERE fk_mailing = ".$mailing_id;
@@ -141,6 +151,7 @@ class MailingTargets    // This can't be abstract as it is used for some method
         return $nb;
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      * Ajoute destinataires dans table des cibles
      *
@@ -148,13 +159,14 @@ class MailingTargets    // This can't be abstract as it is used for some method
      * @param   array	$cibles        Array with targets
      * @return  int      			   < 0 si erreur, nb ajout si ok
      */
-    function add_to_target($mailing_id, $cibles)
+    public function add_to_target($mailing_id, $cibles)
     {
+        // phpcs:enable
     	global $conf;
 
     	$this->db->begin();
 
-        // Insert emailing targest from array into database
+        // Insert emailing targets from array into database
         $j = 0;
         $num = count($cibles);
         foreach ($cibles as $targetarray)
@@ -177,7 +189,7 @@ class MailingTargets    // This can't be abstract as it is used for some method
         		$sql.= (empty($targetarray['source_id']) ? 'null' : "'".$this->db->escape($targetarray['source_id'])."'").",";
        			$sql .= "'".$this->db->escape(dol_hash($targetarray['email'].';'.$targetarray['lastname'].';'.$mailing_id.';'.$conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY))."',";
         		$sql .= "'".$this->db->escape($targetarray['source_type'])."')";
-        		dol_syslog(get_class($this)."::".__METHOD__,LOG_DEBUG);
+        		dol_syslog(get_class($this)."::".__METHOD__, LOG_DEBUG);
         		$result=$this->db->query($sql);
         		if ($result)
         		{
@@ -188,8 +200,8 @@ class MailingTargets    // This can't be abstract as it is used for some method
         			if ($this->db->errno() != 'DB_ERROR_RECORD_ALREADY_EXISTS')
         			{
         				// Si erreur autre que doublon
-        				dol_syslog($this->db->error());
-        				$this->error=$this->db->error();
+        				dol_syslog($this->db->error().' : '.$targetarray['email']);
+        				$this->error=$this->db->error().' : '.$targetarray['email'];
         				$this->db->rollback();
         				return -1;
         			}
@@ -199,6 +211,7 @@ class MailingTargets    // This can't be abstract as it is used for some method
 
         dol_syslog(get_class($this)."::".__METHOD__.": mailing ".$j." targets added");
 
+        /*
         //Update the status to show thirdparty mail that don't want to be contacted anymore'
         $sql = "UPDATE ".MAIN_DB_PREFIX."mailing_cibles";
         $sql .= " SET statut=3";
@@ -207,8 +220,6 @@ class MailingTargets    // This can't be abstract as it is used for some method
         dol_syslog(get_class($this)."::".__METHOD__.": mailing update status to display thirdparty mail that do not want to be contacted");
         $result=$this->db->query($sql);
 
-
-
         //Update the status to show contact mail that don't want to be contacted anymore'
         $sql = "UPDATE ".MAIN_DB_PREFIX."mailing_cibles";
         $sql .= " SET statut=3";
@@ -216,22 +227,36 @@ class MailingTargets    // This can't be abstract as it is used for some method
         $sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe s ON s.rowid=sc.fk_soc WHERE s.fk_stcomm=-1 OR no_email=1))";
         dol_syslog(get_class($this)."::".__METHOD__.": mailing update status to display contact mail that do not want to be contacted",LOG_DEBUG);
         $result=$this->db->query($sql);
+		*/
 
+        $sql = "UPDATE ".MAIN_DB_PREFIX."mailing_cibles";
+        $sql .= " SET statut=3";
+        $sql .= " WHERE fk_mailing=".$mailing_id." AND email IN (SELECT mu.email FROM ".MAIN_DB_PREFIX."mailing_unsubscribe AS mu WHERE mu.entity IN ('".getEntity('mailing')."'))";
+
+        dol_syslog(get_class($this)."::".__METHOD__.":mailing update status to display emails that do not want to be contacted anymore", LOG_DEBUG);
+        $result=$this->db->query($sql);
+        if (! $result)
+        {
+        	dol_print_error($this->db);
+        }
 
         $this->update_nb($mailing_id);
 
         $this->db->commit();
+
         return $j;
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *  Supprime tous les destinataires de la table des cibles
      *
-     *	@param	int		$mailing_id        Id of emailing
-     *	@return	void
+     *  @param  int		$mailing_id        Id of emailing
+     *  @return	void
      */
-    function clear_target($mailing_id)
+    public function clear_target($mailing_id)
     {
+        // phpcs:enable
         $sql = "DELETE FROM ".MAIN_DB_PREFIX."mailing_cibles";
         $sql .= " WHERE fk_mailing = ".$mailing_id;
 
@@ -242,6 +267,4 @@ class MailingTargets    // This can't be abstract as it is used for some method
 
         $this->update_nb($mailing_id);
     }
-
 }
-

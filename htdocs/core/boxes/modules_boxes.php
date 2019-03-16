@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004-2013  Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012  Regis Houssin       <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012  Regis Houssin       <regis.houssin@inodbox.com>
  * Copyright (C) 2014       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2015       Frederic France     <frederic.france@free.fr>
  *
@@ -31,7 +31,7 @@
  *
  * Boxes parent class
  */
-class ModeleBoxes    // Can't be abtract as it is instantiated to build "empty" boxes
+class ModeleBoxes // Can't be abtract as it is instantiated to build "empty" boxes
 {
 	/**
 	 * @var DoliDB Database handler
@@ -115,7 +115,7 @@ class ModeleBoxes    // Can't be abtract as it is instantiated to build "empty" 
 	 * @param   DoliDB  $db     Database handler
      * @param   string  $param  More parameters
 	 */
-	function __construct($db,$param='')
+	public function __construct($db, $param = '')
 	{
 		$this->db=$db;
 	}
@@ -125,7 +125,7 @@ class ModeleBoxes    // Can't be abtract as it is instantiated to build "empty" 
 	 *
 	 * @return  string  Error message
 	 */
-	function error()
+	public function error()
 	{
 		return $this->error;
 	}
@@ -138,7 +138,7 @@ class ModeleBoxes    // Can't be abtract as it is instantiated to build "empty" 
 	 *
 	 * @return  int         <0 if KO, >0 if OK
 	 */
-	function fetch($rowid)
+	public function fetch($rowid)
 	{
 		global $conf;
 
@@ -182,7 +182,7 @@ class ModeleBoxes    // Can't be abtract as it is instantiated to build "empty" 
 	 *
 	 * @return  string
 	 */
-	function outputBox($head = null, $contents = null)
+	public function outputBox($head = null, $contents = null)
 	{
 		global $langs, $user, $conf;
 
@@ -204,7 +204,7 @@ class ModeleBoxes    // Can't be abtract as it is instantiated to build "empty" 
 	 * @param	int		$nooutput	No print, only return string
 	 * @return  string
 	 */
-	function showBox($head = null, $contents = null, $nooutput=0)
+	public function showBox($head = null, $contents = null, $nooutput = 0)
 	{
 		global $langs, $user, $conf;
 
@@ -213,7 +213,6 @@ class ModeleBoxes    // Can't be abtract as it is instantiated to build "empty" 
         require_once DOL_DOCUMENT_ROOT .'/core/lib/files.lib.php';
 
 		$MAXLENGTHBOX=60;   // Mettre 0 pour pas de limite
-		$var = false;
 
         $cachetime = 900;   // 900 : 15mn
         $cachedir = DOL_DATA_ROOT.'/boxes/temp';
@@ -231,7 +230,8 @@ class ModeleBoxes    // Can't be abtract as it is instantiated to build "empty" 
             $nblines=count($contents);
 
             $out.= "\n<!-- Box ".get_class($this)." start -->\n";
-            $out.= '<div class="box" id="boxto_'.$this->box_id.'">'."\n";
+
+            $out.= '<div class="box boxdraggable" id="boxto_'.$this->box_id.'">'."\n";
 
             if (! empty($head['text']) || ! empty($head['sublink']) || ! empty($head['subpicto']) || $nblines)
             {
@@ -247,11 +247,11 @@ class ModeleBoxes    // Can't be abtract as it is instantiated to build "empty" 
                 $out.= '>';
                 if ($conf->use_javascript_ajax)
                 {
-                    $out.= '<table summary="" class="nobordernopadding" width="100%"><tr><td class="tdoverflowmax100 maxwidth100onsmartphone">';
+                    $out.= '<table summary="" class="nobordernopadding" width="100%"><tr><td class="tdoverflowmax150 maxwidth150onsmartphone">';
                 }
                 if (! empty($head['text']))
                 {
-                    $s=dol_trunc($head['text'],isset($head['limit'])?$head['limit']:$MAXLENGTHBOX);
+                    $s=dol_trunc($head['text'], isset($head['limit'])?$head['limit']:$MAXLENGTHBOX);
                     $out.= $s;
                 }
                 $out.= '</td>';
@@ -259,17 +259,18 @@ class ModeleBoxes    // Can't be abtract as it is instantiated to build "empty" 
                 if (! empty($conf->use_javascript_ajax))
                 {
                     $sublink='';
-                    if (! empty($head['sublink']))  $sublink.= '<a href="'.$head['sublink'].'"'.(empty($head['target'])?' target="_blank"':'').'>';
-                    if (! empty($head['subpicto'])) $sublink.= img_picto($head['subtext'], $head['subpicto'], 'class="'.(empty($head['subclass'])?'':$head['subclass']).'" id="idsubimg'.$this->boxcode.'"');
+                    if (! empty($head['sublink']))  $sublink.= '<a href="'.$head['sublink'].'"'.(empty($head['target'])?'':' target="'.$head['target'].'"').'>';
+                    if (! empty($head['subpicto'])) $sublink.= img_picto($head['subtext'], $head['subpicto'], 'class="opacitymedium '.(empty($head['subclass'])?'':$head['subclass']).'" id="idsubimg'.$this->boxcode.'"');
                     if (! empty($head['sublink']))  $sublink.= '</a>';
 
                     $out.= '<td class="nocellnopadd boxclose right nowraponall">';
                     $out.=$sublink;
                     // The image must have the class 'boxhandle' beause it's value used in DOM draggable objects to define the area used to catch the full object
-                    $out.= img_picto($langs->trans("MoveBox",$this->box_id),'grip_title','class="boxhandle hideonsmartphone cursormove"');
-                    $out.= img_picto($langs->trans("CloseBox",$this->box_id),'close_title','class="boxclose cursorpointer" rel="x:y" id="imgclose'.$this->box_id.'"');
+                    $out.= img_picto($langs->trans("MoveBox", $this->box_id), 'grip_title', 'class="opacitymedium boxhandle hideonsmartphone cursormove"');
+                    $out.= img_picto($langs->trans("CloseBox", $this->box_id), 'close_title', 'class="opacitymedium boxclose cursorpointer" rel="x:y" id="imgclose'.$this->box_id.'"');
                     $label=$head['text'];
-                    if (! empty($head['graph'])) $label.=' ('.$langs->trans("Graph").')';
+                    //if (! empty($head['graph'])) $label.=' ('.$langs->trans("Graph").')';
+                    if (! empty($head['graph'])) $label.=' <span class="opacitymedium fa fa-bar-chart"></span>';
                     $out.= '<input type="hidden" id="boxlabelentry'.$this->box_id.'" value="'.dol_escape_htmltag($label).'">';
                     $out.= '</td></tr></table>';
                 }
@@ -286,7 +287,7 @@ class ModeleBoxes    // Can't be abtract as it is instantiated to build "empty" 
                     if (isset($contents[$i]))
                     {
                         // TR
-                        if (isset($contents[$i][0]['tr'])) $out.= '<tr class="tdtop" '.$contents[$i][0]['tr'].'>';
+                        if (isset($contents[$i][0]['tr'])) $out.= '<tr '.$contents[$i][0]['tr'].'>';
                         else $out.= '<tr class="oddeven">';
 
                         // Loop on each TD
@@ -297,9 +298,9 @@ class ModeleBoxes    // Can't be abtract as it is instantiated to build "empty" 
                             if (isset($contents[$i][$j]['td'])) $tdparam.=' '.$contents[$i][$j]['td'];
 
                             $text=isset($contents[$i][$j]['text'])?$contents[$i][$j]['text']:'';
-                            $textwithnotags=preg_replace('/<([^>]+)>/i','',$text);
+                            $textwithnotags=preg_replace('/<([^>]+)>/i', '', $text);
                             $text2=isset($contents[$i][$j]['text2'])?$contents[$i][$j]['text2']:'';
-                            $text2withnotags=preg_replace('/<([^>]+)>/i','',$text2);
+                            $text2withnotags=preg_replace('/<([^>]+)>/i', '', $text2);
                             $textnoformat=isset($contents[$i][$j]['textnoformat'])?$contents[$i][$j]['textnoformat']:'';
                             //$out.= "xxx $textwithnotags y";
                             if (empty($contents[$i][$j]['tooltip'])) $contents[$i][$j]['tooltip']="";
@@ -322,7 +323,7 @@ class ModeleBoxes    // Can't be abtract as it is instantiated to build "empty" 
                             // Logo
                             if (! empty($contents[$i][$j]['logo']))
                             {
-                                $logo=preg_replace("/^object_/i","",$contents[$i][$j]['logo']);
+                                $logo=preg_replace("/^object_/i", "", $contents[$i][$j]['logo']);
                                 $out.= '<a href="'.$contents[$i][$j]['url'].'">';
                                 $out.= img_object($langs->trans("Show").' '.$tooltip, $logo, 'class="classfortooltip"');
                             }
@@ -330,14 +331,14 @@ class ModeleBoxes    // Can't be abtract as it is instantiated to build "empty" 
                             $maxlength=$MAXLENGTHBOX;
                             if (! empty($contents[$i][$j]['maxlength'])) $maxlength=$contents[$i][$j]['maxlength'];
 
-                            if ($maxlength) $textwithnotags=dol_trunc($textwithnotags,$maxlength);
-                            if (preg_match('/^<img/i',$text) || preg_match('/^<div/i',$text) || ! empty($contents[$i][$j]['asis'])) $out.= $text;   // show text with no html cleaning
+                            if ($maxlength) $textwithnotags=dol_trunc($textwithnotags, $maxlength);
+                            if (preg_match('/^<img/i', $text) || preg_match('/^<div/i', $text) || ! empty($contents[$i][$j]['asis'])) $out.= $text;   // show text with no html cleaning
                             else $out.= $textwithnotags;                // show text with html cleaning
 
                             // End Url
                             if (! empty($contents[$i][$j]['url'])) $out.= '</a>';
 
-                            if (preg_match('/^<img/i',$text2) || preg_match('/^<div/i',$text2) || ! empty($contents[$i][$j]['asis2'])) $out.= $text2; // show text with no html cleaning
+                            if (preg_match('/^<img/i', $text2) || preg_match('/^<div/i', $text2) || ! empty($contents[$i][$j]['asis2'])) $out.= $text2; // show text with no html cleaning
                             else $out.= $text2withnotags;               // show text with html cleaning
 
                             if (! empty($textnoformat)) $out.= "\n".$textnoformat."\n";
@@ -359,6 +360,7 @@ class ModeleBoxes    // Can't be abtract as it is instantiated to build "empty" 
             if (empty($head['text']) && empty($head['sublink']) && empty($head['subpicto']) && ! $nblines) $out.= "<br>\n";
 
             $out.= "</div>\n";
+
             $out.= "<!-- Box ".get_class($this)." end -->\n\n";
             if (! empty($conf->global->MAIN_ACTIVATE_FILECACHE)) {
                 dol_filecache($cachedir, $filename, $out);
@@ -383,7 +385,7 @@ class ModeleBoxes    // Can't be abtract as it is instantiated to build "empty" 
 	 *  @param	array	$forcedirwidget		null=All default directories. This parameter is used by modulebuilder module only.
 	 * 	@return	array						Array list of widget
 	 */
-	static function getWidgetsList($forcedirwidget=null)
+	public static function getWidgetsList($forcedirwidget = null)
 	{
 		global $conf, $langs, $db;
 
@@ -395,7 +397,8 @@ class ModeleBoxes    // Can't be abtract as it is instantiated to build "empty" 
 		$orders = array();
 		$i = 0;
 
-		$dirwidget=array_merge(array('/core/boxes/'));
+		//$dirwidget=array_merge(array('/core/boxes/'), $conf->modules_parts['widgets']);
+		$dirwidget=array('/core/boxes/');	// $conf->modules_parts['widgets'] is not required
 		if (is_array($forcedirwidget))
 		{
 			$dirwidget=$forcedirwidget;
@@ -403,7 +406,7 @@ class ModeleBoxes    // Can't be abtract as it is instantiated to build "empty" 
 
 		foreach($dirwidget as $reldir)
 		{
-			$dir=dol_buildpath($reldir,0);
+			$dir=dol_buildpath($reldir, 0);
 			$newdir=dol_osencode($dir);
 
 			// Check if directory exists (we do not use dol_is_dir to avoid loading files.lib.php at each call)
@@ -414,18 +417,18 @@ class ModeleBoxes    // Can't be abtract as it is instantiated to build "empty" 
 			{
 				while (($file = readdir($handle))!==false)
 				{
-					if (is_readable($newdir.'/'.$file) && preg_match('/^(.+)\.php/',$file,$reg))
+					if (is_readable($newdir.'/'.$file) && preg_match('/^(.+)\.php/', $file, $reg))
 					{
-						if (preg_match('/\.back$/',$file)) continue;
+						if (preg_match('/\.back$/', $file)) continue;
 
 						$part1=$reg[1];
 
 						$modName = ucfirst($reg[1]);
 						//print "file=$file"; print "modName=$modName"; exit;
-						if (in_array($modName,$modules))
+						if (in_array($modName, $modules))
 						{
 							$langs->load("errors");
-							print '<div class="error">'.$langs->trans("Error").' : '.$langs->trans("ErrorDuplicateWidget",$modName,"").'</div>';
+							print '<div class="error">'.$langs->trans("Error").' : '.$langs->trans("ErrorDuplicateWidget", $modName, "").'</div>';
 						}
 						else
 						{
@@ -440,7 +443,7 @@ class ModeleBoxes    // Can't be abtract as it is instantiated to build "empty" 
 
 						$files[$i] = $file;
 						$fullpath[$i] = $dir.'/'.$file;
-						$relpath[$i] = preg_replace('/^\//','',$reldir).'/'.$file;
+						$relpath[$i] = preg_replace('/^\//', '', $reldir).'/'.$file;
 						$iscoreorexternal[$i] = ($reldir == '/core/boxes/'?'internal':'external');
 						$modules[$i] = $modName;
 						$orders[$i] = $part1;   // Set sort criteria value
@@ -477,22 +480,22 @@ class ModeleBoxes    // Can't be abtract as it is instantiated to build "empty" 
 				$module='';
 
 				// Check if widget file is disabled by name
-				if (preg_match('/NORUN$/i',$files[$key])) $disabledbyname=1;
+				if (preg_match('/NORUN$/i', $files[$key])) $disabledbyname=1;
 
 				// We set info of modules
-				$widget[$j]['picto'] = $objMod->picto?img_object('',$objMod->picto):img_object('','generic');
+				$widget[$j]['picto'] = $objMod->picto?img_object('', $objMod->picto):img_object('', 'generic');
 				$widget[$j]['file'] = $files[$key];
 				$widget[$j]['fullpath'] = $fullpath[$key];
 				$widget[$j]['relpath'] = $relpath[$key];
 				$widget[$j]['iscoreorexternal'] = $iscoreorexternal[$key];
 				//$widget[$j]['version'] = $objMod->getVersion();
-				$widget[$j]['status'] = img_picto($langs->trans("Active"),'tick');
+				$widget[$j]['status'] = img_picto($langs->trans("Active"), 'tick');
 				if ($disabledbyname > 0 || $disabledbymodule > 1) $widget[$j]['status'] = '';
 
 				$text ='<b>'.$langs->trans("Description").':</b><br>';
 				$text.=$objMod->boxlabel.'<br>';
 				$text.='<br><b>'.$langs->trans("Status").':</b><br>';
-				if ($disabledbymodule == 2) $text.=$langs->trans("HooksDisabledAsModuleDisabled",$module).'<br>';
+				if ($disabledbymodule == 2) $text.=$langs->trans("HooksDisabledAsModuleDisabled", $module).'<br>';
 
 				$widget[$j]['info'] = $text;
 			}
@@ -500,8 +503,4 @@ class ModeleBoxes    // Can't be abtract as it is instantiated to build "empty" 
 		}
 		return $widget;
 	}
-
-
 }
-
-

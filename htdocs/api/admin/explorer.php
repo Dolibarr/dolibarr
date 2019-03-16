@@ -14,7 +14,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * @deprecated      Old explorer. Not using Swagger. See instead explorer in htdocs/api/index.php.
  */
 
@@ -30,6 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/api/class/api.class.php';
 require_once DOL_DOCUMENT_ROOT.'/api/class/api_access.class.php';
 
+// Load translation files required by the page
 $langs->load("admin");
 
 
@@ -41,7 +42,7 @@ $langs->load("admin");
 if (empty($conf->global->MAIN_MODULE_API))
 {
     dol_syslog("Call Dolibarr API interfaces with module REST disabled");
-    print $langs->trans("WarningModuleNotActive",'Api').'.<br><br>';
+    print $langs->trans("WarningModuleNotActive", 'Api').'.<br><br>';
     print $langs->trans("ToActivateModule");
     exit;
 }
@@ -51,7 +52,7 @@ $api = new DolibarrApi($db);
 
 $api->r->addAPIClass('Luracast\\Restler\\Resources'); //this creates resources.json at API Root
 $api->r->setSupportedFormats('JsonFormat', 'XmlFormat');
-$api->r->addAuthenticationClass('DolibarrApiAccess','');
+$api->r->addAuthenticationClass('DolibarrApiAccess', '');
 
 $listofapis = array();
 
@@ -68,13 +69,13 @@ foreach ($modulesdir as $dir)
     {
         while (($file = readdir($handle))!==false)
         {
-            if (is_readable($dir.$file) && preg_match("/^(mod.*)\.class\.php$/i",$file,$reg))
+            if (is_readable($dir.$file) && preg_match("/^(mod.*)\.class\.php$/i", $file, $reg))
             {
                 $modulename=$reg[1];
 
                 // Defined if module is enabled
                 $enabled=true;
-                $module=$part=$obj=strtolower(preg_replace('/^mod/i','',$modulename));
+                $module=$part=$obj=strtolower(preg_replace('/^mod/i', '', $modulename));
                 //if ($part == 'propale') $part='propal';
                 if ($module == 'societe') {
 					$obj = 'thirdparty';
@@ -87,10 +88,15 @@ foreach ($modulesdir as $dir)
                     $part = 'compta/facture';
 					$obj = 'facture';
 				}
+                if ($module == 'ficheinter') {
+                    $obj = 'fichinter';
+                    $part = 'fichinter';
+                    $module='fichinter';
+                }
+
                 if (empty($conf->$module->enabled)) $enabled=false;
 
-                if ($enabled)
-                {
+                if ($enabled) {
                     /*
                      * If exists, load the API class for enable module
                      *
@@ -106,18 +112,7 @@ foreach ($modulesdir as $dir)
                     {
                         while (($file_searched = readdir($handle_part))!==false)
                         {
-                            // Support of the deprecated API.
-                            if (is_readable($dir_part.$file_searched) && preg_match("/^api_deprecated_(.*)\.class\.php$/i",$file_searched,$reg))
-                            {
-                                $classname = ucwords($reg[1]).'Api';
-                                require_once $dir_part.$file_searched;
-                                if (class_exists($classname))
-                                {
-                                    dol_syslog("Found deprecated API classname=".$classname." into ".$dir);
-                                    $api->r->addAPIClass($classname, '');
-                                }
-                            }
-                            elseif (is_readable($dir_part.$file_searched) && preg_match("/^api_(.*)\.class\.php$/i",$file_searched,$reg))
+                            if (is_readable($dir_part.$file_searched) && preg_match("/^api_(.*)\.class\.php$/i", $file_searched, $reg))
                             {
                                 $classname = ucwords($reg[1]);
                                 require_once $dir_part.$file_searched;
@@ -126,8 +121,8 @@ foreach ($modulesdir as $dir)
                                     dol_syslog("Found API classname=".$classname." into ".$dir);
                                     $listofapis[] = $classname;
                                 }
-                            }                                
-                        
+                            }
+
                             /*
                             if (is_readable($dir_part.$file_searched) && preg_match("/^(api_.*)\.class\.php$/i",$file_searched,$reg))
                             {
@@ -137,11 +132,11 @@ foreach ($modulesdir as $dir)
                                 $classname = ucfirst($classname);
                                 require_once $dir_part.$file_searched;
 
-                                if (class_exists($classname)) 
+                                if (class_exists($classname))
                                 {
-                                    dol_syslog("Found API classname=".$classname);    
+                                    dol_syslog("Found API classname=".$classname);
                                     $api->r->addAPIClass($classname,'');
-                                    
+
 
                                     /*
                                     require_once DOL_DOCUMENT_ROOT.'/includes/restler/framework/Luracast/Restler/Routes.php';
@@ -151,10 +146,10 @@ foreach ($modulesdir as $dir)
                                     } catch (Exception $e) {
                                         throw new RestException(500, "Error while parsing comments of `$classname` class. " . $e->getMessage());
                                     }*/
-                                    
+
                                     //$listofapis[]=array('classname'=>$classname, 'fullpath'=>$file_searched);
                            /*     }
-                                
+
                             }*/
                         }
                     }
@@ -171,11 +166,11 @@ $listofapis=Routes::toArray();          // TODO api for "status" is lost here
 
 llxHeader();
 
-$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print load_fiche_titre($langs->trans("ApiSetup"),$linkback,'title_setup');
+$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+print load_fiche_titre($langs->trans("ApiSetup"), $linkback, 'title_setup');
 
 // Define $urlwithroot
-$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
+$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
 $urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
 //$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
 
@@ -184,7 +179,7 @@ print '<br>';
 $message='';
 $url='<a href="'.$urlwithroot.'/api/index.php/login?login='.urlencode($user->login).'&password=yourpassword" target="_blank">'.$urlwithroot.'/api/index.php/login?login='.urlencode($user->login).'&password=yourpassword[&reset=1]</a>';
 $message.=$langs->trans("UrlToGetKeyToUseAPIs").':<br>';
-$message.=img_picto('','object_globe.png').' '.$url;
+$message.=img_picto('', 'object_globe.png').' '.$url;
 print $message;
 print '<br>';
 print '<br>';
@@ -196,7 +191,7 @@ foreach($listofapis['v1'] as $key => $val)
 {
     if ($key == 'login') continue;
     if ($key == 'index') continue;
-    
+
     if ($key)
     {
         foreach($val as $method => $val2)
@@ -204,8 +199,8 @@ foreach($listofapis['v1'] as $key => $val)
             $newclass=$val2['className'];
 
             if (preg_match('/restler/i', $newclass)) continue;
-            
-            if ($oldclass != $newclass) 
+
+            if ($oldclass != $newclass)
             {
                 print "\n<br>\n".$langs->trans("Class").': '.$newclass.'<br>'."\n";
                 $oldclass = $newclass;
@@ -213,8 +208,8 @@ foreach($listofapis['v1'] as $key => $val)
             //print $key.' - '.$val['classname'].' - '.$val['fullpath']." - ".DOL_MAIN_URL_ROOT.'/api/index.php/'.strtolower(preg_replace('/Api$/','',$val['classname']))."/xxx<br>\n";
             $url=$urlwithroot.'/api/index.php/'.$key;
             $url.='?api_key=token';
-            print img_picto('','object_globe.png').' '.$method.' <a href="'.$url.'" target="_blank">'.$url."</a><br>\n";
-        }        
+            print img_picto('', 'object_globe.png').' '.$method.' <a href="'.$url.'" target="_blank">'.$url."</a><br>\n";
+        }
     }
 }
 
@@ -225,4 +220,3 @@ print $langs->trans("OnlyActiveElementsAreExposed", DOL_URL_ROOT.'/admin/modules
 
 llxFooter();
 $db->close();
-

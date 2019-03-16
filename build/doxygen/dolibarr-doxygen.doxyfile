@@ -442,7 +442,7 @@ SORT_BY_SCOPE_NAME = NO
 # disable (NO) the todo list. This list is created by putting \todo
 # commands in the documentation.
 
-GENERATE_TODOLIST = YES
+GENERATE_TODOLIST = NO
 
 # The GENERATE_TESTLIST tag can be used to enable (YES) or
 # disable (NO) the test list. This list is created by putting \test
@@ -639,7 +639,7 @@ EXCLUDE_SYMBOLS =
 # directories that contain example code fragments that are included (see
 # the \include command).
 
-EXAMPLE_PATH = ../../dev/skeletons
+EXAMPLE_PATH = ../../htdocs/modulebuilder/template 
 
 # If the value of the EXAMPLE_PATH tag contains directories, you can use the
 # EXAMPLE_PATTERNS tag to specify one or more wildcard pattern (like *.cpp

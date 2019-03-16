@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2010-2013	Regis Houssin		<regis.houssin@capnetworks.com>
+/* Copyright (C) 2010-2013	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2010-2011	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2012-2013	Christophe Battarel	<christophe.battarel@altairis.fr>
  * Copyright (C) 2012       Cédric Salvador     <csalvador@gpcsolutions.fr>
@@ -37,10 +37,18 @@
  * $type, $text, $description, $line
  */
 
+// Protection to avoid direct call of template
+if (empty($object) || ! is_object($object))
+{
+	print "Error, template page can't be called as URL";
+	exit;
+}
+
+
 global $forceall, $senderissupplier, $inputalsopricewithtax, $outputalsopricetotalwithtax;
 
 $usemargins=0;
-if (! empty($conf->margin->enabled) && ! empty($object->element) && in_array($object->element,array('facture','propal','commande'))) $usemargins=1;
+if (! empty($conf->margin->enabled) && ! empty($object->element) && in_array($object->element, array('facture','propal','commande'))) $usemargins=1;
 
 if (empty($dateSelector)) $dateSelector=0;
 if (empty($forceall)) $forceall=0;
@@ -48,12 +56,19 @@ if (empty($senderissupplier)) $senderissupplier=0;
 if (empty($inputalsopricewithtax)) $inputalsopricewithtax=0;
 if (empty($outputalsopricetotalwithtax)) $outputalsopricetotalwithtax=0;
 
+// add html5 elements
+$domData  = ' data-element="'.$line->element.'"';
+$domData .= ' data-id="'.$line->id.'"';
+$domData .= ' data-qty="'.$line->qty.'"';
+$domData .= ' data-product_type="'.$line->product_type.'"';
+
+
 ?>
 <?php $coldisplay=0; ?>
 <!-- BEGIN PHP TEMPLATE objectline_view.tpl.php -->
-<tr <?php echo 'id="row-'.$line->id.'" '.$bcdd[$var]; ?>>
+<tr  id="row-<?php echo $line->id?>" class="drag drop oddeven" <?php echo $domData; ?> >
 	<?php if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) { ?>
-	<td class="linecolnum" align="center"><?php $coldisplay++; ?><?php echo ($i+1); ?></td>
+	<td class="linecolnum center"><?php $coldisplay++; ?><?php echo ($i+1); ?></td>
 	<?php } ?>
 	<td class="linecoldescription minwidth300imp"><?php $coldisplay++; ?><div id="line_<?php echo $line->id; ?>"></div>
 	<?php
@@ -62,9 +77,10 @@ if (empty($outputalsopricetotalwithtax)) $outputalsopricetotalwithtax=0;
 		<a href="<?php echo DOL_URL_ROOT.'/comm/remx.php?id='.$this->socid; ?>">
 		<?php
 		$txt='';
-		print img_object($langs->trans("ShowReduc"),'reduc').' ';
+		print img_object($langs->trans("ShowReduc"), 'reduc').' ';
 		if ($line->description == '(DEPOSIT)') $txt=$langs->trans("Deposit");
 		elseif ($line->description == '(EXCESS RECEIVED)') $txt=$langs->trans("ExcessReceived");
+		elseif ($line->description == '(EXCESS PAID)') $txt=$langs->trans("ExcessPaid");
 		//else $txt=$langs->trans("Discount");
 		print $txt;
 		?>
@@ -76,13 +92,13 @@ if (empty($outputalsopricetotalwithtax)) $outputalsopricetotalwithtax=0;
 			{
 				$discount=new DiscountAbsolute($this->db);
 				$discount->fetch($line->fk_remise_except);
-				echo ($txt?' - ':'').$langs->transnoentities("DiscountFromCreditNote",$discount->getNomUrl(0));
+				echo ($txt?' - ':'').$langs->transnoentities("DiscountFromCreditNote", $discount->getNomUrl(0));
 			}
 			elseif ($line->description == '(DEPOSIT)' && $line->fk_remise_except > 0)
 			{
 				$discount=new DiscountAbsolute($this->db);
 				$discount->fetch($line->fk_remise_except);
-				echo ($txt?' - ':'').$langs->transnoentities("DiscountFromDeposit",$discount->getNomUrl(0));
+				echo ($txt?' - ':'').$langs->transnoentities("DiscountFromDeposit", $discount->getNomUrl(0));
 				// Add date of deposit
 				if (! empty($conf->global->INVOICE_ADD_DEPOSIT_DATE))
 				    echo ' ('.dol_print_date($discount->datec).')';
@@ -91,7 +107,13 @@ if (empty($outputalsopricetotalwithtax)) $outputalsopricetotalwithtax=0;
 			{
 				$discount=new DiscountAbsolute($this->db);
 				$discount->fetch($line->fk_remise_except);
-				echo ($txt?' - ':'').$langs->transnoentities("DiscountFromExcessReceived",$discount->getNomUrl(0));
+				echo ($txt?' - ':'').$langs->transnoentities("DiscountFromExcessReceived", $discount->getNomUrl(0));
+			}
+			elseif ($line->description == '(EXCESS PAID)' && $objp->fk_remise_except > 0)
+			{
+				$discount=new DiscountAbsolute($this->db);
+				$discount->fetch($line->fk_remise_except);
+				echo ($txt?' - ':'').$langs->transnoentities("DiscountFromExcessPaid", $discount->getNomUrl(0));
 			}
 			else
 			{
@@ -105,47 +127,65 @@ if (empty($outputalsopricetotalwithtax)) $outputalsopricetotalwithtax=0;
 
 	    if ($line->fk_product > 0)
 		{
-			echo $form->textwithtooltip($text,$description,3,'','',$i,0,(!empty($line->fk_parent_line)?img_picto('', 'rightarrow'):''));
-
-			// Show range
-			echo get_date_range($line->date_start, $line->date_end, $format);
-
-			// Add description in form
-			if (! empty($conf->global->PRODUIT_DESC_IN_FORM))
-			{
-				print (! empty($line->description) && $line->description!=$line->product_label)?'<br>'.dol_htmlentitiesbr($line->description):'';
-			}
-
+			echo $form->textwithtooltip($text, $description, 3, '', '', $i, 0, (!empty($line->fk_parent_line)?img_picto('', 'rightarrow'):''));
 		}
 		else
 		{
-
-			if ($type==1) $text = img_object($langs->trans('Service'),'service');
-			else $text = img_object($langs->trans('Product'),'product');
+			if ($type==1) $text = img_object($langs->trans('Service'), 'service');
+			else $text = img_object($langs->trans('Product'), 'product');
 
 			if (! empty($line->label)) {
 				$text.= ' <strong>'.$line->label.'</strong>';
-				echo $form->textwithtooltip($text,dol_htmlentitiesbr($line->description),3,'','',$i,0,(!empty($line->fk_parent_line)?img_picto('', 'rightarrow'):''));
+				echo $form->textwithtooltip($text, dol_htmlentitiesbr($line->description), 3, '', '', $i, 0, (!empty($line->fk_parent_line)?img_picto('', 'rightarrow'):''));
 			} else {
 				if (! empty($line->fk_parent_line)) echo img_picto('', 'rightarrow');
 				echo $text.' '.dol_htmlentitiesbr($line->description);
 			}
+		}
 
-			// Show range
-			echo get_date_range($line->date_start,$line->date_end, $format);
+		// Show date range
+		if ($line->element == 'facturedetrec') {
+			if ($line->date_start_fill || $line->date_end_fill) echo '<br><div class="clearboth nowraponall">';
+			if ($line->date_start_fill) echo $langs->trans('AutoFillDateFromShort').': '.yn($line->date_start_fill);
+			if ($line->date_start_fill && $line->date_end_fill) echo ' - ';
+			if ($line->date_end_fill) echo $langs->trans('AutoFillDateToShort').': '.yn($line->date_end_fill);
+			if ($line->date_start_fill || $line->date_end_fill) echo '</div>';
+		}
+		else {
+			if ($line->date_start || $line->date_end) echo '<br><div class="clearboth nowraponall">'.get_date_range($line->date_start, $line->date_end, $format).'</div>';
+			//echo get_date_range($line->date_start, $line->date_end, $format);
+		}
+
+		// Add description in form
+		if ($line->fk_product > 0 && ! empty($conf->global->PRODUIT_DESC_IN_FORM))
+		{
+			print (! empty($line->description) && $line->description!=$line->product_label)?'<br>'.dol_htmlentitiesbr($line->description):'';
 		}
 	}
+
+	if (! empty($conf->accounting->enabled) && $line->fk_accounting_account > 0)
+	{
+		$accountingaccount=new AccountingAccount($this->db);
+		$accountingaccount->fetch($line->fk_accounting_account);
+		echo '<div class="clearboth"></div><br><span class="opacitymedium">' . $langs->trans('AccountingAffectation') . ' : </span>' . $accountingaccount->getNomUrl(0, 1, 1);
+	}
+
 	?>
 	</td>
-	<?php if ($object->element == 'supplier_proposal') { ?>
-		<td class="linecolrefsupplier" align="right"><?php echo $line->ref_fourn; ?></td>
-	<?php }
+	<?php
+	if ($object->element == 'supplier_proposal' || $object->element == 'order_supplier' || $object->element == 'invoice_supplier')	// We must have same test in printObjectLines
+	{
+	?>
+		<td class="linecolrefsupplier"><?php
+		echo ($line->ref_fourn?$line->ref_fourn:$line->ref_supplier);
+		?></td>
+	<?php
+	}
 	// VAT Rate
 	?>
-	<td align="right" class="linecolvat nowrap"><?php $coldisplay++; ?><?php
-	//var_dump($line);
+	<td class="linecolvat nowrap right"><?php $coldisplay++; ?><?php
 	$positiverates='';
-	if (price2num($line->tva_tx))       $positiverates.=($positiverates?'/':'').price2num($line->tva_tx);
+	if (price2num($line->tva_tx))          $positiverates.=($positiverates?'/':'').price2num($line->tva_tx);
 	if (price2num($line->total_localtax1)) $positiverates.=($positiverates?'/':'').price2num($line->localtax1_tx);
 	if (price2num($line->total_localtax2)) $positiverates.=($positiverates?'/':'').price2num($line->localtax2_tx);
 	if (empty($positiverates)) $positiverates='0';
@@ -153,30 +193,32 @@ if (empty($outputalsopricetotalwithtax)) $outputalsopricetotalwithtax=0;
 	//echo vatrate($line->tva_tx.($line->vat_src_code?(' ('.$line->vat_src_code.')'):''), '%', $line->info_bits);
 	?></td>
 
-	<td align="right" class="linecoluht nowrap"><?php $coldisplay++; ?><?php echo price($line->subprice); ?></td>
+	<td class="linecoluht nowrap right"><?php $coldisplay++; ?><?php echo price($line->subprice); ?></td>
 
-	<?php if (!empty($conf->multicurrency->enabled)) { ?>
-	<td align="right" class="linecoluht_currency nowrap"><?php $coldisplay++; ?><?php echo price($line->multicurrency_subprice); ?></td>
+	<?php if (!empty($conf->multicurrency->enabled) && $this->multicurrency_code != $conf->currency) { ?>
+	<td class="linecoluht_currency nowrap right"><?php $coldisplay++; ?><?php echo price($line->multicurrency_subprice); ?></td>
 	<?php } ?>
 
 	<?php if ($inputalsopricewithtax) { ?>
-	<td align="right" class="linecoluttc nowrap"><?php $coldisplay++; ?><?php echo (isset($line->pu_ttc)?price($line->pu_ttc):price($line->subprice)); ?></td>
+	<td class="linecoluttc nowrap right"><?php $coldisplay++; ?><?php echo (isset($line->pu_ttc)?price($line->pu_ttc):price($line->subprice)); ?></td>
 	<?php } ?>
 
-	<td align="right" class="linecolqty nowrap"><?php $coldisplay++; ?>
-	<?php if ((($line->info_bits & 2) != 2) && $line->special_code != 3) {
-			// I comment this because it shows info even when not required
-			// for example always visible on invoice but must be visible only if stock module on and stock decrease option is on invoice validation and status is not validated
-			// must also not be output for most entities (proposal, intervention, ...)
-			//if($line->qty > $line->stock) print img_picto($langs->trans("StockTooLow"),"warning", 'style="vertical-align: bottom;"')." ";
-			echo $line->qty;
-		} else echo '&nbsp;';	?>
+	<td class="linecolqty nowrap right"><?php $coldisplay++; ?>
+    <?php
+    if ((($line->info_bits & 2) != 2) && $line->special_code != 3) {
+		// I comment this because it shows info even when not required
+		// for example always visible on invoice but must be visible only if stock module on and stock decrease option is on invoice validation and status is not validated
+		// must also not be output for most entities (proposal, intervention, ...)
+		//if($line->qty > $line->stock) print img_picto($langs->trans("StockTooLow"),"warning", 'style="vertical-align: bottom;"')." ";
+		echo price($line->qty, 0, '', 0, 0);  // Yes, it is a quantity, not a price, but we just want the formating role of function price
+    } else echo '&nbsp;';
+    ?>
 	</td>
 
 	<?php
 	if($conf->global->PRODUCT_USE_UNITS)
 	{
-		print '<td align="left" class="linecoluseunit nowrap">';
+		print '<td class="linecoluseunit nowrap left">';
 		$label = $line->getLabelOfUnit('short');
 		if ($label !== '') {
 			print $langs->trans($label);
@@ -186,10 +228,10 @@ if (empty($outputalsopricetotalwithtax)) $outputalsopricetotalwithtax=0;
 	?>
 
 	<?php if (!empty($line->remise_percent) && $line->special_code != 3) { ?>
-	<td class="linecoldiscount" align="right"><?php
+	<td class="linecoldiscount right"><?php
 		$coldisplay++;
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-		echo dol_print_reduction($line->remise_percent,$langs);
+		echo dol_print_reduction($line->remise_percent, $langs);
 	?></td>
 	<?php } else { ?>
 	<td class="linecoldiscount"><?php $coldisplay++; ?>&nbsp;</td>
@@ -197,42 +239,42 @@ if (empty($outputalsopricetotalwithtax)) $outputalsopricetotalwithtax=0;
 
 	if ($this->situation_cycle_ref) {
 		$coldisplay++;
-		print '<td align="right" class="linecolcycleref nowrap">' . $line->situation_percent . '%</td>';
+		print '<td class="linecolcycleref nowrap right">' . $line->situation_percent . '%</td>';
 	}
 
   	if ($usemargins && ! empty($conf->margin->enabled) && empty($user->societe_id))
   	{
-		$rounding = min($conf->global->MAIN_MAX_DECIMALS_UNIT,$conf->global->MAIN_MAX_DECIMALS_TOT);
+		$rounding = min($conf->global->MAIN_MAX_DECIMALS_UNIT, $conf->global->MAIN_MAX_DECIMALS_TOT);
   		?>
 
   	<?php if (!empty($user->rights->margins->creer)) { ?>
-  	<td align="right" class="linecolmargin1 nowrap margininfos"><?php $coldisplay++; ?><?php echo price($line->pa_ht); ?></td>
+  	<td class="linecolmargin1 nowrap margininfos right"><?php $coldisplay++; ?><?php echo price($line->pa_ht); ?></td>
   	<?php } ?>
   	<?php if (! empty($conf->global->DISPLAY_MARGIN_RATES) && $user->rights->margins->liretous) { ?>
-  	  <td align="right" class="linecolmargin2 nowrap margininfos"><?php $coldisplay++; ?><?php echo (($line->pa_ht == 0)?'n/a':price($line->marge_tx, null, null, null, null, $rounding).'%'); ?></td>
+  	  <td class="linecolmargin2 nowrap margininfos right"><?php $coldisplay++; ?><?php echo (($line->pa_ht == 0)?'n/a':price($line->marge_tx, null, null, null, null, $rounding).'%'); ?></td>
   	<?php }
     if (! empty($conf->global->DISPLAY_MARK_RATES) && $user->rights->margins->liretous) {?>
-  	  <td align="right" class="linecolmargin2 nowrap margininfos"><?php $coldisplay++; ?><?php echo price($line->marque_tx, null, null, null, null, $rounding).'%'; ?></td>
+  	  <td class="linecolmargin2 nowrap margininfos right"><?php $coldisplay++; ?><?php echo price($line->marque_tx, null, null, null, null, $rounding).'%'; ?></td>
     <?php }
   	}
   	?>
 
 	<?php if ($line->special_code == 3)	{ ?>
-	<td align="right" class="linecoloption nowrap"><?php $coldisplay++; ?><?php echo $langs->trans('Option'); ?></td>
+	<td class="linecoloption nowrap right"><?php $coldisplay++; ?><?php echo $langs->trans('Option'); ?></td>
 	<?php } else { ?>
-	<td align="right" class="liencolht nowrap"><?php $coldisplay++; ?><?php echo price($line->total_ht); ?></td>
-		<?php if (!empty($conf->multicurrency->enabled)) { ?>
-		<td align="right" class="linecolutotalht_currency nowrap"><?php $coldisplay++; ?><?php echo price($line->multicurrency_total_ht); ?></td>
+	<td class="linecolht nowrap right"><?php $coldisplay++; ?><?php echo price($line->total_ht); ?></td>
+		<?php if (!empty($conf->multicurrency->enabled) && $this->multicurrency_code != $conf->currency) { ?>
+		<td class="linecolutotalht_currency nowrap right"><?php $coldisplay++; ?><?php echo price($line->multicurrency_total_ht); ?></td>
 		<?php } ?>
 	<?php } ?>
         <?php if ($outputalsopricetotalwithtax) { ?>
-        <td align="right" class="liencolht nowrap"><?php $coldisplay++; ?><?php echo price($line->total_ttc); ?></td>
+        <td class="linecolht nowrap right"><?php $coldisplay++; ?><?php echo price($line->total_ttc); ?></td>
         <?php } ?>
 
 
 	<?php
-	if ($this->statut == 0  && ($object_rights->creer)) { ?>
-	<td class="linecoledit" align="center"><?php $coldisplay++; ?>
+	if ($this->statut == 0  && ($object_rights->creer) && $action != 'selectlines' ) { ?>
+	<td class="linecoledit center"><?php $coldisplay++; ?>
 		<?php if (($line->info_bits & 2) == 2 || ! empty($disableedit)) { ?>
 		<?php } else { ?>
 		<a href="<?php echo $_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=editline&amp;lineid='.$line->id.'#line_'.$line->id; ?>">
@@ -241,9 +283,9 @@ if (empty($outputalsopricetotalwithtax)) $outputalsopricetotalwithtax=0;
 		<?php } ?>
 	</td>
 
-	<td class="linecoldelete" align="center"><?php $coldisplay++; ?>
+	<td class="linecoldelete center"><?php $coldisplay++; ?>
 		<?php
-		if (($this->situation_counter == 1 || !$this->situation_cycle_ref) && empty($disableremove)) {
+		if (($line->fk_prev_id == null ) && empty($disableremove)) { //La suppression n'est autorisée que si il n'y a pas de ligne dans une précédente situation
 			print '<a href="' . $_SERVER["PHP_SELF"] . '?id=' . $this->id . '&amp;action=ask_deleteline&amp;lineid=' . $line->id . '">';
 			print img_delete();
 			print '</a>';
@@ -252,33 +294,41 @@ if (empty($outputalsopricetotalwithtax)) $outputalsopricetotalwithtax=0;
 	</td>
 
 	<?php
-	if ($num > 1 && empty($conf->browser->phone) && ($this->situation_counter == 1 || !$this->situation_cycle_ref) && empty($disablemove)) { ?>
-	<td align="center" class="linecolmove tdlineupdown"><?php $coldisplay++; ?>
+	if ($num > 1 && $conf->browser->layout != 'phone' && ($this->situation_counter == 1 || !$this->situation_cycle_ref) && empty($disablemove)) { ?>
+	<td class="linecolmove tdlineupdown center"><?php $coldisplay++; ?>
 		<?php if ($i > 0) { ?>
 		<a class="lineupdown" href="<?php echo $_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=up&amp;rowid='.$line->id; ?>">
-		<?php echo img_up('default',0,'imgupforline'); ?>
+		<?php echo img_up('default', 0, 'imgupforline'); ?>
 		</a>
 		<?php } ?>
 		<?php if ($i < $num-1) { ?>
 		<a class="lineupdown" href="<?php echo $_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=down&amp;rowid='.$line->id; ?>">
-		<?php echo img_down('default',0,'imgdownforline'); ?>
+		<?php echo img_down('default', 0, 'imgdownforline'); ?>
 		</a>
 		<?php } ?>
 	</td>
     <?php } else { ?>
-    <td align="center"<?php echo ((empty($conf->browser->phone) && empty($disablemove)) ?' class="linecolmove tdlineupdown"':' class="linecolmove"'); ?>><?php $coldisplay++; ?></td>
+    <td <?php echo (($conf->browser->layout != 'phone' && empty($disablemove)) ?' class="linecolmove tdlineupdown center"':' class="linecolmove center"'); ?>><?php $coldisplay++; ?></td>
 	<?php } ?>
-<?php } else { ?>
+<?php
+    } else {
+?>
 	<td colspan="3"><?php $coldisplay=$coldisplay+3; ?></td>
-<?php } ?>
+<?php
+    }
+?>
+	<?php  if($action == 'selectlines'){ ?>
+	<td class="linecolcheck center"><input type="checkbox" class="linecheckbox" name="line_checkbox[<?php echo $i+1; ?>]" value="<?php echo $line->id; ?>" ></td>
+	<?php } ?>
+
+</tr>
 
 <?php
 //Line extrafield
 if (!empty($extrafieldsline))
 {
-	print $line->showOptionals($extrafieldsline,'view',array('style'=>$bcdd[$var],'colspan'=>$coldisplay));
+	print $line->showOptionals($extrafieldsline, 'view', array('style'=>'class="drag drop oddeven"','colspan'=>$coldisplay), '', '', empty($conf->global->MAIN_EXTRAFIELDS_IN_ONE_TD)?0:1);
 }
 ?>
 
-</tr>
 <!-- END PHP TEMPLATE objectline_view.tpl.php -->

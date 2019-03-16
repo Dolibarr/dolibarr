@@ -10,7 +10,6 @@ AgendaAutoActionDesc=Definieren Sie hier Ereignisse für die Dolibarr einen Kale
 ShipmentValidatedInDolibarr=Versand %s in Dolibarr geprüft
 OrderCanceledInDolibarr=Auftrag storniert %s
 ShippingSentByEMail=Lieferung %s per Email versendet
-InterventionSentByEMail=Intervention %s gesendet via E-Mail
 AgendaHideBirthdayEvents=Geburtstage von Kontakten verstecken
 DateActionBegin=Beginnzeit des Ereignis
 DateStartPlusOne=Anfangsdatum + 1 Stunde

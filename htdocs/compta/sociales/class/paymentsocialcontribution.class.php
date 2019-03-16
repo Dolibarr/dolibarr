@@ -31,32 +31,67 @@ require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php'
  */
 class PaymentSocialContribution extends CommonObject
 {
-	public $element='paiementcharge';			//!< Id that identify managed objects
-	public $table_element='paiementcharge';	//!< Name of table without prefix where object is stored
+	/**
+	 * @var string ID to identify managed object
+	 */
+	public $element='paiementcharge';
 
-	var $fk_charge;
-	var $datec='';
-	var $tms='';
-	var $datep='';
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
+	public $table_element='paiementcharge';
+
+	/**
+	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+	 */
+	public $picto = 'payment';
+
+	/**
+     * @var int ID
+     */
+	public $fk_charge;
+
+	public $datec='';
+	public $tms='';
+	public $datep='';
+
 	/**
 	 * @deprecated
 	 * @see amount
 	 */
-	var $total;
-    var $amount;            // Total amount of payment
-    var $amounts=array();   // Array of amounts
-	var $fk_typepaiement;
-	var $num_paiement;
-	var $fk_bank;
-	var $fk_user_creat;
-	var $fk_user_modif;
+	public $total;
+
+    public $amount;            // Total amount of payment
+    public $amounts=array();   // Array of amounts
+
+    /**
+     * @var int ID
+     */
+	public $fk_typepaiement;
+
+	public $num_paiement;
+
+	/**
+     * @var int ID
+     */
+	public $fk_bank;
+
+	/**
+     * @var int ID
+     */
+	public $fk_user_creat;
+
+	/**
+     * @var int ID
+     */
+	public $fk_user_modif;
 
 	/**
 	 *	Constructor
 	 *
 	 *  @param		DoliDB		$db      Database handler
 	 */
-	function __construct($db)
+	public function __construct($db)
 	{
 		$this->db = $db;
 	}
@@ -69,7 +104,7 @@ class PaymentSocialContribution extends CommonObject
 	 *	@param		int		$closepaidcontrib   	1=Also close payed contributions to paid, 0=Do nothing more
 	 *  @return     int     						<0 if KO, id of payment if OK
 	 */
-	function create($user, $closepaidcontrib=0)
+	public function create($user, $closepaidcontrib = 0)
 	{
 		global $conf, $langs;
 
@@ -78,7 +113,7 @@ class PaymentSocialContribution extends CommonObject
         $now=dol_now();
 
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
-        
+
 		// Validate parametres
 		if (! $this->datepaye)
 		{
@@ -87,19 +122,19 @@ class PaymentSocialContribution extends CommonObject
 		}
 
 		// Clean parameters
-		if (isset($this->fk_charge)) $this->fk_charge=trim($this->fk_charge);
+		if (isset($this->fk_charge)) $this->fk_charge= (int) $this->fk_charge;
 		if (isset($this->amount)) $this->amount=trim($this->amount);
-		if (isset($this->fk_typepaiement)) $this->fk_typepaiement=trim($this->fk_typepaiement);
+		if (isset($this->fk_typepaiement)) $this->fk_typepaiement= (int) $this->fk_typepaiement;
 		if (isset($this->num_paiement)) $this->num_paiement=trim($this->num_paiement);
 		if (isset($this->note)) $this->note=trim($this->note);
-		if (isset($this->fk_bank)) $this->fk_bank=trim($this->fk_bank);
-		if (isset($this->fk_user_creat)) $this->fk_user_creat=trim($this->fk_user_creat);
-		if (isset($this->fk_user_modif)) $this->fk_user_modif=trim($this->fk_user_modif);
+		if (isset($this->fk_bank)) $this->fk_bank= (int) $this->fk_bank;
+		if (isset($this->fk_user_creat)) $this->fk_user_creat= (int) $this->fk_user_creat;
+		if (isset($this->fk_user_modif)) $this->fk_user_modif= (int) $this->fk_user_modif;
 
         $totalamount = 0;
         foreach ($this->amounts as $key => $value)  // How payment is dispatch
         {
-            $newvalue = price2num($value,'MT');
+            $newvalue = price2num($value, 'MT');
             $this->amounts[$key] = $newvalue;
             $totalamount += $newvalue;
         }
@@ -125,7 +160,7 @@ class PaymentSocialContribution extends CommonObject
 			if ($resql)
 			{
 				$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."paiementcharge");
-				
+
 				// Insere tableau des montants / factures
 				foreach ($this->amounts as $key => $amount)
 				{
@@ -137,7 +172,7 @@ class PaymentSocialContribution extends CommonObject
 						// If we want to closed payed invoices
 						if ($closepaidcontrib)
 						{
-							
+
 							$contrib=new ChargeSociales($this->db);
 							$contrib->fetch($contribid);
 							$paiement = $contrib->getSommePaiement();
@@ -145,8 +180,8 @@ class PaymentSocialContribution extends CommonObject
 							$creditnotes=0;
 							//$deposits=$contrib->getSumDepositsUsed();
 							$deposits=0;
-							$alreadypayed=price2num($paiement + $creditnotes + $deposits,'MT');
-							$remaintopay=price2num($contrib->amount - $paiement - $creditnotes - $deposits,'MT');
+							$alreadypayed=price2num($paiement + $creditnotes + $deposits, 'MT');
+							$remaintopay=price2num($contrib->amount - $paiement - $creditnotes - $deposits, 'MT');
 							if ($remaintopay == 0)
 							{
 								$result=$contrib->set_paid($user, '', '');
@@ -160,8 +195,10 @@ class PaymentSocialContribution extends CommonObject
 			{
 				$error++;
 			}
-
 		}
+
+		$result = $this->call_trigger('PAYMENTSOCIALCONTRIBUTION_CREATE', $user);
+		if($result < 0) $error++;
 
 		if ($totalamount != 0 && ! $error)
 		{
@@ -184,7 +221,7 @@ class PaymentSocialContribution extends CommonObject
 	 *  @param	int		$id         Id object
 	 *  @return int         		<0 if KO, >0 if OK
 	 */
-	function fetch($id)
+	public function fetch($id)
 	{
 		global $langs;
 		$sql = "SELECT";
@@ -202,9 +239,10 @@ class PaymentSocialContribution extends CommonObject
 		$sql.= " t.fk_user_modif,";
 		$sql.= " pt.code as type_code, pt.libelle as type_libelle,";
 		$sql.= ' b.fk_account';
-		$sql.= " FROM (".MAIN_DB_PREFIX."c_paiement as pt, ".MAIN_DB_PREFIX."paiementcharge as t)";
+		$sql.= " FROM ".MAIN_DB_PREFIX."paiementcharge as t LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pt ON t.fk_typepaiement = pt.id";
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON t.fk_bank = b.rowid';
-		$sql.= " WHERE t.rowid = ".$id." AND t.fk_typepaiement = pt.id";
+		$sql.= " WHERE t.rowid = ".$id;
+		// TODO link on entity of tax;
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$resql=$this->db->query($sql);
@@ -254,21 +292,21 @@ class PaymentSocialContribution extends CommonObject
 	 *  @param  int		$notrigger	    0=launch triggers after, 1=disable triggers
 	 *  @return int         			<0 if KO, >0 if OK
 	 */
-	function update($user=null, $notrigger=0)
+	public function update($user = null, $notrigger = 0)
 	{
 		global $conf, $langs;
 		$error=0;
 
 		// Clean parameters
 
-		if (isset($this->fk_charge)) $this->fk_charge=trim($this->fk_charge);
+		if (isset($this->fk_charge)) $this->fk_charge= (int) $this->fk_charge;
 		if (isset($this->amount)) $this->amount=trim($this->amount);
-		if (isset($this->fk_typepaiement)) $this->fk_typepaiement=trim($this->fk_typepaiement);
+		if (isset($this->fk_typepaiement)) $this->fk_typepaiement= (int) $this->fk_typepaiement;
 		if (isset($this->num_paiement)) $this->num_paiement=trim($this->num_paiement);
 		if (isset($this->note)) $this->note=trim($this->note);
-		if (isset($this->fk_bank)) $this->fk_bank=trim($this->fk_bank);
-		if (isset($this->fk_user_creat)) $this->fk_user_creat=trim($this->fk_user_creat);
-		if (isset($this->fk_user_modif)) $this->fk_user_modif=trim($this->fk_user_modif);
+		if (isset($this->fk_bank)) $this->fk_bank= (int) $this->fk_bank;
+		if (isset($this->fk_user_creat)) $this->fk_user_creat= (int) $this->fk_user_creat;
+		if (isset($this->fk_user_modif)) $this->fk_user_modif= (int) $this->fk_user_modif;
 
 
 
@@ -299,10 +337,10 @@ class PaymentSocialContribution extends CommonObject
 		$resql = $this->db->query($sql);
 		if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 
-		if (! $error)
-		{
-			if (! $notrigger)
-			{
+		//if (! $error)
+		//{
+		//	if (! $notrigger)
+		//	{
 				// Uncomment this and change MYOBJECT to your own tag if you
 				// want this action call a trigger.
 
@@ -312,8 +350,8 @@ class PaymentSocialContribution extends CommonObject
 				//$result=$interface->run_triggers('MYOBJECT_MODIFY',$this,$user,$langs,$conf);
 				//if ($result < 0) { $error++; $this->errors=$interface->errors; }
 				//// End call triggers
-			}
-		}
+		//	}
+		//}
 
 		// Commit or rollback
 		if ($error)
@@ -341,7 +379,7 @@ class PaymentSocialContribution extends CommonObject
 	 *  @param  int		$notrigger		0=launch triggers after, 1=disable triggers
 	 *  @return int						<0 if KO, >0 if OK
 	 */
-	function delete($user, $notrigger=0)
+	public function delete($user, $notrigger = 0)
 	{
 		global $conf, $langs;
 		$error=0;
@@ -371,10 +409,10 @@ class PaymentSocialContribution extends CommonObject
 			if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 		}
 
-		if (! $error)
-		{
-			if (! $notrigger)
-			{
+		//if (! $error)
+		//{
+		//	if (! $notrigger)
+		//	{
 				// Uncomment this and change MYOBJECT to your own tag if you
 				// want this action call a trigger.
 
@@ -384,8 +422,8 @@ class PaymentSocialContribution extends CommonObject
 				//$result=$interface->run_triggers('MYOBJECT_DELETE',$this,$user,$langs,$conf);
 				//if ($result < 0) { $error++; $this->errors=$interface->errors; }
 				//// End call triggers
-			}
-		}
+		//	}
+		//}
 
 		// Commit or rollback
 		if ($error)
@@ -413,15 +451,13 @@ class PaymentSocialContribution extends CommonObject
 	 *	@param	int		$fromid     	Id of object to clone
 	 * 	@return	int						New id of clone
 	 */
-	function createFromClone($fromid)
+	public function createFromClone($fromid)
 	{
 		global $user,$langs;
 
 		$error=0;
 
 		$object=new PaymentSocialContribution($this->db);
-
-		$object->context['createfromclone'] = 'createfromclone';
 
 		$this->db->begin();
 
@@ -434,6 +470,7 @@ class PaymentSocialContribution extends CommonObject
 		// ...
 
 		// Create clone
+		$object->context['createfromclone'] = 'createfromclone';
 		$result=$object->create($user);
 
 		// Other options
@@ -443,14 +480,7 @@ class PaymentSocialContribution extends CommonObject
 			$error++;
 		}
 
-		if (! $error)
-		{
-
-
-
-		}
-
-		unset($this->context['createfromclone']);
+		unset($object->context['createfromclone']);
 
 		// End
 		if (! $error)
@@ -473,7 +503,7 @@ class PaymentSocialContribution extends CommonObject
      *
      *  @return	void
 	 */
-	function initAsSpecimen()
+	public function initAsSpecimen()
 	{
 		$this->id=0;
 
@@ -488,8 +518,6 @@ class PaymentSocialContribution extends CommonObject
 		$this->fk_bank='';
 		$this->fk_user_creat='';
 		$this->fk_user_modif='';
-
-
 	}
 
 
@@ -505,7 +533,7 @@ class PaymentSocialContribution extends CommonObject
      *      @param  string	$emetteur_banque    Name of bank
      *      @return int                 		<0 if KO, >0 if OK
      */
-    function addPaymentToBank($user,$mode,$label,$accountid,$emetteur_nom,$emetteur_banque)
+    public function addPaymentToBank($user, $mode, $label, $accountid, $emetteur_nom, $emetteur_banque)
     {
         global $conf;
 
@@ -513,7 +541,7 @@ class PaymentSocialContribution extends CommonObject
 
         if (! empty($conf->banque->enabled))
         {
-            require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+            include_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
             $acc = new Account($this->db);
             $acc->fetch($accountid);
@@ -566,7 +594,7 @@ class PaymentSocialContribution extends CommonObject
                     {
                         $socialcontrib = new ChargeSociales($this->db);
                         $socialcontrib->fetch($key);
-                        $result=$acc->add_url_line($bank_line_id, $socialcontrib->id, DOL_URL_ROOT.'/compta/charges.php?id=', $socialcontrib->type_libelle.(($socialcontrib->lib && $socialcontrib->lib!=$socialcontrib->type_libelle)?' ('.$socialcontrib->lib.')':''),'sc');
+                        $result=$acc->add_url_line($bank_line_id, $socialcontrib->id, DOL_URL_ROOT.'/compta/charges.php?id=', $socialcontrib->type_libelle.(($socialcontrib->lib && $socialcontrib->lib!=$socialcontrib->type_libelle)?' ('.$socialcontrib->lib.')':''), 'sc');
                         if ($result <= 0) dol_print_error($this->db);
                     }
                 }
@@ -589,14 +617,16 @@ class PaymentSocialContribution extends CommonObject
     }
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Mise a jour du lien entre le paiement de  charge et la ligne dans llx_bank generee
 	 *
 	 *  @param	int		$id_bank         Id if bank
 	 *  @return	int			             >0 if OK, <=0 if KO
 	 */
-	function update_fk_bank($id_bank)
+	public function update_fk_bank($id_bank)
 	{
+        // phpcs:enable
 		$sql = "UPDATE ".MAIN_DB_PREFIX."paiementcharge SET fk_bank = ".$id_bank." WHERE rowid = ".$this->id;
 
 		dol_syslog(get_class($this)."::update_fk_bank", LOG_DEBUG);
@@ -612,6 +642,70 @@ class PaymentSocialContribution extends CommonObject
 		}
 	}
 
+
+	/**
+	 * Retourne le libelle du statut d'une facture (brouillon, validee, abandonnee, payee)
+	 *
+	 * @param	int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 * @return  string				Libelle
+	 */
+	public function getLibStatut($mode = 0)
+	{
+		return $this->LibStatut($this->statut, $mode);
+	}
+
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 * Renvoi le libelle d'un statut donne
+	 *
+	 * @param   int		$status     Statut
+	 * @param   int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 * @return	string  		    Libelle du statut
+	 */
+	public function LibStatut($status, $mode = 0)
+	{
+        // phpcs:enable
+		global $langs;	// TODO Renvoyer le libelle anglais et faire traduction a affichage
+
+		$langs->load('compta');
+		/*if ($mode == 0)
+			{
+			if ($status == 0) return $langs->trans('ToValidate');
+			if ($status == 1) return $langs->trans('Validated');
+			}
+			if ($mode == 1)
+			{
+			if ($status == 0) return $langs->trans('ToValidate');
+			if ($status == 1) return $langs->trans('Validated');
+			}
+			if ($mode == 2)
+			{
+			if ($status == 0) return img_picto($langs->trans('ToValidate'),'statut1').' '.$langs->trans('ToValidate');
+			if ($status == 1) return img_picto($langs->trans('Validated'),'statut4').' '.$langs->trans('Validated');
+			}
+			if ($mode == 3)
+			{
+			if ($status == 0) return img_picto($langs->trans('ToValidate'),'statut1');
+			if ($status == 1) return img_picto($langs->trans('Validated'),'statut4');
+			}
+			if ($mode == 4)
+			{
+			if ($status == 0) return img_picto($langs->trans('ToValidate'),'statut1').' '.$langs->trans('ToValidate');
+			if ($status == 1) return img_picto($langs->trans('Validated'),'statut4').' '.$langs->trans('Validated');
+			}
+			if ($mode == 5)
+			{
+			if ($status == 0) return $langs->trans('ToValidate').' '.img_picto($langs->trans('ToValidate'),'statut1');
+			if ($status == 1) return $langs->trans('Validated').' '.img_picto($langs->trans('Validated'),'statut4');
+			}
+			if ($mode == 6)
+			{
+			if ($status == 0) return $langs->trans('ToValidate').' '.img_picto($langs->trans('ToValidate'),'statut1');
+			if ($status == 1) return $langs->trans('Validated').' '.img_picto($langs->trans('Validated'),'statut4');
+			}*/
+		return '';
+	}
+
 	/**
 	 *  Return clicable name (with picto eventually)
 	 *
@@ -619,7 +713,7 @@ class PaymentSocialContribution extends CommonObject
 	 * 	@param	int		$maxlen			Longueur max libelle
 	 *	@return	string					Chaine avec URL
 	 */
-	function getNomUrl($withpicto=0,$maxlen=0)
+	public function getNomUrl($withpicto = 0, $maxlen = 0)
 	{
 		global $langs;
 
@@ -628,18 +722,15 @@ class PaymentSocialContribution extends CommonObject
 		if (empty($this->ref)) $this->ref=$this->lib;
         $label = $langs->trans("ShowPayment").': '.$this->ref;
 
-		if (!empty($this->id))
-		{
-			$link = '<a href="'.DOL_URL_ROOT.'/compta/payment_sc/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
-			$linkend='</a>';
+        if (!empty($this->id)) {
+            $link = '<a href="'.DOL_URL_ROOT.'/compta/payment_sc/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+            $linkend='</a>';
 
             if ($withpicto) $result.=($link.img_object($label, 'payment', 'class="classfortooltip"').$linkend.' ');
-			if ($withpicto && $withpicto != 2) $result.=' ';
-			if ($withpicto != 2) $result.=$link.($maxlen?dol_trunc($this->ref,$maxlen):$this->ref).$linkend;
-		}
+            if ($withpicto && $withpicto != 2) $result.=' ';
+            if ($withpicto != 2) $result.=$link.($maxlen?dol_trunc($this->ref, $maxlen):$this->ref).$linkend;
+        }
 
-		return $result;
-	}
+        return $result;
+    }
 }
-
-

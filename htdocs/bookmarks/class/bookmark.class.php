@@ -28,21 +28,53 @@
  */
 class Bookmark extends CommonObject
 {
-    public $element='bookmark';
+    /**
+	 * @var string ID to identify managed object
+	 */
+	public $element='bookmark';
+
+    /**
+     * @var string Name of table without prefix where object is stored
+     */
     public $table_element='bookmark';
-    protected $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
-    public $picto = 'bookmark';
 
-    var $db;
+    /**
+	 * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+	 * @var int
+	 */
+    public $ismultientitymanaged = 1;
 
-    var $id;
-    var $fk_user;
-    var $datec;
-    var $url;
-    var $target;	// 0=replace, 1=new window
-    var $title;
-    var $position;
-    var $favicon;
+    /**
+	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+	 */
+	public $picto = 'bookmark';
+
+    /**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+
+    /**
+     * @var int ID
+     */
+    public $id;
+
+    /**
+	 * @var int User ID
+	 */
+	public $fk_user;
+
+    public $datec;
+
+    public $url;
+
+    public $target;	// 0=replace, 1=new window
+
+    public $title;
+
+    public $position;
+
+    public $favicon;
 
 
     /**
@@ -50,7 +82,7 @@ class Bookmark extends CommonObject
 	 *
 	 *  @param		DoliDB		$db      Database handler
      */
-    function __construct($db)
+    public function __construct($db)
     {
         $this->db = $db;
     }
@@ -61,7 +93,7 @@ class Bookmark extends CommonObject
      *    @param    int		$id		Bookmark Id Loader
      *    @return	int				<0 if KO, >0 if OK
      */
-    function fetch($id)
+    public function fetch($id)
     {
         global $conf;
 
@@ -103,7 +135,7 @@ class Bookmark extends CommonObject
      *
      *      @return     int     <0 si ko, rowid du bookmark cree si ok
      */
-    function create()
+    public function create()
     {
         global $conf;
 
@@ -127,7 +159,7 @@ class Bookmark extends CommonObject
         $sql.= ", ".$this->db->escape($conf->entity);
         $sql.= ")";
 
-        dol_syslog("Bookmark::update", LOG_DEBUG);
+        dol_syslog("Bookmark::create", LOG_DEBUG);
         $resql = $this->db->query($sql);
         if ($resql)
         {
@@ -160,7 +192,7 @@ class Bookmark extends CommonObject
      *
      *      @return     int         <0 if KO, > if OK
      */
-    function update()
+    public function update()
     {
     	// Clean parameters
     	$this->url=trim($this->url);
@@ -195,7 +227,7 @@ class Bookmark extends CommonObject
      *      @param      int		$id     Id removed bookmark
      *      @return     int         	<0 si ko, >0 si ok
      */
-    function remove($id)
+    public function remove($id)
     {
         $sql  = "DELETE FROM ".MAIN_DB_PREFIX."bookmark";
         $sql .= " WHERE rowid = ".$id;
@@ -211,7 +243,6 @@ class Bookmark extends CommonObject
             $this->error=$this->db->lasterror();
             return -1;
         }
-
     }
 
 	/**
@@ -237,9 +268,8 @@ class Bookmark extends CommonObject
 	 *	@param      int			$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	 * 	@return 	string					Label of contact status
 	 */
-	function getLibStatut($mode)
+	public function getLibStatut($mode)
 	{
 	    return '';
 	}
-
 }

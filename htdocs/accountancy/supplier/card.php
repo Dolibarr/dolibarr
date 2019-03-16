@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004       Rodolphe Quiedeville  <rodolphe@quiedeville.org>
  * Copyright (C) 2005       Simon TOSSER          <simon@kornog-computing.com>
- * Copyright (C) 2013-2017  Alexandre Spangaro    <aspangaro@zendsi.com>
+ * Copyright (C) 2013-2017  Alexandre Spangaro    <aspangaro@open-dsi.fr>
  * Copyright (C) 2013-2014  Olivier Geffroy       <jeff@jeffinfo.com>
  * Copyright (C) 2013-2014  Florian Henry         <florian.henry@open-concept.pro>
  * Copyright (C) 2014       Juanjo Menent         <jmenent@2byte.es>
@@ -28,15 +28,16 @@
  */
 require '../../main.inc.php';
 
-// Class
 require_once DOL_DOCUMENT_ROOT . '/fourn/class/fournisseur.facture.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formaccounting.class.php';
 
-// Langs
-$langs->load("bills");
-$langs->load("accountancy");
+// Load translation files required by the page
+$langs->loadLangs(array("bills","accountancy"));
 
 $action = GETPOST('action', 'alpha');
+$cancel = GETPOST('cancel', 'alpha');
+$backtopage = GETPOST('backtopage', 'alpha');
+
 $codeventil = GETPOST('codeventil');
 $id = GETPOST('id');
 
@@ -49,8 +50,10 @@ if ($user->societe_id > 0)
  * Actions
  */
 
-if ($action == 'ventil' && $user->rights->accounting->bind->write) {
-	if (! GETPOST('cancel', 'alpha')) {
+if ($action == 'ventil' && $user->rights->accounting->bind->write)
+{
+	if (! $cancel)
+	{
 	    if ($codeventil < 0) $codeventil = 0;
 
 		$sql = " UPDATE " . MAIN_DB_PREFIX . "facture_fourn_det";
@@ -64,6 +67,11 @@ if ($action == 'ventil' && $user->rights->accounting->bind->write) {
 		else
 		{
 		    setEventMessages($langs->trans("RecordModifiedSuccessfully"), null, 'mesgs');
+		    if ($backtopage)
+		    {
+		    	header("Location: ".$backtopage);
+		    	exit();
+		    }
 		}
 	} else {
 		header("Location: ./lines.php");
@@ -88,7 +96,7 @@ $facturefournisseur_static = new FactureFournisseur($db);
 $formaccounting = new FormAccounting($db);
 
 if (! empty($id)) {
-	$sql = "SELECT f.ref as facnumber, f.rowid as facid, l.fk_product, l.description, l.rowid, l.fk_code_ventilation, ";
+	$sql = "SELECT f.ref as ref, f.rowid as facid, l.fk_product, l.description, l.rowid, l.fk_code_ventilation, ";
 	$sql .= " p.rowid as product_id, p.ref as product_ref, p.label as product_label";
 	$sql .= ", aa.account_number, aa.label";
 	$sql .= " FROM " . MAIN_DB_PREFIX . "facture_fourn_det as l";
@@ -111,6 +119,7 @@ if (! empty($id)) {
 			print '<form action="' . $_SERVER["PHP_SELF"] . '?id=' . $id . '" method="post">' . "\n";
 			print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
 			print '<input type="hidden" name="action" value="ventil">';
+			print '<input type="hidden" name="backtopage" value="'.dol_escape_htmltag($backtopage).'">';
 
 			print load_fiche_titre($langs->trans('SuppliersVentilation'), '', 'title_setup');
 
@@ -120,7 +129,7 @@ if (! empty($id)) {
 
 			// ref invoice
 			print '<tr><td>' . $langs->trans("BillsSuppliers") . '</td>';
-			$facturefournisseur_static->ref = $objp->facnumber;
+			$facturefournisseur_static->ref = $objp->ref;
 			$facturefournisseur_static->id = $objp->facid;
 			print '<td>' . $facturefournisseur_static->getNomUrl(1) . '</td>';
 			print '</tr>';
@@ -153,5 +162,6 @@ if (! empty($id)) {
 	print "Error ID incorrect";
 }
 
+// End of page
 llxFooter();
 $db->close();

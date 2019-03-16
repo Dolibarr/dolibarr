@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2010 Regis Houssin  <regis.houssin@capnetworks.com>
+/* Copyright (C) 2010 Regis Houssin  <regis.houssin@inodbox.com>
  * Copyright (C) 2012 Philippe Grand <philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -14,8 +14,15 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
- *
  */
+
+// Protection to avoid direct call of template
+if (empty($conf) || ! is_object($conf))
+{
+	print "Error, template page can't be called as URL";
+	exit;
+}
+
 
 $contact = $GLOBALS['objcanvas']->control->object;
 
@@ -26,17 +33,17 @@ $contact = $GLOBALS['objcanvas']->control->object;
 <?php
 print load_fiche_titre($this->control->tpl['title']);
 
-dol_htmloutput_errors($this->control->tpl['error'],$this->control->tpl['errors']);
+dol_htmloutput_errors($this->control->tpl['error'], $this->control->tpl['errors']);
 
 echo $this->control->tpl['ajax_selectcountry'];
 ?>
 
 <br>
 
-<form method="post" name="formmember" action="<?php echo $_SERVER["PHP_SELF"].'?id='.GETPOST('id','int'); ?>">
+<form method="post" name="formmember" action="<?php echo $_SERVER["PHP_SELF"].'?id='.GETPOST('id', 'int'); ?>">
 <input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>">
 <input type="hidden" name="canvas" value="<?php echo $canvas ?>">
-<input type="hidden" name="id" value="<?php echo GETPOST('id','int'); ?>">
+<input type="hidden" name="id" value="<?php echo GETPOST('id', 'int'); ?>">
 <input type="hidden" name="action" value="update">
 <input type="hidden" name="adherentid" value="<?php echo $this->control->tpl['id']; ?>">
 <input type="hidden" name="old_name" value="<?php echo $this->control->tpl['name']; ?>">

@@ -1,5 +1,5 @@
 -- ===================================================================
--- Copyright (C) 2015-2016 Alexandre Spangaro  <aspangaro.dolibarr@gmail.com>
+-- Copyright (C) 2015-2016 Alexandre Spangaro  <aspangaro@open-dsi.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -17,5 +17,5 @@
 -- Table with category for accounting account
 -- ===================================================================
 
-ALTER TABLE llx_c_accounting_category ADD UNIQUE INDEX uk_c_accounting_category(code);
+ALTER TABLE llx_c_accounting_category ADD UNIQUE INDEX uk_c_accounting_category(code,entity);
 

@@ -3,6 +3,7 @@
  * Copyright (C) 2014-2016  Juanjo Menent       <jmenent@2byte.es>
  * Copyright (C) 2015       Florian Henry       <florian.henry@open-concept.pro>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2018       Francis Appels      <francis.appels@yahoo.com>
  * Copyright (C) ---Put here your own copyright and developer email---
  *
  * This program is free software; you can redistribute it and/or modify
@@ -27,31 +28,54 @@
 
 // Put here all includes required by your class file
 require_once DOL_DOCUMENT_ROOT . '/core/class/commonobject.class.php';
-//require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
-//require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 
 /**
  * Class to manage ECM files
  */
-class EcmFiles //extends CommonObject
+class EcmFiles extends CommonObject
 {
 	/**
 	 * @var string Id to identify managed objects
 	 */
 	public $element = 'ecmfiles';
+
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element = 'ecm_files';
 
 	/**
+	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
 	 */
-	public $label;
+	public $picto = 'generic';
+
+	/**
+	 * @var string Ref hash of file path
+	 */
+	public $ref;
+
+	/**
+	 * hash of file content (md5_file(dol_osencode($destfull))
+     * @var string Ecm Files label
+     */
+    public $label;
+
+	public $share;					// hash for file sharing, empty by default (example: getRandomPassword(true))
+
+	/**
+	 * @var int Entity
+	 */
 	public $entity;
+
 	public $filename;
 	public $filepath;
 	public $fullpath_orig;
+
+	/**
+	 * @var string description
+	 */
 	public $description;
+
 	public $keywords;
 	public $cover;
 	public $position;
@@ -59,12 +83,20 @@ class EcmFiles //extends CommonObject
 	public $extraparams;
 	public $date_c = '';
 	public $date_m = '';
-	public $fk_user_c;
-	public $fk_user_m;
-	public $acl;
 
 	/**
-	 */
+     * @var int ID
+     */
+	public $fk_user_c;
+
+	/**
+     * @var int ID
+     */
+	public $fk_user_m;
+
+	public $acl;
+	public $src_object_type;
+	public $src_object_id;
 
 
 	/**
@@ -80,23 +112,27 @@ class EcmFiles //extends CommonObject
 	/**
 	 * Create object into database
 	 *
-	 * @param  User $user      User that creates
-	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
-	 *
-	 * @return int <0 if KO, Id of created object if OK
+	 * @param  User $user      	User that creates
+	 * @param  bool $notrigger 	false=launch triggers after, true=disable triggers
+	 * @return int 				<0 if KO, Id of created object if OK
 	 */
 	public function create(User $user, $notrigger = false)
 	{
-	    global $conf;
+		global $conf;
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
 		$error = 0;
 
 		// Clean parameters
-
+		if (isset($this->ref)) {
+			 $this->ref = trim($this->ref);
+		}
 		if (isset($this->label)) {
 			 $this->label = trim($this->label);
+		}
+		if (isset($this->share)) {
+			 $this->share = trim($this->share);
 		}
 		if (isset($this->entity)) {
 			 $this->entity = trim($this->entity);
@@ -106,6 +142,7 @@ class EcmFiles //extends CommonObject
 		}
 		if (isset($this->filepath)) {
 			 $this->filepath = trim($this->filepath);
+			 $this->filepath = preg_replace('/[\\/]+$/', '', $this->filepath);		// Remove last /
 		}
 		if (isset($this->fullpath_orig)) {
 			 $this->fullpath_orig = trim($this->fullpath_orig);
@@ -134,30 +171,64 @@ class EcmFiles //extends CommonObject
 		if (isset($this->acl)) {
 			 $this->acl = trim($this->acl);
 		}
-        if (empty($this->date_c)) $this->date_c = dol_now();
+		if (isset($this->src_object_type)) {
+			$this->src_object_type = trim($this->src_object_type);
+		}
+		if (empty($this->date_c)) $this->date_c = dol_now();
+		if (empty($this->date_m)) $this->date_m = dol_now();
 
-        $maxposition=0;
+		// If ref not defined
+		$ref = '';
+		if (! empty($this->ref))
+		{
+			$ref=$this->ref;
+		}
+		else {
+			include_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
+			$ref = dol_hash($this->filepath.'/'.$this->filename, 3);
+		}
+
+		$maxposition=0;
 		if (empty($this->position))   // Get max used
 		{
-		    $sql = "SELECT MAX(position) as maxposition FROM " . MAIN_DB_PREFIX . $this->table_element;
-		    $sql.= " WHERE filepath ='".$this->db->escape($this->filepath)."'";
+			$sql = "SELECT MAX(position) as maxposition FROM " . MAIN_DB_PREFIX . $this->table_element;
+			$sql.= " WHERE filepath ='".$this->db->escape($this->filepath)."'";
 
-		    $resql = $this->db->query($sql);
-		    if ($resql)
-		    {
-		        $obj = $this->db->fetch_object($resql);
-		        $maxposition = (int) $obj->maxposition;
-		    }
-		    else dol_print_error($this->db);
+			$resql = $this->db->query($sql);
+			if ($resql)
+			{
+				$obj = $this->db->fetch_object($resql);
+				$maxposition = (int) $obj->maxposition;
+			}
+			else
+			{
+				$this->errors[] = 'Error ' . $this->db->lasterror();
+				return --$error;
+			}
+			$maxposition=$maxposition+1;
 		}
-		$maxposition=$maxposition+1;
+		else
+		{
+			$maxposition=$this->position;
+		}
 
 		// Check parameters
+		if (empty($this->filename) || empty($this->filepath))
+		{
+			$this->errors[] = 'Bad property filename or filepath';
+			return --$error;
+		}
+		if (! isset($this->entity))
+		{
+			$this->entity = $conf->entity;
+		}
 		// Put here code to add control on parameters values
 
 		// Insert request
 		$sql = 'INSERT INTO ' . MAIN_DB_PREFIX . $this->table_element . '(';
+		$sql.= 'ref,';
 		$sql.= 'label,';
+		$sql.= 'share,';
 		$sql.= 'entity,';
 		$sql.= 'filename,';
 		$sql.= 'filepath,';
@@ -172,10 +243,14 @@ class EcmFiles //extends CommonObject
 		$sql.= 'date_m,';
 		$sql.= 'fk_user_c,';
 		$sql.= 'fk_user_m,';
-		$sql.= 'acl';
+		$sql.= 'acl,';
+		$sql.= 'src_object_type,';
+		$sql.= 'src_object_id';
 		$sql .= ') VALUES (';
+		$sql .= " '".$ref."', ";
 		$sql .= ' '.(! isset($this->label)?'NULL':"'".$this->db->escape($this->label)."'").',';
-		$sql .= ' '.(! isset($this->entity)?$conf->entity:$this->entity).',';
+		$sql .= ' '.(! isset($this->share)?'NULL':"'".$this->db->escape($this->share)."'").',';
+		$sql .= ' '.$this->entity.',';
 		$sql .= ' '.(! isset($this->filename)?'NULL':"'".$this->db->escape($this->filename)."'").',';
 		$sql .= ' '.(! isset($this->filepath)?'NULL':"'".$this->db->escape($this->filepath)."'").',';
 		$sql .= ' '.(! isset($this->fullpath_orig)?'NULL':"'".$this->db->escape($this->fullpath_orig)."'").',';
@@ -189,7 +264,9 @@ class EcmFiles //extends CommonObject
 		$sql .= ' '.(! isset($this->date_m) || dol_strlen($this->date_m)==0?'NULL':"'".$this->db->idate($this->date_m)."'").',';
 		$sql .= ' '.(! isset($this->fk_user_c)?$user->id:$this->fk_user_c).',';
 		$sql .= ' '.(! isset($this->fk_user_m)?'NULL':$this->fk_user_m).',';
-		$sql .= ' '.(! isset($this->acl)?'NULL':"'".$this->db->escape($this->acl)."'");
+		$sql .= ' '.(! isset($this->acl)?'NULL':"'".$this->db->escape($this->acl)."'").',';
+		$sql .= ' '.(! isset($this->src_object_type)?'NULL':"'".$this->db->escape($this->src_object_type)."'").',';
+		$sql .= ' '.(! isset($this->src_object_id)?'NULL':$this->src_object_id);
 		$sql .= ')';
 
 		$this->db->begin();
@@ -203,16 +280,15 @@ class EcmFiles //extends CommonObject
 
 		if (!$error) {
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX . $this->table_element);
-            $this->position = $maxposition;
+			$this->position = $maxposition;
 
-			if (!$notrigger) {
-				// Uncomment this and change MYOBJECT to your own tag if you
-				// want this action to call a trigger.
-
-				//// Call triggers
-				//$result=$this->call_trigger('MYOBJECT_CREATE',$user);
-				//if ($result < 0) $error++;
-				//// End call triggers
+			// Triggers
+			if (! $notrigger)
+			{
+				// Call triggers
+				$result=$this->call_trigger(strtoupper(get_class($this)).'_CREATE', $user);
+				if ($result < 0) { $error++; }
+				// End call triggers
 			}
 		}
 
@@ -231,19 +307,26 @@ class EcmFiles //extends CommonObject
 	/**
 	 * Load object in memory from the database
 	 *
-	 * @param  int    $id          	   Id object
-	 * @param  string $ref         	   Not used yet. Will contains a hash id from filename+filepath
-	 * @param  string $relativepath    Relative path of file from document directory. Example: path/path2/file
-	 * @return int                 	   <0 if KO, 0 if not found, >0 if OK
+	 * @param  int    $id          	   	Id object
+	 * @param  string $ref         	   	Hash of file name (filename+filepath). Not always defined on some version.
+	 * @param  string $relativepath    	Relative path of file from document directory. Example: path/path2/file
+	 * @param  string $hashoffile      	Hash of file content. Take the first one found if same file is at different places. This hash will also change if file content is changed.
+	 * @param  string $hashforshare    	Hash of file sharing.
+	 * @param  string $src_object_type 	src_object_type to search
+	 * @param  string $src_object_id 	src_object_id to search
+	 * @return int                 	   	<0 if KO, 0 if not found, >0 if OK
 	 */
-	public function fetch($id, $ref = null, $relativepath = '')
+	public function fetch($id, $ref = '', $relativepath = '', $hashoffile = '', $hashforshare = '', $src_object_type = '', $src_object_id = 0)
 	{
+		global $conf;
+
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
 		$sql = 'SELECT';
 		$sql .= ' t.rowid,';
 		$sql .= " t.ref,";
 		$sql .= " t.label,";
+		$sql .= " t.share,";
 		$sql .= " t.entity,";
 		$sql .= " t.filename,";
 		$sql .= " t.filepath,";
@@ -258,7 +341,9 @@ class EcmFiles //extends CommonObject
 		$sql .= " t.date_m,";
 		$sql .= " t.fk_user_c,";
 		$sql .= " t.fk_user_m,";
-		$sql .= " t.acl";
+		$sql .= " t.acl,";
+		$sql .= " t.src_object_type,";
+		$sql .= " t.src_object_id";
 		$sql .= ' FROM ' . MAIN_DB_PREFIX . $this->table_element . ' as t';
 		$sql.= ' WHERE 1 = 1';
 		/* Fetching this table depends on filepath+filename, it must not depends on entity
@@ -267,12 +352,32 @@ class EcmFiles //extends CommonObject
 		}*/
 		if ($relativepath) {
 			$sql .= " AND t.filepath = '" . $this->db->escape(dirname($relativepath)) . "' AND t.filename = '".$this->db->escape(basename($relativepath))."'";
+			$sql .= " AND t.entity = ".$conf->entity;				// unique key include the entity so each company has its own index
 		}
-		elseif (null !== $ref) {
+		elseif (! empty($ref)) {		// hash of file path
 			$sql .= " AND t.ref = '".$this->db->escape($ref)."'";
-		} else {
-			$sql .= ' AND t.rowid = ' . $id;
+			$sql .= " AND t.entity = ".$conf->entity;				// unique key include the entity so each company has its own index
 		}
+		elseif (! empty($hashoffile)) {	// hash of content
+			$sql .= " AND t.label = '".$this->db->escape($hashoffile)."'";
+			$sql .= " AND t.entity = ".$conf->entity;				// unique key include the entity so each company has its own index
+		}
+		elseif (! empty($hashforshare)) {
+			$sql .= " AND t.share = '".$this->db->escape($hashforshare)."'";
+			//$sql .= " AND t.entity = ".$conf->entity;							// hashforshare already unique
+		}
+		elseif ($src_object_type && $src_object_id)
+		{
+			// Warning: May return several record, and only first one is returned !
+			$sql .= " AND t.src_object_type ='".$this->db->escape($src_object_type)."' AND t.src_object_id = ".$this->db->escape($src_object_id);
+			$sql .= " AND t.entity = ".$conf->entity;
+		}
+		else {
+			$sql .= ' AND t.rowid = '.$this->db->escape($id);					// rowid already unique
+		}
+
+		$this->db->plimit(1);	// When we search on src or on hash of content (hashforfile) to solve hash conflict when several files has same content, we take first one only
+		$this->db->order('t.rowid', 'ASC');
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -283,6 +388,7 @@ class EcmFiles //extends CommonObject
 				$this->id = $obj->rowid;
 				$this->ref = $obj->ref;
 				$this->label = $obj->label;
+				$this->share = $obj->share;
 				$this->entity = $obj->entity;
 				$this->filename = $obj->filename;
 				$this->filepath = $obj->filepath;
@@ -298,16 +404,14 @@ class EcmFiles //extends CommonObject
 				$this->fk_user_c = $obj->fk_user_c;
 				$this->fk_user_m = $obj->fk_user_m;
 				$this->acl = $obj->acl;
+				$this->src_object_type = $obj->src_object_type;
+				$this->src_object_id = $obj->src_object_id;
 			}
 
 			// Retrieve all extrafields for invoice
 			// fetch optionals attributes and labels
-			/*
-			require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-			$extrafields=new ExtraFields($this->db);
-			$extralabels=$extrafields->fetch_name_optionals_label($this->table_element,true);
-			$this->fetch_optionals($this->id,$extralabels);
-            */
+			// $this->fetch_optionals();
+
 			// $this->fetch_lines();
 
 			$this->db->free($resql);
@@ -321,7 +425,7 @@ class EcmFiles //extends CommonObject
 			$this->errors[] = 'Error ' . $this->db->lasterror();
 			dol_syslog(__METHOD__ . ' ' . implode(',', $this->errors), LOG_ERR);
 
-			return - 1;
+			return -1;
 		}
 	}
 
@@ -337,13 +441,14 @@ class EcmFiles //extends CommonObject
 	 *
 	 * @return int <0 if KO, >0 if OK
 	 */
-	public function fetchAll($sortorder='', $sortfield='', $limit=0, $offset=0, array $filter = array(), $filtermode='AND')
+	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND')
 	{
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
 		$sql = 'SELECT';
 		$sql .= ' t.rowid,';
 		$sql .= " t.label,";
+		$sql .= " t.share,";
 		$sql .= " t.entity,";
 		$sql .= " t.filename,";
 		$sql .= " t.filepath,";
@@ -358,7 +463,9 @@ class EcmFiles //extends CommonObject
 		$sql .= " t.date_m,";
 		$sql .= " t.fk_user_c,";
 		$sql .= " t.fk_user_m,";
-		$sql .= " t.acl";
+		$sql .= " t.acl,";
+		$sql .= " t.src_object_type,";
+		$sql .= " t.src_object_id";
 		$sql .= ' FROM ' . MAIN_DB_PREFIX . $this->table_element. ' as t';
 
 		// Manage filter
@@ -377,10 +484,10 @@ class EcmFiles //extends CommonObject
 			$sql .= ' AND ' . implode(' '.$filtermode.' ', $sqlwhere);
 		}
 		if (!empty($sortfield)) {
-			$sql .= $this->db->order($sortfield,$sortorder);
+			$sql .= $this->db->order($sortfield, $sortorder);
 		}
 		if (!empty($limit)) {
-            $sql .=  ' ' . $this->db->plimit($limit, $offset);
+			$sql .=  ' ' . $this->db->plimit($limit, $offset);
 		}
 
 		$this->lines = array();
@@ -393,8 +500,9 @@ class EcmFiles //extends CommonObject
 				$line = new EcmfilesLine();
 
 				$line->id = $obj->rowid;
-
+				$line->ref = $obj->ref;
 				$line->label = $obj->label;
+				$line->share = $obj->share;
 				$line->entity = $obj->entity;
 				$line->filename = $obj->filename;
 				$line->filepath = $obj->filepath;
@@ -410,6 +518,9 @@ class EcmFiles //extends CommonObject
 				$line->fk_user_c = $obj->fk_user_c;
 				$line->fk_user_m = $obj->fk_user_m;
 				$line->acl = $obj->acl;
+				$line->src_object_type = $obj->src_object_type;
+				$line->src_object_id = $obj->src_object_id;
+				$this->lines[] = $line;
 			}
 			$this->db->free($resql);
 
@@ -432,14 +543,22 @@ class EcmFiles //extends CommonObject
 	 */
 	public function update(User $user, $notrigger = false)
 	{
+		global $conf;
+
 		$error = 0;
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
 		// Clean parameters
 
+		if (isset($this->ref)) {
+			 $this->ref = trim($this->ref);
+		}
 		if (isset($this->label)) {
 			 $this->label = trim($this->label);
+		}
+		if (isset($this->share)) {
+			 $this->share = trim($this->share);
 		}
 		if (isset($this->entity)) {
 			 $this->entity = trim($this->entity);
@@ -468,23 +587,24 @@ class EcmFiles //extends CommonObject
 		if (isset($this->extraparams)) {
 			 $this->extraparams = trim($this->extraparams);
 		}
-		if (isset($this->fk_user_c)) {
-			 $this->fk_user_c = trim($this->fk_user_c);
-		}
 		if (isset($this->fk_user_m)) {
 			 $this->fk_user_m = trim($this->fk_user_m);
 		}
 		if (isset($this->acl)) {
 			 $this->acl = trim($this->acl);
 		}
-
+		if (isset($this->src_object_type)) {
+			$this->src_object_type = trim($this->src_object_type);
+		}
 
 		// Check parameters
 		// Put here code to add a control on parameters values
 
 		// Update request
 		$sql = 'UPDATE ' . MAIN_DB_PREFIX . $this->table_element . ' SET';
+		$sql .= " ref = '".dol_hash($this->filepath.'/'.$this->filename, 3)."',";
 		$sql .= ' label = '.(isset($this->label)?"'".$this->db->escape($this->label)."'":"null").',';
+		$sql .= ' share = '.(! empty($this->share)?"'".$this->db->escape($this->share)."'":"null").',';
 		$sql .= ' entity = '.(isset($this->entity)?$this->entity:$conf->entity).',';
 		$sql .= ' filename = '.(isset($this->filename)?"'".$this->db->escape($this->filename)."'":"null").',';
 		$sql .= ' filepath = '.(isset($this->filepath)?"'".$this->db->escape($this->filepath)."'":"null").',';
@@ -497,9 +617,10 @@ class EcmFiles //extends CommonObject
 		$sql .= ' extraparams = '.(isset($this->extraparams)?"'".$this->db->escape($this->extraparams)."'":"null").',';
 		$sql .= ' date_c = '.(! isset($this->date_c) || dol_strlen($this->date_c) != 0 ? "'".$this->db->idate($this->date_c)."'" : 'null').',';
 		//$sql .= ' date_m = '.(! isset($this->date_m) || dol_strlen($this->date_m) != 0 ? "'".$this->db->idate($this->date_m)."'" : 'null').','; // Field automatically updated
-		$sql .= ' fk_user_c = '.(isset($this->fk_user_c)?$this->fk_user_c:"null").',';
 		$sql .= ' fk_user_m = '.($this->fk_user_m > 0?$this->fk_user_m:$user->id).',';
-		$sql .= ' acl = '.(isset($this->acl)?"'".$this->db->escape($this->acl)."'":"null");
+		$sql .= ' acl = '.(isset($this->acl)?"'".$this->db->escape($this->acl)."'":"null").',';
+		$sql .= ' src_object_id = '.($this->src_object_id > 0?$this->src_object_id:"null").',';
+		$sql .= ' src_object_type = '.(isset($this->src_object_type)?"'".$this->db->escape($this->src_object_type)."'":"null");
 		$sql .= ' WHERE rowid=' . $this->id;
 
 		$this->db->begin();
@@ -511,14 +632,13 @@ class EcmFiles //extends CommonObject
 			dol_syslog(__METHOD__ . ' ' . implode(',', $this->errors), LOG_ERR);
 		}
 
-		if (!$error && !$notrigger) {
-			// Uncomment this and change MYOBJECT to your own tag if you
-			// want this action calls a trigger.
-
-			//// Call triggers
-			//$result=$this->call_trigger('MYOBJECT_MODIFY',$user);
-			//if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
-			//// End call triggers
+		// Triggers
+		if (! $error && ! $notrigger)
+		{
+			// Call triggers
+			$result=$this->call_trigger(strtoupper(get_class($this)).'_MODIFY', $user);
+			if ($result < 0) { $error++; } //Do also here what you must do to rollback action if trigger fail
+			// End call triggers
 		}
 
 		// Commit or rollback
@@ -549,16 +669,13 @@ class EcmFiles //extends CommonObject
 
 		$this->db->begin();
 
-		if (!$error) {
-			if (!$notrigger) {
-				// Uncomment this and change MYOBJECT to your own tag if you
-				// want this action calls a trigger.
-
-				//// Call triggers
-				//$result=$this->call_trigger('MYOBJECT_DELETE',$user);
-				//if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
-				//// End call triggers
-			}
+		// Triggers
+		if (! $notrigger)
+		{
+			// Call triggers
+			$result=$this->call_trigger(strtoupper(get_class($this)).'_DELETE', $user);
+			if ($result < 0) { $error++; } //Do also here what you must do to rollback action if trigger fail
+			// End call triggers
 		}
 
 		// If you need to delete child tables to, you can insert them here
@@ -613,6 +730,7 @@ class EcmFiles //extends CommonObject
 		// ...
 
 		// Create clone
+		$object->context['createfromclone'] = 'createfromclone';
 		$result = $object->create($user);
 
 		// Other options
@@ -621,6 +739,8 @@ class EcmFiles //extends CommonObject
 			$this->errors = $object->errors;
 			dol_syslog(__METHOD__ . ' ' . implode(',', $this->errors), LOG_ERR);
 		}
+
+		unset($object->context['createfromclone']);
 
 		// End
 		if (!$error) {
@@ -639,49 +759,49 @@ class EcmFiles //extends CommonObject
 	 *
 	 *	@param	int		$withpicto			Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
 	 *	@param	string	$option				On what the link point to
-     *  @param	int  	$notooltip			1=Disable tooltip
-     *  @param	int		$maxlen				Max length of visible user name
-     *  @param  string  $morecss            Add more css on link
+	 *  @param	int  	$notooltip			1=Disable tooltip
+	 *  @param	int		$maxlen				Max length of visible user name
+	 *  @param  string  $morecss            Add more css on link
 	 *	@return	string						String with URL
 	 */
-	function getNomUrl($withpicto=0, $option='', $notooltip=0, $maxlen=24, $morecss='')
+	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $maxlen = 24, $morecss = '')
 	{
 		global $db, $conf, $langs;
-        global $dolibarr_main_authentication, $dolibarr_main_demo;
-        global $menumanager;
+		global $dolibarr_main_authentication, $dolibarr_main_demo;
+		global $menumanager;
 
-        if (! empty($conf->dol_no_mouse_hover)) $notooltip=1;   // Force disable tooltips
+		if (! empty($conf->dol_no_mouse_hover)) $notooltip=1;   // Force disable tooltips
 
-        $result = '';
-        $companylink = '';
+		$result = '';
+		$companylink = '';
 
-        $label = '<u>' . $langs->trans("MyModule") . '</u>';
-        $label.= '<br>';
-        $label.= '<b>' . $langs->trans('Ref') . ':</b> ' . $this->ref;
+		$label = '<u>' . $langs->trans("MyModule") . '</u>';
+		$label.= '<br>';
+		$label.= '<b>' . $langs->trans('Ref') . ':</b> ' . $this->ref;
 
-        $url = DOL_URL_ROOT.'/ecm/'.$this->table_name.'_card.php?id='.$this->id;
+		$url = DOL_URL_ROOT.'/ecm/'.$this->table_name.'_card.php?id='.$this->id;
 
-        $linkclose='';
-        if (empty($notooltip))
-        {
-            if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
-            {
-                $label=$langs->trans("ShowProject");
-                $linkclose.=' alt="'.dol_escape_htmltag($label, 1).'"';
-            }
-            $linkclose.=' title="'.dol_escape_htmltag($label, 1).'"';
-            $linkclose.=' class="classfortooltip'.($morecss?' '.$morecss:'').'"';
-        }
-        else $linkclose = ($morecss?' class="'.$morecss.'"':'');
+		$linkclose='';
+		if (empty($notooltip))
+		{
+			if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
+			{
+				$label=$langs->trans("ShowProject");
+				$linkclose.=' alt="'.dol_escape_htmltag($label, 1).'"';
+			}
+			$linkclose.=' title="'.dol_escape_htmltag($label, 1).'"';
+			$linkclose.=' class="classfortooltip'.($morecss?' '.$morecss:'').'"';
+		}
+		else $linkclose = ($morecss?' class="'.$morecss.'"':'');
 
 		$linkstart = '<a href="'.$url.'"';
 		$linkstart.=$linkclose.'>';
 		$linkend='</a>';
 
-        if ($withpicto)
-        {
-            $result.=($linkstart.img_object(($notooltip?'':$label), 'label', ($notooltip?'':'class="classfortooltip"')).$linkend);
-            if ($withpicto != 2) $result.=' ';
+		if ($withpicto)
+		{
+			$result.=($linkstart.img_object(($notooltip?'':$label), 'label', ($notooltip?'':'class="classfortooltip"')).$linkend);
+			if ($withpicto != 2) $result.=' ';
 		}
 		$result.= $linkstart . $this->ref . $linkend;
 		return $result;
@@ -693,11 +813,12 @@ class EcmFiles //extends CommonObject
 	 *  @param	int		$mode          0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	 *  @return	string 			       Label of status
 	 */
-	function getLibStatut($mode=0)
+	public function getLibStatut($mode = 0)
 	{
-		return $this->LibStatut($this->status,$mode);
+		return $this->LibStatut($this->status, $mode);
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Return the status
 	 *
@@ -705,46 +826,11 @@ class EcmFiles //extends CommonObject
 	 *  @param  int		$mode          	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 5=Long label + Picto
 	 *  @return string 			       	Label of status
 	 */
-	static function LibStatut($status,$mode=0)
+	public static function LibStatut($status, $mode = 0)
 	{
+        // phpcs:enable
 		global $langs;
-
-		if ($mode == 0)
-		{
-			$prefix='';
-			if ($status == 1) return $langs->trans('Enabled');
-			if ($status == 0) return $langs->trans('Disabled');
-		}
-		if ($mode == 1)
-		{
-			if ($status == 1) return $langs->trans('Enabled');
-			if ($status == 0) return $langs->trans('Disabled');
-		}
-		if ($mode == 2)
-		{
-			if ($status == 1) return img_picto($langs->trans('Enabled'),'statut4').' '.$langs->trans('Enabled');
-			if ($status == 0) return img_picto($langs->trans('Disabled'),'statut5').' '.$langs->trans('Disabled');
-		}
-		if ($mode == 3)
-		{
-			if ($status == 1) return img_picto($langs->trans('Enabled'),'statut4');
-			if ($status == 0) return img_picto($langs->trans('Disabled'),'statut5');
-		}
-		if ($mode == 4)
-		{
-			if ($status == 1) return img_picto($langs->trans('Enabled'),'statut4').' '.$langs->trans('Enabled');
-			if ($status == 0) return img_picto($langs->trans('Disabled'),'statut5').' '.$langs->trans('Disabled');
-		}
-		if ($mode == 5)
-		{
-			if ($status == 1) return $langs->trans('Enabled').' '.img_picto($langs->trans('Enabled'),'statut4');
-			if ($status == 0) return $langs->trans('Disabled').' '.img_picto($langs->trans('Disabled'),'statut5');
-		}
-		if ($mode == 6)
-		{
-			if ($status == 1) return $langs->trans('Enabled').' '.img_picto($langs->trans('Enabled'),'statut4');
-			if ($status == 0) return $langs->trans('Disabled').' '.img_picto($langs->trans('Disabled'),'statut5');
-		}
+		return '';
 	}
 
 
@@ -756,7 +842,7 @@ class EcmFiles //extends CommonObject
 	 */
 	public function initAsSpecimen()
 	{
-	    global $conf,$user;
+		global $conf,$user;
 
 		$this->id = 0;
 
@@ -776,19 +862,33 @@ class EcmFiles //extends CommonObject
 		$this->fk_user_c = $user->id;
 		$this->fk_user_m = '';
 		$this->acl = '';
+		$this->src_object_type = 'product';
+		$this->src_object_id = 1;
 	}
-
 }
 
 
 class EcmfilesLine
 {
-	public $label;
+	/**
+     * @var string ECM files line label
+     */
+    public $label;
+
+	/**
+	 * @var int Entity
+	 */
 	public $entity;
+
 	public $filename;
 	public $filepath;
 	public $fullpath_orig;
+
+	/**
+	 * @var string description
+	 */
 	public $description;
+
 	public $keywords;
 	public $cover;
 	public $position;
@@ -796,7 +896,18 @@ class EcmfilesLine
 	public $extraparams;
 	public $date_c = '';
 	public $date_m = '';
+
+	/**
+     * @var int ID
+     */
 	public $fk_user_c;
+
+	/**
+     * @var int ID
+     */
 	public $fk_user_m;
+
 	public $acl;
+	public $src_object_type;
+	public $src_object_id;
 }

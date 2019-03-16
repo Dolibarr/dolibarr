@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2014-2016	Alexandre Spangaro   <aspangaro@zendsi.com>
+/* Copyright (C) 2014-2018  Alexandre Spangaro  <aspangaro@open-dsi.fr>
+ * Copyright (C) 2017       Ferran Marcet       <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,25 +28,25 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/loan.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
+if (! empty($conf->projet->enabled)) {
+	require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
+}
 
-$langs->load("other");
-$langs->load("companies");
-$langs->load("compta");
-$langs->load("bills");
-$langs->load("loan");
+// Load translation files required by the page
+$langs->loadLangs(array("other","companies","compta","bills","loan"));
 
-$id = GETPOST('id','int');
-$action = GETPOST('action','aZ09');
+$id = GETPOST('id', 'int');
+$action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'loan', $id, '','');
+$result = restrictedArea($user, 'loan', $id, '', '');
 
 // Get parameters
-$sortfield = GETPOST("sortfield",'alpha');
-$sortorder = GETPOST("sortorder",'alpha');
-$page = GETPOST("page",'int');
+$sortfield = GETPOST("sortfield", 'alpha');
+$sortorder = GETPOST("sortorder", 'alpha');
+$page = GETPOST("page", 'int');
 if ($page == -1) {
     $page = 0;
 }
@@ -77,7 +78,7 @@ $form = new Form($db);
 
 $title = $langs->trans("Loan") . ' - ' . $langs->trans("Documents");
 $help_url = 'EN:Module_Loan|FR:Module_Emprunt';
-llxHeader("",$title,$help_url);
+llxHeader("", $title, $help_url);
 
 if ($object->id)
 {
@@ -85,7 +86,7 @@ if ($object->id)
 
     $head = loan_prepare_head($object);
 
-    dol_fiche_head($head, 'documents',  $langs->trans("Loan"), -1, 'bill');
+    dol_fiche_head($head, 'documents', $langs->trans("Loan"), -1, 'bill');
 
 	$morehtmlref='<div class="refidno">';
 	// Ref loan
@@ -123,7 +124,7 @@ if ($object->id)
 	}
 	$morehtmlref.='</div>';
 
-	$linkback = '<a href="' . DOL_URL_ROOT . '/loan/index.php">' . $langs->trans("BackToList") . '</a>';
+	$linkback = '<a href="' . DOL_URL_ROOT . '/loan/list.php">' . $langs->trans("BackToList") . '</a>';
 
 	$object->totalpaid = $totalpaid;   // To give a chance to dol_banner_tab to use already paid amount to show correct status
 
@@ -133,8 +134,8 @@ if ($object->id)
 	print '<div class="underbanner clearboth"></div>';
 
 
-    // Construit liste des fichiers
-    $filearray=dol_dir_list($upload_dir,"files",0,'','(\.meta|_preview.*\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
+    // Build file list
+    $filearray=dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC), 1);
     $totalsize=0;
     foreach($filearray as $key => $file)
     {
@@ -144,7 +145,7 @@ if ($object->id)
 
     print '<table class="border" width="100%">';
     print '<tr><td class="titlefield">'.$langs->trans("NbOfAttachedFiles").'</td><td>'.count($filearray).'</td></tr>';
-    print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td>'.$totalsize.' '.$langs->trans("bytes").'</td></tr>';
+    print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td>'.dol_print_size($totalsize, 1, 1).'</td></tr>';
     print "</table>\n";
 
     print "</div>\n";
@@ -162,7 +163,6 @@ else
     print $langs->trans("ErrorUnknown");
 }
 
-
+// End of page
 llxFooter();
-
 $db->close();

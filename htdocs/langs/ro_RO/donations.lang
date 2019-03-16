@@ -31,3 +31,4 @@ DONATION_ART200=Afiseaza articolului 200 din CGI dacă sunteți îngrijorat
 DONATION_ART238=Afiseaza articolului 238 din CGI dacă sunteți îngrijorat
 DONATION_ART885=Afiseaza articol 885 din CGI dacă sunteți îngrijorat
 DonationPayment=Plată donaţie
+DonationValidated=Donation %s validated

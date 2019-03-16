@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2005		Simon TOSSER			<simon@kornog-computing.com>
- * Copyright (C) 2013-2017	Alexandre Spangaro		<aspangaro@zendsi.com>
+ * Copyright (C) 2013-2017	Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2013-2014	Olivier Geffroy			<jeff@jeffinfo.com>
  * Copyright (C) 2013-2014	Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2014		Juanjo Menent			<jmenent@2byte.es>
@@ -28,16 +28,16 @@
  */
 require '../../main.inc.php';
 
-// Class
 require_once DOL_DOCUMENT_ROOT . '/expensereport/class/expensereport.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formaccounting.class.php';
 
-// Langs
-$langs->load("bills");
-$langs->load("accountancy");
-$langs->load("trips");
+// Load translation files required by the page
+$langs->loadLangs(array("bills","accountancy","trips"));
 
 $action = GETPOST('action', 'alpha');
+$cancel = GETPOST('cancel', 'alpha');
+$backtopage = GETPOST('backtopage', 'alpha');
+
 $codeventil = GETPOST('codeventil');
 $id = GETPOST('id');
 
@@ -45,12 +45,15 @@ $id = GETPOST('id');
 if ($user->societe_id > 0)
 	accessforbidden();
 
+
 /*
  * Actions
  */
 
-if ($action == 'ventil' && $user->rights->accounting->bind->write) {
-	if (! GETPOST('cancel', 'alpha')) {
+if ($action == 'ventil' && $user->rights->accounting->bind->write)
+{
+	if (! $cancel)
+	{
 		if ($codeventil < 0) $codeventil = 0;
 
 		$sql = " UPDATE " . MAIN_DB_PREFIX . "expensereport_det";
@@ -64,6 +67,11 @@ if ($action == 'ventil' && $user->rights->accounting->bind->write) {
 		else
 		{
 			setEventMessages($langs->trans("RecordModifiedSuccessfully"), null, 'mesgs');
+			if ($backtopage)
+			{
+				header("Location: ".$backtopage);
+				exit();
+			}
 		}
 	} else {
 		header("Location: ./lines.php");
@@ -111,6 +119,7 @@ if (! empty($id)) {
 			print '<form action="' . $_SERVER["PHP_SELF"] . '?id=' . $id . '" method="post">' . "\n";
 			print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
 			print '<input type="hidden" name="action" value="ventil">';
+			print '<input type="hidden" name="backtopage" value="'.dol_escape_htmltag($backtopage).'">';
 
 			print load_fiche_titre($langs->trans('ExpenseReportsVentilation'), '', 'title_setup');
 
@@ -158,5 +167,6 @@ if (! empty($id)) {
 	print "Error ID incorrect";
 }
 
+// End of page
 llxFooter();
 $db->close();

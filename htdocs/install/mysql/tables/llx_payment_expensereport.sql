@@ -1,5 +1,5 @@
 -- ===================================================================
--- Copyright (C) 2015      Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
+-- Copyright (C) 2015      Alexandre Spangaro   <aspangaro@open-dsi.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@ create table llx_payment_expensereport
   datec                   datetime,           -- date de creation
   tms                     timestamp,
   datep                   datetime,           -- payment date
-  amount                  real DEFAULT 0,
+  amount                  double(24,8) DEFAULT 0,
   fk_typepayment          integer NOT NULL,
   num_payment             varchar(50),
   note                    text,

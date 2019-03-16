@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2005      Christophe
  * Copyright (C) 2005-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2013      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2015      Frederic France      <frederic.france@free.fr>
  *
@@ -33,17 +33,21 @@ include_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
  */
 class box_comptes extends ModeleBoxes
 {
-	var $boxcode="currentaccounts";
-	var $boximg="object_bill";
-	var $boxlabel="BoxCurrentAccounts";
-	var $depends = array("banque");     // Box active if module banque active
+    public $boxcode="currentaccounts";
+    public $boximg="object_bill";
+    public $boxlabel="BoxCurrentAccounts";
+    public $depends = array("banque");     // Box active if module banque active
 
-	var $db;
-	var $param;
-	var $enabled = 1;
+    /**
+     * @var DoliDB Database handler.
+     */
+    public $db;
 
-	var $info_box_head = array();
-	var $info_box_contents = array();
+    public $param;
+    public $enabled = 1;
+
+    public $info_box_head = array();
+    public $info_box_contents = array();
 
 
 	/**
@@ -52,15 +56,15 @@ class box_comptes extends ModeleBoxes
 	 *  @param  DoliDB	$db      	Database handler
      *  @param	string	$param		More parameters
 	 */
-	function __construct($db,$param='')
+	public function __construct($db, $param = '')
 	{
 		global $conf, $user;
 
 		$this->db = $db;
 
 		// disable module for such cases
-		$listofmodulesforexternal=explode(',',$conf->global->MAIN_MODULES_FOR_EXTERNAL);
-		if (! in_array('banque',$listofmodulesforexternal) && ! empty($user->societe_id)) $this->enabled=0;	// disabled for external users
+		$listofmodulesforexternal=explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL);
+		if (! in_array('banque', $listofmodulesforexternal) && ! empty($user->societe_id)) $this->enabled=0;	// disabled for external users
 
 		$this->hidden = ! ($user->rights->banque->lire);
 	}
@@ -71,7 +75,7 @@ class box_comptes extends ModeleBoxes
 	 *  @param	int		$max        Maximum number of records to load
      *  @return	void
 	 */
-	function loadBox($max=5)
+	public function loadBox($max = 5)
 	{
 		global $user, $langs, $db, $conf;
 
@@ -80,13 +84,16 @@ class box_comptes extends ModeleBoxes
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleCurrentAccounts"));
 
         if ($user->rights->banque->lire) {
-			$sql = "SELECT rowid, ref, label, bank, number, courant, clos, rappro, url,";
-			$sql.= " code_banque, code_guichet, cle_rib, bic, iban_prefix as iban,";
-			$sql.= " domiciliation, proprio, owner_address,";
-			$sql.= " account_number, currency_code,";
-			$sql.= " min_allowed, min_desired, comment";
-			$sql.= " FROM ".MAIN_DB_PREFIX."bank_account";
-			$sql.= " WHERE entity = ".$conf->entity;
+			$sql = "SELECT b.rowid, b.ref, b.label, b.bank,b.number, b.courant, b.clos, b.rappro, b.url";
+			$sql.= ", b.code_banque, b.code_guichet, b.cle_rib, b.bic, b.iban_prefix as iban";
+			$sql.= ", b.domiciliation, b.proprio, b.owner_address";
+			$sql.= ", b.account_number, b.currency_code";
+			$sql.= ", b.min_allowed, b.min_desired, comment";
+            $sql.= ', b.fk_accountancy_journal';
+            $sql.= ', aj.code as accountancy_journal';
+            $sql.= " FROM ".MAIN_DB_PREFIX."bank_account as b";
+            $sql.= ' LEFT JOIN ' . MAIN_DB_PREFIX . 'accounting_journal as aj ON aj.rowid=b.fk_accountancy_journal';
+            $sql.= " WHERE b.entity = ".$conf->entity;
 			$sql.= " AND clos = 0";
 			//$sql.= " AND courant = 1";
 			$sql.= " ORDER BY label";
@@ -108,6 +115,9 @@ class box_comptes extends ModeleBoxes
 					$account_static->ref = $objp->ref;
                     $account_static->label = $objp->label;
                     $account_static->number = $objp->number;
+                    $account_static->account_number = $objp->account_number;
+                    $account_static->currency_code = $objp->currency_code;
+                    $account_static->accountancy_journal = $objp->accountancy_journal;
                     $solde=$account_static->solde(0);
 
                     $solde_total[$objp->currency_code] += $solde;
@@ -135,16 +145,16 @@ class box_comptes extends ModeleBoxes
                 foreach ($solde_total as $key=>$solde) {
                     $this->info_box_contents[$line][] = array(
                         'tr' => 'class="liste_total"',
-                        'td' => 'align="left" class="liste_total"',
+                        'td' => 'class="liste_total left"',
                         'text' => $langs->trans('Total').' '.$key,
                     );
                     $this->info_box_contents[$line][] = array(
-                        'td' => 'align="right" class="liste_total"',
+                        'td' => 'class="liste_total right"',
                         'text' => '&nbsp;'
                     );
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => 'align="right" class="liste_total"',
+                        'td' => 'class="liste_total right"',
                         'text' => price($solde, 0, $langs, 0, -1, -1, $key)
                     );
                     $line++;
@@ -160,25 +170,22 @@ class box_comptes extends ModeleBoxes
             }
         } else {
             $this->info_box_contents[0][0] = array(
-                'td' => 'align="left" class="nohover opacitymedium"',
+                'td' => 'class="nohover opacitymedium left"',
                 'text' => $langs->trans("ReadPermissionNotAllowed")
             );
         }
-
 	}
 
-	/**
-	 *	Method to show box
-	 *
-	 *	@param	array	$head       Array with properties of box title
-	 *	@param  array	$contents   Array with properties of box lines
-	 *  @param	int		$nooutput	No print, only return string
-	 *	@return	string
-	 */
-    function showBox($head = null, $contents = null, $nooutput=0)
+    /**
+     *  Method to show box
+     *
+     *  @param  array   $head       Array with properties of box title
+     *  @param  array   $contents   Array with properties of box lines
+     *  @param  int     $nooutput   No print, only return string
+     *  @return string
+     */
+    public function showBox($head = null, $contents = null, $nooutput = 0)
     {
-		return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
-	}
-
+        return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
+    }
 }
-
