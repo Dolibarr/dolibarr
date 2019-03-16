@@ -20,7 +20,6 @@ class DolQueryCollector extends DataCollector implements Renderable, AssetProvid
 
 	/**
 	 * Constructor
-	 *
 	 */
 	public function __construct()
 	{
@@ -73,6 +72,7 @@ class DolQueryCollector extends DataCollector implements Renderable, AssetProvid
 	/**
 	 *	Return collector name
 	 *
+	 *  @param string  Name
 	 */
 	public function getName()
 	{
@@ -82,6 +82,7 @@ class DolQueryCollector extends DataCollector implements Renderable, AssetProvid
 	/**
 	 *	Return widget settings
 	 *
+	 *  @param array      Array
 	 */
 	public function getWidgets()
 	{
@@ -106,6 +107,7 @@ class DolQueryCollector extends DataCollector implements Renderable, AssetProvid
 	/**
 	 *	Return assets
 	 *
+	 *  @param array   Array
 	 */
 	public function getAssets()
 	{

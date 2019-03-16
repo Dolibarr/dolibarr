@@ -38,6 +38,7 @@ class DolLogsCollector extends MessagesCollector
 	/**
 	 *	Return widget settings
 	 *
+	 *  @return array  Array
 	 */
 	public function getWidgets()
 	{
@@ -63,6 +64,7 @@ class DolLogsCollector extends MessagesCollector
 	/**
 	 *	Return collected data
 	 *
+	 *  @return array  Array
 	 */
 	public function collect()
 	{

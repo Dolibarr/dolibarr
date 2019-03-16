@@ -11,6 +11,7 @@ class DolMessagesCollector extends MessagesCollector
 	/**
 	 *	Return widget settings
 	 *
+	 *  @return array  Array
 	 */
 	public function getWidgets()
 	{

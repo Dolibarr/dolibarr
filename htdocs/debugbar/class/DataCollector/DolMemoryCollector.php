@@ -11,6 +11,7 @@ class DolMemoryCollector extends MemoryCollector
 	/**
 	 *	Return widget settings
 	 *
+	 *  @return void
 	 */
 	public function getWidgets()
 	{
