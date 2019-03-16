@@ -76,7 +76,7 @@ class DolLogsCollector extends MessagesCollector
 	/**
 	 * Get the path to the logs file
 	 *
-	 * @return string
+	 * @return string      Path of log file
 	 */
 	public function getLogsFile()
 	{
@@ -109,9 +109,9 @@ class DolLogsCollector extends MessagesCollector
 	/**
 	 * Get latest file lines
 	 *
-	 * @param string $file
-	 * @param int $lines
-	 * @return array
+	 * @param string       $file
+	 * @param int          $lines
+	 * @return array       Array
 	 */
 	protected function tailFile($file, $lines)
 	{
@@ -146,8 +146,8 @@ class DolLogsCollector extends MessagesCollector
 	/**
 	 * Search a string for log entries
 	 *
-	 * @param $file
-	 * @return array
+	 * @param  string  $file       File
+	 * @return array               Lines of logs
 	 */
 	public function getLogs($file)
 	{
@@ -171,7 +171,7 @@ class DolLogsCollector extends MessagesCollector
 	/**
 	 * Get the log levels from psr/log.
 	 *
-	 * @return array
+	 * @return array       Array of log level
 	 */
 	public function getLevels()
 	{

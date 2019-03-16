@@ -47,6 +47,7 @@ class DolibarrDebugBar extends DebugBar
 	/**
 	 * Returns a JavascriptRenderer for this instance
 	 *
+	 * @return string      String content
 	 */
 	public function getRenderer()
 	{

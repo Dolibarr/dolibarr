@@ -120,6 +120,7 @@ class modDebugBar extends DolibarrModules
 	/**
 	 * Function called after module configuration.
 	 *
+	 * @return     void
 	 */
 	public function loadSettings()
 	{

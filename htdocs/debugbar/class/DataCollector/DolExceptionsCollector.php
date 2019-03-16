@@ -11,6 +11,7 @@ class DolExceptionsCollector extends ExceptionsCollector
 	/**
 	 *	Return widget settings
 	 *
+	 *  @return    array       Array
 	 */
 	public function getWidgets()
 	{

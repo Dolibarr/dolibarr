@@ -9,6 +9,7 @@ class ActionsDebugBar
 	/**
 	 * Load Debug bar
 	 *
+	 * @return void
 	 */
 	protected function loadDebugBar()
 	{
@@ -23,9 +24,9 @@ class ActionsDebugBar
 	/**
 	 * Overloading the afterLogin function
 	 *
-	 * @param   array()         $parameters     Hook metadatas (context, etc...)
-	 * @param   CommonObject    &$object        The object to process (an invoice if you are in invoice module, a propale in propale's module, etc...)
-	 * @param   string          &$action        Current action (if set). Generally create or edit or null
+	 * @param   array           $parameters     Hook metadatas (context, etc...)
+	 * @param   CommonObject    $object         The object to process (an invoice if you are in invoice module, a propale in propale's module, etc...)
+	 * @param   string          $action         Current action (if set). Generally create or edit or null
 	 * @param   HookManager     $hookmanager    Hook manager propagated to allow calling another hook
 	 * @return  int                             < 0 on error, 0 on success, 1 to replace standard code
 	 */
@@ -51,9 +52,9 @@ class ActionsDebugBar
 	/**
 	 * Overloading the updateSession function
 	 *
-	 * @param   array()         $parameters     Hook metadatas (context, etc...)
-	 * @param   CommonObject    &$object        The object to process (an invoice if you are in invoice module, a propale in propale's module, etc...)
-	 * @param   string          &$action        Current action (if set). Generally create or edit or null
+	 * @param   array           $parameters     Hook metadatas (context, etc...)
+	 * @param   CommonObject    $object         The object to process (an invoice if you are in invoice module, a propale in propale's module, etc...)
+	 * @param   string          $action         Current action (if set). Generally create or edit or null
 	 * @param   HookManager     $hookmanager    Hook manager propagated to allow calling another hook
 	 * @return  int                             < 0 on error, 0 on success, 1 to replace standard code
 	 */
@@ -79,11 +80,11 @@ class ActionsDebugBar
 	/**
 	 * Overloading the printCommonFooter function
 	 *
-	 * @param   array()         $parameters     Hook metadatas (context, etc...)
-	 * @param   CommonObject    &$object        The object to process (an invoice if you are in invoice module, a propale in propale's module, etc...)
-	 * @param   string          &$action        Current action (if set). Generally create or edit or null
+	 * @param   array           $parameters     Hook metadatas (context, etc...)
+	 * @param   CommonObject    $object         The object to process (an invoice if you are in invoice module, a propale in propale's module, etc...)
+	 * @param   string          $action         Current action (if set). Generally create or edit or null
 	 * @param   HookManager     $hookmanager    Hook manager propagated to allow calling another hook
-	 * @return  int                             < 0 on error, 0 on success, 1 to replace standard code
+	 * @return  int                             <0 on error, 0 on success, 1 to replace standard code
 	 */
 	public function printCommonFooter($parameters, &$object, &$action, $hookmanager)
 	{

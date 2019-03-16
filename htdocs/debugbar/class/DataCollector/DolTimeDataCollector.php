@@ -2,10 +2,10 @@
 
 use \DebugBar\DataCollector\TimeDataCollector;
 
+
 /**
  * DolTimeDataCollector class
  */
-
 class DolTimeDataCollector extends TimeDataCollector
 {
 	/**

@@ -136,9 +136,9 @@ class TraceableDB extends DoliDB
 	/**
 	 *  Convert a SQL request in Mysql syntax to native syntax
 	 *
-	 * @param   string $line SQL request line to convert
-	 * @param   string $type Type of SQL order ('ddl' for insert, update, select, delete or 'dml' for create, alter...)
-	 * @return  string        SQL request line converted
+	 * @param   string $line   SQL request line to convert
+	 * @param   string $type   Type of SQL order ('ddl' for insert, update, select, delete or 'dml' for create, alter...)
+	 * @return  string         SQL request line converted
 	 */
 	public static function convertSQLFromMysql($line, $type = 'ddl')
 	{
@@ -148,9 +148,9 @@ class TraceableDB extends DoliDB
 	/**
 	 * Renvoie le nombre de lignes dans le resultat d'une requete INSERT, DELETE ou UPDATE
 	 *
-	 * @param   resource $resultset Curseur de la requete voulue
-	 * @return 	int            Nombre de lignes
-	 * @see    	num_rows
+	 * @param   resource $resultset    Curseur de la requete voulue
+	 * @return 	int                    Nombre de lignes
+	 * @see    	num_rows()
 	 */
 	public function affected_rows($resultset)
 	{
@@ -212,14 +212,16 @@ class TraceableDB extends DoliDB
 		return $this->db->decrypt($value);
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *    Return datas as an array
+	 * Return datas as an array
 	 *
-	 * @param   resource $resultset Resultset of request
-	 * @return  array                    Array
+	 * @param   resource $resultset    Resultset of request
+	 * @return  array                  Array
 	 */
 	public function fetch_array($resultset)
 	{
+	    // phpcs:enable
 		return $this->db->fetch_array($resultset);
 	}
 
@@ -244,6 +246,7 @@ class TraceableDB extends DoliDB
 		return $this->db->escape($stringtoencode);
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Get last ID after an insert INSERT
 	 *
@@ -253,11 +256,12 @@ class TraceableDB extends DoliDB
 	 */
 	public function last_insert_id($tab, $fieldid = 'rowid')
 	{
-		return $this->db->last_insert_id($tab, $fieldid);
+	    // phpcs:enable
+	    return $this->db->last_insert_id($tab, $fieldid);
 	}
 
 	/**
-	 *    Return full path of restore program
+	 * Return full path of restore program
 	 *
 	 * @return        string        Full path of restore program
 	 */
@@ -267,7 +271,7 @@ class TraceableDB extends DoliDB
 	}
 
 	/**
-	 *    Annulation d'une transaction et retour aux anciennes valeurs
+	 * Annulation d'une transaction et retour aux anciennes valeurs
 	 *
 	 * @param	string $log Add more log to default log line
 	 * @return  int                1 si annulation ok ou transaction non ouverte, 0 en cas d'erreur
@@ -309,8 +313,8 @@ class TraceableDB extends DoliDB
 	/**
 	 * End query tracing
 	 *
-	 * @param     $sql       query string
-	 * @param     $resql     query result
+	 * @param     string   $sql       query string
+	 * @param     string   $resql     query result
 	 */
 	protected function endTracing($sql, $resql)
 	{
@@ -338,7 +342,7 @@ class TraceableDB extends DoliDB
 	 * @param   string $name name of database (not used for mysql, used for pgsql)
 	 * @param   int    $port Port of database server
 	 * @return  resource            Database access handler
-	 * @see     close
+	 * @see     close()
 	 */
 	public function connect($host, $login, $passwd, $name, $port = 0)
 	{
@@ -394,7 +398,7 @@ class TraceableDB extends DoliDB
 	 *
 	 * @param   resource $resultset Resulset of requests
 	 * @return 	int                        Nb of lines
-	 * @see    	affected_rows
+	 * @see    	affected_rows()
 	 */
 	public function num_rows($resultset)
 	{
@@ -628,7 +632,7 @@ class TraceableDB extends DoliDB
 	 * Close database connexion
 	 *
 	 * @return  boolean     					True if disconnect successfull, false otherwise
-	 * @see     connect
+	 * @see     connect()
 	 */
 	public function close()
 	{
@@ -655,25 +659,29 @@ class TraceableDB extends DoliDB
 		return $this->db->DDLGetConnectId();
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Renvoie la ligne courante (comme un objet) pour le curseur resultset
 	 *
-	 * @param   resource $resultset Curseur de la requete voulue
-	 * @return  Object                    Object result line or false if KO or end of cursor
+	 * @param   resource $resultset    Curseur de la requete voulue
+	 * @return  Object                 Object result line or false if KO or end of cursor
 	 */
 	public function fetch_object($resultset)
 	{
+	    // phpcs:enable
 		return $this->db->fetch_object($resultset);
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Select a database
 	 *
-	 * @param	string $database Name of database
-	 * @return  boolean            true if OK, false if KO
+	 * @param	string $database     Name of database
+	 * @return  boolean              true if OK, false if KO
 	 */
 	public function select_db($database)
 	{
+	    // phpcs:enable
 		return $this->db->select_db($database);
 	}
 }
