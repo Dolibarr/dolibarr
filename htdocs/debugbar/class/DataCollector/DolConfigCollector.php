@@ -11,6 +11,7 @@ class DolConfigCollector extends ConfigCollector
 	/**
 	 *	Return widget settings
 	 *
+	 *  @return array      Array
 	 */
 	public function getWidgets()
 	{
@@ -29,6 +30,7 @@ class DolConfigCollector extends ConfigCollector
 	/**
 	 *	Return collected data
 	 *
+	 *  @return    array   Array
 	 */
 	public function collect()
 	{
@@ -40,6 +42,7 @@ class DolConfigCollector extends ConfigCollector
 	/**
 	 * Returns an array with config data
 	 *
+	 * @return array       Array of config
 	 */
 	protected function getConfig()
 	{
@@ -67,6 +70,7 @@ class DolConfigCollector extends ConfigCollector
 	/**
 	 * Convert an object to array
 	 *
+	 * @return array   Array
 	 */
 	protected function object_to_array($obj)
 	{

@@ -32,6 +32,7 @@ class DolibarrCollector extends DataCollector implements Renderable, AssetProvid
 	/**
 	 *	Return database info as an HTML string
 	 *
+	 *  @return string         HTML string
 	 */
 	protected function getDatabaseInfo()
 	{
