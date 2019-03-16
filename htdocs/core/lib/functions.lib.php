@@ -8037,7 +8037,7 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
             $return =  $htmlImg .' '. $htmlLabel;
         }
         elseif ($displayMode === 5) {
-            $return = $displayMode.$htmlLabelShort .' '. $htmlImg;
+            $return = $htmlLabelShort .' '. $htmlImg;
         }
         else { // $displayMode >= 6
             $return = $htmlLabel .' '. $htmlImg;
