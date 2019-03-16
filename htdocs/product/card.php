@@ -1039,7 +1039,7 @@ else
             // Nature
             print '<tr><td>'.$langs->trans("Nature").'</td><td colspan="3">';
             $statutarray=array('1' => $langs->trans("Finished"), '0' => $langs->trans("RowMaterial"));
-            print $form->selectarray('finished', $statutarray, GETPOST('finished','alpha'), 1);
+            print $form->selectarray('finished', $statutarray, GETPOST('finished', 'alpha'), 1);
             print '</td></tr>';
 
             // Weight
@@ -1424,7 +1424,7 @@ else
                 // Nature
                 print '<tr><td>'.$langs->trans("Nature").'</td><td colspan="3">';
                 $statutarray=array('-1'=>'&nbsp;', '1' => $langs->trans("Finished"), '0' => $langs->trans("RowMaterial"));
-                print $form->selectarray('finished' ,$statutarray, $object->finished);
+                print $form->selectarray('finished', $statutarray, $object->finished);
                 print '</td></tr>';
               
                 // Weight
