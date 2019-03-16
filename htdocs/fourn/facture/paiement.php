@@ -254,13 +254,13 @@ if (empty($reshook))
         {
             foreach ($amounts as $key => $value)	// How payment is dispatch
             {
-                $newvalue = price2num($value,'MT');
+                $newvalue = price2num($value, 'MT');
                 $amounts[$key] = -$newvalue;
             }
 
             foreach ($multicurrency_amounts as $key => $value)	// How payment is dispatch
             {
-                $newvalue = price2num($value,'MT');
+                $newvalue = price2num($value, 'MT');
                 $multicurrency_amounts[$key] = -$newvalue;
             }
         }
