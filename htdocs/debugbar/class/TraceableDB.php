@@ -64,6 +64,7 @@ class TraceableDB extends DoliDB
 		return $this->db->ifsql($test, $resok, $resko);
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Return datas as an array
 	 *
@@ -72,6 +73,7 @@ class TraceableDB extends DoliDB
 	 */
 	public function fetch_row($resultset)
 	{
+	    // phpcs:enable
 		return $this->db->fetch_row($resultset);
 	}
 
