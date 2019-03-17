@@ -1,5 +1,17 @@
 = MYMODULE =
-:subtitle: MYMODULE SPECIFICATIONS
+:subtitle: MYMODULE DOCUMENTATION
+:source-highlighter: rouge
+:companyname: __MYCOMPANY_NAME__
+:corpname: __MYCOMPANY_NAME__
+:orgname: __MYCOMPANY_NAME__
+:creator: __USER_FULLNAME__
+:title: Documentation of module MyModule
+:subject: This document is the document of module MyModule.
+:keywords: __KEYWORDS__
+// Date du document :
+:docdate: __YYYY-MM-DD__
+:toc: manual
+:toc-placement: preamble
 
 
 
@@ -39,7 +51,7 @@ external documents stored in the *Appendices* directory accompanying this docume
 [options="header",format="csv"]
 |=== 
 Author, Date, Version
-John Doe, Date YYYY-MM-DD, Version 1.0
+--- __USER_FULLNAME__  __USER_EMAIL__ ---, __YYYY-MM-DD__, Version 1.0
 |===
 
 

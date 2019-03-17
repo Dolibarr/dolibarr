@@ -304,7 +304,12 @@ if ($dirins && $action == 'initcli' && !empty($module))
             'Mon module'=>$modulename,
             'mon module'=>$modulename,
             'htdocs/modulebuilder/template'=>strtolower($modulename),
-            '---Put here your own copyright and developer email---'=>dol_print_date($now, '%Y').' '.$user->getFullName($langs).($user->email?' <'.$user->email.'>':'')
+            '__MYCOMPANY_NAME__'=>$mysoc->name,
+            '__KEYWORDS__'=>$modulename,
+            '__USER_FULLNAME__'=>$user->getFullName($langs),
+            '__USER_EMAIL__'=>$user->email,
+            '__YYYY-MM-DD__'=>dol_print_date($now, 'dayrfc'),
+            '---Put here your own copyright and developer email---'=>dol_print_date($now, 'dayrfc').' '.$user->getFullName($langs).($user->email?' <'.$user->email.'>':'')
         );
 
         dolReplaceInFile($destfile, $arrayreplacement);
@@ -314,8 +319,8 @@ if ($dirins && $action == 'initdoc' && !empty($module))
 {
     dol_mkdir($dirins.'/'.strtolower($module).'/doc');
     $srcdir = DOL_DOCUMENT_ROOT.'/modulebuilder/template';
-    $srcfile = $srcdir.'/doc/Specifications.asciidoc';
-    $destfile = $dirins.'/'.strtolower($module).'/doc/Specifications.asciidoc';
+    $srcfile = $srcdir.'/doc/Documentation.asciidoc';
+    $destfile = $dirins.'/'.strtolower($module).'/doc/Documentation.asciidoc';
     //var_dump($srcfile);var_dump($destfile);
     $result = dol_copy($srcfile, $destfile, 0, 0);
 
@@ -333,7 +338,12 @@ if ($dirins && $action == 'initdoc' && !empty($module))
             'Mon module'=>$modulename,
             'mon module'=>$modulename,
             'htdocs/modulebuilder/template'=>strtolower($modulename),
-            '---Put here your own copyright and developer email---'=>dol_print_date($now, '%Y').' '.$user->getFullName($langs).($user->email?' <'.$user->email.'>':'')
+            '__MYCOMPANY_NAME__'=>$mysoc->name,
+            '__KEYWORDS__'=>$modulename,
+            '__USER_FULLNAME__'=>$user->getFullName($langs),
+            '__USER_EMAIL__'=>$user->email,
+            '__YYYY-MM-DD__'=>dol_print_date($now, 'dayrfc'),
+            '---Put here your own copyright and developer email---'=>dol_print_date($now, 'dayrfc').' '.$user->getFullName($langs).($user->email?' <'.$user->email.'>':'')
         );
 
         dolReplaceInFile($destfile, $arrayreplacement);
