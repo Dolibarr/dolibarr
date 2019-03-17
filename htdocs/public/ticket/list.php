@@ -506,7 +506,7 @@ if ($action == "view_ticketlist")
                     }
                 }
 
-                print '<td class="liste_titre nowraponall" align="right">';
+                print '<td class="liste_titre nowraponall right">';
                 print '<input type="image" class="liste_titre" name="button_search" src="' . img_picto($langs->trans("Search"), 'search.png', '', '', 1) . '" value="' . dol_escape_htmltag($langs->trans("Search")) . '" title="' . dol_escape_htmltag($langs->trans("Search")) . '">';
                 print '<input type="image" class="liste_titre" name="button_removefilter" src="' . img_picto($langs->trans("Search"), 'searchclear.png', '', '', 1) . '" value="' . dol_escape_htmltag($langs->trans("RemoveFilter")) . '" title="' . dol_escape_htmltag($langs->trans("RemoveFilter")) . '">';
                 print '</td>';
@@ -664,7 +664,7 @@ if ($action == "view_ticketlist")
         print '<div class="error">Not Allowed<br><a href="' . $_SERVER['PHP_SELF'] . '?track_id=' . $object->dao->track_id . '">' . $langs->trans('Back') . '</a></div>';
     }
 } else {
-    print '<p style="text-align: center">' . $langs->trans("TicketPublicMsgViewLogIn") . '</p>';
+    print '<p class="center">' . $langs->trans("TicketPublicMsgViewLogIn") . '</p>';
 
     print '<div id="form_view_ticket">';
     print '<form method="post" name="form_view_ticketlist"  enctype="multipart/form-data" action="' . $_SERVER['PHP_SELF'] . '">';
