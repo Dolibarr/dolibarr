@@ -184,7 +184,7 @@ if ($action == "updatereduction") {
 if ($action == "order" and $placeid != 0) {
     include_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
 
-    $headerorder = '<html><br><b>' . $langs->trans('Place') . ' ' . $place . '<br><table width="65%"><thead><tr><th align="left">' . $langs->trans("Label") . '</th><th align="right">' . $langs->trans("Qty") . '</th></tr></thead><tbody>';
+    $headerorder = '<html><br><b>' . $langs->trans('Place') . ' ' . $place . '<br><table width="65%"><thead><tr><th class="left">' . $langs->trans("Label") . '</th><th class="right">' . $langs->trans("Qty") . '</th></tr></thead><tbody>';
     $footerorder = '</tbody></table>' . dol_print_date(dol_now(), 'dayhour') . '<br></html>';
     $order_receipt_printer1 = "";
     $order_receipt_printer2 = "";
@@ -201,7 +201,7 @@ if ($action == "order" and $placeid != 0) {
         if ($count > 0) {
             $sql = "UPDATE " . MAIN_DB_PREFIX . "facturedet set special_code='3' where rowid=$line->rowid";
             $db->query($sql);
-            $order_receipt_printer1.= '<tr>' . $line->product_label . '<td align="right">' . $line->qty;
+            $order_receipt_printer1.= '<tr>' . $line->product_label . '<td class="right">' . $line->qty;
 			if (!empty($line->array_options['options_order_notes'])) $order_receipt_printer1.="<br>(".$line->array_options['options_order_notes'].")";
 			$order_receipt_printer1.='</td></tr>';
         }
@@ -218,7 +218,7 @@ if ($action == "order" and $placeid != 0) {
         if ($count > 0) {
             $sql = "UPDATE " . MAIN_DB_PREFIX . "facturedet set special_code='3' where rowid=$line->rowid";
             $db->query($sql);
-            $order_receipt_printer2.= '<tr>' . $line->product_label . '<td align="right">' . $line->qty;
+            $order_receipt_printer2.= '<tr>' . $line->product_label . '<td class="right">' . $line->qty;
 			if (!empty($line->array_options['options_order_notes'])) $order_receipt_printer2.="<br>(".$line->array_options['options_order_notes'].")";
 			$order_receipt_printer2.='</td></tr>';
         }
@@ -333,8 +333,8 @@ print '<div class="div-table-responsive-no-min invoice">';
 print '<table id="tablelines" class="noborder noshadow" width="100%">';
 print '<tr class="liste_titre nodrag nodrop">';
 print '<td class="linecoldescription">' . $langs->trans('Description') . '</td>';
-print '<td class="linecolqty" align="right">' . $langs->trans('Qty') . '</td>';
-print '<td class="linecolht" align="right">' . $langs->trans('TotalHTShort') . '</td>';
+print '<td class="linecolqty right">' . $langs->trans('Qty') . '</td>';
+print '<td class="linecolht right">' . $langs->trans('TotalHTShort') . '</td>';
 print "</tr>\n";
 
 if ($placeid > 0) {
@@ -345,18 +345,18 @@ if ($placeid > 0) {
             print ' order';
         }
         print '" id="' . $line->rowid . '">';
-        print '<td align="left">' . $line->product_label . $line->desc;
+        print '<td class="left">' . $line->product_label . $line->desc;
 		if (!empty($line->array_options['options_order_notes'])) echo "<br>(".$line->array_options['options_order_notes'].")";
 		print '</td>';
-        print '<td align="right">' . $line->qty . '</td>';
-        print '<td align="right">' . price($line->total_ttc) . '</td>';
+        print '<td class="right">' . $line->qty . '</td>';
+        print '<td class="right">' . price($line->total_ttc) . '</td>';
         print '</tr>';
     }
 }
 
 print '</table>';
 
-print '<p style="font-size:120%;" align="right"><b>'.$langs->trans('TotalTTC');
+print '<p style="font-size:120%;" class="right"><b>'.$langs->trans('TotalTTC');
 
 if($conf->global->TAKEPOS_BAR_RESTAURANT) print " ".$langs->trans('Place')." ".$place;
 
@@ -367,13 +367,13 @@ if ($invoice->socid != $conf->global->CASHDESK_ID_THIRDPARTY)
     $soc = new Societe($db);
     if ($invoice->socid > 0) $soc->fetch($invoice->socid);
     else $soc->fetch($conf->global->CASHDESK_ID_THIRDPARTY);
-    print '<p style="font-size:120%;" align="right">';
+    print '<p style="font-size:120%;" class="right">';
     print $langs->trans("Customer").': '.$soc->name;
     print '</p>';
 }
 if ($action=="valid")
 {
-	print '<p style="font-size:120%;" align="center"><b>'.$invoice->ref." ".$langs->trans('BillShortStatusValidated').'</b></p>';
+	print '<p style="font-size:120%;" class="center"><b>'.$invoice->ref." ".$langs->trans('BillShortStatusValidated').'</b></p>';
 	if ($conf->global->TAKEPOSCONNECTOR) print '<center><button type="button" onclick="TakeposPrinting('.$placeid.');">'.$langs->trans('PrintTicket').'</button><center>';
 	else print '<center><button type="button" onclick="Print('.$placeid.');">'.$langs->trans('PrintTicket').'</button><center>';
 }
