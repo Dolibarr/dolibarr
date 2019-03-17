@@ -201,14 +201,14 @@ if ($resql)
     print '</td>';
     print "</tr>\n";
     
-    print '<tr class="liste_titre">'; 
-	print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "d.rowid", "", $param, "", $sortfield, $sortorder);    
+    print '<tr class="liste_titre">';
+	print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "d.rowid", "", $param, "", $sortfield, $sortorder);
     if (! empty($conf->global->DONATION_USE_THIRDPARTIES)) {
 	print_liste_field_titre("ThirdParty", $_SERVER["PHP_SELF"], "d.fk_soc", "", $param, "", $sortfield, $sortorder);
     } else {
 	print_liste_field_titre("Company", $_SERVER["PHP_SELF"], "d.societe", "", $param, "", $sortfield, $sortorder);
 	print_liste_field_titre("Name", $_SERVER["PHP_SELF"], "d.lastname", "", $param, "", $sortfield, $sortorder);
-} 
+    }
 	print_liste_field_titre("Date", $_SERVER["PHP_SELF"], "d.datedon", "", $param, '', $sortfield, $sortorder, 'center ');
 	if (! empty($conf->projet->enabled))
 	{
@@ -237,8 +237,8 @@ if ($resql)
     if  (!empty($objp->socid) && $company->id > 0)  {
     print "<td>".$company->getNomUrl(1)."</td>";
     } else {
-    print "<td>".$objp->societe." ".$donationstatic->getFullName($langs)."</td>";    
-    }   
+    print "<td>".$objp->societe." ".$donationstatic->getFullName($langs)."</td>";
+    }
     } else {
     print "<td>".$objp->societe."</td>";
 		print "<td>".$donationstatic->getFullName($langs)."</td>";
