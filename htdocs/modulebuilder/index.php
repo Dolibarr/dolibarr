@@ -327,6 +327,7 @@ if ($dirins && $action == 'initdoc' && !empty($module))
     if ($result > 0)
     {
         $modulename = ucfirst($module);     // Force first letter in uppercase
+        $modulelowercase = strtolower($module);
 
         //var_dump($phpfileval['fullname']);
         $arrayreplacement=array(
@@ -347,6 +348,17 @@ if ($dirins && $action == 'initdoc' && !empty($module))
         );
 
         dolReplaceInFile($destfile, $arrayreplacement);
+
+        // Delete old documentation files
+        $FILENAMEDOC=$modulelowercase.'.html';
+        $FILENAMEDOCPDF=$modulelowercase.'.pdf';
+        $outputfiledoc = dol_buildpath($modulelowercase, 0).'/doc/'.$FILENAMEDOC;
+        $outputfiledocurl = dol_buildpath($modulelowercase, 1).'/doc/'.$FILENAMEDOC;
+        $outputfiledocpdf = dol_buildpath($modulelowercase, 0).'/doc/'.$FILENAMEDOCPDF;
+        $outputfiledocurlpdf = dol_buildpath($modulelowercase, 1).'/doc/'.$FILENAMEDOCPDF;
+
+        dol_delete_file($outputfiledoc, 0, 0, 0, null, false, 0);
+        dol_delete_file($outputfiledocpdf, 0, 0, 0, null, false, 0);
     }
 }
 
@@ -557,7 +569,7 @@ if ($dirins && $action == 'initobject' && $module && $objectname)
 
 				$moduledescriptorfile=$destdir.'/core/modules/mod'.$module.'.class.php';
 
-				// TODO Allow a replace with regex using dolReplaceRegexInFile
+				// TODO Allow a replace with regex using dolReplaceInFile with param arryreplacementisregex to 1
 				// TODO Avoid duplicate addition
 
 				dolReplaceInFile($moduledescriptorfile, array('END MODULEBUILDER LEFTMENU MYOBJECT */' => '*/'."\n".$stringtoadd."\n\t\t/* END MODULEBUILDER LEFTMENU MYOBJECT */"));
@@ -985,10 +997,17 @@ if ($action == 'savefile' && empty($cancel))
 		if ($content)
 		{
 			dol_delete_file($pathoffile);
-			file_put_contents($pathoffile, $content);
-			@chmod($pathoffile, octdec($newmask));
+			$result = file_put_contents($pathoffile, $content);
+			if ($result)
+			{
+    			@chmod($pathoffile, octdec($newmask));
 
-			setEventMessages($langs->trans("FileSaved"), null);
+                setEventMessages($langs->trans("FileSaved"), null);
+			}
+			else
+			{
+			    setEventMessages($langs->trans("ErrorFailedToSaveFile"), null, 'errors');
+			}
 		}
 		else
 		{
@@ -2742,12 +2761,12 @@ elseif (! empty($module))
 
 		if ($tab == 'specifications')
 		{
+		    $specs=dol_dir_list(dol_buildpath($modulelowercase.'/doc', 0), 'files', 1, '(\.md|\.asciidoc)$', array('\/temp\/'));
+
 		    if ($action != 'editfile' || empty($file))
 		    {
 		        print '<span class="opacitymedium">'.$langs->trans("SpecDefDesc").'</span><br>';
 		        print '<br>';
-
-		        $specs=dol_dir_list(dol_buildpath($modulelowercase.'/doc', 0), 'files', 1, '(\.md|\.asciidoc)$', array('\/temp\/'));
 
 		        print '<table>';
 		        if (is_array($specs) && ! empty($specs))
@@ -2802,6 +2821,53 @@ elseif (! empty($module))
 
 		        print '</form>';
 		    }
+
+		    print '<br><br><br>';
+
+		    $FILENAMEDOC=$modulelowercase.'.html';
+		    $FILENAMEDOCPDF=$modulelowercase.'.pdf';
+		    $outputfiledoc = dol_buildpath($modulelowercase, 0).'/doc/'.$FILENAMEDOC;
+		    $outputfiledocurl = dol_buildpath($modulelowercase, 1).'/doc/'.$FILENAMEDOC;
+		    $outputfiledocpdf = dol_buildpath($modulelowercase, 0).'/doc/'.$FILENAMEDOCPDF;
+		    $outputfiledocurlpdf = dol_buildpath($modulelowercase, 1).'/doc/'.$FILENAMEDOCPDF;
+
+		    // HTML
+		    print '<span class="fa fa-file-o"></span> '. $langs->trans("PathToModuleDocumentation", "HTML") . ' : ';
+		    if (! dol_is_file($outputfiledoc)) print '<strong>'.$langs->trans("FileNotYetGenerated").'</strong>';
+		    else {
+		        print '<strong>';
+		        print '<a href="'.$outputfiledocurl.'" target="_blank">';
+		        print $outputfiledoc;
+		        print '</a>';
+		        print '</strong>';
+		        print ' ('.$langs->trans("GeneratedOn").' '.dol_print_date(dol_filemtime($outputfiledoc), 'dayhour').')';
+		    }
+		    print '</strong><br>';
+
+		    // PDF
+		    print '<span class="fa fa-file-o"></span> '. $langs->trans("PathToModuleDocumentation", "PDF") . ' : ';
+		    if (! dol_is_file($outputfiledocpdf)) print '<strong>'.$langs->trans("FileNotYetGenerated").'</strong>';
+		    else {
+		        print '<strong>';
+		        print '<a href="'.$outputfiledocurlpdf.'" target="_blank">';
+		        print $outputfiledocpdf;
+		        print '</a>';
+		        print '</strong>';
+		        print ' ('.$langs->trans("GeneratedOn").' '.dol_print_date(dol_filemtime($outputfiledocpdf), 'dayhour').')';
+		    }
+		    print '</strong><br>';
+
+		    print '<br>';
+
+		    print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" name="generatedoc">';
+		    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		    print '<input type="hidden" name="action" value="generatedoc">';
+		    print '<input type="hidden" name="tab" value="'.dol_escape_htmltag($tab).'">';
+		    print '<input type="hidden" name="module" value="'.dol_escape_htmltag($module).'">';
+		    print '<input type="submit" class="button" name="generatedoc" value="'.$langs->trans("BuildDocumentation").'"';
+		    if (! is_array($specs) || empty($specs)) print ' disabled="disabled"';
+		    print '>';
+		    print '</form>';
 		}
 
 		if ($tab == 'buildpackage')
@@ -2846,13 +2912,6 @@ elseif (! empty($module))
 			{
 				$FILENAMEZIP="module_".$modulelowercase.'-'.$arrayversion[0].'.'.$arrayversion[1].($arrayversion[2]?".".$arrayversion[2]:"").".zip";
 				$outputfilezip = dol_buildpath($modulelowercase, 0).'/bin/'.$FILENAMEZIP;
-
-				$FILENAMEDOC=$modulelowercase.'.html';
-				$FILENAMEDOCPDF=$modulelowercase.'.pdf';
-				$outputfiledoc = dol_buildpath($modulelowercase, 0).'/doc/'.$FILENAMEDOC;
-				$outputfiledocurl = dol_buildpath($modulelowercase, 1).'/doc/'.$FILENAMEDOC;
-				$outputfiledocpdf = dol_buildpath($modulelowercase, 0).'/doc/'.$FILENAMEDOCPDF;
-				$outputfiledocurlpdf = dol_buildpath($modulelowercase, 1).'/doc/'.$FILENAMEDOCPDF;
 			}
 
 			print '<br>';
@@ -2874,44 +2933,6 @@ elseif (! empty($module))
 			print '<input type="hidden" name="tab" value="'.dol_escape_htmltag($tab).'">';
 			print '<input type="hidden" name="module" value="'.dol_escape_htmltag($module).'">';
 			print '<input type="submit" class="button" name="generatepackage" value="'.$langs->trans("BuildPackage").'">';
-			print '</form>';
-
-			print '<br><br><br>';
-
-			// HTML
-			print '<span class="fa fa-file-o"></span> '. $langs->trans("PathToModuleDocumentation", "HTML") . ' : ';
-			if (! dol_is_file($outputfiledoc)) print '<strong>'.$langs->trans("FileNotYetGenerated").'</strong>';
-			else {
-				print '<strong>';
-				print '<a href="'.$outputfiledocurl.'" target="_blank">';
-				print $outputfiledoc;
-				print '</a>';
-				print '</strong>';
-				print ' ('.$langs->trans("GeneratedOn").' '.dol_print_date(dol_filemtime($outputfiledoc), 'dayhour').')';
-			}
-			print '</strong><br>';
-
-			// PDF
-			print '<span class="fa fa-file-o"></span> '. $langs->trans("PathToModuleDocumentation", "PDF") . ' : ';
-			if (! dol_is_file($outputfiledocpdf)) print '<strong>'.$langs->trans("FileNotYetGenerated").'</strong>';
-			else {
-			    print '<strong>';
-			    print '<a href="'.$outputfiledocurlpdf.'" target="_blank">';
-			    print $outputfiledocpdf;
-			    print '</a>';
-			    print '</strong>';
-			    print ' ('.$langs->trans("GeneratedOn").' '.dol_print_date(dol_filemtime($outputfiledocpdf), 'dayhour').')';
-			}
-			print '</strong><br>';
-
-			print '<br>';
-
-			print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" name="generatedoc">';
-			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-			print '<input type="hidden" name="action" value="generatedoc">';
-			print '<input type="hidden" name="tab" value="'.dol_escape_htmltag($tab).'">';
-			print '<input type="hidden" name="module" value="'.dol_escape_htmltag($module).'">';
-			print '<input type="submit" class="button" name="generatedoc" value="'.$langs->trans("BuildDocumentation").'">';
 			print '</form>';
 		}
 

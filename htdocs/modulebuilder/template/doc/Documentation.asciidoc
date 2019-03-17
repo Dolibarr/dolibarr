@@ -16,7 +16,7 @@
 
 == TOPIC OF DOCUMENT
 
-This document is the document of module MyModule
+This is the documentation of module MyModule
 
 
 *Log of versions of document*
@@ -41,8 +41,8 @@ This document was generated using Dolibarr ERP CRM process
 
 == INTRODUCTION
 
-include::README.md[]
-
+//include::README.md[]
+__README__
 
 == DATA SPECIFICATIONS
 
@@ -51,4 +51,6 @@ __DATA_SPECIFICATION__
 
 == CHANGELOG
 
-include::ChangeLog.md[]
+//include::ChangeLog.md[]
+__CHANGELOG__
+

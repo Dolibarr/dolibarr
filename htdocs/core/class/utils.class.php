@@ -634,6 +634,19 @@ class Utils
 				    return -1;
 				}
 
+				// Copy some files into temp directory, so instruction include::ChangeLog.md[] will works inside the asciidoc file.
+				dol_copy($dirofmodule.'/README.md', $dirofmoduletmp.'/README.md', 0, 1);
+				dol_copy($dirofmodule.'/ChangeLog.md', $dirofmoduletmp.'/ChangeLog.md', 0, 1);
+
+				// Replace into README.md and ChangeLog.md (in case they are included into documentation with tag __README__ or __CHANGELOG__)
+				$arrayreplacement=array();
+				$arrayreplacement['/^#\s.*/m']='';    // Remove first level of title into .md files
+				$arrayreplacement['/^#/m']='##';      // Add on # to increase level
+
+				dolReplaceInFile($dirofmoduletmp.'/README.md', $arrayreplacement, '', 0, 0, 1);
+				dolReplaceInFile($dirofmoduletmp.'/ChangeLog.md', $arrayreplacement, '', 0, 0, 1);
+
+
 				$destfile=$dirofmoduletmp.'/'.$FILENAMEASCII;
 
 				$fhandle = fopen($destfile, 'w+');
@@ -666,18 +679,12 @@ class Utils
 						$i++;
 					}
 
-					/*fwrite($fhandle, "\n\n\n== DATA SPECIFICATIONS...\n\n");
-
-					// TODO
-					fwrite($fhandle, "TODO...");
-
-					fwrite($fhandle, "\n\n\n== CHANGELOG...\n\n");
-
-					// TODO
-					fwrite($fhandle, "TODO...");
-                    */
-
 					fclose($fhandle);
+
+					$contentreadme=file_get_contents($dirofmoduletmp.'/README.md');
+					$contentchangelog=file_get_contents($dirofmoduletmp.'/ChangeLog.md');
+
+					include DOL_DOCUMENT_ROOT.'/core/lib/parsemd.lib.php';
 
 					//var_dump($phpfileval['fullname']);
 					$arrayreplacement=array(
@@ -695,15 +702,13 @@ class Utils
 					    '__USER_EMAIL__'=>$user->email,
 					    '__YYYY-MM-DD__'=>dol_print_date($now, 'dayrfc'),
 					    '---Put here your own copyright and developer email---'=>dol_print_date($now, 'dayrfc').' '.$user->getFullName($langs).($user->email?' <'.$user->email.'>':''),
-					    '__DATA_SPECIFICATION__'=>'Not yet available'
+					    '__DATA_SPECIFICATION__'=>'Not yet available',
+					    '__README__'=>dolMd2Asciidoc($contentreadme),
+					    '__CHANGELOG__'=>dolMd2Asciidoc($contentchangelog),
 					);
 
-					dolReplaceInFile($spec['fullname'], $arrayreplacement);
+					dolReplaceInFile($destfile, $arrayreplacement);
 				}
-
-				// Copy some files into temp directory, so instruction include::ChangeLog.md[] will works inside the asciidoc file.
-				dol_copy($dirofmodule.'/README.md', $dirofmoduletmp.'/README.md', 0, 1);
-				dol_copy($dirofmodule.'/ChangeLog.md', $dirofmoduletmp.'/ChangeLog.md', 0, 1);
 
 				// Launch doc generation
                 $currentdir = getcwd();
