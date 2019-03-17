@@ -5373,7 +5373,7 @@ abstract class CommonObject
 	 * @param  string  		$moreparam     To add more parameters on html input tag
 	 * @param  string  		$keysuffix     Prefix string to add into name and id of field (can be used to avoid duplicate names)
 	 * @param  string  		$keyprefix     Suffix string to add into name and id of field (can be used to avoid duplicate names)
-	 * @param  string|int		$morecss       Value for css to define style/length of field. May also be a numeric.
+	 * @param  string|int	$morecss       Value for css to define style/length of field. May also be a numeric.
 	 * @return string
 	 */
 	public function showInputField($val, $key, $value, $moreparam = '', $keysuffix = '', $keyprefix = '', $morecss = 0)
@@ -5427,7 +5427,7 @@ abstract class CommonObject
 
 		$langfile=$this->fields[$key]['langfile'];
 		$list=$this->fields[$key]['list'];
-		$hidden=abs($this->fields[$key]['visible'])!=1?1:0;
+		$hidden=(in_array(abs($this->fields[$key]['visible']), array(0,2)) ? 1 : 0);
 
 		$objectid = $this->id;
 
@@ -5439,12 +5439,12 @@ abstract class CommonObject
 		}
 
 
-		// Use in priority showsize from parameters, then $val['css'] then autodefine
+		// Set value of $morecss. For this, we use in priority showsize from parameters, then $val['css'] then autodefine
 		if (empty($morecss) && ! empty($val['css']))
 		{
-			$showsize = $val['css'];
+		    $morecss = $val['css'];
 		}
-		if (empty($morecss))
+		elseif (empty($morecss))
 		{
 			if ($type == 'date')
 			{
@@ -5499,6 +5499,10 @@ abstract class CommonObject
 			$tmp=explode(',', $size);
 			$newsize=$tmp[0];
 			$out='<input type="text" class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" maxlength="'.$newsize.'" value="'.dol_escape_htmltag($value).'"'.($moreparam?$moreparam:'').'>';
+		}
+		elseif (in_array($type, array('real')))
+		{
+		    $out='<input type="text" class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.dol_escape_htmltag($value).'"'.($moreparam?$moreparam:'').'>';
 		}
 		elseif (preg_match('/varchar/', $type))
 		{
@@ -5939,14 +5943,14 @@ abstract class CommonObject
 			if(! empty($value)) {
 				foreach($value as $option) {
 					$out.= '<span><a class="'.dol_escape_htmltag($keyprefix.$key.$keysuffix).'_del" href="javascript:;"><span class="fa fa-minus-circle valignmiddle"></span></a> ';
-					$out.= $this->showInputField($newval, $keyprefix.$key.$keysuffix.'[]', $option, $moreparam, '', '', $showsize).'<br></span>';
+					$out.= $this->showInputField($newval, $keyprefix.$key.$keysuffix.'[]', $option, $moreparam, '', '', $morecss).'<br></span>';
 				}
 			}
 
 			$out.= '<a id="'.dol_escape_htmltag($keyprefix.$key.$keysuffix).'_add" href="javascript:;"><span class="fa fa-plus-circle valignmiddle"></span></a>';
 
 			$newInput = '<span><a class="'.dol_escape_htmltag($keyprefix.$key.$keysuffix).'_del" href="javascript:;"><span class="fa fa-minus-circle valignmiddle"></span></a> ';
-			$newInput.= $this->showInputField($newval, $keyprefix.$key.$keysuffix.'[]', '', $moreparam, '', '', $showsize).'<br></span>';
+			$newInput.= $this->showInputField($newval, $keyprefix.$key.$keysuffix.'[]', '', $moreparam, '', '', $morecss).'<br></span>';
 
 			if(! empty($conf->use_javascript_ajax)) {
 				$out.= '
@@ -5983,10 +5987,10 @@ abstract class CommonObject
 	 * @param  string  $moreparam      To add more parametes on html input tag
 	 * @param  string  $keysuffix      Prefix string to add into name and id of field (can be used to avoid duplicate names)
 	 * @param  string  $keyprefix      Suffix string to add into name and id of field (can be used to avoid duplicate names)
-	 * @param  mixed   $showsize       Value for css to define size. May also be a numeric.
+	 * @param  mixed   $morecss        Value for css to define size. May also be a numeric.
 	 * @return string
 	 */
-	public function showOutputField($val, $key, $value, $moreparam = '', $keysuffix = '', $keyprefix = '', $showsize = 0)
+	public function showOutputField($val, $key, $value, $moreparam = '', $keysuffix = '', $keyprefix = '', $morecss = '')
 	{
 		global $conf,$langs,$form;
 
@@ -6037,45 +6041,41 @@ abstract class CommonObject
 			$value = dol_eval($computed, 1, 0);
 		}
 
-		if (empty($showsize))
+		if (empty($morecss))
 		{
 			if ($type == 'date')
 			{
-				//$showsize=10;
-				$showsize = 'minwidth100imp';
+				$morecss = 'minwidth100imp';
 			}
 			elseif ($type == 'datetime')
 			{
-				//$showsize=19;
-				$showsize = 'minwidth200imp';
+				$morecss = 'minwidth200imp';
 			}
 			elseif (in_array($type, array('int','double','price')))
 			{
-				//$showsize=10;
-				$showsize = 'maxwidth75';
+				$morecss = 'maxwidth75';
 			}
 			elseif ($type == 'url')
 			{
-				$showsize='minwidth400';
+				$morecss='minwidth400';
 			}
 			elseif ($type == 'boolean')
 			{
-				$showsize='';
+				$morecss='';
 			}
 			else
 			{
 				if (round($size) < 12)
 				{
-					$showsize = 'minwidth100';
+					$morecss = 'minwidth100';
 				}
 				elseif (round($size) <= 48)
 				{
-					$showsize = 'minwidth200';
+					$morecss = 'minwidth200';
 				}
 				else
 				{
-					//$showsize=48;
-					$showsize = 'minwidth400';
+					$morecss = 'minwidth400';
 				}
 			}
 		}
