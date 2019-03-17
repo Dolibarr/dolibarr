@@ -1758,9 +1758,11 @@ if (preg_match('/^dopayment/', $action))
 	        background-color: #fefde5 !important;
 	    }
 	    </style>';
-
-		//print '<br><form action="'.$_SERVER['REQUEST_URI'].'" method="POST" id="payment-form">';
-
+        
+        if ($paymentmethod != 'stripe')
+        {
+		print '<br><form action="'.$_SERVER['REQUEST_URI'].'" method="POST" id="payment-form">';
+        }
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">'."\n";
 		print '<input type="hidden" name="dopayment_stripe" value="1">'."\n";
 		print '<input type="hidden" name="action" value="charge">'."\n";
@@ -1795,9 +1797,10 @@ if (preg_match('/^dopayment/', $action))
 	    <button class="butAction" id="buttontopay" data-secret="'.$paymentintent->client_secret.'">'.$langs->trans("ValidatePayment").'</button>
 	    <img id="hourglasstopay" class="hidden" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/working.gif'.'">
 	    </td></tr></tbody></table>';
-
-	    //print '</form>';
-
+        if ($paymentmethod != 'stripe')
+        {
+	    print '</form>';
+        }
 	    print '<script src="https://js.stripe.com/v3/"></script>
 
 	    <script type="text/javascript" language="javascript">';
