@@ -87,9 +87,20 @@ class ActionComm extends CommonObject
      * @var string Agenda event label
      */
     public $label;
-
-    public $datec;			// Date creation record (datec)
-    public $datem;			// Date modification record (tms)
+    
+    /**
+     * Date creation record (datec)
+     *
+     * @var DateTime
+     */
+    public $datec;			
+    
+    /**
+     * Date modification record (tms)
+     *
+     * @var DateTime
+     */
+    public $datem;			
 
     /**
      * Object user that create action
@@ -118,9 +129,20 @@ class ActionComm extends CommonObject
      * @var int
      */
     public $usermodid;
-
-    public $datep;			// Date action start (datep)
-    public $datef;			// Date action end (datep2)
+    
+    /**
+     * Date action start (datep)
+     *
+     * @var DateTime
+     */
+    public $datep;
+    
+    /**
+     * Date action end (datep2)
+     *
+     * @var DateTime
+     */
+    public $datep2;			
 
     /**
      * @var int -1=Unkown duration
