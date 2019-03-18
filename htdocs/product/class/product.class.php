@@ -3257,7 +3257,7 @@ class Product extends CommonObject
      * @param  int $optional  1=Mark component as optional
      * @return int                < 0 if KO, > 0 if OK
      */
-    public function add_sousproduit($id_pere, $id_fils, $qty, $incdec = 1)
+    public function add_sousproduit($id_pere, $id_fils, $qty, $incdec = 1, $optional = 0)
     {
         // phpcs:enable
         // Clean parameters
@@ -3322,7 +3322,7 @@ class Product extends CommonObject
      * @param  int $optional  1=Mark component as optional
      * @return int                < 0 if KO, > 0 if OK
      */
-    public function update_sousproduit($id_pere, $id_fils, $qty, $incdec = 1)
+    public function update_sousproduit($id_pere, $id_fils, $qty, $incdec = 1, $optional = 0)
     {
         // phpcs:enable
         // Clean parameters
