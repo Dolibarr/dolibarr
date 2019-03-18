@@ -1281,7 +1281,7 @@ class Commande extends CommonOrder
 	 * 	@param		float			$txlocaltax1		Local tax 1 rate (deprecated, use instead txtva with code inside)
 	 * 	@param		float			$txlocaltax2		Local tax 2 rate (deprecated, use instead txtva with code inside)
 	 *	@param      int				$fk_product      	Id of product
-	 *	@param      float			$remise_percent  	Pourcentage de remise de la ligne
+	 *	@param      float			$remise_percent  	Percentage discount of the line
 	 *	@param      int				$info_bits			Bits de type de lignes
 	 *	@param      int				$fk_remise_except	Id remise
 	 *	@param      string			$price_base_type	HT or TTC

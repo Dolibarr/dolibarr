@@ -1345,7 +1345,7 @@ class Contrat extends CommonObject
 	 *  @param  float		$txlocaltax1        Local tax 1 rate
 	 *  @param  float		$txlocaltax2        Local tax 2 rate
 	 *  @param  int			$fk_product      	Id produit
-	 *  @param  float		$remise_percent  	Pourcentage de remise de la ligne
+	 *  @param  float		$remise_percent  	Percentage discount of the line
 	 *  @param  int			$date_start      	Date de debut prevue
 	 *  @param  int			$date_end        	Date de fin prevue
 	 *	@param	string		$price_base_type	HT or TTC
@@ -1552,7 +1552,7 @@ class Contrat extends CommonObject
 	 *  @param  string		$desc             	Description de la ligne
 	 *  @param  float		$pu               	Prix unitaire
 	 *  @param  int			$qty              	Quantite
-	 *  @param  float		$remise_percent   	Pourcentage de remise de la ligne
+	 *  @param  float		$remise_percent   	Percentage discount of the line
 	 *  @param  int			$date_start       	Date de debut prevue
 	 *  @param  int			$date_end         	Date de fin prevue
 	 *  @param  float		$tvatx            	Taux TVA

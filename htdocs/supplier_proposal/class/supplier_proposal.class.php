@@ -374,7 +374,7 @@ class SupplierProposal extends CommonObject
      * 		@param		double		$txlocaltax1		Local tax 1 rate
      *  	@param		double		$txlocaltax2		Local tax 2 rate
      *		@param    	int			$fk_product      	Product/Service ID predefined
-     * 		@param    	double		$remise_percent  	Pourcentage de remise de la ligne
+     * 		@param    	double		$remise_percent  	Percentage discount of the line
      * 		@param    	string		$price_base_type	HT or TTC
      * 		@param    	double		$pu_ttc             Prix unitaire TTC
      * 		@param    	int			$info_bits			Bits de type de lignes
