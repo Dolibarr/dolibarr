@@ -57,7 +57,8 @@ input.select2-input {
 .liste_titre input[name=search_day_lim], .liste_titre input[name=search_day_start], .liste_titre input[name=search_day_end], .liste_titre input[name=search_day_create],
 .liste_titre input[name=search_day_create], .liste_titre input[name=search_day_start], .liste_titre input[name=search_day_end],
 .liste_titre input[name=search_day_date_when], .liste_titre input[name=search_month_date_when], .liste_titre input[name=search_year_date_when],
-.liste_titre input[name=search_dtstartday], .liste_titre input[name=search_dtendday], .liste_titre input[name=search_dtstartmonth], .liste_titre input[name=search_dtendmonth]
+.liste_titre input[name=search_dtstartday], .liste_titre input[name=search_dtendday], .liste_titre input[name=search_dtstartmonth], .liste_titre input[name=search_dtendmonth],
+select#date_startday, select#date_startmonth, select#date_endday, select#date_endmonth, select#reday, select#remonth
 {
 	margin-right: 4px;
 }
@@ -511,6 +512,9 @@ select.flat.selectlimit {
 .nomarginleft {
 	margin-left: 0px !important;
 }
+.margintoponly {
+	margin-top: 10px !important;
+}
 .marginbottomonly {
 	margin-bottom: 10px !important;
 }
@@ -959,7 +963,13 @@ td.showDragHandle {
 	border-right: 1px solid #d0d0d0;
 	box-shadow: 3px 0 6px -2px #eee;
 	background: rgb(<?php echo $colorbackvmenu1; ?>);
+	transition: left 0.5s ease;
 }
+
+body.sidebar-collapse .side-nav {
+	display: none;
+}
+
 div.blockvmenulogo
 {
 	border-bottom: 0 !important;
@@ -1002,11 +1012,8 @@ div.vmenu, td.vmenu {
 	background: #FFF;
 	padding-left: 20px;
 	padding-right: 20px;
-}
-.side-nav {
 	position: absolute;
-    z-index: 90;
-    display: none;
+    	z-index: 90;
 }
 div.blockvmenulogo
 {

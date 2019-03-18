@@ -31,20 +31,15 @@
  * \brief 		Class accountancy export
  */
 
-/**
- * Class AccountancyExport
- *
- * Manage the different format accountancy export
- */
-
 require_once DOL_DOCUMENT_ROOT . '/core/lib/functions.lib.php';
 
+/**
+ * Manage the different format accountancy export
+ */
 class AccountancyExport
 {
-	/**
-	 * Type of export. Defined by $conf->global->ACCOUNTING_EXPORT_MODELCSV
-	 */
-	public static $EXPORT_TYPE_NORMAL = 1;	 			// CSV
+	// Type of export. Used into $conf->global->ACCOUNTING_EXPORT_MODELCSV
+    public static $EXPORT_TYPE_NORMAL = 1;	 			// CSV
 	public static $EXPORT_TYPE_CONFIGURABLE = 10;		// CSV
 	public static $EXPORT_TYPE_CEGID = 2;
 	public static $EXPORT_TYPE_COALA = 3;

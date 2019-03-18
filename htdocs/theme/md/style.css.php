@@ -294,7 +294,8 @@ textarea.cke_source:focus
 .liste_titre input[name=search_day_lim], .liste_titre input[name=search_day_start], .liste_titre input[name=search_day_end], .liste_titre input[name=search_day_create],
 .liste_titre input[name=search_day_create], .liste_titre input[name=search_day_start], .liste_titre input[name=search_day_end],
 .liste_titre input[name=search_day_date_when], .liste_titre input[name=search_month_date_when], .liste_titre input[name=search_year_date_when],
-.liste_titre input[name=search_dtstartday], .liste_titre input[name=search_dtendday], .liste_titre input[name=search_dtstartmonth], .liste_titre input[name=search_dtendmonth]
+.liste_titre input[name=search_dtstartday], .liste_titre input[name=search_dtendday], .liste_titre input[name=search_dtstartmonth], .liste_titre input[name=search_dtendmonth],
+select#date_startday, select#date_startmonth, select#date_endday, select#date_endmonth, select#reday, select#remonth
 {
 	margin-right: 4px;
 }
@@ -744,6 +745,9 @@ select.flat.selectlimit {
 .nomarginleft {
 	margin-left: 0px !important;
 }
+.margintoponly {
+	margin-top: 10px !important;
+}
 .marginbottomonly {
 	margin-bottom: 10px !important;
 }
@@ -1192,8 +1196,32 @@ td.showDragHandle {
 <?php } ?>
 <?php } ?>
 }
+
+/*
+*	Slide animation
+*/
+.side-nav-vert, #id-right {
+	transition: padding-left 0.5s ease, margin-left 0.5s ease;
+}
+
+.side-nav, .login_block {
+	transition: left 0.5s ease;
+}
+
+body.sidebar-collapse .side-nav-vert, body.sidebar-collapse #id-right {
+	margin-left: 0;padding-left:0
+}
+
+
 .side-nav-vert {
 	margin-left: 228px;
+}
+body.sidebar-collapse .side-nav, body.sidebar-collapse .login_block {
+<?php if (in_array($conf->browser->layout, array('phone','tablet')) && ((GETPOST('testmenuhider') || ! empty($conf->global->MAIN_TESTMENUHIDER)) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))) { ?>
+	left: -240px;
+<?php } else { ?>
+	left: -229px;
+<?php } ?>
 }
 <?php if (empty($conf->global->THEME_DISABLE_STICKY_TOPMENU)) {  ?>
 .side-nav-vert {
@@ -1221,12 +1249,12 @@ div.login_block {
 	overflow-x: initial !important;
 	overflow-y: scroll;
 <?php } ?>
-	display: none;
+	display: block;
 
-	position: auto;
-	top: auto;
-	z-index: 90;
+	position: relative;
 }
+
+
 
 div.backgroundsemitransparent {
 	background:rgba(255,255,255,0.6);
@@ -1240,7 +1268,7 @@ div.backgroundsemitransparent {
 
 div.login_block {
 	/* position: initial !important;*/
-	display: none;
+	/*display: none;*/
 }
 .login_block_getinfo {
 	text-align: center;

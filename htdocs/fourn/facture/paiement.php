@@ -69,7 +69,7 @@ if (! $sortorder) $sortorder="DESC";
 if (! $sortfield) $sortfield="p.rowid";
 $optioncss = GETPOST('optioncss', 'alpha');
 
-$amounts = array();array();
+$amounts = array();
 $amountsresttopay=array();
 $addwarning=0;
 
@@ -247,7 +247,23 @@ if (empty($reshook))
 	{
 	    $error=0;
 
-	    $datepaye = dol_mktime(12, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear'));
+	    $datepaye = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
+
+        // Clean parameters amount if payment is for a credit note
+        if (GETPOST('type', 'int') == FactureFournisseur::TYPE_CREDIT_NOTE)
+        {
+            foreach ($amounts as $key => $value)	// How payment is dispatch
+            {
+                $newvalue = price2num($value, 'MT');
+                $amounts[$key] = -$newvalue;
+            }
+
+            foreach ($multicurrency_amounts as $key => $value)	// How payment is dispatch
+            {
+                $newvalue = price2num($value, 'MT');
+                $multicurrency_amounts[$key] = -$newvalue;
+            }
+        }
 
 	    if (! $error)
 	    {
@@ -432,6 +448,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
             print '<input type="hidden" name="facid" value="'.$facid.'">';
             print '<input type="hidden" name="ref_supplier" value="'.$obj->ref_supplier.'">';
             print '<input type="hidden" name="socid" value="'.$obj->socid.'">';
+            print '<input type="hidden" name="type" id="invoice_type" value="'.$object->type.'">';
             print '<input type="hidden" name="societe" value="'.$obj->name.'">';
 
             dol_fiche_head(null);
@@ -620,14 +637,14 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 							    print '</td>';
 	                        }
 
-	                        print '<td class="right">'.price($objp->total_ttc).'</td>';
+	                        print '<td class="right">'.price($sign * $objp->total_ttc).'</td>';
 
-	                        print '<td class="right">'.price($objp->am);
+	                        print '<td class="right">'.price($sign * $objp->am);
 							if ($creditnotes) print '+'.price($creditnotes);
 							if ($deposits) print '+'.price($deposits);
 							print '</td>';
 
-	                        print '<td class="right">'.price($remaintopay).'</td>';
+	                        print '<td class="right">'.price($sign * $remaintopay).'</td>';
 
 	                        // Amount
 	                        print '<td class="center">';

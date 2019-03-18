@@ -70,6 +70,7 @@ class BOM extends CommonObject
 	 *  'label' the translation key.
 	 *  'enabled' is a condition when the field must be managed.
 	 *  'visible' says if field is visible in list (Examples: 0=Not visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create). Using a negative value means field is not shown by default on list but can be selected for viewing)
+	 *  'noteditable' says if field is not editable (1 or 0)
 	 *  'notnull' is set to 1 if not null in database. Set to -1 if we must set data to null if empty ('' or 0).
 	 *  'default' is a default value for creation (can still be replaced by the global setup of default values)
 	 *  'index' if we want an index in database.
@@ -90,7 +91,7 @@ class BOM extends CommonObject
 	 */
 	public $fields=array(
 		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-1, 'position'=>1, 'notnull'=>1, 'index'=>1, 'comment'=>"Id",),
-	    'ref' => array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>1, 'visible'=>4, 'position'=>10, 'notnull'=>1, 'default'=>'(PROV)', 'index'=>1, 'searchall'=>1, 'comment'=>"Reference of BOM", 'showoncombobox'=>'1',),
+	    'ref' => array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>1, 'noteditable'=>1, 'visible'=>4, 'position'=>10, 'notnull'=>1, 'default'=>'(PROV)', 'index'=>1, 'searchall'=>1, 'comment'=>"Reference of BOM", 'showoncombobox'=>'1',),
 		'label' => array('type'=>'varchar(255)', 'label'=>'Label', 'enabled'=>1, 'visible'=>1, 'position'=>30, 'notnull'=>1, 'searchall'=>1, 'showoncombobox'=>'1',),
 		'description' => array('type'=>'text', 'label'=>'Description', 'enabled'=>1, 'visible'=>-1, 'position'=>60, 'notnull'=>-1,),
 		'note_public' => array('type'=>'html', 'label'=>'NotePublic', 'enabled'=>1, 'visible'=>-1, 'position'=>61, 'notnull'=>-1,),
@@ -103,7 +104,7 @@ class BOM extends CommonObject
 	    'fk_user_valid' => array('type'=>'integer', 'label'=>'UserValidation', 'enabled'=>1, 'visible'=>-2, 'position'=>512, 'notnull'=>0,),
 	    'import_key' => array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'position'=>1000, 'notnull'=>-1,),
 		'fk_product' => array('type'=>'integer:Product:product/class/product.class.php', 'label'=>'Product', 'enabled'=>1, 'visible'=>1, 'position'=>50, 'notnull'=>1, 'index'=>1, 'help'=>'ProductBOMHelp'),
-		'qty' => array('type'=>'real', 'label'=>'Quantity', 'enabled'=>1, 'visible'=>1, 'default'=>1, 'position'=>55, 'notnull'=>1, 'isameasure'=>'1',),
+	    'qty' => array('type'=>'real', 'label'=>'Quantity', 'enabled'=>1, 'visible'=>1, 'default'=>1, 'position'=>55, 'notnull'=>1, 'isameasure'=>'1', 'css'=>'maxwidth75imp'),
 	    'status' => array('type'=>'integer', 'label'=>'Status', 'enabled'=>1, 'visible'=>2, 'position'=>1000, 'notnull'=>1, 'default'=>0, 'index'=>1, 'arrayofkeyval'=>array('0'=>'Draft', '1'=>'Enabled', '-1'=>'Disabled')),
 	);
 	public $rowid;
@@ -289,6 +290,24 @@ class BOM extends CommonObject
 		$this->lines=array();
 
 		// Load lines with object BOMLine
+        $sql = 'SELECT rowid, fk_product, description, qty, rank WHERE fk_bom = '.$this->id;
+
+        $resql=$this->db->query($sql);
+        if ($resql)
+        {
+            $obj = $this->db->fetch_object($resql);
+            if ($obj)
+            {
+                $newline = new BOMLine($this->db);
+                $newline->id = $obj->rowid;
+                $newline->fk_product = $obj->fk_product;
+                $newline->description = $obj->description;
+                $newline->qty = $obj->qty;
+                $newline->rank = $obj->rank;
+
+                $this->lines[] = $newline;
+            }
+        }
 
 		return count($this->lines)?1:0;
 	}
@@ -398,6 +417,62 @@ class BOM extends CommonObject
 
 
 	/**
+	 *  Returns the reference to the following non used BOM depending on the active numbering module
+	 *  defined into BOM_ADDON
+	 *
+	 *  @param	Product		$prod 	Object product
+	 *  @return string      		BOM free reference
+	 */
+	public function getNextNumRef($prod)
+	{
+	    global $langs, $conf;
+	    $langs->load("mrp");
+
+	    if (! empty($conf->global->BOM_ADDON))
+	    {
+	        $mybool=false;
+
+	        $file = $conf->global->BOM_ADDON.".php";
+	        $classname = $conf->global->BOM_ADDON;
+
+	        // Include file with class
+	        $dirmodels=array_merge(array('/'), (array) $conf->modules_parts['models']);
+	        foreach ($dirmodels as $reldir)
+	        {
+	            $dir = dol_buildpath($reldir."core/modules/bom/");
+
+	            // Load file with numbering class (if found)
+	            $mybool|=@include_once $dir.$file;
+	        }
+
+	        if ($mybool === false)
+	        {
+	            dol_print_error('', "Failed to include file ".$file);
+	            return '';
+	        }
+
+	        $obj = new $classname();
+	        $numref = $obj->getNextValue($prod, $this);
+
+	        if ($numref != "")
+	        {
+	            return $numref;
+	        }
+	        else
+	        {
+	            $this->error=$obj->error;
+	            //dol_print_error($this->db,get_class($this)."::getNextNumRef ".$obj->error);
+	            return "";
+	        }
+	    }
+	    else
+	    {
+	        print $langs->trans("Error")." ".$langs->trans("Error_BOM_ADDON_NotDefined");
+	        return "";
+	    }
+	}
+
+	/**
 	 *	Validate bom
 	 *
 	 *	@param		User	$user     		User making status change
@@ -433,7 +508,8 @@ class BOM extends CommonObject
 	    // Define new ref
 	    if (! $error && (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref))) // empty should not happened, but when it occurs, the test save life
 	    {
-	        $num = $this->getNextNumRef();
+	        $this->fetch_product();
+	        $num = $this->getNextNumRef($this->product);
 	    }
 	    else
 	    {
@@ -520,7 +596,6 @@ class BOM extends CommonObject
 	    }
 	}
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Set draft status
 	 *
@@ -529,7 +604,6 @@ class BOM extends CommonObject
 	 */
 	public function setDraft($user)
 	{
-	    //phpcs:enable
 	    global $conf,$langs;
 
 	    $error=0;
@@ -887,36 +961,6 @@ class BOMLine extends CommonObject
 	public $fk_bom;
 	public $rank;
 	// END MODULEBUILDER PROPERTIES
-
-
-
-	// If this object has a subtable with lines
-
-	/**
-	 * @var int    Name of subtable line
-	 */
-	//public $table_element_line = 'bomlinedet';
-
-	/**
-	 * @var int    Field with ID of parent key if this field has a parent
-	 */
-	//public $fk_element = 'fk_bomline';
-
-	/**
-	 * @var int    Name of subtable class that manage subtable lines
-	 */
-	//public $class_element_line = 'BillOfMaterialsLineline';
-
-	/**
-	 * @var array  Array of child tables (child tables to delete before deleting a record)
-	 */
-	//protected $childtables=array('bomlinedet');
-
-	/**
-	 * @var BillOfMaterialsLineLine[]     Array of subtable lines
-	 */
-	//public $lines = array();
-
 
 
 	/**
@@ -1350,36 +1394,5 @@ class BOMLine extends CommonObject
 	public function initAsSpecimen()
 	{
 		$this->initAsSpecimenCommon();
-	}
-
-
-	/**
-	 * Action executed by scheduler
-	 * CAN BE A CRON TASK. In such a case, parameters come from the schedule job setup field 'Parameters'
-	 *
-	 * @return  int	        0 if OK, <>0 if KO (this function is used also by cron so only 0 is OK)
-	 */
-	//public function doScheduledJob($param1, $param2, ...)
-	public function doScheduledJob()
-	{
-		global $conf, $langs;
-
-		//$conf->global->SYSLOG_FILE = 'DOL_DATA_ROOT/dolibarr_mydedicatedlofile.log';
-
-		$error = 0;
-		$this->output = '';
-		$this->error='';
-
-		dol_syslog(__METHOD__, LOG_DEBUG);
-
-		$now = dol_now();
-
-		$this->db->begin();
-
-		// ...
-
-		$this->db->commit();
-
-		return $error;
 	}
 }

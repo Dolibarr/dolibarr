@@ -986,7 +986,7 @@ else
         $object->idprof6			= GETPOST('idprof6', 'alpha');
         $object->typent_id			= GETPOST('typent_id', 'int');
         $object->effectif_id		= GETPOST('effectif_id', 'int');
-        $object->civility_id		= GETPOST('civility_id', 'int');
+        $object->civility_id		= GETPOST('civility_id', 'alpha');
 
         $object->tva_assuj			= GETPOST('assujtva_value', 'int');
         $object->status				= GETPOST('status', 'int');

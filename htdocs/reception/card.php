@@ -144,7 +144,7 @@ if (empty($reshook))
 	// Confirm back to draft status
 	if ($action == 'modif' && $user->rights->reception->creer)
 	{
-		$result = $object->set_draft($user);
+		$result = $object->setDraft($user);
 		if ($result >= 0)
 		{
 			// Define output language
@@ -438,7 +438,7 @@ if (empty($reshook))
 	    }
 	}
 	// TODO add alternative status
-	/*else if ($action == 'reopen' && (! empty($user->rights->reception->creer) || ! empty($user->rights->reception->reception_advance->validate)))
+	/*elseif ($action == 'reopen' && (! empty($user->rights->reception->creer) || ! empty($user->rights->reception->reception_advance->validate)))
 	{
 	    $result = $object->setStatut(0);
 	    if ($result < 0)

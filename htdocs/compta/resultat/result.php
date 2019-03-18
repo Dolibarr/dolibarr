@@ -288,13 +288,13 @@ elseif ($modecompta=="BOOKKEEPING")
 	$j=1;
 	$sommes = array();
 	$totPerAccount = array();
-	if (!is_array($cats) && $cats<0) {
-		setEventMessages(null,$AccCat->errors,'errors');
+	if (! is_array($cats) && $cats < 0) {
+		setEventMessages(null, $AccCat->errors, 'errors');
 	} elseif (is_array($cats) && count($cats)>0) {
-		foreach ($cats as $cat)        // Loop on each group
-		{
-			if (!empty($cat['category_type']))        // category calculed
-			{
+		foreach ($cats as $cat) {
+            // Loop on each group
+			if (!empty($cat['category_type'])) {
+                // category calculed
 				// When we enter here, $sommes was filled by group of accounts
 
 				$formula = $cat['formula'];
@@ -314,7 +314,6 @@ elseif ($modecompta=="BOOKKEEPING")
 				foreach ($sommes as $code => $det) {
 					$vars[$code] = $det['NP'];
 				}
-
 
 				$result = strtr($formula, $vars);
 

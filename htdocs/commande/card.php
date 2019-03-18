@@ -1219,7 +1219,7 @@ if (empty($reshook))
 		}
 
 		if (! $error) {
-			$result = $object->set_draft($user, $idwarehouse);
+			$result = $object->setDraft($user, $idwarehouse);
 			if ($result >= 0)
 			{
 				// Define output language

@@ -51,6 +51,7 @@ CREATE TABLE llx_expensereport_det
    multicurrency_total_tva      double(24,8) DEFAULT 0,
    multicurrency_total_ttc      double(24,8) DEFAULT 0,
    fk_facture					integer DEFAULT 0,				-- ID of customer invoice line if expense is rebilled to a customer
+   fk_expensereport_line        integer DEFAULT NULL,			-- ID of ECM file that is source document of expense report 
    fk_code_ventilation			integer DEFAULT 0,
    rang							integer DEFAULT 0,				-- position of line
    import_key					varchar(14),

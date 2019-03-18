@@ -69,8 +69,7 @@ if ($action == 'updateMask')
 		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
 }
-
-else if ($action == 'specimen')
+elseif ($action == 'specimen')
 {
 	$modele=GETPOST('module', 'alpha');
 
@@ -114,14 +113,13 @@ else if ($action == 'specimen')
 		dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
 	}
 }
-
-else if ($action == 'setribchq')
+elseif ($action == 'setribchq')
 {
-	$rib = GETPOST('rib','alpha');
-	$chq = GETPOST('chq','alpha');
+	$rib = GETPOST('rib', 'alpha');
+	$chq = GETPOST('chq', 'alpha');
 
-	$res = dolibarr_set_const($db, "FACTURE_RIB_NUMBER",$rib,'chaine',0,'',$conf->entity);
-	$res = dolibarr_set_const($db, "FACTURE_CHQ_NUMBER",$chq,'chaine',0,'',$conf->entity);
+	$res = dolibarr_set_const($db, "FACTURE_RIB_NUMBER", $rib, 'chaine', 0, '', $conf->entity);
+	$res = dolibarr_set_const($db, "FACTURE_CHQ_NUMBER", $chq, 'chaine', 0, '', $conf->entity);
 
 	if (! $res > 0) $error++;
 
@@ -134,8 +132,7 @@ else if ($action == 'setribchq')
 		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
 }
-
-else if ($action == 'set_PROPALE_DRAFT_WATERMARK')
+elseif ($action == 'set_PROPALE_DRAFT_WATERMARK')
 {
 	$draft = GETPOST('PROPALE_DRAFT_WATERMARK', 'alpha');
 
@@ -151,8 +148,7 @@ else if ($action == 'set_PROPALE_DRAFT_WATERMARK')
 		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
 }
-
-else if ($action == 'set_PROPOSAL_FREE_TEXT')
+elseif ($action == 'set_PROPOSAL_FREE_TEXT')
 {
 	$freetext = GETPOST('PROPOSAL_FREE_TEXT', 'none');	// No alpha here, we want exact string
 
@@ -169,8 +165,7 @@ else if ($action == 'set_PROPOSAL_FREE_TEXT')
 		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
 }
-
-else if ($action == 'setdefaultduration')
+elseif ($action == 'setdefaultduration')
 {
 	$res = dolibarr_set_const($db, "PROPALE_VALIDITY_DURATION", $value, 'chaine', 0, '', $conf->entity);
 
@@ -186,7 +181,7 @@ else if ($action == 'setdefaultduration')
 	}
 }
 
-else if ($action == 'set_BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL')
+elseif ($action == 'set_BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL')
 {
     $res = dolibarr_set_const($db, "BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL", $value, 'chaine', 0, '', $conf->entity);
 
@@ -201,13 +196,11 @@ else if ($action == 'set_BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL')
         setEventMessages($langs->trans("Error"), null, 'errors');
     }
 }
-
 // Activate a model
-else if ($action == 'set')
+elseif ($action == 'set')
 {
 	$ret = addDocumentModel($value, $type, $label, $scandir);
 }
-
 elseif ($action == 'del')
 {
 	$ret = delDocumentModel($value, $type);
@@ -476,7 +469,7 @@ foreach ($dirmodels as $reldir)
 	                            print '</td>';
 
 	                           // Info
-	                            $htmltooltip =    ''.$langs->trans("Name").': '.$module->name;
+	                            $htmltooltip = $langs->trans("Name").': '.$module->name;
 	                            $htmltooltip.='<br>'.$langs->trans("Type").': '.($module->type?$module->type:$langs->trans("Unknown"));
 	                            if ($module->type == 'pdf')
 	                            {
@@ -526,7 +519,7 @@ print '</table>';
 if (empty($conf->facture->enabled))
 {
 	print '<br>';
-	print load_fiche_titre($langs->trans("SuggestedPaymentModesIfNotDefinedInProposal"),'','');
+	print load_fiche_titre($langs->trans("SuggestedPaymentModesIfNotDefinedInProposal"), '', '');
 
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />';
@@ -608,7 +601,7 @@ if (empty($conf->facture->enabled))
 
 			print '<option value="'.$row[0].'"';
 			print $conf->global->FACTURE_CHQ_NUMBER == $row[0] ? ' selected':'';
-			print '>'.$langs->trans("OwnerOfBankAccount",$row[1]).'</option>';
+			print '>'.$langs->trans("OwnerOfBankAccount", $row[1]).'</option>';
 
 			$i++;
 		}

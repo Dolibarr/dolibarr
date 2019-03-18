@@ -152,7 +152,7 @@ class FormFile
 			$out .= (!empty($accept)?' accept="'.$accept.'"':' accept=""');
 			$out .= '>';
 			$out .= ' ';
-			$out .= '<input type="submit" class="button" name="sendit" value="'.$langs->trans("Upload").'"';
+			$out .= '<input type="submit" class="button reposition" name="sendit" value="'.$langs->trans("Upload").'"';
 			$out .= (empty($conf->global->MAIN_UPLOAD_DOC) || empty($perm)?' disabled':'');
 			$out .= '>';
 

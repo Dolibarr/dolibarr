@@ -66,7 +66,7 @@ $socid = GETPOST('socid', 'int')?GETPOST('socid', 'int'):GETPOST('socid_id', 'in
 // Security check
 $id=GETPOST("id", 'int');
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'expensereport', 0, 'expensereport');
+$result = restrictedArea($user, 'expensereport', $id, 'expensereport');
 
 
 // Hack to use expensereport dir
@@ -1892,9 +1892,9 @@ else
 				print '<td class="liste_titre">' . $langs->trans('Date') . '</td>';
 				print '<td class="liste_titre">' . $langs->trans('Type') . '</td>';
 				if (! empty($conf->banque->enabled)) {
-					print '<td class="liste_titre" align="right">' . $langs->trans('BankAccount') . '</td>';
+					print '<td class="liste_titre right">' . $langs->trans('BankAccount') . '</td>';
 				}
-				print '<td class="liste_titre" align="right">' . $langs->trans('Amount') . '</td>';
+				print '<td class="liste_titre right">' . $langs->trans('Amount') . '</td>';
 				print '<td class="liste_titre" width="18">&nbsp;</td>';
 				print '</tr>';
 
@@ -1948,12 +1948,12 @@ else
 								$bankaccountstatic->accountancy_journal = $accountingjournal->getNomUrl(0, 1, 1, '', 1);
 							}
 
-							print '<td align="right">';
+							print '<td class="right">';
 							if ($bankaccountstatic->id)
 								print $bankaccountstatic->getNomUrl(1, 'transactions');
 							print '</td>';
 						}
-				        print '<td align="right">'.price($objp->amount)."</td>";
+				        print '<td class="right">'.price($objp->amount)."</td>";
 				        print '<td></td>';
 				        print "</tr>";
 				        $totalpaid += $objp->amount;
@@ -1975,10 +1975,10 @@ else
 			    	{
 			    		$cssforamountpaymentcomplete = 'amountpaymentneutral';
 			    	}
-			        print '<tr><td colspan="' . $nbcols . '" align="right">'.$langs->trans("AlreadyPaid").':</td><td align="right">'.price($totalpaid).'</td><td></td></tr>';
-			        print '<tr><td colspan="' . $nbcols . '" align="right">'.$langs->trans("AmountExpected").':</td><td align="right">'.price($object->total_ttc).'</td><td></td></tr>';
+			        print '<tr><td colspan="' . $nbcols . '" class="right">'.$langs->trans("AlreadyPaid").':</td><td class="right">'.price($totalpaid).'</td><td></td></tr>';
+			        print '<tr><td colspan="' . $nbcols . '" class="right">'.$langs->trans("AmountExpected").':</td><td class="right">'.price($object->total_ttc).'</td><td></td></tr>';
 
-			        print '<tr><td colspan="' . $nbcols . '" align="right">'.$langs->trans("RemainderToPay").':</td>';
+			        print '<tr><td colspan="' . $nbcols . '" class="right">'.$langs->trans("RemainderToPay").':</td>';
 			        print '<td align="right"'.($resteapayeraffiche?' class="amountremaintopay"':(' class="'.$cssforamountpaymentcomplete.'"')).'>'.price($resteapayeraffiche).'</td><td></td></tr>';
 
 				    $db->free($resql);
@@ -2014,26 +2014,26 @@ else
 					$i = 0;$total = 0;
 
 					print '<tr class="liste_titre">';
-					print '<td style="text-align:center;">'.$langs->trans('LineNb').'</td>';
-					//print '<td style="text-align:center;">'.$langs->trans('Piece').'</td>';
-					print '<td style="text-align:center;">'.$langs->trans('Date').'</td>';
+					print '<td class="center">'.$langs->trans('LineNb').'</td>';
+					//print '<td class="center">'.$langs->trans('Piece').'</td>';
+					print '<td class="center">'.$langs->trans('Date').'</td>';
 					if (! empty($conf->projet->enabled)) print '<td class="minwidth100imp">'.$langs->trans('Project').'</td>';
 					if (!empty($conf->global->MAIN_USE_EXPENSE_IK)) print '<td>'.$langs->trans('CarCategory').'</td>';
-					print '<td style="text-align:center;">'.$langs->trans('Type').'</td>';
-					print '<td style="text-align:left;">'.$langs->trans('Description').'</td>';
-					print '<td style="text-align:right;">'.$langs->trans('VAT').'</td>';
-					print '<td style="text-align:right;">'.$langs->trans('PriceUHT').'</td>';
-					print '<td style="text-align:right;">'.$langs->trans('PriceUTTC').'</td>';
-					print '<td style="text-align:right;">'.$langs->trans('Qty').'</td>';
+					print '<td class="center">'.$langs->trans('Type').'</td>';
+					print '<td class="left">'.$langs->trans('Description').'</td>';
+					print '<td class="right">'.$langs->trans('VAT').'</td>';
+					print '<td class="right">'.$langs->trans('PriceUHT').'</td>';
+					print '<td class="right">'.$langs->trans('PriceUTTC').'</td>';
+					print '<td class="right">'.$langs->trans('Qty').'</td>';
 					if ($action != 'editline')
 					{
-						print '<td style="text-align:right;">'.$langs->trans('AmountHT').'</td>';
-						print '<td style="text-align:right;">'.$langs->trans('AmountTTC').'</td>';
+						print '<td class="right">'.$langs->trans('AmountHT').'</td>';
+						print '<td class="right">'.$langs->trans('AmountTTC').'</td>';
 					}
 					// Ajout des boutons de modification/suppression
 					if (($object->fk_statut < 2 || $object->fk_statut == 99) && $user->rights->expensereport->creer)
 					{
-						print '<td style="text-align:right;"></td>';
+						print '<td class="right"></td>';
 					}
 					print '</tr>';
 
@@ -2045,22 +2045,22 @@ else
 						{
 							print '<tr class="oddeven">';
 
-							print '<td style="text-align:center;">';
+							print '<td class="center">';
 							print $numline;
 							print '</td>';
 
-							/*print '<td style="text-align:center;">';
+							/*print '<td class="center">';
 							print img_picto($langs->trans("Document"), "object_generic");
 							print ' <span>'.$piece_comptable.'</span>';
 							print '</td>';*/
 
-							print '<td style="text-align:center;">'.dol_print_date($db->jdate($line->date), 'day').'</td>';
+							print '<td class="center">'.dol_print_date($db->jdate($line->date), 'day').'</td>';
 							if (! empty($conf->projet->enabled))
 							{
 								print '<td>';
-								if ($line->fk_projet > 0)
+								if ($line->fk_project > 0)
 								{
-									$projecttmp->id=$line->fk_projet;
+									$projecttmp->id=$line->fk_project;
 									$projecttmp->ref=$line->projet_ref;
 									print $projecttmp->getNomUrl(1);
 								}
@@ -2076,10 +2076,10 @@ else
 							$labeltype = ($langs->trans(($line->type_fees_code)) == $line->type_fees_code ? $line->type_fees_libelle : $langs->trans($line->type_fees_code));
 							print $labeltype;
 							print '</td>';
-							print '<td style="text-align:left;">'.dol_escape_htmltag($line->comments).'</td>';
-							print '<td style="text-align:right;">'.vatrate($line->vatrate, true).'</td>';
+							print '<td class="left">'.dol_nl2br($line->comments).'</td>';
+							print '<td class="right">'.vatrate($line->vatrate, true).'</td>';
                             // Unit price HT
-							print '<td style="text-align:right;">';
+							print '<td class="right">';
 							if (! empty($line->value_unit_ht))
 							{
 							    print price($line->value_unit_ht);
@@ -2092,20 +2092,20 @@ else
 							}
 							print '</td>';
 
-							print '<td style="text-align:right;">'.price($line->value_unit).'</td>';
+							print '<td class="right">'.price($line->value_unit).'</td>';
 
-							print '<td style="text-align:right;">'.dol_escape_htmltag($line->qty).'</td>';
+							print '<td class="right">'.dol_escape_htmltag($line->qty).'</td>';
 
 							if ($action != 'editline')
 							{
-								print '<td style="text-align:right;">'.price($line->total_ht).'</td>';
-								print '<td style="text-align:right;">'.price($line->total_ttc).'</td>';
+								print '<td class="right">'.price($line->total_ht).'</td>';
+								print '<td class="right">'.price($line->total_ttc).'</td>';
 							}
 
 							// Ajout des boutons de modification/suppression
 							if (($object->fk_statut < ExpenseReport::STATUS_VALIDATED || $object->fk_statut == ExpenseReport::STATUS_REFUSED) && $user->rights->expensereport->creer)
 							{
-								print '<td style="text-align:right;" class="nowrap">';
+								print '<td class="nowrap right">';
 
 								print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=editline&amp;rowid='.$line->rowid.'#'.$line->rowid.'">';
 								print img_edit();
@@ -2135,7 +2135,7 @@ else
 								if (! empty($conf->projet->enabled))
 								{
 									print '<td>';
-									$formproject->select_projects(-1, $line->fk_projet, 'fk_projet', 0, 0, 1, 1, 0, 0, 0, '', 0, 0, 'maxwidth300');
+									$formproject->select_projects(-1, $line->fk_project, 'fk_projet', 0, 0, 1, 1, 0, 0, 0, '', 0, 0, 'maxwidth300');
 									print '</td>';
 								}
 
@@ -2154,36 +2154,36 @@ else
 
 								// Add comments
 								print '<td>';
-								print '<textarea name="comments" class="flat_ndf centpercent">'.dol_escape_htmltag($line->comments).'</textarea>';
+								print '<textarea name="comments" class="flat_ndf centpercent">'.dol_escape_htmltag($line->comments, 0, 1).'</textarea>';
 								print '</td>';
 
 								// VAT
-								print '<td style="text-align:right;">';
+								print '<td class="right">';
 								print $form->load_tva('vatrate', (isset($_POST["vatrate"])?$_POST["vatrate"]:$line->vatrate), $mysoc, '', 0, 0, '', false, 1);
 								print '</td>';
 
 								// Unit price
-								print '<td style="text-align:right;">';
+								print '<td class="right">';
 								print '<input type="text" min="0" class="right maxwidth50" id="value_unit_ht" name="value_unit_ht" value="'.dol_escape_htmltag(price2num($line->value_unit_ht)).'" />';
 								print '</td>';
 
 								// Unit price with tax
-								print '<td style="text-align:right;">';
+								print '<td class="right">';
 								print '<input type="text" min="0" class="right maxwidth50" id="value_unit" name="value_unit" value="'.dol_escape_htmltag(price2num($line->value_unit)).'" />';
 								print '</td>';
 
 								// Quantity
-								print '<td style="text-align:right;">';
+								print '<td class="right">';
 								print '<input type="number" min="0" class="right maxwidth50" name="qty" value="'.dol_escape_htmltag($line->qty).'" />';
 								print '</td>';
 
 								if ($action != 'editline')
 								{
-									print '<td style="text-align:right;">'.$langs->trans('AmountHT').'</td>';
-									print '<td style="text-align:right;">'.$langs->trans('AmountTTC').'</td>';
+									print '<td class="right">'.$langs->trans('AmountHT').'</td>';
+									print '<td class="right">'.$langs->trans('AmountTTC').'</td>';
 								}
 
-								print '<td style="text-align:center;">';
+								print '<td class="center">';
 								print '<input type="hidden" name="rowid" value="'.$line->rowid.'">';
 								print '<input type="submit" class="button" name="save" value="'.$langs->trans('Save').'">';
 								print '<br><input type="submit" class="button" name="cancel" value="'.$langs->trans('Cancel').'">';
@@ -2202,12 +2202,54 @@ else
 				    if (! empty($conf->projet->enabled)) $colspan++;
 				    if ($action != 'editline') $colspan++;
 
+				    $nbFiles = $nbLinks = 0;
+				    $arrayoffiles = array();
+				    if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
+				    {
+				        require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+				        require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
+				        require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
+				        $upload_dir = $conf->expensereport->dir_output . "/" . dol_sanitizeFileName($object->ref);
+				        $arrayoffiles=dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png|'.preg_quote(dol_sanitizeFileName($object->ref.'.pdf'), '/').')$');
+				        $nbFiles = count($arrayoffiles);
+				        $nbLinks=Link::count($db, $object->element, $object->id);
+				    }
+
+				    // Add line with link to add new file or attach to an existing file
 				    print '<tr class="liste_titre">';
 				    print '<td colspan="'.$colspan.'" class="liste_titre">';
-				    print $langs->trans("UploadANewFileNow");
+				    print '<a href="" class="commonlink auploadnewfilenow reposition">'.$langs->trans("UploadANewFileNow");
+				    print img_picto($langs->trans("UploadANewFileNow"), 'chevron-down', '', false, 0, 0, '', 'marginleftonly');
+				    print '</a>';
+				    if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
+				    {
+				        print ' &nbsp; - &nbsp; '.'<a href="" class="commonlink aattachtodoc reposition">'.$langs->trans("AttachTheNewLineToTheDocument");
+				        print img_picto($langs->trans("AttachTheNewLineToTheDocument"), 'chevron-down', '', false, 0, 0, '', 'marginleftonly');
+				        print '</a>';
+				    }
+
+				    print '<script language="javascript">'."\n";
+				    print '$(document).ready(function() {
+				        $( ".auploadnewfilenow" ).click(function() {
+				            jQuery(".truploadnewfilenow").toggle();
+                            return false;
+                        });
+				        $( ".aattachtodoc" ).click(function() {
+				            jQuery(".trattachnewfilenow").toggle();
+                            return false;
+                        });';
+				    if (is_array(GETPOST('attachfile', 'array')) && count(GETPOST('attachfile', 'array')))
+				    {
+				        print 'jQuery(".trattachnewfilenow").toggle();'."\n";
+				    }
+				    print '
+                    });
+				    ';
+				    print '</script>'."\n";
 				    print '</td></tr>';
 
-				    print '<tr class="oddeven">';
+				    // Add line to upload new file
+				    print '<tr class="oddeven truploadnewfilenow"'.(empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)?' style="display: none"':'').'>';
 				    print '<td colspan="'.$colspan.'">';
 
 				    $modulepart = 'expensereport';
@@ -2251,17 +2293,76 @@ else
 
 				    print '</td></tr>';
 
+                    // Add line to select existing file
+				    if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
+				    {
+				        require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+				        require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
+				        require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
+				        $upload_dir = $conf->expensereport->dir_output . "/" . dol_sanitizeFileName($object->ref);
+				        $arrayoffiles=dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png|'.preg_quote(dol_sanitizeFileName($object->ref.'.pdf'), '/').')$');
+				        $nbFiles = count($arrayoffiles);
+				        $nbLinks=Link::count($db, $object->element, $object->id);
+				        if ($nbFiles >= 0)
+				        {
+				            print '<tr class="oddeven trattachnewfilenow"'.(! GETPOSTISSET('sendit') && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)?' style="display: none"':'').'>';
+				            print '<td colspan="'.$colspan.'">';
+				            //print '<span class="opacitymedium">'.$langs->trans("AttachTheNewLineToTheDocument").'</span><br>';
+				            $modulepart='expensereport';$maxheightmini=48;
+				            $relativepath=(! empty($object->ref)?dol_sanitizeFileName($object->ref):'').'/';
+				            foreach($arrayoffiles as $file)
+				            {
+				                print '<div class="inline-block margintoponly marginleftonly marginrightonly center">';
+				                $fileinfo = pathinfo($file['name']);
+				                if (image_format_supported($file['name']) > 0)
+				                {
+				                    $minifile=getImageFileNameForSize($file['name'], '_mini'); // For new thumbs using same ext (in lower case howerver) than original
+				                    //if (! dol_is_file($file['path'].'/'.$minifile)) $minifile=getImageFileNameForSize($file['name'], '_mini', '.png'); // For backward compatibility of old thumbs that were created with filename in lower case and with .png extension
+				                    //print $file['path'].'/'.$minifile.'<br>';
+				                    $urlforhref=getAdvancedPreviewUrl($modulepart, $fileinfo['relativename'].'.'.strtolower($fileinfo['extension']), 1, '&entity='.(!empty($object->entity)?$object->entity:$conf->entity));
+				                    if (empty($urlforhref)) {
+				                        $urlforhref=DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.(!empty($object->entity)?$object->entity:$conf->entity).'&file='.urlencode($fileinfo['relativename'].'.'.strtolower($fileinfo['extension']));
+				                        print '<a href="'.$urlforhref.'" class="aphoto" target="_blank">';
+				                    } else {
+				                        print '<a href="'.$urlforhref['url'].'" class="'.$urlforhref['css'].'" target="'.$urlforhref['target'].'" mime="'.$urlforhref['mime'].'">';
+				                    }
+				                    print '<img class="photo" height="'.$maxheightmini.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.(!empty($object->entity)?$object->entity:$conf->entity).'&file='.urlencode($relativepath.$minifile).'" title="">';
+				                    print '</a>';
+				                }
+				                else print '&nbsp;';
+				                print '<br>';
+				                $checked='';
+				                //var_dump(GETPOST($file['relativename'])); var_dump($file['relativename']); var_dump($_FILES['userfile']['name']);
+				                foreach($_FILES['userfile']['name'] as $tmpfile)
+				                {
+				                    if ($file['relativename'] == (GETPOST('savingdocmask', 'alpha') ? dol_sanitizeFileName($object->ref.'-') : '').$tmpfile)
+				                    {
+				                        $checked=' checked';
+				                        break;
+				                    }
+				                    elseif ($file['relativename'] && in_array($file['relativename'], GETPOST('attachfile', 'array'))) {
+				                        $checked=' checked';
+				                        break;
+				                    }
+				                }
+				                print '<input type="checkbox"'.$checked.' name="attachfile[]" value="'.$file['relativename'].'"> '.$file['relativename'];
+				                print '</div>';
+				            }
+				            print '</td></tr>';
+				        }
+				    }
+
 					print '<tr class="liste_titre">';
 					print '<td></td>';
-					print '<td align="center">'.$langs->trans('Date').'</td>';
+					print '<td class="center">'.$langs->trans('Date').'</td>';
 					if (! empty($conf->projet->enabled)) print '<td class="minwidth100imp">'.$langs->trans('Project').'</td>';
 					if (!empty($conf->global->MAIN_USE_EXPENSE_IK)) print '<td>'.$langs->trans('CarCategory').'</td>';
-					print '<td align="center">'.$langs->trans('Type').'</td>';
+					print '<td class="center">'.$langs->trans('Type').'</td>';
 					print '<td>'.$langs->trans('Description').'</td>';
-					print '<td align="right">'.$langs->trans('VAT').'</td>';
-					print '<td align="right">'.$langs->trans('PriceUHT').'</td>';
-					print '<td align="right">'.$langs->trans('PriceUTTC').'</td>';
-					print '<td align="right">'.$langs->trans('Qty').'</td>';
+					print '<td class="right">'.$langs->trans('VAT').'</td>';
+					print '<td class="right">'.$langs->trans('PriceUHT').'</td>';
+					print '<td class="right">'.$langs->trans('PriceUTTC').'</td>';
+					print '<td class="right">'.$langs->trans('Qty').'</td>';
 					print '<td colspan="3"></td>';
 					print '</tr>';
 
@@ -2271,7 +2372,7 @@ else
 					print '<td></td>';
 
 					// Select date
-					print '<td align="center">';
+					print '<td class="center">';
 					print $form->selectDate($date?$date:-1, 'date', 0, 0, 0, '', 1, 1);
 					print '</td>';
 
@@ -2292,56 +2393,46 @@ else
 					}
 
 					// Select type
-					print '<td align="center">';
+					print '<td class="center">';
 					select_type_fees_id($fk_c_type_fees, 'fk_c_type_fees', 1);
 					print '</td>';
 
 					// Add comments
 					print '<td>';
-					print '<textarea class="flat_ndf centpercent" name="comments" rows="'.ROWS_2.'">'.dol_escape_htmltag($comments).'</textarea>';
+					print '<textarea class="flat_ndf centpercent" name="comments" rows="'.ROWS_2.'">'.dol_escape_htmltag($comments, 0, 1).'</textarea>';
 					print '</td>';
 
 					// Select VAT
-					print '<td align="right">';
+					print '<td class="right">';
 					$defaultvat=-1;
 					if (! empty($conf->global->EXPENSEREPORT_NO_DEFAULT_VAT)) $conf->global->MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS = 'none';
 					print $form->load_tva('vatrate', ($vatrate!=''?$vatrate:$defaultvat), $mysoc, '', 0, 0, '', false, 1);
 					print '</td>';
 
 					// Unit price net
-					print '<td align="right">';
+					print '<td class="right">';
 					print '<input type="text" class="right maxwidth50" id="value_unit_ht" name="value_unit_ht" value="'.dol_escape_htmltag($value_unit_ht).'">';
 					print '</td>';
 
 					// Unit price with tax
-					print '<td align="right">';
+					print '<td class="right">';
 					print '<input type="text" class="right maxwidth50" id="value_unit" name="value_unit" value="'.dol_escape_htmltag($value_unit).'">';
 					print '</td>';
 
 					// Quantity
-					print '<td align="right">';
+					print '<td class="right">';
 					print '<input type="text" min="0" class="right maxwidth50" name="qty" value="'.dol_escape_htmltag($qty?$qty:1).'">';    // We must be able to enter decimal qty
 					print '</td>';
 
 					if ($action != 'editline')
 					{
-						print '<td align="right"></td>';
-						print '<td align="right"></td>';
+						print '<td class="right"></td>';
+						print '<td class="right"></td>';
 					}
 
-					print '<td align="center"><input type="submit" value="'.$langs->trans("Add").'" name="bouton" class="button"></td>';
+					print '<td class="center"><input type="submit" value="'.$langs->trans("Add").'" name="bouton" class="button"></td>';
 
 					print '</tr>';
-
-					if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
-					{
-    					print '<tr class="oddeven"><td colspan="'.$colspan.'">';
-    					print $langs->trans("AttachTheNewLineToTheDocument");
-
-    					print '...';
-
-    					print '</td></tr>';
-					}
 				} // Fin si c'est payé/validé
 
 				print '</table>';

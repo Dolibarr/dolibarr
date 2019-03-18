@@ -2769,6 +2769,8 @@ elseif (! empty($object->id))
 	}
 }
 
+
+
 // End of page
 llxFooter();
 $db->close();

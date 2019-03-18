@@ -45,14 +45,14 @@ foreach($linkedObjectBlock as $key => $objectlink)
 	<td><?php echo $langs->trans("ExpenseReport"); ?></td>
     <td><?php echo $objectlink->getNomUrl(1); ?></td>
     <td></td>
-	<td align="center"><?php echo dol_print_date($objectlink->date_debut, 'day'); ?></td>
-	<td align="right"><?php
+	<td class="center"><?php echo dol_print_date($objectlink->date_debut, 'day'); ?></td>
+	<td class="right"><?php
 		if ($user->rights->expensereport->lire) {
 			$total = $total + $objectlink->total_ht;
 			echo price($objectlink->total_ht);
 		} ?></td>
-	<td align="right"><?php echo $objectlink->getLibStatut(3); ?></td>
-	<td align="right"><a href="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=dellink&dellinkid='.$key; ?>"><?php echo img_picto($langs->transnoentitiesnoconv("RemoveLink"), 'unlink'); ?></a></td>
+	<td class="right"><?php echo $objectlink->getLibStatut(3); ?></td>
+	<td class="right"><a href="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=dellink&dellinkid='.$key; ?>"><?php echo img_picto($langs->transnoentitiesnoconv("RemoveLink"), 'unlink'); ?></a></td>
 </tr>
 <?php
 }

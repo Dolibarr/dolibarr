@@ -745,7 +745,7 @@ class Invoices extends DolibarrApi
             throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
         }
 
-        $result = $this->invoice->set_draft(DolibarrApiAccess::$user, $idwarehouse);
+        $result = $this->invoice->setDraft(DolibarrApiAccess::$user, $idwarehouse);
         if ($result == 0) {
             throw new RestException(304, 'Nothing done.');
         }
