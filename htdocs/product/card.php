@@ -1995,7 +1995,7 @@ $formquestionclone=array(
 	'text' => $langs->trans("ConfirmClone"),
     array('type' => 'text', 'name' => 'clone_ref','label' => $langs->trans("NewRefForClone"), 'value' => empty($tmpcode) ? $langs->trans("CopyOf").' '.$object->ref : $tmpcode, 'size'=>24),
     array('type' => 'checkbox', 'name' => 'clone_content','label' => $langs->trans("CloneContentProduct"), 'value' => 1),
-    array('type' => 'checkbox', 'name' => 'clone_categories', 'label' => $langs->trans("CloneCategoriesProduct"), 'value' => 1),
+    array('type' => 'checkbox', 'name' => 'clone_categories', 'label' => $langs->trans("CloneCategories"), 'value' => 1),
     array('type' => 'checkbox', 'name' => 'clone_prices', 'label' => $langs->trans("ClonePricesProduct").' ('.$langs->trans("FeatureNotYetAvailable").')', 'value' => 0, 'disabled' => true),
 );
 if (! empty($conf->global->PRODUIT_SOUSPRODUITS))
