@@ -180,10 +180,10 @@ if ($resql)
     print '<td class="liste_titre">';
     print '<input class="flat" size="10" type="text" name="search_company" value="'.$search_company.'">';
     print '</td>';
+    }
     print '<td class="liste_titre">';
     print '<input class="flat" size="10" type="text" name="search_name" value="'.$search_name.'">';
     print '</td>';
-    }
     print '<td class="liste_titre left">';
     print '&nbsp;';
     print '</td>';
@@ -207,8 +207,8 @@ if ($resql)
 	print_liste_field_titre("ThirdParty", $_SERVER["PHP_SELF"], "d.fk_soc", "", $param, "", $sortfield, $sortorder);
     } else {
 	print_liste_field_titre("Company", $_SERVER["PHP_SELF"], "d.societe", "", $param, "", $sortfield, $sortorder);
-	print_liste_field_titre("Name", $_SERVER["PHP_SELF"], "d.lastname", "", $param, "", $sortfield, $sortorder);
     }
+	print_liste_field_titre("Name", $_SERVER["PHP_SELF"], "d.lastname", "", $param, "", $sortfield, $sortorder);
 	print_liste_field_titre("Date", $_SERVER["PHP_SELF"], "d.datedon", "", $param, '', $sortfield, $sortorder, 'center ');
 	if (! empty($conf->projet->enabled))
 	{
@@ -235,14 +235,14 @@ if ($resql)
     $company=new Societe($db);
     $result=$company->fetch($objp->socid);
     if  (!empty($objp->socid) && $company->id > 0)  {
-    print "<td>".$company->getNomUrl(1)."</td>";
+        print "<td>".$company->getNomUrl(1)."</td>";
     } else {
-    print "<td>".$objp->societe." ".$donationstatic->getFullName($langs)."</td>";
+        print "<td>".$objp->societe."</td>";
     }
     } else {
-    print "<td>".$objp->societe."</td>";
+        print "<td>".$objp->societe."</td>";
+    }
 		print "<td>".$donationstatic->getFullName($langs)."</td>";
-    }
 		print '<td class="center">'.dol_print_date($db->jdate($objp->datedon), 'day').'</td>';
 		if (! empty($conf->projet->enabled))
 		{
