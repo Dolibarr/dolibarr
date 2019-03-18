@@ -159,12 +159,13 @@ if (! empty($conf->propal->enabled) && $user->rights->propal->lire)
 		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
-		print '<th colspan="3">'.$langs->trans("ProposalsDraft").($num?' <span class="badge">'.$num.'</span>':'').'</th></tr>';
+		print '<th colspan="3">'.$langs->trans("ProposalsDraft").' <a href="'.DOL_URL_ROOT.'/comm/propal/list.php?viewstatut=0"><span class="badge">'.$num.'</span></a></th></tr>';
 
 		if ($num > 0)
 		{
 			$i = 0;
-			while ($i < $num)
+			$nbofloop=min($num, (empty($conf->global->MAIN_MAXLIST_OVERLOAD)?500:$conf->global->MAIN_MAXLIST_OVERLOAD));
+			while ($i < $nbofloop)
 			{
 				$obj = $db->fetch_object($resql);
 
@@ -190,10 +191,13 @@ if (! empty($conf->propal->enabled) && $user->rights->propal->lire)
 				$i++;
 				$total += $obj->total_ht;
 			}
-			if ($total>0)
+			if ($num > $nbofloop)
 			{
-
-				print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td colspan="2" class="right">'.price($total)."</td></tr>";
+				print '<tr class="liste_total"><td colspan="3" class="right">'.$langs->trans("XMoreLines", ($num - $nbofloop))."</td></tr>";
+			}
+			elseif ($total>0)
+			{
+				print '<tr class="liste_total"><td colspan="2" class="right">'.$langs->trans("Total").'</td><td class="right">'.price($total)."</td></tr>";
 			}
 		}
 		else
@@ -245,7 +249,8 @@ if (! empty($conf->supplier_proposal->enabled) && $user->rights->supplier_propos
         if ($num > 0)
         {
             $i = 0;
-            while ($i < $num)
+			$nbofloop=min($num, (empty($conf->global->MAIN_MAXLIST_OVERLOAD)?500:$conf->global->MAIN_MAXLIST_OVERLOAD));
+			while ($i < $nbofloop)
             {
                 $obj = $db->fetch_object($resql);
 
@@ -270,9 +275,13 @@ if (! empty($conf->supplier_proposal->enabled) && $user->rights->supplier_propos
                 $i++;
                 $total += $obj->total_ht;
             }
-            if ($total>0)
+			if ($num > $nbofloop)
+			{
+				print '<tr class="liste_total"><td colspan="3" class="right">'.$langs->trans("XMoreLines", ($num - $nbofloop))."</td></tr>";
+			}
+			elseif ($total>0)
             {
-                print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td colspan="2" class="right">'.price($total)."</td></tr>";
+                print '<tr class="liste_total"><td class="right">'.$langs->trans("Total").'</td><td colspan="2" class="right">'.price($total)."</td></tr>";
             }
         }
         else
@@ -322,9 +331,9 @@ if (! empty($conf->commande->enabled) && $user->rights->commande->lire)
 		if ($num > 0)
 		{
 			$i = 0;
-			while ($i < $num)
+			$nbofloop=min($num, (empty($conf->global->MAIN_MAXLIST_OVERLOAD)?500:$conf->global->MAIN_MAXLIST_OVERLOAD));
+			while ($i < $nbofloop)
 			{
-
 				$obj = $db->fetch_object($resql);
 				print '<tr class="oddeven"><td class="nowrap">';
                 $orderstatic->id=$obj->rowid;
@@ -353,10 +362,13 @@ if (! empty($conf->commande->enabled) && $user->rights->commande->lire)
 				$i++;
 				$total += $obj->total_ttc;
 			}
-			if ($total>0)
+			if ($num > $nbofloop)
 			{
-
-				print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td colspan="2" class="right">'.price($total)."</td></tr>";
+				print '<tr class="liste_total"><td colspan="3" class="right">'.$langs->trans("XMoreLines", ($num - $nbofloop))."</td></tr>";
+			}
+			elseif ($total>0)
+            {
+                print '<tr class="liste_total"><td class="right">'.$langs->trans("Total").'</td><td colspan="2" class="right">'.price($total)."</td></tr>";
 			}
 		}
 		else
@@ -409,7 +421,8 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->commande
         if ($num > 0)
         {
             $i = 0;
-            while ($i < $num)
+			$nbofloop=min($num, (empty($conf->global->MAIN_MAXLIST_OVERLOAD)?500:$conf->global->MAIN_MAXLIST_OVERLOAD));
+			while ($i < $nbofloop)
             {
 
                 $obj = $db->fetch_object($resql);
@@ -440,10 +453,13 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->commande
                 $i++;
                 $total += $obj->total_ttc;
             }
-            if ($total>0)
+ 			if ($num > $nbofloop)
+			{
+				print '<tr class="liste_total"><td colspan="3" class="right">'.$langs->trans("XMoreLines", ($num - $nbofloop))."</td></tr>";
+			}
+			elseif ($total>0)
             {
-
-                print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td colspan="2" class="right">'.price($total)."</td></tr>";
+                print '<tr class="liste_total"><td class="right">'.$langs->trans("Total").'</td><td colspan="2" class="right">'.price($total)."</td></tr>";
             }
         }
         else
@@ -757,11 +773,11 @@ if (! empty($conf->propal->enabled) && $user->rights->propal->lire)
 			}
 			if ($num > $nbofloop)
 			{
-				print '<tr class="liste_total"><td colspan="5">'.$langs->trans("XMoreLines", ($num - $nbofloop))."</td></tr>";
+				print '<tr class="liste_total"><td colspan="5" class="right">'.$langs->trans("XMoreLines", ($num - $nbofloop))."</td></tr>";
 			}
 			elseif ($total>0)
 			{
-				print '<tr class="liste_total"><td colspan="3">'.$langs->trans("Total")."</td><td class=\"right\">".price($total)."</td><td>&nbsp;</td></tr>";
+				print '<tr class="liste_total"><td colspan="3" class="right">'.$langs->trans("Total")."</td><td class=\"right\">".price($total)."</td><td>&nbsp;</td></tr>";
 			}
 			print "</table>";
 			print "</div><br>";
@@ -861,11 +877,11 @@ if (! empty($conf->commande->enabled) && $user->rights->commande->lire)
 			}
 			if ($num > $nbofloop)
 			{
-				print '<tr class="liste_total"><td colspan="5">'.$langs->trans("XMoreLines", ($num - $nbofloop))."</td></tr>";
+				print '<tr class="liste_total"><td colspan="5" class="right">'.$langs->trans("XMoreLines", ($num - $nbofloop))."</td></tr>";
 			}
 			elseif ($total>0)
 			{
-				print '<tr class="liste_total"><td colspan="3">'.$langs->trans("Total")."</td><td class=\"right\">".price($total)."</td><td>&nbsp;</td></tr>";
+				print '<tr class="liste_total"><td colspan="3" class="right">'.$langs->trans("Total")."</td><td class=\"right\">".price($total)."</td><td>&nbsp;</td></tr>";
 			}
 			print "</table>";
 			print "</div><br>";
