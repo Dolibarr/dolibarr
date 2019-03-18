@@ -84,7 +84,7 @@ create table llx_mailing_unsubscribe
 ALTER TABLE llx_mailing_unsubscribe ADD UNIQUE uk_mailing_unsubscribe(email, entity, unsubscribegroup);
 
 ALTER TABLE llx_adherent ADD gender VARCHAR(10);
-ALTER TABLE llx_subscription ADD fk_type integer(11);
+ALTER TABLE llx_subscription ADD fk_type integer;
 
 -- Add url_id into unique index of bank_url
 ALTER TABLE llx_bank_url DROP INDEX uk_bank_url;
@@ -96,7 +96,7 @@ ALTER TABLE llx_don ADD COLUMN fk_soc integer NULL;
 
 ALTER TABLE llx_payment_various ADD COLUMN subledger_account varchar(32);
 
-ALTER TABLE llx_prelevement_facture_demande ADD COLUMN entity integer(11);
+ALTER TABLE llx_prelevement_facture_demande ADD COLUMN entity integer;
 ALTER TABLE llx_prelevement_facture_demande ADD COLUMN sourcetype varchar(32);
 ALTER TABLE llx_prelevement_facture_demande ADD COLUMN ext_payment_id varchar(128) NULL;
 ALTER TABLE llx_prelevement_facture_demande ADD COLUMN ext_payment_site varchar(128) NULL;
