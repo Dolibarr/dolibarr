@@ -19,6 +19,7 @@ Following changes may create regressions for some external modules, but were nec
 * Files for variables of themes were renamed from graph-color.php into theme_vars.inc.php to match naming 
   convention of extension .inc.php for files to be included.
 * All methods set_draft() were renamed into setDraft().
+* Removed deprecated function function test_sql_and_script_inject that was replaced with testSqlAndScriptInject.
 
 
 ***** ChangeLog for 9.0.1 compared to 9.0.0 *****

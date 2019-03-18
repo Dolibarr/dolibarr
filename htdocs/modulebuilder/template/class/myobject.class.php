@@ -139,12 +139,12 @@ class MyObject extends CommonObject
 	public $status;
 
 	/**
-     * @var string date_creation
+     * @var integer|string date_creation
      */
 	public $date_creation;
 
 	/**
-     * @var string tms
+     * @var integer tms
      */
 	public $tms;
 
