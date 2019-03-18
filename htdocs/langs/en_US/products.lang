@@ -147,7 +147,6 @@ RowMaterial=Raw Material
 CloneProduct=Clone product or service
 ConfirmCloneProduct=Are you sure you want to clone product or service <b>%s</b>?
 CloneContentProduct=Clone all main information of product/service
-CloneCategoriesProduct=Clone tags/categories linked
 ClonePricesProduct=Clone prices
 CloneCompositionProduct=Clone virtual product/service
 CloneCombinationsProduct=Clone product variants
