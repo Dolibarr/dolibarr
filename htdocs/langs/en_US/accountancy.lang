@@ -333,3 +333,9 @@ ImportAccountingEntries=Accounting entries
 WarningReportNotReliable=Warning, this report is not based on the Ledger, so does not contains transaction modified manually in the Ledger. If your journalization is up to date, the bookkeeping view is more accurate.
 ExpenseReportJournal=Expense Report Journal
 InventoryJournal=Inventory Journal
+
+## Cost accounting
+MenuCostAccounting=Cost accounting
+ConfigAccountingExpertCost=Configuration of cost accounting
+ACCOUNTING_ENABLE_COST_ACCOUNTING=Enable cost accounting
+AccountingCostExplanation=Manage analytical axes on your sales (invoices, proposals, etc.) and purchases (expenses, credit supplier invoice).
