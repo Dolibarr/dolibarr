@@ -176,8 +176,20 @@ class Adherent extends CommonObject
 
     public $photo;
 
-	public $datec;
-	public $datem;
+	/**
+     * Date creation record (datec)
+     *
+     * @var DateTime
+     */
+    public $datec;
+    
+	/**
+     * Date modification record (tms)
+     *
+     * @var DateTime
+     */
+    public $datem;
+    
 	public $datevalid;
 
 	public $gender;
