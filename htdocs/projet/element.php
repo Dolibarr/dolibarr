@@ -600,11 +600,22 @@ foreach ($listofreferent as $key => $value)
 				$element->fetch($idofelement);
 				if ($idofelementuser) $elementuser->fetch($idofelementuser);
 
-                // Special cases
+				$qualifiedfortotal=true;
+				if ($key == 'invoice')
+				{
+				    if (! empty($element->close_code) && $element->close_code == 'replaced') $qualifiedfortotal=false;	// Replacement invoice, do not include into total
+				}
+				if ($key == 'propal')
+				{
+				    if ($element->statut == Propal::STATUS_NOTSIGNED) $qualifiedfortotal=false;	// Refused proposal must not be included in total
+				}
+
 				if ($tablename != 'expensereport_det' && method_exists($element, 'fetch_thirdparty')) $element->fetch_thirdparty();
+
+				// Define $total_ht_by_line
 				if ($tablename == 'don' || $tablename == 'chargesociales' || $tablename == 'payment_various' || $tablename == 'payment_salary') $total_ht_by_line=$element->amount;
+				elseif ($tablename == 'fichinter') $total_ht_by_line=$element->getAmount();
 				elseif ($tablename == 'stock_mouvement') $total_ht_by_line=$element->price*abs($element->qty);
-				else if($tablename == 'fichinter') $total_ht_by_line=$element->getAmount();
 				elseif ($tablename == 'projet_task')
 				{
 					if ($idofelementuser)
@@ -620,18 +631,7 @@ foreach ($listofreferent as $key => $value)
 				}
 				else $total_ht_by_line=$element->total_ht;
 
-				$qualifiedfortotal=true;
-				if ($key == 'invoice')
-				{
-					if (! empty($element->close_code) && $element->close_code == 'replaced') $qualifiedfortotal=false;	// Replacement invoice, do not include into total
-				}
-				if ($key == 'propal')
-				{
-					if ($element->statut == Propal::STATUS_NOTSIGNED) $qualifiedfortotal=false;	// Refused proposal must not be included in total
-				}
-
-				if ($qualifiedfortotal) $total_ht = $total_ht + $total_ht_by_line;
-
+				// Define $total_ttc_by_line
 				if ($tablename == 'don' || $tablename == 'chargesociales' || $tablename == 'payment_various' || $tablename == 'payment_salary') $total_ttc_by_line=$element->amount;
 				elseif ($tablename == 'fichinter') $total_ttc_by_line=$element->getAmount();
 				elseif ($tablename == 'stock_mouvement') $total_ttc_by_line=$element->price*abs($element->qty);
@@ -642,7 +642,12 @@ foreach ($listofreferent as $key => $value)
 				}
 				else $total_ttc_by_line=$element->total_ttc;
 
-				if ($qualifiedfortotal) $total_ttc = $total_ttc + $total_ttc_by_line;
+				// Add total if we have to
+				if ($qualifiedfortotal)
+				{
+				    $total_ht = $total_ht + $total_ht_by_line;
+				    $total_ttc = $total_ttc + $total_ttc_by_line;
+				}
 			}
 
 			// Each element with at least one line is output
