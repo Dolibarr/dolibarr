@@ -179,14 +179,14 @@ class Adherent extends CommonObject
 	/**
      * Date creation record (datec)
      *
-     * @var DateTime
+     * @var integer
      */
     public $datec;
     
 	/**
      * Date modification record (tms)
      *
-     * @var DateTime
+     * @var integer
      */
     public $datem;
     
