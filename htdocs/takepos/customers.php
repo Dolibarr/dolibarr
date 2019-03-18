@@ -764,14 +764,14 @@ if (! empty($arrayfields['region.nom']['checked']))
 // Country
 if (! empty($arrayfields['country.code_iso']['checked']))
 {
-	print '<td class="liste_titre" align="center">';
+	print '<td class="liste_titre center">';
 	print $form->select_country($search_country, 'search_country', '', 0, 'minwidth100imp maxwidth100');
 	print '</td>';
 }
 // Company type
 if (! empty($arrayfields['typent.code']['checked']))
 {
-	print '<td class="liste_titre maxwidthonsmartphone" align="center">';
+	print '<td class="liste_titre maxwidthonsmartphone center">';
 	print $form->selectarray("search_type_thirdparty", $formcompany->typent_array(0), $search_type_thirdparty, 0, 0, 0, '', 0, 0, 0, (empty($conf->global->SOCIETE_SORT_ON_TYPEENT)?'ASC':$conf->global->SOCIETE_SORT_ON_TYPEENT));
 	print '</td>';
 }
@@ -849,7 +849,7 @@ if (! empty($arrayfields['s.tva_intra']['checked']))
 // Type (customer/prospect/supplier)
 if (! empty($arrayfields['customerorsupplier']['checked']))
 {
-	print '<td class="liste_titre maxwidthonsmartphone" align="middle">';
+	print '<td class="liste_titre maxwidthonsmartphone middle">';
 	if ($type != '') print '<input type="hidden" name="type" value="'.$type.'">';
 	print '<select class="flat" name="search_type">';
 	print '<option value="-1"'.($search_type==''?' selected':'').'>&nbsp;</option>';
@@ -863,7 +863,7 @@ if (! empty($arrayfields['customerorsupplier']['checked']))
 if (! empty($arrayfields['s.fk_prospectlevel']['checked']))
 {
 	// Prospect level
- 	print '<td class="liste_titre" align="center">';
+ 	print '<td class="liste_titre center">';
  	$options_from = '<option value="">&nbsp;</option>';	 	// Generate in $options_from the list of each option sorted
  	foreach ($tab_level as $tab_level_sortorder => $tab_level_label)
  	{
@@ -891,7 +891,7 @@ if (! empty($arrayfields['s.fk_prospectlevel']['checked']))
 if (! empty($arrayfields['s.fk_stcomm']['checked']))
 {
 	// Prospect status
-	print '<td class="liste_titre maxwidthonsmartphone" align="center">';
+	print '<td class="liste_titre maxwidthonsmartphone center">';
 	$arraystcomm=array();
 	foreach($prospectstatic->cacheprospectstatus as $key => $val)
 	{
@@ -933,7 +933,7 @@ if (! empty($arrayfields['s.import_key']['checked']))
 	print '</td>';
 }
 // Action column
-print '<td class="liste_titre" align="right">';
+print '<td class="liste_titre right">';
 $searchpicto=$form->showFilterButtons();
 print $searchpicto;
 print '</td>';
@@ -1086,7 +1086,7 @@ while ($i < min($num, $limit))
 	// Country
 	if (! empty($arrayfields['country.code_iso']['checked']))
 	{
-		print '<td align="center">';
+		print '<td class="center">';
 		$tmparray=getCountry($obj->fk_pays, 'all');
 		print $tmparray['label'];
 		print '</td>';
@@ -1095,7 +1095,7 @@ while ($i < min($num, $limit))
 	// Type ent
 	if (! empty($arrayfields['typent.code']['checked']))
 	{
-		print '<td align="center">';
+		print '<td class="center">';
 		if (! is_array($typenArray) || count($typenArray)==0) $typenArray = $formcompany->typent_array(1);
 		print $typenArray[$obj->typent_code];
 		print '</td>';
@@ -1154,7 +1154,7 @@ while ($i < min($num, $limit))
 	// Type
 	if (! empty($arrayfields['customerorsupplier']['checked']))
 	{
-		print '<td align="center">';
+		print '<td class="center">';
 		$s='';
 		if (($obj->client==1 || $obj->client==3) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS))
 		{
@@ -1184,7 +1184,7 @@ while ($i < min($num, $limit))
 	if (! empty($arrayfields['s.fk_prospectlevel']['checked']))
 	{
 		// Prospect level
-		print '<td align="center">';
+		print '<td class="center">';
 		print $companystatic->getLibProspLevel();
 		print "</td>";
 		if (! $i) $totalarray['nbfield']++;
@@ -1193,7 +1193,7 @@ while ($i < min($num, $limit))
 	if (! empty($arrayfields['s.fk_stcomm']['checked']))
 	{
 		// Prospect status
-		print '<td align="center" class="nowrap"><div class="nowrap">';
+		print '<td class="nowrap center"><div class="nowrap">';
 		print '<div class="inline-block">'.$companystatic->LibProspCommStatut($obj->stcomm_id, 2, $prospectstatic->cacheprospectstatus[$obj->stcomm_id]['label']);
 		print '</div> - <div class="inline-block">';
 		foreach($prospectstatic->cacheprospectstatus as $key => $val)
@@ -1214,7 +1214,7 @@ while ($i < min($num, $limit))
 	// Date creation
 	if (! empty($arrayfields['s.datec']['checked']))
 	{
-		print '<td align="center" class="nowrap">';
+		print '<td class="nowrap center">';
 		print dol_print_date($db->jdate($obj->date_creation), 'dayhour', 'tzuser');
 		print '</td>';
 		if (! $i) $totalarray['nbfield']++;
@@ -1222,7 +1222,7 @@ while ($i < min($num, $limit))
 	// Date modification
 	if (! empty($arrayfields['s.tms']['checked']))
 	{
-		print '<td align="center" class="nowrap">';
+		print '<td class="nowrap center">';
 		print dol_print_date($db->jdate($obj->date_update), 'dayhour', 'tzuser');
 		print '</td>';
 		if (! $i) $totalarray['nbfield']++;
@@ -1230,7 +1230,7 @@ while ($i < min($num, $limit))
 	// Status
 	if (! empty($arrayfields['s.status']['checked']))
 	{
-		print '<td align="center" class="nowrap">'.$companystatic->getLibStatut(3).'</td>';
+		print '<td class="nowrap center">'.$companystatic->getLibStatut(3).'</td>';
 		if (! $i) $totalarray['nbfield']++;
 	}
 	if (! empty($arrayfields['s.import_key']['checked']))
@@ -1242,7 +1242,7 @@ while ($i < min($num, $limit))
 	}
 
 	// Action column
-	print '<td class="nowrap" align="center">';
+	print '<td class="nowrap center">';
 	if ($massactionbutton || $massaction)   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 	{
 		$selected=0;
