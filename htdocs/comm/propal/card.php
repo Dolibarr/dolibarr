@@ -881,7 +881,13 @@ if (empty($reshook))
 			}
 		}
 
-		if (! $error && ($qty >= 0) && (! empty($product_desc) || ! empty($idprod))) {
+		if ($qty < 0)
+		{
+			setEventMessage($langs->trans("QtyShouldBePositive"), 'errors');
+			$error++;
+		}
+
+		if (! $error && (! empty($product_desc) || ! empty($idprod))) {
 			$pu_ht = 0;
 			$pu_ttc = 0;
 			$price_min = 0;
