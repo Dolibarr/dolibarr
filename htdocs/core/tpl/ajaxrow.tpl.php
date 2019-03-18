@@ -44,8 +44,8 @@ $forcereloadpage=empty($conf->global->MAIN_FORCE_RELOAD_PAGE)?0:1;
 $tagidfortablednd=(empty($tagidfortablednd)?'tablelines':$tagidfortablednd);
 $filepath=(empty($filepath)?'':$filepath);
 
-if (GETPOST('action','aZ09') != 'editline' && $nboflines > 1) { ?>
-<script type="text/javascript">
+if (GETPOST('action', 'aZ09') != 'editline' && $nboflines > 1) { ?>
+<script>
 $(document).ready(function(){
 	$(".imgupforline").hide();
 	$(".imgdownforline").hide();

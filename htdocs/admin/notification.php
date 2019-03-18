@@ -36,7 +36,7 @@ $langs->loadLangs(array('admin', 'other', 'orders', 'propal', 'bills', 'errors',
 if (!$user->admin)
   accessforbidden();
 
-$action = GETPOST('action','aZ09');
+$action = GETPOST('action', 'aZ09');
 
 
 /*
@@ -60,10 +60,10 @@ if ($action == 'setvalue' && $user->admin)
 	    	$newval='';
 	    	$newkey='';
 
-	    	$shortkey=preg_replace('/_key$/','',$key);
+	    	$shortkey=preg_replace('/_key$/', '', $key);
     		//print $shortkey.'<br>';
 
-	    	if (preg_match('/^NOTIF_(.*)_old_(.*)_key/',$key,$reg))
+	    	if (preg_match('/^NOTIF_(.*)_old_(.*)_key/', $key, $reg))
 	    	{
 				dolibarr_del_const($db, 'NOTIFICATION_FIXEDEMAIL_'.$reg[1].'_THRESHOLD_HIGHER_'.$reg[2], $conf->entity);
 
@@ -71,7 +71,7 @@ if ($action == 'setvalue' && $user->admin)
 				$newval=GETPOST($shortkey.'_key');
 				//print $newkey.' - '.$newval.'<br>';
 	    	}
-	    	else if (preg_match('/^NOTIF_(.*)_new_key/',$key,$reg))
+	    	elseif (preg_match('/^NOTIF_(.*)_new_key/', $key, $reg))
 	    	{
 		    	// Add a new entry
 	    		$newkey='NOTIFICATION_FIXEDEMAIL_'.$reg[1].'_THRESHOLD_HIGHER_'.((int) GETPOST($shortkey.'_amount'));
@@ -108,10 +108,10 @@ if ($action == 'setvalue' && $user->admin)
 $form=new Form($db);
 $notify = new Notify($db);
 
-llxHeader('',$langs->trans("NotificationSetup"));
+llxHeader('', $langs->trans("NotificationSetup"));
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
-print load_fiche_titre($langs->trans("NotificationSetup"),$linkback,'title_setup');
+print load_fiche_titre($langs->trans("NotificationSetup"), $linkback, 'title_setup');
 
 print $langs->trans("NotificationsDesc").'<br>';
 print $langs->trans("NotificationsDescUser").'<br>';
@@ -144,14 +144,14 @@ print '<br><br>';
 // Notification per contacts
 $title=$langs->trans("ListOfNotificationsPerUser");
 if (! empty($conf->societe->enabled)) $title=$langs->trans("ListOfNotificationsPerUserOrContact");
-print load_fiche_titre($title,'','');
+print load_fiche_titre($title, '', '');
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Label").'</td>';
 /*print '<td>'.$langs->trans("Code").'</td>';
  print '<td>'.$langs->trans("Label").'</td>';*/
-//print '<td align="right">'.$langs->trans("NbOfTargetedContacts").'</td>';
+//print '<td class="right">'.$langs->trans("NbOfTargetedContacts").'</td>';
 print "</tr>\n";
 
 // Load array of available notifications
@@ -191,7 +191,7 @@ print '</div>';
 print '<br><br>';
 
 
-print load_fiche_titre($langs->trans("ListOfFixedNotifications"),'','');
+print load_fiche_titre($langs->trans("ListOfFixedNotifications"), '', '');
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
@@ -233,23 +233,23 @@ foreach($listofnotifiedevents as $notifiedevent)
 		if ($val == '' || ! preg_match('/^NOTIFICATION_FIXEDEMAIL_'.$notifiedevent['code'].'_THRESHOLD_HIGHER_(.*)/', $key, $reg)) continue;
 
 	    $param='NOTIFICATION_FIXEDEMAIL_'.$notifiedevent['code'].'_THRESHOLD_HIGHER_'.$reg[1];
-    	$value=GETPOST('NOTIF_'.$notifiedevent['code'].'_old_'.$reg[1].'_key')?GETPOST('NOTIF_'.$notifiedevent['code'].'_old_'.$reg[1].'_key','alpha'):$conf->global->$param;
+    	$value=GETPOST('NOTIF_'.$notifiedevent['code'].'_old_'.$reg[1].'_key')?GETPOST('NOTIF_'.$notifiedevent['code'].'_old_'.$reg[1].'_key', 'alpha'):$conf->global->$param;
 
     	$s='<input type="text" size="32" name="NOTIF_'.$notifiedevent['code'].'_old_'.$reg[1].'_key" value="'.dol_escape_htmltag($value).'">';		// Do not use type="email" here, we must be able to enter a list of email with , separator.
-	    $arrayemail=explode(',',$value);
+	    $arrayemail=explode(',', $value);
 		$showwarning=0;
 		foreach($arrayemail as $key=>$valuedet)
 		{
 			$valuedet=trim($valuedet);
-			if (! empty($valuedet) && ! isValidEmail($valuedet,1)) $showwarning++;
+			if (! empty($valuedet) && ! isValidEmail($valuedet, 1)) $showwarning++;
 		}
 	    if ((! empty($conf->global->$param)) && $showwarning) $s.=' '.img_warning($langs->trans("ErrorBadEMail"));
-	    print $form->textwithpicto($s,$langs->trans("YouCanUseCommaSeparatorForSeveralRecipients").'<br>'.$langs->trans("YouCanAlsoUseSupervisorKeyword"),1,'help','',0,2);
+	    print $form->textwithpicto($s, $langs->trans("YouCanUseCommaSeparatorForSeveralRecipients").'<br>'.$langs->trans("YouCanAlsoUseSupervisorKeyword"), 1, 'help', '', 0, 2);
 		print '<br>';
     }
     // New entry input fields
     $s='<input type="text" size="32" name="NOTIF_'.$notifiedevent['code'].'_new_key" value="">';		// Do not use type="email" here, we must be able to enter a list of email with , separator.
-    print $form->textwithpicto($s,$langs->trans("YouCanUseCommaSeparatorForSeveralRecipients").'<br>'.$langs->trans("YouCanAlsoUseSupervisorKeyword"),1,'help','',0,2);
+    print $form->textwithpicto($s, $langs->trans("YouCanUseCommaSeparatorForSeveralRecipients").'<br>'.$langs->trans("YouCanAlsoUseSupervisorKeyword"), 1, 'help', '', 0, 2);
     print '</td>';
 
     print '<td>';

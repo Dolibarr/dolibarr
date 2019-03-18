@@ -32,7 +32,7 @@ $langs->loadLangs(array('banks', 'categories'));
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
-$result=restrictedArea($user,'banque');
+$result=restrictedArea($user, 'banque');
 
 
 /*
@@ -49,9 +49,9 @@ print load_fiche_titre($langs->trans("BankTransactionByCategories"), '', 'title_
 print '<table class="noborder" width="100%">';
 print "<tr class=\"liste_titre\">";
 print '<td>'.$langs->trans("Rubrique").'</td>';
-print '<td align="right">'.$langs->trans("Nb").'</td>';
-print '<td align="right">'.$langs->trans("Total").'</td>';
-print '<td align="right">'.$langs->trans("Average").'</td>';
+print '<td class="right">'.$langs->trans("Nb").'</td>';
+print '<td class="right">'.$langs->trans("Total").'</td>';
+print '<td class="right">'.$langs->trans("Average").'</td>';
 print "</tr>\n";
 
 $sql = "SELECT sum(d.amount) as somme, count(*) as nombre, c.label, c.rowid ";
@@ -76,9 +76,9 @@ if ($result)
 
 		print '<tr class="oddeven">';
 		print "<td><a href=\"".DOL_URL_ROOT."/compta/bank/bankentries_list.php?bid=$objp->rowid\">$objp->label</a></td>";
-		print '<td align="right">'.$objp->nombre.'</td>';
-		print '<td align="right">'.price(abs($objp->somme))."</td>";
-		print '<td align="right">'.price(abs(price2num($objp->somme / $objp->nombre,'MT')))."</td>";
+		print '<td class="right">'.$objp->nombre.'</td>';
+		print '<td class="right">'.price(abs($objp->somme))."</td>";
+		print '<td class="right">'.price(abs(price2num($objp->somme / $objp->nombre, 'MT')))."</td>";
 		print "</tr>";
 		$i++;
 		$total += abs($objp->somme);
@@ -87,8 +87,8 @@ if ($result)
 	$db->free($result);
 
 	print '<tr class="liste_total"><td colspan="2">'.$langs->trans("Total").'</td>';
-	print '<td align="right" class="liste_total">'.price($total).'</td>';
-	print '<td align="right" colspan="2" class="liste_total">'.price($totalnb?price2num($total / $totalnb, 'MT'):0).'</td></tr>';
+	print '<td class="liste_total right">'.price($total).'</td>';
+	print '<td colspan="2" class="liste_total right">'.price($totalnb?price2num($total / $totalnb, 'MT'):0).'</td></tr>';
 }
 else
 {

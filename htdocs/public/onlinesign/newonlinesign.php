@@ -26,8 +26,8 @@
  *		\brief      File to offer a way to make an online signature for a particular Dolibarr entity
  */
 
-define("NOLOGIN",1);		// This means this output page does not require to be logged.
-define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
+define("NOLOGIN", 1);		// This means this output page does not require to be logged.
+define("NOCSRFCHECK", 1);	// We accept to go on this page from external web site.
 
 // For MultiCompany module.
 // Do not use GETPOST here, function is not defined and define must be done before including main.inc.php
@@ -46,7 +46,7 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
 $langs->loadLangs(array("main", "other", "dict", "bills", "companies", "errors", "paybox"));
 
-$action=GETPOST('action','alpha');
+$action=GETPOST('action', 'alpha');
 
 // Input are:
 // type ('invoice','order','contractline'),
@@ -55,9 +55,9 @@ $action=GETPOST('action','alpha');
 // tag (a free text, required if type is empty)
 // currency (iso code)
 
-$suffix=GETPOST("suffix",'alpha');
-$source=GETPOST("source",'alpha');
-$ref=$REF=GETPOST("ref",'alpha');
+$suffix=GETPOST("suffix", 'alpha');
+$source=GETPOST("source", 'alpha');
+$ref=$REF=GETPOST("ref", 'alpha');
 
 if (empty($source)) $source='proposal';
 
@@ -106,8 +106,8 @@ if (! empty($entity))
 	$urlok.='entity='.urlencode($entity).'&';
 	$urlko.='entity='.urlencode($entity).'&';
 }
-$urlok=preg_replace('/&$/','',$urlok);  // Remove last &
-$urlko=preg_replace('/&$/','',$urlko);  // Remove last &
+$urlok=preg_replace('/&$/', '', $urlok);  // Remove last &
+$urlko=preg_replace('/&$/', '', $urlko);  // Remove last &
 
 $creditor = $mysoc->name;
 
@@ -151,8 +151,8 @@ print '<div class="center">'."\n";
 print '<form id="dolpaymentform" class="center" name="paymentform" action="'.$_SERVER["PHP_SELF"].'" method="POST">'."\n";
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">'."\n";
 print '<input type="hidden" name="action" value="dosign">'."\n";
-print '<input type="hidden" name="tag" value="'.GETPOST("tag",'alpha').'">'."\n";
-print '<input type="hidden" name="suffix" value="'.GETPOST("suffix",'alpha').'">'."\n";
+print '<input type="hidden" name="tag" value="'.GETPOST("tag", 'alpha').'">'."\n";
+print '<input type="hidden" name="suffix" value="'.GETPOST("suffix", 'alpha').'">'."\n";
 print '<input type="hidden" name="securekey" value="'.$SECUREKEY.'">'."\n";
 print '<input type="hidden" name="entity" value="'.$entity.'" />';
 print "\n";
@@ -167,7 +167,7 @@ $logosmall=$mysoc->logo_small;
 $logo=$mysoc->logo;
 $paramlogo='ONLINE_SIGN_LOGO_'.$suffix;
 if (! empty($conf->global->$paramlogo)) $logosmall=$conf->global->$paramlogo;
-else if (! empty($conf->global->ONLINE_SIGN_LOGO)) $logosmall=$conf->global->ONLINE_SIGN_LOGO;
+elseif (! empty($conf->global->ONLINE_SIGN_LOGO)) $logosmall=$conf->global->ONLINE_SIGN_LOGO;
 //print '<!-- Show logo (logosmall='.$logosmall.' logo='.$logo.') -->'."\n";
 // Define urllogo
 $urllogo='';
@@ -195,14 +195,14 @@ $text='';
 if (! empty($conf->global->ONLINE_SIGN_NEWFORM_TEXT))
 {
     $langs->load("members");
-    if (preg_match('/^\((.*)\)$/',$conf->global->ONLINE_SIGN_NEWFORM_TEXT,$reg)) $text.=$langs->trans($reg[1])."<br>\n";
+    if (preg_match('/^\((.*)\)$/', $conf->global->ONLINE_SIGN_NEWFORM_TEXT, $reg)) $text.=$langs->trans($reg[1])."<br>\n";
     else $text.=$conf->global->ONLINE_SIGN_NEWFORM_TEXT."<br>\n";
     $text='<tr><td align="center"><br>'.$text.'<br></td></tr>'."\n";
 }
 if (empty($text))
 {
     $text.='<tr><td class="textpublicpayment"><br><strong>'.$langs->trans("WelcomeOnOnlineSignaturePage", $mysoc->name).'</strong></td></tr>'."\n";
-    $text.='<tr><td class="textpublicpayment">'.$langs->trans("ThisScreenAllowsYouToSignDocFrom",$creditor).'<br><br></td></tr>'."\n";
+    $text.='<tr><td class="textpublicpayment">'.$langs->trans("ThisScreenAllowsYouToSignDocFrom", $creditor).'<br><br></td></tr>'."\n";
 }
 print $text;
 
@@ -224,7 +224,7 @@ if ($source == 'proposal')
 	require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 
 	$proposal=new Propal($db);
-	$result=$proposal->fetch('',$ref);
+	$result=$proposal->fetch('', $ref);
 	if ($result <= 0)
 	{
 		$mesg=$proposal->error;
@@ -249,10 +249,10 @@ if ($source == 'proposal')
 
 	// Object
 
-	$text='<b>'.$langs->trans("SignatureProposalRef",$proposal->ref).'</b>';
+	$text='<b>'.$langs->trans("SignatureProposalRef", $proposal->ref).'</b>';
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Designation");
 	print '</td><td class="CTableRow'.($var?'1':'2').'">'.$text;
-	print '<input type="hidden" name="source" value="'.GETPOST("source",'alpha').'">';
+	print '<input type="hidden" name="source" value="'.GETPOST("source", 'alpha').'">';
 	print '<input type="hidden" name="ref" value="'.$proposal->ref.'">';
 	print '</td></tr>'."\n";
 }
@@ -291,7 +291,7 @@ print '</div>'."\n";
 print '<br>';
 
 
-htmlPrintOnlinePaymentFooter($mysoc,$langs);
+htmlPrintOnlinePaymentFooter($mysoc, $langs);
 
 llxFooter('', 'public');
 

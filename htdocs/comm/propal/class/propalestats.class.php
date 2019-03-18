@@ -40,12 +40,12 @@ class PropaleStats extends Stats
 	 */
 	public $table_element;
 
-    var $socid;
-    var $userid;
+    public $socid;
+    public $userid;
 
-    var $from;
-    var $field;
-    var $where;
+    public $from;
+    public $field;
+    public $where;
 
 
 	/**
@@ -56,7 +56,7 @@ class PropaleStats extends Stats
      * @param   int		$userid    Id user for filter (creation user)
 	 * @param 	string	$mode	   Option ('customer', 'supplier')
 	 */
-	function __construct($db, $socid=0, $userid=0, $mode='customer')
+    public function __construct($db, $socid = 0, $userid = 0, $mode = 'customer')
 	{
 		global $user, $conf;
 
@@ -106,7 +106,7 @@ class PropaleStats extends Stats
      *	@param	int		$format		0=Label of absiss is a translated text, 1=Label of absiss is month number, 2=Label of absiss is first letter of month
 	 * @return	array				Array with number by month
 	 */
-	function getNbByMonth($year, $format=0)
+    public function getNbByMonth($year, $format = 0)
 	{
 		global $user;
 
@@ -116,7 +116,7 @@ class PropaleStats extends Stats
 		$sql.= " WHERE ".$this->field_date." BETWEEN '".$this->db->idate(dol_get_first_day($year))."' AND '".$this->db->idate(dol_get_last_day($year))."'";
 		$sql.= " AND ".$this->where;
 		$sql.= " GROUP BY dm";
-        $sql.= $this->db->order('dm','DESC');
+        $sql.= $this->db->order('dm', 'DESC');
 
 		$res=$this->_getNbByMonth($year, $sql, $format);
 		return $res;
@@ -128,7 +128,7 @@ class PropaleStats extends Stats
 	 * @return	array	Array with number by year
 	 *
 	 */
-	function getNbByYear()
+    public function getNbByYear()
 	{
 		global $user;
 
@@ -137,7 +137,7 @@ class PropaleStats extends Stats
 		if (!$user->rights->societe->client->voir && !$this->socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql.= " WHERE ".$this->where;
 		$sql.= " GROUP BY dm";
-        $sql.= $this->db->order('dm','DESC');
+        $sql.= $this->db->order('dm', 'DESC');
 
 		return $this->_getNbByYear($sql);
 	}
@@ -149,7 +149,7 @@ class PropaleStats extends Stats
      * @param	int		$format		0=Label of absiss is a translated text, 1=Label of absiss is month number, 2=Label of absiss is first letter of month
 	 * @return	array				Array with amount by month
 	 */
-	function getAmountByMonth($year, $format)
+    public function getAmountByMonth($year, $format)
 	{
 		global $user;
 
@@ -159,7 +159,7 @@ class PropaleStats extends Stats
 		$sql.= " WHERE ".$this->field_date." BETWEEN '".$this->db->idate(dol_get_first_day($year))."' AND '".$this->db->idate(dol_get_last_day($year))."'";
 		$sql.= " AND ".$this->where;
 		$sql.= " GROUP BY dm";
-        $sql.= $this->db->order('dm','DESC');
+        $sql.= $this->db->order('dm', 'DESC');
 
 		$res=$this->_getAmountByMonth($year, $sql, $format);
 		return $res;
@@ -171,7 +171,7 @@ class PropaleStats extends Stats
 	 * @param	int		$year	year for stats
 	 * @return	array			array with number by month
 	 */
-	function getAverageByMonth($year)
+    public function getAverageByMonth($year)
 	{
 		global $user;
 
@@ -181,7 +181,7 @@ class PropaleStats extends Stats
 		$sql.= " WHERE ".$this->field_date." BETWEEN '".$this->db->idate(dol_get_first_day($year))."' AND '".$this->db->idate(dol_get_last_day($year))."'";
 		$sql.= " AND ".$this->where;
 		$sql.= " GROUP BY dm";
-        $sql.= $this->db->order('dm','DESC');
+        $sql.= $this->db->order('dm', 'DESC');
 
 		return $this->_getAverageByMonth($year, $sql);
 	}
@@ -191,7 +191,7 @@ class PropaleStats extends Stats
 	 *
 	 *	@return	array	Array of values
 	 */
-	function getAllByYear()
+    public function getAllByYear()
 	{
 		global $user;
 
@@ -200,7 +200,7 @@ class PropaleStats extends Stats
 		if (!$user->rights->societe->client->voir && !$this->socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql.= " WHERE ".$this->where;
 		$sql.= " GROUP BY year";
-        $sql.= $this->db->order('year','DESC');
+        $sql.= $this->db->order('year', 'DESC');
 
 		return $this->_getAllByYear($sql);
 	}
@@ -213,7 +213,7 @@ class PropaleStats extends Stats
 	 *	@param	int		$year	Year to scan
 	 *	@return	array	Array of values
 	 */
-	function getAllByProduct($year)
+    public function getAllByProduct($year)
 	{
 		global $user;
 
@@ -222,9 +222,9 @@ class PropaleStats extends Stats
 		if (!$user->rights->societe->client->voir && !$user->socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql.= " WHERE ".$this->where;
 		$sql.= " AND p.rowid = tl.fk_propal AND tl.fk_product = product.rowid";
-    	$sql.= " AND ".$this->field_date." BETWEEN '".$this->db->idate(dol_get_first_day($year,1,false))."' AND '".$this->db->idate(dol_get_last_day($year,12,false))."'";
+    	$sql.= " AND ".$this->field_date." BETWEEN '".$this->db->idate(dol_get_first_day($year, 1, false))."' AND '".$this->db->idate(dol_get_last_day($year, 12, false))."'";
 		$sql.= " GROUP BY product.ref";
-        $sql.= $this->db->order('nb','DESC');
+        $sql.= $this->db->order('nb', 'DESC');
         //$sql.= $this->db->plimit(20);
 
 		return $this->_getAllByProduct($sql);

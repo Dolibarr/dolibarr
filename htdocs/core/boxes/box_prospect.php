@@ -34,20 +34,20 @@ include_once DOL_DOCUMENT_ROOT.'/societe/class/client.class.php';
  */
 class box_prospect extends ModeleBoxes
 {
-	var $boxcode="lastprospects";
-	var $boximg="object_company";
-	var $boxlabel="BoxLastProspects";
-	var $depends = array("societe");
+    public $boxcode="lastprospects";
+    public $boximg="object_company";
+    public $boxlabel="BoxLastProspects";
+    public $depends = array("societe");
 
 	/**
      * @var DoliDB Database handler.
      */
     public $db;
-    
-	var $enabled = 1;
 
-	var $info_box_head = array();
-	var $info_box_contents = array();
+    public $enabled = 1;
+
+    public $info_box_head = array();
+    public $info_box_contents = array();
 
 
 	/**
@@ -56,7 +56,7 @@ class box_prospect extends ModeleBoxes
 	 *  @param  DoliDB	$db      	Database handler
      *  @param	string	$param		More parameters
 	 */
-	function __construct($db,$param='')
+	public function __construct($db, $param = '')
 	{
 		global $conf, $user;
 
@@ -74,7 +74,7 @@ class box_prospect extends ModeleBoxes
 	 *  @param	int		$max        Maximum number of records to load
      *  @return	void
 	 */
-	function loadBox($max=5)
+	public function loadBox($max = 5)
 	{
 		global $user, $langs, $db, $conf;
 
@@ -82,7 +82,7 @@ class box_prospect extends ModeleBoxes
 
 		$thirdpartystatic=new Client($db);
 
-		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastModifiedProspects",$max));
+		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastModifiedProspects", $max));
 
 		if ($user->rights->societe->lire)
 		{
@@ -134,35 +134,36 @@ class box_prospect extends ModeleBoxes
                     );
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => 'align="right" width="18"',
-                        'text' => str_replace('img ','img height="14" ',$thirdpartystatic->LibProspCommStatut($objp->fk_stcomm,3)),
+                        'td' => 'class="right" width="18"',
+                        'text' => str_replace('img ', 'img height="14" ', $thirdpartystatic->LibProspCommStatut($objp->fk_stcomm, 3)),
                     );
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => 'align="right" width="18"',
-                        'text' => $thirdpartystatic->LibStatut($objp->status,3),
+                        'td' => 'class="right" width="18"',
+                        'text' => $thirdpartystatic->LibStatut($objp->status, 3),
                     );
 
                     $line++;
                 }
 
-                if ($num==0)
+                if ($num==0) {
                     $this->info_box_contents[$line][0] = array(
-                        'td' => 'align="center"',
+                        'td' => 'class="center"',
                         'text'=>$langs->trans("NoRecordedProspects"),
-                );
+                    );
+                }
 
                 $db->free($resql);
             } else {
                 $this->info_box_contents[0][0] = array(
                     'td' => '',
-                    'maxlength'=>500,
+                    'maxlength' => 500,
                     'text' => ($db->error().' sql='.$sql),
                 );
             }
         } else {
             $this->info_box_contents[0][0] = array(
-                'td' => 'align="left" class="nohover opacitymedium"',
+                'td' => 'class="nohover opacitymedium left"',
                 'text' => $langs->trans("ReadPermissionNotAllowed")
             );
 		}
@@ -176,9 +177,8 @@ class box_prospect extends ModeleBoxes
 	 *  @param	int		$nooutput	No print, only return string
 	 *	@return	string
 	 */
-    function showBox($head = null, $contents = null, $nooutput=0)
+    public function showBox($head = null, $contents = null, $nooutput = 0)
     {
 		return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
 	}
 }
-

@@ -63,7 +63,7 @@ class Ctypent // extends CommonObject
      *
      *  @param      DoliDb		$db      Database handler
      */
-    function __construct($db)
+    public function __construct($db)
     {
         $this->db = $db;
     }
@@ -76,7 +76,7 @@ class Ctypent // extends CommonObject
      *  @param      int		$notrigger   0=launch triggers after, 1=disable triggers
      *  @return     int      		   	 <0 if KO, Id of created object if OK
      */
-    function create($user, $notrigger=0)
+    public function create($user, $notrigger = 0)
     {
     	global $conf, $langs;
 		$error=0;
@@ -109,7 +109,7 @@ class Ctypent // extends CommonObject
 		$sql.= " ".(! isset($this->id)?'NULL':"'".$this->db->escape($this->id)."'").",";
 		$sql.= " ".(! isset($this->code)?'NULL':"'".$this->db->escape($this->code)."'").",";
 		$sql.= " ".(! isset($this->libelle)?'NULL':"'".$this->db->escape($this->libelle)."'").",";
-		$sql.= " ".(! isset($this->active)?'NULL':"'".$this->db->active($this->active)."'").",";
+		$sql.= " ".(! isset($this->active)?'NULL':"'".$this->db->escape($this->active)."'").",";
 		$sql.= " ".(! isset($this->module)?'NULL':"'".$this->db->escape($this->module)."'")."";
 
 
@@ -166,7 +166,7 @@ class Ctypent // extends CommonObject
      *  @param		string	$label	Label
      *  @return     int          	<0 if KO, >0 if OK
      */
-    function fetch($id,$code='',$label='')
+    public function fetch($id, $code = '', $label = '')
     {
     	global $langs;
         $sql = "SELECT";
@@ -214,7 +214,7 @@ class Ctypent // extends CommonObject
      *  @param      int		$notrigger	 0=launch triggers after, 1=disable triggers
      *  @return     int     		   	 <0 if KO, >0 if OK
      */
-    function update($user=null, $notrigger=0)
+    public function update($user = null, $notrigger = 0)
     {
     	global $conf, $langs;
 		$error=0;
@@ -285,7 +285,7 @@ class Ctypent // extends CommonObject
      *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
 	 *  @return	int					 <0 if KO, >0 if OK
 	 */
-	function delete($user, $notrigger=0)
+	public function delete($user, $notrigger = 0)
 	{
 		global $conf, $langs;
 		$error=0;
@@ -299,10 +299,10 @@ class Ctypent // extends CommonObject
 		$resql = $this->db->query($sql);
     	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 
-		if (! $error)
-		{
-			if (! $notrigger)
-			{
+		//if (! $error)
+		//{
+		//	if (! $notrigger)
+		//	{
 				// Uncomment this and change MYOBJECT to your own tag if you
 		        // want this action call a trigger.
 
@@ -312,12 +312,12 @@ class Ctypent // extends CommonObject
 		        //$result=$interface->run_triggers('MYOBJECT_DELETE',$this,$user,$langs,$conf);
 		        //if ($result < 0) { $error++; $this->errors=$interface->errors; }
 		        //// End call triggers
-			}
-		}
+		//	}
+		//}
 
         // Commit or rollback
-		if ($error)
-		{
+        if ($error)
+        {
 			foreach($this->errors as $errmsg)
 			{
 	            dol_syslog(get_class($this)."::delete ".$errmsg, LOG_ERR);
@@ -325,11 +325,11 @@ class Ctypent // extends CommonObject
 			}
 			$this->db->rollback();
 			return -1*$error;
-		}
-		else
-		{
-			$this->db->commit();
-			return 1;
-		}
-	}
+        }
+        else
+        {
+            $this->db->commit();
+            return 1;
+        }
+    }
 }

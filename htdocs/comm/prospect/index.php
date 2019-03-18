@@ -98,9 +98,9 @@ if ($resql)
 
 			print '<tr class="oddeven"><td>';
 			print '<a href="prospects.php?page=0&amp;stcomm='.$obj->id.'">';
-			print img_action($langs->trans("Show"),$obj->id).' ';
+			print img_action($langs->trans("Show"), $obj->id).' ';
 			print $langs->trans("StatusProspect".$obj->id);
-			print '</a></td><td align="right">'.$obj->cc.'</td></tr>';
+			print '</a></td><td class="right">'.$obj->cc.'</td></tr>';
 			$i++;
 		}
 		print "</table><br>";
@@ -139,8 +139,8 @@ if (! empty($conf->propal->enabled) && $user->rights->propale->lire)
 				$obj = $db->fetch_object($resql);
 
 				print '<tr class="oddeven"><td>';
-				print '<a href="'.DOL_URL_ROOT.'/comm/propal/card.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowPropal"),"propal").' '.$obj->ref.'</a>';
-				print '</td><td align="right">';
+				print '<a href="'.DOL_URL_ROOT.'/comm/propal/card.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowPropal"), "propal").' '.$obj->ref.'</a>';
+				print '</td><td class="right">';
 				print price($obj->price);
 				print "</td></tr>";
 				$i++;
@@ -203,24 +203,24 @@ if (! empty($conf->propal->enabled) && $user->rights->propale->lire)
 
 				print '<tr class="oddeven"><td>';
 				print '<a href="../propal.php?id='.$obj->propalid.'">';
-				print img_object($langs->trans("ShowPropal"),"propal").' '.$obj->ref.'</a></td>';
+				print img_object($langs->trans("ShowPropal"), "propal").' '.$obj->ref.'</a></td>';
 
 				print "<td>";
                 $companystatic->id=$obj->socid;
                 $companystatic->name=$obj->name;
                 $companystatic->client=$obj->client;
                 $companystatic->canvas=$obj->canvas;
-                print $companystatic->getNomUrl(1,'',44);
+                print $companystatic->getNomUrl(1, '', 44);
 				print "</td>\n";
 				print "<td align=\"right\">";
-				print dol_print_date($db->jdate($obj->dp),'day')."</td>\n";
+				print dol_print_date($db->jdate($obj->dp), 'day')."</td>\n";
 				print "<td align=\"right\">".price($obj->total_ttc)."</td></tr>\n";
 				$i++;
 				$total += $obj->price;
 			}
 			if ($total>0)
 			{
-				print '<tr class="liste_total"><td colspan="3" align="right">'.$langs->trans("Total")."</td><td align=\"right\">".price($total)."</td></tr>";
+				print '<tr class="liste_total"><td colspan="3" class="right">'.$langs->trans("Total")."</td><td class=\"right\">".price($total)."</td></tr>";
 			}
 			print "</table><br>";
 		}
@@ -263,7 +263,7 @@ if ($resql)
             $companystatic->name=$obj->name;
             $companystatic->client=$obj->client;
             $companystatic->canvas=$obj->canvas;
-            print $companystatic->getNomUrl(1,'prospect',44);
+            print $companystatic->getNomUrl(1, 'prospect', 44);
 			print '</td></tr>';
 			$i++;
 		}

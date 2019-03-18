@@ -1,5 +1,5 @@
 -- ===================================================================
--- Copyright (C) 2017		Alexandre Spangaro <aspangaro@zendsi.com>
+-- Copyright (C) 2017-2019	Alexandre Spangaro <aspangaro@open-dsi.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -30,6 +30,7 @@ create table llx_payment_various
   amount                double(24,8) DEFAULT 0 NOT NULL,
   fk_typepayment        integer NOT NULL,
   accountancy_code      varchar(32),
+  subledger_account     varchar(32),
   fk_projet             integer DEFAULT NULL,
   entity                integer DEFAULT 1 NOT NULL,	-- multi company id
   note                  text,

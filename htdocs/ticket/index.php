@@ -70,7 +70,7 @@ $tickesupstatic = new Ticket($db);
 llxHeader('', $langs->trans('TicketsIndex'), '');
 
 $linkback='';
-print load_fiche_titre($langs->trans('TicketsIndex'),$linkback,'title_ticket.png');
+print load_fiche_titre($langs->trans('TicketsIndex'), $linkback, 'title_ticket.png');
 
 
 $dir = '';
@@ -257,10 +257,13 @@ $data = $stats->getNbByMonth($endyear, $startyear);
 
 print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
+
 /*
  * Last tickets
  */
-$max = 15;
+
+$max = 10;
+
 $sql = "SELECT t.rowid, t.ref, t.track_id, t.datec, t.subject, t.type_code, t.category_code, t.severity_code, t.fk_statut, t.progress,";
 $sql .= " type.label as type_label, category.label as category_label, severity.label as severity_label";
 $sql .= " FROM " . MAIN_DB_PREFIX . "ticket as t";
@@ -300,11 +303,11 @@ if ($result) {
     print '<div class="div-table-responsive-no-min">';
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre"><th>' . $transRecordedType . '</th>';
-    print '<th>' . $langs->trans('Date') . '</th>';
-    print '<th>' . $langs->trans('Subject') . '</th>';
-    print '<th>' . $langs->trans('Type') . '</th>';
-    print '<th>' . $langs->trans('Category') . '</th>';
-    print '<th>' . $langs->trans('Severity') . '</th>';
+    print '<th></th>';
+    print '<th></th>';
+    print '<th></th>';
+    print '<th></th>';
+    print '<th class="right"><a href="'.DOL_URL_ROOT.'/ticket/list.php">'.$langs->trans("FullList").'</th>';
     print '<th></th>';
     print '</tr>';
     if ($num > 0) {
@@ -327,7 +330,7 @@ if ($result) {
             print "</td>\n";
 
             // Creation date
-            print '<td align="left">';
+            print '<td class="left">';
             print dol_print_date($db->jdate($objp->datec), 'dayhour');
             print "</td>";
 
@@ -351,8 +354,8 @@ if ($result) {
             print $objp->severity_label;
             print "</td>";
 
-            print '<td class="nowrap">';
-            print $tickesupstatic->getLibStatut(3);
+            print '<td class="nowrap right">';
+            print $tickesupstatic->getLibStatut(5);
             print "</td>";
 
             print "</tr>\n";
@@ -372,11 +375,6 @@ if ($result) {
 
 print '</div></div></div>';
 print '<div style="clear:both"></div>';
-
-print '<div class="tabsAction">';
-print '<div class="inline-block divButAction"><a class="butAction" href="new.php?action=create_ticket">' . $langs->trans('CreateTicket') . '</a></div>';
-print '<div class="inline-block divButAction"><a class="butAction" href="list.php">' . $langs->trans('TicketList') . '</a></div>';
-print '</div>';
 
 // End of page
 llxFooter('');

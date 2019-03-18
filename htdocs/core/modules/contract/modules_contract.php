@@ -43,7 +43,7 @@ abstract class ModelePDFContract extends CommonDocGenerator
 	public $error='';
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Return list of active generation modules
 	 *
@@ -51,7 +51,7 @@ abstract class ModelePDFContract extends CommonDocGenerator
      *  @param  integer	$maxfilenamelength  Max length of value to show
      *  @return	array						List of templates
 	 */
-	static function liste_modeles($db,$maxfilenamelength=0)
+    public static function liste_modeles($db, $maxfilenamelength = 0)
 	{
         // phpcs:enable
 		global $conf;
@@ -60,7 +60,7 @@ abstract class ModelePDFContract extends CommonDocGenerator
 		$liste=array();
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-		$liste=getListOfModels($db,$type,$maxfilenamelength);
+		$liste=getListOfModels($db, $type, $maxfilenamelength);
 
 		return $liste;
 	}
@@ -82,7 +82,7 @@ class ModelNumRefContracts
 	 *
 	 * 	@return		boolean     true if module can be used
 	 */
-	function isEnabled()
+	public function isEnabled()
 	{
 		return true;
 	}
@@ -92,7 +92,7 @@ class ModelNumRefContracts
 	 *
 	 *	@return     string      text description
 	 */
-	function info()
+	public function info()
 	{
 		global $langs;
 		$langs->load("contracts");
@@ -104,7 +104,7 @@ class ModelNumRefContracts
 	 *
 	 *	@return     string      Example
 	 */
-	function getExample()
+	public function getExample()
 	{
 		global $langs;
 		$langs->load("contracts");
@@ -116,7 +116,7 @@ class ModelNumRefContracts
 	 *
 	 *	@return		boolean		false if conflict, true if ok
 	 */
-	function canBeActivated()
+	public function canBeActivated()
 	{
 		return true;
 	}
@@ -128,7 +128,7 @@ class ModelNumRefContracts
 	 *	@param	Object		$contract	contract object
 	 *	@return	string					Value
 	 */
-	function getNextValue($objsoc, $contract)
+	public function getNextValue($objsoc, $contract)
 	{
 		global $langs;
 		return $langs->trans("NotAvailable");
@@ -139,7 +139,7 @@ class ModelNumRefContracts
 	 *
 	 *	@return     string      Value
 	 */
-	function getVersion()
+	public function getVersion()
 	{
 		global $langs;
 		$langs->load("admin");

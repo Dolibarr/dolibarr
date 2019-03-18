@@ -33,16 +33,16 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 //Required to translate NbOfProposals
 $langs->load('propal');
 
-$type=GETPOST("type","int");
+$type=GETPOST("type", "int");
 
 // Security check
 if (! empty($user->societe_id)) $socid=$user->societe_id;
-$result=restrictedArea($user,'produit|service');
+$result=restrictedArea($user, 'produit|service');
 
-$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
-$sortfield = GETPOST("sortfield",'alpha');
-$sortorder = GETPOST("sortorder",'alpha');
-$page = GETPOST("page",'int');
+$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
+$sortfield = GETPOST("sortfield", 'alpha');
+$sortorder = GETPOST("sortorder", 'alpha');
+$page = GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 if (! $sortfield) $sortfield="c";
 if (! $sortorder) $sortorder="DESC";
@@ -63,7 +63,7 @@ if ($type == '0')
 {
     $helpurl='EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
 }
-else if ($type == '1')
+elseif ($type == '1')
 {
     $helpurl='EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
 }
@@ -76,7 +76,7 @@ $title=$langs->trans("Statistics");
 
 llxHeader('', $title, $helpurl);
 
-print load_fiche_titre($title, $mesg,'title_products.png');
+print load_fiche_titre($title, $mesg, 'title_products.png');
 
 
 $param = '';
@@ -128,7 +128,7 @@ if ($result)
     $totalnboflines = $db->num_rows($result);
 }
 
-$sql.= $db->order($sortfield,$sortorder);
+$sql.= $db->order($sortfield, $sortorder);
 $sql.= $db->plimit($limit+1, $offset);
 
 $resql=$db->query($sql);
@@ -163,7 +163,7 @@ print "<tr class=\"liste_titre\">";
 print_liste_field_titre('Ref', $_SERVER["PHP_SELF"], 'p.ref', '', $param, '', $sortfield, $sortorder);
 print_liste_field_titre('Type', $_SERVER["PHP_SELF"], 'p.fk_product_type', '', $param, '', $sortfield, $sortorder);
 print_liste_field_titre('Label', $_SERVER["PHP_SELF"], 'p.label', '', $param, '', $sortfield, $sortorder);
-print_liste_field_titre('NbOfQtyInProposals', $_SERVER["PHP_SELF"], 'c', '', $param, 'align="right"', $sortfield, $sortorder);
+print_liste_field_titre('NbOfQtyInProposals', $_SERVER["PHP_SELF"], 'c', '', $param, '', $sortfield, $sortorder, 'right ');
 print "</tr>\n";
 
 foreach($infoprod as $prodid => $vals)
@@ -187,8 +187,8 @@ foreach($infoprod as $prodid => $vals)
 
 	print "<tr>";
 	print '<td><a href="'.DOL_URL_ROOT.'/product/stats/card.php?id='.$prodid.'">';
-	if ($vals['type'] == 1) print img_object($langs->trans("ShowService"),"service");
-	else print img_object($langs->trans("ShowProduct"),"product");
+	if ($vals['type'] == 1) print img_object($langs->trans("ShowService"), "service");
+	else print img_object($langs->trans("ShowProduct"), "product");
 	print " ";
 	print $vals['ref'].'</a></td>';
 	print '<td>';
@@ -196,7 +196,7 @@ foreach($infoprod as $prodid => $vals)
 	else print $langs->trans("Product");
 	print '</td>';
 	print '<td>'.$vals['label'].'</td>';
-	print '<td align="right">'.$vals['nblineproposal'].'</td>';
+	print '<td class="right">'.$vals['nblineproposal'].'</td>';
 	print "</tr>\n";
 	$i++;
 }

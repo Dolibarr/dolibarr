@@ -19,7 +19,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-define('NOTOKENRENEWAL',1); // Disables token renewal
+define('NOTOKENRENEWAL', 1); // Disables token renewal
 
 require '../../../../main.inc.php';
 ?>
@@ -104,7 +104,7 @@ window.onload = function()
 					<button style="WIDTH: 100%" type="button">
 						<table cellSpacing="0" cellPadding="0" width="100%" border="0">
 							<tr>
-								<td><?php echo img_picto_common('','treemenu/folder.gif','width="16" height="16"'); ?></td>
+								<td><?php echo img_picto_common('', 'treemenu/folder.gif', 'width="16" height="16"'); ?></td>
 								<td>&nbsp;</td>
 								<td id="tdName" width="100%" class="ActualFolder nowrap">/</td>
 								<td>&nbsp;</td>

@@ -32,23 +32,23 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 // Load translation files required by the page
 $langs->load("categories");
 
-$id=GETPOST('id','int');
+$id=GETPOST('id', 'int');
 $ref=GETPOST('ref');
 $type=GETPOST('type');
-$action=(GETPOST('action','aZ09')?GETPOST('action','aZ09'):'edit');
+$action=(GETPOST('action', 'aZ09')?GETPOST('action', 'aZ09'):'edit');
 $confirm=GETPOST('confirm');
-$cancel=GETPOST('cancel','alpha');
+$cancel=GETPOST('cancel', 'alpha');
 
-$socid=GETPOST('socid','int');
+$socid=GETPOST('socid', 'int');
 $label=GETPOST('label');
 $description=GETPOST('description');
-$color=GETPOST('color','alpha');
+$color=GETPOST('color', 'alpha');
 $visible=GETPOST('visible');
 $parent=GETPOST('parent');
 
 if ($id == "")
 {
-	dol_print_error('','Missing parameter id');
+	dol_print_error('', 'Missing parameter id');
 	exit();
 }
 
@@ -81,6 +81,7 @@ if ($cancel)
 // Action mise a jour d'une categorie
 if ($action == 'update' && $user->rights->categorie->creer)
 {
+    $object->oldcopy = dol_clone($object);
 	$object->label          = $label;
 	$object->description    = dol_htmlcleanlastbr($description);
 	$object->color          = $color;
@@ -101,7 +102,7 @@ if ($action == 'update' && $user->rights->categorie->creer)
 	}
 	if (! $error && empty($object->error))
 	{
-		$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
+		$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
 		if ($ret < 0) $error++;
 
 		if (! $error && $object->update($user) > 0)
@@ -129,7 +130,7 @@ if ($action == 'update' && $user->rights->categorie->creer)
 $form = new Form($db);
 $formother = new FormOther($db);
 
-llxHeader("","",$langs->trans("Categories"));
+llxHeader("", "", $langs->trans("Categories"));
 
 print load_fiche_titre($langs->trans("ModifCat"));
 
@@ -158,7 +159,7 @@ print '<tr>';
 print '<td>'.$langs->trans("Description").'</td>';
 print '<td >';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-$doleditor=new DolEditor('description',$object->description,'',200,'dolibarr_notes','',false,true,$conf->fckeditor->enabled,ROWS_6,'90%');
+$doleditor=new DolEditor('description', $object->description, '', 200, 'dolibarr_notes', '', false, true, $conf->fckeditor->enabled, ROWS_6, '90%');
 $doleditor->Create();
 print '</td></tr>';
 
@@ -171,15 +172,15 @@ print '</td></tr>';
 
 // Parent category
 print '<tr><td>'.$langs->trans("In").'</td><td>';
-print $form->select_all_categories($type,$object->fk_parent,'parent',64,$object->id);
+print $form->select_all_categories($type, $object->fk_parent, 'parent', 64, $object->id);
 print '</td></tr>';
 
 $parameters=array();
-$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+$reshook=$hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action);    // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 if (empty($reshook))
 {
-	print $object->showOptionals($extrafields,'edit');
+	print $object->showOptionals($extrafields, 'edit');
 }
 
 print '</table>';

@@ -29,29 +29,29 @@ require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'orders', 'bills'));
 
-$id=GETPOST("id",'int');
+$id=GETPOST("id", 'int');
 
-$socid = GETPOST('id','int')?GETPOST('id','int'):GETPOST('socid','int');
+$socid = GETPOST('id', 'int')?GETPOST('id', 'int'):GETPOST('socid', 'int');
 // Security check
 if ($user->societe_id > 0)
 {
 	$socid = $user->societe_id;
 }
 
-$backtopage = GETPOST('backtopage','alpha');
+$backtopage = GETPOST('backtopage', 'alpha');
 
 
 /*
  * Actions
  */
 
-if (GETPOST('cancel','alpha') && ! empty($backtopage))
+if (GETPOST('cancel', 'alpha') && ! empty($backtopage))
 {
      header("Location: ".$backtopage);
      exit;
 }
 
-if (GETPOST('action','aZ09') == 'setremise')
+if (GETPOST('action', 'aZ09') == 'setremise')
 {
 	$object = new Societe($db);
 	$object->fetch($id);
@@ -59,9 +59,9 @@ if (GETPOST('action','aZ09') == 'setremise')
 	$discount_type = GETPOST('discount_type', 'int');
 
 	if(! empty($discount_type)) {
-		$result=$object->set_remise_supplier(price2num(GETPOST("remise")),GETPOST("note"),$user);
+		$result=$object->set_remise_supplier(price2num(GETPOST("remise")), GETPOST("note"), $user);
 	} else {
-		$result=$object->set_remise_client(price2num(GETPOST("remise")),GETPOST("note"),$user);
+		$result=$object->set_remise_client(price2num(GETPOST("remise")), GETPOST("note"), $user);
 	}
 
 	if ($result > 0)
@@ -106,7 +106,7 @@ if ($socid > 0)
 
 	$head = societe_prepare_head($object);
 
-	$isCustomer = $object->client == 1 || $object->client == 3;
+	$isCustomer = ($object->client == 1 || $object->client == 3);
 	$isSupplier = $object->fournisseur == 1;
 
 	print '<form method="POST" action="remise.php?id='.$object->id.'">';
@@ -122,7 +122,7 @@ if ($socid > 0)
 
     print '<div class="underbanner clearboth"></div>';
 
-    if(! $isCustomer && ! $isSupplier) {
+    if (! $isCustomer && ! $isSupplier) {
     	print '<p class="opacitymedium">'.$langs->trans('ThirdpartyIsNeitherCustomerNorClientSoCannotHaveDiscounts').'</p>';
 
     	dol_fiche_end();
@@ -137,13 +137,13 @@ if ($socid > 0)
 
 	print '<table class="border centpercent">';
 
-	if($isCustomer) {
+	if ($isCustomer) {
 		// Customer discount
 		print '<tr><td class="titlefield">';
 		print $langs->trans("CustomerRelativeDiscount").'</td><td>'.price2num($object->remise_percent)."%</td></tr>";
 	}
 
-	if($isSupplier) {
+	if ($isSupplier) {
 		// Supplier discount
 		print '<tr><td class="titlefield">';
 		print $langs->trans("SupplierRelativeDiscount").'</td><td>'.price2num($object->remise_supplier_percent)."%</td></tr>";
@@ -152,25 +152,32 @@ if ($socid > 0)
 	print '</table>';
 	print '<br>';
 
-	print load_fiche_titre($langs->trans("NewRelativeDiscount"),'','');
+	print load_fiche_titre($langs->trans("NewRelativeDiscount"), '', '');
 
 	print '<div class="underbanner clearboth"></div>';
 
-	if($isCustomer && ! $isSupplier) {
-		print '<input type="hidden" name="discount_type" value="0" />';
-	}
-
-	if(! $isCustomer && $isSupplier) {
-		print '<input type="hidden" name="discount_type" value="1" />';
-	}
+	/*if (! ($isCustomer && $isSupplier))
+	{
+	    if ($isCustomer && ! $isSupplier) {
+	        print '<input type="hidden" name="discount_type" value="0" />';
+	    }
+	    if (! $isCustomer && $isSupplier) {
+	        print '<input type="hidden" name="discount_type" value="1" />';
+	    }
+	}*/
 
 	print '<table class="border centpercent">';
 
-	if($isCustomer && $isSupplier) {
+	if ($isCustomer || $isSupplier)
+	{
 		// Discount type
-		print '<tr><td class="titlefield fieldrequired">'.$langs->trans('DiscountType').'</td>';
-		print '<td><input type="radio" name="discount_type" id="discount_type_0" selected value="0"/> <label for="discount_type_0">'.$langs->trans('Customer').'</label>';
-		print ' <input type="radio" name="discount_type" id="discount_type_1" selected value="1"/> <label for="discount_type_1">'.$langs->trans('Supplier').'</label>';
+		print '<tr><td class="titlefield fieldrequired">'.$langs->trans('DiscountType').'</td><td>';
+		if ($isCustomer) {
+			print '<input type="radio" name="discount_type" id="discount_type_0" checked value="0"/> <label for="discount_type_0">'.$langs->trans('Customer').'</label>';
+		}
+		if ($isSupplier) {
+		    print ' <input type="radio" name="discount_type" id="discount_type_1"'.($isCustomer?'':' checked').' value="1"/> <label for="discount_type_1">'.$langs->trans('Supplier').'</label>';
+		}
 		print '</td></tr>';
 	}
 
@@ -227,7 +234,7 @@ if ($socid > 0)
 			print '<tr class="liste_titre">';
 			print '<td width="160">'.$langs->trans("Date").'</td>';
 			print '<td width="160" align="center">'.$langs->trans("CustomerRelativeDiscountShort").'</td>';
-			print '<td align="left">'.$langs->trans("NoteReason").'</td>';
+			print '<td class="left">'.$langs->trans("NoteReason").'</td>';
 			print '<td align="center">'.$langs->trans("User").'</td>';
 			print '</tr>';
 			$num = $db->num_rows($resql);
@@ -238,10 +245,10 @@ if ($socid > 0)
 	    		{
 	    			$obj = $db->fetch_object($resql);
 	    			print '<tr class="oddeven">';
-	    			print '<td>'.dol_print_date($db->jdate($obj->dc),"dayhour").'</td>';
+	    			print '<td>'.dol_print_date($db->jdate($obj->dc), "dayhour").'</td>';
 	    			print '<td align="center">'.price2num($obj->remise_percent).'%</td>';
-	    			print '<td align="left">'.$obj->note.'</td>';
-	    			print '<td align="center"><a href="'.DOL_URL_ROOT.'/user/card.php?id='.$obj->user_id.'">'.img_object($langs->trans("ShowUser"),'user').' '.$obj->login.'</a></td>';
+	    			print '<td class="left">'.$obj->note.'</td>';
+	    			print '<td align="center"><a href="'.DOL_URL_ROOT.'/user/card.php?id='.$obj->user_id.'">'.img_object($langs->trans("ShowUser"), 'user').' '.$obj->login.'</a></td>';
 	    			print '</tr>';
 	    			$i++;
 	    		}
@@ -286,7 +293,7 @@ if ($socid > 0)
 			print '<tr class="liste_titre">';
 			print '<td width="160">'.$langs->trans("Date").'</td>';
 			print '<td width="160" align="center">'.$langs->trans("CustomerRelativeDiscountShort").'</td>';
-			print '<td align="left">'.$langs->trans("NoteReason").'</td>';
+			print '<td class="left">'.$langs->trans("NoteReason").'</td>';
 			print '<td align="center">'.$langs->trans("User").'</td>';
 			print '</tr>';
 			$num = $db->num_rows($resql);
@@ -297,10 +304,10 @@ if ($socid > 0)
 				{
 					$obj = $db->fetch_object($resql);
 					print '<tr class="oddeven">';
-					print '<td>'.dol_print_date($db->jdate($obj->dc),"dayhour").'</td>';
+					print '<td>'.dol_print_date($db->jdate($obj->dc), "dayhour").'</td>';
 					print '<td align="center">'.price2num($obj->remise_percent).'%</td>';
-					print '<td align="left">'.$obj->note.'</td>';
-					print '<td align="center"><a href="'.DOL_URL_ROOT.'/user/card.php?id='.$obj->user_id.'">'.img_object($langs->trans("ShowUser"),'user').' '.$obj->login.'</a></td>';
+					print '<td class="left">'.$obj->note.'</td>';
+					print '<td align="center"><a href="'.DOL_URL_ROOT.'/user/card.php?id='.$obj->user_id.'">'.img_object($langs->trans("ShowUser"), 'user').' '.$obj->login.'</a></td>';
 					print '</tr>';
 					$i++;
 				}

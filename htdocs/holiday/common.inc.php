@@ -23,7 +23,7 @@
  *		\brief      Common load of data
  */
 
-require_once realpath(dirname(__FILE__)).'/../main.inc.php';
+require_once realpath(__DIR__).'/../main.inc.php';
 if (! class_exists('Holiday')) {
 	require_once DOL_DOCUMENT_ROOT. '/holiday/class/holiday.class.php';
 }
@@ -33,11 +33,10 @@ $langs->loadLangs(array('user', 'other', 'holiday'));
 
 if (empty($conf->holiday->enabled))
 {
-    llxHeader('',$langs->trans('CPTitreMenu'));
+    llxHeader('', $langs->trans('CPTitreMenu'));
     print '<div class="tabBar">';
     print '<span style="color: #FF0000;">'.$langs->trans('NotActiveModCP').'</span>';
     print '</div>';
     llxFooter();
     exit();
 }
-

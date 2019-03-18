@@ -40,9 +40,15 @@ function ticketAdminPrepareHead()
     $head[$h][1] = $langs->trans("TicketSettings");
     $head[$h][2] = 'settings';
     $h++;
+
     $head[$h][0] = DOL_URL_ROOT.'/admin/ticket_extrafields.php';
     $head[$h][1] = $langs->trans("ExtraFieldsTicket");
     $head[$h][2] = 'attributes';
+    $h++;
+
+    $head[$h][0] = DOL_URL_ROOT.'/admin/ticket_public.php';
+    $head[$h][1] = $langs->trans("PublicInterface");
+    $head[$h][2] = 'public';
     $h++;
 
     // Show more tabs from modules
@@ -78,7 +84,7 @@ function ticket_prepare_head($object)
 
     if (empty($conf->global->MAIN_DISABLE_CONTACTS_TAB) && empty($user->socid))
     {
-    	$nbContact = count($object->liste_contact(-1,'internal')) + count($object->liste_contact(-1,'external'));
+    	$nbContact = count($object->liste_contact(-1, 'internal')) + count($object->liste_contact(-1, 'external'));
     	$head[$h][0] = DOL_URL_ROOT.'/ticket/contact.php?track_id='.$object->track_id;
     	$head[$h][1] = $langs->trans('ContactsAddresses');
     	if ($nbContact > 0) $head[$h][1].= ' <span class="badge">'.$nbContact.'</span>';
@@ -114,7 +120,7 @@ function ticket_prepare_head($object)
     $h++;
 
 
-    complete_head_from_modules($conf, $langs, $object, $head, $h, 'ticket','remove');
+    complete_head_from_modules($conf, $langs, $object, $head, $h, 'ticket', 'remove');
 
 
     return $head;
@@ -126,7 +132,7 @@ function ticket_prepare_head($object)
  *    @param  string $car Char to generate key
  *     @return void
  */
-function generate_random_id($car=16)
+function generate_random_id($car = 16)
 {
     $string = "";
     $chaine = "abcdefghijklmnopqrstuvwxyz123456789";

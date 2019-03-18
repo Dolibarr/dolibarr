@@ -43,4 +43,3 @@ function mailmanspip_admin_prepare_head()
         )
     );
 }
-

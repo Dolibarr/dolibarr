@@ -119,7 +119,7 @@ class Events // extends CommonObject
 	 *
 	 *  @param		DoliDB		$db      Database handler
 	 */
-	function __construct($db)
+	public function __construct($db)
 	{
 		$this->db = $db;
 	}
@@ -129,9 +129,9 @@ class Events // extends CommonObject
 	 *   Create in database
 	 *
 	 *   @param      User	$user       User that create
-	 *   @return     int     		    <0 if KO, >0 if OK
+	 *   @return     int                <0 if KO, >0 if OK
 	 */
-	function create($user)
+	public function create($user)
 	{
 		global $conf, $langs;
 
@@ -155,10 +155,10 @@ class Events // extends CommonObject
 		$sql.= " '".$this->db->escape($this->type)."',";
 		$sql.= " ".$conf->entity.",";
 		$sql.= " '".$this->db->escape(getUserRemoteIP())."',";
-		$sql.= " ".($this->user_agent ? "'".$this->db->escape(dol_trunc($this->user_agent,250))."'" : 'NULL').",";
+		$sql.= " ".($this->user_agent ? "'".$this->db->escape(dol_trunc($this->user_agent, 250))."'" : 'NULL').",";
 		$sql.= " '".$this->db->idate($this->dateevent)."',";
 		$sql.= " ".($user->id?"'".$this->db->escape($user->id)."'":'NULL').",";
-		$sql.= " '".$this->db->escape(dol_trunc($this->description,250))."'";
+		$sql.= " '".$this->db->escape(dol_trunc($this->description, 250))."'";
 		$sql.= ")";
 
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
@@ -183,7 +183,7 @@ class Events // extends CommonObject
 	 * @param   int		$notrigger	    0=no, 1=yes (no update trigger)
 	 * @return  int         			<0 if KO, >0 if OK
 	 */
-	function update($user=null, $notrigger=0)
+    public function update($user = null, $notrigger = 0)
 	{
 		global $conf, $langs;
 
@@ -220,7 +220,7 @@ class Events // extends CommonObject
 	 *  @param  User	$user       User that load
 	 *  @return int         		<0 if KO, >0 if OK
 	 */
-	function fetch($id, $user=null)
+    public function fetch($id, $user = null)
 	{
 		global $langs;
 
@@ -271,7 +271,7 @@ class Events // extends CommonObject
 	 *	@param	User	$user       User that delete
 	 *	@return	int					<0 if KO, >0 if OK
 	 */
-	function delete($user)
+    public function delete($user)
 	{
 		global $conf, $langs;
 
@@ -296,8 +296,8 @@ class Events // extends CommonObject
      *	id must be 0 if object instance is a specimen.
      *
      *  @return	void
-	 */
-	function initAsSpecimen()
+     */
+    public function initAsSpecimen()
 	{
 		$this->id=0;
 
@@ -305,5 +305,5 @@ class Events // extends CommonObject
 		$this->type='';
 		$this->dateevent=time();
 		$this->description='This is a specimen event';
-	}
+    }
 }

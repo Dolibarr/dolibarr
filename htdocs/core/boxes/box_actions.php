@@ -32,20 +32,20 @@ include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
  */
 class box_actions extends ModeleBoxes
 {
-	var $boxcode="lastactions";
-	var $boximg="object_action";
-	var $boxlabel="BoxLastActions";
-	var $depends = array("agenda");
+    public $boxcode="lastactions";
+    public $boximg="object_action";
+    public $boxlabel="BoxLastActions";
+    public $depends = array("agenda");
 
 	/**
      * @var DoliDB Database handler.
      */
     public $db;
-    
-	var $param;
 
-	var $info_box_head = array();
-	var $info_box_contents = array();
+    public $param;
+
+    public $info_box_head = array();
+    public $info_box_contents = array();
 
 
 	/**
@@ -54,7 +54,7 @@ class box_actions extends ModeleBoxes
 	 *  @param  DoliDB	$db      	Database handler
 	 *  @param	string	$param		More parameters
 	 */
-	function __construct($db,$param='')
+	public function __construct($db, $param = '')
 	{
 	    global $user;
 
@@ -69,7 +69,7 @@ class box_actions extends ModeleBoxes
      *  @param	int		$max        Maximum number of records to load
      *  @return	void
 	 */
-	function loadBox($max=5)
+	public function loadBox($max = 5)
 	{
 		global $user, $langs, $db, $conf;
 
@@ -80,7 +80,7 @@ class box_actions extends ModeleBoxes
         $societestatic = new Societe($db);
         $actionstatic = new ActionComm($db);
 
-		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastActionsToDo",$max));
+		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastActionsToDo", $max));
 
         if ($user->rights->agenda->myactions->read) {
 			$sql = "SELECT a.id, a.label, a.datep as dp, a.percent as percentage";
@@ -89,8 +89,7 @@ class box_actions extends ModeleBoxes
             $sql.= ", s.nom as name";
             $sql.= ", s.rowid as socid";
             $sql.= ", s.code_client";
-			$sql.= " FROM (".MAIN_DB_PREFIX."c_actioncomm AS ta, ";
-			$sql.= MAIN_DB_PREFIX."actioncomm AS a)";
+			$sql.= " FROM ".MAIN_DB_PREFIX."c_actioncomm AS ta, ".MAIN_DB_PREFIX."actioncomm AS a";
 			if (! $user->rights->societe->client->voir && ! $user->societe_id) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON a.fk_soc = sc.fk_soc";
 			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON a.fk_soc = s.rowid";
 			$sql.= " WHERE a.fk_action = ta.id";
@@ -142,7 +141,7 @@ class box_actions extends ModeleBoxes
                     );
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => 'align="left" class="nowrap"',
+                        'td' => 'class="nowrap left"',
                         'text' => dol_print_date($datelimite, "dayhour"),
                     );
 
@@ -152,8 +151,8 @@ class box_actions extends ModeleBoxes
                     );
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => 'align="right" width="18"',
-                        'text' => $actionstatic->LibStatut($objp->percentage,3),
+                        'td' => 'class="right" width="18"',
+                        'text' => $actionstatic->LibStatut($objp->percentage, 3),
                     );
 
                     $line++;
@@ -161,7 +160,7 @@ class box_actions extends ModeleBoxes
 
                 if ($num==0)
                     $this->info_box_contents[$line][0] = array(
-                        'td' => 'align="center"',
+                        'td' => 'class="center"',
                         'text'=>$langs->trans("NoActionsToDo"),
                     );
 
@@ -175,7 +174,7 @@ class box_actions extends ModeleBoxes
             }
         } else {
             $this->info_box_contents[0][0] = array(
-                'td' => 'align="left" class="nohover opacitymedium"',
+                'td' => 'class="nohover opacitymedium left"',
                 'text' => $langs->trans("ReadPermissionNotAllowed")
             );
 		}
@@ -184,12 +183,12 @@ class box_actions extends ModeleBoxes
 	/**
 	 *	Method to show box
 	 *
-	 *	@param	array	$head       Array with properties of box title
+	 *	@param  array	$head       Array with properties of box title
 	 *	@param  array	$contents   Array with properties of box lines
 	 *  @param	int		$nooutput	No print, only return string
 	 *	@return	string
 	 */
-    function showBox($head = null, $contents = null, $nooutput=0)
+    public function showBox($head = null, $contents = null, $nooutput = 0)
     {
 		global $langs, $conf;
 		$out = parent::showBox($this->info_box_head, $this->info_box_contents);
@@ -221,13 +220,13 @@ class box_actions extends ModeleBoxes
 						$dateligne=$contents[$line][4]['text'];
 						$percentage=$contents[$line][5]['text'];
 						$out.= '<tr class="oddeven">';
-						$out.= '<td align=center>';
-						$out.= img_object("",$logo);
+						$out.= '<td class="center">';
+						$out.= img_object("", $logo);
 						$out.= '</td>';
-						$out.= '<td align=center><a href="'.$urlevent.'">'.$label.'</a></td>';
-						$out.= '<td align=center><a href="'.$urlsoc.'">'.img_object("",$logosoc)." ".$nomsoc.'</a></td>';
-						$out.= '<td align=center>'.$dateligne.'</td>';
-						$out.= '<td align=center>'.$percentage.'</td>';
+						$out.= '<td class="center"><a href="'.$urlevent.'">'.$label.'</a></td>';
+						$out.= '<td class="center"><a href="'.$urlsoc.'">'.img_object("", $logosoc)." ".$nomsoc.'</a></td>';
+						$out.= '<td class="center">'.$dateligne.'</td>';
+						$out.= '<td class="center">'.$percentage.'</td>';
 						$out.= '</tr>';
 					}
 				}
@@ -258,6 +257,5 @@ class box_actions extends ModeleBoxes
 		else print $out;
 
 		return '';
-	}
+    }
 }
-

@@ -57,7 +57,7 @@ abstract class CommonObjectLine extends CommonObject
      * 	@param	string $type Label type (long or short)
      *	@return	string|int <0 if ko, label if ok
      */
-	public function getLabelOfUnit($type='long')
+	public function getLabelOfUnit($type = 'long')
 	{
 		global $langs;
 

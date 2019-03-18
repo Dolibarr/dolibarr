@@ -34,17 +34,17 @@ include_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
  */
 class CommandeStats extends Stats
 {
-	/**
-	 * @var string Name of table without prefix where object is stored
-	 */
-	public $table_element;
+    /**
+     * @var string Name of table without prefix where object is stored
+     */
+    public $table_element;
 
-	var $socid;
-    var $userid;
+    public $socid;
+    public $userid;
 
-    var $from;
-	var $field;
-    var $where;
+    public $from;
+    public $field;
+    public $where;
 
 
 	/**
@@ -55,7 +55,7 @@ class CommandeStats extends Stats
 	 * @param 	string	$mode	   Option ('customer', 'supplier')
 	 * @param   int		$userid    Id user for filter (creation user)
 	 */
-	function __construct($db, $socid, $mode, $userid=0)
+	public function __construct($db, $socid, $mode, $userid = 0)
 	{
 		global $user, $conf;
 
@@ -74,7 +74,7 @@ class CommandeStats extends Stats
 			$this->field_line='total_ht';
 			$this->where.= " c.fk_statut > 0";    // Not draft and not cancelled
 		}
-		if ($mode == 'supplier')
+		elseif ($mode == 'supplier')
 		{
 			$object=new CommandeFournisseur($this->db);
 			$this->from = MAIN_DB_PREFIX.$object->table_element." as c";
@@ -101,7 +101,7 @@ class CommandeStats extends Stats
      *	@param	int		$format		0=Label of absiss is a translated text, 1=Label of absiss is month number, 2=Label of absiss is first letter of month
 	 * @return	array				Array with number by month
 	 */
-	function getNbByMonth($year, $format=0)
+	public function getNbByMonth($year, $format = 0)
 	{
 		global $user;
 
@@ -111,7 +111,7 @@ class CommandeStats extends Stats
 		$sql.= " WHERE c.date_commande BETWEEN '".$this->db->idate(dol_get_first_day($year))."' AND '".$this->db->idate(dol_get_last_day($year))."'";
 		$sql.= " AND ".$this->where;
 		$sql.= " GROUP BY dm";
-        $sql.= $this->db->order('dm','DESC');
+        $sql.= $this->db->order('dm', 'DESC');
 
 		$res=$this->_getNbByMonth($year, $sql, $format);
 		return $res;
@@ -123,7 +123,7 @@ class CommandeStats extends Stats
 	 * @return	array	Array with number by year
 	 *
 	 */
-	function getNbByYear()
+	public function getNbByYear()
 	{
 		global $user;
 
@@ -132,7 +132,7 @@ class CommandeStats extends Stats
 		if (!$user->rights->societe->client->voir && !$this->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql.= " WHERE ".$this->where;
 		$sql.= " GROUP BY dm";
-        $sql.= $this->db->order('dm','DESC');
+        $sql.= $this->db->order('dm', 'DESC');
 
 		return $this->_getNbByYear($sql);
 	}
@@ -144,7 +144,7 @@ class CommandeStats extends Stats
      * @param	int		$format		0=Label of absiss is a translated text, 1=Label of absiss is month number, 2=Label of absiss is first letter of month
 	 * @return	array				Array with amount by month
 	 */
-	function getAmountByMonth($year, $format=0)
+	public function getAmountByMonth($year, $format = 0)
 	{
 		global $user;
 
@@ -154,7 +154,7 @@ class CommandeStats extends Stats
 		$sql.= " WHERE c.date_commande BETWEEN '".$this->db->idate(dol_get_first_day($year))."' AND '".$this->db->idate(dol_get_last_day($year))."'";
 		$sql.= " AND ".$this->where;
 		$sql.= " GROUP BY dm";
-        $sql.= $this->db->order('dm','DESC');
+        $sql.= $this->db->order('dm', 'DESC');
 
 		$res=$this->_getAmountByMonth($year, $sql, $format);
 		return $res;
@@ -166,7 +166,7 @@ class CommandeStats extends Stats
 	 * @param	int		$year	year for stats
 	 * @return	array			array with number by month
 	 */
-	function getAverageByMonth($year)
+	public function getAverageByMonth($year)
 	{
 		global $user;
 
@@ -176,7 +176,7 @@ class CommandeStats extends Stats
 		$sql.= " WHERE c.date_commande BETWEEN '".$this->db->idate(dol_get_first_day($year))."' AND '".$this->db->idate(dol_get_last_day($year))."'";
 		$sql.= " AND ".$this->where;
 		$sql.= " GROUP BY dm";
-        $sql.= $this->db->order('dm','DESC');
+        $sql.= $this->db->order('dm', 'DESC');
 
 		return $this->_getAverageByMonth($year, $sql);
 	}
@@ -186,7 +186,7 @@ class CommandeStats extends Stats
 	 *
 	 *	@return	array	Array of values
 	 */
-	function getAllByYear()
+	public function getAllByYear()
 	{
 		global $user;
 
@@ -195,7 +195,7 @@ class CommandeStats extends Stats
 		if (!$user->rights->societe->client->voir && !$this->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql.= " WHERE ".$this->where;
 		$sql.= " GROUP BY year";
-        $sql.= $this->db->order('year','DESC');
+        $sql.= $this->db->order('year', 'DESC');
 
 		return $this->_getAllByYear($sql);
 	}
@@ -206,7 +206,7 @@ class CommandeStats extends Stats
 	 *	@param	int		$year	Year to scan
 	 *	@return	array	Array of values
 	 */
-	function getAllByProduct($year)
+	public function getAllByProduct($year)
 	{
 		global $user;
 
@@ -215,12 +215,11 @@ class CommandeStats extends Stats
 		if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql.= " WHERE ".$this->where;
 		$sql.= " AND c.rowid = tl.fk_commande AND tl.fk_product = product.rowid";
-    	$sql.= " AND c.date_commande BETWEEN '".$this->db->idate(dol_get_first_day($year,1,false))."' AND '".$this->db->idate(dol_get_last_day($year,12,false))."'";
+    	$sql.= " AND c.date_commande BETWEEN '".$this->db->idate(dol_get_first_day($year, 1, false))."' AND '".$this->db->idate(dol_get_last_day($year, 12, false))."'";
 		$sql.= " GROUP BY product.ref";
-        $sql.= $this->db->order('nb','DESC');
+        $sql.= $this->db->order('nb', 'DESC');
         //$sql.= $this->db->plimit(20);
 
 		return $this->_getAllByProduct($sql);
 	}
 }
-

@@ -35,8 +35,8 @@ $langs->loadLangs(array("admin","receiptprinter"));
 
 if (! $user->admin) accessforbidden();
 
-$action = GETPOST('action','alpha');
-$mode = GETPOST('mode','alpha');
+$action = GETPOST('action', 'alpha');
+$mode = GETPOST('mode', 'alpha');
 
 $printername = GETPOST('printername', 'alpha');
 $printerid = GETPOST('printerid', 'int');
@@ -60,7 +60,7 @@ if (!function_exists('gzdecode')) {
      */
     function gzdecode($data)
     {
-        return gzinflate(substr($data,10,-8));
+        return gzinflate(substr($data, 10, -8));
     }
 }
 
@@ -68,8 +68,7 @@ if (!function_exists('gzdecode')) {
  * Action
  */
 
-if ($action == 'addprinter' && $user->admin)
-{
+if ($action == 'addprinter' && $user->admin) {
     $error=0;
     $db->begin();
     if (empty($printername)) {
@@ -81,15 +80,14 @@ if ($action == 'addprinter' && $user->admin)
         setEventMessages($langs->trans("PrinterParameterEmpty"), null, 'warnings');
     }
 
-    if (! $error)
-    {
-        $result= $printer->AddPrinter($printername, GETPOST('printertypeid', 'int'), GETPOST('printerprofileid', 'int'), $parameter);
+    if (! $error) {
+        $result= $printer->addPrinter($printername, GETPOST('printertypeid', 'int'), GETPOST('printerprofileid', 'int'), $parameter);
         if ($result > 0) $error++;
 
         if (! $error)
         {
             $db->commit();
-            setEventMessages($langs->trans("PrinterAdded",$printername), null);
+            setEventMessages($langs->trans("PrinterAdded", $printername), null);
         }
         else
         {
@@ -100,8 +98,7 @@ if ($action == 'addprinter' && $user->admin)
     $action = '';
 }
 
-if ($action == 'deleteprinter' && $user->admin)
-{
+if ($action == 'deleteprinter' && $user->admin) {
     $error=0;
     $db->begin();
     if (empty($printerid)) {
@@ -109,15 +106,14 @@ if ($action == 'deleteprinter' && $user->admin)
         setEventMessages($langs->trans("PrinterIdEmpty"), null, 'errors');
     }
 
-    if (! $error)
-    {
-        $result= $printer->DeletePrinter($printerid);
+    if (! $error) {
+        $result= $printer->deletePrinter($printerid);
         if ($result > 0) $error++;
 
         if (! $error)
         {
             $db->commit();
-            setEventMessages($langs->trans("PrinterDeleted",$printername), null);
+            setEventMessages($langs->trans("PrinterDeleted", $printername), null);
         }
         else
         {
@@ -128,8 +124,7 @@ if ($action == 'deleteprinter' && $user->admin)
     $action = '';
 }
 
-if ($action == 'updateprinter' && $user->admin)
-{
+if ($action == 'updateprinter' && $user->admin) {
     $error=0;
     $db->begin();
     if (empty($printerid)) {
@@ -137,18 +132,14 @@ if ($action == 'updateprinter' && $user->admin)
         setEventMessages($langs->trans("PrinterIdEmpty"), null, 'errors');
     }
 
-    if (! $error)
-    {
-        $result= $printer->UpdatePrinter($printername, GETPOST('printertypeid', 'int'), GETPOST('printerprofileid', 'int'), $parameter, $printerid);
+    if (! $error) {
+        $result= $printer->updatePrinter($printername, GETPOST('printertypeid', 'int'), GETPOST('printerprofileid', 'int'), $parameter, $printerid);
         if ($result > 0) $error++;
 
-        if (! $error)
-        {
+        if (! $error) {
             $db->commit();
-            setEventMessages($langs->trans("PrinterUpdated",$printername), null);
-        }
-        else
-        {
+            setEventMessages($langs->trans("PrinterUpdated", $printername), null);
+        } else {
             $db->rollback();
             dol_print_error($db);
         }
@@ -156,24 +147,19 @@ if ($action == 'updateprinter' && $user->admin)
     $action = '';
 }
 
-if ($action == 'testprinter' && $user->admin)
-{
+if ($action == 'testprinter' && $user->admin) {
     $error=0;
     if (empty($printerid)) {
         $error++;
         setEventMessages($langs->trans("PrinterIdEmpty"), null, 'errors');
     }
 
-    if (! $error)
-    {
+    if (! $error) {
         // test
-        $ret = $printer->SendTestToPrinter($printerid);
-        if ($ret == 0)
-        {
+        $ret = $printer->sendTestToPrinter($printerid);
+        if ($ret == 0) {
             setEventMessages($langs->trans("TestSentToPrinter", $printername), null);
-        }
-        else
-        {
+        } else {
             setEventMessages($printer->error, $printer->errors, 'errors');
         }
     }
@@ -181,8 +167,7 @@ if ($action == 'testprinter' && $user->admin)
 }
 
 
-if ($action == 'updatetemplate' && $user->admin)
-{
+if ($action == 'updatetemplate' && $user->admin) {
     $error=0;
     $db->begin();
     if (empty($templateid)) {
@@ -190,18 +175,14 @@ if ($action == 'updatetemplate' && $user->admin)
         setEventMessages($langs->trans("TemplateIdEmpty"), null, 'errors');
     }
 
-    if (! $error)
-    {
-        $result= $printer->UpdateTemplate($templatename, $template, $templateid);
+    if (! $error) {
+        $result= $printer->updateTemplate($templatename, $template, $templateid);
         if ($result > 0) $error++;
 
-        if (! $error)
-        {
+        if (! $error) {
             $db->commit();
-            setEventMessages($langs->trans("TemplateUpdated",$templatename), null);
-        }
-        else
-        {
+            setEventMessages($langs->trans("TemplateUpdated", $templatename), null);
+        } else {
             $db->rollback();
             dol_print_error($db);
         }
@@ -216,15 +197,14 @@ if ($action == 'updatetemplate' && $user->admin)
 
 $form = new Form($db);
 
-llxHeader('',$langs->trans("ReceiptPrinterSetup"));
+llxHeader('', $langs->trans("ReceiptPrinterSetup"));
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
-print load_fiche_titre($langs->trans("ReceiptPrinterSetup"),$linkback,'title_setup');
+print load_fiche_titre($langs->trans("ReceiptPrinterSetup"), $linkback, 'title_setup');
 
 $head = receiptprinteradmin_prepare_head($mode);
 
-if ($mode == 'config' && $user->admin)
-{
+if ($mode == 'config' && $user->admin) {
     print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?mode=config" autocomplete="off">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     if ($action!='editprinter') {
@@ -253,11 +233,9 @@ if ($mode == 'config' && $user->admin)
     if ($ret > 0) {
         setEventMessages($printer->error, $printer->errors, 'errors');
     } else {
-        for ($line=0; $line < $nbofprinters; $line++)
-        {
+        for ($line=0; $line < $nbofprinters; $line++) {
             print '<tr class="oddeven">';
-            if ($action=='editprinter' && $printer->listprinters[$line]['rowid']==$printerid)
-            {
+            if ($action=='editprinter' && $printer->listprinters[$line]['rowid']==$printerid) {
                 print '<input type="hidden" name="printerid" value="'.$printer->listprinters[$line]['rowid'].'">';
                 print '<td><input size="50" type="text" name="printername" value="'.$printer->listprinters[$line]['name'].'"></td>';
                 $ret = $printer->selectTypePrinter($printer->listprinters[$line]['fk_type']);
@@ -269,32 +247,30 @@ if ($mode == 'config' && $user->admin)
                 print '<td></td>';
                 print '<td></td>';
                 print '</tr>';
-             } else {
+            } else {
                 print '<td>'.$printer->listprinters[$line]['name'].'</td>';
                 print '<td>'.$langs->trans($printer->listprinters[$line]['fk_type_name']).'</td>';
                 print '<td>'.$langs->trans($printer->listprinters[$line]['fk_profile_name']).'</td>';
                 print '<td>'.$printer->listprinters[$line]['parameter'].'</td>';
                 // edit icon
                 print '<td><a href="'.$_SERVER['PHP_SELF'].'?mode=config&amp;action=editprinter&amp;printerid='.$printer->listprinters[$line]['rowid'].'">';
-                print img_picto($langs->trans("Edit"),'edit');
+                print img_picto($langs->trans("Edit"), 'edit');
                 print '</a></td>';
                 // delete icon
                 print '<td><a href="'.$_SERVER['PHP_SELF'].'?mode=config&amp;action=deleteprinter&amp;printerid='.$printer->listprinters[$line]['rowid'].'&amp;printername='.$printer->listprinters[$line]['name'].'">';
-                print img_picto($langs->trans("Delete"),'delete');
+                print img_picto($langs->trans("Delete"), 'delete');
                 print '</a></td>';
                 // test icon
                 print '<td><a href="'.$_SERVER['PHP_SELF'].'?mode=config&amp;action=testprinter&amp;printerid='.$printer->listprinters[$line]['rowid'].'&amp;printername='.$printer->listprinters[$line]['name'].'">';
-                print img_picto($langs->trans("TestPrinter"),'printer');
+                print img_picto($langs->trans("TestPrinter"), 'printer');
                 print '</a></td>';
                 print '</tr>';
             }
         }
     }
 
-    if ($action!='editprinter')
-    {
-        if ($nbofprinters > 0)
-        {
+    if ($action!='editprinter') {
+        if ($nbofprinters > 0) {
             print '<tr class="liste_titre">';
             print '<th>'.$langs->trans("Name").'</th>';
             print '<th>'.$langs->trans("Type").'</th>';
@@ -357,8 +333,7 @@ if ($mode == 'config' && $user->admin)
     dol_fiche_end();
 }
 
-if ($mode == 'template' && $user->admin)
-{
+if ($mode == 'template' && $user->admin) {
     print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?mode=template" autocomplete="off">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     if ($action!='edittemplate') {
@@ -400,15 +375,15 @@ if ($mode == 'template' && $user->admin)
                 print '<td>'.nl2br(htmlentities($printer->listprinterstemplates[$line]['template'])).'</td>';
                 // edit icon
                 print '<td><a href="'.$_SERVER['PHP_SELF'].'?mode=template&amp;action=edittemplate&amp;templateid='.$printer->listprinterstemplates[$line]['rowid'].'">';
-                print img_picto($langs->trans("Edit"),'edit');
+                print img_picto($langs->trans("Edit"), 'edit');
                 print '</a></td>';
                 // delete icon
                 print '<td><a href="'.$_SERVER['PHP_SELF'].'?mode=template&amp;action=deletetemplate&amp;templateid='.$printer->listprinterstemplates[$line]['rowid'].'&amp;templatename='.$printer->listprinterstemplates[$line]['name'].'">';
-                print img_picto($langs->trans("Delete"),'delete');
+                print img_picto($langs->trans("Delete"), 'delete');
                 print '</a></td>';
                 // test icon
                 print '<td><a href="'.$_SERVER['PHP_SELF'].'?mode=template&amp;action=testtemplate&amp;templateid='.$printer->listprinterstemplates[$line]['rowid'].'&amp;templatename='.$printer->listprinterstemplates[$line]['name'].'">';
-                print img_picto($langs->trans("TestPrinterTemplate"),'printer');
+                print img_picto($langs->trans("TestPrinterTemplate"), 'printer');
                 print '</a></td>';
             }
             print '</tr>';
@@ -429,8 +404,7 @@ if ($mode == 'template' && $user->admin)
     print '<th>'.$langs->trans("Description").'</th>';
     print "</tr>\n";
     $max = count($printer->tags);
-    for ($tag=0; $tag < $max; $tag++)
-    {
+    for ($tag=0; $tag < $max; $tag++) {
         print '<tr class="oddeven">';
         print '<td>&lt;'.$printer->tags[$tag].'&gt;</td><td>'.$langs->trans(strtoupper($printer->tags[$tag])).'</td>';
         print '</tr>';

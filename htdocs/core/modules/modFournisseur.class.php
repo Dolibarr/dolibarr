@@ -20,11 +20,10 @@
  */
 
 /**
- * 		\defgroup   fournisseur     suppliers Module
- *		\brief      Module to manage companies and contacts of supplier type
+ * 		\defgroup   fournisseur     Module suppliers
  *		\file       htdocs/core/modules/modFournisseur.class.php
  *		\ingroup    fournisseur
- *		\brief      Description and activation file for module Fournisseur
+ *		\brief      Description and activation file for module Supplier
  */
 include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 
@@ -40,7 +39,7 @@ class modFournisseur extends DolibarrModules
 	 *
 	 *   @param      DoliDB		$db      Database handler
 	 */
-	function __construct($db)
+	public function __construct($db)
 	{
 		global $conf, $user;
 
@@ -52,7 +51,7 @@ class modFournisseur extends DolibarrModules
 		$this->family = "srm";
 		$this->module_position = '10';
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
-		$this->name = preg_replace('/^mod/i','',get_class($this));
+		$this->name = preg_replace('/^mod/i', '', get_class($this));
 		$this->description = "Gestion des fournisseurs";
 
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
@@ -62,12 +61,13 @@ class modFournisseur extends DolibarrModules
 		$this->picto='company';
 
 		// Data directories to create when module is enabled
-		$this->dirs = array("/fournisseur/temp",
-							"/fournisseur/commande",
-		                    "/fournisseur/commande/temp",
-		                    "/fournisseur/facture",
-		                    "/fournisseur/facture/temp"
-		                    );
+		$this->dirs = array(
+            "/fournisseur/temp",
+            "/fournisseur/commande",
+            "/fournisseur/commande/temp",
+            "/fournisseur/facture",
+            "/fournisseur/facture/temp"
+        );
 
 		// Dependencies
 		$this->depends = array("modSociete");
@@ -623,7 +623,7 @@ class modFournisseur extends DolibarrModules
      *      @param      string	$options    Options when enabling module ('', 'noboxes')
 	 *      @return     int             	1 if OK, 0 if KO
 	 */
-	function init($options='')
+	public function init($options = '')
 	{
 		global $conf;
 
@@ -634,6 +634,6 @@ class modFournisseur extends DolibarrModules
 			 "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->db->escape($this->const[0][2])."','order_supplier',".$conf->entity.")",
 		);
 
-		return $this->_init($sql,$options);
+		return $this->_init($sql, $options);
 	}
 }

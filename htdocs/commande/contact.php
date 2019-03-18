@@ -35,13 +35,13 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('orders', 'sendings', 'companies'));
 
-$id=GETPOST('id','int');
-$ref=GETPOST('ref','alpha');
-$action=GETPOST('action','alpha');
+$id=GETPOST('id', 'int');
+$ref=GETPOST('ref', 'alpha');
+$action=GETPOST('action', 'alpha');
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'commande', $id,'');
+$result = restrictedArea($user, 'commande', $id, '');
 
 $object = new Commande($db);
 
@@ -55,7 +55,7 @@ if ($action == 'addcontact' && $user->rights->commande->creer)
 
     if ($result > 0 && $id > 0)
     {
-    	$contactid = (GETPOST('userid','int') ? GETPOST('userid','int') : GETPOST('contactid','int'));
+    	$contactid = (GETPOST('userid', 'int') ? GETPOST('userid', 'int') : GETPOST('contactid', 'int'));
   		$result = $object->add_contact($contactid, $_POST["type"], $_POST["source"]);
     }
 
@@ -79,7 +79,7 @@ if ($action == 'addcontact' && $user->rights->commande->creer)
 }
 
 // bascule du statut d'un contact
-else if ($action == 'swapstatut' && $user->rights->commande->creer)
+elseif ($action == 'swapstatut' && $user->rights->commande->creer)
 {
 	if ($object->fetch($id))
 	{
@@ -92,7 +92,7 @@ else if ($action == 'swapstatut' && $user->rights->commande->creer)
 }
 
 // Efface un contact
-else if ($action == 'deletecontact' && $user->rights->commande->creer)
+elseif ($action == 'deletecontact' && $user->rights->commande->creer)
 {
 	$object->fetch($id);
 	$result = $object->delete_contact($_GET["lineid"]);
@@ -107,7 +107,7 @@ else if ($action == 'deletecontact' && $user->rights->commande->creer)
 	}
 }
 /*
-else if ($action == 'setaddress' && $user->rights->commande->creer)
+elseif ($action == 'setaddress' && $user->rights->commande->creer)
 {
 	$object->fetch($id);
 	$result=$object->setDeliveryAddress($_POST['fk_address']);
@@ -119,7 +119,7 @@ else if ($action == 'setaddress' && $user->rights->commande->creer)
  * View
  */
 
-llxHeader('',$langs->trans('Order'),'EN:Customers_Orders|FR:Commandes_Clients|ES:Pedidos de clientes');
+llxHeader('', $langs->trans('Order'), 'EN:Customers_Orders|FR:Commandes_Clients|ES:Pedidos de clientes');
 
 $form = new Form($db);
 $formcompany = new FormCompany($db);
@@ -199,7 +199,7 @@ if ($id > 0 || ! empty($ref))
 		print '<br>';
 
 		// Contacts lines (modules that overwrite templates must declare this into descriptor)
-		$dirtpls=array_merge($conf->modules_parts['tpl'],array('/core/tpl'));
+		$dirtpls=array_merge($conf->modules_parts['tpl'], array('/core/tpl'));
 		foreach($dirtpls as $reldir)
 		{
 		    $res=@include dol_buildpath($reldir.'/contacts.tpl.php');

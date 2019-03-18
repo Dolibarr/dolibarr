@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2014	Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
+/* Copyright (C) 2014	Alexandre Spangaro	<aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,14 +43,14 @@ function fiscalyear_prepare_head(Fiscalyear $object)
 	// Entries must be declared in modules descriptor with line
     // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
     // $this->tabs = array('entity:-tabname);   												to remove a tab
-	complete_head_from_modules($conf,$langs,$object,$head,$h,'fiscalyear');
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'fiscalyear');
 
 	$head[$h][0] = DOL_URL_ROOT . '/accountancy/admin/fiscalyear_info.php?id=' . $object->id;
 	$head[$h][1] = $langs->trans("Info");
 	$head[$h][2] = 'info';
 	$h++;
 
-	complete_head_from_modules($conf,$langs,$object,$head,$h,'fiscalyear','remove');
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'fiscalyear', 'remove');
 
 	return $head;
 }

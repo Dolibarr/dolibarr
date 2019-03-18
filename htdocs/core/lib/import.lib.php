@@ -32,7 +32,7 @@
  * @param	int			$maxstep	Limit steps to maxstep or no limit if 0
  * @return	array					Array of tabs
  */
-function import_prepare_head($param, $maxstep=0)
+function import_prepare_head($param, $maxstep = 0)
 {
 	global $langs;
 
@@ -52,4 +52,3 @@ function import_prepare_head($param, $maxstep=0)
 
 	return $head;
 }
-

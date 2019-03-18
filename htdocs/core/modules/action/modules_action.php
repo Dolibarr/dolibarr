@@ -33,7 +33,7 @@ abstract class ModeleAction extends CommonDocGenerator
 	 */
 	public $error='';
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *  Return list of active generation modules
      *
@@ -41,7 +41,7 @@ abstract class ModeleAction extends CommonDocGenerator
      *  @param	integer		$maxfilenamelength  Max length of value to show
      * 	@return	array							List of templates
      */
-    static function liste_modeles($db,$maxfilenamelength=0)
+    public static function liste_modeles($db, $maxfilenamelength = 0)
     {
         // phpcs:enable
         global $conf;
@@ -50,7 +50,7 @@ abstract class ModeleAction extends CommonDocGenerator
         $liste=array();
 
         include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-        $liste=getListOfModels($db,$type,$maxfilenamelength);
+        $liste=getListOfModels($db, $type, $maxfilenamelength);
 
         return $liste;
     }
@@ -69,7 +69,7 @@ abstract class ModeleAction extends CommonDocGenerator
  *  @param  int			$hideref        Hide ref
  *  @return int         				0 if KO, 1 if OK
  */
-function action_create($db, $object, $modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0)
+function action_create($db, $object, $modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 {
     // phpcs:enable
 	global $conf,$langs,$user;
@@ -93,7 +93,7 @@ function action_create($db, $object, $modele, $outputlangs, $hidedetails=0, $hid
 	}
 
 	// If selected modele is a filename template (then $modele="modelname:filename")
-	$tmp=explode(':',$modele,2);
+	$tmp=explode(':', $modele, 2);
     if (! empty($tmp[1]))
     {
         $modele=$tmp[0];
@@ -103,7 +103,7 @@ function action_create($db, $object, $modele, $outputlangs, $hidedetails=0, $hid
 	// Search template files
 	$file=''; $classname=''; $filefound=0;
 	$dirmodels=array('/');
-	if (is_array($conf->modules_parts['models'])) $dirmodels=array_merge($dirmodels,$conf->modules_parts['models']);
+	if (is_array($conf->modules_parts['models'])) $dirmodels=array_merge($dirmodels, $conf->modules_parts['models']);
 	foreach($dirmodels as $reldir)
 	{
     	foreach(array('doc','pdf') as $prefix)
@@ -111,7 +111,7 @@ function action_create($db, $object, $modele, $outputlangs, $hidedetails=0, $hid
     	    $file = $prefix."_".$modele.".modules.php";
 
     		// On verifie l'emplacement du modele
-	        $file=dol_buildpath($reldir."core/modules/action/doc/".$file,0);
+	        $file=dol_buildpath($reldir."core/modules/action/doc/".$file, 0);
     		if (file_exists($file))
     		{
     			$filefound=1;
@@ -145,13 +145,13 @@ function action_create($db, $object, $modele, $outputlangs, $hidedetails=0, $hid
 		else
 		{
 			$outputlangs->charset_output=$sav_charset_output;
-			dol_print_error($db,"action_pdf_create Error: ".$obj->error);
+			dol_print_error($db, "action_pdf_create Error: ".$obj->error);
 			return 0;
 		}
 	}
 	else
 	{
-		print $langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists",$file);
+		print $langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists", $file);
 		return 0;
 	}
 }

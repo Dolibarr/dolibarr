@@ -113,7 +113,7 @@ if (empty($files))
 
 $dups=array();
 $exludefiles = array('.','..','README');
-$files = array_diff($files,$exludefiles);
+$files = array_diff($files, $exludefiles);
 // To force a file: $files=array('myfile.lang');
 if (isset($argv[2]))
 {
@@ -128,10 +128,10 @@ foreach ($files AS $file) {
 		$content = file($workdir.$file);
 		foreach ($content AS $line => $row) {
 			// don't want comment lines
-			if (substr($row,0,1) !== '#') {
+			if (substr($row, 0, 1) !== '#') {
 				// don't want lines without the separator (why should those even be here, anyway...)
-				if (strpos($row,'=')!==false) {
-					$row_array = explode('=',$row);		// $row_array[0] = key
+				if (strpos($row, '=')!==false) {
+					$row_array = explode('=', $row);		// $row_array[0] = key
 					$langstrings_3d[$path_file['basename']][$line+1]=$row_array[0];
 					$langstrings_3dtrans[$path_file['basename']][$line+1]=$row_array[1];
 					$langstrings_full[]=$row_array[0];
@@ -215,8 +215,8 @@ foreach ($dups as $string => $pages)
 	$s.="\n";
 
 	if ($duplicateinsamefile) $sduplicateinsamefile .= $s;
-	else if ($inmain) $sinmainandother .= $s;
-	else if ($inadmin) $sininstallandadmin .= $s;
+	elseif ($inmain) $sinmainandother .= $s;
+	elseif ($inadmin) $sininstallandadmin .= $s;
 	else $sother .= $s;
 }
 
@@ -355,7 +355,7 @@ if ((! empty($_REQUEST['unused']) && $_REQUEST['unused'] == 'true') || (isset($a
 	    $search = '-e "\''.$value.'\'" -e \'"'.$value.'"\' -e "('.$value.')" -e "('.$value.',"';
 		$string =  'grep -R -m 1 -F --exclude=includes/* --include=*.php '.$search.' '.$htdocs.'* '.$scripts.'*';
 		//print $string."<br>\n";
-		exec($string,$output);
+		exec($string, $output);
 		if (empty($output)) {
    			$unused[$value] = $line;
        		echo $line;        // $trad contains the \n
@@ -372,7 +372,7 @@ if ((! empty($_REQUEST['unused']) && $_REQUEST['unused'] == 'true') || (isset($a
 	{
         $filetosave='/tmp/'.($argv[2]?$argv[2]:"").'notused.lang';
         print "Strings in en_US that are never used are saved into file ".$filetosave.":\n";
-        file_put_contents($filetosave, implode("",$unused));
+        file_put_contents($filetosave, implode("", $unused));
         print "To remove from original file, run command :\n";
         if (($argv[2]?$argv[2]:"")) print 'cd htdocs/langs/en_US; mv '.($argv[2]?$argv[2]:"")." ".($argv[2]?$argv[2]:"").".tmp; ";
         print "diff ".($argv[2]?$argv[2]:"").".tmp ".$filetosave." | grep \< | cut  -b 3- > ".($argv[2]?$argv[2]:"");
@@ -388,4 +388,3 @@ if ($web)
 }
 
 exit;
-

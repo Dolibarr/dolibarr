@@ -28,20 +28,20 @@ include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
  */
 class box_bookmarks extends ModeleBoxes
 {
-	var $boxcode="bookmarks";
-	var $boximg="object_bookmark";
-	var $boxlabel="BoxMyLastBookmarks";
-	var $depends = array("bookmark");
+    public $boxcode="bookmarks";
+    public $boximg="object_bookmark";
+    public $boxlabel="BoxMyLastBookmarks";
+    public $depends = array("bookmark");
 
 	/**
      * @var DoliDB Database handler.
      */
     public $db;
-    
-	var $param;
 
-	var $info_box_head = array();
-	var $info_box_contents = array();
+    public $param;
+
+    public $info_box_head = array();
+    public $info_box_contents = array();
 
 
 	/**
@@ -50,7 +50,7 @@ class box_bookmarks extends ModeleBoxes
 	 *  @param  DoliDB  $db         Database handler
 	 *  @param  string  $param      More parameters
 	 */
-	function __construct($db,$param)
+	public function __construct($db, $param)
 	{
 	    global $user;
 
@@ -65,7 +65,7 @@ class box_bookmarks extends ModeleBoxes
      *  @param	int		$max        Maximum number of records to load
      *  @return	void
 	 */
-	function loadBox($max=5)
+	public function loadBox($max = 5)
 	{
 		global $user, $langs, $db, $conf;
 		$langs->load("boxes");
@@ -73,7 +73,7 @@ class box_bookmarks extends ModeleBoxes
 		$this->max=$max;
 
 		$this->info_box_head = array(
-            'text' => $langs->trans("BoxMyLastBookmarks",$max),
+            'text' => $langs->trans("BoxMyLastBookmarks", $max),
             'sublink' => DOL_URL_ROOT.'/bookmarks/list.php',
         );
         if ($user->rights->bookmark->creer) {
@@ -92,7 +92,7 @@ class box_bookmarks extends ModeleBoxes
 			$sql.= " FROM ".MAIN_DB_PREFIX."bookmark as b";
 			$sql.= " WHERE fk_user = ".$user->id;
             $sql.= " AND b.entity = ".$conf->entity;
-			$sql.= $db->order("position","ASC");
+			$sql.= $db->order("position", "ASC");
 			$sql.= $db->plimit($max, 0);
 
 			$result = $db->query($sql);
@@ -106,7 +106,7 @@ class box_bookmarks extends ModeleBoxes
                     $objp = $db->fetch_object($result);
 
                     $this->info_box_contents[$line][0] = array(
-                        'td' => 'align="left" width="16"',
+                        'td' => 'class="left" width="16"',
                         'logo' => $this->boximg,
                         'url' => $objp->url,
                         'tooltip' => $objp->title,
@@ -127,7 +127,7 @@ class box_bookmarks extends ModeleBoxes
                     $mytxt=$langs->trans("NoRecordedBookmarks");
                     if ($user->rights->bookmark->creer) $mytxt.=' '.$langs->trans("ClickToAdd");
                     $this->info_box_contents[$line][0] = array(
-                        'td' => 'align="center" colspan="2"',
+                        'td' => 'class="center" colspan="2"',
                         'tooltip' => $mytxt,
                         'url'=> DOL_URL_ROOT.'/bookmarks/list.php', 'text'=>$mytxt,
                     );
@@ -143,23 +143,22 @@ class box_bookmarks extends ModeleBoxes
             }
         } else {
             $this->info_box_contents[0][0] = array(
-                'td' => 'align="left" class="nohover opacitymedium"',
+                'td' => 'class="nohover opacitymedium left"',
                 'text' => $langs->trans("ReadPermissionNotAllowed")
             );
         }
     }
 
-	/**
-	 *	Method to show box
-	 *
-	 *	@param	array	$head       Array with properties of box title
-	 *	@param  array	$contents   Array with properties of box lines
-	 *  @param	int		$nooutput	No print, only return string
-	 *	@return	string
-	 */
-    function showBox($head = null, $contents = null, $nooutput=0)
+    /**
+     *  Method to show box
+     *
+     *  @param	array	$head       Array with properties of box title
+     *  @param  array	$contents   Array with properties of box lines
+     *  @param	int		$nooutput	No print, only return string
+     *  @return	string
+     */
+    public function showBox($head = null, $contents = null, $nooutput = 0)
     {
-		return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
-	}
+        return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
+    }
 }
-

@@ -27,33 +27,33 @@ require_once DOL_DOCUMENT_ROOT .'/core/class/html.form.class.php';
  */
 class FormMailing extends Form
 {
-	/**
-	 * @var string[] Error codes (or messages)
-	 */
-	public $errors = array();
+    /**
+     * @var string[] Error codes (or messages)
+     */
+    public $errors = array();
 
-	/**
-	 * Output a select with destinaries status
-	 *
-	 * @param string   $selectedid     The selected id
-	 * @param string   $htmlname       Name of controm
-	 * @param integer  $show_empty     Show empty option
-	 * @return string HTML select
-	 */
-    public function selectDestinariesStatus($selectedid='', $htmlname='dest_status', $show_empty=0)
+    /**
+     * Output a select with destinaries status
+     *
+     * @param string   $selectedid     The selected id
+     * @param string   $htmlname       Name of controm
+     * @param integer  $show_empty     Show empty option
+     * @return string HTML select
+     */
+    public function selectDestinariesStatus($selectedid = '', $htmlname = 'dest_status', $show_empty = 0)
     {
 
-		global $langs;
-		$langs->load("mails");
+        global $langs;
+        $langs->load("mails");
 
-		require_once DOL_DOCUMENT_ROOT.'/comm/mailing/class/mailing.class.php';
-		$mailing = new Mailing($this->db);
+        require_once DOL_DOCUMENT_ROOT.'/comm/mailing/class/mailing.class.php';
+        $mailing = new Mailing($this->db);
 
-		$options = array();
+        $options = array();
 
-		if ($show_empty) {
-			$options[-2] = '';   // Note -1 is used for error
-		}
+        if ($show_empty) {
+            $options[-2] = '';   // Note -1 is used for error
+        }
 
         $options = $options + $mailing->statut_dest;
 

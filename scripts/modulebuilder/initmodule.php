@@ -156,7 +156,7 @@ if (! $error)
 		'Mon module'=>$modulename,
 		'mon module'=>$modulename,
 		'htdocs/modulebuilder/template'=>strtolower($modulename),
-		'---Put here your own copyright and developer email---'=>dol_print_date($now,'%Y').' '.$user->getFullName($langs).($user->email?' <'.$user->email.'>':'')
+		'---Put here your own copyright and developer email---'=>dol_print_date($now, '%Y').' '.$user->getFullName($langs).($user->email?' <'.$user->email.'>':'')
 		);
 
 
@@ -172,4 +172,3 @@ if (! $error)
 
 print 'Module initialized'."\n";
 exit(0);
-

@@ -36,7 +36,7 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
 	exit(-1);
 }
 
-if (! isset($argv[1]) || ! $argv[1] || ! in_array($argv[1],array('test','confirm')))
+if (! isset($argv[1]) || ! $argv[1] || ! in_array($argv[1], array('test','confirm')))
 {
 	print "Usage: $script_file (test|confirm) [delay]\n";
 	print "\n";
@@ -66,7 +66,7 @@ $error=0;
 
 @set_time_limit(0);
 print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." *****\n";
-dol_syslog($script_file." launched with arg ".join(',',$argv));
+dol_syslog($script_file." launched with arg ".join(',', $argv));
 
 $now=dol_now('tzserver');
 $duration_value=isset($argv[2])?$argv[2]:'none';
@@ -111,7 +111,7 @@ if ($resql)
                 // Break onto sales representative (new email or uid)
                 if (dol_strlen($oldemail) && $oldemail != 'none')
                 {
-                   	envoi_mail($mode,$oldemail,$message,$total,$oldlang,$oldsalerepresentative);
+                   	envoi_mail($mode, $oldemail, $message, $total, $oldlang, $oldsalerepresentative);
                 }
                 else
 				{
@@ -129,7 +129,7 @@ if ($resql)
             }
 
             // Define line content
-            $outputlangs=new Translate('',$conf);
+            $outputlangs=new Translate('', $conf);
             $outputlangs->setDefaultLang(empty($obj->lang)?$langs->defaultlang:$obj->lang);	// By default language of sale representative
 
             // Load translation files required by the page
@@ -137,11 +137,11 @@ if ($resql)
 
             if (dol_strlen($obj->email))
             {
-            	$message .= $outputlangs->trans("Invoice")." ".$obj->ref." : ".price($obj->total_ttc,0,$outputlangs,0,0,-1,$conf->currency)." : ".$obj->name."\n";
+            	$message .= $outputlangs->trans("Invoice")." ".$obj->ref." : ".price($obj->total_ttc, 0, $outputlangs, 0, 0, -1, $conf->currency)." : ".$obj->name."\n";
             	dol_syslog("email_unpaid_invoices_to_representatives.php: ".$obj->email);
             	$foundtoprocess++;
             }
-            print "Unpaid invoice ".$obj->ref.", price ".price2num($obj->total_ttc).", due date ".dol_print_date($db->jdate($obj->due_date),'day')." (linked to company ".$obj->name.", sale representative ".dolGetFirstLastname($obj->firstname, $obj->lastname).", email ".$obj->email.", lang ".$outputlangs->defaultlang."): ";
+            print "Unpaid invoice ".$obj->ref.", price ".price2num($obj->total_ttc).", due date ".dol_print_date($db->jdate($obj->due_date), 'day')." (linked to company ".$obj->name.", sale representative ".dolGetFirstLastname($obj->firstname, $obj->lastname).", email ".$obj->email.", lang ".$outputlangs->defaultlang."): ";
             if (dol_strlen($obj->email)) print "qualified.";
             else print "disqualified (no email).";
 			print "\n";
@@ -157,7 +157,7 @@ if ($resql)
         {
             if (dol_strlen($oldemail) && $oldemail != 'none')	// Break onto email (new email)
             {
-       			envoi_mail($mode,$oldemail,$message,$total,$oldlang,$oldsalerepresentative);
+       			envoi_mail($mode, $oldemail, $message, $total, $oldlang, $oldsalerepresentative);
             }
             else
 			{
@@ -192,13 +192,13 @@ else
  *  @param	string	$oldsalerepresentative	Old sale representative
  * 	@return	int								<0 if KO, >0 if OK
  */
-function envoi_mail($mode,$oldemail,$message,$total,$userlang,$oldsalerepresentative)
+function envoi_mail($mode, $oldemail, $message, $total, $userlang, $oldsalerepresentative)
 {
     global $conf,$langs;
 
     if (getenv('DOL_FORCE_EMAIL_TO')) $oldemail=getenv('DOL_FORCE_EMAIL_TO');
 
-    $newlangs=new Translate('',$conf);
+    $newlangs=new Translate('', $conf);
     $newlangs->setDefaultLang(empty($userlang)?(empty($conf->global->MAIN_LANG_DEFAULT)?'auto':$conf->global->MAIN_LANG_DEFAULT):$userlang);
     $newlangs->load("main");
     $newlangs->load("bills");
@@ -227,7 +227,7 @@ function envoi_mail($mode,$oldemail,$message,$total,$userlang,$oldsalerepresenta
     	$allmessage.= $newlangs->transnoentities("NoteListOfYourUnpaidInvoices").($usehtml?"<br>\n":"\n");
     }
     $allmessage.= $message.($usehtml?"<br>\n":"\n");
-    $allmessage.= $langs->trans("Total")." = ".price($total,0,$newlangs,0,0,-1,$conf->currency).($usehtml?"<br>\n":"\n");
+    $allmessage.= $langs->trans("Total")." = ".price($total, 0, $newlangs, 0, 0, -1, $conf->currency).($usehtml?"<br>\n":"\n");
     if (! empty($conf->global->SCRIPT_EMAIL_UNPAID_INVOICES_SALESREPRESENTATIVES_FOOTER))
     {
     	$allmessage.=$conf->global->SCRIPT_EMAIL_UNPAID_INVOICES_SALESREPRESENTATIVES_FOOTER;
@@ -277,4 +277,3 @@ function envoi_mail($mode,$oldemail,$message,$total,$userlang,$oldsalerepresenta
         return -1;
     }
 }
-

@@ -46,9 +46,9 @@ if (! $res && file_exists($path."../../htdocs/master.inc.php")) $res=@include $p
 if (! $res && file_exists("../master.inc.php")) $res=@include "../master.inc.php";
 if (! $res && file_exists("../../master.inc.php")) $res=@include "../../master.inc.php";
 if (! $res && file_exists("../../../master.inc.php")) $res=@include "../../../master.inc.php";
-if (! $res && preg_match('/\/nltechno([^\/]*)\//',$_SERVER["PHP_SELF"],$reg)) $res=@include $path."../../../dolibarr".$reg[1]."/htdocs/master.inc.php"; // Used on dev env only
-if (! $res && preg_match('/\/nltechno([^\/]*)\//',$_SERVER["PHP_SELF"],$reg)) $res=@include "../../../dolibarr".$reg[1]."/htdocs/master.inc.php"; // Used on dev env only
-if (! $res) die ("Failed to include master.inc.php file\n");
+if (! $res && preg_match('/\/nltechno([^\/]*)\//', $_SERVER["PHP_SELF"], $reg)) $res=@include $path."../../../dolibarr".$reg[1]."/htdocs/master.inc.php"; // Used on dev env only
+if (! $res && preg_match('/\/nltechno([^\/]*)\//', $_SERVER["PHP_SELF"], $reg)) $res=@include "../../../dolibarr".$reg[1]."/htdocs/master.inc.php"; // Used on dev env only
+if (! $res) die("Failed to include master.inc.php file\n");
 include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 
@@ -58,7 +58,7 @@ include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 $login='';
 $server='';
-if (preg_match('/^(.*)@(.*):(.*)$/',$sourceserver,$reg))
+if (preg_match('/^(.*)@(.*):(.*)$/', $sourceserver, $reg))
 {
 	$login=$reg[1];
 	$server=$reg[2];
@@ -84,7 +84,7 @@ print 'SFTP connect string : '.$sftpconnectstring."\n";
 
 // SFTP connect
 if (! function_exists("ssh2_connect")) {
-	dol_print_error('','ssh2_connect function does not exists'); exit(1);
+	dol_print_error('', 'ssh2_connect function does not exists'); exit(1);
 }
 
 $connection = ssh2_connect($server, 22);
@@ -92,7 +92,7 @@ if ($connection)
 {
 	if (! @ssh2_auth_password($connection, $login, $password))
 	{
-		dol_syslog("Could not authenticate with username ".$login." . and password ".preg_replace('/./', '*', $password),LOG_ERR);
+		dol_syslog("Could not authenticate with username ".$login." . and password ".preg_replace('/./', '*', $password), LOG_ERR);
 		exit(-5);
 	}
 	else
@@ -112,11 +112,11 @@ if ($connection)
 		ssh2_scp_recv($connection, $sourcefile, $targetdir.$targetfile);
 
 		$fullcommand="cat ".$targetdir.$targetfile." | mysql -h".$databaseserver." -u".$loginbase." -p".$passwordbase." -D ".$database;
-		if (preg_match('/\.bz2$/',$targetfile))
+		if (preg_match('/\.bz2$/', $targetfile))
 		{
 			$fullcommand="bzip2 -c -d ".$targetdir.$targetfile." | mysql -h".$databaseserver." -u".$loginbase." -p".$passwordbase." -D ".$database;
 		}
-		if (preg_match('/\.gz$/',$targetfile))
+		if (preg_match('/\.gz$/', $targetfile))
 		{
 			$fullcommand="gzip -d ".$targetdir.$targetfile." | mysql -h".$databaseserver." -u".$loginbase." -p".$passwordbase." -D ".$database;
 		}

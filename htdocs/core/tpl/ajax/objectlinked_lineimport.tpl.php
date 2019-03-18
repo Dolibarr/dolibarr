@@ -22,7 +22,7 @@ if (empty($conf) || ! is_object($conf))
 	exit;
 }
 
-$objectUrl = $object->getNomUrl(0,'',0,1);
+$objectUrl = $object->getNomUrl(0, '', 0, 1);
 if($object->element == 'propal')
 {
     $objectUrl = DOL_URL_ROOT.'/comm/propal/card.php?id='.$object->id;

@@ -45,13 +45,6 @@ class mod_commande_saphir extends ModeleNumRefCommandes
 	public $error = '';
 
 	/**
-	 * @var string nom
-	 * @deprecated
-	 * @see name
-	 */
-	public $nom='Saphir';
-
-	/**
 	 * @var string name
 	 */
 	public $name='Saphir';
@@ -62,7 +55,7 @@ class mod_commande_saphir extends ModeleNumRefCommandes
      *
      *  @return     string      Texte descripif
      */
-	function info()
+    public function info()
     {
     	global $conf, $langs;
 
@@ -77,17 +70,17 @@ class mod_commande_saphir extends ModeleNumRefCommandes
 		$texte.= '<input type="hidden" name="maskconstorder" value="COMMANDE_SAPHIR_MASK">';
 		$texte.= '<table class="nobordernopadding" width="100%">';
 
-		$tooltip=$langs->trans("GenericMaskCodes",$langs->transnoentities("Order"),$langs->transnoentities("Order"));
+		$tooltip=$langs->trans("GenericMaskCodes", $langs->transnoentities("Order"), $langs->transnoentities("Order"));
 		$tooltip.=$langs->trans("GenericMaskCodes2");
 		$tooltip.=$langs->trans("GenericMaskCodes3");
-		$tooltip.=$langs->trans("GenericMaskCodes4a",$langs->transnoentities("Order"),$langs->transnoentities("Order"));
+		$tooltip.=$langs->trans("GenericMaskCodes4a", $langs->transnoentities("Order"), $langs->transnoentities("Order"));
 		$tooltip.=$langs->trans("GenericMaskCodes5");
 
 		// Parametrage du prefix
 		$texte.= '<tr><td>'.$langs->trans("Mask").':</td>';
-		$texte.= '<td align="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskorder" value="'.$conf->global->COMMANDE_SAPHIR_MASK.'">',$tooltip,1,1).'</td>';
+		$texte.= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskorder" value="'.$conf->global->COMMANDE_SAPHIR_MASK.'">', $tooltip, 1, 1).'</td>';
 
-		$texte.= '<td align="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
+		$texte.= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
 
 		$texte.= '</tr>';
 
@@ -102,7 +95,7 @@ class mod_commande_saphir extends ModeleNumRefCommandes
      *
      *  @return     string      Example
      */
-    function getExample()
+    public function getExample()
     {
      	global $conf,$langs,$mysoc;
 
@@ -110,7 +103,7 @@ class mod_commande_saphir extends ModeleNumRefCommandes
     	$old_code_type=$mysoc->typent_code;
     	$mysoc->code_client='CCCCCCCCCC';
     	$mysoc->typent_code='TTTTTTTTTT';
-     	$numExample = $this->getNextValue($mysoc,'');
+     	$numExample = $this->getNextValue($mysoc, '');
 		$mysoc->code_client=$old_code_client;
 		$mysoc->typent_code=$old_code_type;
 
@@ -128,7 +121,7 @@ class mod_commande_saphir extends ModeleNumRefCommandes
 	 *  @param  Object		$object		Object we need next value for
 	 *  @return string      			Value if KO, <0 if KO
 	 */
-    function getNextValue($objsoc,$object)
+    public function getNextValue($objsoc, $object)
     {
 		global $db,$conf;
 
@@ -145,13 +138,13 @@ class mod_commande_saphir extends ModeleNumRefCommandes
 
 		$date = ($object->date_commande ? $object->date_commande : $object->date);
 
-		$numFinal=get_next_value($db,$mask,'commande','ref','',$objsoc,$date);
+		$numFinal=get_next_value($db, $mask, 'commande', 'ref', '', $objsoc, $date);
 
 		return  $numFinal;
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Return next free value
 	 *
@@ -159,9 +152,9 @@ class mod_commande_saphir extends ModeleNumRefCommandes
 	 *  @param	string		$objforref	Object for number to search
 	 *  @return string      			Next free value
      */
-    function commande_get_num($objsoc,$objforref)
+    public function commande_get_num($objsoc, $objforref)
     {
         // phpcs:enable
-        return $this->getNextValue($objsoc,$objforref);
+        return $this->getNextValue($objsoc, $objforref);
     }
 }

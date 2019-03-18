@@ -30,8 +30,8 @@ require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('orders', 'companies'));
 
-$id = GETPOST('id','int');
-$_socid = GETPOST("id",'int');
+$id = GETPOST('id', 'int');
+$_socid = GETPOST("id", 'int');
 // Security check
 if ($user->societe_id > 0)
 {
@@ -47,7 +47,7 @@ if ($_POST["action"] == 'setpricelevel')
 {
 	$soc = new Societe($db);
 	$soc->fetch($id);
-	$soc->set_price_level($_POST["price_level"],$user);
+	$soc->set_price_level($_POST["price_level"], $user);
 
 	header("Location: multiprix.php?id=".$id);
 	exit;
@@ -67,7 +67,7 @@ if ($_socid > 0)
 	// On recupere les donnees societes par l'objet
 	$objsoc = new Societe($db);
 	$objsoc->id=$_socid;
-	$objsoc->fetch($_socid,$to);
+	$objsoc->fetch($_socid, $to);
 
 	if ($errmesg)
 	{
@@ -149,7 +149,7 @@ if ($_socid > 0)
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans("Date").'</td>';
 		print '<td>'.$langs->trans("PriceLevel").'</td>';
-		print '<td align="right">'.$langs->trans("User").'</td>';
+		print '<td class="right">'.$langs->trans("User").'</td>';
 		print '</tr>';
 		$i = 0 ;
 		$num = $db->num_rows($resql);
@@ -159,11 +159,11 @@ if ($_socid > 0)
 			$obj = $db->fetch_object($resql);
 			$tag = !$tag;
 			print '<tr '.$bc[$tag].'>';
-			print '<td>'.dol_print_date($db->jdate($obj->dc),"dayhour").'</td>';
+			print '<td>'.dol_print_date($db->jdate($obj->dc), "dayhour").'</td>';
 			print '<td>'.$obj->price_level.' </td>';
 			$userstatic->id=$obj->uid;
 			$userstatic->lastname=$obj->login;
-			print '<td align="right">'.$userstatic->getNomUrl(1).'</td>';
+			print '<td class="right">'.$userstatic->getNomUrl(1).'</td>';
 			print '</tr>';
 			$i++;
 		}

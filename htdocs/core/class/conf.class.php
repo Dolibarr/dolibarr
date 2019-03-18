@@ -32,22 +32,22 @@
  */
 class Conf
 {
-	/** \public */
-	//! To store properties found in conf file
-	var $file;
+    /** \public */
+    //! To store properties found in conf file
+    public $file;
 
-	/**
+    /**
      * @var DoliDB Database handler.
      */
     public $db;
 
-	//! To store properties found into database
-	var $global;
-	//! To store browser info
-	var $browser;
+    //! To store properties found into database
+    public $global;
+    //! To store browser info
+    public $browser;
 
-	//! To store if javascript/ajax is enabked
-	public $use_javascript_ajax;
+    //! To store if javascript/ajax is enabked
+    public $use_javascript_ajax;
 	//! Used to store current currency (ISO code like 'USD', 'EUR', ...)
 	public $currency;
 	//! Used to store current css (from theme)
@@ -55,19 +55,36 @@ class Conf
 	public $css;          // Contains full path of css page ("/theme/eldy/style.css.php", ...)
     //! Used to store current menu handler
 	public $standard_menu;
+    // List of activated modules
+    public $modules = array();
+    public $modules_parts = array(
+        'css' => array(),
+        'js' => array(),
+        'tabs' => array(),
+        'triggers' => array(),
+        'login' => array(),
+        'substitutions' => array(),
+        'menus' => array(),
+        'theme' => array(),
+        'sms' => array(),
+        'tpl' => array(),
+        'barcode' => array(),
+        'models' => array(),
+        'societe' => array(),
+        'hooks' => array(),
+        'dir' => array(),
+        'syslog' => array(),
+    );
 
-	public $modules					= array();	// List of activated modules
-	public $modules_parts			= array('css'=>array(),'js'=>array(),'tabs'=>array(),'triggers'=>array(),'login'=>array(),'substitutions'=>array(),'menus'=>array(),'theme'=>array(),'sms'=>array(),'tpl'=>array(),'barcode'=>array(),'models'=>array(),'societe'=>array(),'hooks'=>array(),'dir'=>array(), 'syslog' =>array());
+    public $logbuffer = array();
 
-	var $logbuffer					= array();
+    /**
+     * @var LogHandlerInterface[]
+     */
+    public $loghandlers = array();
 
-	/**
-	 * @var LogHandlerInterface[]
-	 */
-	var $loghandlers                = array();
-
-	//! To store properties of multi-company
-	public $multicompany;
+    //! To store properties of multi-company
+    public $multicompany;
 	//! Used to store running instance for multi-company (default 1)
 	public $entity					= 1;
 	//! Used to store list of entities to use for each element
@@ -83,7 +100,7 @@ class Conf
 	/**
 	 * Constructor
 	 */
-	function __construct()
+	public function __construct()
 	{
 		// Properly declare multi-modules objects.
 		$this->file				= new stdClass();
@@ -124,13 +141,13 @@ class Conf
 
 
 	/**
-	 *	Load setup values into conf object (read llx_const)
+	 *  Load setup values into conf object (read llx_const)
 	 *  Note that this->db->xxx, this->file->xxx and this->multicompany have been already loaded when setValues is called.
 	 *
-	 *	@param      DoliDB		$db		Database handler
-	 *	@return     int					< 0 if KO, >= 0 if OK
+	 *  @param      DoliDB      $db     Database handler
+	 *  @return     int                 < 0 if KO, >= 0 if OK
 	 */
-	function setValues($db)
+	public function setValues($db)
 	{
 		global $conf;
 
@@ -158,13 +175,13 @@ class Conf
 					//if (! defined("$key")) define("$key", $value);	// In some cases, the constant might be already forced (Example: SYSLOG_HANDLERS during install)
 					$this->global->$key=$value;
 
-					if ($value && preg_match('/^MAIN_MODULE_/',$key))
+					if ($value && preg_match('/^MAIN_MODULE_/', $key))
 					{
 						// If this is constant for a new tab page activated by a module. It initializes modules_parts['tabs'].
-						if (preg_match('/^MAIN_MODULE_([0-9A-Z_]+)_TABS_/i',$key))
+						if (preg_match('/^MAIN_MODULE_([0-9A-Z_]+)_TABS_/i', $key))
 						{
 							$partname = 'tabs';
-							$params=explode(':',$value,2);
+							$params=explode(':', $value, 2);
 							if (! isset($this->modules_parts[$partname]) || ! is_array($this->modules_parts[$partname])) { $this->modules_parts[$partname] = array(); }
 							$this->modules_parts[$partname][$params[0]][]=$value;	// $value may be a string or an array
 						}
@@ -173,21 +190,21 @@ class Conf
 						// modules_parts['models'], modules_parts['theme']
 						// modules_parts['sms'],
 						// modules_parts['css'], ...
-						elseif (preg_match('/^MAIN_MODULE_([0-9A-Z_]+)_([A-Z]+)$/i',$key,$reg))
+						elseif (preg_match('/^MAIN_MODULE_([0-9A-Z_]+)_([A-Z]+)$/i', $key, $reg))
 						{
 							$modulename = strtolower($reg[1]);
 							$partname = strtolower($reg[2]);
 							if (! isset($this->modules_parts[$partname]) || ! is_array($this->modules_parts[$partname])) { $this->modules_parts[$partname] = array(); }
-							$arrValue = json_decode($value,true);
+							$arrValue = json_decode($value, true);
 							if (is_array($arrValue) && ! empty($arrValue)) $value = $arrValue;
-							else if (in_array($partname,array('login','menus','substitutions','triggers','tpl'))) $value = '/'.$modulename.'/core/'.$partname.'/';
-							else if (in_array($partname,array('models','theme'))) $value = '/'.$modulename.'/';
-							else if (in_array($partname,array('sms'))) $value = '/'.$modulename.'/';
-							else if ($value == 1) $value = '/'.$modulename.'/core/modules/'.$partname.'/';	// ex: partname = societe
+							elseif (in_array($partname, array('login','menus','substitutions','triggers','tpl'))) $value = '/'.$modulename.'/core/'.$partname.'/';
+							elseif (in_array($partname, array('models','theme'))) $value = '/'.$modulename.'/';
+							elseif (in_array($partname, array('sms'))) $value = '/'.$modulename.'/';
+							elseif ($value == 1) $value = '/'.$modulename.'/core/modules/'.$partname.'/';	// ex: partname = societe
 							$this->modules_parts[$partname] = array_merge($this->modules_parts[$partname], array($modulename => $value));	// $value may be a string or an array
 						}
                         // If this is a module constant (must be at end)
-						elseif (preg_match('/^MAIN_MODULE_([0-9A-Z_]+)$/i',$key,$reg))
+						elseif (preg_match('/^MAIN_MODULE_([0-9A-Z_]+)$/i', $key, $reg))
 						{
 							$modulename=strtolower($reg[1]);
 							if ($modulename == 'propale') $modulename='propal';
@@ -201,8 +218,8 @@ class Conf
 				$i++;
 			}
 
-		    $db->free($resql);
-		}
+            $db->free($resql);
+        }
 
         // Include other local consts.php files and fetch their values to the corresponding database constants.
         if (! empty($this->global->LOCAL_CONSTS_FILES)) {
@@ -216,8 +233,8 @@ class Conf
             }
         }
 
-		//var_dump($this->modules);
-		//var_dump($this->modules_parts['theme']);
+        //var_dump($this->modules);
+        //var_dump($this->modules_parts['theme']);
 
 		// If you can't set timezone of your PHP, set this constant. Better is to set it to UTC.
 		// In future, this constant will be forced to 'UTC' so PHP server timezone will not have effect anymore.
@@ -234,12 +251,10 @@ class Conf
 		}
 
 		// Object $mc
-		if (! defined('NOREQUIREMC') && ! empty($this->multicompany->enabled))
-		{
+		if (! defined('NOREQUIREMC') && ! empty($this->multicompany->enabled)) {
 			global $mc;
 			$ret = @dol_include_once('/multicompany/class/actions_multicompany.class.php');
-			if ($ret)
-			{
+			if ($ret) {
 				$mc = new ActionsMulticompany($db);
 				$this->mc = $mc;
 			}
@@ -252,7 +267,7 @@ class Conf
 		if (empty($this->global->MAIN_MENUFRONT_SMARTPHONE)) $this->global->MAIN_MENUFRONT_SMARTPHONE="eldy_menu.php";	// Use eldy by default because smartphone does not work on all phones
 		// Clean var use vat for company
 		if (! isset($this->global->FACTURE_TVAOPTION)) $this->global->FACTURE_TVAOPTION=1;
-		else if (! empty($this->global->FACTURE_TVAOPTION) && ! is_numeric($this->global->FACTURE_TVAOPTION))
+		elseif (! empty($this->global->FACTURE_TVAOPTION) && ! is_numeric($this->global->FACTURE_TVAOPTION))
 		{
 			// Old value of option, we clean to use new value (0 or 1)
 			if ($this->global->FACTURE_TVAOPTION != "franchise") $this->global->FACTURE_TVAOPTION=1;
@@ -575,7 +590,9 @@ class Conf
 		    $this->adherent->subscription = new stdClass();
             $this->adherent->subscription->warning_delay=(isset($this->global->MAIN_DELAY_MEMBERS)?$this->global->MAIN_DELAY_MEMBERS:0)*24*60*60;
 		}
-		if (isset($this->agenda)) $this->agenda->warning_delay=(isset($this->global->MAIN_DELAY_ACTIONS_TODO)?$this->global->MAIN_DELAY_ACTIONS_TODO:7)*24*60*60;
+		if (isset($this->agenda)) {
+            $this->agenda->warning_delay=(isset($this->global->MAIN_DELAY_ACTIONS_TODO)?$this->global->MAIN_DELAY_ACTIONS_TODO:7)*24*60*60;
+        }
 		if (isset($this->projet))
 		{
 		    $this->projet->warning_delay=(isset($this->global->MAIN_DELAY_PROJECT_TO_CLOSE)?$this->global->MAIN_DELAY_PROJECT_TO_CLOSE:7)*24*60*60;
@@ -615,9 +632,9 @@ class Conf
 		    $this->bank->cheque->warning_delay=(isset($this->global->MAIN_DELAY_CHEQUES_TO_DEPOSIT)?$this->global->MAIN_DELAY_CHEQUES_TO_DEPOSIT:0)*24*60*60;
 		}
 		if (isset($this->expensereport)) {
-		    $this->expensereport->approve		= new stdClass();
+		    $this->expensereport->approve = new stdClass();
 		    $this->expensereport->approve->warning_delay=(isset($this->global->MAIN_DELAY_EXPENSEREPORTS)?$this->global->MAIN_DELAY_EXPENSEREPORTS:0)*24*60*60;
-		    $this->expensereport->payment		= new stdClass();
+		    $this->expensereport->payment = new stdClass();
 		    $this->expensereport->payment->warning_delay=(isset($this->global->MAIN_DELAY_EXPENSEREPORTS_TO_PAY)?$this->global->MAIN_DELAY_EXPENSEREPORTS_TO_PAY:0)*24*60*60;
 		}
 
@@ -694,4 +711,3 @@ class Conf
 		}
 	}
 }
-

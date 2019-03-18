@@ -53,6 +53,11 @@ apper-systems-ab:
     - asymmetrik
   label: 'Asymmetrik, Ltd.'
   url: 'http://asymmetrik.com'
+ausmed-education:
+  icons:
+    - user-nurse
+  label: Ausmed Education
+  url: 'https://www.ausmed.com.au'
 avianex:
   icons:
     - avianex
@@ -314,6 +319,16 @@ med-apps:
     - medapps
   label: MedApps
   url: 'http://medapps.com.au'
+medapps:
+  icons:
+    - book-medical
+    - clinic-medical
+    - comment-medical
+    - crutch
+    - laptop-medical
+    - pager
+  label: MedApps
+  url: 'https://medapps.com.au'
 megaport:
   icons:
     - megaport
@@ -375,6 +390,11 @@ pal-fed:
     - palfed
   label: PalFed
   url: 'https://www.palfed.com'
+pcsg:
+  icons:
+    - horse-head
+  label: PCSG
+  url: 'https://www.pcsg.de'
 phabricator:
   icons:
     - phabricator
@@ -405,6 +425,11 @@ quin-scape:
     - quinscape
   label: QuinScape
   url: 'https://www.quinscape.de'
+reacteurope:
+  icons:
+    - reacteurope
+  label: ReactEurope
+  url: 'https://www.react-europe.org'
 readme-io:
   icons:
     - readme
@@ -415,11 +440,6 @@ red-river:
     - red-river
   label: red river
   url: 'https://river.red'
-rendact:
-  icons:
-    - rendact
-  label: Rendact
-  url: 'https://rendact.com'
 replyd:
   icons:
     - replyd
@@ -453,6 +473,7 @@ rocket-chat:
     - poo
     - quote-left
     - quote-right
+    - rocketchat
     - smile
     - video
     - video-slash
@@ -583,6 +604,11 @@ themeco:
     - themeco
   label: Themeco
   url: 'https://theme.co'
+think-peaks:
+  icons:
+    - think-peaks
+  label: Think Peaks
+  url: 'https://thinkpeaks.com/'
 typo3:
   icons:
     - typo3
@@ -637,3 +663,13 @@ whmcs:
     - whmcs
   label: WHMCS
   url: 'https://www.whmcs.com'
+workrails:
+  icons:
+    - briefcase
+  label: WorkRails
+  url: 'https://www.workrails.com'
+wpressr:
+  icons:
+    - wpressr
+  label: wpressr
+  url: 'https://wpressr.com'

@@ -32,18 +32,18 @@ require_once DOL_DOCUMENT_ROOT . '/margin/lib/margins.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'bills', 'products', 'margins'));
 
-$action     = GETPOST('action','alpha');
-$massaction = GETPOST('massaction','alpha');
+$action     = GETPOST('action', 'alpha');
+$massaction = GETPOST('massaction', 'alpha');
 $toselect   = GETPOST('toselect', 'array');
-$contextpage= GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'margindetail';   // To manage different context of search
-$backtopage = GETPOST('backtopage','alpha');
-$optioncss  = GETPOST('optioncss','alpha');
+$contextpage= GETPOST('contextpage', 'aZ')?GETPOST('contextpage', 'aZ'):'margindetail';   // To manage different context of search
+$backtopage = GETPOST('backtopage', 'alpha');
+$optioncss  = GETPOST('optioncss', 'alpha');
 
 // Load variable for pagination
-$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
-$sortfield = GETPOST('sortfield','alpha');
-$sortorder = GETPOST('sortorder','alpha');
-$page = GETPOST('page','int');
+$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
+$sortfield = GETPOST('sortfield', 'alpha');
+$sortorder = GETPOST('sortorder', 'alpha');
+$page = GETPOST('page', 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
@@ -56,10 +56,10 @@ $startdate = $enddate = '';
 $startdate = dol_mktime(0, 0, 0, GETPOST('startdatemonth', 'int'), GETPOST('startdateday', 'int'), GETPOST('startdateyear', 'int'));
 $enddate = dol_mktime(23, 59, 59, GETPOST('enddatemonth', 'int'), GETPOST('enddateday', 'int'), GETPOST('enddateyear', 'int'));
 
-$search_ref = GETPOST('search_ref','alpha');
+$search_ref = GETPOST('search_ref', 'alpha');
 
 // Security check
-$result=restrictedArea($user,'margins');
+$result=restrictedArea($user, 'margins');
 
 // Both test are required to be compatible with all browsers
 if (GETPOST("button_search_x") || GETPOST("button_search")) {
@@ -73,11 +73,11 @@ if (GETPOST("button_search_x") || GETPOST("button_search")) {
  * Actions
  */
 
-if (GETPOST('cancel','alpha')) { $action='list'; $massaction=''; }
-if (! GETPOST('confirmmassaction','alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction=''; }
+if (GETPOST('cancel', 'alpha')) { $action='list'; $massaction=''; }
+if (! GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction=''; }
 
 $parameters=array();
-$reshook=$hookmanager->executeHooks('doActions',$parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
+$reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 if (empty($reshook))
@@ -88,7 +88,7 @@ if (empty($reshook))
     if ($action == 'update') {
         $datapost = $_POST;
 
-        foreach ( $datapost as $key => $value ) {
+        foreach ($datapost as $key => $value) {
             if (strpos($key, 'buyingprice_') !== false) {
                 $tmp_array = explode('_', $key);
                 if (count($tmp_array) > 0) {
@@ -108,7 +108,7 @@ if (empty($reshook))
     }
 
     // Purge search criteria
-    if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // All tests are required to be compatible with all browsers
+    if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All tests are required to be compatible with all browsers
     {
         $search_ref='';
         $search_array_options=array();
@@ -183,6 +183,7 @@ dol_fiche_end();
 $arrayfields=array();
 $massactionbutton='';
 
+$invoice_status_except_list = array(Facture::STATUS_DRAFT, Facture::STATUS_ABANDONED);
 
 $sql = "SELECT";
 $sql .= " f.ref, f.rowid as invoiceid, d.rowid as invoicedetid, d.buy_price_ht, d.total_ht, d.subprice, d.label, d.description , d.qty";
@@ -190,7 +191,7 @@ $sql .= " ,d.fk_product";
 $sql .= " FROM " . MAIN_DB_PREFIX . "facture as f ";
 $sql .= " INNER JOIN " . MAIN_DB_PREFIX . "facturedet as d  ON d.fk_facture = f.rowid";
 $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product as p ON d.fk_product = p.rowid";
-$sql .= " WHERE f.fk_statut > 0";
+$sql .= " WHERE f.fk_statut NOT IN (" . implode(', ', $invoice_status_except_list) . ")";
 $sql .= " AND f.entity IN (" . getEntity('invoice') . ") ";
 if (! empty($startdate)) $sql .= " AND f.datef >= '" . $db->idate($startdate) . "'";
 if (! empty($enddate))   $sql .= " AND f.datef <= '" . $db->idate($enddate) . "'";
@@ -255,7 +256,7 @@ if ($result) {
 	print_liste_field_titre($labelcostprice, $_SERVER["PHP_SELF"], "d.buy_price_ht", "", $param, 'align="right"', $sortfield, $sortorder);
 	print_liste_field_titre("Qty", $_SERVER["PHP_SELF"], "d.qty", "", $param, 'align="right"', $sortfield, $sortorder);
 	print_liste_field_titre("AmountTTC", $_SERVER["PHP_SELF"], "d.total_ht", "", $param, 'align="right"', $sortfield, $sortorder);
-	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"],"",'',$param,'align="center"',$sortfield,$sortorder,'maxwidthsearch ');
+	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', $param, 'align="center"', $sortfield, $sortorder, 'maxwidthsearch ');
 	print "</tr>\n";
 
     $i=0;
@@ -286,16 +287,16 @@ if ($result) {
 			print $objp->description;
 		}
 		print '</td>';
-		print '<td align="right">';
+		print '<td class="right">';
 		print price($objp->subprice);
 		print '</td>';
-		print '<td align="right">';
+		print '<td class="right">';
 		print '<input type="text" name="buyingprice_' . $objp->invoicedetid . '" id="buyingprice_' . $objp->invoicedetid . '" size="6" value="' . price($objp->buy_price_ht) . '" class="right flat">';
 		print '</td>';
-		print '<td align="right">';
+		print '<td class="right">';
 		print $objp->qty;
 		print '</td>';
-		print '<td align="right">';
+		print '<td class="right">';
 		print price($objp->total_ht);
 		print '</td>';
 		print '<td></td>';

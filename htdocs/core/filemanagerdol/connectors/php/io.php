@@ -29,7 +29,7 @@
  * @param   string $sFolder       sFolder
  * @return  string                Combined path
  */
-function CombinePaths( $sBasePath, $sFolder )
+function CombinePaths($sBasePath, $sFolder)
 {
 	return RemoveFromEnd($sBasePath, '/') . '/' . RemoveFromStart($sFolder, '/');
 }
@@ -175,14 +175,14 @@ function CreateServerFolder($folderPath, $lastFolder = null)
 		// Enable error tracking to catch the error.
 		ini_set('track_errors', '1');
 
-		if ( isset( $Config['ChmodOnFolderCreate'] ) && !$Config['ChmodOnFolderCreate'] )
+		if ( isset($Config['ChmodOnFolderCreate']) && !$Config['ChmodOnFolderCreate'] )
 		{
 			mkdir($folderPath);
 		}
 		else
 		{
 			$permissions = '0777';
-			if ( isset( $Config['ChmodOnFolderCreate'] ) && $Config['ChmodOnFolderCreate'])
+			if ( isset($Config['ChmodOnFolderCreate']) && $Config['ChmodOnFolderCreate'])
 			{
 				$permissions = (string) $Config['ChmodOnFolderCreate'];
 			}
@@ -219,7 +219,7 @@ function GetRootPath()
     }
     $sRealPath = realpath('./');
     // #2124 ensure that no slash is at the end
-    $sRealPath = rtrim($sRealPath,"\\/");
+    $sRealPath = rtrim($sRealPath, "\\/");
 
     $sSelfPath = $_SERVER['PHP_SELF'] ;
     $sSelfPath = substr($sSelfPath, 0, strrpos($sSelfPath, '/'));
@@ -238,7 +238,7 @@ function GetRootPath()
 
 // Emulate the asp Server.mapPath function.
 // given an url path return the physical directory that it corresponds to
-function Server_MapPath( $path )
+function Server_MapPath($path)
 {
     // This function is available only for Apache
     if (function_exists('apache_lookup_uri')) {
@@ -315,7 +315,7 @@ function GetCurrentFolder()
 	if (!isset($_GET)) {
 		global $_GET;
 	}
-	$sCurrentFolder	= isset( $_GET['CurrentFolder'] ) ? GETPOST('CurrentFolder', '', 1) : '/' ;
+	$sCurrentFolder	= isset($_GET['CurrentFolder']) ? GETPOST('CurrentFolder', '', 1) : '/' ;
 
 	// Check the current folder syntax (must begin and start with a slash).
 	if (!preg_match('|/$|', $sCurrentFolder))
@@ -339,7 +339,7 @@ function GetCurrentFolder()
 }
 
 // Do a cleanup of the folder name to avoid possible problems
-function SanitizeFolderName( $sNewFolderName )
+function SanitizeFolderName($sNewFolderName)
 {
 	$sNewFolderName = stripslashes($sNewFolderName);
 
@@ -350,7 +350,7 @@ function SanitizeFolderName( $sNewFolderName )
 }
 
 // Do a cleanup of the file name to avoid possible problems
-function SanitizeFileName( $sNewFileName )
+function SanitizeFileName($sNewFileName)
 {
 	global $Config ;
 
@@ -367,7 +367,7 @@ function SanitizeFileName( $sNewFileName )
 }
 
 // This is the function that sends the results of the uploading process.
-function SendUploadResults( $errorNumber, $fileUrl = '', $fileName = '', $customMsg = '' )
+function SendUploadResults($errorNumber, $fileUrl = '', $fileName = '', $customMsg = '')
 {
 	// Minified version of the document.domain automatic fix script (#1919).
 	// The original script can be found at _dev/domain_fix_template.js

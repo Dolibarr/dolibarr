@@ -42,7 +42,7 @@ error_reporting(0);
 @set_time_limit(120);
 error_reporting($err);
 
-$setuplang=GETPOST("selectlang",'az09',3)?GETPOST("selectlang",'az09',3):'auto';
+$setuplang=GETPOST("selectlang", 'az09', 3)?GETPOST("selectlang", 'az09', 3):'auto';
 $langs->setDefaultLang($setuplang);
 
 $langs->loadLangs(array("admin","install","other"));
@@ -60,34 +60,34 @@ if (! is_object($conf)) dolibarr_install_syslog("repair: conf file not initializ
  * View
  */
 
-pHeader('',"upgrade2",GETPOST('action','aZ09'));
+pHeader('', "upgrade2", GETPOST('action', 'aZ09'));
 
 // Action to launch the repair script
 $actiondone=1;
 
 print '<h3>'.$langs->trans("Repair").'</h3>';
 
-print 'Option standard (0 or \'confirmed\') is '.(GETPOST('standard','alpha')?GETPOST('standard','alpha'):'0').'<br>'."\n";
-print 'Option restore_thirdparties_logos (0 or \'confirmed\') is '.(GETPOST('restore_thirdparties_logos','alpha')?GETPOST('restore_thirdparties_logos','alpha'):'0').'<br>'."\n";
-print 'Option clean_linked_elements (0 or \'confirmed\') is '.(GETPOST('clean_linked_elements','alpha')?GETPOST('clean_linked_elements','alpha'):'0').'<br>'."\n";
-print 'Option clean_menus (0 or \'test\' or \'confirmed\') is '.(GETPOST('clean_menus','alpha')?GETPOST('clean_menus','alpha'):'0').'<br>'."\n";
-print 'Option clean_orphelin_dir (0 or \'test\' or \'confirmed\') is '.(GETPOST('clean_orphelin_dir','alpha')?GETPOST('clean_orphelin_dir','alpha'):'0').'<br>'."\n";
-print 'Option clean_product_stock_batch (0 or \'test\' or \'confirmed\') is '.(GETPOST('clean_product_stock_batch','alpha')?GETPOST('clean_product_stock_batch','alpha'):'0').'<br>'."\n";
-print 'Option set_empty_time_spent_amount (0 or \'test\' or \'confirmed\') is '.(GETPOST('set_empty_time_spent_amount','alpha')?GETPOST('set_empty_time_spent_amount','alpha'):'0').'<br>'."\n";
-print 'Option rebuild_product_thumbs (0 or \'test\' or \'confirmed\') is '.(GETPOST('rebuild_product_thumbs','alpha')?GETPOST('rebuild_product_thumbs','alpha'):'0').'<br>'."\n";
-print 'Option force_disable_of_modules_not_found (0 or \'test\' or \'confirmed\') is '.(GETPOST('force_disable_of_modules_not_found','alpha')?GETPOST('force_disable_of_modules_not_found','alpha'):'0').'<br>'."\n";
-print 'Option clean_perm_table (0 or \'test\' or \'confirmed\') is '.(GETPOST('clean_perm_table','alpha')?GETPOST('clean_perm_table','alpha'):'0').'<br>'."\n";
-print 'Option force_utf8_on_tables, for mysql/mariadb only (0 or \'test\' or \'confirmed\') is '.(GETPOST('force_utf8_on_tables','alpha')?GETPOST('force_utf8_on_tables','alpha'):'0').'<br>'."\n";
+print 'Option standard (0 or \'confirmed\') is '.(GETPOST('standard', 'alpha')?GETPOST('standard', 'alpha'):'0').'<br>'."\n";
+print 'Option restore_thirdparties_logos (0 or \'confirmed\') is '.(GETPOST('restore_thirdparties_logos', 'alpha')?GETPOST('restore_thirdparties_logos', 'alpha'):'0').'<br>'."\n";
+print 'Option clean_linked_elements (0 or \'confirmed\') is '.(GETPOST('clean_linked_elements', 'alpha')?GETPOST('clean_linked_elements', 'alpha'):'0').'<br>'."\n";
+print 'Option clean_menus (0 or \'test\' or \'confirmed\') is '.(GETPOST('clean_menus', 'alpha')?GETPOST('clean_menus', 'alpha'):'0').'<br>'."\n";
+print 'Option clean_orphelin_dir (0 or \'test\' or \'confirmed\') is '.(GETPOST('clean_orphelin_dir', 'alpha')?GETPOST('clean_orphelin_dir', 'alpha'):'0').'<br>'."\n";
+print 'Option clean_product_stock_batch (0 or \'test\' or \'confirmed\') is '.(GETPOST('clean_product_stock_batch', 'alpha')?GETPOST('clean_product_stock_batch', 'alpha'):'0').'<br>'."\n";
+print 'Option set_empty_time_spent_amount (0 or \'test\' or \'confirmed\') is '.(GETPOST('set_empty_time_spent_amount', 'alpha')?GETPOST('set_empty_time_spent_amount', 'alpha'):'0').'<br>'."\n";
+print 'Option rebuild_product_thumbs (0 or \'test\' or \'confirmed\') is '.(GETPOST('rebuild_product_thumbs', 'alpha')?GETPOST('rebuild_product_thumbs', 'alpha'):'0').'<br>'."\n";
+print 'Option force_disable_of_modules_not_found (0 or \'test\' or \'confirmed\') is '.(GETPOST('force_disable_of_modules_not_found', 'alpha')?GETPOST('force_disable_of_modules_not_found', 'alpha'):'0').'<br>'."\n";
+print 'Option clean_perm_table (0 or \'test\' or \'confirmed\') is '.(GETPOST('clean_perm_table', 'alpha')?GETPOST('clean_perm_table', 'alpha'):'0').'<br>'."\n";
+print 'Option force_utf8_on_tables, for mysql/mariadb only (0 or \'test\' or \'confirmed\') is '.(GETPOST('force_utf8_on_tables', 'alpha')?GETPOST('force_utf8_on_tables', 'alpha'):'0').'<br>'."\n";
 print '<br>';
 
 print '<table cellspacing="0" cellpadding="1" border="0" width="100%">';
 $error=0;
 
 // If password is encoded, we decode it
-if (preg_match('/crypted:/i',$dolibarr_main_db_pass) || ! empty($dolibarr_main_db_encrypted_pass))
+if (preg_match('/crypted:/i', $dolibarr_main_db_pass) || ! empty($dolibarr_main_db_encrypted_pass))
 {
     require_once $dolibarr_main_document_root.'/core/lib/security.lib.php';
-    if (preg_match('/crypted:/i',$dolibarr_main_db_pass))
+    if (preg_match('/crypted:/i', $dolibarr_main_db_pass))
     {
         $dolibarr_main_db_pass = preg_replace('/crypted:/i', '', $dolibarr_main_db_pass);
         $dolibarr_main_db_pass = dol_decode($dolibarr_main_db_pass);
@@ -108,7 +108,7 @@ $conf->db->pass = $dolibarr_main_db_pass;
 $conf->db->dolibarr_main_db_encryption	= isset($dolibarr_main_db_encryption)?$dolibarr_main_db_encryption:'';
 $conf->db->dolibarr_main_db_cryptkey	= isset($dolibarr_main_db_cryptkey)?$dolibarr_main_db_cryptkey:'';
 
-$db=getDoliDBInstance($conf->db->type,$conf->db->host,$conf->db->user,$conf->db->pass,$conf->db->name,$conf->db->port);
+$db=getDoliDBInstance($conf->db->type, $conf->db->host, $conf->db->user, $conf->db->pass, $conf->db->name, $conf->db->port);
 
 if ($db->connected)
 {
@@ -119,7 +119,7 @@ if ($db->connected)
 }
 else
 {
-    print "<tr><td>".$langs->trans("ErrorFailedToConnectToDatabase",$dolibarr_main_db_name)."</td><td align=\"right\">".$langs->transnoentities("Error")."</td></tr>";
+    print "<tr><td>".$langs->trans("ErrorFailedToConnectToDatabase", $dolibarr_main_db_name)."</td><td align=\"right\">".$langs->transnoentities("Error")."</td></tr>";
     dolibarr_install_syslog("repair: " . $langs->transnoentities("ErrorFailedToConnectToDatabase", $dolibarr_main_db_name));
     $ok = 0;
 }
@@ -135,7 +135,7 @@ if ($ok)
     }
     else
     {
-        print "<tr><td>".$langs->trans("ErrorFailedToConnectToDatabase",$dolibarr_main_db_name)."</td><td align=\"right\">".$langs->trans("Error")."</td></tr>";
+        print "<tr><td>".$langs->trans("ErrorFailedToConnectToDatabase", $dolibarr_main_db_name)."</td><td align=\"right\">".$langs->trans("Error")."</td></tr>";
         dolibarr_install_syslog("repair: " . $langs->transnoentities("ErrorFailedToConnectToDatabase", $dolibarr_main_db_name));
         $ok=0;
     }
@@ -160,10 +160,10 @@ $conf->global->MAIN_ENABLE_LOG_TO_HTML = 1;
 
 /* Start action here */
 $oneoptionset=0;
-$oneoptionset=(GETPOST('standard', 'alpha') || GETPOST('restore_thirdparties_logos','alpha') || GETPOST('clean_linked_elements','alpha') || GETPOST('clean_menus','alpha')
-	|| GETPOST('clean_orphelin_dir','alpha') || GETPOST('clean_product_stock_batch','alpha') || GETPOST('set_empty_time_spent_amount','alpha') || GETPOST('rebuild_product_thumbs','alpha')
-	|| GETPOST('clean_perm_table','alpha')
-	|| GETPOST('force_disable_of_modules_not_found','alpha') || GETPOST('force_utf8_on_tables','alpha'));
+$oneoptionset=(GETPOST('standard', 'alpha') || GETPOST('restore_thirdparties_logos', 'alpha') || GETPOST('clean_linked_elements', 'alpha') || GETPOST('clean_menus', 'alpha')
+	|| GETPOST('clean_orphelin_dir', 'alpha') || GETPOST('clean_product_stock_batch', 'alpha') || GETPOST('set_empty_time_spent_amount', 'alpha') || GETPOST('rebuild_product_thumbs', 'alpha')
+	|| GETPOST('clean_perm_table', 'alpha')
+	|| GETPOST('force_disable_of_modules_not_found', 'alpha') || GETPOST('force_utf8_on_tables', 'alpha'));
 
 if ($ok && $oneoptionset)
 {
@@ -189,14 +189,14 @@ if ($ok && GETPOST('standard', 'alpha'))
     {
         while (($file = readdir($handle))!==false)
         {
-            if (preg_match('/\.sql$/i',$file)) $filesindir[]=$file;
+            if (preg_match('/\.sql$/i', $file)) $filesindir[]=$file;
         }
     }
     sort($filesindir);
 
     foreach($filesindir as $file)
     {
-        if (preg_match('/repair/i',$file))
+        if (preg_match('/repair/i', $file))
         {
             $filelist[]=$file;
         }
@@ -245,7 +245,7 @@ if ($ok && GETPOST('standard', 'alpha'))
 	        while($obj=$db->fetch_object($resql))
 	        {
 	            $fieldname=$fieldtype='';
-	            if (preg_match('/mysql/',$db->type))
+	            if (preg_match('/mysql/', $db->type))
 	            {
 	                $fieldname=$obj->Field;
 	                $fieldtype=$obj->Type;
@@ -257,14 +257,14 @@ if ($ok && GETPOST('standard', 'alpha'))
 	            }
 
 	            if (empty($fieldname)) continue;
-	            if (in_array($fieldname,array('rowid','tms','fk_object','import_key'))) continue;
+	            if (in_array($fieldname, array('rowid','tms','fk_object','import_key'))) continue;
 	            $arrayoffieldsfound[$fieldname]=array('type'=>$fieldtype);
 	        }
 
 	        // If it does not match, we create fields
 	        foreach($arrayoffieldsdesc as $code => $label)
 	        {
-	            if (! in_array($code,array_keys($arrayoffieldsfound)))
+	            if (! in_array($code, array_keys($arrayoffieldsfound)))
 	            {
 	                print 'Found field '.$code.' declared into '.MAIN_DB_PREFIX.'extrafields table but not found into desc of table '.$tableextra." -> ";
 	                $type=$extrafields->attributes[$elementtype]['type'][$code]; $length=$extrafields->attributes[$elementtype]['size'][$code]; $attribute=''; $default=''; $extra=''; $null='null';
@@ -302,7 +302,7 @@ if ($ok && GETPOST('standard', 'alpha'))
 	                );
 	                //var_dump($field_desc);exit;
 
-	                $result=$db->DDLAddField($tableextra,$code,$field_desc,"");
+	                $result=$db->DDLAddField($tableextra, $code, $field_desc, "");
 	                if ($result < 0)
 	                {
 	                    print "KO ".$db->lasterror."<br>\n";
@@ -365,7 +365,7 @@ if ($ok && GETPOST('restore_thirdparties_logos'))
 				$name=preg_replace('/\'/','',$name);
 				*/
 
-				$tmp=explode('.',$obj->logo);
+				$tmp=explode('.', $obj->logo);
 				$name=$tmp[0];
 				if (isset($tmp[1])) $ext='.'.$tmp[1];
 
@@ -414,7 +414,7 @@ if ($ok && GETPOST('restore_thirdparties_logos'))
 
 
 // rebuild_product_thumbs: Rebuild thumbs for product files
-if ($ok && GETPOST('rebuild_product_thumbs','alpha'))
+if ($ok && GETPOST('rebuild_product_thumbs', 'alpha'))
 {
     $ext='';
     global $maxwidthsmall, $maxheightsmall, $maxwidthmini, $maxheightmini;
@@ -441,14 +441,14 @@ if ($ok && GETPOST('rebuild_product_thumbs','alpha'))
 					if (image_format_supported($file['fullname']) == 1)
 					{
 					    $imgThumbSmall='notbuild';
-                        if (GETPOST('rebuild_product_thumbs','alpha') == 'confirmed')
+                        if (GETPOST('rebuild_product_thumbs', 'alpha') == 'confirmed')
                         {
                             // Used on logon for example
                             $imgThumbSmall = vignette($file['fullname'], $maxwidthsmall, $maxheightsmall, '_small', 50, "thumbs");
                         }
 					    print 'Check product '.$obj->rowid.", file ".$file['fullname']." -> ".$imgThumbSmall." maxwidthsmall=".$maxwidthsmall." maxheightsmall=".$maxheightsmall."<br>\n";
 					    $imgThumbMini='notbuild';
-                        if (GETPOST('rebuild_product_thumbs','alpha') == 'confirmed')
+                        if (GETPOST('rebuild_product_thumbs', 'alpha') == 'confirmed')
                         {
                             // Create mini thumbs for image (Ratio is near 16/9)
                             // Used on menu or for setup page for example
@@ -472,7 +472,7 @@ if ($ok && GETPOST('rebuild_product_thumbs','alpha'))
 }
 
 // clean_linked_elements: Check and clean linked elements
-if ($ok && GETPOST('clean_linked_elements','alpha'))
+if ($ok && GETPOST('clean_linked_elements', 'alpha'))
 {
     print '<tr><td colspan="2"><br>*** Check table of linked elements and delete orphelins links</td></tr>';
 	// propal => order
@@ -496,7 +496,7 @@ if ($ok && GETPOST('clean_linked_elements','alpha'))
 
 
 // clean_menus: Check orphelins menus
-if ($ok && GETPOST('clean_menus','alpha'))
+if ($ok && GETPOST('clean_menus', 'alpha'))
 {
 	print '<tr><td colspan="2"><br>*** Clean menu entries coming from disabled modules</td></tr>';
 
@@ -517,7 +517,7 @@ if ($ok && GETPOST('clean_menus','alpha'))
 				$obj=$db->fetch_object($resql);
 
 				$modulecond=$obj->module;
-				$modulecondarray = explode('|',$obj->module);				// Name of module
+				$modulecondarray = explode('|', $obj->module);				// Name of module
 
 				print '<tr><td>';
 				print $modulecond;
@@ -586,7 +586,7 @@ if ($ok && GETPOST('clean_menus','alpha'))
 
 
 // clean_orphelin_dir: Run purge of directory
-if ($ok && GETPOST('clean_orphelin_dir','alpha'))
+if ($ok && GETPOST('clean_orphelin_dir', 'alpha'))
 {
     $listmodulepart=array('company','invoice','invoice_supplier','propal','order','order_supplier','contract','tax');
     foreach ($listmodulepart as $modulepart)
@@ -604,7 +604,7 @@ if ($ok && GETPOST('clean_orphelin_dir','alpha'))
 
         print '<tr><td colspan="2"><br>*** Clean orphelins files into files '.$upload_dir.'</td></tr>';
 
-        $filearray=dol_dir_list($upload_dir,"files",1,'',array('^SPECIMEN\.pdf$','^\.','(\.meta|_preview.*\.png)$','^temp$','^payments$','^CVS$','^thumbs$'),'',SORT_DESC,1,true);
+        $filearray=dol_dir_list($upload_dir, "files", 1, '', array('^SPECIMEN\.pdf$','^\.','(\.meta|_preview.*\.png)$','^temp$','^payments$','^CVS$','^thumbs$'), '', SORT_DESC, 1, true);
 
         // To show ref or specific information according to view to show (defined by $module)
         if ($modulepart == 'company')
@@ -617,32 +617,32 @@ if ($ok && GETPOST('clean_orphelin_dir','alpha'))
             include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
             $object_instance=new Facture($db);
         }
-        else if ($modulepart == 'invoice_supplier')
+        elseif ($modulepart == 'invoice_supplier')
         {
             include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
             $object_instance=new FactureFournisseur($db);
         }
-        else if ($modulepart == 'propal')
+        elseif ($modulepart == 'propal')
         {
             include_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
             $object_instance=new Propal($db);
         }
-        else if ($modulepart == 'order')
+        elseif ($modulepart == 'order')
         {
             include_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
             $object_instance=new Commande($db);
         }
-        else if ($modulepart == 'order_supplier')
+        elseif ($modulepart == 'order_supplier')
         {
             include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
             $object_instance=new CommandeFournisseur($db);
         }
-        else if ($modulepart == 'contract')
+        elseif ($modulepart == 'contract')
         {
             include_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
             $object_instance=new Contrat($db);
         }
-        else if ($modulepart == 'tax')
+        elseif ($modulepart == 'tax')
         {
             include_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
             $object_instance=new ChargeSociales($db);
@@ -657,52 +657,52 @@ if ($ok && GETPOST('clean_orphelin_dir','alpha'))
             )
             {
                 // Define relative path used to store the file
-                $relativefile=preg_replace('/'.preg_quote($upload_dir.'/','/').'/','',$file['fullname']);
+                $relativefile=preg_replace('/'.preg_quote($upload_dir.'/', '/').'/', '', $file['fullname']);
 
                 //var_dump($file);
                 $id=0; $ref=''; $object_instance->id=0; $object_instance->ref=''; $label='';
 
                 // To show ref or specific information according to view to show (defined by $module)
                 if ($modulepart == 'invoice')          {
-                    preg_match('/(.*)\/[^\/]+$/',$relativefile,$reg);  $ref=$reg[1];
+                    preg_match('/(.*)\/[^\/]+$/', $relativefile, $reg);  $ref=$reg[1];
                 }
                 if ($modulepart == 'invoice_supplier') {
-                    preg_match('/(\d+)\/[^\/]+$/',$relativefile,$reg); $id=empty($reg[1])?'':$reg[1];
+                    preg_match('/(\d+)\/[^\/]+$/', $relativefile, $reg); $id=empty($reg[1])?'':$reg[1];
                 }
                 if ($modulepart == 'propal')           {
-                    preg_match('/(.*)\/[^\/]+$/',$relativefile,$reg);  $ref=$reg[1];
+                    preg_match('/(.*)\/[^\/]+$/', $relativefile, $reg);  $ref=$reg[1];
                 }
                 if ($modulepart == 'order')            {
-                    preg_match('/(.*)\/[^\/]+$/',$relativefile,$reg);  $ref=$reg[1];
+                    preg_match('/(.*)\/[^\/]+$/', $relativefile, $reg);  $ref=$reg[1];
                 }
                 if ($modulepart == 'order_supplier')   {
-                    preg_match('/(.*)\/[^\/]+$/',$relativefile,$reg);  $ref=$reg[1];
+                    preg_match('/(.*)\/[^\/]+$/', $relativefile, $reg);  $ref=$reg[1];
                 }
                 if ($modulepart == 'contract')         {
-                    preg_match('/(.*)\/[^\/]+$/',$relativefile,$reg);  $ref=$reg[1];
+                    preg_match('/(.*)\/[^\/]+$/', $relativefile, $reg);  $ref=$reg[1];
                 }
                 if ($modulepart == 'tax')              {
-                    preg_match('/(\d+)\/[^\/]+$/',$relativefile,$reg); $id=$reg[1];
+                    preg_match('/(\d+)\/[^\/]+$/', $relativefile, $reg); $id=$reg[1];
                 }
 
                 if ($id || $ref)
                 {
                     //print 'Fetch '.$id.' or '.$ref.'<br>';
-                    $result=$object_instance->fetch($id,$ref);
+                    $result=$object_instance->fetch($id, $ref);
                     //print $result.'<br>';
                     if ($result == 0)    // Not found but no error
                     {
                         // Clean of orphelins directories are done into repair.php
                         print '<tr><td colspan="2">';
                         print 'Delete orphelins file '.$file['fullname'].'<br>';
-                        if (GETPOST('clean_orphelin_dir','alpha') == 'confirmed')
+                        if (GETPOST('clean_orphelin_dir', 'alpha') == 'confirmed')
                         {
-                            dol_delete_file($file['fullname'],1,1,1);
-                            dol_delete_dir(dirname($file['fullname']),1);
+                            dol_delete_file($file['fullname'], 1, 1, 1);
+                            dol_delete_dir(dirname($file['fullname']), 1);
                         }
                         print "</td></tr>";
                     }
-                    else if ($result < 0) print 'Error in '.get_class($object_instance).'.fetch of id'.$id.' ref='.$ref.', result='.$result.'<br>';
+                    elseif ($result < 0) print 'Error in '.get_class($object_instance).'.fetch of id'.$id.' ref='.$ref.', result='.$result.'<br>';
                 }
             }
         }
@@ -710,9 +710,9 @@ if ($ok && GETPOST('clean_orphelin_dir','alpha'))
 }
 
 // clean_linked_elements: Check and clean linked elements
-if ($ok && GETPOST('clean_product_stock_batch','alpha'))
+if ($ok && GETPOST('clean_product_stock_batch', 'alpha'))
 {
-    $methodtofix=GETPOST('methodtofix','alpha')?GETPOST('methodtofix','alpha'):'updatestock';
+    $methodtofix=GETPOST('methodtofix', 'alpha')?GETPOST('methodtofix', 'alpha'):'updatestock';
 
     print '<tr><td colspan="2"><br>*** Clean table product_batch, methodtofix='.$methodtofix.' (possible values: updatestock or updatebatch)</td></tr>';
 
@@ -811,7 +811,7 @@ if ($ok && GETPOST('clean_product_stock_batch','alpha'))
 
 
 // clean_product_stock_negative_if_batch
-if ($ok && GETPOST('clean_product_stock_negative_if_batch','alpha'))
+if ($ok && GETPOST('clean_product_stock_negative_if_batch', 'alpha'))
 {
     print '<tr><td colspan="2"><br>Clean table product_batch, methodtofix='.$methodtofix.' (possible values: updatestock or updatebatch)</td></tr>';
 
@@ -841,7 +841,7 @@ if ($ok && GETPOST('clean_product_stock_negative_if_batch','alpha'))
 }
 
 // set_empty_time_spent_amount
-if ($ok && GETPOST('set_empty_time_spent_amount','alpha'))
+if ($ok && GETPOST('set_empty_time_spent_amount', 'alpha'))
 {
     print '<tr><td colspan="2"><br>*** Set value of time spent without amount</td></tr>';
 
@@ -901,7 +901,7 @@ if ($ok && GETPOST('set_empty_time_spent_amount','alpha'))
 
 
 // force_disable_of_modules_not_found
-if ($ok && GETPOST('force_disable_of_modules_not_found','alpha'))
+if ($ok && GETPOST('force_disable_of_modules_not_found', 'alpha'))
 {
     print '<tr><td colspan="2"><br>*** Force modules not found to be disabled (only modules adding js, css or hooks can be detected as removed)</td></tr>';
 
@@ -943,14 +943,14 @@ if ($ok && GETPOST('force_disable_of_modules_not_found','alpha'))
 		                    	$value=$obj->value;
 		                    	$valuearray=json_decode($value);
 	                    		$reloffile=$valuearray[0];
-	                    		$reloffile=preg_replace('/^\//','',$valuearray[0]);
+	                    		$reloffile=preg_replace('/^\//', '', $valuearray[0]);
 	                    	}
 	                    	if ($key == 'css')
 	                    	{
 		                    	$value=$obj->value;
 		                    	$valuearray=json_decode($value);
 		                    	if ($value && count($valuearray)==0) $valuearray[0]=$value;	// If value was not a json array but a string
-	                    		$reloffile=preg_replace('/^\//','',$valuearray[0]);
+	                    		$reloffile=preg_replace('/^\//', '', $valuearray[0]);
 	                    	}
 
 	                    	//var_dump($key.' - '.$value.' - '.$reloffile);
@@ -1020,7 +1020,7 @@ if ($ok && GETPOST('force_disable_of_modules_not_found','alpha'))
 
 
 // clean_old_module_entries: Clean data into const when files of module were removed without being
-if ($ok && GETPOST('clean_perm_table','alpha'))
+if ($ok && GETPOST('clean_perm_table', 'alpha'))
 {
 	print '<tr><td colspan="2"><br>*** Clean table user_rights from lines of external modules no more enabled</td></tr>';
 
@@ -1043,7 +1043,7 @@ if ($ok && GETPOST('clean_perm_table','alpha'))
 				if ($obj->id > 0)
 				{
 					print '<tr><td>Found line with id '.$obj->id.', label "'.$obj->libelle.'" of module "'.$obj->module.'" to delete';
-					if (GETPOST('clean_perm_table','alpha') == 'confirmed')
+					if (GETPOST('clean_perm_table', 'alpha') == 'confirmed')
 					{
 						$sqldelete = 'DELETE FROM '.MAIN_DB_PREFIX.'rights_def WHERE id = '.$obj->id;
 						$resqldelete = $db->query($sqldelete);
@@ -1072,13 +1072,13 @@ if ($ok && GETPOST('clean_perm_table','alpha'))
 
 
 // force utf8 on tables
-if ($ok && GETPOST('force_utf8_on_tables','alpha'))
+if ($ok && GETPOST('force_utf8_on_tables', 'alpha'))
 {
     print '<tr><td colspan="2"><br>*** Force page code and collation of tables into utf8/utf8_unicode_ci (for mysql/mariadb only)</td></tr>';
 
     if ($db->type == "mysql" || $db->type == "mysqli")
     {
-    	$force_utf8_on_tables = GETPOST('force_utf8_on_tables','alpha');
+    	$force_utf8_on_tables = GETPOST('force_utf8_on_tables', 'alpha');
 
     	$listoftables = $db->DDLListTables($db->database_name);
 
@@ -1146,7 +1146,7 @@ else
 }
 
 dolibarr_install_syslog("--- repair: end");
-pFooter(1,$setuplang);
+pFooter(1, $setuplang);
 
 if ($db->connected) $db->close();
 

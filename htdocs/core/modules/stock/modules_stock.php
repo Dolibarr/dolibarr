@@ -19,25 +19,25 @@
 require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
 
 /**
- *	Parent class for stock models of doc generators
+ *  Parent class for stock models of doc generators
  */
 abstract class ModelePDFStock extends CommonDocGenerator
 {
     /**
-	 * @var string Error code (or message)
-	 */
-	public $error='';
+     * @var string Error code (or message)
+     */
+    public $error='';
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *  Return list of active generation modules
      *
-     * 	@param	DoliDB		$db					Database handler
-     *  @param	integer		$maxfilenamelength  Max length of value to show
-     * 	@return	array							List of templates
+     *  @param  DoliDB      $db                 Database handler
+     *  @param  integer     $maxfilenamelength  Max length of value to show
+     *  @return array                           List of templates
      */
-    static function liste_modeles($db,$maxfilenamelength=0)
+    public static function liste_modeles($db, $maxfilenamelength = 0)
     {
         // phpcs:enable
         global $conf;
@@ -46,7 +46,7 @@ abstract class ModelePDFStock extends CommonDocGenerator
         $liste=array();
 
         include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-        $liste=getListOfModels($db,$type,$maxfilenamelength);
+        $liste=getListOfModels($db, $type, $maxfilenamelength);
 
         return $liste;
     }

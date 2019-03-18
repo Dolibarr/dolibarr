@@ -27,10 +27,9 @@
  */
 
 // Protection to avoid direct call of template
-if (empty($conf) || ! is_object($conf))
-{
-	print "Error, template page can't be called as URL";
-	exit;
+if (empty($conf) || ! is_object($conf)) {
+    print "Error, template page can't be called as URL";
+    exit;
 }
 
 
@@ -48,11 +47,14 @@ if ($action == 'presend')
 
 		$ref = dol_sanitizeFileName($object->ref);
 		include_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
-		$fileparams = dol_most_recent_file($diroutput . '/' . $ref, preg_quote($ref, '/').'[^\-]+');
-		//
+		// Special case
 		if ($object->element == 'invoice_supplier')
 		{
-			$fileparams = dol_most_recent_file($diroutput . '/' . get_exdir($object->id,2,0,0,$object,$object->element).$ref, preg_quote($ref,'/').'([^\-])+');
+			$fileparams = dol_most_recent_file($diroutput . '/' . get_exdir($object->id, 2, 0, 0, $object, $object->element).$ref, preg_quote($ref, '/').'([^\-])+');
+		}
+		else
+		{
+		    $fileparams = dol_most_recent_file($diroutput . '/' . $ref, preg_quote($ref, '/').'[^\-]+');
 		}
 
 		$file = $fileparams['fullname'];
@@ -81,21 +83,32 @@ if ($action == 'presend')
 	$topicmail='';
 	if (empty($object->ref_client)) {
 		$topicmail = $outputlangs->trans($defaulttopic, '__REF__');
-	} else if (! empty($object->ref_client)) {
+	} elseif (! empty($object->ref_client)) {
 		$topicmail = $outputlangs->trans($defaulttopic, '__REF__ (__REFCLIENT__)');
 	}
 
 	// Build document if it not exists
-	if (! in_array($object->element, array('societe', 'user', 'member')))
+	$forcebuilddoc=true;
+	if (in_array($object->element, array('societe', 'user', 'member'))) $forcebuilddoc=false;
+	if ($object->element == 'invoice_supplier' && empty($conf->global->INVOICE_SUPPLIER_ADDON_PDF)) $forcebuilddoc=false;
+	if ($forcebuilddoc)    // If there is no default value for supplier invoice, we do not generate file, even if modelpdf was set by a manual generation
 	{
 		if ((! $file || ! is_readable($file)) && method_exists($object, 'generateDocument'))
 		{
 			$result = $object->generateDocument(GETPOST('model') ? GETPOST('model') : $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
-			if ($result <= 0) {
+			if ($result < 0) {
 				dol_print_error($db, $object->error, $object->errors);
 				exit();
 			}
-			$fileparams = dol_most_recent_file($diroutput . '/' . $ref, preg_quote($ref, '/').'[^\-]+');
+			if ($object->element == 'invoice_supplier')
+			{
+			    $fileparams = dol_most_recent_file($diroutput . '/' . get_exdir($object->id, 2, 0, 0, $object, $object->element).$ref, preg_quote($ref, '/').'([^\-])+');
+			}
+			else
+			{
+			    $fileparams = dol_most_recent_file($diroutput . '/' . $ref, preg_quote($ref, '/').'[^\-]+');
+			}
+
 			$file = $fileparams['fullname'];
 		}
 	}
@@ -164,10 +177,10 @@ if ($action == 'presend')
 		$result= $fuserdest->fetchAll('ASC', 't.lastname', 0, 0, array('customsql'=>'t.statut=1 AND t.employee=1 AND t.email IS NOT NULL AND t.email<>\'\''));
 		if ($result>0 && is_array($fuserdest->users) && count($fuserdest->users)>0) {
 			foreach($fuserdest->users as $uuserdest) {
-				$listeuser[$uuserdest->id] = $uuserdest->user_get_property($uuserdest->id,'email');
+				$listeuser[$uuserdest->id] = $uuserdest->user_get_property($uuserdest->id, 'email');
 			}
 		} elseif ($result<0) {
-			setEventMessages(null, $fuserdest->errors,'errors');
+			setEventMessages(null, $fuserdest->errors, 'errors');
 		}
 		if (count($listeuser)>0) {
 			$formmail->withtouser = $listeuser;
@@ -218,7 +231,7 @@ if ($action == 'presend')
 	// Tableau des parametres complementaires
 	$formmail->param['action'] = 'send';
 	$formmail->param['models'] = $modelmail;
-	$formmail->param['models_id']=GETPOST('modelmailselected','int');
+	$formmail->param['models_id']=GETPOST('modelmailselected', 'int');
 	$formmail->param['id'] = $object->id;
 	$formmail->param['returnurl'] = $_SERVER["PHP_SELF"] . '?id=' . $object->id;
 	$formmail->param['fileinit'] = array($file);
@@ -228,4 +241,3 @@ if ($action == 'presend')
 
 	dol_fiche_end();
 }
-

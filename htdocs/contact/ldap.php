@@ -32,7 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/ldap.lib.php';
 $langs->loadLangs(array('companies', 'ldap'));
 $langs->load("admin");
 
-$action=GETPOST('action','aZ09');
+$action=GETPOST('action', 'aZ09');
 
 // Security check
 $id = GETPOST('id', 'int');
@@ -61,7 +61,7 @@ if ($action == 'dolibarr2ldap')
 	$dn=$object->_load_ldap_dn($info);
 	$olddn=$dn;	// We can say that old dn = dn as we force synchro
 
-	$result=$ldap->update($dn,$info,$user,$olddn);
+	$result=$ldap->update($dn, $info, $user, $olddn);
 
 	if ($result >= 0)
 	{
@@ -82,7 +82,7 @@ if ($action == 'dolibarr2ldap')
 
 $title = (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("Contacts") : $langs->trans("ContactsAddresses"));
 
-llxHeader('',$title,'EN:Module_Third_Parties|FR:Module_Tiers|ES:M&oacute;dulo_Empresas');
+llxHeader('', $title, 'EN:Module_Third_Parties|FR:Module_Tiers|ES:M&oacute;dulo_Empresas');
 
 $form = new Form($db);
 
@@ -170,9 +170,9 @@ $result=$ldap->connect_bind();
 if ($result > 0)
 {
 	$info=$object->_load_ldap_info();
-	$dn=$object->_load_ldap_dn($info,1);
-	$search = "(".$object->_load_ldap_dn($info,2).")";
-	$records = $ldap->getAttribute($dn,$search);
+	$dn=$object->_load_ldap_dn($info, 1);
+	$search = "(".$object->_load_ldap_dn($info, 2).")";
+	$records = $ldap->getAttribute($dn, $search);
 
 	//var_dump($records);
 
@@ -185,7 +185,7 @@ if ($result > 0)
 		}
 		else
 		{
-			$result=show_ldap_content($records,0,$records['count'],true);
+			$result=show_ldap_content($records, 0, $records['count'], true);
 		}
 	}
 	else

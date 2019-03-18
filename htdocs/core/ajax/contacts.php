@@ -21,16 +21,16 @@
  *       \brief      File to load contacts combobox
  */
 
-if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL','1'); // Disables token renewal
-if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU','1');
-if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');
+if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1'); // Disables token renewal
+if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1');
+if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
 
 require '../../main.inc.php';
 
-$id			= GETPOST('id','int');
-$action		= GETPOST('action','alpha');
-$htmlname	= GETPOST('htmlname','alpha');
-$showempty	= GETPOST('showempty','int');
+$id			= GETPOST('id', 'int');
+$action		= GETPOST('action', 'alpha');
+$htmlname	= GETPOST('htmlname', 'alpha');
+$showempty	= GETPOST('showempty', 'int');
 
 /*
  * View
@@ -48,10 +48,9 @@ if (! empty($id) && ! empty($action) && ! empty($htmlname))
 	$return=array();
 	if (empty($showempty)) $showempty=0;
 
-	$return['value']	= $form->selectcontacts($id,'',$htmlname,$showempty,'','',0,'',true);
+	$return['value']	= $form->selectcontacts($id, '', $htmlname, $showempty, '', '', 0, '', true);
 	$return['num']		= $form->num;
 	$return['error']	= $form->error;
 
 	echo json_encode($return);
 }
-

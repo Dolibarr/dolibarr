@@ -59,7 +59,7 @@ class CommandeFournisseurTest extends PHPUnit_Framework_TestCase
      *
      * @return CommandeFournisseurTest
      */
-    function __construct()
+    public function __construct()
     {
     	parent::__construct();
 
@@ -137,7 +137,7 @@ class CommandeFournisseurTest extends PHPUnit_Framework_TestCase
         $societe=new Societe($db);
         $societe->fetch($socid);
         $product=new ProductFournisseur($db);
-        $product->fetch(0,'PIDRESS');
+        $product->fetch(0, 'PIDRESS');
         if ($product->id <= 0) { print "\n".__METHOD__." A product with ref PIDRESS must exists into database"; die(); }
 
         $quantity=10;

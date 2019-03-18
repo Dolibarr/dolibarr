@@ -31,7 +31,7 @@ $langs->load("admin");
 if (! $user->admin)
 	accessforbidden();
 
-$table=GETPOST('table','alpha');
+$table=GETPOST('table', 'alpha');
 
 
 /*
@@ -41,16 +41,16 @@ $table=GETPOST('table','alpha');
 llxHeader();
 
 
-print load_fiche_titre($langs->trans("Table") . " ".$table,'','title_setup');
+print load_fiche_titre($langs->trans("Table") . " ".$table, '', 'title_setup');
 
 // Define request to get table description
 $base=0;
-if (preg_match('/mysql/i',$conf->db->type))
+if (preg_match('/mysql/i', $conf->db->type))
 {
 	$sql = "SHOW TABLE STATUS LIKE '".$db->escape($table)."'";
 	$base=1;
 }
-else if ($conf->db->type == 'pgsql')
+elseif ($conf->db->type == 'pgsql')
 {
 	$sql = "SELECT conname,contype FROM pg_constraint";
 	$base=2;
@@ -87,7 +87,7 @@ else
 				$cx = preg_replace("/`\)/", "", $cx);
 				$cx = preg_replace("/`\s/", "", $cx);
 
-				$val = explode("`",$cx);
+				$val = explode("`", $cx);
 
 				$link[trim($val[0])][0] = (isset($val[1])?$val[1]:'');
 				$link[trim($val[0])][1] = (isset($val[2])?$val[2]:'');

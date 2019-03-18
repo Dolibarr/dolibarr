@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2011-2018  Alexandre Spangaro      <aspangaro@zendsi.com>
+/* Copyright (C) 2011-2018  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2014       Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2015       Charlie BENKE           <charlie@patas-monkey.com>
@@ -40,13 +40,13 @@ if (! empty($conf->projet->enabled))
 $langs->loadLangs(array("compta","banks","bills","users","salaries","hrm"));
 if (! empty($conf->projet->enabled))	$langs->load("projects");
 
-$id=GETPOST("id",'int');
-$action=GETPOST('action','aZ09');
+$id=GETPOST("id", 'int');
+$action=GETPOST('action', 'aZ09');
 $cancel= GETPOST('cancel', 'aZ09');
-$projectid = (GETPOST('projectid','int') ? GETPOST('projectid', 'int') : GETPOST('fk_project','int'));
+$projectid = (GETPOST('projectid', 'int') ? GETPOST('projectid', 'int') : GETPOST('fk_project', 'int'));
 
 // Security check
-$socid = GETPOST("socid","int");
+$socid = GETPOST("socid", "int");
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'salaries', '', '', '');
 
@@ -78,16 +78,16 @@ if ($action == 'add' && empty($cancel))
 {
 	$error=0;
 
-	$datep=dol_mktime(12,0,0, GETPOST("datepmonth",'int'), GETPOST("datepday",'int'), GETPOST("datepyear",'int'));
-	$datev=dol_mktime(12,0,0, GETPOST("datevmonth",'int'), GETPOST("datevday",'int'), GETPOST("datevyear",'int'));
-	$datesp=dol_mktime(12,0,0, GETPOST("datespmonth",'int'), GETPOST("datespday",'int'), GETPOST("datespyear",'int'));
-	$dateep=dol_mktime(12,0,0, GETPOST("dateepmonth",'int'), GETPOST("dateepday",'int'), GETPOST("dateepyear",'int'));
+	$datep=dol_mktime(12, 0, 0, GETPOST("datepmonth", 'int'), GETPOST("datepday", 'int'), GETPOST("datepyear", 'int'));
+	$datev=dol_mktime(12, 0, 0, GETPOST("datevmonth", 'int'), GETPOST("datevday", 'int'), GETPOST("datevyear", 'int'));
+	$datesp=dol_mktime(12, 0, 0, GETPOST("datespmonth", 'int'), GETPOST("datespday", 'int'), GETPOST("datespyear", 'int'));
+	$dateep=dol_mktime(12, 0, 0, GETPOST("dateepmonth", 'int'), GETPOST("dateepday", 'int'), GETPOST("dateepyear", 'int'));
 	if (empty($datev)) $datev=$datep;
 
 	$type_payment = dol_getIdFromCode($db, GETPOST("paymenttype", 'alpha'), 'c_paiement', 'code', 'id', 1);
 
-	$object->accountid=GETPOST("accountid") > 0 ? GETPOST("accountid","int") : 0;
-	$object->fk_user=GETPOST("fk_user") > 0 ? GETPOST("fk_user","int") : 0;
+	$object->accountid=GETPOST("accountid") > 0 ? GETPOST("accountid", "int") : 0;
+	$object->fk_user=GETPOST("fk_user") > 0 ? GETPOST("fk_user", "int") : 0;
 	$object->datev=$datev;
 	$object->datep=$datep;
 	$object->amount=price2num(GETPOST("amount"));
@@ -98,11 +98,11 @@ if ($action == 'add' && empty($cancel))
 	$object->type_payment=($type_payment > 0 ? $type_payment : 0);
 	$object->num_payment=GETPOST("num_payment");
 	$object->fk_user_author=$user->id;
-	$object->fk_project= GETPOST('fk_project','int');
+	$object->fk_project= GETPOST('fk_project', 'int');
 
 	// Set user current salary as ref salaray for the payment
 	$fuser=new User($db);
-	$fuser->fetch(GETPOST("fk_user","int"));
+	$fuser->fetch(GETPOST("fk_user", "int"));
 	$object->salary=$fuser->salary;
 
 	if (empty($datep) || empty($datev) || empty($datesp) || empty($dateep))
@@ -201,7 +201,7 @@ if ($action == 'delete')
  *	View
  */
 
-llxHeader("",$langs->trans("SalaryPayment"));
+llxHeader("", $langs->trans("SalaryPayment"));
 
 $form = new Form($db);
 if (! empty($conf->projet->enabled)) $formproject = new FormProjets($db);
@@ -220,8 +220,8 @@ if ($id)
 // Create
 if ($action == 'create')
 {
-	$year_current = strftime("%Y",dol_now());
-	$pastmonth = strftime("%m",dol_now()) - 1;
+	$year_current = strftime("%Y", dol_now());
+	$pastmonth = strftime("%m", dol_now()) - 1;
 	$pastmonthyear = $year_current;
 	if ($pastmonth == 0)
 	{
@@ -240,14 +240,14 @@ if ($action == 'create')
 
 	if (empty($datesp) || empty($dateep)) // We define date_start and date_end
 	{
-		$datesp=dol_get_first_day($pastmonthyear,$pastmonth,false); $dateep=dol_get_last_day($pastmonthyear,$pastmonth,false);
+		$datesp=dol_get_first_day($pastmonthyear, $pastmonth, false); $dateep=dol_get_last_day($pastmonthyear, $pastmonth, false);
 	}
 
 	print '<form name="salary" action="'.$_SERVER["PHP_SELF"].'" method="post">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="add">';
 
-	print load_fiche_titre($langs->trans("NewSalaryPayment"),'', 'title_accountancy.png');
+	print load_fiche_titre($langs->trans("NewSalaryPayment"), '', 'title_accountancy.png');
 
 	dol_fiche_head('', '');
 
@@ -269,7 +269,7 @@ if ($action == 'create')
 	print '<tr><td>';
 	print $form->editfieldkey('Employee', 'fk_user', '', $object, 0, 'string', '', 1).'</td><td>';
 	$noactive=0;	// We keep active and unactive users
-	print $form->select_dolusers(GETPOST('fk_user','int'), 'fk_user', 1, '', 0, '', '', 0, 0, 0, 'AND employee=1', 0, '', 'maxwidth300', $noactive);
+	print $form->select_dolusers(GETPOST('fk_user', 'int'), 'fk_user', 1, '', 0, '', '', 0, 0, 0, 'AND employee=1', 0, '', 'maxwidth300', $noactive);
 	print '</td></tr>';
 
 	// Label
@@ -303,7 +303,7 @@ if ($action == 'create')
 
 		print '<tr><td>'.$langs->trans("Project").'</td><td>';
 
-		$numproject=$formproject->select_projects(-1, $projectid,'fk_project',0,0,1,1);
+		$numproject=$formproject->select_projects(-1, $projectid, 'fk_project', 0, 0, 1, 1);
 
 		print '</td></tr>';
 	}
@@ -313,7 +313,7 @@ if ($action == 'create')
 	{
 		print '<tr><td>';
 		print $form->editfieldkey('BankAccount', 'selectaccountid', '', $object, 0, 'string', '', 1).'</td><td>';
-		$form->select_comptes($_POST["accountid"],"accountid",0,'',1);  // Affiche liste des comptes courant
+		$form->select_comptes($_POST["accountid"], "accountid", 0, '', 1);  // Affiche liste des comptes courant
 		print '</td></tr>';
 	}
 
@@ -335,7 +335,7 @@ if ($action == 'create')
 
 	// Other attributes
 	$parameters=array();
-	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+	$reshook=$hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action);    // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 
 	print '</table>';
@@ -419,23 +419,23 @@ if ($id)
 
 	print "<tr>";
 	print '<td>'.$langs->trans("DateStartPeriod").'</td><td>';
-	print dol_print_date($object->datesp,'day');
+	print dol_print_date($object->datesp, 'day');
 	print '</td></tr>';
 
 	print '<tr><td>'.$langs->trans("DateEndPeriod").'</td><td>';
-	print dol_print_date($object->dateep,'day');
+	print dol_print_date($object->dateep, 'day');
 	print '</td></tr>';
 
 	print "<tr>";
 	print '<td>'.$langs->trans("DatePayment").'</td><td>';
-	print dol_print_date($object->datep,'day');
+	print dol_print_date($object->datep, 'day');
 	print '</td></tr>';
 
 	print '<tr><td>'.$langs->trans("DateValue").'</td><td>';
-	print dol_print_date($object->datev,'day');
+	print dol_print_date($object->datev, 'day');
 	print '</td></tr>';
 
-	print '<tr><td>'.$langs->trans("Amount").'</td><td>'.price($object->amount,0,$outputlangs,1,-1,-1,$conf->currency).'</td></tr>';
+	print '<tr><td>'.$langs->trans("Amount").'</td><td>'.price($object->amount, 0, $outputlangs, 1, -1, -1, $conf->currency).'</td></tr>';
 
 	if (! empty($conf->banque->enabled))
 	{
@@ -447,7 +447,7 @@ if ($id)
 			print '<tr>';
 			print '<td>'.$langs->trans('BankTransactionLine').'</td>';
 			print '<td>';
-			print $bankline->getNomUrl(1,0,'showall');
+			print $bankline->getNomUrl(1, 0, 'showall');
 			print '</td>';
 			print '</tr>';
 		}
@@ -455,7 +455,7 @@ if ($id)
 
 	// Other attributes
 	$parameters=array();
-	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+	$reshook=$hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action);    // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 
 	print '</table>';

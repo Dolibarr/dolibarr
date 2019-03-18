@@ -29,21 +29,21 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
  */
 abstract class ModeleBarCode
 {
-	/**
-	 * @var string Error code (or message)
-	 */
-	public $error='';
+    /**
+     * @var string Error code (or message)
+     */
+    public $error='';
 
 
-	/**
-	 * Return if a model can be used or not
-	 *
-	 * @return		boolean     true if model can be used
-	 */
-	function isEnabled()
-	{
-		return true;
-	}
+    /**
+     * Return if a model can be used or not
+     *
+     * @return		boolean     true if model can be used
+     */
+    public function isEnabled()
+    {
+        return true;
+    }
 }
 
 
@@ -52,17 +52,17 @@ abstract class ModeleBarCode
  */
 abstract class ModeleNumRefBarCode
 {
-	/**
-	 * @var string Error code (or message)
-	 */
-	public $error='';
+    /**
+     * @var string Error code (or message)
+     */
+    public $error='';
 
     /**     Return default description of numbering model
      *
      *		@param	Translate	$langs		Object langs
      *      @return string      			Descriptive text
      */
-    function info($langs)
+    public function info($langs)
     {
         $langs->load("bills");
         return $langs->trans("NoDescription");
@@ -73,7 +73,7 @@ abstract class ModeleNumRefBarCode
      *		@param	Translate	$langs		Object langs
      *      @return string      			Model name
      */
-    function getNom($langs)
+    public function getNom($langs)
     {
         return empty($this->name)?$this->nom:$this->name;
     }
@@ -83,7 +83,7 @@ abstract class ModeleNumRefBarCode
      *		@param	Translate	$langs		Object langs
      *      @return string      			Example
      */
-    function getExample($langs)
+    public function getExample($langs)
     {
         $langs->load("bills");
         return $langs->trans("NoExample");
@@ -96,17 +96,17 @@ abstract class ModeleNumRefBarCode
      *	@param	string		$type		Type of barcode (EAN, ISBN, ...)
      *  @return string      			Value
      */
-    function getNextValue($objproduct,$type='')
+    public function getNextValue($objproduct, $type = '')
     {
         global $langs;
         return $langs->trans("Function_getNextValue_InModuleNotWorking");
     }
 
-	/**     Return version of module
+    /**     Return version of module
      *
      *      @return     string      Version
      */
-    function getVersion()
+    public function getVersion()
     {
         global $langs;
         $langs->load("admin");
@@ -126,7 +126,7 @@ abstract class ModeleNumRefBarCode
      *		@param	int			$type		-1=Nothing, 0=Product, 1=Service
      *		@return	string					HTML translated description
      */
-    function getToolTip($langs,$soc,$type)
+    public function getToolTip($langs, $soc, $type)
     {
         global $conf;
 
@@ -142,24 +142,24 @@ abstract class ModeleNumRefBarCode
         {
             $s.=$langs->trans("RequiredIfProduct").': ';
             if (! empty($conf->global->MAIN_BARCODE_CODE_ALWAYS_REQUIRED) && ! empty($this->code_null)) $s.='<strike>';
-            $s.=yn(!$this->code_null,1,2);
-            if (! empty($conf->global->MAIN_BARCODE_CODE_ALWAYS_REQUIRED) && ! empty($this->code_null)) $s.='</strike> '.yn(1,1,2).' ('.$langs->trans("ForcedToByAModule",$langs->transnoentities("yes")).')';
+            $s.=yn(!$this->code_null, 1, 2);
+            if (! empty($conf->global->MAIN_BARCODE_CODE_ALWAYS_REQUIRED) && ! empty($this->code_null)) $s.='</strike> '.yn(1, 1, 2).' ('.$langs->trans("ForcedToByAModule", $langs->transnoentities("yes")).')';
             $s.='<br>';
         }
         if ($type == 1)
         {
             $s.=$langs->trans("RequiredIfService").': ';
             if (! empty($conf->global->MAIN_BARCODE_CODE_ALWAYS_REQUIRED) && ! empty($this->code_null)) $s.='<strike>';
-            $s.=yn(!$this->code_null,1,2);
-            if (! empty($conf->global->MAIN_BARCODE_CODE_ALWAYS_REQUIRED) && ! empty($this->code_null)) $s.='</strike> '.yn(1,1,2).' ('.$langs->trans("ForcedToByAModule",$langs->transnoentities("yes")).')';
+            $s.=yn(!$this->code_null, 1, 2);
+            if (! empty($conf->global->MAIN_BARCODE_CODE_ALWAYS_REQUIRED) && ! empty($this->code_null)) $s.='</strike> '.yn(1, 1, 2).' ('.$langs->trans("ForcedToByAModule", $langs->transnoentities("yes")).')';
             $s.='<br>';
         }
         if ($type == -1)
         {
             $s.=$langs->trans("Required").': ';
             if (! empty($conf->global->MAIN_BARCODE_CODE_ALWAYS_REQUIRED) && ! empty($this->code_null)) $s.='<strike>';
-            $s.=yn(!$this->code_null,1,2);
-            if (! empty($conf->global->MAIN_BARCODE_CODE_ALWAYS_REQUIRED) && ! empty($this->code_null)) $s.='</strike> '.yn(1,1,2).' ('.$langs->trans("ForcedToByAModule",$langs->transnoentities("yes")).')';
+            $s.=yn(!$this->code_null, 1, 2);
+            if (! empty($conf->global->MAIN_BARCODE_CODE_ALWAYS_REQUIRED) && ! empty($this->code_null)) $s.='</strike> '.yn(1, 1, 2).' ('.$langs->trans("ForcedToByAModule", $langs->transnoentities("yes")).')';
             $s.='<br>';
         }
         /*$s.=$langs->trans("CanBeModifiedIfOk").': ';
@@ -167,14 +167,13 @@ abstract class ModeleNumRefBarCode
         $s.='<br>';
         $s.=$langs->trans("CanBeModifiedIfKo").': '.yn($this->code_modifiable_invalide,1,2).'<br>';
         */
-        $s.=$langs->trans("AutomaticCode").': '.yn($this->code_auto,1,2).'<br>';
+        $s.=$langs->trans("AutomaticCode").': '.yn($this->code_auto, 1, 2).'<br>';
         $s.='<br>';
 
-        $nextval=$this->getNextValue($soc,'');
+        $nextval=$this->getNextValue($soc, '');
         if (empty($nextval)) $nextval=$langs->trans("Undefined");
         $s.=$langs->trans("NextValue").': <b>'.$nextval.'</b><br>';
 
         return $s;
     }
 }
-

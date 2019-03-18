@@ -32,17 +32,17 @@ include_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
  */
 class FactureStats extends Stats
 {
-    var $socid;
-    var $userid;
+    public $socid;
+    public $userid;
 
     /**
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element;
-	
-    var $from;
-    var $field;
-    var $where;
+
+    public $from;
+    public $field;
+    public $where;
 
 
 	/**
@@ -53,7 +53,7 @@ class FactureStats extends Stats
 	 * 	@param 	string		$mode	   	Option ('customer', 'supplier')
      * 	@param	int			$userid    	Id user for filter (creation user)
 	 */
-	function __construct($db, $socid, $mode, $userid=0)
+	public function __construct($db, $socid, $mode, $userid = 0)
 	{
 		global $user, $conf;
 
@@ -80,7 +80,7 @@ class FactureStats extends Stats
 		}
 
 		$this->where = " f.fk_statut > 0";
-		$this->where.= " AND f.entity = ".$conf->entity;
+		$this->where.= " AND f.entity IN (".getEntity('invoice').")";
 		if (!$user->rights->societe->client->voir && !$this->socid) $this->where .= " AND f.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
 		if ($mode == 'customer') $this->where.=" AND (f.fk_statut <> 3 OR f.close_code <> 'replaced')";	// Exclude replaced invoices as they are duplicated (we count closed invoices for other reasons)
 		if ($this->socid)
@@ -100,7 +100,7 @@ class FactureStats extends Stats
      *	@param	int		$format		0=Label of absiss is a translated text, 1=Label of absiss is month number, 2=Label of absiss is first letter of month
 	 *	@return	array				Array of values
 	 */
-	function getNbByMonth($year, $format=0)
+	public function getNbByMonth($year, $format = 0)
 	{
 		global $user;
 
@@ -110,7 +110,7 @@ class FactureStats extends Stats
 		$sql.= " WHERE f.datef BETWEEN '".$this->db->idate(dol_get_first_day($year))."' AND '".$this->db->idate(dol_get_last_day($year))."'";
 		$sql.= " AND ".$this->where;
 		$sql.= " GROUP BY dm";
-        $sql.= $this->db->order('dm','DESC');
+        $sql.= $this->db->order('dm', 'DESC');
 
 		$res=$this->_getNbByMonth($year, $sql, $format);
 		//var_dump($res);print '<br>';
@@ -123,7 +123,7 @@ class FactureStats extends Stats
 	 *
 	 *	@return		array	Array with number by year
 	 */
-	function getNbByYear()
+	public function getNbByYear()
 	{
 		global $user;
 
@@ -132,7 +132,7 @@ class FactureStats extends Stats
 		if (!$user->rights->societe->client->voir && !$this->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql.= " WHERE ".$this->where;
 		$sql.= " GROUP BY dm";
-        $sql.= $this->db->order('dm','DESC');
+        $sql.= $this->db->order('dm', 'DESC');
 
 		return $this->_getNbByYear($sql);
 	}
@@ -145,7 +145,7 @@ class FactureStats extends Stats
      *	@param	int		$format		0=Label of absiss is a translated text, 1=Label of absiss is month number, 2=Label of absiss is first letter of month
 	 *	@return	array				Array with amount by month
 	 */
-	function getAmountByMonth($year, $format=0)
+	public function getAmountByMonth($year, $format = 0)
 	{
 		global $user;
 
@@ -155,7 +155,7 @@ class FactureStats extends Stats
 		$sql.= " WHERE f.datef BETWEEN '".$this->db->idate(dol_get_first_day($year))."' AND '".$this->db->idate(dol_get_last_day($year))."'";
 		$sql.= " AND ".$this->where;
         $sql.= " GROUP BY dm";
-        $sql.= $this->db->order('dm','DESC');
+        $sql.= $this->db->order('dm', 'DESC');
 
 		$res=$this->_getAmountByMonth($year, $sql, $format);
 		//var_dump($res);print '<br>';
@@ -168,7 +168,7 @@ class FactureStats extends Stats
 	 *	@param	int		$year	Year to scan
 	 *	@return	array			Array of values
 	 */
-	function getAverageByMonth($year)
+	public function getAverageByMonth($year)
 	{
 		global $user;
 
@@ -178,7 +178,7 @@ class FactureStats extends Stats
         $sql.= " WHERE f.datef BETWEEN '".$this->db->idate(dol_get_first_day($year))."' AND '".$this->db->idate(dol_get_last_day($year))."'";
 		$sql.= " AND ".$this->where;
         $sql.= " GROUP BY dm";
-        $sql.= $this->db->order('dm','DESC');
+        $sql.= $this->db->order('dm', 'DESC');
 
 		return $this->_getAverageByMonth($year, $sql);
 	}
@@ -188,7 +188,7 @@ class FactureStats extends Stats
 	 *
 	 *	@return	array	Array of values
 	 */
-	function getAllByYear()
+	public function getAllByYear()
 	{
 		global $user;
 
@@ -197,7 +197,7 @@ class FactureStats extends Stats
 		if (!$user->rights->societe->client->voir && !$this->socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql.= " WHERE ".$this->where;
 		$sql.= " GROUP BY year";
-        $sql.= $this->db->order('year','DESC');
+        $sql.= $this->db->order('year', 'DESC');
 
 		return $this->_getAllByYear($sql);
 	}
@@ -208,7 +208,7 @@ class FactureStats extends Stats
 	 *	@param	int		$year	Year to scan
 	 *	@return	array	Array of values
 	 */
-	function getAllByProduct($year)
+	public function getAllByProduct($year)
 	{
 		global $user;
 
@@ -217,12 +217,11 @@ class FactureStats extends Stats
 		if (!$user->rights->societe->client->voir && !$this->socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql.= " WHERE ".$this->where;
 		$sql.= " AND f.rowid = tl.fk_facture AND tl.fk_product = product.rowid";
-    	$sql.= " AND f.datef BETWEEN '".$this->db->idate(dol_get_first_day($year,1,false))."' AND '".$this->db->idate(dol_get_last_day($year,12,false))."'";
+    	$sql.= " AND f.datef BETWEEN '".$this->db->idate(dol_get_first_day($year, 1, false))."' AND '".$this->db->idate(dol_get_last_day($year, 12, false))."'";
 		$sql.= " GROUP BY product.ref";
-        $sql.= $this->db->order('nb','DESC');
+        $sql.= $this->db->order('nb', 'DESC');
         //$sql.= $this->db->plimit(20);
 
 		return $this->_getAllByProduct($sql);
 	}
 }
-

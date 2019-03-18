@@ -37,22 +37,23 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('products', 'stocks', 'companies', 'categories'));
 
-$action=GETPOST('action','aZ09');
-$cancel=GETPOST('cancel','alpha');
+$action=GETPOST('action', 'aZ09');
+$cancel=GETPOST('cancel', 'alpha');
 $confirm=GETPOST('confirm');
 
-$id = GETPOST('id','int');
-$ref = GETPOST('ref','alpha');
+$id = GETPOST('id', 'int');
+$ref = GETPOST('ref', 'alpha');
 
-$sortfield = GETPOST("sortfield",'alpha');
-$sortorder = GETPOST("sortorder",'alpha');
+$sortfield = GETPOST("sortfield", 'alpha');
+$sortorder = GETPOST("sortorder", 'alpha');
 if (! $sortfield) $sortfield="p.ref";
 if (! $sortorder) $sortorder="DESC";
 
-$backtopage=GETPOST('backtopage','alpha');
+$backtopage=GETPOST('backtopage', 'alpha');
 
 // Security check
-$result=restrictedArea($user,'stock');
+//$result=restrictedArea($user,'stock', $id, 'entrepot&stock');
+$result=restrictedArea($user, 'stock');
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('warehousecard','globalcard'));
@@ -116,7 +117,7 @@ if ($action == 'add' && $user->rights->stock->creer)
 // Delete warehouse
 if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->stock->supprimer)
 {
-	$object->fetch(GETPOST('id','int'));
+	$object->fetch(GETPOST('id', 'int'));
 	$result=$object->delete($user);
 	if ($result > 0)
 	{
@@ -186,7 +187,7 @@ $formcompany=new FormCompany($db);
 $formfile = new FormFile($db);
 
 $help_url='EN:Module_Stocks_En|FR:Module_Stock|ES:M&oacute;dulo_Stocks';
-llxHeader("",$langs->trans("WarehouseCard"),$help_url);
+llxHeader("", $langs->trans("WarehouseCard"), $help_url);
 
 
 if ($action == 'create')
@@ -218,7 +219,7 @@ if ($action == 'create')
 	print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
 	// Editeur wysiwyg
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-	$doleditor=new DolEditor('desc',(!empty($object->description)?$object->description:''),'',180,'dolibarr_notes','In',false,true,$conf->fckeditor->enabled,ROWS_5,'90%');
+	$doleditor=new DolEditor('desc', (!empty($object->description)?$object->description:''), '', 180, 'dolibarr_notes', 'In', false, true, $conf->fckeditor->enabled, ROWS_5, '90%');
 	$doleditor->Create();
 	print '</td></tr>';
 
@@ -228,16 +229,16 @@ if ($action == 'create')
 
 	// Zip / Town
 	print '<tr><td>'.$langs->trans('Zip').'</td><td>';
-	print $formcompany->select_ziptown((!empty($object->zip)?$object->zip:''),'zipcode',array('town','selectcountry_id','state_id'),6);
+	print $formcompany->select_ziptown((!empty($object->zip)?$object->zip:''), 'zipcode', array('town','selectcountry_id','state_id'), 6);
 	print '</td></tr>';
 	print '<tr><td>'.$langs->trans('Town').'</td><td>';
-	print $formcompany->select_ziptown((!empty($object->town)?$object->town:''),'town',array('zipcode','selectcountry_id','state_id'));
+	print $formcompany->select_ziptown((!empty($object->town)?$object->town:''), 'town', array('zipcode','selectcountry_id','state_id'));
 	print '</td></tr>';
 
 	// Country
 	print '<tr><td>'.$langs->trans('Country').'</td><td>';
-	print $form->select_country((!empty($object->country_id)?$object->country_id:$mysoc->country_code),'country_id');
-	if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
+	print $form->select_country((!empty($object->country_id)?$object->country_id:$mysoc->country_code), 'country_id');
+	if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 	print '</td></tr>';
 	// Status
 	print '<tr><td>'.$langs->trans("Status").'</td><td>';
@@ -270,7 +271,7 @@ if ($action == 'create')
 }
 else
 {
-    $id=GETPOST("id",'int');
+    $id=GETPOST("id", 'int');
 	if ($id > 0 || $ref)
 	{
 		$object = new Entrepot($db);
@@ -295,7 +296,7 @@ else
 			// Confirm delete third party
 			if ($action == 'delete')
 			{
-				$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id,$langs->trans("DeleteAWarehouse"),$langs->trans("ConfirmDeleteWarehouse",$object->libelle),"confirm_delete",'',0,2);
+				$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id, $langs->trans("DeleteAWarehouse"), $langs->trans("ConfirmDeleteWarehouse", $object->libelle), "confirm_delete", '', 0, 2);
 			}
 
 			// Call Hook formConfirm
@@ -315,7 +316,7 @@ else
         	$morehtmlref.='</div>';
 
             $shownav = 1;
-            if ($user->societe_id && ! in_array('stock', explode(',',$conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
+            if ($user->societe_id && ! in_array('stock', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
 
         	dol_banner_tab($object, 'ref', $linkback, $shownav, 'ref', 'ref', $morehtmlref);
 
@@ -362,7 +363,7 @@ else
 
 			// Value
 			print '<tr><td class="titlefield">'.$langs->trans("EstimatedStockValueShort").'</td><td>';
-			print price((empty($calcproducts['value'])?'0':price2num($calcproducts['value'],'MT')), 0, $langs, 0, -1, -1, $conf->currency);
+			print price((empty($calcproducts['value'])?'0':price2num($calcproducts['value'], 'MT')), 0, $langs, 0, -1, -1, $conf->currency);
 			print "</td></tr>";
 
 			// Last movement
@@ -382,7 +383,7 @@ else
 			print '<tr><td>'.$langs->trans("LastMovement").'</td><td>';
 			if ($lastmovementdate)
 			{
-			    print dol_print_date($lastmovementdate,'dayhour').' ';
+			    print dol_print_date($lastmovementdate, 'dayhour').' ';
 			    print '(<a href="'.DOL_URL_ROOT.'/product/stock/movement_list.php?id='.$object->id.'">'.$langs->trans("FullList").'</a>)';
 			}
 			else
@@ -411,7 +412,7 @@ else
 			print "<div class=\"tabsAction\">\n";
 
 			$parameters=array();
-			$reshook=$hookmanager->executeHooks('addMoreActionsButtons',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+			$reshook=$hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action);    // Note that $action and $object may have been modified by hook
 			if (empty($reshook))
 			{
 				if (empty($action))
@@ -440,15 +441,23 @@ else
 
 			print '<table class="noborder" width="100%">';
 			print "<tr class=\"liste_titre\">";
-			print_liste_field_titre("Product","", "p.ref","&amp;id=".$id,"","",$sortfield,$sortorder);
-			print_liste_field_titre("Label","", "p.label","&amp;id=".$id,"","",$sortfield,$sortorder);
-            print_liste_field_titre("Units","", "ps.reel","&amp;id=".$id,"",'align="right"',$sortfield,$sortorder);
-            print_liste_field_titre("AverageUnitPricePMPShort","", "p.pmp","&amp;id=".$id,"",'align="right"',$sortfield,$sortorder);
-			print_liste_field_titre("EstimatedStockValueShort","", "","&amp;id=".$id,"",'align="right"',$sortfield,$sortorder);
-            if (empty($conf->global->PRODUIT_MULTIPRICES)) print_liste_field_titre("SellPriceMin","", "p.price","&amp;id=".$id,"",'align="right"',$sortfield,$sortorder);
-            if (empty($conf->global->PRODUIT_MULTIPRICES)) print_liste_field_titre("EstimatedStockValueSellShort","", "","&amp;id=".$id,"",'align="right"',$sortfield,$sortorder);
-			if ($user->rights->stock->mouvement->creer) print_liste_field_titre('');
-			if ($user->rights->stock->creer)            print_liste_field_titre('');
+			print_liste_field_titre("Product", "", "p.ref", "&amp;id=".$id, "", "", $sortfield, $sortorder);
+			print_liste_field_titre("Label", "", "p.label", "&amp;id=".$id, "", "", $sortfield, $sortorder);
+            print_liste_field_titre("Units", "", "ps.reel", "&amp;id=".$id, "", '', $sortfield, $sortorder, 'right ');
+            print_liste_field_titre("AverageUnitPricePMPShort", "", "p.pmp", "&amp;id=".$id, "", '', $sortfield, $sortorder, 'right ');
+			print_liste_field_titre("EstimatedStockValueShort", "", "", "&amp;id=".$id, "", '', $sortfield, $sortorder, 'right ');
+            if (empty($conf->global->PRODUIT_MULTIPRICES)) {
+                print_liste_field_titre("SellPriceMin", "", "p.price", "&amp;id=".$id, "", '', $sortfield, $sortorder, 'right ');
+            }
+            if (empty($conf->global->PRODUIT_MULTIPRICES)) {
+                print_liste_field_titre("EstimatedStockValueSellShort", "", "", "&amp;id=".$id, "", '', $sortfield, $sortorder, 'right ');
+            }
+			if ($user->rights->stock->mouvement->creer) {
+                print_liste_field_titre('');
+            }
+			if ($user->rights->stock->creer) {
+                print_liste_field_titre('');
+            }
 			print "</tr>\n";
 
 			$totalunit=0;
@@ -460,7 +469,7 @@ else
 			$sql.= " WHERE ps.fk_product = p.rowid";
 			$sql.= " AND ps.reel <> 0";	// We do not show if stock is 0 (no product in this warehouse)
 			$sql.= " AND ps.fk_entrepot = ".$object->id;
-			$sql.= $db->order($sortfield,$sortorder);
+			$sql.= $db->order($sortfield, $sortorder);
 
 			dol_syslog('List products', LOG_DEBUG);
 			$resql = $db->query($sql);
@@ -499,49 +508,49 @@ else
 					$productstatic->type=$objp->type;
 					$productstatic->entity=$objp->entity;
 					$productstatic->status_batch=$objp->tobatch;
-					print $productstatic->getNomUrl(1,'stock',16);
+					print $productstatic->getNomUrl(1, 'stock', 16);
 					print '</td>';
 
 					// Label
 					print '<td>'.$objp->produit.'</td>';
 
-					print '<td align="right">';
-					$valtoshow=price2num($objp->value, 'MS');
+					print '<td class="right">';
+					$valtoshow=price(price2num($objp->value, 'MS'), 0, '', 0, 0);  // TODO replace with a qty() function
 					print empty($valtoshow)?'0':$valtoshow;
 					print '</td>';
 					$totalunit+=$objp->value;
 
                     // Price buy PMP
-					print '<td align="right">'.price(price2num($objp->ppmp,'MU')).'</td>';
+					print '<td class="right">'.price(price2num($objp->ppmp, 'MU')).'</td>';
 
                     // Total PMP
-					print '<td align="right">'.price(price2num($objp->ppmp*$objp->value,'MT')).'</td>';
-					$totalvalue+=price2num($objp->ppmp*$objp->value,'MT');
+					print '<td class="right">'.price(price2num($objp->ppmp*$objp->value, 'MT')).'</td>';
+					$totalvalue+=price2num($objp->ppmp*$objp->value, 'MT');
 
                     // Price sell min
                     if (empty($conf->global->PRODUIT_MULTIPRICES))
                     {
                         $pricemin=$objp->price;
-                        print '<td align="right">';
-                        print price(price2num($pricemin,'MU'),1);
+                        print '<td class="right">';
+                        print price(price2num($pricemin, 'MU'), 1);
                         print '</td>';
                         // Total sell min
-                        print '<td align="right">';
-                        print price(price2num($pricemin*$objp->value,'MT'),1);
+                        print '<td class="right">';
+                        print price(price2num($pricemin*$objp->value, 'MT'), 1);
                         print '</td>';
                     }
-                    $totalvaluesell+=price2num($pricemin*$objp->value,'MT');
+                    $totalvaluesell+=price2num($pricemin*$objp->value, 'MT');
 
                     if ($user->rights->stock->mouvement->creer)
 					{
-						print '<td align="center"><a href="'.DOL_URL_ROOT.'/product/stock/product.php?dwid='.$object->id.'&id='.$objp->rowid.'&action=transfert&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$id).'">';
-						print img_picto($langs->trans("StockMovement"),'uparrow.png','class="hideonsmartphone"').' '.$langs->trans("StockMovement");
+						print '<td class="center"><a href="'.DOL_URL_ROOT.'/product/stock/product.php?dwid='.$object->id.'&id='.$objp->rowid.'&action=transfert&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$id).'">';
+						print img_picto($langs->trans("StockMovement"), 'uparrow.png', 'class="hideonsmartphone"').' '.$langs->trans("StockMovement");
 						print "</a></td>";
 					}
 
 					if ($user->rights->stock->creer)
 					{
-						print '<td align="center"><a href="'.DOL_URL_ROOT.'/product/stock/product.php?dwid='.$object->id.'&id='.$objp->rowid.'&action=correction&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$id).'">';
+						print '<td class="center"><a href="'.DOL_URL_ROOT.'/product/stock/product.php?dwid='.$object->id.'&id='.$objp->rowid.'&action=correction&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$id).'">';
 						print $langs->trans("StockCorrection");
 						print "</a></td>";
 					}
@@ -552,16 +561,16 @@ else
 				$db->free($resql);
 
 				print '<tr class="liste_total"><td class="liste_total" colspan="2">'.$langs->trans("Total").'</td>';
-				print '<td class="liste_total" align="right">';
+				print '<td class="liste_total right">';
 				$valtoshow=price2num($totalunit, 'MS');
 				print empty($valtoshow)?'0':$valtoshow;
 				print '</td>';
 				print '<td class="liste_total">&nbsp;</td>';
-                print '<td class="liste_total" align="right">'.price(price2num($totalvalue,'MT')).'</td>';
+                print '<td class="liste_total right">'.price(price2num($totalvalue, 'MT')).'</td>';
                 if (empty($conf->global->PRODUIT_MULTIPRICES))
                 {
                     print '<td class="liste_total">&nbsp;</td>';
-                    print '<td class="liste_total" align="right">'.price(price2num($totalvaluesell,'MT')).'</td>';
+                    print '<td class="liste_total right">'.price(price2num($totalvaluesell, 'MT')).'</td>';
                 }
                 print '<td class="liste_total">&nbsp;</td>';
 				print '<td class="liste_total">&nbsp;</td>';
@@ -607,7 +616,7 @@ else
 			print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
 			// Editeur wysiwyg
 			require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-			$doleditor=new DolEditor('desc',$object->description,'',180,'dolibarr_notes','In',false,true,$conf->fckeditor->enabled,ROWS_5,'90%');
+			$doleditor=new DolEditor('desc', $object->description, '', 180, 'dolibarr_notes', 'In', false, true, $conf->fckeditor->enabled, ROWS_5, '90%');
 			$doleditor->Create();
 			print '</td></tr>';
 
@@ -617,16 +626,16 @@ else
 
 			// Zip / Town
 			print '<tr><td>'.$langs->trans('Zip').'</td><td>';
-			print $formcompany->select_ziptown($object->zip,'zipcode',array('town','selectcountry_id','state_id'),6);
+			print $formcompany->select_ziptown($object->zip, 'zipcode', array('town','selectcountry_id','state_id'), 6);
 			print '</td></tr>';
 			print '<tr><td>'.$langs->trans('Town').'</td><td>';
-			print $formcompany->select_ziptown($object->town,'town',array('zipcode','selectcountry_id','state_id'));
+			print $formcompany->select_ziptown($object->town, 'town', array('zipcode','selectcountry_id','state_id'));
 			print '</td></tr>';
 
 			// Country
 			print '<tr><td>'.$langs->trans('Country').'</td><td>';
-			print $form->select_country($object->country_id?$object->country_id:$mysoc->country_code,'country_id');
-			if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
+			print $form->select_country($object->country_id?$object->country_id:$mysoc->country_code, 'country_id');
+			if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 			print '</td></tr>';
 
 			print '<tr><td>'.$langs->trans("Status").'</td><td>';
@@ -683,7 +692,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
 	    $delallowed=$usercancreate;
 	    $modulepart = 'stock';
 
-	    print $formfile->showdocuments($modulepart,$object->ref,$filedir,$urlsource,$genallowed,$delallowed,'',0,0,0,28,0,'',0,'',$object->default_lang, '', $object);
+	    print $formfile->showdocuments($modulepart, $object->ref, $filedir, $urlsource, $genallowed, $delallowed, '', 0, 0, 0, 28, 0, '', 0, '', $object->default_lang, '', $object);
 	    $somethingshown=$formfile->numoffiles;
 
 	    print '</div><div class="fichehalfright"><div class="ficheaddleft">';

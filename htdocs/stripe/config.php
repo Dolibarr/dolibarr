@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2017		Alexandre Spangaro		<aspangaro@zendsi.com>
+/* Copyright (C) 2017		Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2017		Saasprov				<saasprov@gmail.com>
  * Copyright (C) 2017		Ferran Marcet			<fmarcet@2byte.es.com>
  *
@@ -44,7 +44,7 @@ $stripearrayofkeysbyenv = array(
 );
 
 $stripearrayofkeys = array();
-if (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox','alpha'))
+if (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox', 'alpha'))
 {
 	$stripearrayofkeys = $stripearrayofkeysbyenv[0];	// Test
 }

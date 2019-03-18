@@ -3,7 +3,7 @@
  * Copyright (C) 2005      Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2013      Olivier Geffroy      <jeff@jeffinfo.com>
  * Copyright (C) 2013      Florian Henry	    <florian.henry@open-concept.pro>
- * Copyright (C) 2013-2018 Alexandre Spangaro      <aspangaro@zendsi.com>
+ * Copyright (C) 2013-2018 Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2018      Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -57,9 +57,9 @@ if ($sortorder == "")
 if ($sortfield == "")
 	$sortfield = "bk.doc_date";
 
-$search_year = GETPOST("search_year",'int');
-$search_doc_type = GETPOST("search_doc_type",'alpha');
-$search_doc_ref = GETPOST("search_doc_ref",'alpha');
+$search_year = GETPOST("search_year", 'int');
+$search_doc_type = GETPOST("search_doc_type", 'alpha');
+$search_doc_ref = GETPOST("search_doc_ref", 'alpha');
 
 $lettering = GETPOST('lettering', 'alpha');
 if (!empty($lettering)) {
@@ -68,7 +68,7 @@ if (!empty($lettering)) {
 
 // Did we click on purge search criteria ?
 // All tests are required to be compatible with all browsers
-if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha'))
+if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha'))
 {
 	$search_year='';
 	$search_doc_type='';
@@ -123,7 +123,7 @@ $formaccounting = new FormAccounting($db);
 
 $title=$object->name." - ".$langs->trans('TabLetteringSupplier');
 $help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
-llxHeader('',$title,$help_url);
+llxHeader('', $title, $help_url);
 
 $head = societe_prepare_head($object);
 
@@ -149,7 +149,7 @@ if (dol_strlen($search_year)) {
 	$sql .= " AND ( bk.doc_date BETWEEN  '".$db->idate($date_start)."' AND  '".$db->idate($date_end)."' )";
 }
 
-$sql.= $db->order($sortfield,$sortorder);
+$sql.= $db->order($sortfield, $sortorder);
 
 $debit = 0;
 $credit = 0;
@@ -173,17 +173,16 @@ while ($obj = $db->fetch_object($resql)) {
 
 $sql.= $db->plimit($limit+1, $offset);
 
-dol_syslog ( "/accountancy/bookkeeping/thirdparty_lettrage_supplier.php", LOG_DEBUG );
+dol_syslog("/accountancy/bookkeeping/thirdparty_lettrage_supplier.php", LOG_DEBUG);
 $resql = $db->query($sql);
-if (! $resql)
-{
+if (! $resql) {
 		dol_print_error($db);
 		exit;
 }
 
 $num = $db->num_rows($resql);
 
-dol_syslog ( "/accountancy/bookkeeping/thirdparty_lettrage_supplier.php", LOG_DEBUG );
+dol_syslog("/accountancy/bookkeeping/thirdparty_lettrage_supplier.php", LOG_DEBUG);
 $resql = $db->query($sql);
 if ($resql) {
 	$num = $db->num_rows($resql);
@@ -196,14 +195,14 @@ if ($resql) {
 
 	print "<table class=\"noborder\" width=\"100%\">";
 	print '<tr class="liste_titre">';
-	print_liste_field_titre("Doctype", $_SERVER["PHP_SELF"], "bk.doc_type","",$param,"",$sortfield,$sortorder);
-	print_liste_field_titre("Docdate", $_SERVER["PHP_SELF"], "bk.doc_date","",$param,"",$sortfield,$sortorder);
-	print_liste_field_titre("Docref", $_SERVER["PHP_SELF"], "bk.doc_ref","",$param,"",$sortfield,$sortorder);
-	print_liste_field_titre("LabelAccount", $_SERVER["PHP_SELF"], "bk.label_compte","",$param,"",$sortfield,$sortorder);
-	print_liste_field_titre("Debit", $_SERVER["PHP_SELF"], "bk.debit","",$param,"",$sortfield,$sortorder);
-	print_liste_field_titre("Credit", $_SERVER["PHP_SELF"], "bk.credit","",$param,"",$sortfield,$sortorder);
-	print_liste_field_titre("Balancing", $_SERVER["PHP_SELF"], "","",$param,"",$sortfield,$sortorder);
-	print_liste_field_titre("Codejournal", $_SERVER["PHP_SELF"], "bk.code_journal","",$param,"",$sortfield,$sortorder);
+	print_liste_field_titre("Doctype", $_SERVER["PHP_SELF"], "bk.doc_type", "", $param, "", $sortfield, $sortorder);
+	print_liste_field_titre("Docdate", $_SERVER["PHP_SELF"], "bk.doc_date", "", $param, "", $sortfield, $sortorder);
+	print_liste_field_titre("Docref", $_SERVER["PHP_SELF"], "bk.doc_ref", "", $param, "", $sortfield, $sortorder);
+	print_liste_field_titre("LabelAccount", $_SERVER["PHP_SELF"], "bk.label_compte", "", $param, "", $sortfield, $sortorder);
+	print_liste_field_titre("Debit", $_SERVER["PHP_SELF"], "bk.debit", "", $param, "", $sortfield, $sortorder);
+	print_liste_field_titre("Credit", $_SERVER["PHP_SELF"], "bk.credit", "", $param, "", $sortfield, $sortorder);
+	print_liste_field_titre("Balancing", $_SERVER["PHP_SELF"], "", "", $param, "", $sortfield, $sortorder);
+	print_liste_field_titre("Codejournal", $_SERVER["PHP_SELF"], "bk.code_journal", "", $param, "", $sortfield, $sortorder);
 	print_liste_field_titre("LetteringCode", $_SERVER["PHP_SELF"], "bk.lettering_code", "", $param, "", $sortfield, $sortorder);
 	print "</tr>\n";
 
@@ -212,7 +211,7 @@ if ($resql) {
 	print '<td><input type="text" name="search_year" value="' . $search_year . '"></td>';
 	print '<td><input type="text" name="search_doc_refe" value="' . $search_doc_ref . '"></td>';
 	print '<td colspan="6">&nbsp;</td>';
-	print '<td align="right">';
+	print '<td class="right">';
 	$searchpicto=$form->showFilterButtons();
 	print $searchpicto;
 	print '</td>';
@@ -238,30 +237,30 @@ if ($resql) {
 		print '<td>' . dol_print_date($db->jdate($obj->doc_date), 'day') . '</td>';
 		print '<td>' . $obj->doc_ref . '</td>';
 		print '<td>' . $obj->label_compte . '</td>';
-		print '<td align="right">' . price($obj->debit) . '</td>';
-		print '<td align="right">' . price($obj->credit) . '</td>';
-		print '<td align="right">' . price(round($solde, 2)) . '</td>';
-		print '<td align="center">' . $obj->code_journal . '</td>';
+		print '<td class="right">' . price($obj->debit) . '</td>';
+		print '<td class="right">' . price($obj->credit) . '</td>';
+		print '<td class="right">' . price(round($solde, 2)) . '</td>';
+		print '<td class="center">' . $obj->code_journal . '</td>';
 
 		if (empty($obj->lettering_code)) {
-			print '<td class="nowrap" align="center"><input type="checkbox" class="flat checkforselect" name="toselect[]" id="toselect[]" value="' . $obj->rowid . '" /></td>';
+			print '<td class="nowrap center"><input type="checkbox" class="flat checkforselect" name="toselect[]" id="toselect[]" value="' . $obj->rowid . '" /></td>';
 		} else
-			print '<td align="center">' . $obj->lettering_code . '</td>';
+			print '<td class="center">' . $obj->lettering_code . '</td>';
 
 		print "</tr>\n";
 	}
 
 	print '<tr class="oddeven">';
-	print '<td align="right" colspan="4">'.$langs->trans("Total").':</td>' . "\n";
-	print '<td align="right"><strong>' . price($debit) . '</strong></td>';
-	print '<td align="right"><strong>' . price($credit) . '</strong></td>';
+	print '<td class="right" colspan="4">'.$langs->trans("Total").':</td>' . "\n";
+	print '<td class="right"><strong>' . price($debit) . '</strong></td>';
+	print '<td class="right"><strong>' . price($credit) . '</strong></td>';
 	print '<td colspan="5"></td>';
 	print "</tr>\n";
 
 	print '<tr class="oddeven">';
-	print '<td align="right" colspan="4">'.$langs->trans("Balancing").':</td>' . "\n";
+	print '<td class="right" colspan="4">'.$langs->trans("Balancing").':</td>' . "\n";
 	print '<td colspan="2">&nbsp;</td>';
-	print '<td align="right"><strong>' . price($credit - $debit) . '</strong></td>';
+	print '<td class="right"><strong>' . price($credit - $debit) . '</strong></td>';
 	print '<td colspan="3"></td>';
 	print "</tr>\n";
 

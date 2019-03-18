@@ -27,9 +27,9 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 
-$id = GETPOST('id','int');
-$action = GETPOST('action','aZ09');
-$contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'usernote';   // To manage different context of search
+$id = GETPOST('id', 'int');
+$action = GETPOST('action', 'aZ09');
+$contextpage=GETPOST('contextpage', 'aZ')?GETPOST('contextpage', 'aZ'):'usernote';   // To manage different context of search
 
 // Load translation files required by page
 $langs->loadLangs(array('companies', 'members', 'bills', 'users'));
@@ -45,7 +45,7 @@ if (($object->id != $user->id) && (! $user->rights->user->user->lire)) accessfor
 $socid=0;
 if ($user->societe_id > 0) $socid = $user->societe_id;
 $feature2 = (($socid && $user->rights->user->self->creer)?'':'user');
-if ($user->id == $id) $feature2=''; // A user can always read its own card
+
 $result = restrictedArea($user, 'user', $id, 'user&user', $feature2);
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
@@ -57,14 +57,14 @@ $hookmanager->initHooks(array('usercard','usernote','globalcard'));
  */
 
 $parameters=array('id'=>$socid);
-$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+$reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 if (empty($reshook)) {
 	if ($action == 'update' && $user->rights->user->user->creer && !$_POST["cancel"]) {
 		$db->begin();
 
-		$res = $object->update_note(dol_html_entity_decode(GETPOST('note_private','none'), ENT_QUOTES));
+		$res = $object->update_note(dol_html_entity_decode(GETPOST('note_private', 'none'), ENT_QUOTES));
 		if ($res < 0) {
 			$mesg = '<div class="error">'.$adh->error.'</div>';
 			$db->rollback();
@@ -96,7 +96,7 @@ if ($id)
 		$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 	}
 
-    dol_banner_tab($object,'id',$linkback,$user->rights->user->user->lire || $user->admin);
+    dol_banner_tab($object, 'id', $linkback, $user->rights->user->user->lire || $user->admin);
 
     print '<div class="underbanner clearboth"></div>';
 
@@ -118,7 +118,7 @@ if ($id)
 		print "<input type=\"hidden\" name=\"id\" value=\"".$object->id."\">";
 	    // Editeur wysiwyg
 		require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-		$doleditor=new DolEditor('note_private',$object->note,'',280,'dolibarr_notes','In',true,false,$conf->global->FCKEDITOR_ENABLE_SOCIETE,ROWS_8,'90%');
+		$doleditor=new DolEditor('note_private', $object->note, '', 280, 'dolibarr_notes', 'In', true, false, $conf->global->FCKEDITOR_ENABLE_SOCIETE, ROWS_8, '90%');
 		$doleditor->Create();
 	}
 	else

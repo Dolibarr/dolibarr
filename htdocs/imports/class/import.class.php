@@ -27,21 +27,21 @@
  */
 class Import
 {
-	var $array_import_module;
-	var $array_import_perms;
-	var $array_import_icon;
-	var $array_import_code;
-	var $array_import_label;
-	var $array_import_tables;
-	var $array_import_tables_creator;
-	var $array_import_fields;
-	var $array_import_fieldshidden;
-	var $array_import_entities;
-	var $array_import_regex;
-	var $array_import_updatekeys;
-	var $array_import_examplevalues;
-	var $array_import_convertvalue;
-	var $array_import_run_sql_after;
+    public $array_import_module;
+    public $array_import_perms;
+    public $array_import_icon;
+    public $array_import_code;
+    public $array_import_label;
+    public $array_import_tables;
+    public $array_import_tables_creator;
+    public $array_import_fields;
+    public $array_import_fieldshidden;
+    public $array_import_entities;
+    public $array_import_regex;
+    public $array_import_updatekeys;
+    public $array_import_examplevalues;
+    public $array_import_convertvalue;
+    public $array_import_run_sql_after;
 
 	/**
 	 * @var string Error code (or message)
@@ -54,18 +54,18 @@ class Import
 	public $errors = array();
 
 
-	/**
-	 *    Constructor
-	 *
-	 *    @param  	DoliDB		$db		Database handler
-	 */
-	function __construct($db)
-	{
-		$this->db=$db;
-	}
+    /**
+     *    Constructor
+     *
+     *    @param  	DoliDB		$db		Database handler
+     */
+    public function __construct($db)
+    {
+        $this->db=$db;
+    }
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Load description int this->array_import_module, this->array_import_fields, ... of an importable dataset
 	 *
@@ -73,7 +73,7 @@ class Import
 	 *  @param  	string	$filter		Load a particular dataset only. Index will start to 0.
  	 *  @return		int					<0 if KO, >0 if OK
 	 */
-	function load_arrays($user,$filter='')
+    public function load_arrays($user, $filter = '')
 	{
         // phpcs:enable
 		global $langs,$conf;
@@ -94,13 +94,13 @@ class Import
 			// Search module files
 			while (($file = readdir($handle))!==false)
 			{
-				if (! preg_match("/^(mod.*)\.class\.php/i",$file,$reg)) continue;
+				if (! preg_match("/^(mod.*)\.class\.php/i", $file, $reg)) continue;
 
 				$modulename=$reg[1];
 
 				// Defined if module is enabled
 				$enabled=true;
-				$part=strtolower(preg_replace('/^mod/i','',$modulename));
+				$part=strtolower(preg_replace('/^mod/i', '', $modulename));
 				if (empty($conf->$part->enabled)) $enabled=false;
 
 				if (empty($enabled)) continue;
@@ -185,7 +185,7 @@ class Import
 
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Build an import example file.
 	 *  Arrays this->array_export_xxx are already loaded for required datatoexport
@@ -196,7 +196,7 @@ class Import
 	 *  @param		string	$datatoimport		Dataset to import
 	 *  @return		string						<0 if KO, >0 if OK
 	 */
-	function build_example_file($model, $headerlinefields, $contentlinevalues,$datatoimport)
+    public function build_example_file($model, $headerlinefields, $contentlinevalues, $datatoimport)
 	{
         // phpcs:enable
 		global $conf,$langs;
@@ -210,7 +210,7 @@ class Import
 		$file = "import_".$model.".modules.php";
 		$classname = "Import".$model;
 		require_once $dir.$file;
-		$objmodel = new $classname($this->db,$datatoimport);
+		$objmodel = new $classname($this->db, $datatoimport);
 
 		$outputlangs=$langs;	// Lang for output
 		$s='';
@@ -219,10 +219,10 @@ class Import
 		$s.=$objmodel->write_header_example($outputlangs);
 
 		// Genere ligne de titre
-		$s.=$objmodel->write_title_example($outputlangs,$headerlinefields);
+		$s.=$objmodel->write_title_example($outputlangs, $headerlinefields);
 
 		// Genere ligne de titre
-		$s.=$objmodel->write_record_example($outputlangs,$contentlinevalues);
+		$s.=$objmodel->write_record_example($outputlangs, $contentlinevalues);
 
 		// Genere pied de page
 		$s.=$objmodel->write_footer_example($outputlangs);
@@ -236,7 +236,7 @@ class Import
 	 *  @param		User	$user 	Object user that save
 	 *  @return		int				<0 if KO, >0 if OK
 	 */
-	function create($user)
+    public function create($user)
 	{
 		global $conf;
 
@@ -276,7 +276,7 @@ class Import
 	 *  @param		int		$id		Id of profil to load
 	 *  @return		int				<0 if KO, >0 if OK
 	 */
-	function fetch($id)
+    public function fetch($id)
 	{
 		$sql = 'SELECT em.rowid, em.field, em.label, em.type';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'import_model as em';
@@ -316,7 +316,7 @@ class Import
 	 *  @param      int		$notrigger	    0=launch triggers after, 1=disable triggers
 	 *	@return		int						<0 if KO, >0 if OK
 	 */
-	function delete($user, $notrigger=0)
+    public function delete($user, $notrigger = 0)
 	{
 		global $conf, $langs;
 		$error=0;

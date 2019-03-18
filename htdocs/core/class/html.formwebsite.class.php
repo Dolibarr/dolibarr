@@ -40,7 +40,7 @@ class FormWebsite
      *
      *	@param	DoliDB		$db      Database handler
      */
-    function __construct($db)
+    public function __construct($db)
     {
         $this->db = $db;
     }
@@ -54,9 +54,9 @@ class FormWebsite
      *    @param    int		$useempty          Show empty value or not
      *    @return	string					   Html component
      */
-    function selectWebsite($selected='',$htmlname='exportmodelid',$useempty=0)
+    public function selectWebsite($selected = '', $htmlname = 'exportmodelid', $useempty = 0)
     {
-    	$out='';
+        $out='';
 
         $sql = "SELECT rowid, ref";
         $sql.= " FROM ".MAIN_DB_PREFIX."website";
@@ -107,16 +107,16 @@ class FormWebsite
      *  @param  string  $moreattrib         More attributes on HTML select tag
      * 	@return	void
      */
-    function selectTypeOfContainer($htmlname, $selected='', $useempty=0, $moreattrib='')
+    public function selectTypeOfContainer($htmlname, $selected = '', $useempty = 0, $moreattrib = '')
     {
-    	global $langs, $conf, $user;
+        global $langs, $conf, $user;
 
-    	$langs->load("admin");
+        $langs->load("admin");
 
-    	$sql = "SELECT rowid, code, label, entity";
-    	$sql.= " FROM ".MAIN_DB_PREFIX.'c_type_container';
-    	$sql.= " WHERE active = 1 AND entity IN (".getEntity('c_type_container').")";
-    	$sql.= " ORDER BY label";
+        $sql = "SELECT rowid, code, label, entity";
+        $sql.= " FROM ".MAIN_DB_PREFIX.'c_type_container';
+        $sql.= " WHERE active = 1 AND entity IN (".getEntity('c_type_container').")";
+        $sql.= " ORDER BY label";
 
     	dol_syslog(get_class($this)."::selectTypeOfContainer", LOG_DEBUG);
     	$result = $this->db->query($sql);
@@ -148,7 +148,7 @@ class FormWebsite
     				$i++;
     			}
     			print "</select>";
-    			if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
+    			if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
     		}
     		else
     		{
@@ -170,7 +170,7 @@ class FormWebsite
      *  @param  string  $moreattrib         More attributes on HTML select tag
      * 	@return	void
      */
-    function selectSampleOfContainer($htmlname, $selected='', $useempty=0, $moreattrib='')
+    public function selectSampleOfContainer($htmlname, $selected = '', $useempty = 0, $moreattrib = '')
     {
     	global $langs, $conf, $user;
 

@@ -33,16 +33,16 @@ $langs->load("admin");
 if (! $user->admin)
 	accessforbidden();
 
-$rowid=GETPOST('rowid','int');
-$entity=GETPOST('entity','int');
-$action=GETPOST('action','alpha');
-$update=GETPOST('update','alpha');
-$delete=GETPOST('delete','none');	// Do not use alpha here
-$debug=GETPOST('debug','int');
-$consts=GETPOST('const','array');
-$constname=GETPOST('constname','alpha');
-$constvalue=GETPOST('constvalue','none');	// We shoul dbe able to send everything here
-$constnote=GETPOST('constnote','alpha');
+$rowid=GETPOST('rowid', 'int');
+$entity=GETPOST('entity', 'int');
+$action=GETPOST('action', 'alpha');
+$update=GETPOST('update', 'alpha');
+$delete=GETPOST('delete', 'none');	// Do not use alpha here
+$debug=GETPOST('debug', 'int');
+$consts=GETPOST('const', 'array');
+$constname=GETPOST('constname', 'alpha');
+$constvalue=GETPOST('constvalue', 'none');	// We shoul dbe able to send everything here
+$constnote=GETPOST('constnote', 'alpha');
 
 
 
@@ -148,7 +148,7 @@ if ($action == 'delete')
 $form = new Form($db);
 
 $wikihelp='EN:Setup_Other|FR:Paramétrage_Divers|ES:Configuración_Varios';
-llxHeader('',$langs->trans("Setup"),$wikihelp);
+llxHeader('', $langs->trans("Setup"), $wikihelp);
 
 // Add logic to show/hide buttons
 if ($conf->use_javascript_ajax)
@@ -174,7 +174,7 @@ jQuery(document).ready(function() {
 <?php
 }
 
-print load_fiche_titre($langs->trans("OtherSetup"),'','title_setup');
+print load_fiche_titre($langs->trans("OtherSetup"), '', 'title_setup');
 
 print $langs->trans("ConstDesc")."<br>\n";
 print "<br>\n";
@@ -190,7 +190,7 @@ print '<td>'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Value").'</td>';
 print '<td>'.$langs->trans("Comment").'</td>';
 if (! empty($conf->multicompany->enabled) && !$user->entity) print '<td>'.$langs->trans("Entity").'</td>';
-print '<td align="center">'.$langs->trans("Action").'</td>';
+print '<td class="center">'.$langs->trans("Action").'</td>';
 print "</tr>\n";
 
 
@@ -210,11 +210,11 @@ if (! empty($conf->multicompany->enabled) && !$user->entity)
 	print '<td>';
 	print '<input type="text" class="flat" size="1" name="entity" value="'.$conf->entity.'">';
 	print '</td>';
-	print '<td align="center">';
+	print '<td class="center">';
 }
 else
 {
-	print '<td align="center">';
+	print '<td class="center">';
 	print '<input type="hidden" name="entity" value="'.$conf->entity.'">';
 }
 print '<input type="submit" class="button" value="'.$langs->trans("Add").'" name="add">';
@@ -233,7 +233,7 @@ $sql.= ", entity";
 $sql.= " FROM ".MAIN_DB_PREFIX."const";
 $sql.= " WHERE entity IN (".$user->entity.",".$conf->entity.")";
 if ((empty($user->entity) || $user->admin) && $debug) {} 										// to force for superadmin to debug
-else if (! GETPOST('visible') || GETPOST('visible') != 'all') $sql.= " AND visible = 1";		// We must always have this. Otherwise, array is too large and submitting data fails due to apache POST or GET limits
+elseif (! GETPOST('visible') || GETPOST('visible') != 'all') $sql.= " AND visible = 1";		// We must always have this. Otherwise, array is too large and submitting data fails due to apache POST or GET limits
 if (GETPOST('name')) $sql.=natural_search("name", GETPOST('name'));
 $sql.= " ORDER BY entity, name ASC";
 
@@ -264,7 +264,7 @@ if ($result)
 
 		// Note
 		print '<td>';
-		print '<input type="text" id="note_'.$i.'" class="flat inputforupdate" size="40" name="const['.$i.'][note]" value="'.htmlspecialchars($obj->note,1).'">';
+		print '<input type="text" id="note_'.$i.'" class="flat inputforupdate" size="40" name="const['.$i.'][note]" value="'.htmlspecialchars($obj->note, 1).'">';
 		print '</td>';
 
 		// Entity limit to superadmin
@@ -273,11 +273,11 @@ if ($result)
 			print '<td>';
 			print '<input type="text" class="flat" size="1" name="const['.$i.'][entity]" value="'.$obj->entity.'">';
 			print '</td>';
-			print '<td align="center">';
+			print '<td class="center">';
 		}
 		else
 		{
-			print '<td align="center">';
+			print '<td class="center">';
 			print '<input type="hidden" name="const['.$i.'][entity]" value="'.$obj->entity.'">';
 		}
 
@@ -304,10 +304,10 @@ print '</div>';
 if ($conf->use_javascript_ajax)
 {
 	print '<br>';
-	print '<div id="updateconst" align="right">';
+	print '<div id="updateconst" class="right">';
 	print '<input type="submit" name="update" class="button" value="'.$langs->trans("Modify").'">';
 	print '</div>';
-	print '<div id="delconst" align="right">';
+	print '<div id="delconst" class="right">';
 	print '<input type="submit" name="delete" class="button" value="'.$langs->trans("Delete").'">';
 	print '</div>';
 }

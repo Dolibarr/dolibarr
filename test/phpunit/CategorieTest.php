@@ -58,7 +58,7 @@ class CategorieTest extends PHPUnit_Framework_TestCase
      *
      * @return CategorieTest
      */
-    function __construct()
+    public function __construct()
     {
     	parent::__construct();
 
@@ -195,7 +195,7 @@ class CategorieTest extends PHPUnit_Framework_TestCase
         $result=$localobject2->create($user);
         $cat = new Categorie($this->savdb);
         $cat->id = $catid;
-        $result=$cat->add_type($localobject2,"product");
+        $result=$cat->add_type($localobject2, "product");
 
         print __METHOD__." result=".$result."\n";
         $this->assertGreaterThan(0, $result);
@@ -203,7 +203,7 @@ class CategorieTest extends PHPUnit_Framework_TestCase
         // Get list of categories for product
         $localcateg=new Categorie($this->savdb);
         $listofcateg=$localcateg->containing($localobject2->id, Categorie::TYPE_PRODUCT, 'label');
-        $this->assertTrue(in_array('Specimen Category for product',$listofcateg), 'Categ not found linked to product when it should');
+        $this->assertTrue(in_array('Specimen Category for product', $listofcateg), 'Categ not found linked to product when it should');
 
         return $id;
     }

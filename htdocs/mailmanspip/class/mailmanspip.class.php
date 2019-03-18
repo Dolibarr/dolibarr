@@ -65,7 +65,7 @@ class MailmanSpip
 	 *
 	 *	@param 		DoliDB		$db		Database handler
      */
-    function __construct($db)
+    public function __construct($db)
     {
         $this->db = $db;
     }
@@ -75,7 +75,7 @@ class MailmanSpip
      *
      * @return boolean
      */
-    function isSpipEnabled()
+    public function isSpipEnabled()
     {
         if (defined("ADHERENT_USE_SPIP") && (ADHERENT_USE_SPIP == 1))
         {
@@ -90,7 +90,7 @@ class MailmanSpip
      *
      * @return boolean
      */
-    function checkSpipConfig()
+    public function checkSpipConfig()
     {
         if (defined('ADHERENT_SPIP_SERVEUR') && defined('ADHERENT_SPIP_USER') && defined('ADHERENT_SPIP_PASS') && defined('ADHERENT_SPIP_DB'))
         {
@@ -108,7 +108,7 @@ class MailmanSpip
      *
      * @return boolean|DoliDB		Boolean of DoliDB
      */
-    function connectSpip()
+    public function connectSpip()
     {
         $resource = getDoliDBInstance('mysql', ADHERENT_SPIP_SERVEUR, ADHERENT_SPIP_USER, ADHERENT_SPIP_PASS, ADHERENT_SPIP_DB, ADHERENT_SPIP_PORT);
 
@@ -176,14 +176,14 @@ class MailmanSpip
         return $result;
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *  Fonction qui donne les droits redacteurs dans spip
      *
      *	@param	Adherent	$object		Object with data (->firstname, ->lastname, ->email and ->login)
      *  @return	int					=0 if KO, >0 if OK
      */
-    function add_to_spip($object)
+    public function add_to_spip($object)
     {
         // phpcs:enable
         dol_syslog(get_class($this)."::add_to_spip");
@@ -198,8 +198,8 @@ class MailmanSpip
                 {
                     require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
                     $mdpass=dol_hash($object->pass);
-                    $htpass=crypt($object->pass,makesalt());
-                    $query = "INSERT INTO spip_auteurs (nom, email, login, pass, htpass, alea_futur, statut) VALUES(\"".dolGetFirstLastname($object->firstname,$object->lastname)."\",\"".$object->email."\",\"".$object->login."\",\"$mdpass\",\"$htpass\",FLOOR(32000*RAND()),\"1comite\")";
+                    $htpass=crypt($object->pass, makesalt());
+                    $query = "INSERT INTO spip_auteurs (nom, email, login, pass, htpass, alea_futur, statut) VALUES(\"".dolGetFirstLastname($object->firstname, $object->lastname)."\",\"".$object->email."\",\"".$object->login."\",\"$mdpass\",\"$htpass\",FLOOR(32000*RAND()),\"1comite\")";
 
                     $result = $mydb->query($query);
 
@@ -220,14 +220,14 @@ class MailmanSpip
         return 0;
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *  Fonction qui enleve les droits redacteurs dans spip
      *
      *	@param	Adherent	$object		Object with data (->login)
      *  @return	int					=0 if KO, >0 if OK
      */
-    function del_to_spip($object)
+    public function del_to_spip($object)
     {
         // phpcs:enable
         dol_syslog(get_class($this)."::del_to_spip");
@@ -261,14 +261,14 @@ class MailmanSpip
         return 0;
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *  Fonction qui dit si cet utilisateur est un redacteur existant dans spip
      *
      *	@param	object	$object		Object with data (->login)
      *  @return int     			1=exists, 0=does not exists, -1=error
      */
-    function is_in_spip($object)
+    public function is_in_spip($object)
     {
         // phpcs:enable
         if ($this->isSpipEnabled())
@@ -313,7 +313,7 @@ class MailmanSpip
         return -1;
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *  Subscribe an email to all mailing-lists
      *
@@ -321,7 +321,7 @@ class MailmanSpip
      *  @param	array	$listes    	To force mailing-list (string separated with ,)
      *  @return	int		  			<0 if KO, >=0 if OK
      */
-    function add_to_mailman($object,$listes='')
+    public function add_to_mailman($object, $listes = '')
     {
         // phpcs:enable
         global $conf,$langs,$user;
@@ -334,7 +334,7 @@ class MailmanSpip
         if (! function_exists("curl_init"))
         {
             $langs->load("errors");
-            $this->error=$langs->trans("ErrorFunctionNotAvailableInPHP","curl_init");
+            $this->error=$langs->trans("ErrorFunctionNotAvailableInPHP", "curl_init");
             return -1;
         }
 
@@ -342,15 +342,15 @@ class MailmanSpip
         {
 	        if (! empty($conf->global->ADHERENT_MAILMAN_URL))
 	        {
-	            if ($listes == '' && ! empty($conf->global->ADHERENT_MAILMAN_LISTS)) $lists=explode(',',$conf->global->ADHERENT_MAILMAN_LISTS);
-	            else $lists=explode(',',$listes);
+	            if ($listes == '' && ! empty($conf->global->ADHERENT_MAILMAN_LISTS)) $lists=explode(',', $conf->global->ADHERENT_MAILMAN_LISTS);
+	            else $lists=explode(',', $listes);
 
 	            $categstatic=new Categorie($this->db);
 
 	            foreach ($lists as $list)
 	            {
 	                // Filter on type something (ADHERENT_MAILMAN_LISTS = "mailinglist0,TYPE:typevalue:mailinglist1,CATEG:categvalue:mailinglist2")
-	                $tmp=explode(':',$list);
+	                $tmp=explode(':', $list);
 	                if (! empty($tmp[2]))
 	                {
 	                    $list=$tmp[2];
@@ -386,7 +386,7 @@ class MailmanSpip
         }
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *  Unsubscribe an email from all mailing-lists
      *  Used when a user is resiliated
@@ -395,7 +395,7 @@ class MailmanSpip
      *  @param	array	$listes     To force mailing-list (string separated with ,)
      *  @return int         		<0 if KO, >=0 if OK
      */
-    function del_to_mailman($object,$listes='')
+    public function del_to_mailman($object, $listes = '')
     {
         // phpcs:enable
         global $conf,$langs,$user;
@@ -408,7 +408,7 @@ class MailmanSpip
         if (! function_exists("curl_init"))
         {
             $langs->load("errors");
-            $this->error=$langs->trans("ErrorFunctionNotAvailableInPHP","curl_init");
+            $this->error=$langs->trans("ErrorFunctionNotAvailableInPHP", "curl_init");
             return -1;
         }
 
@@ -416,15 +416,15 @@ class MailmanSpip
         {
 	        if (! empty($conf->global->ADHERENT_MAILMAN_UNSUB_URL))
 	        {
-	            if ($listes=='' && ! empty($conf->global->ADHERENT_MAILMAN_LISTS)) $lists=explode(',',$conf->global->ADHERENT_MAILMAN_LISTS);
-	            else $lists=explode(',',$listes);
+	            if ($listes=='' && ! empty($conf->global->ADHERENT_MAILMAN_LISTS)) $lists=explode(',', $conf->global->ADHERENT_MAILMAN_LISTS);
+	            else $lists=explode(',', $listes);
 
 	            $categstatic=new Categorie($this->db);
 
 	            foreach ($lists as $list)
 	            {
 	            	// Filter on type something (ADHERENT_MAILMAN_LISTS = "mailinglist0,TYPE:typevalue:mailinglist1,CATEG:categvalue:mailinglist2")
-	            	$tmp=explode(':',$list);
+	            	$tmp=explode(':', $list);
 	            	if (! empty($tmp[2]))
 	            	{
 	            		$list=$tmp[2];

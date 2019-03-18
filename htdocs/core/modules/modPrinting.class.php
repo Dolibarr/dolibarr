@@ -40,7 +40,7 @@ class modPrinting extends DolibarrModules
      *
      *  @param      DoliDB      $db      Database handler
      */
-    function __construct($db)
+    public function __construct($db)
     {
         $this->db = $db ;
         $this->numero = 64000;
@@ -49,7 +49,7 @@ class modPrinting extends DolibarrModules
         $this->family = "interface";
         $this->module_position = '52';
         // Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
-        $this->name = preg_replace('/^mod/i','',get_class($this));
+        $this->name = preg_replace('/^mod/i', '', get_class($this));
         // Module description, used if translation string 'ModuleXXXDesc' not found (where XXX is value of numeric property 'numero' of module)
         $this->description = "Enable Direct Printing System.";
         $this->version = 'dolibarr';    // 'development' or 'experimental' or 'dolibarr' or version

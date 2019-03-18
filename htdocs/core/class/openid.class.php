@@ -26,18 +26,18 @@
  */
 class SimpleOpenID
 {
-    var $openid_url_identity;
-    var $URLs = array();
-    var $error = array();
-    var $fields = array(
-		'required' => array(),
-		'optional' => array(),
+    public $openid_url_identity;
+    public $URLs = array();
+    public $error = array();
+    public $fields = array(
+        'required' => array(),
+        'optional' => array(),
     );
 
     /**
      * Constructor
      */
-    function __construct()
+    public function __construct()
     {
         if (!function_exists('curl_exec'))
         {
@@ -45,66 +45,66 @@ class SimpleOpenID
         }
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      * SetOpenIDServer
      *
      * @param	string	$a		Server
      * @return	void
      */
-    function SetOpenIDServer($a)
+    public function SetOpenIDServer($a)
     {
         // phpcs:enable
         $this->URLs['openid_server'] = $a;
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      * SetOpenIDServer
      *
      * @param	string	$a		Server
      * @return	void
      */
-    function SetTrustRoot($a)
+    public function SetTrustRoot($a)
     {
         // phpcs:enable
         $this->URLs['trust_root'] = $a;
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      * SetOpenIDServer
      *
      * @param	string	$a		Server
      * @return	void
      */
-    function SetCancelURL($a)
+    public function SetCancelURL($a)
     {
         // phpcs:enable
         $this->URLs['cancel'] = $a;
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      * SetApprovedURL
      *
      * @param	string	$a		Server
      * @return	void
      */
-    function SetApprovedURL($a)
+    public function SetApprovedURL($a)
     {
         // phpcs:enable
         $this->URLs['approved'] = $a;
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      * SetRequiredFields
      *
      * @param	string	$a		Server
      * @return	void
      */
-    function SetRequiredFields($a)
+    public function SetRequiredFields($a)
     {
         // phpcs:enable
         if (is_array($a)) {
@@ -114,14 +114,14 @@ class SimpleOpenID
         }
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      * SetOptionalFields
      *
      * @param	string	$a		Server
      * @return	void
      */
-    function SetOptionalFields($a)
+    public function SetOptionalFields($a)
     {
         // phpcs:enable
         if (is_array($a)) {
@@ -131,14 +131,14 @@ class SimpleOpenID
         }
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      * SetIdentity
      *
      * @param	string  $a		Server
      * @return	void
      */
-    function SetIdentity($a)
+    public function SetIdentity($a)
     {
         // phpcs:enable
         // Set Identity URL
@@ -162,33 +162,33 @@ class SimpleOpenID
         $this->openid_url_identity = $a;
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      * GetIdentity
      *
      * @return	string
      */
-    function GetIdentity()
+    public function GetIdentity()
     {
         // phpcs:enable
         // Get Identity
         return $this->openid_url_identity;
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      * SetOpenIDServer
      *
      * @return	void
      */
-    function GetError()
+    public function GetError()
     {
         // phpcs:enable
         $e = $this->error;
         return array('code'=>$e[0],'description'=>$e[1]);
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      * ErrorStore
      *
@@ -196,7 +196,7 @@ class SimpleOpenID
      * @param	string	$desc		Description
      * @return	void
      */
-    function ErrorStore($code, $desc = null)
+    public function ErrorStore($code, $desc = null)
     {
         // phpcs:enable
         $errs['OPENID_NOSERVERSFOUND'] = 'Cannot find OpenID Server TAG on Identity page.';
@@ -206,13 +206,13 @@ class SimpleOpenID
         $this->error = array($code,$desc);
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      * IsError
      *
      * @return	boolean
      */
-    function IsError()
+    public function IsError()
     {
         // phpcs:enable
         if (count($this->error) > 0)
@@ -231,7 +231,7 @@ class SimpleOpenID
      * @param	string	$response		Server
      * @return	void
      */
-    function splitResponse($response)
+    public function splitResponse($response)
     {
         $r = array();
         $response = explode("\n", $response);
@@ -245,14 +245,14 @@ class SimpleOpenID
         return $r;
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      * OpenID_Standarize
      *
      * @param	string	$openid_identity		Server
      * @return	string
      */
-    function OpenID_Standarize($openid_identity = null)
+    public function OpenID_Standarize($openid_identity = null)
     {
         // phpcs:enable
         if ($openid_identity === null)
@@ -263,7 +263,7 @@ class SimpleOpenID
         if (!isset($u['path']) || ($u['path'] == '/')) {
             $u['path'] = '';
         }
-        if(substr($u['path'],-1,1) == '/'){
+        if(substr($u['path'], -1, 1) == '/'){
             $u['path'] = substr($u['path'], 0, strlen($u['path'])-1);
         }
         if (isset($u['query'])){ // If there is a query string, then use identity as is
@@ -279,7 +279,7 @@ class SimpleOpenID
      * @param 	array	$arr		An array
      * @return false|string		false if KO, string of url if OK
      */
-    function array2url($arr)
+    public function array2url($arr)
     {
         // converts associated array to URL Query String
         if (!is_array($arr)){
@@ -292,7 +292,7 @@ class SimpleOpenID
         return $query;
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      * FSOCK_Request
      *
@@ -301,7 +301,7 @@ class SimpleOpenID
      * @param string	$params		Params
      * @return boolean|unknown
      */
-    function FSOCK_Request($url, $method="GET", $params = "")
+    public function FSOCK_Request($url, $method = "GET", $params = "")
     {
         // phpcs:enable
         $fp = fsockopen("ssl://www.myopenid.com", 443, $errno, $errstr, 3); // Connection timeout is 3 seconds
@@ -326,7 +326,7 @@ class SimpleOpenID
         }
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      * CURL_Request
      *
@@ -335,7 +335,7 @@ class SimpleOpenID
      * @param 	string	$params		Params
      * @return string
      */
-    function CURL_Request($url, $method="GET", $params = "")
+    public function CURL_Request($url, $method = "GET", $params = "")
     {
         // phpcs:enable
         // Remember, SSL MUST BE SUPPORTED
@@ -359,14 +359,14 @@ class SimpleOpenID
         return $response;
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      * HTML2OpenIDServer
      *
      * @param string	$content	Content
      * @return array				Array of servers
      */
-    function HTML2OpenIDServer($content)
+    public function HTML2OpenIDServer($content)
     {
         // phpcs:enable
         $get = array();
@@ -387,20 +387,20 @@ class SimpleOpenID
     }
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      * Get openid server
      *
      * @param	string	$url	Url to found endpoint
      * @return 	string			Endpoint
      */
-    function GetOpenIDServer($url='')
+    public function GetOpenIDServer($url = '')
     {
         // phpcs:enable
         global $conf;
 
-		include_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
-		if (empty($url)) $url=$conf->global->MAIN_AUTHENTICATION_OPENID_URL;
+        include_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
+        if (empty($url)) $url=$conf->global->MAIN_AUTHENTICATION_OPENID_URL;
 
         $response = getURLContent($url);
 
@@ -417,13 +417,13 @@ class SimpleOpenID
         return $servers[0];
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      * GetRedirectURL
      *
      * @return	string
      */
-    function GetRedirectURL()
+    public function GetRedirectURL()
     {
         // phpcs:enable
         $params = array();
@@ -434,22 +434,22 @@ class SimpleOpenID
 
         if (isset($this->fields['required'])
         && (count($this->fields['required']) > 0)) {
-            $params['openid.sreg.required'] = implode(',',$this->fields['required']);
+            $params['openid.sreg.required'] = implode(',', $this->fields['required']);
         }
         if (isset($this->fields['optional'])
         && (count($this->fields['optional']) > 0)) {
-            $params['openid.sreg.optional'] = implode(',',$this->fields['optional']);
+            $params['openid.sreg.optional'] = implode(',', $this->fields['optional']);
         }
         return $this->URLs['openid_server'] . "?". $this->array2url($params);
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      * Redirect
      *
      * @return	void
      */
-    function Redirect()
+    public function Redirect()
     {
         // phpcs:enable
         $redirect_to = $this->GetRedirectURL();
@@ -465,26 +465,26 @@ class SimpleOpenID
         }
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      * ValidateWithServer
      *
      * @return	boolean
      */
-    function ValidateWithServer()
+    public function ValidateWithServer()
     {
         // phpcs:enable
         $params = array(
-			'openid.assoc_handle' => urlencode($_GET['openid_assoc_handle']),
-			'openid.signed' => urlencode($_GET['openid_signed']),
-			'openid.sig' => urlencode($_GET['openid_sig'])
+            'openid.assoc_handle' => urlencode($_GET['openid_assoc_handle']),
+            'openid.signed' => urlencode($_GET['openid_signed']),
+            'openid.sig' => urlencode($_GET['openid_sig'])
         );
         // Send only required parameters to confirm validity
-        $arr_signed = explode(",",str_replace('sreg.','sreg_',$_GET['openid_signed']));
+        $arr_signed = explode(",", str_replace('sreg.', 'sreg_', $_GET['openid_signed']));
         $num = count($arr_signed);
         for ($i = 0; $i < $num; $i++)
         {
-            $s = str_replace('sreg_','sreg.', $arr_signed[$i]);
+            $s = str_replace('sreg_', 'sreg.', $arr_signed[$i]);
             $c = $_GET['openid_' . $arr_signed[$i]];
             // if ($c != ""){
             $params['openid.' . $s] = urlencode($c);
@@ -497,7 +497,7 @@ class SimpleOpenID
         {
             return false;
         }
-        $response = $this->CURL_Request($openid_server,'POST',$params);
+        $response = $this->CURL_Request($openid_server, 'POST', $params);
         $data = $this->splitResponse($response);
         if ($data['is_valid'] == "true")
         {
@@ -518,36 +518,36 @@ class SimpleOpenID
      * @param	string	$url	Url of endpoint to request
      * @return 	string			First endpoint OpenID server found. False if it failed to found.
      */
-    function sendDiscoveryRequestToGetXRDS($url='')
+    public function sendDiscoveryRequestToGetXRDS($url = '')
     {
-    	global $conf;
+        global $conf;
 
-		include_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
-		if (empty($url)) $url=$conf->global->MAIN_AUTHENTICATION_OPENID_URL;
+        include_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
+        if (empty($url)) $url=$conf->global->MAIN_AUTHENTICATION_OPENID_URL;
 
-		dol_syslog(get_class($this).'::sendDiscoveryRequestToGetXRDS get XRDS');
+        dol_syslog(get_class($this).'::sendDiscoveryRequestToGetXRDS get XRDS');
 
-		$addheaders=array('Accept: application/xrds+xml');
+        $addheaders=array('Accept: application/xrds+xml');
         $response = getURLContent($url, 'GET', '', 1, $addheaders);
-		/* response should like this:
-		<?xml version="1.0" encoding="UTF-8"?>
-		<xrds:XRDS xmlns:xrds="xri://$xrds" xmlns="xri://$xrd*($v*2.0)">
-		<XRD>
-		<Service priority="0">
-		<Type>http://specs.openid.net/auth/2.0/server</Type>
-		<Type>http://openid.net/srv/ax/1.0</Type>
-		...
-		<URI>https://www.google.com/accounts/o8/ud</URI>
-		</Service>
-		</XRD>
-		</xrds:XRDS>
-		*/
-		$content=$response['content'];
+        /* response should like this:
+        <?xml version="1.0" encoding="UTF-8"?>
+        <xrds:XRDS xmlns:xrds="xri://$xrds" xmlns="xri://$xrd*($v*2.0)">
+        <XRD>
+        <Service priority="0">
+        <Type>http://specs.openid.net/auth/2.0/server</Type>
+        <Type>http://openid.net/srv/ax/1.0</Type>
+        ...
+        <URI>https://www.google.com/accounts/o8/ud</URI>
+        </Service>
+        </XRD>
+        </xrds:XRDS>
+        */
+        $content=$response['content'];
 
         $server='';
-        if (preg_match('/'.preg_quote('<URI>','/').'(.*)'.preg_quote('</URI>','/').'/is', $content, $reg))
+        if (preg_match('/'.preg_quote('<URI>', '/').'(.*)'.preg_quote('</URI>', '/').'/is', $content, $reg))
         {
-        	$server=$reg[1];
+            $server=$reg[1];
         }
 
         if (empty($server))
@@ -557,9 +557,9 @@ class SimpleOpenID
         }
         else
        {
-       		dol_syslog(get_class($this).'::sendDiscoveryRequestToGetXRDS found endpoint = '.$server);
-        	$this->SetOpenIDServer($server);
-        	return $server;
-	    }
+               dol_syslog(get_class($this).'::sendDiscoveryRequestToGetXRDS found endpoint = '.$server);
+            $this->SetOpenIDServer($server);
+            return $server;
+        }
     }
 }

@@ -36,7 +36,7 @@ class modWebsite extends DolibarrModules
 	 *
 	 *   @param      DoliDB		$db      Database handler
      */
-    function __construct($db)
+    public function __construct($db)
     {
     	global $langs,$conf;
 
@@ -48,7 +48,7 @@ class modWebsite extends DolibarrModules
         $this->family = "portal";
         $this->module_position = '50';
         // Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
-        $this->name = preg_replace('/^mod/i','',get_class($this));
+        $this->name = preg_replace('/^mod/i', '', get_class($this));
         $this->description = "Enable to build and serve public web sites with CMS features";
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
         $this->version = 'dolibarr';
@@ -138,14 +138,14 @@ class modWebsite extends DolibarrModules
 
 
     /**
-     *		Function called when module is enabled.
-     *		The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
-     *		It also creates data directories
+     *  Function called when module is enabled.
+     *  The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
+     *  It also creates data directories
      *
-     *      @param      string	$options    Options when enabling module ('', 'noboxes')
-     *      @return     int             	1 if OK, 0 if KO
+     *  @param      string	$options    Options when enabling module ('', 'noboxes')
+     *  @return     int                 1 if OK, 0 if KO
      */
-    function init($options='')
+    public function init($options = '')
     {
     	global $conf,$langs;
 
@@ -163,11 +163,11 @@ class modWebsite extends DolibarrModules
 	    	{
 	    		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 	    		dol_mkdir($dest);
-	    		$result=dolCopyDir($src,$dest,0,0);
+	    		$result=dolCopyDir($src, $dest, 0, 0);
 	    		if ($result < 0)
 	    		{
 	    			$langs->load("errors");
-	    			$this->error=$langs->trans('ErrorFailToCopyDir',$src,$dest);
+	    			$this->error=$langs->trans('ErrorFailToCopyDir', $src, $dest);
 	    			return 0;
 	    		}
 	    	}

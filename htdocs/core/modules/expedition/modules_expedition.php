@@ -5,7 +5,7 @@
  * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  * Copyright (C) 2011      Juanjo Menent	    <jmenent@2byte.es>
- * Copyright (C) 2011-2013 Philippe Grand       <philippe.grand@atoo-net.com>
+ * Copyright (C) 2011-2019 Philippe Grand       <philippe.grand@atoo-net.com>
  * Copyright (C) 2014      Marcos García        <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -42,26 +42,26 @@ abstract class ModelePdfExpedition extends CommonDocGenerator
 	public $error='';
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Return list of active generation modules
+	 *  Return list of active generation models
 	 *
      *  @param	DoliDB	$db     			Database handler
      *  @param  integer	$maxfilenamelength  Max length of value to show
      *  @return	array						List of templates
 	 */
-	static function liste_modeles($db,$maxfilenamelength=0)
+	public static function liste_modeles($db, $maxfilenamelength = 0)
 	{
         // phpcs:enable
 		global $conf;
 
 		$type='shipping';
-		$liste=array();
+		$list=array();
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-		$liste=getListOfModels($db,$type,$maxfilenamelength);
+		$list = getListOfModels($db, $type, $maxfilenamelength);
 
-		return $liste;
+		return $list;
 	}
 }
 
@@ -80,7 +80,7 @@ abstract class ModelNumRefExpedition
 	 *
 	 *  @return		boolean     true if model can be used
 	 */
-	function isEnabled()
+    public function isEnabled()
 	{
 		return true;
 	}
@@ -90,7 +90,7 @@ abstract class ModelNumRefExpedition
 	 *
 	 *	@return     string      text description
 	 */
-	function info()
+    public function info()
 	{
 		global $langs;
 		$langs->load("sendings");
@@ -102,7 +102,7 @@ abstract class ModelNumRefExpedition
 	 *
 	 *	@return     string      Example
 	 */
-	function getExample()
+    public function getExample()
 	{
 		global $langs;
 		$langs->load("sendings");
@@ -112,9 +112,9 @@ abstract class ModelNumRefExpedition
 	/**
 	 *	Test if existing numbers make problems with numbering
 	 *
-	 *	@return     boolean     false if conflit, true if ok
+	 *	@return     boolean     false if conflict, true if ok
 	 */
-	function canBeActivated()
+    public function canBeActivated()
 	{
 		return true;
 	}
@@ -126,7 +126,7 @@ abstract class ModelNumRefExpedition
 	 *	@param	Object		$shipment	Shipment object
 	 *	@return	string					Value
 	 */
-	function getNextValue($objsoc, $shipment)
+    public function getNextValue($objsoc, $shipment)
 	{
 		global $langs;
 		return $langs->trans("NotAvailable");
@@ -137,7 +137,7 @@ abstract class ModelNumRefExpedition
 	 *
 	 *	@return     string      Value
 	 */
-	function getVersion()
+    public function getVersion()
 	{
 		global $langs;
 		$langs->load("admin");

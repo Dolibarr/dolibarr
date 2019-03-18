@@ -40,7 +40,7 @@ class modComptabilite extends DolibarrModules
 	 *
 	 *   @param      DoliDB		$db      Database handler
     */
-	function __construct($db)
+	public function __construct($db)
 	{
 		global $conf;
 
@@ -50,7 +50,7 @@ class modComptabilite extends DolibarrModules
 		$this->family = "financial";
 		$this->module_position = '60';
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
-		$this->name = preg_replace('/^mod/i','',get_class($this));
+		$this->name = preg_replace('/^mod/i', '', get_class($this));
 		$this->description = "Gestion sommaire de comptabilite";
 
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
@@ -101,16 +101,16 @@ class modComptabilite extends DolibarrModules
 	}
 
 
-   /**
-	 *		Function called when module is enabled.
-	 *		The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
-	 *		It also creates data directories
+    /**
+     *  Function called when module is enabled.
+	 *  The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
+	 *  It also creates data directories
 	 *
-     *      @param      string	$options    Options when enabling module ('', 'noboxes')
-	 *      @return     int             	1 if OK, 0 if KO
+     *  @param      string	$options    Options when enabling module ('', 'noboxes')
+     *  @return     int             	1 if OK, 0 if KO
     */
-	function init($options='')
-	{
+    public function init($options = '')
+    {
 		global $conf;
 
 		// Nettoyage avant activation
@@ -118,6 +118,6 @@ class modComptabilite extends DolibarrModules
 
 		$sql = array();
 
-		return $this->_init($sql,$options);
+		return $this->_init($sql, $options);
 	}
 }

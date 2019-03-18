@@ -203,7 +203,7 @@ PaymentsNotLinkedToProduct=Paiement non lié à un produit / service
 
 Pcgtype=Groupe de comptes comptables
 Pcgsubtype=Sous-groupe de comptes comptables
-PcgtypeDesc=Les groupes et sous-groupes de comptes sont utilisés comme critères de filtre et de regroupement prédéfinis pour certains rapports de comptabilité. Par exemple, «REVENU» ou «CHARGES» sont utilisés en tant que groupes pour la comptabilité des produits afin de générer le rapport dépenses / revenus.
+PcgtypeDesc=Les groupes et sous-groupes de comptes sont utilisés comme critères de filtre et de regroupement prédéfinis pour certains rapports de comptabilité. Par exemple, «INCOME» ou «EXPENSE» sont utilisés en tant que groupes pour la comptabilité afin de générer le rapport dépenses / revenus.
 
 TotalVente=Total chiffre affaires hors taxe
 TotalMarge=Total marge
@@ -235,7 +235,7 @@ ListOfProductsWithoutAccountingAccount=Liste des produits non liés à un compte
 ChangeBinding=Changer les liens
 Accounted=Comptabilisé
 NotYetAccounted=Pas encore comptabilisé
-AccountantFiles = Justificatifs comptablilité
+AccountantFiles=Export pièces/justificatifs
 
 ## Admin
 ApplyMassCategories=Application en masse des catégories
@@ -269,7 +269,7 @@ Modelcsv_quadratus=Export vers Quadratus QuadraCompta
 Modelcsv_ebp=Export vers EBP
 Modelcsv_cogilog=Export vers Cogilog
 Modelcsv_agiris=Export vers Agiris
-Modelcsv_configurable=Export CSV Configurable
+Modelcsv_configurable=Export configurable
 Modelcsv_FEC=Exportation FEC (Art. L47 A) (Test)
 ChartofaccountsId=Id plan comptable
 

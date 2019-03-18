@@ -39,7 +39,7 @@ class modContrat extends DolibarrModules
 	 *
 	 *   @param      DoliDB		$db      Database handler
 	 */
-	function __construct($db)
+	public function __construct($db)
 	{
 		global $conf, $langs;
 
@@ -49,7 +49,7 @@ class modContrat extends DolibarrModules
 		$this->family = "crm";
 		$this->module_position = '35';
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
-		$this->name = preg_replace('/^mod/i','',get_class($this));
+		$this->name = preg_replace('/^mod/i', '', get_class($this));
 		$this->description = "Gestion des contrats de services";
 
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
@@ -212,7 +212,7 @@ class modContrat extends DolibarrModules
      *      @param      string	$options    Options when enabling module ('', 'noboxes')
 	 *      @return     int             	1 if OK, 0 if KO
 	 */
-	function init($options='')
+	public function init($options = '')
 	{
 		global $conf;
 
@@ -228,11 +228,11 @@ class modContrat extends DolibarrModules
 		{
 		    require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 		    dol_mkdir($dirodt);
-		    $result=dol_copy($src,$dest,0,0);
+		    $result=dol_copy($src, $dest, 0, 0);
 		    if ($result < 0)
 		    {
 		        $langs->load("errors");
-		        $this->error=$langs->trans('ErrorFailToCopyFile',$src,$dest);
+		        $this->error=$langs->trans('ErrorFailToCopyFile', $src, $dest);
 		        return 0;
 		    }
 		}
@@ -242,6 +242,6 @@ class modContrat extends DolibarrModules
 		    "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->db->escape($this->const[1][2])."','contract',".$conf->entity.")"
 		);
 
-		return $this->_init($sql,$options);
+		return $this->_init($sql, $options);
 	}
 }

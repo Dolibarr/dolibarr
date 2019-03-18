@@ -18,8 +18,7 @@
  */
 
 /**
- *     \defgroup    ticket    Ticket module
- *     \brief       Ticket module descriptor.
+ *     \defgroup    ticket    Module Ticket
  *     \file        core/modules/modTicket.class.php
  *     \ingroup     ticket
  *     \brief       Description and activation file for module Ticket
@@ -64,7 +63,7 @@ class modTicket extends DolibarrModules
         // (where XXX is value of numeric property 'numero' of module)
         $this->description = "Incident/support ticket management";
         // Possible values for version are: 'development', 'experimental' or version
-        $this->version = 'experimental';
+        $this->version = 'dolibarr';
         // Key used in llx_const table to save module status enabled/disabled
         // (where MYMODULE is value of property name of module in uppercase)
         $this->const_name = 'MAIN_MODULE_' . strtoupper($this->name);
@@ -104,9 +103,10 @@ class modTicket extends DolibarrModules
         // List of particular constants to add when module is enabled
         // (key, 'chaine', value, desc, visible, 'current' or 'allentities', deleteonunactive)
         // Example:
-        $this->const = array();
-        $this->const[1] = array('TICKET_ENABLE_PUBLIC_INTERFACE', 'chaine', '1', 'Enable ticket public interface');
-        $this->const[2] = array('TICKET_ADDON', 'chaine', 'mod_ticket_simple', 'Ticket ref module');
+        $this->const = array(
+            1 => array('TICKET_ENABLE_PUBLIC_INTERFACE', 'chaine', '0', 'Enable ticket public interface', 0),
+            2 => array('TICKET_ADDON', 'chaine', 'mod_ticket_simple', 'Ticket ref module', 0)
+        );
 
         $this->tabs = array(
             'thirdparty:+ticket:Tickets:@ticket:$user->rights->ticket->read:/ticket/list.php?socid=__ID__',
@@ -218,7 +218,7 @@ class modTicket extends DolibarrModules
             'type' => 'left',
             'titre' => 'NewTicket',
             'mainmenu' => 'ticket',
-            'url' => '/ticket/new.php?action=create_ticket',
+            'url' => '/ticket/card.php?action=create',
             'langs' => 'ticket',
             'position' => 102,
             'enabled' => '$conf->ticket->enabled',
@@ -232,23 +232,9 @@ class modTicket extends DolibarrModules
             'titre' => 'List',
             'mainmenu' => 'ticket',
             'leftmenu' => 'ticketlist',
-            'url' => '/ticket/list.php',
-            'langs' => 'ticket',
-            'position' => 103,
-            'enabled' => '$conf->ticket->enabled',
-            'perms' => '$user->rights->ticket->read',
-            'target' => '',
-            'user' => 2);
-        $r++;
-
-        $this->menu[$r] = array('fk_menu' => 'fk_mainmenu=ticket,fk_leftmenu=ticketlist',
-            'type' => 'left',
-            'titre' => 'MenuListNonClosed',
-            'mainmenu' => 'ticket',
-            'leftmenu' => 'ticketlist',
             'url' => '/ticket/list.php?search_fk_status=non_closed',
             'langs' => 'ticket',
-            'position' => 104,
+            'position' => 103,
             'enabled' => '$conf->ticket->enabled',
             'perms' => '$user->rights->ticket->read',
             'target' => '',
@@ -260,7 +246,7 @@ class modTicket extends DolibarrModules
             'titre' => 'MenuTicketMyAssign',
             'mainmenu' => 'ticket',
             'leftmenu' => 'ticketmy',
-            'url' => '/ticket/list.php?mode=my_assign',
+            'url' => '/ticket/list.php?mode=mine&search_fk_status=non_closed',
             'langs' => 'ticket',
             'position' => 105,
             'enabled' => '$conf->ticket->enabled',
@@ -269,13 +255,13 @@ class modTicket extends DolibarrModules
             'user' => 0);
         $r++;
 
-        $this->menu[$r] = array('fk_menu' => 'fk_mainmenu=ticket,fk_leftmenu=ticketmy',
+        $this->menu[$r] = array('fk_menu' => 'fk_mainmenu=ticket,fk_leftmenu=ticket',
             'type' => 'left',
-            'titre' => 'MenuTicketMyAssignNonClosed',
+            'titre' => 'Statistics',
             'mainmenu' => 'ticket',
-            'url' => '/ticket/list.php?mode=my_assign&search_fk_status=non_closed',
+            'url' => '/ticket/stats/index.php',
             'langs' => 'ticket',
-            'position' => 106,
+            'position' => 107,
             'enabled' => '$conf->ticket->enabled',
             'perms' => '$user->rights->ticket->read',
             'target' => '',

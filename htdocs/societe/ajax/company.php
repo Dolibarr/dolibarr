@@ -22,21 +22,21 @@
  *       \brief      File to return Ajax response on thirdparty list request
  */
 
-if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL',1); // Disables token renewal
-if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU','1');
-if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML','1');
-if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');
-if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC','1');
-if (! defined('NOCSRFCHECK'))    define('NOCSRFCHECK','1');
+if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', 1); // Disables token renewal
+if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1');
+if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML', '1');
+if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
+if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC', '1');
+if (! defined('NOCSRFCHECK'))    define('NOCSRFCHECK', '1');
 
 require '../../main.inc.php';
 
-$htmlname=GETPOST('htmlname','alpha');
-$filter=GETPOST('filter','alpha');
-$outjson=(GETPOST('outjson','int') ? GETPOST('outjson','int') : 0);
+$htmlname=GETPOST('htmlname', 'alpha');
+$filter=GETPOST('filter', 'alpha');
+$outjson=(GETPOST('outjson', 'int') ? GETPOST('outjson', 'int') : 0);
 $action=GETPOST('action', 'alpha');
 $id=GETPOST('id', 'int');
-$showtype=GETPOST('showtype','int');
+$showtype=GETPOST('showtype', 'int');
 
 
 /*
@@ -78,7 +78,7 @@ else
 
 	if (empty($htmlname)) return;
 
-	$match = preg_grep('/('.$htmlname.'[0-9]+)/',array_keys($_GET));
+	$match = preg_grep('/('.$htmlname.'[0-9]+)/', array_keys($_GET));
 	sort($match);
 	$id = (! empty($match[0]) ? $match[0] : '');
 
@@ -94,4 +94,3 @@ else
 
 	if ($outjson) print json_encode($arrayresult);
 }
-

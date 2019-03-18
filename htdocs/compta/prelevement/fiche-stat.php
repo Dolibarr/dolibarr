@@ -36,28 +36,28 @@ $langs->loadLangs(array("banks","categories",'withdrawals','bills'));
 if ($user->societe_id > 0) accessforbidden();
 
 // Get supervariables
-$prev_id = GETPOST('id','int');
+$prev_id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
 
 // Load variable for pagination
-$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
-$sortfield = GETPOST('sortfield','alpha');
-$sortorder = GETPOST('sortorder','alpha');
-$page = GETPOST('page','int');
+$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
+$sortfield = GETPOST('sortfield', 'alpha');
+$sortorder = GETPOST('sortorder', 'alpha');
+$page = GETPOST('page', 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
 
-$object = new BonPrelevement($db,"");
+$object = new BonPrelevement($db, "");
 
 
 /*
  * View
  */
 
-llxHeader('',$langs->trans("WithdrawalsReceipts"));
+llxHeader('', $langs->trans("WithdrawalsReceipts"));
 
 if ($prev_id > 0 || $ref)
 {
@@ -75,7 +75,7 @@ if ($prev_id > 0 || $ref)
 		print '<table class="border centpercent">'."\n";
 
 		//print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td><td>'.$object->getNomUrl(1).'</td></tr>';
-		print '<tr><td class="titlefield">'.$langs->trans("Date").'</td><td>'.dol_print_date($object->datec,'day').'</td></tr>';
+		print '<tr><td class="titlefield">'.$langs->trans("Date").'</td><td>'.dol_print_date($object->datec, 'day').'</td></tr>';
 		print '<tr><td>'.$langs->trans("Amount").'</td><td>'.price($object->amount).'</td></tr>';
 
 		// Status
@@ -91,7 +91,7 @@ if ($prev_id > 0 || $ref)
 			$muser->fetch($object->user_trans);
 
 			print '<tr><td>'.$langs->trans("TransData").'</td><td>';
-			print dol_print_date($object->date_trans,'day');
+			print dol_print_date($object->date_trans, 'day');
 			print ' '.$langs->trans("By").' '.$muser->getFullName($langs).'</td></tr>';
 			print '<tr><td>'.$langs->trans("TransMetod").'</td><td>';
 			print $object->methodes_trans[$object->method_trans];
@@ -100,7 +100,7 @@ if ($prev_id > 0 || $ref)
 		if($object->date_credit <> 0)
 		{
 			print '<tr><td>'.$langs->trans('CreditDate').'</td><td>';
-			print dol_print_date($object->date_credit,'day');
+			print dol_print_date($object->date_credit, 'day');
 			print '</td></tr>';
 		}
 
@@ -142,7 +142,7 @@ if ($prev_id > 0 || $ref)
 	/*
 	 * Stats
 	 */
-	$ligne=new LignePrelevement($db,$user);
+	$ligne=new LignePrelevement($db, $user);
 
 	$sql = "SELECT sum(pl.amount), pl.statut";
 	$sql.= " FROM ".MAIN_DB_PREFIX."prelevement_lignes as pl";
@@ -155,12 +155,12 @@ if ($prev_id > 0 || $ref)
 		$num = $db->num_rows($resql);
 		$i = 0;
 
-		print load_fiche_titre($langs->trans("StatisticsByLineStatus"),'','');
+		print load_fiche_titre($langs->trans("StatisticsByLineStatus"), '', '');
 
 		print"\n<!-- debut table -->\n";
 		print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
 		print '<tr class="liste_titre">';
-		print '<td>'.$langs->trans("Status").'</td><td align="right">'.$langs->trans("Amount").'</td><td align="right">%</td></tr>';
+		print '<td>'.$langs->trans("Status").'</td><td class="right">'.$langs->trans("Amount").'</td><td class="right">%</td></tr>';
 
 		while ($i < $num)
 		{
@@ -168,13 +168,13 @@ if ($prev_id > 0 || $ref)
 
 			print '<tr class="oddeven"><td>';
 
-			print $ligne->LibStatut($row[1],1);
+			print $ligne->LibStatut($row[1], 1);
 
-			print '</td><td align="right">';
+			print '</td><td class="right">';
 			print price($row[0]);
 
-			print '</td><td align="right">';
-			if ($object->amount) print round($row[0]/$object->amount*100,2)." %";
+			print '</td><td class="right">';
+			if ($object->amount) print round($row[0]/$object->amount*100, 2)." %";
 			print '</td>';
 
 			print "</tr>\n";

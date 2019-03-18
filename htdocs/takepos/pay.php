@@ -19,18 +19,18 @@
 //if (! defined('NOREQUIREDB'))		define('NOREQUIREDB','1');		// Not disabled cause need to load personalized language
 //if (! defined('NOREQUIRESOC'))		define('NOREQUIRESOC','1');
 //if (! defined('NOREQUIRETRAN'))		define('NOREQUIRETRAN','1');
-if (! defined('NOCSRFCHECK'))		define('NOCSRFCHECK','1');
-if (! defined('NOTOKENRENEWAL'))	define('NOTOKENRENEWAL','1');
-if (! defined('NOREQUIREMENU'))		define('NOREQUIREMENU','1');
-if (! defined('NOREQUIREHTML'))		define('NOREQUIREHTML','1');
-if (! defined('NOREQUIREAJAX'))		define('NOREQUIREAJAX','1');
+if (! defined('NOCSRFCHECK'))		define('NOCSRFCHECK', '1');
+if (! defined('NOTOKENRENEWAL'))	define('NOTOKENRENEWAL', '1');
+if (! defined('NOREQUIREMENU'))		define('NOREQUIREMENU', '1');
+if (! defined('NOREQUIREHTML'))		define('NOREQUIREHTML', '1');
+if (! defined('NOREQUIREAJAX'))		define('NOREQUIREAJAX', '1');
 
 $_GET['theme']="md"; // Force theme. MD theme provides better look and feel to TakePOS
 
 require '../main.inc.php';	// Load $user and permissions
 require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
 
-$place = GETPOST('place','int');
+$place = GETPOST('place', 'int');
 
 
 /*
@@ -39,7 +39,7 @@ $place = GETPOST('place','int');
 
 $sql="SELECT rowid FROM ".MAIN_DB_PREFIX."facture where ref='(PROV-POS-".$place.")'";
 $resql = $db->query($sql);
-$row = $db->fetch_array ($resql);
+$row = $db->fetch_array($resql);
 $placeid=$row[0];
 if (! $placeid) $placeid=0; // Invoice not exist
 else{
@@ -53,14 +53,20 @@ $langs->loadLangs(array("main", "bills", "cashdesk"));
 ?>
 <link rel="stylesheet" href="css/pos.css">
 	<script>
-	var received=0;
+	<?php
+	if ($conf->global->TAKEPOS_NUMPAD==0) print "var received='';";
+	else print "var received=0;";
+	?>
 	function addreceived(price)
 	{
-	received+=parseFloat(price);
-	$('#change1').html(received.toFixed(2));
-	if (received><?php echo $invoice->total_ttc;?>)
+	<?php
+	if ($conf->global->TAKEPOS_NUMPAD==0) print 'received+=String(price);';
+	else print 'received+=parseFloat(price);';
+	?>
+	$('#change1').html(parseFloat(received).toFixed(2));
+	if (parseFloat(received)><?php echo $invoice->total_ttc;?>)
 		{
-		var change=parseFloat(received-<?php echo $invoice->total_ttc;?>);
+		var change=parseFloat(parseFloat(received)-<?php echo $invoice->total_ttc;?>);
 		$('#change2').html(change.toFixed(2));
 		}
 	}
@@ -98,21 +104,24 @@ $langs->loadLangs(array("main", "bills", "cashdesk"));
 </div>
 
 <div style="position:absolute; top:40%; left:5%; height:55%; width:91%;">
-<button type="button" class="calcbutton" onclick="addreceived(10);">10</button>
-<button type="button" class="calcbutton" onclick="addreceived(20);">20</button>
-<button type="button" class="calcbutton" onclick="addreceived(50);">50</button>
+<?php
+$numpad=$conf->global->TAKEPOS_NUMPAD;
+?>
+<button type="button" class="calcbutton" onclick="addreceived(<?php if ($numpad==0) print "7"; else print "10";?>);"><?php if ($numpad==0) print "7"; else print "10";?></button>
+<button type="button" class="calcbutton" onclick="addreceived(<?php if ($numpad==0) print "8"; else print "20";?>);"><?php if ($numpad==0) print "8"; else print "20";?></button>
+<button type="button" class="calcbutton" onclick="addreceived(<?php if ($numpad==0) print "9"; else print "50";?>);"><?php if ($numpad==0) print "9"; else print "50";?></button>
 <button type="button" <?php if ($placeid==0) echo "disabled";?> class="calcbutton2" onclick="Validate('cash');"><?php echo $langs->trans("Cash"); ?></button>
-<button type="button" class="calcbutton" onclick="addreceived(1);">1</button>
-<button type="button" class="calcbutton" onclick="addreceived(2);">2</button>
-<button type="button" class="calcbutton" onclick="addreceived(5);">5</button>
+<button type="button" class="calcbutton" onclick="addreceived(<?php if ($numpad==0) print "4"; else print "1";?>);"><?php if ($numpad==0) print "4"; else print "1";?></button>
+<button type="button" class="calcbutton" onclick="addreceived(<?php if ($numpad==0) print "5"; else print "2";?>);"><?php if ($numpad==0) print "5"; else print "2";?></button>
+<button type="button" class="calcbutton" onclick="addreceived(<?php if ($numpad==0) print "6"; else print "5";?>);"><?php if ($numpad==0) print "6"; else print "5";?></button>
 <button type="button" <?php if ($placeid==0) echo "disabled";?> class="calcbutton2" onclick="Validate('card');"><?php echo $langs->trans("PaymentTypeCB"); ?></button>
-<button type="button" class="calcbutton" onclick="addreceived(0.10);">0.10</button>
-<button type="button" class="calcbutton" onclick="addreceived(0.20);">0.20</button>
-<button type="button" class="calcbutton" onclick="addreceived(0.50);">0.50</button>
+<button type="button" class="calcbutton" onclick="addreceived(<?php if ($numpad==0) print "1"; else print "0.10";?>);"><?php if ($numpad==0) print "1"; else print "0.10";?></button>
+<button type="button" class="calcbutton" onclick="addreceived(<?php if ($numpad==0) print "2"; else print "0.20";?>);"><?php if ($numpad==0) print "2"; else print "0.20";?></button>
+<button type="button" class="calcbutton" onclick="addreceived(<?php if ($numpad==0) print "3"; else print "0.50";?>);"><?php if ($numpad==0) print "3"; else print "0.50";?></button>
 <button type="button" <?php if ($placeid==0) echo "disabled";?> class="calcbutton2" onclick="Validate('cheque');"><?php echo $langs->trans("Cheque"); ?></button>
-<button type="button" class="calcbutton" onclick="addreceived(0.01);">0.01</button>
-<button type="button" class="calcbutton" onclick="addreceived(0.02);">0.02</button>
-<button type="button" class="calcbutton" onclick="addreceived(0.05);">0.05</button>
+<button type="button" class="calcbutton" onclick="addreceived(<?php if ($numpad==0) print "0"; else print "0.01";?>);"><?php if ($numpad==0) print "0"; else print "0.01";?></button>
+<button type="button" class="calcbutton" onclick="addreceived(<?php if ($numpad==0) print "'000'"; else print "0.02";?>);"><?php if ($numpad==0) print "000"; else print "0.02";?></button>
+<button type="button" class="calcbutton" onclick="addreceived(<?php if ($numpad==0) print "'.'"; else print "0.05";?>);"><?php if ($numpad==0) print "."; else print "0.05";?></button>
 <button type="button" class="calcbutton3" onclick="reset();"><span style='font-size: 150%;'>C</span></button>
 <button type="button" class="calcbutton3" onclick="parent.$.colorbox.close();"><span id="printtext"><?php echo $langs->trans("GoBack"); ?></span></button>
 </div>

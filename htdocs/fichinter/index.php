@@ -36,7 +36,7 @@ if (!$user->rights->ficheinter->lire) accessforbidden();
 $langs->load("interventions");
 
 // Security check
-$socid=GETPOST('socid','int');
+$socid=GETPOST('socid', 'int');
 if ($user->societe_id > 0)
 {
 	$action = '';
@@ -54,7 +54,7 @@ $form = new Form($db);
 $formfile = new FormFile($db);
 $help_url="EN:ModuleFichinters|FR:Module_Fiche_Interventions|ES:Módulo_FichaInterventiones";
 
-llxHeader("",$langs->trans("Interventions"),$help_url);
+llxHeader("", $langs->trans("Interventions"), $help_url);
 
 print load_fiche_titre($langs->trans("InterventionsArea"));
 
@@ -122,13 +122,13 @@ if ($resql)
     $bool=false;
     foreach ($listofstatus as $status)
     {
-        $dataseries[]=array($fichinterstatic->LibStatut($status,$bool,1), (isset($vals[$status.$bool])?(int) $vals[$status.$bool]:0));
+        $dataseries[]=array($fichinterstatic->LibStatut($status, $bool, 1), (isset($vals[$status.$bool])?(int) $vals[$status.$bool]:0));
         if ($status==3 && ! $bool) $bool=true;
         else $bool=false;
     }
     if ($conf->use_javascript_ajax)
     {
-        print '<tr class="impair"><td align="center" colspan="2">';
+        print '<tr class="impair"><td class="center" colspan="2">';
 
         include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
         $dolgraph = new DolGraph();
@@ -149,9 +149,9 @@ if ($resql)
         if (! $conf->use_javascript_ajax)
         {
             print '<tr class="oddeven">';
-            print '<td>'.$fichinterstatic->LibStatut($status,$bool,0).'</td>';
-            print '<td align="right"><a href="list.php?viewstatut='.$status.'">'.(isset($vals[$status.$bool])?$vals[$status.$bool]:0).' ';
-            print $fichinterstatic->LibStatut($status,$bool,3);
+            print '<td>'.$fichinterstatic->LibStatut($status, $bool, 0).'</td>';
+            print '<td class="right"><a href="list.php?viewstatut='.$status.'">'.(isset($vals[$status.$bool])?$vals[$status.$bool]:0).' ';
+            print $fichinterstatic->LibStatut($status, $bool, 3);
             print '</a>';
             print '</td>';
             print "</tr>\n";
@@ -160,8 +160,8 @@ if ($resql)
         }
     }
     //if ($totalinprocess != $total)
-    //print '<tr class="liste_total"><td>'.$langs->trans("Total").' ('.$langs->trans("CustomersOrdersRunning").')</td><td align="right">'.$totalinprocess.'</td></tr>';
-    print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td align="right">'.$total.'</td></tr>';
+    //print '<tr class="liste_total"><td>'.$langs->trans("Total").' ('.$langs->trans("CustomersOrdersRunning").')</td><td class="right">'.$totalinprocess.'</td></tr>';
+    print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td class="right">'.$total.'</td></tr>';
     print "</table><br>";
 }
 else
@@ -201,8 +201,8 @@ if (! empty($conf->ficheinter->enabled))
 				$obj = $db->fetch_object($resql);
 				print '<tr class="oddeven">';
 				print '<td class="nowrap">';
-				print "<a href=\"card.php?id=".$obj->rowid."\">".img_object($langs->trans("ShowFichinter"),"intervention").' '.$obj->ref."</a></td>";
-				print '<td><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dol_trunc($obj->name,24).'</a></td></tr>';
+				print "<a href=\"card.php?id=".$obj->rowid."\">".img_object($langs->trans("ShowFichinter"), "intervention").' '.$obj->ref."</a></td>";
+				print '<td><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"), "company").' '.dol_trunc($obj->name, 24).'</a></td></tr>';
 				$i++;
 			}
 		}
@@ -238,7 +238,7 @@ if ($resql)
 {
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
-	print '<th colspan="4">'.$langs->trans("LastModifiedInterventions",$max).'</th></tr>';
+	print '<th colspan="4">'.$langs->trans("LastModifiedInterventions", $max).'</th></tr>';
 
 	$num = $db->num_rows($resql);
 	if ($num)
@@ -263,7 +263,7 @@ if ($resql)
 			print '&nbsp;';
 			print '</td>';
 
-			print '<td width="16" align="right" class="nobordernopadding hideonsmartphone">';
+			print '<td width="16" class="right nobordernopadding hideonsmartphone">';
 			$filename=dol_sanitizeFileName($obj->ref);
 			$filedir=$conf->commande->dir_output . '/' . dol_sanitizeFileName($obj->ref);
 			$urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->rowid;
@@ -272,9 +272,9 @@ if ($resql)
 
 			print '</td>';
 
-			print '<td><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->name.'</a></td>';
-			print '<td>'.dol_print_date($db->jdate($obj->datem),'day').'</td>';
-			print '<td align="right">'.$fichinterstatic->LibStatut($obj->fk_statut,5).'</td>';
+			print '<td><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"), "company").' '.$obj->name.'</a></td>';
+			print '<td>'.dol_print_date($db->jdate($obj->datem), 'day').'</td>';
+			print '<td class="right">'.$fichinterstatic->LibStatut($obj->fk_statut, 5).'</td>';
 			print '</tr>';
 			$i++;
 		}
@@ -331,7 +331,7 @@ if (! empty($conf->ficheinter->enabled))
 				print '&nbsp;';
 				print '</td>';
 
-				print '<td width="16" align="right" class="nobordernopadding hideonsmartphone">';
+				print '<td width="16" class="right nobordernopadding hideonsmartphone">';
 				$filename=dol_sanitizeFileName($obj->ref);
 				$filedir=$conf->commande->dir_output . '/' . dol_sanitizeFileName($obj->ref);
 				$urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->rowid;
@@ -340,9 +340,9 @@ if (! empty($conf->ficheinter->enabled))
 
 				print '</td>';
 
-				print '<td><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dol_trunc($obj->name,24).'</a></td>';
+				print '<td><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"), "company").' '.dol_trunc($obj->name, 24).'</a></td>';
 
-				print '<td align="right">'.$fichinterstatic->LibStatut($obj->fk_statut,5).'</td>';
+				print '<td class="right">'.$fichinterstatic->LibStatut($obj->fk_statut, 5).'</td>';
 
 				print '</tr>';
 				$i++;

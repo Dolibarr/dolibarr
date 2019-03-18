@@ -247,6 +247,8 @@ class Inventory extends CommonObject
 			$this->errors = $object->errors;
 		}
 
+		unset($object->context['createfromclone']);
+
 		// End
 		if (!$error) {
 			$this->db->commit();
@@ -319,7 +321,7 @@ class Inventory extends CommonObject
      *  @param  int     $save_lastsearch_value    	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
 	 *	@return	string								String with URL
 	 */
-	function getNomUrl($withpicto=0, $option='', $notooltip=0, $morecss='', $save_lastsearch_value=-1)
+    public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
 	{
 		global $db, $conf, $langs;
         global $dolibarr_main_authentication, $dolibarr_main_demo;
@@ -334,7 +336,7 @@ class Inventory extends CommonObject
         $label.= '<br>';
         $label.= '<b>' . $langs->trans('Ref') . ':</b> ' . $this->ref;
 
-        $url = dol_buildpath('/product/inventory/card.php',1).'?id='.$this->id;
+        $url = dol_buildpath('/product/inventory/card.php', 1).'?id='.$this->id;
 
         $linkclose='';
         if (empty($notooltip))
@@ -368,12 +370,12 @@ class Inventory extends CommonObject
 	 *  @param	int		$mode          0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	 *  @return	string 			       Label of status
 	 */
-	function getLibStatut($mode=0)
+    public function getLibStatut($mode = 0)
 	{
-		return $this->LibStatut($this->status,$mode);
+		return $this->LibStatut($this->status, $mode);
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Return the status
 	 *
@@ -381,7 +383,7 @@ class Inventory extends CommonObject
 	 *  @param  int		$mode          	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 5=Long label + Picto, 6=Long label + Picto
 	 *  @return string 			       	Label of status
 	 */
-	static function LibStatut($status,$mode=0)
+	public static function LibStatut($status, $mode = 0)
 	{
         // phpcs:enable
 		global $langs;
@@ -401,33 +403,33 @@ class Inventory extends CommonObject
 		}
 		elseif ($mode == 2)
 		{
-			if ($status == 0) return img_picto($langs->trans('Draft'),'statut0').' '.$langs->trans('Draft');
-			elseif ($status == 1) return img_picto($langs->trans('Enabled'),'statut4').' '.$langs->trans('Enabled');
-			elseif ($status == -1) return img_picto($langs->trans('Canceled'),'statut6').' '.$langs->trans('Canceled');
+			if ($status == 0) return img_picto($langs->trans('Draft'), 'statut0').' '.$langs->trans('Draft');
+			elseif ($status == 1) return img_picto($langs->trans('Enabled'), 'statut4').' '.$langs->trans('Enabled');
+			elseif ($status == -1) return img_picto($langs->trans('Canceled'), 'statut6').' '.$langs->trans('Canceled');
 		}
 		elseif ($mode == 3)
 		{
-			if ($status == 0) return img_picto($langs->trans('Draft'),'statut0');
-			elseif ($status == 1) return img_picto($langs->trans('Enabled'),'statut4');
-			elseif ($status == -1) return img_picto($langs->trans('Canceled'),'statut6');
+			if ($status == 0) return img_picto($langs->trans('Draft'), 'statut0');
+			elseif ($status == 1) return img_picto($langs->trans('Enabled'), 'statut4');
+			elseif ($status == -1) return img_picto($langs->trans('Canceled'), 'statut6');
 		}
 		elseif ($mode == 4)
 		{
-			if ($status == 0) return img_picto($langs->trans('Draft'),'statut0').' '.$langs->trans('Draft');
-			elseif ($status == 1) return img_picto($langs->trans('Enabled'),'statut4').' '.$langs->trans('Enabled');
-			elseif ($status == -1) return img_picto($langs->trans('Canceled'),'statut6').' '.$langs->trans('Canceled');
+			if ($status == 0) return img_picto($langs->trans('Draft'), 'statut0').' '.$langs->trans('Draft');
+			elseif ($status == 1) return img_picto($langs->trans('Enabled'), 'statut4').' '.$langs->trans('Enabled');
+			elseif ($status == -1) return img_picto($langs->trans('Canceled'), 'statut6').' '.$langs->trans('Canceled');
 		}
 		elseif ($mode == 5)
 		{
-			if ($status == 0) return $langs->trans('Draft').' '.img_picto($langs->trans('Draft'),'statut0');
-			elseif ($status == 1) return $langs->trans('Enabled').' '.img_picto($langs->trans('Enabled'),'statut4');
-			elseif ($status == -1) return $langs->trans('Canceled').' '.img_picto($langs->trans('Canceled'),'statut6');
+			if ($status == 0) return $langs->trans('Draft').' '.img_picto($langs->trans('Draft'), 'statut0');
+			elseif ($status == 1) return $langs->trans('Enabled').' '.img_picto($langs->trans('Enabled'), 'statut4');
+			elseif ($status == -1) return $langs->trans('Canceled').' '.img_picto($langs->trans('Canceled'), 'statut6');
 		}
 		elseif ($mode == 6)
 		{
-			if ($status == 0) return $langs->trans('Draft').' '.img_picto($langs->trans('Draft'),'statut0');
-			elseif ($status == 1) return $langs->trans('Enabled').' '.img_picto($langs->trans('Enabled'),'statut4');
-			elseif ($status == -1) return $langs->trans('Canceled').' '.img_picto($langs->trans('Canceled'),'statut6');
+			if ($status == 0) return $langs->trans('Draft').' '.img_picto($langs->trans('Draft'), 'statut0');
+			elseif ($status == 1) return $langs->trans('Enabled').' '.img_picto($langs->trans('Enabled'), 'statut4');
+			elseif ($status == -1) return $langs->trans('Canceled').' '.img_picto($langs->trans('Canceled'), 'statut6');
 		}
 	}
 
@@ -437,7 +439,7 @@ class Inventory extends CommonObject
 	 *	@param  int		$id       Id of order
 	 *	@return	void
 	 */
-	function info($id)
+    public function info($id)
 	{
 		$sql = 'SELECT rowid, date_creation as datec, tms as datem,';
 		$sql.= ' fk_user_creat, fk_user_modif';

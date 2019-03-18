@@ -30,9 +30,9 @@ require_once 'ticket.class.php';
 class TicketStats extends Stats
 {
     /**
-	 * @var string Name of table without prefix where object is stored
-	 */
-	public $table_element;
+     * @var string Name of table without prefix where object is stored
+     */
+    public $table_element;
 
     public $socid;
     public $userid;
@@ -59,7 +59,7 @@ class TicketStats extends Stats
 
         $object = new Ticket($this->db);
         $this->from = MAIN_DB_PREFIX . $object->table_element;
-        $this->field = 'km';
+        $this->field = 'timing';
 
         $this->where = " fk_statut > 0";
         $this->where .= " AND entity = " . $conf->entity;

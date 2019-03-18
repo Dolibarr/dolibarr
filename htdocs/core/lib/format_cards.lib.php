@@ -66,4 +66,3 @@ foreach($_Avery_Labels as $key => $val)
 {
 	$_Avery_Labels[$key]['name'].=' ('.$_Avery_Labels[$key]['paper-size'].' - '.$_Avery_Labels[$key]['NX'].'x'.$_Avery_Labels[$key]['NY'].')';
 }
-

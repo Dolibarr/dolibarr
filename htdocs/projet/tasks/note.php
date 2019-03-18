@@ -29,14 +29,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 // Load translation files required by the page
 $langs->load('projects');
 
-$action=GETPOST('action','alpha');
-$confirm=GETPOST('confirm','alpha');
+$action=GETPOST('action', 'alpha');
+$confirm=GETPOST('confirm', 'alpha');
 $mine = $_REQUEST['mode']=='mine' ? 1 : 0;
 //if (! $user->rights->projet->all->lire) $mine=1;	// Special for projects
-$id = GETPOST('id','int');
+$id = GETPOST('id', 'int');
 $ref= GETPOST('ref', 'alpha');
-$withproject=GETPOST('withproject','int');
-$project_ref = GETPOST('project_ref','alpha');
+$withproject=GETPOST('withproject', 'int');
+$project_ref = GETPOST('project_ref', 'alpha');
 
 // Security check
 $socid=0;
@@ -49,7 +49,7 @@ $projectstatic = new Project($db);
 
 if ($id > 0 || ! empty($ref))
 {
-	if ($object->fetch($id,$ref) > 0)
+	if ($object->fetch($id, $ref) > 0)
 	{
 		if(! empty($conf->global->PROJECT_ALLOW_COMMENT_ON_TASK) && method_exists($object, 'fetchComments') && empty($object->comments)) $object->fetchComments();
 		$projectstatic->fetch($object->fk_project);
@@ -68,7 +68,7 @@ if ($id > 0 || ! empty($ref))
 // Retreive First Task ID of Project if withprojet is on to allow project prev next to work
 if (! empty($project_ref) && ! empty($withproject))
 {
-	if ($projectstatic->fetch(0,$project_ref) > 0)
+	if ($projectstatic->fetch(0, $project_ref) > 0)
 	{
 		$tasksarray=$object->getTasksArray(0, 0, $projectstatic->id, $socid, 0);
 		if (count($tasksarray) > 0)
@@ -106,7 +106,7 @@ $now=dol_now();
 
 if ($object->id > 0)
 {
-	$userWrite  = $projectstatic->restrictedProjectArea($user,'write');
+	$userWrite  = $projectstatic->restrictedProjectArea($user, 'write');
 
 	if (! empty($withproject))
 	{
@@ -133,8 +133,8 @@ if ($object->id > 0)
 		// Define a complementary filter for search of next/prev ref.
 		if (! $user->rights->projet->all->lire)
 		{
-		    $objectsListId = $projectstatic->getProjectsAuthorizedForUser($user,0,0);
-		    $projectstatic->next_prev_filter=" rowid in (".(count($objectsListId)?join(',',array_keys($objectsListId)):'0').")";
+		    $objectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 0);
+		    $projectstatic->next_prev_filter=" rowid in (".(count($objectsListId)?join(',', array_keys($objectsListId)):'0').")";
 		}
 
 		dol_banner_tab($projectstatic, 'project_ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
@@ -153,9 +153,9 @@ if ($object->id > 0)
 
 		// Date start - end
 		print '<tr><td>'.$langs->trans("DateStart").' - '.$langs->trans("DateEnd").'</td><td>';
-		$start = dol_print_date($projectstatic->date_start,'day');
+		$start = dol_print_date($projectstatic->date_start, 'day');
 		print ($start?$start:'?');
-		$end = dol_print_date($projectstatic->date_end,'day');
+		$end = dol_print_date($projectstatic->date_end, 'day');
 		print ' - ';
 		print ($end?$end:'?');
 		if ($projectstatic->hasDelay()) print img_warning("Late");
@@ -163,7 +163,7 @@ if ($object->id > 0)
 
 		// Budget
 		print '<tr><td>'.$langs->trans("Budget").'</td><td>';
-		if (strcmp($projectstatic->budget_amount, '')) print price($projectstatic->budget_amount,'',$langs,1,0,0,$conf->currency);
+		if (strcmp($projectstatic->budget_amount, '')) print price($projectstatic->budget_amount, '', $langs, 1, 0, 0, $conf->currency);
 		print '</td></tr>';
 
 		// Other attributes
@@ -186,8 +186,8 @@ if ($object->id > 0)
 
 		// Categories
 		if($conf->categorie->enabled) {
-		    print '<tr><td valign="middle">'.$langs->trans("Categories").'</td><td>';
-		    print $form->showCategories($projectstatic->id,'project',1);
+		    print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td>';
+		    print $form->showCategories($projectstatic->id, 'project', 1);
 		    print "</td></tr>";
 		}
 
@@ -213,7 +213,7 @@ if ($object->id > 0)
 
 	if (! GETPOST('withproject') || empty($projectstatic->id))
 	{
-	    $projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,0,1);
+	    $projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 1);
 	    $object->next_prev_filter=" fk_projet in (".$projectsListId.")";
 	}
 	else $object->next_prev_filter=" fk_projet = ".$projectstatic->id;

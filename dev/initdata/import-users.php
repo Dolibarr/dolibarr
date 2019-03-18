@@ -35,7 +35,7 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
 }
 
 // Recupere root dolibarr
-$path=preg_replace('/import-users.php/i','',$_SERVER["PHP_SELF"]);
+$path=preg_replace('/import-users.php/i', '', $_SERVER["PHP_SELF"]);
 require $path."../../htdocs/master.inc.php";
 include_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
@@ -57,7 +57,7 @@ $error=0;
 
 @set_time_limit(0);
 print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." *****\n";
-dol_syslog($script_file." launched with arg ".implode(',',$argv));
+dol_syslog($script_file." launched with arg ".implode(',', $argv));
 
 $mode = $argv[1];
 $filepath = $argv[2];
@@ -66,7 +66,7 @@ $filepatherr = $filepath.'.err';
 $startlinenb = empty($argv[3])?1:$argv[3];
 $endlinenb = empty($argv[4])?0:$argv[4];
 
-if (empty($mode) || ! in_array($mode,array('test','confirm','confirmforced')) || empty($filepath)) {
+if (empty($mode) || ! in_array($mode, array('test','confirm','confirmforced')) || empty($filepath)) {
     print "Usage:  $script_file (test|confirm|confirmforced) filepath.csv [startlinenb] [endlinenb]\n";
     print "Usage:  $script_file test myfilepath.csv 2 1002\n";
     print "\n";
@@ -78,7 +78,7 @@ if (! file_exists($filepath)) {
     exit(-1);
 }
 
-$ret=$user->fetch('','admin');
+$ret=$user->fetch('', 'admin');
 if (! $ret > 0)
 {
 	print 'A user with login "admin" and all permissions must be created to use this script.'."\n";
@@ -93,7 +93,7 @@ if (! $confirmed)
     $input = trim(fgets(STDIN));
 }
 
-// Open input and ouput files
+// Open input and output files
 $fhandle = fopen($filepath, 'r');
 if (! $fhandle)
 {
@@ -127,12 +127,12 @@ while ($fields=fgetcsv($fhandle, $linelength, $delimiter, $enclosure, $escape))
     $object = new User($db);
     $object->statut = 1;
 
-    $tmp=explode(' ',$fields[3],2);
+    $tmp=explode(' ', $fields[3], 2);
     $object->firstname = trim($tmp[0]);
     $object->lastname = trim($tmp[1]);
     if ($object->lastname) $object->login = strtolower(substr($object->firstname, 0, 1)) . strtolower(substr($object->lastname, 0));
     else $object->login=strtolower($object->firstname);
-    $object->login=preg_replace('/ /','',$object->login);
+    $object->login=preg_replace('/ /', '', $object->login);
     $object->password = 'init';
 
     print "Process line nb ".$i.", login ".$object->login;

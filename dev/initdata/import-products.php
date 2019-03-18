@@ -35,7 +35,7 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
 }
 
 // Recupere root dolibarr
-$path=preg_replace('/import-products.php/i','',$_SERVER["PHP_SELF"]);
+$path=preg_replace('/import-products.php/i', '', $_SERVER["PHP_SELF"]);
 require $path."../../htdocs/master.inc.php";
 include_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
@@ -57,7 +57,7 @@ $error=0;
 
 @set_time_limit(0);
 print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." *****\n";
-dol_syslog($script_file." launched with arg ".implode(',',$argv));
+dol_syslog($script_file." launched with arg ".implode(',', $argv));
 
 $mode = $argv[1];
 $filepath = $argv[2];
@@ -66,7 +66,7 @@ $defaultlang = empty($argv[3])?'en_US':$argv[3];
 $startlinenb = empty($argv[4])?1:$argv[4];
 $endlinenb = empty($argv[5])?0:$argv[5];
 
-if (empty($mode) || ! in_array($mode,array('test','confirm','confirmforced')) || empty($filepath)) {
+if (empty($mode) || ! in_array($mode, array('test','confirm','confirmforced')) || empty($filepath)) {
     print "Usage:  $script_file (test|confirm|confirmforced) filepath.csv [defaultlang] [startlinenb] [endlinenb]\n";
     print "Usage:  $script_file test myfilepath.csv fr_FR 2 1002\n";
     print "\n";
@@ -78,7 +78,7 @@ if (! file_exists($filepath)) {
     exit(-1);
 }
 
-$ret=$user->fetch('','admin');
+$ret=$user->fetch('', 'admin');
 if (! $ret > 0)
 {
 	print 'A user with login "admin" and all permissions must be created to use this script.'."\n";
@@ -93,7 +93,7 @@ if (! $confirmed)
     $input = trim(fgets(STDIN));
 }
 
-// Open input and ouput files
+// Open input and output files
 $fhandle = fopen($filepath, 'r');
 if (! $fhandle)
 {

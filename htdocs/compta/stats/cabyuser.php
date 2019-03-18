@@ -32,12 +32,12 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 // Load translation files required by the page
 $langs->load("accountancy");
 
-$socid = GETPOST('socid','int');
+$socid = GETPOST('socid', 'int');
 
 // Security check
 if ($user->societe_id > 0) $socid = $user->societe_id;
-if (! empty($conf->comptabilite->enabled)) $result=restrictedArea($user,'compta','','','resultat');
-if (! empty($conf->accounting->enabled)) $result=restrictedArea($user,'accounting','','','comptarapport');
+if (! empty($conf->comptabilite->enabled)) $result=restrictedArea($user, 'compta', '', '', 'resultat');
+if (! empty($conf->accounting->enabled)) $result=restrictedArea($user, 'accounting', '', '', 'comptarapport');
 
 // Define modecompta ('CREANCES-DETTES' or 'RECETTES-DEPENSES')
 $modecompta = $conf->global->ACCOUNTING_MODE;
@@ -59,16 +59,16 @@ $date_endmonth = GETPOST("date_endmonth");
 $date_endday = GETPOST("date_endday");
 if (empty($year))
 {
-	$year_current = strftime("%Y",dol_now());
-	$month_current = strftime("%m",dol_now());
-	$year_start = $year_current;
+    $year_current = strftime("%Y", dol_now());
+    $month_current = strftime("%m", dol_now());
+    $year_start = $year_current;
 } else {
 	$year_current = $year;
-	$month_current = strftime("%m",dol_now());
+	$month_current = strftime("%m", dol_now());
 	$year_start = $year;
 }
-$date_start=dol_mktime(0,0,0,$_REQUEST["date_startmonth"],$_REQUEST["date_startday"],$_REQUEST["date_startyear"]);
-$date_end=dol_mktime(23,59,59,$_REQUEST["date_endmonth"],$_REQUEST["date_endday"],$_REQUEST["date_endyear"]);
+$date_start=dol_mktime(0, 0, 0, $_REQUEST["date_startmonth"], $_REQUEST["date_startday"], $_REQUEST["date_startyear"]);
+$date_end=dol_mktime(23, 59, 59, $_REQUEST["date_endmonth"], $_REQUEST["date_endday"], $_REQUEST["date_endyear"]);
 // Quarter
 if (empty($date_start) || empty($date_end)) // We define date_start and date_end
 {
@@ -90,12 +90,12 @@ if (empty($date_start) || empty($date_end)) // We define date_start and date_end
 			if ($month_end < 1) $month_end=12;
 			else $year_end++;
 		}
-		$date_start=dol_get_first_day($year_start,$month_start,false); $date_end=dol_get_last_day($year_end,$month_end,false);
+		$date_start=dol_get_first_day($year_start, $month_start, false); $date_end=dol_get_last_day($year_end, $month_end, false);
 	}
-	if ($q==1) { $date_start=dol_get_first_day($year_start,1,false); $date_end=dol_get_last_day($year_start,3,false); }
-	if ($q==2) { $date_start=dol_get_first_day($year_start,4,false); $date_end=dol_get_last_day($year_start,6,false); }
-	if ($q==3) { $date_start=dol_get_first_day($year_start,7,false); $date_end=dol_get_last_day($year_start,9,false); }
-	if ($q==4) { $date_start=dol_get_first_day($year_start,10,false); $date_end=dol_get_last_day($year_start,12,false); }
+	if ($q==1) { $date_start=dol_get_first_day($year_start, 1, false); $date_end=dol_get_last_day($year_start, 3, false); }
+	if ($q==2) { $date_start=dol_get_first_day($year_start, 4, false); $date_end=dol_get_last_day($year_start, 6, false); }
+	if ($q==3) { $date_start=dol_get_first_day($year_start, 7, false); $date_end=dol_get_last_day($year_start, 9, false); }
+	if ($q==4) { $date_start=dol_get_first_day($year_start, 10, false); $date_end=dol_get_last_day($year_start, 12, false); }
 }
 else
 {
@@ -158,7 +158,7 @@ if ($modecompta=="CREANCES-DETTES") {
     $builddate=dol_now();
     //$exportlink=$langs->trans("NotYetAvailable");
 }
-else if ($modecompta=="RECETTES-DEPENSES")
+elseif ($modecompta=="RECETTES-DEPENSES")
 {
 	$name=$langs->trans("TurnoverCollected").', '.$langs->trans("ByUserAuthorOfInvoice");
 	$calcmode=$langs->trans("CalcModeEngagement");
@@ -168,12 +168,12 @@ else if ($modecompta=="RECETTES-DEPENSES")
     $builddate=dol_now();
     //$exportlink=$langs->trans("NotYetAvailable");
 }
-else if ($modecompta=="BOOKKEEPING")
+elseif ($modecompta=="BOOKKEEPING")
 {
 
 
 }
-else if ($modecompta=="BOOKKEEPINGCOLLECTED")
+elseif ($modecompta=="BOOKKEEPINGCOLLECTED")
 {
 
 
@@ -185,7 +185,7 @@ else $periodlink = '';
 $moreparam=array();
 if (! empty($modecompta)) $moreparam['modecompta']=$modecompta;
 
-report_header($name,$namelink,$period,$periodlink,$description,$builddate,$exportlink,$moreparam,$calcmode);
+report_header($name, $namelink, $period, $periodlink, $description, $builddate, $exportlink, $moreparam, $calcmode);
 
 if (! empty($conf->accounting->enabled) && $modecompta != 'BOOKKEEPING')
 {
@@ -211,7 +211,7 @@ if ($modecompta == 'CREANCES-DETTES') {
     $sql.= " WHERE f.fk_statut in (1,2)";
 	if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
 	    $sql.= " AND f.type IN (0,1,2,5)";
-	    } else {
+    } else {
 	    $sql.= " AND f.type IN (0,1,2,3,5)";
 	}
 	if ($date_start && $date_end) {
@@ -232,7 +232,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 	    $sql.= " AND p.datep >= '".$db->idate($date_start)."' AND p.datep <= '".$db->idate($date_end)."'";
 	}
 }
-$sql.= " AND f.entity = ".$conf->entity;
+$sql.= " AND f.entity IN (".getEntity('invoice').")";
 if ($socid) $sql.= " AND f.fk_soc = ".$socid;
 $sql .= " GROUP BY u.rowid, u.lastname, u.firstname";
 $sql .= " ORDER BY u.rowid";
@@ -243,12 +243,12 @@ if ($result) {
     $i=0;
     while ($i < $num) {
          $obj = $db->fetch_object($result);
-	 $amount_ht[$obj->rowid] = $obj->amount;
-	 $amount[$obj->rowid] = $obj->amount_ttc;
-	 $name[$obj->rowid] = $obj->name.' '.$obj->firstname;
-	 $catotal_ht+=$obj->amount;
-	 $catotal+=$obj->amount_ttc;
-	 $i++;
+        $amount_ht[$obj->rowid] = $obj->amount;
+        $amount[$obj->rowid] = $obj->amount_ttc;
+        $name[$obj->rowid] = $obj->name.' '.$obj->firstname;
+        $catotal_ht+=$obj->amount;
+        $catotal+=$obj->amount_ttc;
+        $i++;
     }
 } else {
     dol_print_error($db);
@@ -302,7 +302,7 @@ print_liste_field_titre(
 	"",
 	$sortfield,
 	$sortorder
-	);
+);
 if ($modecompta == 'CREANCES-DETTES') {
     print_liste_field_titre(
            $langs->trans('AmountHT'),
@@ -310,11 +310,11 @@ if ($modecompta == 'CREANCES-DETTES') {
            "amount_ht",
            "",
            $paramslink,
-           'align="right"',
+           'class="right"',
            $sortfield,
            $sortorder
-	   );
-    } else {
+	);
+} else {
 	print_liste_field_titre('');
 }
 print_liste_field_titre(
@@ -323,19 +323,19 @@ print_liste_field_titre(
 	"amount_ttc",
 	"",
 	$paramslink,
-	'align="right"',
+	'class="right"',
 	$sortfield,
 	$sortorder
-	);
+);
 print_liste_field_titre(
 	$langs->trans("Percentage"),
-	$_SERVER["PHP_SELF"],"amount_ttc",
+	$_SERVER["PHP_SELF"], "amount_ttc",
 	"",
 	$paramslink,
-	'align="right"',
+	'class="right"',
 	$sortfield,
 	$sortorder
-	);
+);
 print_liste_field_titre(
 	$langs->trans("OtherStatistics"),
 	$_SERVER["PHP_SELF"],
@@ -343,7 +343,7 @@ print_liste_field_titre(
 	"",
 	"",
 	'align="center" width="20%"'
-	);
+);
 print "</tr>\n";
 
 if (count($amount)) {
@@ -384,63 +384,63 @@ if (count($amount)) {
         // Third party
         $fullname=$name[$key];
         if ($key >= 0) {
-            $linkname='<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$key.'">'.img_object($langs->trans("ShowUser"),'user').' '.$fullname.'</a>';
+            $linkname='<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$key.'">'.img_object($langs->trans("ShowUser"), 'user').' '.$fullname.'</a>';
         } else {
             $linkname=$langs->trans("PaymentsNotLinkedToUser");
         }
         print "<td>".$linkname."</td>\n";
 
-	// Amount w/o VAT
-        print '<td align="right">';
+        // Amount w/o VAT
+        print '<td class="right">';
         if ($modecompta != 'CREANCES-DETTES')
         {
             if ($key > 0) {
-		print '<a href="'.DOL_URL_ROOT.'/compta/paiement/list.php?userid='.$key.'">';
-		} else {
-		    print '<a href="'.DOL_URL_ROOT.'/compta/paiement/list.php?userid=-1">';
-		}
+                print '<a href="'.DOL_URL_ROOT.'/compta/paiement/list.php?userid='.$key.'">';
+            } else {
+                print '<a href="'.DOL_URL_ROOT.'/compta/paiement/list.php?userid=-1">';
+            }
         } else {
             if ($key > 0) {
-		print '<a href="'.DOL_URL_ROOT.'/compta/facture/list.php?userid='.$key.'">';
-	    } else {
-		print '<a href="#">';
-	    }
-	    print price($amount_ht[$key]);
+                print '<a href="'.DOL_URL_ROOT.'/compta/facture/list.php?userid='.$key.'">';
+            } else {
+                print '<a href="#">';
+            }
+            print price($amount_ht[$key]);
         }
         print '</td>';
 
         // Amount with VAT
-        print '<td align="right">';
+        print '<td class="right">';
         if ($modecompta != 'CREANCES-DETTES') {
             if ($key > 0) {
-		print '<a href="'.DOL_URL_ROOT.'/compta/paiement/list.php?userid='.$key.'">';
-		} else {
-		    print '<a href="'.DOL_URL_ROOT.'/compta/paiement/list.php?userid=-1">';
-		}
+                print '<a href="'.DOL_URL_ROOT.'/compta/paiement/list.php?userid='.$key.'">';
+            } else {
+                print '<a href="'.DOL_URL_ROOT.'/compta/paiement/list.php?userid=-1">';
+            }
         } else {
             if ($key > 0) {
-		print '<a href="'.DOL_URL_ROOT.'/compta/facture/list.php?userid='.$key.'">';
-	    } else {
-		print '<a href="#">';
-	    }
+                print '<a href="'.DOL_URL_ROOT.'/compta/facture/list.php?userid='.$key.'">';
+            } else {
+                print '<a href="#">';
+            }
         }
         print price($amount[$key]);
         print '</td>';
 
         // Percent
-        print '<td align="right">'.($catotal > 0 ? round(100 * $amount[$key] / $catotal,2).'%' : '&nbsp;').'</td>';
+        print '<td class="right">'.($catotal > 0 ? round(100 * $amount[$key] / $catotal, 2).'%' : '&nbsp;').'</td>';
 
         // Other stats
         print '<td align="center">';
         if (! empty($conf->propal->enabled) && $key>0) {
-	    print '&nbsp;<a href="'.DOL_URL_ROOT.'/comm/propal/stats/index.php?userid='.$key.'">'.img_picto($langs->trans("ProposalStats"),"stats").'</a>&nbsp;';
-	}
+            print '&nbsp;<a href="'.DOL_URL_ROOT.'/comm/propal/stats/index.php?userid='.$key.'">'.img_picto($langs->trans("ProposalStats"), "stats").'</a>&nbsp;';
+        }
         if (! empty($conf->commande->enabled) && $key>0) {
-	    print '&nbsp;<a href="'.DOL_URL_ROOT.'/commande/stats/index.php?userid='.$key.'">'.img_picto($langs->trans("OrderStats"),"stats").'</a>&nbsp;';
-	}
+            print '&nbsp;<a href="'.DOL_URL_ROOT.'/commande/stats/index.php?userid='.$key.'">'.img_picto($langs->trans("OrderStats"), "stats").'</a>&nbsp;';
+        }
         if (! empty($conf->facture->enabled) && $key>0) {
-	    print '&nbsp;<a href="'.DOL_URL_ROOT.'/compta/facture/stats/index.php?userid='.$key.'">'.img_picto($langs->trans("InvoiceStats"),"stats").'</a>&nbsp;';
-	}
+            print '&nbsp;<a href="'.DOL_URL_ROOT.'/compta/facture/stats/index.php?userid='.$key.'">'.img_picto($langs->trans("InvoiceStats"), "stats").'</a>&nbsp;';
+        }
         print '</td>';
         print "</tr>\n";
         $i++;
@@ -450,11 +450,11 @@ if (count($amount)) {
     print '<tr class="liste_total">';
     print '<td>'.$langs->trans("Total").'</td>';
     if ($modecompta != 'CREANCES-DETTES') {
-	print '<td colspan="1"></td>';
+        print '<td colspan="1"></td>';
     } else {
-	    print '<td align="right">'.price($catotal_ht).'</td>';
+        print '<td class="right">'.price($catotal_ht).'</td>';
     }
-    print '<td align="right">'.price($catotal).'</td>';
+    print '<td class="right">'.price($catotal).'</td>';
     print '<td>&nbsp;</td>';
     print '<td>&nbsp;</td>';
     print '</tr>';

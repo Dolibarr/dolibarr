@@ -28,8 +28,8 @@
  *		\brief      File to offer a way to make a payment for a particular Dolibarr object
  */
 
-define("NOLOGIN",1);		// This means this output page does not require to be logged.
-define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
+define("NOLOGIN", 1);		// This means this output page does not require to be logged.
+define("NOCSRFCHECK", 1);	// We accept to go on this page from external web site.
 
 // For MultiCompany module.
 // Do not use GETPOST here, function is not defined and get of entity must be done before including main.inc.php
@@ -48,7 +48,7 @@ require_once DOL_DOCUMENT_ROOT.'/societe/class/societeaccount.class.php';
 
 $langs->loadLangs(array("main","other","dict","bills","companies","errors","paybox","paypal","stripe"));     // File with generic data
 
-$action=GETPOST('action','aZ09');
+$action=GETPOST('action', 'aZ09');
 
 // Input are:
 // type ('invoice','order','contractline'),
@@ -57,26 +57,26 @@ $action=GETPOST('action','aZ09');
 // tag (a free text, required if type is empty)
 // currency (iso code)
 
-$suffix=GETPOST("suffix",'aZ09');
-$amount=price2num(GETPOST("amount",'alpha'));
-if (! GETPOST("currency",'alpha')) $currency=$conf->currency;
-else $currency=GETPOST("currency",'alpha');
-$source = GETPOST("s",'alpha')?GETPOST("s",'alpha'):GETPOST("source",'alpha');
-$download = GETPOST('d','int')?GETPOST('d','int'):GETPOST('download','int');
+$suffix=GETPOST("suffix", 'aZ09');
+$amount=price2num(GETPOST("amount", 'alpha'));
+if (! GETPOST("currency", 'alpha')) $currency=$conf->currency;
+else $currency=GETPOST("currency", 'alpha');
+$source = GETPOST("s", 'alpha')?GETPOST("s", 'alpha'):GETPOST("source", 'alpha');
+$download = GETPOST('d', 'int')?GETPOST('d', 'int'):GETPOST('download', 'int');
 
 if (! $action)
 {
-	if (! GETPOST("amount",'alpha') && ! $source)
+	if (! GETPOST("amount", 'alpha') && ! $source)
 	{
 		print $langs->trans('ErrorBadParameters')." - amount or source";
 		exit;
 	}
-	if (is_numeric($amount) && ! GETPOST("tag",'alpha') && ! $source)
+	if (is_numeric($amount) && ! GETPOST("tag", 'alpha') && ! $source)
 	{
 		print $langs->trans('ErrorBadParameters')." - tag or source";
 		exit;
 	}
-	if ($source && ! GETPOST("ref",'alpha'))
+	if ($source && ! GETPOST("ref", 'alpha'))
 	{
 		print $langs->trans('ErrorBadParameters')." - ref";
 		exit;
@@ -84,7 +84,7 @@ if (! $action)
 }
 
 
-$paymentmethod=GETPOST('paymentmethod','alphanohtml')?GETPOST('paymentmethod','alphanohtml'):'';	// Empty in most cases. Defined when a payment mode is forced
+$paymentmethod=GETPOST('paymentmethod', 'alphanohtml')?GETPOST('paymentmethod', 'alphanohtml'):'';	// Empty in most cases. Defined when a payment mode is forced
 $validpaymentmethod=array();
 
 // Detect $paymentmethod
@@ -107,11 +107,11 @@ $urlok=$urlwithroot.'/public/payment/paymentok.php?';
 $urlko=$urlwithroot.'/public/payment/paymentko.php?';
 
 // Complete urls for post treatment
-$ref=$REF=GETPOST('ref','alpha');
-$TAG=GETPOST("tag",'alpha');
-$FULLTAG=GETPOST("fulltag",'alpha');		// fulltag is tag with more informations
+$ref=$REF=GETPOST('ref', 'alpha');
+$TAG=GETPOST("tag", 'alpha');
+$FULLTAG=GETPOST("fulltag", 'alpha');		// fulltag is tag with more informations
 $SECUREKEY=GETPOST("securekey");	        // Secure key
-if ($paymentmethod && ! preg_match('/'.preg_quote('PM='.$paymentmethod,'/').'/', $FULLTAG)) $FULLTAG.=($FULLTAG?'.':'').'PM='.$paymentmethod;
+if ($paymentmethod && ! preg_match('/'.preg_quote('PM='.$paymentmethod, '/').'/', $FULLTAG)) $FULLTAG.=($FULLTAG?'.':'').'PM='.$paymentmethod;
 
 if (! empty($suffix))
 {
@@ -148,8 +148,8 @@ if (! empty($entity))
 	$urlok.='e='.urlencode($entity).'&';
 	$urlko.='e='.urlencode($entity).'&';
 }
-$urlok=preg_replace('/&$/','',$urlok);  // Remove last &
-$urlko=preg_replace('/&$/','',$urlko);  // Remove last &
+$urlok=preg_replace('/&$/', '', $urlok);  // Remove last &
+$urlko=preg_replace('/&$/', '', $urlko);  // Remove last &
 
 
 
@@ -167,17 +167,17 @@ if ((empty($paymentmethod) || $paymentmethod == 'paypal') && ! empty($conf->payp
 	if ($urlko) $PAYPAL_API_KO=$urlko;
 	if (empty($PAYPAL_API_USER))
 	{
-		dol_print_error('',"Paypal setup param PAYPAL_API_USER not defined");
+		dol_print_error('', "Paypal setup param PAYPAL_API_USER not defined");
 		return -1;
 	}
 	if (empty($PAYPAL_API_PASSWORD))
 	{
-		dol_print_error('',"Paypal setup param PAYPAL_API_PASSWORD not defined");
+		dol_print_error('', "Paypal setup param PAYPAL_API_PASSWORD not defined");
 		return -1;
 	}
 	if (empty($PAYPAL_API_SIGNATURE))
 	{
-		dol_print_error('',"Paypal setup param PAYPAL_API_SIGNATURE not defined");
+		dol_print_error('', "Paypal setup param PAYPAL_API_SIGNATURE not defined");
 		return -1;
 	}
 
@@ -255,7 +255,7 @@ $creditor=$mysoc->name;
 $paramcreditor='ONLINE_PAYMENT_CREDITOR';
 $paramcreditorlong='ONLINE_PAYMENT_CREDITOR_'.$suffix;
 if (! empty($conf->global->$paramcreditorlong)) $creditor=$conf->global->$paramcreditorlong;
-else if (! empty($conf->global->$paramcreditor)) $creditor=$conf->global->$paramcreditor;
+elseif (! empty($conf->global->$paramcreditor)) $creditor=$conf->global->$paramcreditor;
 
 
 
@@ -268,21 +268,21 @@ if ($action == 'dopayment')
 {
 	if ($paymentmethod == 'paypal')
 	{
-		$PAYPAL_API_PRICE=price2num(GETPOST("newamount",'alpha'),'MT');
+		$PAYPAL_API_PRICE=price2num(GETPOST("newamount", 'alpha'), 'MT');
 		$PAYPAL_PAYMENT_TYPE='Sale';
 
 		// Vars that are used as global var later in print_paypal_redirect()
-		$origfulltag=GETPOST("fulltag",'alpha');
-		$shipToName=GETPOST("shipToName",'alpha');
-		$shipToStreet=GETPOST("shipToStreet",'alpha');
-		$shipToCity=GETPOST("shipToCity",'alpha');
-		$shipToState=GETPOST("shipToState",'alpha');
-		$shipToCountryCode=GETPOST("shipToCountryCode",'alpha');
-		$shipToZip=GETPOST("shipToZip",'alpha');
-		$shipToStreet2=GETPOST("shipToStreet2",'alpha');
-		$phoneNum=GETPOST("phoneNum",'alpha');
-		$email=GETPOST("email",'alpha');
-		$desc=GETPOST("desc",'alpha');
+		$origfulltag=GETPOST("fulltag", 'alpha');
+		$shipToName=GETPOST("shipToName", 'alpha');
+		$shipToStreet=GETPOST("shipToStreet", 'alpha');
+		$shipToCity=GETPOST("shipToCity", 'alpha');
+		$shipToState=GETPOST("shipToState", 'alpha');
+		$shipToCountryCode=GETPOST("shipToCountryCode", 'alpha');
+		$shipToZip=GETPOST("shipToZip", 'alpha');
+		$shipToStreet2=GETPOST("shipToStreet2", 'alpha');
+		$phoneNum=GETPOST("phoneNum", 'alpha');
+		$email=GETPOST("email", 'alpha');
+		$desc=GETPOST("desc", 'alpha');
 		$thirdparty_id=GETPOST('thirdparty_id', 'int');
 
 		// Special case for Paypal-Indonesia
@@ -294,14 +294,14 @@ if ($action == 'dopayment')
 		$mesg='';
 		if (empty($PAYPAL_API_PRICE) || ! is_numeric($PAYPAL_API_PRICE))
 		{
-			$mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Amount"));
+			$mesg=$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Amount"));
 			$action = '';
 		}
 		//elseif (empty($EMAIL))          $mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("YourEMail"));
 		//elseif (! isValidEMail($EMAIL)) $mesg=$langs->trans("ErrorBadEMail",$EMAIL);
 		elseif (! $origfulltag)
 		{
-			$mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("PaymentCode"));
+			$mesg=$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("PaymentCode"));
 			$action = '';
 		}
 
@@ -344,7 +344,7 @@ if ($action == 'dopayment')
 			//$_SESSION["FinalPaymentAmt"]=$PAYPAL_API_PRICE;
 
 			// A redirect is added if API call successfull
-			$mesg = print_paypal_redirect($PAYPAL_API_PRICE,$PAYPAL_API_DEVISE,$PAYPAL_PAYMENT_TYPE,$PAYPAL_API_OK,$PAYPAL_API_KO, $FULLTAG);
+			$mesg = print_paypal_redirect($PAYPAL_API_PRICE, $PAYPAL_API_DEVISE, $PAYPAL_PAYMENT_TYPE, $PAYPAL_API_OK, $PAYPAL_API_KO, $FULLTAG);
 
 			// If we are here, it means the Paypal redirect was not done, so we show error message
 			$action = '';
@@ -353,21 +353,21 @@ if ($action == 'dopayment')
 
 	if ($paymentmethod == 'paybox')
 	{
-		$PRICE=price2num(GETPOST("newamount"),'MT');
-		$email=GETPOST("email",'alpha');
+		$PRICE=price2num(GETPOST("newamount"), 'MT');
+		$email=GETPOST("email", 'alpha');
 		$thirdparty_id=GETPOST('thirdparty_id', 'int');
 
-		$origfulltag=GETPOST("fulltag",'alpha');
+		$origfulltag=GETPOST("fulltag", 'alpha');
 
 		// Securekey into back url useless for back url and we need an url lower than 150.
 		$urlok = preg_replace('/securekey=[^&]+/', '', $urlok);
 		$urlko = preg_replace('/securekey=[^&]+/', '', $urlko);
 
 		$mesg='';
-		if (empty($PRICE) || ! is_numeric($PRICE)) $mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Amount"));
-		elseif (empty($email))            $mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("YourEMail"));
-		elseif (! isValidEMail($email))   $mesg=$langs->trans("ErrorBadEMail",$email);
-		elseif (! $origfulltag)           $mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("PaymentCode"));
+		if (empty($PRICE) || ! is_numeric($PRICE)) $mesg=$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Amount"));
+		elseif (empty($email))            $mesg=$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("YourEMail"));
+		elseif (! isValidEMail($email))   $mesg=$langs->trans("ErrorBadEMail", $email);
+		elseif (! $origfulltag)           $mesg=$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("PaymentCode"));
 		elseif (dol_strlen($urlok) > 150) $mesg='Error urlok too long '.$urlok.'( Paybox requires 150, found '.strlen($urlok).')';
 		elseif (dol_strlen($urlko) > 150) $mesg='Error urlko too long '.$urlko.'( Paybox requires 150, found '.strlen($urlok).')';
 
@@ -385,7 +385,7 @@ if ($action == 'dopayment')
 
 	if ($paymentmethod == 'stripe')
 	{
-		if (GETPOST('newamount','alpha')) $amount = price2num(GETPOST('newamount','alpha'),'MT');
+		if (GETPOST('newamount', 'alpha')) $amount = price2num(GETPOST('newamount', 'alpha'), 'MT');
 		else
 		{
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Amount")), null, 'errors');
@@ -408,12 +408,12 @@ if ($action == 'charge' && ! empty($conf->stripe->enabled))
 	dol_syslog("POST keys  : ".join(',', array_keys($_POST)), LOG_DEBUG, 0, '_stripe');
 	dol_syslog("POST values: ".join(',', $_POST), LOG_DEBUG, 0, '_stripe');
 
-	$stripeToken = GETPOST("stripeToken",'alpha');
-	$email = GETPOST("email",'alpha');
+	$stripeToken = GETPOST("stripeToken", 'alpha');
+	$email = GETPOST("email", 'alpha');
 	$thirdparty_id=GETPOST('thirdparty_id', 'int');		// Note that for payment following online registration for members, this is empty because thirdparty is created once payment is confirmed by paymentok.php
 	$dol_type=(GETPOST('s', 'alpha') ? GETPOST('s', 'alpha') : GETPOST('source', 'alpha'));
   	$dol_id=GETPOST('dol_id', 'int');
-  	$vatnumber = GETPOST('vatnumber','alpha');
+  	$vatnumber = GETPOST('vatnumber', 'alpha');
 	$savesource=GETPOSTISSET('savesource')?GETPOST('savesource', 'int'):1;
 
 	dol_syslog("POST stripeToken = ".$stripeToken, LOG_DEBUG, 0, '_stripe');
@@ -428,7 +428,7 @@ if ($action == 'charge' && ! empty($conf->stripe->enabled))
 			'dol_version' => DOL_VERSION,
 			'dol_entity'  => $conf->entity,
 			'dol_company' => $mysoc->name,		// Usefull when using multicompany
-			'ipaddress'=>(empty($_SERVER['REMOTE_ADDR'])?'':$_SERVER['REMOTE_ADDR'])
+		    'ipaddress'=> getUserRemoteIP()
 		);
 
 		if (! empty($thirdparty_id)) $metadata["dol_thirdparty_id"] = $thirdparty_id;
@@ -439,7 +439,7 @@ if ($action == 'charge' && ! empty($conf->stripe->enabled))
 
 			$service = 'StripeTest';
 			$servicestatus = 0;
-			if (! empty($conf->global->STRIPE_LIVE) && ! GETPOST('forcesandbox','int'))
+			if (! empty($conf->global->STRIPE_LIVE) && ! GETPOST('forcesandbox', 'int'))
 			{
 				$service = 'StripeLive';
 				$servicestatus = 1;
@@ -484,7 +484,7 @@ if ($action == 'charge' && ! empty($conf->stripe->enabled))
 					'customer' => $customer->id,
 					'source' => $card,
 					'statement_descriptor' => dol_trunc(dol_trunc(dol_string_unaccent($mysoc->name), 6, 'right', 'UTF-8', 1).' '.$FULLTAG, 22, 'right', 'UTF-8', 1)     // 22 chars that appears on bank receipt
-				),array("idempotency_key" => "$ref", "stripe_account" => "$stripeacc"));
+				), array("idempotency_key" => "$ref", "stripe_account" => "$stripeacc"));
 				// Return $charge = array('id'=>'ch_XXXX', 'status'=>'succeeded|pending|failed', 'failure_code'=>, 'failure_message'=>...)
 				if (empty($charge))
 				{
@@ -508,7 +508,7 @@ if ($action == 'charge' && ! empty($conf->stripe->enabled))
 			if (empty($vatcleaned)) $taxinfo=null;
 
 			dol_syslog("Create anonymous customer card profile", LOG_DEBUG, 0, '_stripe');
-			$customer = \Stripe\Customer::create(array(
+$customer = \Stripe\Customer::create(array(
 				'email' => $email,
 				'description' => ($email?'Anonymous customer for '.$email:'Anonymous customer'),
 				'metadata' => $metadata,
@@ -524,7 +524,7 @@ if ($action == 'charge' && ! empty($conf->stripe->enabled))
 			// The customer was just created with a source, so we can make a charge
 			// with no card defined, the source just used for customer creation will be used.
 			dol_syslog("Create charge", LOG_DEBUG, 0, '_stripe');
-			$charge = \Stripe\Charge::create(array(
+$charge = \Stripe\Charge::create(array(
 				'customer' => $customer->id,
 				'amount'   => price2num($amountstripe, 'MU'),
 				'currency' => $currency,
@@ -532,7 +532,7 @@ if ($action == 'charge' && ! empty($conf->stripe->enabled))
 				'description' => 'Stripe payment: '.$FULLTAG.' ref='.$ref,
 				'metadata' => $metadata,
 				'statement_descriptor' => dol_trunc(dol_trunc(dol_string_unaccent($mysoc->name), 6, 'right', 'UTF-8', 1).' '.$FULLTAG, 22, 'right', 'UTF-8', 1)     // 22 chars that appears on bank receipt
-			),array("idempotency_key" => "$ref", "stripe_account" => "$stripeacc"));
+			), array("idempotency_key" => "$ref", "stripe_account" => "$stripeacc"));
 			// Return $charge = array('id'=>'ch_XXXX', 'status'=>'succeeded|pending|failed', 'failure_code'=>, 'failure_message'=>...)
 			if (empty($charge))
 			{
@@ -602,7 +602,7 @@ if ($action == 'charge' && ! empty($conf->stripe->enabled))
 	$_SESSION["FinalPaymentAmt"] = $amount;
 	$_SESSION["currencyCodeType"] = $currency;
 	$_SESSION["paymentType"] = '';
-	$_SESSION['ipaddress'] = $_SERVER['REMOTE_ADDR'];  // Payer ip
+	$_SESSION['ipaddress'] = getUserRemoteIP();  // Payer ip
 	$_SESSION['payerID'] = is_object($customer)?$customer->id:'';
 	$_SESSION['TRANSACTIONID'] = is_object($charge)?$charge->id:'';
 
@@ -649,13 +649,13 @@ if ($source && in_array($ref, array('member_ref', 'contractline_ref', 'invoice_r
 
 
 // Show sandbox warning
-if ((empty($paymentmethod) || $paymentmethod == 'paypal') && ! empty($conf->paypal->enabled) && (! empty($conf->global->PAYPAL_API_SANDBOX) || GETPOST('forcesandbox','int')))		// We can force sand box with param 'forcesandbox'
+if ((empty($paymentmethod) || $paymentmethod == 'paypal') && ! empty($conf->paypal->enabled) && (! empty($conf->global->PAYPAL_API_SANDBOX) || GETPOST('forcesandbox', 'int')))		// We can force sand box with param 'forcesandbox'
 {
-	dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode','Paypal'),'','warning');
+	dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode', 'Paypal'), '', 'warning');
 }
-if ((empty($paymentmethod) || $paymentmethod == 'stripe') && ! empty($conf->stripe->enabled) && (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox','int')))
+if ((empty($paymentmethod) || $paymentmethod == 'stripe') && ! empty($conf->stripe->enabled) && (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox', 'int')))
 {
-	dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode','Stripe'),'','warning');
+	dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode', 'Stripe'), '', 'warning');
 }
 
 
@@ -664,11 +664,11 @@ print '<div class="center">'."\n";
 print '<form id="dolpaymentform" class="center" name="paymentform" action="'.$_SERVER["PHP_SELF"].'" method="POST">'."\n";
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">'."\n";
 print '<input type="hidden" name="action" value="dopayment">'."\n";
-print '<input type="hidden" name="tag" value="'.GETPOST("tag",'alpha').'">'."\n";
+print '<input type="hidden" name="tag" value="'.GETPOST("tag", 'alpha').'">'."\n";
 print '<input type="hidden" name="suffix" value="'.dol_escape_htmltag($suffix).'">'."\n";
 print '<input type="hidden" name="securekey" value="'.dol_escape_htmltag($SECUREKEY).'">'."\n";
 print '<input type="hidden" name="e" value="'.$entity.'" />';
-print '<input type="hidden" name="forcesandbox" value="'.GETPOST('forcesandbox','int').'" />';
+print '<input type="hidden" name="forcesandbox" value="'.GETPOST('forcesandbox', 'int').'" />';
 print "\n";
 print '<!-- Form to send a payment -->'."\n";
 print '<!-- creditor = '.$creditor.' -->'."\n";
@@ -699,7 +699,7 @@ $logosmall=$mysoc->logo_small;
 $logo=$mysoc->logo;
 $paramlogo='ONLINE_PAYMENT_LOGO_'.$suffix;
 if (! empty($conf->global->$paramlogo)) $logosmall=$conf->global->$paramlogo;
-else if (! empty($conf->global->ONLINE_PAYMENT_LOGO)) $logosmall=$conf->global->ONLINE_PAYMENT_LOGO;
+elseif (! empty($conf->global->ONLINE_PAYMENT_LOGO)) $logosmall=$conf->global->ONLINE_PAYMENT_LOGO;
 //print '<!-- Show logo (logosmall='.$logosmall.' logo='.$logo.') -->'."\n";
 // Define urllogo
 $urllogo='';
@@ -728,14 +728,14 @@ $text='';
 if (! empty($conf->global->PAYMENT_NEWFORM_TEXT))
 {
 	$langs->load("members");
-	if (preg_match('/^\((.*)\)$/',$conf->global->PAYMENT_NEWFORM_TEXT,$reg)) $text.=$langs->trans($reg[1])."<br>\n";
+	if (preg_match('/^\((.*)\)$/', $conf->global->PAYMENT_NEWFORM_TEXT, $reg)) $text.=$langs->trans($reg[1])."<br>\n";
 	else $text.=$conf->global->PAYMENT_NEWFORM_TEXT."<br>\n";
 	$text='<tr><td align="center"><br>'.$text.'<br></td></tr>'."\n";
 }
 if (empty($text))
 {
 	$text.='<tr><td class="textpublicpayment"><br><strong>'.$langs->trans("WelcomeOnPaymentPage").'</strong></td></tr>'."\n";
-	$text.='<tr><td class="textpublicpayment">'.$langs->trans("ThisScreenAllowsYouToPay",$creditor).'<br><br></td></tr>'."\n";
+	$text.='<tr><td class="textpublicpayment">'.$langs->trans("ThisScreenAllowsYouToPay", $creditor).'<br><br></td></tr>'."\n";
 }
 print $text;
 
@@ -770,8 +770,8 @@ if (! $source)
 	print '</td><td class="CTableRow'.($var?'1':'2').'">';
 	if (empty($amount) || ! is_numeric($amount))
 	{
-		print '<input type="hidden" name="amount" value="'.GETPOST("amount",'int').'">';
-		print '<input class="flat maxwidth75" type="text" name="newamount" value="'.price2num(GETPOST("newamount","alpha"),'MT').'">';
+		print '<input type="hidden" name="amount" value="'.GETPOST("amount", 'int').'">';
+		print '<input class="flat maxwidth75" type="text" name="newamount" value="'.price2num(GETPOST("newamount", "alpha"), 'MT').'">';
 	}
 	else {
 		print '<b>'.price($amount).'</b>';
@@ -804,7 +804,7 @@ if ($source == 'order')
 	require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 
 	$order=new Commande($db);
-	$result=$order->fetch('',$ref);
+	$result=$order->fetch('', $ref);
 	if ($result <= 0)
 	{
 		$mesg=$order->error;
@@ -820,7 +820,7 @@ if ($source == 'order')
 	if ($action != 'dopayment') // Do not change amount if we just click on first dopayment
 	{
 		$amount=$order->total_ttc;
-		if (GETPOST("amount",'int')) $amount=GETPOST("amount",'int');
+		if (GETPOST("amount", 'int')) $amount=GETPOST("amount", 'int');
 		$amount=price2num($amount);
 	}
 
@@ -838,10 +838,11 @@ if ($source == 'order')
 	// Debitor
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("ThirdParty");
 	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$order->thirdparty->name.'</b>';
+	print '</td></tr>'."\n";
 
 	// Object
-	$text='<b>'.$langs->trans("PaymentOrderRef",$order->ref).'</b>';
-	if (GETPOST('desc','alpha')) $text='<b>'.$langs->trans(GETPOST('desc','alpha')).'</b>';
+	$text='<b>'.$langs->trans("PaymentOrderRef", $order->ref).'</b>';
+	if (GETPOST('desc', 'alpha')) $text='<b>'.$langs->trans(GETPOST('desc', 'alpha')).'</b>';
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Designation");
 	print '</td><td class="CTableRow'.($var?'1':'2').'">'.$text;
 	print '<input type="hidden" name="s" value="'.dol_escape_htmltag($source).'">';
@@ -851,7 +852,7 @@ if ($source == 'order')
 	if ($directdownloadlink)
 	{
 		print '<br><a href="'.$directdownloadlink.'">';
-		print img_mime($order->last_main_doc,'');
+		print img_mime($order->last_main_doc, '');
 		print $langs->trans("DownloadDocument").'</a>';
 	}
 	print '</td></tr>'."\n";
@@ -862,8 +863,8 @@ if ($source == 'order')
 	print '</td><td class="CTableRow'.($var?'1':'2').'">';
 	if (empty($amount) || ! is_numeric($amount))
 	{
-		print '<input type="hidden" name="amount" value="'.GETPOST("amount",'int').'">';
-		print '<input class="flat maxwidth75" type="text" name="newamount" value="'.price2num(GETPOST("newamount","alpha"),'MT').'">';
+		print '<input type="hidden" name="amount" value="'.GETPOST("amount", 'int').'">';
+		print '<input class="flat maxwidth75" type="text" name="newamount" value="'.price2num(GETPOST("newamount", "alpha"), 'MT').'">';
 	}
 	else {
 		print '<b>'.price($amount).'</b>';
@@ -910,7 +911,7 @@ if ($source == 'order')
 	print '<input type="hidden" name="email" value="'.$order->thirdparty->email.'">'."\n";
 	print '<input type="hidden" name="vatnumber" value="'.$order->thirdparty->tva_intra.'">'."\n";
 	$labeldesc=$langs->trans("Order").' '.$order->ref;
-	if (GETPOST('desc','alpha')) $labeldesc=GETPOST('desc','alpha');
+	if (GETPOST('desc', 'alpha')) $labeldesc=GETPOST('desc', 'alpha');
 	print '<input type="hidden" name="desc" value="'.dol_escape_htmltag($labeldesc).'">'."\n";
 }
 
@@ -924,7 +925,7 @@ if ($source == 'invoice')
 	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 
 	$invoice=new Facture($db);
-	$result=$invoice->fetch('',$ref);
+	$result=$invoice->fetch('', $ref);
 	if ($result <= 0)
 	{
 		$mesg=$invoice->error;
@@ -940,7 +941,7 @@ if ($source == 'invoice')
 	if ($action != 'dopayment') // Do not change amount if we just click on first dopayment
 	{
 		$amount=price2num($invoice->total_ttc - ($invoice->getSommePaiement() + $invoice->getSumCreditNotesUsed()));
-		if (GETPOST("amount",'int')) $amount=GETPOST("amount",'int');
+		if (GETPOST("amount", 'int')) $amount=GETPOST("amount", 'int');
 		$amount=price2num($amount);
 	}
 
@@ -958,10 +959,11 @@ if ($source == 'invoice')
 	// Debitor
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("ThirdParty");
 	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$invoice->thirdparty->name.'</b>';
+	print '</td></tr>'."\n";
 
 	// Object
-	$text='<b>'.$langs->trans("PaymentInvoiceRef",$invoice->ref).'</b>';
-	if (GETPOST('desc','alpha')) $text='<b>'.$langs->trans(GETPOST('desc','alpha')).'</b>';
+	$text='<b>'.$langs->trans("PaymentInvoiceRef", $invoice->ref).'</b>';
+	if (GETPOST('desc', 'alpha')) $text='<b>'.$langs->trans(GETPOST('desc', 'alpha')).'</b>';
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Designation");
 	print '</td><td class="CTableRow'.($var?'1':'2').'">'.$text;
 	print '<input type="hidden" name="s" value="'.dol_escape_htmltag($source).'">';
@@ -971,7 +973,7 @@ if ($source == 'invoice')
 	if ($directdownloadlink)
 	{
 		print '<br><a href="'.$directdownloadlink.'">';
-		print img_mime($invoice->last_main_doc,'');
+		print img_mime($invoice->last_main_doc, '');
 		print $langs->trans("DownloadDocument").'</a>';
 	}
 	print '</td></tr>'."\n";
@@ -984,8 +986,8 @@ if ($source == 'invoice')
 	{
 		if (empty($amount) || ! is_numeric($amount))
 		{
-			print '<input type="hidden" name="amount" value="'.GETPOST("amount",'int').'">';
-			print '<input class="flat maxwidth75" type="text" name="newamount" value="'.price2num(GETPOST("newamount","alpha"), 'MT').'">';
+			print '<input type="hidden" name="amount" value="'.GETPOST("amount", 'int').'">';
+			print '<input class="flat maxwidth75" type="text" name="newamount" value="'.price2num(GETPOST("newamount", "alpha"), 'MT').'">';
 		}
 		else {
 			print '<b>'.price($amount).'</b>';
@@ -1008,15 +1010,6 @@ if ($source == 'invoice')
 	print '<input type="hidden" name="tag" value="'.$tag.'">';
 	print '<input type="hidden" name="fulltag" value="'.$fulltag.'">';
 	print '</td></tr>'."\n";
-
-	// Add download link
-	if ($download > 0)
-	{
-		print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Document");
-		print '</td><td class="CTableRow'.($var?'1':'2').'">';
-		print $invoice->getDirectExternalLink(1);
-		print '</td></tr>'."\n";
-	}
 
 	// Shipping address
 	$shipToName=$invoice->thirdparty->name;
@@ -1046,7 +1039,7 @@ if ($source == 'invoice')
 	print '<input type="hidden" name="email" value="'.$invoice->thirdparty->email.'">'."\n";
 	print '<input type="hidden" name="vatnumber" value="'.$invoice->thirdparty->tva_intra.'">'."\n";
 	$labeldesc=$langs->trans("Invoice").' '.$invoice->ref;
-	if (GETPOST('desc','alpha')) $labeldesc=GETPOST('desc','alpha');
+	if (GETPOST('desc', 'alpha')) $labeldesc=GETPOST('desc', 'alpha');
 	print '<input type="hidden" name="desc" value="'.dol_escape_htmltag($labeldesc).'">'."\n";
 }
 
@@ -1061,7 +1054,7 @@ if ($source == 'contractline')
 	$contract=new Contrat($db);
 	$contractline=new ContratLigne($db);
 
-	$result=$contractline->fetch('',$ref);
+	$result=$contractline->fetch('', $ref);
 	if ($result <= 0)
 	{
 		$mesg=$contractline->error;
@@ -1117,16 +1110,16 @@ if ($source == 'contractline')
 			$amount=$pu_ttc;
 			if (empty($amount))
 			{
-				dol_print_error('','ErrorNoPriceDefinedForThisProduct');
+				dol_print_error('', 'ErrorNoPriceDefinedForThisProduct');
 				exit;
 			}
 		}
 
-		if (GETPOST("amount",'int')) $amount=GETPOST("amount",'int');
+		if (GETPOST("amount", 'int')) $amount=GETPOST("amount", 'int');
 		$amount=price2num($amount);
 	}
 
-	$fulltag='COL='.$contractline->id.'.CON='.$contract->id.'.CUS='.$contract->thirdparty->id.'.DAT='.dol_print_date(dol_now(),'%Y%m%d%H%M');
+	$fulltag='COL='.$contractline->id.'.CON='.$contract->id.'.CUS='.$contract->thirdparty->id.'.DAT='.dol_print_date(dol_now(), '%Y%m%d%H%M');
 	//$fulltag.='.NAM='.strtr($contract->thirdparty->name,"-"," ");
 	if (! empty($TAG)) { $tag=$TAG; $fulltag.='.TAG='.$TAG; }
 	$fulltag=dol_string_unaccent($fulltag);
@@ -1145,7 +1138,7 @@ if ($source == 'contractline')
 	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$contract->thirdparty->name.'</b>';
 
 	// Object
-	$text='<b>'.$langs->trans("PaymentRenewContractId",$contract->ref,$contractline->ref).'</b>';
+	$text='<b>'.$langs->trans("PaymentRenewContractId", $contract->ref, $contractline->ref).'</b>';
 	if ($contractline->fk_product)
 	{
 		$contractline->fetch_product();
@@ -1160,7 +1153,7 @@ if ($source == 'contractline')
 	{
 		$text.='<br>'.$langs->trans("ExpiredSince").': '.dol_print_date($contractline->date_fin_validite);
 	}
-	if (GETPOST('desc','alpha')) $text='<b>'.$langs->trans(GETPOST('desc','alpha')).'</b>';
+	if (GETPOST('desc', 'alpha')) $text='<b>'.$langs->trans(GETPOST('desc', 'alpha')).'</b>';
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Designation");
 	print '</td><td class="CTableRow'.($var?'1':'2').'">'.$text;
 	print '<input type="hidden" name="source" value="'.dol_escape_htmltag($source).'">';
@@ -1170,7 +1163,7 @@ if ($source == 'contractline')
 	if ($directdownloadlink)
 	{
 		print '<br><a href="'.$directdownloadlink.'">';
-		print img_mime($contract->last_main_doc,'');
+		print img_mime($contract->last_main_doc, '');
 		print $langs->trans("DownloadDocument").'</a>';
 	}
 	print '</td></tr>'."\n";
@@ -1208,8 +1201,8 @@ if ($source == 'contractline')
 	print '</td><td class="CTableRow'.($var?'1':'2').'">';
 	if (empty($amount) || ! is_numeric($amount))
 	{
-		print '<input type="hidden" name="amount" value="'.GETPOST("amount",'int').'">';
-		print '<input class="flat maxwidth75" type="text" name="newamount" value="'.price2num(GETPOST("newamount","alpha"),'MT').'">';
+		print '<input type="hidden" name="amount" value="'.GETPOST("amount", 'int').'">';
+		print '<input class="flat maxwidth75" type="text" name="newamount" value="'.price2num(GETPOST("newamount", "alpha"), 'MT').'">';
 	}
 	else {
 		print '<b>'.price($amount).'</b>';
@@ -1256,7 +1249,7 @@ if ($source == 'contractline')
 	print '<input type="hidden" name="email" value="'.$contract->thirdparty->email.'">'."\n";
 	print '<input type="hidden" name="vatnumber" value="'.$contract->thirdparty->tva_intra.'">'."\n";
 	$labeldesc=$langs->trans("Contract").' '.$contract->ref;
-	if (GETPOST('desc','alpha')) $labeldesc=GETPOST('desc','alpha');
+	if (GETPOST('desc', 'alpha')) $labeldesc=GETPOST('desc', 'alpha');
 	print '<input type="hidden" name="desc" value="'.dol_escape_htmltag($labeldesc).'">'."\n";
 }
 
@@ -1270,7 +1263,7 @@ if ($source == 'membersubscription')
 	require_once DOL_DOCUMENT_ROOT.'/adherents/class/subscription.class.php';
 
 	$member=new Adherent($db);
-	$result=$member->fetch('',$ref);
+	$result=$member->fetch('', $ref);
 	if ($result <= 0)
 	{
 		$mesg=$member->error;
@@ -1286,45 +1279,49 @@ if ($source == 'membersubscription')
 	if ($action != 'dopayment') // Do not change amount if we just click on first dopayment
 	{
 		$amount=$subscription->total_ttc;
-		if (GETPOST("amount",'int')) $amount=GETPOST("amount",'int');
+		if (GETPOST("amount", 'int')) $amount=GETPOST("amount", 'int');
 		$amount=price2num($amount);
 	}
 
-	$fulltag='MEM='.$member->id.'.DAT='.dol_print_date(dol_now(),'%Y%m%d%H%M');
+	$fulltag='MEM='.$member->id.'.DAT='.dol_print_date(dol_now(), '%Y%m%d%H%M');
 	if (! empty($TAG)) { $tag=$TAG; $fulltag.='.TAG='.$TAG; }
 	$fulltag=dol_string_unaccent($fulltag);
 
 	// Creditor
-
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Creditor");
 	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$creditor.'</b>';
 	print '<input type="hidden" name="creditor" value="'.$creditor.'">';
 	print '</td></tr>'."\n";
 
 	// Debitor
-
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Member");
 	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>';
 	if ($member->morphy == 'mor' && ! empty($member->societe)) print $member->societe;
 	else print $member->getFullName($langs);
 	print '</b>';
+	print '</td></tr>'."\n";
 
 	// Object
-
 	$text='<b>'.$langs->trans("PaymentSubscription").'</b>';
-	if (GETPOST('desc','alpha')) $text='<b>'.$langs->trans(GETPOST('desc','alpha')).'</b>';
+	if (GETPOST('desc', 'alpha')) $text='<b>'.$langs->trans(GETPOST('desc', 'alpha')).'</b>';
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Designation");
 	print '</td><td class="CTableRow'.($var?'1':'2').'">'.$text;
 	print '<input type="hidden" name="source" value="'.dol_escape_htmltag($source).'">';
 	print '<input type="hidden" name="ref" value="'.dol_escape_htmltag($member->ref).'">';
 	print '</td></tr>'."\n";
 
+	if ($object->datefin > 0) {
+	    print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("DateEndSubscription");
+	    print '</td><td class="CTableRow'.($var?'1':'2').'">'.dol_print_date($member->datefin, 'day');
+	    print '</td></tr>'."\n";
+	}
+
 	if ($member->last_subscription_date || $member->last_subscription_amount)
 	{
 		// Last subscription date
 
 		print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("LastSubscriptionDate");
-		print '</td><td class="CTableRow'.($var?'1':'2').'">'.dol_print_date($member->last_subscription_date,'day');
+		print '</td><td class="CTableRow'.($var?'1':'2').'">'.dol_print_date($member->last_subscription_date, 'day');
 		print '</td></tr>'."\n";
 
 		// Last subscription amount
@@ -1333,11 +1330,10 @@ if ($source == 'membersubscription')
 		print '</td><td class="CTableRow'.($var?'1':'2').'">'.price($member->last_subscription_amount);
 		print '</td></tr>'."\n";
 
-		if (empty($amount) && ! GETPOST('newamount','alpha')) $_GET['newamount']=$member->last_subscription_amount;
+		if (empty($amount) && ! GETPOST('newamount', 'alpha')) $_GET['newamount']=$member->last_subscription_amount;
 	}
 
 	// Amount
-
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Amount");
 	if (empty($amount))
 	{
@@ -1349,7 +1345,7 @@ if ($source == 'membersubscription')
 	$valtoshow='';
 	if (empty($amount) || ! is_numeric($amount))
 	{
-		$valtoshow=price2num(GETPOST("newamount",'alpha'),'MT');
+		$valtoshow=price2num(GETPOST("newamount", 'alpha'), 'MT');
 		// force default subscription amount to value defined into constant...
 		if (empty($valtoshow))
 		{
@@ -1368,13 +1364,13 @@ if ($source == 'membersubscription')
 	if (empty($amount) || ! is_numeric($amount))
 	{
 		//$valtoshow=price2num(GETPOST("newamount",'alpha'),'MT');
-		if (! empty($conf->global->MEMBER_MIN_AMOUNT) && $valtoshow) $valtoshow=max($conf->global->MEMBER_MIN_AMOUNT,$valtoshow);
-		print '<input type="hidden" name="amount" value="'.GETPOST("amount",'int').'">';
+		if (! empty($conf->global->MEMBER_MIN_AMOUNT) && $valtoshow) $valtoshow=max($conf->global->MEMBER_MIN_AMOUNT, $valtoshow);
+		print '<input type="hidden" name="amount" value="'.GETPOST("amount", 'int').'">';
 		print '<input class="flat maxwidth75" type="text" name="newamount" value="'.$valtoshow.'">';
 	}
 	else {
 		$valtoshow=$amount;
-		if (! empty($conf->global->MEMBER_MIN_AMOUNT) && $valtoshow) $valtoshow=max($conf->global->MEMBER_MIN_AMOUNT,$valtoshow);
+		if (! empty($conf->global->MEMBER_MIN_AMOUNT) && $valtoshow) $valtoshow=max($conf->global->MEMBER_MIN_AMOUNT, $valtoshow);
 		print '<b>'.price($valtoshow).'</b>';
 		print '<input type="hidden" name="amount" value="'.$valtoshow.'">';
 		print '<input type="hidden" name="newamount" value="'.$valtoshow.'">';
@@ -1385,7 +1381,6 @@ if ($source == 'membersubscription')
 	print '</td></tr>'."\n";
 
 	// Tag
-
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("PaymentCode");
 	print '</td><td class="CTableRow'.($var?'1':'2').'"><b style="word-break: break-all;">'.$fulltag.'</b>';
 	print '<input type="hidden" name="tag" value="'.$tag.'">';
@@ -1420,7 +1415,7 @@ if ($source == 'membersubscription')
 	if (is_object($member->thirdparty)) print '<input type="hidden" name="thirdparty_id" value="'.$member->thirdparty->id.'">'."\n";
 	print '<input type="hidden" name="email" value="'.$member->email.'">'."\n";
 	$labeldesc = $langs->trans("PaymentSubscription");
-	if (GETPOST('desc','alpha')) $labeldesc=GETPOST('desc','alpha');
+	if (GETPOST('desc', 'alpha')) $labeldesc=GETPOST('desc', 'alpha');
 	print '<input type="hidden" name="desc" value="'.dol_escape_htmltag($labeldesc).'">'."\n";
 }
 
@@ -1448,33 +1443,31 @@ if ($source == 'donation')
 	if ($action != 'dopayment') // Do not change amount if we just click on first dopayment
 	{
 		$amount=$subscription->total_ttc;
-		if (GETPOST("amount",'int')) $amount=GETPOST("amount",'int');
+		if (GETPOST("amount", 'int')) $amount=GETPOST("amount", 'int');
 		$amount=price2num($amount);
 	}
 
-	$fulltag='DON='.$don->ref.'.DAT='.dol_print_date(dol_now(),'%Y%m%d%H%M');
+	$fulltag='DON='.$don->ref.'.DAT='.dol_print_date(dol_now(), '%Y%m%d%H%M');
 	if (! empty($TAG)) { $tag=$TAG; $fulltag.='.TAG='.$TAG; }
 	$fulltag=dol_string_unaccent($fulltag);
 
 	// Creditor
-
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Creditor");
 	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$creditor.'</b>';
 	print '<input type="hidden" name="creditor" value="'.$creditor.'">';
 	print '</td></tr>'."\n";
 
 	// Debitor
-
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("ThirdParty");
 	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>';
 	if ($don->morphy == 'mor' && ! empty($don->societe)) print $don->societe;
 	else print $don->getFullName($langs);
 	print '</b>';
+	print '</td></tr>'."\n";
 
 	// Object
-
 	$text='<b>'.$langs->trans("PaymentDonation").'</b>';
-	if (GETPOST('desc','alpha')) $text='<b>'.$langs->trans(GETPOST('desc','alpha')).'</b>';
+	if (GETPOST('desc', 'alpha')) $text='<b>'.$langs->trans(GETPOST('desc', 'alpha')).'</b>';
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Designation");
 	print '</td><td class="CTableRow'.($var?'1':'2').'">'.$text;
 	print '<input type="hidden" name="source" value="'.dol_escape_htmltag($source).'">';
@@ -1482,7 +1475,6 @@ if ($source == 'donation')
 	print '</td></tr>'."\n";
 
 	// Amount
-
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Amount");
 	if (empty($amount))
 	{
@@ -1494,7 +1486,7 @@ if ($source == 'donation')
 	$valtoshow='';
 	if (empty($amount) || ! is_numeric($amount))
 	{
-		$valtoshow=price2num(GETPOST("newamount",'alpha'),'MT');
+		$valtoshow=price2num(GETPOST("newamount", 'alpha'), 'MT');
 		// force default subscription amount to value defined into constant...
 		if (empty($valtoshow))
 		{
@@ -1513,13 +1505,13 @@ if ($source == 'donation')
 	if (empty($amount) || ! is_numeric($amount))
 	{
 		//$valtoshow=price2num(GETPOST("newamount",'alpha'),'MT');
-		if (! empty($conf->global->MEMBER_MIN_AMOUNT) && $valtoshow) $valtoshow=max($conf->global->MEMBER_MIN_AMOUNT,$valtoshow);
-		print '<input type="hidden" name="amount" value="'.GETPOST("amount",'int').'">';
+		if (! empty($conf->global->MEMBER_MIN_AMOUNT) && $valtoshow) $valtoshow=max($conf->global->MEMBER_MIN_AMOUNT, $valtoshow);
+		print '<input type="hidden" name="amount" value="'.GETPOST("amount", 'int').'">';
 		print '<input class="flat maxwidth75" type="text" name="newamount" value="'.$valtoshow.'">';
 	}
 	else {
 		$valtoshow=$amount;
-		if (! empty($conf->global->MEMBER_MIN_AMOUNT) && $valtoshow) $valtoshow=max($conf->global->MEMBER_MIN_AMOUNT,$valtoshow);
+		if (! empty($conf->global->MEMBER_MIN_AMOUNT) && $valtoshow) $valtoshow=max($conf->global->MEMBER_MIN_AMOUNT, $valtoshow);
 		print '<b>'.price($valtoshow).'</b>';
 		print '<input type="hidden" name="amount" value="'.$valtoshow.'">';
 		print '<input type="hidden" name="newamount" value="'.$valtoshow.'">';
@@ -1530,7 +1522,6 @@ if ($source == 'donation')
 	print '</td></tr>'."\n";
 
 	// Tag
-
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("PaymentCode");
 	print '</td><td class="CTableRow'.($var?'1':'2').'"><b style="word-break: break-all;">'.$fulltag.'</b>';
 	print '<input type="hidden" name="tag" value="'.$tag.'">';
@@ -1565,7 +1556,7 @@ if ($source == 'donation')
 	if (is_object($don->thirdparty)) print '<input type="hidden" name="thirdparty_id" value="'.$don->thirdparty->id.'">'."\n";
 	print '<input type="hidden" name="email" value="'.$don->email.'">'."\n";
 	$labeldesc = $langs->trans("PaymentSubscription");
-	if (GETPOST('desc','alpha')) $labeldesc=GETPOST('desc','alpha');
+	if (GETPOST('desc', 'alpha')) $labeldesc=GETPOST('desc', 'alpha');
 	print '<input type="hidden" name="desc" value="'.dol_escape_htmltag($labeldesc).'">'."\n";
 }
 
@@ -1589,16 +1580,19 @@ if ($action != 'dopayment')
 		{
 			print '<br><br><span class="amountpaymentcomplete">'.$langs->trans("InvoicePaid").'</span>';
 		}
-		elseif ($source == 'membersubscription' && $object->datefin > dol_now())
-		{
-			print '<br><br><span class="amountpaymentcomplete">'.$langs->trans("MembershipPaid").'</span>';
-		}
 		elseif ($source == 'donation' && $object->paid)
 		{
 			print '<br><br><span class="amountpaymentcomplete">'.$langs->trans("DonationPaid").'</span>';
 		}
 		else
 		{
+		    // Membership can be paid and we still allow to make renewal
+		    if ($source == 'membersubscription' && $object->datefin > dol_now())
+		    {
+		        $langs->load("members");
+		        print '<br><span class="amountpaymentcomplete">'.$langs->trans("MembershipPaid", dol_print_date($object->datefin, 'day')).'</span><br>';
+		    }
+
 			// Buttons for all payments registration methods
 
 			if ((empty($paymentmethod) || $paymentmethod == 'paybox') && ! empty($conf->paybox->enabled))
@@ -1649,11 +1643,11 @@ print '<br>';
 
 
 // Add more content on page for some services
-if (preg_match('/^dopayment/',$action))
+if (preg_match('/^dopayment/', $action))
 {
 
 	// Strip
-	if (GETPOST('dopayment_stripe','alpha'))
+	if (GETPOST('dopayment_stripe', 'alpha'))
 	{
 		// Simple checkout
 		/*
@@ -1712,9 +1706,9 @@ if (preg_match('/^dopayment/',$action))
 		print '<input type="hidden" name="e" value="'.$entity.'" />';
 		print '<input type="hidden" name="amount" value="'.$amount.'">'."\n";
 		print '<input type="hidden" name="currency" value="'.$currency.'">'."\n";
-		print '<input type="hidden" name="forcesandbox" value="'.GETPOST('forcesandbox','int').'" />';
-		print '<input type="hidden" name="email" value="'.GETPOST('email','alpha').'" />';
-		print '<input type="hidden" name="thirdparty_id" value="'.GETPOST('thirdparty_id','int').'" />';
+		print '<input type="hidden" name="forcesandbox" value="'.GETPOST('forcesandbox', 'int').'" />';
+		print '<input type="hidden" name="email" value="'.GETPOST('email', 'alpha').'" />';
+		print '<input type="hidden" name="thirdparty_id" value="'.GETPOST('thirdparty_id', 'int').'" />';
 
 		print '
 	    <table id="dolpaymenttable" summary="Payment form" class="center">
@@ -1867,7 +1861,7 @@ if (preg_match('/^dopayment/',$action))
 }
 
 
-htmlPrintOnlinePaymentFooter($mysoc,$langs,1,$suffix,$object);
+htmlPrintOnlinePaymentFooter($mysoc, $langs, 1, $suffix, $object);
 
 llxFooter('', 'public');
 

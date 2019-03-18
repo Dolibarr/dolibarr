@@ -111,9 +111,9 @@ class dolReceiptPrinter extends Escpos
      */
     public $db;
 
-    var $tags;
-    var $printer;
-    var $template;
+    public $tags;
+    public $printer;
+    public $template;
 
     /**
      * @var string Error code (or message)
@@ -132,7 +132,7 @@ class dolReceiptPrinter extends Escpos
      *
      * @param   DoliDB      $db         database
      */
-    function __construct($db)
+    public function __construct($db)
     {
         $this->db=$db;
         $this->tags = array(
@@ -211,7 +211,7 @@ class dolReceiptPrinter extends Escpos
      *
      * @return  int                     0 if OK; >0 if KO
      */
-    function listPrinters()
+    public function listPrinters()
     {
         global $conf;
         $error = 0;
@@ -279,7 +279,7 @@ class dolReceiptPrinter extends Escpos
      *
      * @return  int                     0 if OK; >0 if KO
      */
-    function listPrintersTemplates()
+    public function listPrintersTemplates()
     {
         global $conf;
         $error = 0;
@@ -311,7 +311,7 @@ class dolReceiptPrinter extends Escpos
      *  @param    string    $htmlname       select html name
      *  @return  int                        0 if OK; >0 if KO
      */
-    function selectTypePrinter($selected='', $htmlname='printertypeid')
+    public function selectTypePrinter($selected = '', $htmlname = 'printertypeid')
     {
         global $langs;
 
@@ -335,7 +335,7 @@ class dolReceiptPrinter extends Escpos
      *  @param    string    $htmlname       select html name
      *  @return  int                        0 if OK; >0 if KO
      */
-    function selectProfilePrinter($selected='', $htmlname='printerprofileid')
+    public function selectProfilePrinter($selected = '', $htmlname = 'printerprofileid')
     {
         global $langs;
 
@@ -352,7 +352,6 @@ class dolReceiptPrinter extends Escpos
     }
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *  Function to Add a printer in db
      *
@@ -362,9 +361,8 @@ class dolReceiptPrinter extends Escpos
      *  @param    string    $parameter      Printer parameter
      *  @return  int                        0 if OK; >0 if KO
      */
-    function AddPrinter($name, $type, $profile, $parameter)
+    public function addPrinter($name, $type, $profile, $parameter)
     {
-        // phpcs:enable
         global $conf;
         $error = 0;
         $sql = 'INSERT INTO '.MAIN_DB_PREFIX.'printer_receipt';
@@ -378,7 +376,6 @@ class dolReceiptPrinter extends Escpos
         return $error;
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *  Function to Update a printer in db
      *
@@ -389,9 +386,8 @@ class dolReceiptPrinter extends Escpos
      *  @param    int       $printerid      Printer id
      *  @return  int                        0 if OK; >0 if KO
      */
-    function UpdatePrinter($name, $type, $profile, $parameter, $printerid)
+    public function updatePrinter($name, $type, $profile, $parameter, $printerid)
     {
-        // phpcs:enable
         global $conf;
         $error = 0;
         $sql = 'UPDATE '.MAIN_DB_PREFIX.'printer_receipt';
@@ -408,16 +404,14 @@ class dolReceiptPrinter extends Escpos
         return $error;
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *  Function to Delete a printer from db
      *
      *  @param    int       $printerid      Printer id
      *  @return  int                        0 if OK; >0 if KO
      */
-    function DeletePrinter($printerid)
+    public function deletePrinter($printerid)
     {
-        // phpcs:enable
         global $conf;
         $error = 0;
         $sql = 'DELETE FROM '.MAIN_DB_PREFIX.'printer_receipt';
@@ -430,7 +424,6 @@ class dolReceiptPrinter extends Escpos
         return $error;
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *  Function to Update a printer template in db
      *
@@ -439,9 +432,8 @@ class dolReceiptPrinter extends Escpos
      *  @param    int       $templateid     Template id
      *  @return   int                       0 if OK; >0 if KO
      */
-    function UpdateTemplate($name, $template, $templateid)
+    public function updateTemplate($name, $template, $templateid)
     {
-        // phpcs:enable
         global $conf;
         $error = 0;
         $sql = 'UPDATE '.MAIN_DB_PREFIX.'printer_receipt_template';
@@ -457,20 +449,18 @@ class dolReceiptPrinter extends Escpos
     }
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *  Function to Send Test page to Printer
      *
      *  @param    int       $printerid      Printer id
      *  @return  int                        0 if OK; >0 if KO
      */
-    function SendTestToPrinter($printerid)
+    public function sendTestToPrinter($printerid)
     {
-        // phpcs:enable
         global $conf;
         $error = 0;
         $img = new EscposImage(DOL_DOCUMENT_ROOT .'/theme/common/dolibarr_logo_bw.png');
-        $ret = $this->InitPrinter($printerid);
+        $ret = $this->initPrinter($printerid);
         if ($ret>0) {
             setEventMessages($this->error, $this->errors, 'errors');
         } else {
@@ -492,7 +482,6 @@ class dolReceiptPrinter extends Escpos
         return $error;
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *  Function to Print Receipt Ticket
      *
@@ -501,9 +490,8 @@ class dolReceiptPrinter extends Escpos
      *  @param   int       $printerid       Printer id
      *  @return  int                        0 if OK; >0 if KO
      */
-    function SendToPrinter($object, $templateid, $printerid)
+    public function sendToPrinter($object, $templateid, $printerid)
     {
-        // phpcs:enable
         global $conf;
         $error = 0;
         $ret = $this->loadTemplate($templateid);
@@ -542,15 +530,12 @@ class dolReceiptPrinter extends Escpos
         // print ticket
         $level = 0;
         $html = '<table border="1" style="width:210px"><pre>';
-        $ret = $this->InitPrinter($printerid);
+        $ret = $this->initPrinter($printerid);
         if ($ret>0) {
             setEventMessages($this->error, $this->errors, 'errors');
-        }
-        else
-        {
+        } else {
             $nboflines = count($vals);
-            for ($line=0; $line < $nboflines; $line++)
-            {
+            for ($line=0; $line < $nboflines; $line++) {
                 switch ($vals[$line]['tag']) {
                     case 'DOL_ALIGN_CENTER':
                         $this->printer->setJustification(Escpos::JUSTIFY_CENTER);
@@ -627,10 +612,10 @@ class dolReceiptPrinter extends Escpos
     /**
      *  Function to load Template
      *
-     *  @param   int       $templateid        Template id
-     *  @return  int                        0 if OK; >0 if KO
+     *  @param   int       $templateid          Template id
+     *  @return  int                            0 if OK; >0 if KO
      */
-    function loadTemplate($templateid)
+    public function loadTemplate($templateid)
     {
         global $conf;
         $error = 0;
@@ -656,16 +641,14 @@ class dolReceiptPrinter extends Escpos
     }
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
      *  Function Init Printer
      *
      *  @param   int       $printerid       Printer id
      *  @return  int                        0 if OK; >0 if KO
      */
-    function InitPrinter($printerid)
+    public function initPrinter($printerid)
     {
-        // phpcs:enable
         global $conf;
         $error=0;
         $sql = 'SELECT rowid, name, fk_type, fk_profile, parameter';

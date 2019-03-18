@@ -20,8 +20,8 @@
  */
 
 /**
- * 	    \file       dev/initdata/generate-order.php
- * 		\brief      Script example to inject random orders (for load tests)
+ *      \file       dev/initdata/generate-order.php
+ *      \brief      Script example to inject random orders (for load tests)
  */
 
 // Test si mode batch
@@ -49,59 +49,59 @@ require_once DOL_DOCUMENT_ROOT."/commande/class/commande.class.php";
 
 define(GEN_NUMBER_COMMANDE, 10);
 $year = 2016;
-$dates = array (mktime(12,0,0,1,3,$year),
-    mktime(12,0,0,1,9,$year),
-    mktime(12,0,0,2,13,$year),
-    mktime(12,0,0,2,23,$year),
-    mktime(12,0,0,3,30,$year),
-    mktime(12,0,0,4,3,$year),
-    mktime(12,0,0,4,3,$year),
-    mktime(12,0,0,5,9,$year),
-    mktime(12,0,0,5,1,$year),
-    mktime(12,0,0,5,13,$year),
-    mktime(12,0,0,5,19,$year),
-    mktime(12,0,0,5,23,$year),
-    mktime(12,0,0,6,3,$year),
-    mktime(12,0,0,6,19,$year),
-    mktime(12,0,0,6,24,$year),
-    mktime(12,0,0,7,3,$year),
-    mktime(12,0,0,7,9,$year),
-    mktime(12,0,0,7,23,$year),
-    mktime(12,0,0,7,30,$year),
-    mktime(12,0,0,8,9,$year),
-    mktime(12,0,0,9,23,$year),
-    mktime(12,0,0,10,3,$year),
-    mktime(12,0,0,11,12,$year),
-    mktime(12,0,0,11,13,$year),
-    mktime(12,0,0,1,3,($year - 1)),
-    mktime(12,0,0,1,9,($year - 1)),
-    mktime(12,0,0,2,13,($year - 1)),
-    mktime(12,0,0,2,23,($year - 1)),
-    mktime(12,0,0,3,30,($year - 1)),
-    mktime(12,0,0,4,3,($year - 1)),
-    mktime(12,0,0,4,3,($year - 1)),
-    mktime(12,0,0,5,9,($year - 1)),
-    mktime(12,0,0,5,1,($year - 1)),
-    mktime(12,0,0,5,13,($year - 1)),
-    mktime(12,0,0,5,19,($year - 1)),
-    mktime(12,0,0,5,23,($year - 1)),
-    mktime(12,0,0,6,3,($year - 1)),
-    mktime(12,0,0,6,19,($year - 1)),
-    mktime(12,0,0,6,24,($year - 1)),
-    mktime(12,0,0,7,3,($year - 1)),
-    mktime(12,0,0,7,9,($year - 1)),
-    mktime(12,0,0,7,23,($year - 1)),
-    mktime(12,0,0,7,30,($year - 1)),
-    mktime(12,0,0,8,9,($year - 1)),
-    mktime(12,0,0,9,23,($year - 1)),
-    mktime(12,0,0,10,3,($year - 1)),
-    mktime(12,0,0,11,12,$year),
-    mktime(12,0,0,11,13,$year),
-    mktime(12,0,0,12,12,$year),
-    mktime(12,0,0,12,13,$year),
+$dates = array (mktime(12, 0, 0, 1, 3, $year),
+    mktime(12, 0, 0, 1, 9, $year),
+    mktime(12, 0, 0, 2, 13, $year),
+    mktime(12, 0, 0, 2, 23, $year),
+    mktime(12, 0, 0, 3, 30, $year),
+    mktime(12, 0, 0, 4, 3, $year),
+    mktime(12, 0, 0, 4, 3, $year),
+    mktime(12, 0, 0, 5, 9, $year),
+    mktime(12, 0, 0, 5, 1, $year),
+    mktime(12, 0, 0, 5, 13, $year),
+    mktime(12, 0, 0, 5, 19, $year),
+    mktime(12, 0, 0, 5, 23, $year),
+    mktime(12, 0, 0, 6, 3, $year),
+    mktime(12, 0, 0, 6, 19, $year),
+    mktime(12, 0, 0, 6, 24, $year),
+    mktime(12, 0, 0, 7, 3, $year),
+    mktime(12, 0, 0, 7, 9, $year),
+    mktime(12, 0, 0, 7, 23, $year),
+    mktime(12, 0, 0, 7, 30, $year),
+    mktime(12, 0, 0, 8, 9, $year),
+    mktime(12, 0, 0, 9, 23, $year),
+    mktime(12, 0, 0, 10, 3, $year),
+    mktime(12, 0, 0, 11, 12, $year),
+    mktime(12, 0, 0, 11, 13, $year),
+    mktime(12, 0, 0, 1, 3, ($year - 1)),
+    mktime(12, 0, 0, 1, 9, ($year - 1)),
+    mktime(12, 0, 0, 2, 13, ($year - 1)),
+    mktime(12, 0, 0, 2, 23, ($year - 1)),
+    mktime(12, 0, 0, 3, 30, ($year - 1)),
+    mktime(12, 0, 0, 4, 3, ($year - 1)),
+    mktime(12, 0, 0, 4, 3, ($year - 1)),
+    mktime(12, 0, 0, 5, 9, ($year - 1)),
+    mktime(12, 0, 0, 5, 1, ($year - 1)),
+    mktime(12, 0, 0, 5, 13, ($year - 1)),
+    mktime(12, 0, 0, 5, 19, ($year - 1)),
+    mktime(12, 0, 0, 5, 23, ($year - 1)),
+    mktime(12, 0, 0, 6, 3, ($year - 1)),
+    mktime(12, 0, 0, 6, 19, ($year - 1)),
+    mktime(12, 0, 0, 6, 24, ($year - 1)),
+    mktime(12, 0, 0, 7, 3, ($year - 1)),
+    mktime(12, 0, 0, 7, 9, ($year - 1)),
+    mktime(12, 0, 0, 7, 23, ($year - 1)),
+    mktime(12, 0, 0, 7, 30, ($year - 1)),
+    mktime(12, 0, 0, 8, 9, ($year - 1)),
+    mktime(12, 0, 0, 9, 23, ($year - 1)),
+    mktime(12, 0, 0, 10, 3, ($year - 1)),
+    mktime(12, 0, 0, 11, 12, $year),
+    mktime(12, 0, 0, 11, 13, $year),
+    mktime(12, 0, 0, 12, 12, $year),
+    mktime(12, 0, 0, 12, 13, $year),
 );
 
-$ret=$user->fetch('','admin');
+$ret=$user->fetch('', 'admin');
 if ($ret <= 0)
 {
     print 'A user with login "admin" and all permissions must be created to use this script.'."\n";
@@ -113,13 +113,13 @@ $societesid = array();
 $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe where client in (1, 3)";
 $resql=$db->query($sql);
 if ($resql) {
-	$num_thirdparties = $db->num_rows($resql);
-	$i = 0;
-	while ($i < $num_thirdparties) {
-		$i++;
-	    $row = $db->fetch_row($resql);
-		$societesid[$i] = $row[0];
-	}
+    $num_thirdparties = $db->num_rows($resql);
+    $i = 0;
+    while ($i < $num_thirdparties) {
+        $i++;
+        $row = $db->fetch_row($resql);
+        $societesid[$i] = $row[0];
+    }
 }
 else { print "err"; }
 
@@ -127,32 +127,29 @@ $commandesid = array();
 $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."commande";
 $resql=$db->query($sql);
 if ($resql) {
-	$num = $db->num_rows($resql);
-	$i = 0;
-	while ($i < $num) {
-		$i++;
-	    $row = $db->fetch_row($resql);
-		$commandesid[$i] = $row[0];
-	}
+    $num = $db->num_rows($resql);
+    $i = 0;
+    while ($i < $num) {
+        $i++;
+        $row = $db->fetch_row($resql);
+        $commandesid[$i] = $row[0];
+    }
 }
 else { print "err"; }
 
 $prodids = array();
 $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."product WHERE tosell=1";
 $resql = $db->query($sql);
-if ($resql)
-{
-  $num_prods = $db->num_rows($resql);
-  $i = 0;
-  while ($i < $num_prods)
-    {
-      $i++;
+if ($resql) {
+    $num_prods = $db->num_rows($resql);
+    $i = 0;
+    while ($i < $num_prods) {
+        $i++;
 
-      $row = $db->fetch_row($resql);
-      $prodids[$i] = $row[0];
+        $row = $db->fetch_row($resql);
+        $prodids[$i] = $row[0];
     }
 }
-
 
 
 
@@ -173,18 +170,18 @@ for ($s = 0 ; $s < GEN_NUMBER_COMMANDE ; $s++)
     $object->cond_reglement_id = mt_rand(0, 2);
     $object->more_reglement_id = mt_rand(0, 7);
     $object->availability_id = mt_rand(0, 1);
-    
+
     $listofuserid=array(12,13,16);
-    
+
     $fuser = new User($db);
-    $fuser->fetch($listofuserid[mt_rand(0,2)]);
+    $fuser->fetch($listofuserid[mt_rand(0, 2)]);
     $fuser->getRights();
-    
+
     $db->begin();
 
     $result=$object->create($fuser);
-	if ($result >= 0)
-	{
+    if ($result >= 0)
+    {
         $nbp = mt_rand(2, 5);
         $xnbp = 0;
         while ($xnbp < $nbp)
@@ -192,32 +189,31 @@ for ($s = 0 ; $s < GEN_NUMBER_COMMANDE ; $s++)
             $prodid = mt_rand(1, $num_prods);
             $product=new Product($db);
             $result=$product->fetch($prodids[$prodid]);
-            $result=$object->addline($product->description, $product->price, mt_rand(1,5), 0, 0, 0, $prodids[$prodid], 0, 0, 0,  $product->price_base_type, $product->price_ttc, '', '', $product->type);
+            $result=$object->addline($product->description, $product->price, mt_rand(1, 5), 0, 0, 0, $prodids[$prodid], 0, 0, 0, $product->price_base_type, $product->price_ttc, '', '', $product->type);
             if ($result <= 0)
             {
-                dol_print_error($db,$object->error);
+                dol_print_error($db, $object->error);
             }
             $xnbp++;
         }
 
-	    $result=$object->valid($fuser);
-		if ($result > 0)
-		{
+        $result=$object->valid($fuser);
+        if ($result > 0)
+        {
             $db->commit();
             print " OK with ref ".$object->ref."\n";
-		}
-		else
-		{
+        }
+        else
+        {
             print " KO\n";
-		    $db->rollback();
-		    dol_print_error($db,$object->error);
-		}
-	}
-	else
-	{
+            $db->rollback();
+            dol_print_error($db, $object->error);
+        }
+    }
+    else
+    {
         print " KO\n";
-	    $db->rollback();
-	    dol_print_error($db,$object->error);
-	}
+        $db->rollback();
+        dol_print_error($db, $object->error);
+    }
 }
-

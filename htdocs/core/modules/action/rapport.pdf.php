@@ -71,7 +71,7 @@ class CommActionRapport
 	 * @param	int		$month	Month
 	 * @param	int		$year	Year
 	 */
-	function __construct($db, $month, $year)
+	public function __construct($db, $month, $year)
 	{
 		global $conf, $langs;
 
@@ -99,16 +99,16 @@ class CommActionRapport
         $this->subject=$langs->transnoentitiesnoconv("ActionsReport").' '.$this->year."-".$this->month;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
-	/**
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+    /**
      *      Write the object to document file to disk
      *
      *      @param	int			$socid			Thirdparty id
      *      @param  int			$catid			Cat id
      *      @param  Translate	$outputlangs    Lang object for output language
      *      @return int             			1=OK, 0=KO
-	 */
-	function write_file($socid = 0, $catid = 0, $outputlangs='')
+     */
+	public function write_file($socid = 0, $catid = 0, $outputlangs = '')
 	{
         // phpcs:enable
 		global $user,$conf,$langs,$hookmanager;
@@ -127,7 +127,7 @@ class CommActionRapport
 		{
 			if (dol_mkdir($dir) < 0)
 			{
-				$this->error=$langs->trans("ErrorCanNotCreateDir",$dir);
+				$this->error=$langs->trans("ErrorCanNotCreateDir", $dir);
 				return 0;
 			}
 		}
@@ -143,13 +143,13 @@ class CommActionRapport
 			$hookmanager->initHooks(array('pdfgeneration'));
 			$parameters=array('file'=>$file, 'outputlangs'=>$outputlangs);
 			global $action;
-			$reshook=$hookmanager->executeHooks('beforePDFCreation',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+			$reshook=$hookmanager->executeHooks('beforePDFCreation', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
 
             $pdf=pdf_getInstance($this->format);
             $heightforinfotot = 50;	// Height reserved to output the info and total part
             $heightforfreetext= (isset($conf->global->MAIN_PDF_FREETEXT_HEIGHT)?$conf->global->MAIN_PDF_FREETEXT_HEIGHT:5);	// Height reserved to output the free text on last page
             $heightforfooter = $this->marge_basse + 8;	// Height reserved to output the footer (value include bottom margin)
-            $pdf->SetAutoPageBreak(1,0);
+            $pdf->SetAutoPageBreak(1, 0);
 
             if (class_exists('TCPDF'))
             {
@@ -160,8 +160,8 @@ class CommActionRapport
 
 			$pdf->Open();
 			$pagenb=0;
-			$pdf->SetDrawColor(128,128,128);
-			$pdf->SetFillColor(220,220,220);
+			$pdf->SetDrawColor(128, 128, 128);
+			$pdf->SetFillColor(220, 220, 220);
 
 			$pdf->SetTitle($outputlangs->convToOutputCharset($this->title));
 			$pdf->SetSubject($outputlangs->convToOutputCharset($this->subject));
@@ -173,10 +173,10 @@ class CommActionRapport
 
 			$nbpage = $this->_pages($pdf, $outputlangs);
 
-			if (method_exists($pdf,'AliasNbPages')) $pdf->AliasNbPages();
+			if (method_exists($pdf, 'AliasNbPages')) $pdf->AliasNbPages();
 			$pdf->Close();
 
-			$pdf->Output($file,'F');
+			$pdf->Output($file, 'F');
 
 			// Add pdfgeneration hook
 			if (! is_object($hookmanager))
@@ -187,7 +187,12 @@ class CommActionRapport
 			$hookmanager->initHooks(array('pdfgeneration'));
 			$parameters=array('file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs);
 			global $action;
-			$reshook=$hookmanager->executeHooks('afterPDFCreation',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+			$reshook=$hookmanager->executeHooks('afterPDFCreation', $parameters, $this, $action);    // Note that $action and $object may have been modified by some hooks
+			if ($reshook < 0)
+			{
+			    $this->error = $hookmanager->error;
+			    $this->errors = $hookmanager->errors;
+			}
 
 			if (! empty($conf->global->MAIN_UMASK))
 			@chmod($file, octdec($conf->global->MAIN_UMASK));
@@ -205,7 +210,7 @@ class CommActionRapport
      * @param	Translate   $outputlangs	Object langs
 	 * @return  int							1
 	 */
-	function _pages(&$pdf, $outputlangs)
+	private function _pages(&$pdf, $outputlangs)
 	{
 		global $conf;
 
@@ -214,7 +219,7 @@ class CommActionRapport
 
 		$y=$this->_pagehead($pdf, $outputlangs, $pagenb);
 		$y++;
-		$pdf->SetFont('','',8);
+		$pdf->SetFont('', '', 8);
 
 		$sql = "SELECT s.nom as thirdparty, s.rowid as socid, s.client,";
 		$sql.= " a.id, a.datep as dp, a.datep2 as dp2,";
@@ -224,8 +229,8 @@ class CommActionRapport
 		$sql.= " FROM ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."user as u, ".MAIN_DB_PREFIX."actioncomm as a";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON a.fk_soc = s.rowid";
 		$sql.= " WHERE c.id=a.fk_action AND a.fk_user_author = u.rowid";
-		$sql.= " AND a.datep BETWEEN '".$this->db->idate(dol_get_first_day($this->year,$this->month,false))."'";
-		$sql.= " AND '".$this->db->idate(dol_get_last_day($this->year,$this->month,false))."'";
+		$sql.= " AND a.datep BETWEEN '".$this->db->idate(dol_get_first_day($this->year, $this->month, false))."'";
+		$sql.= " AND '".$this->db->idate(dol_get_last_day($this->year, $this->month, false))."'";
 		$sql.= " AND a.entity = ".$conf->entity;
 		$sql.= " ORDER BY a.datep DESC";
 
@@ -253,12 +258,12 @@ class CommActionRapport
 
 				// Calculate height of text
 				$text='';
-				if (! preg_match('/^'.preg_quote($obj->label).'/',$obj->note)) $text=$obj->label."\n";
+				if (! preg_match('/^'.preg_quote($obj->label).'/', $obj->note)) $text=$obj->label."\n";
 				$text.=$obj->note;
-				$text=dol_trunc(dol_htmlentitiesbr_decode($text),150);
+				$text=dol_trunc(dol_htmlentitiesbr_decode($text), 150);
 				// Add status to text
 				$text.="\n";
-				$status=dol_htmlentitiesbr_decode($eventstatic->getLibStatut(1,1));
+				$status=dol_htmlentitiesbr_decode($eventstatic->getLibStatut(1, 1));
 				$text.=$status;
 				if ($obj->fk_project > 0)
 				{
@@ -268,7 +273,7 @@ class CommActionRapport
 
 				//print 'd'.$text; exit;
 				$nboflines=dol_nboflines($text);
-				$heightlinemax=max(2*$height,$nboflines*$height);
+				$heightlinemax=max(2*$height, $nboflines*$height);
 				// Check if there is enough space to print record
 				if ((1+$y+$heightlinemax) >= ($this->page_hauteur - $this->marge_haute))
 				{
@@ -276,15 +281,15 @@ class CommActionRapport
 					$pagenb++;
 					$y=$this->_pagehead($pdf, $outputlangs, $pagenb);
 					$y++;
-					$pdf->SetFont('','',8);
+					$pdf->SetFont('', '', 8);
 				}
 				$y++;
 
 				// Date
 				$pdf->SetXY($this->marge_gauche, $y);
-				$textdate = dol_print_date($this->db->jdate($obj->dp),"day")."\n".dol_print_date($this->db->jdate($obj->dp),"hour");
+				$textdate = dol_print_date($this->db->jdate($obj->dp), "day")."\n".dol_print_date($this->db->jdate($obj->dp), "hour");
 				if ($obj->dp2) {
-					if (dol_print_date($this->db->jdate($obj->dp),"day") != dol_print_date($this->db->jdate($obj->dp2),"day"))
+					if (dol_print_date($this->db->jdate($obj->dp), "day") != dol_print_date($this->db->jdate($obj->dp2), "day"))
 						$textdate.= " -> ".dol_print_date($this->db->jdate($obj->dp2), "day")." - ".dol_print_date($this->db->jdate($obj->dp2), "hour");
 					else
 						$textdate.= " -> ".dol_print_date($this->db->jdate($obj->dp2), "hour");
@@ -294,7 +299,7 @@ class CommActionRapport
 
 				// Third party
 				$pdf->SetXY(26, $y);
-				$pdf->MultiCell(32, $height, dol_trunc($outputlangs->convToOutputCharset($obj->thirdparty),32), 0, 'L', 0);
+				$pdf->MultiCell(32, $height, dol_trunc($outputlangs->convToOutputCharset($obj->thirdparty), 32), 0, 'L', 0);
 				$y1 = $pdf->GetY();
 
 				// Action code
@@ -304,14 +309,14 @@ class CommActionRapport
 					if ($code == 'AC_OTH')      $code='AC_MANUAL';
 					if ($code == 'AC_OTH_AUTO') $code='AC_AUTO';
 				}
-				$pdf->SetXY(60,$y);
+				$pdf->SetXY(60, $y);
 				$labelactiontype = $outputlangs->transnoentitiesnoconv("Action".$code);
 				$labelactiontypeshort = $outputlangs->transnoentitiesnoconv("Action".$code.'Short');
-				$pdf->MultiCell(32, $height, dol_trunc($outputlangs->convToOutputCharset($labelactiontypeshort == "Action".$code.'Short' ? $labelactiontype : $labelactiontypeshort),32), 0, 'L', 0);
+				$pdf->MultiCell(32, $height, dol_trunc($outputlangs->convToOutputCharset($labelactiontypeshort == "Action".$code.'Short' ? $labelactiontype : $labelactiontypeshort), 32), 0, 'L', 0);
 				$y2 = $pdf->GetY();
 
 				// Description of event
-				$pdf->SetXY(106,$y);
+				$pdf->SetXY(106, $y);
 				$pdf->MultiCell(94, $height, $outputlangs->convToOutputCharset($text), 0, 'L', 0);
 				$y3 = $pdf->GetY();
 
@@ -330,7 +335,7 @@ class CommActionRapport
 	 * 	@param	int			$pagenb			Page nb
 	 *  @return	integer
 	 */
-	function _pagehead(&$pdf, $outputlangs, $pagenb)
+	private function _pagehead(&$pdf, $outputlangs, $pagenb)
 	{
 		global $conf,$langs;
 
@@ -341,7 +346,7 @@ class CommActionRapport
 		$pdf->AddPage();
 
 		// Show title
-		$pdf->SetFont('','B',10);
+		$pdf->SetFont('', 'B', 10);
 		$pdf->SetXY($this->marge_gauche, $this->marge_haute);
 		$pdf->MultiCell(120, 1, $outputlangs->convToOutputCharset($this->title), 0, 'L', 0);
         // Show page nb only on iso languages (so default Helvetica font)

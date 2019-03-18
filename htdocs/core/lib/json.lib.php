@@ -214,7 +214,7 @@ if (! function_exists('json_decode'))
 	 * @param	bool	$assoc		False return an object, true return an array
 	 * @return 	mixed				Object or Array
 	 */
-	function json_decode($json, $assoc=false)
+	function json_decode($json, $assoc = false)
 	{
 		return dol_json_decode($json, $assoc);
 	}
@@ -229,7 +229,7 @@ if (! function_exists('json_decode'))
  * @return 	mixed				Object or Array or false on error
  * @see json_decode()
  */
-function dol_json_decode($json, $assoc=false)
+function dol_json_decode($json, $assoc = false)
 {
 	dol_syslog("For better performance, enable the native json in your PHP", LOG_WARNING);
 
@@ -242,8 +242,8 @@ function dol_json_decode($json, $assoc=false)
 		if (! $comment)
 		{
 			if (($json[$i] == '{') || ($json[$i] == '[')) $out.= 'array(';
-			else if (($json[$i] == '}') || ($json[$i] == ']')) $out.= ')';
-			else if ($json[$i] == ':') $out.= ' => ';
+			elseif (($json[$i] == '}') || ($json[$i] == ']')) $out.= ')';
+			elseif ($json[$i] == ':') $out.= ' => ';
 			else $out.=$json[$i];
 		}
 		else $out.= $json[$i];
@@ -282,8 +282,8 @@ function dol_json_decode($json, $assoc=false)
 /**
  * Return text according to type
  *
- * @param 	string	$val	Value to decode
- * @return	string			Formated value
+ * @param   string  $val    Value to decode
+ * @return  string          Formated value
  */
 function _unval($val)
 {
@@ -292,7 +292,7 @@ function _unval($val)
 	    // single, escaped unicode character
 	    $utf16 = chr(hexdec($reg[1])) . chr(hexdec($reg[2]));
 	    $utf8  = utf162utf8($utf16);
-	    $val=preg_replace('/\\\u'.$reg[1].$reg[2].'/i',$utf8,$val);
+	    $val=preg_replace('/\\\u'.$reg[1].$reg[2].'/i', $utf8, $val);
 	}
 	return $val;
 }
@@ -310,7 +310,7 @@ function _unval($val)
 function utf162utf8($utf16)
 {
 	// oh please oh please oh please oh please oh please
-	if(function_exists('mb_convert_encoding')) {
+	if (function_exists('mb_convert_encoding')) {
 	    return mb_convert_encoding($utf16, 'UTF-8', 'UTF-16');
 	}
 

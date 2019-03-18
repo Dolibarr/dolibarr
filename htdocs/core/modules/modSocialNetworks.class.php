@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2013   Alexandre Spangaro  <aspangaro.dolibarr@gmail.com>
+/* Copyright (C) 2013   Alexandre Spangaro  <aspangaro@open-dsi.fr>
  * Copyright (C) 2014   Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -36,7 +36,7 @@ class modSocialNetworks extends DolibarrModules
 	 *
 	 *   @param      DoliDB		$db      Database handler
      */
-    function __construct($db)
+    public function __construct($db)
     {
     	global $langs,$conf;
 
@@ -49,7 +49,7 @@ class modSocialNetworks extends DolibarrModules
         // Module position in the family on 2 digits ('01', '10', '20', ...)
         $this->module_position = '20';
         // Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
-        $this->name = preg_replace('/^mod/i','',get_class($this));
+        $this->name = preg_replace('/^mod/i', '', get_class($this));
         $this->description = "Enable Social Networks fields into third parties and addresses (skype, twitter, facebook, ...)";
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
         $this->version = 'dolibarr';

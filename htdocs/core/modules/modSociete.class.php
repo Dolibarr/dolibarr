@@ -41,7 +41,7 @@ class modSociete extends DolibarrModules
 	 *
 	 *   @param      DoliDB		$db      Database handler
 	 */
-	function __construct($db)
+	public function __construct($db)
 	{
 		global $conf, $user;
 
@@ -51,7 +51,7 @@ class modSociete extends DolibarrModules
 		$this->family = "crm";
 		$this->module_position = '10';
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
-		$this->name = preg_replace('/^mod/i','',get_class($this));
+		$this->name = preg_replace('/^mod/i', '', get_class($this));
 		$this->description = "Gestion des sociétés et contacts";
 
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
@@ -273,7 +273,7 @@ class modSociete extends DolibarrModules
 		// Add multicompany field
 		if (! empty($conf->global->MULTICOMPANY_ENTITY_IN_EXPORT_IF_SHARED))
 		{
-		    $nbofallowedentities=count(explode(',',getEntity('societe')));    // If project are shared, nb will be > 1
+		    $nbofallowedentities=count(explode(',', getEntity('societe')));    // If project are shared, nb will be > 1
 		    if (! empty($conf->multicompany->enabled) && $nbofallowedentities > 1) $this->export_fields_array[$r]+=array('s.entity'=>'Entity');
 		}
 		$keyforselect='societe'; $keyforelement='company'; $keyforaliasextra='extra';
@@ -317,7 +317,7 @@ class modSociete extends DolibarrModules
 			$this->export_sql_end[$r] .=' AND (sc.fk_user = '.$user->id.' ';
 			if (! empty($conf->global->SOCIETE_EXPORT_SUBORDINATES_CHILDS)) {
 				$subordinatesids = $user->getAllChildIds();
-				$this->export_sql_end[$r] .=count($subordinatesids)>0 ? ' OR (sc.fk_user IN ('.implode(',',$subordinatesids).')' : '';
+				$this->export_sql_end[$r] .=count($subordinatesids)>0 ? ' OR (sc.fk_user IN ('.implode(',', $subordinatesids).')' : '';
 			}
 			$this->export_sql_end[$r] .=')';
 		}
@@ -339,7 +339,7 @@ class modSociete extends DolibarrModules
 		$this->export_TypeFields_array[$r]=array(
 			'c.civility'=>"List:c_civility:label:code",'c.lastname'=>'Text','c.firstname'=>'Text','c.poste'=>'Text','c.datec'=>"Date",'c.priv'=>"Boolean",
 			'c.address'=>"Text",'c.zip'=>"Text",'c.town'=>"Text",'d.nom'=>'Text','co.label'=>"List:c_country:label:rowid",'co.code'=>"Text",'c.phone'=>"Text",
-			'c.fax'=>"Text",'c.email'=>"Text",'s.rowid'=>"List:societe:nom",'s.nom'=>"Text",'s.status'=>"Status",'s.code_client'=>"Text",'s.code_fournisseur'=>"Text",
+			'c.fax'=>"Text",'c.email'=>"Text",'s.rowid'=>"List:societe:nom::thirdparty",'s.nom'=>"Text",'s.status'=>"Status",'s.code_client'=>"Text",'s.code_fournisseur'=>"Text",
 			's.client'=>"Text",'s.fournisseur'=>"Text"
 		);
 		$this->export_entities_array[$r]=array(
@@ -368,7 +368,7 @@ class modSociete extends DolibarrModules
 			$this->export_sql_end[$r] .=' AND (sc.fk_user = '.$user->id.' ';
 			if (! empty($conf->global->SOCIETE_EXPORT_SUBORDINATES_CHILDS)) {
 				$subordinatesids = $user->getAllChildIds();
-				$this->export_sql_end[$r] .=count($subordinatesids)>0 ? ' OR (sc.fk_user IN ('.implode(',',$subordinatesids).')' : '';
+				$this->export_sql_end[$r] .=count($subordinatesids)>0 ? ' OR (sc.fk_user IN ('.implode(',', $subordinatesids).')' : '';
 			}
 			$this->export_sql_end[$r] .=')';
 		}
@@ -631,7 +631,7 @@ class modSociete extends DolibarrModules
         $this->import_examplevalues_array[$r] = array(//field order as per structure of table llx_socpeople
             's.datec' => 'formatted as ' . dol_print_date(dol_now(), '%Y-%m-%d'),
             's.fk_soc' => 'Third Party name eg. TPBigCompany',
-            's.civility' => 'honorific eg: MR...matches field "code" in table "' . MAIN_DB_PREFIX . 'c_civility"',
+            's.civility' => 'Title of civility eg: MR...matches field "code" in table "' . MAIN_DB_PREFIX . 'c_civility"',
             's.lastname' => "lastname or label",
             's.firstname' => 'John',
             's.address' => '61 Jump street',
@@ -720,15 +720,15 @@ class modSociete extends DolibarrModules
 
 
     /**
-	 *		Function called when module is enabled.
-	 *		The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
-	 *		It also creates data directories
+	 *  Function called when module is enabled.
+	 *  The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
+	 *  It also creates data directories
 	 *
-     *      @param      string	$options    Options when enabling module ('', 'noboxes')
-	 *      @return     int             	1 if OK, 0 if KO
+     *  @param      string	$options    Options when enabling module ('', 'noboxes')
+	 *  @return     int             	1 if OK, 0 if KO
      */
-	function init($options='')
-	{
+    public function init($options = '')
+    {
 		global $conf, $langs;
 
 		// We disable this to prevent pb of modules not correctly disabled
@@ -743,17 +743,17 @@ class modSociete extends DolibarrModules
 		{
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 			dol_mkdir($dirodt);
-			$result=dol_copy($src,$dest,0,0);
+			$result=dol_copy($src, $dest, 0, 0);
 			if ($result < 0)
 			{
 				$langs->load("errors");
-				$this->error=$langs->trans('ErrorFailToCopyFile',$src,$dest);
+				$this->error=$langs->trans('ErrorFailToCopyFile', $src, $dest);
 				return 0;
 			}
 		}
 
 		$sql = array();
 
-		return $this->_init($sql,$options);
+		return $this->_init($sql, $options);
 	}
 }

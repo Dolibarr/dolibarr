@@ -54,12 +54,12 @@ $langs->load("modulebuilder");
     		var list = jQuery("#list");
             var totalizable = jQuery("#totalizable");
     		<?php
-    		if((GETPOST('type','alpha') != "select") &&  (GETPOST('type','alpha') != "sellist"))
+    		if((GETPOST('type', 'alpha') != "select") &&  (GETPOST('type', 'alpha') != "sellist"))
     		{
     			print 'jQuery("#value_choice").hide();';
     		}
 
-    		if (GETPOST('type','alpha') == "separate")
+    		if (GETPOST('type', 'alpha') == "separate")
     		{
 				print "jQuery('#size, #default_value, #langfile').val('').prop('disabled', true);";
     			print 'jQuery("#value_choice").hide();';
@@ -204,7 +204,7 @@ if (in_array($type, array_keys($typewecanchangeinto)))
     foreach($type2label as $key => $val)
     {
         $selected='';
-        if ($key == (GETPOST('type','alpha')?GETPOST('type','alpha'):$type)) $selected=' selected="selected"';
+        if ($key == (GETPOST('type', 'alpha')?GETPOST('type', 'alpha'):$type)) $selected=' selected="selected"';
         if (in_array($key, $typewecanchangeinto[$type])) print '<option value="'.$key.'"'.$selected.'>'.$val.'</option>';
         else print '<option value="'.$key.'" disabled="disabled"'.$selected.'>'.$val.'</option>';
     }
@@ -229,11 +229,11 @@ else
     <tr><td>
     	<textarea name="param" id="param" cols="80" rows="<?php echo ROWS_4 ?>"><?php echo dol_htmlcleanlastbr($param_chain); ?></textarea>
     </td><td>
-    <span id="helpselect"><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelpselect"),1,0,'', 0, 2, 'helpvalue1')?></span>
-    <span id="helpsellist"><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelpsellist"),1,0,'', 0, 2, 'helpvalue2')?></span>
-    <span id="helpchkbxlst"><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelpchkbxlst"),1,0,'', 0, 2, 'helpvalue3')?></span>
-    <span id="helplink"><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelplink"),1,0,'', 0, 2, 'helpvalue4')?></span>
-    <span id="helppassword"><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelpPassword"),1,0,'', 0, 2, 'helpvalue5')?></span>
+    <span id="helpselect"><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelpselect"), 1, 0, '', 0, 2, 'helpvalue1')?></span>
+    <span id="helpsellist"><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelpsellist"), 1, 0, '', 0, 2, 'helpvalue2')?></span>
+    <span id="helpchkbxlst"><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelpchkbxlst"), 1, 0, '', 0, 2, 'helpvalue3')?></span>
+    <span id="helplink"><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelplink"), 1, 0, '', 0, 2, 'helpvalue4')?></span>
+    <span id="helppassword"><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelpPassword"), 1, 0, '', 0, 2, 'helpvalue5')?></span>
     </td></tr>
     </table>
 </td>
@@ -266,7 +266,7 @@ else
 
 <?php dol_fiche_end(); ?>
 
-<div align="center"><input type="submit" name="button" class="button" value="<?php echo $langs->trans("Save"); ?>">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<div class="center"><input type="submit" name="button" class="button" value="<?php echo $langs->trans("Save"); ?>">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 <input type="submit" name="button" class="button" value="<?php echo $langs->trans("Cancel"); ?>"></div>
 
 </form>

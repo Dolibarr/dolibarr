@@ -20,17 +20,17 @@
  *	\brief      File to return Ajax response on set extra parameters of elements
  */
 
-if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL','1'); // Disables token renewal
-if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU','1');
-if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML','1');
-if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');
-if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC','1');
+if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1'); // Disables token renewal
+if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1');
+if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML', '1');
+if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
+if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC', '1');
 
 include '../../main.inc.php';
 
-$id = GETPOST('id','int');
-$element = GETPOST('element','alpha');
-$htmlelement = GETPOST('htmlelement','alpha');
+$id = GETPOST('id', 'int');
+$element = GETPOST('element', 'alpha');
+$htmlelement = GETPOST('htmlelement', 'alpha');
 $type = GETPOST('type', 'alpha');
 
 /*
@@ -43,7 +43,7 @@ print '<!-- Ajax page called with url '.dol_escape_htmltag($_SERVER["PHP_SELF"])
 
 if(! empty($id) && ! empty($element) && ! empty($htmlelement) && ! empty($type))
 {
-	$value = GETPOST('value','alpha');
+	$value = GETPOST('value', 'alpha');
 	$params=array();
 
 	dol_syslog("AjaxSetExtraParameters id=".$id." element=".$element." htmlelement=".$htmlelement." type=".$type." value=".$value, LOG_DEBUG);
@@ -52,18 +52,18 @@ if(! empty($id) && ! empty($element) && ! empty($htmlelement) && ! empty($type))
 
 	// For compatibility
 	if ($element == 'order' || $element == 'commande')    { $classpath = $subelement = 'commande'; }
-	else if ($element == 'propal')				{ $classpath = 'comm/propal'; $subelement = 'propal'; }
-	else if ($element == 'facture')				{ $classpath = 'compta/facture'; $subelement = 'facture'; }
-	else if ($element == 'contract')			{ $classpath = $subelement = 'contrat'; }
-	else if ($element == 'shipping')			{ $classpath = $subelement = 'expedition'; }
-	else if ($element == 'deplacement')			{ $classpath = 'compta/deplacement'; $subelement = 'deplacement'; }
-	else if ($element == 'order_supplier')		{ $classpath = 'fourn'; $subelement = 'fournisseur.commande'; }
-	else if ($element == 'invoice_supplier')	{ $classpath = 'fourn'; $subelement = 'fournisseur.facture'; }
+	elseif ($element == 'propal')				{ $classpath = 'comm/propal'; $subelement = 'propal'; }
+	elseif ($element == 'facture')				{ $classpath = 'compta/facture'; $subelement = 'facture'; }
+	elseif ($element == 'contract')			{ $classpath = $subelement = 'contrat'; }
+	elseif ($element == 'shipping')			{ $classpath = $subelement = 'expedition'; }
+	elseif ($element == 'deplacement')			{ $classpath = 'compta/deplacement'; $subelement = 'deplacement'; }
+	elseif ($element == 'order_supplier')		{ $classpath = 'fourn'; $subelement = 'fournisseur.commande'; }
+	elseif ($element == 'invoice_supplier')	{ $classpath = 'fourn'; $subelement = 'fournisseur.facture'; }
 
 	dol_include_once('/'.$classpath.'/class/'.$subelement.'.class.php');
 
 	if ($element == 'order_supplier')			{ $classname = 'CommandeFournisseur'; }
-	else if ($element == 'invoice_supplier')	{ $classname = 'FactureFournisseur'; }
+	elseif ($element == 'invoice_supplier')	{ $classname = 'FactureFournisseur'; }
 	else $classname = ucfirst($subelement);
 
 	$object	= new $classname($db);
@@ -74,4 +74,3 @@ if(! empty($id) && ! empty($element) && ! empty($htmlelement) && ! empty($type))
 
 	$result=$object->setExtraParameters();
 }
-

@@ -20,18 +20,18 @@
  *       \brief      File to load field value
  */
 
-if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL','1'); // Disables token renewal
-if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU','1');
-if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');
-if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC','1');
+if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1'); // Disables token renewal
+if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1');
+if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
+if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC', '1');
 
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/genericobject.class.php';
 
-$field			= GETPOST('field','alpha');
-$element		= GETPOST('element','alpha');
-$table_element	= GETPOST('table_element','alpha');
-$fk_element		= GETPOST('fk_element','alpha');
+$field			= GETPOST('field', 'alpha');
+$element		= GETPOST('element', 'alpha');
+$table_element	= GETPOST('table_element', 'alpha');
+$fk_element		= GETPOST('fk_element', 'alpha');
 
 /*
  * View
@@ -44,26 +44,26 @@ top_httphead();
 // Load original field value
 if (! empty($field) && ! empty($element) && ! empty($table_element) && ! empty($fk_element))
 {
-	$ext_element	= GETPOST('ext_element','alpha');
+	$ext_element	= GETPOST('ext_element', 'alpha');
 	$field			= substr($field, 8); // remove prefix val_
-	$type			= GETPOST('type','alpha');
-	$loadmethod		= (GETPOST('loadmethod','alpha') ? GETPOST('loadmethod','alpha') : 'getValueFrom');
+	$type			= GETPOST('type', 'alpha');
+	$loadmethod		= (GETPOST('loadmethod', 'alpha') ? GETPOST('loadmethod', 'alpha') : 'getValueFrom');
 
-	if ($element != 'order_supplier' && $element != 'invoice_supplier' && preg_match('/^([^_]+)_([^_]+)/i',$element,$regs))
+	if ($element != 'order_supplier' && $element != 'invoice_supplier' && preg_match('/^([^_]+)_([^_]+)/i', $element, $regs))
 	{
 		$element = $regs[1];
 		$subelement = $regs[2];
 	}
 
 	if ($element == 'propal') $element = 'propale';
-	else if ($element == 'fichinter') $element = 'ficheinter';
-	else if ($element == 'product') $element = 'produit';
-	else if ($element == 'member') $element = 'adherent';
-	else if ($element == 'order_supplier') {
+	elseif ($element == 'fichinter') $element = 'ficheinter';
+	elseif ($element == 'product') $element = 'produit';
+	elseif ($element == 'member') $element = 'adherent';
+	elseif ($element == 'order_supplier') {
 		$element = 'fournisseur';
 		$subelement = 'commande';
 	}
-	else if ($element == 'invoice_supplier') {
+	elseif ($element == 'invoice_supplier') {
 		$element = 'fournisseur';
 		$subelement = 'facture';
 	}
@@ -76,7 +76,7 @@ if (! empty($field) && ! empty($element) && ! empty($table_element) && ! empty($
 		if ($type == 'select')
 		{
 			$methodname	= 'load_cache_'.$loadmethod;
-			$cachename = 'cache_'.GETPOST('loadmethod','alpha');
+			$cachename = 'cache_'.GETPOST('loadmethod', 'alpha');
 
 			$form = new Form($db);
 			if (method_exists($form, $methodname))
@@ -84,10 +84,10 @@ if (! empty($field) && ! empty($element) && ! empty($table_element) && ! empty($
 				$ret = $form->$methodname();
 				if ($ret > 0) echo json_encode($form->$cachename);
 			}
-			else if (! empty($ext_element))
+			elseif (! empty($ext_element))
 			{
 				$module = $subelement = $ext_element;
-				if (preg_match('/^([^_]+)_([^_]+)/i',$ext_element,$regs))
+				if (preg_match('/^([^_]+)_([^_]+)/i', $ext_element, $regs))
 				{
 					$module = $regs[1];
 					$subelement = $regs[2];
@@ -112,4 +112,3 @@ if (! empty($field) && ! empty($element) && ! empty($table_element) && ! empty($
 		echo $langs->transnoentities('NotEnoughPermissions');
 	}
 }
-

@@ -33,10 +33,10 @@ if (! empty($conf->projet->enabled)) {
 // Load translation files required by the page
 $langs->load("contracts");
 
-$action		= GETPOST('action','alpha');
-$confirm	= GETPOST('confirm','alpha');
-$id			= GETPOST('id','int');
-$ref		= GETPOST('ref','alpha');
+$action		= GETPOST('action', 'alpha');
+$confirm	= GETPOST('confirm', 'alpha');
+$id			= GETPOST('id', 'int');
+$ref		= GETPOST('ref', 'alpha');
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
@@ -60,7 +60,7 @@ $hookmanager->initHooks(array('contractcard','globalcard'));
 
 $form = new Form($db);
 
-llxHeader('',$langs->trans("Contract"),"");
+llxHeader('', $langs->trans("Contract"), "");
 
 $object = new Contrat($db);
 $object->fetch($id, $ref);
@@ -92,11 +92,11 @@ $morehtmlref.=$form->editfieldval("",'ref',$object->ref,0,'string','',0,2);
 $morehtmlref.='<div class="refidno">';
 // Ref customer
 $morehtmlref.=$form->editfieldkey("RefCustomer", 'ref_customer', $object->ref_customer, $object, 0, 'string', '', 0, 1);
-$morehtmlref.=$form->editfieldval("RefCustomer", 'ref_customer', $object->ref_customer, $object, 0, 'string', '', null, null, '', 1);
+$morehtmlref.=$form->editfieldval("RefCustomer", 'ref_customer', $object->ref_customer, $object, 0, 'string', '', null, null, '', 1, 'getFormatedCustomerRef');
 // Ref supplier
 $morehtmlref.='<br>';
 $morehtmlref.=$form->editfieldkey("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, 0, 'string', '', 0, 1);
-$morehtmlref.=$form->editfieldval("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, 0, 'string', '', null, null, '', 1);
+$morehtmlref.=$form->editfieldval("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, 0, 'string', '', null, null, '', 1, 'getFormatedSupplierRef');
 // Thirdparty
 $morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1);
 // Project

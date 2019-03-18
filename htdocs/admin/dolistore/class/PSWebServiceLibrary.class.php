@@ -69,7 +69,7 @@ class PrestaShopWebservice
 	 * @param string $key Authentification key
 	 * @param mixed $debug Debug mode Activated (true) or deactivated (false)
 	*/
-    function __construct($url, $key, $debug = true)
+    public function __construct($url, $key, $debug = true)
     {
 		if (!extension_loaded('curl'))
 		  throw new PrestaShopWebserviceException('Please activate the PHP extension \'curl\' to allow use of PrestaShop webservice library');
@@ -77,7 +77,7 @@ class PrestaShopWebservice
 		$this->key = $key;
 		$this->debug = $debug;
 		$this->version = 'unknown';
-	}
+    }
 
 	/**
 	 * Take the status code and throw an exception if the server didn't return 200 or 201 code
@@ -226,7 +226,7 @@ class PrestaShopWebservice
 		{
 			libxml_clear_errors();
 			libxml_use_internal_errors(true);
-			$xml = simplexml_load_string($response,'SimpleXMLElement', LIBXML_NOCDATA);
+			$xml = simplexml_load_string($response, 'SimpleXMLElement', LIBXML_NOCDATA);
 			if (libxml_get_errors())
 			{
 				$msg = var_export(libxml_get_errors(), true);

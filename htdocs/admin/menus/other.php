@@ -29,7 +29,7 @@ $langs->loadLangs(array("user","other","admin"));
 
 if (! $user->admin) accessforbidden();
 
-$action=GETPOST('action','alpha');
+$action=GETPOST('action', 'alpha');
 
 
 /*
@@ -38,13 +38,13 @@ $action=GETPOST('action','alpha');
 
 if ($action == 'activate_hidemenu')
 {
-	dolibarr_set_const($db, "MAIN_MENU_HIDE_UNAUTHORIZED", '1','chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_MENU_HIDE_UNAUTHORIZED", '1', 'chaine', 0, '', $conf->entity);
 	header("Location: ".$_SERVER["PHP_SELF"]);
 	exit;
 }
-else if ($action == 'disable_hidemenu')
+elseif ($action == 'disable_hidemenu')
 {
-	dolibarr_del_const($db, "MAIN_MENU_HIDE_UNAUTHORIZED",$conf->entity);
+	dolibarr_del_const($db, "MAIN_MENU_HIDE_UNAUTHORIZED", $conf->entity);
 	header("Location: ".$_SERVER["PHP_SELF"]);
 	exit;
 }
@@ -54,9 +54,9 @@ else if ($action == 'disable_hidemenu')
  * View
  */
 
-llxHeader('',$langs->trans("Setup"));
+llxHeader('', $langs->trans("Setup"));
 
-print load_fiche_titre($langs->trans("Menus"),'','title_setup');
+print load_fiche_titre($langs->trans("Menus"), '', 'title_setup');
 
 
 $h = 0;
@@ -93,11 +93,11 @@ print '<td colspan="3">'.$langs->trans("HideUnauthorizedMenu").'</td>';
 print '<td align="center">';
 if (empty($conf->global->MAIN_MENU_HIDE_UNAUTHORIZED))
 {
-	print '<a href="'.$_SERVER["PHP_SELF"].'?action=activate_hidemenu">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
+	print '<a href="'.$_SERVER["PHP_SELF"].'?action=activate_hidemenu">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
 }
 else
 {
-	print '<a href="'.$_SERVER["PHP_SELF"].'?action=disable_hidemenu">'.img_picto($langs->trans("Enabled"),'switch_on').'</a>';
+	print '<a href="'.$_SERVER["PHP_SELF"].'?action=disable_hidemenu">'.img_picto($langs->trans("Enabled"), 'switch_on').'</a>';
 }
 print "</td>";
 print '</tr>';

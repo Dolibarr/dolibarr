@@ -60,7 +60,7 @@ class Canvas
 	*   @param     DoliDB	$db          	Database handler
 	*   @param     string   $actiontype		Action type ('create', 'view', 'edit', 'list')
 	*/
-	function __construct($db, $actiontype='view')
+	public function __construct($db, $actiontype = 'view')
 	{
 		$this->db = $db;
 
@@ -91,7 +91,7 @@ class Canvas
 	 * 	@param	string	$canvas		Name of canvas (ex: mycanvas, default, or mycanvas@myexternalmodule)
 	 * 	@return	void
 	 */
-	function getCanvas($module, $card, $canvas)
+	public function getCanvas($module, $card, $canvas)
 	{
 		global $conf, $langs;
 
@@ -101,7 +101,7 @@ class Canvas
         $this->card = $card;
         $this->dirmodule = $module;
         // Correct values if canvas is into an external module
-		if (preg_match('/^([^@]+)@([^@]+)$/i',$canvas,$regs))
+		if (preg_match('/^([^@]+)@([^@]+)$/i', $canvas, $regs))
 		{
             $this->canvas = $regs[1];
 		    $this->dirmodule = $regs[2];
@@ -133,7 +133,7 @@ class Canvas
         //print ' => template_dir='.$this->template_dir.'<br>';
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
 	 * 	Shared method for canvas to assign values for templates
 	 *
@@ -142,10 +142,10 @@ class Canvas
 	 * 	@param		string		$ref		Object ref (if id not provided)
 	 * 	@return		void
 	 */
-	function assign_values(&$action='view', $id=0, $ref='')
+	public function assign_values(&$action = 'view', $id = 0, $ref = '')
 	{
         // phpcs:enable
-		if (method_exists($this->control,'assign_values')) $this->control->assign_values($action, $id, $ref);
+		if (method_exists($this->control, 'assign_values')) $this->control->assign_values($action, $id, $ref);
 	}
 
     /**
@@ -154,7 +154,7 @@ class Canvas
 	 *	@param	string	$action		Action code
      *	@return	int		0=Canvas template file does not exist, 1=Canvas template file exists
      */
-    function displayCanvasExists($action)
+    public function displayCanvasExists($action)
     {
         if (empty($this->template_dir)) return 0;
 
@@ -162,7 +162,7 @@ class Canvas
         else return 0;
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Display a canvas page. This will include the template for output.
 	 *	Variables used by templates may have been defined or loaded before into the assign_values function.
@@ -170,7 +170,7 @@ class Canvas
 	 *	@param	string	$action		Action code
 	 *	@return	void
 	 */
-	function display_canvas($action)
+	public function display_canvas($action)
 	{
         // phpcs:enable
 		global $db, $conf, $langs, $user, $canvas;
@@ -188,7 +188,7 @@ class Canvas
 	 *
 	 * 	@return		boolean		Return if canvas contains actions (old feature. now actions should be inside hooks)
 	 */
-	function hasActions()
+	public function hasActions()
 	{
         return (is_object($this->control));
 	}
@@ -204,9 +204,9 @@ class Canvas
 	 * 	@return		mixed					Return return code of doActions of canvas
 	 * 	@see		http://wiki.dolibarr.org/index.php/Canvas_development
 	 */
-	function doActions(&$action='view', $id=0)
+	public function doActions(&$action = 'view', $id = 0)
 	{
-		if (method_exists($this->control,'doActions'))
+		if (method_exists($this->control, 'doActions'))
 		{
 			$ret = $this->control->doActions($action, $id);
 			return $ret;

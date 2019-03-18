@@ -26,21 +26,20 @@
 // $object must be defined
 // $permissiondellink must be defined
 
-$dellinkid = GETPOST('dellinkid','int');
-$addlinkid = GETPOST('idtolinkto','int');
+$dellinkid = GETPOST('dellinkid', 'int');
+$addlinkid = GETPOST('idtolinkto', 'int');
 
 // Link invoice to order
-if ($action == 'addlink' && ! empty($permissiondellink) && ! GETPOST('cancel','alpha') && $id > 0 && $addlinkid > 0)
+if ($action == 'addlink' && ! empty($permissiondellink) && ! GETPOST('cancel', 'alpha') && $id > 0 && $addlinkid > 0)
 {
     $object->fetch($id);
     $object->fetch_thirdparty();
-    $result = $object->add_object_linked(GETPOST('addlink','alpha'), $addlinkid);
+    $result = $object->add_object_linked(GETPOST('addlink', 'alpha'), $addlinkid);
 }
 
 // Delete link
-if ($action == 'dellink' && ! empty($permissiondellink) && ! GETPOST('cancel','alpha') && $dellinkid > 0)
+if ($action == 'dellink' && ! empty($permissiondellink) && ! GETPOST('cancel', 'alpha') && $dellinkid > 0)
 {
 	$result=$object->deleteObjectLinked(0, '', 0, '', $dellinkid);
-	if ($result < 0) setEventMessages($object->error,$object->errors,'errors');
+	if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
 }
-

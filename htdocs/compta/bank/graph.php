@@ -31,8 +31,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('banks', 'categories'));
 
-$WIDTH=DolGraph::getDefaultGraphSizeForStats('width',768);
-$HEIGHT=DolGraph::getDefaultGraphSizeForStats('height',200);
+$WIDTH=DolGraph::getDefaultGraphSizeForStats('width', 768);
+$HEIGHT=DolGraph::getDefaultGraphSizeForStats('height', 200);
 
 // Security check
 if (isset($_GET["account"]) || isset($_GET["ref"]))
@@ -41,7 +41,7 @@ if (isset($_GET["account"]) || isset($_GET["ref"]))
 }
 $fieldid = isset($_GET["ref"])?'ref':'rowid';
 if ($user->societe_id) $socid=$user->societe_id;
-$result=restrictedArea($user,'banque',$id,'bank_account&bank_account','','',$fieldid);
+$result=restrictedArea($user, 'banque', $id, 'bank_account&bank_account', '', '', $fieldid);
 
 $account=GETPOST("account");
 $mode='standard';
@@ -55,7 +55,7 @@ $error=0;
 
 $title = $langs->trans("FinancialAccount").' - '.$langs->trans("Graph");
 $helpurl = "";
-llxHeader('',$title,$helpurl);
+llxHeader('', $title, $helpurl);
 
 $form = new Form($db);
 
@@ -63,12 +63,12 @@ $datetime = dol_now();
 $year = dol_print_date($datetime, "%Y");
 $month = dol_print_date($datetime, "%m");
 $day = dol_print_date($datetime, "%d");
-if (GETPOST("year"))  $year=sprintf("%04d",GETPOST("year"));
-if (GETPOST("month")) $month=sprintf("%02d",GETPOST("month"));
+if (GETPOST("year"))  $year=sprintf("%04d", GETPOST("year"));
+if (GETPOST("month")) $month=sprintf("%02d", GETPOST("month"));
 
 
 $object = new Account($db);
-if ($_GET["account"] && ! preg_match('/,/',$_GET["account"]))	// if for a particular account and not a list
+if ($_GET["account"] && ! preg_match('/,/', $_GET["account"]))	// if for a particular account and not a list
 {
 	$result=$object->fetch(GETPOST("account", "int"));
 }
@@ -165,7 +165,7 @@ else
 		$sql.= ", ".MAIN_DB_PREFIX."bank_account as ba";
 		$sql.= " WHERE b.fk_account = ba.rowid";
 		$sql.= " AND ba.entity IN (".getEntity('bank_account').")";
-		$sql.= " AND b.datev < '".$year."-".sprintf("%02s",$month)."-01'";
+		$sql.= " AND b.datev < '".$year."-".sprintf("%02s", $month)."-01'";
 		if ($account && $_GET["option"]!='all') $sql.= " AND b.fk_account IN (".$account.")";
 
 		$resql = $db->query($sql);
@@ -186,11 +186,11 @@ else
 		$datamin = array();
 
 		$subtotal = 0;
-		$day = dol_mktime(12,0,0,$month,1,$year);
-		$textdate = strftime("%Y%m%d",$day);
-		$xyear = substr($textdate,0,4);
-		$xday = substr($textdate,6,2);
-		$xmonth = substr($textdate,4,2);
+		$day = dol_mktime(12, 0, 0, $month, 1, $year);
+		$textdate = strftime("%Y%m%d", $day);
+		$xyear = substr($textdate, 0, 4);
+		$xday = substr($textdate, 6, 2);
+		$xmonth = substr($textdate, 4, 2);
 
 		$i = 0;
 		while ($xmonth == $month)
@@ -210,10 +210,10 @@ else
 			$labels[$i] = $xday;
 
 			$day += 86400;
-			$textdate = strftime("%Y%m%d",$day);
-			$xyear = substr($textdate,0,4);
-			$xday = substr($textdate,6,2);
-			$xmonth = substr($textdate,4,2);
+			$textdate = strftime("%Y%m%d", $day);
+			$xyear = substr($textdate, 0, 4);
+			$xday = substr($textdate, 6, 2);
+			$xmonth = substr($textdate, 4, 2);
 
 			$i++;
 		}
@@ -232,15 +232,15 @@ else
 		foreach($datas as $i => $val)
 		{
 			$graph_datas[$i]=array(isset($labels[$i])?$labels[$i]:'',$datas[$i]);
-			if ($object->min_desired) array_push($graph_datas[$i],$datamin[$i]);
-			if ($object->min_allowed) array_push($graph_datas[$i],$dataall[$i]);
+			if ($object->min_desired) array_push($graph_datas[$i], $datamin[$i]);
+			if ($object->min_allowed) array_push($graph_datas[$i], $dataall[$i]);
 		}
 
 		$px1 = new DolGraph();
 		$px1->SetData($graph_datas);
 		$arraylegends=array($langs->transnoentities("Balance"));
-		if ($object->min_desired) array_push($arraylegends,$langs->transnoentities("BalanceMinimalDesired"));
-		if ($object->min_allowed) array_push($arraylegends,$langs->transnoentities("BalanceMinimalAllowed"));
+		if ($object->min_desired) array_push($arraylegends, $langs->transnoentities("BalanceMinimalDesired"));
+		if ($object->min_allowed) array_push($arraylegends, $langs->transnoentities("BalanceMinimalAllowed"));
 		$px1->SetLegend($arraylegends);
 		$px1->SetLegendWidthMin(180);
 		$px1->SetMaxValue($px1->GetCeilMaxValue()<0?0:$px1->GetCeilMaxValue());
@@ -253,7 +253,7 @@ else
 		$px1->setBgColorGrid(array(255,255,255));
 		$px1->SetHorizTickIncrement(1);
 		$px1->SetPrecisionY(0);
-		$px1->draw($file,$fileurl);
+		$px1->draw($file, $fileurl);
 
 		$show1=$px1->show();
 		unset($graph_datas);
@@ -331,10 +331,10 @@ else
 
 		$subtotal = 0;
 		$now = time();
-		$day = dol_mktime(12,0,0,1,1,$year);
-		$textdate = strftime("%Y%m%d",$day);
-		$xyear = substr($textdate,0,4);
-		$xday = substr($textdate,6,2);
+		$day = dol_mktime(12, 0, 0, 1, 1, $year);
+		$textdate = strftime("%Y%m%d", $day);
+		$xyear = substr($textdate, 0, 4);
+		$xday = substr($textdate, 6, 2);
 
 		$i = 0;
 		while ($xyear == $year && $day <= $datetime)
@@ -352,12 +352,12 @@ else
 			$dataall[$i] = $object->min_allowed;
 			if ($xday == '15')
 			{
-				$labels[$i] = dol_print_date($day,"%b");
+				$labels[$i] = dol_print_date($day, "%b");
 			}
 			$day += 86400;
-			$textdate = strftime("%Y%m%d",$day);
-			$xyear = substr($textdate,0,4);
-			$xday = substr($textdate,6,2);
+			$textdate = strftime("%Y%m%d", $day);
+			$xyear = substr($textdate, 0, 4);
+			$xday = substr($textdate, 6, 2);
 			$i++;
 		}
 
@@ -369,14 +369,14 @@ else
 		foreach($datas as $i => $val)
 		{
 			$graph_datas[$i]=array(isset($labels[$i])?$labels[$i]:'',$datas[$i]);
-			if ($object->min_desired) array_push($graph_datas[$i],$datamin[$i]);
-			if ($object->min_allowed) array_push($graph_datas[$i],$dataall[$i]);
+			if ($object->min_desired) array_push($graph_datas[$i], $datamin[$i]);
+			if ($object->min_allowed) array_push($graph_datas[$i], $dataall[$i]);
 		}
 		$px2 = new DolGraph();
 		$px2->SetData($graph_datas);
 		$arraylegends=array($langs->transnoentities("Balance"));
-		if ($object->min_desired) array_push($arraylegends,$langs->transnoentities("BalanceMinimalDesired"));
-		if ($object->min_allowed) array_push($arraylegends,$langs->transnoentities("BalanceMinimalAllowed"));
+		if ($object->min_desired) array_push($arraylegends, $langs->transnoentities("BalanceMinimalDesired"));
+		if ($object->min_allowed) array_push($arraylegends, $langs->transnoentities("BalanceMinimalAllowed"));
 		$px2->SetLegend($arraylegends);
 		$px2->SetLegendWidthMin(180);
 		$px2->SetMaxValue($px2->GetCeilMaxValue()<0?0:$px2->GetCeilMaxValue());
@@ -390,7 +390,7 @@ else
 		$px2->SetHideXGrid(true);
 		//$px2->SetHorizTickIncrement(30.41);	// 30.41 jours/mois en moyenne
 		$px2->SetPrecisionY(0);
-		$px2->draw($file,$fileurl);
+		$px2->draw($file, $fileurl);
 
 		$show2=$px2->show();
 
@@ -449,7 +449,7 @@ else
 		$subtotal = 0;
 
 		$day = $min;
-		$textdate=strftime("%Y%m%d",$day);
+		$textdate=strftime("%Y%m%d", $day);
 		//print "x".$textdate;
 		$i = 0;
 		while ($day <= ($max+86400))	// On va au dela du dernier jour
@@ -466,13 +466,13 @@ else
 			}
 			$datamin[$i] = $object->min_desired;
 			$dataall[$i] = $object->min_allowed;
-			if (substr($textdate,6,2) == '01' || $i == 0)
+			if (substr($textdate, 6, 2) == '01' || $i == 0)
 			{
-				$labels[$i] = substr($textdate,4,2);
+				$labels[$i] = substr($textdate, 4, 2);
 			}
 
 			$day += 86400;
-			$textdate=strftime("%Y%m%d",$day);
+			$textdate=strftime("%Y%m%d", $day);
 			$i++;
 		}
 
@@ -484,15 +484,15 @@ else
 		foreach($datas as $i => $val)
 		{
 			$graph_datas[$i]=array(isset($labels[$i])?$labels[$i]:'',$datas[$i]);
-			if ($object->min_desired) array_push($graph_datas[$i],$datamin[$i]);
-			if ($object->min_allowed) array_push($graph_datas[$i],$dataall[$i]);
+			if ($object->min_desired) array_push($graph_datas[$i], $datamin[$i]);
+			if ($object->min_allowed) array_push($graph_datas[$i], $dataall[$i]);
 		}
 
 		$px3 = new DolGraph();
 		$px3->SetData($graph_datas);
 		$arraylegends=array($langs->transnoentities("Balance"));
-		if ($object->min_desired) array_push($arraylegends,$langs->transnoentities("BalanceMinimalDesired"));
-		if ($object->min_allowed) array_push($arraylegends,$langs->transnoentities("BalanceMinimalAllowed"));
+		if ($object->min_desired) array_push($arraylegends, $langs->transnoentities("BalanceMinimalDesired"));
+		if ($object->min_allowed) array_push($arraylegends, $langs->transnoentities("BalanceMinimalAllowed"));
 		$px3->SetLegend($arraylegends);
 		$px3->SetLegendWidthMin(180);
 		$px3->SetMaxValue($px3->GetCeilMaxValue()<0?0:$px3->GetCeilMaxValue());
@@ -504,7 +504,7 @@ else
 		$px3->setBgColor('onglet');
 		$px3->setBgColorGrid(array(255,255,255));
 		$px3->SetPrecisionY(0);
-		$px3->draw($file,$fileurl);
+		$px3->draw($file, $fileurl);
 
 		$show3=$px3->show();
 
@@ -604,9 +604,9 @@ else
 		$data_debit = array();
 		for ($i = 0 ; $i < 31 ; $i++)
 		{
-			$data_credit[$i] = isset($credits[substr("0".($i+1),-2)]) ? $credits[substr("0".($i+1),-2)] : 0;
-			$data_debit[$i] = isset($debits[substr("0".($i+1),-2)]) ? $debits[substr("0".($i+1),-2)] : 0;
-			$labels[$i] = sprintf("%02d",$i+1);
+			$data_credit[$i] = isset($credits[substr("0".($i+1), -2)]) ? $credits[substr("0".($i+1), -2)] : 0;
+			$data_debit[$i] = isset($debits[substr("0".($i+1), -2)]) ? $debits[substr("0".($i+1), -2)] : 0;
+			$labels[$i] = sprintf("%02d", $i+1);
 			$datamin[$i] = $object->min_desired;
 		}
 
@@ -634,7 +634,7 @@ else
 		$px4->setBgColorGrid(array(255,255,255));
 		$px4->SetHorizTickIncrement(1);
 		$px4->SetPrecisionY(0);
-		$px4->draw($file,$fileurl);
+		$px4->draw($file, $fileurl);
 
 		$show4=$px4->show();
 
@@ -713,9 +713,9 @@ else
 		$data_debit = array();
 		for ($i = 0 ; $i < 12 ; $i++)
 		{
-			$data_credit[$i] = isset($credits[substr("0".($i+1),-2)]) ? $credits[substr("0".($i+1),-2)] : 0;
-			$data_debit[$i] = isset($debits[substr("0".($i+1),-2)]) ? $debits[substr("0".($i+1),-2)] : 0;
-			$labels[$i] = dol_print_date(dol_mktime(12,0,0,$i+1,1,2000),"%b");
+			$data_credit[$i] = isset($credits[substr("0".($i+1), -2)]) ? $credits[substr("0".($i+1), -2)] : 0;
+			$data_debit[$i] = isset($debits[substr("0".($i+1), -2)]) ? $debits[substr("0".($i+1), -2)] : 0;
+			$labels[$i] = dol_print_date(dol_mktime(12, 0, 0, $i+1, 1, 2000), "%b");
 			$datamin[$i] = $object->min_desired;
 		}
 
@@ -743,7 +743,7 @@ else
 		$px5->setBgColorGrid(array(255,255,255));
 		$px5->SetHorizTickIncrement(1);
 		$px5->SetPrecisionY(0);
-		$px5->draw($file,$fileurl);
+		$px5->draw($file, $fileurl);
 
 		$show5=$px5->show();
 
@@ -757,14 +757,14 @@ else
 
 // Onglets
 $head=bank_prepare_head($object);
-dol_fiche_head($head,'graph',$langs->trans("FinancialAccount"),0,'account');
+dol_fiche_head($head, 'graph', $langs->trans("FinancialAccount"), 0, 'account');
 
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/compta/bank/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 if ($account)
 {
-	if (! preg_match('/,/',$account))
+	if (! preg_match('/,/', $account))
 	{
 		$moreparam='&month='.$month.'&year='.$year.($mode=='showalltime'?'&mode=showalltime':'');
 
@@ -783,7 +783,7 @@ if ($account)
 	else
 	{
 	    $bankaccount=new Account($db);
-		$listid=explode(',',$account);
+		$listid=explode(',', $account);
 		foreach($listid as $key => $id)
 		{
 			$bankaccount->fetch($id);
@@ -804,7 +804,7 @@ dol_fiche_end();
 print '<table class="notopnoleftnoright" width="100%">';
 
 // Navigation links
-print '<tr><td align="right">'.$morehtml.' &nbsp; &nbsp; ';
+print '<tr><td class="right">'.$morehtml.' &nbsp; &nbsp; ';
 if ($mode == 'showalltime')
 {
 	print '<a href="'.$_SERVER["PHP_SELF"].'?account='.$account.'">';
@@ -830,34 +830,34 @@ if ($mode == 'standard')
 
 	// For month
 	$link="<a href='".$_SERVER["PHP_SELF"]."?account=".$account.($_GET["option"]!='all'?'':'&option=all')."&year=".$prevyear."&month=".$prevmonth."'>".img_previous('', 'class="valignbottom"')."</a> ".$langs->trans("Month")." <a href='".$_SERVER["PHP_SELF"]."?account=".$account."&year=".$nextyear."&month=".$nextmonth."'>".img_next('', 'class="valignbottom"')."</a>";
-	print '<tr><td align="right">'.$link.'</td></tr>';
+	print '<tr><td class="right">'.$link.'</td></tr>';
 
-	print '<tr><td align="center">';
+	print '<tr><td class="center">';
 	$file = "movement".$account."-".$year.$month.".png";
 	print $show4;
 	print '</td></tr>';
 
-	print '<tr><td align="center">';
+	print '<tr><td class="center">';
 	print $show1;
 	print '</td></tr>';
 
 	// For year
 	$prevyear=$year-1;$nextyear=$year+1;
 	$link="<a href='".$_SERVER["PHP_SELF"]."?account=".$account.($_GET["option"]!='all'?'':'&option=all')."&year=".($prevyear)."'>".img_previous('', 'class="valignbottom"')."</a> ".$langs->trans("Year")." <a href='".$_SERVER["PHP_SELF"]."?account=".$account."&year=".($nextyear)."'>".img_next('', 'class="valignbottom"')."</a>";
-	print '<tr><td align="right">'.$link.'</td></tr>';
+	print '<tr><td class="right">'.$link.'</td></tr>';
 
-	print '<tr><td align="center">';
+	print '<tr><td class="center">';
 	print $show5;
 	print '</td></tr>';
 
-	print '<tr><td align="center">';
+	print '<tr><td class="center">';
 	print $show2;
 	print '</td></tr>';
 }
 
 if ($mode == 'showalltime')
 {
-	print '<tr><td align="center">';
+	print '<tr><td class="center">';
 	print $show3;
 	print '</td></tr>';
 }

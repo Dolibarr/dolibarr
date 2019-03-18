@@ -41,12 +41,12 @@ class pdf_standardlabel extends CommonStickerGenerator
 	 * @param	array		$param			Associative array containing label content and optional parameters
 	 * @return	void
 	 */
-    function addSticker(&$pdf,$outputlangs,$param)
+    public function addSticker(&$pdf, $outputlangs, $param)
     {
 		// use this method in future refactoring
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Output a sticker on page at position _COUNTX, _COUNTY (_COUNTX and _COUNTY start from 0)
 	 * - %LOGO% is replace with company logo
@@ -61,7 +61,7 @@ class pdf_standardlabel extends CommonStickerGenerator
 	 * @param	string		$photo			Photo (full path to image file used as replacement for key %PHOTOS% into left, right, header or footer text)
 	 * @return	void
 	 */
-	function Add_PDF_label(&$pdf,$textleft,$header,$footer,$outputlangs,$textright='',$photo='')
+	public function Add_PDF_label(&$pdf, $textleft, $header, $footer, $outputlangs, $textright = '', $photo = '')
 	{
         // phpcs:enable
 		global $mysoc, $conf, $langs;
@@ -107,13 +107,13 @@ class pdf_standardlabel extends CommonStickerGenerator
 		{
 			$this->Tformat=$this->_Avery_Labels["CARD"];
 			//$this->_Pointille($pdf,$_PosX,$_PosY,$_PosX+$this->_Width,$_PosY+$this->_Height,0.3,25);
-			$this->_Croix($pdf,$_PosX,$_PosY,$_PosX+$this->_Width,$_PosY+$this->_Height,0.1,10);
+			$this->_Croix($pdf, $_PosX, $_PosY, $_PosX+$this->_Width, $_PosY+$this->_Height, 0.1, 10);
 		}
 
 		// Background
 		if ($backgroundimage)
 		{
-			$pdf->image($backgroundimage,$_PosX,$_PosY,$this->_Width,$this->_Height);
+			$pdf->image($backgroundimage, $_PosX, $_PosY, $this->_Width, $this->_Height);
 		}
 
 		$xleft=2; $ytop=2;
@@ -123,12 +123,12 @@ class pdf_standardlabel extends CommonStickerGenerator
 		{
 			if ($this->code == "CARD")
 			{
-				$pdf->SetDrawColor(128,128,128);
+				$pdf->SetDrawColor(128, 128, 128);
 				$pdf->Line($_PosX, $_PosY+$this->_Line_Height+1, $_PosX+$this->_Width, $_PosY+$this->_Line_Height+1); // Only 1 mm and not ytop for top text
-				$pdf->SetDrawColor(0,0,0);
+				$pdf->SetDrawColor(0, 0, 0);
 			}
 			$pdf->SetXY($_PosX+$xleft, $_PosY+1); // Only 1 mm and not ytop for top text
-			$pdf->Cell($this->_Width-2*$xleft, $this->_Line_Height, $outputlangs->convToOutputCharset($header),0,1,'C');
+			$pdf->Cell($this->_Width-2*$xleft, $this->_Line_Height, $outputlangs->convToOutputCharset($header), 0, 1, 'C');
 		}
 
 
@@ -151,47 +151,47 @@ class pdf_standardlabel extends CommonStickerGenerator
 		if ($textright=='')	// Only a left part
 		{
 			// Output left area
-			if ($textleft == '%LOGO%' && $logo) $pdf->Image($logo,$_PosX+$xleft,$_PosY+$ytop,$widthtouse,$heighttouse);
-			else if ($textleft == '%PHOTO%' && $photo) $pdf->Image($photo,$_PosX+$xleft,$_PosY+$ytop,$widthtouse,$heighttouse);
+			if ($textleft == '%LOGO%' && $logo) $pdf->Image($logo, $_PosX+$xleft, $_PosY+$ytop, $widthtouse, $heighttouse);
+			elseif ($textleft == '%PHOTO%' && $photo) $pdf->Image($photo, $_PosX+$xleft, $_PosY+$ytop, $widthtouse, $heighttouse);
 			else
 			{
 				$pdf->SetXY($_PosX+$xleft, $_PosY+$ytop);
-				$pdf->MultiCell($this->_Width, $this->_Line_Height, $outputlangs->convToOutputCharset($textleft),0,'L');
+				$pdf->MultiCell($this->_Width, $this->_Line_Height, $outputlangs->convToOutputCharset($textleft), 0, 'L');
 			}
 		}
-		else if ($textleft!='' && $textright!='')	//
+		elseif ($textleft!='' && $textright!='')	//
 		{
 			if ($textleft == '%LOGO%' || $textleft == '%PHOTO%')
 			{
-				if ($textleft == '%LOGO%' && $logo) $pdf->Image($logo,$_PosX+$xleft,$_PosY+$ytop,$widthtouse,$heighttouse);
-				else if ($textleft == '%PHOTO%' && $photo) $pdf->Image($photo,$_PosX+$xleft,$_PosY+$ytop,$widthtouse,$heighttouse);
+				if ($textleft == '%LOGO%' && $logo) $pdf->Image($logo, $_PosX+$xleft, $_PosY+$ytop, $widthtouse, $heighttouse);
+				elseif ($textleft == '%PHOTO%' && $photo) $pdf->Image($photo, $_PosX+$xleft, $_PosY+$ytop, $widthtouse, $heighttouse);
 				$pdf->SetXY($_PosX+$xleft+$widthtouse+1, $_PosY+$ytop);
-				$pdf->MultiCell($this->_Width-$xleft-$xleft-$widthtouse-1, $this->_Line_Height, $outputlangs->convToOutputCharset($textright),0,'R');
+				$pdf->MultiCell($this->_Width-$xleft-$xleft-$widthtouse-1, $this->_Line_Height, $outputlangs->convToOutputCharset($textright), 0, 'R');
 			}
-			else if ($textright == '%LOGO%' || $textright == '%PHOTO%')
+			elseif ($textright == '%LOGO%' || $textright == '%PHOTO%')
 			{
-				if ($textright == '%LOGO%' && $logo) $pdf->Image($logo,$_PosX+$this->_Width-$widthtouse-$xleft,$_PosY+$ytop,$widthtouse,$heighttouse);
-				else if ($textright == '%PHOTO%' && $photo) $pdf->Image($photo,$_PosX+$this->_Width-$widthtouse-$xleft,$_PosY+$ytop,$widthtouse,$heighttouse);
+				if ($textright == '%LOGO%' && $logo) $pdf->Image($logo, $_PosX+$this->_Width-$widthtouse-$xleft, $_PosY+$ytop, $widthtouse, $heighttouse);
+				elseif ($textright == '%PHOTO%' && $photo) $pdf->Image($photo, $_PosX+$this->_Width-$widthtouse-$xleft, $_PosY+$ytop, $widthtouse, $heighttouse);
 				$pdf->SetXY($_PosX+$xleft, $_PosY+$ytop);
-				$pdf->MultiCell($this->_Width-$widthtouse-$xleft-$xleft-1, $this->_Line_Height, $outputlangs->convToOutputCharset($textleft),0,'L');
+				$pdf->MultiCell($this->_Width-$widthtouse-$xleft-$xleft-1, $this->_Line_Height, $outputlangs->convToOutputCharset($textleft), 0, 'L');
 			}
 			else	// text on halft left and text on half right
 			{
 				$pdf->SetXY($_PosX+$xleft, $_PosY+$ytop);
-				$pdf->MultiCell(round($this->_Width/2), $this->_Line_Height, $outputlangs->convToOutputCharset($textleft),0,'L');
+				$pdf->MultiCell(round($this->_Width/2), $this->_Line_Height, $outputlangs->convToOutputCharset($textleft), 0, 'L');
 				$pdf->SetXY($_PosX+round($this->_Width/2), $_PosY+$ytop);
-				$pdf->MultiCell(round($this->_Width/2)-2, $this->_Line_Height, $outputlangs->convToOutputCharset($textright),0,'R');
+				$pdf->MultiCell(round($this->_Width/2)-2, $this->_Line_Height, $outputlangs->convToOutputCharset($textright), 0, 'R');
 			}
 		}
 		else	// Only a right part
 		{
 			// Output right area
-			if ($textright == '%LOGO%' && $logo) $pdf->Image($logo,$_PosX+$this->_Width-$widthtouse-$xleft,$_PosY+$ytop,$widthtouse,$heighttouse);
-			else if ($textright == '%PHOTO%' && $photo) $pdf->Image($photo,$_PosX+$this->_Width-$widthtouse-$xleft,$_PosY+$ytop,$widthtouse,$heighttouse);
+			if ($textright == '%LOGO%' && $logo) $pdf->Image($logo, $_PosX+$this->_Width-$widthtouse-$xleft, $_PosY+$ytop, $widthtouse, $heighttouse);
+			elseif ($textright == '%PHOTO%' && $photo) $pdf->Image($photo, $_PosX+$this->_Width-$widthtouse-$xleft, $_PosY+$ytop, $widthtouse, $heighttouse);
 			else
 			{
 				$pdf->SetXY($_PosX+$xleft, $_PosY+$ytop);
-				$pdf->MultiCell($this->_Width-$xleft, $this->_Line_Height, $outputlangs->convToOutputCharset($textright),0,'R');
+				$pdf->MultiCell($this->_Width-$xleft, $this->_Line_Height, $outputlangs->convToOutputCharset($textright), 0, 'R');
 			}
 		}
 
@@ -200,12 +200,12 @@ class pdf_standardlabel extends CommonStickerGenerator
 		{
 			if ($this->code == "CARD")
 			{
-				$pdf->SetDrawColor(128,128,128);
+				$pdf->SetDrawColor(128, 128, 128);
 				$pdf->Line($_PosX, $_PosY+$this->_Height-$this->_Line_Height-2, $_PosX+$this->_Width, $_PosY+$this->_Height-$this->_Line_Height-2);
-				$pdf->SetDrawColor(0,0,0);
+				$pdf->SetDrawColor(0, 0, 0);
 			}
 			$pdf->SetXY($_PosX, $_PosY+$this->_Height-$this->_Line_Height-1);
-			$pdf->Cell($this->_Width, $this->_Line_Height, $outputlangs->convToOutputCharset($footer),0,1,'C');
+			$pdf->Cell($this->_Width, $this->_Line_Height, $outputlangs->convToOutputCharset($footer), 0, 1, 'C');
 		}
 		//print "$_PosY+$this->_Height-$this->_Line_Height-1<br>\n";
 
@@ -227,7 +227,7 @@ class pdf_standardlabel extends CommonStickerGenerator
 
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Function to build PDF on disk, then output on HTTP strem.
 	 *
@@ -238,14 +238,14 @@ class pdf_standardlabel extends CommonStickerGenerator
 	 *  @param  string      $filename           Short file name of PDF output file
 	 *	@return int								1=OK, 0=KO
 	 */
-	function write_file($arrayofrecords,$outputlangs,$srctemplatepath,$outputdir='',$filename='tmp_address_sheet.pdf')
+	public function write_file($arrayofrecords, $outputlangs, $srctemplatepath, $outputdir = '', $filename = 'tmp_address_sheet.pdf')
 	{
         // phpcs:enable
 		global $user,$conf,$langs,$mysoc,$_Avery_Labels;
 
 		$this->code=$srctemplatepath;
 		$this->Tformat = $_Avery_Labels[$this->code];
-		if (empty($this->Tformat)) { dol_print_error('','ErrorBadTypeForCard'.$this->code); exit; }
+		if (empty($this->Tformat)) { dol_print_error('', 'ErrorBadTypeForCard'.$this->code); exit; }
 		$this->type = 'pdf';
         // standard format or custom
         if ($this->Tformat['paper-size']!='custom') {
@@ -273,12 +273,12 @@ class pdf_standardlabel extends CommonStickerGenerator
 		{
 			if (dol_mkdir($dir) < 0)
 			{
-				$this->error=$langs->trans("ErrorCanNotCreateDir",$dir);
+				$this->error=$langs->trans("ErrorCanNotCreateDir", $dir);
 				return 0;
 			}
 		}
 
-		$pdf=pdf_getInstance($this->format,$this->Tformat['metric'], $this->Tformat['orientation']);
+		$pdf=pdf_getInstance($this->format, $this->Tformat['metric'], $this->Tformat['orientation']);
 
 		if (class_exists('TCPDF'))
 		{
@@ -294,7 +294,7 @@ class pdf_standardlabel extends CommonStickerGenerator
 		$pdf->SetKeyWords($keywords);
 		if (! empty($conf->global->MAIN_DISABLE_PDF_COMPRESSION)) $pdf->SetCompression(false);
 
-		$pdf->SetMargins(0,0);
+		$pdf->SetMargins(0, 0);
 		$pdf->SetAutoPageBreak(false);
 
 		$this->_Metric_Doc = $this->Tformat['metric'];
@@ -316,7 +316,7 @@ class pdf_standardlabel extends CommonStickerGenerator
 		foreach($arrayofrecords as $val)
 		{
 			// imprime le texte specifique sur la carte
-			$this->Add_PDF_label($pdf,$val['textleft'],$val['textheader'],$val['textfooter'],$langs,$val['textright'],$val['photo']);
+			$this->Add_PDF_label($pdf, $val['textleft'], $val['textheader'], $val['textfooter'], $langs, $val['textright'], $val['photo']);
 		}
 
 		//$pdf->SetXY(10, 295);
@@ -324,7 +324,7 @@ class pdf_standardlabel extends CommonStickerGenerator
 
 
 		// Output to file
-		$pdf->Output($file,'F');
+		$pdf->Output($file, 'F');
 
 		if (! empty($conf->global->MAIN_UMASK))
 			@chmod($file, octdec($conf->global->MAIN_UMASK));

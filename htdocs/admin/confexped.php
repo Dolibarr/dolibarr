@@ -35,7 +35,7 @@ $langs->loadLangs(array('admin', 'sendings', 'deliveries'));
 if (!$user->admin)
   accessforbidden();
 
-$action=GETPOST('action','alpha');
+$action=GETPOST('action', 'alpha');
 
 
 /*
@@ -46,7 +46,7 @@ $action=GETPOST('action','alpha');
 if (! empty($conf->expedition->enabled) && empty($conf->global->MAIN_SUBMODULE_EXPEDITION))
 {
     // This option should always be set to on when module is on.
-    dolibarr_set_const($db, "MAIN_SUBMODULE_EXPEDITION", "1",'chaine',0,'',$conf->entity);
+    dolibarr_set_const($db, "MAIN_SUBMODULE_EXPEDITION", "1", 'chaine', 0, '', $conf->entity);
 }
 /*
 if ($action == 'activate_sending')
@@ -66,14 +66,14 @@ if ($action == 'disable_sending')
 // Delivery note
 if ($action == 'activate_delivery')
 {
-    dolibarr_set_const($db, "MAIN_SUBMODULE_EXPEDITION", "1",'chaine',0,'',$conf->entity);    // We must also enable this
-    dolibarr_set_const($db, "MAIN_SUBMODULE_LIVRAISON", "1",'chaine',0,'',$conf->entity);
+    dolibarr_set_const($db, "MAIN_SUBMODULE_EXPEDITION", "1", 'chaine', 0, '', $conf->entity);    // We must also enable this
+    dolibarr_set_const($db, "MAIN_SUBMODULE_LIVRAISON", "1", 'chaine', 0, '', $conf->entity);
 	header("Location: confexped.php");
 	exit;
 }
-else if ($action == 'disable_delivery')
+elseif ($action == 'disable_delivery')
 {
-	dolibarr_del_const($db, "MAIN_SUBMODULE_LIVRAISON",$conf->entity);
+	dolibarr_del_const($db, "MAIN_SUBMODULE_LIVRAISON", $conf->entity);
     header("Location: confexped.php");
     exit;
 }
@@ -86,10 +86,10 @@ else if ($action == 'disable_delivery')
 $dir = DOL_DOCUMENT_ROOT."/core/modules/expedition/";
 $form=new Form($db);
 
-llxHeader("",$langs->trans("SendingsSetup"));
+llxHeader("", $langs->trans("SendingsSetup"));
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
-print load_fiche_titre($langs->trans("SendingsSetup"),$linkback,'title_setup');
+print load_fiche_titre($langs->trans("SendingsSetup"), $linkback, 'title_setup');
 print '<br>';
 $head = expedition_admin_prepare_head();
 
@@ -134,11 +134,11 @@ print '<td class="center">';
 
 if (empty($conf->global->MAIN_SUBMODULE_LIVRAISON))
 {
-	print '<a href="confexped.php?action=activate_delivery">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
+	print '<a href="confexped.php?action=activate_delivery">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
 }
 else
 {
-	print '<a href="confexped.php?action=disable_delivery">'.img_picto($langs->trans("Enabled"),'switch_on').'</a>';
+	print '<a href="confexped.php?action=disable_delivery">'.img_picto($langs->trans("Enabled"), 'switch_on').'</a>';
 }
 
 print "</td>";

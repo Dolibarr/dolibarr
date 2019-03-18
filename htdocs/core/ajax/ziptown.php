@@ -22,12 +22,12 @@
  *       \brief     File to return Ajax response on zipcode or town request
  */
 
-if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL',1); // Disables token renewal
-if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU','1');
-if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML','1');
-if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');
-if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC','1');
-if (! defined('NOCSRFCHECK'))    define('NOCSRFCHECK','1');
+if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', 1); // Disables token renewal
+if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1');
+if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML', '1');
+if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
+if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC', '1');
+if (! defined('NOCSRFCHECK'))    define('NOCSRFCHECK', '1');
 
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
@@ -47,7 +47,7 @@ top_httphead();
 
 //print '<!-- Ajax page called with url '.dol_escape_htmltag($_SERVER["PHP_SELF"]).'?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]).' -->'."\n";
 
-dol_syslog("GET is ".join(',',$_GET).', MAIN_USE_ZIPTOWN_DICTIONNARY='.(empty($conf->global->MAIN_USE_ZIPTOWN_DICTIONNARY)?'':$conf->global->MAIN_USE_ZIPTOWN_DICTIONNARY));
+dol_syslog("GET is ".join(',', $_GET).', MAIN_USE_ZIPTOWN_DICTIONNARY='.(empty($conf->global->MAIN_USE_ZIPTOWN_DICTIONNARY)?'':$conf->global->MAIN_USE_ZIPTOWN_DICTIONNARY));
 //var_dump($_GET);
 
 // Generation of list of zip-town
@@ -121,9 +121,9 @@ if (! empty($_GET['zipcode']) || ! empty($_GET['town']))
 			$row_array['state_id'] = $row['fk_county'];
 
 			// TODO Use a cache here to avoid to make select_state in each pass (this make a SQL and lot of logs)
-			$row_array['states'] = $formcompany->select_state('',$row['fk_country'],'');
+			$row_array['states'] = $formcompany->select_state('', $row['fk_country'], '');
 
-			array_push($return_arr,$row_array);
+			array_push($return_arr, $row_array);
 		}
 	}
 
@@ -135,4 +135,3 @@ else
 }
 
 $db->close();
-
