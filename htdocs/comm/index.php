@@ -164,7 +164,7 @@ if (! empty($conf->propal->enabled) && $user->rights->propal->lire)
 		if ($num > 0)
 		{
 			$i = 0;
-			$nbofloop=min($num, (empty($conf->global->MAIN_MAXLIST_OVERLOAD)?5:$conf->global->MAIN_MAXLIST_OVERLOAD));
+			$nbofloop=min($num, (empty($conf->global->MAIN_MAXLIST_OVERLOAD)?500:$conf->global->MAIN_MAXLIST_OVERLOAD));
 			while ($i < $nbofloop)
 			{
 				$obj = $db->fetch_object($resql);
