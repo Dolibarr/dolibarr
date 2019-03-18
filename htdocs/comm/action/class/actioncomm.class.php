@@ -91,14 +91,14 @@ class ActionComm extends CommonObject
     /**
      * Date creation record (datec)
      *
-     * @var DateTime
+     * @var integer
      */
     public $datec;			
     
     /**
      * Date modification record (tms)
      *
-     * @var DateTime
+     * @var integer
      */
     public $datem;			
 
@@ -133,14 +133,14 @@ class ActionComm extends CommonObject
     /**
      * Date action start (datep)
      *
-     * @var DateTime
+     * @var integer
      */
     public $datep;
     
     /**
      * Date action end (datep2)
      *
-     * @var DateTime
+     * @var integer
      */
     public $datep2;			
 
