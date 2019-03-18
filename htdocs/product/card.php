@@ -1024,14 +1024,10 @@ else
         // Duration
         if ($type == 1)
         {
-            print '<tr><td>' . $langs->trans("Duration") . '</td><td colspan="3"><input name="duration_value" size="6" maxlength="5" value="' . $duration_value . '"> &nbsp;';
-            print '<input name="duration_unit" type="radio" value="i">'.$langs->trans("Minute").'&nbsp;';
-            print '<input name="duration_unit" type="radio" value="h">'.$langs->trans("Hour").'&nbsp;';
-            print '<input name="duration_unit" type="radio" value="d">'.$langs->trans("Day").'&nbsp;';
-            print '<input name="duration_unit" type="radio" value="w">'.$langs->trans("Week").'&nbsp;';
-            print '<input name="duration_unit" type="radio" value="m">'.$langs->trans("Month").'&nbsp;';
-            print '<input name="duration_unit" type="radio" value="y">'.$langs->trans("Year").'&nbsp;';
-            print '</td></tr>';
+            print '<tr><td>'.$langs->trans("Duration").'</td><td colspan="3">';
+            print '<input name="surface" size="4" value="'.GETPOST('duration_value').'">';
+            print $formproduct->select_measuring_units("duration_unit", "time");
+            print '</td></tr>';      
         }
 
         if ($type != 1)	// Nature, Weight and volume only applies to products and not to services
@@ -1404,19 +1400,9 @@ else
             if ($object->isService())
             {
                 // Duration
-                print '<tr><td>'.$langs->trans("Duration").'</td><td colspan="3"><input name="duration_value" size="3" maxlength="5" value="'.$object->duration_value.'">';
-                print '&nbsp; ';
-                print '<input name="duration_unit" type="radio" value="i"'.($object->duration_unit=='i'?' checked':'').'>'.$langs->trans("Minute");
-                print '&nbsp; ';
-                print '<input name="duration_unit" type="radio" value="h"'.($object->duration_unit=='h'?' checked':'').'>'.$langs->trans("Hour");
-                print '&nbsp; ';
-                print '<input name="duration_unit" type="radio" value="d"'.($object->duration_unit=='d'?' checked':'').'>'.$langs->trans("Day");
-                print '&nbsp; ';
-                print '<input name="duration_unit" type="radio" value="w"'.($object->duration_unit=='w'?' checked':'').'>'.$langs->trans("Week");
-                print '&nbsp; ';
-                print '<input name="duration_unit" type="radio" value="m"'.($object->duration_unit=='m'?' checked':'').'>'.$langs->trans("Month");
-                print '&nbsp; ';
-                print '<input name="duration_unit" type="radio" value="y"'.($object->duration_unit=='y'?' checked':'').'>'.$langs->trans("Year");
+                print '<tr><td>'.$langs->trans("Duration").'</td><td colspan="3">';
+                print '<input name="surface" size="5" value="'.$object->duration_value.'"> ';
+                print $formproduct->select_measuring_units("duration_unit", "time", $object->duration_unit);
                 print '</td></tr>';
             }
             else
