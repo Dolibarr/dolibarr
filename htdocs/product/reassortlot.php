@@ -285,14 +285,14 @@ if ($resql)
 		print '</td>';
 	}
 	print '<td class="liste_titre"><input class="flat" type="text" name="search_warehouse" size="6" value="'.$search_warehouse.'"></td>';
-	print '<td class="liste_titre" align="center"><input class="flat" type="text" name="search_batch" size="6" value="'.$search_batch.'"></td>';
-	print '<td class="liste_titre" align="right">&nbsp;</td>';
+	print '<td class="liste_titre center"><input class="flat" type="text" name="search_batch" size="6" value="'.$search_batch.'"></td>';
+	print '<td class="liste_titre right">&nbsp;</td>';
 	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre">&nbsp;</td>';
     print '<td class="liste_titre">&nbsp;</td>';
-    print '<td class="liste_titre" align="right">';
+    print '<td class="liste_titre right">';
     $searchpicto=$form->showFilterAndCheckAddButtons(0);
     print $searchpicto;
     print '</td>';
@@ -302,18 +302,18 @@ if ($resql)
 	print "<tr class=\"liste_titre\">";
 	print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "p.ref", $param, "", "", $sortfield, $sortorder);
 	print_liste_field_titre("Label", $_SERVER["PHP_SELF"], "p.label", $param, "", "", $sortfield, $sortorder);
-	if (! empty($conf->service->enabled) && $type == 1) print_liste_field_titre("Duration", $_SERVER["PHP_SELF"], "p.duration", $param, "", 'align="center"', $sortfield, $sortorder);
+	if (! empty($conf->service->enabled) && $type == 1) print_liste_field_titre("Duration", $_SERVER["PHP_SELF"], "p.duration", $param, "", '', $sortfield, $sortorder, 'center ');
 	print_liste_field_titre("Warehouse", $_SERVER["PHP_SELF"], "e.ref", $param, "", '', $sortfield, $sortorder);
-	//print_liste_field_titre("DesiredStock", $_SERVER["PHP_SELF"], "p.desiredstock",$param,"",'align="right"',$sortfield,$sortorder);
-	print_liste_field_titre("Batch", $_SERVER["PHP_SELF"], "pb.batch", $param, "", 'align="center"', $sortfield, $sortorder);
-	print_liste_field_titre("EatByDate", $_SERVER["PHP_SELF"], "pb.eatby", $param, "", 'align="center"', $sortfield, $sortorder);
-	print_liste_field_titre("SellByDate", $_SERVER["PHP_SELF"], "pb.sellby", $param, "", 'align="center"', $sortfield, $sortorder);
-	print_liste_field_titre("PhysicalStock", $_SERVER["PHP_SELF"], "stock_physique", $param, "", 'align="right"', $sortfield, $sortorder);
+	//print_liste_field_titre("DesiredStock", $_SERVER["PHP_SELF"], "p.desiredstock",$param,"",'',$sortfield,$sortorder, 'right );
+	print_liste_field_titre("Batch", $_SERVER["PHP_SELF"], "pb.batch", $param, "", '', $sortfield, $sortorder, 'center ');
+	print_liste_field_titre("EatByDate", $_SERVER["PHP_SELF"], "pb.eatby", $param, "", '', $sortfield, $sortorder, 'center ');
+	print_liste_field_titre("SellByDate", $_SERVER["PHP_SELF"], "pb.sellby", $param, "", '', $sortfield, $sortorder, 'center ');
+	print_liste_field_titre("PhysicalStock", $_SERVER["PHP_SELF"], "stock_physique", $param, "", '', $sortfield, $sortorder, 'right ');
 	// TODO Add info of running suppliers/customers orders
-	//print_liste_field_titre("TheoreticalStock",$_SERVER["PHP_SELF"], "stock_theorique",$param,"",'align="right"',$sortfield,$sortorder);
+	//print_liste_field_titre("TheoreticalStock",$_SERVER["PHP_SELF"], "stock_theorique",$param,"",'',$sortfield,$sortorder, 'right ');
 	print_liste_field_titre('');
-	print_liste_field_titre( $langs->trans("Status").' ('.$langs->trans("Sell").')', $_SERVER["PHP_SELF"], "p.tosell", "", $param, 'align="right"', $sortfield, $sortorder);
-	print_liste_field_titre( $langs->trans("Status").' ('.$langs->trans("Buy").')', $_SERVER["PHP_SELF"], "p.tobuy", "", $param, 'align="right"', $sortfield, $sortorder);
+	print_liste_field_titre("ProductStatusOnSell", $_SERVER["PHP_SELF"], "p.tosell", "", $param, '', $sortfield, $sortorder, 'right ');
+	print_liste_field_titre("ProductStatusOnBuy", $_SERVER["PHP_SELF"], "p.tobuy", "", $param, '', $sortfield, $sortorder, 'right ');
 	print_liste_field_titre('');
 	print "</tr>\n";
 
@@ -375,16 +375,16 @@ if ($resql)
 
 		if (! empty($conf->service->enabled) && $type == 1)
 		{
-			print '<td align="center">';
+			print '<td class="center">';
 			if (preg_match('/([0-9]+)y/i', $objp->duration, $regs)) print $regs[1].' '.$langs->trans("DurationYear");
 			elseif (preg_match('/([0-9]+)m/i', $objp->duration, $regs)) print $regs[1].' '.$langs->trans("DurationMonth");
 			elseif (preg_match('/([0-9]+)d/i', $objp->duration, $regs)) print $regs[1].' '.$langs->trans("DurationDay");
 			else print $objp->duration;
 			print '</td>';
 		}
-		//print '<td align="right">'.$objp->stock_theorique.'</td>';
-		//print '<td align="right">'.$objp->seuil_stock_alerte.'</td>';
-		//print '<td align="right">'.$objp->desiredstock.'</td>';
+		//print '<td class="right">'.$objp->stock_theorique.'</td>';
+		//print '<td class="right">'.$objp->seuil_stock_alerte.'</td>';
+		//print '<td class="right">'.$objp->desiredstock.'</td>';
 
 		// Warehouse
 		print '<td>';
@@ -395,22 +395,22 @@ if ($resql)
 		print '</td>';
 
 		// Lot
-		print '<td align="center">';
+		print '<td class="center">';
 		if ($product_lot_static->batch)
 		{
 			print $product_lot_static->getNomUrl(1);
 		}
 		print '</td>';
 
-		print '<td align="center">'.dol_print_date($db->jdate($objp->eatby), 'day').'</td>';
-		print '<td align="center">'.dol_print_date($db->jdate($objp->sellby), 'day').'</td>';
-		print '<td align="right">';
+		print '<td class="center">'.dol_print_date($db->jdate($objp->eatby), 'day').'</td>';
+		print '<td class="center">'.dol_print_date($db->jdate($objp->sellby), 'day').'</td>';
+		print '<td class="right">';
         //if ($objp->seuil_stock_alerte && ($objp->stock_physique < $objp->seuil_stock_alerte)) print img_warning($langs->trans("StockTooLow")).' ';
 		print $objp->stock_physique;
 		print '</td>';
-		print '<td align="right"><a href="'.DOL_URL_ROOT.'/product/stock/movement_list.php?idproduct='.$product_static->id.'&search_warehouse='.$objp->fk_entrepot.'&search_batch='.($objp->batch != 'Undefined' ? $objp->batch : 'Undefined').'">'.$langs->trans("Movements").'</a></td>';
-		print '<td align="right" class="nowrap">'.$product_static->LibStatut($objp->statut, 5, 0).'</td>';
-        print '<td align="right" class="nowrap">'.$product_static->LibStatut($objp->tobuy, 5, 1).'</td>';
+		print '<td class="right"><a href="'.DOL_URL_ROOT.'/product/stock/movement_list.php?idproduct='.$product_static->id.'&search_warehouse='.$objp->fk_entrepot.'&search_batch='.($objp->batch != 'Undefined' ? $objp->batch : 'Undefined').'">'.$langs->trans("Movements").'</a></td>';
+		print '<td class="right nowrap">'.$product_static->LibStatut($objp->statut, 5, 0).'</td>';
+        print '<td class="right nowrap">'.$product_static->LibStatut($objp->tobuy, 5, 1).'</td>';
         print '<td></td>';
 		print "</tr>\n";
 		$i++;

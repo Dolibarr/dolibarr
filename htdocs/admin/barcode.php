@@ -44,7 +44,12 @@ include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
 if ($action == 'setbarcodeproducton')
 {
-	$res=dolibarr_set_const($db, "BARCODE_PRODUCT_ADDON_NUM", GETPOST('value'), 'chaine', 0, '', $conf->entity);
+    $barcodenumberingmodule = GETPOST('value', 'alpha');
+	$res=dolibarr_set_const($db, "BARCODE_PRODUCT_ADDON_NUM", $barcodenumberingmodule, 'chaine', 0, '', $conf->entity);
+	if ($barcodenumberingmodule == 'mod_barcode_product_standard' && empty($conf->global->BARCODE_STANDARD_PRODUCT_MASK))
+	{
+	    $res=dolibarr_set_const($db, "BARCODE_STANDARD_PRODUCT_MASK", '020{000000000}', 'chaine', 0, '', $conf->entity);
+	}
 }
 elseif ($action == 'setbarcodeproductoff')
 {
@@ -199,8 +204,8 @@ print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Description").'</td>';
-print '<td width="200" align="center">'.$langs->trans("Example").'</td>';
-print '<td align="center" width="60">'.$langs->trans("CodeBarGenerator").'</td>';
+print '<td width="200" class="center">'.$langs->trans("Example").'</td>';
+print '<td class="center" width="60">'.$langs->trans("CodeBarGenerator").'</td>';
 print "</tr>\n";
 
 $sql = "SELECT rowid, code as encoding, libelle, coder, example";
@@ -229,7 +234,7 @@ if ($resql)
 		print '</td>';
 
 		// Show example
-		print '<td align="center">';
+		print '<td class="center">';
 		if ($obj->coder && $obj->coder != -1)
 		{
 			$result=0;
@@ -277,7 +282,7 @@ if ($resql)
 		}
 		print '</td>';
 
-		print '<td align="center">';
+		print '<td class="center">';
 		print $formbarcode->setBarcodeEncoder($obj->coder, $barcodelist, $obj->rowid, 'form'.$i);
 		print "</td></tr>\n";
 
@@ -307,7 +312,7 @@ print "<input type=\"hidden\" name=\"action\" value=\"update\">";
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td>';
-print '<td width="60" align="center">'.$langs->trans("Value").'</td>';
+print '<td width="60" class="center">'.$langs->trans("Value").'</td>';
 print '<td>&nbsp;</td>';
 print '</tr>';
 
@@ -317,7 +322,7 @@ if (! isset($_SERVER['WINDIR']))
 
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("GenbarcodeLocation").'</td>';
-	print '<td width="60" align="center">';
+	print '<td width="60" class="center">';
 	print '<input type="text" size="40" name="GENBARCODE_LOCATION" value="'.$conf->global->GENBARCODE_LOCATION.'">';
 	if (! empty($conf->global->GENBARCODE_LOCATION) && ! @file_exists($conf->global->GENBARCODE_LOCATION))
 	{
@@ -369,8 +374,8 @@ if ($conf->produit->enabled)
 	print '<td width="140">'.$langs->trans("Name").'</td>';
 	print '<td>'.$langs->trans("Description").'</td>';
 	print '<td>'.$langs->trans("Example").'</td>';
-	print '<td align="center" width="80">'.$langs->trans("Status").'</td>';
-	print '<td align="center" width="60">'.$langs->trans("ShortInfo").'</td>';
+	print '<td class="center" width="80">'.$langs->trans("Status").'</td>';
+	print '<td class="center" width="60">'.$langs->trans("ShortInfo").'</td>';
 	print "</tr>\n";
 
 	$dirbarcodenum=array_merge(array('/core/modules/barcode/'), $conf->modules_parts['barcode']);
@@ -406,17 +411,17 @@ if ($conf->produit->enabled)
 
 	    			if ($conf->global->BARCODE_PRODUCT_ADDON_NUM == "$file")
 	    			{
-	    				print '<td align="center"><a href="'.$_SERVER['PHP_SELF'].'?action=setbarcodeproductoff&amp;value='.$file.'">';
+	    				print '<td class="center"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setbarcodeproductoff&amp;value='.$file.'">';
 	    				print img_picto($langs->trans("Activated"), 'switch_on');
 	    				print '</a></td>';
 	    			}
 	    			else
 	    			{
-	    				print '<td align="center"><a href="'.$_SERVER['PHP_SELF'].'?action=setbarcodeproducton&amp;value='.$file.'">';
+	    				print '<td class="center"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setbarcodeproducton&amp;value='.$file.'">';
 	    				print img_picto($langs->trans("Disabled"), 'switch_off');
 	    				print '</a></td>';
 	    			}
-	    			print '<td align="center">';
+	    			print '<td class="center">';
 	    			$s=$modBarCode->getToolTip($langs, null, -1);
 	    			print $form->textwithpicto('', $s, 1);
 	    			print '</td>';

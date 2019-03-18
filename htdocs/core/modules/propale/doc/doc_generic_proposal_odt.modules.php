@@ -38,23 +38,21 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/doc.lib.php';
  */
 class doc_generic_proposal_odt extends ModelePDFPropales
 {
-	/**
-	 * Issuer
-	 * @var Company object that emits
-	 */
-	public $emetteur;
-
-	/**
-   * @var array() Minimum version of PHP required by module.
-	 * e.g.: PHP ≥ 5.4 = array(5, 4)
-   */
-	public $phpmin = array(5, 4);
-
-	/**
-     * Dolibarr version of the loaded document
-     * @public string
+    /**
+     * @var Company Issuer object that emits
      */
-	public $version = 'dolibarr';
+    public $emetteur;
+
+    /**
+     * @var array Minimum version of PHP required by module.
+     * e.g.: PHP ≥ 5.4 = array(5, 4)
+     */
+    public $phpmin = array(5, 4);
+
+    /**
+     * @var string Dolibarr version of the loaded document
+     */
+    public $version = 'dolibarr';
 
 
 	/**
@@ -62,7 +60,7 @@ class doc_generic_proposal_odt extends ModelePDFPropales
 	 *
 	 *  @param		DoliDB		$db      Database handler
 	 */
-	function __construct($db)
+	public function __construct($db)
 	{
 		global $conf, $langs, $mysoc;
 
@@ -107,7 +105,7 @@ class doc_generic_proposal_odt extends ModelePDFPropales
 	 *	@param	Translate	$langs      Lang object to use for output
 	 *	@return string       			Description
 	 */
-	function info($langs)
+	public function info($langs)
 	{
 		global $conf,$langs;
 
@@ -221,7 +219,7 @@ class doc_generic_proposal_odt extends ModelePDFPropales
 		return $texte;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Function to build a document on disk using the generic odt module.
 	 *
@@ -233,7 +231,7 @@ class doc_generic_proposal_odt extends ModelePDFPropales
 	 *  @param		int			$hideref			Do not show ref
 	 *	@return		int         					1 if OK, <=0 if KO
 	 */
-	function write_file($object, $outputlangs, $srctemplatepath, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
+	public function write_file($object, $outputlangs, $srctemplatepath, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
         // phpcs:enable
 		global $user,$langs,$conf,$mysoc,$hookmanager;
@@ -369,7 +367,7 @@ class doc_generic_proposal_odt extends ModelePDFPropales
 				// Open and load template
 				require_once ODTPHP_PATH.'odf.php';
 				try {
-					$odfHandler = new odf(
+                    $odfHandler = new odf(
 						$srctemplatepath,
 						array(
 						'PATH_TO_TMP'	  => $conf->propal->multidir_temp[$object->entity],

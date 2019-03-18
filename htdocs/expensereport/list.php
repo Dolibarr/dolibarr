@@ -556,16 +556,16 @@ if ($resql)
     // Amount with no tax
 	if (! empty($arrayfields['d.total_ht']['checked']))
 	{
-    	print '<td class="liste_titre" align="right"><input class="flat" type="text" size="5" name="search_amount_ht" value="'.$search_amount_ht.'"></td>';
+    	print '<td class="liste_titre right"><input class="flat" type="text" size="5" name="search_amount_ht" value="'.$search_amount_ht.'"></td>';
 	}
 	if (! empty($arrayfields['d.total_vat']['checked']))
 	{
-	   print '<td class="liste_titre" align="right"><input class="flat" type="text" size="5" name="search_amount_vat" value="'.$search_amount_vat.'"></td>';
+	   print '<td class="liste_titre right"><input class="flat" type="text" size="5" name="search_amount_vat" value="'.$search_amount_vat.'"></td>';
 	}
 	// Amount with all taxes
 	if (! empty($arrayfields['d.total_ttc']['checked']))
 	{
-	   print '<td class="liste_titre" align="right"><input class="flat" type="text" size="5" name="search_amount_ttc" value="'.$search_amount_ttc.'"></td>';
+	   print '<td class="liste_titre right"><input class="flat" type="text" size="5" name="search_amount_ttc" value="'.$search_amount_ttc.'"></td>';
 	}
 	// Extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
@@ -589,12 +589,12 @@ if ($resql)
 	// Status
 	if (! empty($arrayfields['d.fk_statut']['checked']))
 	{
-    	print '<td class="liste_titre" align="right">';
+    	print '<td class="liste_titre right">';
     	select_expensereport_statut($search_status, 'search_status', 1, 1);
     	print '</td>';
 	}
 	// Action column
-	print '<td class="liste_titre" align="middle">';
+	print '<td class="liste_titre middle">';
 	$searchpicto=$form->showFilterButtons();
 	print $searchpicto;
 	print '</td>';
@@ -670,7 +670,7 @@ if ($resql)
     			    print '</span>';
     			}
     			print '</td>';
-    			print '<td width="16" align="right" class="nobordernopadding hideonsmartphone">';
+    			print '<td width="16" class="nobordernopadding hideonsmartphone right">';
     			$filename=dol_sanitizeFileName($obj->ref);
     			$filedir=$conf->expensereport->dir_output . '/' . dol_sanitizeFileName($obj->ref);
     			$urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->rowid;
@@ -696,28 +696,28 @@ if ($resql)
 			}
 			// Start date
 			if (! empty($arrayfields['d.date_debut']['checked'])) {
-                print '<td align="center">'.($obj->date_debut > 0 ? dol_print_date($db->jdate($obj->date_debut), 'day') : '').'</td>';
+                print '<td class="center">'.($obj->date_debut > 0 ? dol_print_date($db->jdate($obj->date_debut), 'day') : '').'</td>';
                 if (! $i) $totalarray['nbfield']++;
             }
             // End date
 			if (! empty($arrayfields['d.date_fin']['checked'])) {
-			    print '<td align="center">'.($obj->date_fin > 0 ? dol_print_date($db->jdate($obj->date_fin), 'day') : '').'</td>';
+			    print '<td class="center">'.($obj->date_fin > 0 ? dol_print_date($db->jdate($obj->date_fin), 'day') : '').'</td>';
 			    if (! $i) $totalarray['nbfield']++;
 			}
 			// Date validation
 			if (! empty($arrayfields['d.date_valid']['checked'])) {
-			    print '<td align="center">'.($obj->date_valid > 0 ? dol_print_date($db->jdate($obj->date_valid), 'day') : '').'</td>';
+			    print '<td class="center">'.($obj->date_valid > 0 ? dol_print_date($db->jdate($obj->date_valid), 'day') : '').'</td>';
 			    if (! $i) $totalarray['nbfield']++;
 			}
 			// Date approval
 			if (! empty($arrayfields['d.date_approve']['checked'])) {
-			    print '<td align="center">'.($obj->date_approve > 0 ? dol_print_date($db->jdate($obj->date_approve), 'day') : '').'</td>';
+			    print '<td class="center">'.($obj->date_approve > 0 ? dol_print_date($db->jdate($obj->date_approve), 'day') : '').'</td>';
 			    if (! $i) $totalarray['nbfield']++;
 			}
 			// Amount HT
             if (! empty($arrayfields['d.total_ht']['checked']))
             {
-    		      print '<td align="right">'.price($obj->total_ht)."</td>\n";
+    		      print '<td class="right">'.price($obj->total_ht)."</td>\n";
     		      if (! $i) $totalarray['nbfield']++;
     		      if (! $i) $totalarray['totalhtfield']=$totalarray['nbfield'];
     		      $totalarray['totalht'] += $obj->total_ht;
@@ -725,7 +725,7 @@ if ($resql)
             // Amount VAT
             if (! empty($arrayfields['d.total_vat']['checked']))
             {
-                print '<td align="right">'.price($obj->total_tva)."</td>\n";
+                print '<td class="right">'.price($obj->total_tva)."</td>\n";
                 if (! $i) $totalarray['nbfield']++;
     		    if (! $i) $totalarray['totalvatfield']=$totalarray['nbfield'];
     		    $totalarray['totalvat'] += $obj->total_tva;
@@ -733,7 +733,7 @@ if ($resql)
             // Amount TTC
             if (! empty($arrayfields['d.total_ttc']['checked']))
             {
-                print '<td align="right">'.price($obj->total_ttc)."</td>\n";
+                print '<td class="right">'.price($obj->total_ttc)."</td>\n";
                 if (! $i) $totalarray['nbfield']++;
     		    if (! $i) $totalarray['totalttcfield']=$totalarray['nbfield'];
     		    $totalarray['totalttc'] += $obj->total_ttc;
@@ -748,7 +748,7 @@ if ($resql)
             // Date creation
             if (! empty($arrayfields['d.date_create']['checked']))
             {
-                print '<td align="center" class="nowrap">';
+                print '<td class="nowrap center">';
                 print dol_print_date($db->jdate($obj->date_create), 'dayhour');
                 print '</td>';
                 if (! $i) $totalarray['nbfield']++;
@@ -756,7 +756,7 @@ if ($resql)
             // Date modification
             if (! empty($arrayfields['d.tms']['checked']))
             {
-                print '<td align="center" class="nowrap">';
+                print '<td class="nowrap center">';
                 print dol_print_date($db->jdate($obj->date_modif), 'dayhour');
                 print '</td>';
                 if (! $i) $totalarray['nbfield']++;
@@ -764,11 +764,11 @@ if ($resql)
             // Status
             if (! empty($arrayfields['d.fk_statut']['checked']))
             {
-                print '<td align="right" class="nowrap">'.$expensereportstatic->getLibStatut(5).'</td>';
+                print '<td class="nowrap right">'.$expensereportstatic->getLibStatut(5).'</td>';
                 if (! $i) $totalarray['nbfield']++;
             }
             // Action column
-            print '<td class="nowrap" align="center">';
+            print '<td class="nowrap center">';
             if ($massactionbutton || $massaction)   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
             {
                 $selected=0;
@@ -808,9 +808,9 @@ if ($resql)
 	            if ($num < $limit && empty($offset)) print '<td class="left">'.$langs->trans("Total").'</td>';
 	            else print '<td class="left">'.$langs->trans("Totalforthispage").'</td>';
 	        }
-	        elseif ($totalarray['totalhtfield'] == $i) print '<td align="right">'.price($totalarray['totalht']).'</td>';
-	        elseif ($totalarray['totalvatfield'] == $i) print '<td align="right">'.price($totalarray['totalvat']).'</td>';
-	        elseif ($totalarray['totalttcfield'] == $i) print '<td align="right">'.price($totalarray['totalttc']).'</td>';
+	        elseif ($totalarray['totalhtfield'] == $i) print '<td class="right">'.price($totalarray['totalht']).'</td>';
+	        elseif ($totalarray['totalvatfield'] == $i) print '<td class="right">'.price($totalarray['totalvat']).'</td>';
+	        elseif ($totalarray['totalttcfield'] == $i) print '<td class="right">'.price($totalarray['totalttc']).'</td>';
 	        else print '<td></td>';
 	    }
 	    print '</tr>';

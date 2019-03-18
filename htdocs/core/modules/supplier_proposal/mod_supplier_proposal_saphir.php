@@ -62,7 +62,7 @@ class mod_supplier_proposal_saphir extends ModeleNumRefSupplierProposal
      *
      *  @return     string      Texte descripif
      */
-	function info()
+    public function info()
     {
     	global $conf, $langs;
 
@@ -85,9 +85,9 @@ class mod_supplier_proposal_saphir extends ModeleNumRefSupplierProposal
 
 		// Parametrage du prefix
 		$texte.= '<tr><td>'.$langs->trans("Mask").':</td>';
-		$texte.= '<td align="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="masksupplier_proposal" value="'.$conf->global->SUPPLIER_PROPOSAL_SAPHIR_MASK.'">', $tooltip, 1, 1).'</td>';
+		$texte.= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="masksupplier_proposal" value="'.$conf->global->SUPPLIER_PROPOSAL_SAPHIR_MASK.'">', $tooltip, 1, 1).'</td>';
 
-		$texte.= '<td align="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
+		$texte.= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
 
 		$texte.= '</tr>';
 
@@ -102,7 +102,7 @@ class mod_supplier_proposal_saphir extends ModeleNumRefSupplierProposal
      *
      *  @return     string      Example
      */
-    function getExample()
+    public function getExample()
     {
      	global $conf,$langs,$mysoc;
 
@@ -125,7 +125,7 @@ class mod_supplier_proposal_saphir extends ModeleNumRefSupplierProposal
 	 * 	@param	Propal		$supplier_proposal	Object supplier_proposal
 	 *  @return string      					Value if OK, 0 if KO
 	 */
-	function getNextValue($objsoc, $supplier_proposal)
+	public function getNextValue($objsoc, $supplier_proposal)
 	{
 		global $db,$conf;
 

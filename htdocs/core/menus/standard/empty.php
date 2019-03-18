@@ -30,11 +30,11 @@ class MenuManager
      */
     public $db;
 
-	var $type_user=0;					// Put 0 for internal users, 1 for external users
-	var $atarget="";               		// To store default target to use onto links
+    public $type_user=0;					// Put 0 for internal users, 1 for external users
+    public $atarget="";               		// To store default target to use onto links
 
-	var $menu;
-	var $menu_array_after;
+    public $menu;
+    public $menu_array_after;
 
 
 	/**
@@ -43,7 +43,7 @@ class MenuManager
 	 *  @param	DoliDB		$db     		Database handler
      *  @param	int			$type_user		Type of user
 	 */
-	function __construct($db, $type_user)
+	public function __construct($db, $type_user)
 	{
 		$this->type_user=$type_user;
 		$this->db=$db;
@@ -55,7 +55,7 @@ class MenuManager
 	 *
 	 * @return	void
 	 */
-	function loadMenu()
+	public function loadMenu()
 	{
 	}
 
@@ -67,7 +67,7 @@ class MenuManager
      *  @param	array	$moredata		An array with more data to output
      *  @return int                     0 or nb of top menu entries if $mode = 'topnb'
 	 */
-	function showmenu($mode, $moredata = null)
+	public function showmenu($mode, $moredata = null)
 	{
 		global $user,$conf,$langs,$dolibarr_main_db_name;
 

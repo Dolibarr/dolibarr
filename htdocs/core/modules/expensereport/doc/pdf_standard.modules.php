@@ -61,14 +61,14 @@ class pdf_standard extends ModeleExpenseReport
     public $type;
 
     /**
-     * @var array() Minimum version of PHP required by module.
+     * @var array Minimum version of PHP required by module.
 	 * e.g.: PHP ≥ 5.4 = array(5, 4)
      */
 	public $phpmin = array(5, 4);
 
 	/**
      * Dolibarr version of the loaded document
-     * @public string
+     * @var string
      */
 	public $version = 'dolibarr';
 
@@ -114,13 +114,13 @@ class pdf_standard extends ModeleExpenseReport
 	public $emetteur;
 
 
-	/**
-	 *	Constructor
-	 *
-	 *  @param		DoliDB		$db      Database handler
-	 */
-	function __construct($db)
-	{
+    /**
+     *  Constructor
+     *
+     *  @param      DoliDB      $db      Database handler
+     */
+    public function __construct($db)
+    {
 		global $conf, $langs, $mysoc;
 
 		// Translations
@@ -192,7 +192,7 @@ class pdf_standard extends ModeleExpenseReport
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *  Function to build pdf onto disk
      *
@@ -204,7 +204,7 @@ class pdf_standard extends ModeleExpenseReport
      *  @param		int			$hideref			Do not show ref
      *  @return     int             				1=OK, 0=KO
 	 */
-	function write_file($object, $outputlangs, $srctemplatepath = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0)
+    public function write_file($object, $outputlangs, $srctemplatepath = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
         // phpcs:enable
 		global $user, $langs, $conf, $mysoc, $db, $hookmanager;
@@ -450,8 +450,7 @@ class pdf_standard extends ModeleExpenseReport
 				}
 
 				// Show square
-				if ($pagenb == 1)
-				{
+				if ($pagenb == 1) {
 					$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforinfotot - $heightforfreetext - $heightforfooter, 0, $outputlangs, 0, 0);
 					$bottomlasttab=$this->page_hauteur - $heightforinfotot - $heightforfreetext - $heightforfooter + 1;
 				}
@@ -606,7 +605,7 @@ class pdf_standard extends ModeleExpenseReport
         $pdf->MultiCell($this->page_largeur-$this->marge_droite-$this->postotalttc, 4, price($object->lines[$linenumber]->total_ttc), 0, 'R');
 
         // Comments
-        $pdf->SetXY($this->posxcomment, $curY );
+        $pdf->SetXY($this->posxcomment, $curY);
         $comment = $outputlangs->trans("Date").':'. dol_print_date($object->lines[$linenumber]->date, "day", false, $outputlangs).' ';
         $comment .= $outputlangs->trans("Type").':'. $expensereporttypecodetoshow.'<br>';
         if (! empty($object->lines[$linenumber]->projet_ref)) {
@@ -625,7 +624,7 @@ class pdf_standard extends ModeleExpenseReport
 	 *  @param  Translate	$outputlangs	Object lang for output
 	 *  @return	void
 	 */
-	function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
+	private function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
 	{
 		global $conf, $langs, $hookmanager;
 
@@ -770,8 +769,7 @@ class pdf_standard extends ModeleExpenseReport
 				$pdf->MultiCell(96, 4, $outputlangs->transnoentities("DateCreation")." : ".dol_print_date($object->date_create, "day", false, $outputlangs), 0, 'L');
 			}
 
-			if ($object->fk_statut==99)
-			{
+			if ($object->fk_statut==99) {
 				if ($object->fk_user_refuse > 0) {
 					$userfee=new User($this->db);
 					$userfee->fetch($object->fk_user_refuse); $posy+=6;
@@ -840,7 +838,7 @@ class pdf_standard extends ModeleExpenseReport
 	 *   @param		string		$currency		Currency code
 	 *   @return	void
 	 */
-	function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop = 0, $hidebottom = 0, $currency = '')
+	private function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop = 0, $hidebottom = 0, $currency = '')
 	{
 		global $conf;
 
@@ -1054,15 +1052,15 @@ class pdf_standard extends ModeleExpenseReport
 	}
 
 	/**
-	 *   	Show footer of page. Need this->emetteur object
+	 *  Show footer of page. Need this->emetteur object
      *
-	 *   	@param	PDF			$pdf     			PDF
-	 * 		@param	Object		$object				Object to show
-	 *      @param	Translate	$outputlangs		Object lang for output
-	 *      @param	int			$hidefreetext		1=Hide free text
-	 *      @return	int								Return height of bottom margin including footer text
+	 *  @param  PDF			$pdf     			PDF
+	 *  @param  Object		$object				Object to show
+	 *  @param  Translate	$outputlangs		Object lang for output
+	 *  @param  int			$hidefreetext		1=Hide free text
+	 *  @return int								Return height of bottom margin including footer text
 	 */
-	function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
+	private function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
 	{
 		global $conf;
 		$showdetails = $conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;

@@ -45,24 +45,24 @@ class doc_generic_contract_odt extends ModelePDFContract
 	public $emetteur;
 
 	/**
-   * @var array() Minimum version of PHP required by module.
+     * @var array Minimum version of PHP required by module.
 	 * e.g.: PHP ≥ 5.4 = array(5, 4)
-   */
+     */
 	public $phpmin = array(5, 4);
 
 	/**
      * Dolibarr version of the loaded document
-     * @public string
+     * @var string
      */
 	public $version = 'dolibarr';
 
 
 	/**
-	 *	Constructor
+	 *  Constructor
 	 *
-	 *  @param		DoliDB		$db      Database handler
+	 *  @param      DoliDB      $db      Database handler
 	 */
-	function __construct($db)
+	public function __construct($db)
 	{
 		global $conf, $langs, $mysoc;
 
@@ -107,7 +107,7 @@ class doc_generic_contract_odt extends ModelePDFContract
 	 *	@param	Translate	$langs      Lang object to use for output
 	 *	@return string       			Description
 	 */
-	function info($langs)
+	public function info($langs)
 	{
 		global $conf,$langs;
 
@@ -181,19 +181,19 @@ class doc_generic_contract_odt extends ModelePDFContract
 		return $texte;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *	Function to build a document on disk using the generic odt module.
+	 *  Function to build a document on disk using the generic odt module.
 	 *
-	 *	@param		Contract		$object				Object source to build document
-	 *	@param		Translate	$outputlangs		Lang output object
-	 * 	@param		string		$srctemplatepath	Full path of source filename for generator using a template file
+	 *  @param		Contract		$object				Object source to build document
+	 *  @param		Translate	$outputlangs		Lang output object
+	 *  @param		string		$srctemplatepath	Full path of source filename for generator using a template file
 	 *  @param		int			$hidedetails		Do not show line details
 	 *  @param		int			$hidedesc			Do not show desc
 	 *  @param		int			$hideref			Do not show ref
-	 *	@return		int         					1 if OK, <=0 if KO
+	 *  @return		int         					1 if OK, <=0 if KO
 	 */
-	function write_file($object, $outputlangs, $srctemplatepath, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
+	public function write_file($object, $outputlangs, $srctemplatepath, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
         // phpcs:enable
 		global $user,$langs,$conf,$mysoc,$hookmanager;
@@ -291,10 +291,9 @@ class doc_generic_contract_odt extends ModelePDFContract
 
 				// Recipient name
 				$contactobject=null;
-				if (! empty($usecontact))
-				{
-					// On peut utiliser le nom de la societe du contact
-					if (! empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)) {
+                if (! empty($usecontact)) {
+                    // On peut utiliser le nom de la societe du contact
+                    if (! empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)) {
                         $socobject = $object->contact;
                     } else {
                         $socobject = $object->thirdparty;
@@ -343,7 +342,7 @@ class doc_generic_contract_odt extends ModelePDFContract
 				// Open and load template
 				require_once ODTPHP_PATH.'odf.php';
 				try {
-					$odfHandler = new odf(
+    $odfHandler = new odf(
 						$srctemplatepath,
 						array(
 						'PATH_TO_TMP'	  => $conf->contrat->dir_temp,

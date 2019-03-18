@@ -95,7 +95,7 @@ class ImportXlsx extends ModeleImports
 	 *	@param	DoliDB		$db				Database handler
 	 *	@param	string		$datatoimport	String code describing import set (ex: 'societe_1')
 	 */
-	function __construct($db, $datatoimport)
+    public function __construct($db, $datatoimport)
 	{
 		global $conf,$langs;
 		$this->db = $db;
@@ -125,14 +125,14 @@ class ImportXlsx extends ModeleImports
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * 	Output header of an example file for this format
 	 *
 	 * 	@param	Translate	$outputlangs		Output language
 	 *  @return	string
 	 */
-	function write_header_example($outputlangs)
+    public function write_header_example($outputlangs)
 	{
         // phpcs:enable
         global $user,$conf,$langs;
@@ -158,7 +158,7 @@ class ImportXlsx extends ModeleImports
         return '';
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * 	Output title line of an example file for this format
 	 *
@@ -166,7 +166,7 @@ class ImportXlsx extends ModeleImports
 	 *  @param	array		$headerlinefields	Array of fields name
 	 * 	@return	string
 	 */
-	function write_title_example($outputlangs, $headerlinefields)
+    public function write_title_example($outputlangs, $headerlinefields)
 	{
         // phpcs:enable
 		global $conf;
@@ -184,7 +184,7 @@ class ImportXlsx extends ModeleImports
 		return ''; // final output will be generated in footer
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * 	Output record of an example file for this format
 	 *
@@ -192,7 +192,7 @@ class ImportXlsx extends ModeleImports
 	 * 	@param	array		$contentlinevalues	Array of lines
 	 * 	@return	string
 	 */
-	function write_record_example($outputlangs, $contentlinevalues)
+    public function write_record_example($outputlangs, $contentlinevalues)
 	{
         // phpcs:enable
 		$col = 0;
@@ -205,14 +205,14 @@ class ImportXlsx extends ModeleImports
 		return ''; // final output will be generated in footer
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * 	Output footer of an example file for this format
 	 *
 	 * 	@param	Translate	$outputlangs		Output language
 	 *  @return	string
 	 */
-	function write_footer_example($outputlangs)
+    public function write_footer_example($outputlangs)
 	{
         // phpcs:enable
 		// return the file content as a string
@@ -229,14 +229,14 @@ class ImportXlsx extends ModeleImports
 
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Open input file
 	 *
 	 *	@param	string	$file		Path of filename
 	 *	@return	int					<0 if KO, >=0 if OK
 	 */
-	function import_open_file($file)
+    public function import_open_file($file)
 	{
         // phpcs:enable
 		global $langs;
@@ -253,14 +253,14 @@ class ImportXlsx extends ModeleImports
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * 	Return nb of records. File must be closed.
 	 *
 	 *	@param	string	$file		Path of filename
 	 * 	@return		int		<0 if KO, >=0 if OK
 	 */
-	function import_get_nb_of_lines($file)
+    public function import_get_nb_of_lines($file)
 	{
         // phpcs:enable
 		$reader = new PHPExcel_Reader_Excel2007();
@@ -275,13 +275,13 @@ class ImportXlsx extends ModeleImports
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * 	Input header line from file
 	 *
 	 * 	@return		int		<0 if KO, >=0 if OK
 	 */
-	function import_read_header()
+    public function import_read_header()
 	{
         // phpcs:enable
 		// This is not called by the import code !!!
@@ -294,13 +294,13 @@ class ImportXlsx extends ModeleImports
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * 	Return array of next record in input file.
 	 *
 	 * 	@return		Array		Array of field values. Data are UTF8 encoded. [fieldpos] => (['val']=>val, ['type']=>-1=null,0=blank,1=not empty string)
 	 */
-	function import_read_record()
+    public function import_read_record()
 	{
         // phpcs:enable
 		global $conf;
@@ -319,13 +319,13 @@ class ImportXlsx extends ModeleImports
 		return $array;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * 	Close file handle
 	 *
 	 *  @return	integer
 	 */
-	function import_close_file()
+    public function import_close_file()
 	{
         // phpcs:enable
 		$this->workbook->disconnectWorksheets();
@@ -334,7 +334,7 @@ class ImportXlsx extends ModeleImports
 
 
     // What is this doing here ? it is common to all imports, is should be in the parent class
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Insert a record into database
 	 *
@@ -346,7 +346,7 @@ class ImportXlsx extends ModeleImports
 	 * @param	array	$updatekeys						Array of keys to use to try to do an update first before insert. This field are defined into the module descriptor.
 	 * @return	int										<0 if KO, >0 if OK
 	 */
-	function import_insert($arrayrecord, $array_match_file_to_database, $objimport, $maxfields, $importid, $updatekeys)
+    public function import_insert($arrayrecord, $array_match_file_to_database, $objimport, $maxfields, $importid, $updatekeys)
 	{
         // phpcs:enable
 		global $langs,$conf,$user;
@@ -497,6 +497,43 @@ class ImportXlsx extends ModeleImports
                                 elseif ($objimport->array_import_convertvalue[0][$val]['rule']=='zeroifnull')
                                 {
                                     if (empty($newval)) $newval='0';
+                                }
+                                elseif ($objimport->array_import_convertvalue[0][$val]['rule']=='fetchidfromcodeunits')
+                                {
+                                	$file=(empty($objimport->array_import_convertvalue[0][$val]['classfile'])?$objimport->array_import_convertvalue[0][$val]['file']:$objimport->array_import_convertvalue[0][$val]['classfile']);
+                                	$class=$objimport->array_import_convertvalue[0][$val]['class'];
+                                	$method=$objimport->array_import_convertvalue[0][$val]['method'];
+                                	$units=$objimport->array_import_convertvalue[0][$val]['units'];
+                                	if ($this->cacheconvert[$file.'_'.$class.'_'.$method.'_'.$units][$newval] != '')
+                                	{
+                                		$newval=$this->cacheconvert[$file.'_'.$class.'_'.$method.'_'.$units][$newval];
+                                	}
+                                	else
+                                	{
+                                		$resultload = dol_include_once($file);
+                                		if (empty($resultload))
+                                		{
+                                			dol_print_error('', 'Error trying to call file='.$file.', class='.$class.', method='.$method.', units='.$units);
+                                			break;
+                                		}
+                                		$classinstance=new $class($this->db);
+                                		// Try the fetch from code or ref
+                                		call_user_func_array(array($classinstance, $method), array('', $units, '', $newval));
+                                		$this->cacheconvert[$file.'_'.$class.'_'.$method.'_'.$units][$newval]=$classinstance->code;
+                                		//print 'We have made a '.$class.'->'.$method.' to get id from code '.$newval.'. ';
+                                		if ($classinstance->code != '')	// id may be 0, it is a found value
+                                		{
+                                			$newval=$classinstance->code;
+                                		}
+                                		else
+                                		{
+                                			if (!empty($objimport->array_import_convertvalue[0][$val]['dict'])) $this->errors[$error]['lib']=$langs->trans('ErrorFieldValueNotIn', $key, $newval, 'code', $langs->transnoentitiesnoconv($objimport->array_import_convertvalue[0][$val]['dict']));
+                                			else $this->errors[$error]['lib']='ErrorFieldValueNotIn';
+                                			$this->errors[$error]['type']='FOREIGNKEY';
+                                			$errorforthistable++;
+                                			$error++;
+                                		}
+                                	}
                                 }
                                 elseif ($objimport->array_import_convertvalue[0][$val]['rule']=='getcustomercodeifauto')
                                 {

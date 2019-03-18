@@ -35,7 +35,7 @@ class modWebServicesClient extends DolibarrModules
 	 *
 	 *   @param      DoliDB		$db      Database handler
      */
-    function __construct($db)
+    public function __construct($db)
     {
         $this->db = $db;
         $this->numero = 2660;

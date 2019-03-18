@@ -29,20 +29,20 @@ include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
  */
 class box_graph_product_distribution extends ModeleBoxes
 {
-	var $boxcode="productdistribution";
-	var $boximg="object_product";
-	var $boxlabel="BoxProductDistribution";
-	var $depends = array("product|service","facture|propal|commande");
+    public $boxcode="productdistribution";
+    public $boximg="object_product";
+    public $boxlabel="BoxProductDistribution";
+    public $depends = array("product|service","facture|propal|commande");
 
 	/**
      * @var DoliDB Database handler.
      */
     public $db;
-    
-	var $param;
 
-	var $info_box_head = array();
-	var $info_box_contents = array();
+    public $param;
+
+    public $info_box_head = array();
+    public $info_box_contents = array();
 
 
 	/**
@@ -51,7 +51,7 @@ class box_graph_product_distribution extends ModeleBoxes
 	 * 	@param	DoliDB	$db			Database handler
 	 *  @param	string	$param		More parameters
 	 */
-	function __construct($db, $param)
+	public function __construct($db, $param)
 	{
 		global $user, $conf;
 
@@ -70,7 +70,7 @@ class box_graph_product_distribution extends ModeleBoxes
 	 *  @param	int		$max        Maximum number of records to load
      *  @return	void
 	 */
-	function loadBox($max = 5)
+	public function loadBox($max = 5)
 	{
 		global $conf, $user, $langs, $db;
 
@@ -127,10 +127,6 @@ class box_graph_product_distribution extends ModeleBoxes
 				'target'=>'none'	// Set '' to get target="_blank"
 		);
 
-
-		$paramtitle=$langs->transnoentitiesnoconv("Products").'/'.$langs->transnoentitiesnoconv("Services");
-		if (empty($conf->produit->enabled)) $paramtitle=$langs->transnoentitiesnoconv("Services");
-		if (empty($conf->service->enabled)) $paramtitle=$langs->transnoentitiesnoconv("Products");
 
 		$socid=empty($user->societe_id)?0:$user->societe_id;
 		$userid=0;	// No filter on user creation
@@ -190,7 +186,7 @@ class box_graph_product_distribution extends ModeleBoxes
 					$px1->SetCssPrefix("cssboxes");
 					//$px1->mode='depth';
 					$px1->SetType(array('pie'));
-					$px1->SetTitle($langs->trans("BoxProductDistributionFor", $paramtitle, $langs->transnoentitiesnoconv("Invoices")));
+					$px1->SetTitle($langs->trans("ForObject", $langs->transnoentitiesnoconv("Invoices")));
 					$px1->combine = 0.05;
 
 					$px1->draw($filenamenb, $fileurlnb);
@@ -250,7 +246,7 @@ class box_graph_product_distribution extends ModeleBoxes
 					$px2->SetCssPrefix("cssboxes");
 					//$px2->mode='depth';
 					$px2->SetType(array('pie'));
-					$px2->SetTitle($langs->trans("BoxProductDistributionFor", $paramtitle, $langs->transnoentitiesnoconv("Proposals")));
+					$px2->SetTitle($langs->trans("ForObject", $langs->transnoentitiesnoconv("Proposals")));
 					$px2->combine = 0.05;
 
 					$px2->draw($filenamenb, $fileurlnb);
@@ -311,7 +307,7 @@ class box_graph_product_distribution extends ModeleBoxes
 					$px3->SetCssPrefix("cssboxes");
 					//$px3->mode='depth';
 					$px3->SetType(array('pie'));
-					$px3->SetTitle($langs->trans("BoxProductDistributionFor", $paramtitle, $langs->transnoentitiesnoconv("Orders")));
+					$px3->SetTitle($langs->trans("ForObject", $langs->transnoentitiesnoconv("Orders")));
 					$px3->combine = 0.05;
 
 					$px3->draw($filenamenb, $fileurlnb);
@@ -392,12 +388,16 @@ class box_graph_product_distribution extends ModeleBoxes
 				$stringtoshow.=$px3->show();
 				$stringtoshow.='</div></div>';
 			}
-			$this->info_box_contents[0][0] = array('tr'=>'class="oddeven nohover"', 'td' => 'align="center" class="nohover"','textnoformat'=>$stringtoshow);
+			$this->info_box_contents[0][0] = array(
+                'tr'=>'class="oddeven nohover"',
+                'td' => 'class="nohover center"',
+                'textnoformat'=>$stringtoshow,
+            );
 		}
 		else
 		{
 			$this->info_box_contents[0][0] = array(
-			    'td' => 'align="left" class="nohover opacitymedium"',
+			    'td' => 'class="nohover opacitymedium left"',
 				'maxlength'=>500,
 				'text' => $mesg
 			);
@@ -412,7 +412,7 @@ class box_graph_product_distribution extends ModeleBoxes
 	 *  @param	int		$nooutput	No print, only return string
 	 *	@return	string
 	 */
-    function showBox($head = null, $contents = null, $nooutput = 0)
+    public function showBox($head = null, $contents = null, $nooutput = 0)
     {
 		return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
 	}

@@ -357,7 +357,7 @@ if (empty($reshook))
 										$array_options = $lines[$i]->array_options;
 									}
 
-									$result = $object->addline(
+        $result = $object->addline(
 										$desc, $lines[$i]->subprice, $lines[$i]->qty, $lines[$i]->tva_tx,
 										$lines[$i]->localtax1_tx, $lines[$i]->localtax2_tx,
 										$lines[$i]->fk_product, $lines[$i]->remise_percent,
@@ -491,7 +491,7 @@ if (empty($reshook))
 	// Go back to draft
 	if ($action == 'modif' && $user->rights->supplier_proposal->creer)
 	{
-		$object->set_draft($user);
+		$object->setDraft($user);
 
 		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
 		{
@@ -551,7 +551,7 @@ if (empty($reshook))
 		// Extrafields
 		$extrafieldsline = new ExtraFields($db);
 		$extralabelsline = $extrafieldsline->fetch_name_optionals_label($object->table_element_line);
-		$array_options = $extrafieldsline->getOptionalsFromPost($extralabelsline, $predef);
+		$array_options = $extrafieldsline->getOptionalsFromPost($object->table_element_line, $predef);
 		// Unset extrafield
 		if (is_array($extralabelsline)) {
 			// Get extra fields
@@ -648,7 +648,7 @@ if (empty($reshook))
 					$localtax1_tx= get_localtax($tva_tx, 1, $mysoc, $object->thirdparty, $tva_npr);
 					$localtax2_tx= get_localtax($tva_tx, 2, $mysoc, $object->thirdparty, $tva_npr);
 
-					$result=$object->addline(
+    $result=$object->addline(
 						$desc,
 						$pu_ht,
 						$qty,
@@ -820,7 +820,7 @@ if (empty($reshook))
 		// Extrafields
 		$extrafieldsline = new ExtraFields($db);
 		$extralabelsline = $extrafieldsline->fetch_name_optionals_label($object->table_element_line);
-		$array_options = $extrafieldsline->getOptionalsFromPost($extralabelsline);
+		$array_options = $extrafieldsline->getOptionalsFromPost($object->table_element_line);
 		// Unset extrafield
 		if (is_array($extralabelsline)) {
 			// Get extra fields
@@ -1084,7 +1084,7 @@ if ($action == 'create')
 	} else {
 		print '<td colspan="2">';
 		print $form->select_company('', 'socid', 's.fournisseur = 1', 'SelectThirdParty', 0, 0, null, 0, 'minwidth300');
-		print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&client=0&fournisseur=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'">'.$langs->trans("AddThirdParty").'</a>';
+		print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&client=0&fournisseur=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'">'.$langs->trans("AddThirdParty").' <span class="fa fa-plus-circle valignmiddle"></span></a>';
 		print '</td>';
 	}
 	print '</tr>' . "\n";
@@ -1165,7 +1165,7 @@ if ($action == 'create')
 		print '<td>' . $langs->trans("Project") . '</td><td colspan="2">';
 
 		$numprojet = $formproject->select_projects(($soc->id > 0 ? $soc->id : -1), $projectid, 'projectid', 0, 0, 1, 1);
-		print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/card.php?socid=' . $soc->id . '&action=create&status=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create&socid='.$soc->id).'">' . $langs->trans("AddProject") . '</a>';
+		print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/card.php?socid=' . $soc->id . '&action=create&status=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create&socid='.$soc->id).'">' . $langs->trans("AddProject") . ' <span class="fa fa-plus-circle valignmiddle"></span></a>';
 
 		print '</td>';
 		print '</tr>';
@@ -1209,8 +1209,8 @@ if ($action == 'create')
 		print '<input type="hidden" name="originid"       value="' . $objectsrc->id . '">';
 
 		print '<tr><td>' . $langs->trans('CommRequest') . '</td><td colspan="2">' . $objectsrc->getNomUrl(1) . '</td></tr>';
-		print '<tr><td>' . $langs->trans('TotalHT') . '</td><td colspan="2">' . price($objectsrc->total_ht) . '</td></tr>';
-		print '<tr><td>' . $langs->trans('TotalVAT') . '</td><td colspan="2">' . price($objectsrc->total_tva) . "</td></tr>";
+		print '<tr><td>' . $langs->trans('AmountHT') . '</td><td colspan="2">' . price($objectsrc->total_ht) . '</td></tr>';
+		print '<tr><td>' . $langs->trans('AmountVAT') . '</td><td colspan="2">' . price($objectsrc->total_tva) . "</td></tr>";
 		if ($mysoc->localtax1_assuj == "1" || $objectsrc->total_localtax1 != 0 ) 		// Localtax1
 		{
 			print '<tr><td>' . $langs->transcountry("AmountLT1", $mysoc->country_code) . '</td><td colspan="2">' . price($objectsrc->total_localtax1) . "</td></tr>";
@@ -1220,13 +1220,13 @@ if ($action == 'create')
 		{
 			print '<tr><td>' . $langs->transcountry("AmountLT2", $mysoc->country_code) . '</td><td colspan="2">' . price($objectsrc->total_localtax2) . "</td></tr>";
 		}
-		print '<tr><td>' . $langs->trans('TotalTTC') . '</td><td colspan="2">' . price($objectsrc->total_ttc) . "</td></tr>";
+		print '<tr><td>' . $langs->trans('AmountTTC') . '</td><td colspan="2">' . price($objectsrc->total_ttc) . "</td></tr>";
 
 		if (!empty($conf->multicurrency->enabled))
 		{
-			print '<tr><td>' . $langs->trans('MulticurrencyTotalHT') . '</td><td colspan="2">' . price($objectsrc->multicurrency_total_ht) . '</td></tr>';
-			print '<tr><td>' . $langs->trans('MulticurrencyTotalVAT') . '</td><td colspan="2">' . price($objectsrc->multicurrency_total_tva) . "</td></tr>";
-			print '<tr><td>' . $langs->trans('MulticurrencyTotalTTC') . '</td><td colspan="2">' . price($objectsrc->multicurrency_total_ttc) . "</td></tr>";
+			print '<tr><td>' . $langs->trans('MulticurrencyAmountHT') . '</td><td colspan="2">' . price($objectsrc->multicurrency_total_ht) . '</td></tr>';
+			print '<tr><td>' . $langs->trans('MulticurrencyAmountVAT') . '</td><td colspan="2">' . price($objectsrc->multicurrency_total_tva) . "</td></tr>";
+			print '<tr><td>' . $langs->trans('MulticurrencyAmountTTC') . '</td><td colspan="2">' . price($objectsrc->multicurrency_total_ttc) . "</td></tr>";
 		}
 	}
 
@@ -1328,7 +1328,7 @@ if ($action == 'create')
 							// 1),
 							array('type' => 'other','name' => 'socid','label' => $langs->trans("SelectThirdParty"),'value' => $form->select_company(GETPOST('socid', 'int'), 'socid', 's.fournisseur=1')));
 		// Paiement incomplet. On demande si motif = escompte ou autre
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('CloneAsk'), $langs->trans('ConfirmCloneAsk', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneAsk', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
 	}
 
 	// Confirm delete
@@ -1468,7 +1468,7 @@ if ($action == 'create')
 	print $langs->trans('PaymentConditionsShort');
 	print '</td>';
 	if ($action != 'editconditions' && ! empty($object->brouillon))
-		print '<td align="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editconditions&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetConditions'), 1) . '</a></td>';
+		print '<td class="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editconditions&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetConditions'), 1) . '</a></td>';
 	print '</tr></table>';
 	print '</td><td colspan="3">';
 	if ($action == 'editconditions') {
@@ -1486,7 +1486,7 @@ if ($action == 'create')
 	print $langs->trans('DeliveryDate');
 	print '</td>';
 	if ($action != 'editdate_livraison' && ! empty($object->brouillon))
-		print '<td align="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editdate_livraison&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetDeliveryDate'), 1) . '</a></td>';
+		print '<td class="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editdate_livraison&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetDeliveryDate'), 1) . '</a></td>';
 	print '</tr></table>';
 	print '</td><td colspan="3">';
 	if ($action == 'editdate_livraison') {
@@ -1509,7 +1509,7 @@ if ($action == 'create')
 	print $langs->trans('PaymentMode');
 	print '</td>';
 	if ($action != 'editmode' && ! empty($object->brouillon))
-		print '<td align="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editmode&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetMode'), 1) . '</a></td>';
+		print '<td class="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editmode&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetMode'), 1) . '</a></td>';
 	print '</tr></table>';
 	print '</td><td colspan="3">';
 	if ($action == 'editmode') {
@@ -1529,7 +1529,7 @@ if ($action == 'create')
 		print $form->editfieldkey('Currency', 'multicurrency_code', '', $object, 0);
 		print '</td>';
 		if ($action != 'editmulticurrencycode' && ! empty($object->brouillon))
-			print '<td align="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editmulticurrencycode&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetMultiCurrencyCode'), 1) . '</a></td>';
+			print '<td class="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editmulticurrencycode&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetMultiCurrencyCode'), 1) . '</a></td>';
 		print '</tr></table>';
 		print '</td><td colspan="3">';
 		if ($action == 'editmulticurrencycode') {
@@ -1546,7 +1546,7 @@ if ($action == 'create')
 		print $form->editfieldkey('CurrencyRate', 'multicurrency_tx', '', $object, 0);
 		print '</td>';
 		if ($action != 'editmulticurrencyrate' && ! empty($object->brouillon) && $object->multicurrency_code && $object->multicurrency_code != $conf->currency)
-			print '<td align="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editmulticurrencyrate&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetMultiCurrencyCode'), 1) . '</a></td>';
+			print '<td class="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editmulticurrencyrate&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetMultiCurrencyCode'), 1) . '</a></td>';
 		print '</tr></table>';
 		print '</td><td colspan="3">';
 		if ($action == 'editmulticurrencyrate' || $action == 'actualizemulticurrencyrate') {
@@ -1571,7 +1571,7 @@ if ($action == 'create')
 		// Outstanding Bill
 		print '<tr><td>';
 		print $langs->trans('OutstandingBill');
-		print '</td><td align=right colspan="3">';
+		print '</td><td class=right colspan="3">';
 		print price($soc->get_OutstandingBill()) . ' / ';
 		print price($soc->outstanding_limit, 0, '', 1, - 1, - 1, $conf->currency);
 		print '</td>';
@@ -1586,7 +1586,7 @@ if ($action == 'create')
 		print $langs->trans('BankAccount');
 		print '</td>';
 		if ($action != 'editbankaccount' && $user->rights->supplier_proposal->creer)
-			print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editbankaccount&amp;id='.$object->id.'">'.img_edit($langs->trans('SetBankAccount'), 1).'</a></td>';
+			print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editbankaccount&amp;id='.$object->id.'">'.img_edit($langs->trans('SetBankAccount'), 1).'</a></td>';
 		print '</tr></table>';
 		print '</td><td colspan="3">';
 		if ($action == 'editbankaccount') {
@@ -1739,7 +1739,7 @@ if ($action == 'create')
 		if (! empty($conf->global->SUPPLIER_PROPOSAL_UPDATE_PRICE_ON_SUPPlIER_PROPOSAL)) $form_close .= '<p class="notice">'.$langs->trans('SupplierProposalRefFournNotice').'</p>';  // TODO Suggest a permanent checkbox instead of option
 		$form_close .= '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
 		$form_close .= '<table class="border" width="100%">';
-		$form_close .= '<tr><td width="150"  align="left">' . $langs->trans("CloseAs") . '</td><td class="left">';
+		$form_close .= '<tr><td width="150"  class="left">' . $langs->trans("CloseAs") . '</td><td class="left">';
 		$form_close .= '<input type="hidden" name="action" value="setstatut">';
 		$form_close .= '<select id="statut" name="statut" class="flat">';
 		$form_close .= '<option value="0">&nbsp;</option>';
@@ -1747,10 +1747,10 @@ if ($action == 'create')
 		$form_close .= '<option value="3">' . $langs->trans('SupplierProposalStatusNotSigned') . '</option>';
 		$form_close .= '</select>';
 		$form_close .= '</td></tr>';
-		$form_close .= '<tr><td width="150" align="left">' . $langs->trans('Note') . '</td><td class="left"><textarea cols="70" rows="' . ROWS_3 . '" wrap="soft" name="note">';
+		$form_close .= '<tr><td width="150" class="left">' . $langs->trans('Note') . '</td><td class="left"><textarea cols="70" rows="' . ROWS_3 . '" wrap="soft" name="note">';
 		$form_close .= $object->note;
 		$form_close .= '</textarea></td></tr>';
-		$form_close .= '<tr><td align="center" colspan="2">';
+		$form_close .= '<tr><td class="center" colspan="2">';
 		$form_close .= '<input type="submit" class="button" name="validate" value="' . $langs->trans('Save') . '">';
 		$form_close .= ' &nbsp; <input type="submit" class="button" name="cancel" value="' . $langs->trans('Cancel') . '">';
 		$form_close .= '<a name="acceptedrefused">&nbsp;</a>';

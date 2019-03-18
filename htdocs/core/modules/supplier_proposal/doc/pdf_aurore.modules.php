@@ -59,14 +59,14 @@ class pdf_aurore extends ModelePDFSupplierProposal
     public $type;
 
 	/**
-     * @var array() Minimum version of PHP required by module.
+     * @var array Minimum version of PHP required by module.
 	 * e.g.: PHP ≥ 5.4 = array(5, 4)
      */
 	public $phpmin = array(5, 4);
 
 	/**
      * Dolibarr version of the loaded document
-     * @public string
+     * @var string
      */
 	public $version = 'dolibarr';
 
@@ -193,7 +193,7 @@ class pdf_aurore extends ModelePDFSupplierProposal
 		$this->atleastonediscount=0;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *  Function to build pdf onto disk
      *
@@ -205,7 +205,7 @@ class pdf_aurore extends ModelePDFSupplierProposal
      *  @param		int			$hideref			Do not show ref
      *  @return     int             				1=OK, 0=KO
 	 */
-	function write_file($object, $outputlangs, $srctemplatepath = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0)
+	public function write_file($object, $outputlangs, $srctemplatepath = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
         // phpcs:enable
 		global $user,$langs,$conf,$mysoc,$db,$hookmanager,$nblignes;
@@ -704,7 +704,7 @@ class pdf_aurore extends ModelePDFSupplierProposal
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Show payments table
 	 *
@@ -714,13 +714,13 @@ class pdf_aurore extends ModelePDFSupplierProposal
      *  @param  Translate	$outputlangs    Object langs for output
      *  @return int             			<0 if KO, >0 if OK
 	 */
-	function _tableau_versements(&$pdf, $object, $posy, $outputlangs)
+	private function _tableau_versements(&$pdf, $object, $posy, $outputlangs)
 	{
         // phpcs:enable
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *   Show miscellaneous information (payment mode, payment term, ...)
 	 *
@@ -730,7 +730,7 @@ class pdf_aurore extends ModelePDFSupplierProposal
 	 *   @param		Translate	$outputlangs	Langs object
 	 *   @return	void
 	 */
-	function _tableau_info(&$pdf, $object, $posy, $outputlangs)
+	private function _tableau_info(&$pdf, $object, $posy, $outputlangs)
 	{
         // phpcs:enable
 		global $conf;
@@ -888,7 +888,7 @@ class pdf_aurore extends ModelePDFSupplierProposal
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Show total to pay
 	 *
@@ -899,7 +899,7 @@ class pdf_aurore extends ModelePDFSupplierProposal
 	 *	@param	Translate	$outputlangs	Objet langs
 	 *	@return int							Position pour suite
 	 */
-	function _tableau_tot(&$pdf, $object, $deja_regle, $posy, $outputlangs)
+	private function _tableau_tot(&$pdf, $object, $deja_regle, $posy, $outputlangs)
 	{
         // phpcs:enable
 		global $conf,$mysoc;
@@ -1174,7 +1174,7 @@ class pdf_aurore extends ModelePDFSupplierProposal
 	 *   @param		string		$currency		Currency code
 	 *   @return	void
 	 */
-	function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop = 0, $hidebottom = 0, $currency = '')
+	private function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop = 0, $hidebottom = 0, $currency = '')
 	{
 		global $conf;
 
@@ -1249,7 +1249,7 @@ class pdf_aurore extends ModelePDFSupplierProposal
 		    $pdf->line($this->posxunit - 1, $tab_top, $this->posxunit - 1, $tab_top + $tab_height);
 		    if (empty($hidetop)) {
 		        $pdf->SetXY($this->posxunit - 1, $tab_top + 1);
-		        $pdf->MultiCell($this->posxdiscount - $this->posxunit - 1, 2, $outputlangs->transnoentities("Unit"), '',
+        $pdf->MultiCell($this->posxdiscount - $this->posxunit - 1, 2, $outputlangs->transnoentities("Unit"), '',
 		            'C');
 		    }
 		}
@@ -1283,7 +1283,7 @@ class pdf_aurore extends ModelePDFSupplierProposal
 	 *  @param  Translate	$outputlangs	Object lang for output
 	 *  @return	void
 	 */
-	function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
+	private function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
 	{
 		global $conf, $langs;
 
@@ -1491,16 +1491,16 @@ class pdf_aurore extends ModelePDFSupplierProposal
 		return $top_shift;
 	}
 
-	/**
-	 *   	Show footer of page. Need this->emetteur object
+    /**
+     *  Show footer of page. Need this->emetteur object
      *
-	 *   	@param	PDF			$pdf     			PDF
-	 * 		@param	Object		$object				Object to show
-	 *      @param	Translate	$outputlangs		Object lang for output
-	 *      @param	int			$hidefreetext		1=Hide free text
-	 *      @return	int								Return height of bottom margin including footer text
-	 */
-	function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
+     *  @param  PDF			$pdf     			PDF
+     *  @param  Object		$object				Object to show
+     *  @param  Translate	$outputlangs		Object lang for output
+     *  @param  int			$hidefreetext		1=Hide free text
+     *  @return int								Return height of bottom margin including footer text
+     */
+    private function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
 	{
 		global $conf;
 		$showdetails=$conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;

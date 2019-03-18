@@ -61,7 +61,7 @@ class mod_contract_serpis extends ModelNumRefContracts
 	 *
 	 *	@return     string      text description
 	 */
-    function info()
+    public function info()
     {
     	global $langs;
       	return $langs->trans("SimpleNumRefModelDesc", $this->prefix);
@@ -73,7 +73,7 @@ class mod_contract_serpis extends ModelNumRefContracts
 	 *
 	 *	@return     string      Example
 	 */
-	function getExample()
+	public function getExample()
 	{
 		return $this->prefix."0501-0001";
 	}
@@ -84,7 +84,7 @@ class mod_contract_serpis extends ModelNumRefContracts
 	 *
 	 *	@return     boolean     false if conflit, true if ok
 	 */
-	function canBeActivated()
+	public function canBeActivated()
 	{
 		global $conf,$langs,$db;
 
@@ -119,7 +119,7 @@ class mod_contract_serpis extends ModelNumRefContracts
 	 *	@param	Object		$contract	contract object
 	 *	@return string      			Value if OK, 0 if KO
 	 */
-	function getNextValue($objsoc, $contract)
+	public function getNextValue($objsoc, $contract)
 	{
 		global $db,$conf;
 
@@ -153,7 +153,7 @@ class mod_contract_serpis extends ModelNumRefContracts
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Return next value
 	 *
@@ -161,7 +161,7 @@ class mod_contract_serpis extends ModelNumRefContracts
 	 *	@param	Object		$objforref  contract object
 	 *	@return string      			Value if OK, 0 if KO
 	 */
-	function contract_get_num($objsoc, $objforref)
+	public function contract_get_num($objsoc, $objforref)
 	{
         // phpcs:enable
 		return $this->getNextValue($objsoc, $objforref);

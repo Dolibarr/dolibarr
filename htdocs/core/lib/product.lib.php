@@ -324,10 +324,10 @@ function show_stats_for_company($product, $socid)
 	$nblines = 0;
 
 	print '<tr class="liste_titre">';
-	print '<td align="left" width="25%">'.$langs->trans("Referers").'</td>';
-	print '<td align="right" width="25%">'.$langs->trans("NbOfThirdParties").'</td>';
-	print '<td align="right" width="25%">'.$langs->trans("NbOfObjectReferers").'</td>';
-	print '<td align="right" width="25%">'.$langs->trans("TotalQuantity").'</td>';
+	print '<td class="left" width="25%">'.$langs->trans("Referers").'</td>';
+	print '<td class="right" width="25%">'.$langs->trans("NbOfThirdParties").'</td>';
+	print '<td class="right" width="25%">'.$langs->trans("NbOfObjectReferers").'</td>';
+	print '<td class="right" width="25%">'.$langs->trans("TotalQuantity").'</td>';
 	print '</tr>';
 
 	// Customer proposals
@@ -339,11 +339,11 @@ function show_stats_for_company($product, $socid)
 		$langs->load("propal");
 		print '<tr><td>';
 		print '<a href="propal.php?id='.$product->id.'">'.img_object('', 'propal').' '.$langs->trans("Proposals").'</a>';
-		print '</td><td align="right">';
+		print '</td><td class="right">';
 		print $product->stats_propale['customers'];
-		print '</td><td align="right">';
+		print '</td><td class="right">';
 		print $product->stats_propale['nb'];
-		print '</td><td align="right">';
+		print '</td><td class="right">';
 		print $product->stats_propale['qty'];
 		print '</td>';
 		print '</tr>';
@@ -357,11 +357,11 @@ function show_stats_for_company($product, $socid)
 		$langs->load("propal");
 		print '<tr><td>';
 		print '<a href="supplier_proposal.php?id='.$product->id.'">'.img_object('', 'propal').' '.$langs->trans("SupplierProposals").'</a>';
-		print '</td><td align="right">';
+		print '</td><td class="right">';
 		print $product->stats_proposal_supplier['suppliers'];
-		print '</td><td align="right">';
+		print '</td><td class="right">';
 		print $product->stats_proposal_supplier['nb'];
-		print '</td><td align="right">';
+		print '</td><td class="right">';
 		print $product->stats_proposal_supplier['qty'];
 		print '</td>';
 		print '</tr>';
@@ -375,11 +375,11 @@ function show_stats_for_company($product, $socid)
 		$langs->load("orders");
 		print '<tr><td>';
 		print '<a href="commande.php?id='.$product->id.'">'.img_object('', 'order').' '.$langs->trans("CustomersOrders").'</a>';
-		print '</td><td align="right">';
+		print '</td><td class="right">';
 		print $product->stats_commande['customers'];
-		print '</td><td align="right">';
+		print '</td><td class="right">';
 		print $product->stats_commande['nb'];
-		print '</td><td align="right">';
+		print '</td><td class="right">';
 		print $product->stats_commande['qty'];
 		print '</td>';
 		print '</tr>';
@@ -393,11 +393,11 @@ function show_stats_for_company($product, $socid)
 		$langs->load("orders");
 		print '<tr><td>';
 		print '<a href="commande_fournisseur.php?id='.$product->id.'">'.img_object('', 'order').' '.$langs->trans("SuppliersOrders").'</a>';
-		print '</td><td align="right">';
+		print '</td><td class="right">';
 		print $product->stats_commande_fournisseur['suppliers'];
-		print '</td><td align="right">';
+		print '</td><td class="right">';
 		print $product->stats_commande_fournisseur['nb'];
-		print '</td><td align="right">';
+		print '</td><td class="right">';
 		print $product->stats_commande_fournisseur['qty'];
 		print '</td>';
 		print '</tr>';
@@ -411,11 +411,11 @@ function show_stats_for_company($product, $socid)
 		$langs->load("bills");
 		print '<tr><td>';
 		print '<a href="facture.php?id='.$product->id.'">'.img_object('', 'bill').' '.$langs->trans("CustomersInvoices").'</a>';
-		print '</td><td align="right">';
+		print '</td><td class="right">';
 		print $product->stats_facture['customers'];
-		print '</td><td align="right">';
+		print '</td><td class="right">';
 		print $product->stats_facture['nb'];
-		print '</td><td align="right">';
+		print '</td><td class="right">';
 		print $product->stats_facture['qty'];
 		print '</td>';
 		print '</tr>';
@@ -429,11 +429,11 @@ function show_stats_for_company($product, $socid)
 		$langs->load("bills");
 		print '<tr><td>';
 		print '<a href="facture_fournisseur.php?id='.$product->id.'">'.img_object('', 'bill').' '.$langs->trans("SuppliersInvoices").'</a>';
-		print '</td><td align="right">';
+		print '</td><td class="right">';
 		print $product->stats_facture_fournisseur['suppliers'];
-		print '</td><td align="right">';
+		print '</td><td class="right">';
 		print $product->stats_facture_fournisseur['nb'];
-		print '</td><td align="right">';
+		print '</td><td class="right">';
 		print $product->stats_facture_fournisseur['qty'];
 		print '</td>';
 		print '</tr>';
@@ -448,11 +448,11 @@ function show_stats_for_company($product, $socid)
 		$langs->load("contracts");
 		print '<tr><td>';
 		print '<a href="contrat.php?id='.$product->id.'">'.img_object('', 'contract').' '.$langs->trans("Contracts").'</a>';
-		print '</td><td align="right">';
+		print '</td><td class="right">';
 		print $product->stats_contrat['customers'];
-		print '</td><td align="right">';
+		print '</td><td class="right">';
 		print $product->stats_contrat['nb'];
-		print '</td><td align="right">';
+		print '</td><td class="right">';
 		print $product->stats_contrat['qty'];
 		print '</td>';
 		print '</tr>';
@@ -460,7 +460,6 @@ function show_stats_for_company($product, $socid)
 
 	return $nblines++;
 }
-
 
 /**
  *	Return translation label of a unit key
@@ -472,50 +471,24 @@ function show_stats_for_company($product, $socid)
  */
 function measuring_units_string($unit, $measuring_style = '')
 {
-	global $langs;
+	global $langs, $db;
+	require_once DOL_DOCUMENT_ROOT.'/core/class/cunits.class.php';
+	$measuringUnits= new CUnits($db);
+	$result = $measuringUnits->fetchAll('', '', 0, 0, array(
+			't.code' => $unit,
+			't.unit_type' => $measuring_style,
+			't.active' => 1
+	));
 
-	$measuring_units=array();
-	if ($measuring_style == 'weight')
-	{
-		$measuring_units[3] = $langs->transnoentitiesnoconv("WeightUnitton");
-		$measuring_units[0] = $langs->transnoentitiesnoconv("WeightUnitkg");
-		$measuring_units[-3] = $langs->transnoentitiesnoconv("WeightUnitg");
-		$measuring_units[-6] = $langs->transnoentitiesnoconv("WeightUnitmg");
-		$measuring_units[98] = $langs->transnoentitiesnoconv("WeightUnitounce");
-		$measuring_units[99] = $langs->transnoentitiesnoconv("WeightUnitpound");
+	if ($result<0) {
+		return -1;
+	} else {
+		if (is_array($measuringUnits->records) && count($measuringUnits->records)>0) {
+			return $langs->transnoentitiesnoconv($measuringUnits->records[key($measuringUnits->records)]->label);
+		} else {
+			return '';
+		}
 	}
-	elseif ($measuring_style == 'size')
-	{
-		$measuring_units[0] = $langs->transnoentitiesnoconv("SizeUnitm");
-		$measuring_units[-1] = $langs->transnoentitiesnoconv("SizeUnitdm");
-		$measuring_units[-2] = $langs->transnoentitiesnoconv("SizeUnitcm");
-		$measuring_units[-3] = $langs->transnoentitiesnoconv("SizeUnitmm");
-        $measuring_units[98] = $langs->transnoentitiesnoconv("SizeUnitfoot");
-		$measuring_units[99] = $langs->transnoentitiesnoconv("SizeUnitinch");
-	}
-	elseif ($measuring_style == 'surface')
-	{
-		$measuring_units[0] = $langs->transnoentitiesnoconv("SurfaceUnitm2");
-		$measuring_units[-2] = $langs->transnoentitiesnoconv("SurfaceUnitdm2");
-		$measuring_units[-4] = $langs->transnoentitiesnoconv("SurfaceUnitcm2");
-		$measuring_units[-6] = $langs->transnoentitiesnoconv("SurfaceUnitmm2");
-        $measuring_units[98] = $langs->transnoentitiesnoconv("SurfaceUnitfoot2");
-		$measuring_units[99] = $langs->transnoentitiesnoconv("SurfaceUnitinch2");
-	}
-	elseif ($measuring_style == 'volume')
-	{
-		$measuring_units[0] = $langs->transnoentitiesnoconv("VolumeUnitm3");
-		$measuring_units[-3] = $langs->transnoentitiesnoconv("VolumeUnitdm3");
-		$measuring_units[-6] = $langs->transnoentitiesnoconv("VolumeUnitcm3");
-		$measuring_units[-9] = $langs->transnoentitiesnoconv("VolumeUnitmm3");
-        $measuring_units[88] = $langs->transnoentitiesnoconv("VolumeUnitfoot3");
-        $measuring_units[89] = $langs->transnoentitiesnoconv("VolumeUnitinch3");
-		$measuring_units[97] = $langs->transnoentitiesnoconv("VolumeUnitounce");
-		$measuring_units[98] = $langs->transnoentitiesnoconv("VolumeUnitlitre");
-        $measuring_units[99] = $langs->transnoentitiesnoconv("VolumeUnitgallon");
-	}
-
-	return $measuring_units[$unit];
 }
 
 /**

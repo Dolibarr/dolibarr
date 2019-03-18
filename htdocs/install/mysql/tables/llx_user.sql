@@ -58,6 +58,7 @@ create table llx_user
   skype				varchar(255),
   twitter			varchar(255),                        		--
   facebook			varchar(255),                        		--
+  linkedin                  varchar(255),                         	--
   instagram                varchar(255),                        		--
   snapchat                 varchar(255),                        		--
   googleplus               varchar(255),                        		--
@@ -99,5 +100,6 @@ create table llx_user
 
   import_key        varchar(14),				-- import key
   default_range     integer,
-  default_c_exp_tax_cat     integer
+  default_c_exp_tax_cat     integer,
+  fk_warehouse     integer
 )ENGINE=innodb;

@@ -225,7 +225,7 @@ class Paiement extends CommonObject
 	 *  @param  Societe   $thirdparty           Thirdparty
 	 *  @return int                 			id of created payment, < 0 if error
 	 */
-	function create($user, $closepaidinvoices = 0, $thirdparty = null)
+    public function create($user, $closepaidinvoices = 0, $thirdparty = null)
 	{
 		global $conf, $langs;
 
@@ -366,6 +366,7 @@ class Paiement extends CommonObject
                                 if ($invoice->type == Facture::TYPE_DEPOSIT)
                                 {
 			                        $amount_ht = $amount_tva = $amount_ttc = array();
+			                        $multicurrency_amount_ht = $multicurrency_amount_tva = $multicurrency_amount_ttc = array();
 
 									// Insert one discount by VAT rate category
 									$discount = new DiscountAbsolute($this->db);
@@ -384,6 +385,9 @@ class Paiement extends CommonObject
 												$amount_ht[$line->tva_tx] += $line->total_ht;
 												$amount_tva[$line->tva_tx] += $line->total_tva;
 												$amount_ttc[$line->tva_tx] += $line->total_ttc;
+												$multicurrency_amount_ht[$line->tva_tx] += $line->multicurrency_total_ht;
+												$multicurrency_amount_tva[$line->tva_tx] += $line->multicurrency_total_tva;
+												$multicurrency_amount_ttc[$line->tva_tx] += $line->multicurrency_total_ttc;
 												$i++;
 											}
 										}
@@ -392,6 +396,9 @@ class Paiement extends CommonObject
 											$discount->amount_ht = abs($amount_ht[$tva_tx]);
 											$discount->amount_tva = abs($amount_tva[$tva_tx]);
 											$discount->amount_ttc = abs($amount_ttc[$tva_tx]);
+											$discount->multicurrency_amount_ht = abs($multicurrency_amount_ht[$tva_tx]);
+											$discount->multicurrency_amount_tva = abs($multicurrency_amount_tva[$tva_tx]);
+											$discount->multicurrency_amount_ttc = abs($multicurrency_amount_ttc[$tva_tx]);
 											$discount->tva_tx = abs($tva_tx);
 
 											$result = $discount->create($user);
@@ -490,7 +497,7 @@ class Paiement extends CommonObject
 	 *  @param	int		$notrigger		No trigger
 	 *  @return int     				<0 si ko, >0 si ok
 	 */
-	function delete($notrigger = 0)
+    public function delete($notrigger = 0)
 	{
 		global $conf, $user, $langs;
 
@@ -600,7 +607,7 @@ class Paiement extends CommonObject
      *      @param	int		$notrigger			No trigger
      *      @return int                 		<0 if KO, bank_line_id if OK
      */
-    function addPaymentToBank($user, $mode, $label, $accountid, $emetteur_nom, $emetteur_banque, $notrigger = 0)
+    public function addPaymentToBank($user, $mode, $label, $accountid, $emetteur_nom, $emetteur_banque, $notrigger = 0)
     {
         global $conf,$langs,$user;
 
@@ -723,9 +730,8 @@ class Paiement extends CommonObject
                 }
 
 				// Add link 'WithdrawalPayment' in bank_url
-				if (! $error && $label == '(WithdrawalPayment)')
-				{
-					$result=$acc->add_url_line(
+				if (! $error && $label == '(WithdrawalPayment)') {
+                    $result=$acc->add_url_line(
 						$bank_line_id,
 						$this->id_prelevement,
 						DOL_URL_ROOT.'/compta/prelevement/card.php?id=',
@@ -769,14 +775,14 @@ class Paiement extends CommonObject
     }
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *      Mise a jour du lien entre le paiement et la ligne generee dans llx_bank
 	 *
 	 *      @param	int		$id_bank    Id compte bancaire
 	 *      @return	int					<0 if KO, >0 if OK
 	 */
-	function update_fk_bank($id_bank)
+    public function update_fk_bank($id_bank)
 	{
         // phpcs:enable
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element.' set fk_bank = '.$id_bank;
@@ -794,16 +800,16 @@ class Paiement extends CommonObject
             dol_syslog(get_class($this).'::update_fk_bank '.$this->error);
 			return -1;
 		}
-	}
+    }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *	Updates the payment date
      *
      *  @param	int	$date   New date
      *  @return int					<0 if KO, 0 if OK
      */
-    function update_date($date)
+    public function update_date($date)
     {
         // phpcs:enable
         $error=0;
@@ -861,18 +867,17 @@ class Paiement extends CommonObject
         return -1; //no date given or already validated
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *  Updates the payment number
      *
      *  @param	string	$num		New num
      *  @return int					<0 if KO, 0 if OK
      */
-    function update_num($num)
+    public function update_num($num)
     {
         // phpcs:enable
-    	if(!empty($num) && $this->statut!=1)
-        {
+        if(!empty($num) && $this->statut!=1) {
             $sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
             $sql.= " SET num_paiement = '".$this->db->escape($num)."'";
             $sql.= " WHERE rowid = ".$this->id;
@@ -899,8 +904,8 @@ class Paiement extends CommonObject
 	 *	  @param	User	$user		User making validation
 	 *    @return   int     			<0 if KO, >0 if OK
 	 */
-	function valide(User $user = null)
-	{
+    public function valide(User $user = null)
+    {
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element.' SET statut = 1 WHERE rowid = '.$this->id;
 
 		dol_syslog(get_class($this).'::valide', LOG_DEBUG);
@@ -915,7 +920,7 @@ class Paiement extends CommonObject
 			dol_syslog(get_class($this).'::valide '.$this->error);
 			return -1;
 		}
-	}
+    }
 
 	/**
 	 *    Reject payment
@@ -923,8 +928,8 @@ class Paiement extends CommonObject
 	 *	  @param	User	$user		User making reject
 	 *    @return   int     			<0 if KO, >0 if OK
 	 */
-	function reject(User $user = null)
-	{
+    public function reject(User $user = null)
+    {
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element.' SET statut = 2 WHERE rowid = '.$this->id;
 
 		dol_syslog(get_class($this).'::reject', LOG_DEBUG);
@@ -939,7 +944,7 @@ class Paiement extends CommonObject
 			dol_syslog(get_class($this).'::reject '.$this->error);
 			return -1;
 		}
-	}
+    }
 
 	/**
 	 *    Information sur l'objet
@@ -947,8 +952,8 @@ class Paiement extends CommonObject
 	 *    @param   int     $id      id du paiement dont il faut afficher les infos
 	 *    @return  void
 	 */
-	function info($id)
-	{
+    public function info($id)
+    {
 		$sql = 'SELECT p.rowid, p.datec, p.fk_user_creat, p.fk_user_modif, p.tms';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'paiement as p';
 		$sql.= ' WHERE p.rowid = '.$id;
@@ -983,7 +988,7 @@ class Paiement extends CommonObject
 		{
 			dol_print_error($this->db);
 		}
-	}
+    }
 
 	/**
 	 *  Retourne la liste des factures sur lesquels porte le paiement
@@ -991,8 +996,8 @@ class Paiement extends CommonObject
 	 *  @param	string	$filter         Critere de filtre
 	 *  @return array					Tableau des id de factures
 	 */
-	function getBillsArray($filter = '')
-	{
+    public function getBillsArray($filter = '')
+    {
 		$sql = 'SELECT fk_facture';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'paiement_facture as pf, '.MAIN_DB_PREFIX.'facture as f';
 		$sql.= ' WHERE pf.fk_facture = f.rowid AND fk_paiement = '.$this->id;
@@ -1019,7 +1024,7 @@ class Paiement extends CommonObject
 			dol_syslog(get_class($this).'::getBillsArray Error '.$this->error.' -', LOG_DEBUG);
 			return -1;
 		}
-	}
+    }
 
 	/**
 	 *      Return next reference of customer invoice not already used (or last reference)
@@ -1029,7 +1034,7 @@ class Paiement extends CommonObject
 	 *      @param     string		$mode		'next' for next value or 'last' for last value
 	 *      @return    string					free ref or last ref
 	 */
-	function getNextNumRef($soc, $mode = 'next')
+    public function getNextNumRef($soc, $mode = 'next')
 	{
 		global $conf, $db, $langs;
 		$langs->load("bills");
@@ -1110,9 +1115,9 @@ class Paiement extends CommonObject
 	/**
 	 * 	get the right way of payment
 	 *
-	 * 	@return 	string 	'dolibarr' if standard comportment or paid in dolibarr currency, 'customer' if payment received from multicurrency inputs
+	 * 	@return 	string 	'dolibarr' if standard comportment or paid in main currency, 'customer' if payment received from multicurrency inputs
 	 */
-	function getWay()
+    public function getWay()
 	{
 		global $conf;
 
@@ -1140,7 +1145,7 @@ class Paiement extends CommonObject
 	 *	@param	string		$option		''=Create a specimen invoice with lines, 'nolines'=No lines
 	 *  @return	void
 	 */
-	function initAsSpecimen($option = '')
+    public function initAsSpecimen($option = '')
 	{
 		global $user,$langs,$conf;
 
@@ -1166,7 +1171,7 @@ class Paiement extends CommonObject
      *  @param	int  	$notooltip		1=Disable tooltip
 	 *	@return	string					Chaine avec URL
 	 */
-	function getNomUrl($withpicto = 0, $option = '', $mode = 'withlistofinvoices', $notooltip = 0)
+    public function getNomUrl($withpicto = 0, $option = '', $mode = 'withlistofinvoices', $notooltip = 0)
 	{
 		global $conf, $langs;
 
@@ -1224,12 +1229,12 @@ class Paiement extends CommonObject
 	 * @param	int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	 * @return  string				Libelle
 	 */
-	function getLibStatut($mode = 0)
+    public function getLibStatut($mode = 0)
 	{
 		return $this->LibStatut($this->statut, $mode);
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Renvoi le libelle d'un statut donne
 	 *
@@ -1237,7 +1242,7 @@ class Paiement extends CommonObject
 	 * @param   int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	 * @return	string  		    Libelle du statut
 	 */
-	function LibStatut($status, $mode = 0)
+    public function LibStatut($status, $mode = 0)
 	{
         // phpcs:enable
 		global $langs;	// TODO Renvoyer le libelle anglais et faire traduction a affichage
@@ -1281,14 +1286,14 @@ class Paiement extends CommonObject
 		return '';
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Load the third party of object, from id into this->thirdparty
 	 *
 	 *	@param		int		$force_thirdparty_id	Force thirdparty id
 	 *	@return		int								<0 if KO, >0 if OK
 	 */
-	function fetch_thirdparty($force_thirdparty_id = 0)
+    public function fetch_thirdparty($force_thirdparty_id = 0)
 	{
         // phpcs:enable
 		include_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';

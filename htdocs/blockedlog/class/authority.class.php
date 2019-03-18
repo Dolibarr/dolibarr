@@ -53,7 +53,7 @@ class BlockedLogAuthority
     public function __construct($db)
     {
     	$this->db = $db;
-	}
+    }
 
 	/**
 	 *	Get the blockchain
@@ -76,7 +76,7 @@ class BlockedLogAuthority
 		}
 
 		return $this->blockchain;
-	}
+    }
 
 	/**
 	 *	Get hash of the block chain to check
@@ -87,7 +87,7 @@ class BlockedLogAuthority
     {
 
 		return md5($this->signature.$this->blockchain);
-	}
+    }
 
 	/**
 	 *	Get hash of the block chain to check
@@ -99,7 +99,7 @@ class BlockedLogAuthority
     {
 
 		return ($hash === $this->getBlockchainHash() );
-	}
+    }
 
 	/**
 	 *	Add a new block to the chain
@@ -111,7 +111,7 @@ class BlockedLogAuthority
     {
 
 		$this->blockchain.=$block;
-	}
+    }
 
 	/**
 	 *	hash already exist into chain ?
@@ -132,7 +132,7 @@ class BlockedLogAuthority
 		else{
 			return false;
 		}
-	}
+    }
 
 
 	/**
@@ -161,7 +161,7 @@ class BlockedLogAuthority
 		$sql.= " FROM ".MAIN_DB_PREFIX."blockedlog_authority as b";
 
 		if ($id) $sql.= " WHERE b.rowid = ". $id;
-		elseif($signature)$sql.= " WHERE b.signature = '". $this->db->escape( $signature ) ."'" ;
+		elseif($signature)$sql.= " WHERE b.signature = '". $this->db->escape($signature) ."'" ;
 
 		$resql=$this->db->query($sql);
 		if ($resql)
@@ -191,7 +191,7 @@ class BlockedLogAuthority
 			$this->error=$this->db->error();
 			return -1;
 		}
-	}
+    }
 
 	/**
 	 *	Create authority in database.
@@ -245,7 +245,7 @@ class BlockedLogAuthority
 			$this->db->rollback();
 			return -1;
 		}
-	}
+    }
 
 	/**
 	 *	Create authority in database.
@@ -283,7 +283,7 @@ class BlockedLogAuthority
 			$this->db->rollback();
 			return -1;
 		}
-	}
+    }
 
 	/**
 	 *	For cron to sync to authority.
@@ -326,6 +326,6 @@ class BlockedLogAuthority
 			}
 		}
 
-		return 1;
-	}
+        return 1;
+    }
 }

@@ -356,8 +356,8 @@ print '<tr class="liste_titre">'."\n";
 print '  <td>'.$langs->trans("Name").'</td>';
 print '  <td>'.$langs->trans("Description").'</td>';
 print '  <td>'.$langs->trans("Example").'</td>';
-print '  <td align="center" width="80">'.$langs->trans("Status").'</td>';
-print '  <td align="center" width="60">'.$langs->trans("ShortInfo").'</td>';
+print '  <td class="center" width="80">'.$langs->trans("Status").'</td>';
+print '  <td class="center" width="60">'.$langs->trans("ShortInfo").'</td>';
 print "</tr>\n";
 
 foreach ($dirsociete as $dirroot)
@@ -395,7 +395,7 @@ foreach ($dirsociete as $dirroot)
 
     			if ($conf->global->SOCIETE_CODECLIENT_ADDON == "$file")
     			{
-    				print '<td align="center">'."\n";
+    				print '<td class="center">'."\n";
     				print img_picto($langs->trans("Activated"), 'switch_on');
     				print "</td>\n";
     			}
@@ -403,14 +403,14 @@ foreach ($dirsociete as $dirroot)
     			{
     				$disabled = false;
     				if (! empty($conf->multicompany->enabled) && (is_object($mc) && ! empty($mc->sharings['referent']) && $mc->sharings['referent'] == $conf->entity) ? false : true);
-    				print '<td align="center">';
+    				print '<td class="center">';
     				if (! $disabled) print '<a href="'.$_SERVER['PHP_SELF'].'?action=setcodeclient&value='.$file.'">';
     				print img_picto($langs->trans("Disabled"), 'switch_off');
     				if (! $disabled) print '</a>';
     				print '</td>';
     			}
 
-    			print '<td align="center">';
+    			print '<td class="center">';
     			$s=$modCodeTiers->getToolTip($langs, null, -1);
     			print $form->textwithpicto('', $s, 1);
     			print '</td>';
@@ -437,8 +437,8 @@ print '<tr class="liste_titre">';
 print '<td width="140">'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Description").'</td>';
 print '<td>'.$langs->trans("Example").'</td>';
-print '<td align="center" width="80">'.$langs->trans("Status").'</td>';
-print '<td align="center" width="60">'.$langs->trans("ShortInfo").'</td>';
+print '<td class="center" width="80">'.$langs->trans("Status").'</td>';
+print '<td class="center" width="60">'.$langs->trans("ShortInfo").'</td>';
 print "</tr>\n";
 
 foreach ($dirsociete as $dirroot)
@@ -472,17 +472,17 @@ foreach ($dirsociete as $dirroot)
 
     			if ($conf->global->SOCIETE_CODECOMPTA_ADDON == "$file")
     			{
-    				print '<td align="center">';
+    				print '<td class="center">';
     				print img_picto($langs->trans("Activated"), 'switch_on');
     				print '</td>';
     			}
     			else
     			{
-    				print '<td align="center"><a href="'.$_SERVER['PHP_SELF'].'?action=setcodecompta&value='.$file.'">';
+    				print '<td class="center"><a href="'.$_SERVER['PHP_SELF'].'?action=setcodecompta&value='.$file.'">';
     				print img_picto($langs->trans("Disabled"), 'switch_off');
     				print '</a></td>';
     			}
-    			print '<td align="center">';
+    			print '<td class="center">';
     			$s=$modCodeCompta->getToolTip($langs, null, -1);
     			print $form->textwithpicto('', $s, 1);
     			print '</td>';
@@ -530,9 +530,9 @@ print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td width="140">'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Description").'</td>';
-print '<td align="center" width="80">'.$langs->trans("Status").'</td>';
-print '<td align="center" width="60">'.$langs->trans("ShortInfo").'</td>';
-print '<td align="center" width="60">'.$langs->trans("Preview").'</td>';
+print '<td class="center" width="80">'.$langs->trans("Status").'</td>';
+print '<td class="center" width="60">'.$langs->trans("ShortInfo").'</td>';
+print '<td class="center" width="60">'.$langs->trans("Preview").'</td>';
 print "</tr>\n";
 
 foreach ($dirsociete as $dirroot)
@@ -577,7 +577,7 @@ foreach ($dirsociete as $dirroot)
 					// Activate / Disable
 					if (in_array($name, $def))
 					{
-						print "<td align=\"center\">\n";
+						print "<td class=\"center\">\n";
 						//if ($conf->global->COMPANY_ADDON_PDF != "$name")
 						//{
 							print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&value='.$name.'&scan_dir='.$module->scandir.'&label='.urlencode($module->name).'">';
@@ -594,13 +594,13 @@ foreach ($dirsociete as $dirroot)
 					{
 						if (versioncompare($module->phpmin, versionphparray()) > 0)
 						{
-							print "<td align=\"center\">\n";
+							print "<td class=\"center\">\n";
 							print img_picto(dol_escape_htmltag($langs->trans("ErrorModuleRequirePHPVersion", join('.', $module->phpmin))), 'switch_off');
 							print "</td>";
 						}
 						else
 						{
-							print "<td align=\"center\">\n";
+							print "<td class=\"center\">\n";
 							print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&value='.$name.'&scan_dir='.$module->scandir.'&label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
 							print "</td>";
 						}
@@ -616,12 +616,12 @@ foreach ($dirsociete as $dirroot)
 					$htmltooltip.='<br><br><u>'.$langs->trans("FeaturesSupported").':</u>';
 					$htmltooltip.='<br>'.$langs->trans("WatermarkOnDraft").': '.yn((! empty($module->option_draft_watermark)?$module->option_draft_watermark:''), 1, 1);
 
-					print '<td align="center" class="nowrap">';
+					print '<td class="center nowrap">';
 					print $form->textwithpicto('', $htmltooltip, 1, 0);
 					print '</td>';
 
 					// Preview
-					print '<td align="center" class="nowrap">';
+					print '<td class="center nowrap">';
 					if ($module->type == 'pdf')
 					{
 						$linkspec='<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"), 'bill').'</a>';
@@ -653,9 +653,9 @@ print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Description").'</td>';
-print '<td align="center">'.$langs->trans("MustBeUnique").'</td>';
-print '<td align="center">'.$langs->trans("MustBeMandatory").'</td>';
-print '<td align="center">'.$langs->trans("MustBeInvoiceMandatory").'</td>';
+print '<td class="center">'.$langs->trans("MustBeUnique").'</td>';
+print '<td class="center">'.$langs->trans("MustBeMandatory").'</td>';
+print '<td class="center">'.$langs->trans("MustBeInvoiceMandatory").'</td>';
 print "</tr>\n";
 
 $profid['IDPROF1'][0]=$langs->trans("ProfId1");
@@ -693,39 +693,39 @@ foreach($profid as $key => $val)
 
 		if ($verif)
 		{
-			print '<td align="center"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setprofid&value='.$key.'&status=0">';
+			print '<td class="center"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setprofid&value='.$key.'&status=0">';
 			print img_picto($langs->trans("Activated"), 'switch_on');
 			print '</a></td>';
 		}
 		else
 		{
-			print '<td align="center"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setprofid&value='.$key.'&status=1">';
+			print '<td class="center"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setprofid&value='.$key.'&status=1">';
 			print img_picto($langs->trans("Disabled"), 'switch_off');
 			print '</a></td>';
 		}
 
 		if ($mandatory)
 		{
-			print '<td align="center"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setprofidmandatory&value='.$key.'&status=0">';
+			print '<td class="center"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setprofidmandatory&value='.$key.'&status=0">';
 			print img_picto($langs->trans("Activated"), 'switch_on');
 			print '</a></td>';
 		}
 		else
 		{
-			print '<td align="center"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setprofidmandatory&value='.$key.'&status=1">';
+			print '<td class="center"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setprofidmandatory&value='.$key.'&status=1">';
 			print img_picto($langs->trans("Disabled"), 'switch_off');
 			print '</a></td>';
 		}
 
 		if ($invoice_mandatory)
 		{
-			print '<td align="center"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setprofidinvoicemandatory&value='.$key.'&status=0">';
+			print '<td class="center"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setprofidinvoicemandatory&value='.$key.'&status=0">';
 			print img_picto($langs->trans("Activated"), 'switch_on');
 			print '</a></td>';
 		}
 		else
 		{
-			print '<td align="center"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setprofidinvoicemandatory&value='.$key.'&status=1">';
+			print '<td class="center"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setprofidinvoicemandatory&value='.$key.'&status=1">';
 			print img_picto($langs->trans("Disabled"), 'switch_off');
 			print '</a></td>';
 		}
@@ -753,7 +753,7 @@ print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print "<td>".$langs->trans("Parameters")."</td>\n";
-print '<td align="right" width="60">'.$langs->trans("Value").'</td>'."\n";
+print '<td class="right" width="60">'.$langs->trans("Value").'</td>'."\n";
 print '<td width="80">&nbsp;</td></tr>'."\n";
 
 // Utilisation formulaire Ajax sur choix societe
@@ -762,20 +762,20 @@ print '<tr class="oddeven">';
 print '<td width="80%">'.$form->textwithpicto($langs->trans("DelaiedFullListToSelectCompany"), $langs->trans('UseSearchToSelectCompanyTooltip'), 1).' </td>';
 if (! $conf->use_javascript_ajax)
 {
-	print '<td class="nowrap" align="right" colspan="2">';
+	print '<td class="nowrap right" colspan="2">';
 	print $langs->trans("NotAvailableWhenAjaxDisabled");
 	print "</td>";
 }
 else
 {
-	print '<td width="60" align="right">';
+	print '<td width="60" class="right">';
 	$arrval=array('0'=>$langs->trans("No"),
 	'1'=>$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 1).')',
     '2'=>$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 2).')',
     '3'=>$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 3).')',
 	);
 	print $form->selectarray("activate_COMPANY_USE_SEARCH_TO_SELECT", $arrval, $conf->global->COMPANY_USE_SEARCH_TO_SELECT, 0, 0, 0, '', 0, 0, 0, '', 'minwidth75imp');
-	print '</td><td align="right">';
+	print '</td><td class="right">';
 	print '<input type="submit" class="button" name="COMPANY_USE_SEARCH_TO_SELECT" value="'.$langs->trans("Modify").'">';
 	print "</td>";
 }
@@ -786,20 +786,20 @@ print '<tr class="oddeven">';
 print '<td width="80%">'.$form->textwithpicto($langs->trans("DelaiedFullListToSelectContact"), $langs->trans('UseSearchToSelectContactTooltip'), 1).'</td>';
 if (! $conf->use_javascript_ajax)
 {
-	print '<td class="nowrap" align="right" colspan="2">';
+	print '<td class="nowrap right" colspan="2">';
 	print $langs->trans("NotAvailableWhenAjaxDisabled");
 	print "</td>";
 }
 else
 {
-	print '<td width="60" align="right">';
+	print '<td width="60" class="right">';
 	$arrval=array('0'=>$langs->trans("No"),
 	'1'=>$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 1).')',
 	'2'=>$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 2).')',
 	'3'=>$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 3).')',
 	);
 	print $form->selectarray("activate_CONTACT_USE_SEARCH_TO_SELECT", $arrval, $conf->global->CONTACT_USE_SEARCH_TO_SELECT, 0, 0, 0, '', 0, 0, 0, '', 'minwidth75imp');
-	print '</td><td align="right">';
+	print '</td><td class="right">';
 	print '<input type="submit" class="button" name="CONTACT_USE_SEARCH_TO_SELECT" value="'.$langs->trans("Modify").'">';
 	print "</td>";
 }
@@ -810,7 +810,7 @@ print '</tr>';
 print '<tr class="oddeven">';
 print '<td width="80%">'.$langs->trans("AddRefInList").'</td>';
 print '<td>&nbsp</td>';
-print '<td align="center">';
+print '<td class="center">';
 if (!empty($conf->global->SOCIETE_ADD_REF_IN_LIST))
 {
 	print '<a href="'.$_SERVER['PHP_SELF'].'?action=setaddrefinlist&value=0">';
@@ -827,7 +827,7 @@ print '</tr>';
 print '<tr class="oddeven">';
 print '<td width="80%">'.$langs->trans("AddAdressInList").'</td>';
 print '<td>&nbsp</td>';
-print '<td align="center">';
+print '<td class="center">';
 if (!empty($conf->global->COMPANY_SHOW_ADDRESS_SELECTLIST))
 {
 	print '<a href="'.$_SERVER['PHP_SELF'].'?action=setaddadressinlist&value=0">';
@@ -846,7 +846,7 @@ print '</tr>';
 print '<tr class="oddeven">';
 print '<td width="80%">'.$langs->trans("AskForPreferredShippingMethod").'</td>';
 print '<td>&nbsp</td>';
-print '<td align="center">';
+print '<td class="center">';
 if (!empty($conf->global->SOCIETE_ASK_FOR_SHIPPING_METHOD))
 {
 	print '<a href="'.$_SERVER['PHP_SELF'].'?action=setaskforshippingmet&value=0">';
@@ -864,7 +864,7 @@ print '</tr>';
 print '<tr class="oddeven">';
 print '<td width="80%">'.$langs->trans("DisableProspectCustomerType").'</td>';
 print '<td>&nbsp</td>';
-print '<td align="center">';
+print '<td class="center">';
 if (!empty($conf->global->SOCIETE_DISABLE_PROSPECTSCUSTOMERS))
 {
     print '<a href="'.$_SERVER['PHP_SELF'].'?action=setdisableprospectcustomer&value=0">';
@@ -884,7 +884,7 @@ print '<td width="80%">'.$langs->trans("DefaultCustomerType").'</td>';
 print '<td>';
 print $formcompany->selectProspectCustomerType($conf->global->THIRDPARTY_CUSTOMERTYPE_BY_DEFAULT, 'defaultcustomertype', 'defaultcustomertype', 'admin');
 print '</td>';
-print '<td align="center">';
+print '<td class="center">';
 print '<input type="submit" class="button" name="THIRDPARTY_CUSTOMERTYPE_BY_DEFAULT" value="'.$langs->trans("Modify").'">';
 print '</td>';
 print '</tr>';

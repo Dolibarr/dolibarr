@@ -60,14 +60,14 @@ class pdf_typhon extends ModelePDFDeliveryOrder
     public $type;
 
     /**
-     * @var array() Minimum version of PHP required by module.
+     * @var array Minimum version of PHP required by module.
 	 * e.g.: PHP ≥ 5.4 = array(5, 4)
      */
 	public $phpmin = array(5, 4);
 
 	/**
      * Dolibarr version of the loaded document
-     * @public string
+     * @var string
      */
 	public $version = 'dolibarr';
 
@@ -117,7 +117,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 	 *
 	 *  @param		DoliDB		$db      Database handler
 	 */
-	function __construct($db)
+	public function __construct($db)
 	{
 		global $conf,$langs,$mysoc;
 
@@ -174,20 +174,20 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *  Function to build pdf onto disk
      *
-     *  @param		Object		$object				Object to generate
-     *  @param		Translate	$outputlangs		Lang output object
-     *  @param		string		$srctemplatepath	Full path of source filename for generator using a template file
-     *  @param		int			$hidedetails		Do not show line details
-     *  @param		int			$hidedesc			Do not show desc
-     *  @param		int			$hideref			Do not show ref
+     *  @param      Object		$object				Object to generate
+     *  @param      Translate	$outputlangs		Lang output object
+     *  @param      string		$srctemplatepath	Full path of source filename for generator using a template file
+     *  @param      int			$hidedetails		Do not show line details
+     *  @param      int			$hidedesc			Do not show desc
+     *  @param      int			$hideref			Do not show ref
      *  @return     int             			1=OK, 0=KO
      */
-	function write_file($object, $outputlangs, $srctemplatepath = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0)
-	{
+    public function write_file($object, $outputlangs, $srctemplatepath = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0)
+    {
         // phpcs:enable
 		global $user,$langs,$conf,$mysoc,$hookmanager;
 
@@ -637,7 +637,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 		return 0;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *   Show miscellaneous information (payment mode, payment term, ...)
 	 *
@@ -647,7 +647,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 	 *   @param		Translate	$outputlangs	Langs object
 	 *   @return	void
 	 */
-	function _tableau_info(&$pdf, $object, $posy, $outputlangs)
+	private function _tableau_info(&$pdf, $object, $posy, $outputlangs)
 	{
         // phpcs:enable
 		global $conf,$mysoc;
@@ -678,7 +678,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 	 *   @param		int			$hidebottom		Hide bottom bar of array
 	 *   @return	void
 	 */
-	function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop = 0, $hidebottom = 0)
+	private function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop = 0, $hidebottom = 0)
 	{
 		global $conf,$mysoc;
 
@@ -740,7 +740,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 	 *  @param  Translate	$outputlangs	Object lang for output
 	 *  @return	void
 	 */
-	function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
+	private function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
 	{
 		global $conf,$langs,$hookmanager;
 
@@ -910,18 +910,18 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 	}
 
 	/**
-	 *   	Show footer of page. Need this->emetteur object
+	 *  Show footer of page. Need this->emetteur object
      *
-	 *   	@param	PDF			$pdf     			PDF
-	 * 		@param	Object		$object				Object to show
-	 *      @param	Translate	$outputlangs		Object lang for output
-	 *      @param	int			$hidefreetext		1=Hide free text
-	 *      @return	int								Return height of bottom margin including footer text
+	 *  @param	PDF			$pdf     			PDF
+	 *  @param	Object		$object				Object to show
+	 *  @param	Translate	$outputlangs		Object lang for output
+	 *  @param	int			$hidefreetext		1=Hide free text
+	 *  @return	int								Return height of bottom margin including footer text
 	 */
-	function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
-	{
-		global $conf;
-		$showdetails=$conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;
-		return pdf_pagefoot($pdf, $outputlangs, 'DELIVERY_FREE_TEXT', $this->emetteur, $this->marge_basse, $this->marge_gauche, $this->page_hauteur, $object, $showdetails, $hidefreetext);
-	}
+    private function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
+    {
+        global $conf;
+        $showdetails=$conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;
+        return pdf_pagefoot($pdf, $outputlangs, 'DELIVERY_FREE_TEXT', $this->emetteur, $this->marge_basse, $this->marge_gauche, $this->page_hauteur, $object, $showdetails, $hidefreetext);
+    }
 }

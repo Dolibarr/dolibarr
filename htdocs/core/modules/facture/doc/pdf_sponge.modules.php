@@ -1,13 +1,13 @@
 <?php
-/* Copyright (C) 2004-2014	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012	Regis Houssin		<regis.houssin@inodbox.com>
- * Copyright (C) 2008		Raphael Bertrand		<raphael.bertrand@resultic.fr>
- * Copyright (C) 2010-2014	Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2012		Christophe Battarel	<christophe.battarel@altairis.fr>
- * Copyright (C) 2012		Cédric Salvador		<csalvador@gpcsolutions.fr>
- * Copyright (C) 2012-2014	Raphaël Doursenaud	<rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2015		Marcos García		<marcosgdf@gmail.com>
- * Copyright (C) 2017		Ferran Marcet		<fmarcet@2byte.es>
+/* Copyright (C) 2004-2014  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2008       Raphael Bertrand        <raphael.bertrand@resultic.fr>
+ * Copyright (C) 2010-2014  Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2012       Christophe Battarel     <christophe.battarel@altairis.fr>
+ * Copyright (C) 2012       Cédric Salvador         <csalvador@gpcsolutions.fr>
+ * Copyright (C) 2012-2014  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
+ * Copyright (C) 2017       Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -26,9 +26,9 @@
  */
 
 /**
- *	\file       htdocs/core/modules/facture/doc/pdf_sponge.modules.php
- *	\ingroup    facture
- *	\brief      File of class to generate customers invoices from sponge model
+ *  \file       htdocs/core/modules/facture/doc/pdf_sponge.modules.php
+ *  \ingroup    facture
+ *  \brief      File of class to generate customers invoices from sponge model
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/modules/facture/modules_facture.php';
@@ -59,7 +59,7 @@ class pdf_sponge extends ModelePDFFactures
     public $description;
 
     /**
-     * @var int 	Save the name of generated file as the main doc when generating a doc with this template
+     * @var int     Save the name of generated file as the main doc when generating a doc with this template
      */
     public $update_main_doc_field;
 
@@ -76,7 +76,7 @@ class pdf_sponge extends ModelePDFFactures
 
 	/**
      * Dolibarr version of the loaded document
-     * @public string
+     * @var string
      */
 	public $version = 'development';
 
@@ -106,7 +106,7 @@ class pdf_sponge extends ModelePDFFactures
 	 *
 	 *  @param		DoliDB		$db      Database handler
 	 */
-	function __construct($db)
+	public function __construct($db)
 	{
 		global $conf,$langs,$mysoc;
 
@@ -860,7 +860,7 @@ class pdf_sponge extends ModelePDFFactures
      *  @param  Translate	$outputlangs    Object langs for output
      *  @return int             			<0 if KO, >0 if OK
 	 */
-	function drawPaymentsTable(&$pdf, $object, $posy, $outputlangs)
+	public function drawPaymentsTable(&$pdf, $object, $posy, $outputlangs)
 	{
 		global $conf;
 
@@ -1148,9 +1148,9 @@ class pdf_sponge extends ModelePDFFactures
 
 
 	/**
-	 *	Show total to pay
+	 *  Show total to pay
 	 *
-	 *	@param	PDF			$pdf           Object PDF
+	 *  @param	PDF			$pdf           Object PDF
 	 *	@param  Facture		$object         Object invoice
 	 *	@param  int			$deja_regle     Montant deja regle
 	 *	@param	int			$posy			Position depart
@@ -1478,7 +1478,7 @@ class pdf_sponge extends ModelePDFFactures
 	 *   @param		string		$currency		Currency code
 	 *   @return	void
 	 */
-	function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop = 0, $hidebottom = 0, $currency = '')
+	private function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop = 0, $hidebottom = 0, $currency = '')
 	{
 		global $conf;
 
@@ -1524,7 +1524,7 @@ class pdf_sponge extends ModelePDFFactures
 
 		    if (empty($hidetop))
 		    {
-		      $pdf->SetXY($colDef['xStartPos'] + $colDef['title']['padding'][3], $tab_top + $colDef['title']['padding'][0] );
+		      $pdf->SetXY($colDef['xStartPos'] + $colDef['title']['padding'][3], $tab_top + $colDef['title']['padding'][0]);
 
 		      $textWidth = $colDef['width'] - $colDef['title']['padding'][3] -$colDef['title']['padding'][1];
 		      $pdf->MultiCell($textWidth, 2, $colDef['title']['label'], '', $colDef['title']['align']);
@@ -1545,7 +1545,7 @@ class pdf_sponge extends ModelePDFFactures
 	 *  @param  Translate	$outputlangs	Object lang for output
 	 *  @return	void
 	 */
-	function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
+	private function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
 	{
 		global $conf, $langs;
 
@@ -1818,7 +1818,7 @@ class pdf_sponge extends ModelePDFFactures
 	 *      @param	int			$hidefreetext		1=Hide free text
 	 *      @return	int								Return height of bottom margin including footer text
 	 */
-	function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
+	private function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
 	{
 		global $conf;
 		$showdetails=$conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;
@@ -1826,16 +1826,16 @@ class pdf_sponge extends ModelePDFFactures
 	}
 
 	/**
-	 *   	Define Array Column Field
+	 *  Define Array Column Field
 	 *
-	 *   	@param	object			$object    		common object
-	 *   	@param	outputlangs		$outputlangs    langs
-     *      @param	int			   $hidedetails		Do not show line details
-     *      @param	int			   $hidedesc		Do not show desc
-     *      @param	int			   $hideref			Do not show ref
-	 *      @return	null
-	 */
-    function defineColumnField($object, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
+	 *  @param	object			$object    		common object
+	 *  @param	outputlangs		$outputlangs    langs
+     *  @param	int			   $hidedetails		Do not show line details
+     *  @param	int			   $hidedesc		Do not show desc
+     *  @param	int			   $hideref			Do not show ref
+     *  @return	null
+     */
+    public function defineColumnField($object, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
     {
 	    global $conf, $hookmanager;
 

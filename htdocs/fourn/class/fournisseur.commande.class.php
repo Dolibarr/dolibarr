@@ -9,7 +9,7 @@
  * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
  * Copyright (C) 2013       Cédric Salvador         <csalvador@gpcsolutions.fr>
  * Copyright (C) 2018       Nicolas ZABOURI			<info@inovea-conseil.com>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2019  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2018       Ferran Marcet         	<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -262,7 +262,7 @@ class CommandeFournisseur extends CommonOrder
         $sql.= " c.date_commande as date_commande, c.date_livraison as date_livraison, c.fk_cond_reglement, c.fk_mode_reglement, c.fk_projet as fk_project, c.remise_percent, c.source, c.fk_input_method,";
         $sql.= " c.fk_account,";
         $sql.= " c.note_private, c.note_public, c.model_pdf, c.extraparams, c.billed,";
-		$sql.= " c.fk_multicurrency, c.multicurrency_code, c.multicurrency_tx, c.multicurrency_total_ht, c.multicurrency_total_tva, c.multicurrency_total_ttc,";
+        $sql.= " c.fk_multicurrency, c.multicurrency_code, c.multicurrency_tx, c.multicurrency_total_ht, c.multicurrency_total_tva, c.multicurrency_total_ttc,";
         $sql.= " cm.libelle as methode_commande,";
         $sql.= " cr.code as cond_reglement_code, cr.libelle as cond_reglement_libelle,";
         $sql.= " p.code as mode_reglement_code, p.libelle as mode_reglement_libelle";
@@ -272,7 +272,7 @@ class CommandeFournisseur extends CommonOrder
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_payment_term as cr ON c.fk_cond_reglement = cr.rowid";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as p ON c.fk_mode_reglement = p.id";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_input_method as cm ON cm.rowid = c.fk_input_method";
-		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_incoterms as i ON c.fk_incoterms = i.rowid';
+        $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_incoterms as i ON c.fk_incoterms = i.rowid';
         $sql.= " WHERE c.entity = ".$conf->entity;
         if ($ref) $sql.= " AND c.ref='".$this->db->escape($ref)."'";
         else $sql.= " AND c.rowid=".$id;
@@ -375,14 +375,14 @@ class CommandeFournisseur extends CommonOrder
         }
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      * Load array lines
      *
      * @param		int		$only_product	Return only physical products
      * @return		int						<0 if KO, >0 if OK
      */
-    function fetch_lines($only_product = 0)
+    public function fetch_lines($only_product = 0)
     {
         // phpcs:enable
     	//$result=$this->fetch_lines();
@@ -616,7 +616,7 @@ class CommandeFournisseur extends CommonOrder
         return $this->LibStatut($this->statut, $mode, $this->billed);
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *  Return label of a status
      *
@@ -625,7 +625,7 @@ class CommandeFournisseur extends CommonOrder
      *  @param  int     $billed     1=Billed
      *  @return string				Label of status
      */
-    function LibStatut($statut, $mode = 0, $billed = 0)
+    public function LibStatut($statut, $mode = 0, $billed = 0)
     {
         // phpcs:enable
     	global $conf, $langs;
@@ -1079,7 +1079,7 @@ class CommandeFournisseur extends CommonOrder
         return $result ;
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      * 	Cancel an approved order.
      *	The cancellation is done after approval
@@ -1088,12 +1088,12 @@ class CommandeFournisseur extends CommonOrder
      *	@param	int		$idwarehouse	Id warehouse to use for stock change (not used for supplier orders).
      * 	@return	int						>0 if Ok, <0 if Ko
      */
-    function Cancel($user, $idwarehouse = -1)
+    public function Cancel($user, $idwarehouse = -1)
     {
         // phpcs:enable
         global $langs,$conf;
 
-		$error=0;
+        $error=0;
 
         //dol_syslog("CommandeFournisseur::Cancel");
         $result = 0;
@@ -1293,7 +1293,7 @@ class CommandeFournisseur extends CommonOrder
 
 	                $this->special_code = $this->lines[$i]->special_code; // TODO : remove this in 9.0 and add special_code param to addline()
 
-	                $result = $this->addline(              // This include test on qty if option SUPPLIER_ORDER_WITH_NOPRICEDEFINED is not set
+                $result = $this->addline(              // This include test on qty if option SUPPLIER_ORDER_WITH_NOPRICEDEFINED is not set
 	                    $this->lines[$i]->desc,
 	                    $this->lines[$i]->subprice,
 	                    $this->lines[$i]->qty,
@@ -2006,13 +2006,13 @@ class CommandeFournisseur extends CommonOrder
 		}
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *	Get list of order methods
      *
      *	@return int 0 if OK, <0 if KO
      */
-    function get_methodes_commande()
+    public function get_methodes_commande()
     {
         // phpcs:enable
         $sql = "SELECT rowid, libelle";
@@ -2093,7 +2093,7 @@ class CommandeFournisseur extends CommonOrder
     }
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      * 	Set a delivery in database for this supplier order
      *
@@ -2103,7 +2103,7 @@ class CommandeFournisseur extends CommonOrder
      *	@param	string	$comment	Comment
      *	@return	int					<0 if KO, >0 if OK
      */
-    function Livraison($user, $date, $type, $comment)
+    public function Livraison($user, $date, $type, $comment)
     {
         // phpcs:enable
     	global $conf, $langs;
@@ -2210,7 +2210,7 @@ class CommandeFournisseur extends CommonOrder
         return $result ;
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *	Set the planned delivery date
      *
@@ -2219,7 +2219,7 @@ class CommandeFournisseur extends CommonOrder
      *  @param     	int				$notrigger			1=Does not execute triggers, 0= execute triggers
      *	@return     int         						<0 if KO, >0 if OK
      */
-    function set_date_livraison($user, $date_livraison, $notrigger = 0)
+    public function set_date_livraison($user, $date_livraison, $notrigger = 0)
     {
         // phpcs:enable
         if ($user->rights->fournisseur->commande->creer)
@@ -2276,7 +2276,7 @@ class CommandeFournisseur extends CommonOrder
         }
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
      *	Set the id projet
      *
@@ -2285,7 +2285,7 @@ class CommandeFournisseur extends CommonOrder
      *  @param     	int				$notrigger			1=Does not execute triggers, 0= execute triggers
      *	@return     int         						<0 si ko, >0 si ok
      */
-    function set_id_projet($user, $id_projet, $notrigger = 0)
+    public function set_id_projet($user, $id_projet, $notrigger = 0)
     {
         // phpcs:enable
         if ($user->rights->fournisseur->commande->creer)
@@ -2310,6 +2310,7 @@ class CommandeFournisseur extends CommonOrder
             {
             	$this->oldcopy= clone $this;
             	$this->fk_projet = $id_projet;
+            	$this->fk_project = $id_projet;
             }
 
             if (! $notrigger && empty($error))
@@ -2469,7 +2470,7 @@ class CommandeFournisseur extends CommonOrder
      */
     public function updateline($rowid, $desc, $pu, $qty, $remise_percent, $txtva, $txlocaltax1 = 0, $txlocaltax2 = 0, $price_base_type = 'HT', $info_bits = 0, $type = 0, $notrigger = 0, $date_start = '', $date_end = '', $array_options = 0, $fk_unit = null, $pu_ht_devise = 0, $ref_supplier = '')
     {
-    	global $mysoc, $conf;
+        global $mysoc, $conf;
         dol_syslog(get_class($this)."::updateline $rowid, $desc, $pu, $qty, $remise_percent, $txtva, $price_base_type, $info_bits, $type, $fk_unit");
         include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 
@@ -2739,13 +2740,13 @@ class CommandeFournisseur extends CommonOrder
         }
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *	Charge indicateurs this->nb de tableau de bord
      *
      *	@return     int         <0 si ko, >0 si ok
      */
-    function load_state_board()
+    public function load_state_board()
     {
         // phpcs:enable
         global $conf, $user;
@@ -2782,14 +2783,14 @@ class CommandeFournisseur extends CommonOrder
         }
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *	Load indicators for dashboard (this->nbtodo and this->nbtodolate)
      *
      *	@param          User	$user   Objet user
      *	@return WorkboardResponse|int 	<0 if KO, WorkboardResponse if OK
      */
-    function load_board($user)
+    public function load_board($user)
     {
         // phpcs:enable
         global $conf, $langs;
@@ -2918,7 +2919,7 @@ class CommandeFournisseur extends CommonOrder
      * @return 							Translated string
      */
     public function getMaxDeliveryTimeDay($langs)
-	{
+    {
 		if (empty($this->lines)) return '';
 
 		$obj = new ProductFournisseur($this->db);
@@ -3155,7 +3156,7 @@ class CommandeFournisseur extends CommonOrder
      *	@param      int		$filtre_statut      Filter on shipment status
      * 	@return     int                			<0 if KO, Nb of lines found if OK
      */
-    function loadReceptions($filtre_statut = -1)
+    public function loadReceptions($filtre_statut = -1)
     {
         $this->receptions = array();
 
@@ -3579,7 +3580,7 @@ class CommandeFournisseurLigne extends CommonOrderLine
      *	@param      int     $notrigger  1=Disable call to triggers
      *	@return     int                 <0 if KO, >0 if OK
      */
-    function delete($notrigger)
+    public function delete($notrigger)
     {
         global $user;
 

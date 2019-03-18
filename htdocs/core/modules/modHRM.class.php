@@ -44,7 +44,7 @@ class modHRM extends DolibarrModules
 
 		$this->family = "hr";
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
-		$this->name = preg_replace( '/^mod/i', '', get_class($this));
+		$this->name = preg_replace('/^mod/i', '', get_class($this));
 		$this->description = "Management of employees carrier and feelings (department, employment contract)";
 
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
@@ -131,7 +131,7 @@ class modHRM extends DolibarrModules
 	 * @param string $options Enabling module ('', 'noboxes')
 	 * @return int if OK, 0 if KO
 	 */
-	function init($options = '')
+	public function init($options = '')
 	{
 		// Permissions
 		$this->remove($options);

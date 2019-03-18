@@ -119,7 +119,7 @@ class Events // extends CommonObject
 	 *
 	 *  @param		DoliDB		$db      Database handler
 	 */
-	function __construct($db)
+	public function __construct($db)
 	{
 		$this->db = $db;
 	}
@@ -129,9 +129,9 @@ class Events // extends CommonObject
 	 *   Create in database
 	 *
 	 *   @param      User	$user       User that create
-	 *   @return     int     		    <0 if KO, >0 if OK
+	 *   @return     int                <0 if KO, >0 if OK
 	 */
-	function create($user)
+	public function create($user)
 	{
 		global $conf, $langs;
 
@@ -183,7 +183,7 @@ class Events // extends CommonObject
 	 * @param   int		$notrigger	    0=no, 1=yes (no update trigger)
 	 * @return  int         			<0 if KO, >0 if OK
 	 */
-	function update($user = null, $notrigger = 0)
+    public function update($user = null, $notrigger = 0)
 	{
 		global $conf, $langs;
 
@@ -220,7 +220,7 @@ class Events // extends CommonObject
 	 *  @param  User	$user       User that load
 	 *  @return int         		<0 if KO, >0 if OK
 	 */
-	function fetch($id, $user = null)
+    public function fetch($id, $user = null)
 	{
 		global $langs;
 
@@ -271,7 +271,7 @@ class Events // extends CommonObject
 	 *	@param	User	$user       User that delete
 	 *	@return	int					<0 if KO, >0 if OK
 	 */
-	function delete($user)
+    public function delete($user)
 	{
 		global $conf, $langs;
 
@@ -296,8 +296,8 @@ class Events // extends CommonObject
      *	id must be 0 if object instance is a specimen.
      *
      *  @return	void
-	 */
-	function initAsSpecimen()
+     */
+    public function initAsSpecimen()
 	{
 		$this->id=0;
 
@@ -305,5 +305,5 @@ class Events // extends CommonObject
 		$this->type='';
 		$this->dateevent=time();
 		$this->description='This is a specimen event';
-	}
+    }
 }

@@ -60,7 +60,6 @@ matrix:
   fast_finish: true
   allow_failures:
   - php: nightly
-  - php: '7.3'
   # We exclude some combinations not usefull to save Travis CPU
   exclude:
   - php: '5.5'
@@ -71,6 +70,8 @@ matrix:
     env: DB=mariadb
   - php: '7.1'
     env: DB=mariadb
+  - php: '7.2'
+    env: DB=mariadb
   - php: '5.5'
     env: DB=postgresql
   - php: '5.6'
@@ -79,7 +80,7 @@ matrix:
     env: DB=postgresql
   - php: '7.1'
     env: DB=postgresql
-  - php: '7.3'
+  - php: '7.2'
     env: DB=postgresql
   - php: nightly
     env: DB=postgresql
@@ -308,7 +309,7 @@ script:
   set -e
   # Exclusions are defined in the ruleset.xml file
   #phpcs -s -n -p -d memory_limit=-1 --colors --tab-width=4 --standard=dev/setup/codesniffer/ruleset.xml --encoding=utf-8 .
-  phpcs -s -p -d memory_limit=-1 --colors --tab-width=4 --standard=dev/setup/codesniffer/ruleset.xml --encoding=utf-8 --runtime-set ignore_warnings_on_exit true .
+  phpcs -s -p -d memory_limit=-1 --extensions=php --colors --tab-width=4 --standard=dev/setup/codesniffer/ruleset.xml --encoding=utf-8 --runtime-set ignore_warnings_on_exit true .
   set +e
   echo
 

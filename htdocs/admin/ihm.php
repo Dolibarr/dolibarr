@@ -139,7 +139,7 @@ if ($action == 'update')
 
 	dolibarr_set_const($db, "MAIN_SIZE_LISTE_LIMIT", $_POST["main_size_liste_limit"], 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_SIZE_SHORTLIST_LIMIT", $_POST["main_size_shortliste_limit"], 'chaine', 0, '', $conf->entity);
-	dolibarr_set_const($db, "MAIN_DISABLE_JAVASCRIPT", $_POST["main_disable_javascript"], 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_DISABLE_JAVASCRIPT", $_POST["MAIN_DISABLE_JAVASCRIPT"], 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_BUTTON_HIDE_UNAUTHORIZED", $_POST["MAIN_BUTTON_HIDE_UNAUTHORIZED"], 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_START_WEEK", $_POST["MAIN_START_WEEK"], 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_DEFAULT_WORKING_DAYS", $_POST["MAIN_DEFAULT_WORKING_DAYS"], 'chaine', 0, '', $conf->entity);
@@ -259,8 +259,15 @@ if ($action == 'edit')	// Edit
 	print '<br>';
 
 	// Other
-	print '<table summary="edit" class="noborder" width="100%">';
+	print '<table summary="otherparameters" class="noborder" width="100%">';
 	print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Parameters").'</td><td>'.$langs->trans("Value").'</td>';
+	print '<td width="20">&nbsp;</td>';
+	print '</tr>';
+
+	// Disable javascript and ajax
+	print '<tr><td>'.$langs->trans("DisableJavascript").'</td><td>';
+	print $form->selectyesno('MAIN_DISABLE_JAVASCRIPT', isset($conf->global->MAIN_DISABLE_JAVASCRIPT)?$conf->global->MAIN_DISABLE_JAVASCRIPT:0, 1);
+	print '</td>';
 	print '<td width="20">&nbsp;</td>';
 	print '</tr>';
 
@@ -282,13 +289,6 @@ if ($action == 'edit')	// Edit
 	print '<td width="20">&nbsp;</td>';
 	print '</tr>';
     */
-
-	// Disable javascript and ajax
-	print '<tr><td>'.$langs->trans("DisableJavascript").'</td><td>';
-	print $form->selectyesno('main_disable_javascript', isset($conf->global->MAIN_DISABLE_JAVASCRIPT)?$conf->global->MAIN_DISABLE_JAVASCRIPT:0, 1);
-	print '</td>';
-	print '<td width="20">&nbsp;</td>';
-	print '</tr>';
 
 	// First day for weeks
 	print '<tr><td class="titlefield">'.$langs->trans("WeekStartOnDay").'</td><td>';
@@ -468,15 +468,19 @@ else	// Show
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Parameters").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
+	// Disable javascript/ajax
+	print '<tr class="oddeven"><td class="titlefield">'.$langs->trans("DisableJavascript").'</td><td>';
+	print yn($conf->global->MAIN_DISABLE_JAVASCRIPT);
+	print ' <span class="opacitymedium"> &nbsp; - &nbsp; '.$langs->trans("DisableJavascriptNote").'</span>';
+	print "</td>";
+	print "</tr>";
+
+	// Max size of lists
 	print '<tr class="oddeven"><td>'.$langs->trans("DefaultMaxSizeList").'</td><td>' . $conf->global->MAIN_SIZE_LISTE_LIMIT . '</td>';
 	print "</tr>";
 
+	// Max size of short lists
 	print '<tr class="oddeven"><td>'.$langs->trans("DefaultMaxSizeShortList").'</td><td>' . $conf->global->MAIN_SIZE_SHORTLIST_LIMIT . '</td>';
-	print "</tr>";
-
-	// Disable javascript/ajax
-	print '<tr class="oddeven"><td class="titlefield">'.$langs->trans("DisableJavascript").'</td><td>';
-	print yn($conf->global->MAIN_DISABLE_JAVASCRIPT)."</td>";
 	print "</tr>";
 
 	// First day for weeks

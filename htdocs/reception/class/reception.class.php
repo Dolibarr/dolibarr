@@ -50,29 +50,29 @@ class Reception extends CommonObject
 	protected $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
     public $picto = 'reception';
 
-	var $socid;
-	var $ref_supplier;
-	var $ref_int;
-	var $brouillon;
-	var $entrepot_id;
-	var $lines=array();
-	var $tracking_number;
-	var $tracking_url;
-	var $billed;
-	var $model_pdf;
+    public $socid;
+    public $ref_supplier;
+    public $ref_int;
+    public $brouillon;
+    public $entrepot_id;
+    public $lines=array();
+    public $tracking_number;
+    public $tracking_url;
+    public $billed;
+    public $model_pdf;
 
-	var $trueWeight;
-	var $weight_units;
-	var $trueWidth;
-	var $width_units;
-	var $trueHeight;
-	var $height_units;
-	var $trueDepth;
-	var $depth_units;
+    public $trueWeight;
+    public $weight_units;
+    public $trueWidth;
+    public $width_units;
+    public $trueHeight;
+    public $height_units;
+    public $trueDepth;
+    public $depth_units;
 	// A denormalized value
-	var $trueSize;
+    public $trueSize;
 
-	var $date_delivery;		// Date delivery planed
+    public $date_delivery;		// Date delivery planed
 
 
 	/**
@@ -80,11 +80,11 @@ class Reception extends CommonObject
 	 * @var int
 	 */
 	public $date_reception;
-	var $date_creation;
-	var $date_valid;
+    public $date_creation;
+    public $date_valid;
 
-	var $meths;
-	var $listmeths;			// List of carriers
+    public $meths;
+    public $listmeths;			// List of carriers
 
 
 	const STATUS_DRAFT = 0;
@@ -98,7 +98,7 @@ class Reception extends CommonObject
 	 *
 	 *  @param		DoliDB		$db      Database handler
 	 */
-	function __construct($db)
+    public function __construct($db)
 	{
 		$this->db = $db;
 		$this->lines = array();
@@ -118,7 +118,7 @@ class Reception extends CommonObject
 	 *	@param	Societe		$soc	Thirdparty object
 	 *	@return string				Free reference for contract
 	 */
-	function getNextNumRef($soc)
+    public function getNextNumRef($soc)
 	{
 		global $langs, $conf;
 		$langs->load("receptions");
@@ -176,7 +176,7 @@ class Reception extends CommonObject
 	 *  @param	int		$notrigger	1=Does not execute triggers, 0= execute triggers
 	 *  @return int 				<0 si erreur, id reception creee si ok
 	 */
-	function create($user, $notrigger = 0)
+    public function create($user, $notrigger = 0)
 	{
 		global $conf, $hookmanager;
 
@@ -358,7 +358,7 @@ class Reception extends CommonObject
      * 	@param	string	$ref_int	Internal reference of other object
 	 *	@return int			        >0 if OK, 0 if not found, <0 if KO
 	 */
-	function fetch($id, $ref = '', $ref_ext = '', $ref_int = '')
+    public function fetch($id, $ref = '', $ref_ext = '', $ref_int = '')
 	{
 		global $conf;
 
@@ -488,7 +488,7 @@ class Reception extends CommonObject
      *  @param		int			$notrigger	1=Does not execute triggers, 0= execute triggers
 	 *  @return     int						<0 if OK, >0 if KO
 	 */
-	function valid($user, $notrigger = 0)
+    public function valid($user, $notrigger = 0)
 	{
 		global $conf, $langs;
 
@@ -712,7 +712,7 @@ class Reception extends CommonObject
 	 * @param	string		$batch					Lot number
 	 * @return	int							<0 if KO, >0 if OK
 	 */
-	function addline($entrepot_id, $id, $qty, $array_options = 0, $comment = '', $eatby = '', $sellby = '', $batch = '')
+    public function addline($entrepot_id, $id, $qty, $array_options = 0, $comment = '', $eatby = '', $sellby = '', $batch = '')
 	{
 		global $conf, $langs, $user;
 
@@ -763,7 +763,7 @@ class Reception extends CommonObject
      *  @param  int		$notrigger	    0=launch triggers after, 1=disable triggers
      *  @return int 			       	<0 if KO, >0 if OK
      */
-    function update($user = null, $notrigger = 0)
+    public function update($user = null, $notrigger = 0)
     {
     	global $conf;
 		$error=0;
@@ -864,7 +864,7 @@ class Reception extends CommonObject
 	 *	@param	User	$user	Object user
 	 * 	@return	int				>0 if OK, 0 if deletion done but failed to delete files, <0 if KO
 	 */
-	function delete(User $user)
+    public function delete(User $user)
 	{
 		global $conf, $langs, $user;
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -1014,13 +1014,13 @@ class Reception extends CommonObject
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Load lines
 	 *
 	 *	@return	int		>0 if OK, Otherwise if KO
 	 */
-	function fetch_lines()
+    public function fetch_lines()
 	{
 		// phpcs:enable
 		global $db;
@@ -1082,7 +1082,7 @@ class Reception extends CommonObject
      *  @param      int         $notooltip      1=No tooltip
      *	@return     string          			String with URL
      */
-	function getNomUrl($withpicto = 0, $option = 0, $max = 0, $short = 0, $notooltip = 0)
+    public function getNomUrl($withpicto = 0, $option = 0, $max = 0, $short = 0, $notooltip = 0)
 	{
 		global $langs;
 		$result='';
@@ -1123,12 +1123,12 @@ class Reception extends CommonObject
      *	@param      int		$mode      	0=Long label, 1=Short label, 2=Picto + Short label, 3=Picto, 4=Picto + Long label, 5=Short label + Picto
      *	@return     string      		Libelle
      */
-	function getLibStatut($mode = 0)
-	{
-		return $this->LibStatut($this->statut, $mode);
-	}
+    public function getLibStatut($mode = 0)
+    {
+        return $this->LibStatut($this->statut, $mode);
+    }
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Return label of a status
 	 *
@@ -1136,40 +1136,40 @@ class Reception extends CommonObject
 	 * @param      int		$mode       0=Long label, 1=Short label, 2=Picto + Short label, 3=Picto, 4=Picto + Long label, 5=Short label + Picto
 	 * @return     string				Label of status
 	 */
-	function LibStatut($statut, $mode)
-	{
+    public function LibStatut($statut, $mode)
+    {
 		// phpcs:enable
 		global $langs;
 
 		if ($mode==0)
 		{
 			if ($statut==0) return $langs->trans($this->statuts[$statut]);
-			if ($statut==1)  return $langs->trans($this->statuts[$statut]);
-			if ($statut==2)  return $langs->trans($this->statuts[$statut]);
+			elseif ($statut==1)  return $langs->trans($this->statuts[$statut]);
+			elseif ($statut==2)  return $langs->trans($this->statuts[$statut]);
 		}
-		if ($mode==1)
+		elseif ($mode==1)
 		{
 			if ($statut==0) return $langs->trans('StatusReceptionDraftShort');
-			if ($statut==1) return $langs->trans('StatusReceptionValidatedShort');
-			if ($statut==2) return $langs->trans('StatusReceptionProcessedShort');
+			elseif ($statut==1) return $langs->trans('StatusReceptionValidatedShort');
+			elseif ($statut==2) return $langs->trans('StatusReceptionProcessedShort');
 		}
-		if ($mode == 3)
+		elseif ($mode == 3)
 		{
 			if ($statut==0) return img_picto($langs->trans($this->statuts[$statut]), 'statut0');
-			if ($statut==1) return img_picto($langs->trans($this->statuts[$statut]), 'statut4');
-			if ($statut==2) return img_picto($langs->trans('StatusReceptionProcessed'), 'statut6');
+			elseif ($statut==1) return img_picto($langs->trans($this->statuts[$statut]), 'statut4');
+			elseif ($statut==2) return img_picto($langs->trans('StatusReceptionProcessed'), 'statut6');
 		}
-		if ($mode == 4)
+		elseif ($mode == 4)
 		{
 			if ($statut==0) return img_picto($langs->trans($this->statuts[$statut]), 'statut0').' '.$langs->trans($this->statuts[$statut]);
-			if ($statut==1) return img_picto($langs->trans($this->statuts[$statut]), 'statut4').' '.$langs->trans($this->statuts[$statut]);
-			if ($statut==2) return img_picto($langs->trans('StatusReceptionProcessed'), 'statut6').' '.$langs->trans('StatusReceptionProcessed');
+			elseif ($statut==1) return img_picto($langs->trans($this->statuts[$statut]), 'statut4').' '.$langs->trans($this->statuts[$statut]);
+			elseif ($statut==2) return img_picto($langs->trans('StatusReceptionProcessed'), 'statut6').' '.$langs->trans('StatusReceptionProcessed');
 		}
-		if ($mode == 5)
+		elseif ($mode == 5)
 		{
 			if ($statut==0) return $langs->trans('StatusReceptionDraftShort').' '.img_picto($langs->trans($this->statuts[$statut]), 'statut0');
-			if ($statut==1) return $langs->trans('StatusReceptionValidatedShort').' '.img_picto($langs->trans($this->statuts[$statut]), 'statut4');
-			if ($statut==2) return $langs->trans('StatusReceptionProcessedShort').' '.img_picto($langs->trans('StatusReceptionProcessedShort'), 'statut6');
+			elseif ($statut==1) return $langs->trans('StatusReceptionValidatedShort').' '.img_picto($langs->trans($this->statuts[$statut]), 'statut4');
+			elseif ($statut==2) return $langs->trans('StatusReceptionProcessedShort').' '.img_picto($langs->trans('StatusReceptionProcessedShort'), 'statut6');
 		}
 	}
 
@@ -1179,9 +1179,9 @@ class Reception extends CommonObject
      *	id must be 0 if object instance is a specimen.
      *
      *  @return	void
-	 */
-	function initAsSpecimen()
-	{
+     */
+    public function initAsSpecimen()
+    {
 		global $langs;
 		dol_include_once('/fourn/class/fournisseur.commande.dispatch.class.php');
 		$now=dol_now();
@@ -1232,8 +1232,8 @@ class Reception extends CommonObject
         $this->origin_id            = 1;
         $this->origin               = 'commande';
 
-        $this->note_private			= 'Private note';
-        $this->note_public			= 'Public note';
+        $this->note_private = 'Private note';
+        $this->note_public = 'Public note';
 
 		$nbp = 5;
 		$xnbp = 0;
@@ -1251,7 +1251,7 @@ class Reception extends CommonObject
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Set the planned delivery date
 	 *
@@ -1259,7 +1259,7 @@ class Reception extends CommonObject
 	 *	@param      timestamp		$date_livraison     Date de livraison
 	 *	@return     int         						<0 if KO, >0 if OK
 	 */
-	function set_date_livraison($user, $date_livraison)
+    public function set_date_livraison($user, $date_livraison)
 	{
 		// phpcs:enable
 		if ($user->rights->reception->creer)
@@ -1287,13 +1287,13 @@ class Reception extends CommonObject
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Fetch deliveries method and return an array. Load array this->meths(rowid=>label).
 	 *
 	 * 	@return	void
 	 */
-	function fetch_delivery_methods()
+    public function fetch_delivery_methods()
 	{
 		// phpcs:enable
 		global $langs;
@@ -1315,16 +1315,16 @@ class Reception extends CommonObject
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *  Fetch all deliveries method and return an array. Load array this->listmeths.
      *
      *  @param  int      $id     only this carrier, all if none
      *  @return void
      */
-    function list_delivery_methods($id = '')
+    public function list_delivery_methods($id = '')
     {
-		// phpcs:enable
+        // phpcs:enable
         global $langs;
 
         $this->listmeths = array();
@@ -1335,10 +1335,8 @@ class Reception extends CommonObject
         if ($id!='') $sql.= " WHERE em.rowid=".$id;
 
         $resql = $this->db->query($sql);
-        if ($resql)
-        {
-            while ($obj = $this->db->fetch_object($resql))
-            {
+        if ($resql) {
+            while ($obj = $this->db->fetch_object($resql)) {
                 $this->listmeths[$i]['rowid'] = $obj->rowid;
                 $this->listmeths[$i]['code'] = $obj->code;
                 $label=$langs->trans('ReceptionMethod'.$obj->code);
@@ -1351,7 +1349,7 @@ class Reception extends CommonObject
         }
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *  Update/create delivery method.
      *
@@ -1359,7 +1357,7 @@ class Reception extends CommonObject
      *
      *  @return void
      */
-    function update_delivery_method($id = '')
+    public function update_delivery_method($id = '')
     {
 		// phpcs:enable
         if ($id=='')
@@ -1381,7 +1379,7 @@ class Reception extends CommonObject
         if ($resql < 0) dol_print_error($this->db, '');
     }
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *  Activate delivery method.
      *
@@ -1389,7 +1387,7 @@ class Reception extends CommonObject
      *
      *  @return void
      */
-    function activ_delivery_method($id)
+    public function activ_delivery_method($id)
     {
 		// phpcs:enable
         $sql = 'UPDATE '.MAIN_DB_PREFIX.'c_shipment_mode SET active=1';
@@ -1398,7 +1396,7 @@ class Reception extends CommonObject
         $resql = $this->db->query($sql);
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *  DesActivate delivery method.
      *
@@ -1406,7 +1404,7 @@ class Reception extends CommonObject
      *
      *  @return void
      */
-    function disable_delivery_method($id)
+    public function disable_delivery_method($id)
     {
 		// phpcs:enable
         $sql = 'UPDATE '.MAIN_DB_PREFIX.'c_shipment_mode SET active=0';
@@ -1422,7 +1420,7 @@ class Reception extends CommonObject
 	 * @param	string	$value		Value
 	 * @return	void
 	 */
-	function getUrlTrackingStatus($value = '')
+    public function getUrlTrackingStatus($value = '')
 	{
 		if (! empty($this->shipping_method_id))
 		{
@@ -1456,7 +1454,7 @@ class Reception extends CommonObject
 	 *
 	 *	@return     int     <0 if KO, >0 if OK
 	 */
-	function setClosed()
+    public function setClosed()
 	{
 		global $conf,$langs,$user;
 
@@ -1553,7 +1551,7 @@ class Reception extends CommonObject
 							// line with batch detail
 
 							// We decrement stock of product (and sub-products) -> update table llx_product_stock (key of this table is fk_product+fk_entrepot) and add a movement record
-							$result=$mouvS->reception($user, $obj->fk_product, $obj->fk_entrepot, $qty, $obj->subprice, $langs->trans("ReceptionClassifyClosedInDolibarr", $numref),  $this->db->jdate($obj->eatby), $this->db->jdate($obj->sellby), $obj->batch);
+							$result=$mouvS->reception($user, $obj->fk_product, $obj->fk_entrepot, $qty, $obj->subprice, $langs->trans("ReceptionClassifyClosedInDolibarr", $numref), $this->db->jdate($obj->eatby), $this->db->jdate($obj->sellby), $obj->batch);
 
 							if ($result < 0) {
 							    $this->error = $mouvS->error;
@@ -1597,13 +1595,13 @@ class Reception extends CommonObject
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Classify the reception as invoiced (used when WORKFLOW_BILL_ON_RECEPTION is on)
 	 *
 	 *	@return     int     <0 if ko, >0 if ok
 	 */
-	function set_billed()
+    public function set_billed()
 	{
 		// phpcs:enable
 	    global $user;
@@ -1648,7 +1646,7 @@ class Reception extends CommonObject
 	 *
 	 *	@return     int     <0 if ko, >0 if ok
 	 */
-	function reOpen()
+    public function reOpen()
 	{
 		global $conf,$langs,$user;
 
@@ -1718,7 +1716,7 @@ class Reception extends CommonObject
 							// line with batch detail
 
 							// We decrement stock of product (and sub-products) -> update table llx_product_stock (key of this table is fk_product+fk_entrepot) and add a movement record
-							$result=$mouvS->reception($user, $obj->fk_product, $obj->fk_entrepot, -$qty, $obj->subprice, $langs->trans("ReceptionUnClassifyCloseddInDolibarr", $numref),  $this->db->jdate($obj->eatby), $this->db->jdate($obj->sellby), $obj->batch, $obj->fk_origin_stock);
+							$result=$mouvS->reception($user, $obj->fk_product, $obj->fk_entrepot, -$qty, $obj->subprice, $langs->trans("ReceptionUnClassifyCloseddInDolibarr", $numref), $this->db->jdate($obj->eatby), $this->db->jdate($obj->sellby), $obj->batch, $obj->fk_origin_stock);
 							if ($result < 0) {
 							    $this->error = $mouvS->error;
 							    $this->errors = $mouvS->errors;
@@ -1766,14 +1764,14 @@ class Reception extends CommonObject
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	 /**
      *	Set draft status
      *
      *	@param	User	$user			Object user that modify
      *	@return	int						<0 if KO, >0 if OK
      */
-    function set_draft($user)
+    public function setDraft($user)
     {
 		// phpcs:enable
         global $conf,$langs;
@@ -1856,7 +1854,7 @@ class Reception extends CommonObject
 							// line with batch detail
 
 							// We decrement stock of product (and sub-products) -> update table llx_product_stock (key of this table is fk_product+fk_entrepot) and add a movement record
-							$result=$mouvS->reception($user, $obj->fk_product, $obj->fk_entrepot, -$qty, $obj->subprice, $langs->trans("ReceptionBackToDraftInDolibarr", $this->ref),  $this->db->jdate($obj->eatby), $this->db->jdate($obj->sellby), $obj->batch);
+							$result=$mouvS->reception($user, $obj->fk_product, $obj->fk_entrepot, -$qty, $obj->subprice, $langs->trans("ReceptionBackToDraftInDolibarr", $this->ref), $this->db->jdate($obj->eatby), $this->db->jdate($obj->sellby), $obj->batch);
 							if ($result < 0) {
 							    $this->error = $mouvS->error;
 							    $this->errors = $mouvS->errors;
@@ -1908,13 +1906,13 @@ class Reception extends CommonObject
 				}
 			}
 
-			if (!$error) {
-           		$this->statut=self::STATUS_DRAFT;
-            	$this->db->commit();
-            	return 1;
-            }else {
-            	$this->db->rollback();
-            	return -1;
+            if (!$error) {
+                $this->statut=self::STATUS_DRAFT;
+                $this->db->commit();
+                return 1;
+            } else {
+                $this->db->rollback();
+                return -1;
             }
         }
         else

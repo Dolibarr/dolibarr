@@ -109,10 +109,10 @@ if ($id > 0)
         if (! empty($arrayfields['f.datef']['checked']))  print_liste_field_titre($arrayfields['f.datef']['label'], $_SERVER["PHP_SELF"], "f.datef", "", $param, 'align="center" class="nowrap"', $sortfield, $sortorder);
 		print '<td>'.$langs->trans("Element").'</td>';
 		print '<td>'.$langs->trans("Status").'</td>';
-		print '<td align="right">'.$langs->trans("Debit").'</td>';
-		print '<td align="right">'.$langs->trans("Credit").'</td>';
-		print '<td align="right">'.$langs->trans("Balance").'</td>';
-		print '<td align="right">'.$langs->trans("Author").'</td>';
+		print '<td class="right">'.$langs->trans("Debit").'</td>';
+		print '<td class="right">'.$langs->trans("Credit").'</td>';
+		print '<td class="right">'.$langs->trans("Balance").'</td>';
+		print '<td class="right">'.$langs->trans("Author").'</td>';
 		print '</tr>';
 
 		$TData = array();
@@ -252,27 +252,27 @@ if ($id > 0)
 
 				print '<tr class="oddeven '.$html_class.'">';
 
-				print "<td align=\"center\">";
+				print "<td class=\"center\">";
 				if (!empty($data['fk_facture'])) print dol_print_date($data['date'], 'day');
 				elseif (!empty($data['fk_paiement'])) print dol_print_date($data['date'], 'dayhour');
 				print "</td>\n";
 
 				print '<td>'.$data['link']."</td>\n";
 
-				print '<td aling="left">'.$data['status'].'</td>';
+				print '<td class="left">'.$data['status'].'</td>';
 
-				print '<td align="right">'.(($data['amount'] > 0) ? price(abs($data['amount'])) : '')."</td>\n";
-				
+				print '<td class="right">'.(($data['amount'] > 0) ? price(abs($data['amount'])) : '')."</td>\n";
+
 				$totalDebit += ($data['amount'] > 0) ? abs($data['amount']) : 0;
-				
-				print '<td align="right">'.(($data['amount'] > 0) ? '' : price(abs($data['amount'])))."</td>\n";
+
+				print '<td class="right">'.(($data['amount'] > 0) ? '' : price(abs($data['amount'])))."</td>\n";
 				$totalCredit += ($data['amount'] > 0) ? 0 : abs($data['amount']);
-				
+
 				// Balance
-				print '<td align="right">'.price($data['balance'])."</td>\n";
+				print '<td class="right">'.price($data['balance'])."</td>\n";
 
 				// Author
-				print '<td class="nowrap" align="right">';
+				print '<td class="nowrap right">';
 				print $data['author'];
 				print '</td>';
 
@@ -281,9 +281,9 @@ if ($id > 0)
 
 			print '<tr class="liste_total">';
 			print '<td colspan="3">&nbsp;</td>';
-			print '<td align="right">'.price($totalDebit).'</td>';
-			print '<td align="right">'.price($totalCredit).'</td>';
-			print '<td align="right">'.price(price2num($totalDebit - $totalCredit, 'MT')).'</td>';
+			print '<td class="right">'.price($totalDebit).'</td>';
+			print '<td class="right">'.price($totalCredit).'</td>';
+			print '<td class="right">'.price(price2num($totalDebit - $totalCredit, 'MT')).'</td>';
 			print '<td></td>';
 			print "</tr>\n";
 		}

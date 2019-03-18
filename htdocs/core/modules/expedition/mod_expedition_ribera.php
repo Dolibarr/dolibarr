@@ -57,7 +57,7 @@ class mod_expedition_ribera extends ModelNumRefExpedition
 	 *
 	 *	@return     string      text description
 	 */
-	function info()
+    public function info()
     {
     	global $conf, $langs;
 
@@ -79,8 +79,8 @@ class mod_expedition_ribera extends ModelNumRefExpedition
 		$tooltip.=$langs->trans("GenericMaskCodes5");
 
 		$texte.= '<tr><td>'.$langs->trans("Mask").':</td>';
-		$texte.= '<td align="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskexpedition" value="'.$conf->global->EXPEDITION_RIBERA_MASK.'">', $tooltip, 1, 1).'</td>';
-		$texte.= '<td align="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
+		$texte.= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskexpedition" value="'.$conf->global->EXPEDITION_RIBERA_MASK.'">', $tooltip, 1, 1).'</td>';
+		$texte.= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
 		$texte.= '</tr>';
 		$texte.= '</table>';
 		$texte.= '</form>';
@@ -93,7 +93,7 @@ class mod_expedition_ribera extends ModelNumRefExpedition
 	 *
 	 *	@return     string      Example
 	 */
-    function getExample()
+    public function getExample()
     {
      	global $conf,$langs,$mysoc;
 
@@ -119,7 +119,7 @@ class mod_expedition_ribera extends ModelNumRefExpedition
 	 *	@param	Object		$shipment	Shipment object
 	 *	@return string      			Value if OK, 0 if KO
 	 */
-    function getNextValue($objsoc, $shipment)
+    public function getNextValue($objsoc, $shipment)
     {
 		global $db,$conf;
 
@@ -140,7 +140,7 @@ class mod_expedition_ribera extends ModelNumRefExpedition
 		return  $numFinal;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Return next free value
 	 *
@@ -148,7 +148,7 @@ class mod_expedition_ribera extends ModelNumRefExpedition
 	 *	@param	Object		$objforref	Shipment object
 	 *	@return string      			Next free value
 	 */
-    function expedition_get_num($objsoc, $objforref)
+    public function expedition_get_num($objsoc, $objforref)
     {
         // phpcs:enable
         return $this->getNextValue($objsoc, $objforref);

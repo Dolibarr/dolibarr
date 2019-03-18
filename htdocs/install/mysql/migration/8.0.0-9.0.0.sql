@@ -48,6 +48,9 @@ create table llx_facture_rec_extrafields
   import_key                varchar(14)
 ) ENGINE=innodb;
 
+ALTER TABLE llx_actioncomm ADD COLUMN email_subject varchar(255) after email_msgid;
+ALTER TABLE llx_actioncomm ADD COLUMN email_tocc varchar(255) after email_to;
+ALTER TABLE llx_actioncomm ADD COLUMN email_tobcc varchar(255) after email_tocc;
 
 -- For 9.0
 ALTER TABLE llx_extrafields ADD COLUMN help text NULL;
@@ -262,6 +265,20 @@ CREATE TABLE llx_pos_cash_fence(
 -- VMYSQL4.3 ALTER TABLE llx_accounting_account MODIFY COLUMN account_number varchar(32) NOT NULL;
 -- VPGSQL8.2 ALTER TABLE llx_accounting_account ALTER COLUMN account_number SET NOT NULL;
 
+
 -- Withdrawals / Prelevements
 UPDATE llx_const set name = 'PRELEVEMENT_END_TO_END' where name = 'END_TO_END';
 UPDATE llx_const set name = 'PRELEVEMENT_USTRD' where name = 'USTRD';
+
+
+-- Delete duplicate accounting account, but only if not used
+DROP TABLE tmp_llx_accouting_account;
+CREATE TABLE tmp_llx_accouting_account AS SELECT MIN(rowid) as MINID, account_number, entity, fk_pcg_version, count(*) AS NB FROM llx_accounting_account group BY account_number, entity, fk_pcg_version HAVING count(*) >= 2 order by account_number, entity, fk_pcg_version;
+--SELECT * from tmp_llx_accouting_account;
+DELETE from llx_accounting_account where rowid in (select minid from tmp_llx_accouting_account where minid NOT IN (SELECT fk_code_ventilation from llx_facturedet) AND minid NOT IN (SELECT fk_code_ventilation from llx_facture_fourn_det) AND minid NOT IN (SELECT fk_code_ventilation from llx_expensereport_det));
+
+
+ALTER TABLE llx_accounting_account DROP INDEX uk_accounting_account;
+ALTER TABLE llx_accounting_account ADD UNIQUE INDEX uk_accounting_account (account_number, entity, fk_pcg_version);
+
+

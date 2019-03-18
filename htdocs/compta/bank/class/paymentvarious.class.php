@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2017       Alexandre Spangaro      <aspangaro@open-dsi.fr>
+/* Copyright (C) 2017-2019  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -71,6 +71,8 @@ class PaymentVarious extends CommonObject
 
 	public $accountancy_code;
 
+    public $subledger_account;
+
 	/**
      * @var int ID
      */
@@ -97,7 +99,7 @@ class PaymentVarious extends CommonObject
 	 *
 	 *  @param		DoliDB		$db      Database handler
 	 */
-	function __construct($db)
+    public function __construct($db)
 	{
 		$this->db = $db;
 		$this->element = 'payment_various';
@@ -111,7 +113,7 @@ class PaymentVarious extends CommonObject
 	 * @param   int		$notrigger      0=no, 1=yes (no update trigger)
 	 * @return  int         			<0 if KO, >0 if OK
 	 */
-	function update($user = null, $notrigger = 0)
+    public function update($user = null, $notrigger = 0)
 	{
 		global $conf, $langs;
 
@@ -139,6 +141,7 @@ class PaymentVarious extends CommonObject
 		$sql.= " label='".$this->db->escape($this->label)."',";
 		$sql.= " note='".$this->db->escape($this->note)."',";
 		$sql.= " accountancy_code='".$this->db->escape($this->accountancy_code)."',";
+        $sql.= " subledger_account='".$this->db->escape($this->subledger_account)."',";
 		$sql.= " fk_projet='".$this->db->escape($this->fk_project)."',";
 		$sql.= " fk_bank=".($this->fk_bank > 0 ? $this->fk_bank:"null").",";
 		$sql.= " fk_user_author=".$this->fk_user_author.",";
@@ -181,7 +184,7 @@ class PaymentVarious extends CommonObject
 	 *  @param  User	$user       User that load
 	 *  @return int         		<0 if KO, >0 if OK
 	 */
-	function fetch($id, $user = null)
+    public function fetch($id, $user = null)
 	{
 		global $langs;
 		$sql = "SELECT";
@@ -196,6 +199,7 @@ class PaymentVarious extends CommonObject
 		$sql.= " v.label,";
 		$sql.= " v.note,";
 		$sql.= " v.accountancy_code,";
+		$sql.= " v.subledger_account,";
 		$sql.= " v.fk_projet as fk_project,";
 		$sql.= " v.fk_bank,";
 		$sql.= " v.fk_user_author,";
@@ -215,25 +219,26 @@ class PaymentVarious extends CommonObject
 			{
 				$obj = $this->db->fetch_object($resql);
 
-				$this->id				= $obj->rowid;
-				$this->ref				= $obj->rowid;
-				$this->tms				= $this->db->jdate($obj->tms);
-				$this->datep			= $this->db->jdate($obj->datep);
-				$this->datev			= $this->db->jdate($obj->datev);
-				$this->sens				= $obj->sens;
-				$this->amount			= $obj->amount;
-				$this->type_payment		= $obj->fk_typepayment;
-				$this->num_payment		= $obj->num_payment;
-				$this->label			= $obj->label;
-				$this->note				= $obj->note;
-				$this->accountancy_code	= $obj->accountancy_code;
-				$this->fk_project		= $obj->fk_project;
-				$this->fk_bank			= $obj->fk_bank;
-				$this->fk_user_author	= $obj->fk_user_author;
-				$this->fk_user_modif	= $obj->fk_user_modif;
-				$this->fk_account		= $obj->fk_account;
-				$this->fk_type			= $obj->fk_type;
-				$this->rappro			= $obj->rappro;
+				$this->id                   = $obj->rowid;
+				$this->ref                  = $obj->rowid;
+				$this->tms                  = $this->db->jdate($obj->tms);
+				$this->datep                = $this->db->jdate($obj->datep);
+				$this->datev                = $this->db->jdate($obj->datev);
+				$this->sens                 = $obj->sens;
+				$this->amount               = $obj->amount;
+				$this->type_payment         = $obj->fk_typepayment;
+				$this->num_payment          = $obj->num_payment;
+				$this->label                = $obj->label;
+				$this->note                 = $obj->note;
+				$this->subledger_account    = $obj->subledger_account;
+				$this->accountancy_code     = $obj->accountancy_code;
+				$this->fk_project           = $obj->fk_project;
+				$this->fk_bank              = $obj->fk_bank;
+				$this->fk_user_author       = $obj->fk_user_author;
+				$this->fk_user_modif        = $obj->fk_user_modif;
+				$this->fk_account           = $obj->fk_account;
+				$this->fk_type              = $obj->fk_type;
+				$this->rappro               = $obj->rappro;
 			}
 			$this->db->free($resql);
 
@@ -253,7 +258,7 @@ class PaymentVarious extends CommonObject
 	 *	@param	User	$user       User that delete
 	 *	@return	int					<0 if KO, >0 if OK
 	 */
-	function delete($user)
+    public function delete($user)
 	{
 		global $conf, $langs;
 
@@ -287,7 +292,7 @@ class PaymentVarious extends CommonObject
 	 *
 	 *  @return	void
 	 */
-	function initAsSpecimen()
+    public function initAsSpecimen()
 	{
 		$this->id=0;
 
@@ -298,6 +303,7 @@ class PaymentVarious extends CommonObject
 		$this->amount='';
 		$this->label='';
 		$this->accountancy_code='';
+        $this->subledger_account='';
 		$this->note='';
 		$this->fk_bank='';
 		$this->fk_user_author='';
@@ -310,7 +316,7 @@ class PaymentVarious extends CommonObject
 	 *  @param   User   $user   User that create
 	 *  @return  int            <0 if KO, >0 if OK
 	 */
-	function create($user)
+    public function create($user)
 	{
 		global $conf,$langs;
 
@@ -360,6 +366,7 @@ class PaymentVarious extends CommonObject
 		if ($this->note) $sql.= ", note";
 		$sql.= ", label";
 		$sql.= ", accountancy_code";
+		$sql.= ", subledger_account";
 		$sql.= ", fk_projet";
 		$sql.= ", fk_user_author";
 		$sql.= ", datec";
@@ -376,6 +383,7 @@ class PaymentVarious extends CommonObject
 		if ($this->note) $sql.= ", '".$this->db->escape($this->note)."'";
 		$sql.= ", '".$this->db->escape($this->label)."'";
 		$sql.= ", '".$this->db->escape($this->accountancy_code)."'";
+		$sql.= ", '".$this->db->escape($this->subledger_account)."'";
 		$sql.= ", ".($this->fk_project > 0? $this->fk_project : 0);
 		$sql.= ", ".$user->id;
 		$sql.= ", '".$this->db->idate($now)."'";
@@ -406,7 +414,7 @@ class PaymentVarious extends CommonObject
 					$sign=1;
 					if ($this->sens == '0') $sign=-1;
 
-					$bank_line_id = $acc->addline(
+    $bank_line_id = $acc->addline(
 						$this->datep,
 						$this->type_payment,
 						$this->label,
@@ -474,14 +482,14 @@ class PaymentVarious extends CommonObject
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Update link between payment various and line generate into llx_bank
 	 *
 	 *  @param  int     $id_bank    Id bank account
 	 *	@return int                 <0 if KO, >0 if OK
 	 */
-	function update_fk_bank($id_bank)
+    public function update_fk_bank($id_bank)
 	{
         // phpcs:enable
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'payment_various SET fk_bank = '.$id_bank;
@@ -505,12 +513,12 @@ class PaymentVarious extends CommonObject
 	 * @param	int		$mode   	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
 	 * @return  string   		   	Libelle
 	 */
-	function getLibStatut($mode = 0)
+    public function getLibStatut($mode = 0)
 	{
 		return $this->LibStatut($this->statut, $mode);
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Renvoi le libelle d'un statut donne
 	 *
@@ -518,7 +526,7 @@ class PaymentVarious extends CommonObject
 	 *  @param  int		$mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
 	 *  @return string      		Libelle
 	 */
-	function LibStatut($statut, $mode = 0)
+    public function LibStatut($statut, $mode = 0)
 	{
         // phpcs:enable
 		global $langs;
@@ -567,7 +575,7 @@ class PaymentVarious extends CommonObject
      *  @param	int  	$notooltip		 			1=Disable tooltip
 	 *	@return string								String with URL
 	 */
-	function getNomUrl($withpicto = 0, $option = '', $save_lastsearch_value = -1, $notooltip = 0)
+    public function getNomUrl($withpicto = 0, $option = '', $save_lastsearch_value = -1, $notooltip = 0)
 	{
 		global $db, $conf, $langs, $hookmanager;
 		global $langs;
@@ -636,8 +644,8 @@ class PaymentVarious extends CommonObject
 	 * @param  int      $id      Id of record
 	 * @return void
 	 */
-	function info($id)
-	{
+    public function info($id)
+    {
 		$sql = 'SELECT v.rowid, v.datec, v.fk_user_author';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'payment_various as v';
 		$sql.= ' WHERE v.rowid = '.$id;

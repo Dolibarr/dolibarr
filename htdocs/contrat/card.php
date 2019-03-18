@@ -457,7 +457,7 @@ if (empty($reshook))
 		// Extrafields
 		$extrafieldsline = new ExtraFields($db);
 		$extralabelsline = $extrafieldsline->fetch_name_optionals_label($object->table_element_line);
-		$array_options = $extrafieldsline->getOptionalsFromPost($extralabelsline, $predef);
+		$array_options = $extrafieldsline->getOptionalsFromPost($object->table_element_line, $predef);
 		// Unset extrafield
 		if (is_array($extralabelsline)) {
 			// Get extra fields
@@ -737,7 +737,7 @@ if (empty($reshook))
 			// Extrafields
 			$extrafieldsline = new ExtraFields($db);
 			$extralabelsline = $extrafieldsline->fetch_name_optionals_label($objectline->table_element);
-			$array_options = $extrafieldsline->getOptionalsFromPost($extralabelsline, $predef);
+			$array_options = $extrafieldsline->getOptionalsFromPost($object->table_element_line, $predef);
 			$objectline->array_options=$array_options;
 
 			// TODO verifier price_min si fk_product et multiprix
@@ -1212,7 +1212,7 @@ if ($action == 'create')
 	{
 		print '<td>';
 		print $form->select_company('', 'socid', '', 'SelectThirdParty', 1, 0, null, 0, 'minwidth300');
-		print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'">'.$langs->trans("AddThirdParty").'</a>';
+		print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'">'.$langs->trans("AddThirdParty").' <span class="fa fa-plus-circle valignmiddle"></span></a>';
 		print '</td>';
 	}
 	print '</tr>'."\n";
@@ -1254,7 +1254,7 @@ if ($action == 'create')
 
 		print '<tr><td>'.$langs->trans("Project").'</td><td>';
 		$formproject->select_projects(($soc->id>0?$soc->id:-1), $projectid, "projectid", 0, 0, 1, 1);
-		print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/card.php?socid=' . $soc->id . '&action=create&status=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create&socid='.$soc->id).'">' . $langs->trans("AddProject") . '</a>';
+		print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/card.php?socid=' . $soc->id . '&action=create&status=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create&socid='.$soc->id).'">' . $langs->trans("AddProject") . ' <span class="fa fa-plus-circle valignmiddle"></span></a>';
 		print "</td></tr>";
 	}
 
@@ -1364,7 +1364,7 @@ else
         } elseif ($action == 'clone') {
             // Clone confirmation
             $formquestion = array(array('type' => 'other','name' => 'socid','label' => $langs->trans("SelectThirdParty"),'value' => $form->select_company(GETPOST('socid', 'int'), 'socid', '(s.client=1 OR s.client=2 OR s.client=3)')));
-            $formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('CloneContract'), $langs->trans('ConfirmCloneContract', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
+            $formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneContract', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
         }
 
 
@@ -1562,15 +1562,15 @@ else
 
 				print '<tr class="liste_titre'.($cursorline?' liste_titre_add':'').'">';
 				print '<td>'.$langs->trans("ServiceNb", $cursorline).'</td>';
-				print '<td width="80" align="center">'.$langs->trans("VAT").'</td>';
-				print '<td width="80" align="right">'.$langs->trans("PriceUHT").'</td>';
+				print '<td width="80" class="center">'.$langs->trans("VAT").'</td>';
+				print '<td width="80" class="right">'.$langs->trans("PriceUHT").'</td>';
 				if (!empty($conf->multicurrency->enabled)) {
-					print '<td width="80" align="right">'.$langs->trans("PriceUHTCurrency").'</td>';
+					print '<td width="80" class="right">'.$langs->trans("PriceUHTCurrency").'</td>';
 				}
-				print '<td width="30" align="center">'.$langs->trans("Qty").'</td>';
-				if ($conf->global->PRODUCT_USE_UNITS) print '<td width="30" align="left">'.$langs->trans("Unit").'</td>';
-				print '<td width="50" align="right">'.$langs->trans("ReductionShort").'</td>';
-				if (! empty($conf->margin->enabled) && ! empty($conf->global->MARGIN_SHOW_ON_CONTRACT)) print '<td width="50" align="right">'.$langs->trans("BuyingPrice").'</td>';
+				print '<td width="30" class="center">'.$langs->trans("Qty").'</td>';
+				if ($conf->global->PRODUCT_USE_UNITS) print '<td width="30" class="left">'.$langs->trans("Unit").'</td>';
+				print '<td width="50" class="right">'.$langs->trans("ReductionShort").'</td>';
+				if (! empty($conf->margin->enabled) && ! empty($conf->global->MARGIN_SHOW_ON_CONTRACT)) print '<td width="50" class="right">'.$langs->trans("BuyingPrice").'</td>';
 				print '<td width="30">&nbsp;</td>';
 				print "</tr>\n";
 
@@ -1614,23 +1614,23 @@ else
 						print '<td>'.img_object($langs->trans("ShowProductOrService"), ($objp->product_type ? 'service' : 'product')).' '.dol_htmlentitiesbr($objp->description)."</td>\n";
 					}
 					// TVA
-					print '<td align="center">';
+					print '<td class="center">';
 					print vatrate($objp->tva_tx.($objp->vat_src_code?(' ('.$objp->vat_src_code.')'):''), '%', $objp->info_bits);
 					print '</td>';
 					// Price
-					print '<td align="right">'.($objp->subprice != '' ? price($objp->subprice) : '')."</td>\n";
+					print '<td class="right">'.($objp->subprice != '' ? price($objp->subprice) : '')."</td>\n";
 					// Price multicurrency
 					if (!empty($conf->multicurrency->enabled)) {
-						print '<td align="right" class="linecoluht_currency nowrap">'.price($objp->multicurrency_subprice).'</td>';
+						print '<td class="linecoluht_currency nowrap right">'.price($objp->multicurrency_subprice).'</td>';
 					}
 					// Quantite
-					print '<td align="center">'.$objp->qty.'</td>';
+					print '<td class="center">'.$objp->qty.'</td>';
 					// Unit
 					if($conf->global->PRODUCT_USE_UNITS) print '<td class="left">'.$langs->trans($object->lines[$cursorline-1]->getLabelOfUnit()).'</td>';
 					// Remise
 					if ($objp->remise_percent > 0)
 					{
-						print '<td align="right">'.$objp->remise_percent."%</td>\n";
+						print '<td class="right">'.$objp->remise_percent."%</td>\n";
 					}
 					else
 					{
@@ -1638,10 +1638,10 @@ else
 					}
 
 					// Margin
-					if (! empty($conf->margin->enabled) && ! empty($conf->global->MARGIN_SHOW_ON_CONTRACT)) print '<td align="right" class="nowrap">'.price($objp->pa_ht).'</td>';
+					if (! empty($conf->margin->enabled) && ! empty($conf->global->MARGIN_SHOW_ON_CONTRACT)) print '<td class="right nowrap">'.price($objp->pa_ht).'</td>';
 
 					// Icon move, update et delete (statut contrat 0=brouillon,1=valide,2=ferme)
-					print '<td align="right" class="nowrap">';
+					print '<td class="nowrap right">';
 					if ($user->rights->contrat->creer && count($arrayothercontracts) && ($object->statut >= 0))
 					{
 						print '<!-- link to move service line into another contract -->';
@@ -1746,25 +1746,25 @@ else
 					$doleditor->Create();
 
 					print '</td>';
-					print '<td align="right">';
+					print '<td class="right">';
 					print $form->load_tva("eltva_tx", $objp->tva_tx.($objp->vat_src_code?(' ('.$objp->vat_src_code.')'):''), $mysoc, $object->thirdparty, $objp->fk_product, $objp->info_bits, $objp->product_type, 0, 1);
 					print '</td>';
-					print '<td align="right"><input size="5" type="text" name="elprice" value="'.price($objp->subprice).'"></td>';
-					print '<td align="center"><input size="2" type="text" name="elqty" value="'.$objp->qty.'"></td>';
+					print '<td class="right"><input size="5" type="text" name="elprice" value="'.price($objp->subprice).'"></td>';
+					print '<td class="center"><input size="2" type="text" name="elqty" value="'.$objp->qty.'"></td>';
 					if ($conf->global->PRODUCT_USE_UNITS)
 					{
 						print '<td class="left">';
 						print $form->selectUnits($objp->fk_unit, "unit");
 						print '</td>';
 					}
-					print '<td align="right" class="nowrap"><input size="1" type="text" name="elremise_percent" value="'.$objp->remise_percent.'">%</td>';
+					print '<td class="nowrap right"><input size="1" type="text" name="elremise_percent" value="'.$objp->remise_percent.'">%</td>';
 					if (! empty($usemargins))
 					{
-						print '<td align="right">';
+						print '<td class="right">';
 						if ($objp->fk_product) print '<select id="fournprice" name="fournprice"></select>';
 						print '<input id="buying_price" type="text" size="5" name="buying_price" value="'.price($objp->pa_ht, 0, '', 0).'"></td>';
 					}
-					print '<td align="center">';
+					print '<td class="center">';
 					print '<input type="submit" class="button" name="save" value="'.$langs->trans("Modify").'">';
 					print '<br><input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
 					print '</td>';
@@ -1880,7 +1880,7 @@ else
 
 				print '<tr class="oddeven">';
 				print '<td>'.$langs->trans("ServiceStatus").': '.$object->lines[$cursorline-1]->getLibStatut(4).'</td>';
-				print '<td width="30" align="right">';
+				print '<td width="30" class="right">';
 				if ($user->societe_id == 0)
 				{
 					if ($object->statut > 0 && $action != 'activateline' && $action != 'unactivateline')
@@ -1911,26 +1911,26 @@ else
 				// Si pas encore active
 				if (! $objp->date_debut_reelle) {
 					print $langs->trans("DateStartReal").': ';
-					if ($objp->date_debut_reelle) print dol_print_date($objp->date_debut_reelle, 'day');
+					if ($objp->date_debut_reelle) print dol_print_date($db->jdate($objp->date_debut_reelle), 'day');
 					else print $langs->trans("ContractStatusNotRunning");
 				}
 				// Si active et en cours
 				if ($objp->date_debut_reelle && ! $objp->date_fin_reelle) {
 					print $langs->trans("DateStartReal").': ';
-					print dol_print_date($objp->date_debut_reelle, 'day');
+                    print dol_print_date($db->jdate($objp->date_debut_reelle), 'day');
 				}
 				// Si desactive
 				if ($objp->date_debut_reelle && $objp->date_fin_reelle) {
 					print $langs->trans("DateStartReal").': ';
-					print dol_print_date($objp->date_debut_reelle, 'day');
+                    print dol_print_date($db->jdate($objp->date_debut_reelle), 'day');
 					print ' &nbsp;-&nbsp; ';
 					print $langs->trans("DateEndReal").': ';
-					print dol_print_date($objp->date_fin_reelle, 'day');
+					print dol_print_date($db->jdate($objp->date_fin_reelle), 'day');
 				}
 				if (! empty($objp->comment)) print " &nbsp;-&nbsp; ".$objp->comment;
 				print '</td>';
 
-				print '<td align="center">&nbsp;</td>';
+				print '<td class="center">&nbsp;</td>';
 
 				print '</tr>';
 				print '</table>';

@@ -28,18 +28,18 @@ include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
  */
 class box_graph_invoices_permonth extends ModeleBoxes
 {
-	var $boxcode="invoicespermonth";
-	var $boximg="object_bill";
-	var $boxlabel="BoxCustomersInvoicesPerMonth";
-	var $depends = array("facture");
+    public $boxcode="invoicespermonth";
+    public $boximg="object_bill";
+    public $boxlabel="BoxCustomersInvoicesPerMonth";
+    public $depends = array("facture");
 
 	/**
      * @var DoliDB Database handler.
      */
     public $db;
 
-	var $info_box_head = array();
-	var $info_box_contents = array();
+    public $info_box_head = array();
+    public $info_box_contents = array();
 
 
 	/**
@@ -48,7 +48,7 @@ class box_graph_invoices_permonth extends ModeleBoxes
 	 * 	@param	DoliDB	$db			Database handler
 	 *  @param	string	$param		More parameters
 	 */
-	function __construct($db, $param)
+	public function __construct($db, $param)
 	{
 		global $user;
 
@@ -63,7 +63,7 @@ class box_graph_invoices_permonth extends ModeleBoxes
 	 *  @param	int		$max        Maximum number of records to load
      *  @return	void
 	 */
-	function loadBox($max = 5)
+	public function loadBox($max = 5)
 	{
 		global $conf, $user, $langs, $db;
 
@@ -76,14 +76,14 @@ class box_graph_invoices_permonth extends ModeleBoxes
 
 		$text = $langs->trans("BoxCustomersInvoicesPerMonth", $max);
 		$this->info_box_head = array(
-				'text' => $text,
-				'limit'=> dol_strlen($text),
-				'graph'=> 1,
-				'sublink'=>'',
-				'subtext'=>$langs->trans("Filter"),
-				'subpicto'=>'filter.png',
-				'subclass'=>'linkobject boxfilter',
-				'target'=>'none'	// Set '' to get target="_blank"
+			'text' => $text,
+			'limit'=> dol_strlen($text),
+			'graph'=> 1,
+			'sublink'=>'',
+			'subtext'=>$langs->trans("Filter"),
+			'subpicto'=>'filter.png',
+			'subclass'=>'linkobject boxfilter',
+			'target'=>'none'	// Set '' to get target="_blank"
 		);
 
 		$dir=''; 	// We don't need a path because image file will not be saved into disk
@@ -252,16 +252,16 @@ class box_graph_invoices_permonth extends ModeleBoxes
 					$stringtoshow.='</div>';
 					$stringtoshow.='</div>';
 				}
-				$this->info_box_contents[0][0] = array('tr'=>'class="oddeven nohover"', 'td' => 'align="center" class="nohover"','textnoformat'=>$stringtoshow);
+				$this->info_box_contents[0][0] = array('tr'=>'class="oddeven nohover"', 'td' => 'class="nohover center"','textnoformat'=>$stringtoshow);
 			}
 			else
 			{
-				$this->info_box_contents[0][0] = array('tr'=>'class="oddeven nohover"', 'td' => 'align="left" class="nohover"', 'maxlength'=>500, 'text' => $mesg);
+				$this->info_box_contents[0][0] = array('tr'=>'class="oddeven nohover"', 'td' => 'class="nohover left"', 'maxlength'=>500, 'text' => $mesg);
 			}
 		}
 		else {
 			$this->info_box_contents[0][0] = array(
-			    'td' => 'align="left" class="nohover opacitymedium"',
+			    'td' => 'class="nohover opacitymedium left"',
                 'text' => $langs->trans("ReadPermissionNotAllowed")
 			);
 		}
@@ -275,7 +275,7 @@ class box_graph_invoices_permonth extends ModeleBoxes
 	 *  @param	int		$nooutput	No print, only return string
 	 *	@return	string
 	 */
-    function showBox($head = null, $contents = null, $nooutput = 0)
+    public function showBox($head = null, $contents = null, $nooutput = 0)
     {
 		return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
 	}

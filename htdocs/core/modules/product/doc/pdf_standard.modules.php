@@ -57,14 +57,14 @@ class pdf_standard extends ModelePDFProduct
     public $type;
 
 	/**
-     * @var array() Minimum version of PHP required by module.
+     * @var array Minimum version of PHP required by module.
 	 * e.g.: PHP ≥ 5.4 = array(5, 4)
      */
 	public $phpmin = array(5, 4);
 
 	/**
      * Dolibarr version of the loaded document
-     * @public string
+     * @var string
      */
 	public $version = 'dolibarr';
 
@@ -148,7 +148,7 @@ class pdf_standard extends ModelePDFProduct
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Function to build a document on disk using the generic odt module.
 	 *
@@ -160,8 +160,8 @@ class pdf_standard extends ModelePDFProduct
 	 *  @param		int			$hideref			Do not show ref
 	 *	@return		int         					1 if OK, <=0 if KO
 	 */
-	function write_file($object, $outputlangs, $srctemplatepath, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
-	{
+    public function write_file($object, $outputlangs, $srctemplatepath, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
+    {
         // phpcs:enable
 		global $user,$langs,$conf,$mysoc,$db,$hookmanager;
 
@@ -204,7 +204,7 @@ class pdf_standard extends ModelePDFProduct
 
 			if (file_exists($dir))
 			{
-							// Add pdfgeneration hook
+				// Add pdfgeneration hook
 				if (! is_object($hookmanager))
 				{
 					include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
@@ -592,7 +592,7 @@ class pdf_standard extends ModelePDFProduct
 			$this->error=$langs->trans("ErrorConstantNotDefined", "PRODUCT_OUTPUTDIR");
 			return 0;
 		}
-	}
+    }
 
 
 	/**
@@ -608,7 +608,7 @@ class pdf_standard extends ModelePDFProduct
 	 *   @param		string		$currency		Currency code
 	 *   @return	void
 	 */
-	function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop = 0, $hidebottom = 0, $currency = '')
+	private function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop = 0, $hidebottom = 0, $currency = '')
 	{
 	    global $conf;
 
@@ -682,7 +682,7 @@ class pdf_standard extends ModelePDFProduct
 	        $pdf->line($this->posxunit - 1, $tab_top, $this->posxunit - 1, $tab_top + $tab_height);
 	        if (empty($hidetop)) {
 	            $pdf->SetXY($this->posxunit - 1, $tab_top + 1);
-	            $pdf->MultiCell($this->posxdiscount - $this->posxunit - 1, 2, $outputlangs->transnoentities("Unit"), '',
+            $pdf->MultiCell($this->posxdiscount - $this->posxunit - 1, 2, $outputlangs->transnoentities("Unit"), '',
 	                'C');
 	        }
 	    }
@@ -718,7 +718,7 @@ class pdf_standard extends ModelePDFProduct
 	 *  @param	string		$titlekey		Translation key to show as title of document
 	 *  @return	void
 	 */
-	function _pagehead(&$pdf, $object, $showaddress, $outputlangs, $titlekey = "")
+	private function _pagehead(&$pdf, $object, $showaddress, $outputlangs, $titlekey = "")
 	{
 	    global $conf,$langs,$hookmanager;
 
@@ -853,24 +853,24 @@ class pdf_standard extends ModelePDFProduct
 	        $pdf->SetFont('','', $default_font_size - 1);
 	        $pdf->MultiCell(80, 4, $carac_emetteur, 0, 'L');
 	        */
-	    }
+        }
 
-	    $pdf->SetTextColor(0, 0, 0);
-	}
+        $pdf->SetTextColor(0, 0, 0);
+    }
 
-	/**
-	 *   	Show footer of page. Need this->emetteur object
-	 *
-	 *   	@param	TCPDF		$pdf     			PDF
-	 * 		@param	Object		$object				Object to show
-	 *      @param	Translate	$outputlangs		Object lang for output
-	 *      @param	int			$hidefreetext		1=Hide free text
-	 *      @return	int								Return height of bottom margin including footer text
-	 */
-	function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
-	{
-	    global $conf;
-	    $showdetails=$conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;
-	    return pdf_pagefoot($pdf, $outputlangs, 'PRODUCT_FREE_TEXT', $this->emetteur, $this->marge_basse, $this->marge_gauche, $this->page_hauteur, $object, $showdetails, $hidefreetext);
-	}
+    /**
+     *  Show footer of page. Need this->emetteur object
+     *
+     *  @param	TCPDF		$pdf     			PDF
+     *  @param	Object		$object				Object to show
+     *  @param	Translate	$outputlangs		Object lang for output
+     *  @param	int			$hidefreetext		1=Hide free text
+     *  @return	int								Return height of bottom margin including footer text
+     */
+    private function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
+    {
+        global $conf;
+        $showdetails=$conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;
+        return pdf_pagefoot($pdf, $outputlangs, 'PRODUCT_FREE_TEXT', $this->emetteur, $this->marge_basse, $this->marge_gauche, $this->page_hauteur, $object, $showdetails, $hidefreetext);
+    }
 }

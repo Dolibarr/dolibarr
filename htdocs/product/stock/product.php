@@ -1,14 +1,14 @@
 <?php
 /* Copyright (C) 2001-2007  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005      Simon TOSSER         <simon@kornog-computing.com>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2013      Cédric Salvador      <csalvador.gpcsolutions.fr>
  * Copyright (C) 2013-2018 Juanjo Menent	    <jmenent@2byte.es>
  * Copyright (C) 2014-2015 Cédric Gross         <c.gross@kreiz-it.fr>
- * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
+ * Copyright (C) 2018-2019  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,9 +38,10 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/productstockentrepot.class.php';
-if (! empty($conf->productbatch->enabled)) require_once DOL_DOCUMENT_ROOT.'/product/class/productbatch.class.php';
-if (! empty($conf->projet->enabled))
-{
+if (! empty($conf->productbatch->enabled)) {
+    require_once DOL_DOCUMENT_ROOT.'/product/class/productbatch.class.php';
+}
+if (! empty($conf->projet->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
@@ -376,7 +377,7 @@ if ($action == "transfert_stock" && ! $cancel)
 				if (! $error)
 				{
 					// Remove stock
-					$result1=$object->correct_stock_batch(
+    $result1=$object->correct_stock_batch(
 						$user,
 						$srcwarehouseid,
 						GETPOST("nbpiece", 'int'),
@@ -391,7 +392,7 @@ if ($action == "transfert_stock" && ! $cancel)
 				if (! $error)
 				{
 					// Add stock
-					$result2=$object->correct_stock_batch(
+    $result2=$object->correct_stock_batch(
 						$user,
 						GETPOST("id_entrepot_destination", 'int'),
 						GETPOST("nbpiece", 'int'),
@@ -807,17 +808,17 @@ if (! $variants) {
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
 	print '<td colspan="4">' . $langs->trans("Warehouse") . '</td>';
-	print '<td align="right">' . $langs->trans("NumberOfUnit") . '</td>';
-	print '<td align="right">' . $langs->trans("AverageUnitPricePMPShort") . '</td>';
-	print '<td align="right">' . $langs->trans("EstimatedStockValueShort") . '</td>';
-	print '<td align="right">' . $langs->trans("SellPriceMin") . '</td>';
-	print '<td align="right">' . $langs->trans("EstimatedStockValueSellShort") . '</td>';
+	print '<td class="right">' . $langs->trans("NumberOfUnit") . '</td>';
+	print '<td class="right">' . $langs->trans("AverageUnitPricePMPShort") . '</td>';
+	print '<td class="right">' . $langs->trans("EstimatedStockValueShort") . '</td>';
+	print '<td class="right">' . $langs->trans("SellPriceMin") . '</td>';
+	print '<td class="right">' . $langs->trans("EstimatedStockValueSellShort") . '</td>';
 	print '</tr>';
 	if ((!empty($conf->productbatch->enabled)) && $object->hasbatch()) {
 		print '<tr class="liste_titre"><td width="10%"></td>';
-		print '<td align="right" width="10%">' . $langs->trans("batch_number") . '</td>';
-		print '<td align="center" width="10%">' . $langs->trans("EatByDate") . '</td>';
-		print '<td align="center" width="10%">' . $langs->trans("SellByDate") . '</td>';
+		print '<td class="right" width="10%">' . $langs->trans("batch_number") . '</td>';
+		print '<td class="center" width="10%">' . $langs->trans("EatByDate") . '</td>';
+		print '<td class="center" width="10%">' . $langs->trans("SellByDate") . '</td>';
 		print '<td></td>';
 		print '<td></td>';
 		print '<td></td>';
@@ -856,18 +857,18 @@ if (! $variants) {
 			$stock_real = price2num($obj->reel, 'MS');
 			print '<tr class="oddeven">';
 			print '<td colspan="4">' . $entrepotstatic->getNomUrl(1) . '</td>';
-			print '<td align="right">' . $stock_real . ($stock_real < 0 ? ' ' . img_warning() : '') . '</td>';
+			print '<td class="right">' . $stock_real . ($stock_real < 0 ? ' ' . img_warning() : '') . '</td>';
 			// PMP
-			print '<td align="right">' . (price2num($object->pmp) ? price2num($object->pmp, 'MU') : '') . '</td>';
+			print '<td class="right">' . (price2num($object->pmp) ? price2num($object->pmp, 'MU') : '') . '</td>';
 			// Value purchase
-			print '<td align="right">' . (price2num($object->pmp) ? price(price2num($object->pmp * $obj->reel, 'MT')) : '') . '</td>';
+			print '<td class="right">' . (price2num($object->pmp) ? price(price2num($object->pmp * $obj->reel, 'MT')) : '') . '</td>';
 			// Sell price
-			print '<td align="right">';
+			print '<td class="right">';
 			if (empty($conf->global->PRODUIT_MULTIPRICES)) print price(price2num($object->price, 'MU'), 1);
 			else print $langs->trans("Variable");
 			print '</td>';
 			// Value sell
-			print '<td align="right">';
+			print '<td class="right">';
 			if (empty($conf->global->PRODUIT_MULTIPRICES)) print price(price2num($object->price * $obj->reel, 'MT'), 1) . '</td>';
 			else print $langs->trans("Variable");
 			print '</tr>';
@@ -890,33 +891,33 @@ if (! $variants) {
 						print '<td colspan="9">';
 						print '<form action="' . $_SERVER["PHP_SELF"] . '" method="POST">';
 						print '<input type="hidden" name="pdluoid" value="' . $pdluo->id . '"><input type="hidden" name="action" value="updateline"><input type="hidden" name="id" value="' . $id . '"><table class="noborder" width="100%"><tr><td width="10%"></td>';
-						print '<td align="right" width="10%"><input type="text" name="batch_number" value="' . $pdluo->batch . '"></td>';
-						print '<td align="center" width="10%">';
+						print '<td class="right" width="10%"><input type="text" name="batch_number" value="' . $pdluo->batch . '"></td>';
+						print '<td class="center" width="10%">';
 						print $form->selectDate($pdluo->eatby, 'eatby', '', '', 1, '', 1, 0);
 						print '</td>';
-						print '<td align="center" width="10%">';
+						print '<td class="center" width="10%">';
 						print $form->selectDate($pdluo->sellby, 'sellby', '', '', 1, '', 1, 0);
 						print '</td>';
-						print '<td align="right" width="10%">' . $pdluo->qty . ($pdluo->qty < 0 ? ' ' . img_warning() : '') . '</td>';
+						print '<td class="right" width="10%">' . $pdluo->qty . ($pdluo->qty < 0 ? ' ' . img_warning() : '') . '</td>';
 						print '<td colspan="4"><input type="submit" class="button" id="savelinebutton" name="save" value="' . $langs->trans("Save") . '">';
 						print '<input type="submit" class="button" id="cancellinebutton" name="Cancel" value="' . $langs->trans("Cancel") . '"></td></tr>';
 						print '</table>';
 						print '</form>';
 						print '</td></tr>';
 					} else {
-						print "\n" . '<tr><td align="right">';
+						print "\n" . '<tr><td class="right">';
 						print img_picto($langs->trans("Tranfer"), 'uparrow', 'class="hideonsmartphone"') . ' ';
 						print '<a href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&amp;id_entrepot=' . $entrepotstatic->id . '&amp;action=transfert&amp;pdluoid=' . $pdluo->id . '">' . $langs->trans("TransferStock") . '</a>';
 						// Disabled, because edition of stock content must use the "Correct stock menu".
 						// Do not use this, or data will be wrong (bad tracking of movement label, inventory code, ...
 						//print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&amp;action=editline&amp;lineid='.$pdluo->id.'#'.$pdluo->id.'">';
 						//print img_edit().'</a></td>';
-						print '<td align="right">';
+						print '<td class="right">';
 						print $product_lot_static->getNomUrl(1);
 						print '</td>';
-						print '<td align="center">' . dol_print_date($pdluo->eatby, 'day') . '</td>';
-						print '<td align="center">' . dol_print_date($pdluo->sellby, 'day') . '</td>';
-						print '<td align="right">' . $pdluo->qty . ($pdluo->qty < 0 ? ' ' . img_warning() : '') . '</td>';
+						print '<td class="center">' . dol_print_date($pdluo->eatby, 'day') . '</td>';
+						print '<td class="center">' . dol_print_date($pdluo->sellby, 'day') . '</td>';
+						print '<td class="right">' . $pdluo->qty . ($pdluo->qty < 0 ? ' ' . img_warning() : '') . '</td>';
 						print '<td colspan="4"></td></tr>';
 					}
 				}
@@ -925,21 +926,21 @@ if (! $variants) {
 		}
 	} else dol_print_error($db);
 
-	print '<tr class="liste_total"><td align="right" class="liste_total" colspan="4">' . $langs->trans("Total") . ':</td>';
-	print '<td class="liste_total" align="right">' . price2num($total, 'MS') . '</td>';
-	print '<td class="liste_total" align="right">';
+	print '<tr class="liste_total"><td class="right liste_total" colspan="4">' . $langs->trans("Total") . ':</td>';
+	print '<td class="liste_total right">' . price2num($total, 'MS') . '</td>';
+	print '<td class="liste_total right">';
 	print ($totalwithpmp ? price(price2num($totalvalue / $totalwithpmp, 'MU')) : '&nbsp;');    // This value may have rounding errors
 	print '</td>';
 // Value purchase
-	print '<td class="liste_total" align="right">';
+	print '<td class="liste_total right">';
 	print $totalvalue ? price(price2num($totalvalue, 'MT'), 1) : '&nbsp;';
 	print '</td>';
-	print '<td class="liste_total" align="right">';
+	print '<td class="liste_total right">';
 	if (empty($conf->global->PRODUIT_MULTIPRICES)) print ($total ? price($totalvaluesell / $total, 1) : '&nbsp;');
 	else print $langs->trans("Variable");
 	print '</td>';
 // Value to sell
-	print '<td class="liste_total" align="right">';
+	print '<td class="liste_total right">';
 	if (empty($conf->global->PRODUIT_MULTIPRICES)) print price(price2num($totalvaluesell, 'MT'), 1);
 	else print $langs->trans("Variable");
 	print '</td>';
@@ -959,14 +960,14 @@ if (! $variants) {
 		print '<table class="noborder" width="100%">';
 		if (!empty($user->rights->produit->creer)) {
 			print '<tr class="liste_titre"><td width="40%">' . $formproduct->selectWarehouses('', 'fk_entrepot') . '</td>';
-			print '<td align="right"><input name="seuil_stock_alerte" type="text" placeholder="' . $langs->trans("StockLimit") . '" /></td>';
-			print '<td align="right"><input name="desiredstock" type="text" placeholder="' . $langs->trans("DesiredStock") . '" /></td>';
-			print '<td align="right"><input type="submit" value="' . $langs->trans('Save') . '" class="button" /></td>';
+			print '<td class="right"><input name="seuil_stock_alerte" type="text" placeholder="' . $langs->trans("StockLimit") . '" /></td>';
+			print '<td class="right"><input name="desiredstock" type="text" placeholder="' . $langs->trans("DesiredStock") . '" /></td>';
+			print '<td class="right"><input type="submit" value="' . $langs->trans('Save') . '" class="button" /></td>';
 			print '</tr>';
 		} else {
 			print '<tr class="liste_titre"><td width="40%">' . $langs->trans("Warehouse") . '</td>';
-			print '<td align="right">' . $langs->trans("StockLimit") . '</td>';
-			print '<td align="right">' . $langs->trans("DesiredStock") . '</td>';
+			print '<td class="right">' . $langs->trans("StockLimit") . '</td>';
+			print '<td class="right">' . $langs->trans("DesiredStock") . '</td>';
 			print '</tr>';
 		}
 
@@ -979,10 +980,10 @@ if (! $variants) {
 				$ent = new Entrepot($db);
 				$ent->fetch($line['fk_entrepot']);
 				print '<tr class="oddeven"><td width="40%">' . $ent->getNomUrl(3) . '</td>';
-				print '<td align="right">' . $line['seuil_stock_alerte'] . '</td>';
-				print '<td align="right">' . $line['desiredstock'] . '</td>';
+				print '<td class="right">' . $line['seuil_stock_alerte'] . '</td>';
+				print '<td class="right">' . $line['desiredstock'] . '</td>';
 				if (!empty($user->rights->produit->creer)) {
-					print '<td align="right"><a href="?id=' . $id . '&fk_productstockwarehouse=' . $line['id'] . '&action=delete_productstockwarehouse">' . img_delete() . '</a></td>';
+					print '<td class="right"><a href="?id=' . $id . '&fk_productstockwarehouse=' . $line['id'] . '&action=delete_productstockwarehouse">' . img_delete() . '</a></td>';
 				}
 				print '</tr>';
 			}
@@ -1064,8 +1065,8 @@ if (! $variants) {
 			}
 
 			print '<tr class="liste_total">';
-			print '<td colspan="4" align="left">'.$langs->trans("Total").'</td>';
-			print '<td align="right">'.$stock_total.'</td>';
+			print '<td colspan="4" class="left">'.$langs->trans("Total").'</td>';
+			print '<td class="right">'.$stock_total.'</td>';
 			print '</tr>';
 		}
 		else

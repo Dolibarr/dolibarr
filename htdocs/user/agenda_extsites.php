@@ -146,6 +146,7 @@ llxHeader('', $langs->trans("UserSetup"), '', '', 0, 0, $arrayofjs, $arrayofcss)
 
 print '<form name="extsitesconfig" action="'.$_SERVER["PHP_SELF"].'" method="post">';
 print '<input type="hidden" name="id" value="'.$id.'">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
 $head=user_prepare_head($object);
 
@@ -171,14 +172,14 @@ if ($selectedvalue==1) $selectedvalue=0; else $selectedvalue=1;
 
 
 print '<div class="div-table-responsive">';
-print "<table class=\"noborder\" width=\"100%\">";
+print '<table class="noborder centpercent">';
 
 print "<tr class=\"liste_titre\">";
 print "<td>".$langs->trans("Parameter")."</td>";
 print "<td>".$langs->trans("Name")."</td>";
 print "<td>".$langs->trans("ExtSiteUrlAgenda").'<div class="hideonsmartphone">'." (".$langs->trans("Example").': http://yoursite/agenda/agenda.ics)</div></td>';
 print "<td>".$form->textwithpicto($langs->trans("FixTZ"), $langs->trans("FillFixTZOnlyIfRequired"), 1).'</td>';
-print '<td align="right">'.$langs->trans("Color").'</td>';
+print '<td class="right">'.$langs->trans("Color").'</td>';
 print "</tr>";
 
 $i=1;

@@ -174,6 +174,8 @@ dol_fiche_end();
 
 print '</form>';
 
+$invoice_status_except_list = array(Facture::STATUS_DRAFT, Facture::STATUS_ABANDONED);
+
 $sql = "SELECT p.label, p.rowid, p.fk_product_type, p.ref, p.entity as pentity,";
 if ($id > 0) $sql.= " d.fk_product,";
 if ($id > 0) $sql.= " f.rowid as facid, f.ref, f.total as total_ht, f.datef, f.paye, f.fk_statut as statut,";
@@ -190,7 +192,7 @@ if (! empty($TSelectedCats)) {
 }
 $sql.= " WHERE f.fk_soc = s.rowid";
 $sql.= ' AND f.entity IN ('.getEntity('invoice').')';
-$sql.= " AND f.fk_statut > 0";
+$sql.= " AND f.fk_statut NOT IN (" . implode(', ', $invoice_status_except_list) . ")";
 $sql.= " AND d.fk_facture = f.rowid";
 if ($id > 0)
 	$sql.= " AND d.fk_product =".$id;
@@ -280,7 +282,7 @@ if ($result)
 				$invoicestatic->ref=$objp->ref;
 				print $invoicestatic->getNomUrl(1);
 				print "</td>\n";
-				print "<td align=\"center\">";
+				print "<td class=\"center\">";
 				print dol_print_date($db->jdate($objp->datef), 'day')."</td>";
 			}
 			else {
@@ -302,13 +304,13 @@ if ($result)
 				print "</td>\n";
 				//print "<td>".$product_static->getNomUrl(1)."</td>\n";
 			}
-			print "<td align=\"right\">".price($pv, null, null, null, null, $rounding)."</td>\n";
-			print "<td align=\"right\">".price($pa, null, null, null, null, $rounding)."</td>\n";
-			print "<td align=\"right\">".price($marge, null, null, null, null, $rounding)."</td>\n";
+			print "<td class=\"right\">".price($pv, null, null, null, null, $rounding)."</td>\n";
+			print "<td class=\"right\">".price($pa, null, null, null, null, $rounding)."</td>\n";
+			print "<td class=\"right\">".price($marge, null, null, null, null, $rounding)."</td>\n";
 			if (! empty($conf->global->DISPLAY_MARGIN_RATES))
-				print "<td align=\"right\">".(($marginRate === '')?'n/a':price($marginRate, null, null, null, null, $rounding)."%")."</td>\n";
+				print "<td class=\"right\">".(($marginRate === '')?'n/a':price($marginRate, null, null, null, null, $rounding)."%")."</td>\n";
 			if (! empty($conf->global->DISPLAY_MARK_RATES))
-				print "<td align=\"right\">".(($markRate === '')?'n/a':price($markRate, null, null, null, null, $rounding)."%")."</td>\n";
+				print "<td class=\"right\">".(($markRate === '')?'n/a':price($markRate, null, null, null, null, $rounding)."%")."</td>\n";
 			print "</tr>\n";
 
 			$i++;
@@ -330,13 +332,13 @@ if ($result)
 	else
 		print '<td>';
 	print $langs->trans('TotalMargin')."</td>";
-	print "<td align=\"right\">".price($cumul_vente, null, null, null, null, $rounding)."</td>\n";
-	print "<td align=\"right\">".price($cumul_achat, null, null, null, null, $rounding)."</td>\n";
-	print "<td align=\"right\">".price($totalMargin, null, null, null, null, $rounding)."</td>\n";
+	print "<td class=\"right\">".price($cumul_vente, null, null, null, null, $rounding)."</td>\n";
+	print "<td class=\"right\">".price($cumul_achat, null, null, null, null, $rounding)."</td>\n";
+	print "<td class=\"right\">".price($totalMargin, null, null, null, null, $rounding)."</td>\n";
 	if (! empty($conf->global->DISPLAY_MARGIN_RATES))
-		print "<td align=\"right\">".(($marginRate === '')?'n/a':price($marginRate, null, null, null, null, $rounding)."%")."</td>\n";
+		print "<td class=\"right\">".(($marginRate === '')?'n/a':price($marginRate, null, null, null, null, $rounding)."%")."</td>\n";
 	if (! empty($conf->global->DISPLAY_MARK_RATES))
-		print "<td align=\"right\">".(($markRate === '')?'n/a':price($markRate, null, null, null, null, $rounding)."%")."</td>\n";
+		print "<td class=\"right\">".(($markRate === '')?'n/a':price($markRate, null, null, null, null, $rounding)."%")."</td>\n";
 	print "</tr>\n";
 
 	print "</table>";

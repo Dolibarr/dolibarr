@@ -33,11 +33,11 @@ require_once DOL_DOCUMENT_ROOT .'/core/modules/supplier_invoice/modules_facturef
  */
 class mod_facture_fournisseur_cactus extends ModeleNumRefSuppliersInvoices
 {
-	/**
+    /**
      * Dolibarr version of the loaded document
      * @public string
      */
-	public $version = 'dolibarr';		// 'development', 'experimental', 'dolibarr'
+    public $version = 'dolibarr';		// 'development', 'experimental', 'dolibarr'
 
 	/**
      * @var string Error code (or message)
@@ -64,24 +64,24 @@ class mod_facture_fournisseur_cactus extends ModeleNumRefSuppliersInvoices
 
 
     /**
-     * 	Return description of numbering model
+     *  Return description of numbering model
      *
      *  @return     string      Text with description
      */
-    function info()
+    public function info()
     {
-    	global $langs;
-		$langs->load("bills");
-      	return $langs->trans("CactusNumRefModelDesc1", $this->prefixinvoice, $this->prefixcreditnote, $this->prefixdeposit);
+        global $langs;
+        $langs->load("bills");
+        return $langs->trans("CactusNumRefModelDesc1", $this->prefixinvoice, $this->prefixcreditnote, $this->prefixdeposit);
     }
 
 
     /**
-     * 	Returns a numbering example
+     *  Returns a numbering example
      *
      *  @return     string      Example
      */
-    function getExample()
+    public function getExample()
     {
         return $this->prefixinvoice."1301-0001";
     }
@@ -92,7 +92,7 @@ class mod_facture_fournisseur_cactus extends ModeleNumRefSuppliersInvoices
 	 *
 	 *  @return     boolean     false if conflict, true if ok
 	 */
-	function canBeActivated()
+	public function canBeActivated()
 	{
 		global $conf,$langs,$db;
 
@@ -164,13 +164,13 @@ class mod_facture_fournisseur_cactus extends ModeleNumRefSuppliersInvoices
 
     /**
      * Return next value
-	 *
-	 * @param	Societe		$objsoc     Object third party
-	 * @param  	Object		$object		Object invoice
+     *
+     * @param	Societe		$objsoc     Object third party
+     * @param  	Object		$object		Object invoice
      * @param   string		$mode       'next' for next value or 'last' for last value
-	 * @return 	string      			Value if OK, 0 if KO
+     * @return 	string      			Value if OK, 0 if KO
      */
-    function getNextValue($objsoc, $object, $mode = 'next')
+    public function getNextValue($objsoc, $object, $mode = 'next')
     {
         global $db,$conf;
 
@@ -236,14 +236,14 @@ class mod_facture_fournisseur_cactus extends ModeleNumRefSuppliersInvoices
 
 
     /**
-	 * Return next free value
-	 *
+     * Return next free value
+     *
      * @param	Societe		$objsoc     	Object third party
      * @param	string		$objforref		Object for number to search
      * @param   string		$mode       	'next' for next value or 'last' for last value
      * @return  string      				Next free value
      */
-	function getNumRef($objsoc, $objforref, $mode = 'next')
+	public function getNumRef($objsoc, $objforref, $mode = 'next')
 	{
 		return $this->getNextValue($objsoc, $objforref, $mode);
 	}

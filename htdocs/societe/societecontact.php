@@ -3,7 +3,7 @@
  * Copyright (C) 2005-2011	Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin       <regis.houssin@inodbox.com>
  * Copyright (C) 2011-2015	Philippe Grand      <philippe.grand@atoo-net.com>
- * Copyright (C) 2014		Charles-Fr Benke	<charles.fr@benke.fr>
+ * Copyright (C) 2014       Charles-Fr Benke	<charles.fr@benke.fr>
  * Copyright (C) 2015       Marcos García       <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -110,7 +110,7 @@ elseif ($action == 'deletecontact' && $user->rights->societe->creer)
 	}
 }
 /*
-else if ($action == 'setaddress' && $user->rights->societe->creer)
+elseif ($action == 'setaddress' && $user->rights->societe->creer)
 {
 	$object->fetch($id);
 	$result=$object->setDeliveryAddress($_POST['fk_address']);
@@ -243,13 +243,13 @@ if ($id > 0 || ! empty($ref))
 					print "<table class=\"noborder\" width=\"100%\">";
 					print '<tr class="liste_titre">';
 					print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "d.rowid", $param, "", "", $sortfield, $sortorder);
-					print_liste_field_titre( $langs->trans("Name")." / ".$langs->trans("Company"), $_SERVER["PHP_SELF"], "d.lastname", $param, "", "", $sortfield, $sortorder);
+					print_liste_field_titre("NameSlashCompany", $_SERVER["PHP_SELF"], "d.lastname", $param, "", "", $sortfield, $sortorder);
 					print_liste_field_titre("Login", $_SERVER["PHP_SELF"], "d.login", $param, "", "", $sortfield, $sortorder);
 					print_liste_field_titre("Type", $_SERVER["PHP_SELF"], "t.libelle", $param, "", "", $sortfield, $sortorder);
 					print_liste_field_titre("Person", $_SERVER["PHP_SELF"], "d.morphy", $param, "", "", $sortfield, $sortorder);
 					print_liste_field_titre("EMail", $_SERVER["PHP_SELF"], "d.email", $param, "", "", $sortfield, $sortorder);
 					print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "d.statut,d.datefin", $param, "", "", $sortfield, $sortorder);
-					print_liste_field_titre("EndSubscription", $_SERVER["PHP_SELF"], "d.datefin", $param, "", 'align="center"', $sortfield, $sortorder);
+					print_liste_field_titre("EndSubscription", $_SERVER["PHP_SELF"], "d.datefin", $param, "", '', $sortfield, $sortorder, 'center ');
 					print "</tr>\n";
 
 					$i=0;
@@ -305,7 +305,7 @@ if ($id > 0 || ! empty($ref))
 						// End of subscription date
 						if ($datefin)
 						{
-							print '<td align="center" class="nowrap">';
+							print '<td class="center nowrap">';
 							print dol_print_date($datefin, 'day');
 							if ($memberstatic->hasDelay()) {
 								print " ".img_warning($langs->trans("SubscriptionLate"));
@@ -314,7 +314,7 @@ if ($id > 0 || ! empty($ref))
 						}
 						else
 						{
-							print '<td align="left" class="nowrap">';
+							print '<td class="left nowrap">';
 							if ($objp->subscription == 'yes')
 							{
 								print $langs->trans("SubscriptionNotReceived");

@@ -173,17 +173,16 @@ while ($obj = $db->fetch_object($resql)) {
 
 $sql.= $db->plimit($limit+1, $offset);
 
-dol_syslog ( "/accountancy/bookkeeping/thirdparty_lettrage_supplier.php", LOG_DEBUG );
+dol_syslog("/accountancy/bookkeeping/thirdparty_lettrage_supplier.php", LOG_DEBUG);
 $resql = $db->query($sql);
-if (! $resql)
-{
+if (! $resql) {
 		dol_print_error($db);
 		exit;
 }
 
 $num = $db->num_rows($resql);
 
-dol_syslog ( "/accountancy/bookkeeping/thirdparty_lettrage_supplier.php", LOG_DEBUG );
+dol_syslog("/accountancy/bookkeeping/thirdparty_lettrage_supplier.php", LOG_DEBUG);
 $resql = $db->query($sql);
 if ($resql) {
 	$num = $db->num_rows($resql);
@@ -241,12 +240,12 @@ if ($resql) {
 		print '<td class="right">' . price($obj->debit) . '</td>';
 		print '<td class="right">' . price($obj->credit) . '</td>';
 		print '<td class="right">' . price(round($solde, 2)) . '</td>';
-		print '<td align="center">' . $obj->code_journal . '</td>';
+		print '<td class="center">' . $obj->code_journal . '</td>';
 
 		if (empty($obj->lettering_code)) {
-			print '<td class="nowrap" align="center"><input type="checkbox" class="flat checkforselect" name="toselect[]" id="toselect[]" value="' . $obj->rowid . '" /></td>';
+			print '<td class="nowrap center"><input type="checkbox" class="flat checkforselect" name="toselect[]" id="toselect[]" value="' . $obj->rowid . '" /></td>';
 		} else
-			print '<td align="center">' . $obj->lettering_code . '</td>';
+			print '<td class="center">' . $obj->lettering_code . '</td>';
 
 		print "</tr>\n";
 	}

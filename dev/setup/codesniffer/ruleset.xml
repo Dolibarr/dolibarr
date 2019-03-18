@@ -11,10 +11,8 @@
 	<exclude-pattern type="relative">htdocs/conf.php</exclude-pattern>
 	<exclude-pattern type="relative">*/nltechno*</exclude-pattern>
 	<exclude-pattern type="relative">*/htdocs/includes</exclude-pattern>
-	<exclude-pattern type="relative">*.min.css</exclude-pattern>
-	<exclude-pattern type="relative">*.js</exclude-pattern>
 
-		<!-- List of all tests -->
+	<!-- List of all tests -->
 
 
 	<!-- Rules from Internal Standard -->
@@ -115,10 +113,10 @@
 	<rule ref="Generic.Functions.FunctionCallArgumentSpacing.NoSpaceBeforeEquals">
 		<severity>0</severity>
 	</rule>
-	<rule ref="Generic.Functions.FunctionCallArgumentSpacing.NoSpaceAfterEquals">
+	<rule ref="Generic.Functions.FunctionCallArgumentSpacing.NoSpaceBeforeEquals">
 		<severity>0</severity>
 	</rule>
-	<rule ref="Generic.Functions.FunctionCallArgumentSpacing.TooMuchSpaceAfterComma">
+	<rule ref="Generic.Functions.FunctionCallArgumentSpacing.TooMuchSpaceAfterComma">	<!-- We don't want this rule, we want to be able to align params on several similare functions on different lines -->
 		<severity>0</severity>
 	</rule>
 
@@ -166,7 +164,7 @@
 	<!-- Disallow usage of tab -->
 	<!--  <rule ref="Generic.WhiteSpace.DisallowTabIndent" /> -->
 
-	<!-- Check indent are done with spaces and wiht correct number -->
+	<!-- Check indent are done with spaces and with correct number -->
 	<!-- Disabled as this does not support tab -->
 	<!-- <rule ref="Generic.WhiteSpace.ScopeIndent" /> -->
 
@@ -201,7 +199,7 @@
     <rule ref="Squiz.Functions.FunctionDeclarationArgumentSpacing.SpacingAfterHint">
         <severity>0</severity>
     </rule>
-
+    <rule ref="Squiz.Scope.MethodScope.Missing" />
 
     <!-- Rules from PEAR Standard -->
 
@@ -349,12 +347,6 @@
     <rule ref="PEAR.Functions.FunctionCallSignature.SpaceBeforeOpenBracket">
         <severity>0</severity>
     </rule>
-	<rule ref="PEAR.Functions.FunctionCallSignature.SpaceAfterOpenBracket">
-        <severity>0</severity>
-    </rule>
-    <rule ref="PEAR.Functions.FunctionCallSignature.SpaceBeforeCloseBracket">
-        <severity>0</severity>
-    </rule>
     <rule ref="PEAR.Functions.FunctionCallSignature.SpaceAfterCloseBracket">
         <severity>0</severity>
     </rule>
@@ -434,5 +426,7 @@
     <rule ref="PSR2.Classes.ClassDeclaration" />
     <rule ref="PSR2.Methods.FunctionClosingBrace" />
     <rule ref="PSR2.Files.EndFileNewline.TooMany" />
-    <rule ref="PSR2.Files.EndFileNewline.NoneFound" />
+	<rule ref="PSR2.Files.EndFileNewline.NoneFound" />
+	<rule ref="PSR2.Methods.FunctionCallSignature.SpaceBeforeOpenBracket" />
+	<rule ref="PSR2.Classes.PropertyDeclaration.VarUsed" />
 </ruleset>

@@ -621,7 +621,7 @@ if (empty($reshook))
 			{
 				if (! empty($conf->global->INVOICE_CAN_ALWAYS_BE_EDITED) || ($resteapayer == $object->total_ttc && empty($object->paye)))
 				{
-					$result=$object->set_draft($user, $idwarehouse);
+					$result=$object->setDraft($user, $idwarehouse);
 					if ($result<0) setEventMessages($object->error, $object->errors, 'errors');
 
 					// Define output language
@@ -696,6 +696,7 @@ if (empty($reshook))
 			$db->begin();
 
 			$amount_ht = $amount_tva = $amount_ttc = array();
+			$multicurrency_amount_ht = $multicurrency_amount_tva = $multicurrency_amount_ttc = array();
 
 			// Loop on each vat rate
 			$i = 0;
@@ -709,7 +710,7 @@ if (empty($reshook))
 					$multicurrency_amount_ht[$line->tva_tx] += $line->multicurrency_total_ht;
 					$multicurrency_amount_tva[$line->tva_tx] += $line->multicurrency_total_tva;
 					$multicurrency_amount_ttc[$line->tva_tx] += $line->multicurrency_total_ttc;
-					$i ++;
+					$i++;
 				}
 			}
 
@@ -1130,7 +1131,7 @@ if (empty($reshook))
 				// Source facture
 				$object->fac_rec = GETPOST('fac_rec', 'int');
 
-				$id = $object->create($user);       // This include recopy of links from recurring invoice and invoice lines
+				$id = $object->create($user);       // This include recopy of links from recurring invoice and recurring invoice lines
 			}
 		}
 
@@ -1319,6 +1320,8 @@ if (empty($reshook))
 
 							foreach ($amountdeposit as $tva => $amount)
 							{
+								if (empty($amount)) continue;
+
 								$arraylist = array('amount' => 'FixAmount','variable' => 'VarAmount');
 								$descline = $langs->trans('Deposit');
 								//$descline.= ' - '.$langs->trans($arraylist[$typeamount]);
@@ -1449,7 +1452,7 @@ if (empty($reshook))
 										$localtax1_tx = get_localtax($tva_tx, 1, $object->thirdparty);
 										$localtax2_tx = get_localtax($tva_tx, 2, $object->thirdparty);
 
-										$result = $object->addline(
+        $result = $object->addline(
 											$desc, $lines[$i]->subprice, $lines[$i]->qty, $tva_tx, $localtax1_tx, $localtax2_tx, $lines[$i]->fk_product,
 											$lines[$i]->remise_percent, $date_start, $date_end, 0, $lines[$i]->info_bits, $lines[$i]->fk_remise_except,
 											'HT', 0, $product_type, $lines[$i]->rang, $lines[$i]->special_code, $object->origin, $lines[$i]->rowid,
@@ -1687,7 +1690,7 @@ if (empty($reshook))
 		// Extrafields
 		$extrafieldsline = new ExtraFields($db);
 		$extralabelsline = $extrafieldsline->fetch_name_optionals_label($object->table_element_line);
-		$array_options = $extrafieldsline->getOptionalsFromPost($extralabelsline, $predef);
+		$array_options = $extrafieldsline->getOptionalsFromPost($object->table_element_line, $predef);
 		// Unset extrafield
 		if (is_array($extralabelsline)) {
 			// Get extra fields
@@ -2009,7 +2012,7 @@ if (empty($reshook))
 		// Extrafields
 		$extrafieldsline = new ExtraFields($db);
 		$extralabelsline = $extrafieldsline->fetch_name_optionals_label($object->table_element_line);
-		$array_options = $extrafieldsline->getOptionalsFromPost($extralabelsline);
+		$array_options = $extrafieldsline->getOptionalsFromPost($object->table_element_line);
 		// Unset extrafield
 		if (is_array($extralabelsline)) {
 			// Get extra fields
@@ -2118,7 +2121,7 @@ if (empty($reshook))
 				}
 			}
 
-			$result = $object->updateline(GETPOST('lineid'), $description, $pu_ht, $qty, GETPOST('remise_percent'),
+$result = $object->updateline(GETPOST('lineid'), $description, $pu_ht, $qty, GETPOST('remise_percent'),
 				$date_start, $date_end, $vat_rate, $localtax1_rate, $localtax2_rate, 'HT', $info_bits, $type,
 				GETPOST('fk_parent_line'), 0, $fournprice, $buyingprice, $label, $special_code, $array_options, GETPOST('progress'),
 				$_POST['units'], $pu_ht_devise);
@@ -2352,7 +2355,7 @@ if (empty($reshook))
 	        {
 	            $lineId = intval($lineId);
                 $originLine = new $lineClassName($db);
-                if(intval($fromElementid) > 0 && $originLine->fetch( $lineId ) > 0)
+                if(intval($fromElementid) > 0 && $originLine->fetch($lineId) > 0)
                 {
                     $originLine->fetch_optionals($lineId);
                     $desc = $originLine->desc;
@@ -2616,8 +2619,8 @@ if ($action == 'create')
 	}
 
 	if (!empty($soc->id)) $absolute_discount = $soc->getAvailableDiscounts();
-	$note_public = $object->getDefaultCreateValueFor('note_public', (is_object($objectsrc)?$objectsrc->note_public:null));
-	$note_private = $object->getDefaultCreateValueFor('note_private', ((! empty($origin) && ! empty($originid) && is_object($objectsrc))?$objectsrc->note_private:null));
+	$note_public = $object->getDefaultCreateValueFor('note_public', ((! empty($origin) && ! empty($originid) && is_object($objectsrc) && !empty($conf->global->FACTURE_REUSE_NOTES_ON_CREATE_FROM))?$objectsrc->note_public:null));
+	$note_private = $object->getDefaultCreateValueFor('note_private', ((! empty($origin) && ! empty($originid) && is_object($objectsrc) && !empty($conf->global->FACTURE_REUSE_NOTES_ON_CREATE_FROM))?$objectsrc->note_private:null));
 
 	if (! empty($conf->use_javascript_ajax))
 	{
@@ -2695,7 +2698,7 @@ if ($action == 'create')
 			});
 			</script>';
 		}
-		print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&client=3&fournisseur=0&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'">'.$langs->trans("AddThirdParty").'</a>';
+		print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&client=3&fournisseur=0&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'">'.$langs->trans("AddThirdParty").' <span class="fa fa-plus-circle valignmiddle"></span></a>';
 		print '</td>';
 	}
 	print '</tr>' . "\n";
@@ -3091,7 +3094,7 @@ if ($action == 'create')
 		$langs->load('projects');
 		print '<tr><td>' . $langs->trans('Project') . '</td><td colspan="2">';
 		$numprojet = $formproject->select_projects(($socid > 0 ? $socid : -1), $projectid, 'projectid', 0, 0, 1, 1);
-		print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/card.php?socid=' . $soc->id . '&action=create&status=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create&socid='.$soc->id.($fac_rec?'&fac_rec='.$fac_rec:'')).'">' . $langs->trans("AddProject") . '</a>';
+		print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/card.php?socid=' . $soc->id . '&action=create&status=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create&socid='.$soc->id.($fac_rec?'&fac_rec='.$fac_rec:'')).'">' . $langs->trans("AddProject") . ' <span class="fa fa-plus-circle valignmiddle"></span></a>';
 		print '</td></tr>';
 	}
 
@@ -3244,8 +3247,8 @@ if ($action == 'create')
 			echo ' ('.$langs->trans('LatestRelatedBill').end($objectsrc->linkedObjects['facture'])->getNomUrl(1).')';
 		}
 		echo '</td></tr>';
-		print '<tr><td>' . $langs->trans('TotalHT') . '</td><td colspan="2">' . price($objectsrc->total_ht) . '</td></tr>';
-		print '<tr><td>' . $langs->trans('TotalVAT') . '</td><td colspan="2">' . price($objectsrc->total_tva) . "</td></tr>";
+		print '<tr><td>' . $langs->trans('AmountHT') . '</td><td colspan="2">' . price($objectsrc->total_ht) . '</td></tr>';
+		print '<tr><td>' . $langs->trans('AmountVAT') . '</td><td colspan="2">' . price($objectsrc->total_tva) . "</td></tr>";
 		if ($mysoc->localtax1_assuj == "1" || $objectsrc->total_localtax1 != 0) 		// Localtax1
 		{
 			print '<tr><td>' . $langs->transcountry("AmountLT1", $mysoc->country_code) . '</td><td colspan="2">' . price($objectsrc->total_localtax1) . "</td></tr>";
@@ -3255,7 +3258,7 @@ if ($action == 'create')
 		{
 			print '<tr><td>' . $langs->transcountry("AmountLT2", $mysoc->country_code) . '</td><td colspan="2">' . price($objectsrc->total_localtax2) . "</td></tr>";
 		}
-		print '<tr><td>' . $langs->trans('TotalTTC') . '</td><td colspan="2">' . price($objectsrc->total_ttc) . "</td></tr>";
+		print '<tr><td>' . $langs->trans('AmountTTC') . '</td><td colspan="2">' . price($objectsrc->total_ttc) . "</td></tr>";
 
 		if (!empty($conf->multicurrency->enabled))
 		{
@@ -3607,7 +3610,7 @@ elseif ($id > 0 || ! empty($ref))
 							// array('type' => 'checkbox', 'name' => 'clone_content', 'label' => $langs->trans("CloneMainAttributes"), 'value' => 1)
 							array('type' => 'other','name' => 'socid','label' => $langs->trans("SelectThirdParty"),'value' => $form->select_company($object->socid, 'socid', '(s.client=1 OR s.client=2 OR s.client=3)', 1)));
 		// Paiement incomplet. On demande si motif = escompte ou autre
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?facid=' . $object->id, $langs->trans('CloneInvoice'), $langs->trans('ConfirmCloneInvoice', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?facid=' . $object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneInvoice', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
 	}
 
 	// Call Hook formConfirm
@@ -4669,6 +4672,13 @@ elseif ($id > 0 || ! empty($ref))
 				{
 					print '<div class="inline-block divButAction"><a class="butAction'.($conf->use_javascript_ajax?' reposition':'').'" href="'.$_SERVER["PHP_SELF"].'?facid='.$object->id.'&amp;action=converttoreduc">'.$langs->trans('ConvertToReduc').'</a></div>';
 				}
+			}
+
+			// POS Ticket
+			if (! empty($conf->takepos->enabled) && $object->module_source != '')
+			{
+                $receipt_url=DOL_URL_ROOT."/takepos/receipt.php";
+                print '<div class="inline-block divButAction"><a target="_blank" class="butAction" href="' . $receipt_url . '?facid=' . $object->id.'">' . $langs->trans('POSTicket') .'</a></div>';
 			}
 
 			// Classify paid

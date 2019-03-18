@@ -46,13 +46,13 @@ class FormCompany
 	 *
 	 *	@param	DoliDB	$db		Database handler
 	 */
-	function __construct($db)
+	public function __construct($db)
 	{
 		$this->db = $db;
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *    	Return list of labels (translated) of third parties type
 	 *
@@ -60,7 +60,7 @@ class FormCompany
 	 *      @param  string	$filter     Add a SQL filter to select
 	 *    	@return array      			Array of types
 	 */
-	function typent_array($mode = 0, $filter = '')
+	public function typent_array($mode = 0, $filter = '')
 	{
         // phpcs:enable
 		global $langs,$mysoc;
@@ -95,7 +95,7 @@ class FormCompany
 		return $effs;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Renvoie la liste des types d'effectifs possibles (pas de traduction car nombre)
 	 *
@@ -103,7 +103,7 @@ class FormCompany
 	 *	@param  string	$filter     Add a SQL filter to select
 	 *  @return array				Array of types d'effectifs
 	 */
-	function effectif_array($mode = 0, $filter = '')
+	public function effectif_array($mode = 0, $filter = '')
 	{
         // phpcs:enable
 		$effs = array();
@@ -135,7 +135,7 @@ class FormCompany
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Affiche formulaire de selection des modes de reglement
 	 *
@@ -145,7 +145,7 @@ class FormCompany
 	 *	@param	int		$empty			Add empty value in list
 	 *	@return	void
 	 */
-	function form_prospect_level($page, $selected = '', $htmlname = 'prospect_level_id', $empty = 0)
+	public function form_prospect_level($page, $selected = '', $htmlname = 'prospect_level_id', $empty = 0)
 	{
         // phpcs:enable
 		global $user, $langs;
@@ -186,32 +186,30 @@ class FormCompany
 		print '</form>';
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *   Retourne la liste deroulante des departements/province/cantons tout pays confondu ou pour un pays donne.
-	 *   Dans le cas d'une liste tout pays confondus, l'affichage fait une rupture sur le pays.
-	 *   La cle de la liste est le code (il peut y avoir plusieurs entree pour
-	 *   un code donnee mais dans ce cas, le champ pays differe).
-	 *   Ainsi les liens avec les departements se font sur un departement independemment de son nom.
+	 *   Returns the drop-down list of departments/provinces/cantons for all countries or for a given country.
+     *   In the case of an all-country list, the display breaks on the country.
+     *   The key of the list is the code (there can be several entries for a given code but in this case, the country field differs).
+     *   Thus the links with the departments are done on a department independently of its name.
 	 *
 	 *   @param     string	$selected        	Code state preselected
 	 *   @param     int		$country_codeid     0=list for all countries, otherwise country code or country rowid to show
 	 *   @param     string	$htmlname			Id of department
 	 *   @return	void
 	 */
-	function select_departement($selected = '', $country_codeid = 0, $htmlname = 'state_id')
+	public function select_departement($selected = '', $country_codeid = 0, $htmlname = 'state_id')
 	{
         // phpcs:enable
 		print $this->select_state($selected, $country_codeid, $htmlname);
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *    Retourne la liste deroulante des departements/province/cantons tout pays confondu ou pour un pays donne.
-	 *    Dans le cas d'une liste tout pays confondus, l'affichage fait une rupture sur le pays.
-	 *    La cle de la liste est le code (il peut y avoir plusieurs entree pour
-	 *    un code donnee mais dans ce cas, le champ pays differe).
-	 *    Ainsi les liens avec les departements se font sur un departement independemment de son nom.
+	 *   Returns the drop-down list of departments/provinces/cantons for all countries or for a given country.
+     *   In the case of an all-country list, the display breaks on the country.
+     *   The key of the list is the code (there can be several entries for a given code but in this case, the country field differs).
+     *   Thus the links with the departments are done on a department independently of its name.
 	 *
 	 *    @param	string	$selected        	Code state preselected (mus be state id)
 	 *    @param    integer	$country_codeid    	Country code or id: 0=list for all countries, otherwise country code or country rowid to show
@@ -219,7 +217,7 @@ class FormCompany
 	 * 	  @return	string						String with HTML select
 	 *    @see select_country
 	 */
-	function select_state($selected = '', $country_codeid = 0, $htmlname = 'state_id')
+	public function select_state($selected = '', $country_codeid = 0, $htmlname = 'state_id')
 	{
         // phpcs:enable
 		global $conf,$langs,$user;
@@ -321,7 +319,7 @@ class FormCompany
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *   Retourne la liste deroulante des regions actives dont le pays est actif
 	 *   La cle de la liste est le code (il peut y avoir plusieurs entree pour
@@ -332,7 +330,7 @@ class FormCompany
 	 *   @param		string		$htmlname		Name of HTML select field
 	 *   @return	void
 	 */
-	function select_region($selected = '', $htmlname = 'region_id')
+	public function select_region($selected = '', $htmlname = 'region_id')
 	{
         // phpcs:enable
 		global $conf,$langs;
@@ -389,7 +387,7 @@ class FormCompany
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Return combo list with people title
 	 *
@@ -398,7 +396,7 @@ class FormCompany
 	 *  @param  string  $morecss        Add more css on SELECT element
 	 *  @return	string					String with HTML select
 	 */
-	function select_civility($selected = '', $htmlname = 'civility_id', $morecss = 'maxwidth100')
+	public function select_civility($selected = '', $htmlname = 'civility_id', $morecss = 'maxwidth100')
 	{
         // phpcs:enable
 		global $conf,$langs,$user;
@@ -447,7 +445,7 @@ class FormCompany
 		return $out;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *    Retourne la liste deroulante des formes juridiques tous pays confondus ou pour un pays donne.
 	 *    Dans le cas d'une liste tous pays confondu, on affiche une rupture sur le pays.
@@ -459,13 +457,13 @@ class FormCompany
 	 *    @deprecated Use print xxx->select_juridicalstatus instead
 	 *    @see select_juridicalstatus()
 	 */
-	function select_forme_juridique($selected = '', $country_codeid = 0, $filter = '')
+	public function select_forme_juridique($selected = '', $country_codeid = 0, $filter = '')
 	{
         // phpcs:enable
 		print $this->select_juridicalstatus($selected, $country_codeid, $filter);
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *    Retourne la liste deroulante des formes juridiques tous pays confondus ou pour un pays donne.
 	 *    Dans le cas d'une liste tous pays confondu, on affiche une rupture sur le pays
@@ -476,7 +474,7 @@ class FormCompany
      *    @param	string		$htmlname			HTML name of select
      *    @return	string							String with HTML select
 	 */
-	function select_juridicalstatus($selected = '', $country_codeid = 0, $filter = '', $htmlname = 'forme_juridique_code')
+	public function select_juridicalstatus($selected = '', $country_codeid = 0, $filter = '', $htmlname = 'forme_juridique_code')
 	{
         // phpcs:enable
 		global $conf,$langs,$user;
@@ -581,7 +579,7 @@ class FormCompany
      *  @param	string		$morecss		More CSS on select component
 	 * 	@return int 						The selected third party ID
 	 */
-	function selectCompaniesForNewContact($object, $var_id, $selected = '', $htmlname = 'newcompany', $limitto = '', $forceid = 0, $moreparam = '', $morecss = '')
+	public function selectCompaniesForNewContact($object, $var_id, $selected = '', $htmlname = 'newcompany', $limitto = '', $forceid = 0, $moreparam = '', $morecss = '')
 	{
 		global $conf, $langs;
 
@@ -740,7 +738,7 @@ class FormCompany
      *  @param  string      $morecss        Add more css to select component
      *  @return	void
      */
-	function selectTypeContact($object, $selected, $htmlname = 'type', $source = 'internal', $sortorder = 'position', $showempty = 0, $morecss = '')
+    public function selectTypeContact($object, $selected, $htmlname = 'type', $source = 'internal', $sortorder = 'position', $showempty = 0, $morecss = '')
 	{
 	    global $user, $langs;
 
@@ -764,7 +762,7 @@ class FormCompany
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *    Return a select list with zip codes and their town
 	 *
@@ -777,7 +775,7 @@ class FormCompany
 	 *    @param    string      $morecss                More css
 	 *    @return	string
 	 */
-	function select_ziptown($selected = '', $htmlname = 'zipcode', $fields = '', $fieldsize = 0, $disableautocomplete = 0, $moreattrib = '', $morecss = '')
+	public function select_ziptown($selected = '', $htmlname = 'zipcode', $fields = '', $fieldsize = 0, $disableautocomplete = 0, $moreattrib = '', $morecss = '')
 	{
         // phpcs:enable
 		global $conf;
@@ -797,7 +795,7 @@ class FormCompany
 		return $out;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *  Return HTML string to use as input of professional id into a HTML page (siren, siret, etc...)
      *
@@ -808,7 +806,7 @@ class FormCompany
      *  @param  string  $morecss        More css
      *  @return	string					HTML string with prof id
      */
-    function get_input_id_prof($idprof, $htmlname, $preselected, $country_code, $morecss = 'maxwidth100onsmartphone quatrevingtpercent')
+    public function get_input_id_prof($idprof, $htmlname, $preselected, $country_code, $morecss = 'maxwidth100onsmartphone quatrevingtpercent')
     {
         // phpcs:enable
         global $conf,$langs;
@@ -849,7 +847,7 @@ class FormCompany
         return $out;
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      * Return a HTML select with localtax values for thirdparties
      *
@@ -858,7 +856,7 @@ class FormCompany
      * @param 	string      $htmlname		HTML select name
      * @return	void
      */
-    function select_localtax($local, $selected, $htmlname)
+    public function select_localtax($local, $selected, $htmlname)
     {
         // phpcs:enable
         $tax=get_localtax_by_third($local);
@@ -902,7 +900,7 @@ class FormCompany
      * @param string $morecss More css
      * @return string HTML string
      */
-    function selectProspectCustomerType($selected, $htmlname = 'client', $htmlidname = 'customerprospect', $typeinput = 'form', $morecss = '')
+    public function selectProspectCustomerType($selected, $htmlname = 'client', $htmlidname = 'customerprospect', $typeinput = 'form', $morecss = '')
     {
 
     	global $conf,$langs;

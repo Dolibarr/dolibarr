@@ -102,7 +102,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
         // Order classify billed proposal
         if ($action == 'ORDER_CLASSIFY_BILLED')
         {
-        	dol_syslog( "Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id );
+        	dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
         	if (! empty($conf->propal->enabled) && ! empty($conf->workflow->enabled) && ! empty($conf->global->WORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL))
         	{
         		$object->fetchObjectLinked('', 'propal', $object->id, $object->element);
@@ -113,7 +113,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 					{
 					    if ($element->statut == Propal::STATUS_SIGNED || $element->statut == Propal::STATUS_BILLED) $totalonlinkedelements += $element->total_ht;
 					}
-					dol_syslog( "Amount of linked proposals = ".$totalonlinkedelements.", of order = ".$object->total_ht.", egality is ".($totalonlinkedelements == $object->total_ht) );
+					dol_syslog("Amount of linked proposals = ".$totalonlinkedelements.", of order = ".$object->total_ht.", egality is ".($totalonlinkedelements == $object->total_ht));
 					if ( ($totalonlinkedelements == $object->total_ht) || (! empty($conf->global->WORKFLOW_CLASSIFY_IF_AMOUNTS_ARE_DIFFERENTS)) )
 					{
     					foreach($object->linkedObjects['propal'] as $element)
@@ -129,7 +129,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
         // classify billed order & billed propososal
         if ($action == 'BILL_VALIDATE')
         {
-        	dol_syslog( "Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id );
+        	dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
 			// First classify billed the order to allow the proposal classify process
 			if (! empty($conf->commande->enabled) && ! empty($conf->workflow->enabled) && ! empty($conf->global->WORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER))
@@ -142,7 +142,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
         		    {
         		        if ($element->statut == Commande::STATUS_VALIDATED || $element->statut == Commande::STATUS_SHIPMENTONPROCESS || $element->statut == Commande::STATUS_CLOSED) $totalonlinkedelements += $element->total_ht;
         		    }
-        		    dol_syslog( "Amount of linked orders = ".$totalonlinkedelements.", of invoice = ".$object->total_ht.", egality is ".($totalonlinkedelements == $object->total_ht) );
+        		    dol_syslog("Amount of linked orders = ".$totalonlinkedelements.", of invoice = ".$object->total_ht.", egality is ".($totalonlinkedelements == $object->total_ht));
         		    if ( ($totalonlinkedelements == $object->total_ht) || (! empty($conf->global->WORKFLOW_CLASSIFY_IF_AMOUNTS_ARE_DIFFERENTS)) )
         		    {
         		        foreach($object->linkedObjects['commande'] as $element)
@@ -165,7 +165,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
         		    {
         		        if ($element->statut == Propal::STATUS_SIGNED || $element->statut == Propal::STATUS_BILLED) $totalonlinkedelements += $element->total_ht;
         		    }
-        		    dol_syslog( "Amount of linked proposals = ".$totalonlinkedelements.", of invoice = ".$object->total_ht.", egality is ".($totalonlinkedelements == $object->total_ht) );
+        		    dol_syslog("Amount of linked proposals = ".$totalonlinkedelements.", of invoice = ".$object->total_ht.", egality is ".($totalonlinkedelements == $object->total_ht));
         		    if ( ($totalonlinkedelements == $object->total_ht) || (! empty($conf->global->WORKFLOW_CLASSIFY_IF_AMOUNTS_ARE_DIFFERENTS)) )
         		    {
         		        foreach($object->linkedObjects['propal'] as $element)
@@ -181,7 +181,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
         // classify billed order & billed propososal
         if ($action == 'BILL_SUPPLIER_VALIDATE')
         {
-        	dol_syslog( "Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id );
+        	dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
         	// First classify billed the order to allow the proposal classify process
         	if (! empty($conf->fournisseur->enabled) && ! empty($conf->global->WORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER))
@@ -194,7 +194,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
         			{
         				if ($element->statut == CommandeFournisseur::STATUS_ACCEPTED || $element->statut == CommandeFournisseur::STATUS_ORDERSENT || $element->statut == CommandeFournisseur::STATUS_RECEIVED_PARTIALLY || $element->statut == CommandeFournisseur::STATUS_RECEIVED_COMPLETELY) $totalonlinkedelements += $element->total_ht;
         			}
-        			dol_syslog( "Amount of linked orders = ".$totalonlinkedelements.", of invoice = ".$object->total_ht.", egality is ".($totalonlinkedelements == $object->total_ht) );
+        			dol_syslog("Amount of linked orders = ".$totalonlinkedelements.", of invoice = ".$object->total_ht.", egality is ".($totalonlinkedelements == $object->total_ht));
         			if ( ($totalonlinkedelements == $object->total_ht) || (! empty($conf->global->WORKFLOW_CLASSIFY_IF_AMOUNTS_ARE_DIFFERENTS)) )
         			{
         				foreach($object->linkedObjects['order_supplier'] as $element)
@@ -217,7 +217,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
         			{
         				if ($element->statut == SupplierProposal::STATUS_SIGNED || $element->statut == SupplierProposal::STATUS_BILLED) $totalonlinkedelements += $element->total_ht;
         			}
-        			dol_syslog( "Amount of linked supplier proposals = ".$totalonlinkedelements.", of supplier invoice = ".$object->total_ht.", egality is ".($totalonlinkedelements == $object->total_ht) );
+        			dol_syslog("Amount of linked supplier proposals = ".$totalonlinkedelements.", of supplier invoice = ".$object->total_ht.", egality is ".($totalonlinkedelements == $object->total_ht));
         			if ( ($totalonlinkedelements == $object->total_ht) || (! empty($conf->global->WORKFLOW_CLASSIFY_IF_AMOUNTS_ARE_DIFFERENTS)) )
         			{
         				foreach($object->linkedObjects['supplier_proposal'] as $element)
@@ -233,7 +233,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
         // Invoice classify billed order
         if ($action == 'BILL_PAYED')
         {
-            dol_syslog( "Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id );
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
             if (! empty($conf->commande->enabled) && ! empty($conf->global->WORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER))
             {
@@ -245,7 +245,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
                     {
                         if ($element->statut == Commande::STATUS_VALIDATED || $element->statut == Commande::STATUS_SHIPMENTONPROCESS || $element->statut == Commande::STATUS_CLOSED) $totalonlinkedelements += $element->total_ht;
                     }
-                    dol_syslog( "Amount of linked orders = ".$totalonlinkedelements.", of invoice = ".$object->total_ht.", egality is ".($totalonlinkedelements == $object->total_ht) );
+                    dol_syslog("Amount of linked orders = ".$totalonlinkedelements.", of invoice = ".$object->total_ht.", egality is ".($totalonlinkedelements == $object->total_ht));
                     if ( ($totalonlinkedelements == $object->total_ht) || (! empty($conf->global->WORKFLOW_CLASSIFY_IF_AMOUNTS_ARE_DIFFERENTS)) )
                     {
                         foreach($object->linkedObjects['commande'] as $element)
@@ -260,7 +260,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 
         if ($action=='SHIPPING_VALIDATE')
         {
-        	dol_syslog( "Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id );
+        	dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
         	if (! empty($conf->commande->enabled) && ! empty($conf->expedition->enabled) && ! empty($conf->workflow->enabled) && ! empty($conf->global->WORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING))
         	{

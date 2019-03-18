@@ -234,8 +234,8 @@ if ($resql)
 	print '<td>'.$langs->trans("ThirdParty").'</td>';
 	print '<td>'.$langs->trans("RIB").'</td>';
 	print '<td>'.$langs->trans("RUM").'</td>';
-	print '<td align="right">'.$langs->trans("AmountTTC").'</td>';
-	print '<td align="right">'.$langs->trans("DateRequest").'</td>';
+	print '<td class="right">'.$langs->trans("AmountTTC").'</td>';
+	print '<td class="right">'.$langs->trans("DateRequest").'</td>';
 	print '</tr>';
 
 	if ($num)
@@ -271,11 +271,11 @@ if ($resql)
 			if ($format) print ' ('.$format.')';
 			print '</td>';
 			// Amount
-			print '<td align="right">';
+			print '<td class="right">';
 			print price($obj->amount, 0, $langs, 0, 0, -1, $conf->currency);
 			print '</td>';
 			// Date
-			print '<td align="right">';
+			print '<td class="right">';
 			print dol_print_date($db->jdate($obj->date_demande), 'day');
 			print '</td>';
 			print '</tr>';
@@ -317,7 +317,7 @@ if ($result)
     print"\n<!-- debut table -->\n";
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre"><td>'.$langs->trans("Ref").'</td>';
-    print '<td align="center">'.$langs->trans("Date").'</td><td align="right">'.$langs->trans("Amount").'</td>';
+    print '<td align="center">'.$langs->trans("Date").'</td><td class="right">'.$langs->trans("Amount").'</td>';
     print '</tr>';
 
     while ($i < min($num,$limit))
@@ -335,7 +335,7 @@ if ($result)
 
         print '<td align="center">'.dol_print_date($db->jdate($obj->datec),'day')."</td>\n";
 
-        print '<td align="right">'.price($obj->amount,0,$langs,0,0,-1,$conf->currency)."</td>\n";
+        print '<td class="right">'.price($obj->amount,0,$langs,0,0,-1,$conf->currency)."</td>\n";
 
         print "</tr>\n";
         $i++;

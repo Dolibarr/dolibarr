@@ -41,7 +41,7 @@ class modSociete extends DolibarrModules
 	 *
 	 *   @param      DoliDB		$db      Database handler
 	 */
-	function __construct($db)
+	public function __construct($db)
 	{
 		global $conf, $user;
 
@@ -339,7 +339,7 @@ class modSociete extends DolibarrModules
 		$this->export_TypeFields_array[$r]=array(
 			'c.civility'=>"List:c_civility:label:code",'c.lastname'=>'Text','c.firstname'=>'Text','c.poste'=>'Text','c.datec'=>"Date",'c.priv'=>"Boolean",
 			'c.address'=>"Text",'c.zip'=>"Text",'c.town'=>"Text",'d.nom'=>'Text','co.label'=>"List:c_country:label:rowid",'co.code'=>"Text",'c.phone'=>"Text",
-			'c.fax'=>"Text",'c.email'=>"Text",'s.rowid'=>"List:societe:nom",'s.nom'=>"Text",'s.status'=>"Status",'s.code_client'=>"Text",'s.code_fournisseur'=>"Text",
+			'c.fax'=>"Text",'c.email'=>"Text",'s.rowid'=>"List:societe:nom::thirdparty",'s.nom'=>"Text",'s.status'=>"Status",'s.code_client'=>"Text",'s.code_fournisseur'=>"Text",
 			's.client'=>"Text",'s.fournisseur'=>"Text"
 		);
 		$this->export_entities_array[$r]=array(
@@ -720,15 +720,15 @@ class modSociete extends DolibarrModules
 
 
     /**
-	 *		Function called when module is enabled.
-	 *		The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
-	 *		It also creates data directories
+	 *  Function called when module is enabled.
+	 *  The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
+	 *  It also creates data directories
 	 *
-     *      @param      string	$options    Options when enabling module ('', 'noboxes')
-	 *      @return     int             	1 if OK, 0 if KO
+     *  @param      string	$options    Options when enabling module ('', 'noboxes')
+	 *  @return     int             	1 if OK, 0 if KO
      */
-	function init($options = '')
-	{
+    public function init($options = '')
+    {
 		global $conf, $langs;
 
 		// We disable this to prevent pb of modules not correctly disabled

@@ -309,17 +309,17 @@ print '<input type="hidden" name="action" value="setmainoptions">';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print "<td>".$langs->trans("Parameters")."</td>\n";
-print '<td align="right" width="60">'.$langs->trans("Value").'</td>'."\n";
+print '<td class="right" width="60">'.$langs->trans("Value").'</td>'."\n";
 print '<td width="80">&nbsp;</td></tr>'."\n";
 
 print '<tr class="oddeven">';
 print '<td width="80%">'.$langs->trans("ManageOpportunitiesStatus").'</td>';
-print '<td width="60" align="right">';
+print '<td width="60" class="right">';
 $arrval=array('0'=>$langs->trans("No"),
 	'1'=>$langs->trans("Yes"),
 );
 print $form->selectyesno('PROJECT_USE_OPPORTUNITIES', $conf->global->PROJECT_USE_OPPORTUNITIES, 1);
-print '</td><td align="right">';
+print '</td><td class="right">';
 print '<input type="submit" class="button" name="modifyPROJECT_USE_OPPORTUNITIES" value="'.$langs->trans("Modify").'">';
 print "</td>";
 print '</tr>';
@@ -327,12 +327,12 @@ print '</tr>';
 
 print '<tr class="oddeven">';
 print '<td width="80%">'.$langs->trans("ManageTasks").'</td>';
-print '<td width="60" align="right">';
+print '<td width="60" class="right">';
 $arrval=array('0'=>$langs->trans("No"),
 	'1'=>$langs->trans("Yes"),
 );
 print $form->selectyesno('PROJECT_USE_TASKS', empty($conf->global->PROJECT_HIDE_TASKS)?1:0, 1);
-print '</td><td align="right">';
+print '</td><td class="right">';
 print '<input type="submit" class="button" name="modifyPROJECT_USE_TASKS" value="'.$langs->trans("Modify").'">';
 print "</td>";
 print '</tr>';
@@ -354,8 +354,8 @@ print '<tr class="liste_titre">';
 print '<td width="100">'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Description").'</td>';
 print '<td>'.$langs->trans("Example").'</td>';
-print '<td align="center" width="60">'.$langs->trans("Activated").'</td>';
-print '<td align="center" width="80">'.$langs->trans("ShortInfo").'</td>';
+print '<td class="center" width="60">'.$langs->trans("Activated").'</td>';
+print '<td class="center" width="80">'.$langs->trans("ShortInfo").'</td>';
 print "</tr>\n";
 
 clearstatcache();
@@ -398,7 +398,7 @@ foreach ($dirmodels as $reldir)
 						else print $tmp;
 						print '</td>'."\n";
 
-						print '<td align="center">';
+						print '<td class="center">';
 						if ($conf->global->PROJECT_ADDON == 'mod_'.$classname)
 						{
 							print img_picto($langs->trans("Activated"), 'switch_on');
@@ -429,7 +429,7 @@ foreach ($dirmodels as $reldir)
 							}
 						}
 
-						print '<td align="center">';
+						print '<td class="center">';
 						print $form->textwithpicto('', $htmltooltip, 1, 0);
 						print '</td>';
 
@@ -455,8 +455,8 @@ if (empty($conf->global->PROJECT_HIDE_TASKS))
 	print '<td width="100">'.$langs->trans("Name").'</td>';
 	print '<td>'.$langs->trans("Description").'</td>';
 	print '<td>'.$langs->trans("Example").'</td>';
-	print '<td align="center" width="60">'.$langs->trans("Activated").'</td>';
-	print '<td align="center" width="80">'.$langs->trans("ShortInfo").'</td>';
+	print '<td class="center" width="60">'.$langs->trans("Activated").'</td>';
+	print '<td class="center" width="80">'.$langs->trans("ShortInfo").'</td>';
 	print "</tr>\n";
 
 	clearstatcache();
@@ -499,7 +499,7 @@ if (empty($conf->global->PROJECT_HIDE_TASKS))
 							else print $tmp;
 							print '</td>'."\n";
 
-							print '<td align="center">';
+							print '<td class="center">';
 							if ($conf->global->PROJECT_TASK_ADDON == 'mod_'.$classname)
 							{
 								print img_picto($langs->trans("Activated"), 'switch_on');
@@ -530,7 +530,7 @@ if (empty($conf->global->PROJECT_HIDE_TASKS))
 								}
 							}
 
-							print '<td align="center">';
+							print '<td class="center">';
 							print $form->textwithpicto('', $htmltooltip, 1, 0);
 							print '</td>';
 
@@ -583,10 +583,10 @@ print "<table class=\"noborder\" width=\"100%\">\n";
 print "<tr class=\"liste_titre\">\n";
 print '  <td width="100">'.$langs->trans("Name")."</td>\n";
 print "  <td>".$langs->trans("Description")."</td>\n";
-print '<td align="center" width="60">'.$langs->trans("Activated")."</td>\n";
-print '<td align="center" width="60">'.$langs->trans("Default")."</td>\n";
-print '<td align="center" width="80">'.$langs->trans("ShortInfo").'</td>';
-print '<td align="center" width="80">'.$langs->trans("Preview").'</td>';
+print '<td class="center" width="60">'.$langs->trans("Activated")."</td>\n";
+print '<td class="center" width="60">'.$langs->trans("Default")."</td>\n";
+print '<td class="center" width="80">'.$langs->trans("ShortInfo").'</td>';
+print '<td class="center" width="80">'.$langs->trans("Preview").'</td>';
 print "</tr>\n";
 
 clearstatcache();
@@ -637,7 +637,7 @@ foreach ($dirmodels as $reldir)
 								// Active
 								if (in_array($name, $def))
 								{
-									print "<td align=\"center\">\n";
+									print "<td class=\"center\">\n";
 									print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'">';
 									print img_picto($langs->trans("Enabled"), 'switch_on');
 									print '</a>';
@@ -645,13 +645,13 @@ foreach ($dirmodels as $reldir)
 								}
 								else
 								{
-									print "<td align=\"center\">\n";
+									print "<td class=\"center\">\n";
 									print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
 									print "</td>";
 								}
 
 								// Default
-								print "<td align=\"center\">";
+								print "<td class=\"center\">";
 								if ($conf->global->PROJECT_ADDON_PDF == "$name")
 								{
 									print img_picto($langs->trans("Default"), 'on');
@@ -672,12 +672,12 @@ foreach ($dirmodels as $reldir)
 								$htmltooltip.='<br><br><u>'.$langs->trans("FeaturesSupported").':</u>';
 								$htmltooltip.='<br>'.$langs->trans("Logo").': '.yn($module->option_logo, 1, 1);
 
-								print '<td align="center">';
+								print '<td class="center">';
 								print $form->textwithpicto('', $htmltooltip, 1, 0);
 								print '</td>';
 
 								// Preview
-								print '<td align="center">';
+								print '<td class="center">';
 								if ($module->type == 'pdf')
 								{
 									print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"), 'bill').'</a>';
@@ -740,10 +740,10 @@ if (empty($conf->global->PROJECT_HIDE_TASKS))
 	print "<tr class=\"liste_titre\">\n";
 	print '  <td width="100">'.$langs->trans("Name")."</td>\n";
 	print "  <td>".$langs->trans("Description")."</td>\n";
-	print '<td align="center" width="60">'.$langs->trans("Activated")."</td>\n";
-	print '<td align="center" width="60">'.$langs->trans("Default")."</td>\n";
-	print '<td align="center" width="80">'.$langs->trans("ShortInfo").'</td>';
-	print '<td align="center" width="80">'.$langs->trans("Preview").'</td>';
+	print '<td class="center" width="60">'.$langs->trans("Activated")."</td>\n";
+	print '<td class="center" width="60">'.$langs->trans("Default")."</td>\n";
+	print '<td class="center" width="80">'.$langs->trans("ShortInfo").'</td>';
+	print '<td class="center" width="80">'.$langs->trans("Preview").'</td>';
 	print "</tr>\n";
 
 	clearstatcache();
@@ -794,7 +794,7 @@ if (empty($conf->global->PROJECT_HIDE_TASKS))
 									// Active
 									if (in_array($name, $def))
 									{
-										print "<td align=\"center\">\n";
+										print "<td class=\"center\">\n";
 										print '<a href="'.$_SERVER["PHP_SELF"].'?action=deltask&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'">';
 										print img_picto($langs->trans("Enabled"), 'switch_on');
 										print '</a>';
@@ -802,13 +802,13 @@ if (empty($conf->global->PROJECT_HIDE_TASKS))
 									}
 									else
 									{
-										print "<td align=\"center\">\n";
+										print "<td class=\"center\">\n";
 										print '<a href="'.$_SERVER["PHP_SELF"].'?action=settask&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
 										print "</td>";
 									}
 
 									// Defaut
-									print "<td align=\"center\">";
+									print "<td class=\"center\">";
 									if ($conf->global->PROJECT_TASK_ADDON_PDF == "$name")
 									{
 										print img_picto($langs->trans("Default"), 'on');
@@ -829,12 +829,12 @@ if (empty($conf->global->PROJECT_HIDE_TASKS))
 									$htmltooltip.='<br><br><u>'.$langs->trans("FeaturesSupported").':</u>';
 									$htmltooltip.='<br>'.$langs->trans("Logo").': '.yn($module->option_logo, 1, 1);
 
-									print '<td align="center">';
+									print '<td class="center">';
 									print $form->textwithpicto('', $htmltooltip, 1, 0);
 									print '</td>';
 
 									// Preview
-									print '<td align="center">';
+									print '<td class="center">';
 									if ($module->type == 'pdf')
 									{
 										print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimentask&module='.$name.'">'.img_object($langs->trans("Preview"), 'bill').'</a>';
@@ -870,27 +870,27 @@ print '<input type="hidden" name="action" value="updateoptions">';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print "<td>".$langs->trans("Parameters")."</td>\n";
-print '<td align="right" width="60">'.$langs->trans("Value").'</td>'."\n";
+print '<td class="right" width="60">'.$langs->trans("Value").'</td>'."\n";
 print '<td width="80">&nbsp;</td></tr>'."\n";
 
 print '<tr class="oddeven">';
 print '<td width="80%">'.$langs->trans("UseSearchToSelectProject").'</td>';
 if (! $conf->use_javascript_ajax)
 {
-	print '<td class="nowrap" align="right" colspan="2">';
+	print '<td class="nowrap right" colspan="2">';
 	print $langs->trans("NotAvailableWhenAjaxDisabled");
 	print "</td>";
 }
 else
 {
-	print '<td width="60" align="right">';
+	print '<td width="60" class="right">';
 	$arrval=array('0'=>$langs->trans("No"),
 		'1'=>$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 1).')',
 		'2'=>$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 2).')',
 		'3'=>$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 3).')',
 	);
 	print $form->selectarray("activate_PROJECT_USE_SEARCH_TO_SELECT", $arrval, $conf->global->PROJECT_USE_SEARCH_TO_SELECT);
-	print '</td><td align="right">';
+	print '</td><td class="right">';
 	print '<input type="submit" class="button" name="PROJECT_USE_SEARCH_TO_SELECT" value="'.$langs->trans("Modify").'">';
 	print "</td>";
 }
@@ -899,7 +899,7 @@ print '</tr>';
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("AllowToSelectProjectFromOtherCompany").'</td>';
 
-print '<td align="right" width="60" colspan="2">';
+print '<td class="right" width="60" colspan="2">';
 print '<input type="text" id="projectToSelect" name="projectToSelect" value="'.$conf->global->PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY.'"/>&nbsp;';
 print $form->textwithpicto('', $langs->trans('AllowToLinkFromOtherCompany'));
 print '<input type="submit" class="button" name="PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY" value="'.$langs->trans("Modify").'">';

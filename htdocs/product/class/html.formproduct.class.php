@@ -45,11 +45,11 @@ class FormProduct
 
 
 	/**
-	 *	Constructor
+	 *  Constructor
 	 *
-	 *	@param	DoliDB	$db		Database handler
+	 *  @param  DoliDB  $db     Database handler
 	 */
-	function __construct($db)
+	public function __construct($db)
 	{
 		$this->db = $db;
 	}
@@ -69,7 +69,7 @@ class FormProduct
 	 * @param	array	$exclude		    warehouses ids to exclude
 	 * @return  int  		    		    Nb of loaded lines, 0 if already loaded, <0 if KO
 	 */
-	function loadWarehouses($fk_product = 0, $batch = '', $status = '', $sumStock = true, $exclude = '')
+	public function loadWarehouses($fk_product = 0, $batch = '', $status = '', $sumStock = true, $exclude = '')
 	{
 		global $conf, $langs;
 
@@ -210,7 +210,7 @@ class FormProduct
 	 *  @param  int     $showfullpath   1=Show full path of name (parent ref into label), 0=Show only ref of current warehouse
 	 * 	@return	string					HTML select
 	 */
-	function selectWarehouses($selected = '', $htmlname = 'idwarehouse', $filterstatus = '', $empty = 0, $disabled = 0, $fk_product = 0, $empty_label = '', $showstock = 0, $forcecombo = 0, $events = array(), $morecss = 'minwidth200', $exclude = '', $showfullpath = 1)
+	public function selectWarehouses($selected = '', $htmlname = 'idwarehouse', $filterstatus = '', $empty = 0, $disabled = 0, $fk_product = 0, $empty_label = '', $showstock = 0, $forcecombo = 0, $events = array(), $morecss = 'minwidth200', $exclude = '', $showfullpath = 1)
 	{
 		global $conf,$langs,$user;
 
@@ -255,7 +255,7 @@ class FormProduct
      *    @param    int     $addempty    1=Add an empty value in list, 2=Add an empty value in list only if there is more than 2 entries.
      *    @return   void
      */
-    function formSelectWarehouses($page, $selected = '', $htmlname = 'warehouse_id', $addempty = 0)
+    public function formSelectWarehouses($page, $selected = '', $htmlname = 'warehouse_id', $addempty = 0)
     {
         global $langs;
         if ($htmlname != "none") {
@@ -280,7 +280,7 @@ class FormProduct
         }
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Output a combo box with list of units
 	 *  pour l'instant on ne definit pas les unites dans la base
@@ -291,51 +291,61 @@ class FormProduct
 	 * 	@param	int			$adddefault			Add empty unit called "Default"
 	 * 	@return	void
 	 */
-	function select_measuring_units($name = 'measuring_units', $measuring_style = '', $default = '0', $adddefault = 0)
+	public function select_measuring_units($name = 'measuring_units', $measuring_style = '', $default = '0', $adddefault = 0)
 	{
         //phpcs:enable
 		print $this->load_measuring_units($name, $measuring_style, $default, $adddefault);
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Return a combo box with list of units
 	 *  For the moment, units labels are defined in measuring_units_string
 	 *
-	 *  @param	string		$name                Name of HTML field
+	 *  @param  string		$name                Name of HTML field
 	 *  @param  string		$measuring_style     Unit to show: weight, size, surface, volume
 	 *  @param  string		$default             Force unit
-	 * 	@param	int			$adddefault			Add empty unit called "Default"
-	 * 	@return	string
+	 *  @param  int			$adddefault			Add empty unit called "Default"
+	 *  @return string
 	 */
-	function load_measuring_units($name = 'measuring_units', $measuring_style = '', $default = '0', $adddefault = 0)
+	public function load_measuring_units($name = 'measuring_units', $measuring_style = '', $default = '0', $adddefault = 0)
 	{
         //phpcs:enable
-		global $langs,$conf,$mysoc;
+		global $langs, $conf, $mysoc, $db;
 		$langs->load("other");
 
-		$return='';
+		$return = '';
 
-		$measuring_units=array();
-		if ($measuring_style == 'weight') $measuring_units=array(-6=>1,-3=>1,0=>1,3=>1,98=>1,99=>1);
-		elseif ($measuring_style == 'size') $measuring_units=array(-3=>1,-2=>1,-1=>1,0=>1,98=>1,99=>1);
-        elseif ($measuring_style == 'surface') $measuring_units=array(-6=>1,-4=>1,-2=>1,0=>1,98=>1,99=>1);
-		elseif ($measuring_style == 'volume') $measuring_units=array(-9=>1,-6=>1,-3=>1,0=>1,88=>1,89=>1,97=>1,99=>1,/* 98=>1 */);  // Liter is not used as already available with dm3
+		require_once DOL_DOCUMENT_ROOT . '/core/class/cunits.class.php';
+		$measuringUnits = new CUnits($db);
+        $result = $measuringUnits->fetchAll(
+            '',
+            '',
+            0,
+            0,
+            array(
+                't.unit_type' => $measuring_style,
+                't.active' => 1,
+            )
+        );
+		if ($result < 0) {
+			dol_print_error($db);
+			return - 1;
+		} else {
+			$return .= '<select class="flat" name="' . $name . '">';
+			if ($adddefault)
+				$return .= '<option value="0">' . $langs->trans("Default") . '</option>';
 
-		$return.= '<select class="flat" name="'.$name.'">';
-		if ($adddefault) $return.= '<option value="0">'.$langs->trans("Default").'</option>';
-
-		foreach ($measuring_units as $key => $value)
-		{
-			$return.= '<option value="'.$key.'"';
-			if ($key == $default)
-			{
-				$return.= ' selected';
+			foreach ($measuringUnits->records as $lines) {
+				$return .= '<option value="' . $lines->id . '"';
+				if ($lines->id == $default) {
+					$return .= ' selected';
+				}
+				// $return.= '>'.$value.'</option>';
+				$return .= '>' . $langs->transnoentitiesnoconv($lines->label) . '</option>';
 			}
-			//$return.= '>'.$value.'</option>';
-			$return.= '>'.measuring_units_string($key, $measuring_style).'</option>';
+			$return .= '</select>';
 		}
-		$return.= '</select>';
 
 		return $return;
 	}
@@ -358,7 +368,7 @@ class FormProduct
 	 *
 	 * 	@return	string					HTML select
 	 */
-	function selectLotStock($selected = '', $htmlname = 'batch_id', $filterstatus = '', $empty = 0, $disabled = 0, $fk_product = 0, $fk_entrepot = 0, $objectLines = array(), $empty_label = '', $forcecombo = 0, $events = array(), $morecss = 'minwidth200')
+	public function selectLotStock($selected = '', $htmlname = 'batch_id', $filterstatus = '', $empty = 0, $disabled = 0, $fk_product = 0, $fk_entrepot = 0, $objectLines = array(), $empty_label = '', $forcecombo = 0, $events = array(), $morecss = 'minwidth200')
 	{
 		global $langs;
 

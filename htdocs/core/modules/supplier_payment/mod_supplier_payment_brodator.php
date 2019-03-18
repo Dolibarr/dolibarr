@@ -59,7 +59,7 @@ class mod_supplier_payment_brodator extends ModeleNumRefSupplierPayments
      *
      *  @return     string      Texte descripif
      */
-	function info()
+	public function info()
     {
     	global $conf, $langs;
 
@@ -82,9 +82,9 @@ class mod_supplier_payment_brodator extends ModeleNumRefSupplierPayments
 
 		// Parametrage du prefix
 		$texte.= '<tr><td>'.$langs->trans("Mask").':</td>';
-		$texte.= '<td align="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="masksupplierpayment" value="'.$conf->global->SUPPLIER_PAYMENT_BRODATOR_MASK.'">', $tooltip, 1, 1).'</td>';
+		$texte.= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="masksupplierpayment" value="'.$conf->global->SUPPLIER_PAYMENT_BRODATOR_MASK.'">', $tooltip, 1, 1).'</td>';
 
-		$texte.= '<td align="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
+		$texte.= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
 
 		$texte.= '</tr>';
 
@@ -99,7 +99,7 @@ class mod_supplier_payment_brodator extends ModeleNumRefSupplierPayments
      *
      *  @return     string      Example
      */
-    function getExample()
+    public function getExample()
     {
      	global $conf,$langs,$mysoc;
 
@@ -122,7 +122,7 @@ class mod_supplier_payment_brodator extends ModeleNumRefSupplierPayments
 	 *  @param  Object		$object		Object we need next value for
 	 *  @return string      			Value if KO, <0 if KO
 	 */
-    function getNextValue($objsoc, $object)
+    public function getNextValue($objsoc, $object)
     {
 		global $db,$conf;
 
@@ -143,7 +143,7 @@ class mod_supplier_payment_brodator extends ModeleNumRefSupplierPayments
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Return next free value
 	 *
@@ -151,7 +151,7 @@ class mod_supplier_payment_brodator extends ModeleNumRefSupplierPayments
 	 * 	@param	string		$objforref	Object for number to search
 	 *  @return string      			Next free value
      */
-    function commande_get_num($objsoc, $objforref)
+    public function commande_get_num($objsoc, $objforref)
     {
         // phpcs:enable
         return $this->getNextValue($objsoc, $objforref);

@@ -97,24 +97,24 @@ function testSqlAndScriptInject($val, $type)
 	// For SQL Injection (only GET are used to be included into bad escaped SQL requests)
 	if ($type == 1 || $type == 3)
 	{
-		$inj += preg_match('/delete\s+from/i',	 $val);
-		$inj += preg_match('/create\s+table/i',	 $val);
-		$inj += preg_match('/insert\s+into/i', 	 $val);
-		$inj += preg_match('/select\s+from/i', 	 $val);
-		$inj += preg_match('/into\s+(outfile|dumpfile)/i',  $val);
-		$inj += preg_match('/user\s*\(/i',  $val);						// avoid to use function user() that return current database login
-		$inj += preg_match('/information_schema/i',  $val);				// avoid to use request that read information_schema database
+		$inj += preg_match('/delete\s+from/i', $val);
+		$inj += preg_match('/create\s+table/i', $val);
+		$inj += preg_match('/insert\s+into/i', $val);
+		$inj += preg_match('/select\s+from/i', $val);
+		$inj += preg_match('/into\s+(outfile|dumpfile)/i', $val);
+		$inj += preg_match('/user\s*\(/i', $val);						// avoid to use function user() that return current database login
+		$inj += preg_match('/information_schema/i', $val);				// avoid to use request that read information_schema database
 	}
 	if ($type == 3)
 	{
-		$inj += preg_match('/select|update|delete|replace|group\s+by|concat|count|from/i',	 $val);
+		$inj += preg_match('/select|update|delete|replace|group\s+by|concat|count|from/i', $val);
 	}
 	if ($type != 2)	// Not common key strings, so we can check them both on GET and POST
 	{
-		$inj += preg_match('/updatexml\(/i', 	 $val);
-		$inj += preg_match('/update.+set.+=/i',  $val);
-		$inj += preg_match('/union.+select/i', 	 $val);
-		$inj += preg_match('/(\.\.%2f)+/i',		 $val);
+		$inj += preg_match('/updatexml\(/i', $val);
+		$inj += preg_match('/update.+set.+=/i', $val);
+		$inj += preg_match('/union.+select/i', $val);
+		$inj += preg_match('/(\.\.%2f)+/i', $val);
 	}
 	// For XSS Injection done by adding javascript with script
 	// This is all cases a browser consider text is javascript:
@@ -395,6 +395,7 @@ if ((! defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && ! empty($conf->
 	{
 		dol_syslog("Invalid token, so we disable POST and some GET parameters - referer=".$_SERVER['HTTP_REFERER'].", action=".GETPOST('action', 'aZ09').", _GET|POST['token']=".GETPOST('token', 'alpha').", _SESSION['token']=".$_SESSION['token'], LOG_WARNING);
 		//print 'Unset POST by CSRF protection in main.inc.php.';	// Do not output anything because this create problems when using the BACK button on browsers.
+        if ($conf->global->MAIN_FEATURES_LEVEL>1) setEventMessages('Unset POST by CSRF protection in main.inc.php.', null, 'warnings');
 		unset($_POST);
 		unset($_GET['confirm']);
 	}
@@ -417,6 +418,20 @@ if (! empty($_SESSION["disablemodules"]))
 				$conf->supplier_order->enabled=0;
 				$conf->supplier_invoice->enabled=0;
 			}
+		}
+	}
+}
+
+// Set current modulepart
+$modulepart = explode("/", $_SERVER["PHP_SELF"]);
+if(is_array($modulepart) && count($modulepart)>0)
+{
+	foreach($conf->modules as $module)
+	{
+		if(in_array($module, $modulepart))
+		{
+			$conf->modulepart = $module;
+                        break;
 		}
 	}
 }
@@ -1081,6 +1096,10 @@ if (! function_exists("llxHeader"))
 		// html header
 		top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
 
+		if ($conf->browser->layout == 'phone'){
+		    $morecssonbody.= ' sidebar-collapse';
+		}
+
 		print '<body id="mainbody"'.($morecssonbody?' class="'.$morecssonbody.'"':'').'>' . "\n";
 
 		// top menu and left menu area
@@ -1270,7 +1289,7 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 		{
 			print '<!-- Includes CSS for font awesome -->'."\n";
 			print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/theme/common/fontawesome/css/font-awesome.min.css'.($ext?'?'.$ext:'').'">'."\n";
-			if (! empty($conf->global->MAIN_USE_FONT_AWESOME_5))
+			if (empty($conf->global->MAIN_DISABLE_FONT_AWESOME_5))
 			{
                 print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/theme/common/fontawesome-5/css/all.min.css'.($ext?'?'.$ext:'').'">'."\n";
                 print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/theme/common/fontawesome-5/css/v4-shims.min.css'.($ext?'?'.$ext:'').'">'."\n";
@@ -1321,7 +1340,15 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 		{
 			foreach($arrayofcss as $cssfile)
 			{
-				print '<!-- Includes CSS added by page -->'."\n".'<link rel="stylesheet" type="text/css" title="default" href="'.dol_buildpath($cssfile, 1);
+			    if (preg_match('/^http/i', $cssfile))
+			    {
+			        $urltofile=$cssfile;
+			    }
+			    else
+			    {
+			        $urltofile=dol_buildpath($cssfile, 1);
+			    }
+				print '<!-- Includes CSS added by page -->'."\n".'<link rel="stylesheet" type="text/css" title="default" href="'.$urltofile;
 				// We add params only if page is not static, because some web server setup does not return content type text/css if url has parameters and browser cache is not used.
 				if (!preg_match('/\.css$/i', $cssfile)) print $themeparam;
 				print '">'."\n";
@@ -1335,11 +1362,11 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 			print '<!-- Includes JS for JQuery -->'."\n";
 			if (defined('JS_JQUERY') && constant('JS_JQUERY')) print '<script src="'.JS_JQUERY.'jquery.min.js'.($ext?'?'.$ext:'').'"></script>'."\n";
 			else print '<script src="'.DOL_URL_ROOT.'/includes/jquery/js/jquery.min.js'.($ext?'?'.$ext:'').'"></script>'."\n";
-			if (! empty($conf->global->MAIN_FEATURES_LEVEL) && ! defined('JS_JQUERY_MIGRATE_DISABLED'))
+			/*if (! empty($conf->global->MAIN_FEATURES_LEVEL) && ! defined('JS_JQUERY_MIGRATE_DISABLED'))
 			{
 				if (defined('JS_JQUERY_MIGRATE') && constant('JS_JQUERY_MIGRATE')) print '<script src="'.JS_JQUERY_MIGRATE.'jquery-migrate.min.js'.($ext?'?'.$ext:'').'"></script>'."\n";
 				else print '<script src="'.DOL_URL_ROOT.'/includes/jquery/js/jquery-migrate.min.js'.($ext?'?'.$ext:'').'"></script>'."\n";
-			}
+			}*/
 			if (defined('JS_JQUERY_UI') && constant('JS_JQUERY_UI')) print '<script src="'.JS_JQUERY_UI.'jquery-ui.min.js'.($ext?'?'.$ext:'').'"></script>'."\n";
 			else print '<script src="'.DOL_URL_ROOT.'/includes/jquery/js/jquery-ui.min.js'.($ext?'?'.$ext:'').'"></script>'."\n";
 			if (! defined('DISABLE_JQUERY_TABLEDND')) print '<script src="'.DOL_URL_ROOT.'/includes/jquery/plugins/tablednd/jquery.tablednd.min.js'.($ext?'?'.$ext:'').'"></script>'."\n";
@@ -1740,8 +1767,7 @@ function left_menu($menu_array_before, $helppagename = '', $notused = '', $menu_
 		{
 			foreach($arrayresult as $key => $val)
 			{
-				//$searchform.=printSearchForm($val['url'], $val['url'], $val['label'], 'maxwidth100', 'sall', $val['shortcut'], 'searchleft', img_picto('',$val['img']));
-				$searchform.=printSearchForm($val['url'], $val['url'], $val['label'], 'maxwidth125', 'sall', $val['shortcut'], 'searchleft', img_picto('', $val['img'], '', false, 1, 1));
+				$searchform.=printSearchForm($val['url'], $val['url'], $val['label'], 'maxwidth125', 'sall', $val['shortcut'], 'searchleft'.$key, img_picto('', $val['img'], '', false, 1, 1));
 			}
 		}
 
@@ -1798,7 +1824,7 @@ function left_menu($menu_array_before, $helppagename = '', $notused = '', $menu_
 		print '<div id="blockvmenuhelp" class="blockvmenuhelp">'."\n";
 
 		// Version
-		if (empty($conf->global->MAIN_HIDE_VERSION))    // Version is already on help picto and on login page.
+		if (! empty($conf->global->MAIN_SHOW_VERSION))    // Version is already on help picto and on login page.
 		{
 			$doliurl='https://www.dolibarr.org';
 			//local communities
@@ -1961,7 +1987,7 @@ function printSearchForm($urlaction, $urlobject, $title, $htmlmorecss, $htmlinpu
 	global $conf,$langs,$user;
 
 	$ret='';
-	$ret.='<form action="'.$urlaction.'" method="post" class="searchform">';
+	$ret.='<form action="'.$urlaction.'" method="post" class="searchform nowraponall">';
 	$ret.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	$ret.='<input type="hidden" name="mode" value="search">';
 	$ret.='<input type="hidden" name="savelogin" value="'.dol_escape_htmltag($user->login).'">';
@@ -2123,5 +2149,21 @@ if (! function_exists("llxFooter"))
 
 		print "</body>\n";
 		print "</html>\n";
-	}
+
+        ?>
+
+		<!-- Disabled. This creates a lot of regression. A better solution is to add a protection on submitted page to avoid action to be done twice.
+        <script type="text/javascript">
+            //Prevent from multiple form sending
+            $(function() {
+                $('input[type=submit]').click(function(e) {
+                    e.preventDefault();
+                    $(this).prop('disabled', true);
+                    $(this).closest('form').submit();
+                });
+            });
+        </script>
+        -->
+        <?php
+    }
 }

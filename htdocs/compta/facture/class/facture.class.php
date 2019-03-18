@@ -274,7 +274,7 @@ class Facture extends CommonInvoice
 	 *
 	 * 	@param	DoliDB		$db			Database handler
 	 */
-	function __construct($db)
+	public function __construct($db)
 	{
 		$this->db = $db;
 	}
@@ -289,7 +289,7 @@ class Facture extends CommonInvoice
 	 * 	@param	int		$forceduedate	1=Do not recalculate due date from payment condition but force it with value
 	 *	@return	int						<0 if KO, >0 if OK
 	 */
-	function create(User $user, $notrigger = 0, $forceduedate = 0)
+    public function create(User $user, $notrigger = 0, $forceduedate = 0)
 	{
 		global $langs,$conf,$mysoc,$hookmanager;
 		$error=0;
@@ -675,7 +675,7 @@ class Facture extends CommonInvoice
 						$vatrate = $line->tva_tx;
 						if ($line->vat_src_code && ! preg_match('/\(.*\)/', $vatrate)) $vatrate.=' ('.$line->vat_src_code.')';
 
-						$result = $this->addline(
+    $result = $this->addline(
 							$line->desc,
 							$line->subprice,
 							$line->qty,
@@ -723,7 +723,7 @@ class Facture extends CommonInvoice
 			}
 
 			/*
-			 * Insert lines of predefined invoices
+			 * Insert lines of template invoices
 			 */
 			if (! $error && $this->fac_rec > 0)
 			{
@@ -749,6 +749,31 @@ class Facture extends CommonInvoice
 					$localtax1_tx = $_facrec->lines[$i]->localtax1_tx;
 					$localtax2_tx = $_facrec->lines[$i]->localtax2_tx;
 
+					$fk_product_fournisseur_price = empty($_facrec->lines[$i]->fk_product_fournisseur_price)?null:$_facrec->lines[$i]->fk_product_fournisseur_price;
+					$buyprice = empty($_facrec->lines[$i]->buyprice)?0:$_facrec->lines[$i]->buyprice;
+					// If buyprice not defined from template invoice, we try to guess the best value
+					if (! $buyprice && $_facrec->lines[$i]->fk_product > 0)
+                    {
+                        require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
+                        $producttmp = new ProductFournisseur($this->db);
+                        $producttmp->fetch($_facrec->lines[$i]->fk_product);
+
+                        // If margin module defined on costprice, we try the costprice
+                        // If not defined or if module margin defined and pmp and stock module enabled, we try pmp price
+                        // else we get the best supplier price
+                        if ($conf->global->MARGIN_TYPE == 'costprice' && ! empty($producttmp->cost_price)) $buyprice = $producttmp->cost_price;
+                        elseif (! empty($conf->stock->enabled) && ($conf->global->MARGIN_TYPE == 'costprice' || $conf->global->MARGIN_TYPE == 'pmp') && ! empty($producttmp->pmp)) $buyprice = $producttmp->pmp;
+                        else {
+                            if ($producttmp->find_min_price_product_fournisseur($_facrec->lines[$i]->fk_product) > 0)
+                            {
+                                if ($producttmp->product_fourn_price_id > 0)
+                                {
+                                    $buyprice = price2num($producttmp->fourn_unitprice * (1 - $producttmp->fourn_remise_percent/100) + $producttmp->fourn_remise, 'MU');
+                                }
+                            }
+                        }
+                    }
+
 					$result_insert = $this->addline(
 						$_facrec->lines[$i]->desc,
 						$_facrec->lines[$i]->subprice,
@@ -771,8 +796,8 @@ class Facture extends CommonInvoice
 						'',
 						0,
 						0,
-						null,
-						0,
+					    $fk_product_fournisseur_price,
+						$buyprice,
 						$_facrec->lines[$i]->label,
 						empty($_facrec->lines[$i]->array_options)?null:$_facrec->lines[$i]->array_options,
 						$_facrec->lines[$i]->situation_percent,
@@ -854,7 +879,7 @@ class Facture extends CommonInvoice
 	 *	@param		int		$invertdetail	Reverse sign of amounts for lines
 	 *	@return		int						<0 if KO, >0 if OK
 	 */
-	function createFromCurrent(User $user, $invertdetail = 0)
+    public function createFromCurrent(User $user, $invertdetail = 0)
 	{
 		global $conf;
 
@@ -945,7 +970,7 @@ class Facture extends CommonInvoice
 	 *		@param		int				$socid			Id of thirdparty
 	 * 	 	@return		int								New id of clone
 	 */
-	function createFromClone($socid = 0)
+    public function createFromClone($socid = 0)
 	{
 		global $user,$hookmanager, $conf;
 
@@ -1054,7 +1079,7 @@ class Facture extends CommonInvoice
 	 *  @param		User			$user				Object user
 	 *  @return     int             					<0 if KO, 0 if nothing done, 1 if OK
 	 */
-	function createFromOrder($object, User $user)
+    public function createFromOrder($object, User $user)
 	{
 		global $hookmanager;
 
@@ -1120,6 +1145,9 @@ class Facture extends CommonInvoice
 		$this->note_private         = $object->note_private;
 		$this->note_public          = $object->note_public;
 
+        $this->module_source		= $object->module_source;
+		$this->pos_source			= $object->pos_source;
+
 		$this->origin				= $object->element;
 		$this->origin_id			= $object->id;
 
@@ -1157,30 +1185,6 @@ class Facture extends CommonInvoice
 	}
 
 	/**
-	 * Return link to download file from a direct external access
-	 *
-	 * @param	int				$withpicto			Add download picto into link
-	 * @return	string			HTML link to file
-	 */
-	function getDirectExternalLink($withpicto = 0)
-	{
-		global $dolibarr_main_url_root;
-
-		// Define $urlwithroot
-		$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
-		$urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
-		//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
-
-		// TODO Read into ecmfile table to get entry and hash exists (PS: If not found, add it)
-		include_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
-		$ecmfile=new EcmFiles($this->db);
-		//$result = $ecmfile->get();
-
-		$hashp='todo';
-		return '<a href="'.$urlwithroot.'/document.php?modulepart=invoice&hashp='.$hashp.'" target="_download" rel="noindex, nofollow">'.$this->ref.'</a>';
-	}
-
-	/**
 	 *  Return clicable link of object (with eventually picto)
 	 *
 	 *  @param	int		$withpicto       			Add picto into link
@@ -1193,7 +1197,7 @@ class Facture extends CommonInvoice
      *  @param  int     $save_lastsearch_value		-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
 	 *  @return string 			         			String with URL
 	 */
-	function getNomUrl($withpicto = 0, $option = '', $max = 0, $short = 0, $moretitle = '', $notooltip = 0, $addlinktonotes = 0, $save_lastsearch_value = -1)
+    public function getNomUrl($withpicto = 0, $option = '', $max = 0, $short = 0, $moretitle = '', $notooltip = 0, $addlinktonotes = 0, $save_lastsearch_value = -1)
 	{
 		global $langs, $conf, $user, $form;
 
@@ -1301,7 +1305,7 @@ class Facture extends CommonInvoice
 	 *  @param		bool	$fetch_situation	Fetch the previous and next situation in $tab_previous_situation_invoice and $tab_next_situation_invoice
 	 *	@return     int         			>0 if OK, <0 if KO, 0 if not found
 	 */
-	function fetch($rowid, $ref = '', $ref_ext = '', $ref_int = '', $fetch_situation = false)
+    public function fetch($rowid, $ref = '', $ref_ext = '', $ref_int = '', $fetch_situation = false)
 	{
 		global $conf;
 
@@ -1317,13 +1321,14 @@ class Facture extends CommonInvoice
 		$sql.= ', f.tms as datem';
 		$sql.= ', f.note_private, f.note_public, f.fk_statut, f.paye, f.close_code, f.close_note, f.fk_user_author, f.fk_user_valid, f.model_pdf, f.last_main_doc';
 		$sql.= ', f.fk_facture_source';
-		$sql.= ', f.fk_mode_reglement, f.fk_cond_reglement, f.fk_projet, f.extraparams';
+		$sql.= ', f.fk_mode_reglement, f.fk_cond_reglement, f.fk_projet as fk_project, f.extraparams';
 		$sql.= ', f.situation_cycle_ref, f.situation_counter, f.situation_final';
 		$sql.= ', f.fk_account';
 		$sql.= ", f.fk_multicurrency, f.multicurrency_code, f.multicurrency_tx, f.multicurrency_total_ht, f.multicurrency_total_tva, f.multicurrency_total_ttc";
 		$sql.= ', p.code as mode_reglement_code, p.libelle as mode_reglement_libelle';
 		$sql.= ', c.code as cond_reglement_code, c.libelle as cond_reglement_libelle, c.libelle_facture as cond_reglement_libelle_doc';
         $sql.= ', f.fk_incoterms, f.location_incoterms';
+        $sql.= ', f.module_source, f.pos_source';
         $sql.= ", i.libelle as libelle_incoterms";
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'facture as f';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_payment_term as c ON f.fk_cond_reglement = c.rowid';
@@ -1357,7 +1362,7 @@ class Facture extends CommonInvoice
 				$this->date_pointoftax		= $this->db->jdate($obj->date_pointoftax);
 				$this->date_creation		= $this->db->jdate($obj->datec);
 				$this->date_validation		= $this->db->jdate($obj->datev);
-				$this->date_modification		= $this->db->jdate($obj->datem);
+				$this->date_modification	= $this->db->jdate($obj->datem);
 				$this->datem				= $this->db->jdate($obj->datem);
 				$this->remise_percent		= $obj->remise_percent;
 				$this->remise_absolue		= $obj->remise_absolue;
@@ -1381,7 +1386,7 @@ class Facture extends CommonInvoice
 				$this->cond_reglement		= $obj->cond_reglement_libelle;
 				$this->cond_reglement_doc	= $obj->cond_reglement_libelle_doc;
 				$this->fk_account           = ($obj->fk_account>0)?$obj->fk_account:null;
-				$this->fk_project			= $obj->fk_projet;
+				$this->fk_project			= $obj->fk_project;
 				$this->fk_facture_source	= $obj->fk_facture_source;
 				$this->note					= $obj->note_private;	// deprecated
 				$this->note_private			= $obj->note_private;
@@ -1396,9 +1401,12 @@ class Facture extends CommonInvoice
 				$this->extraparams			= (array) json_decode($obj->extraparams, true);
 
 				//Incoterms
-				$this->fk_incoterms = $obj->fk_incoterms;
-				$this->location_incoterms = $obj->location_incoterms;
-				$this->libelle_incoterms = $obj->libelle_incoterms;
+				$this->fk_incoterms         = $obj->fk_incoterms;
+				$this->location_incoterms   = $obj->location_incoterms;
+				$this->libelle_incoterms    = $obj->libelle_incoterms;
+
+  				$this->module_source        = $obj->module_source;
+				$this->pos_source           = $obj->pos_source;
 
 				// Multicurrency
 				$this->fk_multicurrency 		= $obj->fk_multicurrency;
@@ -1448,13 +1456,13 @@ class Facture extends CommonInvoice
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Load all detailed lines into this->lines
 	 *
 	 *	@return     int         1 if OK, < 0 if KO
 	 */
-	function fetch_lines()
+    public function fetch_lines()
 	{
         // phpcs:enable
 		$this->lines=array();
@@ -1564,7 +1572,7 @@ class Facture extends CommonInvoice
 	 *
 	 * @return	void
 	 */
-	function fetchPreviousNextSituationInvoice()
+    public function fetchPreviousNextSituationInvoice()
 	{
 		global $conf;
 
@@ -1604,7 +1612,7 @@ class Facture extends CommonInvoice
 	 *      @param      int		$notrigger	    0=launch triggers after, 1=disable triggers
 	 *      @return     int      			   	<0 if KO, >0 if OK
 	 */
-	function update(User $user, $notrigger = 0)
+    public function update(User $user, $notrigger = 0)
 	{
 		global $conf;
 
@@ -1709,14 +1717,14 @@ class Facture extends CommonInvoice
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *    Add a discount line into an invoice (as an invoice line) using an existing absolute discount (Consume the discount)
 	 *
 	 *    @param     int	$idremise	Id of absolute discount
 	 *    @return    int          		>0 if OK, <0 if KO
 	 */
-	function insert_discount($idremise)
+    public function insert_discount($idremise)
 	{
         // phpcs:enable
 		global $langs;
@@ -1811,7 +1819,7 @@ class Facture extends CommonInvoice
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Set customer ref
 	 *
@@ -1819,7 +1827,7 @@ class Facture extends CommonInvoice
 	 *  @param     	int		$notrigger		1=Does not execute triggers, 0= execute triggers
 	 *	@return		int						<0 if KO, >0 if OK
 	 */
-	function set_ref_client($ref_client, $notrigger = 0)
+    public function set_ref_client($ref_client, $notrigger = 0)
 	{
         // phpcs:enable
 	    global $user;
@@ -1884,7 +1892,7 @@ class Facture extends CommonInvoice
 	 *	@param		int		$idwarehouse	Id warehouse to use for stock change.
 	 *	@return		int						<0 if KO, 0=Refused, >0 if OK
 	 */
-	function delete($user, $notrigger = 0, $idwarehouse = -1)
+    public function delete($user, $notrigger = 0, $idwarehouse = -1)
 	{
 		global $langs,$conf;
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -2048,7 +2056,7 @@ class Facture extends CommonInvoice
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Tag la facture comme paye completement (si close_code non renseigne) => this->fk_statut=2, this->paye=1
 	 *  ou partiellement (si close_code renseigne) + appel trigger BILL_PAYED => this->fk_statut=2, this->paye stay 0
@@ -2058,7 +2066,7 @@ class Facture extends CommonInvoice
 	 *	@param  string	$close_note	Commentaire renseigne si on classe a payee alors que paiement incomplet (cas escompte par exemple)
 	 *  @return int         		<0 if KO, >0 if OK
 	 */
-	function set_paid($user, $close_code = '', $close_note = '')
+    public function set_paid($user, $close_code = '', $close_note = '')
 	{
         // phpcs:enable
 		$error=0;
@@ -2108,7 +2116,7 @@ class Facture extends CommonInvoice
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Tag la facture comme non payee completement + appel trigger BILL_UNPAYED
 	 *	Fonction utilisee quand un paiement prelevement est refuse,
@@ -2117,7 +2125,7 @@ class Facture extends CommonInvoice
 	 *  @param	User	$user       Object user that change status
 	 *  @return int         		<0 if KO, >0 if OK
 	 */
-	function set_unpaid($user)
+    public function set_unpaid($user)
 	{
         // phpcs:enable
 		$error=0;
@@ -2157,7 +2165,7 @@ class Facture extends CommonInvoice
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Tag invoice as canceled, with no payment on it (example for replacement invoice or payment never received) + call trigger BILL_CANCEL
 	 *	Warning, if option to decrease stock on invoice was set, this function does not change stock (it might be a cancel because
@@ -2168,7 +2176,7 @@ class Facture extends CommonInvoice
 	 *	@param	string	$close_note		Comment
 	 *	@return int         			<0 if KO, >0 if OK
 	 */
-	function set_canceled($user, $close_code = '', $close_note = '')
+    public function set_canceled($user, $close_code = '', $close_note = '')
 	{
         // phpcs:enable
 
@@ -2231,7 +2239,7 @@ class Facture extends CommonInvoice
 	 * @param	int		$notrigger		1=Does not execute triggers, 0= execute triggers
      * @return	int						<0 if KO, 0=Nothing done because invoice is not a draft, >0 if OK
 	 */
-	function validate($user, $force_number = '', $idwarehouse = 0, $notrigger = 0)
+    public function validate($user, $force_number = '', $idwarehouse = 0, $notrigger = 0)
 	{
 		global $conf,$langs;
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -2488,7 +2496,7 @@ class Facture extends CommonInvoice
 	 * @param	Translate	$langs	Translate object
 	 * @return bool		false if KO, true if OK
 	 */
-	function updatePriceNextInvoice(&$langs)
+    public function updatePriceNextInvoice(&$langs)
 	{
 		foreach ($this->tab_next_situation_invoice as $next_invoice)
 		{
@@ -2521,7 +2529,7 @@ class Facture extends CommonInvoice
 		return true;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Set draft status
 	 *
@@ -2529,7 +2537,7 @@ class Facture extends CommonInvoice
 	 *	@param	int		$idwarehouse	Id warehouse to use for stock change.
 	 *	@return	int						<0 if KO, >0 if OK
 	 */
-	function set_draft($user, $idwarehouse = -1)
+    public function setDraft($user, $idwarehouse = -1)
 	{
         // phpcs:enable
 		global $conf,$langs;
@@ -2649,8 +2657,8 @@ class Facture extends CommonInvoice
 	 * 		@param		double		$pu_ht_devise		Unit price in currency
 	 *    	@return    	int             				<0 if KO, Id of line if OK
 	 */
-	function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1 = 0, $txlocaltax2 = 0, $fk_product = 0, $remise_percent = 0, $date_start = '', $date_end = '', $ventil = 0, $info_bits = 0, $fk_remise_except = '', $price_base_type = 'HT', $pu_ttc = 0, $type = self::TYPE_STANDARD, $rang = -1, $special_code = 0, $origin = '', $origin_id = 0, $fk_parent_line = 0, $fk_fournprice = null, $pa_ht = 0, $label = '', $array_options = 0, $situation_percent = 100, $fk_prev_id = 0, $fk_unit = null, $pu_ht_devise = 0)
-	{
+    public function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1 = 0, $txlocaltax2 = 0, $fk_product = 0, $remise_percent = 0, $date_start = '', $date_end = '', $ventil = 0, $info_bits = 0, $fk_remise_except = '', $price_base_type = 'HT', $pu_ttc = 0, $type = self::TYPE_STANDARD, $rang = -1, $special_code = 0, $origin = '', $origin_id = 0, $fk_parent_line = 0, $fk_fournprice = null, $pa_ht = 0, $label = '', $array_options = 0, $situation_percent = 100, $fk_prev_id = 0, $fk_unit = null, $pu_ht_devise = 0)
+    {
 		// Deprecation warning
 		if ($label) {
 			dol_syslog(__METHOD__ . ": using line label is deprecated", LOG_WARNING);
@@ -2879,7 +2887,7 @@ class Facture extends CommonInvoice
 	 * 	@param		int			$notrigger			disable line update trigger
 	 *  @return    	int             				< 0 if KO, > 0 if OK
 	 */
-	function updateline($rowid, $desc, $pu, $qty, $remise_percent, $date_start, $date_end, $txtva, $txlocaltax1 = 0, $txlocaltax2 = 0, $price_base_type = 'HT', $info_bits = 0, $type = self::TYPE_STANDARD, $fk_parent_line = 0, $skip_update_total = 0, $fk_fournprice = null, $pa_ht = 0, $label = '', $special_code = 0, $array_options = 0, $situation_percent = 100, $fk_unit = null, $pu_ht_devise = 0, $notrigger = 0)
+    public function updateline($rowid, $desc, $pu, $qty, $remise_percent, $date_start, $date_end, $txtva, $txlocaltax1 = 0, $txlocaltax2 = 0, $price_base_type = 'HT', $info_bits = 0, $type = self::TYPE_STANDARD, $fk_parent_line = 0, $skip_update_total = 0, $fk_fournprice = null, $pa_ht = 0, $label = '', $special_code = 0, $array_options = 0, $situation_percent = 100, $fk_unit = null, $pu_ht_devise = 0, $notrigger = 0)
 	{
 		global $conf,$user;
 		// Deprecation warning
@@ -3070,7 +3078,7 @@ class Facture extends CommonInvoice
 	 * @param	float	$situation_percent	progress percentage need to be test
 	 * @return false if KO, true if OK
 	 */
-	function checkProgressLine($idline, $situation_percent)
+    public function checkProgressLine($idline, $situation_percent)
 	{
 		$sql = 'SELECT fd.situation_percent FROM '.MAIN_DB_PREFIX.'facturedet fd
 				INNER JOIN '.MAIN_DB_PREFIX.'facture f ON (fd.fk_facture = f.rowid)
@@ -3090,7 +3098,7 @@ class Facture extends CommonInvoice
 		else return $situation_percent < $obj->situation_percent;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Update invoice line with percentage
 	 *
@@ -3098,7 +3106,7 @@ class Facture extends CommonInvoice
 	 * @param  int          $percent    Percentage
 	 * @return void
 	 */
-	function update_percent($line, $percent)
+    public function update_percent($line, $percent)
 	{
         // phpcs:enable
 	    global $mysoc,$user;
@@ -3128,7 +3136,7 @@ class Facture extends CommonInvoice
 	 *	@param		int		$rowid		Id of line to delete
 	 *	@return		int					<0 if KO, >0 if OK
 	 */
-	function deleteline($rowid)
+    public function deleteline($rowid)
 	{
         global $user;
 
@@ -3188,7 +3196,7 @@ class Facture extends CommonInvoice
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Set percent discount
 	 *
@@ -3197,7 +3205,7 @@ class Facture extends CommonInvoice
 	 *  @param     	int		$notrigger	1=Does not execute triggers, 0= execute triggers
 	 *	@return		int 		<0 if ko, >0 if ok
 	 */
-	function set_remise($user, $remise, $notrigger = 0)
+    public function set_remise($user, $remise, $notrigger = 0)
 	{
         // phpcs:enable
 		// Clean parameters
@@ -3254,7 +3262,7 @@ class Facture extends CommonInvoice
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Set absolute discount
 	 *
@@ -3263,7 +3271,7 @@ class Facture extends CommonInvoice
 	 *  @param     	int		$notrigger	1=Does not execute triggers, 0= execute triggers
 	 *	@return		int 				<0 if KO, >0 if OK
 	 */
-	function set_remise_absolue($user, $remise, $notrigger = 0)
+    public function set_remise_absolue($user, $remise, $notrigger = 0)
 	{
         // phpcs:enable
 		if (empty($remise)) $remise=0;
@@ -3330,7 +3338,7 @@ class Facture extends CommonInvoice
 	 *      @param     string		$mode		'next' for next value or 'last' for last value
 	 *      @return    string					free ref or last ref
 	 */
-	function getNextNumRef($soc, $mode = 'next')
+    public function getNextNumRef($soc, $mode = 'next')
 	{
 		global $conf, $langs;
 		$langs->load("bills");
@@ -3346,10 +3354,10 @@ class Facture extends CommonInvoice
 
 			$mybool=false;
 
-			
+
 			$file = $conf->global->FACTURE_ADDON.".php";
 			$classname = $conf->global->FACTURE_ADDON;
-			
+
 
 			// Include file with class
 			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
@@ -3382,7 +3390,7 @@ class Facture extends CommonInvoice
                     }
 				}
 			}
-			
+
 			if (! $mybool)
 			{
 				dol_print_error('', "Failed to include file ".$file);
@@ -3419,7 +3427,7 @@ class Facture extends CommonInvoice
 	 *	@param  int		$id		Id of object to load
 	 *	@return	void
 	 */
-	function info($id)
+    public function info($id)
 	{
 		$sql = 'SELECT c.rowid, datec, date_valid as datev, tms as datem,';
 		$sql.= ' fk_user_author, fk_user_valid';
@@ -3458,7 +3466,7 @@ class Facture extends CommonInvoice
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Return list of invoices (eventually filtered on a user) into an array
 	 *
@@ -3472,7 +3480,7 @@ class Facture extends CommonInvoice
 	 *  @param    	string	$sortorder		Sort order
 	 *  @return     int             		-1 if KO, array with result if OK
 	 */
-	function liste_array($shortlist = 0, $draft = 0, $excluser = '', $socid = 0, $limit = 0, $offset = 0, $sortfield = 'f.datef,f.rowid', $sortorder = 'DESC')
+    public function liste_array($shortlist = 0, $draft = 0, $excluser = '', $socid = 0, $limit = 0, $offset = 0, $sortfield = 'f.datef,f.rowid', $sortorder = 'DESC')
 	{
         // phpcs:enable
 		global $conf,$user;
@@ -3534,7 +3542,7 @@ class Facture extends CommonInvoice
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Return list of invoices qualified to be replaced by another invoice.
 	 *	Invoices matching the following rules are returned:
@@ -3543,7 +3551,7 @@ class Facture extends CommonInvoice
 	 *	@param		int		$socid		Id thirdparty
 	 *	@return    	array				Array of invoices ('id'=>id, 'ref'=>ref, 'status'=>status, 'paymentornot'=>0/1)
 	 */
-	function list_replacable_invoices($socid = 0)
+    public function list_replacable_invoices($socid = 0)
 	{
         // phpcs:enable
 		global $conf;
@@ -3584,7 +3592,7 @@ class Facture extends CommonInvoice
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Return list of invoices qualified to be corrected by a credit note.
 	 *	Invoices matching the following rules are returned:
@@ -3593,7 +3601,7 @@ class Facture extends CommonInvoice
 	 *	@param		int		$socid		Id thirdparty
 	 *	@return    	array				Array of invoices ($id => array('ref'=>,'paymentornot'=>,'status'=>,'paye'=>)
 	 */
-	function list_qualified_avoir_invoices($socid = 0)
+    public function list_qualified_avoir_invoices($socid = 0)
 	{
         // phpcs:enable
 		global $conf;
@@ -3659,7 +3667,7 @@ class Facture extends CommonInvoice
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Create a withdrawal request for a standing order.
 	 *  Use the remain to pay excluding all existing open direct debit requests.
@@ -3668,7 +3676,7 @@ class Facture extends CommonInvoice
 	 *  @param		float	$amount		Amount we request direct debit for
 	 *	@return     int         		<0 if KO, >0 if OK
 	 */
-	function demande_prelevement($fuser, $amount = 0)
+    public function demande_prelevement($fuser, $amount = 0)
 	{
         // phpcs:enable
 
@@ -3771,7 +3779,7 @@ class Facture extends CommonInvoice
         }
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Supprime une demande de prelevement
 	 *
@@ -3779,7 +3787,7 @@ class Facture extends CommonInvoice
 	 *  @param  int		$did        id de la demande a supprimer
 	 *  @return	int					<0 if OK, >0 if KO
 	 */
-	function demande_prelevement_delete($fuser, $did)
+    public function demande_prelevement_delete($fuser, $did)
 	{
         // phpcs:enable
 		$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'prelevement_facture_demande';
@@ -3798,14 +3806,14 @@ class Facture extends CommonInvoice
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Load indicators for dashboard (this->nbtodo and this->nbtodolate)
 	 *
 	 *	@param  User		$user    	Object user
 	 *	@return WorkboardResponse|int 	<0 if KO, WorkboardResponse if OK
 	 */
-	function load_board($user)
+    public function load_board($user)
 	{
         // phpcs:enable
 		global $conf, $langs;
@@ -3870,7 +3878,7 @@ class Facture extends CommonInvoice
 	 *
 	 *	@return     array       Liste des id contacts facturation
 	 */
-	function getIdBillingContact()
+    public function getIdBillingContact()
 	{
 		return $this->getIdContact('external', 'BILLING');
 	}
@@ -3880,7 +3888,7 @@ class Facture extends CommonInvoice
 	 *
 	 *	@return     array       Liste des id contacts livraison
 	 */
-	function getIdShippingContact()
+    public function getIdShippingContact()
 	{
 		return $this->getIdContact('external', 'SHIPPING');
 	}
@@ -3894,7 +3902,7 @@ class Facture extends CommonInvoice
 	 *	@param	string		$option		''=Create a specimen invoice with lines, 'nolines'=No lines
 	 *  @return	void
 	 */
-	function initAsSpecimen($option = '')
+    public function initAsSpecimen($option = '')
 	{
 		global $langs;
 
@@ -4045,13 +4053,13 @@ class Facture extends CommonInvoice
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *      Load indicators for dashboard (this->nbtodo and this->nbtodolate)
 	 *
 	 *      @return         int     <0 if KO, >0 if OK
 	 */
-	function load_state_board()
+    public function load_state_board()
 	{
         // phpcs:enable
 		global $conf, $user;
@@ -4094,7 +4102,7 @@ class Facture extends CommonInvoice
 	 *
 	 * 	@return int		>0 if OK, <0 if KO
 	 */
-	function getLinesArray()
+    public function getLinesArray()
 	{
 	    return $this->fetch_lines();
 	}
@@ -4140,7 +4148,7 @@ class Facture extends CommonInvoice
 	 *
 	 * @return int >= 1 if OK, -1 if error
 	 */
-	function newCycle()
+    public function newCycle()
 	{
 		$sql = 'SELECT max(situation_cycle_ref) FROM ' . MAIN_DB_PREFIX . 'facture as f';
 		$sql.= " WHERE f.entity in (".getEntity('invoice', 0).")";
@@ -4163,25 +4171,25 @@ class Facture extends CommonInvoice
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Checks if the invoice is the first of a cycle
 	 *
 	 * @return boolean
 	 */
-	function is_first()
+    public function is_first()
 	{
         // phpcs:enable
 		return ($this->situation_counter == 1);
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Returns an array containing the previous situations as Facture objects
 	 *
 	 * @return mixed -1 if error, array of previous situations
 	 */
-	function get_prev_sits()
+    public function get_prev_sits()
 	{
         // phpcs:enable
 		global $conf;
@@ -4215,7 +4223,7 @@ class Facture extends CommonInvoice
 	 *  @param     	int		$notrigger	1=Does not execute triggers, 0= execute triggers
 	 *	@return		int 				<0 if KO, >0 if OK
 	 */
-	function setFinal(User $user, $notrigger = 0)
+    public function setFinal(User $user, $notrigger = 0)
 	{
 		$error=0;
 
@@ -4256,14 +4264,13 @@ class Facture extends CommonInvoice
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Checks if the invoice is the last in its cycle
 	 *
 	 * @return bool Last of the cycle status
-	 *
 	 */
-	function is_last_in_cycle()
+    public function is_last_in_cycle()
 	{
         // phpcs:enable
 		global $conf;
@@ -4290,9 +4297,9 @@ class Facture extends CommonInvoice
 	/**
 	 * Function used to replace a thirdparty id with another one.
 	 *
-	 * @param DoliDB $db Database handler
-	 * @param int $origin_id Old thirdparty id
-	 * @param int $dest_id New thirdparty id
+	 * @param  DoliDB  $db             Database handler
+	 * @param  int     $origin_id      Old third-party id
+	 * @param  int     $dest_id        New third-party id
 	 * @return bool
 	 */
 	public static function replaceThirdparty(DoliDB $db, $origin_id, $dest_id)
@@ -4382,13 +4389,13 @@ class FactureLigne extends CommonInvoiceLine
 	// From llx_product
 	/**
 	 * @deprecated
-	 * @see product_ref
+	 * @see $product_ref
 	 */
 	public $ref;				// Product ref (deprecated)
 	public $product_ref;       // Product ref
 	/**
 	 * @deprecated
-	 * @see product_label
+	 * @see $product_label
 	 */
 	public $libelle;      		// Product label (deprecated)
 	public $product_label;     // Product label
@@ -4420,7 +4427,7 @@ class FactureLigne extends CommonInvoiceLine
 	 *	@param	int		$rowid      id of invoice line to get
 	 *	@return	int					<0 if KO, >0 if OK
 	 */
-	function fetch($rowid)
+    public function fetch($rowid)
 	{
 		$sql = 'SELECT fd.rowid, fd.fk_facture, fd.fk_parent_line, fd.fk_product, fd.product_type, fd.label as custom_label, fd.description, fd.price, fd.qty, fd.vat_src_code, fd.tva_tx,';
 		$sql.= ' fd.localtax1_tx, fd. localtax2_tx, fd.remise, fd.remise_percent, fd.fk_remise_except, fd.subprice,';
@@ -4512,7 +4519,7 @@ class FactureLigne extends CommonInvoiceLine
 	 *  @param      int     $noerrorifdiscountalreadylinked  1=Do not make error if lines is linked to a discount and discount already linked to another
 	 *	@return		int						                 <0 if KO, >0 if OK
 	 */
-	function insert($notrigger = 0, $noerrorifdiscountalreadylinked = 0)
+    public function insert($notrigger = 0, $noerrorifdiscountalreadylinked = 0)
 	{
 		global $langs,$user,$conf;
 
@@ -4729,7 +4736,7 @@ class FactureLigne extends CommonInvoiceLine
 	 *	@param		int		$notrigger	Disable triggers
 	 *	@return		int					<0 if KO, >0 if OK
 	 */
-	function update($user = '', $notrigger = 0)
+    public function update($user = '', $notrigger = 0)
 	{
 		global $user,$conf;
 
@@ -4863,7 +4870,7 @@ class FactureLigne extends CommonInvoiceLine
      *
 	 *	@return	    int		           <0 if KO, >0 if OK
 	 */
-	function delete()
+    public function delete()
 	{
 		global $user;
 
@@ -4894,14 +4901,14 @@ class FactureLigne extends CommonInvoiceLine
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
      *	Update DB line fields total_xxx
 	 *	Used by migration
 	 *
 	 *	@return		int		<0 if KO, >0 if OK
 	 */
-	function update_total()
+    public function update_total()
 	{
         // phpcs:enable
 		$this->db->begin();
@@ -4936,7 +4943,7 @@ class FactureLigne extends CommonInvoiceLine
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Returns situation_percent of the previous line.
 	 * Warning: If invoice is a replacement invoice, this->fk_prev_id is id of the replaced line.
@@ -4945,7 +4952,7 @@ class FactureLigne extends CommonInvoiceLine
 	 * @param  bool    $include_credit_note		Include credit note or not
 	 * @return int                     >= 0
 	 */
-	function get_prev_progress($invoiceid, $include_credit_note = true)
+    public function get_prev_progress($invoiceid, $include_credit_note = true)
 	{
         // phpcs:enable
 		if (is_null($this->fk_prev_id) || empty($this->fk_prev_id) || $this->fk_prev_id == "") {

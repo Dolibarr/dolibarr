@@ -22,20 +22,20 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
  */
 class mailing_thirdparties_services_expired extends MailingTargets
 {
-    var $name='DolibarrContractsLinesExpired';
+    public $name='DolibarrContractsLinesExpired';
 	// This label is used if no translation is found for key XXX neither MailingModuleDescXXX where XXX=name is found
-    var $desc='Third parties with expired contract\'s lines';
-    var $require_admin=0;
+    public $desc='Third parties with expired contract\'s lines';
+    public $require_admin=0;
 
-    var $require_module=array('contrat');
-    var $picto='company';
+    public $require_module=array('contrat');
+    public $picto='company';
 
     /**
      * @var DoliDB Database handler.
      */
     public $db;
 
-    var $arrayofproducts=array();
+    public $arrayofproducts=array();
 
 
     /**
@@ -43,7 +43,7 @@ class mailing_thirdparties_services_expired extends MailingTargets
      *
      *  @param		DoliDB		$db      Database handler
      */
-    function __construct($db)
+    public function __construct($db)
     {
     	global $conf;
 
@@ -77,14 +77,14 @@ class mailing_thirdparties_services_expired extends MailingTargets
     }
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *  This is the main function that returns the array of emails
      *
      *  @param	int		$mailing_id    	Id of mailing. No need to use it.
      *  @return int           			<0 if error, number of emails added if ok
      */
-    function add_to_target($mailing_id)
+    public function add_to_target($mailing_id)
     {
         // phpcs:enable
         $key=GETPOST('filter', 'int');
@@ -171,7 +171,7 @@ class mailing_thirdparties_services_expired extends MailingTargets
      *
      *	@return		array		Array with SQL requests
      */
-    function getSqlArrayForStats()
+    public function getSqlArrayForStats()
     {
 
         //var $statssql=array();
@@ -189,7 +189,7 @@ class mailing_thirdparties_services_expired extends MailingTargets
      *	@param	string	$sql		SQL request to use to count
      *	@return	int					Number of recipients
      */
-    function getNbOfRecipients($sql = '')
+    public function getNbOfRecipients($sql = '')
     {
         $now=dol_now();
 
@@ -215,7 +215,7 @@ class mailing_thirdparties_services_expired extends MailingTargets
      *
      *  @return     string      A html select zone
      */
-    function formFilter()
+    public function formFilter()
     {
         global $langs;
 
@@ -238,7 +238,7 @@ class mailing_thirdparties_services_expired extends MailingTargets
      *  @param	int		$id		ID
      *  @return string      	Url link
      */
-    function url($id)
+    public function url($id)
     {
         return '<a href="'.DOL_URL_ROOT.'/societe/card.php?socid='.$id.'">'.img_object('', "company").'</a>';
     }

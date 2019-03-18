@@ -194,9 +194,9 @@ if ($result)
 	    print '</td>';
     }
 	// Amount
-	print '<td class="liste_titre" align="right"><input name="search_amount" class="flat" type="text" size="8" value="'.$db->escape($search_amount).'"></td>';
+	print '<td class="liste_titre right"><input name="search_amount" class="flat" type="text" size="8" value="'.$db->escape($search_amount).'"></td>';
 
-    print '<td class="liste_titre" align="right">';
+    print '<td class="liste_titre right">';
     $searchpicto=$form->showFilterAndCheckAddButtons(0);
     print $searchpicto;
     print '</td>';
@@ -204,11 +204,11 @@ if ($result)
     print '<tr class="liste_titre">';
     print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "s.rowid", "", $param, "", $sortfield, $sortorder);
     print_liste_field_titre("Employee", $_SERVER["PHP_SELF"], "u.rowid", "", $param, "", $sortfield, $sortorder);
-    print_liste_field_titre("Label", $_SERVER["PHP_SELF"], "s.label", "", $param, 'align="left"', $sortfield, $sortorder);
+    print_liste_field_titre("Label", $_SERVER["PHP_SELF"], "s.label", "", $param, 'class="left"', $sortfield, $sortorder);
     print_liste_field_titre("DatePayment", $_SERVER["PHP_SELF"], "s.datep,s.rowid", "", $param, 'align="center"', $sortfield, $sortorder);
-    print_liste_field_titre("PaymentMode", $_SERVER["PHP_SELF"], "type", "", $param, 'align="left"', $sortfield, $sortorder);
+    print_liste_field_titre("PaymentMode", $_SERVER["PHP_SELF"], "type", "", $param, 'class="left"', $sortfield, $sortorder);
     if (! empty($conf->banque->enabled)) print_liste_field_titre("BankAccount", $_SERVER["PHP_SELF"], "ba.label", "", $param, "", $sortfield, $sortorder);
-    print_liste_field_titre("PayedByThisPayment", $_SERVER["PHP_SELF"], "s.amount", "", $param, 'align="right"', $sortfield, $sortorder);
+    print_liste_field_titre("PayedByThisPayment", $_SERVER["PHP_SELF"], "s.amount", "", $param, 'class="right"', $sortfield, $sortorder);
     print_liste_field_titre('', $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'maxwidthsearch ');
     print "</tr>\n";
 
@@ -269,8 +269,8 @@ if ($result)
 	        print '</td>';
 	    }
         // Amount
-        print "<td align=\"right\">".price($obj->amount)."</td>";
-        print "<td></td>";
+        print '<td class="right">'.price($obj->amount).'</td>';
+        print '<td></td>';
         print "</tr>\n";
 
         $total = $total + $obj->amount;
@@ -281,7 +281,7 @@ if ($result)
     $colspan=5;
     if (! empty($conf->banque->enabled)) $colspan++;
     print '<tr class="liste_total"><td colspan="'.$colspan.'" class="liste_total">'.$langs->trans("Total").'</td>';
-    print '<td class="liste_total" align="right">'.price($total)."</td>";
+    print '<td class="liste_total right">'.price($total)."</td>";
 	print "<td></td></tr>";
 
     print "</table>";

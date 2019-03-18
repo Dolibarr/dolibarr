@@ -1,7 +1,6 @@
 <?php
-/*
- * Copyright (C) 2009-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
-*
+/* Copyright (C) 2009-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
@@ -36,10 +35,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
  * @param	string		$diroutputpdf			Dir to output file
  * @param	string		$newlangid				Lang id
  * @param 	array		$filter					Array with filters
- * @param 	date		$dateafterdate			Invoice after date
- * @param 	date 		$datebeforedate			Invoice before date
- * @param 	date		$paymentdateafter		Payment after date (must includes hour)
- * @param 	date		$paymentdatebefore		Payment before date (must includes hour)
+ * @param 	integer		$dateafterdate			Invoice after date
+ * @param 	integer 	$datebeforedate			Invoice before date
+ * @param 	integer		$paymentdateafter		Payment after date (must includes hour)
+ * @param 	integer		$paymentdatebefore		Payment before date (must includes hour)
  * @param	int			$usestdout				Add information onto standard output
  * @param	int			$regenerate				''=Use existing PDF files, 'nameofpdf'=Regenerate all PDF files using the template
  * @param	string		$filesuffix				Suffix to add into file name of generated PDF

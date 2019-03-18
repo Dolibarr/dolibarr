@@ -173,7 +173,7 @@ if ($action == 'specimen')
 }
 
 // Set default model
-else if ($action == 'setdoc')
+elseif ($action == 'setdoc')
 {
     if (dolibarr_set_const($db, "PAYMENTORDER_ADDON_PDF",$value,'chaine',0,'',$conf->entity))
     {

@@ -45,12 +45,12 @@ class FormProjets
 	 *
 	 *  @param		DoliDB		$db      Database handler
 	 */
-	function __construct($db)
+	public function __construct($db)
 	{
 		$this->db = $db;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Output a combo list with projects qualified for a third party / user
 	 *
@@ -60,7 +60,7 @@ class FormProjets
 	 *	@param	int		$maxlength		Maximum length of label
 	 *	@param	int		$option_only	Return only html options lines without the select tag
 	 *	@param	int		$show_empty		Add an empty line
-	 *  @param	int		$discard_closed Discard closed projects (0=Keep,1=hide completely,2=Disable)
+	 *  @param	int		$discard_closed Discard closed projects (0=Keep, 1=hide completely, 2=Disable)
 	 *  @param	int		$forcefocus		Force focus on field (works with javascript only)
 	 *  @param	int		$disabled		Disabled
 	 *  @param  int     $mode           0 for HTML mode and 1 for JSON mode
@@ -71,8 +71,8 @@ class FormProjets
 	 *	@param  int     $htmlid         Html id to use instead of htmlname
 	 *	@return string           		Return html content
 	 */
-	function select_projects($socid = -1, $selected = '', $htmlname = 'projectid', $maxlength = 16, $option_only = 0, $show_empty = 1, $discard_closed = 0, $forcefocus = 0, $disabled = 0, $mode = 0, $filterkey = '', $nooutput = 0, $forceaddid = 0, $morecss = '', $htmlid = '')
-	{
+    public function select_projects($socid = -1, $selected = '', $htmlname = 'projectid', $maxlength = 16, $option_only = 0, $show_empty = 1, $discard_closed = 0, $forcefocus = 0, $disabled = 0, $mode = 0, $filterkey = '', $nooutput = 0, $forceaddid = 0, $morecss = '', $htmlid = '')
+    {
         // phpcs:enable
 		global $langs,$conf,$form;
 
@@ -90,13 +90,13 @@ class FormProjets
 				$selected_input_value=$project->ref;
 			}
 			$urloption='socid='.$socid.'&htmlname='.$htmlname.'&discardclosed='.$discard_closed;
-			$out.=ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT.'/projet/ajax/projects.php', $urloption, $conf->global->PROJECT_USE_SEARCH_TO_SELECT, 0, array(
-//				'update' => array(
-//					'projectid' => 'id'
-//				)
-			));
+            $out.=ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT.'/projet/ajax/projects.php', $urloption, $conf->global->PROJECT_USE_SEARCH_TO_SELECT, 0, array(
+                //  'update' => array(
+                //      'projectid' => 'id'
+                //  )
+            ));
 
-			$out.='<input type="text" class="minwidth200'.($morecss?' '.$morecss:'').'" name="search_'.$htmlname.'" id="search_'.$htmlname.'" value="'.$selected_input_value.'"'.$placeholder.' />';
+            $out.='<input type="text" class="minwidth200'.($morecss?' '.$morecss:'').'" name="search_'.$htmlname.'" id="search_'.$htmlname.'" value="'.$selected_input_value.'"'.$placeholder.' />';
 		}
 		else
 		{
@@ -119,7 +119,7 @@ class FormProjets
 		else return $out;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Returns an array with projects qualified for a third party
 	 *
@@ -140,8 +140,8 @@ class FormProjets
 	 * @param  string  $morecss            More CSS
 	 * @return int         			       Nb of project if OK, <0 if KO
 	 */
-	function select_projects_list($socid = -1, $selected = '', $htmlname = 'projectid', $maxlength = 24, $option_only = 0, $show_empty = 1, $discard_closed = 0, $forcefocus = 0, $disabled = 0, $mode = 0, $filterkey = '', $nooutput = 0, $forceaddid = 0, $htmlid = '', $morecss = 'maxwidth500')
-	{
+    public function select_projects_list($socid = -1, $selected = '', $htmlname = 'projectid', $maxlength = 24, $option_only = 0, $show_empty = 1, $discard_closed = 0, $forcefocus = 0, $disabled = 0, $mode = 0, $filterkey = '', $nooutput = 0, $forceaddid = 0, $htmlid = '', $morecss = 'maxwidth500')
+    {
         // phpcs:enable
 		global $user,$conf,$langs;
 
@@ -303,11 +303,11 @@ class FormProjets
 	}
 
 	/**
-	 *	Output a combo list with tasks qualified for a third party
+	 *  Output a combo list with tasks qualified for a third party
 	 *
-	 *	@param	int		$socid      	Id third party (-1=all, 0=only projects not linked to a third party, id=projects not linked or linked to third party id)
-	 *	@param  int		$selected   	Id task preselected
-	 *	@param  string	$htmlname   	Name of HTML select
+	 *  @param	int		$socid      	Id third party (-1=all, 0=only projects not linked to a third party, id=projects not linked or linked to third party id)
+	 *  @param  int		$selected   	Id task preselected
+	 *  @param  string	$htmlname   	Name of HTML select
 	 *	@param	int		$maxlength		Maximum length of label
 	 *	@param	int		$option_only	Return only html options lines without the select tag
 	 *	@param	string	$show_empty		Add an empty line ('1' or string to show for empty line)
@@ -320,7 +320,7 @@ class FormProjets
 	 *  @param	User	$usertofilter	User object to use for filtering
 	 *	@return int         			Nbr of project if OK, <0 if KO
 	 */
-	function selectTasks($socid = -1, $selected = '', $htmlname = 'taskid', $maxlength = 24, $option_only = 0, $show_empty = '1', $discard_closed = 0, $forcefocus = 0, $disabled = 0, $morecss = 'maxwidth500', $projectsListId = '', $showproject = 'all', $usertofilter = null)
+    public function selectTasks($socid = -1, $selected = '', $htmlname = 'taskid', $maxlength = 24, $option_only = 0, $show_empty = '1', $discard_closed = 0, $forcefocus = 0, $disabled = 0, $morecss = 'maxwidth500', $projectsListId = '', $showproject = 'all', $usertofilter = null)
 	{
 		global $user,$conf,$langs;
 
@@ -477,7 +477,7 @@ class FormProjets
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *    Build a HTML select list of element of same thirdparty to suggest to link them to project
 	 *
@@ -488,7 +488,7 @@ class FormProjets
 	 *    @param	string		$projectkey			Equivalent key  to fk_projet for actual table_element
 	 *    @return	int|string						The HTML select list of element or '' if nothing or -1 if KO
 	 */
-	function select_element($table_element, $socid = 0, $morecss = '', $limitonstatus = -2, $projectkey = "fk_projet")
+	public function select_element($table_element, $socid = 0, $morecss = '', $limitonstatus = -2, $projectkey = "fk_projet")
 	{
         // phpcs:enable
 		global $conf, $langs;
@@ -618,7 +618,7 @@ class FormProjets
 	 *    @param   string      $morecss            Add more css
 	 *    @return  int|string                      The HTML select list of element or '' if nothing or -1 if KO
 	 */
-	function selectOpportunityStatus($htmlname, $preselected = '-1', $showempty = 1, $useshortlabel = 0, $showallnone = 0, $showpercent = 0, $morecss = '')
+	public function selectOpportunityStatus($htmlname, $preselected = '-1', $showempty = 1, $useshortlabel = 0, $showallnone = 0, $showpercent = 0, $morecss = '')
 	{
 		global $conf, $langs;
 

@@ -92,8 +92,7 @@ elseif ($action == 'add')
 			$object->status     	= GETPOST('status', 'int');
 			$object->fk_user_author	= $user->id;
 			$object->datec			= dol_now();
-
-
+			$object->entity			= GETPOST('entity', 'int')>0?GETPOST('entity', 'int'):$conf->entity;
 
 			$id = $object->create($user);
 
@@ -141,6 +140,7 @@ elseif ($action == 'update')
 			$object->country_id     = GETPOST('country_id', 'int');
 			$object->fk_user_mod	= $user->id;
 			$object->status         = GETPOST('status', 'int');
+			$object->entity         = GETPOST('entity', 'int')>0?GETPOST('entity', 'int'):$conf->entity;
 
 			$result = $object->update($user);
 
@@ -188,6 +188,14 @@ if ($action == 'create')
 	print '<tr>';
 	print '<td>'. $form->editfieldkey('Name', 'name', '', $object, 0, 'string', '', 1).'</td>';
 	print '<td><input name="name" id="name" size="32" value="' . GETPOST("name", "alpha") . '"></td>';
+	print '</tr>';
+
+	// Parent
+	print '<tr>';
+	print '<td>'.$form->editfieldkey('Parent', 'entity', '', $object, 0, 'string', '', 1).'</td>';
+	print '<td class="maxwidthonsmartphone">';
+	print $form->selectEstablishments(GETPOST('entity', 'int')>0?GETPOST('entity', 'int'):$conf->entity, 'entity', 1);
+	print '</td>';
 	print '</tr>';
 
 	// Address
@@ -283,6 +291,12 @@ if (($id || $ref) && $action == 'edit')
             print '<tr><td>'.$form->editfieldkey('Name', 'name', '', $object, 0, 'string', '', 1).'</td><td>';
             print '<input name="name" id="name" class="flat" size="32" value="'.$object->name.'">';
             print '</td></tr>';
+			
+			// Parent
+            print '<tr><td>'.$form->editfieldkey('Parent', 'entity', '', $object, 0, 'string', '', 1).'</td>';
+			print '<td class="maxwidthonsmartphone">';
+			print $form->selectEstablishments($object->entity>0?$object->entity:$conf->entity, 'entity', 1);
+            print '</td></tr>';
 
 			// Address
 			print '<tr><td>'.$form->editfieldkey('Address', 'address', '', $object, 0).'</td>';
@@ -365,6 +379,12 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '<tr>';
 	print '<td class="titlefield">'.$langs->trans("Name").'</td>';
 	print '<td>'.$object->name.'</td>';
+	print '</tr>';
+	
+	// Parent
+	print '<tr>';
+	print '<td class="titlefield">'.$langs->trans("Parent").'</td>';
+	print '<td>'.$object->getNomUrlParent($object->entity).'</td>';
 	print '</tr>';
 
 	// Address

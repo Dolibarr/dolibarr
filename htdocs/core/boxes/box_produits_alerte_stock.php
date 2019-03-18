@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2005-2012 Maxime Kohlhaas      <mko@atm-consulting.fr>
- * Copyright (C) 2015      Frederic France      <frederic.france@free.fr>
+ * Copyright (C) 2015-2019 Frédéric France      <frederic.france@netlogic.fr>
  * Copyright (C) 2015      Juanjo Menent	    <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -35,20 +35,20 @@ include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
  */
 class box_produits_alerte_stock extends ModeleBoxes
 {
-	var $boxcode="productsalertstock";
-	var $boximg="object_product";
-	var $boxlabel="BoxProductsAlertStock";
-	var $depends = array("produit");
+    public $boxcode="productsalertstock";
+    public $boximg="object_product";
+    public $boxlabel="BoxProductsAlertStock";
+    public $depends = array("produit");
 
 	/**
      * @var DoliDB Database handler.
      */
     public $db;
-    
-	var $param;
 
-	var $info_box_head = array();
-	var $info_box_contents = array();
+    public $param;
+
+    public $info_box_head = array();
+    public $info_box_contents = array();
 
 
 	/**
@@ -57,7 +57,7 @@ class box_produits_alerte_stock extends ModeleBoxes
 	 *  @param  DoliDB	$db      	Database handler
 	 *  @param	string	$param		More parameters
 	 */
-	function __construct($db, $param = '')
+	public function __construct($db, $param = '')
 	{
 	    global $conf,$user;
 
@@ -75,7 +75,7 @@ class box_produits_alerte_stock extends ModeleBoxes
 	 *  @param	int		$max        Maximum number of records to load
      *  @return	void
 	 */
-	function loadBox($max = 5)
+	public function loadBox($max = 5)
 	{
 		global $user, $langs, $db, $conf, $hookmanager;
 
@@ -117,6 +117,8 @@ class box_produits_alerte_stock extends ModeleBoxes
                 while ($line < $num) {
 					$objp = $db->fetch_object($result);
 					$datem=$db->jdate($objp->tms);
+                    $price = '';
+                    $price_base_type = '';
 
 					// Multilangs
 					if (! empty($conf->global->MAIN_MULTILANGS)) // si l'option est active
@@ -187,18 +189,19 @@ class box_produits_alerte_stock extends ModeleBoxes
                     );
 
 					$this->info_box_contents[$line][] = array(
-					    'td' => 'align="center"',
-                    'text' => $objp->total_stock . ' / '.$objp->seuil_stock_alerte,
-					'text2'=>img_warning($langs->transnoentitiesnoconv("StockLowerThanLimit", $objp->seuil_stock_alerte)));
+					    'td' => 'class="center"',
+                        'text' => $objp->total_stock . ' / '.$objp->seuil_stock_alerte,
+                        'text2'=>img_warning($langs->transnoentitiesnoconv("StockLowerThanLimit", $objp->seuil_stock_alerte)),
+                    );
 
 					$this->info_box_contents[$line][] = array(
-					    'td' => 'align="right" width="18"',
+					    'td' => 'class="right" width="18"',
                         'text' => '<span class="statusrefsell">'.$productstatic->LibStatut($objp->tosell, 3, 0).'<span>',
 					    'asis' => 1
 					);
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => 'align="right" width="18"',
+                        'td' => 'class="right" width="18"',
                         'text' => '<span class="statusrefbuy">'.$productstatic->LibStatut($objp->tobuy, 3, 0).'<span>',
                         'asis' => 1
                     );
@@ -207,7 +210,7 @@ class box_produits_alerte_stock extends ModeleBoxes
                 }
                 if ($num==0)
                     $this->info_box_contents[$line][0] = array(
-                        'td' => 'align="center"',
+                        'td' => 'class="center"',
                         'text'=>$langs->trans("NoTooLowStockProducts"),
                     );
 
@@ -224,7 +227,7 @@ class box_produits_alerte_stock extends ModeleBoxes
 		}
 		else {
             $this->info_box_contents[0][0] = array(
-                'td' => 'align="left" class="nohover opacitymedium"',
+                'td' => 'class="nohover opacitymedium left"',
                 'text' => $langs->trans("ReadPermissionNotAllowed")
             );
 		}
@@ -238,7 +241,7 @@ class box_produits_alerte_stock extends ModeleBoxes
 	 *  @param	int		$nooutput	No print, only return string
 	 *	@return	string
 	 */
-    function showBox($head = null, $contents = null, $nooutput = 0)
+    public function showBox($head = null, $contents = null, $nooutput = 0)
     {
         return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
 	}

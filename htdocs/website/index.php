@@ -920,7 +920,7 @@ if ($action == 'updatecss')
 
     		/* We disable php code since htmlheader is never executed as an include but only read by fgets_content.
     	    $htmlheadercontent.= "<?php // BEGIN PHP\n";
-    	    $htmlheadercontent.= '$websitekey=basename(dirname(__FILE__));'."\n";
+    	    $htmlheadercontent.= '$websitekey=basename(__DIR__);'."\n";
     	    $htmlheadercontent.= "if (! defined('USEDOLIBARRSERVER') && ! defined('USEDOLIBARREDITOR')) { require_once './master.inc.php'; } // Not already loaded"."\n";
     	    $htmlheadercontent.= "require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';\n";
     	    $htmlheadercontent.= "require_once DOL_DOCUMENT_ROOT.'/core/website.inc.php';\n";
@@ -943,8 +943,8 @@ if ($action == 'updatecss')
     		$csscontent ='';
 
     		$csscontent.= "<?php // BEGIN PHP\n";
-    		$csscontent.= '$websitekey=basename(dirname(__FILE__));'."\n";
-    		$csscontent.= "if (! defined('USEDOLIBARRSERVER') && ! defined('USEDOLIBARREDITOR')) { require_once dirname(__FILE__).'/master.inc.php'; } // Not already loaded"."\n";	// For the css, we need to set path of master using the dirname of css file.
+    		$csscontent.= '$websitekey=basename(__DIR__);'."\n";
+    		$csscontent.= "if (! defined('USEDOLIBARRSERVER') && ! defined('USEDOLIBARREDITOR')) { require_once __DIR__.'/master.inc.php'; } // Not already loaded"."\n";	// For the css, we need to set path of master using the dirname of css file.
     		$csscontent.= "require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';\n";
     		$csscontent.= "require_once DOL_DOCUMENT_ROOT.'/core/website.inc.php';\n";
     		$csscontent.= "ob_start();\n";
@@ -976,8 +976,8 @@ if ($action == 'updatecss')
     		$jscontent ='';
 
     		$jscontent.= "<?php // BEGIN PHP\n";
-    		$jscontent.= '$websitekey=basename(dirname(__FILE__));'."\n";
-    		$jscontent.= "if (! defined('USEDOLIBARRSERVER') && ! defined('USEDOLIBARREDITOR')) { require_once dirname(__FILE__).'/master.inc.php'; } // Not already loaded"."\n";	// For the css, we need to set path of master using the dirname of css file.
+    		$jscontent.= '$websitekey=basename(__DIR__);'."\n";
+    		$jscontent.= "if (! defined('USEDOLIBARRSERVER') && ! defined('USEDOLIBARREDITOR')) { require_once __DIR__.'/master.inc.php'; } // Not already loaded"."\n";	// For the css, we need to set path of master using the dirname of css file.
     		$jscontent.= "require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';\n";
     		$jscontent.= "require_once DOL_DOCUMENT_ROOT.'/core/website.inc.php';\n";
     		$jscontent.= "ob_start();\n";
@@ -1009,7 +1009,7 @@ if ($action == 'updatecss')
     		$robotcontent ='';
 
     		/*$robotcontent.= "<?php // BEGIN PHP\n";
-    	    $robotcontent.= '$websitekey=basename(dirname(__FILE__));'."\n";
+    	    $robotcontent.= '$websitekey=basename(__DIR__);'."\n";
     	    $robotcontent.= "if (! defined('USEDOLIBARRSERVER') && ! defined('USEDOLIBARREDITOR')) { require_once './master.inc.php'; } // Not already loaded"."\n";
     	    $robotcontent.= "require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';\n";
     	    $robotcontent.= "require_once DOL_DOCUMENT_ROOT.'/core/website.inc.php';\n";
@@ -1042,7 +1042,7 @@ if ($action == 'updatecss')
     		$htaccesscontent ='';
 
     		/*$htaccesscontent.= "<?php // BEGIN PHP\n";
-        	$htaccesscontent.= '$websitekey=basename(dirname(__FILE__));'."\n";
+        	$htaccesscontent.= '$websitekey=basename(__DIR__);'."\n";
         	$htaccesscontent.= "if (! defined('USEDOLIBARRSERVER') && ! defined('USEDOLIBARREDITOR')) { require_once './master.inc.php'; } // Not already loaded"."\n";
         	$htaccesscontent.= "require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';\n";
         	$htaccesscontent.= "require_once DOL_DOCUMENT_ROOT.'/core/website.inc.php';\n";
@@ -1127,7 +1127,7 @@ if ($action == 'updatemeta')
 	$objectpage->fk_website = $object->id;
 
 	// Check parameters
-	if (! preg_match('/^[a-z0-9\-\_]+$/i',  GETPOST('WEBSITE_PAGENAME', 'alpha')))
+	if (! preg_match('/^[a-z0-9\-\_]+$/i', GETPOST('WEBSITE_PAGENAME', 'alpha')))
 	{
 		$error++;
 		$langs->load("errors");
@@ -2132,7 +2132,14 @@ if (! GETPOST('hide_websitemenu'))
 		if (GETPOST('editsource', 'alpha') || GETPOST('editcontent', 'alpha'))
 		{
 			$htmltext=$langs->transnoentitiesnoconv("YouCanEditHtmlSource").'<br>';
-			print $form->textwithpicto($langs->trans("SyntaxHelp"), $htmltext, 1, 'help', 'inline-block', 1, 2, 'tooltipsubstitution');
+            if ($conf->browser->layout == 'phone')
+            {
+                print $form->textwithpicto('', $htmltext, 1, 'help', 'inline-block', 1, 2, 'tooltipsubstitution');
+            }
+            else
+            {
+                print $form->textwithpicto($langs->trans("SyntaxHelp"), $htmltext, 1, 'help', 'inline-block', 1, 2, 'tooltipsubstitution');
+            }
 		}
 		print '</div>';	// end websitehelp
 

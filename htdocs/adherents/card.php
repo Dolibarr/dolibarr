@@ -305,6 +305,7 @@ if (empty($reshook))
 			$object->skype       = trim(GETPOST("skype", 'alpha'));
 			$object->twitter     = trim(GETPOST("twitter", 'alpha'));
 			$object->facebook    = trim(GETPOST("facebook", 'alpha'));
+			$object->linkedin    = trim(GETPOST("linkedin", 'alpha'));
 			$object->birth       = $birthdate;
 
 			$object->typeid      = GETPOST("typeid", 'int');
@@ -450,6 +451,7 @@ if (empty($reshook))
 		$skype=GETPOST("member_skype", 'alpha');
 		$twitter=GETPOST("member_twitter", 'alpha');
 		$facebook=GETPOST("member_facebook", 'alpha');
+        $linkedin=GETPOST("member_linkedin", 'alpha');
 		$email=preg_replace('/\s+/', '', GETPOST("member_email", 'alpha'));
 		$login=GETPOST("member_login", 'alpha');
 		$pass=GETPOST("password", 'alpha');
@@ -479,6 +481,7 @@ if (empty($reshook))
 		$object->skype       = $skype;
 		$object->twitter     = $twitter;
 		$object->facebook    = $facebook;
+		$object->linkedin    = $linkedin;
 
 		$object->email       = $email;
 		$object->login       = $login;
@@ -1029,6 +1032,12 @@ else
 	    	print '<tr><td>'.$langs->trans("Facebook").'</td><td><input type="text" name="member_facebook" size="40" value="'.(GETPOST('member_facebook', 'alpha')?GETPOST('member_facebook', 'alpha'):$object->facebook).'"></td></tr>';
 	    }
 
+        // LinkedIn
+        if (! empty($conf->socialnetworks->enabled))
+        {
+            print '<tr><td>'.$langs->trans("LinkedIn").'</td><td><input type="text" name="member_linkedin" size="40" value="'.(GETPOST('member_linkedin', 'alpha')?GETPOST('member_linkedin', 'alpha'):$object->linkedin).'"></td></tr>';
+        }
+
 	    // Birthday
 		print "<tr><td>".$langs->trans("Birthday")."</td><td>\n";
 		print $form->selectDate(($object->birth ? $object->birth : -1), 'birth', '', '', 1, 'formsoc');
@@ -1281,10 +1290,16 @@ else
 	    }
 
 	    // Facebook
-	    if (! empty($conf->socialnetworks->enabled))
-	    {
-	    	print '<tr><td>'.$langs->trans("Facebook").'</td><td><input type="text" name="facebook" class="minwidth100" value="'.(isset($_POST["facebook"])?GETPOST("facebook"):$object->facebook).'"></td></tr>';
-	    }
+        if (! empty($conf->socialnetworks->enabled))
+        {
+            print '<tr><td>'.$langs->trans("Facebook").'</td><td><input type="text" name="facebook" class="minwidth100" value="'.(isset($_POST["facebook"])?GETPOST("facebook"):$object->facebook).'"></td></tr>';
+        }
+
+        // LinkedIn
+        if (! empty($conf->socialnetworks->enabled))
+        {
+            print '<tr><td>'.$langs->trans("LinkedIn").'</td><td><input type="text" name="linkedin" class="minwidth100" value="'.(isset($_POST["linkedin"])?GETPOST("linkedin"):$object->linkedin).'"></td></tr>';
+        }
 
 	    // Birthday
 		print "<tr><td>".$langs->trans("Birthday")."</td><td>\n";
@@ -1297,7 +1312,7 @@ else
 		print "</td></tr>\n";
 
 		// Categories
-		if (! empty( $conf->categorie->enabled ) && !empty( $user->rights->categorie->lire ))
+		if (! empty($conf->categorie->enabled) && !empty($user->rights->categorie->lire))
 		{
 			print '<tr><td>' . $form->editfieldkey("Categories", 'memcats', '', $object, 0) . '</td>';
 			print '<td>';

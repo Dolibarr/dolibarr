@@ -45,7 +45,8 @@ $ref=GETPOST('ref', 'alpha');
 $fuserid = (GETPOST('fuserid', 'int')?GETPOST('fuserid', 'int'):$user->id);
 
 // Protection if external user
-if ($user->societe_id > 0) accessforbidden();
+if ($user->societe_id) $socid=$user->societe_id;
+$result = restrictedArea($user, 'holiday', $id, 'holiday');
 
 $now=dol_now();
 
@@ -1326,7 +1327,7 @@ else
 
                 if ($action == 'edit' && $object->statut == Holiday::STATUS_DRAFT)
                 {
-                    print '<div align="center">';
+                    print '<div class="center">';
                     if ($cancreate && $object->statut == Holiday::STATUS_DRAFT)
                     {
                         print '<input type="submit" value="'.$langs->trans("Save").'" class="button">';

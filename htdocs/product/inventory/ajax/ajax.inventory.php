@@ -14,7 +14,7 @@ $put = GETPOST('put');
             $fk_det_inventory = GETPOST('fk_det_inventory');
 
             $det = new Inventorydet($db);
-            if( $det->fetch( $fk_det_inventory))
+            if( $det->fetch($fk_det_inventory))
             {
                 $det->qty_view+=GETPOST('qty');
                 $res = $det->update($user);
@@ -34,7 +34,7 @@ $put = GETPOST('put');
             $fk_det_inventory = GETPOST('fk_det_inventory');
 
             $det = new Inventorydet($db);
-            if( $det->fetch( $fk_det_inventory))
+            if( $det->fetch($fk_det_inventory))
             {
                 $det->new_pmp=price2num(GETPOST('pmp'));
                 $det->update($user);

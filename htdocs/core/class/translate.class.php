@@ -48,7 +48,7 @@ class Translate
 	 *  @param	string	$dir            Force directory that contains /langs subdirectory (value is sometimes '..' like into install/* pages or support/* pages). Use '' by default.
 	 *  @param  Conf	$conf			Object with Dolibarr configuration
 	 */
-	function __construct($dir, $conf)
+	public function __construct($dir, $conf)
 	{
 		if (! empty($conf->file->character_set_client)) $this->charset_output=$conf->file->character_set_client;	// If charset output is forced
 		if ($dir) $this->dir=array($dir);
@@ -62,7 +62,7 @@ class Translate
 	 *  @param	string	$srclang     	Language to use. If '' or 'auto', we use browser lang.
 	 *  @return	void
 	 */
-	function setDefaultLang($srclang = 'en_US')
+	public function setDefaultLang($srclang = 'en_US')
 	{
 		global $conf;
 
@@ -132,7 +132,7 @@ class Translate
 	 *  @param	int		$mode       0=Long language code, 1=Short language code (en, fr, es, ...)
 	 *  @return string      		Language code used (en_US, en_AU, fr_FR, ...)
 	 */
-	function getDefaultLang($mode = 0)
+	public function getDefaultLang($mode = 0)
 	{
 	    if (empty($mode)) return $this->defaultlang;
 	    else return substr($this->defaultlang, 0, 2);
@@ -145,7 +145,7 @@ class Translate
 	 *  @param	array	$domains      		Array of lang files to load
 	 *	@return	int							<0 if KO, 0 if already loaded or loading not required, >0 if OK
 	 */
-	function loadLangs($domains)
+	public function loadLangs($domains)
 	{
 	    foreach($domains as $domain)
 	    {
@@ -171,9 +171,9 @@ class Translate
 	 * 	@param	int		$forcelangdir		To force a different lang directory
 	 *  @param  int     $loadfromfileonly   1=Do not load overwritten translation from file or old conf.
 	 *	@return	int							<0 if KO, 0 if already loaded or loading not required, >0 if OK
-	 *  @see loadLangs
+	 *  @see loadLangs()
 	 */
-	function load($domain, $alt = 0, $stopafterdirection = 0, $forcelangdir = '', $loadfromfileonly = 0)
+	public function load($domain, $alt = 0, $stopafterdirection = 0, $forcelangdir = '', $loadfromfileonly = 0)
 	{
 		global $conf,$db;
 
@@ -399,7 +399,7 @@ class Translate
      *  @param  Database    $db             Database handler
 	 *	@return	int							<0 if KO, 0 if already loaded or loading not required, >0 if OK
 	 */
-	function loadFromDatabase($db)
+	public function loadFromDatabase($db)
 	{
 		global $conf;
 
@@ -537,8 +537,8 @@ class Translate
 	 * @param	string		$key		Key to translate
 	 * @return 	string					Translated string (translated with transnoentitiesnoconv)
 	 */
-	private function getTradFromKey($key)
-	{
+    private function getTradFromKey($key)
+    {
 		global $conf, $db;
 
 		if (! is_string($key)) return 'ErrorBadValueForParamNotAString';	// Avoid multiple errors with code not using function correctly.
@@ -577,7 +577,7 @@ class Translate
         }*/
 
         return $newstr;
-	}
+    }
 
 
 	/**
@@ -593,9 +593,9 @@ class Translate
 	 *  @param  string	$param4     chaine de param4
 	 *	@param	int		$maxsize	Max length of text
 	 *  @return string      		Translated string (encoded into HTML entities and UTF8)
-	 */
-	function trans($key, $param1 = '', $param2 = '', $param3 = '', $param4 = '', $maxsize = 0)
-	{
+     */
+    public function trans($key, $param1 = '', $param2 = '', $param3 = '', $param4 = '', $maxsize = 0)
+    {
         global $conf;
 
 	    if (! empty($this->tab_translate[$key]))	// Translation is available
@@ -638,7 +638,7 @@ class Translate
 		    //if ($key[0] == '$') { return dol_eval($key,1); }
 			return $this->getTradFromKey($key);
 		}
-	}
+    }
 
 
 	/**
@@ -655,7 +655,7 @@ class Translate
 	 *  @param  string	$param5     chaine de param5
 	 *  @return string      		Translated string (encoded into UTF8)
 	 */
-	function transnoentities($key, $param1 = '', $param2 = '', $param3 = '', $param4 = '', $param5 = '')
+	public function transnoentities($key, $param1 = '', $param2 = '', $param3 = '', $param4 = '', $param5 = '')
 	{
 		return $this->convToOutputCharset($this->transnoentitiesnoconv($key, $param1, $param2, $param3, $param4, $param5));
 	}
@@ -676,7 +676,7 @@ class Translate
 	 *  @param  string	$param5     chaine de param5
 	 *  @return string      		Translated string
 	 */
-	function transnoentitiesnoconv($key, $param1 = '', $param2 = '', $param3 = '', $param4 = '', $param5 = '')
+	public function transnoentitiesnoconv($key, $param1 = '', $param2 = '', $param3 = '', $param4 = '', $param5 = '')
 	{
 		global $conf;
 
@@ -719,7 +719,7 @@ class Translate
 	 *  @param  string	$countrycode    country code (FR, ...)
 	 *  @return	string         			translated string
 	 */
-	function transcountry($str, $countrycode)
+	public function transcountry($str, $countrycode)
 	{
 		if ($this->tab_translate["$str$countrycode"]) return $this->trans("$str$countrycode");
 		else return $this->trans($str);
@@ -733,7 +733,7 @@ class Translate
 	 *  @param  string	$countrycode    country code (FR, ...)
 	 *  @return string         			translated string
 	 */
-	function transcountrynoentities($str, $countrycode)
+	public function transcountrynoentities($str, $countrycode)
 	{
 		if ($this->tab_translate["$str$countrycode"]) return $this->transnoentities("$str$countrycode");
 		else return $this->transnoentities($str);
@@ -747,7 +747,7 @@ class Translate
 	 *  @param	string	$pagecodefrom	Page code of src string
 	 *  @return string         			Converted string
 	 */
-	function convToOutputCharset($str, $pagecodefrom = 'UTF-8')
+	public function convToOutputCharset($str, $pagecodefrom = 'UTF-8')
 	{
 		if ($pagecodefrom == 'ISO-8859-1' && $this->charset_output == 'UTF-8')  $str=utf8_encode($str);
 		if ($pagecodefrom == 'UTF-8' && $this->charset_output == 'ISO-8859-1')	$str=utf8_decode(str_replace('€', chr(128), $str));
@@ -755,7 +755,7 @@ class Translate
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Return list of all available languages
 	 *
@@ -764,8 +764,8 @@ class Translate
 	 *  @param	int		$usecode		1=Show code instead of country name for language variant, 2=Show only code
 	 *  @return array     				List of languages
 	 */
-	function get_available_languages($langdir = DOL_DOCUMENT_ROOT, $maxlength = 0, $usecode = 0)
-	{
+    public function get_available_languages($langdir = DOL_DOCUMENT_ROOT, $maxlength = 0, $usecode = 0)
+    {
         // phpcs:enable
 		global $conf;
 
@@ -793,10 +793,10 @@ class Translate
 			}
 		}
 		return $langs_available;
-	}
+    }
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Return if a filename $filename exists for current language (or alternate language)
 	 *
@@ -804,8 +804,8 @@ class Translate
 	 *  @param  integer	$searchalt      Search also alernate language file
 	 *  @return boolean         		true if exists and readable
 	 */
-	function file_exists($filename, $searchalt = 0)
-	{
+    public function file_exists($filename, $searchalt = 0)
+    {
         // phpcs:enable
 		// Test si fichier dans repertoire de la langue
 		foreach($this->dir as $searchdir)
@@ -822,7 +822,7 @@ class Translate
 		}
 
 		return false;
-	}
+    }
 
 
 	/**
@@ -831,13 +831,13 @@ class Translate
      *      same number (this module is not provided by default as it use non GPL source code).
 	 *
 	 *		@param	int		$number		Number to encode in full text
-	 * 		@param	int		$isamount	1=It's an amount, 0=it's just a number
+     *      @param  string	$isamount	''=it's just a number, '1'=It's an amount (default currency), 'currencycode'=It's an amount (foreign currency)
 	 *      @return string				Label translated in UTF8 (but without entities)
 	 * 									10 if setDefaultLang was en_US => ten
 	 * 									123 if setDefaultLang was fr_FR => cent vingt trois
 	 */
-	function getLabelFromNumber($number, $isamount = 0)
-	{
+    public function getLabelFromNumber($number, $isamount = '')
+    {
 		global $conf;
 
 		$newnumber=$number;
@@ -861,7 +861,7 @@ class Translate
 		}
 
 		return $newnumber;
-	}
+    }
 
 
 	/**
@@ -877,10 +877,10 @@ class Translate
 	 *      @param	string	$keyforselect	Use another value than the translation key for the where into select
 	 *      @param  int		$filteronentity	Use a filter on entity
 	 *      @return string					Label in UTF8 (but without entities)
-	 *      @see dol_getIdFromCode
+	 *      @see dol_getIdFromCode()
 	 */
-	function getLabelFromKey($db, $key, $tablename, $fieldkey, $fieldlabel, $keyforselect = '', $filteronentity = 0)
-	{
+    public function getLabelFromKey($db, $key, $tablename, $fieldkey, $fieldlabel, $keyforselect = '', $filteronentity = 0)
+    {
 		// If key empty
 		if ($key == '') return '';
 
@@ -919,7 +919,7 @@ class Translate
 			$this->error=$db->lasterror();
 			return -1;
 		}
-	}
+    }
 
 
 	/**
@@ -931,7 +931,7 @@ class Translate
 	 *  @deprecated							Use method price to output a price
 	 *  @see price()
 	 */
-	function getCurrencyAmount($currency_code, $amount)
+    public function getCurrencyAmount($currency_code, $amount)
 	{
 		$symbol=$this->getCurrencySymbol($currency_code);
 
@@ -944,11 +944,11 @@ class Translate
 	 *  If mb_convert_encoding is not available, return currency code.
 	 *
 	 *  @param	string	$currency_code		Currency code
-	 *  @param	integer	$forceloadall		1=Force to load all currencies into cache. We know we need to use all of them. By default read and cache only required currency.
+	 *  @param	integer	$forceloadall		1=Force to load all currencies into cache. We know we need to use all of them. By default read and cache only the requested currency.
 	 *  @return	string						Currency symbol encoded into UTF8
 	 */
-	function getCurrencySymbol($currency_code, $forceloadall = 0)
-	{
+    public function getCurrencySymbol($currency_code, $forceloadall = 0)
+    {
 		$currency_sign = '';	// By default return iso code
 
 		if (function_exists("mb_convert_encoding"))
@@ -965,7 +965,7 @@ class Translate
 		}
 
 		return ($currency_sign?$currency_sign:$currency_code);
-	}
+    }
 
 	/**
 	 *  Load into the cache this->cache_currencies, all currencies
@@ -1021,23 +1021,23 @@ class Translate
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Return an array with content of all loaded translation keys (found into this->tab_translate) so
 	 * we get a substitution array we can use for substitutions (for mail or ODT generation for example)
 	 *
 	 * @return array	Array of translation keys lang_key => string_translation_loaded
 	 */
-	function get_translations_for_substitutions()
-	{
+    public function get_translations_for_substitutions()
+    {
         // phpcs:enable
-		$substitutionarray = array();
+        $substitutionarray = array();
 
-		foreach($this->tab_translate as $code => $label) {
-			$substitutionarray['lang_'.$code] = $label;
-			$substitutionarray['__('.$code.')__'] = $label;
-		}
+        foreach($this->tab_translate as $code => $label) {
+            $substitutionarray['lang_'.$code] = $label;
+            $substitutionarray['__('.$code.')__'] = $label;
+        }
 
-		return $substitutionarray;
-	}
+        return $substitutionarray;
+    }
 }

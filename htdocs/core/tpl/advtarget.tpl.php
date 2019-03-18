@@ -53,10 +53,10 @@ print '<script type="text/javascript" language="javascript">
 		print '<form name="find_customer" id="find_customer" action="' . $_SERVER['PHP_SELF'] . '?id=' . $id . '"  method="POST">' . "\n";
 		print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">' . "\n";
 		print '<input type="hidden" name="action" value="">' . "\n";
-		print '<table class="border" width="100%">' . "\n";
+		print '<table class="border centpercent">' . "\n";
 
 		print '<tr>' . "\n";
-		print '<td colspan="3" align="right">' . "\n";
+		print '<td colspan="3" class="right">' . "\n";
 
 		print '<input type="button" name="addcontact" id="addcontact" value="' . $langs->trans('AdvTgtAddContact') . '" class="butAction"/>' . "\n";
 
@@ -146,10 +146,13 @@ print '<script type="text/javascript" language="javascript">
 			print img_picto($langs->trans('AdvTgtUse'), 'ok.png@advtargetemailing');
 		}
 		print '</td><td>';
-		print $formadvtargetemaling->advMultiselectarray('cust_status', array (
+        print $formadvtargetemaling->advMultiselectarray(
+            'cust_status', array (
 				'0' => $langs->trans('ActivityCeased'),
 				'1' => $langs->trans('InActivity')
-		), $array_query['cust_status']);
+            ),
+            $array_query['cust_status']
+        );
 		print '</td><td>' . "\n";
 		print '</td></tr>' . "\n";
 
@@ -289,11 +292,15 @@ print '<script type="text/javascript" language="javascript">
 						print '</td><td>' . "\n";
 						print $form->textwithpicto('', $langs->trans("AdvTgtSearchDtHelp"), 1, 'help');
 					} elseif (($extrafields->attribute_type[$key] == 'boolean')) {
-						print $form->selectarray('options_' . $key, array (
+                        print $form->selectarray(
+                            'options_' . $key,
+                            array (
 								'' => '',
 								'1' => $langs->trans('Yes'),
 								'0' => $langs->trans('No')
-						), $array_query['options_' . $key]);
+                            ),
+                            $array_query['options_' . $key]
+                        );
 						print '</td><td>' . "\n";
 					} elseif (($extrafields->attribute_type[$key] == 'select')) {
 						print $formadvtargetemaling->advMultiselectarray('options_' . $key, $extrafields->attribute_param[$key]['options'], $array_query['options_' . $key]);
@@ -302,7 +309,6 @@ print '<script type="text/javascript" language="javascript">
 						print $formadvtargetemaling->advMultiselectarraySelllist('options_' . $key, $extrafields->attribute_param[$key]['options'], $array_query['options_' . $key]);
 						print '</td><td>' . "\n";
 					} else {
-
 						print '<table class="nobordernopadding"><tr>';
 						print '<td></td><td>';
 						if (is_array($array_query['options_' . $key])) {
@@ -341,10 +347,14 @@ print '<script type="text/javascript" language="javascript">
 			print img_picto($langs->trans('AdvTgtUse'), 'ok.png@advtargetemailing');
 		}
 		print '</td><td>';
-		print $formadvtargetemaling->advMultiselectarray('contact_status', array (
+        print $formadvtargetemaling->advMultiselectarray(
+            'contact_status',
+            array (
 				'0' => $langs->trans('ActivityCeased'),
 				'1' => $langs->trans('InActivity')
-		), $array_query['contact_status']);
+            ),
+            $array_query['contact_status']
+        );
 		print '</td><td>' . "\n";
 		print $form->textwithpicto('', $langs->trans("AdvTgtContactHelp"), 1, 'help');
 		print '</td></tr>' . "\n";
@@ -390,11 +400,15 @@ print '<script type="text/javascript" language="javascript">
 			print img_picto($langs->trans('AdvTgtUse'), 'ok.png@advtargetemailing');
 		}
 		print '</td><td>' . "\n";
-		print $form->selectarray('contact_no_email', array (
+        print $form->selectarray(
+            'contact_no_email',
+            array (
 				'' => '',
 				'1' => $langs->trans('Yes'),
 				'0' => $langs->trans('No')
-		), $array_query['contact_no_email']);
+            ),
+            $array_query['contact_no_email']
+        );
 		print '</td><td>' . "\n";
 		print '</td></tr>' . "\n";
 
@@ -478,11 +492,15 @@ print '<script type="text/javascript" language="javascript">
 					print '</td><td>' . "\n";
 					print $form->textwithpicto('', $langs->trans("AdvTgtSearchDtHelp"), 1, 'help');
 				} elseif (($extrafields->attribute_type[$key] == 'boolean')) {
-					print $form->selectarray('options_' . $key . '_cnct', array (
+                    print $form->selectarray(
+                        'options_' . $key . '_cnct',
+                        array (
 							'' => '',
 							'1' => $langs->trans('Yes'),
 							'0' => $langs->trans('No')
-					), $array_query['options_' . $key . '_cnct']);
+                        ),
+                        $array_query['options_' . $key . '_cnct']
+                    );
 					print '</td><td>' . "\n";
 				} elseif (($extrafields->attribute_type[$key] == 'select')) {
 					print $formadvtargetemaling->advMultiselectarray('options_' . $key . '_cnct', $extrafields->attribute_param[$key]['options'], $array_query['options_' . $key . '_cnct']);
@@ -508,7 +526,7 @@ print '<script type="text/javascript" language="javascript">
 		}
 
 		print '<tr>' . "\n";
-		print '<td colspan="3" align="right">' . "\n";
+		print '<td colspan="3" class="right">' . "\n";
 
 		print '<input type="button" name="addcontact" id="addcontact" value="' . $langs->trans('AdvTgtAddContact') . '" class="butAction"/>' . "\n";
 
@@ -523,7 +541,7 @@ print '<script type="text/javascript" language="javascript">
 		print load_fiche_titre($langs->trans("ToClearAllRecipientsClickHere"));
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
-		print '<td class="liste_titre" align="right"><input type="submit" class="button" value="' . $langs->trans("TargetsReset") . '"></td>';
+		print '<td class="liste_titre right"><input type="submit" class="button" value="' . $langs->trans("TargetsReset") . '"></td>';
 		print '</tr>';
 		print '</table>';
 		print '</form>';

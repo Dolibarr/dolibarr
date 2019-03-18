@@ -292,7 +292,7 @@ if ($id)
 		print"\n<!-- debut table -->\n";
 		print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
 		print '<tr class="liste_titre">';
-		print '<td>'.$langs->trans("Invoice").'</td><td>'.$langs->trans("ThirdParty").'</td><td align="right">'.$langs->trans("Amount").'</td><td align="right">'.$langs->trans("Status").'</td>';
+		print '<td>'.$langs->trans("Invoice").'</td><td>'.$langs->trans("ThirdParty").'</td><td class="right">'.$langs->trans("Amount").'</td><td class="right">'.$langs->trans("Status").'</td>';
 		print '</tr>';
 
 		$total = 0;
@@ -312,9 +312,9 @@ if ($id)
 			print '<td><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$obj->socid.'">';
 			print img_object($langs->trans("ShowCompany"), "company"). ' '.$obj->name."</a></td>\n";
 
-			print '<td align="right">'.price($obj->total_ttc)."</td>\n";
+			print '<td class="right">'.price($obj->total_ttc)."</td>\n";
 
-			print '<td align="right">';
+			print '<td class="right">';
 			$invoicestatic->fetch($obj->facid);
 			print $invoicestatic->getLibStatut(5);
 			print "</td>\n";

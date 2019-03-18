@@ -1120,17 +1120,17 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 		if (! empty($yearoffsettype) && ! is_numeric($yearoffsettype) && $yearoffsettype != '=')	// yearoffsettype is - or +, so we don't want current year
 		{
 	        $numFinal = preg_replace('/\{yyyy\}/i', date("Y", $date)+$yearoffset, $numFinal);
-        	$numFinal = preg_replace('/\{yy\}/i',  date("y", $date)+$yearoffset, $numFinal);
-        	$numFinal = preg_replace('/\{y\}/i',   substr(date("y", $date), 1, 1)+$yearoffset, $numFinal);
+        	$numFinal = preg_replace('/\{yy\}/i', date("y", $date)+$yearoffset, $numFinal);
+        	$numFinal = preg_replace('/\{y\}/i', substr(date("y", $date), 1, 1)+$yearoffset, $numFinal);
 		}
 		else	// we want yyyy to be current year
 		{
         	$numFinal = preg_replace('/\{yyyy\}/i', date("Y", $date), $numFinal);
-        	$numFinal = preg_replace('/\{yy\}/i',  date("y", $date), $numFinal);
-        	$numFinal = preg_replace('/\{y\}/i',   substr(date("y", $date), 1, 1), $numFinal);
+        	$numFinal = preg_replace('/\{yy\}/i', date("y", $date), $numFinal);
+        	$numFinal = preg_replace('/\{y\}/i', substr(date("y", $date), 1, 1), $numFinal);
 		}
-        $numFinal = preg_replace('/\{mm\}/i',  date("m", $date), $numFinal);
-        $numFinal = preg_replace('/\{dd\}/i',  date("d", $date), $numFinal);
+        $numFinal = preg_replace('/\{mm\}/i', date("m", $date), $numFinal);
+        $numFinal = preg_replace('/\{dd\}/i', date("d", $date), $numFinal);
 
         // Now we replace the counter
         $maskbefore='{'.$masktri.'}';
@@ -1453,7 +1453,7 @@ function weight_convert($weight, &$from_unit, $to_unit)
  *	@param	array	$tab        Array (key=>value) with all parameters to save
  *	@return int         		<0 if KO, >0 if OK
  *
- *	@see		dolibarr_get_const, dolibarr_set_const, dolibarr_del_const
+ *	@see		dolibarr_get_const(), dolibarr_set_const(), dolibarr_del_const()
  */
 function dol_set_user_param($db, $conf, &$user, $tab)
 {
@@ -1553,7 +1553,7 @@ function version_os()
  * 	Return PHP version
  *
  * 	@return		string			PHP version
- *  @see		versionphparray
+ *  @see		versionphparray()
  */
 function version_php()
 {
@@ -1564,7 +1564,7 @@ function version_php()
  * 	Return Dolibarr version
  *
  * 	@return		string			Dolibarr version
- *  @see		versiondolibarrarray
+ *  @see		versiondolibarrarray()
  */
 function version_dolibarr()
 {
@@ -2017,30 +2017,30 @@ function cleanCorruptedTree($db, $tabletocleantree, $fieldfkparent)
 /**
  *	Get an array with properties of an element
  *
- * @param 	string 	$element_type 	Element type: 'action', 'facture', 'project_task' or 'object@modulext'...
- * @return 	array					(module, classpath, element, subelement, classfile, classname)
+ * @param   string 	$element_type 	Element type: 'action', 'facture', 'project_task' or 'object@modulext'...
+ * @return  array					(module, classpath, element, subelement, classfile, classname)
  */
 function getElementProperties($element_type)
 {
     // Parse element/subelement (ex: project_task)
-    $module = $element = $subelement = $element_type;
+    $module = $element_type;
+    $element =  $element_type;
+    $subelement = $element_type;
 
     // If we ask an resource form external module (instead of default path)
-    if (preg_match('/^([^@]+)@([^@]+)$/i', $element_type, $regs))
-    {
+    if (preg_match('/^([^@]+)@([^@]+)$/i', $element_type, $regs)) {
         $element = $subelement = $regs[1];
-        $module 	= $regs[2];
+        $module = $regs[2];
     }
 
     //print '<br>1. element : '.$element.' - module : '.$module .'<br>';
-    if ( preg_match('/^([^_]+)_([^_]+)/i', $element, $regs))
-    {
+    if ( preg_match('/^([^_]+)_([^_]+)/i', $element, $regs)) {
         $module = $element = $regs[1];
         $subelement = $regs[2];
     }
 
     // For compat
-    if($element_type == "action") {
+    if ($element_type == "action") {
         $classpath = 'comm/action/class';
         $subelement = 'Actioncomm';
         $module = 'agenda';
@@ -2049,13 +2049,13 @@ function getElementProperties($element_type)
     // To work with non standard path
     if ($element_type == 'facture' || $element_type == 'invoice') {
         $classpath = 'compta/facture/class';
-        $module='facture';
-        $subelement='facture';
+        $module ='facture';
+        $subelement = 'facture';
     }
     if ($element_type == 'commande' || $element_type == 'order') {
         $classpath = 'commande/class';
-        $module='commande';
-        $subelement='commande';
+        $module = 'commande';
+        $subelement = 'commande';
     }
     if ($element_type == 'propal')  {
         $classpath = 'comm/propal/class';
@@ -2137,13 +2137,12 @@ function getElementProperties($element_type)
  *
  * @param	int     	$element_id 	Element id
  * @param	string  	$element_type 	Element type
- * @param	ref     	$element_ref 	Element ref (Use this if element_id but not both)
+ * @param	string     	$element_ref 	Element ref (Use this or element_id but not both)
  * @return 	int|object 					object || 0 || -1 if error
  */
 function fetchObjectByElement($element_id, $element_type, $element_ref = '')
 {
-    global $conf;
-	global $db,$conf;
+    global $conf, $db;
 
     $element_prop = getElementProperties($element_type);
     if (is_array($element_prop) && $conf->{$element_prop['module']}->enabled)
@@ -2168,7 +2167,7 @@ function fetchObjectByElement($element_id, $element_type, $element_ref = '')
  *  @param	array	$arraycolor			Array
  *  @param	string	$colorifnotfound	Color code to return if entry not defined or not a RGB format
  *  @return	string						RGB hex value (without # before). For example: 'FF00FF', '01FF02'
- *  @see	colorStringToArray
+ *  @see	colorStringToArray()
  */
 function colorArrayToHex($arraycolor, $colorifnotfound = '888888')
 {
@@ -2184,12 +2183,13 @@ function colorArrayToHex($arraycolor, $colorifnotfound = '888888')
  *
  *  @param	string	$stringcolor		String with hex (FFFFFF) or comma RGB ('255,255,255')
  *  @param	array	$colorifnotfound	Color code array to return if entry not defined
- *  @return	string						RGB hex value (without # before). For example: FF00FF
- *  @see	colorArrayToHex
+ *  @return	array   					RGB hex value (without # before). For example: FF00FF
+ *  @see	colorArrayToHex()
  */
 function colorStringToArray($stringcolor, $colorifnotfound = array(88,88,88))
 {
 	if (is_array($stringcolor)) return $stringcolor;	// If already into correct output format, we return as is
+	$reg=array();
 	$tmp=preg_match('/^#?([0-9a-fA-F][0-9a-fA-F])([0-9a-fA-F][0-9a-fA-F])([0-9a-fA-F][0-9a-fA-F])$/', $stringcolor, $reg);
 	if (! $tmp)
 	{
@@ -2199,6 +2199,108 @@ function colorStringToArray($stringcolor, $colorifnotfound = array(88,88,88))
 	}
 	return array(hexdec($reg[1]),hexdec($reg[2]),hexdec($reg[3]));
 }
+
+/**
+ * @param string $color the color you need to valid
+ * @param boolean $allow_white in case of white isn't valid
+ * @return boolean
+ */
+function colorValidateHex($color, $allow_white = true)
+{
+    
+    if(!$allow_white && ($color === '#fff' || $color === '#ffffff') ) return false;
+    
+    if(preg_match('/^#[a-f0-9]{6}$/i', $color)) //hex color is valid
+    {
+        return true;
+    }
+    return false;
+}
+
+
+/**
+ * @param string $hex color in hex
+ * @param integer $steps Steps should be between -255 and 255. Negative = darker, positive = lighter
+ * @return string
+ */
+function colorAdjustBrightness($hex, $steps)
+{
+    // Steps should be between -255 and 255. Negative = darker, positive = lighter
+    $steps = max(-255, min(255, $steps));
+    
+    // Normalize into a six character long hex string
+    $hex = str_replace('#', '', $hex);
+    if (strlen($hex) == 3) {
+        $hex = str_repeat(substr($hex, 0, 1), 2).str_repeat(substr($hex, 1, 1), 2).str_repeat(substr($hex, 2, 1), 2);
+    }
+    
+    // Split into three parts: R, G and B
+    $color_parts = str_split($hex, 2);
+    $return = '#';
+    
+    foreach ($color_parts as $color) {
+        $color   = hexdec($color); // Convert to decimal
+        $color   = max(0, min(255, $color + $steps)); // Adjust color
+        $return .= str_pad(dechex($color), 2, '0', STR_PAD_LEFT); // Make two char hex code
+    }
+    
+    return $return;
+}
+
+/**
+ * @param string $hex color in hex
+ * @param integer $percent 0 to 100
+ * @return string
+ */
+function colorDarker($hex, $percent)
+{
+    $steps = intval(255 * $percent / 100) * -1;
+    return colorAdjustBrightness($hex, $steps);
+}
+
+/**
+ * @param string $hex color in hex
+ * @param integer $percent 0 to 100
+ * @return string
+ */
+function colorLighten($hex, $percent)
+{
+    $steps = intval(255 * $percent / 100);
+    return colorAdjustBrightness($hex, $steps);
+}
+
+
+/**
+ * @param string $hex color in hex
+ * @param float $alpha 0 to 1
+ * @param bool $returnArray set to 1 to return an array instead of string
+ * @return string|array
+ */
+function colorHexToRgb($hex, $alpha = false, $returnArray = false)
+{
+    $string = '';
+    $hex      = str_replace('#', '', $hex);
+    $length   = strlen($hex);
+    $rgb = array();
+    $rgb['r'] = hexdec($length == 6 ? substr($hex, 0, 2) : ($length == 3 ? str_repeat(substr($hex, 0, 1), 2) : 0));
+    $rgb['g'] = hexdec($length == 6 ? substr($hex, 2, 2) : ($length == 3 ? str_repeat(substr($hex, 1, 1), 2) : 0));
+    $rgb['b'] = hexdec($length == 6 ? substr($hex, 4, 2) : ($length == 3 ? str_repeat(substr($hex, 2, 1), 2) : 0));
+    if ( $alpha !== false ) {
+        $rgb['a'] = floatval($alpha);
+        $string = 'rgba('.implode(',', $rgb).')';
+    }
+    else{
+        $string = 'rgb('.implode(',', $rgb).')';
+    }
+    
+    if($returnArray){
+        return $rgb;
+    }
+    else{
+        return $string;
+    }
+}
+
 
 /**
  * Applies the Cartesian product algorithm to an array
@@ -2260,6 +2362,9 @@ function getModuleDirForApiClass($module)
     elseif ($module == 'adherent' || $module == 'members' || $module == 'memberstypes' || $module == 'subscriptions') {
         $moduledirforclass = 'adherents';
     }
+    elseif ($module == 'don' || $module == 'donations') {
+        $moduledirforclass = 'don';
+    }
     elseif ($module == 'banque' || $module == 'bankaccounts') {
         $moduledirforclass = 'compta/bank';
     }
@@ -2270,7 +2375,7 @@ function getModuleDirForApiClass($module)
         $moduledirforclass = 'commande';
     }
     elseif ($module == 'shipments') {
-    	$moduledirforclass = 'expedition';
+        $moduledirforclass = 'expedition';
     }
     elseif ($module == 'facture' || $module == 'invoice' || $module == 'invoices') {
         $moduledirforclass = 'compta/facture';
@@ -2318,7 +2423,7 @@ function getModuleDirForApiClass($module)
  */
 function random_color_part($min = 0, $max = 255)
 {
-    return str_pad( dechex( mt_rand( $min, $max) ), 2, '0', STR_PAD_LEFT);
+    return str_pad(dechex(mt_rand($min, $max)), 2, '0', STR_PAD_LEFT);
 }
 
 /*

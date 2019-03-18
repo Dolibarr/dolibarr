@@ -63,7 +63,10 @@ $canadduser=(! empty($user->admin) || $user->rights->user->user->creer);
 
 $form = new Form($db);
 
-$arrayofjs=array('/includes/jquery/plugins/jquerytreeview/jquery.treeview.js', '/includes/jquery/plugins/jquerytreeview/lib/jquery.cookie.js');
+$arrayofjs = array(
+    '/includes/jquery/plugins/jquerytreeview/jquery.treeview.js',
+    '/includes/jquery/plugins/jquerytreeview/lib/jquery.cookie.js',
+);
 $arrayofcss=array('/includes/jquery/plugins/jquerytreeview/jquery.treeview.css');
 
 llxHeader('', $langs->trans("ListOfUsers"). ' - '.$langs->trans("HierarchicView"), '', '', 0, 0, $arrayofjs, $arrayofcss);
@@ -162,16 +165,16 @@ print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="mode" value="'.$mode.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
-print '<table class="liste nohover" width="100%">';
+print '<table class="liste nohover centpercent">';
 
 print '<tr class="liste_titre_filter">';
 print '<td class="liste_titre">&nbsp;</td>';
 print '<td class="liste_titre">&nbsp;</td>';
 // Status
-print '<td class="liste_titre" align="right">';
+print '<td class="liste_titre right">';
 print $form->selectarray('search_statut', array('-1'=>'','1'=>$langs->trans('Enabled')), $search_statut);
 print '</td>';
-print '<td class="liste_titre" align="right">';
+print '<td class="liste_titre right">';
 $searchpicto=$form->showFilterAndCheckAddButtons(0);
 print $searchpicto;
 print '</td>';

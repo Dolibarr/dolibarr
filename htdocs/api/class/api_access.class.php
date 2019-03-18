@@ -173,20 +173,20 @@ class DolibarrApiAccess implements iAuthenticate
 	 * @example Digest
 	 * @example OAuth
 	 */
-	public function __getWWWAuthenticateString()
+    public function __getWWWAuthenticateString()
     {
         // phpcs:enable
         return '';
     }
 
-	/**
-	 * Verify access
-	 *
-	 * @param   array $m Properties of method
-	 *
-	 * @access private
-	 * @return bool
-	 */
+    /**
+     * Verify access
+     *
+     * @param   array $m Properties of method
+     *
+     * @access private
+     * @return bool
+     */
     public static function verifyAccess(array $m)
     {
         $requires = isset($m['class']['DolibarrApiAccess']['properties']['requires'])

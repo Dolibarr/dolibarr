@@ -1,20 +1,21 @@
 <?php
 /* Copyright (C) 2001-2007	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2004-2016	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2005		Eric Seigne				<eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2015	Regis Houssin			<regis.houssin@inodbox.com>
- * Copyright (C) 2006		Andre Cianfarani		<acianfa@free.fr>
- * Copyright (C) 2006		Auguria SARL			<info@auguria.org>
- * Copyright (C) 2010-2015	Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2013-2016	Marcos García			<marcosgdf@gmail.com>
- * Copyright (C) 2012-2013	Cédric Salvador			<csalvador@gpcsolutions.fr>
- * Copyright (C) 2011-2019	Alexandre Spangaro		<aspangaro@open-dsi.fr>
- * Copyright (C) 2014		Cédric Gross			<c.gross@kreiz-it.fr>
- * Copyright (C) 2014-2015	Ferran Marcet			<fmarcet@2byte.es>
- * Copyright (C) 2015		Jean-François Ferry		<jfefe@aternatik.fr>
- * Copyright (C) 2015		Raphaël Doursenaud		<rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2016		Charlie Benke			<charlie@patas-monkey.com>
- * Copyright (C) 2016		Meziane Sof				<virtualsof@yahoo.fr>
+ * Copyright (C) 2004-2016	Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2005		Eric Seigne		<eric.seigne@ryxeo.com>
+ * Copyright (C) 2005-2015	Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2006		Andre Cianfarani	<acianfa@free.fr>
+ * Copyright (C) 2006		Auguria SARL		<info@auguria.org>
+ * Copyright (C) 2010-2015	Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2013-2016	Marcos García		<marcosgdf@gmail.com>
+ * Copyright (C) 2012-2013	Cédric Salvador		<csalvador@gpcsolutions.fr>
+ * Copyright (C) 2011-2017	Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2014		Cédric Gross		<c.gross@kreiz-it.fr>
+ * Copyright (C) 2014-2015	Ferran Marcet		<fmarcet@2byte.es>
+ * Copyright (C) 2015		Jean-François Ferry	<jfefe@aternatik.fr>
+ * Copyright (C) 2015		Raphaël Doursenaud	<rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2016		Charlie Benke		<charlie@patas-monkey.com>
+ * Copyright (C) 2016		Meziane Sof		<virtualsof@yahoo.fr>
+ * Copyright (C) 2017		Josep Lluís Amador	<joseplluis@lliuretic.cat>
  * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -1020,21 +1021,12 @@ else
             print '<input name="desiredstock" type="hidden" value="0">';
         }
 
-        // Nature
-        if ($type != 1)
-        {
-            print '<tr><td>'.$langs->trans("Nature").'</td><td colspan="3">';
-            $statutarray=array('1' => $langs->trans("Finished"), '0' => $langs->trans("RowMaterial"));
-            print $form->selectarray('finished', $statutarray, GETPOST('finished'), 1);
-            print '</td></tr>';
-        }
-
         // Duration
         if ($type == 1)
         {
             print '<tr><td>' . $langs->trans("Duration") . '</td><td colspan="3"><input name="duration_value" size="6" maxlength="5" value="' . $duration_value . '"> &nbsp;';
             print '<input name="duration_unit" type="radio" value="i">'.$langs->trans("Minute").'&nbsp;';
-	    print '<input name="duration_unit" type="radio" value="h">'.$langs->trans("Hour").'&nbsp;';
+            print '<input name="duration_unit" type="radio" value="h">'.$langs->trans("Hour").'&nbsp;';
             print '<input name="duration_unit" type="radio" value="d">'.$langs->trans("Day").'&nbsp;';
             print '<input name="duration_unit" type="radio" value="w">'.$langs->trans("Week").'&nbsp;';
             print '<input name="duration_unit" type="radio" value="m">'.$langs->trans("Month").'&nbsp;';
@@ -1042,8 +1034,14 @@ else
             print '</td></tr>';
         }
 
-        if ($type != 1)	// Le poids et le volume ne concerne que les produits et pas les services
+        if ($type != 1)	// Nature, Weight and volume only applies to products and not to services
         {
+            // Nature
+            print '<tr><td>'.$langs->trans("Nature").'</td><td colspan="3">';
+            $statutarray=array('1' => $langs->trans("Finished"), '0' => $langs->trans("RowMaterial"));
+            print $form->selectarray('finished', $statutarray, GETPOST('finished', 'alpha'), 1);
+            print '</td></tr>';
+
             // Weight
             print '<tr><td>'.$langs->trans("Weight").'</td><td colspan="3">';
             print '<input name="weight" size="4" value="'.GETPOST('weight').'">';
@@ -1375,7 +1373,7 @@ else
 
             // Public Url
             print '<tr><td>'.$langs->trans("PublicUrl").'</td><td colspan="3">';
-			print '<input type="text" name="url" class="quatrevingtpercent" value="'.$object->url.'">';
+            print '<input type="text" name="url" class="quatrevingtpercent" value="'.$object->url.'">';
             print '</td></tr>';
 
             // Stock
@@ -1403,22 +1401,13 @@ else
                 print '<input name="desiredstock" type="hidden" value="'.$object->desiredstock.'">';
             }*/
 
-            // Nature
-            if($object->type!= Product::TYPE_SERVICE)
-            {
-                print '<tr><td>'.$langs->trans("Nature").'</td><td colspan="3">';
-                $statutarray=array('-1'=>'&nbsp;', '1' => $langs->trans("Finished"), '0' => $langs->trans("RowMaterial"));
-                print $form->selectarray('finished', $statutarray, $object->finished);
-                print '</td></tr>';
-            }
-
             if ($object->isService())
             {
                 // Duration
                 print '<tr><td>'.$langs->trans("Duration").'</td><td colspan="3"><input name="duration_value" size="3" maxlength="5" value="'.$object->duration_value.'">';
                 print '&nbsp; ';
                 print '<input name="duration_unit" type="radio" value="i"'.($object->duration_unit=='i'?' checked':'').'>'.$langs->trans("Minute");
-		print '&nbsp; ';
+                print '&nbsp; ';
                 print '<input name="duration_unit" type="radio" value="h"'.($object->duration_unit=='h'?' checked':'').'>'.$langs->trans("Hour");
                 print '&nbsp; ';
                 print '<input name="duration_unit" type="radio" value="d"'.($object->duration_unit=='d'?' checked':'').'>'.$langs->trans("Day");
@@ -1431,7 +1420,13 @@ else
                 print '</td></tr>';
             }
             else
-			{
+            {
+                // Nature
+                print '<tr><td>'.$langs->trans("Nature").'</td><td colspan="3">';
+                $statutarray=array('-1'=>'&nbsp;', '1' => $langs->trans("Finished"), '0' => $langs->trans("RowMaterial"));
+                print $form->selectarray('finished', $statutarray, $object->finished);
+                print '</td></tr>';
+              
                 // Weight
                 print '<tr><td>'.$langs->trans("Weight").'</td><td colspan="3">';
                 print '<input name="weight" size="5" value="'.$object->weight.'"> ';
@@ -1439,13 +1434,13 @@ else
                 print '</td></tr>';
                 if (empty($conf->global->PRODUCT_DISABLE_SIZE))
                 {
-        			// Length
-        			print '<tr><td>'.$langs->trans("Length").' x '.$langs->trans("Width").' x '.$langs->trans("Height").'</td><td colspan="3">';
-        			print '<input name="size" size="5" value="'.$object->length.'">x';
-        			print '<input name="sizewidth" size="5" value="'.$object->width.'">x';
-        			print '<input name="sizeheight" size="5" value="'.$object->height.'"> ';
-        			print $formproduct->select_measuring_units("size_units", "size", $object->length_units);
-        			print '</td></tr>';
+                  // Length
+                  print '<tr><td>'.$langs->trans("Length").' x '.$langs->trans("Width").' x '.$langs->trans("Height").'</td><td colspan="3">';
+                  print '<input name="size" size="5" value="'.$object->length.'">x';
+                  print '<input name="sizewidth" size="5" value="'.$object->width.'">x';
+                  print '<input name="sizeheight" size="5" value="'.$object->height.'"> ';
+                  print $formproduct->select_measuring_units("size_units", "size", $object->length_units);
+                  print '</td></tr>';
                 }
                 if (empty($conf->global->PRODUCT_DISABLE_SURFACE))
                 {
@@ -1496,7 +1491,7 @@ else
 			// Tags-Categories
             if ($conf->categorie->enabled)
 			{
-				print '<tr><td class="tdtop">'.$langs->trans("Categories").'</td><td colspan="3">';
+				print '<tr><td>'.$langs->trans("Categories").'</td><td colspan="3">';
 				$cate_arbo = $form->select_all_categories(Categorie::TYPE_PRODUCT, '', 'parent', 64, 0, 1);
 				$c = new Categorie($db);
 				$cats = $c->containing($object->id, Categorie::TYPE_PRODUCT);
@@ -1641,7 +1636,7 @@ else
                 print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
                 print $langs->trans("BarcodeType");
                 print '</td>';
-                if (($action != 'editbarcodetype') && $usercancreate && $createbarcode) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editbarcodetype&amp;id='.$object->id.'">'.img_edit($langs->trans('Edit'), 1).'</a></td>';
+                if (($action != 'editbarcodetype') && $usercancreate && $createbarcode) print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editbarcodetype&amp;id='.$object->id.'">'.img_edit($langs->trans('Edit'), 1).'</a></td>';
                 print '</tr></table>';
                 print '</td><td colspan="2">';
                 if ($action == 'editbarcodetype' || $action == 'editbarcode')
@@ -1665,7 +1660,7 @@ else
                 print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
                 print $langs->trans("BarcodeValue");
                 print '</td>';
-                if (($action != 'editbarcode') && $usercancreate && $createbarcode) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editbarcode&amp;id='.$object->id.'">'.img_edit($langs->trans('Edit'), 1).'</a></td>';
+                if (($action != 'editbarcode') && $usercancreate && $createbarcode) print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editbarcode&amp;id='.$object->id.'">'.img_edit($langs->trans('Edit'), 1).'</a></td>';
                 print '</tr></table>';
                 print '</td><td colspan="2">';
                 if ($action == 'editbarcode')
@@ -1823,14 +1818,6 @@ else
             print '<div class="underbanner clearboth"></div>';
             print '<table class="border tableforfield" width="100%">';
 
-            // Nature
-            if($object->type!= Product::TYPE_SERVICE)
-            {
-                print '<tr><td class="titlefield">'.$langs->trans("Nature").'</td><td colspan="2">';
-                print $object->getLibFinished();
-                print '</td></tr>';
-            }
-
             if ($object->isService())
             {
                 // Duration
@@ -1849,6 +1836,10 @@ else
             }
             else
             {
+                // Nature
+                print '<tr><td class="titlefield">'.$langs->trans("Nature").'</td><td colspan="2">';
+                print $object->getLibFinished();
+                print '</td></tr>';
                 // Weight
                 print '<tr><td class="titlefield">'.$langs->trans("Weight").'</td><td colspan="2">';
                 if ($object->weight != '')
@@ -1920,7 +1911,7 @@ else
 			}
 
         	// Custom code
-        	if (! $object->isService() && empty($conf->global->PRODUCT_DISABLE_CUSTOM_INFO))
+    	    if (! $object->isService() && empty($conf->global->PRODUCT_DISABLE_CUSTOM_INFO))
         	{
 	            print '<tr><td>'.$langs->trans("CustomCode").'</td><td colspan="2">'.$object->customcode.'</td>';
 
@@ -1934,7 +1925,7 @@ else
 
 			// Categories
 			if($conf->categorie->enabled) {
-				print '<tr><td valign="middle">'.$langs->trans("Categories").'</td><td colspan="3">';
+				print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td colspan="3">';
 				print $form->showCategories($object->id, 'product', 1);
 				print "</td></tr>";
 			}
@@ -2000,7 +1991,7 @@ if (($action == 'delete' && (empty($conf->use_javascript_ajax) || ! empty($conf-
 if (($action == 'clone' && (empty($conf->use_javascript_ajax) || ! empty($conf->dol_use_jmobile)))		// Output when action = clone if jmobile or no js
 	|| (! empty($conf->use_javascript_ajax) && empty($conf->dol_use_jmobile)))							// Always output when not jmobile nor js
 {
-    print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('CloneProduct'), $langs->trans('ConfirmCloneProduct', $object->ref), 'confirm_clone', $formquestionclone, 'yes', 'action-clone', 260, 600);
+    print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneProduct', $object->ref), 'confirm_clone', $formquestionclone, 'yes', 'action-clone', 260, 600);
 }
 
 

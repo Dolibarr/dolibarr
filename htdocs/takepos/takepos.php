@@ -40,6 +40,11 @@ $action = GETPOST('action', 'alpha');
 
 $langs->loadLangs(array("bills","orders","commercial","cashdesk","receiptprinter"));
 
+$categorie = new Categorie($db);
+
+$MAXCATEG = 16;
+$MAXPRODUCT = 32;
+
 
 /*
  * View
@@ -61,25 +66,44 @@ top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
 <script type="text/javascript" src="js/jquery.colorbox-min.js"></script>
 <script language="javascript">
 <?php
-$categorie = new Categorie($db);
-$categories = $categorie->get_full_arbo('product');
+$categories = $categorie->get_full_arbo('product', 0, (($conf->global->TAKEPOS_ROOT_CATEGORY_ID > 0)?$conf->global->TAKEPOS_ROOT_CATEGORY_ID:0));
 
-$maincategories = array_filter($categories, function ($item) {
-    if (($item['level']==1) !== false) {
-        return true;
-    }
-    return false;
-});
+//$conf->global->TAKEPOS_ROOT_CATEGORY_ID=0;
 
-$subcategories = array_filter($categories, function ($item) {
-    if (($item['level']!=1) !== false) {
-        return true;
+// Search root category to know its level
+$levelofrootcategory=0;
+if ($conf->global->TAKEPOS_ROOT_CATEGORY_ID > 0)
+{
+    foreach($categories as $key => $categorycursor)
+    {
+        if ($categorycursor['id'] == $conf->global->TAKEPOS_ROOT_CATEGORY_ID)
+        {
+            $levelofrootcategory = $categorycursor['level'];
+            break;
+        }
     }
-    return false;
-});
+}
+$levelofmaincategories = $levelofrootcategory + 1;
+
+$maincategories = array();
+$subcategories = array();
+foreach($categories as $key => $categorycursor)
+{
+    if ($categorycursor['level'] == $levelofmaincategories)
+    {
+        $maincategories[$key] = $categorycursor;
+    }
+    else
+    {
+        $subcategories[$key] = $categorycursor;
+    }
+}
+
+sort($maincategories);
+sort($subcategories);
 ?>
 
-var categories = <?php echo json_encode($categories); ?>;
+var categories = <?php echo json_encode($maincategories); ?>;
 var subcategories = <?php echo json_encode($subcategories); ?>;
 
 var currentcat;
@@ -93,8 +117,9 @@ function PrintCategories(first){
 	for (i = 0; i < 14; i++) {
 		if (typeof (categories[parseInt(i)+parseInt(first)]) == "undefined") break;
 		$("#catdesc"+i).text(categories[parseInt(i)+parseInt(first)]['label']);
-        $("#catimg"+i).attr("src","genimg/?query=cat&w=55&h=50&id="+categories[parseInt(i)+parseInt(first)]['rowid']);
+        $("#catimg"+i).attr("src","genimg/index.php?query=cat&id="+categories[parseInt(i)+parseInt(first)]['rowid']);
         $("#catdiv"+i).data("rowid",categories[parseInt(i)+parseInt(first)]['rowid']);
+		$("#catwatermark"+i).show();
 	}
 }
 
@@ -117,12 +142,14 @@ function MoreCategories(moreorless){
 	for (i = 0; i < 14; i++) {
 		if (typeof (categories[i+(14*pagecategories)]) == "undefined"){
 				$("#catdesc"+i).text("");
-				$("#catimg"+i).attr("src","");
+				$("#catimg"+i).attr("src","genimg/empty.png");
+				$("#catwatermark"+i).hide();
 				continue;
 			}
 		$("#catdesc"+i).text(categories[i+(14*pagecategories)]['label']);
-        $("#catimg"+i).attr("src","genimg/?query=cat&w=55&h=50&id="+categories[i+(14*pagecategories)]['rowid']);
+        $("#catimg"+i).attr("src","genimg/index.php?query=cat&id="+categories[i+(14*pagecategories)]['rowid']);
         $("#catdiv"+i).data("rowid",categories[i+(14*pagecategories)]['rowid']);
+		$("#catwatermark"+i).show();
 	}
 }
 
@@ -131,37 +158,39 @@ function LoadProducts(position, issubcat=false){
 	$('#catimg'+position).animate({opacity: '1'}, 100);
 	if (issubcat==true) currentcat=$('#prodiv'+position).data('rowid');
 	else currentcat=$('#catdiv'+position).data('rowid');
-    if (currentcat=="") return;
+    if (currentcat==undefined) return;
 	pageproducts=0;
 	ishow=0; //product to show counter
 
 	jQuery.each(subcategories, function(i, val) {
 		if (currentcat==val.fk_parent){
 			$("#prodesc"+ishow).text(val.label);
-			$("#proimg"+ishow).attr("src","genimg/?query=cat&w=55&h=50&id="+val.rowid);
+			$("#proimg"+ishow).attr("src","genimg/index.php?query=cat&id="+val.rowid);
 			$("#prodiv"+ishow).data("rowid",val.rowid);
 			$("#prodiv"+ishow).data("iscat",1);
+			$("#prowatermark"+ishow).show();
 			ishow++;
 		}
 	});
 
 	idata=0; //product data counter
 	$.getJSON('./ajax.php?action=getProducts&category='+currentcat, function(data) {
-		while (idata < 30) {
+		while (ishow < 30) {
 			if (typeof (data[idata]) == "undefined") {
 				$("#prodesc"+ishow).text("");
-				$("#proimg"+ishow).attr("src","");
+				$("#proimg"+ishow).attr("src","genimg/empty.png");
 				$("#prodiv"+ishow).data("rowid","");
 				ishow++; //Next product to show after print data product
 			}
 			else if ((data[idata]['status']) == "1") {
 				//Only show products with status=1 (for sell)
 				$("#prodesc"+ishow).text(data[parseInt(idata)]['label']);
-				$("#proimg"+ishow).attr("src","genimg/?query=pro&w=55&h=50&id="+data[idata]['id']);
+				$("#proimg"+ishow).attr("src","genimg/index.php?query=pro&id="+data[idata]['id']);
 				$("#prodiv"+ishow).data("rowid",data[idata]['id']);
 				$("#prodiv"+ishow).data("iscat",0);
 				ishow++; //Next product to show after print data product
 			}
+			$("#prowatermark"+ishow).hide();
 			idata++; //Next data everytime
 		}
 	});
@@ -186,21 +215,22 @@ function MoreProducts(moreorless){
 		}
 		idata=30*pageproducts; //product data counter
 		ishow=0; //product to show counter
-		while (idata < 30) {
+		while (ishow < 30) {
 			if (typeof (data[idata]) == "undefined") {
 				$("#prodesc"+ishow).text("");
-				$("#proimg"+ishow).attr("src","");
+				$("#proimg"+ishow).attr("src","genimg/empty.png");
 				$("#prodiv"+ishow).data("rowid","");
 				ishow++; //Next product to show after print data product
 			}
 			else if ((data[idata]['status']) == "1") {
 				//Only show products with status=1 (for sell)
 				$("#prodesc"+ishow).text(data[parseInt(idata)]['label']);
-				$("#proimg"+ishow).attr("src","genimg/?query=pro&w=55&h=50&id="+data[idata]['id']);
+				$("#proimg"+ishow).attr("src","genimg/index.php?query=pro&id="+data[idata]['id']);
 				$("#prodiv"+ishow).data("rowid",data[idata]['id']);
 				$("#prodiv"+ishow).data("iscat",0);
 				ishow++; //Next product to show after print data product
 			}
+			$("#prowatermark"+ishow).hide();
 			idata++; //Next data everytime
 		}
 	});
@@ -240,7 +270,11 @@ function Floors(){
 }
 
 function FreeZone(){
-	$.colorbox({href:"freezone.php?place="+place, onClosed: function () { Refresh(); },width:"80%", height:"30%", transition:"none", iframe:"true", title:"<?php echo $langs->trans("FreeZone");?>"});
+	$.colorbox({href:"freezone.php?action=freezone&place="+place, onClosed: function () { Refresh(); },width:"80%", height:"30%", transition:"none", iframe:"true", title:"<?php echo $langs->trans("FreeZone");?>"});
+}
+
+function TakeposOrderNotes(){
+	$.colorbox({href:"freezone.php?action=addnote&place="+place+"&idline="+selectedline, onClosed: function () { Refresh(); },width:"80%", height:"30%", transition:"none", iframe:"true", title:"<?php echo $langs->trans("OrderNotes");?>"});
 }
 
 function Refresh(){
@@ -261,14 +295,14 @@ function Search2(){
 		for (i = 0; i < 30; i++) {
 			if (typeof (data[i]) == "undefined"){
 				$("#prodesc"+i).text("");
-				$("#proimg"+i).attr("src","");
+				$("#proimg"+i).attr("src","genimg/empty.png");
                 $("#prodiv"+i).data("rowid","");
 				continue;
 			}
 			$("#prodesc"+i).text(data[parseInt(i)]['label']);
-			$("#proimg"+i).attr("src","genimg/?query=pro&w=55&h=50&id="+data[i]['rowid']);
+			$("#proimg"+i).attr("src","genimg/?query=pro&id="+data[i]['rowid']);
 			$("#prodiv"+i).data("rowid",data[i]['rowid']);
-			$("#prodiv"+ishow).data("iscat",0);
+			$("#prodiv"+i).data("iscat",0);
 		}
 	});
 }
@@ -432,11 +466,11 @@ $menus[$r++]=array('title'=>$langs->trans("FreeZone"),
 $menus[$r++]=array('title'=>$langs->trans("Customer"),
 					'action'=>'Customer();');
 $menus[$r++]=array('title'=>$langs->trans("BackOffice"),
-                   'action'=>'window.open(\''.DOL_URL_ROOT.'\', \'backoffice\');');
+                    'action'=>'window.open(\''.(DOL_URL_ROOT ? DOL_URL_ROOT : '/').'\', \'_self\');');
 $menus[$r++]=array('title'=>$langs->trans("ValidateBill"),
 					'action'=>'CloseBill();');
 $menus[$r++]=array('title'=>$langs->trans("Logout"),
-                   'action'=>'window.location.href=\''.DOL_URL_ROOT.'/user/logout.php\';');
+					'action'=>'window.location.href=\''.DOL_URL_ROOT.'/user/logout.php\';');
 
 //BAR RESTAURANT specified menu
 if($conf->global->TAKEPOS_BAR_RESTAURANT){
@@ -450,6 +484,10 @@ if($conf->global->TAKEPOS_BAR_RESTAURANT){
 	if ($conf->global->TAKEPOS_BAR_RESTAURANT){
 		if ($conf->global->TAKEPOSCONNECTOR) $menus[$r++]=array('title'=>$langs->trans("Receipt"),'action'=>'TakeposPrinting(placeid);');
 		else $menus[$r++]=array('title'=>$langs->trans("Receipt"),'action'=>'Print(placeid);');
+	}
+	if ($conf->global->TAKEPOSCONNECTOR && $conf->global->TAKEPOS_ORDER_NOTES==1){
+		$menus[$r++]=array('title'=>$langs->trans("OrderNotes"),
+		'action'=>'TakeposOrderNotes();');
 	}
 }
 
@@ -469,6 +507,7 @@ if (!empty($reshook)) {
 ?>
 		<div class="div3">
 <?php
+
 $i = 0;
 foreach($menus as $menu) {
 	$i++;
@@ -483,18 +522,20 @@ foreach($menus as $menu) {
 ?>
 		</div>
 	</div>
+
 	<div class="row2">
 		<div class="div4">
 	<?php
 	$count=0;
-	while ($count<16)
+	while ($count < $MAXCATEG)
 	{
 	?>
-			<div class='wrapper' <?php if ($count==14) echo 'onclick="MoreCategories(\'less\');"'; elseif ($count==15) echo 'onclick="MoreCategories(\'more\');"'; else echo 'onclick="LoadProducts('.$count.');"';?> id='catdiv<?php echo $count;?>'>
-				<img class='imgwrapper' <?php if ($count==14) echo 'src="img/arrow-prev-top.png"'; if ($count==15) echo 'src="img/arrow-next-top.png"';?> width="98%" id='catimg<?php echo $count;?>'/>
+			<div class='wrapper' <?php if ($count==($MAXCATEG-2)) echo 'onclick="MoreCategories(\'less\');"'; elseif ($count==($MAXCATEG-1)) echo 'onclick="MoreCategories(\'more\');"'; else echo 'onclick="LoadProducts('.$count.');"';?> id='catdiv<?php echo $count;?>'>
+				<img class='imgwrapper' <?php if ($count==($MAXCATEG-2)) echo 'src="img/arrow-prev-top.png"'; if ($count==($MAXCATEG-1)) echo 'src="img/arrow-next-top.png"';?> width="100%" height="100%" id="catimg<?php echo $count;?>" />
 				<div class='description'>
 					<div class='description_content' id='catdesc<?php echo $count;?>'></div>
 				</div>
+				<div class="catwatermark" id='catwatermark<?php echo $count;?>'>+</div>
 			</div>
 	<?php
     $count++;
@@ -503,21 +544,22 @@ foreach($menus as $menu) {
 		</div>
 
 		<div class="div5">
-<?php
-$count=0;
-while ($count<32)
-{
-?>
-			<div class='wrapper2' id='prodiv<?php echo $count;?>' <?php if ($count==30) {?> onclick="MoreProducts('less');" <?php } if ($count==31) {?> onclick="MoreProducts('more');" <?php } else echo 'onclick="ClickProduct('.$count.');"';?>>
-				<img class='imgwrapper' <?php if ($count==30) echo 'src="img/arrow-prev-top.png"'; if ($count==31) echo 'src="img/arrow-next-top.png"';?> width="95%" id='proimg<?php echo $count;?>'/>
-				<div class='description'>
-					<div class='description_content' id='prodesc<?php echo $count;?>'></div>
-				</div>
-			</div>
-<?php
-    $count++;
-}
-?>
+    <?php
+    $count=0;
+    while ($count < $MAXPRODUCT)
+    {
+    ?>
+    			<div class='wrapper2' id='prodiv<?php echo $count;?>' <?php if ($count==($MAXPRODUCT-2)) {?> onclick="MoreProducts('less');" <?php } if ($count==($MAXPRODUCT-1)) {?> onclick="MoreProducts('more');" <?php } else echo 'onclick="ClickProduct('.$count.');"';?>>
+    				<img class='imgwrapper' <?php if ($count==($MAXPRODUCT-2)) echo 'src="img/arrow-prev-top.png"'; if ($count==($MAXPRODUCT-1)) echo 'src="img/arrow-next-top.png"';?> width="100%" height="100%" id="proimg<?php echo $count;?>" />
+    				<div class='description'>
+    					<div class='description_content' id='prodesc<?php echo $count;?>'></div>
+    				</div>
+    				<div class="catwatermark" id='prowatermark<?php echo $count;?>'>+</div>
+    			</div>
+    <?php
+        $count++;
+    }
+    ?>
 		</div>
 	</div>
 </div>

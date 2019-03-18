@@ -40,12 +40,12 @@ class PropaleStats extends Stats
 	 */
 	public $table_element;
 
-    var $socid;
-    var $userid;
+    public $socid;
+    public $userid;
 
-    var $from;
-    var $field;
-    var $where;
+    public $from;
+    public $field;
+    public $where;
 
 
 	/**
@@ -56,7 +56,7 @@ class PropaleStats extends Stats
      * @param   int		$userid    Id user for filter (creation user)
 	 * @param 	string	$mode	   Option ('customer', 'supplier')
 	 */
-	function __construct($db, $socid = 0, $userid = 0, $mode = 'customer')
+    public function __construct($db, $socid = 0, $userid = 0, $mode = 'customer')
 	{
 		global $user, $conf;
 
@@ -106,7 +106,7 @@ class PropaleStats extends Stats
      *	@param	int		$format		0=Label of absiss is a translated text, 1=Label of absiss is month number, 2=Label of absiss is first letter of month
 	 * @return	array				Array with number by month
 	 */
-	function getNbByMonth($year, $format = 0)
+    public function getNbByMonth($year, $format = 0)
 	{
 		global $user;
 
@@ -128,7 +128,7 @@ class PropaleStats extends Stats
 	 * @return	array	Array with number by year
 	 *
 	 */
-	function getNbByYear()
+    public function getNbByYear()
 	{
 		global $user;
 
@@ -149,7 +149,7 @@ class PropaleStats extends Stats
      * @param	int		$format		0=Label of absiss is a translated text, 1=Label of absiss is month number, 2=Label of absiss is first letter of month
 	 * @return	array				Array with amount by month
 	 */
-	function getAmountByMonth($year, $format)
+    public function getAmountByMonth($year, $format)
 	{
 		global $user;
 
@@ -171,7 +171,7 @@ class PropaleStats extends Stats
 	 * @param	int		$year	year for stats
 	 * @return	array			array with number by month
 	 */
-	function getAverageByMonth($year)
+    public function getAverageByMonth($year)
 	{
 		global $user;
 
@@ -191,7 +191,7 @@ class PropaleStats extends Stats
 	 *
 	 *	@return	array	Array of values
 	 */
-	function getAllByYear()
+    public function getAllByYear()
 	{
 		global $user;
 
@@ -213,7 +213,7 @@ class PropaleStats extends Stats
 	 *	@param	int		$year	Year to scan
 	 *	@return	array	Array of values
 	 */
-	function getAllByProduct($year)
+    public function getAllByProduct($year)
 	{
 		global $user;
 

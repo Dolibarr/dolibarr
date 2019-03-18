@@ -72,7 +72,7 @@ class mod_codeproduct_elephant extends ModeleProductCode
 	/**
 	 *	Constructor
 	 */
-	function __construct()
+	public function __construct()
 	{
 		$this->code_null = 0;
 		$this->code_modifiable = 1;
@@ -83,13 +83,14 @@ class mod_codeproduct_elephant extends ModeleProductCode
 	}
 
 
-	/**		Return description of module
-	 *
-	 * 		@param	Translate	$langs		Object langs
-	 * 		@return string      			Description of module
-	 */
-	function info($langs)
-	{
+    /**
+     *  Return description of module
+     *
+     *  @param	Translate	$langs		Object langs
+     *  @return string      			Description of module
+     */
+    public function info($langs)
+    {
 		global $conf, $mc;
 		global $form;
 
@@ -112,22 +113,22 @@ class mod_codeproduct_elephant extends ModeleProductCode
 
 		// Parametrage du prefix customers
 		$texte.= '<tr><td>'.$langs->trans("Mask").' ('.$langs->trans("ProductCodeModel").'):</td>';
-		$texte.= '<td align="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="value1" value="'.(! empty($conf->global->PRODUCT_ELEPHANT_MASK_PRODUCT)?$conf->global->PRODUCT_ELEPHANT_MASK_PRODUCT:'').'"'.$disabled.'>', $tooltip, 1, 1).'</td>';
+		$texte.= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="value1" value="'.(! empty($conf->global->PRODUCT_ELEPHANT_MASK_PRODUCT)?$conf->global->PRODUCT_ELEPHANT_MASK_PRODUCT:'').'"'.$disabled.'>', $tooltip, 1, 1).'</td>';
 
-		$texte.= '<td align="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"'.$disabled.'></td>';
+		$texte.= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"'.$disabled.'></td>';
 
 		$texte.= '</tr>';
 
 		// Parametrage du prefix suppliers
 		$texte.= '<tr><td>'.$langs->trans("Mask").' ('.$langs->trans("ServiceCodeModel").'):</td>';
-		$texte.= '<td align="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="value2" value="'.(! empty($conf->global->PRODUCT_ELEPHANT_MASK_SERVICE)?$conf->global->PRODUCT_ELEPHANT_MASK_SERVICE:'').'"'.$disabled.'>', $tooltip, 1, 1).'</td>';
+		$texte.= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="value2" value="'.(! empty($conf->global->PRODUCT_ELEPHANT_MASK_SERVICE)?$conf->global->PRODUCT_ELEPHANT_MASK_SERVICE:'').'"'.$disabled.'>', $tooltip, 1, 1).'</td>';
 		$texte.= '</tr>';
 
 		$texte.= '</table>';
 		$texte.= '</form>';
 
 		return $texte;
-	}
+    }
 
 
 	/**
@@ -138,7 +139,7 @@ class mod_codeproduct_elephant extends ModeleProductCode
 	 * @param	int			$type		Type of third party (1:customer, 2:supplier, -1:autodetect)
 	 * @return	string					Return string example
 	 */
-	function getExample($langs, $objproduct = 0, $type = -1)
+    public function getExample($langs, $objproduct = 0, $type = -1)
 	{
 		if ($type == 0 || $type == -1)
 		{
@@ -179,7 +180,7 @@ class mod_codeproduct_elephant extends ModeleProductCode
 	 * @param  	int		    $type       Produit ou service (0:product, 1:service)
 	 * @return 	string      			Value if OK, '' if module not configured, <0 if KO
 	 */
-	function getNextValue($objproduct = 0, $type = -1)
+	public function getNextValue($objproduct = 0, $type = -1)
 	{
 		global $db,$conf;
 
@@ -219,13 +220,13 @@ class mod_codeproduct_elephant extends ModeleProductCode
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *   Check if mask/numbering use prefix
 	 *
 	 *   @return	int			0 or 1
 	 */
-	function verif_prefixIsUsed()
+	public function verif_prefixIsUsed()
 	{
         // phpcs:enable
 		global $conf;
@@ -254,7 +255,7 @@ class mod_codeproduct_elephant extends ModeleProductCode
 	 * 								-4 ErrorPrefixRequired
 	 * 								-5 Other (see this->error)
 	 */
-	function verif($db, &$code, $product, $type)
+	public function verif($db, &$code, $product, $type)
 	{
 		global $conf;
 
@@ -296,16 +297,16 @@ class mod_codeproduct_elephant extends ModeleProductCode
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *		Renvoi si un code est pris ou non (par autre tiers)
+	 *  Renvoi si un code est pris ou non (par autre tiers)
 	 *
-	 *		@param	DoliDB		$db			Handler acces base
-	 *		@param	string		$code		Code a verifier
-	 *		@param	Product		$product		Objet product
-	 *		@return	int						0 if available, <0 if KO
+	 *  @param	DoliDB		$db			Handler acces base
+	 *  @param	string		$code		Code a verifier
+	 *  @param	Product		$product		Objet product
+	 *  @return	int						0 if available, <0 if KO
 	 */
-	function verif_dispo($db, $code, $product)
+	public function verif_dispo($db, $code, $product)
 	{
         // phpcs:enable
 		$sql = "SELECT ref FROM ".MAIN_DB_PREFIX."product";

@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2013	Laurent Destailleur		<eldy@users.sourceforge.net>
+/* Copyright (C) 2013-2019	Laurent Destailleur		<eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -67,6 +67,18 @@ else
 {
 	print img_picto('', 'warning').' '.$langs->trans("XDebugInstalled");
 	print ' '.$langs->trans("MoreInformation").' <a href="'.DOL_URL_ROOT.'/admin/system/xdebug.php'.'">XDebug admin page</a>';
+}
+print '<br>';
+
+// Module debugbar
+print '<br>';
+print '<strong>'.$langs->trans("DebugBar").'</strong>: ';
+$test=empty($conf->debugbar->enabled);
+if ($test) print img_picto('', 'tick.png').' '.$langs->trans("NotInstalled");
+else
+{
+    print img_picto('', 'warning').' '.$langs->trans("DebugBarModuleActivated");
+    //print ' '.$langs->trans("MoreInformation").' <a href="'.DOL_URL_ROOT.'/admin/system/xdebug.php'.'">XDebug admin page</a>';
 }
 print '<br>';
 

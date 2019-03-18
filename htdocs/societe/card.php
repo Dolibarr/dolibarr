@@ -146,7 +146,7 @@ if (empty($reshook))
 				$object->client = $object->client | $soc_origin->client;
 				$object->fournisseur = $object->fournisseur | $soc_origin->fournisseur;
 				$listofproperties=array(
-					'address', 'zip', 'town', 'state_id', 'country_id', 'phone', 'phone_pro', 'fax', 'email', 'skype', 'twitter', 'facebook', 'url', 'barcode',
+					'address', 'zip', 'town', 'state_id', 'country_id', 'phone', 'phone_pro', 'fax', 'email', 'skype', 'twitter', 'facebook', 'linkedin', 'url', 'barcode',
 					'idprof1', 'idprof2', 'idprof3', 'idprof4', 'idprof5', 'idprof6',
 					'tva_intra', 'effectif_id', 'forme_juridique', 'remise_percent', 'remise_supplier_percent', 'mode_reglement_supplier_id', 'cond_reglement_supplier_id', 'name_bis',
 					'stcomm_id', 'outstanding_limit', 'price_level', 'parent', 'default_lang', 'ref', 'ref_ext', 'import_key', 'fk_incoterms', 'fk_multicurrency',
@@ -251,7 +251,7 @@ if (empty($reshook))
 				// External modules should update their ones too
 				if (! $error)
 				{
-					$reshook = $hookmanager->executeHooks('replaceThirdparty', array(
+    $reshook = $hookmanager->executeHooks('replaceThirdparty', array(
 						'soc_origin' => $soc_origin->id,
 						'soc_dest' => $object->id
 					), $soc_dest, $action);
@@ -407,6 +407,7 @@ if (empty($reshook))
 	        $object->skype					= GETPOST('skype', 'alpha');
 	        $object->twitter				= GETPOST('twitter', 'alpha');
 	        $object->facebook				= GETPOST('facebook', 'alpha');
+            $object->linkedin				= GETPOST('linkedin', 'alpha');
 	        $object->phone					= GETPOST('phone', 'alpha');
 	        $object->fax					= GETPOST('fax', 'alpha');
 	        $object->email					= trim(GETPOST('email', 'custom', 0, FILTER_SANITIZE_EMAIL));
@@ -687,7 +688,7 @@ if (empty($reshook))
 				if (! $error && !empty($user->rights->categorie->lire))
 				{
 					// Customer categories association
-					$categories = GETPOST( 'custcats', 'array' );
+					$categories = GETPOST('custcats', 'array');
 					$result = $object->setCategories($categories, 'customer');
 					if ($result < 0)
 					{
@@ -970,6 +971,7 @@ else
         $object->skype				= GETPOST('skype', 'alpha');
         $object->twitter			= GETPOST('twitter', 'alpha');
         $object->facebook			= GETPOST('facebook', 'alpha');
+        $object->linkedin			= GETPOST('linkedin', 'alpha');
         $object->phone				= GETPOST('phone', 'alpha');
         $object->fax				= GETPOST('fax', 'alpha');
         $object->email				= GETPOST('email', 'custom', 0, FILTER_SANITIZE_EMAIL);
@@ -984,7 +986,7 @@ else
         $object->idprof6			= GETPOST('idprof6', 'alpha');
         $object->typent_id			= GETPOST('typent_id', 'int');
         $object->effectif_id		= GETPOST('effectif_id', 'int');
-        $object->civility_id		= GETPOST('civility_id', 'int');
+        $object->civility_id		= GETPOST('civility_id', 'alpha');
 
         $object->tva_assuj			= GETPOST('assujtva_value', 'int');
         $object->status				= GETPOST('status', 'int');
@@ -1304,13 +1306,21 @@ else
 				print '</td></tr>';
         	}
         	// Facebook
-        	if (! empty($conf->global->SOCIALNETWORKS_FACEBOOK))
-        	{
-	        	print '<tr><td>'.$form->editfieldkey('Facebook', 'facebook', '', $object, 0).'</td>';
-				print '<td colspan="3">';
-				print '<input type="text" name="facebook" class="minwidth100" maxlength="80" id="facebook" value="'.dol_escape_htmltag(GETPOSTISSET("facebook")?GETPOST("facebook", 'alpha'):$object->facebook).'">';
-				print '</td></tr>';
-        	}
+            if (! empty($conf->global->SOCIALNETWORKS_FACEBOOK))
+            {
+                print '<tr><td>'.$form->editfieldkey('Facebook', 'facebook', '', $object, 0).'</td>';
+                print '<td colspan="3">';
+                print '<input type="text" name="facebook" class="minwidth100" maxlength="80" id="facebook" value="'.dol_escape_htmltag(GETPOSTISSET("facebook")?GETPOST("facebook", 'alpha'):$object->facebook).'">';
+                print '</td></tr>';
+            }
+            // LinkedIn
+            if (! empty($conf->global->SOCIALNETWORKS_LINKEDIN))
+            {
+                print '<tr><td>'.$form->editfieldkey('LinkedIn', 'linkedin', '', $object, 0).'</td>';
+                print '<td colspan="3">';
+                print '<input type="text" name="linkedin" class="minwidth100" maxlength="80" id="linkedin" value="'.dol_escape_htmltag(GETPOSTISSET("linkedin")?GETPOST("linkedin", 'alpha'):$object->linkedin).'">';
+                print '</td></tr>';
+            }
         }
 
         // Phone / Fax
@@ -1591,6 +1601,7 @@ else
                 $object->skype					= GETPOST('skype', 'alpha');
                 $object->twitter				= GETPOST('twitter', 'alpha');
                 $object->facebook				= GETPOST('facebook', 'alpha');
+                $object->linkedin				= GETPOST('linkedin', 'alpha');
                 $object->phone					= GETPOST('phone', 'alpha');
                 $object->fax					= GETPOST('fax', 'alpha');
                 $object->email					= GETPOST('email', 'custom', 0, FILTER_SANITIZE_EMAIL);
@@ -1916,6 +1927,12 @@ else
 	        		print '<tr><td>'.$form->editfieldkey('Facebook', 'facebook', '', $object, 0).'</td>';
 	        		print '<td colspan="3"><input type="text" name="facebook" id="facebook" value="'.$object->facebook.'"></td></tr>';
 	        	}
+                // LinkedIn
+                if (! empty($conf->global->SOCIALNETWORKS_LINKEDIN))
+                {
+                    print '<tr><td>'.$form->editfieldkey('LinkedIn', 'linkedin', '', $object, 0).'</td>';
+                    print '<td colspan="3"><input type="text" name="linkedin" id="linkedin" value="'.$object->linkedin.'"></td></tr>';
+                }
 	        }
 
             // Phone / Fax
@@ -2160,7 +2177,7 @@ else
 
 	          dol_fiche_end();
 
-            print '<div align="center">';
+            print '<div class="center">';
             print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
             print ' &nbsp; &nbsp; ';
             print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
@@ -2506,7 +2523,7 @@ else
         	print '<tr><td>';
         	print '<table width="100%" class="nobordernopadding"><tr><td>';
         	print $langs->trans('IncotermLabel');
-        	print '<td><td align="right">';
+        	print '<td><td class="right">';
         	if ($user->rights->societe->creer) print '<a href="'.DOL_URL_ROOT.'/societe/card.php?socid='.$object->id.'&action=editincoterm">'.img_edit('', 1).'</a>';
         	else print '&nbsp;';
         	print '</td></tr></table>';
@@ -2545,7 +2562,7 @@ else
         	print '<table class="nobordernopadding" width="100%"><tr><td>';
         	print $langs->trans('ParentCompany');
         	print '</td>';
-        	if ($action != 'editparentcompany') print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editparentcompany&amp;socid='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</a></td>';
+        	if ($action != 'editparentcompany') print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editparentcompany&amp;socid='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</a></td>';
         	print '</tr></table>';
         	print '</td><td colspan="3">';
         	if ($action == 'editparentcompany')

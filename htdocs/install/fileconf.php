@@ -60,8 +60,8 @@ $useforcedwizard=false;
 $forcedfile="./install.forced.php";
 if ($conffile == "/etc/dolibarr/conf.php") $forcedfile="/etc/dolibarr/install.forced.php";	// Must be after inc.php
 if (@file_exists($forcedfile)) {
-	$useforcedwizard = true;
-	include_once $forcedfile;
+    $useforcedwizard = true;
+    include_once $forcedfile;
 }
 
 
@@ -78,7 +78,7 @@ pHeader($langs->trans("ConfigurationFile"), "step1", "set", "", (empty($force_do
 if (! is_writable($conffile))
 {
     print $langs->trans("ConfFileIsNotWritable", $conffiletoshow);
-	dolibarr_install_syslog("fileconf: config file is not writable", LOG_WARNING);
+    dolibarr_install_syslog("fileconf: config file is not writable", LOG_WARNING);
     dolibarr_install_syslog("- fileconf: end");
     pFooter(1, $setuplang, 'jscheckparam');
     exit;
@@ -509,7 +509,7 @@ if (! empty($force_install_message))
 				        $autofill = '';
 			        }
 				    // Do not autofill password if instance is a production instance
-			        if (!empty($_SERVER["SERVER_NAME"]) && !in_array($_SERVER["SERVER_NAME"],
+                    if (!empty($_SERVER["SERVER_NAME"]) && !in_array($_SERVER["SERVER_NAME"],
 					    array('127.0.0.1', 'localhost', 'localhostgit'))
 			        ) {
 				        $autofill = '';

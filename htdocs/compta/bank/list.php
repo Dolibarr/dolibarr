@@ -369,7 +369,7 @@ if (! empty($arrayfields['balance']['checked']))
     print '<td class="liste_titre"></td>';
 }
 // Action column
-print '<td class="liste_titre" align="middle">';
+print '<td class="liste_titre valignmiddle">';
 $searchpicto=$form->showFilterAndCheckAddButtons($massactionbutton?1:0, 'checkforselect', 1);
 print $searchpicto;
 print '</td>';
@@ -383,19 +383,19 @@ if (! empty($arrayfields['accountype']['checked']))       print_liste_field_titr
 if (! empty($arrayfields['b.number']['checked']))         print_liste_field_titre($arrayfields['b.number']['label'], $_SERVER["PHP_SELF"], 'b.number', '', $param, '', $sortfield, $sortorder);
 if (! empty($arrayfields['b.account_number']['checked'])) print_liste_field_titre($arrayfields['b.account_number']['label'], $_SERVER["PHP_SELF"], 'b.account_number', '', $param, '', $sortfield, $sortorder);
 if (! empty($arrayfields['b.fk_accountancy_journal']['checked'])) print_liste_field_titre($arrayfields['b.fk_accountancy_journal']['label'], $_SERVER["PHP_SELF"], 'b.fk_accountancy_journal', '', $param, '', $sortfield, $sortorder);
-if (! empty($arrayfields['b.currency_code']['checked']))  print_liste_field_titre($arrayfields['b.currency_code']['label'], $_SERVER["PHP_SELF"], 'b.currency_code', '', $param, 'align="center"', $sortfield, $sortorder);
-if (! empty($arrayfields['toreconcile']['checked']))      print_liste_field_titre($arrayfields['toreconcile']['label'], $_SERVER["PHP_SELF"], '', '', $param, 'align="center"', $sortfield, $sortorder);
+if (! empty($arrayfields['b.currency_code']['checked']))  print_liste_field_titre($arrayfields['b.currency_code']['label'], $_SERVER["PHP_SELF"], 'b.currency_code', '', $param, '', $sortfield, $sortorder, 'center ');
+if (! empty($arrayfields['toreconcile']['checked']))      print_liste_field_titre($arrayfields['toreconcile']['label'], $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'center ');
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 // Hook fields
 $parameters=array('arrayfields'=>$arrayfields,'param'=>$param,'sortfield'=>$sortfield,'sortorder'=>$sortorder);
 $reshook=$hookmanager->executeHooks('printFieldListTitle', $parameters);    // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
-if (! empty($arrayfields['b.datec']['checked']))          print_liste_field_titre($arrayfields['b.datec']['label'], $_SERVER["PHP_SELF"], "b.datec", "", $param, 'align="center" class="nowrap"', $sortfield, $sortorder);
-if (! empty($arrayfields['b.tms']['checked']))            print_liste_field_titre($arrayfields['b.tms']['label'], $_SERVER["PHP_SELF"], "b.tms", "", $param, 'align="center" class="nowrap"', $sortfield, $sortorder);
-if (! empty($arrayfields['b.clos']['checked']))           print_liste_field_titre($arrayfields['b.clos']['label'], $_SERVER["PHP_SELF"], 'b.clos', '', $param, 'align="center"', $sortfield, $sortorder);
-if (! empty($arrayfields['balance']['checked']))          print_liste_field_titre($arrayfields['balance']['label'], $_SERVER["PHP_SELF"], '', '', $param, 'class="right"', $sortfield, $sortorder);
-print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', 'align="center"', $sortfield, $sortorder, 'maxwidthsearch ');
+if (! empty($arrayfields['b.datec']['checked']))          print_liste_field_titre($arrayfields['b.datec']['label'], $_SERVER["PHP_SELF"], "b.datec", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
+if (! empty($arrayfields['b.tms']['checked']))            print_liste_field_titre($arrayfields['b.tms']['label'], $_SERVER["PHP_SELF"], "b.tms", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
+if (! empty($arrayfields['b.clos']['checked']))           print_liste_field_titre($arrayfields['b.clos']['label'], $_SERVER["PHP_SELF"], 'b.clos', '', $param, '', $sortfield, $sortorder, 'center ');
+if (! empty($arrayfields['balance']['checked']))          print_liste_field_titre($arrayfields['balance']['label'], $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'right ');
+print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
 print "</tr>\n";
 
 
@@ -492,7 +492,7 @@ foreach ($accounts as $key=>$type)
     // Currency
     if (! empty($arrayfields['b.currency_code']['checked']))
     {
-    	print '<td align="center">';
+    	print '<td class="center">';
    		print $obj->currency_code;
     	print '</td>';
     	if (! $i) $totalarray['nbfield']++;
@@ -501,7 +501,7 @@ foreach ($accounts as $key=>$type)
     // Transactions to reconcile
     if (! empty($arrayfields['toreconcile']['checked']))
     {
-        print '<td align="center">';
+        print '<td class="center">';
 		if ($obj->rappro)
 		{
 			$result=$obj->load_board($user, $obj->id);
@@ -526,7 +526,7 @@ foreach ($accounts as $key=>$type)
 	// Date creation
     if (! empty($arrayfields['b.datec']['checked']))
     {
-        print '<td align="center">';
+        print '<td class="center">';
         print dol_print_date($obj->date_creation, 'dayhour');
         print '</td>';
 	    if (! $i) $totalarray['nbfield']++;
@@ -534,7 +534,7 @@ foreach ($accounts as $key=>$type)
     // Date modification
     if (! empty($arrayfields['b.tms']['checked']))
     {
-        print '<td align="center">';
+        print '<td class="center">';
         print dol_print_date($obj->date_update, 'dayhour');
         print '</td>';
 	    if (! $i) $totalarray['nbfield']++;
@@ -543,7 +543,7 @@ foreach ($accounts as $key=>$type)
     // Status
     if (! empty($arrayfields['b.clos']['checked']))
     {
-		print '<td align="center">'.$obj->getLibStatut(5).'</td>';
+		print '<td class="center">'.$obj->getLibStatut(5).'</td>';
 	    if (! $i) $totalarray['nbfield']++;
     }
 
@@ -559,7 +559,7 @@ foreach ($accounts as $key=>$type)
     }
 
 	// Action column
-	print '<td class="nowrap" align="center">';
+	print '<td class="nowrap center">';
 	if ($massactionbutton || $massaction)   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 	{
 	    $selected=0;

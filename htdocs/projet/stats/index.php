@@ -108,7 +108,7 @@ if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 		unset($data1);
 
 		if ($nocolor)
-			$px->SetDataColor(array (
+$px->SetDataColor(array (
 					array (
 							220,
 							220,
@@ -126,7 +126,7 @@ if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 			$px->SetShading(3);
 			$px->SetHorizTickIncrement(1);
 			$px->SetCssPrefix("cssboxes");
-			$px->SetType(array (
+$px->SetType(array (
 					'pie'
 			));
 			$px->SetTitle($langs->trans('OpportunitiesStatusForProjects'));
@@ -297,7 +297,7 @@ if (! in_array($nowyear, $arrayyears)) $arrayyears[$nowyear]=$nowyear;
 arsort($arrayyears);
 print $form->selectarray('year', $arrayyears, $year, 0);
 print '</td></tr>';
-print '<tr><td align="center" colspan="2"><input type="submit" name="submit" class="button" value="'.$langs->trans("Refresh").'"></td></tr>';
+print '<tr><td class="center" colspan="2"><input type="submit" name="submit" class="button" value="'.$langs->trans("Refresh").'"></td></tr>';
 print '</table>';
 print '</form>';
 print '<br><br>';
@@ -305,13 +305,13 @@ print '<br><br>';
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre" height="24">';
-print '<td align="center">'.$langs->trans("Year").'</td>';
-print '<td align="right">'.$langs->trans("NbOfProjects").'</td>';
+print '<td class="center">'.$langs->trans("Year").'</td>';
+print '<td class="right">'.$langs->trans("NbOfProjects").'</td>';
 if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 {
-	print '<td align="right">'.$langs->trans("OpportunityAmountShort").'</td>';
-	print '<td align="right">'.$langs->trans("OpportunityAmountAverageShort").'</td>';
-	print '<td align="right">'.$langs->trans("OpportunityAmountWeigthedShort").'</td>';
+	print '<td class="right">'.$langs->trans("OpportunityAmountShort").'</td>';
+	print '<td class="right">'.$langs->trans("OpportunityAmountAverageShort").'</td>';
+	print '<td class="right">'.$langs->trans("OpportunityAmountWeigthedShort").'</td>';
 }
 print '</tr>';
 
@@ -324,25 +324,25 @@ foreach ($data_all_year as $val)
 		$oldyear--;
 
 		print '<tr class="oddeven" height="24">';
-		print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$oldyear.'&amp;mode='.$mode.($socid>0?'&socid='.$socid:'').($userid>0?'&userid='.$userid:'').'">'.$oldyear.'</a></td>';
+		print '<td class="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$oldyear.'&amp;mode='.$mode.($socid>0?'&socid='.$socid:'').($userid>0?'&userid='.$userid:'').'">'.$oldyear.'</a></td>';
 		if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 		{
-			print '<td align="right">0</td>';
-			print '<td align="right">0</td>';
-			print '<td align="right">0</td>';
+			print '<td class="right">0</td>';
+			print '<td class="right">0</td>';
+			print '<td class="right">0</td>';
 		}
-		print '<td align="right">0</td>';
+		print '<td class="right">0</td>';
 		print '</tr>';
 	}
 
 	print '<tr class="oddeven" height="24">';
-	print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&amp;mode='.$mode.($socid>0?'&socid='.$socid:'').($userid>0?'&userid='.$userid:'').'">'.$year.'</a></td>';
-	print '<td align="right">'.$val['nb'].'</td>';
+	print '<td class="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&amp;mode='.$mode.($socid>0?'&socid='.$socid:'').($userid>0?'&userid='.$userid:'').'">'.$year.'</a></td>';
+	print '<td class="right">'.$val['nb'].'</td>';
 	if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 	{
-		print '<td align="right">'.($val['total']?price(price2num($val['total'], 'MT'), 1):'0').'</td>';
-		print '<td align="right">'.($val['avg']?price(price2num($val['avg'], 'MT'), 1):'0').'</td>';
-		print '<td align="right">'.($val['weighted']?price(price2num($val['weighted'], 'MT'), 1):'0').'</td>';
+		print '<td class="right">'.($val['total']?price(price2num($val['total'], 'MT'), 1):'0').'</td>';
+		print '<td class="right">'.($val['avg']?price(price2num($val['avg'], 'MT'), 1):'0').'</td>';
+		print '<td class="right">'.($val['weighted']?price(price2num($val['weighted'], 'MT'), 1):'0').'</td>';
 	}
 	print '</tr>';
 	$oldyear=$year;
@@ -353,7 +353,7 @@ print '</div>';
 
 print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
-$stringtoshow.= '<table class="border" width="100%"><tr class="pair nohover"><td align="center">';
+$stringtoshow.= '<table class="border" width="100%"><tr class="pair nohover"><td class="center">';
 if ($mesg) { print $mesg; }
 else {
 	$stringtoshow.= $px1->show();

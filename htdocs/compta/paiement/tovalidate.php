@@ -108,7 +108,7 @@ if ($resql)
     print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "p.rowid", "", "", 'width="60"', $sortfield, $sortorder);
     print_liste_field_titre("Date", $_SERVER["PHP_SELF"], "dp", "", "", 'width="80" align="center"', $sortfield, $sortorder);
     print_liste_field_titre("Type", $_SERVER["PHP_SELF"], "c.libelle", "", "", "", $sortfield, $sortorder);
-    print_liste_field_titre("AmountTTC", $_SERVER["PHP_SELF"], "c.libelle", "", "", 'align="right"', $sortfield, $sortorder);
+    print_liste_field_titre("AmountTTC", $_SERVER["PHP_SELF"], "c.libelle", "", "", 'class="right"', $sortfield, $sortorder);
     print_liste_field_titre('');
     print "</tr>\n";
 
@@ -120,7 +120,7 @@ if ($resql)
         print '<td><a href="'.DOL_URL_ROOT.'/compta/paiement/card.php?id='.$objp->rowid.'">'.img_object($langs->trans("ShowPayment"), "payment").' '.$objp->rowid.'</a></td>';
         print '<td width="80" align="center">'.dol_print_date($db->jdate($objp->dp), 'day')."</td>\n";
         print "<td>$objp->paiement_type $objp->num_paiement</td>\n";
-        print '<td align="right">'.price($objp->amount).'</td>';
+        print '<td class="right">'.price($objp->amount).'</td>';
         print '<td align="center">';
 
         if ($objp->statut == 0)

@@ -157,13 +157,13 @@ $vatsup=$langs->transcountry($local==1?"LT1":"LT2", $mysoc->country_code);
 // IRPF that the customer has retained me
 if($calc ==0 || $calc == 2)
 {
-	print "<table class=\"noborder\" width=\"100%\">";
-	print "<tr class=\"liste_titre\">";
-	print '<td class="left">'.$langs->trans("Num")."</td>";
-	print '<td class="left">'.$langs->trans("Customer")."</td>";
-	print "<td>".$langs->transcountry("ProfId1", $mysoc->country_code)."</td>";
-	print "<td align=\"right\">".$langs->trans("TotalHT")."</td>";
-	print "<td align=\"right\">".$vatcust."</td>";
+	print '<table class="noborder" width="100%">';
+	print '<tr class="liste_titre">';
+	print '<td class="left">'.$langs->trans("Num").'</td>';
+	print '<td class="left">'.$langs->trans("Customer").'</td>';
+	print '<td>'.$langs->transcountry("ProfId1", $mysoc->country_code).'</td>';
+	print '<td class="right">'.$langs->trans("TotalHT").'</td>';
+	print '<td class="right">'.$vatcust.'</td>';
 	print "</tr>\n";
 
 	$coll_list = tax_by_thirdparty('localtax'.$local, $db, 0, $date_start, $date_end, $modetax, 'sell');
@@ -208,9 +208,9 @@ if($calc ==0 || $calc == 2)
 				print '<td class="nowrap">'.$company_static->getNomUrl(1).'</td>';
 				$find = array(' ','.');
 				$replace = array('','');
-				print '<td class="nowrap">'.$intra."</td>";
-				print "<td class=\"nowrap\" align=\"right\">".price($coll->amount)."</td>";
-				print "<td class=\"nowrap\" align=\"right\">".price($local==1?$coll->localtax1:$coll->localtax2)."</td>";
+				print '<td class="nowrap">'.$intra.'</td>';
+				print '<td class="nowrap right">'.price($coll->amount).'</td>';
+				print '<td class="nowrap right">'.price($local==1?$coll->localtax1:$coll->localtax2).'</td>';
 	            $totalamount = $totalamount + $coll->amount;
 				$total = $total + ($local==1?$coll->localtax1:$coll->localtax2);
 				print "</tr>\n";
@@ -219,9 +219,9 @@ if($calc ==0 || $calc == 2)
 		}
 	    $x_coll_sum = $total;
 
-		print '<tr class="liste_total"><td align="right" colspan="3">'.$langs->trans("Total").':</td>';
-	    print '<td class="nowrap" align="right">'.price($totalamount).'</td>';
-		print '<td class="nowrap" align="right">'.price($total).'</td>';
+		print '<tr class="liste_total"><td class="right" colspan="3">'.$langs->trans("Total").':</td>';
+	    print '<td class="nowrap right">'.price($totalamount).'</td>';
+		print '<td class="nowrap right">'.price($total).'</td>';
 		print '</tr>';
 	}
 	else
@@ -238,13 +238,13 @@ if($calc ==0 || $calc == 2)
 
 // IRPF I retained my supplier
 if($calc ==0 || $calc == 1){
-	print "<table class=\"noborder\" width=\"100%\">";
-	print "<tr class=\"liste_titre\">";
+	print '<table class="noborder" width="100%">';
+	print '<tr class="liste_titre">';
 	print '<td class="left">'.$langs->trans("Num")."</td>";
 	print '<td class="left">'.$langs->trans("Supplier")."</td>";
-	print "<td>".$langs->transcountry("ProfId1", $mysoc->country_code)."</td>";
-	print "<td align=\"right\">".$langs->trans("TotalHT")."</td>";
-	print "<td align=\"right\">".$vatsup."</td>";
+	print '<td>'.$langs->transcountry("ProfId1", $mysoc->country_code).'</td>';
+	print '<td class="right">'.$langs->trans("TotalHT").'</td>';
+	print '<td class="right">'.$vatsup.'</td>';
 	print "</tr>\n";
 
 	$company_static=new Societe($db);
@@ -283,8 +283,8 @@ if($calc ==0 || $calc == 1){
 				$find = array(' ','.');
 				$replace = array('','');
 				print '<td class="nowrap">'.$intra."</td>";
-				print "<td class=\"nowrap\" align=\"right\">".price($coll->amount)."</td>";
-				print "<td class=\"nowrap\" align=\"right\">".price($local==1?$coll->localtax1:$coll->localtax2)."</td>";
+				print '<td class="nowrap right">'.price($coll->amount).'</td>';
+				print '<td class="nowrap right">'.price($local==1?$coll->localtax1:$coll->localtax2).'</td>';
 	            $totalamount = $totalamount + $coll->amount;
 				$total = $total + ($local==1?$coll->localtax1:$coll->localtax2);
 				print "</tr>\n";
@@ -293,9 +293,9 @@ if($calc ==0 || $calc == 1){
 		}
 	    $x_paye_sum = $total;
 
-		print '<tr class="liste_total"><td align="right" colspan="3">'.$langs->trans("Total").':</td>';
-	    print '<td class="nowrap" align="right">'.price($totalamount).'</td>';
-		print '<td class="nowrap" align="right">'.price($total).'</td>';
+		print '<tr class="liste_total"><td class="right" colspan="3">'.$langs->trans("Total").':</td>';
+	    print '<td class="nowrap right">'.price($totalamount).'</td>';
+		print '<td class="nowrap right">'.price($total).'</td>';
 		print '</tr>';
 
 		print '</table>';
@@ -319,7 +319,7 @@ if($calc ==0){
 	$diff = $x_coll_sum - $x_paye_sum ;
 	print '<tr class="liste_total">';
 	print '<td class="liste_total" colspan="4">'.$langs->trans("TotalToPay").($q?', '.$langs->trans("Quadri").' '.$q:'').'</td>';
-	print '<td class="liste_total nowrap" align="right"><b>'.price(price2num($diff, 'MT'))."</b></td>\n";
+	print '<td class="liste_total nowrap right"><b>'.price(price2num($diff, 'MT'))."</b></td>\n";
 	print "</tr>\n";
 }
 print '</table>';

@@ -165,7 +165,7 @@ if (empty($reshook))
 			if ($object->id > 0) {
 				if (!empty($conf->global->PROPAL_CLONE_DATE_DELIVERY)) {
 					//Get difference between old and new delivery date and change lines according to difference
-					$date_delivery = dol_mktime(12, 0, 0,
+    $date_delivery = dol_mktime(12, 0, 0,
 						GETPOST('date_deliverymonth', 'int'),
 						GETPOST('date_deliveryday', 'int'),
 						GETPOST('date_deliveryyear', 'int')
@@ -173,7 +173,7 @@ if (empty($reshook))
 					if (!empty($object->date_livraison) && !empty($date_delivery))
 					{
 						//Attempt to get the date without possible hour rounding errors
-						$old_date_delivery = dol_mktime(12, 0, 0,
+    $old_date_delivery = dol_mktime(12, 0, 0,
 							dol_print_date($object->date_livraison, '%m'),
 							dol_print_date($object->date_livraison, '%d'),
 							dol_print_date($object->date_livraison, '%Y')
@@ -724,7 +724,7 @@ if (empty($reshook))
 	        {
 	            $lineId = intval($lineId);
 	            $originLine = new $lineClassName($db);
-	            if(intval($fromElementid) > 0 && $originLine->fetch( $lineId ) > 0)
+	            if(intval($fromElementid) > 0 && $originLine->fetch($lineId) > 0)
 	            {
 	                $originLine->fetch_optionals($lineId);
 	                $desc = $originLine->desc;
@@ -790,7 +790,7 @@ if (empty($reshook))
 	// Go back to draft
 	if ($action == 'modif' && $usercancreate)
 	{
-		$object->set_draft($user);
+		$object->setDraft($user);
 
 		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
 		{
@@ -843,7 +843,7 @@ if (empty($reshook))
 		// Extrafields
 		$extrafieldsline = new ExtraFields($db);
 		$extralabelsline = $extrafieldsline->fetch_name_optionals_label($object->table_element_line);
-		$array_options = $extrafieldsline->getOptionalsFromPost($extralabelsline, $predef);
+		$array_options = $extrafieldsline->getOptionalsFromPost($object->table_element_line, $predef);
 		// Unset extrafield
 		if (is_array($extralabelsline)) {
 			// Get extra fields
@@ -1211,7 +1211,7 @@ if (empty($reshook))
 		// Extrafields
 		$extrafieldsline = new ExtraFields($db);
 		$extralabelsline = $extrafieldsline->fetch_name_optionals_label($object->table_element_line);
-		$array_options = $extrafieldsline->getOptionalsFromPost($extralabelsline);
+		$array_options = $extrafieldsline->getOptionalsFromPost($object->table_element_line);
 		// Unset extrafield
 		if (is_array($extralabelsline)) {
 			// Get extra fields
@@ -1590,7 +1590,7 @@ if ($action == 'create')
 			});
 			</script>';
 		}
-		print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&client=3&fournisseur=0&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'">'.$langs->trans("AddThirdParty").'</a>';
+		print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&client=3&fournisseur=0&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'">'.$langs->trans("AddThirdParty").' <span class="fa fa-plus-circle valignmiddle"></span></a>';
 		print '</td>';
 	}
 	print '</tr>' . "\n";
@@ -1677,7 +1677,7 @@ if ($action == 'create')
 		print '<tr>';
 		print '<td>' . $langs->trans("Project") . '</td><td>';
 		$numprojet = $formproject->select_projects(($soc->id > 0 ? $soc->id : -1), $projectid, 'projectid', 0, 0, 1, 1);
-		print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/card.php?socid=' . $soc->id . '&action=create&status=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create&socid='.$soc->id).'">' . $langs->trans("AddProject") . '</a>';
+		print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/card.php?socid=' . $soc->id . '&action=create&status=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create&socid='.$soc->id).'">' . $langs->trans("AddProject") . ' <span class="fa fa-plus-circle valignmiddle"></span></a>';
 		print '</td>';
 		print '</tr>';
 	}
@@ -1764,8 +1764,8 @@ if ($action == 'create')
 			$newclassname = 'Intervention';
 
 		print '<tr><td>' . $langs->trans($newclassname) . '</td><td>' . $objectsrc->getNomUrl(1) . '</td></tr>';
-		print '<tr><td>' . $langs->trans('TotalHT') . '</td><td>' . price($objectsrc->total_ht, 0, $langs, 1, -1, -1, $conf->currency) . '</td></tr>';
-		print '<tr><td>' . $langs->trans('TotalVAT') . '</td><td>' . price($objectsrc->total_tva, 0, $langs, 1, -1, -1, $conf->currency) . "</td></tr>";
+		print '<tr><td>' . $langs->trans('AmountHT') . '</td><td>' . price($objectsrc->total_ht, 0, $langs, 1, -1, -1, $conf->currency) . '</td></tr>';
+		print '<tr><td>' . $langs->trans('AmountVAT') . '</td><td>' . price($objectsrc->total_tva, 0, $langs, 1, -1, -1, $conf->currency) . "</td></tr>";
 		if ($mysoc->localtax1_assuj == "1" || $objectsrc->total_localtax1 != 0 ) 		// Localtax1
 		{
 			print '<tr><td>' . $langs->transcountry("AmountLT1", $mysoc->country_code) . '</td><td>' . price($objectsrc->total_localtax1, 0, $langs, 1, -1, -1, $conf->currency) . "</td></tr>";
@@ -1775,7 +1775,14 @@ if ($action == 'create')
 		{
 			print '<tr><td>' . $langs->transcountry("AmountLT2", $mysoc->country_code) . '</td><td>' . price($objectsrc->total_localtax2, 0, $langs, 1, -1, -1, $conf->currency) . "</td></tr>";
 		}
-		print '<tr><td>' . $langs->trans('TotalTTC') . '</td><td>' . price($objectsrc->total_ttc, 0, $langs, 1, -1, -1, $conf->currency) . "</td></tr>";
+		print '<tr><td>' . $langs->trans('AmountTTC') . '</td><td>' . price($objectsrc->total_ttc, 0, $langs, 1, -1, -1, $conf->currency) . "</td></tr>";
+
+		if (!empty($conf->multicurrency->enabled))
+		{
+		    print '<tr><td>' . $langs->trans('MulticurrencyAmountHT') . '</td><td>' . price($objectsrc->multicurrency_total_ht) . '</td></tr>';
+		    print '<tr><td>' . $langs->trans('MulticurrencyAmountVAT') . '</td><td>' . price($objectsrc->multicurrency_total_tva) . "</td></tr>";
+		    print '<tr><td>' . $langs->trans('MulticurrencyAmountTTC') . '</td><td>' . price($objectsrc->multicurrency_total_ttc) . "</td></tr>";
+		}
 	}
 
 	print "</table>\n";
@@ -1880,7 +1887,7 @@ if ($action == 'create')
 			$formquestion[] = array('type' => 'date','name' => 'date_delivery','label' => $langs->trans("DeliveryDate"),'value' => $object->date_livraison);
 		}
 		// Paiement incomplet. On demande si motif = escompte ou autre
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('ClonePropal'), $langs->trans('ConfirmClonePropal', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('ToClone'), $langs->trans('ConfirmClonePropal', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
 	}
 
 	if ($action == 'statut')
@@ -1895,7 +1902,7 @@ if ($action == 'create')
 		{
 			require_once DOL_DOCUMENT_ROOT . '/core/class/notify.class.php';
 			$notify = new Notify($db);
-			$formquestion = array_merge($formquestion, array(
+$formquestion = array_merge($formquestion, array(
 				array('type' => 'onecolumn', 'value' => $notify->confirmMessage('PROPAL_CLOSE_SIGNED', $object->socid, $object)),
 			));
 		}

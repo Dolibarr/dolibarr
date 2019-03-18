@@ -70,7 +70,7 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 	/**
 	 * 	Constructor
 	 */
-	function __construct()
+	public function __construct()
 	{
 		$this->nom = "Monkey";
 		$this->name = "Monkey";
@@ -84,12 +84,13 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 	}
 
 
-	/**		Return description of module
+	/**
+     *  Return description of module
 	 *
-	 * 		@param	Translate	$langs	Object langs
-	 * 		@return string      		Description of module
+	 *  @param	Translate	$langs	Object langs
+	 *  @return string      		Description of module
 	 */
-	function info($langs)
+	public function info($langs)
 	{
 		return $langs->trans("MonkeyNumRefModelDesc", $this->prefixcustomer, $this->prefixsupplier);
 	}
@@ -103,7 +104,7 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 	 * @param	int			$type		Type of third party (1:customer, 2:supplier, -1:autodetect)
 	 * @return	string					Return string example
 	 */
-	function getExample($langs, $objsoc = 0, $type = -1)
+	public function getExample($langs, $objsoc = 0, $type = -1)
 	{
 		return $this->prefixcustomer.'0901-00001<br>'.$this->prefixsupplier.'0901-00001';
 	}
@@ -112,11 +113,11 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 	/**
 	 *  Return next value
 	 *
-	 * 	@param	Societe		$objsoc     Object third party
-	 *	@param  int			$type       Client ou fournisseur (1:client, 2:fournisseur)
+	 *  @param	Societe		$objsoc     Object third party
+	 *  @param  int			$type       Client ou fournisseur (1:client, 2:fournisseur)
 	 *  @return string      			Value if OK, '' if module not configured, <0 if KO
 	 */
-	function getNextValue($objsoc = 0, $type = -1)
+	public function getNextValue($objsoc = 0, $type = -1)
 	{
 		global $db, $conf, $mc;
 
@@ -177,7 +178,7 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 	 * 								-3 ErrorCustomerCodeAlreadyUsed
 	 * 								-4 ErrorPrefixRequired
 	 */
-	function verif($db, &$code, $soc, $type)
+	public function verif($db, &$code, $soc, $type)
 	{
 		global $conf;
 
@@ -224,7 +225,7 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *		Renvoi si un code est pris ou non (par autre tiers)
 	 *
@@ -234,7 +235,7 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 	 *		@param  int		  	$type   	0 = customer/prospect , 1 = supplier
 	 *		@return	int						0 if available, <0 if KO
 	 */
-	function verif_dispo($db, $code, $soc, $type = 0)
+	public function verif_dispo($db, $code, $soc, $type = 0)
 	{
         // phpcs:enable
 		global $conf, $mc;
@@ -265,14 +266,14 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *	Renvoi si un code respecte la syntaxe
+	 *  Renvoi si un code respecte la syntaxe
 	 *
-	 *	@param	string		$code		Code a verifier
-	 *	@return	int						0 si OK, <0 si KO
+	 *  @param  string      $code       Code a verifier
+	 *  @return int                     0 si OK, <0 si KO
 	 */
-	function verif_syntax($code)
+	public function verif_syntax($code)
 	{
         // phpcs:enable
 		$res = 0;

@@ -45,24 +45,24 @@ class HookManager
 	public $errors = array();
 
     // Context hookmanager was created for ('thirdpartycard', 'thirdpartydao', ...)
-    var $contextarray=array();
+    public $contextarray=array();
 
 	// Array with instantiated classes
-	var $hooks=array();
+    public $hooks=array();
 
 	// Array result
-	var $resArray=array();
+    public $resArray=array();
 	// Printable result
-	var $resPrint='';
+    public $resPrint='';
 	// Nb of qualified hook ran
-	var $resNbOfHooks=0;
+    public $resNbOfHooks=0;
 
 	/**
 	 * Constructor
 	 *
 	 * @param	DoliDB		$db		Database handler
 	 */
-	function __construct($db)
+	public function __construct($db)
 	{
 		$this->db = $db;
 	}
@@ -79,7 +79,7 @@ class HookManager
 	 *	@param	string[]	$arraycontext	    Array list of searched hooks tab/features. For example: 'thirdpartycard' (for hook methods into page card thirdparty), 'thirdpartydao' (for hook methods into Societe), ...
 	 *	@return	int							    Always 1
 	 */
-	function initHooks($arraycontext)
+	public function initHooks($arraycontext)
 	{
 		global $conf;
 
@@ -125,18 +125,18 @@ class HookManager
 	}
 
     /**
-     * 		Execute hooks (if they were initialized) for the given method
+     *  Execute hooks (if they were initialized) for the given method
      *
-     * 		@param		string	$method			Name of method hooked ('doActions', 'printSearchForm', 'showInputField', ...)
-     * 	    @param		array	$parameters		Array of parameters
-     * 		@param		Object	$object			Object to use hooks on
-     * 	    @param		string	$action			Action code on calling page ('create', 'edit', 'view', 'add', 'update', 'delete'...)
-     * 		@return		mixed					For 'addreplace' hooks (doActions,formObjectOptions,pdf_xxx,...):  					Return 0 if we want to keep standard actions, >0 if we want to stop/replace standard actions, <0 if KO. Things to print are returned into ->resprints and set into ->resPrint. Things to return are returned into ->results by hook and set into ->resArray for caller.
-     * 											For 'output' hooks (printLeftBlock, formAddObjectLine, formBuilddocOptions, ...):	Return 0, <0 if KO. Things to print are returned into ->resprints and set into ->resPrint. Things to return are returned into ->results by hook and set into ->resArray for caller.
-     *                                          All types can also return some values into an array ->results that will be finaly merged into this->resArray for caller.
-     * 											$this->error or this->errors are also defined by class called by this function if error.
+     *  @param		string	$method			Name of method hooked ('doActions', 'printSearchForm', 'showInputField', ...)
+     *  @param		array	$parameters		Array of parameters
+     *  @param		Object	$object			Object to use hooks on
+     *  @param		string	$action			Action code on calling page ('create', 'edit', 'view', 'add', 'update', 'delete'...)
+     *  @return		mixed					For 'addreplace' hooks (doActions,formObjectOptions,pdf_xxx,...):  					Return 0 if we want to keep standard actions, >0 if we want to stop/replace standard actions, <0 if KO. Things to print are returned into ->resprints and set into ->resPrint. Things to return are returned into ->results by hook and set into ->resArray for caller.
+     *                                      For 'output' hooks (printLeftBlock, formAddObjectLine, formBuilddocOptions, ...):	Return 0, <0 if KO. Things to print are returned into ->resprints and set into ->resPrint. Things to return are returned into ->results by hook and set into ->resArray for caller.
+     *                                      All types can also return some values into an array ->results that will be finaly merged into this->resArray for caller.
+     *                                      $this->error or this->errors are also defined by class called by this function if error.
      */
-	function executeHooks($method, $parameters = array(), &$object = '', &$action = '')
+	public function executeHooks($method, $parameters = array(), &$object = '', &$action = '')
 	{
         if (! is_array($this->hooks) || empty($this->hooks)) return '';
 
@@ -145,7 +145,7 @@ class HookManager
 
         // Define type of hook ('output' or 'addreplace'. 'returnvalue' is deprecated because a 'addreplace' hook can also return resPrint and resArray).
         $hooktype='output';
-		if (in_array(
+        if (in_array(
 			$method,
 			array(
 				'addCalendarChoice',
@@ -204,10 +204,9 @@ class HookManager
 				)
 			)) $hooktype='addreplace';
 
-        if ($method == 'insertExtraFields')
-        {
-        	$hooktype='returnvalue';	// @deprecated. TODO Remove all code with "executeHooks('insertExtraFields'" as soon as there is a trigger available.
-        	dol_syslog("Warning: The hook 'insertExtraFields' is deprecated and must not be used. Use instead trigger on CRUD event (ask it to dev team if not implemented)", LOG_WARNING);
+        if ($method == 'insertExtraFields') {
+            $hooktype='returnvalue';	// @deprecated. TODO Remove all code with "executeHooks('insertExtraFields'" as soon as there is a trigger available.
+            dol_syslog("Warning: The hook 'insertExtraFields' is deprecated and must not be used. Use instead trigger on CRUD event (ask it to dev team if not implemented)", LOG_WARNING);
         }
 
         // Init return properties

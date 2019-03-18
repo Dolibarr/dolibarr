@@ -62,7 +62,7 @@ class mod_task_simple extends ModeleNumRefTask
      *
      *  @return     string      Text with description
      */
-    function info()
+    public function info()
     {
     	global $langs;
       	return $langs->trans("SimpleNumRefModelDesc", $this->prefix);
@@ -74,7 +74,7 @@ class mod_task_simple extends ModeleNumRefTask
      *
      * 	@return     string      Example
      */
-    function getExample()
+    public function getExample()
     {
         return $this->prefix."0501-0001";
     }
@@ -85,7 +85,7 @@ class mod_task_simple extends ModeleNumRefTask
      *
      *   @return     boolean     false si conflit, true si ok
      */
-    function canBeActivated()
+    public function canBeActivated()
     {
     	global $conf,$langs,$db;
 
@@ -123,7 +123,7 @@ class mod_task_simple extends ModeleNumRefTask
 	*  @param   Task	$object		Object Task
 	*  @return	string				Value if OK, 0 if KO
 	*/
-    function getNextValue($objsoc, $object)
+    public function getNextValue($objsoc, $object)
     {
 		global $db,$conf;
 
@@ -159,7 +159,7 @@ class mod_task_simple extends ModeleNumRefTask
     }
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *  Return next reference not yet used as a reference
      *
@@ -167,7 +167,7 @@ class mod_task_simple extends ModeleNumRefTask
      *  @param  Task	$object     Object task
      *  @return string              Next not used reference
      */
-    function task_get_num($objsoc = 0, $object = '')
+    public function task_get_num($objsoc = 0, $object = '')
     {
         return $this->getNextValue($objsoc, $object);
     }

@@ -8,6 +8,7 @@
  * Copyright (C) 2014      Ion Agorria          <ion@agorria.com>
  * Copyright (C) 2015      Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2016      Ferran Marcet		<fmarcet@2byte.es>
+ * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,7 +37,7 @@ require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_expression.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
-
+if(!empty($conf->barcode->enabled)) dol_include_once('/core/class/html.formbarcode.class.php');
 // Load translation files required by the page
 $langs->loadLangs(array('products', 'suppliers', 'bills', 'margins'));
 
@@ -157,6 +158,8 @@ if (empty($reshook))
 		$delivery_time_days = GETPOST('delivery_time_days', 'int') ? GETPOST('delivery_time_days', 'int') : '';
 		$supplier_reputation = GETPOST('supplier_reputation');
 		$supplier_description = GETPOST('supplier_description', 'alpha');
+        $barcode=GETPOST('barcode', 'alpha');
+        $fk_barcode_type=GETPOST('fk_barcode_type', 'int');
 
 		if ($tva_tx == '')
 		{
@@ -257,9 +260,9 @@ if (empty($reshook))
                 	$multicurrency_price = price2num(GETPOST("multicurrency_price", 'alpha'));
                 	$multicurrency_code = GETPOST("multicurrency_code", 'alpha');
 
-                    $ret = $object->update_buyprice($quantity, $newprice, $user, $_POST["price_base_type"], $supplier, $_POST["oselDispo"], $ref_fourn, $tva_tx, $_POST["charges"], $remise_percent, 0, $npr, $delivery_time_days, $supplier_reputation, array(), '', $multicurrency_price, $_POST["multicurrency_price_base_type"], $multicurrency_tx, $multicurrency_code, $supplier_description);
+                    $ret = $object->update_buyprice($quantity, $newprice, $user, $_POST["price_base_type"], $supplier, $_POST["oselDispo"], $ref_fourn, $tva_tx, $_POST["charges"], $remise_percent, 0, $npr, $delivery_time_days, $supplier_reputation, array(), '', $multicurrency_price, $_POST["multicurrency_price_base_type"], $multicurrency_tx, $multicurrency_code, $supplier_description, $barcode, $fk_barcode_type);
                 } else {
-                    $ret = $object->update_buyprice($quantity, $newprice, $user, $_POST["price_base_type"], $supplier, $_POST["oselDispo"], $ref_fourn, $tva_tx, $_POST["charges"], $remise_percent, 0, $npr, $delivery_time_days, $supplier_reputation, array(), '', 0, 'HT', 1, '', $supplier_description);
+                    $ret = $object->update_buyprice($quantity, $newprice, $user, $_POST["price_base_type"], $supplier, $_POST["oselDispo"], $ref_fourn, $tva_tx, $_POST["charges"], $remise_percent, 0, $npr, $delivery_time_days, $supplier_reputation, array(), '', 0, 'HT', 1, '', $supplier_description, $barcode, $fk_barcode_type);
                 }
 				if ($ret < 0)
 				{
@@ -665,7 +668,23 @@ SCRIPT;
 				print '<tr><td>'.$langs->trans("SupplierReputation").'</td><td>';
 				echo $form->selectarray('supplier_reputation', $object->reputations, $supplier_reputation?$supplier_reputation:$object->supplier_reputation);
 				print '</td></tr>';
+                if(!empty($conf->barcode->enabled)) {
 
+				// Option to define a transport cost on supplier price
+                    print '<tr>';
+                    print '<td>' . $langs->trans('BarcodeValue') . '</td>';
+                    print '<td><input class="flat" name="barcode"  value="'.($rowid ? $object->fourn_barcode : '').'"></td>';
+                    print '</tr>';
+                    $formbarcode = new FormBarCode($db);
+
+                    // Barcode type
+                    print '<tr>';
+                    print '<td>' . $langs->trans('BarcodeType') . '</td>';
+                    print '<td>';
+                    print $formbarcode->selectBarcodeType(($rowid ? $object->fourn_fk_barcode_type : ''), 'fk_barcode_type', 1);
+                    print '</td>';
+                    print '</tr>';
+                }
 				// Option to define a transport cost on supplier price
 				if ($conf->global->PRODUCT_CHARGES)
 				{
@@ -765,20 +784,25 @@ SCRIPT;
 				print_liste_field_titre("Suppliers", $_SERVER["PHP_SELF"], "s.nom", "", $param, "", $sortfield, $sortorder);
 				print_liste_field_titre("SupplierRef", $_SERVER["PHP_SELF"], "", "", $param, "", $sortfield, $sortorder);
 				if (!empty($conf->global->FOURN_PRODUCT_AVAILABILITY)) print_liste_field_titre("Availability", $_SERVER["PHP_SELF"], "pfp.fk_availability", "", $param, "", $sortfield, $sortorder);
-				print_liste_field_titre("QtyMin", $_SERVER["PHP_SELF"], "pfp.quantity", "", $param, 'align="right"', $sortfield, $sortorder);
-				print_liste_field_titre("VATRate", $_SERVER["PHP_SELF"], '', '', $param, 'align="right"', $sortfield, $sortorder);
-				print_liste_field_titre("PriceQtyMinHT", $_SERVER["PHP_SELF"], '', '', $param, 'align="right"', $sortfield, $sortorder);
+				print_liste_field_titre("QtyMin", $_SERVER["PHP_SELF"], "pfp.quantity", "", $param, '', $sortfield, $sortorder, 'right ');
+				print_liste_field_titre("VATRate", $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'right ');
+				print_liste_field_titre("PriceQtyMinHT", $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'right ');
                 if ($conf->multicurrency->enabled) {
-                    print_liste_field_titre("PriceQtyMinHTCurrency", $_SERVER["PHP_SELF"], '', '', $param, 'align="right"', $sortfield, $sortorder);
+                    print_liste_field_titre("PriceQtyMinHTCurrency", $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'right ');
                 }
-                print_liste_field_titre("UnitPriceHT", $_SERVER["PHP_SELF"], "pfp.unitprice", "", $param, 'align="right"', $sortfield, $sortorder);
+                print_liste_field_titre("UnitPriceHT", $_SERVER["PHP_SELF"], "pfp.unitprice", "", $param, '', $sortfield, $sortorder, 'right ');
                 if ($conf->multicurrency->enabled) {
-                    print_liste_field_titre("UnitPriceHTCurrency", $_SERVER["PHP_SELF"], "pfp.multicurrency_unitprice", "", $param, 'align="right"', $sortfield, $sortorder);
-                    print_liste_field_titre("Currency", $_SERVER["PHP_SELF"], "", "", $param, 'align="right"', $sortfield, $sortorder);
+                    print_liste_field_titre("UnitPriceHTCurrency", $_SERVER["PHP_SELF"], "pfp.multicurrency_unitprice", "", $param, '', $sortfield, $sortorder, 'right ');
+                    print_liste_field_titre("Currency", $_SERVER["PHP_SELF"], "", "", $param, '', $sortfield, $sortorder, 'right ');
                 }
-				print_liste_field_titre("DiscountQtyMin", $_SERVER["PHP_SELF"], '', '', $param, 'align="right"', $sortfield, $sortorder);
-				print_liste_field_titre("NbDaysToDelivery", $_SERVER["PHP_SELF"], "pfp.delivery_time_days", "", $param, 'align="right"', $sortfield, $sortorder);
-				print_liste_field_titre("ReputationForThisProduct", $_SERVER["PHP_SELF"], "pfp.supplier_reputation", "", $param, 'align="center"', $sortfield, $sortorder);
+				print_liste_field_titre("DiscountQtyMin", $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'right ');
+				print_liste_field_titre("NbDaysToDelivery", $_SERVER["PHP_SELF"], "pfp.delivery_time_days", "", $param, '', $sortfield, $sortorder, 'right ');
+				print_liste_field_titre("ReputationForThisProduct", $_SERVER["PHP_SELF"], "pfp.supplier_reputation", "", $param, '', $sortfield, $sortorder, 'center ');
+				if ($conf->barcode->enabled) {
+                    print_liste_field_titre("BarcodeValue", $_SERVER["PHP_SELF"], "pfp.barcode", "", $param, '', $sortfield, $sortorder, 'center ');
+                    print_liste_field_titre("BarcodeType", $_SERVER["PHP_SELF"], "pfp.fk_barcode_type", "", $param, '', $sortfield, $sortorder, 'center ');
+                }
+				print_liste_field_titre("DateModification", $_SERVER["PHP_SELF"], "pfp.tms", "", $param, '', $sortfield, $sortorder, 'right ');
 				print_liste_field_titre('');
 				print "</tr>\n";
 
@@ -798,11 +822,11 @@ SCRIPT;
 						// Supplier ref
 						if ($user->rights->produit->creer || $user->rights->service->creer) // change required right here
 						{
-							print '<td align="left">'.$productfourn->getNomUrl().'</td>';
+							print '<td class="left">'.$productfourn->getNomUrl().'</td>';
 						}
 						else
 						{
-							print '<td align="left">'.$productfourn->fourn_ref.'</td>';
+							print '<td class="left">'.$productfourn->fourn_ref.'</td>';
 						}
 
 						// Availability
@@ -814,61 +838,81 @@ SCRIPT;
 						}
 
 						// Quantity
-						print '<td align="right">';
+						print '<td class="right">';
 						print $productfourn->fourn_qty;
 						print '</td>';
 
 						// VAT rate
-						print '<td align="right">';
+						print '<td class="right">';
 						print vatrate($productfourn->fourn_tva_tx, true);
 						print '</td>';
 
 						// Price for the quantity
-						print '<td align="right">';
+						print '<td class="right">';
 						print $productfourn->fourn_price?price($productfourn->fourn_price):"";
 						print '</td>';
 
                         if ($conf->multicurrency->enabled) {
                             // Price for the quantity in currency
-                            print '<td align="right">';
+                            print '<td class="right">';
                             print $productfourn->fourn_multicurrency_price ? price($productfourn->fourn_multicurrency_price) : "";
                             print '</td>';
                         }
 
 						// Unit price
-						print '<td align="right">';
+						print '<td class="right">';
 						print price($productfourn->fourn_unitprice);
 						//print $objp->unitprice? price($objp->unitprice) : ($objp->quantity?price($objp->price/$objp->quantity):"&nbsp;");
 						print '</td>';
 
                         if ($conf->multicurrency->enabled) {
                             // Unit price in currency
-                            print '<td align="right">';
+                            print '<td class="right">';
                             print price($productfourn->fourn_multicurrency_unitprice);
                             print '</td>';
 
                             // Currency
-                            print '<td align="right">';
+                            print '<td class="right">';
                             print $productfourn->fourn_multicurrency_code ? currency_name($productfourn->fourn_multicurrency_code) : '';
                             print '</td>';
                         }
 
 						// Discount
-						print '<td align="right">';
+						print '<td class="right">';
 						print price2num($productfourn->fourn_remise_percent).'%';
 						print '</td>';
 
 						// Delivery delay
-						print '<td align="right">';
+						print '<td class="right">';
 						print $productfourn->delivery_time_days;
 						print '</td>';
 
 						// Reputation
-						print '<td align="center">';
+						print '<td class="center">';
 						if (!empty($productfourn->supplier_reputation) && !empty($object->reputations[$productfourn->supplier_reputation])) {
 							print $object->reputations[$productfourn->supplier_reputation];
 						}
 						print'</td>';
+
+						if ($conf->barcode->enabled) {
+                            // Barcode
+                            print '<td align="right">';
+                            print $productfourn->barcode;
+                            print '</td>';
+
+                            // Barcode type
+                            print '<td align="center">';
+
+                            $productfourn->barcode_type = !empty($productfourn->fk_barcode_type) ? $productfourn->fk_barcode_type:0;
+                            $productfourn->fetch_barcode();
+                            print $productfourn->barcode_type_label?$productfourn->barcode_type_label:($productfourn->barcode?'<div class="warning">'.$langs->trans("SetDefaultBarcodeType").'<div>':'');
+                            print '</td>';
+						}
+
+						// Date
+						print '<td align="right">';
+						print dol_print_date($productfourn->date_modification, "dayhour");
+						print '</td>';
 
 						if (is_object($hookmanager))
 						{

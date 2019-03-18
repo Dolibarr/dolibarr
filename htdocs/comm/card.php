@@ -7,8 +7,9 @@
  * Copyright (C) 2008      Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
  * Copyright (C) 2010-2014 Juanjo Menent               <jmenent@2byte.es>
  * Copyright (C) 2013      Alexandre Spangaro          <aspangaro@open-dsi.fr>
- * Copyright (C) 2015      Frederic France             <frederic.france@free.fr>
+ * Copyright (C) 2015-2019 Frédéric France             <frederic.france@netlogic.fr>
  * Copyright (C) 2015      Marcos García               <marcosgdf@gmail.com>
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
@@ -377,38 +378,43 @@ if ($object->id > 0)
 		print '</tr>';
 	}
 
-	// Relative discounts (Discounts-Drawbacks-Rebates)
-	print '<tr><td class="nowrap">';
-	print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
-	print $langs->trans("CustomerRelativeDiscountShort");
-	print '<td><td class="right">';
-	if ($user->rights->societe->creer && !$user->societe_id > 0)
-	{
-		print '<a href="'.DOL_URL_ROOT.'/comm/remise.php?id='.$object->id.'">'.img_edit($langs->trans("Modify")).'</a>';
-	}
-	print '</td></tr></table>';
-	print '</td><td>'.($object->remise_percent?'<a href="'.DOL_URL_ROOT.'/comm/remise.php?id='.$object->id.'">'.$object->remise_percent.'%</a>':'').'</td>';
-	print '</tr>';
+	$isCustomer = ($object->client == 1 || $object->client == 3);
 
-	// Absolute discounts (Discounts-Drawbacks-Rebates)
-	print '<tr><td class="nowrap">';
-	print '<table width="100%" class="nobordernopadding">';
-	print '<tr><td class="nowrap">';
-	print $langs->trans("CustomerAbsoluteDiscountShort");
-	print '<td><td class="right">';
-	if ($user->rights->societe->creer && !$user->societe_id > 0)
+	// Relative discounts (Discounts-Drawbacks-Rebates)
+	if ($isCustomer)
 	{
-		print '<a href="'.DOL_URL_ROOT.'/comm/remx.php?id='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?socid='.$object->id).'">'.img_edit($langs->trans("Modify")).'</a>';
+    	print '<tr><td class="nowrap">';
+    	print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
+    	print $langs->trans("CustomerRelativeDiscountShort");
+    	print '<td><td class="right">';
+    	if ($user->rights->societe->creer && !$user->societe_id > 0)
+    	{
+    		print '<a href="'.DOL_URL_ROOT.'/comm/remise.php?id='.$object->id.'">'.img_edit($langs->trans("Modify")).'</a>';
+    	}
+    	print '</td></tr></table>';
+    	print '</td><td>'.($object->remise_percent?'<a href="'.DOL_URL_ROOT.'/comm/remise.php?id='.$object->id.'">'.$object->remise_percent.'%</a>':'').'</td>';
+    	print '</tr>';
+
+    	// Absolute discounts (Discounts-Drawbacks-Rebates)
+    	print '<tr><td class="nowrap">';
+    	print '<table width="100%" class="nobordernopadding">';
+    	print '<tr><td class="nowrap">';
+    	print $langs->trans("CustomerAbsoluteDiscountShort");
+    	print '<td><td class="right">';
+    	if ($user->rights->societe->creer && !$user->societe_id > 0)
+    	{
+    		print '<a href="'.DOL_URL_ROOT.'/comm/remx.php?id='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?socid='.$object->id).'">'.img_edit($langs->trans("Modify")).'</a>';
+    	}
+    	print '</td></tr></table>';
+    	print '</td>';
+    	print '<td>';
+    	$amount_discount=$object->getAvailableDiscounts();
+    	if ($amount_discount < 0) dol_print_error($db, $object->error);
+    	if ($amount_discount > 0) print '<a href="'.DOL_URL_ROOT.'/comm/remx.php?id='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?socid='.$object->id).'">'.price($amount_discount, 1, $langs, 1, -1, -1, $conf->currency).'</a>';
+    	//else print $langs->trans("DiscountNone");
+    	print '</td>';
+    	print '</tr>';
 	}
-	print '</td></tr></table>';
-	print '</td>';
-	print '<td>';
-	$amount_discount=$object->getAvailableDiscounts();
-	if ($amount_discount < 0) dol_print_error($db, $object->error);
-	if ($amount_discount > 0) print '<a href="'.DOL_URL_ROOT.'/comm/remx.php?id='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?socid='.$object->id).'">'.price($amount_discount, 1, $langs, 1, -1, -1, $conf->currency).'</a>';
-	//else print $langs->trans("DiscountNone");
-	print '</td>';
-	print '</tr>';
 
 	// Max outstanding bill
 	if ($object->client)
@@ -487,7 +493,7 @@ if ($object->id > 0)
 		$langs->load("categories");
 		print '<tr><td>' . $langs->trans("CustomersCategoriesShort") . '</td>';
 		print '<td>';
-		print $form->showCategories( $object->id, 'customer', 1 );
+		print $form->showCategories($object->id, 'customer', 1);
 		print "</td></tr>";
 	}
 
@@ -1325,12 +1331,6 @@ if ($object->id > 0)
 	{
 		// List of contacts
 		show_contacts($conf, $langs, $db, $object, $_SERVER["PHP_SELF"].'?socid='.$object->id);
-	}
-
-	// Addresses list
-	if (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) && ! empty($conf->global->MAIN_REPEATADDRESSONEACHTAB))
-	{
-		show_addresses($conf, $langs, $db, $object, $_SERVER["PHP_SELF"].'?socid='.$object->id);
 	}
 
     if (! empty($conf->global->MAIN_REPEATTASKONEACHTAB))

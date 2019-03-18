@@ -3,6 +3,7 @@
  * Copyright (C) 2011      Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2012      Marcos García       <marcosgdf@gmail.com>
  * Copyright (C) 2018      Andreu Bisquerra    <jove@bisquerra.com>
+ * Copyright (C) 2019      Josep Lluís Amador  <joseplluis@lliuretic.cat>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,13 +35,13 @@ $place=GETPOST('place', 'int');
 if ($place>0){
     $sql="SELECT rowid FROM ".MAIN_DB_PREFIX."facture where ref='(PROV-POS-".$place.")'";
     $resql = $db->query($sql);
-    $row = $db->fetch_array ($resql);
+    $row = $db->fetch_array($resql);
     $facid=$row[0];
 }
 $object=new Facture($db);
 $object->fetch($facid);
 
-// IMPORTANT: This file is sended to 'Takepos Printing' application. Keep basic file. No external files as css, js... If you need images use absolut path.
+// IMPORTANT: This file is sended to 'Takepos Printing' application. Keep basic file. No external files as css, js... If you need images use absolute path.
 ?>
 <html>
 <body>
@@ -84,7 +85,9 @@ print $object->ref;
     {
     ?>
     <tr>
-        <td><?php echo $line->product_label;?></td>
+        <td><?php if (!empty($line->product_label)) echo $line->product_label;
+                  else echo $line->description;?>
+        </td>
         <td align="right"><?php echo $line->qty;?></td>
         <td align="right"><?php echo $line->total_ttc/$line->qty;?></td>
         <td align="right"><?php echo price($line->total_ttc);?></td>

@@ -160,7 +160,7 @@ if ($prev_id > 0 || $ref)
 		print"\n<!-- debut table -->\n";
 		print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
 		print '<tr class="liste_titre">';
-		print '<td>'.$langs->trans("Status").'</td><td align="right">'.$langs->trans("Amount").'</td><td align="right">%</td></tr>';
+		print '<td>'.$langs->trans("Status").'</td><td class="right">'.$langs->trans("Amount").'</td><td class="right">%</td></tr>';
 
 		while ($i < $num)
 		{
@@ -170,10 +170,10 @@ if ($prev_id > 0 || $ref)
 
 			print $ligne->LibStatut($row[1], 1);
 
-			print '</td><td align="right">';
+			print '</td><td class="right">';
 			print price($row[0]);
 
-			print '</td><td align="right">';
+			print '</td><td class="right">';
 			if ($object->amount) print round($row[0]/$object->amount*100, 2)." %";
 			print '</td>';
 

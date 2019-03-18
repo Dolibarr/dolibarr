@@ -279,30 +279,30 @@ if ($action == 'create')
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
 	print '<td class="left">'.$langs->trans("DateDue").'</td>';
-	print '<td align="right">'.$langs->trans("LoanCapital").'</td>';
-	print '<td align="right">'.$langs->trans("AlreadyPaid").'</td>';
-	print '<td align="right">'.$langs->trans("RemainderToPay").'</td>';
-	print '<td align="right">'.$langs->trans("Amount").'</td>';
+	print '<td class="right">'.$langs->trans("LoanCapital").'</td>';
+	print '<td class="right">'.$langs->trans("AlreadyPaid").'</td>';
+	print '<td class="right">'.$langs->trans("RemainderToPay").'</td>';
+	print '<td class="right">'.$langs->trans("Amount").'</td>';
 	print "</tr>\n";
 
 	print '<tr class="oddeven">';
 
 	if ($loan->datestart > 0)
 	{
-		print '<td align="left" valign="center">'.dol_print_date($loan->datestart, 'day').'</td>';
+		print '<td class="left" valign="center">'.dol_print_date($loan->datestart, 'day').'</td>';
 	}
 	else
 	{
-		print '<td align="center" valign="center"><b>!!!</b></td>';
+		print '<td class="center" valign="center"><b>!!!</b></td>';
 	}
 
-	print '<td align="right" valign="center">'.price($loan->capital)."</td>";
+	print '<td class="right" valign="center">'.price($loan->capital)."</td>";
 
-	print '<td align="right" valign="center">'.price($sumpaid)."</td>";
+	print '<td class="right" valign="center">'.price($sumpaid)."</td>";
 
-	print '<td align="right" valign="center">'.price($loan->capital - $sumpaid)."</td>";
+	print '<td class="right" valign="center">'.price($loan->capital - $sumpaid)."</td>";
 
-	print '<td align="right">';
+	print '<td class="right">';
 	if ($sumpaid < $loan->capital)
 	{
 	    print $langs->trans("LoanCapital") .': <input type="text" size="8" name="amount_capital" value="'.$amount_capital.'">';

@@ -68,14 +68,17 @@ div.ticketform {
     border-radius: 10px 10px 10px 10px;
     margin: 1.5em;
     background : #ffffff;
-
-
+	text-align: center;
 }
 
 div.ticketform .index_create, .index_display {
-    float: left;
-    width: 33%;
+	display: inline-block;
+    width: 200px;
+    height: 58px;
     text-align: center;
+    vertical-align: middle;
+    margin: 20px;
+    text-transform: uppercase;
 }
 
 div.ticketform .orange {

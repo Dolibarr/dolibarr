@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2015       Alexandre Spangaro	  	<aspangaro@open-dsi.fr>
+/* Copyright (C) 2015       Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -216,9 +217,9 @@ if ($resql)
 	print '<br><table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans('Donation').'</td>';
-    print '<td align="right">'.$langs->trans('ExpectedToPay').'</td>';
-	print '<td align="center">'.$langs->trans('Status').'</td>';
-	print '<td align="right">'.$langs->trans('PayedByThisPayment').'</td>';
+    print '<td class="right">'.$langs->trans('ExpectedToPay').'</td>';
+	print '<td class="center">'.$langs->trans('Status').'</td>';
+	print '<td class="right">'.$langs->trans('PayedByThisPayment').'</td>';
 	print "</tr>\n";
 
 	if ($num > 0)
@@ -234,14 +235,14 @@ if ($resql)
 			print $don->getNomUrl(1);
 			print "</td>\n";
 			// Expected to pay
-			print '<td align="right">'.price($objp->d_amount).'</td>';
+			print '<td class="right">'.price($objp->d_amount).'</td>';
 			// Status
-			print '<td align="center">'.$don->getLibStatut(4, $objp->amount).'</td>';
+			print '<td class="center">'.$don->getLibStatut(4, $objp->amount).'</td>';
 			// Amount payed
-			print '<td align="right">'.price($objp->amount).'</td>';
+			print '<td class="right">'.price($objp->amount).'</td>';
 			print "</tr>\n";
-			if ($objp->paid == 1)	// If at least one invoice is paid, disable delete
-			{
+			if ($objp->paid == 1) {
+                // If at least one invoice is paid, disable delete
 				$disable_delete = 1;
 			}
 			$total = $total + $objp->amount;

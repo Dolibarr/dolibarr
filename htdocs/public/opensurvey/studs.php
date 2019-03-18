@@ -752,7 +752,7 @@ if ($comments)
 if ($object->allow_comments) {
 	print '<div class="addcomment">' .$langs->trans("AddACommentForPoll") . "<br>\n";
 
-	print '<textarea name="comment" rows="'.ROWS_2.'" class="quatrevingtpercent">'.dol_escape_htmltag(GETPOST('comment', 'none')).'</textarea><br>'."\n";
+	print '<textarea name="comment" rows="'.ROWS_2.'" class="quatrevingtpercent">'.dol_escape_htmltag(GETPOST('comment', 'none'), 0, 1).'</textarea><br>'."\n";
 	print $langs->trans("Name") .': ';
 	print '<input type="text" name="commentuser" maxlength="64" value="'.GETPOST('commentuser', 'nohtml').'"> &nbsp; '."\n";
 	print '<input type="submit" class="button" name="ajoutcomment" value="'.dol_escape_htmltag($langs->trans("AddComment")).'"><br>'."\n";

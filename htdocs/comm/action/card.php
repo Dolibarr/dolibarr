@@ -160,6 +160,10 @@ if ($action == 'confirm_clone' && $confirm == 'yes')
 	{
 		if ($id > 0) {
 			$object->fetch($id);
+            if (!empty($object->socpeopleassigned)) {
+                reset($object->socpeopleassigned);
+                $object->contactid = key($object->socpeopleassigned);
+            }
 			$result = $object->createFromClone(GETPOST('fk_userowner'), GETPOST('socid'));
 			if ($result > 0) {
 				header("Location: " . $_SERVER['PHP_SELF'] . '?id=' . $result);
@@ -431,6 +435,10 @@ if ($action == 'update')
 		$object->socpeopleassigned = array();
 		foreach ($socpeopleassigned as $cid) $object->socpeopleassigned[$cid] = array('id' => $cid);
 		$object->contactid   = GETPOST("contactid", 'int');
+        if (empty($object->contactid) && !empty($object->socpeopleassigned)) {
+            reset($object->socpeopleassigned);
+            $object->contactid = key($object->socpeopleassigned);
+        }
 		$object->fk_project  = GETPOST("projectid", 'int');
 		$object->note        = GETPOST("note", "none");	// deprecated
 		$object->note_private= GETPOST("note", "none");
@@ -682,7 +690,7 @@ if ($action == 'create')
 
 	dol_fiche_head();
 
-	print '<table class="border" width="100%">';
+	print '<table class="border tableforfield" width="100%">';
 
 	// Type of event
 	if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))
@@ -849,7 +857,7 @@ if ($action == 'create')
 	print '<br><hr><br>';
 
 
-	print '<table class="border" width="100%">';
+	print '<table class="border tableforfield" width="100%">';
 
 	if ($conf->societe->enabled)
 	{
@@ -895,7 +903,7 @@ if ($action == 'create')
 
 		$numproject=$formproject->select_projects((! empty($societe->id)?$societe->id:-1), $projectid, 'projectid', 0, 0, 1, 1);
 
-		print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$societe->id.'&action=create">'.$langs->trans("AddProject").'</a>';
+		print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$societe->id.'&action=create">'.$langs->trans("AddProject").' <span class="fa fa-plus-circle valignmiddle"></span></a>';
 		$urloption='?action=create';
 		$url = dol_buildpath('comm/action/card.php', 2).$urloption;
 
@@ -1078,7 +1086,7 @@ if ($id > 0)
 
 		dol_fiche_head($head, 'card', $langs->trans("Action"), 0, 'action');
 
-		print '<table class="border" width="100%">';
+		print '<table class="border tableforfield" width="100%">';
 
 		// Ref
 		print '<tr><td class="titlefieldcreate">'.$langs->trans("Ref").'</td><td colspan="3">'.$object->id.'</td></tr>';
@@ -1259,7 +1267,7 @@ if ($id > 0)
 		print '<br><hr><br>';
 
 
-		print '<table class="border" width="100%">';
+		print '<table class="border tableforfield" width="100%">';
 
 		if ($conf->societe->enabled)
 		{
@@ -1293,7 +1301,7 @@ if ($id > 0)
 			$numprojet=$formproject->select_projects(($object->socid  > 0 ? $object->socid : -1), $object->fk_project, 'projectid', 0, 0, 1, 0, 0, 0, 0, '', 0);
 			if ($numprojet==0)
 			{
-				print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$object->socid.'&action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit').'">'.$langs->trans("AddProject").'</a>';
+				print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$object->socid.'&action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit').'">'.$langs->trans("AddProject").' <span class="fa fa-plus-circle valignmiddle"></span></a>';
 			}
 			print '</td></tr>';
 		}
@@ -1383,7 +1391,7 @@ if ($id > 0)
 		// Clone event
 		if($action == 'clone')
 		{
-			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . GETPOST('id'), $langs->trans('CloneAction'), $langs->trans('ConfirmCloneEvent', $object->label), 'confirm_clone', $formquestion, 'yes', 1);
+			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . GETPOST('id'), $langs->trans('ToClone'), $langs->trans('ConfirmCloneEvent', $object->label), 'confirm_clone', $formquestion, 'yes', 1);
 
 			print $formconfirm;
 		}
@@ -1455,7 +1463,7 @@ if ($id > 0)
 		print '<div class="underbanner clearboth"></div>';
 
 		// Affichage fiche action en mode visu
-		print '<table class="border" width="100%">';
+		print '<table class="border tableforfield" width="100%">';
 
 		// Type
 		if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))
@@ -1558,7 +1566,7 @@ if ($id > 0)
 		print '<br>';
 
 		print '<div class="underbanner clearboth"></div>';
-		print '<table class="border" width="100%">';
+		print '<table class="border tableforfield centpercent">';
 
 		if ($conf->societe->enabled)
 		{

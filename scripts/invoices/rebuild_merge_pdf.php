@@ -266,7 +266,7 @@ exit($error);
 /**
  * Show usage of script
  *
- * @return unknown
+ * @return void
  */
 function usage()
 {

@@ -290,13 +290,13 @@ if ($resql)
 	}
 	// Stock limit
 	print '<td class="liste_titre">&nbsp;</td>';
-	print '<td class="liste_titre" align="right">&nbsp;</td>';
+	print '<td class="liste_titre right">&nbsp;</td>';
 	print '<td class="liste_titre">&nbsp;</td>';
 	if ($virtualdiffersfromphysical) print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre" colspan="'.$colspan_warehouse.'">&nbsp;</td>';
 	print '<td class="liste_titre"></td>';
-	print '<td class="liste_titre" align="right">';
+	print '<td class="liste_titre right">';
    	$searchpicto=$form->showFilterAndCheckAddButtons(0);
    	print $searchpicto;
 	print '</td>';
@@ -306,23 +306,23 @@ if ($resql)
 	print "<tr class=\"liste_titre\">";
 	print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "p.ref", $param, "", "", $sortfield, $sortorder);
 	print_liste_field_titre("Label", $_SERVER["PHP_SELF"], "p.label", $param, "", "", $sortfield, $sortorder);
-	if (! empty($conf->service->enabled) && $type == 1) print_liste_field_titre("Duration", $_SERVER["PHP_SELF"], "p.duration", $param, "", 'align="center"', $sortfield, $sortorder);
-	print_liste_field_titre("StockLimit", $_SERVER["PHP_SELF"], "p.seuil_stock_alerte", $param, "", 'align="right"', $sortfield, $sortorder);
-	print_liste_field_titre("DesiredStock", $_SERVER["PHP_SELF"], "p.desiredstock", $param, "", 'align="right"', $sortfield, $sortorder);
-	print_liste_field_titre("PhysicalStock", $_SERVER["PHP_SELF"], "stock_physique", $param, "", 'align="right"', $sortfield, $sortorder);
+	if (! empty($conf->service->enabled) && $type == 1) print_liste_field_titre("Duration", $_SERVER["PHP_SELF"], "p.duration", $param, "", '', $sortfield, $sortorder, 'center ');
+	print_liste_field_titre("StockLimit", $_SERVER["PHP_SELF"], "p.seuil_stock_alerte", $param, "", '', $sortfield, $sortorder, 'right ');
+	print_liste_field_titre("DesiredStock", $_SERVER["PHP_SELF"], "p.desiredstock", $param, "", '', $sortfield, $sortorder, 'right ');
+	print_liste_field_titre("PhysicalStock", $_SERVER["PHP_SELF"], "stock_physique", $param, "", '', $sortfield, $sortorder, 'right ');
 	// Details per warehouse
 	if (! empty($conf->global->STOCK_DETAIL_ON_WAREHOUSE))	// TODO This should be moved into the selection of fields on page product/list (page product/stock will be removed and replaced with product/list with its own context)
 	{
 	    if ($nb_warehouse>1) {
-	        foreach($warehouses_list as &$wh) {
-	            print_liste_field_titre($wh['label'], '', '', '', '', 'align="right"');
+	        foreach ($warehouses_list as &$wh) {
+	            print_liste_field_titre($wh['label'], '', '', '', '', '', '', '', 'right ');
 	        }
 	    }
 	}
-	if ($virtualdiffersfromphysical) print_liste_field_titre("VirtualStock", $_SERVER["PHP_SELF"], "", $param, "", 'align="right"', $sortfield, $sortorder);
+	if ($virtualdiffersfromphysical) print_liste_field_titre("VirtualStock", $_SERVER["PHP_SELF"], "", $param, "", '', $sortfield, $sortorder, 'right ');
 	print_liste_field_titre('');
-	print_liste_field_titre( $langs->trans("Status").' ('.$langs->trans("Sell").')', $_SERVER["PHP_SELF"], "p.tosell", $param, "", 'align="right"', $sortfield, $sortorder);
-	print_liste_field_titre( $langs->trans("Status").' ('.$langs->trans("Buy").')', $_SERVER["PHP_SELF"], "p.tobuy", $param, "", 'align="right"', $sortfield, $sortorder);
+	print_liste_field_titre("ProductStatusOnSell", $_SERVER["PHP_SELF"], "p.tosell", $param, "", '', $sortfield, $sortorder, 'right ');
+	print_liste_field_titre("ProductStatusOnBuy", $_SERVER["PHP_SELF"], "p.tobuy", $param, "", '', $sortfield, $sortorder, 'right ');
 	print_liste_field_titre('');
 	print "</tr>\n";
 
@@ -343,18 +343,18 @@ if ($resql)
 
 		if (! empty($conf->service->enabled) && $type == 1)
 		{
-			print '<td align="center">';
+			print '<td class="center">';
 			if (preg_match('/([0-9]+)y/i', $objp->duration, $regs)) print $regs[1].' '.$langs->trans("DurationYear");
 			elseif (preg_match('/([0-9]+)m/i', $objp->duration, $regs)) print $regs[1].' '.$langs->trans("DurationMonth");
 			elseif (preg_match('/([0-9]+)d/i', $objp->duration, $regs)) print $regs[1].' '.$langs->trans("DurationDay");
 			else print $objp->duration;
 			print '</td>';
 		}
-		//print '<td align="right">'.$objp->stock_theorique.'</td>';
-		print '<td align="right">'.$objp->seuil_stock_alerte.'</td>';
-		print '<td align="right">'.$objp->desiredstock.'</td>';
+		//print '<td class="right">'.$objp->stock_theorique.'</td>';
+		print '<td class="right">'.$objp->seuil_stock_alerte.'</td>';
+		print '<td class="right">'.$objp->desiredstock.'</td>';
 		// Real stock
-		print '<td align="right">';
+		print '<td class="right">';
         if ($objp->seuil_stock_alerte != '' && ($objp->stock_physique < $objp->seuil_stock_alerte)) print img_warning($langs->trans("StockTooLow")).' ';
 		print $objp->stock_physique|0;
 		print '</td>';
@@ -365,7 +365,7 @@ if ($resql)
 			if($nb_warehouse>1) {
 				foreach($warehouses_list as &$wh) {
 
-					print '<td align="right">';
+					print '<td class="right">';
 					print empty($product->stock_warehouse[$wh['id']]->real) ? '0' : $product->stock_warehouse[$wh['id']]->real;
 					print '</td>';
 				}
@@ -375,14 +375,14 @@ if ($resql)
 		// Virtual stock
 		if ($virtualdiffersfromphysical)
 		{
-			print '<td align="right">';
+			print '<td class="right">';
 			if ($objp->seuil_stock_alerte != '' && ($product->stock_theorique < $objp->seuil_stock_alerte)) print img_warning($langs->trans("StockTooLow")).' ';
 			print $product->stock_theorique;
 			print '</td>';
 		}
-		print '<td align="right"><a href="'.DOL_URL_ROOT.'/product/stock/movement_list.php?idproduct='.$product->id.'">'.$langs->trans("Movements").'</a></td>';
-		print '<td align="right" class="nowrap">'.$product->LibStatut($objp->statut, 5, 0).'</td>';
-        print '<td align="right" class="nowrap">'.$product->LibStatut($objp->tobuy, 5, 1).'</td>';
+		print '<td class="right"><a href="'.DOL_URL_ROOT.'/product/stock/movement_list.php?idproduct='.$product->id.'">'.$langs->trans("Movements").'</a></td>';
+		print '<td class="right nowrap">'.$product->LibStatut($objp->statut, 5, 0).'</td>';
+        print '<td class="right nowrap">'.$product->LibStatut($objp->tobuy, 5, 1).'</td>';
 		print '<td></td>';
         print "</tr>\n";
 		$i++;

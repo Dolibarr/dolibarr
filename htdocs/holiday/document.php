@@ -144,7 +144,7 @@ if ($object->id)
         print '<td>'.$langs->trans('DateDebCP').' ('.$langs->trans("FirstDayOfHoliday").')</td>';
         print '<td>'.dol_print_date($object->date_debut, 'day');
         print ' &nbsp; &nbsp; ';
-        print $langs->trans($listhalfday[$starthalfday]);
+        print '<span class="opacitymedium">'.$langs->trans($listhalfday[$starthalfday]).'</span>';
         print '</td>';
         print '</tr>';
     }
@@ -166,7 +166,7 @@ if ($object->id)
         print '<td>'.$langs->trans('DateFinCP').' ('.$langs->trans("LastDayOfHoliday").')</td>';
         print '<td>'.dol_print_date($object->date_fin, 'day');
         print ' &nbsp; &nbsp; ';
-        print $langs->trans($listhalfday[$endhalfday]);
+        print '<span class="opacitymedium">'.$langs->trans($listhalfday[$endhalfday]).'</span>';
         print '</td>';
         print '</tr>';
     }

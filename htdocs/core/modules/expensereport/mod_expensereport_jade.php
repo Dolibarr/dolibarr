@@ -59,10 +59,10 @@ class mod_expensereport_jade extends ModeleNumRefExpenseReport
      *
      *  @return     string      Text with description
      */
-    function info()
+    public function info()
     {
-    	global $langs;
-      	return $langs->trans("SimpleNumRefModelDesc", $this->prefix);
+        global $langs;
+        return $langs->trans("SimpleNumRefModelDesc", $this->prefix);
     }
 
 
@@ -71,7 +71,7 @@ class mod_expensereport_jade extends ModeleNumRefExpenseReport
 	 *
 	 *  @return     string      Example
 	 */
-	function getExample()
+    public function getExample()
 	{
 		return $this->prefix."0501-0001";
 	}
@@ -83,7 +83,7 @@ class mod_expensereport_jade extends ModeleNumRefExpenseReport
 	 *
 	 *  @return     boolean     false si conflit, true si ok
 	 */
-	function canBeActivated()
+    public function canBeActivated()
 	{
 		global $conf,$langs,$db;
 
@@ -117,7 +117,7 @@ class mod_expensereport_jade extends ModeleNumRefExpenseReport
 	 *  @param  Object		$object		Object we need next value for
 	 *  @return string      			Value if KO, <0 if KO
 	 */
-	function getNextValue($object)
+    public function getNextValue($object)
 	{
 		global $db,$conf;
 

@@ -48,7 +48,7 @@ class pdf_timespent extends ModelePDFProjects
 	 *
 	 *  @param		DoliDB		$db      Database handler
 	 */
-	function __construct($db)
+	public function __construct($db)
 	{
 		global $conf,$langs,$mysoc;
 
@@ -97,7 +97,7 @@ class pdf_timespent extends ModelePDFProjects
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Fonction generant le projet sur le disque
 	 *
@@ -105,7 +105,7 @@ class pdf_timespent extends ModelePDFProjects
 	 *	@param	Translate	$outputlangs	Lang output object
 	 *	@return	int         				1 if OK, <=0 if KO
 	 */
-	function write_file($object, $outputlangs)
+	public function write_file($object, $outputlangs)
 	{
         // phpcs:enable
 		global $conf, $hookmanager, $langs, $user;
@@ -304,7 +304,7 @@ class pdf_timespent extends ModelePDFProjects
 								if (! empty($tplidx)) $pdf->useTemplate($tplidx);
 								if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
 								$pdf->setPage($pageposafter+1);
-								$pdf->SetFont('', '',  $default_font_size - 1);   // On repositionne la police par defaut
+								$pdf->SetFont('', '', $default_font_size - 1);   // On repositionne la police par defaut
 								$pdf->MultiCell(0, 3, '');		// Set interline to 3
 								$pdf->SetTextColor(0, 0, 0);
 
@@ -339,7 +339,7 @@ class pdf_timespent extends ModelePDFProjects
 						$pdf->setPage($pageposafter); $curY = $tab_top_newpage + $heightoftitleline + 1;
 					}
 
-					$pdf->SetFont('', '',  $default_font_size - 1);   // On repositionne la police par defaut
+					$pdf->SetFont('', '', $default_font_size - 1);   // On repositionne la police par defaut
 
 					// Ref of task
 					$pdf->SetXY($this->posxref, $curY);
@@ -464,7 +464,7 @@ class pdf_timespent extends ModelePDFProjects
 	 *   @param		int			$hidebottom		Hide bottom bar of array
 	 *   @return	void
 	 */
-	function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop = 0, $hidebottom = 0)
+	private function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop = 0, $hidebottom = 0)
 	{
 		global $conf,$mysoc;
 
@@ -511,7 +511,7 @@ class pdf_timespent extends ModelePDFProjects
 	 *  @param  Translate	$outputlangs	Object lang for output
 	 *  @return	void
 	 */
-	function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
+	private function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
 	{
 		global $langs,$conf,$mysoc;
 
@@ -595,19 +595,19 @@ class pdf_timespent extends ModelePDFProjects
         */
 	}
 
-	/**
-	 *   	Show footer of page. Need this->emetteur object
+    /**
+     *  Show footer of page. Need this->emetteur object
      *
-	 *   	@param	PDF			$pdf     			PDF
-	 * 		@param	Project		$object				Object to show
-	 *      @param	Translate	$outputlangs		Object lang for output
-	 *      @param	int			$hidefreetext		1=Hide free text
-	 *      @return	integer
-	 */
-	function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
-	{
-		global $conf;
-		$showdetails=$conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;
-		return pdf_pagefoot($pdf, $outputlangs, 'PROJECT_FREE_TEXT', $this->emetteur, $this->marge_basse, $this->marge_gauche, $this->page_hauteur, $object, $showdetails, $hidefreetext);
-	}
+     *  @param  PDF         $pdf                PDF
+     *  @param  Project     $object             Object to show
+     *  @param  Translate   $outputlangs        Object lang for output
+     *  @param  int         $hidefreetext       1=Hide free text
+     *  @return integer
+     */
+    private function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
+    {
+        global $conf;
+        $showdetails=$conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;
+        return pdf_pagefoot($pdf, $outputlangs, 'PROJECT_FREE_TEXT', $this->emetteur, $this->marge_basse, $this->marge_gauche, $this->page_hauteur, $object, $showdetails, $hidefreetext);
+    }
 }

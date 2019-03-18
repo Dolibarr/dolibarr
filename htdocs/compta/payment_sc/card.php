@@ -240,9 +240,9 @@ if ($resql)
 	print '<td>'.$langs->trans('SocialContribution').'</td>';
     print '<td>'.$langs->trans('Type').'</td>';
 	print '<td>'.$langs->trans('Label').'</td>';
-	print '<td align="right">'.$langs->trans('ExpectedToPay').'</td>';
+	print '<td class="right">'.$langs->trans('ExpectedToPay').'</td>';
 	print '<td align="center">'.$langs->trans('Status').'</td>';
-	print '<td align="right">'.$langs->trans('PayedByThisPayment').'</td>';
+	print '<td class="right">'.$langs->trans('PayedByThisPayment').'</td>';
 	print "</tr>\n";
 
 	if ($num > 0)
@@ -265,11 +265,11 @@ if ($resql)
 			// Label
 			print '<td>'.$objp->libelle.'</td>';
 			// Expected to pay
-			print '<td align="right">'.price($objp->sc_amount).'</td>';
+			print '<td class="right">'.price($objp->sc_amount).'</td>';
 			// Status
 			print '<td align="center">'.$socialcontrib->getLibStatut(4, $objp->amount).'</td>';
 			// Amount payed
-			print '<td align="right">'.price($objp->amount).'</td>';
+			print '<td class="right">'.price($objp->amount).'</td>';
 			print "</tr>\n";
 			if ($objp->paye == 1)	// If at least one invoice is paid, disable delete
 			{

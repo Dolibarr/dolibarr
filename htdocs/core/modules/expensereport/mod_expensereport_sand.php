@@ -59,13 +59,13 @@ class mod_expensereport_sand extends ModeleNumRefExpenseReport
      *
      *  @return     string      Texte descripif
      */
-	function info()
+    public function info()
     {
-    	global $conf, $langs;
+    	global $db, $conf, $langs;
 
 		$langs->load("bills");
 
-		$form = new Form($this->db);
+		$form = new Form($db);
 
 		$texte = $langs->trans('GenericNumRefModelDesc')."<br>\n";
 		$texte.= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
@@ -82,9 +82,9 @@ class mod_expensereport_sand extends ModeleNumRefExpenseReport
 
 		// Parametrage du prefix
 		$texte.= '<tr><td>'.$langs->trans("Mask").':</td>';
-		$texte.= '<td align="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskvalue" value="'.$conf->global->EXPENSEREPORT_SAND_MASK.'">', $tooltip, 1, 1).'</td>';
+		$texte.= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskvalue" value="'.$conf->global->EXPENSEREPORT_SAND_MASK.'">', $tooltip, 1, 1).'</td>';
 
-		$texte.= '<td align="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
+		$texte.= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
 
 		$texte.= '</tr>';
 
@@ -99,11 +99,11 @@ class mod_expensereport_sand extends ModeleNumRefExpenseReport
      *
      *  @return     string      Example
      */
-    function getExample()
+    public function getExample()
     {
-     	global $conf,$langs,$user;
+     	global $db, $conf,$langs,$user;
 
-     	$exp=new ExpenseReport($this->db);
+     	$exp=new ExpenseReport($db);
      	$exp->initAsSpecimen();
      	$exp->fk_user_author = $user->id;
 
@@ -116,15 +116,15 @@ class mod_expensereport_sand extends ModeleNumRefExpenseReport
 		return $numExample;
     }
 
-	/**
-	 * 	Return next free value
-	 *
-	 *  @param  Object		$object		Object we need next value for
-	 *  @return string      			Value if KO, <0 if KO
-	 */
-    function getNextValue($object)
+    /**
+     *  Return next free value
+     *
+     *  @param  Object      $object     Object we need next value for
+     *  @return string                  Value if KO, <0 if KO
+     */
+    public function getNextValue($object)
     {
-		global $db,$conf;
+        global $db,$conf;
 
 		require_once DOL_DOCUMENT_ROOT .'/core/lib/functions2.lib.php';
 
@@ -154,5 +154,5 @@ class mod_expensereport_sand extends ModeleNumRefExpenseReport
 		$numFinal=get_next_value($db, $mask, 'expensereport', 'ref', '', null, $date, 'next', true, $fuser);
 
 		return $numFinal;
-	}
+    }
 }

@@ -61,7 +61,7 @@ abstract class CommonDocGenerator
     }
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      * Define array with couple subtitution key => subtitution value
      *
@@ -69,7 +69,7 @@ abstract class CommonDocGenerator
      * @param   Translate	$outputlangs    Language object for output
      * @return	array						Array of substitution key->code
      */
-    function get_substitutionarray_user($user, $outputlangs)
+    public function get_substitutionarray_user($user, $outputlangs)
     {
         // phpcs:enable
         global $conf;
@@ -99,7 +99,7 @@ abstract class CommonDocGenerator
     }
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      * Define array with couple subtitution key => subtitution value
      *
@@ -107,7 +107,7 @@ abstract class CommonDocGenerator
      * @param   Translate	$outputlangs    Language object for output
      * @return	array						Array of substitution key->code
      */
-    function get_substitutionarray_mysoc($mysoc, $outputlangs)
+    public function get_substitutionarray_mysoc($mysoc, $outputlangs)
     {
         // phpcs:enable
         global $conf;
@@ -159,7 +159,7 @@ abstract class CommonDocGenerator
     }
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      * Define array with couple subtitution key => subtitution value
      *
@@ -167,7 +167,7 @@ abstract class CommonDocGenerator
      * @param   Translate	$outputlangs    Language object for output
      * @return	array						Array of substitution key->code
      */
-    function get_substitutionarray_thirdparty($object, $outputlangs)
+    public function get_substitutionarray_thirdparty($object, $outputlangs)
     {
         // phpcs:enable
         global $conf;
@@ -240,7 +240,7 @@ abstract class CommonDocGenerator
 		return $array_thirdparty;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Define array with couple subtitution key => subtitution value
 	 *
@@ -249,7 +249,7 @@ abstract class CommonDocGenerator
 	 * @param   array		$array_key	    Name of the key for return array
 	 * @return	array 						Array of substitution key->code
 	 */
-    function get_substitutionarray_contact($object, $outputlangs, $array_key = 'object')
+    public function get_substitutionarray_contact($object, $outputlangs, $array_key = 'object')
     {
         // phpcs:enable
 		global $conf;
@@ -314,14 +314,14 @@ abstract class CommonDocGenerator
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      * Define array with couple subtitution key => subtitution value
      *
      * @param   Translate	$outputlangs    Language object for output
      * @return	array						Array of substitution key->code
      */
-    function get_substitutionarray_other($outputlangs)
+    public function get_substitutionarray_other($outputlangs)
     {
         // phpcs:enable
     	global $conf;
@@ -352,7 +352,7 @@ abstract class CommonDocGenerator
     }
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Define array with couple substitution key => substitution value
 	 *
@@ -361,7 +361,7 @@ abstract class CommonDocGenerator
      * @param   string		    $array_key	        Name of the key for return array
 	 * @return	array								Array of substitution
 	 */
-	function get_substitutionarray_object($object, $outputlangs, $array_key = 'object')
+	public function get_substitutionarray_object($object, $outputlangs, $array_key = 'object')
 	{
         // phpcs:enable
 		global $conf;
@@ -488,10 +488,10 @@ abstract class CommonDocGenerator
 				if (empty($resarray[$array_key.'_total_vat_'.$vatformated])) $resarray[$array_key.'_total_vat_'.$vatformated]=0;
 				$resarray[$array_key.'_total_vat_'.$vatformated]+=$line->total_tva;
 				$resarray[$array_key.'_total_vat_locale_'.$vatformated]=price($resarray[$array_key.'_total_vat_'.$vatformated]);
-				
+
 				$totalUp += $line->subprice * $line->qty;
 			}
-		
+
 			// @GS: Calculate total up and total discount percentage
 			// Note that this added fields correspond to nothing in Dolibarr (Dolibarr manage discount on lines not globally)
 			$resarray['object_total_up'] = $totalUp;
@@ -501,7 +501,7 @@ abstract class CommonDocGenerator
 				$resarray['object_total_discount_locale'] = price($resarray['object_total_discount'], 0, $outputlangs);
 			}
 		}
-		
+
 		// Retrieve extrafields
 		if (is_array($object->array_options) && count($object->array_options))
 		{
@@ -514,11 +514,11 @@ abstract class CommonDocGenerator
 
 			$resarray = $this->fill_substitutionarray_with_extrafields($object, $resarray, $extrafields, $array_key, $outputlangs);
 		}
-		
+
 		return $resarray;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Define array with couple substitution key => substitution value
 	 *
@@ -526,7 +526,7 @@ abstract class CommonDocGenerator
 	 *	@param  Translate		$outputlangs        Lang object to use for output
 	 *  @return	array								Return a substitution array
 	 */
-	function get_substitutionarray_lines($line, $outputlangs)
+	public function get_substitutionarray_lines($line, $outputlangs)
 	{
         // phpcs:enable
 		global $conf;
@@ -570,7 +570,7 @@ abstract class CommonDocGenerator
 		    'line_multicurrency_total_ttc_locale' => price($line->multicurrency_total_ttc, 0, $outputlangs),
 		);
 
-		    // Units
+        // Units
 		if ($conf->global->PRODUCT_USE_UNITS)
 		{
 		      $resarray['line_unit']=$outputlangs->trans($line->getLabelOfUnit('long'));
@@ -585,7 +585,7 @@ abstract class CommonDocGenerator
 		$extralabels = $extrafields->fetch_name_optionals_label($extrafieldkey, true);
 		$line->fetch_optionals();
 
-		$resarray = $this->fill_substitutionarray_with_extrafields($line, $resarray, $extrafields, $array_key=$array_key, $outputlangs);
+		$resarray = $this->fill_substitutionarray_with_extrafields($line, $resarray, $extrafields, $array_key, $outputlangs);
 
 		// Load product data optional fields to the line -> enables to use "line_options_{extrafield}"
 		if (isset($line->fk_product) && $line->fk_product > 0)
@@ -599,7 +599,7 @@ abstract class CommonDocGenerator
 		return $resarray;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      * Define array with couple substitution key => substitution value
      *
@@ -608,7 +608,7 @@ abstract class CommonDocGenerator
      * @param   array			$array_key	        Name of the key for return array
      * @return	array								Array of substitution
      */
-    function get_substitutionarray_shipment($object, $outputlangs, $array_key = 'object')
+    public function get_substitutionarray_shipment($object, $outputlangs, $array_key = 'object')
     {
         // phpcs:enable
     	global $conf;
@@ -662,7 +662,7 @@ abstract class CommonDocGenerator
     }
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *  Define array with couple substitution key => substitution value
      *
@@ -670,7 +670,7 @@ abstract class CommonDocGenerator
      *	@param  Translate		$outputlangs        Lang object to use for output
      *	@return	array								Substitution array
      */
-    function get_substitutionarray_shipment_lines($line, $outputlangs)
+    public function get_substitutionarray_shipment_lines($line, $outputlangs)
     {
         // phpcs:enable
         global $conf;
@@ -683,7 +683,7 @@ abstract class CommonDocGenerator
 	    	'line_desc'=>$line->desc,
 	    	'line_vatrate'=>vatrate($line->tva_tx, true, $line->info_bits),
 	    	'line_up'=>price($line->subprice),
-		'line_total_up'=>price($line->subprice * $line->qty),
+            'line_total_up'=>price($line->subprice * $line->qty),
 	    	'line_qty'=>$line->qty,
 	    	'line_qty_shipped'=>$line->qty_shipped,
 	    	'line_qty_asked'=>$line->qty_asked,
@@ -711,7 +711,7 @@ abstract class CommonDocGenerator
     }
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      * Define array with couple subtitution key => subtitution value
      *
@@ -720,7 +720,7 @@ abstract class CommonDocGenerator
      * @param   boolean		$recursive    	Want to fetch child array or child object
      * @return	array						Array of substitution key->code
      */
-    function get_substitutionarray_each_var_object(&$object, $outputlangs, $recursive = true)
+    public function get_substitutionarray_each_var_object(&$object, $outputlangs, $recursive = true)
     {
         // phpcs:enable
         $array_other = array();
@@ -740,7 +740,7 @@ abstract class CommonDocGenerator
     }
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *	Fill array with couple extrafield key => extrafield value
      *
@@ -751,8 +751,8 @@ abstract class CommonDocGenerator
      *  @param  Translate		$outputlangs        Lang object to use for output
      *	@return	array								Substitution array
      */
-    function fill_substitutionarray_with_extrafields($object, $array_to_fill, $extrafields, $array_key, $outputlangs)
-	{
+    public function fill_substitutionarray_with_extrafields($object, $array_to_fill, $extrafields, $array_key, $outputlangs)
+    {
         // phpcs:enable
 		global $conf;
 		foreach($extrafields->attribute_label as $key=>$label)
@@ -838,7 +838,7 @@ abstract class CommonDocGenerator
 	 * @param	int		$hidebottom		Hide bottom
 	 * @return	void
 	 */
-    function printRect($pdf, $x, $y, $l, $h, $hidetop = 0, $hidebottom = 0)
+    public function printRect($pdf, $x, $y, $l, $h, $hidetop = 0, $hidebottom = 0)
     {
         if (empty($hidetop) || $hidetop==-1) $pdf->line($x, $y, $x+$l, $y);
         $pdf->line($x+$l, $y, $x+$l, $y+$h);
@@ -848,13 +848,13 @@ abstract class CommonDocGenerator
 
 
     /**
-     *   	uasort callback function to Sort colums fields
+     *  uasort callback function to Sort colums fields
      *
-     *   	@param	array			$a    			PDF lines array fields configs
-     *   	@param	array			$b    			PDF lines array fields configs
-     *      @return	int								Return compare result
+     *  @param	array			$a    			PDF lines array fields configs
+     *  @param	array			$b    			PDF lines array fields configs
+     *  @return	int								Return compare result
      */
-    function columnSort($a, $b)
+    public function columnSort($a, $b)
     {
         if(empty($a['rank'])){ $a['rank'] = 0; }
         if(empty($b['rank'])){ $b['rank'] = 0; }
@@ -874,7 +874,7 @@ abstract class CommonDocGenerator
      *      @param	int				$hideref			Do not show ref
      *      @return	null
      */
-    function prepareArrayColumnField($object, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
+    public function prepareArrayColumnField($object, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
     {
         global $conf;
 
@@ -882,7 +882,7 @@ abstract class CommonDocGenerator
 
 
         // Sorting
-        uasort ( $this->cols, array( $this, 'columnSort' ) );
+        uasort($this->cols, array($this, 'columnSort'));
 
         // Positionning
         $curX = $this->page_largeur-$this->marge_droite; // start from right
@@ -899,7 +899,7 @@ abstract class CommonDocGenerator
 
             if(!empty($colDef['scale'])){
                 // In case of column widht is defined by percentage
-                $colDef['width'] = abs($arrayWidth * $colDef['scale'] / 100 );
+                $colDef['width'] = abs($arrayWidth * $colDef['scale'] / 100);
             }
 
             if(empty($colDef['width'])){
@@ -945,12 +945,12 @@ abstract class CommonDocGenerator
     }
 
     /**
-     *   	get column content width from column key
+     *  get column content width from column key
      *
-     *   	@param	string			$colKey    		the column key
-     *      @return	float      width in mm
+     *  @param	string      $colKey     the column key
+     *  @return	float                   width in mm
      */
-    function getColumnContentWidth($colKey)
+    public function getColumnContentWidth($colKey)
     {
         $colDef = $this->cols[$colKey];
         return  $colDef['width'] - $colDef['content']['padding'][3] - $colDef['content']['padding'][1];
@@ -958,12 +958,12 @@ abstract class CommonDocGenerator
 
 
     /**
-     *   	get column content X (abscissa) left position from column key
+     *  get column content X (abscissa) left position from column key
      *
-     *   	@param	string    $colKey    		the column key
-     *      @return	float      X position in mm
+     *  @param	string    $colKey    		the column key
+     *  @return	float      X position in mm
      */
-    function getColumnContentXStart($colKey)
+    public function getColumnContentXStart($colKey)
     {
         $colDef = $this->cols[$colKey];
         return  $colDef['xStartPos'] + $colDef['content']['padding'][3];
@@ -975,22 +975,22 @@ abstract class CommonDocGenerator
      *   	@param	string		$colKey    		the column key
      *      @return	int         rank on success and -1 on error
      */
-    function getColumnRank($colKey)
+    public function getColumnRank($colKey)
     {
         if(!isset($this->cols[$colKey]['rank'])) return -1;
         return  $this->cols[$colKey]['rank'];
     }
 
     /**
-     *   	get column position rank from column key
+     *  get column position rank from column key
      *
-     *   	@param	string		$newColKey    	the new column key
-     *   	@param	array		$defArray    	a single column definition array
-     *   	@param	string		$targetCol    	target column used to place the new column beside
-     *   	@param	bool		$insertAfterTarget    	insert before or after target column ?
-     *      @return	int         new rank on success and -1 on error
+     *  @param	string		$newColKey    	the new column key
+     *  @param	array		$defArray    	a single column definition array
+     *  @param	string		$targetCol    	target column used to place the new column beside
+     *  @param	bool		$insertAfterTarget    	insert before or after target column ?
+     *  @return	int         new rank on success and -1 on error
      */
-    function insertNewColumnDef($newColKey, $defArray, $targetCol = false, $insertAfterTarget = false)
+    public function insertNewColumnDef($newColKey, $defArray, $targetCol = false, $insertAfterTarget = false)
     {
         // prepare wanted rank
         $rank = -1;
@@ -1025,15 +1025,15 @@ abstract class CommonDocGenerator
 
 
     /**
-     *   	print standard column content
+     *  print standard column content
      *
-     *   	@param	PDF		    $pdf    	pdf object
-     *   	@param	float		$curY    	curent Y position
-     *   	@param	string		$colKey    	the column key
-     *   	@param	string		$columnText   column text
-     *      @return	int         new rank on success and -1 on error
+     *  @param	PDF		    $pdf    	pdf object
+     *  @param	float		$curY    	curent Y position
+     *  @param	string		$colKey    	the column key
+     *  @param	string		$columnText   column text
+     *  @return	int         new rank on success and -1 on error
      */
-    function printStdColumnContent($pdf, &$curY, $colKey, $columnText = '')
+    public function printStdColumnContent($pdf, &$curY, $colKey, $columnText = '')
     {
         global $hookmanager;
 
@@ -1049,18 +1049,18 @@ abstract class CommonDocGenerator
             if(empty($columnText)) return;
             $pdf->SetXY($this->getColumnContentXStart($colKey), $curY); // Set curent position
             $colDef = $this->cols[$colKey];
-            $pdf->writeHTMLCell( $this->getColumnContentWidth($colKey), 2, $this->getColumnContentXStart($colKey), $curY, $columnText, 0, 0, 0, true, $colDef['content']['align']);
+            $pdf->writeHTMLCell($this->getColumnContentWidth($colKey), 2, $this->getColumnContentXStart($colKey), $curY, $columnText, 0, 0, 0, true, $colDef['content']['align']);
         }
     }
 
 
     /**
-     *   	get column status from column key
+     *  get column status from column key
      *
-     *   	@param	string			$colKey    		the column key
-     *      @return	float      width in mm
+     *  @param	string			$colKey    		the column key
+     *  @return	float      width in mm
      */
-    function getColumnStatus($colKey)
+    public function getColumnStatus($colKey)
     {
         if( !empty($this->cols[$colKey]['status'])){
             return true;

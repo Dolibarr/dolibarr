@@ -59,7 +59,7 @@ class mod_contract_magre extends ModelNumRefContracts
 	 *
 	 *	@return     string      text description
 	 */
-	function info()
+    public function info()
     {
     	global $conf,$langs;
 
@@ -81,8 +81,8 @@ class mod_contract_magre extends ModelNumRefContracts
 		$tooltip.=$langs->trans("GenericMaskCodes5");
 
 		$texte.= '<tr><td>'.$langs->trans("Mask").':</td>';
-		$texte.= '<td align="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskcontract" value="'.$conf->global->CONTRACT_MAGRE_MASK.'">', $tooltip, 1, 1).'</td>';
-		$texte.= '<td align="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
+		$texte.= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskcontract" value="'.$conf->global->CONTRACT_MAGRE_MASK.'">', $tooltip, 1, 1).'</td>';
+		$texte.= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
 		$texte.= '</tr>';
 		$texte.= '</table>';
 		$texte.= '</form>';
@@ -95,7 +95,7 @@ class mod_contract_magre extends ModelNumRefContracts
 	 *
 	 *	@return     string      Example
 	 */
-    function getExample()
+    public function getExample()
     {
      	global $conf,$langs,$mysoc;
 
@@ -118,7 +118,7 @@ class mod_contract_magre extends ModelNumRefContracts
 	 *	@param	Object		$contract	contract object
 	 *	@return string      			Value if OK, 0 if KO
 	 */
-    function getNextValue($objsoc, $contract)
+    public function getNextValue($objsoc, $contract)
     {
 		global $db,$conf;
 
@@ -137,15 +137,15 @@ class mod_contract_magre extends ModelNumRefContracts
 		return  $numFinal;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Return next value
 	 *
-	 *	@param	Societe		$objsoc     third party object
-	 *	@param	Object		$objforref	contract object
-	 *	@return string      			Value if OK, 0 if KO
-	 */
-    function contract_get_num($objsoc, $objforref)
+	 *  @param	Societe		$objsoc     third party object
+	 *  @param	Object		$objforref	contract object
+	 *  @return string      			Value if OK, 0 if KO
+     */
+    public function contract_get_num($objsoc, $objforref)
     {
         // phpcs:enable
         return $this->getNextValue($objsoc, $objforref);

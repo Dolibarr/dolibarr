@@ -41,12 +41,12 @@ class pdf_standardlabel extends CommonStickerGenerator
 	 * @param	array		$param			Associative array containing label content and optional parameters
 	 * @return	void
 	 */
-    function addSticker(&$pdf, $outputlangs, $param)
+    public function addSticker(&$pdf, $outputlangs, $param)
     {
 		// use this method in future refactoring
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Output a sticker on page at position _COUNTX, _COUNTY (_COUNTX and _COUNTY start from 0)
 	 * - %LOGO% is replace with company logo
@@ -61,7 +61,7 @@ class pdf_standardlabel extends CommonStickerGenerator
 	 * @param	string		$photo			Photo (full path to image file used as replacement for key %PHOTOS% into left, right, header or footer text)
 	 * @return	void
 	 */
-	function Add_PDF_label(&$pdf, $textleft, $header, $footer, $outputlangs, $textright = '', $photo = '')
+	public function Add_PDF_label(&$pdf, $textleft, $header, $footer, $outputlangs, $textright = '', $photo = '')
 	{
         // phpcs:enable
 		global $mysoc, $conf, $langs;
@@ -227,7 +227,7 @@ class pdf_standardlabel extends CommonStickerGenerator
 
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Function to build PDF on disk, then output on HTTP strem.
 	 *
@@ -238,7 +238,7 @@ class pdf_standardlabel extends CommonStickerGenerator
 	 *  @param  string      $filename           Short file name of PDF output file
 	 *	@return int								1=OK, 0=KO
 	 */
-	function write_file($arrayofrecords, $outputlangs, $srctemplatepath, $outputdir = '', $filename = 'tmp_address_sheet.pdf')
+	public function write_file($arrayofrecords, $outputlangs, $srctemplatepath, $outputdir = '', $filename = 'tmp_address_sheet.pdf')
 	{
         // phpcs:enable
 		global $user,$conf,$langs,$mysoc,$_Avery_Labels;

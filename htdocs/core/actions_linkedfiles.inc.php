@@ -29,7 +29,7 @@
 // Submit file/link
 if (GETPOST('sendit', 'alpha') && ! empty($conf->global->MAIN_UPLOAD_DOC))
 {
-	if (! empty($_FILES))
+    if (! empty($_FILES))
 	{
 		if (is_array($_FILES['userfile']['tmp_name'])) $userfiles=$_FILES['userfile']['tmp_name'];
 		else $userfiles=array($_FILES['userfile']['tmp_name']);

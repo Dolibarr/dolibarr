@@ -220,9 +220,9 @@ function show_list_sending_receive($origin, $origin_id, $filter = '')
 			//print '<td class="left">'.$langs->trans("QtyOrdered").'</td>';
 			print '<td class="left">'.$langs->trans("SendingSheet").'</td>';
 			print '<td class="left">'.$langs->trans("Description").'</td>';
-			print '<td align="center">'.$langs->trans("DateCreation").'</td>';
-			print '<td align="center">'.$langs->trans("DateDeliveryPlanned").'</td>';
-			print '<td align="center">'.$langs->trans("QtyPreparedOrShipped").'</td>';
+			print '<td class="center">'.$langs->trans("DateCreation").'</td>';
+			print '<td class="center">'.$langs->trans("DateDeliveryPlanned").'</td>';
+			print '<td class="center">'.$langs->trans("QtyPreparedOrShipped").'</td>';
 			if (! empty($conf->stock->enabled))
 			{
                 print '<td>'.$langs->trans("Warehouse").'</td>';
@@ -236,8 +236,8 @@ function show_list_sending_receive($origin, $origin_id, $filter = '')
 			if (! empty($conf->livraison_bon->enabled))
 			{
 				print '<td>'.$langs->trans("DeliveryOrder").'</td>';
-				//print '<td align="center">'.$langs->trans("QtyReceived").'</td>';
-				print '<td align="right">'.$langs->trans("DeliveryDate").'</td>';
+				//print '<td class="center">'.$langs->trans("QtyReceived").'</td>';
+				print '<td class="right">'.$langs->trans("DeliveryDate").'</td>';
 			}
 			print "</tr>\n";
 
@@ -248,7 +248,7 @@ function show_list_sending_receive($origin, $origin_id, $filter = '')
 				print '<tr class="oddeven">';
 
 				// Sending id
-				print '<td align="left" class="nowrap">';
+				print '<td class="nowrap left">';
 				print '<a href="'.DOL_URL_ROOT.'/expedition/card.php?id='.$objp->expedition_id.'">'.img_object($langs->trans("ShowSending"), 'sending').' '.$objp->exp_ref.'<a>';
 				print '</td>';
 
@@ -324,16 +324,16 @@ function show_list_sending_receive($origin, $origin_id, $filter = '')
 					print "</td>\n";
 				}
 
-				//print '<td align="center">'.$objp->qty_asked.'</td>';
+				//print '<td class="center">'.$objp->qty_asked.'</td>';
 
 				// Date creation
-				print '<td align="center" class="nowrap">'.dol_print_date($db->jdate($objp->date_creation), 'day').'</td>';
+				print '<td class="nowrap center">'.dol_print_date($db->jdate($objp->date_creation), 'day').'</td>';
 
 				// Date shipping creation
-				print '<td align="center" class="nowrap">'.dol_print_date($db->jdate($objp->date_delivery), 'day').'</td>';
+				print '<td class="nowrap center">'.dol_print_date($db->jdate($objp->date_delivery), 'day').'</td>';
 
 				// Qty shipped
-				print '<td align="center">'.$objp->qty_shipped.'</td>';
+				print '<td class="center">'.$objp->qty_shipped.'</td>';
 
 				// Warehouse
 				if (! empty($conf->stock->enabled))
@@ -403,13 +403,13 @@ function show_list_sending_receive($origin, $origin_id, $filter = '')
 						//print '<a href="'.DOL_URL_ROOT.'/livraison/card.php?id='.$livraison_id.'">'.img_object($langs->trans("ShowReceiving"),'sending').' '.$objp->livraison_ref.'<a>';
 						print '</td>';
 						// Qty received
-						//print '<td align="center">';
+						//print '<td class="center">';
 						// TODO No solution for the moment to link a line det of receipt with a line det of shipping,
 						// so no way to know the qty received for this line of shipping.
 						//print $langs->trans("FeatureNotYetAvailable");
 						//print '</td>';
 						// Date shipping real
-						print '<td align="right">';
+						print '<td class="right">';
 						print dol_print_date($receiving->date_delivery, 'day');
 						print '</td>';
 					}
