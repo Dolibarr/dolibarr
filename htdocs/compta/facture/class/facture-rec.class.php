@@ -681,7 +681,7 @@ class FactureRec extends CommonInvoice
      *	@param    	double		$txtva           	Taux de tva force, sinon -1
 	 * 	@param		double		$txlocaltax1		Local tax 1 rate (deprecated)
 	 *  @param		double		$txlocaltax2		Local tax 2 rate (deprecated)
-     *	@param    	int			$fk_product      	Id du produit/service predefini
+     *	@param    	int			$fk_product      	Product/Service ID predefined
      *	@param    	double		$remise_percent  	Pourcentage de remise de la ligne
      *	@param		string		$price_base_type	HT or TTC
      *	@param    	int			$info_bits			VAT npr or not ?
@@ -862,7 +862,7 @@ class FactureRec extends CommonInvoice
 	 *	@param    	double		$txtva           	Taux de tva force, sinon -1
 	 * 	@param		double		$txlocaltax1		Local tax 1 rate (deprecated)
 	 *  @param		double		$txlocaltax2		Local tax 2 rate (deprecated)
-	 *	@param    	int			$fk_product      	Id du produit/service predefini
+	 *	@param    	int			$fk_product      	Product/Service ID predefined
 	 *	@param    	double		$remise_percent  	Pourcentage de remise de la ligne
 	 *	@param		string		$price_base_type	HT or TTC
 	 *	@param    	int			$info_bits			Bits de type de lignes

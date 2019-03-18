@@ -411,7 +411,7 @@ class Propal extends CommonObject
      * 		@param    	float		$txtva           	Force Vat rate, -1 for auto (Can contain the vat_src_code too with syntax '9.9 (CODE)')
      * 		@param		float		$txlocaltax1		Local tax 1 rate (deprecated, use instead txtva with code inside)
      *  	@param		float		$txlocaltax2		Local tax 2 rate (deprecated, use instead txtva with code inside)
-     *		@param    	int			$fk_product      	Id du produit/service predefini
+     *		@param    	int			$fk_product      	Product/Service ID predefined
      * 		@param    	float		$remise_percent  	Pourcentage de remise de la ligne
      * 		@param    	string		$price_base_type	HT or TTC
      * 		@param    	float		$pu_ttc             Prix unitaire TTC
