@@ -579,7 +579,7 @@ foreach ($listofreferent as $key => $value)
 	$qualified=$value['test'];
 	$margin = $value['margin'];
 	$project_field = $value['project_field'];
-	if ($qualified && isset($margin))		// If this element must be included into profit calculation ($margin is 'minus' or 'plus')
+	if ($qualified && isset($margin))		// If this element must be included into profit calculation ($margin is 'minus' or 'plus' or 'auto')
 	{
 		$element = new $classname($db);
 
@@ -600,6 +600,7 @@ foreach ($listofreferent as $key => $value)
 				$element->fetch($idofelement);
 				if ($idofelementuser) $elementuser->fetch($idofelementuser);
 
+				// Define if record must be used for total or not
 				$qualifiedfortotal=true;
 				if ($key == 'invoice')
 				{
@@ -642,6 +643,16 @@ foreach ($listofreferent as $key => $value)
 				}
 				else $total_ttc_by_line=$element->total_ttc;
 
+				// Change sign of $total_ht_by_line and $total_ttc_by_line for some cases
+				if ($tablename == 'payment_various')
+				{
+			        if ($element->sens == 1)
+			        {
+			            $total_ht_by_line = -$total_ht_by_line;
+			            $total_ttc_by_line = -$total_ttc_by_line;
+			        }
+				}
+
 				// Add total if we have to
 				if ($qualifiedfortotal)
 				{
@@ -658,23 +669,14 @@ foreach ($listofreferent as $key => $value)
 			// Calculate margin
 			if ($qualifiedforfinalprofit)
 			{
-				if ($margin=="add")
-				{
-					$balance_ht+= $total_ht;
-					$balance_ttc+= $total_ttc;
-				}
-				else
-				{
-					$balance_ht-= $total_ht;
-					$balance_ttc-= $total_ttc;
-				}
-
-				// Show $total_ht & $total_ttc -- add a minus when necessary
-				if ($margin!="add")
+			    if ($margin != "add")
 				{
 					$total_ht = -$total_ht;
 					$total_ttc = -$total_ttc;
 				}
+
+				$balance_ht += $total_ht;
+				$balance_ttc += $total_ttc;
 			}
 
 			print '<tr class="oddeven">';
@@ -856,8 +858,7 @@ foreach ($listofreferent as $key => $value)
 					$expensereport->fetch($element->fk_expensereport);
 				}
 
-				//print 'xxx'.$tablename;
-				//print $classname;
+				//print 'xxx'.$tablename.'yyy'.$classname;
 
 				if ($breakline && $saved_third_id != $element->thirdparty->id)
 				{
@@ -1032,6 +1033,16 @@ foreach ($listofreferent as $key => $value)
 					{
 						$total_ht_by_line=$element->total_ht;
 					}
+
+					// Change sign of $total_ht_by_line and $total_ttc_by_line for some cases
+					if ($tablename == 'payment_various')
+					{
+					    if ($element->sens == 0)
+					    {
+					        $total_ht_by_line = -$total_ht_by_line;
+					    }
+					}
+
 					print '<td align="right">';
 					if ($othermessage) print $othermessage;
 					if (isset($total_ht_by_line))
@@ -1069,6 +1080,16 @@ foreach ($listofreferent as $key => $value)
 					{
 						$total_ttc_by_line=$element->total_ttc;
 					}
+
+					// Change sign of $total_ht_by_line and $total_ttc_by_line for some cases
+					if ($tablename == 'payment_various')
+					{
+					    if ($element->sens == 0)
+					    {
+					        $total_ttc_by_line = -$total_ttc_by_line;
+					    }
+					}
+
 					print '<td align="right">';
 					if ($othermessage) print $othermessage;
 					if (isset($total_ttc_by_line))
