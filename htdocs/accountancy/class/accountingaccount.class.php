@@ -76,7 +76,7 @@ class AccountingAccount extends CommonObject
 	/**
      * Date creation record (datec)
      *
-     * @var DateTime
+     * @var integer
      */
     public $datec;
 
