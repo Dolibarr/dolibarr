@@ -438,7 +438,7 @@ class Form
 	 *  @param  string      $tooltiptrigger		''=Tooltip on hover, 'abc'=Tooltip on click (abc is a unique key)
 	 *  @param	int			$forcenowrap		Force no wrap between text and picto (works with notabs=2 only)
 	 *	@return	string							Code html du tooltip (texte+picto)
-	 *	@see	Use function textwithpicto if you can.
+	 *	@see	textwithpicto() Use thisfunction if you can.
 	 *  TODO Move this as static as soon as everybody use textwithpicto or @Form::textwithtooltip
 	 */
     public function textwithtooltip($text, $htmltext, $tooltipon = 1, $direction = 0, $img = '', $extracss = '', $notabs = 2, $incbefore = '', $noencodehtmltext = 0, $tooltiptrigger = '', $forcenowrap = 0)
@@ -1587,7 +1587,7 @@ class Form
 	 *  @param  int		$outputmode     0=HTML select string, 1=Array
 	 *  @param  bool	$multiple       add [] in the name of element and add 'multiple' attribut
 	 * 	@return	string					HTML select string
-	 *  @see select_dolgroups
+	 *  @see select_dolgroups()
 	 */
     public function select_dolusers($selected = '', $htmlname = 'userid', $show_empty = 0, $exclude = null, $disabled = 0, $include = '', $enableonly = '', $force_entity = '0', $maxlength = 0, $showstatus = 0, $morefilter = '', $show_every = 0, $enableonlytext = '', $morecss = '', $noactive = 0, $outputmode = 0, $multiple = false)
 	{
@@ -1795,7 +1795,7 @@ class Form
 	 *  @param	array	$listofcontactid	Array with properties of each contact
 	 *  @param	array	$listofotherid		Array with properties of each other contact
 	 * 	@return	string					HTML select string
-	 *  @see select_dolgroups
+	 *  @see select_dolgroups()
 	 */
     public function select_dolusers_forevent($action = '', $htmlname = 'userid', $show_empty = 0, $exclude = null, $disabled = 0, $include = '', $enableonly = '', $force_entity = '0', $maxlength = 0, $showstatus = 0, $morefilter = '', $showproperties = 0, $listofuserid = array(), $listofcontactid = array(), $listofotherid = array())
 	{
@@ -3532,7 +3532,10 @@ class Form
 		$langs->load('bills');
 
 		$opt = '<option value ="" selected></option>';
-		$sql = 'SELECT rowid, ref, situation_cycle_ref, situation_counter, situation_final, fk_soc FROM ' . MAIN_DB_PREFIX . 'facture WHERE situation_counter>=1';
+		$sql = 'SELECT rowid, ref, situation_cycle_ref, situation_counter, situation_final, fk_soc';
+		$sql.= ' FROM ' . MAIN_DB_PREFIX . 'facture';
+		$sql.= ' WHERE entity IN ('.getEntity('invoice').')';
+		$sql.= ' AND situation_counter>=1';
 		$sql.= ' ORDER by situation_cycle_ref, situation_counter desc';
 		$resql = $this->db->query($sql);
 		if ($resql && $this->db->num_rows($resql) > 0) {
@@ -4377,7 +4380,7 @@ class Form
 	 *    @param    int			$displaymin		Display minutes selector
 	 *    @param	int			$nooutput		1=No print output, return string
 	 *    @return	string
-	 *    @see		selectDate
+	 *    @see		selectDate()
 	 */
     public function form_date($page, $selected, $htmlname, $displayhour = 0, $displaymin = 0, $nooutput = 0)
 	{
@@ -5170,7 +5173,7 @@ class Form
 	 *              - local date in user area, if set_time is '' (so if set_time is '', output may differs when done from two different location)
 	 *              - Empty (fields empty), if set_time is -1 (in this case, parameter empty must also have value 1)
 	 *
-	 *  @param  timestamp   $set_time       Pre-selected date (must be a local PHP server timestamp), -1 to keep date not preselected, '' to use current date with 00:00 hour (Parameter 'empty' must be 0 or 2).
+	 *  @param  integer     $set_time       Pre-selected date (must be a local PHP server timestamp), -1 to keep date not preselected, '' to use current date with 00:00 hour (Parameter 'empty' must be 0 or 2).
 	 *  @param	string		$prefix			Prefix for fields name
 	 *  @param	int			$h				1 or 2=Show also hours (2=hours on a new line), -1 has same effect but hour and minutes are prefilled with 23:59 if date is empty, 3 show hour always empty
 	 *	@param	int			$m				1=Show also minutes, -1 has same effect but hour and minutes are prefilled with 23:59 if date is empty, 3 show minutes always empty
@@ -5183,7 +5186,7 @@ class Form
 	 *  @param	string		$addplusone		Add a link "+1 hour". Value must be name of another selectDate field.
 	 *  @param  datetime    $adddateof      Add a link "Date of invoice" using the following date.
 	 * 	@return string                      Html for selectDate
-	 *  @see    form_date, select_month, select_year, select_dayofweek
+	 *  @see    form_date(), select_month(), select_year(), select_dayofweek()
 	 */
     public function selectDate($set_time = '', $prefix = 're', $h = 0, $m = 0, $empty = 0, $form_name = "", $d = 1, $addnowlink = 0, $disabled = 0, $fullday = '', $addplusone = '', $adddateof = '')
 	{
@@ -5634,7 +5637,7 @@ class Form
 	 * @param	string			$moreparams			More params provided to ajax call
 	 * @param	int				$forcecombo			Force to load all values and output a standard combobox (with no beautification)
 	 * @return	string								Return HTML string
-	 * @see selectForFormsList select_thirdparty
+	 * @see selectForFormsList() select_thirdparty
 	 */
     public function selectForForms($objectdesc, $htmlname, $preselectedvalue, $showempty = '', $searchkey = '', $placeholder = '', $morecss = '', $moreparams = '', $forcecombo = 0)
 	{
@@ -5704,7 +5707,7 @@ class Form
 	 * @param	int				$forcecombo			Force to load all values and output a standard combobox (with no beautification)
 	 * @param	int				$outputmode			0=HTML select string, 1=Array
 	 * @return	string								Return HTML string
-	 * @see selectForForms
+	 * @see selectForForms()
 	 */
     public function selectForFormsList($objecttmp, $htmlname, $preselectedvalue, $showempty = '', $searchkey = '', $placeholder = '', $morecss = '', $moreparams = '', $forcecombo = 0, $outputmode = 0)
 	{
@@ -5951,7 +5954,7 @@ class Form
 	 *  @param  string  $placeholder            String to use as placeholder
 	 *  @param  integer $acceptdelayedhtml      1 = caller is requesting to have html js content not returned but saved into global $delayedhtmlcontent (so caller can show it at end of page to avoid flash FOUC effect)
 	 * 	@return	string   						HTML select string
-	 *  @see selectArrayFilter, ajax_combobox in ajax.lib.php
+	 *  @see selectArrayFilter(), ajax_combobox() in ajax.lib.php
 	 */
 	public static function selectArrayAjax($htmlname, $url, $id = '', $moreparam = '', $moreparamtourl = '', $disabled = 0, $minimumInputLength = 1, $morecss = '', $callurlonselect = 0, $placeholder = '', $acceptdelayedhtml = 0)
 	{
@@ -6171,7 +6174,7 @@ class Form
 	 *  @param	string	$placeholder	String to use as placeholder
 	 *  @param	int		$addjscombo		Add js combo
 	 *	@return	string					HTML multiselect string
-	 *  @see selectarray, selectArrayAjax, selectArrayFilter
+	 *  @see selectarray(), selectArrayAjax(), selectArrayFilter()
 	 */
 	public static function multiselectarray($htmlname, $array, $selected = array(), $key_in_label = 0, $value_as_key = 0, $morecss = '', $translate = 0, $width = 0, $moreattrib = '', $elemtype = '', $placeholder = '', $addjscombo = -1)
 	{
@@ -6281,7 +6284,7 @@ class Form
 	 *	@param	array	$array			Array with array of fields we could show. This array may be modified according to setup of user.
 	 *  @param  string  $varpage        Id of context for page. Can be set by caller with $varpage=(empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage);
 	 *	@return	string					HTML multiselect string
-	 *  @see selectarray
+	 *  @see selectarray()
 	 */
 	public static function multiSelectArrayWithCheckbox($htmlname, &$array, $varpage)
 	{
@@ -7181,7 +7184,7 @@ class Form
 	 * 	@param	string	$force_entity	'0' or Ids of environment to force
 	 * 	@param	bool	$multiple		add [] in the name of element and add 'multiple' attribut (not working with ajax_autocompleter)
 	 *  @return	string
-	 *  @see select_dolusers
+	 *  @see select_dolusers()
 	 */
     public function select_dolgroups($selected = '', $htmlname = 'groupid', $show_empty = 0, $exclude = '', $disabled = 0, $include = '', $enableonly = '', $force_entity = '0', $multiple = false)
 	{
