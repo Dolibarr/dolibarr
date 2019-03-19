@@ -7,7 +7,7 @@
  * Copyright (C) 2013-2014  Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2013       Christophe Battarel     <contact@altairis.fr>
  * Copyright (C) 2013-2018  Alexandre Spangaro      <aspangaro@open-dsi.fr>
- * Copyright (C) 2015-2018  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2015-2019  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2017       Rui Strecht             <rui.strecht@aliartalentos.com>
  * Copyright (C) 2018       Ferran Marcet           <fmarcet@2byte.es>
@@ -1351,7 +1351,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 
     if (!empty($sql) && !empty($sql2)) {
         $sql = $sql . " UNION " . $sql2;
-    } else if (empty($sql) && !empty($sql2)) {
+    } elseif (empty($sql) && !empty($sql2)) {
         $sql = $sql2;
     }
     //TODO Add limit in nb of results
