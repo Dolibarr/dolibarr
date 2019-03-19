@@ -4362,10 +4362,9 @@ elseif ($id > 0 || ! empty($ref))
 
 		// Remainder to pay
 		print '<tr><td colspan="' . $nbcols . '" class="right">';
-		if ($resteapayeraffiche >= 0)
-			print $langs->trans('RemainderToPay');
-		else
-			print $langs->trans('ExcessReceived');
+		print $langs->trans('RemainderToPay');
+		if ($resteapayeraffiche < 0)
+		    print ' ('.$langs->trans('ExcessReceived').')';
 		print ' :</td>';
 		print '<td class="right"'.($resteapayeraffiche?' class="amountremaintopay"':(' class="'.$cssforamountpaymentcomplete.'"')).'>' . price($resteapayeraffiche) . '</td>';
 		print '<td class="nowrap">&nbsp;</td></tr>';
@@ -4384,10 +4383,9 @@ elseif ($id > 0 || ! empty($ref))
 
 		// Remainder to pay back
 		print '<tr><td colspan="' . $nbcols . '" class="right">';
-		if ($resteapayeraffiche <= 0)
-			print $langs->trans('RemainderToPayBack');
-		else
-			print $langs->trans('ExcessPaid');
+		print $langs->trans('RemainderToPayBack');
+		if ($resteapayeraffiche > 0)
+			print ' ('.$langs->trans('ExcessPaid').')';
 		print ' :</td>';
 		print '<td class="right"'.($resteapayeraffiche?' class="amountremaintopayback"':(' class="'.$cssforamountpaymentcomplete.'"')).'>' . price($sign * $resteapayeraffiche) . '</td>';
 		print '<td class="nowrap">&nbsp;</td></tr>';
