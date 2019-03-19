@@ -749,6 +749,7 @@ class User extends CommonObject
 	{
 		dol_syslog(get_class($this)."::clearrights reset user->rights");
 		$this->rights='';
+		$this->nb_rights=0;
 		$this->all_permissions_are_loaded=false;
 		$this->_tab_loaded=array();
 	}
