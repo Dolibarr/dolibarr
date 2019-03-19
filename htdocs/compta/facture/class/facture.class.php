@@ -2865,9 +2865,9 @@ class Facture extends CommonInvoice
 	 *  @param     	string		$desc            	Description of line
 	 *  @param     	double		$pu              	Prix unitaire (HT ou TTC selon price_base_type) (> 0 even for credit note lines)
 	 *  @param     	double		$qty             	Quantity
-	 *  @param     	double		$remise_percent  	Pourcentage de remise de la ligne
-	 *  @param     	int		$date_start      	Date de debut de validite du service
-	 *  @param     	int		$date_end        	Date de fin de validite du service
+	 *  @param     	double		$remise_percent  	Percentage discount of the line
+	 *  @param     	int		    $date_start      	Date de debut de validite du service
+	 *  @param     	int		    $date_end        	Date de fin de validite du service
 	 *  @param     	double		$txtva          	VAT Rate (Can be '8.5', '8.5 (ABC)')
 	 * 	@param		double		$txlocaltax1		Local tax 1 rate
 	 *  @param		double		$txlocaltax2		Local tax 2 rate
