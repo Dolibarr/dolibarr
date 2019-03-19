@@ -291,14 +291,14 @@ class FormProduct
 	 * 	@param	int			$adddefault			Add empty unit called "Default"
 	 *  @param  int         $mode               1=Use short label as value, 0=Use rowid
 	 * 	@return	void
+	 *  @deprecated
 	 */
 	public function select_measuring_units($name = 'measuring_units', $measuring_style = '', $default = '0', $adddefault = 0, $mode = 0)
 	{
         //phpcs:enable
-		print $this->load_measuring_units($name, $measuring_style, $default, $adddefault, $mode);
+	    print $this->selectMeasuringUnits($name, $measuring_style, $default, $adddefault, $mode);
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Return a combo box with list of units
 	 *  For the moment, units labels are defined in measuring_units_string
@@ -310,14 +310,14 @@ class FormProduct
 	 *  @param  int         $mode                1=Use short label as value, 0=Use rowid
 	 *  @return string
 	 */
-	public function load_measuring_units($name = 'measuring_units', $measuring_style = '', $default = '0', $adddefault = 0, $mode = 0)
+	public function selectMeasuringUnits($name = 'measuring_units', $measuring_style = '', $default = '0', $adddefault = 0, $mode = 0)
 	{
-        //phpcs:enable
 		global $langs, $conf, $mysoc, $db;
 		$langs->load("other");
 
 		$return = '';
 
+		// TODO Use a cache
 		require_once DOL_DOCUMENT_ROOT . '/core/class/cunits.class.php';
 		$measuringUnits = new CUnits($db);
         $result = $measuringUnits->fetchAll(
@@ -332,13 +332,16 @@ class FormProduct
         );
 		if ($result < 0) {
 			dol_print_error($db);
-			return - 1;
+			return -1;
 		} else {
 			$return .= '<select class="flat" name="' . $name . '">';
 			if ($adddefault)
+			{
 				$return .= '<option value="0">' . $langs->trans("Default") . '</option>';
+			}
 
-			foreach ($measuringUnits->records as $lines) {
+			foreach ($measuringUnits->records as $lines)
+			{
 				$return .= '<option value="';
 				if ($mode == 1) $return .= $lines->short_label;
 				else $return .= $lines->id;

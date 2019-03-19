@@ -120,7 +120,7 @@ CREATE TABLE llx_c_units(
 ALTER TABLE llx_c_units ADD UNIQUE uk_c_units_code(code);
 
 INSERT INTO llx_c_units (code, scale, label, short_label, unit_type, active) VALUES ('T','3','WeightUnitton','T', 'weight', 1);
-INSERT INTO llx_c_units (code, scale, label, short_label, unit_type, active) VALUES ('KG','0','WeightUnitkg','Kg', 'weight', 1);
+INSERT INTO llx_c_units (code, scale, label, short_label, unit_type, active) VALUES ('KG','0','WeightUnitkg','kg', 'weight', 1);
 INSERT INTO llx_c_units (code, scale, label, short_label, unit_type, active) VALUES ('G','-3','WeightUnitg','g', 'weight', 1);
 INSERT INTO llx_c_units (code, scale, label, short_label, unit_type, active) VALUES ('MG','-6','WeightUnitmg','mg', 'weight', 1);
 INSERT INTO llx_c_units (code, scale, label, short_label, unit_type, active) VALUES ('OZ','98','WeightUnitounce','Oz', 'weight', 1);
@@ -163,6 +163,17 @@ INSERT INTO llx_c_units (code, scale, label, short_label, unit_type, active) VAL
 INSERT INTO llx_c_units (code, scale, label, short_label, unit_type, active) VALUES ('Y','31557600','year','y', 'time', 1);
 
 UPDATE llx_c_units SET short_label = 'i' WHERE code = 'MI';
+UPDATE llx_c_units SET unit_type = 'weight', short_label = 'kg' WHERE code = 'KG';
+UPDATE llx_c_units SET unit_type = 'weight', short_label = 'g' WHERE code = 'G';
+UPDATE llx_c_units SET unit_type = 'time' WHERE code IN ('S','H','D');
+UPDATE llx_c_units SET unit_type = 'size' WHERE code IN ('M','LM');
+UPDATE llx_c_units SET label = 'SizeUnitm' WHERE code IN ('M');
+UPDATE llx_c_units SET active = 0 WHERE code IN ('LM');
+UPDATE llx_c_units SET unit_type = 'surface' WHERE code IN ('M2');
+UPDATE llx_c_units SET unit_type = 'volume' WHERE code IN ('M3','L');
+UPDATE llx_c_units SET scale = -3, active = 0 WHERE code IN ('L');
+UPDATE llx_c_units SET label = 'VolumeUnitm3' WHERE code IN ('M3');
+UPDATE llx_c_units SET label = 'SurfaceUnitm2' WHERE code IN ('M2');
 
 
 -- Default Warehouse id for a user

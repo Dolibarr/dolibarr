@@ -1026,7 +1026,7 @@ else
         {
             print '<tr><td>'.$langs->trans("Duration").'</td><td colspan="3">';
             print '<input name="surface" size="4" value="'.GETPOST('duration_value', 'alpha').'">';
-            print $formproduct->load_measuring_units("duration_unit", "time", GETPOST('duration_value', 'alpha'), 0, 1);
+            print $formproduct->selectMeasuringUnits("duration_unit", "time", GETPOST('duration_value', 'alpha'), 0, 1);
             print '</td></tr>';
         }
 
@@ -1041,7 +1041,7 @@ else
             // Weight
             print '<tr><td>'.$langs->trans("Weight").'</td><td colspan="3">';
             print '<input name="weight" size="4" value="'.GETPOST('weight').'">';
-            print $formproduct->load_measuring_units("weight_units", "weight", (empty($conf->global->MAIN_WEIGHT_DEFAULT_UNIT)?0:$conf->global->MAIN_WEIGHT_DEFAULT_UNIT));
+            print $formproduct->selectMeasuringUnits("weight_units", "weight", (empty($conf->global->MAIN_WEIGHT_DEFAULT_UNIT)?0:$conf->global->MAIN_WEIGHT_DEFAULT_UNIT));
             print '</td></tr>';
             // Length
             if (empty($conf->global->PRODUCT_DISABLE_SIZE))
@@ -1050,7 +1050,7 @@ else
                 print '<input name="size" size="4" value="'.GETPOST('size').'"> x ';
                 print '<input name="sizewidth" size="4" value="'.GETPOST('sizewidth').'"> x ';
                 print '<input name="sizeheight" size="4" value="'.GETPOST('sizeheight').'">';
-                print $formproduct->select_measuring_units("size_units", "size");
+                print $formproduct->selectMeasuringUnits("size_units", "size");
                 print '</td></tr>';
             }
             if (empty($conf->global->PRODUCT_DISABLE_SURFACE))
@@ -1058,7 +1058,7 @@ else
                 // Surface
                 print '<tr><td>'.$langs->trans("Surface").'</td><td colspan="3">';
                 print '<input name="surface" size="4" value="'.GETPOST('surface').'">';
-                print $formproduct->select_measuring_units("surface_units", "surface");
+                print $formproduct->selectMeasuringUnits("surface_units", "surface");
                 print '</td></tr>';
             }
             if (empty($conf->global->PRODUCT_DISABLE_VOLUME))
@@ -1066,7 +1066,7 @@ else
                 // Volume
                 print '<tr><td>'.$langs->trans("Volume").'</td><td colspan="3">';
                 print '<input name="volume" size="4" value="'.GETPOST('volume').'">';
-                print $formproduct->select_measuring_units("volume_units", "volume");
+                print $formproduct->selectMeasuringUnits("volume_units", "volume");
                 print '</td></tr>';
             }
         }
@@ -1402,7 +1402,7 @@ else
                 // Duration
                 print '<tr><td>'.$langs->trans("Duration").'</td><td colspan="3">';
                 print '<input name="surface" size="5" value="'.$object->duration_value.'"> ';
-                print $formproduct->load_measuring_units("duration_unit", "time", $object->duration_unit, 0, 1);
+                print $formproduct->selectMeasuringUnits("duration_unit", "time", $object->duration_unit, 0, 1);
                 print '</td></tr>';
             }
             else
@@ -1416,7 +1416,7 @@ else
                 // Weight
                 print '<tr><td>'.$langs->trans("Weight").'</td><td colspan="3">';
                 print '<input name="weight" size="5" value="'.$object->weight.'"> ';
-                print $formproduct->select_measuring_units("weight_units", "weight", $object->weight_units);
+                print $formproduct->selectMeasuringUnits("weight_units", "weight", $object->weight_units);
                 print '</td></tr>';
                 if (empty($conf->global->PRODUCT_DISABLE_SIZE))
                 {
@@ -1425,7 +1425,7 @@ else
                   print '<input name="size" size="5" value="'.$object->length.'">x';
                   print '<input name="sizewidth" size="5" value="'.$object->width.'">x';
                   print '<input name="sizeheight" size="5" value="'.$object->height.'"> ';
-                  print $formproduct->select_measuring_units("size_units", "size", $object->length_units);
+                  print $formproduct->selectMeasuringUnits("size_units", "size", $object->length_units);
                   print '</td></tr>';
                 }
                 if (empty($conf->global->PRODUCT_DISABLE_SURFACE))
@@ -1433,7 +1433,7 @@ else
                     // Surface
                     print '<tr><td>'.$langs->trans("Surface").'</td><td colspan="3">';
                     print '<input name="surface" size="5" value="'.$object->surface.'"> ';
-                    print $formproduct->select_measuring_units("surface_units", "surface", $object->surface_units);
+                    print $formproduct->selectMeasuringUnits("surface_units", "surface", $object->surface_units);
                     print '</td></tr>';
                 }
                 if (empty($conf->global->PRODUCT_DISABLE_VOLUME))
@@ -1441,7 +1441,7 @@ else
                     // Volume
                     print '<tr><td>'.$langs->trans("Volume").'</td><td colspan="3">';
                     print '<input name="volume" size="5" value="'.$object->volume.'"> ';
-                    print $formproduct->select_measuring_units("volume_units", "volume", $object->volume_units);
+                    print $formproduct->selectMeasuringUnits("volume_units", "volume", $object->volume_units);
                     print '</td></tr>';
                 }
             }
