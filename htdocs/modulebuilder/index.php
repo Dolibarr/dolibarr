@@ -1100,7 +1100,7 @@ print load_fiche_titre($text, '', 'title_setup');
 print $langs->trans("ModuleBuilderDesc", 'https://wiki.dolibarr.org/index.php/Module_development#Create_your_module').'<br>';
 
 $dirsrootforscan=array($dirread);
-if ($dirread != DOL_DOCUMENT_ROOT && ! empty($conf->global->MAIN_FEATURES_LEVEL >=2)) { $dirsrootforscan[]=DOL_DOCUMENT_ROOT; }
+if ($dirread != DOL_DOCUMENT_ROOT && $conf->global->MAIN_FEATURES_LEVEL >=2) { $dirsrootforscan[]=DOL_DOCUMENT_ROOT; }
 
 // Search modules to edit
 $listofmodules=array();

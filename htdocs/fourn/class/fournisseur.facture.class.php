@@ -1540,8 +1540,8 @@ class FactureFournisseur extends CommonInvoice
      *	@param		double	$txlocaltax1		LocalTax1 Rate
      *	@param		double	$txlocaltax2		LocalTax2 Rate
      *	@param    	double	$qty             	Quantite
-     *	@param    	int		$fk_product      	Id du produit/service predefini
-     *	@param    	double	$remise_percent  	Pourcentage de remise de la ligne
+     *	@param    	int		$fk_product      	Product/Service ID predefined
+     *	@param    	double	$remise_percent  	Percentage discount of the line
      *	@param    	date	$date_start      	Date de debut de validite du service
      * 	@param    	date	$date_end        	Date de fin de validite du service
      * 	@param    	string	$ventil          	Code de ventilation comptable
@@ -1794,7 +1794,7 @@ class FactureFournisseur extends CommonInvoice
      * @param	  	double		$price_base_type	HT or TTC
      * @param	  	int			$info_bits			Miscellaneous informations of line
      * @param		int			$type				Type of line (0=product, 1=service)
-     * @param     	double		$remise_percent  	Pourcentage de remise de la ligne
+     * @param     	double		$remise_percent  	Percentage discount of the line
      * @param		int			$notrigger			Disable triggers
      * @param      	timestamp	$date_start     	Date start of service
      * @param      	timestamp   $date_end       	Date end of service
