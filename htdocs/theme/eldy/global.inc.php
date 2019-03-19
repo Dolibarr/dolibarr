@@ -2548,11 +2548,16 @@ table.liste, table.noborder, table.formdoc, div.noborder {
 	border-top-color: rgb(<?php echo $colorbackhmenu1 ?>);
 	border-top-style: solid; */
 
+	/*border-bottom-width: 1px;
+	border-bottom-color: rgb(<?php echo $colortopbordertitle1 ?>);
+	border-bottom-style: solid;*/
+
+	margin: 0px 0px 5px 0px;
+}
+table.liste tr:last-of-type td, table.noborder tr:last-of-type td, table.formdoc tr:last-of-type td, div.noborder tr:last-of-type td {
 	border-bottom-width: 1px;
 	border-bottom-color: rgb(<?php echo $colortopbordertitle1 ?>);
 	border-bottom-style: solid;
-
-	margin: 0px 0px 5px 0px;
 }
 div.tabBar div.ficheaddleft table.noborder:last-of-type {
     border-bottom: 1px solid rgb(<?php echo $colortopbordertitle1 ?>);
@@ -2882,8 +2887,9 @@ form.tagtr:last-of-type div.tagtd, tr.pair:last-of-type td, tr.impair:last-of-ty
 tr.pair td .nobordernopadding tr td, tr.impair td .nobordernopadding tr td {
     border-bottom: 0px !important;
 }
-tr.nobottom td, tr.nobottom , td.nobottom {
-    border-bottom: 0px !important;
+table.nobottomiftotal tr.liste_total td {
+	background-color: #fff;
+	border-bottom: 0px !important;
 }
 div.liste_titre .tagtd {
 	vertical-align: middle;
