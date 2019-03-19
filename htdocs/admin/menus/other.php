@@ -84,13 +84,13 @@ dol_fiche_head($head, 'misc', $langs->trans("Menus"), -1);
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td colspan="3">'.$langs->trans("Parameters").'</td>';
-print '<td align="center" width="80">'.$langs->trans("Status").'</td>';
+print '<td class="center" width="80">'.$langs->trans("Status").'</td>';
 print '</tr>';
 
 // Hide unauthorized menu
 print '<tr class="oddeven">';
 print '<td colspan="3">'.$langs->trans("HideUnauthorizedMenu").'</td>';
-print '<td align="center">';
+print '<td class="center">';
 if (empty($conf->global->MAIN_MENU_HIDE_UNAUTHORIZED))
 {
 	print '<a href="'.$_SERVER["PHP_SELF"].'?action=activate_hidemenu">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
