@@ -1402,7 +1402,8 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
                     $newmenu->add("/accountancy/admin/export.php?mainmenu=accountancy&leftmenu=accountancy_admin", $langs->trans("ExportOptions"), 1, $user->rights->accounting->chartofaccount, '', $mainmenu, 'accountancy_admin_export', 130);
 
                     // Cost accounting
-                    if ($conf->global->MAIN_FEATURES_LEVEL > 1) {
+                    if (! empty($conf->global->MAIN_FEATURES_LEVEL) && $conf->global->MAIN_FEATURES_LEVEL >= 2)
+                    {
                         $newmenu->add("/accountancy/admin/costaccounting.php?mainmenu=accountancy&leftmenu=accountancy_admin", $langs->trans("MenuCostAccounting"), 1, $user->rights->accounting->chartofaccount, '', $mainmenu, 'accountancy_admin_cost', 140);
                     }
                 }
