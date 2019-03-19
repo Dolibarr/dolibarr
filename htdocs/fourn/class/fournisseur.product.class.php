@@ -6,6 +6,7 @@
  * Copyright (C) 2012		Christophe Battarel	<christophe.battarel@altairis.fr>
  * Copyright (C) 2015		Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2016		Charlie Benke           <charlie@patas-monkey.com>
+ * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -996,9 +997,9 @@ class ProductFournisseur extends Product
             //$out .= '<td class="liste_titre right">'.$langs->trans("QtyMin").'</td>';
             $out .= '<td class="liste_titre">'.$langs->trans("User").'</td></tr>';
             foreach ($productFournLogList as $productFournLog) {
-                $out.= '<tr><td align="class">'.dol_print_date($productFournLog['datec'], 'dayhour', 'tzuser').'</td>';
-                $out.= '<td align="class">'.price($productFournLog['price']).'</td>';
-                //$out.= '<td align="class">'.$productFournLog['quantity'].'</td>';
+                $out.= '<tr><td class="right">'.dol_print_date($productFournLog['datec'], 'dayhour', 'tzuser').'</td>';
+                $out.= '<td class="right">'.price($productFournLog['price']).'</td>';
+                //$out.= '<td class="right">'.$productFournLog['quantity'].'</td>';
                 $out.= '<td>'.$productFournLog['lastname'].'</td></tr>';
             }
             $out .= '</table>';
