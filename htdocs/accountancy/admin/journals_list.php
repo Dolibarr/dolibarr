@@ -523,7 +523,7 @@ if ($id)
 		print '<td class="liste_titre"></td>';
 		print '<td class="liste_titre"></td>';
 		print '<td class="liste_titre"></td>';
-		print '<td class="liste_titre" align="center">';
+		print '<td class="liste_titre center">';
 		if ($filterfound)
 		{
 			$searchpicto=$form->showFilterAndCheckAddButtons(0);
@@ -590,7 +590,7 @@ if ($id)
 					// Show fields
 					if (empty($reshook)) fieldListJournal($fieldlist, $obj, $tabname[$id], 'edit');
 
-					print '<td align="center" colspan="4">';
+					print '<td class="center" colspan="4">';
 					print '<input type="hidden" name="page" value="'.$page.'">';
 					print '<input type="hidden" name="rowid" value="'.$rowid.'">';
 					print '<input type="submit" class="button" name="actionmodify" value="'.$langs->trans("Modify").'">';
@@ -654,19 +654,19 @@ if ($id)
 					$url.='&';
 
 					// Active
-					print '<td align="center" class="nowrap">';
+					print '<td class="nowrap center">';
 					if ($canbedisabled) print '<a href="'.$url.'action='.$acts[$obj->active].'">'.$actl[$obj->active].'</a>';
 					else print $langs->trans("AlwaysActive");
 					print "</td>";
 
 					// Modify link
-					if ($canbemodified) print '<td align="center"><a class="reposition" href="'.$url.'action=edit">'.img_edit().'</a></td>';
+					if ($canbemodified) print '<td class="center"><a class="reposition" href="'.$url.'action=edit">'.img_edit().'</a></td>';
 					else print '<td>&nbsp;</td>';
 
 					// Delete link
 					if ($iserasable)
 					{
-						print '<td align="center">';
+						print '<td class="center">';
 						if ($user->admin) print '<a href="'.$url.'action=delete">'.img_delete().'</a>';
 						//else print '<a href="#">'.img_delete().'</a>';    // Some dictionary can be edited by other profile than admin
 						print '</td>';
