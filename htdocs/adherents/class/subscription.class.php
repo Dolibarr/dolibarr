@@ -52,14 +52,14 @@ class Subscription extends CommonObject
      *
      * @var integer
      */
-    public $datec;	
+    public $datec;
     
     /**
      * Date modification record (tms)
      *
      * @var integer
      */
-    public $datem;	
+    public $datem;
     
     /**
      * Subscription start date (date subscription)

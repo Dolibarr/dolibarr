@@ -86,7 +86,7 @@ llxHeader('', $langs->trans("Donations"), 'EN:Module_Donations|FR:Module_Dons|ES
 $donationstatic=new Don($db);
 
 // Genere requete de liste des dons
-$sql = "SELECT d.rowid, d.datedon, d.fk_soc, d.firstname, d.lastname, d.societe,";
+$sql = "SELECT d.rowid, d.datedon, d.fk_soc as socid, d.firstname, d.lastname, d.societe,";
 $sql.= " d.amount, d.fk_statut as statut, ";
 $sql.= " p.rowid as pid, p.ref, p.title, p.public";
 $sql.= " FROM ".MAIN_DB_PREFIX."don as d LEFT JOIN ".MAIN_DB_PREFIX."projet AS p";
@@ -154,7 +154,7 @@ if ($resql)
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
     print '<input type="hidden" name="page" value="'.$page.'">';
-	print '<input type="hidden" name="type" value="'.$type.'">';
+    print '<input type="hidden" name="type" value="'.$type.'">';
 
 	print_barre_liste($langs->trans("Donations"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_generic.png', 0, $newcardbutton);
 
@@ -172,9 +172,15 @@ if ($resql)
     print '<td class="liste_titre">';
     print '<input class="flat" size="10" type="text" name="search_ref" value="'.$search_ref.'">';
     print '</td>';
+    if (! empty($conf->global->DONATION_USE_THIRDPARTIES)) {
+    print '<td class="liste_titre">';
+    print '<input class="flat" size="10" type="text" name="search_thirdparty" value="'.$search_thirdparty.'">';
+    print '</td>';
+    } else {
     print '<td class="liste_titre">';
     print '<input class="flat" size="10" type="text" name="search_company" value="'.$search_company.'">';
     print '</td>';
+    }
     print '<td class="liste_titre">';
     print '<input class="flat" size="10" type="text" name="search_name" value="'.$search_name.'">';
     print '</td>';
@@ -193,11 +199,15 @@ if ($resql)
     $searchpicto=$form->showFilterAndCheckAddButtons(0);
     print $searchpicto;
     print '</td>';
-	print "</tr>\n";
-
-	print '<tr class="liste_titre">';
+    print "</tr>\n";
+    
+    print '<tr class="liste_titre">';
 	print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "d.rowid", "", $param, "", $sortfield, $sortorder);
+    if (! empty($conf->global->DONATION_USE_THIRDPARTIES)) {
+	print_liste_field_titre("ThirdParty", $_SERVER["PHP_SELF"], "d.fk_soc", "", $param, "", $sortfield, $sortorder);
+    } else {
 	print_liste_field_titre("Company", $_SERVER["PHP_SELF"], "d.societe", "", $param, "", $sortfield, $sortorder);
+    }
 	print_liste_field_titre("Name", $_SERVER["PHP_SELF"], "d.lastname", "", $param, "", $sortfield, $sortorder);
 	print_liste_field_titre("Date", $_SERVER["PHP_SELF"], "d.datedon", "", $param, '', $sortfield, $sortorder, 'center ');
 	if (! empty($conf->projet->enabled))
@@ -219,9 +229,20 @@ if ($resql)
 		$donationstatic->ref=$objp->rowid;
 		$donationstatic->lastname=$objp->lastname;
 		$donationstatic->firstname=$objp->firstname;
-		print "<td>".$donationstatic->getNomUrl(1)."</td>\n";
-        print "<td>".$objp->societe."</td>\n";
-		print "<td>".$donationstatic->getFullName($langs)."</td>\n";
+		print "<td>".$donationstatic->getNomUrl(1)."</td>";
+    if (! empty($conf->global->DONATION_USE_THIRDPARTIES)) {
+    
+    $company=new Societe($db);
+    $result=$company->fetch($objp->socid);
+    if  (!empty($objp->socid) && $company->id > 0)  {
+        print "<td>".$company->getNomUrl(1)."</td>";
+    } else {
+        print "<td>".$objp->societe."</td>";
+    }
+    } else {
+        print "<td>".$objp->societe."</td>";
+    }
+		print "<td>".$donationstatic->getFullName($langs)."</td>";
 		print '<td class="center">'.dol_print_date($db->jdate($objp->datedon), 'day').'</td>';
 		if (! empty($conf->projet->enabled))
 		{
