@@ -158,9 +158,9 @@ INSERT INTO llx_c_units (code, scale, label, short_label, unit_type, active) VAL
 INSERT INTO llx_c_units (code, scale, label, short_label, unit_type, active) VALUES ('MI','60','minute','i', 'time', 1);
 INSERT INTO llx_c_units (code, scale, label, short_label, unit_type, active) VALUES ('H','3600','hour','h', 'time', 1);
 INSERT INTO llx_c_units (code, scale, label, short_label, unit_type, active) VALUES ('D','86400','day','d', 'time', 1);
-INSERT INTO llx_c_units (code, scale, label, short_label, unit_type, active) VALUES ('W','604800','week','W', 'time', 1);
+INSERT INTO llx_c_units (code, scale, label, short_label, unit_type, active) VALUES ('W','604800','week','w', 'time', 1);
 INSERT INTO llx_c_units (code, scale, label, short_label, unit_type, active) VALUES ('MO','2629800','month','m', 'time', 1);
-INSERT INTO llx_c_units (code, scale, label, short_label, unit_type, active) VALUES ('Y','31557600','year','Y', 'time', 1);
+INSERT INTO llx_c_units (code, scale, label, short_label, unit_type, active) VALUES ('Y','31557600','year','y', 'time', 1);
 
 UPDATE llx_c_units SET short_label = 'i' WHERE code = 'MI';
 
