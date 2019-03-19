@@ -333,11 +333,11 @@ if ($id > 0 || ! empty($ref))
 			print '<tr class="liste_titre">';
 			print '<td>'.$langs->trans('ComposedProduct').'</td>';
 			print '<td>'.$langs->trans('Label').'</td>';
-			print '<td align="right" colspan="2">'.$langs->trans('MinSupplierPrice').'</td>';
-			print '<td align="right" colspan="2">'.$langs->trans('MinCustomerPrice').'</td>';
-			if (! empty($conf->stock->enabled)) print '<td align="right">'.$langs->trans('Stock').'</td>';
-			print '<td align="center">'.$langs->trans('Qty').'</td>';
-			print '<td align="center">'.$langs->trans('ComposedProductIncDecStock').'</td>';
+			print '<td class="right" colspan="2">'.$langs->trans('MinSupplierPrice').'</td>';
+			print '<td class="right" colspan="2">'.$langs->trans('MinCustomerPrice').'</td>';
+			if (! empty($conf->stock->enabled)) print '<td class="right">'.$langs->trans('Stock').'</td>';
+			print '<td class="center">'.$langs->trans('Qty').'</td>';
+			print '<td class="center">'.$langs->trans('ComposedProductIncDecStock').'</td>';
 			print '</tr>'."\n";
 
 			$class='pair';
@@ -361,7 +361,7 @@ if ($id > 0 || ! empty($ref))
 						print '<td>'.$productstatic->label.'</td>';
 
 						// Best buying price
-						print '<td align="right">';
+						print '<td class="right">';
 						if ($product_fourn->find_min_price_product_fournisseur($productstatic->id) > 0)
 						{
 							print $langs->trans("BuyingPriceMinShort").': ';
@@ -378,7 +378,7 @@ if ($id > 0 || ! empty($ref))
 						$totalline=price2num($value['nb'] * ($fourn_unitprice * (1 - $fourn_remise_percent/100) - $fourn_remise), 'MT');
 						$total+=$totalline;
 
-						print '<td align="right">';
+						print '<td class="right">';
 						print ($notdefined?'':($value['nb']> 1 ? $value['nb'].'x' : '').price($fourn_unitprice, '', '', 0, 0, -1, $conf->currency));
 						print '</td>';
 
@@ -393,20 +393,20 @@ if ($id > 0 || ! empty($ref))
 							$totallinesell=price2num($value['nb'] * ($pricesell), 'MT');
 							$totalsell+=$totallinesell;
 						}
-						print '<td align="right" colspan="2">';
+						print '<td class="right" colspan="2">';
 						print ($notdefined?'':($value['nb']> 1 ? $value['nb'].'x' : ''));
 						if (is_numeric($pricesell)) print price($pricesell, '', '', 0, 0, -1, $conf->currency);
 						else print $langs->trans($pricesell);
 						print '</td>';
 
 						// Stock
-						if (! empty($conf->stock->enabled)) print '<td align="right">'.$value['stock'].'</td>';	// Real stock
+						if (! empty($conf->stock->enabled)) print '<td class="right">'.$value['stock'].'</td>';	// Real stock
 
 						// Qty + IncDec
 						if ($user->rights->produit->creer || $user->rights->service->creer)
 						{
-							print '<td align="center"><input type="text" value="'.$nb_of_subproduct.'" name="TProduct['.$productstatic->id.'][qty]" size="4" /></td>';
-							print '<td align="center"><input type="checkbox" name="TProduct['.$productstatic->id.'][incdec]" value="1" '.($value['incdec']==1?'checked':''  ).' /></td>';
+							print '<td class="center"><input type="text" value="'.$nb_of_subproduct.'" name="TProduct['.$productstatic->id.'][qty]" size="4" /></td>';
+							print '<td class="center"><input type="checkbox" name="TProduct['.$productstatic->id.'][incdec]" value="1" '.($value['incdec']==1?'checked':''  ).' /></td>';
 						}
 						else{
 							print '<td>'.$nb_of_subproduct.'</td>';
@@ -438,7 +438,7 @@ if ($id > 0 || ! empty($ref))
 						print '<td>&nbsp;</td>';
 
 						if (! empty($conf->stock->enabled)) print '<td></td>';	// Real stock
-						print '<td align="center">'.$value['nb'].'</td>';
+						print '<td class="center">'.$value['nb'].'</td>';
 						print '<td>&nbsp;</td>';
 
 						print '</tr>'."\n";
@@ -450,29 +450,29 @@ if ($id > 0 || ! empty($ref))
 				print '<td class="liste_total"></td>';
 
 				// Minimum buying price
-				print '<td class="liste_total" align="right">';
+				print '<td class="liste_total right">';
 				print $langs->trans("TotalBuyingPriceMinShort");
 				print '</td>';
 
-				print '<td class="liste_total" align="right">';
+				print '<td class="liste_total right">';
 				if ($atleastonenotdefined) print $langs->trans("Unknown").' ('.$langs->trans("SomeSubProductHaveNoPrices").')';
 				print ($atleastonenotdefined?'':price($total, '', '', 0, 0, -1, $conf->currency));
 				print '</td>';
 
 				// Minimum selling price
-				print '<td class="liste_total" align="right">';
+				print '<td class="liste_total right">';
 				print $langs->trans("TotalSellingPriceMinShort");
 				print '</td>';
 
-				print '<td class="liste_total" align="right">';
+				print '<td class="liste_total right">';
 				if ($atleastonenotdefined) print $langs->trans("Unknown").' ('.$langs->trans("SomeSubProductHaveNoPrices").')';
 				print ($atleastonenotdefined?'':price($totalsell, '', '', 0, 0, -1, $conf->currency));
 				print '</td>';
 
 				// Stock
-				if (! empty($conf->stock->enabled)) print '<td class="liste_total" align="right">&nbsp;</td>';
+				if (! empty($conf->stock->enabled)) print '<td class="liste_total right">&nbsp;</td>';
 
-				print '<td align="right" colspan="2">';
+				print '<td class="right" colspan="2">';
 				if ($user->rights->produit->creer || $user->rights->service->creer)
 				{
 					print '<input type="submit" class="button" value="'.$langs->trans('Save').'">';
@@ -542,9 +542,9 @@ if ($id > 0 || ! empty($ref))
 			print '<tr class="liste_titre">';
 			print '<th class="liste_titre">'.$langs->trans("ComposedProduct").'</td>';
 			print '<th class="liste_titre">'.$langs->trans("Label").'</td>';
-			//print '<th class="liste_titre" align="center">'.$langs->trans("IsInPackage").'</td>';
-			print '<th class="liste_titre" align="right">'.$langs->trans("Qty").'</td>';
-			print '<th align="center">'.$langs->trans('ComposedProductIncDecStock').'</th>';
+			//print '<th class="liste_titre center">'.$langs->trans("IsInPackage").'</td>';
+			print '<th class="liste_titre right">'.$langs->trans("Qty").'</td>';
+			print '<th class="center">'.$langs->trans('ComposedProductIncDecStock').'</th>';
 			print '</tr>';
 			if ($resql)
 			{
@@ -613,13 +613,13 @@ if ($id > 0 || ! empty($ref))
 							$incdec=0;
 						}
 						// Contained into package
-						/*print '<td align="center"><input type="hidden" name="prod_id_'.$i.'" value="'.$objp->rowid.'">';
+						/*print '<td class="center"><input type="hidden" name="prod_id_'.$i.'" value="'.$objp->rowid.'">';
 						print '<input type="checkbox" '.$addchecked.'name="prod_id_chk'.$i.'" value="'.$objp->rowid.'"></td>';*/
 						// Qty
-						print '<td align="right"><input type="hidden" name="prod_id_'.$i.'" value="'.$objp->rowid.'"><input type="text" size="2" name="prod_qty_'.$i.'" value="'.($qty?$qty:'').'"></td>';
+						print '<td class="right"><input type="hidden" name="prod_id_'.$i.'" value="'.$objp->rowid.'"><input type="text" size="2" name="prod_qty_'.$i.'" value="'.($qty?$qty:'').'"></td>';
 
 						// Inc Dec
-						print '<td align="center">';
+						print '<td class="center">';
 						if ($qty) print '<input type="checkbox" name="prod_incdec_'.$i.'" value="1" '.($incdec?'checked':'').'>';
 						else
 						{

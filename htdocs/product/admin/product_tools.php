@@ -300,13 +300,13 @@ else
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans("Parameters").'</td>'."\n";
-	print '<td align="right" width="60">'.$langs->trans("Value").'</td>'."\n";
+	print '<td class="right" width="60">'.$langs->trans("Value").'</td>'."\n";
 	print '</tr>'."\n";
 
 
 	print '<tr class="oddeven">'."\n";
 	print '<td>'.$langs->trans("OldVATRates").'</td>'."\n";
-	print '<td width="60" align="right">'."\n";
+	print '<td width="60" class="right">'."\n";
 	print $form->load_tva('oldvatrate', $oldvatrate, $mysoc, null, 0, 0, '', false, 1);
 	print '</td>'."\n";
 	print '</tr>'."\n";
@@ -314,7 +314,7 @@ else
 
 	print '<tr class="oddeven">'."\n";
 	print '<td>'.$langs->trans("NewVATRates").'</td>'."\n";
-	print '<td width="60" align="right">'."\n";
+	print '<td width="60" class="right">'."\n";
 	print $form->load_tva('newvatrate', $newvatrate, $mysoc, null, 0, 0, '', false, 1);
 	print '</td>'."\n";
 	print '</tr>'."\n";
@@ -323,7 +323,7 @@ else
 
 	print '<tr class="oddeven">'."\n";
 	print '<td>'.$langs->trans("PriceBaseTypeToChange").'</td>'."\n";
-	print '<td width="60" align="right">'."\n";
+	print '<td width="60" class="right">'."\n";
 	print $form->selectPriceBaseType($price_base_type);
 	print '</td>'."\n";
 	print '</tr>'."\n";
