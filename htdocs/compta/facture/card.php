@@ -4228,7 +4228,7 @@ elseif ($id > 0 || ! empty($ref))
 				print '<tr class="oddeven"><td>';
 				print $paymentstatic->getNomUrl(1);
 				print '</td>';
-				print '<td>' . dol_print_date($db->jdate($objp->dp), 'day') . '</td>';
+				print '<td>' . dol_print_date($db->jdate($objp->dp), 'dayhour') . '</td>';
 				$label = ($langs->trans("PaymentType" . $objp->payment_code) != ("PaymentType" . $objp->payment_code)) ? $langs->trans("PaymentType" . $objp->payment_code) : $objp->payment_label;
 				print '<td>' . $label . ' ' . $objp->num_paiement . '</td>';
 				if (! empty($conf->banque->enabled))
