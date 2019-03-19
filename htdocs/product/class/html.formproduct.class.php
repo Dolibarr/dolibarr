@@ -286,15 +286,16 @@ class FormProduct
 	 *  pour l'instant on ne definit pas les unites dans la base
 	 *
 	 *  @param	string		$name               Name of HTML field
-	 *  @param	string		$measuring_style    Unit to show: weight, size, surface, volume
-	 *  @param  string		$default            Force unit
+	 *  @param	string		$measuring_style    Unit to show: weight, size, surface, volume, time
+	 *  @param  string		$default            Preselected value
 	 * 	@param	int			$adddefault			Add empty unit called "Default"
+	 *  @param  int         $mode               1=Use short label as value, 0=Use rowid
 	 * 	@return	void
 	 */
-	public function select_measuring_units($name = 'measuring_units', $measuring_style = '', $default = '0', $adddefault = 0)
+	public function select_measuring_units($name = 'measuring_units', $measuring_style = '', $default = '0', $adddefault = 0, $mode = 0)
 	{
         //phpcs:enable
-		print $this->load_measuring_units($name, $measuring_style, $default, $adddefault);
+		print $this->load_measuring_units($name, $measuring_style, $default, $adddefault, $mode);
 	}
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -303,12 +304,13 @@ class FormProduct
 	 *  For the moment, units labels are defined in measuring_units_string
 	 *
 	 *  @param  string		$name                Name of HTML field
-	 *  @param  string		$measuring_style     Unit to show: weight, size, surface, volume
-	 *  @param  string		$default             Force unit
-	 *  @param  int			$adddefault			Add empty unit called "Default"
+	 *  @param  string		$measuring_style     Unit to show: weight, size, surface, volume, time
+	 *  @param  string		$default             Preselected value
+	 *  @param  int			$adddefault			 Add empty unit called "Default"
+	 *  @param  int         $mode                1=Use short label as value, 0=Use rowid
 	 *  @return string
 	 */
-	public function load_measuring_units($name = 'measuring_units', $measuring_style = '', $default = '0', $adddefault = 0)
+	public function load_measuring_units($name = 'measuring_units', $measuring_style = '', $default = '0', $adddefault = 0, $mode = 0)
 	{
         //phpcs:enable
 		global $langs, $conf, $mysoc, $db;
@@ -337,12 +339,16 @@ class FormProduct
 				$return .= '<option value="0">' . $langs->trans("Default") . '</option>';
 
 			foreach ($measuringUnits->records as $lines) {
-				$return .= '<option value="' . $lines->id . '"';
-				if ($lines->id == $default) {
-					$return .= ' selected';
-				}
-				// $return.= '>'.$value.'</option>';
-				$return .= '>' . $langs->transnoentitiesnoconv($lines->label) . '</option>';
+				$return .= '<option value="';
+				if ($mode == 1) $return .= $lines->short_label;
+				else $return .= $lines->id;
+				$return .= '"';
+				if ($mode == 1 && $lines->short_label == $default) $return .= ' selected';
+				if ($mode == 0 && $lines->id == $default) $return .= ' selected';
+				$return .= '>';
+				if ($measuring_style == 'time') $return.= $langs->trans(ucfirst($lines->label));
+				else $return .= $langs->trans($lines->label);
+				$return .= '</option>';
 			}
 			$return .= '</select>';
 		}

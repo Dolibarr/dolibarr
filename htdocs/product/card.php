@@ -1025,9 +1025,9 @@ else
         if ($type == 1)
         {
             print '<tr><td>'.$langs->trans("Duration").'</td><td colspan="3">';
-            print '<input name="surface" size="4" value="'.GETPOST('duration_value').'">';
-            print $formproduct->select_measuring_units("duration_unit", "time");
-            print '</td></tr>';      
+            print '<input name="surface" size="4" value="'.GETPOST('duration_value', 'alpha').'">';
+            print $formproduct->load_measuring_units("duration_unit", "time", GETPOST('duration_value', 'alpha'), 0, 1);
+            print '</td></tr>';
         }
 
         if ($type != 1)	// Nature, Weight and volume only applies to products and not to services
@@ -1041,7 +1041,7 @@ else
             // Weight
             print '<tr><td>'.$langs->trans("Weight").'</td><td colspan="3">';
             print '<input name="weight" size="4" value="'.GETPOST('weight').'">';
-            print $formproduct->select_measuring_units("weight_units", "weight", (empty($conf->global->MAIN_WEIGHT_DEFAULT_UNIT)?0:$conf->global->MAIN_WEIGHT_DEFAULT_UNIT));
+            print $formproduct->load_measuring_units("weight_units", "weight", (empty($conf->global->MAIN_WEIGHT_DEFAULT_UNIT)?0:$conf->global->MAIN_WEIGHT_DEFAULT_UNIT));
             print '</td></tr>';
             // Length
             if (empty($conf->global->PRODUCT_DISABLE_SIZE))
@@ -1402,7 +1402,7 @@ else
                 // Duration
                 print '<tr><td>'.$langs->trans("Duration").'</td><td colspan="3">';
                 print '<input name="surface" size="5" value="'.$object->duration_value.'"> ';
-                print $formproduct->select_measuring_units("duration_unit", "time", $object->duration_unit);
+                print $formproduct->load_measuring_units("duration_unit", "time", $object->duration_unit, 0, 1);
                 print '</td></tr>';
             }
             else
@@ -1412,7 +1412,7 @@ else
                 $statutarray=array('-1'=>'&nbsp;', '1' => $langs->trans("Finished"), '0' => $langs->trans("RowMaterial"));
                 print $form->selectarray('finished', $statutarray, $object->finished);
                 print '</td></tr>';
-              
+
                 // Weight
                 print '<tr><td>'.$langs->trans("Weight").'</td><td colspan="3">';
                 print '<input name="weight" size="5" value="'.$object->weight.'"> ';
