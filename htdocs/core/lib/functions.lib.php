@@ -7195,7 +7195,6 @@ function printCommonFooter($zone = 'private')
 				print '  if(!$( "body" ).hasClass( "sidebar-collapse" )){ event.preventDefault(); }'."\n";
 				print '  console.log("We click on .menuhider");'."\n";
 				print '  $("body").toggleClass("sidebar-collapse")'."\n";
-				print '  $(".login_block").toggle()'."\n";
 				print '});'."\n";
 			}
 

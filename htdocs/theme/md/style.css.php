@@ -1279,7 +1279,9 @@ div.login_block {
 .login_block_getinfo .atoplogin, .login_block_getinfo .atoplogin:hover {
 	color: #333 !important;
 }
-
+.login_block_elem a span.atoplogin, .login_block_elem span.atoplogin {
+    vertical-align: middle;
+}
 
 
 

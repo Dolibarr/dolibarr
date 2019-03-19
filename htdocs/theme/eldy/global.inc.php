@@ -966,7 +966,11 @@ td.showDragHandle {
 	transition: left 0.5s ease;
 }
 
-body.sidebar-collapse .side-nav {
+.side-nav, .login_block {
+	transition: left 0.5s ease;
+}
+
+body.sidebar-collapse .side-nav, body.sidebar-collapse .login_block {
 	display: none;
 }
 
@@ -1828,6 +1832,9 @@ div.login a {
 div.login a:hover {
 	color: #<?php echo $colortextbackvmenu; ?>;
 	text-decoration:underline;
+}
+.login_block_elem a span.atoplogin, .login_block_elem span.atoplogin {
+    vertical-align: middle;
 }
 div.login_block_user {
 	display: inline-block;
@@ -5644,7 +5651,6 @@ div.tabsElem a.tab {
 	div.login_block {
 		<?php if ($conf->browser->layout == 'phone' && ((GETPOST('testmenuhider', 'int') || ! empty($conf->global->MAIN_TESTMENUHIDER)) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))) { ?>
 		/* Style when phone layout or when using the menuhider */
-		display: none;
 		padding-top: 20px;
 		padding-left: 20px;
     	padding-right: 20px;
