@@ -282,12 +282,12 @@ class Dolistore
 
 			//output template
 			$html .= '<tr class="app '.$parity.' '.$compatible.'">
-                <td align="center" width="210"><div class="newAppParent">'.$newapp.$images.'</div></td>
+                <td class="center" width="210"><div class="newAppParent">'.$newapp.$images.'</div></td>
                 <td class="margeCote"><h2 class="appTitle">'.$product->name->language[$this->lang]
 						.'<br/><small>'.$version.'</small></h2>
                     <small> '.dol_print_date(dol_stringtotime($product->date_upd), 'dayhour').' - '.$langs->trans('Ref').': '.$product->reference.' - '.$langs->trans('Id').': '.$product->id.'</small><br><br>'.$product->description_short->language[$this->lang].'</td>
                 <td style="display:none;" class="long_description">'.$product->description->language[$this->lang].'</td>
-                <td class="margeCote" align="center">'.$price.'
+                <td class="margeCote center">'.$price.'
                 </td>
                 <td class="margeCote">'.$download_link.'</td>
                 </tr>';
