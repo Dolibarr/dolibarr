@@ -75,15 +75,15 @@ $form=new Form($db);
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("ExportModel").'</td>'."\n";
-print '<td align="center" width="20">&nbsp;</td>';
-print '<td align="center" width="100"></td>'."\n";
+print '<td class="center" width="20">&nbsp;</td>';
+print '<td class="center" width="100"></td>'."\n";
 
 
 // Example with a yes / no select
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("set_EXPORTS_SHARE_MODELS").'</td>';
-print '<td align="center" width="20">&nbsp;</td>';
-print '<td align="center" width="100">';
+print '<td class="center" width="20">&nbsp;</td>';
+print '<td class="center" width="100">';
 print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="set_EXPORTS_SHARE_MODELS">';
