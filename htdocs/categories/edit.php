@@ -43,7 +43,7 @@ $socid=GETPOST('socid', 'int');
 $label=GETPOST('label');
 $description=GETPOST('description');
 $color=GETPOST('color', 'alpha');
-$visible=GETPOST('visible');
+$visible=GETPOST('visible', 'int');
 $parent=GETPOST('parent');
 
 if ($id == "")
@@ -153,6 +153,14 @@ print '<tr><td class="titlefieldcreate fieldrequired">';
 print $langs->trans("Ref").'</td>';
 print '<td><input type="text" size="25" id="label" name ="label" value="'.$object->label.'" />';
 print '</tr>';
+
+if (! empty($conf->global->CATEGORIE_USE_VISIBLE_STATUS))
+{
+	print '<tr><td>'.$langs->trans("Visible").'</td>';
+	print '<td>';
+	print $form->selectyesno('visible', $object->visible, 1);     // Visible by default
+	print '</td>';
+}
 
 // Description
 print '<tr>';

@@ -323,7 +323,7 @@ class Categorie extends CommonObject
 		$this->description = trim($this->description);
 		$this->color = trim($this->color);
 		$this->import_key = trim($this->import_key);
-		if (empty($this->visible)) $this->visible=0;
+		$this->visible = ($this->visible != "" ? intval($this->visible) : 1);	// Visible by default
 		$this->fk_parent = ($this->fk_parent != "" ? intval($this->fk_parent) : 0);
 
 		if ($this->already_exists())
@@ -436,7 +436,7 @@ class Categorie extends CommonObject
 		$this->label=trim($this->label);
 		$this->description=trim($this->description);
 		$this->fk_parent = ($this->fk_parent != "" ? intval($this->fk_parent) : 0);
-		$this->visible = ($this->visible != "" ? intval($this->visible) : 0);
+		$this->visible = ($this->visible != "" ? intval($this->visible) : 1);	// Visible by default
 
 		if ($this->already_exists())
 		{
@@ -1844,16 +1844,77 @@ class Categorie extends CommonObject
 	}
 
 	/**
-	 *	Return label of contact status
+	 *	Return label of category status
 	 *
-	 *	@param      int			$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
-	 * 	@return 	string					Label of contact status
+	 *	@param      int			$mode       0=Long label, 1=Short label, 2=Picto + Short label, 3=Picto, 4=Picto + Long label, 5=Short label + Picto, 6=Long label + Picto
+	 * 	@return 	string					Label of category status
 	 */
 	public function getLibStatut($mode)
 	{
-	    return '';
+		return '';
 	}
 
+	/**
+	 *	Return label of category visibility
+	 *
+	 *	@param      int			$mode       0=Long label, 1=Short label, 2=Picto + Short label, 3=Picto, 4=Picto + Long label, 5=Short label + Picto, 6=Long label + Picto
+	 * 	@return 	string					Label of category visibility
+	 */
+	public function getLibVisible($mode)
+	{
+		return $this->LibVisible($this->visible, $mode);
+	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *  Return the label of visbility status
+	 *
+	 *  @param	int		$visible        Id visible
+	 *  @param	int		$mode           0=Long label, 1=Short label, 2=Picto + Short label, 3=Picto, 4=Picto + Long label, 5=Short label + Picto, 6=Long label + Picto
+	 *  @return	string          		Label of category visibility
+	 */
+	public function LibVisible($visible, $mode = 0)
+	{
+		// phpcs:enable
+		global $langs;
+		$langs->load('categories');
+
+		if ($mode == 0)
+		{
+			if ($visible==0) return $langs->trans("ContentsNotVisibleByAllShort");
+			elseif ($visible==1) return $langs->trans("ContentsVisibleByAllShort");
+		}
+		elseif ($mode == 1)
+		{
+			if ($visible==0) return $langs->trans("ContentsNotVisibleByAllShort");
+			elseif ($visible==1) return $langs->trans("ContentsVisibleByAllShort");
+		}
+		elseif ($mode == 2)
+		{
+			if ($visible==0) return img_picto($langs->trans("ContentsNotVisibleByAllShort"), 'statut5', 'class="pictostatus"').' '.$langs->trans("ContentsNotVisibleByAllShort");
+			elseif ($visible==1) return img_picto($langs->trans("ContentsVisibleByAllShort"), 'statut4', 'class="pictostatus"').' '.$langs->trans("ContentsVisibleByAllShort");
+		}
+		elseif ($mode == 3)
+		{
+			if ($visible==0) return img_picto($langs->trans("ContentsNotVisibleByAllShort"), 'statut8', 'class="pictostatus"');
+			elseif ($visible==1) return img_picto($langs->trans("ContentsVisibleByAllShort"), 'statut4', 'class="pictostatus"');
+		}
+		elseif ($mode == 4)
+		{
+			if ($visible==0) return img_picto($langs->trans("ContentsNotVisibleByAllShort"), 'statut8', 'class="pictostatus"').' '.$langs->trans("ContentsNotVisibleByAllShort");
+			elseif ($visible==1) return img_picto($langs->trans("ContentsVisibleByAllShort"), 'statut4', 'class="pictostatus"').' '.$langs->trans("ContentsVisibleByAllShort");
+		}
+		elseif ($mode == 5)
+		{
+			if ($visible==0) return '<span class="hideonsmartphone">'.$langs->trans("ContentsNotVisibleByAllShort").'</span> '.img_picto($langs->trans("ContentsNotVisibleByAllShort"), 'statut8', 'class="pictostatus"');
+			elseif ($visible==1) return '<span class="hideonsmartphone">'.$langs->trans("ContentsVisibleByAllShort").'</span> '.img_picto($langs->trans("ContentsVisibleByAllShort"), 'statut4', 'class="pictostatus"');
+		}
+		elseif ($mode == 6)
+		{
+			if ($visible==0) return $langs->trans("ContentsNotVisibleByAllShort").' '.img_picto($langs->trans("ContentsNotVisibleByAllShort"), 'statut8', 'class="pictostatus"');
+			elseif ($visible==1) return $langs->trans("ContentsVisibleByAllShort").' '.img_picto($langs->trans("ContentsVisibleByAllShort"), 'statut4', 'class="pictostatus"');
+		}
+	}
 
     /**
      *  Initialise an instance with random values.

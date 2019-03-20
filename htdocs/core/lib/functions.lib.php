@@ -1514,6 +1514,16 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 		$tmptxt=$object->getLibStatut(5);
 		$morehtmlstatus.=$tmptxt;		// No status on task
 	}
+	elseif ($object->element == 'category' && ! empty($conf->global->CATEGORIE_USE_VISIBLE_STATUS))
+	{
+		if (! empty($conf->use_javascript_ajax) && $user->rights->categorie->creer && ! empty($conf->global->MAIN_DIRECT_STATUS_UPDATE))
+		{
+			$morehtmlstatus.=ajax_object_onoff($object, 'visible', 'visible', 'Visible', 'Hidden');
+		}
+		else {
+			$morehtmlstatus.=$object->getLibVisible(6);
+		}
+	}
 	else { // Generic case
 		$tmptxt=$object->getLibStatut(6);
 		if (empty($tmptxt) || $tmptxt == $object->getLibStatut(3)) $tmptxt=$object->getLibStatut(5);

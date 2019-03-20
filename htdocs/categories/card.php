@@ -50,7 +50,7 @@ $socid=GETPOST('socid', 'int');
 $label=GETPOST('label');
 $description=GETPOST('description');
 $color=GETPOST('color');
-$visible=GETPOST('visible');
+$visible=GETPOST('visible', 'int');
 $parent=GETPOST('parent');
 
 if ($origin)
@@ -254,6 +254,14 @@ if ($user->rights->categorie->creer)
 		print '<tr>';
 		print '<td class="titlefieldcreate fieldrequired">'.$langs->trans("Ref").'</td><td><input id="label" class="minwidth100" name="label" value="'.$label.'">';
 		print'</td></tr>';
+
+		if (! empty($conf->global->CATEGORIE_USE_VISIBLE_STATUS))
+		{
+			print '<tr><td>'.$langs->trans("Visible").'</td>';
+			print '<td>';
+			print $form->selectyesno('visible', GETPOSTISSET('visible')?GETPOST('visible', 'int'):1, 1);     // Visible by default
+			print '</td>';
+		}
 
 		// Description
 		print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
