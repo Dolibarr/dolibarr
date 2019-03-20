@@ -21,3 +21,5 @@ ALTER TABLE llx_categorie ADD UNIQUE INDEX uk_categorie_ref (entity, fk_parent, 
 
 ALTER TABLE llx_categorie ADD INDEX idx_categorie_type (type);
 ALTER TABLE llx_categorie ADD INDEX idx_categorie_label (label);
+
+ALTER TABLE llx_categorie ADD CONSTRAINT llx_category_fk_user_creat FOREIGN KEY (fk_user_creat) REFERENCES llx_user(rowid);

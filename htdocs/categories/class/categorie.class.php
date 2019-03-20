@@ -242,7 +242,7 @@ class Categorie extends CommonObject
 		if (empty($id) && empty($label)) return -1;
 		if (! is_numeric($type)) $type=$this->MAP_ID[$type];
 
-		$sql = "SELECT rowid, fk_parent, entity, label, description, color, fk_soc, visible, type";
+		$sql = "SELECT rowid, fk_parent, entity, label, description, color, fk_soc, visible, type, fk_user_creat, fk_user_modif";
 		$sql.= " FROM ".MAIN_DB_PREFIX."categorie";
 		if ($id > 0)
 		{
@@ -262,16 +262,18 @@ class Categorie extends CommonObject
 			{
 				$res = $this->db->fetch_array($resql);
 
-				$this->id			= $res['rowid'];
-				//$this->ref			= $res['rowid'];
-				$this->fk_parent	= $res['fk_parent'];
-				$this->label		= $res['label'];
-				$this->description	= $res['description'];
-				$this->color    	= $res['color'];
-				$this->socid		= $res['fk_soc'];
-				$this->visible		= $res['visible'];
-				$this->type			= $res['type'];
-				$this->entity		= $res['entity'];
+				$this->id					= $res['rowid'];
+				//$this->ref				= $res['rowid'];
+				$this->fk_parent			= $res['fk_parent'];
+				$this->label				= $res['label'];
+				$this->description			= $res['description'];
+				$this->color    			= $res['color'];
+				$this->socid				= $res['fk_soc'];
+				$this->visible				= $res['visible'];
+				$this->type					= $res['type'];
+				$this->entity				= $res['entity'];
+				$this->user_creation		= $res['fk_user_creat'];
+				$this->user_modification	= $res['fk_user_modif'];
 
 				// Retreive all extrafield
 				// fetch optionals attributes and labels
@@ -305,7 +307,7 @@ class Categorie extends CommonObject
 	 *          					-3 : Invalid category
 	 * 								-4 : category already exists
 	 */
-	public function create($user)
+	public function create(User $user)
 	{
 		global $conf,$langs,$hookmanager;
 		$langs->load('categories');
@@ -348,6 +350,7 @@ class Categorie extends CommonObject
 		$sql.= " visible,";
 		$sql.= " type,";
 		$sql.= " import_key,";
+		$sql.= " fk_user_creat,";
 		$sql.= " entity";
 		$sql.= ") VALUES (";
 		$sql.= $this->db->escape($this->fk_parent).",";
@@ -361,6 +364,7 @@ class Categorie extends CommonObject
 		$sql.= "'".$this->db->escape($this->visible)."',";
 		$sql.= $this->db->escape($type).",";
 		$sql.= (! empty($this->import_key)?"'".$this->db->escape($this->import_key)."'":'null').",";
+		$sql.= (! empty($user->id) ? $user->id :"null").",";
 		$sql.= $this->db->escape($conf->entity);
 		$sql.= ")";
 
@@ -457,6 +461,7 @@ class Categorie extends CommonObject
 		}
 		$sql .= ", visible = '".$this->db->escape($this->visible)."'";
 		$sql .= ", fk_parent = ".$this->fk_parent;
+		$sql .= ", fk_user_modif = ".($user->id > 0 ? $user->id : "null");
 		$sql .= " WHERE rowid = ".$this->id;
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);

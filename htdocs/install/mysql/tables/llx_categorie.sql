@@ -30,6 +30,8 @@ create table llx_categorie
 	description 	text,								-- description of the category
     color           varchar(8),                         -- color
 	fk_soc          integer DEFAULT NULL,				-- not used by default. Used when option CATEGORY_ASSIGNED_TO_A_CUSTOMER is set.
+	fk_user_creat	integer NOT NULL,
+	fk_user_modif	integer,
 	visible         tinyint DEFAULT 1 NOT NULL,			-- determine if the products are visible or not
     import_key      varchar(14)							-- Import key
 )ENGINE=innodb;
