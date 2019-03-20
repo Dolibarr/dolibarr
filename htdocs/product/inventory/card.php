@@ -26,13 +26,14 @@ include_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 include_once DOL_DOCUMENT_ROOT.'/product/inventory/class/inventory.class.php';
 include_once DOL_DOCUMENT_ROOT.'/product/inventory/lib/inventory.lib.php';
 
-// Load traductions files requiredby by page
-$langs->loadLangs(array("inventory","other"));
+// Load translation files required by the page
+$langs->loadLangs(array("stocks","other"));
 
 // Get parameters
 $id			= GETPOST('id', 'int');
 $ref        = GETPOST('ref', 'alpha');
 $action		= GETPOST('action', 'alpha');
+$confirm    = GETPOST('confirm', 'alpha');
 $cancel     = GETPOST('cancel', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
 
@@ -52,14 +53,14 @@ $diroutputmassaction=$conf->stock->dir_output . '/temp/massgeneration/'.$user->i
 $hookmanager->initHooks(array('inventorycard'));     // Note that conf->hooks_modules contains array
 // Fetch optionals attributes and labels
 $extralabels = $extrafields->fetch_name_optionals_label('inventory');
-$search_array_options=$extrafields->getOptionalsFromPost($extralabels,'','search_');
+$search_array_options=$extrafields->getOptionalsFromPost('inventory', '', 'search_');
 
 // Initialize array of search criterias
-$search_all=trim(GETPOST("search_all",'alpha'));
+$search_all=trim(GETPOST("search_all", 'alpha'));
 $search=array();
 foreach($object->fields as $key => $val)
 {
-    if (GETPOST('search_'.$key,'alpha')) $search[$key]=GETPOST('search_'.$key,'alpha');
+    if (GETPOST('search_'.$key, 'alpha')) $search[$key]=GETPOST('search_'.$key, 'alpha');
 }
 
 if (empty($action) && empty($id) && empty($ref)) $action='view';
@@ -77,12 +78,12 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be inclu
 
 if (empty($conf->global->MAIN_USE_ADVANCED_PERMS))
 {
-	$permissiontoadd = $user->rights->stock->write;
-	$permissiontodelete = $user->rights->stock->write;
+	$permissiontoadd = $user->rights->stock->creer;
+	$permissiontodelete = $user->rights->stock->supprimer;
 }
 else
 {
-	$permissiontoadd = $user->rights->stock->inventory_advance->create;
+	$permissiontoadd = $user->rights->stock->inventory_advance->write;
 	$permissiontodelete = $user->rights->stock->inventory_advance->write;
 }
 
@@ -92,7 +93,7 @@ else
  */
 
 $parameters=array();
-$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+$reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 if (empty($reshook))
@@ -123,7 +124,7 @@ if (empty($reshook))
 
 $form=new Form($db);
 
-llxHeader('','Inventory','');
+llxHeader('', 'Inventory', '');
 
 // Example : Adding jquery code
 print '<script type="text/javascript" language="javascript">
@@ -211,7 +212,7 @@ if (($id || $ref) && $action == 'edit')
 // Part to show record
 if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create')))
 {
-    $res = $object->fetch_optionals($object->id, $extralabels);
+    $res = $object->fetch_optionals();
 
     $head = inventoryPrepareHead($object);
 	dol_fiche_head($head, 'inventory', $langs->trans("Inventory"), -1, 'inventory');
@@ -223,12 +224,11 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	    $formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('DeleteInventory'), $langs->trans('ConfirmDeleteOrder'), 'confirm_delete', '', 0, 1);
 	}
 
-	if (! $formconfirm) {
-	    $parameters = array('lineid' => $lineid);
-	    $reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-	    if (empty($reshook)) $formconfirm.=$hookmanager->resPrint;
-	    elseif ($reshook > 0) $formconfirm=$hookmanager->resPrint;
-	}
+	// Call Hook formConfirm
+	$parameters = array('lineid' => $lineid);
+	$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+	if (empty($reshook)) $formconfirm.=$hookmanager->resPrint;
+	elseif ($reshook > 0) $formconfirm=$hookmanager->resPrint;
 
 	// Print form confirm
 	print $formconfirm;
@@ -322,7 +322,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	if ($action != 'presend' && $action != 'editline') {
     	print '<div class="tabsAction">'."\n";
     	$parameters=array();
-    	$reshook=$hookmanager->executeHooks('addMoreActionsButtons',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+    	$reshook=$hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action);    // Note that $action and $object may have been modified by hook
     	if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
     	if (empty($reshook))
@@ -336,7 +336,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     		}
     		else
     		{
-    			print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans('Modify').'</a>'."\n";
+    			print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans('Modify').'</a>'."\n";
     		}
 
     		if ($permissiontodelete)
@@ -345,7 +345,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     		}
     		else
     		{
-    			print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans('Delete').'</a>'."\n";
+    			print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans('Delete').'</a>'."\n";
     		}
     	}
     	print '</div>'."\n";
@@ -407,7 +407,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
 	*/
 }
-
 
 // End of page
 llxFooter();

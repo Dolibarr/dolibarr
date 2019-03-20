@@ -1,5 +1,5 @@
 -- ========================================================================
--- Copyright (C) 2014		Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
+-- Copyright (C) 2014		Alexandre Spangaro   <aspangaro@open-dsi.fr>
 -- Copyright (C) 2015       Frederic France      <frederic.france@free.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
@@ -27,7 +27,9 @@ create table llx_loan
   label							varchar(80) NOT NULL,
   fk_bank						integer,
 
-  capital						double(24,8) default 0 NOT NULL,
+  capital						double(24,8) DEFAULT 0 NOT NULL,
+  insurance_amount				double(24,8) DEFAULT 0,
+
   datestart						date,
   dateend						date,
   nbterm						real,
@@ -36,9 +38,9 @@ create table llx_loan
   note_private					text,
   note_public					text,
 
-  capital_position				double(24,8) default 0,		-- If not a new loan, just have the position of capital
+  capital_position				double(24,8) DEFAULT 0,		-- If not a new loan, just have the position of capital
   date_position					date,
-
+  
   paid							smallint default 0 NOT NULL,
 
   accountancy_account_capital	varchar(32),

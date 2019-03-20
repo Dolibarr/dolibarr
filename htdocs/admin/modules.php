@@ -3,10 +3,11 @@
  * Copyright (C) 2003		Jean-Louis Bergamo		<jlb@j1b.org>
  * Copyright (C) 2004-2017	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2004		Eric Seigne				<eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2017	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2017	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2011		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2015		Jean-François Ferry		<jfefe@aternatik.fr>
  * Copyright (C) 2015		Raphaël Doursenaud		<rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2018		Nicolas ZABOURI 		<info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,17 +35,19 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/admin/dolistore/class/dolistore.class.php';
 
+// Load translation files required by the page
 $langs->loadLangs(array("errors","admin","modulebuilder"));
 
 $mode=GETPOST('mode', 'alpha');
 if (empty($mode)) $mode='common';
-$action=GETPOST('action','alpha');
+$action=GETPOST('action', 'alpha');
+//var_dump($_POST);exit;
 $value=GETPOST('value', 'alpha');
-$page_y=GETPOST('page_y','int');
-$search_keyword=GETPOST('search_keyword','alpha');
-$search_status=GETPOST('search_status','alpha');
-$search_nature=GETPOST('search_nature','alpha');
-$search_version=GETPOST('search_version','alpha');
+$page_y=GETPOST('page_y', 'int');
+$search_keyword=GETPOST('search_keyword', 'alpha');
+$search_status=GETPOST('search_status', 'alpha');
+$search_nature=GETPOST('search_nature', 'alpha');
+$search_version=GETPOST('search_version', 'alpha');
 
 
 // For dolistore search
@@ -54,7 +57,7 @@ $options['categorie'] = ((GETPOST('categorie', 'int')?GETPOST('categorie', 'int'
 $options['start']     = ((GETPOST('start', 'int')?GETPOST('start', 'int'):0) + 0);
 $options['end']       = ((GETPOST('end', 'int')?GETPOST('end', 'int'):0) + 0);
 $options['search']    = GETPOST('search_keyword', 'alpha');
-$dolistore            = new Dolistore();
+$dolistore            = new Dolistore(false);
 
 
 if (! $user->admin)
@@ -78,10 +81,13 @@ $familyinfo=array(
 );
 
 $param='';
-if ($search_keyword) $param.='&search_keyword='.urlencode($search_keyword);
-if ($search_status && $search_status != '-1')  $param.='&search_status='.urlencode($search_status);
-if ($search_nature && $search_nature != '-1')  $param.='&search_nature='.urlencode($search_nature);
-if ($search_version && $search_version != '-1') $param.='&search_version='.urlencode($search_version);
+if (! GETPOST('buttonreset', 'alpha'))
+{
+	if ($search_keyword) $param.='&search_keyword='.urlencode($search_keyword);
+	if ($search_status && $search_status != '-1')  $param.='&search_status='.urlencode($search_status);
+	if ($search_nature && $search_nature != '-1')  $param.='&search_nature='.urlencode($search_nature);
+	if ($search_version && $search_version != '-1') $param.='&search_version='.urlencode($search_version);
+}
 
 $dirins=DOL_DOCUMENT_ROOT.'/custom';
 $urldolibarrmodules='https://www.dolistore.com/';
@@ -97,10 +103,10 @@ $hookmanager->initHooks(array('adminmodules','globaladmin'));
 $formconfirm = '';
 
 $parameters=array();
-$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+$reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
-if (GETPOST('buttonreset','alpha'))
+if (GETPOST('buttonreset', 'alpha'))
 {
     $search_keyword='';
     $search_status='';
@@ -124,17 +130,23 @@ if ($action=='install')
     }
     else
     {
-        if (! preg_match('/\.zip$/i',$original_file))
+        if (! preg_match('/\.zip$/i', $original_file))
         {
             $langs->load("errors");
-            setEventMessages($langs->trans("ErrorFileMustBeADolibarrPackage",$original_file), null, 'errors');
+            setEventMessages($langs->trans("ErrorFileMustBeADolibarrPackage", $original_file), null, 'errors');
             $error++;
         }
-    	if (! preg_match('/module_.*\-[\d]+\.[\d]+.*$/i',$original_file))
+    	if (! preg_match('/module_.*\-[\d]+\.[\d]+.*$/i', $original_file))
 		{
 			$langs->load("errors");
-			setEventMessages($langs->trans("ErrorFilenameDosNotMatchDolibarrPackageRules",$original_file, 'module_*-x.y*.zip'), null, 'errors');
+			setEventMessages($langs->trans("ErrorFilenameDosNotMatchDolibarrPackageRules", $original_file, 'module_*-x.y*.zip'), null, 'errors');
 			$error++;
+		}
+		if (empty($_FILES['fileinstall']['tmp_name']))
+		{
+		    $langs->load("errors");
+		    setEventMessages($langs->trans("ErrorFileNotUploaded"), null, 'errors');
+		    $error++;
 		}
     }
 
@@ -146,22 +158,22 @@ if ($action=='install')
             dol_mkdir($conf->admin->dir_temp.'/'.$original_file);
         }
 
-        $tmpdir=preg_replace('/\.zip$/','',$original_file).'.dir';
+        $tmpdir=preg_replace('/\.zip$/i', '', $original_file).'.dir';
         if ($tmpdir)
         {
             @dol_delete_dir_recursive($conf->admin->dir_temp.'/'.$tmpdir);
             dol_mkdir($conf->admin->dir_temp.'/'.$tmpdir);
         }
 
-        $result=dol_move_uploaded_file($_FILES['fileinstall']['tmp_name'],$newfile,1,0,$_FILES['fileinstall']['error']);
+        $result=dol_move_uploaded_file($_FILES['fileinstall']['tmp_name'], $newfile, 1, 0, $_FILES['fileinstall']['error']);
         if ($result > 0)
         {
-            $result=dol_uncompress($newfile,$conf->admin->dir_temp.'/'.$tmpdir);
+            $result=dol_uncompress($newfile, $conf->admin->dir_temp.'/'.$tmpdir);
 
             if (! empty($result['error']))
             {
                 $langs->load("errors");
-                setEventMessages($langs->trans($result['error'],$original_file), null, 'errors');
+                setEventMessages($langs->trans($result['error'], $original_file), null, 'errors');
                 $error++;
             }
             else
@@ -201,6 +213,7 @@ if ($action=='install')
         }
         else
         {
+            setEventMessages($langs->trans("ErrorFailToRenameFile", $_FILES['fileinstall']['tmp_name'], $newfile), null, 'errors');
             $error++;
         }
     }
@@ -238,7 +251,7 @@ if ($action == 'set' && $user->admin)
     header("Location: ".$_SERVER["PHP_SELF"]."?mode=".$mode.$param.($page_y?'&page_y='.$page_y:''));
 	exit;
 }
-else if ($action == 'reset' && $user->admin && GETPOST('confirm') == 'yes')
+elseif ($action == 'reset' && $user->admin && GETPOST('confirm') == 'yes')
 {
     $result=unActivateModule($value);
     if ($result) setEventMessages($result, null, 'errors');
@@ -265,16 +278,15 @@ if (! dol_is_dir($dirins))
 $dirins_ok=(dol_is_dir($dirins));
 
 $help_url='EN:First_setup|FR:Premiers_paramétrages|ES:Primeras_configuraciones';
-llxHeader('',$langs->trans("Setup"),$help_url, '', '', '', $morejs, $morecss, 0, 0);
+llxHeader('', $langs->trans("Setup"), $help_url, '', '', '', $morejs, $morecss, 0, 0);
 
-$arrayofnatures=array('core'=>$langs->transnoentitiesnoconv("Core"), 'external'=>$langs->transnoentitiesnoconv("External").' - '.$langs->trans("AllPublishers"));
-$arrayofwarnings=array();    // Array of warning each module want to show when activated
-$arrayofwarningsext=array();    // Array of warning each module want to show when we activate an external module
 
 // Search modules dirs
 $modulesdir = dolGetModulesDirs();
 
-
+$arrayofnatures=array('core'=>$langs->transnoentitiesnoconv("Core"), 'external'=>$langs->transnoentitiesnoconv("External").' - ['.$langs->trans("AllPublishers").']');
+$arrayofwarnings=array();    // Array of warning each module want to show when activated
+$arrayofwarningsext=array();    // Array of warning each module want to show when we activate an external module
 $filename = array();
 $modules = array();
 $orders = array();
@@ -326,7 +338,7 @@ foreach ($modulesdir as $dir)
     							$modulequalified=1;
 
 		    					// We discard modules according to features level (PS: if module is activated we always show it)
-		    					$const_name = 'MAIN_MODULE_'.strtoupper(preg_replace('/^mod/i','',get_class($objMod)));
+		    					$const_name = 'MAIN_MODULE_'.strtoupper(preg_replace('/^mod/i', '', get_class($objMod)));
 		    					if ($objMod->version == 'development'  && (empty($conf->global->$const_name) && ($conf->global->MAIN_FEATURES_LEVEL < 2))) $modulequalified=0;
 		    					if ($objMod->version == 'experimental' && (empty($conf->global->$const_name) && ($conf->global->MAIN_FEATURES_LEVEL < 1))) $modulequalified=0;
 								if (preg_match('/deprecated/', $objMod->version) && (empty($conf->global->$const_name) && ($conf->global->MAIN_FEATURES_LEVEL >= 0))) $modulequalified=0;
@@ -358,8 +370,6 @@ foreach ($modulesdir as $dir)
 		    			            $filename[$i]= $modName;
 		    					    $modules[$modName] = $objMod;
 
-		    			            $special = $objMod->special;
-
 		    			            // Gives the possibility to the module, to provide his own family info and position of this family
 		    			            if (is_array($objMod->familyinfo) && !empty($objMod->familyinfo)) {
 		    			            	$familyinfo = array_merge($familyinfo, $objMod->familyinfo);
@@ -368,13 +378,11 @@ foreach ($modulesdir as $dir)
 		    			            	$familykey = $objMod->family;
 		    			            }
 
-		    			            $moduleposition = ($objMod->module_position?$objMod->module_position:'500');
-		    			            if ($moduleposition == 500 && ($objMod->isCoreOrExternalModule() == 'external'))
+		    			            $moduleposition = ($objMod->module_position?$objMod->module_position:'50');
+		    			            if ($moduleposition == '50' && ($objMod->isCoreOrExternalModule() == 'external'))
 		    			            {
-		    			                $moduleposition = 800;
+		    			            	$moduleposition = '80';		// External modules at end by default
 		    			            }
-
-		    			            if ($special == 1) $familykey='interface';
 
 		    			            // Add list of warnings to show into arrayofwarnings and arrayofwarningsext
 		    			            if (! empty($objMod->warnings_activation))
@@ -390,7 +398,7 @@ foreach ($modulesdir as $dir)
 		    						$dirmod[$i]  = $dir;
 		    						//print $i.'-'.$dirmod[$i].'<br>';
 		    			            // Set categ[$i]
-		    						$specialstring = isset($specialtostring[$special])?$specialtostring[$special]:'unknown';
+		    						$specialstring = 'unknown';
 		    			            if ($objMod->version == 'development' || $objMod->version == 'experimental') $specialstring='expdev';
 		    						if (isset($categ[$specialstring])) $categ[$specialstring]++;					// Array of all different modules categories
 		    			            else $categ[$specialstring]=1;
@@ -433,9 +441,7 @@ if ($action == 'reset_confirm' && $user->admin)
 
 		$form = new Form($db);
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?value='.$value.'&mode='.$mode.$param, $langs->trans('ConfirmUnactivation'), $langs->trans(GETPOST('confirm_message_code')), 'reset', '', 'no', 1);
-
 	}
-
 }
 
 print $formconfirm;
@@ -446,15 +452,15 @@ asort($orders);
 //var_dump($modules);
 
 $nbofactivatedmodules=count($conf->modules);
-$moreinfo=$langs->trans("TotalNumberOfActivatedModules",($nbofactivatedmodules-1), count($modules));
+$moreinfo=$langs->trans("TotalNumberOfActivatedModules", ($nbofactivatedmodules-1), count($modules));
 if ($nbofactivatedmodules <= 1) $moreinfo .= ' '.img_warning($langs->trans("YouMustEnableOneModule"));
-print load_fiche_titre($langs->trans("ModulesSetup"),$moreinfo,'title_setup');
+print load_fiche_titre($langs->trans("ModulesSetup"), $moreinfo, 'title_setup');
 
 // Start to show page
-if ($mode=='common')      print '<span class="opacitymedium">'.$langs->trans("ModulesDesc")."</span><br>\n";
-if ($mode=='marketplace') print '<span class="opacitymedium">'.$langs->trans("ModulesMarketPlaceDesc")."</span><br>\n";
-if ($mode=='deploy')      print '<span class="opacitymedium">'.$langs->trans("ModulesDeployDesc", $langs->transnoentitiesnoconv("AvailableModules"))."</span><br>\n";
-if ($mode=='develop')     print '<span class="opacitymedium">'.$langs->trans("ModulesDevelopDesc")."</span><br>\n";
+if ($mode=='common')      print '<span class="opacitymedium hideonsmartphone">'.$langs->trans("ModulesDesc")."</span><br>\n";
+if ($mode=='marketplace') print '<span class="opacitymedium hideonsmartphone">'.$langs->trans("ModulesMarketPlaceDesc")."</span><br>\n";
+if ($mode=='deploy')      print '<span class="opacitymedium hideonsmartphone">'.$langs->trans("ModulesDeployDesc", $langs->transnoentitiesnoconv("AvailableModules"))."</span><br>\n";
+if ($mode=='develop')     print '<span class="opacitymedium hideonsmartphone">'.$langs->trans("ModulesDevelopDesc")."</span><br>\n";
 
 $head = modules_prepare_head();
 
@@ -506,7 +512,7 @@ if ($mode == 'common')
     {
         print $moreforfilter;
         $parameters=array();
-        $reshook=$hookmanager->executeHooks('printFieldPreListTitle',$parameters);    // Note that $action and $object may have been modified by hook
+        $reshook=$hookmanager->executeHooks('printFieldPreListTitle', $parameters);    // Note that $action and $object may have been modified by hook
         print $hookmanager->resPrint;
     }
 
@@ -515,7 +521,7 @@ if ($mode == 'common')
     print '<div class="clearboth"></div><br>';
 
     $parameters=array();
-    $reshook=$hookmanager->executeHooks('insertExtraHeader',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+    $reshook=$hookmanager->executeHooks('insertExtraHeader', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
     if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
     // Show list of modules
@@ -524,19 +530,16 @@ if ($mode == 'common')
 
     foreach ($orders as $key => $value)
     {
-        $tab=explode('_',$value);
+        $tab=explode('_', $value);
         $familyposition=$tab[0]; $familykey=$tab[1]; $module_position=$tab[2]; $numero=$tab[3];
 
         $modName = $filename[$key];
     	$objMod  = $modules[$modName];
     	$dirofmodule = $dirmod[$key];
 
-    	$special = $objMod->special;
-
-    	//print $objMod->name." - ".$key." - ".$objMod->special.' - '.$objMod->version."<br>";
+    	//print $objMod->name." - ".$key." - ".$objMod->version."<br>";
     	//if (($mode != (isset($specialtostring[$special])?$specialtostring[$special]:'unknown') && $mode != 'expdev')
-    	if (($special >= 4 && $mode != 'expdev')
-    		|| ($mode == 'expdev' && $objMod->version != 'development' && $objMod->version != 'experimental')) continue;    // Discard if not for current tab
+    	if ($mode == 'expdev' && $objMod->version != 'development' && $objMod->version != 'experimental') continue;    // Discard if not for current tab
 
         if (! $objMod->getName())
         {
@@ -544,7 +547,7 @@ if ($mode == 'common')
       		continue;
         }
 
-        $const_name = 'MAIN_MODULE_'.strtoupper(preg_replace('/^mod/i','',get_class($objMod)));
+        $const_name = 'MAIN_MODULE_'.strtoupper(preg_replace('/^mod/i', '', get_class($objMod)));
 
         // Check filters
         $modulename=$objMod->getName();
@@ -572,8 +575,8 @@ if ($mode == 'common')
         }
         if ($search_nature)
         {
-            if (preg_match('/^external/',$search_nature) && $objMod->isCoreOrExternalModule() != 'external') continue;
-            if (preg_match('/^external_(.*)$/',$search_nature, $reg))
+            if (preg_match('/^external/', $search_nature) && $objMod->isCoreOrExternalModule() != 'external') continue;
+            if (preg_match('/^external_(.*)$/', $search_nature, $reg))
             {
                 //print $reg[1].'-'.dol_escape_htmltag($objMod->getPublisher());
                 $publisher=dol_escape_htmltag($objMod->getPublisher());
@@ -600,17 +603,18 @@ if ($mode == 'common')
         }
 
         // Print a separator if we change family
-        if ($familykey!=$oldfamily)
-        {
-        	if ($oldfamily) print '</table></div><br>';
+        if ($familykey != $oldfamily) {
+            if ($oldfamily) {
+                print '</table></div><br>';
+            }
 
-            $familytext=empty($familyinfo[$familykey]['label'])?$familykey:$familyinfo[$familykey]['label'];
-            print_fiche_titre($familytext, '', '');
+            $familytext = empty($familyinfo[$familykey]['label'])?$familykey:$familyinfo[$familykey]['label'];
+            print load_fiche_titre($familytext, '', '');
 
             print '<div class="div-table-responsive">';
-        	print '<table class="tagtable liste" summary="list_of_modules">'."\n";
+            print '<table class="tagtable liste" summary="list_of_modules">'."\n";
 
-        	$atleastoneforfamily=0;
+            $atleastoneforfamily=0;
         }
 
         $atleastoneforfamily++;
@@ -640,6 +644,7 @@ if ($mode == 'common')
         }
 
         print '<tr class="oddeven">'."\n";
+        if (!empty($conf->global->MAIN_MODULES_SHOW_LINENUMBERS)) print '<td width="20px">'.++$linenum.'</td>';
 
         // Picto + Name of module
         print '  <td width="200px">';
@@ -648,7 +653,7 @@ if ($mode == 'common')
         //if (is_array($objMod->phpmin)) $alttext.=($alttext?' - ':'').'PHP >= '.join('.',$objMod->phpmin);
         if (! empty($objMod->picto))
         {
-        	if (preg_match('/^\//i',$objMod->picto)) print img_picto($alttext,$objMod->picto,' width="14px"',1);
+        	if (preg_match('/^\//i', $objMod->picto)) print img_picto($alttext, $objMod->picto, ' width="14px"', 1);
         	else print img_object($alttext, $objMod->picto, 'class="valignmiddle" width="14px"');
         }
         else
@@ -672,6 +677,17 @@ if ($mode == 'common')
         // Version
         print '<td class="center nowrap" width="120px">';
         print $versiontrans;
+        if(!empty($conf->global->CHECKLASTVERSION_EXTERNALMODULE)){
+            require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
+            if (!empty($objMod->url_last_version)) {
+                $newversion = getURLContent($objMod->url_last_version);
+                if(isset($newversion['content'])){
+                    if (version_compare($newversion['content'], $versiontrans) > 0) {
+                        print "&nbsp;<span class='butAction' title='" . $langs->trans('LastStableVersion') . "'>".$newversion['content']."</span>";
+                    }
+                }
+            }
+        }
         print "</td>\n";
 
         // Activate/Disable and Setup (2 columns)
@@ -689,28 +705,28 @@ if ($mode == 'common')
         	{
         		print $langs->trans("Disabled");
         	}
-        	else if (! empty($objMod->always_enabled) || ((! empty($conf->multicompany->enabled) && $objMod->core_enabled) && ($user->entity || $conf->entity!=1)))
+        	elseif (! empty($objMod->always_enabled) || ((! empty($conf->multicompany->enabled) && $objMod->core_enabled) && ($user->entity || $conf->entity!=1)))
         	{
         		if (method_exists($objMod, 'alreadyUsed') && $objMod->alreadyUsed()) print $langs->trans("Used");
-        		else print $langs->trans("Required");
+        		else {
+        			print img_picto($langs->trans("Required"), 'switch_on');
+        			print $langs->trans("Required");
+        		}
         		if (! empty($conf->multicompany->enabled) && $user->entity) $disableSetup++;
         	}
         	else
         	{
         		if(!empty($objMod->warnings_unactivation[$mysoc->country_code]) && method_exists($objMod, 'alreadyUsed') && $objMod->alreadyUsed()) {
         			print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$objMod->numero.'&amp;module_position='.$module_position.'&amp;action=reset_confirm&amp;confirm_message_code='.$objMod->warnings_unactivation[$mysoc->country_code].'&amp;value=' . $modName . '&amp;mode=' . $mode . $param . '">';
-        			print img_picto($langs->trans("Activated"),'switch_on');
+        			print img_picto($langs->trans("Activated"), 'switch_on');
         			print '</a>';
-
         		}
         		else {
 
         			print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$objMod->numero.'&amp;module_position='.$module_position.'&amp;action=reset&amp;value=' . $modName . '&amp;mode=' . $mode .'&amp;confirm=yes' . $param . '">';
-        			print img_picto($langs->trans("Activated"),'switch_on');
+        			print img_picto($langs->trans("Activated"), 'switch_on');
         			print '</a>';
-
         		}
-
         	}
         	print '</td>'."\n";
 
@@ -733,39 +749,38 @@ if ($mode == 'common')
         				$urlpage=$page;
         				if ($i++)
         				{
-        					print '<a href="'.$urlpage.'" title="'.$langs->trans($page).'">'.img_picto(ucfirst($page),"setup").'</a>';
+        					print '<a href="'.$urlpage.'" title="'.$langs->trans($page).'">'.img_picto(ucfirst($page), "setup").'</a>';
         					//    print '<a href="'.$page.'">'.ucfirst($page).'</a>&nbsp;';
         				}
         				else
         				{
-        					if (preg_match('/^([^@]+)@([^@]+)$/i',$urlpage,$regs))
+        					if (preg_match('/^([^@]+)@([^@]+)$/i', $urlpage, $regs))
         					{
-        						$urltouse=dol_buildpath('/'.$regs[2].'/admin/'.$regs[1],1);
-        						print '<a href="'.$urltouse.(preg_match('/\?/',$urltouse)?'&':'?').'save_lastsearch_values=1&backtopage='.urlencode($backtourl).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"),"setup",'style="padding-right: 6px"').'</a>';
+        						$urltouse=dol_buildpath('/'.$regs[2].'/admin/'.$regs[1], 1);
+        						print '<a href="'.$urltouse.(preg_match('/\?/', $urltouse)?'&':'?').'save_lastsearch_values=1&backtopage='.urlencode($backtourl).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"), "setup", 'style="padding-right: 6px"').'</a>';
         					}
         					else
         					{
         						$urltouse=$urlpage;
-        						print '<a href="'.$urltouse.(preg_match('/\?/',$urltouse)?'&':'?').'save_lastsearch_values=1&backtopage='.urlencode($backtourl).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"),"setup",'style="padding-right: 6px"').'</a>';
+        						print '<a href="'.$urltouse.(preg_match('/\?/', $urltouse)?'&':'?').'save_lastsearch_values=1&backtopage='.urlencode($backtourl).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"), "setup", 'style="padding-right: 6px"').'</a>';
         					}
         				}
         			}
         			print "</td>\n";
         		}
-        		else if (preg_match('/^([^@]+)@([^@]+)$/i',$objMod->config_page_url,$regs))
+        		elseif (preg_match('/^([^@]+)@([^@]+)$/i', $objMod->config_page_url, $regs))
         		{
-        			print '<td class="tdsetuppicto right valignmiddle" width="60px"><a href="'.dol_buildpath('/'.$regs[2].'/admin/'.$regs[1],1).'?save_lastsearch_values=1&backtopage='.urlencode($backtourl).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"),"setup",'style="padding-right: 6px"').'</a></td>';
+        			print '<td class="tdsetuppicto right valignmiddle" width="60px"><a href="'.dol_buildpath('/'.$regs[2].'/admin/'.$regs[1], 1).'?save_lastsearch_values=1&backtopage='.urlencode($backtourl).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"), "setup", 'style="padding-right: 6px"').'</a></td>';
         		}
         		else
         		{
-        			print '<td class="tdsetuppicto right valignmiddle" width="60px"><a href="'.$objMod->config_page_url.'?save_lastsearch_values=1&backtopage='.urlencode($backtourl).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"),"setup",'style="padding-right: 6px"').'</a></td>';
+        			print '<td class="tdsetuppicto right valignmiddle" width="60px"><a href="'.$objMod->config_page_url.'?save_lastsearch_values=1&backtopage='.urlencode($backtourl).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"), "setup", 'style="padding-right: 6px"').'</a></td>';
         		}
         	}
         	else
         	{
-        		print '<td class="tdsetuppicto right valignmiddle" width="60px">'.img_picto($langs->trans("NothingToSetup"),"setup",'class="opacitytransp" style="padding-right: 6px"').'</td>';
+        		print '<td class="tdsetuppicto right valignmiddle" width="60px">'.img_picto($langs->trans("NothingToSetup"), "setup", 'class="opacitytransp" style="padding-right: 6px"').'</td>';
         	}
-
         }
         else	// Module not yet activated
 		{
@@ -775,7 +790,7 @@ if ($mode == 'common')
         	{
         		// Should never happened
         	}
-        	else if (! empty($objMod->disabled))
+        	elseif (! empty($objMod->disabled))
         	{
         		print $langs->trans("Disabled");
         	}
@@ -796,12 +811,12 @@ if ($mode == 'common')
 	        	    print '<!-- This module is an external module and it may have a warning to show (note: your country is '.$mysoc->country_code.') -->'."\n";
 	        	    foreach ($arrayofwarningsext as $keymodule => $arrayofwarningsextbycountry)
 	        	    {
-                        $keymodulelowercase=strtolower(preg_replace('/^mod/','',$keymodule));
+                        $keymodulelowercase=strtolower(preg_replace('/^mod/', '', $keymodule));
                         if (in_array($keymodulelowercase, $conf->modules))    // If module that request warning is on
 	        	        {
         	        	    foreach ($arrayofwarningsextbycountry as $keycountry => $cursorwarningmessage)
         	        	    {
-        	        	        if ($keycountry == 'always' || $keycountry == $mysoc->country_code)
+        	        	    	if (preg_match('/^always/', $keycountry) || ($mysoc->country_code && preg_match('/^'.$mysoc->country_code.'/', $keycountry)))
         	        	        {
         	        	            $warningmessage .= ($warningmessage?"\n":"").$langs->trans($cursorwarningmessage, $objMod->getName(), $mysoc->country_code, $modules[$keymodule]->getName());
         	        	            $warningmessage .= ($warningmessage?"\n":"").($warningmessage?"\n":"").$langs->trans("Module").' : '.$objMod->getName();
@@ -816,13 +831,13 @@ if ($mode == 'common')
 	        	print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$objMod->numero.'&amp;module_position='.$module_position.'&amp;action=set&amp;value=' . $modName . '&amp;mode=' . $mode . $param . '"';
 	        	if ($warningmessage) print ' onclick="return confirm(\''.dol_escape_js($warningmessage).'\');"';
 	        	print '>';
-	        	print img_picto($langs->trans("Disabled"),'switch_off');
+	        	print img_picto($langs->trans("Disabled"), 'switch_off');
 	        	print "</a>\n";
         	}
         	print "</td>\n";
 
         	// Link config
-        	print '<td class="tdsetuppicto right valignmiddle" width="60px">'.img_picto($langs->trans("NothingToSetup"),"setup",'class="opacitytransp" style="padding-right: 6px"').'</td>';
+        	print '<td class="tdsetuppicto right valignmiddle" width="60px">'.img_picto($langs->trans("NothingToSetup"), "setup", 'class="opacitytransp" style="padding-right: 6px"').'</td>';
         }
 
         print "</tr>\n";
@@ -835,6 +850,8 @@ if ($mode == 'common')
     }
 
     dol_fiche_end();
+
+    print '<br>';
 
     // Show warning about external users
     print info_admin(showModulesExludedForExternal($modules))."\n";
@@ -854,9 +871,9 @@ if ($mode == 'marketplace')
     print '<td>'.$langs->trans("URL").'</td>';
     print '</tr>';
 
-    print "<tr class=\"oddeven\">\n";
+    print '<tr class="oddeven">'."\n";
     $url='https://www.dolistore.com';
-    print '<td align="left"><a href="'.$url.'" target="_blank" rel="external"><img border="0" class="imgautosize imgmaxwidth180" src="'.DOL_URL_ROOT.'/theme/dolistore_logo.png"></a></td>';
+    print '<td class="left"><a href="'.$url.'" target="_blank" rel="external"><img border="0" class="imgautosize imgmaxwidth180" src="'.DOL_URL_ROOT.'/theme/dolistore_logo.png"></a></td>';
     print '<td>'.$langs->trans("DoliStoreDesc").'</td>';
     print '<td><a href="'.$url.'" target="_blank" rel="external">'.$url.'</a></td>';
     print '</tr>';
@@ -931,7 +948,7 @@ if ($mode == 'deploy')
 {
 	dol_fiche_head($head, $mode, '', -1);
 
-	$dolibarrdataroot=preg_replace('/([\\/]+)$/i','',DOL_DATA_ROOT);
+	$dolibarrdataroot=preg_replace('/([\\/]+)$/i', '', DOL_DATA_ROOT);
 	$allowonlineinstall=true;
 	$allowfromweb=1;
 	if (dol_is_file($dolibarrdataroot.'/installmodules.lock')) $allowonlineinstall=false;
@@ -940,7 +957,7 @@ if ($mode == 'deploy')
 	$message='';
 	if (! empty($allowonlineinstall))
 	{
-		if (! in_array('/custom',explode(',',$dolibarr_main_url_root_alt)))
+		if (! in_array('/custom', explode(',', $dolibarr_main_url_root_alt)))
 		{
 			$message=info_admin($langs->trans("ConfFileMustContainCustom", DOL_DOCUMENT_ROOT.'/custom', DOL_DOCUMENT_ROOT));
 			$allowfromweb=-1;
@@ -952,20 +969,20 @@ if ($mode == 'deploy')
 				if (! is_writable(dol_osencode($dirins)))
 				{
 					$langs->load("errors");
-					$message=info_admin($langs->trans("ErrorFailedToWriteInDir",$dirins));
+					$message=info_admin($langs->trans("ErrorFailedToWriteInDir", $dirins));
 					$allowfromweb=0;
 				}
 			}
 			else
 			{
-				$message=info_admin($langs->trans("NotExistsDirect",$dirins).$langs->trans("InfDirAlt").$langs->trans("InfDirExample"));
+				$message=info_admin($langs->trans("NotExistsDirect", $dirins).$langs->trans("InfDirAlt").$langs->trans("InfDirExample"));
 				$allowfromweb=0;
 			}
 		}
 	}
 	else
 	{
-		$message=info_admin($langs->trans("InstallModuleFromWebHasBeenDisabledByFile",$dolibarrdataroot.'/installmodules.lock'));
+		$message=info_admin($langs->trans("InstallModuleFromWebHasBeenDisabledByFile", $dolibarrdataroot.'/installmodules.lock'));
 		$allowfromweb=0;
 	}
 
@@ -988,24 +1005,70 @@ if ($mode == 'deploy')
 		else
 		{
 			print $langs->trans("ThisIsAlternativeProcessToFollow").'<br>';
-			print '<b>'.$langs->trans("StepNb",1).'</b>: ';
-			print $langs->trans("FindPackageFromWebSite",$fullurl).'<br>';
-			print '<b>'.$langs->trans("StepNb",2).'</b>: ';
-			print $langs->trans("DownloadPackageFromWebSite",$fullurl).'<br>';
-			print '<b>'.$langs->trans("StepNb",3).'</b>: ';
+			print '<b>'.$langs->trans("StepNb", 1).'</b>: ';
+			print $langs->trans("FindPackageFromWebSite", $fullurl).'<br>';
+			print '<b>'.$langs->trans("StepNb", 2).'</b>: ';
+			print $langs->trans("DownloadPackageFromWebSite", $fullurl).'<br>';
+			print '<b>'.$langs->trans("StepNb", 3).'</b>: ';
 		}
 
 		if ($allowfromweb == 1)
 		{
-			print $langs->trans("UnpackPackageInModulesRoot",$dirins).'<br>';
+			print $langs->trans("UnpackPackageInModulesRoot", $dirins).'<br>';
 
 			print '<br>';
 
 			print '<form enctype="multipart/form-data" method="POST" class="noborder" action="'.$_SERVER["PHP_SELF"].'" name="forminstall">';
+			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<input type="hidden" name="action" value="install">';
 			print '<input type="hidden" name="mode" value="deploy">';
-			print $langs->trans("YouCanSubmitFile").' <input type="file" name="fileinstall"> ';
+
+			print $langs->trans("YouCanSubmitFile");
+
+			$max=$conf->global->MAIN_UPLOAD_DOC;		// En Kb
+			$maxphp=@ini_get('upload_max_filesize');	// En inconnu
+			if (preg_match('/k$/i', $maxphp)) $maxphp=$maxphp*1;
+			if (preg_match('/m$/i', $maxphp)) $maxphp=$maxphp*1024;
+			if (preg_match('/g$/i', $maxphp)) $maxphp=$maxphp*1024*1024;
+			if (preg_match('/t$/i', $maxphp)) $maxphp=$maxphp*1024*1024*1024;
+			// Now $max and $maxphp are in Kb
+			$maxmin = $max;
+			if ($maxphp > 0) $maxmin=min($max, $maxphp);
+
+			if ($maxmin > 0)
+			{
+				print '<script type="text/javascript">
+				$(document).ready(function() {
+					jQuery("#fileinstall").on("change", function() {
+						if(this.files[0].size > '.($maxmin*1024).'){
+							alert("'.dol_escape_js($langs->trans("ErrorFileSizeTooLarge")).'");
+							this.value = "";
+						};
+					});
+				});
+				</script>'."\n";
+				// MAX_FILE_SIZE doit précéder le champ input de type file
+				print '<input type="hidden" name="max_file_size" value="'.($maxmin*1024).'">';
+			}
+
+			print '<input class="flat minwidth400" type="file" name="fileinstall" id="fileinstall"> ';
+
 			print '<input type="submit" name="send" value="'.dol_escape_htmltag($langs->trans("Send")).'" class="button">';
+
+			if (! empty($conf->global->MAIN_UPLOAD_DOC))
+			{
+			    if ($user->admin)
+			    {
+			        $langs->load('other');
+			        print ' ';
+			        print info_admin($langs->trans("ThisLimitIsDefinedInSetup", $max, $maxphp), 1);
+			    }
+			}
+			else
+			{
+			    print ' ('.$langs->trans("UploadDisabled").')';
+			}
+
 			print '</form>';
 
 			print '<br>';
@@ -1015,8 +1078,8 @@ if ($mode == 'deploy')
 		}
 		else
 		{
-			print $langs->trans("UnpackPackageInModulesRoot",$dirins).'<br>';
-			print '<b>'.$langs->trans("StepNb",4).'</b>: ';
+			print $langs->trans("UnpackPackageInModulesRoot", $dirins).'<br>';
+			print '<b>'.$langs->trans("StepNb", 4).'</b>: ';
 			print $langs->trans("SetupIsReadyForUse").'<br>';
 		}
 	}
@@ -1047,18 +1110,18 @@ if ($mode == 'develop')
 	print '</tr>';
 
 	print '<tr class="oddeven" height="80">'."\n";
-	print '<td align="left">';
+	print '<td class="left">';
 	//span class="fa fa-bug"></span>
 	//print '<img border="0" class="imgautosize imgmaxwidth180" src="'.DOL_URL_ROOT.'/theme/dolibarr_preferred_partner_int.png">';
 	print '<div class="imgmaxheight50 logo_setup"></div>';
 	print '</td>';
-	print '<td>'.$langs->trans("TryToUseTheModuleBuilder").'</td>';
+	print '<td>'.$langs->trans("TryToUseTheModuleBuilder", $langs->transnoentitiesnoconv("ModuleBuilder")).'</td>';
 	print '<td>'.$langs->trans("SeeTopRightMenu").'</td>';
 	print '</tr>';
 
 	print '<tr class="oddeven" height="80">'."\n";
 	$url='https://partners.dolibarr.org';
-	print '<td align="left">';
+	print '<td class="left">';
 	print'<a href="'.$url.'" target="_blank" rel="external"><img border="0" class="imgautosize imgmaxwidth180" src="'.DOL_URL_ROOT.'/theme/dolibarr_preferred_partner_int.png"></a>';
 	print '</td>';
 	print '<td>'.$langs->trans("DoliPartnersDesc").'</td>';
@@ -1070,8 +1133,6 @@ if ($mode == 'develop')
 	dol_fiche_end();
 }
 
-
-
+// End of page
 llxFooter();
-
 $db->close();

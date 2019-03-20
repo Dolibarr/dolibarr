@@ -59,7 +59,7 @@ class BankAccountTest extends PHPUnit_Framework_TestCase
      *
      * @return BankAccountTest
      */
-    function __construct()
+    public function __construct()
     {
     	parent::__construct();
 
@@ -222,5 +222,4 @@ class BankAccountTest extends PHPUnit_Framework_TestCase
         $this->assertLessThan($result, 0);
         return $result;
     }
-
 }

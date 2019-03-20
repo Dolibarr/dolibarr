@@ -21,16 +21,10 @@
  * \file tvi/ajax/list.php
  * \brief File to return datables output
  */
-if (! defined('NOTOKENRENEWAL'))
-	define('NOTOKENRENEWAL', '1'); // Disables token renewal
-if (! defined('NOREQUIREMENU'))
-	define('NOREQUIREMENU', '1');
-	// if (! defined('NOREQUIREHTML')) define('NOREQUIREHTML','1');
-if (! defined('NOREQUIREAJAX'))
-	define('NOREQUIREAJAX', '1');
-	// if (! defined('NOREQUIRESOC')) define('NOREQUIRESOC','1');
-	// if (! defined('NOREQUIRETRAN')) define('NOREQUIRETRAN','1');
 
+if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1'); // Disables token renewal
+if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1');
+if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
 
 require '../main.inc.php';
 require DOL_DOCUMENT_ROOT.'/loan/class/loanschedule.class.php';
@@ -48,25 +42,24 @@ $output=array();
 $object = new LoanSchedule($db);
 
 $int = ($capital*($rate/12));
-$int = round($int,2,PHP_ROUND_HALF_UP);
-$cap_rest = round($capital - ($mens-$int),2,PHP_ROUND_HALF_UP);
-$output[$echance]=array('cap_rest'=>$cap_rest,'cap_rest_str'=>price($cap_rest),'interet'=>$int,'interet_str'=>price($int,0,'',1),'mens'=>$mens);
+$int = round($int, 2, PHP_ROUND_HALF_UP);
+$cap_rest = round($capital - ($mens-$int), 2, PHP_ROUND_HALF_UP);
+$output[$echance]=array('cap_rest'=>$cap_rest,'cap_rest_str'=>price($cap_rest),'interet'=>$int,'interet_str'=>price($int, 0, '', 1),'mens'=>$mens);
 
 $echance++;
 $capital=$cap_rest;
 while ($echance<=$nbterm) {
 
-	$mens = round($object->calc_mens($capital,$rate,$nbterm-$echance+1),2,PHP_ROUND_HALF_UP);
+	$mens = round($object->calcMonthlyPayments($capital, $rate, $nbterm-$echance+1), 2, PHP_ROUND_HALF_UP);
 
 	$int = ($capital*($rate/12));
-	$int = round($int,2,PHP_ROUND_HALF_UP);
-	$cap_rest = round($capital - ($mens-$int),2,PHP_ROUND_HALF_UP);
+	$int = round($int, 2, PHP_ROUND_HALF_UP);
+	$cap_rest = round($capital - ($mens-$int), 2, PHP_ROUND_HALF_UP);
 
-	$output[$echance]=array('cap_rest'=>$cap_rest,'cap_rest_str'=>price($cap_rest),'interet'=>$int,'interet_str'=>price($int,0,'',1),'mens'=>$mens);
+	$output[$echance]=array('cap_rest'=>$cap_rest,'cap_rest_str'=>price($cap_rest),'interet'=>$int,'interet_str'=>price($int, 0, '', 1),'mens'=>$mens);
 
 	$capital=$cap_rest;
 	$echance++;
 }
 
 echo json_encode($output);
-

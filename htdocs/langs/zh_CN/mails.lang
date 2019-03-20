@@ -11,7 +11,9 @@ MailFrom=寄件者
 MailErrorsTo=Errors to
 MailReply=回复
 MailTo=收件者(s)
+MailToUsers=To user(s)
 MailCC=抄送
+MailToCCUsers=Copy to users(s)
 MailCCC=缓存副本
 MailTopic=主题
 MailText=内容
@@ -164,4 +166,4 @@ InGoingEmailSetup=Incoming email setup
 OutGoingEmailSetupForEmailing=Outgoing email setup (for mass emailing)
 DefaultOutgoingEmailSetup=Default outgoing email setup
 Information=信息
-
+ContactsWithThirdpartyFilter=Contacts avec filtre client

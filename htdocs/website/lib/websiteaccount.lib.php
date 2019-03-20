@@ -22,16 +22,14 @@
  */
 
 /**
- * Prepare array of tabs for WebsiteAccount
+ * Prepare array of tabs for SocieteAccount
  *
- * @param	WebsiteAccount	$object		WebsiteAccount
- * @return 	array					Array of tabs
+ * @param	SocieteAccount	$object		SocieteAccount
+ * @return 	array						Array of tabs
  */
 function websiteaccountPrepareHead($object)
 {
 	global $db, $langs, $conf;
-
-	$langs->load("monmodule@monmodule");
 
 	$h = 0;
 	$head = array();

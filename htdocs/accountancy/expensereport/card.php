@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2005		Simon TOSSER			<simon@kornog-computing.com>
- * Copyright (C) 2013-2017	Alexandre Spangaro		<aspangaro@zendsi.com>
+ * Copyright (C) 2013-2017	Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2013-2014	Olivier Geffroy			<jeff@jeffinfo.com>
  * Copyright (C) 2013-2014	Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2014		Juanjo Menent			<jmenent@2byte.es>
@@ -28,14 +28,11 @@
  */
 require '../../main.inc.php';
 
-// Class
 require_once DOL_DOCUMENT_ROOT . '/expensereport/class/expensereport.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formaccounting.class.php';
 
-// Langs
-$langs->load("bills");
-$langs->load("accountancy");
-$langs->load("trips");
+// Load translation files required by the page
+$langs->loadLangs(array("bills","accountancy","trips"));
 
 $action = GETPOST('action', 'alpha');
 $cancel = GETPOST('cancel', 'alpha');
@@ -170,5 +167,6 @@ if (! empty($id)) {
 	print "Error ID incorrect";
 }
 
+// End of page
 llxFooter();
 $db->close();

@@ -10,6 +10,7 @@ LoanCapital=Capital
 Insurance=Assegurança
 Interest=Interessos
 Nbterms=Nombre de termes
+Term=Termini
 LoanAccountancyCapitalCode=Compte comptable del capital
 LoanAccountancyInsuranceCode=Compte comptable de l'assegurança
 LoanAccountancyInterestCode=Compte comptable per al interès
@@ -17,39 +18,14 @@ ConfirmDeleteLoan=Confirma la eliminació del préstec
 LoanDeleted=Préstec eliminat correctament
 ConfirmPayLoan=Confirma la classificació del préstec com a pagat
 LoanPaid=Préstec pagat
-# Calc
-LoanCalc=Calculadora de prèstecs del banc
-PurchaseFinanceInfo=Informació de compres i finançament
-SalePriceOfAsset=Preu de venda d'actius
-PercentageDown=Percentatge inferior
-LengthOfMortgage=Durada del préstec
-AnnualInterestRate=Taxa d'interès anual
-ExplainCalculations=Explicació de càlculs
-ShowMeCalculationsAndAmortization=Mostra els càlculs i l'amortització
-MortgagePaymentInformation=Informació de pagament d'hipoteca
-DownPayment=Dipòsit
-DownPaymentDesc=El <b>baix pagament</b> = El preu de l'habitatge multiplicat pel baix percentatge dividit per 100 (el 5% arriba a ser fins 5/100 o 0.05 )
-InterestRateDesc=La <b>taxa d'interès</b> = El percentatge d'interès anual dividit per 100
-MonthlyFactorDesc=El <b>factor mensual</b> = El resultat de la següent fórmula
-MonthlyInterestRateDesc=La <b>taxa d'interès mensual</b> = La taxa d'interès anual dividida per 12 (pels 12 mesos de l'any)
-MonthTermDesc=El <b>terme mensual</b> del préstec en mesos = El nombre d'anys que ha pres el préstec per 12 vegades
-MonthlyPaymentDesc=El pagament mensual és genera utilitzant la següent fórmula
-AmortizationPaymentDesc=L'<a href="#amortization">amortització</a> trenca la quantitat del pagament mensual cap al interès del banc, i com pagarà el capital principal del préstec.
-AmountFinanced=Import finançat
-AmortizationMonthlyPaymentOverYears=Amortització per pagaments mensuals: <b>%s</b> durant %s anys
-Totalsforyear=Totals per any
-MonthlyPayment=Pagament mensual
-LoanCalcDesc=Aquesta <b>calculadora d'hipoteques</ b> es pot utilitzar per calcular el pagament mensual d'una prestatària, d'acord amb la quantitat prestada, el termini del préstec desitjat i el tipus d'interés.<br> Aquesta calculadora inclou també AHP (Assegurança Hipotecària Privada) per als préstecs en els quals menys del 20 %% es posa com a pagament inicial. També es tenen en compte els impostos sobre la propietat de la ciutat, i el seu efecte sobre el total del pagament mensual de la hipoteca.<br>
-GoToInterest=%s es destinaran a INTERÈS
-GoToPrincipal=%s es destinaran a PRINCIPAL
-YouWillSpend=Gastaràs %s en l'any %s
 ListLoanAssociatedProject=Llistat de prèstecs associats al projecte
 AddLoan=Crea un préstec
+FinancialCommitment=Compromís financer
+InterestAmount=Interessos
+CapitalRemain=Capital remain
 # Admin
 ConfigLoan=Configuració del mòdul de préstecs
 LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Compte comptable del capital per defecte
 LOAN_ACCOUNTING_ACCOUNT_INTEREST=Compte comptable per al interès per defecte
 LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Compte comptable de l'assegurança per defecte
-FinancialCommitment=Financial commitment
-CreateCalcSchedule=Edit financial commitment
-InterestAmount=Import d'interès
+CreateCalcSchedule=Edita el compromís financer

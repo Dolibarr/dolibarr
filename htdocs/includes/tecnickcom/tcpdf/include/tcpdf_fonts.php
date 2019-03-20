@@ -70,7 +70,7 @@ class TCPDF_FONTS {
 	 * @public static
 	 */
 	public static function addTTFfont($fontfile, $fonttype='', $enc='', $flags=32, $outpath='', $platid=3, $encid=1, $addcbbox=false, $link=false) {
-		if (!file_exists($fontfile)) {
+		if (!TCPDF_STATIC::file_exists($fontfile)) {
 			// Could not find file
 			return false;
 		}
@@ -95,7 +95,7 @@ class TCPDF_FONTS {
 			$outpath = self::_getfontpath();
 		}
 		// check if this font already exist
-		if (@file_exists($outpath.$font_name.'.php')) {
+		if (@TCPDF_STATIC::file_exists($outpath.$font_name.'.php')) {
 			// this font already exist (delete it from fonts folder to rebuild it)
 			return $font_name;
 		}
@@ -665,7 +665,7 @@ class TCPDF_FONTS {
 								$glyphIdArray[$k] = TCPDF_STATIC::_getUSHORT($font, $offset);
 								$offset += 2;
 							}
-							for ($k = 0; $k < $segCount; ++$k) {
+							for ($k = 0; $k < $segCount - 1; ++$k) {
 								for ($c = $startCount[$k]; $c <= $endCount[$k]; ++$c) {
 									if ($idRangeOffset[$k] == 0) {
 										$g = ($idDelta[$k] + $c) % 65536;
@@ -1543,11 +1543,11 @@ class TCPDF_FONTS {
 	public static function getFontFullPath($file, $fontdir=false) {
 		$fontfile = '';
 		// search files on various directories
-		if (($fontdir !== false) AND @file_exists($fontdir.$file)) {
+		if (($fontdir !== false) AND @TCPDF_STATIC::file_exists($fontdir.$file)) {
 			$fontfile = $fontdir.$file;
-		} elseif (@file_exists(self::_getfontpath().$file)) {
+		} elseif (@TCPDF_STATIC::file_exists(self::_getfontpath().$file)) {
 			$fontfile = self::_getfontpath().$file;
-		} elseif (@file_exists($file)) {
+		} elseif (@TCPDF_STATIC::file_exists($file)) {
 			$fontfile = $file;
 		}
 		return $fontfile;
@@ -2003,7 +2003,11 @@ class TCPDF_FONTS {
 			$chars = str_split($str);
 			$carr = array_map('ord', $chars);
 		}
-		$currentfont['subsetchars'] += array_fill_keys($carr, true);
+		if (is_array($currentfont['subsetchars']) && is_array($carr)) {
+			$currentfont['subsetchars'] += array_fill_keys($carr, true);
+		} else {
+			$currentfont['subsetchars'] = array_merge($currentfont['subsetchars'], $carr);
+		}
 		return $carr;
 	}
 

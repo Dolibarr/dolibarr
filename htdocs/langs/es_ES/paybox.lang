@@ -20,6 +20,7 @@ ToOfferALinkForOnlinePaymentOnInvoice=URL que ofrece una interfaz de pago en lí
 ToOfferALinkForOnlinePaymentOnContractLine=URL que ofrece una interfaz de pago en línea %s basada en el importe de una línea de contrato
 ToOfferALinkForOnlinePaymentOnFreeAmount=URL que ofrece una interfaz de pago en línea %s basada en un importe libre
 ToOfferALinkForOnlinePaymentOnMemberSubscription=URL que ofrece una interfaz de pago en línea %s basada en la cotización de un miembro
+ToOfferALinkForOnlinePaymentOnDonation=URL para pfrecer un %s interfaz de usuario para un pago o donació online
 YouCanAddTagOnUrl=También puede añadir el parámetro url <b>&tag=<i>value</i></b>  para cualquiera de estas direcciones (obligatorio solamente para el pago libre) para ver su propio código de comentario de pago.
 SetupPayBoxToHavePaymentCreatedAutomatically=Configure su url PayBox <b>%s</b> para que el pago se cree automáticamente al validar.
 YourPaymentHasBeenRecorded=Esta página confirma que su pago se ha registrado correctamente. Gracias.

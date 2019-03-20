@@ -38,6 +38,7 @@ function blockedlogadmin_prepare_head()
 	$head[$h][2] = 'blockedlog';
 	$h++;
 
+	$langs->load("blockedlog");
 	$head[$h][0] = DOL_URL_ROOT."/blockedlog/admin/blockedlog_list.php?withtab=1";
 	$head[$h][1] = $langs->trans("BrowseBlockedLog");
 
@@ -56,9 +57,9 @@ function blockedlogadmin_prepare_head()
     // Entries must be declared in modules descriptor with line
     // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
     // $this->tabs = array('entity:-tabname);   												to remove a tab
-	complete_head_from_modules($conf,$langs,$object,$head,$h,'blockedlog');
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'blockedlog');
 
-	complete_head_from_modules($conf,$langs,$object,$head,$h,'blockedlog','remove');
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'blockedlog', 'remove');
 
     return $head;
 }

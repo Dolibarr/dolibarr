@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2014	   Florian Henry		<florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -29,9 +29,8 @@ require_once DOL_DOCUMENT_ROOT . '/fourn/class/fournisseur.commande.class.php';
 require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
 
-$langs->load("orders");
-$langs->load("products");
-$langs->load("companies");
+// Load translation files required by the page
+$langs->loadLangs(array('orders', 'products', 'companies'));
 
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
@@ -52,10 +51,10 @@ $hookmanager->initHooks(array (
 $mesg = '';
 
 // Load variable for pagination
-$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
-$sortfield = GETPOST('sortfield','alpha');
-$sortorder = GETPOST('sortorder','alpha');
-$page = GETPOST('page','int');
+$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
+$sortfield = GETPOST('sortfield', 'alpha');
+$sortorder = GETPOST('sortorder', 'alpha');
+$page = GETPOST('page', 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
@@ -67,7 +66,7 @@ if (! $sortfield)
 $search_month = GETPOST('search_month', 'aplha');
 $search_year = GETPOST('search_year', 'int');
 
-if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter','alpha')) {
+if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
 	$search_month = '';
 	$search_year = '';
 }
@@ -110,7 +109,7 @@ if ($id > 0 || ! empty($ref)) {
 		$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
         $shownav = 1;
-        if ($user->societe_id && ! in_array('product', explode(',',$conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
+        if ($user->societe_id && ! in_array('product', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
 
 		dol_banner_tab($object, 'ref', $linkback, $shownav, 'ref');
 
@@ -154,7 +153,7 @@ if ($id > 0 || ! empty($ref)) {
 			if ($socid)
 				$sql .= " AND c.fk_soc = " . $socid;
 			$sql.= $db->order($sortfield, $sortorder);
-				
+
 			// Calcul total qty and amount for global if full scan list
 			$total_ht = 0;
 			$total_qty = 0;
@@ -166,7 +165,7 @@ if ($id > 0 || ! empty($ref)) {
 				$result = $db->query($sql);
 				$totalofrecords = $db->num_rows($result);
 			}
-			
+
 			$sql .= $db->plimit($limit + 1, $offset);
 
 			$result = $db->query($sql);
@@ -180,7 +179,7 @@ if ($id > 0 || ! empty($ref)) {
 				if (! empty($search_year))
 					$option .= '&amp;search_year=' . $search_year;
 				if ($limit > 0 && $limit != $conf->liste_limit) $option.='&limit='.urlencode($limit);
-					
+
 				print '<form method="post" action="' . $_SERVER['PHP_SELF'] . '?id=' . $product->id . '" name="search_form">' . "\n";
 				if (! empty($sortfield))
 					print '<input type="hidden" name="sortfield" value="' . $sortfield . '"/>';
@@ -225,12 +224,12 @@ if ($id > 0 || ! empty($ref)) {
 
 						$total_ht+=$objp->total_ht;
 						$total_qty+=$objp->qty;
-						
+
 						$supplierorderstatic->id = $objp->commandeid;
 						$supplierorderstatic->ref = $objp->ref;
 						$supplierorderstatic->statut = $objp->statut;
 						$societestatic->fetch($objp->socid);
-						
+
 						print '<tr class="oddeven">';
 						print '<td>';
 						print $supplierorderstatic->getNomUrl(1);
@@ -247,8 +246,8 @@ if ($id > 0 || ! empty($ref)) {
 					}
 				}
 				print '<tr class="liste_total">';
-				if ($num < $limit) print '<td align="left">'.$langs->trans("Total").'</td>';
-				else print '<td align="left">'.$langs->trans("Totalforthispage").'</td>';
+				if ($num < $limit) print '<td class="left">'.$langs->trans("Total").'</td>';
+				else print '<td class="left">'.$langs->trans("Totalforthispage").'</td>';
 				print '<td colspan="3"></td>';
 				print '<td align="center">' . $total_qty . '</td>';
 				print '<td align="right">' . price($total_ht) . '</td>';
@@ -266,5 +265,6 @@ if ($id > 0 || ! empty($ref)) {
 	dol_print_error();
 }
 
+// End of page
 llxFooter();
 $db->close();

@@ -2,7 +2,7 @@
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2014 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
- * Copyright (C) 2005-2009 Regis Houssin         <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2009 Regis Houssin         <regis.houssin@inodbox.com>
  * Copyright (C) 2005      Simon TOSSER          <simon@kornog-computing.com>
  * Copyright (C) 2011      Juanjo Menent         <jmenent@2byte.es>
  * Copyright (C) 2013      Cédric Salvador       <csalvador@gpcsolutions.fr>
@@ -35,28 +35,26 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/tax.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 if (! empty($conf->projet->enabled))
 {
-    require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-    require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
+    include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+    include_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
 
-$langs->load("other");
-$langs->load("companies");
-$langs->load("compta");
-$langs->load("bills");
+// Load translation files required by the page
+$langs->loadLangs(array('other', 'companies', 'compta', 'bills'));
 
-$id = GETPOST('id','int');
-$action = GETPOST('action','aZ09');
+$id = GETPOST('id', 'int');
+$action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'tax', $id, 'chargesociales','charges');
+$result = restrictedArea($user, 'tax', $id, 'chargesociales', 'charges');
 
 
 // Get parameters
-$sortfield = GETPOST("sortfield",'alpha');
-$sortorder = GETPOST("sortorder",'alpha');
-$page = GETPOST("page",'int');
+$sortfield = GETPOST("sortfield", 'alpha');
+$sortorder = GETPOST("sortorder", 'alpha');
+$page = GETPOST("page", 'int');
 if ($page == -1) {
     $page = 0;
 }
@@ -78,7 +76,7 @@ $modulepart='tax';
  * Actions
  */
 
-include_once DOL_DOCUMENT_ROOT . '/core/actions_linkedfiles.inc.php';
+require_once DOL_DOCUMENT_ROOT . '/core/actions_linkedfiles.inc.php';
 
 if ($action == 'setlib' && $user->rights->tax->charges->creer)
 {
@@ -98,7 +96,7 @@ if (! empty($conf->projet->enabled)) { $formproject = new FormProjets($db); }
 
 $title = $langs->trans("SocialContribution") . ' - ' . $langs->trans("Documents");
 $help_url='EN:Module_Taxes_and_social_contributions|FR:Module Taxes et dividendes|ES:M&oacute;dulo Impuestos y cargas sociales (IVA, impuestos)';
-llxHeader("",$title,$help_url);
+llxHeader("", $title, $help_url);
 
 if ($object->id)
 {
@@ -106,7 +104,7 @@ if ($object->id)
 
     $head=tax_prepare_head($object);
 
-    dol_fiche_head($head, 'documents',  $langs->trans("SocialContribution"), -1, 'bill');
+    dol_fiche_head($head, 'documents', $langs->trans("SocialContribution"), -1, 'bill');
 
 	$morehtmlref='<div class="refidno">';
 	// Label of social contribution
@@ -129,7 +127,7 @@ if ($object->id)
 	}
 	$morehtmlref.='</div>';
 
-	$linkback = '<a href="' . DOL_URL_ROOT . '/compta/sociales/index.php?restore_lastsearch_values=1">' . $langs->trans("BackToList") . '</a>';
+	$linkback = '<a href="' . DOL_URL_ROOT . '/compta/sociales/list.php?restore_lastsearch_values=1">' . $langs->trans("BackToList") . '</a>';
 
 	$object->totalpaye = $totalpaye;   // To give a chance to dol_banner_tab to use already paid amount to show correct status
 
@@ -138,8 +136,8 @@ if ($object->id)
 	print '<div class="fichecenter">';
 	print '<div class="underbanner clearboth"></div>';
 
-    // Construit liste des fichiers
-    $filearray=dol_dir_list($upload_dir,"files",0,'','(\.meta|_preview.*\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
+    // Build file list
+    $filearray=dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC), 1);
     $totalsize=0;
     foreach($filearray as $key => $file)
     {
@@ -150,7 +148,7 @@ if ($object->id)
     print '<table class="border" width="100%">';
 
     print '<tr><td class="titlefield">'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
-    print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.$totalsize.' '.$langs->trans("bytes").'</td></tr>';
+    print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.dol_print_size($totalsize, 1, 1).'</td></tr>';
     print '</table>';
 
     print '</div>';
@@ -170,7 +168,6 @@ else
     print $langs->trans("ErrorUnknown");
 }
 
-
+// End of page
 llxFooter();
-
 $db->close();

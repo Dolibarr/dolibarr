@@ -1,7 +1,6 @@
 # Dolibarr language file - Source file is en_US - users
 UserCard=Benutzer-Karte
 GroupCard=Gruppe-Karte
-LastGroupsCreated=%s neueste Gruppen
 LastUsersCreated=%s neueste Benutzer
 LinkToCompanyContact=Mit Geschäftspartner/Kontakt verknüpfen
 LinkedToDolibarrThirdParty=Mit Geschäftspartner verknüpft

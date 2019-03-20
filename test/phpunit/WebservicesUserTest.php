@@ -28,7 +28,7 @@ global $conf,$user,$langs,$db;
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/date.lib.php';
-require_once(NUSOAP_PATH.'/nusoap.php');        // Include SOAP
+require_once NUSOAP_PATH.'/nusoap.php';        // Include SOAP
 
 
 if (empty($user->id)) {
@@ -61,7 +61,7 @@ class WebservicesUserTest extends PHPUnit_Framework_TestCase
      *
      * @return DateLibTest
      */
-    function __construct()
+    public function __construct()
     {
     	parent::__construct();
 
@@ -161,7 +161,7 @@ class WebservicesUserTest extends PHPUnit_Framework_TestCase
         $parameters = array('authentication'=>$authentication,'id'=>0,'ref'=>'admin');
         print __METHOD__."Call method ".$WS_METHOD."\n";
         try {
-            $result = $soapclient->call($WS_METHOD,$parameters,$ns,'');
+            $result = $soapclient->call($WS_METHOD, $parameters, $ns, '');
         } catch(SoapFault $exception) {
             echo $exception;
             $result=0;
@@ -188,7 +188,7 @@ class WebservicesUserTest extends PHPUnit_Framework_TestCase
         $parameters = array('authentication'=>$authentication,'id'=>0,'ref'=>'refthatdoesnotexists');
         print __METHOD__."Call method ".$WS_METHOD."\n";
         try {
-            $result = $soapclient->call($WS_METHOD,$parameters,$ns,'');
+            $result = $soapclient->call($WS_METHOD, $parameters, $ns, '');
         } catch(SoapFault $exception) {
             echo $exception;
             $result=0;
@@ -208,5 +208,4 @@ class WebservicesUserTest extends PHPUnit_Framework_TestCase
 
         return $result;
     }
-
 }

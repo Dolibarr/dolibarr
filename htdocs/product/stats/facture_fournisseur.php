@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2004-2018 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2013	   Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2014	   Florian Henry		<florian.henry@open-concept.pro>
  *
@@ -20,9 +20,9 @@
  */
 
 /**
- * \file htdocs/product/stats/facture_fournisseur.php
- * \ingroup product service facture
- * \brief Page des stats des factures fournisseurs pour un produit
+ * \file 		htdocs/product/stats/facture_fournisseur.php
+ * \ingroup 	product service facture
+ * \brief 		Page of supplier invoice statistics for a product
  */
 
 require '../../main.inc.php';
@@ -31,10 +31,8 @@ require_once DOL_DOCUMENT_ROOT . '/fourn/class/fournisseur.facture.class.php';
 require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
 
-$langs->load("companies");
-$langs->load("bills");
-$langs->load("products");
-$langs->load("companies");
+// Load translation files required by the page
+$langs->loadLangs(array('companies', 'bills', 'products', 'companies'));
 
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
@@ -52,7 +50,7 @@ $hookmanager->initHooks(array('productstatssupplyinvoice'));
 $mesg = '';
 
 // Load variable for pagination
-$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
+$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
 $page = GETPOST("page", 'int');
@@ -65,7 +63,7 @@ if (! $sortfield) $sortfield = "f.datef";
 $search_month = GETPOST('search_month', 'aplha');
 $search_year = GETPOST('search_year', 'int');
 
-if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter','alpha')) {
+if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
 	$search_month = '';
 	$search_year = '';
 }
@@ -107,7 +105,7 @@ if ($id > 0 || ! empty($ref))
         $linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
         $shownav = 1;
-        if ($user->societe_id && ! in_array('product', explode(',',$conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
+        if ($user->societe_id && ! in_array('product', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
 
         dol_banner_tab($object, 'ref', $linkback, $shownav, 'ref');
 
@@ -128,8 +126,8 @@ if ($id > 0 || ! empty($ref))
 
 		if ($user->rights->fournisseur->facture->lire)
 		{
-			$sql = "SELECT DISTINCT s.nom as name, s.rowid as socid, s.code_client, f.ref, d.rowid, d.total_ht as total_ht,";
-			$sql .= " f.datef, f.paye, f.fk_statut as statut, f.rowid as facid, d.qty";
+			$sql = "SELECT DISTINCT s.nom as name, s.rowid as socid, s.code_client, d.rowid, d.total_ht as line_total_ht,";
+			$sql .= " f.rowid as facid, f.ref, f.ref_supplier, f.datef, f.libelle, f.total_ht, f.total_ttc, f.total_tva, f.paye, f.fk_statut as statut, d.qty";
 			if (! $user->rights->societe->client->voir && ! $socid)
 				$sql .= ", sc.fk_soc, sc.fk_user ";
 			$sql .= " FROM " . MAIN_DB_PREFIX . "societe as s";
@@ -151,7 +149,7 @@ if ($id > 0 || ! empty($ref))
 			// Calcul total qty and amount for global if full scan list
 			$total_ht = 0;
 			$total_qty = 0;
-			
+
 			// Count total nb of records
 			$totalofrecords = '';
 			if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
@@ -159,9 +157,9 @@ if ($id > 0 || ! empty($ref))
 				$result = $db->query($sql);
 				$totalofrecords = $db->num_rows($result);
 			}
-			
+
 			$sql.= $db->plimit($limit + 1, $offset);
-			
+
 			$result = $db->query($sql);
 			if ($result)
 			{
@@ -174,7 +172,7 @@ if ($id > 0 || ! empty($ref))
 				if (! empty($search_year))
 					$option .= '&amp;search_year=' . $search_year;
 				if ($limit > 0 && $limit != $conf->liste_limit) $option.='&limit='.urlencode($limit);
-					
+
 				print '<form method="post" action="' . $_SERVER['PHP_SELF'] . '?id=' . $product->id . '" name="search_form">' . "\n";
 				if (! empty($sortfield))
 					print '<input type="hidden" name="sortfield" value="' . $sortfield . '"/>';
@@ -207,7 +205,7 @@ if ($id > 0 || ! empty($ref))
 				print_liste_field_titre("SupplierCode", $_SERVER["PHP_SELF"], "s.code_client", "", $option, '', $sortfield, $sortorder);
 				print_liste_field_titre("DateInvoice", $_SERVER["PHP_SELF"], "f.datef", "", $option, 'align="center"', $sortfield, $sortorder);
 				print_liste_field_titre("Qty", $_SERVER["PHP_SELF"], "d.qty", "", $option, 'align="center"', $sortfield, $sortorder);
-				print_liste_field_titre("AmountHT", $_SERVER["PHP_SELF"], "f.total_ht", "", $option, 'align="right"', $sortfield, $sortorder);
+				print_liste_field_titre("AmountHT", $_SERVER["PHP_SELF"], "d.total_ht", "", $option, 'align="right"', $sortfield, $sortorder);
 				print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "f.paye,f.fk_statut", "", $option, 'align="right"', $sortfield, $sortorder);
 				print "</tr>\n";
 
@@ -217,13 +215,19 @@ if ($id > 0 || ! empty($ref))
 					{
 						$objp = $db->fetch_object($result);
 
-						$total_ht+=$objp->total_ht;
+						$total_ht+=$objp->line_total_ht;
 						$total_qty+=$objp->qty;
-						
+
 						$supplierinvoicestatic->id = $objp->facid;
-						$supplierinvoicestatic->ref = $objp->facnumber;
+						$supplierinvoicestatic->ref = $objp->ref;
+						$supplierinvoicestatic->ref_supplier = $objp->ref_supplier;
+						$supplierinvoicestatic->libelle = $objp->libelle;
+						$supplierinvoicestatic->total_ht = $objp->total_ht;
+						$supplierinvoicestatic->total_ttc = $objp->total_ttc;
+						$supplierinvoicestatic->total_tva = $objp->total_tva;
+
 						$societestatic->fetch($objp->socid);
-						
+
 						print '<tr class="oddeven">';
 						print '<td>';
 						print $supplierinvoicestatic->getNomUrl(1);
@@ -233,15 +237,15 @@ if ($id > 0 || ! empty($ref))
                    		print '<td align="center">';
 						print dol_print_date($db->jdate($objp->datef), 'dayhour') . "</td>";
 						print '<td align="center">' . $objp->qty . "</td>\n";
-						print '<td align="right">' . price($objp->total_ht) . "</td>\n";
+						print '<td align="right">' . price($objp->line_total_ht) . "</td>\n";
 						print '<td align="right">' . $supplierinvoicestatic->LibStatut($objp->paye, $objp->statut, 5) . '</td>';
 						print "</tr>\n";
 						$i++;
 					}
 				}
 				print '<tr class="liste_total">';
-				if ($num < $limit) print '<td align="left">'.$langs->trans("Total").'</td>';
-				else print '<td align="left">'.$langs->trans("Totalforthispage").'</td>';
+				if ($num < $limit) print '<td class="left">'.$langs->trans("Total").'</td>';
+				else print '<td class="left">'.$langs->trans("Totalforthispage").'</td>';
 				print '<td colspan="3"></td>';
 				print '<td align="center">' . $total_qty . '</td>';
 				print '<td align="right">' . price($total_ht) . '</td>';
@@ -259,5 +263,6 @@ if ($id > 0 || ! empty($ref))
 	dol_print_error();
 }
 
+// End of page
 llxFooter();
 $db->close();

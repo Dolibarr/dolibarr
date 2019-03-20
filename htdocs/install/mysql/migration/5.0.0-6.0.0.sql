@@ -317,6 +317,7 @@ ALTER TABLE llx_accounting_bookkeeping MODIFY COLUMN multicurrency_amount double
 
 
 ALTER TABLE llx_paiementfourn ADD COLUMN model_pdf varchar(255);
+ALTER TABLE llx_paiementfourn ADD COLUMN fk_user_modif integer AFTER fk_user_author;
 
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('EXPENSE_REPORT_CREATE','Expense report created','Executed when an expense report is created','expensereport',201);
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('EXPENSE_REPORT_VALIDATE','Expense report validated','Executed when an expense report is validated','expensereport',202);
@@ -521,8 +522,6 @@ ALTER TABLE llx_user_rights ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER r
 ALTER TABLE llx_user_rights DROP FOREIGN KEY fk_user_rights_fk_user_user;
 ALTER TABLE llx_user_rights DROP INDEX uk_user_rights;
 ALTER TABLE llx_user_rights DROP INDEX fk_user;
--- VPGSQL8.4 ALTER TABLE llx_usergroup_rights DROP CONSTRAINT llx_user_rights_fk_user_userp_fk_id_key;
--- VPGSQL8.4 ALTER TABLE llx_usergroup_rights DROP INDEX llx_user_rights_fk_user_user_fk_id_key;
 ALTER TABLE llx_user_rights ADD UNIQUE INDEX uk_user_rights (entity, fk_user, fk_id);
 DELETE FROM llx_user_rights WHERE fk_user NOT IN (select rowid from llx_user);
 ALTER TABLE llx_user_rights ADD CONSTRAINT fk_user_rights_fk_user_user FOREIGN KEY (fk_user) REFERENCES llx_user (rowid);
@@ -530,8 +529,6 @@ ALTER TABLE llx_user_rights ADD CONSTRAINT fk_user_rights_fk_user_user FOREIGN K
 ALTER TABLE llx_usergroup_rights ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER rowid;
 ALTER TABLE llx_usergroup_rights DROP FOREIGN KEY fk_usergroup_rights_fk_usergroup;
 ALTER TABLE llx_usergroup_rights DROP INDEX fk_usergroup;
--- VPGSQL8.4 ALTER TABLE llx_usergroup_rights DROP CONSTRAINT llx_usergroup_rights_fk_usergroup_fk_id_key;
--- VPGSQL8.4 ALTER TABLE llx_usergroup_rights DROP INDEX llx_usergroup_rights_fk_usergroup_fk_id_key;
 ALTER TABLE llx_usergroup_rights ADD UNIQUE INDEX uk_usergroup_rights (entity, fk_usergroup, fk_id);
 ALTER TABLE llx_usergroup_rights ADD CONSTRAINT fk_usergroup_rights_fk_usergroup FOREIGN KEY (fk_usergroup) REFERENCES llx_usergroup (rowid);
 

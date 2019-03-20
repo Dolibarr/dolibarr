@@ -25,7 +25,6 @@ NewCompanyToDolibarr=Terceiro %s criados
 ContractValidatedInDolibarr=Contrato %s validado
 PropalClosedSignedInDolibarr=Proposta %s assinada
 PropalClosedRefusedInDolibarr=Proposta %s declinada
-PropalValidatedInDolibarr=Orçamento %s validado
 PropalClassifiedBilledInDolibarr=Proposta %s classificada faturada
 InvoiceValidatedInDolibarr=Fatura %s validada
 InvoiceValidatedInDolibarrFromPos=Fatura %s validada no POS
@@ -56,7 +55,6 @@ SupplierOrderSentByEMail=Pedido de fornecedor %s enviado por e-mail
 SupplierInvoiceSentByEMail=Fatura de fornecedor %s enviado por e-mail
 ShippingSentByEMail=Frete %s enviado por e-mail
 ShippingValidated=Envio %s validado
-InterventionSentByEMail=Intervenção %s enviado por e-mail
 ProposalDeleted=Proposta excluída
 OrderDeleted=Pedido excluído
 InvoiceDeleted=Fatura excluída
@@ -77,13 +75,13 @@ AgendaUrlOptions3=<b>logina=%s</b> para restringir a saída para ações criada 
 AgendaUrlOptionsNotAdmin=<b>logina=!%s</b> para restringir a saída das ações não pertencentes ao usuário<b>%s</b>.
 AgendaUrlOptions4=<b>logint=%s</b> para restringir a saída às ações atribuídas ao usuário <b>%s</b> (proprietário e outros).
 AgendaUrlOptionsProject=<b>projeto=__PROJECT_ID__</b> para restringir a saída para ações ligadas ao  <b>__PROJECT_ID__</b>.
+AgendaUrlOptionsNotAutoEvent=<b>notactiontype=systemauto</b> para exclusão automática do evento
 AgendaShowBirthdayEvents=Mostrar datas de nascimento dos contatos
 AgendaHideBirthdayEvents=Ocultar datas de nascimento dos contatos
 ExportDataset_event1=Lista dos eventos da agenda
 DefaultWorkingDays=Padrão dias úteis por semana (Exemplo: 1-5, 1-6)
 DefaultWorkingHours=Padrão horas de trabalho em dia (Exemplo: 9-18)
 ExtSitesEnableThisTool=Mostrar calendários externos na agenda
-AgendaExtNb=Calendar no. %s
 ExtSiteUrlAgenda=URL para acessar arquivos .ical
 ExtSiteNoLabel=Sem descrição
 VisibleDaysRange=Intervalo de dias visíveis

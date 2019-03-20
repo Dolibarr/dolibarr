@@ -99,6 +99,7 @@ class MyModuleFunctionalTest extends \PHPUnit_Extensions_Selenium2TestCase
 
 	/**
 	 * Global test setup
+     * @return void
 	 */
 	public static function setUpBeforeClass()
 	{
@@ -106,6 +107,7 @@ class MyModuleFunctionalTest extends \PHPUnit_Extensions_Selenium2TestCase
 
 	/**
 	 * Unit test setup
+     * @return void
 	 */
 	public function setUp()
 	{
@@ -115,6 +117,7 @@ class MyModuleFunctionalTest extends \PHPUnit_Extensions_Selenium2TestCase
 
 	/**
 	 * Verify pre conditions
+     * @return void
 	 */
 	protected function assertPreConditions()
 	{
@@ -122,6 +125,7 @@ class MyModuleFunctionalTest extends \PHPUnit_Extensions_Selenium2TestCase
 
 	/**
 	 * Handle Dolibarr authentication
+     * @return void
 	 */
 	private function authenticate()
 	{
@@ -142,6 +146,7 @@ class MyModuleFunctionalTest extends \PHPUnit_Extensions_Selenium2TestCase
 
 	/**
 	 * Test enabling developer mode
+     * @return bool
 	 */
 	public function testEnableDeveloperMode()
 	{
@@ -161,6 +166,7 @@ class MyModuleFunctionalTest extends \PHPUnit_Extensions_Selenium2TestCase
 	 * Test enabling the module
 	 *
 	 * @depends testEnableDeveloperMode
+     * @return bool
 	 */
 	public function testModuleEnabled()
 	{
@@ -186,6 +192,7 @@ class MyModuleFunctionalTest extends \PHPUnit_Extensions_Selenium2TestCase
 	 * Test access to the configuration page
 	 *
 	 * @depends testModuleEnabled
+     * @return bool
 	 */
 	public function testConfigurationPage()
 	{
@@ -198,6 +205,7 @@ class MyModuleFunctionalTest extends \PHPUnit_Extensions_Selenium2TestCase
 	 * Test access to the about page
 	 *
 	 * @depends testConfigurationPage
+     * @return bool
 	 */
 	public function testAboutPage()
 	{
@@ -210,12 +218,13 @@ class MyModuleFunctionalTest extends \PHPUnit_Extensions_Selenium2TestCase
 	 * Test about page is rendering Markdown
 	 *
 	 * @depends testAboutPage
+     * @return bool
 	 */
 	public function testAboutPageRendersMarkdownReadme()
 	{
 		$this->url('/custom/mymodule/admin/about.php');
 		$this->authenticate();
-		return $this->assertEquals(
+return $this->assertEquals(
 			'Dolibarr Module Template (aka My Module)',
 			$this->byTag('h1')->text(),
 			"Readme title"
@@ -226,6 +235,7 @@ class MyModuleFunctionalTest extends \PHPUnit_Extensions_Selenium2TestCase
 	 * Test box is properly declared
 	 *
 	 * @depends testModuleEnabled
+     * @return bool
 	 */
 	public function testBoxDeclared()
 	{
@@ -238,12 +248,13 @@ class MyModuleFunctionalTest extends \PHPUnit_Extensions_Selenium2TestCase
 	 * Test trigger is properly enabled
 	 *
 	 * @depends testModuleEnabled
+     * @return bool
 	 */
 	public function testTriggerDeclared()
 	{
 		$this->url('/admin/triggers.php');
 		$this->authenticate();
-		return $this->assertContains(
+return $this->assertContains(
 			'interface_99_modMyModule_MyModuleTriggers.class.php',
 			$this->byTag('body')->text(),
 			"Trigger declared"
@@ -254,12 +265,13 @@ class MyModuleFunctionalTest extends \PHPUnit_Extensions_Selenium2TestCase
 	 * Test trigger is properly declared
 	 *
 	 * @depends testTriggerDeclared
+     * @return bool
 	 */
 	public function testTriggerEnabled()
 	{
 		$this->url('/admin/triggers.php');
 		$this->authenticate();
-		return $this->assertContains(
+return $this->assertContains(
 			'tick.png',
 			$this->byXPath('//td[text()="interface_99_modMyModule_MyTrigger.class.php"]/following::img')->attribute('src'),
 			"Trigger enabled"
@@ -268,6 +280,7 @@ class MyModuleFunctionalTest extends \PHPUnit_Extensions_Selenium2TestCase
 
 	/**
 	 * Verify post conditions
+     * @return void
 	 */
 	protected function assertPostConditions()
 	{
@@ -275,6 +288,7 @@ class MyModuleFunctionalTest extends \PHPUnit_Extensions_Selenium2TestCase
 
 	/**
 	 * Unit test teardown
+     * @return void
 	 */
 	public function tearDown()
 	{
@@ -282,6 +296,7 @@ class MyModuleFunctionalTest extends \PHPUnit_Extensions_Selenium2TestCase
 
 	/**
 	 * Global test teardown
+     * @return void
 	 */
 	public static function tearDownAfterClass()
 	{

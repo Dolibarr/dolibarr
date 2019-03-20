@@ -1,6 +1,7 @@
 # Dolibarr language file - Source file is en_US - withdrawals
 CustomersStandingOrdersArea=Zone de commandes de paiement par débit direct
 SuppliersStandingOrdersArea=Zone de commandes de paiement direct
+StandingOrderPayment=Ordre de paiement de débit direct
 NewStandingOrder=Nouveau décret direct
 StandingOrderToProcess=Procéder
 WithdrawalsReceipts=Ordres de débit direct
@@ -22,7 +23,6 @@ LastWithdrawalReceipt=Derniers %s reçus de débit direct
 MakeWithdrawRequest=Faire une demande de paiement par prélèvement automatique
 WithdrawRequestsDone=%s demandes de paiement par prélèvement automatique enregistrées
 ThirdPartyBankCode=Code bancaire tiers
-NoInvoiceCouldBeWithdrawed=Aucune facture retirée avec succès. Vérifiez que la facture se trouve sur des sociétés avec un BAN valide.
 ClassCreditedConfirm=Êtes-vous sûr de vouloir classer ce reçu de retrait comme crédité sur votre compte bancaire?
 WithdrawalRefused=Retrait refusée
 WithdrawalRefusedConfirm=Êtes-vous sûr de vouloir introduire un rejet de retrait pour la société?
@@ -60,7 +60,6 @@ WithdrawalFile=Fichier de retrait
 SetToStatusSent=Définir le statut "Fichier envoyé"
 StatisticsByLineStatus=Statistiques par état des lignes
 RUMLong=Référence de mandat unique
-RUMWillBeGenerated=Le numéro UMR sera généré une fois les informations du compte bancaire enregistrées
 WithdrawMode=Mode de débit direct (FRST ou RECUR)
 WithdrawRequestAmount=Montant de la demande de débit direct:
 WithdrawRequestErrorNilAmount=Impossible de créer une demande de débit direct pour un montant vide.

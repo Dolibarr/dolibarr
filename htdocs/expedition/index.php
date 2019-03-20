@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,8 +27,8 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
 
-$langs->load("orders");
-$langs->load("sendings");
+// Load translation files required by the page
+$langs->loadLangs(array('orders', 'sendings'));
 
 /*
  *	View
@@ -39,7 +39,7 @@ $companystatic=new Societe($db);
 $shipment=new Expedition($db);
 
 $helpurl='EN:Module_Shipments|FR:Module_Exp&eacute;ditions|ES:M&oacute;dulo_Expediciones';
-llxHeader('',$langs->trans("Shipment"),$helpurl);
+llxHeader('', $langs->trans("Shipment"), $helpurl);
 
 print load_fiche_titre($langs->trans("SendingsArea"));
 
@@ -93,11 +93,11 @@ if ($resql)
 		while ($i < $num)
 		{
 			$obj = $db->fetch_object($resql);
-			
+
 			$shipment->id=$obj->rowid;
 			$shipment->ref=$obj->ref;
-			$shipment->ref_customer=$obj->ref_customer;				
-			
+			$shipment->ref_customer=$obj->ref_customer;
+
 			print '<tr class="oddeven"><td class="nowrap">';
 			print $shipment->getNomUrl(1);
 			print "</td>";
@@ -148,19 +148,19 @@ if ($resql)
 			$orderstatic->ref=$obj->ref;
 			$orderstatic->ref_customer=$obj->ref_customer;
 			$orderstatic->statut=$obj->fk_statut;
-			$orderstatic->facturee=0;
-			
+			$orderstatic->billed=0;
+
 			$companystatic->name=$obj->name;
-			$companystatic->id=$obj->socid;			
-			
+			$companystatic->id=$obj->socid;
+
 			print '<tr class="oddeven">';
 			print '<td class="nowrap">';
 			print $orderstatic->getNomUrl(1);
 			print '</td>';
 			print '<td>';
-			print $companystatic->getNomUrl(1,'customer',32);
+			print $companystatic->getNomUrl(1, 'customer', 32);
 			print '</td>';
-			print '<td align="right">';
+			print '<td class="right">';
 			print $orderstatic->getLibStatut(3);
 			print '</td>';
 			print '</tr>';
@@ -203,23 +203,23 @@ if ( $resql )
 		while ($i < $num)
 		{
 			$obj = $db->fetch_object($resql);
-			
+
 		    $orderstatic->id=$obj->rowid;
 			$orderstatic->ref=$obj->ref;
 			$orderstatic->ref_customer=$obj->ref_customer;
 			$orderstatic->statut=$obj->status;
-            $orderstatic->facturee=$obj->billed;
-			
+            $orderstatic->billed=$obj->billed;
+
             $companystatic->name=$obj->name;
-			$companystatic->id=$obj->socid;				
-			
+			$companystatic->id=$obj->socid;
+
 			print '<tr class="oddeven"><td>';
 			print $orderstatic->getNomUrl(1);
 			print '</td>';
 			print '<td>';
-			print $companystatic->getNomUrl(1,'customer');
+			print $companystatic->getNomUrl(1, 'customer');
 			print '</td>';
-            print '<td align="right">';
+            print '<td class="right">';
             print $orderstatic->getLibStatut(3);
             print '</td>';
             print '</tr>';
@@ -262,15 +262,15 @@ if ($resql)
 		while ($i < $num)
 		{
 			$obj = $db->fetch_object($resql);
-		    
+
 			$shipment->id=$obj->rowid;
 			$shipment->ref=$obj->ref;
-			$shipment->ref_customer=$obj->ref_customer;				
-			
+			$shipment->ref_customer=$obj->ref_customer;
+
 			print '<tr class="oddeven"><td>';
 			print $shipment->getNomUrl(1);
 			print '</td>';
-			print '<td><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->name.'</a></td>';
+			print '<td><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"), "company").' '.$obj->name.'</a></td>';
 			print '<td>';
 			if ($obj->commande_id > 0)
 			{
@@ -291,6 +291,6 @@ else dol_print_error($db);
 
 print '</div></div></div>';
 
-
+// End of page
 llxFooter();
 $db->close();

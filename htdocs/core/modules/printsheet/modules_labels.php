@@ -2,7 +2,7 @@
 /* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,35 +30,41 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
 
 /**
- *	Parent class of document generator for address sheet.
+ *  Parent class of document generator for address sheet.
  */
 class ModelePDFLabels
 {
-	var $error='';
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Return list of active generation modules
 	 *
-     *  @param	DoliDB	$db     			Database handler
+     *  @param  DoliDB	$db     			Database handler
      *  @param  integer	$maxfilenamelength  Max length of value to show
      *  @return	array						List of templates
 	 */
-	function liste_modeles($db,$maxfilenamelength=0)
+	public function liste_modeles($db, $maxfilenamelength = 0)
 	{
+        // phpcs:enable
 		global $conf;
 
 		$type='members_labels';
 		$liste=array();
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-		$liste=getListOfModels($db,$type,$maxfilenamelength);
+		$liste=getListOfModels($db, $type, $maxfilenamelength);
 
 		return $liste;
 	}
 }
 
 
+// phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 /**
  *  Create a document onto disk according to template module.
  *
@@ -71,8 +77,9 @@ class ModelePDFLabels
  *  @param  string      $filename           Short file name of PDF output file
  *	@return int        						<0 if KO, >0 if OK
  */
-function doc_label_pdf_create($db, $arrayofrecords, $modele, $outputlangs, $outputdir='', $template='standardlabel', $filename='tmp_address_sheet.pdf')
+function doc_label_pdf_create($db, $arrayofrecords, $modele, $outputlangs, $outputdir = '', $template = 'standardlabel', $filename = 'tmp_address_sheet.pdf')
 {
+    // phpcs:enable
 	global $conf,$langs;
 	$langs->load("members");
 
@@ -102,7 +109,7 @@ function doc_label_pdf_create($db, $arrayofrecords, $modele, $outputlangs, $outp
 	else $code=$modele;
 
 	// If selected modele is a filename template (then $modele="modelname:filename")
-	$tmp=explode(':',$template,2);
+	$tmp=explode(':', $template, 2);
 	if (! empty($tmp[1]))
 	{
 		$template=$tmp[0];
@@ -111,11 +118,11 @@ function doc_label_pdf_create($db, $arrayofrecords, $modele, $outputlangs, $outp
 	else $srctemplatepath=$code;
 
 	dol_syslog("modele=".$modele." outputdir=".$outputdir." template=".$template." code=".$code." srctemplatepath=".$srctemplatepath." filename=".$filename, LOG_DEBUG);
-	
+
 	// Search template files
 	$file=''; $classname=''; $filefound=0;
 	$dirmodels=array('/');
-	if (is_array($conf->modules_parts['models'])) $dirmodels=array_merge($dirmodels,$conf->modules_parts['models']);
+	if (is_array($conf->modules_parts['models'])) $dirmodels=array_merge($dirmodels, $conf->modules_parts['models']);
 	foreach($dirmodels as $reldir)
 	{
 		foreach(array('doc','pdf') as $prefix)
@@ -123,7 +130,7 @@ function doc_label_pdf_create($db, $arrayofrecords, $modele, $outputlangs, $outp
 			$file = $prefix."_".$template.".class.php";
 
 			// On verifie l'emplacement du modele
-			$file=dol_buildpath($reldir."core/modules/printsheet/doc/".$file,0);
+			$file=dol_buildpath($reldir."core/modules/printsheet/doc/".$file, 0);
 			if (file_exists($file))
 			{
 				$filefound=1;
@@ -152,16 +159,13 @@ function doc_label_pdf_create($db, $arrayofrecords, $modele, $outputlangs, $outp
 		else
 		{
 			$outputlangs->charset_output=$sav_charset_output;
-			dol_print_error($db,"doc_label_pdf_create Error: ".$obj->error);
+			dol_print_error($db, "doc_label_pdf_create Error: ".$obj->error);
 			return -1;
 		}
 	}
 	else
 	{
-		dol_print_error('',$langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists",$file));
+		dol_print_error('', $langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists", $file));
 		return -1;
 	}
-
-
 }
-

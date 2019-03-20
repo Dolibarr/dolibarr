@@ -154,15 +154,15 @@ function dol_ch_controle_bvrb($bvrb)
 
 
 	// Clean data
-	$bv=str_replace(' ','',$bvrb);
+	$bv=str_replace(' ', '', $bvrb);
 
 	// Make control
 	$report=0;
 	while (dol_strlen($bv)>1)
 	{
-		$match=substr($bv,0,1);
+		$match=substr($bv, 0, 1);
 		$report=$tableau[$report][$match];
-		$bv=substr($bv,1);
+		$bv=substr($bv, 1);
 	}
 	$controle=$tableau[$report][10];
 

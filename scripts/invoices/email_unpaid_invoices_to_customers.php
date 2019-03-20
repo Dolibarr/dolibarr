@@ -36,7 +36,7 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
 	exit(-1);
 }
 
-if (! isset($argv[2]) || ! $argv[2] || ! in_array($argv[1],array('test','confirm')) || ! in_array($argv[2],array('thirdparties','contacts')))
+if (! isset($argv[2]) || ! $argv[2] || ! in_array($argv[1], array('test','confirm')) || ! in_array($argv[2], array('thirdparties','contacts')))
 {
 	print "Usage: $script_file (test|confirm) (thirdparties|contacts) [delay] [after]\n";
 	print "\n";
@@ -50,8 +50,8 @@ $mode=$argv[1];
 $targettype=$argv[2];
 
 
-require($path."../../htdocs/master.inc.php");
-require_once (DOL_DOCUMENT_ROOT."/core/class/CMailFile.class.php");
+require $path."../../htdocs/master.inc.php";
+require_once DOL_DOCUMENT_ROOT."/core/class/CMailFile.class.php";
 
 $langs->load('main');
 
@@ -67,7 +67,7 @@ $error=0;
 
 @set_time_limit(0);
 print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." *****\n";
-dol_syslog($script_file." launched with arg ".join(',',$argv));
+dol_syslog($script_file." launched with arg ".join(',', $argv));
 
 $now=dol_now('tzserver');
 $duration_value=isset($argv[3])?$argv[3]:'none';
@@ -78,7 +78,7 @@ print $script_file." launched with mode ".$mode." default lang=".$langs->default
 
 if ($mode != 'confirm') $conf->global->MAIN_DISABLE_ALL_MAILS=1;
 
-$sql = "SELECT f.facnumber, f.total_ttc, f.date_lim_reglement as due_date,";
+$sql = "SELECT f.ref, f.total_ttc, f.date_lim_reglement as due_date,";
 $sql.= " s.rowid as sid, s.nom as name, s.email, s.default_lang";
 if ($targettype == 'contacts') $sql.= ", sp.rowid as cid, sp.firstname as cfirstname, sp.lastname as clastname, sp.email as cemail";
 $sql.= " FROM ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."societe as s";
@@ -90,7 +90,7 @@ if (is_numeric($duration_value)) $sql.= " AND f.date_lim_reglement < '".$db->ida
 if ($targettype == 'contacts') $sql.= " AND s.rowid = sp.fk_soc";
 $sql.= " ORDER BY";
 if ($targettype == 'contacts') $sql.= " sp.email, sp.rowid,";
-$sql.= " s.email ASC, s.rowid ASC, f.facnumber ASC";	// Order by email to allow one message per email
+$sql.= " s.email ASC, s.rowid ASC, f.ref ASC";	// Order by email to allow one message per email
 
 //print $sql;
 $resql=$db->query($sql);
@@ -125,7 +125,7 @@ if ($resql)
                 // Break onto sales representative (new email or cid)
                 if (dol_strlen($oldemail) && $oldemail != 'none' && empty($trackthirdpartiessent[$oldsid.'|'.$oldemail]))
                 {
-                   	envoi_mail($mode,$oldemail,$message,$total,$oldlang,$oldtarget);
+                   	envoi_mail($mode, $oldemail, $message, $total, $oldlang, $oldtarget);
                    	$trackthirdpartiessent[$oldsid.'|'.$oldemail]='contact id '.$oldcid;
                 }
                 else
@@ -149,18 +149,19 @@ if ($resql)
             }
 
             // Define line content
-            $outputlangs=new Translate('',$conf);
+            $outputlangs=new Translate('', $conf);
             $outputlangs->setDefaultLang(empty($obj->default_lang)?$langs->defaultlang:$obj->default_lang);	// By default language of customer
-            $outputlangs->load("bills");
-            $outputlangs->load("main");
+
+            // Load translation files required by the page
+            $outputlangs->loadLangs(array("main", "bills"));
 
             if (dol_strlen($newemail))
             {
-            	$message .= $outputlangs->trans("Invoice")." ".$obj->facnumber." : ".price($obj->total_ttc,0,$outputlangs,0,0,-1,$conf->currency)."\n";
+            	$message .= $outputlangs->trans("Invoice")." ".$obj->ref." : ".price($obj->total_ttc, 0, $outputlangs, 0, 0, -1, $conf->currency)."\n";
             	dol_syslog("email_unpaid_invoices_to_customers.php: ".$newemail." ".$message);
             	$foundtoprocess++;
             }
-            print "Unpaid invoice ".$obj->facnumber.", price ".price2num($obj->total_ttc).", due date ".dol_print_date($db->jdate($obj->due_date),'day').", customer id ".$obj->sid." ".$obj->name.", ".($obj->cid?"contact id ".$obj->cid." ".$obj->clastname." ".$obj->cfirstname.", ":"")."email ".$newemail.", lang ".$outputlangs->defaultlang.": ";
+            print "Unpaid invoice ".$obj->ref.", price ".price2num($obj->total_ttc).", due date ".dol_print_date($db->jdate($obj->due_date), 'day').", customer id ".$obj->sid." ".$obj->name.", ".($obj->cid?"contact id ".$obj->cid." ".$obj->clastname." ".$obj->cfirstname.", ":"")."email ".$newemail.", lang ".$outputlangs->defaultlang.": ";
             if (dol_strlen($newemail)) print "qualified.";
             else print "disqualified (no email).";
             print "\n";
@@ -177,7 +178,7 @@ if ($resql)
         {
             if (dol_strlen($oldemail) && $oldemail != 'none' && empty($trackthirdpartiessent[$oldsid.'|'.$oldemail]))	// Break onto email (new email)
             {
-       			envoi_mail($mode,$oldemail,$message,$total,$oldlang,$oldtarget);
+       			envoi_mail($mode, $oldemail, $message, $total, $oldlang, $oldtarget);
        			$trackthirdpartiessent[$oldsid.'|'.$oldemail]='contact id '.$oldcid;
             }
             else
@@ -217,13 +218,13 @@ else
  *  @param	string	$oldtarget		Target name
  * 	@return	int						<0 if KO, >0 if OK
  */
-function envoi_mail($mode,$oldemail,$message,$total,$userlang,$oldtarget)
+function envoi_mail($mode, $oldemail, $message, $total, $userlang, $oldtarget)
 {
     global $conf,$langs;
 
     if (getenv('DOL_FORCE_EMAIL_TO')) $oldemail=getenv('DOL_FORCE_EMAIL_TO');
 
-    $newlangs=new Translate('',$conf);
+    $newlangs=new Translate('', $conf);
     $newlangs->setDefaultLang(empty($userlang)?(empty($conf->global->MAIN_LANG_DEFAULT)?'auto':$conf->global->MAIN_LANG_DEFAULT):$userlang);
     $newlangs->load("main");
     $newlangs->load("bills");
@@ -253,7 +254,7 @@ function envoi_mail($mode,$oldemail,$message,$total,$userlang,$oldtarget)
     	$allmessage.= "Note: This list contains only unpaid invoices.".($usehtml?"<br>\n":"\n");
     }
     $allmessage.= $message.($usehtml?"<br>\n":"\n");
-    $allmessage.= $langs->trans("Total")." = ".price($total,0,$userlang,0,0,-1,$conf->currency).($usehtml?"<br>\n":"\n");
+    $allmessage.= $langs->trans("Total")." = ".price($total, 0, $userlang, 0, 0, -1, $conf->currency).($usehtml?"<br>\n":"\n");
     if (! empty($conf->global->SCRIPT_EMAIL_UNPAID_INVOICES_CUSTOMERS_FOOTER))
     {
     	$allmessage.=$conf->global->SCRIPT_EMAIL_UNPAID_INVOICES_CUSTOMERS_FOOTER;
@@ -304,4 +305,3 @@ function envoi_mail($mode,$oldemail,$message,$total,$userlang,$oldtarget)
         return -1;
     }
 }
-

@@ -68,5 +68,3 @@ function receiptprinteradmin_prepare_head($mode)
 
     return $head;
 }
-
-

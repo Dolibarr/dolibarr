@@ -1,0 +1,15 @@
+# Dolibarr language file - Source file is en_US - multicurrency
+MultiCurrency=Multi Moeda
+ErrorDeleteCurrencyFail=Erro ao excluir falha
+MULTICURRENCY_USE_RATE_ON_DOCUMENT_DATE=Use a data do documento para encontrar a taxa de câmbio, em vez de usar a taxa conhecida mais recente
+multicurrency_useOriginTx=Quando um objeto é criado a partir de outro, mantenha a taxa original do objeto de origem (caso contrário, use a taxa conhecida mais recente)
+CurrencyLayerAccount=API CurrencyLayer
+CurrencyLayerAccount_help_to_synchronize=Você deve criar uma conta em seu site para usar essa funcionalidade. <br> Obtenha sua <b> chave de API </ b>. <br> Se você usa uma conta gratuita, não é possível alterar a <b> origem da moeda </ b> (USD por padrão). <br> Se sua moeda principal não for USD, você pode usar a <b> fonte de moeda alternativa </ b> para forçar sua moeda principal. <br> <br> Você está limitado a 1000 sincronizações por mês.
+multicurrency_appId=Chave API
+multicurrency_appCurrencySource=Moeda corrente
+CurrenciesUsed=Moedas utilizadas
+CurrenciesUsed_help_to_add=Adicione as diferentes moedas e taxas que você precisa usar nas suas <b> propostas </ b>, <b> ordens </ b> etc.
+MulticurrencyReceived=Moeda original recebida
+MulticurrencyRemainderToTake=Quantia restante, moeda original
+MulticurrencyPaymentAmount=Valor do pagamento, moeda original
+AmountToOthercurrency=Quantia para (na moeda da conta receptora)

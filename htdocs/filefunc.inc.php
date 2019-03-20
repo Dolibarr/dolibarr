@@ -4,7 +4,7 @@
  * Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
- * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2005 	   Simon Tosser         <simon@kornog-computing.com>
  * Copyright (C) 2006 	   Andre Cianfarani     <andre.cianfarani@acdeveloppement.net>
  * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
@@ -30,24 +30,24 @@
  *  \brief      File that include conf.php file and commons lib like functions.lib.php
  */
 
-if (! defined('DOL_APPLICATION_TITLE')) define('DOL_APPLICATION_TITLE','Dolibarr');
-if (! defined('DOL_VERSION')) define('DOL_VERSION','7.0.4');		// a.b.c-alpha, a.b.c-beta, a.b.c-rcX or a.b.c
+if (! defined('DOL_APPLICATION_TITLE')) define('DOL_APPLICATION_TITLE', 'Dolibarr');
+if (! defined('DOL_VERSION')) define('DOL_VERSION', '10.0.0-alpha');		// a.b.c-alpha, a.b.c-beta, a.b.c-rcX or a.b.c
 
-if (! defined('EURO')) define('EURO',chr(128));
+if (! defined('EURO')) define('EURO', chr(128));
 
 // Define syslog constants
 if (! defined('LOG_DEBUG'))
 {
 	if (! function_exists("syslog")) {
 		// For PHP versions without syslog (like running on Windows OS)
-		define('LOG_EMERG',0);
-		define('LOG_ALERT',1);
-		define('LOG_CRIT',2);
-		define('LOG_ERR',3);
-		define('LOG_WARNING',4);
-		define('LOG_NOTICE',5);
-		define('LOG_INFO',6);
-		define('LOG_DEBUG',7);
+		define('LOG_EMERG', 0);
+		define('LOG_ALERT', 1);
+		define('LOG_CRIT', 2);
+		define('LOG_ERR', 3);
+		define('LOG_WARNING', 4);
+		define('LOG_NOTICE', 5);
+		define('LOG_INFO', 6);
+		define('LOG_DEBUG', 7);
 	}
 }
 
@@ -80,7 +80,7 @@ if (! $result && ! empty($_SERVER["GATEWAY_INTERFACE"]))    // If install not do
         $path=$_SERVER["CONTEXT_PREFIX"];       // example '/dolibarr/' when using an apache alias.
         if (! preg_match('/\/$/', $path)) $path.='/';
     }
-    else if (preg_match('/index\.php/', $_SERVER['PHP_SELF']))
+    elseif (preg_match('/index\.php/', $_SERVER['PHP_SELF']))
     {
         // When we ask index.php, we MUST BE SURE that $path is '' at the end. This is required to make install process
         // when using apache alias like '/dolibarr/' that point to htdocs.
@@ -121,17 +121,17 @@ else
 }
 
 // Disable php display errors
-if (! empty($dolibarr_main_prod)) ini_set('display_errors','Off');
+if (! empty($dolibarr_main_prod)) ini_set('display_errors', 'Off');
 
 // Clean parameters
 $dolibarr_main_data_root=trim($dolibarr_main_data_root);
-$dolibarr_main_url_root=trim(preg_replace('/\/+$/','',$dolibarr_main_url_root));
+$dolibarr_main_url_root=trim(preg_replace('/\/+$/', '', $dolibarr_main_url_root));
 $dolibarr_main_url_root_alt=(empty($dolibarr_main_url_root_alt)?'':trim($dolibarr_main_url_root_alt));
 $dolibarr_main_document_root=trim($dolibarr_main_document_root);
 $dolibarr_main_document_root_alt=(empty($dolibarr_main_document_root_alt)?'':trim($dolibarr_main_document_root_alt));
 
-if (empty($dolibarr_main_db_port)) $dolibarr_main_db_port=0;		// Pour compatibilite avec anciennes configs, si non defini, on prend 'mysql'
-if (empty($dolibarr_main_db_type)) $dolibarr_main_db_type='mysqli';	// Pour compatibilite avec anciennes configs, si non defini, on prend 'mysql'
+if (empty($dolibarr_main_db_port)) $dolibarr_main_db_port=3306;		// For compatibility with old configs, if not defined, we take 'mysql' type
+if (empty($dolibarr_main_db_type)) $dolibarr_main_db_type='mysqli';	// For compatibility with old configs, if not defined, we take 'mysql' type
 
 // Mysql driver support has been removed in favor of mysqli
 if ($dolibarr_main_db_type == 'mysql') $dolibarr_main_db_type = 'mysqli';
@@ -173,7 +173,7 @@ if (! defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck))
 }
 if (empty($dolibarr_main_db_host))
 {
-	print '<div align="center">Dolibarr setup is not yet complete.<br><br>'."\n";
+	print '<div class="center">Dolibarr setup is not yet complete.<br><br>'."\n";
 	print '<a href="install/index.php">Click here to finish Dolibarr install process</a> ...</div>'."\n";
 	die;
 }
@@ -186,7 +186,7 @@ if (empty($dolibarr_main_url_root))
 if (empty($dolibarr_main_data_root))
 {
 	// Si repertoire documents non defini, on utilise celui par defaut
-	$dolibarr_main_data_root=str_replace("/htdocs","",$dolibarr_main_document_root);
+	$dolibarr_main_data_root=str_replace("/htdocs", "", $dolibarr_main_document_root);
 	$dolibarr_main_data_root.="/documents";
 }
 
@@ -198,13 +198,13 @@ define('DOL_DOCUMENT_ROOT', $dolibarr_main_document_root);			// Filesystem core 
 // Note: autodetect works only in case 1, 2, 3 and 4 of phpunit test CoreTest.php. For case 5, 6, only setting value into conf.php will works.
 $tmp='';
 $found=0;
-$real_dolibarr_main_document_root=str_replace('\\','/',realpath($dolibarr_main_document_root));	// A) Value found into config file, to say where are store htdocs files. Ex: C:/xxx/dolibarr, C:/xxx/dolibarr/htdocs
+$real_dolibarr_main_document_root=str_replace('\\', '/', realpath($dolibarr_main_document_root));	// A) Value found into config file, to say where are store htdocs files. Ex: C:/xxx/dolibarr, C:/xxx/dolibarr/htdocs
 if (!empty($_SERVER["DOCUMENT_ROOT"])) {
     $pathroot = $_SERVER["DOCUMENT_ROOT"];                                                      // B) Value reported by web server setup (not defined on CLI mode), to say where is root of web server instance. Ex: C:/xxx/dolibarr, C:/xxx/dolibarr/htdocs
 } else {
     $pathroot = 'NOTDEFINED';
 }
-$paths=explode('/',str_replace('\\','/',$_SERVER["SCRIPT_NAME"]));								// C) Value reported by web server, to say full path on filesystem of a file. Ex: /dolibarr/htdocs/admin/system/phpinfo.php
+$paths=explode('/', str_replace('\\', '/', $_SERVER["SCRIPT_NAME"]));								// C) Value reported by web server, to say full path on filesystem of a file. Ex: /dolibarr/htdocs/admin/system/phpinfo.php
 // Try to detect if $_SERVER["DOCUMENT_ROOT"]+start of $_SERVER["SCRIPT_NAME"] is $dolibarr_main_document_root. If yes, relative url to add before dol files is this start part.
 $concatpath='';
 foreach($paths as $tmppath)	// We check to find (B+start of C)=A
@@ -224,11 +224,11 @@ foreach($paths as $tmppath)	// We check to find (B+start of C)=A
 }
 //print "found=".$found." dolibarr_main_url_root=".$dolibarr_main_url_root."\n";
 if (! $found) $tmp=$dolibarr_main_url_root; // If autodetect fails (Ie: when using apache alias that point outside default DOCUMENT_ROOT).
-else $tmp='http'.(((empty($_SERVER["HTTPS"]) || $_SERVER["HTTPS"] != 'on') && (empty($_SERVER["SERVER_PORT"])||$_SERVER["SERVER_PORT"]!=443))?'':'s').'://'.$_SERVER["SERVER_NAME"].((empty($_SERVER["SERVER_PORT"])||$_SERVER["SERVER_PORT"]==80||$_SERVER["SERVER_PORT"]==443)?'':':'.$_SERVER["SERVER_PORT"]).($tmp3?(preg_match('/^\//',$tmp3)?'':'/').$tmp3:'');
+else $tmp='http'.(((empty($_SERVER["HTTPS"]) || $_SERVER["HTTPS"] != 'on') && (empty($_SERVER["SERVER_PORT"])||$_SERVER["SERVER_PORT"]!=443))?'':'s').'://'.$_SERVER["SERVER_NAME"].((empty($_SERVER["SERVER_PORT"])||$_SERVER["SERVER_PORT"]==80||$_SERVER["SERVER_PORT"]==443)?'':':'.$_SERVER["SERVER_PORT"]).($tmp3?(preg_match('/^\//', $tmp3)?'':'/').$tmp3:'');
 //print "tmp1=".$tmp1." tmp2=".$tmp2." tmp3=".$tmp3." tmp=".$tmp."\n";
-if (! empty($dolibarr_main_force_https)) $tmp=preg_replace('/^http:/i','https:',$tmp);
+if (! empty($dolibarr_main_force_https)) $tmp=preg_replace('/^http:/i', 'https:', $tmp);
 define('DOL_MAIN_URL_ROOT', $tmp);											// URL absolute root (https://sss/dolibarr, ...)
-$uri=preg_replace('/^http(s?):\/\//i','',constant('DOL_MAIN_URL_ROOT'));	// $uri contains url without http*
+$uri=preg_replace('/^http(s?):\/\//i', '', constant('DOL_MAIN_URL_ROOT'));	// $uri contains url without http*
 $suburi = strstr($uri, '/');												// $suburi contains url without domain:port
 if ($suburi == '/') $suburi = '';											// If $suburi is /, it is now ''
 define('DOL_URL_ROOT', $suburi);											// URL relative root ('', '/dolibarr', ...)
@@ -236,7 +236,7 @@ define('DOL_URL_ROOT', $suburi);											// URL relative root ('', '/dolibarr'
 //print DOL_MAIN_URL_ROOT.'-'.DOL_URL_ROOT."\n";
 
 // Define prefix MAIN_DB_PREFIX
-define('MAIN_DB_PREFIX',$dolibarr_main_db_prefix);
+define('MAIN_DB_PREFIX', $dolibarr_main_db_prefix);
 
 
 /*
@@ -244,22 +244,23 @@ define('MAIN_DB_PREFIX',$dolibarr_main_db_prefix);
  * To use other version than embeded libraries, define here constant to path. Use '' to use include class path autodetect.
  */
 // Path to root libraries
-if (! defined('ADODB_PATH'))           { define('ADODB_PATH',           (!isset($dolibarr_lib_ADODB_PATH))?DOL_DOCUMENT_ROOT.'/includes/adodbtime/':(empty($dolibarr_lib_ADODB_PATH)?'':$dolibarr_lib_ADODB_PATH.'/')); }
-if (! defined('FPDF_PATH'))            { define('FPDF_PATH',            (empty($dolibarr_lib_FPDF_PATH))?DOL_DOCUMENT_ROOT.'/includes/fpdf/':$dolibarr_lib_FPDF_PATH.'/'); }	// Used only for package that can't include tcpdf
-if (! defined('TCPDF_PATH'))           { define('TCPDF_PATH',           (empty($dolibarr_lib_TCPDF_PATH))?DOL_DOCUMENT_ROOT.'/includes/tecnickcom/tcpdf/':$dolibarr_lib_TCPDF_PATH.'/'); }
-if (! defined('FPDI_PATH'))            { define('FPDI_PATH',            (empty($dolibarr_lib_FPDI_PATH))?DOL_DOCUMENT_ROOT.'/includes/fpdfi/':$dolibarr_lib_FPDI_PATH.'/'); }
-if (! defined('TCPDI_PATH'))           { define('TCPDI_PATH',           (empty($dolibarr_lib_TCPDI_PATH))?DOL_DOCUMENT_ROOT.'/includes/tcpdi/':$dolibarr_lib_TCPDI_PATH.'/'); }
-if (! defined('NUSOAP_PATH'))          { define('NUSOAP_PATH',          (!isset($dolibarr_lib_NUSOAP_PATH))?DOL_DOCUMENT_ROOT.'/includes/nusoap/lib/':(empty($dolibarr_lib_NUSOAP_PATH)?'':$dolibarr_lib_NUSOAP_PATH.'/')); }
-if (! defined('PHPEXCEL_PATH'))        { define('PHPEXCEL_PATH',        (!isset($dolibarr_lib_PHPEXCEL_PATH))?DOL_DOCUMENT_ROOT.'/includes/phpoffice/phpexcel/Classes/':(empty($dolibarr_lib_PHPEXCEL_PATH)?'':$dolibarr_lib_PHPEXCEL_PATH.'/')); }
-if (! defined('GEOIP_PATH'))           { define('GEOIP_PATH',           (!isset($dolibarr_lib_GEOIP_PATH))?DOL_DOCUMENT_ROOT.'/includes/geoip/':(empty($dolibarr_lib_GEOIP_PATH)?'':$dolibarr_lib_GEOIP_PATH.'/')); }
-if (! defined('ODTPHP_PATH'))          { define('ODTPHP_PATH',          (!isset($dolibarr_lib_ODTPHP_PATH))?DOL_DOCUMENT_ROOT.'/includes/odtphp/':(empty($dolibarr_lib_ODTPHP_PATH)?'':$dolibarr_lib_ODTPHP_PATH.'/')); }
-if (! defined('ODTPHP_PATHTOPCLZIP'))  { define('ODTPHP_PATHTOPCLZIP',  (!isset($dolibarr_lib_ODTPHP_PATHTOPCLZIP))?DOL_DOCUMENT_ROOT.'/includes/odtphp/zip/pclzip/':(empty($dolibarr_lib_ODTPHP_PATHTOPCLZIP)?'':$dolibarr_lib_ODTPHP_PATHTOPCLZIP.'/')); }
-if (! defined('JS_CKEDITOR'))          { define('JS_CKEDITOR',          (!isset($dolibarr_js_CKEDITOR))?'':(empty($dolibarr_js_CKEDITOR)?'':$dolibarr_js_CKEDITOR.'/')); }
-if (! defined('JS_JQUERY'))            { define('JS_JQUERY',            (!isset($dolibarr_js_JQUERY))?'':(empty($dolibarr_js_JQUERY)?'':$dolibarr_js_JQUERY.'/')); }
-if (! defined('JS_JQUERY_UI'))         { define('JS_JQUERY_UI',         (!isset($dolibarr_js_JQUERY_UI))?'':(empty($dolibarr_js_JQUERY_UI)?'':$dolibarr_js_JQUERY_UI.'/')); }
-if (! defined('JS_JQUERY_FLOT'))       { define('JS_JQUERY_FLOT',       (!isset($dolibarr_js_JQUERY_FLOT))?'':(empty($dolibarr_js_JQUERY_FLOT)?'':$dolibarr_js_JQUERY_FLOT.'/')); }
+if (! defined('ADODB_PATH'))           { define('ADODB_PATH', (!isset($dolibarr_lib_ADODB_PATH))?DOL_DOCUMENT_ROOT.'/includes/adodbtime/':(empty($dolibarr_lib_ADODB_PATH)?'':$dolibarr_lib_ADODB_PATH.'/')); }
+if (! defined('FPDF_PATH'))            { define('FPDF_PATH', (empty($dolibarr_lib_FPDF_PATH))?DOL_DOCUMENT_ROOT.'/includes/fpdf/':$dolibarr_lib_FPDF_PATH.'/'); }	// Used only for package that can't include tcpdf
+if (! defined('TCPDF_PATH'))           { define('TCPDF_PATH', (empty($dolibarr_lib_TCPDF_PATH))?DOL_DOCUMENT_ROOT.'/includes/tecnickcom/tcpdf/':$dolibarr_lib_TCPDF_PATH.'/'); }
+if (! defined('FPDI_PATH'))            { define('FPDI_PATH', (empty($dolibarr_lib_FPDI_PATH))?DOL_DOCUMENT_ROOT.'/includes/fpdfi/':$dolibarr_lib_FPDI_PATH.'/'); }
+if (! defined('TCPDI_PATH'))           { define('TCPDI_PATH', (empty($dolibarr_lib_TCPDI_PATH))?DOL_DOCUMENT_ROOT.'/includes/tcpdi/':$dolibarr_lib_TCPDI_PATH.'/'); }
+if (! defined('NUSOAP_PATH'))          { define('NUSOAP_PATH', (!isset($dolibarr_lib_NUSOAP_PATH))?DOL_DOCUMENT_ROOT.'/includes/nusoap/lib/':(empty($dolibarr_lib_NUSOAP_PATH)?'':$dolibarr_lib_NUSOAP_PATH.'/')); }
+if (! defined('PHPEXCEL_PATH'))        { define('PHPEXCEL_PATH', (!isset($dolibarr_lib_PHPEXCEL_PATH))?DOL_DOCUMENT_ROOT.'/includes/phpoffice/phpexcel/Classes/':(empty($dolibarr_lib_PHPEXCEL_PATH)?'':$dolibarr_lib_PHPEXCEL_PATH.'/')); }
+if (! defined('PHPEXCELNEW_PATH'))     { define('PHPEXCELNEW_PATH', (!isset($dolibarr_lib_PHPEXCELNEW_PATH))?DOL_DOCUMENT_ROOT.'/includes/phpoffice/PhpSpreadsheet/':(empty($dolibarr_lib_PHPEXCELNEW_PATH)?'':$dolibarr_lib_PHPEXCELNEW_PATH.'/')); }
+if (! defined('GEOIP_PATH'))           { define('GEOIP_PATH', (!isset($dolibarr_lib_GEOIP_PATH))?DOL_DOCUMENT_ROOT.'/includes/geoip/':(empty($dolibarr_lib_GEOIP_PATH)?'':$dolibarr_lib_GEOIP_PATH.'/')); }
+if (! defined('ODTPHP_PATH'))          { define('ODTPHP_PATH', (!isset($dolibarr_lib_ODTPHP_PATH))?DOL_DOCUMENT_ROOT.'/includes/odtphp/':(empty($dolibarr_lib_ODTPHP_PATH)?'':$dolibarr_lib_ODTPHP_PATH.'/')); }
+if (! defined('ODTPHP_PATHTOPCLZIP'))  { define('ODTPHP_PATHTOPCLZIP', (!isset($dolibarr_lib_ODTPHP_PATHTOPCLZIP))?DOL_DOCUMENT_ROOT.'/includes/odtphp/zip/pclzip/':(empty($dolibarr_lib_ODTPHP_PATHTOPCLZIP)?'':$dolibarr_lib_ODTPHP_PATHTOPCLZIP.'/')); }
+if (! defined('JS_CKEDITOR'))          { define('JS_CKEDITOR', (!isset($dolibarr_js_CKEDITOR))?'':(empty($dolibarr_js_CKEDITOR)?'':$dolibarr_js_CKEDITOR.'/')); }
+if (! defined('JS_JQUERY'))            { define('JS_JQUERY', (!isset($dolibarr_js_JQUERY))?'':(empty($dolibarr_js_JQUERY)?'':$dolibarr_js_JQUERY.'/')); }
+if (! defined('JS_JQUERY_UI'))         { define('JS_JQUERY_UI', (!isset($dolibarr_js_JQUERY_UI))?'':(empty($dolibarr_js_JQUERY_UI)?'':$dolibarr_js_JQUERY_UI.'/')); }
+if (! defined('JS_JQUERY_FLOT'))       { define('JS_JQUERY_FLOT', (!isset($dolibarr_js_JQUERY_FLOT))?'':(empty($dolibarr_js_JQUERY_FLOT)?'':$dolibarr_js_JQUERY_FLOT.'/')); }
 // Other required path
-if (! defined('DOL_DEFAULT_TTF'))      { define('DOL_DEFAULT_TTF',      (!isset($dolibarr_font_DOL_DEFAULT_TTF))?DOL_DOCUMENT_ROOT.'/includes/fonts/Aerial.ttf':(empty($dolibarr_font_DOL_DEFAULT_TTF)?'':$dolibarr_font_DOL_DEFAULT_TTF)); }
+if (! defined('DOL_DEFAULT_TTF'))      { define('DOL_DEFAULT_TTF', (!isset($dolibarr_font_DOL_DEFAULT_TTF))?DOL_DOCUMENT_ROOT.'/includes/fonts/Aerial.ttf':(empty($dolibarr_font_DOL_DEFAULT_TTF)?'':$dolibarr_font_DOL_DEFAULT_TTF)); }
 if (! defined('DOL_DEFAULT_TTF_BOLD')) { define('DOL_DEFAULT_TTF_BOLD', (!isset($dolibarr_font_DOL_DEFAULT_TTF_BOLD))?DOL_DOCUMENT_ROOT.'/includes/fonts/AerialBd.ttf':(empty($dolibarr_font_DOL_DEFAULT_TTF_BOLD)?'':$dolibarr_font_DOL_DEFAULT_TTF_BOLD)); }
 
 
@@ -283,9 +284,9 @@ include_once DOL_DOCUMENT_ROOT .'/core/lib/security.lib.php';
 //print memory_get_usage();
 
 // If password is encoded, we decode it
-if (preg_match('/crypted:/i',$dolibarr_main_db_pass) || ! empty($dolibarr_main_db_encrypted_pass))
+if (preg_match('/crypted:/i', $dolibarr_main_db_pass) || ! empty($dolibarr_main_db_encrypted_pass))
 {
-	if (preg_match('/crypted:/i',$dolibarr_main_db_pass))
+	if (preg_match('/crypted:/i', $dolibarr_main_db_pass))
 	{
 		$dolibarr_main_db_pass = preg_replace('/crypted:/i', '', $dolibarr_main_db_pass);
 		$dolibarr_main_db_pass = dol_decode($dolibarr_main_db_pass);
@@ -293,4 +294,3 @@ if (preg_match('/crypted:/i',$dolibarr_main_db_pass) || ! empty($dolibarr_main_d
 	}
 	else $dolibarr_main_db_pass = dol_decode($dolibarr_main_db_encrypted_pass);
 }
-

@@ -1,4 +1,5 @@
 # Dolibarr language file - en_US - Accounting Expert
+Accounting=Contabilitate
 ACCOUNTING_EXPORT_SEPARATORCSV= Separator coloane pentru fisier export
 ACCOUNTING_EXPORT_DATE=Format date pentru fisiere export
 ACCOUNTING_EXPORT_PIECE=Export the number of piece
@@ -35,15 +36,15 @@ AlreadyInGeneralLedger=Already journalized in ledgers
 NotYetInGeneralLedger=Not yet journalized in ledgers
 GroupIsEmptyCheckSetup=Group is empty, check setup of the personalized accounting group
 DetailByAccount=Show detail by account
-AccountWithNonZeroValues=Accounts with non zero values
-ListOfAccounts=List of accounts
+AccountWithNonZeroValues=Conturi contabile fără valoare zero
+ListOfAccounts=Listă conturilor contabile
 
 MainAccountForCustomersNotDefined=Main accounting account for customers not defined in setup
-MainAccountForSuppliersNotDefined=Main accounting account for suppliers not defined in setup
+MainAccountForSuppliersNotDefined=Main accounting account for vendors not defined in setup
 MainAccountForUsersNotDefined=Main accounting account for users not defined in setup
 MainAccountForVatPaymentNotDefined=Main accounting account for VAT payment not defined in setup
 
-AccountancyArea=Contabilitate
+AccountancyArea=Accounting area
 AccountancyAreaDescIntro=Utilizarea modulului de contabilitate se face în mai multe etape:
 AccountancyAreaDescActionOnce=Următoarele acțiuni sunt executate de obicei doar o singură dată sau o dată pe an ...
 AccountancyAreaDescActionOnceBis=Următorii pași trebuie făcuți pentru a vă economisi timpul în viitor prin sugerarea contului contabil implicit corect atunci când efectuați jurnalizarea (scrierea înregistrărilor în Jurnale și în registrul Cartea Mare).
@@ -54,6 +55,7 @@ AccountancyAreaDescChartModel=PASUL %s: Creați un model de plan de cont din men
 AccountancyAreaDescChart=PASUL %s: Creați sau verificați conținutul planului dvs. de conturi din meniul %s
 
 AccountancyAreaDescVat=PASUL %s: Definirea conturilor contabile pentru fiecare TVA. Pentru aceasta, utilizați intrarea din meniu %s.
+AccountancyAreaDescDefault=STEP %s: Define default accounting accounts. For this, use the menu entry %s.
 AccountancyAreaDescExpenseReport=PASUL %s: Definiți conturile contabile implicite pentru fiecare tip de raport de cheltuieli. Pentru aceasta, utilizați intrarea din meniu %s.
 AccountancyAreaDescSal=PASUL %s: Definirea conturilor contabile implicite pentru plata salariilor. Pentru aceasta, utilizați intrarea din meniu %s.
 AccountancyAreaDescContrib=PASUL %s: Definiți conturile implicite de contabilitate pentru cheltuieli speciale (taxe diverse). Pentru aceasta, utilizați intrarea din meniu %s.
@@ -89,7 +91,7 @@ MenuProductsAccounts=Conturi de produs
 ProductsBinding=Conturi de produse
 Ventilation=Asocierea la conturi
 CustomersVentilation=Asocierea facturii cu clientul
-SuppliersVentilation=Asocierea facturii cu furnizorul
+SuppliersVentilation=Vendor invoice binding
 ExpenseReportsVentilation=Raportul de cheltuieli obligatoriu
 CreateMvts=Creați o nouă tranzacție
 UpdateMvts=Modificarea unei tranzacții
@@ -130,12 +132,14 @@ ACCOUNTING_LENGTH_GACCOUNT=Lungimea conturilor contabile generale (Dacă setați
 ACCOUNTING_LENGTH_AACCOUNT=Lungimea conturilor contabile ale terțelor părți (dacă ați setat valoarea la 6 aici, contul "401" va apărea ca "401000" pe ecran)
 ACCOUNTING_MANAGE_ZERO=Permiteți gestionarea unui număr diferit de zero la sfârșitul unui cont contabil. Necesar anumitor țări (cum ar fi Elveția). Dacă se ține inchis (implicit), puteți seta următorii 2 parametri pentru a cere aplicației să adauge zero virutal.
 BANK_DISABLE_DIRECT_INPUT=Dezactivați înregistrarea directă a tranzacției în contul bancar
+ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=Enable draft export on journal
 
 ACCOUNTING_SELL_JOURNAL=Jurnal vânzări
 ACCOUNTING_PURCHASE_JOURNAL=Jurnal cumpărări
 ACCOUNTING_MISCELLANEOUS_JOURNAL=Journal Diverse
 ACCOUNTING_EXPENSEREPORT_JOURNAL=Jurnalul raportului de cheltuieli
 ACCOUNTING_SOCIAL_JOURNAL=Jurnal Asigurări Sociale
+ACCOUNTING_HAS_NEW_JOURNAL=Has new Journal
 
 ACCOUNTING_ACCOUNT_TRANSFER_CASH=Contul contabil al transferului
 ACCOUNTING_ACCOUNT_SUSPENSE=Contul contabil de așteptare
@@ -185,11 +189,12 @@ ListeMvts=Lista mișcărilor
 ErrorDebitCredit=Debitul și creditul nu pot avea o valoare, în același timp,
 AddCompteFromBK=Adăugați conturi contabile grupului
 ReportThirdParty=Listează contul terță parte
-DescThirdPartyReport=Consultați aici lista clienților și furnizorilor terță parte și a conturile lor contabile
+DescThirdPartyReport=Consult here the list of the third party customers and vendors and their accounting accounts
 ListAccounts=Lista conturilor contabile
 UnknownAccountForThirdparty=Unknown third party account. We will use %s
 UnknownAccountForThirdpartyBlocking=Unknown third party account. Blocking error
 UnknownAccountForThirdpartyAndWaitingAccountNotDefinedBlocking=Unknown third party account and waiting account not defined. Blocking error
+PaymentsNotLinkedToProduct=Payment not linked to any product / service
 
 Pcgtype=Group of account
 Pcgsubtype=Subgroup of account
@@ -204,8 +209,8 @@ DescVentilDoneCustomer=Consultați aici lista liniilor de facturare pentru clien
 DescVentilTodoCustomer=Ascoiază linii de facturare care nu sunt deja legate de contul contabil al produsului
 ChangeAccount=Modificați contul contabil al produsului / serviciului pentru liniile selectate cu următorul cont contabil:
 Vide=-
-DescVentilSupplier=Consultați aici lista liniilor de facturare a furnizorilor asociate sau nu încă unui cont contabil de produs
-DescVentilDoneSupplier=Consultati aici lista liniilor de facturi furnizor și conturile lor  contabile
+DescVentilSupplier=Consult here the list of vendor invoice lines bound or not yet bound to a product accounting account
+DescVentilDoneSupplier=Consult here the list of the lines of invoices vendors and their accounting account
 DescVentilTodoExpenseReport=Linii de raportare a cheltuielilor care nu sunt deja asociate unui cont contabile de taxe
 DescVentilExpenseReport=Consultați aici lista liniilor de raportare a cheltuielilor asociate (sau nu) unui cont contabile de taxe
 DescVentilExpenseReportMore=Dacă configurați contul contabil pe linii de raportare a tipurilor de cheltuieli, aplicația va putea face asocierea între liniile dvs. de raportare a cheltuielilor și contul contabil al planului dvs. de conturi, printr-un singur clic cu butonul <strong> "%s" </strong>. În cazul în care contul nu a fost stabilit în dicționarul de taxe sau dacă aveți încă anumite linii care nu sunt asociate niciunui cont, va trebui să faceți o asociere manuală din meniul "<strong> %s </strong>".
@@ -215,7 +220,7 @@ ValidateHistory=Asociază automat
 AutomaticBindingDone=Asociere automată făcută
 
 ErrorAccountancyCodeIsAlreadyUse=Eroare, nu puteți șterge acest cont contabil, deoarece este folosit
-MvtNotCorrectlyBalanced=Movement not correctly balanced. Credit = %s. Debit = %s
+MvtNotCorrectlyBalanced=Movement not correctly balanced. Debit = %s | Credit = %s
 FicheVentilation=Card asociat
 GeneralLedgerIsWritten=Tranzacțiile sunt scrise în Cartea Mare
 GeneralLedgerSomeRecordWasNotRecorded=Some of the transactions could not be journalized. If there is no other error message, this is probably because they were already journalized.
@@ -234,11 +239,11 @@ AccountingJournal=Jurnalul contabil
 NewAccountingJournal=Jurnal contabil nou
 ShowAccoutingJournal=Arătați jurnalul contabil
 Nature=Personalitate juridică
-AccountingJournalType1=Miscellaneous operations
+AccountingJournalType1=Operațiuni diverse
 AccountingJournalType2=Vânzări
 AccountingJournalType3=Achiziţii
 AccountingJournalType4=Banca
-AccountingJournalType5=Expenses report
+AccountingJournalType5=Raport Cheltuieli
 AccountingJournalType8=Inventory
 AccountingJournalType9=Are nou
 ErrorAccountingJournalIsAlreadyUse=Acest jurnal este deja folosit
@@ -293,4 +298,9 @@ Binded=Linii asociate
 ToBind=Linii de asociat
 UseMenuToSetBindindManualy=Autodection not possible, use menu <a href="%s">%s</a> to make the binding manually
 
+## Import
+ImportAccountingEntries=Accounting entries
+
 WarningReportNotReliable=Warning, this report is not based on the Ledger, so does not contains transaction modified manualy in the Ledger. If your journalization is up to date, the bookkeeping view is more accurate.
+ExpenseReportJournal=Expense Report Journal
+InventoryJournal=Inventory Journal

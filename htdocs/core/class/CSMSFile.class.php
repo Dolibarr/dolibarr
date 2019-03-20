@@ -2,7 +2,7 @@
 /* Copyright (C) 2000-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
  * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,15 +34,18 @@
  */
 class CSMSFile
 {
-    var $error='';
+    /**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 
-	var $addr_from;
-	var $addr_to;
-	var $deferred;
-	var $priority;
-	var $class;
-	var $message;
-	var $nostop;
+	public $addr_from;
+	public $addr_to;
+	public $deferred;
+	public $priority;
+	public $class;
+	public $message;
+	public $nostop;
 
 
 	/**
@@ -56,14 +59,14 @@ class CSMSFile
 	 *	@param 	int		$priority			Priority
 	 *	@param 	int		$class				Class
 	 */
-	function __construct($to,$from,$msg,$deliveryreceipt=0,$deferred=0,$priority=3,$class=1)
+	public function __construct($to, $from, $msg, $deliveryreceipt = 0, $deferred = 0, $priority = 3, $class = 1)
 	{
 		global $conf;
 
 		// On definit fin de ligne
 		$this->eol="\n";
-		if (preg_match('/^win/i',PHP_OS)) $this->eol="\r\n";
-		if (preg_match('/^mac/i',PHP_OS)) $this->eol="\r";
+		if (preg_match('/^win/i', PHP_OS)) $this->eol="\r\n";
+		if (preg_match('/^mac/i', PHP_OS)) $this->eol="\r";
 
 		// If ending method not defined
 		if (empty($conf->global->MAIN_SMS_SENDMODE))
@@ -91,7 +94,7 @@ class CSMSFile
 	 *
 	 * @return    boolean     True if sms sent, false otherwise
 	 */
-	function sendfile()
+	public function sendfile()
 	{
 		global $conf;
 
@@ -136,9 +139,9 @@ class CSMSFile
 					if (! empty($conf->global->MAIN_SMS_DEBUG)) $this->dump_sms_result($res);
 				}
 			}
-		    else if (! empty($conf->global->MAIN_SMS_SENDMODE))    // $conf->global->MAIN_SMS_SENDMODE looks like a value 'class@module'
+		    elseif (! empty($conf->global->MAIN_SMS_SENDMODE))    // $conf->global->MAIN_SMS_SENDMODE looks like a value 'class@module'
 		    {
-		        $tmp=explode('@',$conf->global->MAIN_SMS_SENDMODE);
+		        $tmp=explode('@', $conf->global->MAIN_SMS_SENDMODE);
 		        $classfile=$tmp[0]; $module=(empty($tmp[1])?$tmp[0]:$tmp[1]);
 		        dol_include_once('/'.$module.'/class/'.$classfile.'.class.php');
 		        try
@@ -169,7 +172,7 @@ class CSMSFile
 		        }
 		        catch(Exception $e)
 		        {
-		            dol_print_error('','Error to get list of senders: '.$e->getMessage());
+		            dol_print_error('', 'Error to get list of senders: '.$e->getMessage());
 		        }
 		    }
 			else
@@ -192,20 +195,22 @@ class CSMSFile
 	}
 
 
-	/**
-	 *  Write content of a SendSms request into a dump file (mode = all)
-	 *  Used for debugging.
-	 *
-	 *  @return	void
-	 */
-	function dump_sms()
-	{
-		global $conf,$dolibarr_main_data_root;
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+    /**
+     *  Write content of a SendSms request into a dump file (mode = all)
+     *  Used for debugging.
+     *
+     *  @return	void
+     */
+    public function dump_sms()
+    {
+        // phpcs:enable
+        global $conf,$dolibarr_main_data_root;
 
 		if (@is_writeable($dolibarr_main_data_root))	// Avoid fatal error on fopen with open_basedir
 		{
 			$outputfile=$dolibarr_main_data_root."/dolibarr_sms.log";
-			$fp = fopen($outputfile,"w");
+			$fp = fopen($outputfile, "w");
 
 			fputs($fp, "From: ".$this->addr_from."\n");
 			fputs($fp, "To: ".$this->addr_to."\n");
@@ -221,6 +226,7 @@ class CSMSFile
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *  Write content of a SendSms result into a dump file (mode = all)
      *  Used for debugging.
@@ -228,14 +234,15 @@ class CSMSFile
      *  @param	int		$result		Result of sms sending
      *  @return	void
      */
-    function dump_sms_result($result)
+    public function dump_sms_result($result)
     {
+        // phpcs:enable
         global $conf,$dolibarr_main_data_root;
 
         if (@is_writeable($dolibarr_main_data_root))    // Avoid fatal error on fopen with open_basedir
         {
         	$outputfile=$dolibarr_main_data_root."/dolibarr_sms.log";
-            $fp = fopen($outputfile,"a+");
+            $fp = fopen($outputfile, "a+");
 
             fputs($fp, "\nResult id=".$result);
 
@@ -244,6 +251,4 @@ class CSMSFile
             @chmod($outputfile, octdec($conf->global->MAIN_UMASK));
         }
     }
-
 }
-

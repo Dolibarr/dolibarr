@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - ldap
-DomainPassword=密碼域
 YouMustChangePassNextLogon=<b>%</b>用戶密碼<b>%之S</b>必須改變對域。
 UserMustChangePassNextLogon=用戶必須更改密碼的域%s
 LDAPInformationsForThisContact=在此LDAP數據庫信息聯系
@@ -25,3 +24,4 @@ MemberTypeSynchronized=Member type synchronized
 ContactSynchronized=聯系同步
 ForceSynchronize=力同步Dolibarr - &gt;的LDAP
 ErrorFailedToReadLDAP=無法讀取LDAP數據庫。檢查的LDAP模塊設置和數據庫獲取。
+PasswordOfUserInLDAP=Password of user in LDAP

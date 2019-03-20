@@ -5,7 +5,11 @@ Agenda=Agenda
 TMenuAgenda=Agenda
 Agendas=Agende
 LocalAgenda=Lokalni kalendar
+<<<<<<< HEAD
+ActionsOwnedBy=Event owned by
+=======
 ActionsOwnedBy=Događaj u vlasništvu
+>>>>>>> branch '7.0' of git@github.com:Dolibarr/dolibarr.git
 ActionsOwnedByShort=Vlasnik
 AffectedTo=Dodijeljeno korisniku
 Event=Događaj
@@ -38,9 +42,15 @@ ActionsEvents=Događaji za koje će Dolibarr stvoriti akciju u dnevni red automa
 EventRemindersByEmailNotEnabled=Event reminders by email was not enabled into Agenda module setup.
 ##### Agenda event labels #####
 NewCompanyToDolibarr=Kreirana treća strana %s
+<<<<<<< HEAD
+ContractValidatedInDolibarr=Contract %s validated
+PropalClosedSignedInDolibarr=Proposal %s signed
+PropalClosedRefusedInDolibarr=Proposal %s refused
+=======
 ContractValidatedInDolibarr=Ugovor %s potvrđen
 PropalClosedSignedInDolibarr=Prijedlog %s potpisan
 PropalClosedRefusedInDolibarr=Prijedlog %s odbijen
+>>>>>>> branch '7.0' of git@github.com:Dolibarr/dolibarr.git
 PropalValidatedInDolibarr=Prijedlog %s potvrđen
 PropalClassifiedBilledInDolibarr=Prijedlog %s klasificiran kao fakturisan
 InvoiceValidatedInDolibarr=Faktura %s potvrđena
@@ -51,12 +61,21 @@ InvoicePaidInDolibarr=Faktura %s promijenjena u status plaćeno
 InvoiceCanceledInDolibarr=Faktura %s otkazana
 MemberValidatedInDolibarr=Član %s potvrđen
 MemberModifiedInDolibarr=Member %s modified
+<<<<<<< HEAD
+MemberResiliatedInDolibarr=Member %s terminated
+MemberDeletedInDolibarr=Member %s deleted
+MemberSubscriptionAddedInDolibarr=Subscription %s for member %s added
+MemberSubscriptionModifiedInDolibarr=Subscription %s for member %s modified
+MemberSubscriptionDeletedInDolibarr=Subscription %s for member %s deleted
+ShipmentValidatedInDolibarr=Shipment %s validated
+=======
 MemberResiliatedInDolibarr=Član %s ugašen
 MemberDeletedInDolibarr=Član%s obrisan
 MemberSubscriptionAddedInDolibarr=Subscription %s for member %s added
 MemberSubscriptionModifiedInDolibarr=Subscription %s for member %s modified
 MemberSubscriptionDeletedInDolibarr=Subscription %s for member %s deleted
 ShipmentValidatedInDolibarr=Pošiljka %s odobrena
+>>>>>>> branch '7.0' of git@github.com:Dolibarr/dolibarr.git
 ShipmentClassifyClosedInDolibarr=Shipment %s classified billed
 ShipmentUnClassifyCloseddInDolibarr=Shipment %s classified reopened
 ShipmentDeletedInDolibarr=Shipment %s deleted
@@ -75,7 +94,11 @@ InvoiceSentByEMail=Fakture za kupca %s poslana putem e-maila
 SupplierOrderSentByEMail=Narudžba za dobavljača %s poslan putem e-maila
 SupplierInvoiceSentByEMail=Predračun dobavljača %s poslan putem e-maila
 ShippingSentByEMail=Pošiljka%s poslana emailom
+<<<<<<< HEAD
+ShippingValidated= Shipment %s validated
+=======
 ShippingValidated= Pošiljka %s odobrena
+>>>>>>> branch '7.0' of git@github.com:Dolibarr/dolibarr.git
 InterventionSentByEMail=Intervencija %s poslana putem e-maila
 ProposalDeleted=Ponuda obrisana
 OrderDeleted=Narudžba obrisana
@@ -112,9 +135,29 @@ ExportCal=Export kalendara
 ExtSites=Import eksternih kalendara
 ExtSitesEnableThisTool=Prikazuje vanjske kalendare (definirane gobalnim postavkama) u agendi. Ne utječe na vanjske kalendare koje definiraju korisnici.
 ExtSitesNbOfAgenda=Broj kalendara
+<<<<<<< HEAD
+AgendaExtNb=Calendar no. %s
+=======
 AgendaExtNb=Kalendar br. %s
+>>>>>>> branch '7.0' of git@github.com:Dolibarr/dolibarr.git
 ExtSiteUrlAgenda=URL za pristup .ical fajla
 ExtSiteNoLabel=Nema opisa
+<<<<<<< HEAD
+VisibleTimeRange=Visible time range
+VisibleDaysRange=Visible days range
+AddEvent=Napravi događaj
+MyAvailability=Moja dostupnost
+ActionType=Vrsta događaja
+DateActionBegin=Start event date
+CloneAction=Kloniraj događaj
+ConfirmCloneEvent=Are you sure you want to clone the event <b>%s</b>?
+RepeatEvent=Repeat event
+EveryWeek=Svake sedmice
+EveryMonth=Svakog mjeseca
+DayOfMonth=Day of month
+DayOfWeek=Day of week
+DateStartPlusOne=Date start + 1 hour
+=======
 VisibleTimeRange=Vidljivi raspon vremena
 VisibleDaysRange=Vidljivi raspon dana
 AddEvent=Napravi događaj
@@ -129,3 +172,4 @@ EveryMonth=Svakog mjeseca
 DayOfMonth=Dan u mjesecu
 DayOfWeek=Dan u sedmici
 DateStartPlusOne=Datum početka + 1 sat
+>>>>>>> branch '7.0' of git@github.com:Dolibarr/dolibarr.git

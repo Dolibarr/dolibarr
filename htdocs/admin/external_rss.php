@@ -4,7 +4,7 @@
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
- * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011 	   Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -31,6 +31,7 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/rssparser.class.php';
 
+// Load translation files required by the page
 $langs->load("admin");
 
 // Security check
@@ -38,7 +39,7 @@ if (!$user->admin) accessforbidden();
 
 $def = array();
 $lastexternalrss=0;
-$action=GETPOST('action','aZ09');
+$action=GETPOST('action', 'aZ09');
 
 
 /*
@@ -54,7 +55,7 @@ if ($result)
 {
     while ($obj = $db->fetch_object($result))
     {
-        preg_match('/([0-9]+)$/i',$obj->name,$reg);
+        preg_match('/([0-9]+)$/i', $obj->name, $reg);
         if ($reg[1] && $reg[1] > $lastexternalrss) $lastexternalrss = $reg[1];
     }
 }
@@ -102,8 +103,8 @@ if ($action == 'add' || GETPOST("modify"))
 	        }
 		}
 
-		$result1=dolibarr_set_const($db, "EXTERNAL_RSS_TITLE_" . GETPOST("norss"),GETPOST($external_rss_title),'chaine',0,'',$conf->entity);
-		if ($result1) $result2=dolibarr_set_const($db, "EXTERNAL_RSS_URLRSS_" . GETPOST("norss"),GETPOST($external_rss_urlrss),'chaine',0,'',$conf->entity);
+		$result1=dolibarr_set_const($db, "EXTERNAL_RSS_TITLE_" . GETPOST("norss"), GETPOST($external_rss_title), 'chaine', 0, '', $conf->entity);
+		if ($result1) $result2=dolibarr_set_const($db, "EXTERNAL_RSS_URLRSS_" . GETPOST("norss"), GETPOST($external_rss_urlrss), 'chaine', 0, '', $conf->entity);
 
         if ($result1 && $result2)
         {
@@ -150,7 +151,7 @@ if ($_POST["delete"])
 				if (! $resql)
 				{
 					$db->rollback();
-					dol_print_error($db,"sql=".$sql);
+					dol_print_error($db, "sql=".$sql);
 					exit;
 				}
 
@@ -162,13 +163,13 @@ if ($_POST["delete"])
 		else
 		{
 			$db->rollback();
-			dol_print_error($db,"sql=".$sql);
+			dol_print_error($db, "sql=".$sql);
 			exit;
         }
 
 
-		$result1=dolibarr_del_const($db,"EXTERNAL_RSS_TITLE_" . GETPOST("norss"),$conf->entity);
-		if ($result1) $result2=dolibarr_del_const($db,"EXTERNAL_RSS_URLRSS_" . GETPOST("norss"),$conf->entity);
+		$result1=dolibarr_del_const($db, "EXTERNAL_RSS_TITLE_" . GETPOST("norss"), $conf->entity);
+		if ($result1) $result2=dolibarr_del_const($db, "EXTERNAL_RSS_URLRSS_" . GETPOST("norss"), $conf->entity);
 
         if ($result1 && $result2)
         {
@@ -189,7 +190,7 @@ if ($_POST["delete"])
  * View
  */
 
-llxHeader('',$langs->trans("ExternalRSSSetup"));
+llxHeader('', $langs->trans("ExternalRSSSetup"));
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("ExternalRSSSetup"), $linkback, 'title_setup');
@@ -241,16 +242,14 @@ if ($resql)
 	{
 		$obj = $db->fetch_object($resql);
 
-	    preg_match('/^([0-9]+)/i',$obj->note,$reg);
+		preg_match('/^([0-9]+)/i', $obj->note, $reg);
 		$idrss = $reg[1];
-        $keyrssurl="EXTERNAL_RSS_URLRSS_".$idrss;
-        $keyrsstitle="EXTERNAL_RSS_URLRSS_".$idrss;
+		$keyrsstitle="EXTERNAL_RSS_TITLE_".$idrss;
+		$keyrssurl="EXTERNAL_RSS_URLRSS_".$idrss;
         //print "x".$idrss;
 
         $rssparser=new RssParser($db);
 		$result = $rssparser->parser($conf->global->$keyrssurl, 5, 300, $conf->externalrss->dir_temp);
-
-		$var=true;
 
 		print "<br>";
 		print "<form name=\"externalrssconfig\" action=\"".$_SERVER["PHP_SELF"]."\" method=\"post\">";
@@ -260,7 +259,7 @@ if ($resql)
 
 		print "<tr class=\"liste_titre\">";
 		print "<td>".$langs->trans("RSS")." ".($i+1)."</td>";
-        print '<td align="right">';
+        print '<td class="right">';
         print "<input type=\"submit\" class=\"button\" name=\"modify\" value=\"".$langs->trans("Modify")."\">";
 		print " &nbsp; ";
 		print "<input type=\"submit\" class=\"button\" name=\"delete\" value=\"".$langs->trans("Delete")."\">";
@@ -326,6 +325,6 @@ else
 	dol_print_error($db);
 }
 
-
+// End of page
 llxFooter();
 $db->close();
