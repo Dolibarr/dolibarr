@@ -70,13 +70,13 @@ if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 
 	            print '<tr class="oddeven">';
 	            print '<td>'.$labelstatus.'</td>';
-	            print '<td align="right"><a href="list.php?statut='.$status.'">'.price((isset($valsamount[$status])?(float) $valsamount[$status]:0), 0, '', 1, -1, -1, $conf->currency).'</a></td>';
+	            print '<td class="right"><a href="list.php?statut='.$status.'">'.price((isset($valsamount[$status])?(float) $valsamount[$status]:0), 0, '', 1, -1, -1, $conf->currency).'</a></td>';
 	            print "</tr>\n";
 	        }
 	    }
 	    if ($conf->use_javascript_ajax)
 	    {
-	        print '<tr><td align="center" colspan="2">';
+	        print '<tr><td class="center" colspan="2">';
 
 	        include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 	        $dolgraph = new DolGraph();
@@ -92,12 +92,12 @@ if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 	        print '</td></tr>';
 	    }
 	    //if ($totalinprocess != $total)
-	    //print '<tr class="liste_total"><td>'.$langs->trans("Total").' ('.$langs->trans("CustomersOrdersRunning").')</td><td align="right">'.$totalinprocess.'</td></tr>';
-	    print '<tr class="liste_total"><td class="maxwidth200 tdoverflow">'.$langs->trans("OpportunityTotalAmount").' ('.$langs->trans("WonLostExcluded").')</td><td align="right">'.price($totalamount, 0, '', 1, -1, -1, $conf->currency).'</td></tr>';
+	    //print '<tr class="liste_total"><td>'.$langs->trans("Total").' ('.$langs->trans("CustomersOrdersRunning").')</td><td class="right">'.$totalinprocess.'</td></tr>';
+	    print '<tr class="liste_total"><td class="maxwidth200 tdoverflow">'.$langs->trans("OpportunityTotalAmount").' ('.$langs->trans("WonLostExcluded").')</td><td class="right">'.price($totalamount, 0, '', 1, -1, -1, $conf->currency).'</td></tr>';
 	    print '<tr class="liste_total"><td class="minwidth200 tdoverflow">';
 	    //print $langs->trans("OpportunityPonderatedAmount").' ('.$langs->trans("WonLostExcluded").')';
 	    print $form->textwithpicto($langs->trans("OpportunityPonderatedAmount").' ('.$langs->trans("WonLostExcluded").')', $langs->trans("OpportunityPonderatedAmountDesc"), 1);
-	    print '</td><td align="right">'.price(price2num($ponderated_opp_amount,'MT'), 0, '', 1, -1, -1, $conf->currency).'</td></tr>';
+	    print '</td><td class="right">'.price(price2num($ponderated_opp_amount, 'MT'), 0, '', 1, -1, -1, $conf->currency).'</td></tr>';
 	    print "</table>";
 	    print "</div>";
 

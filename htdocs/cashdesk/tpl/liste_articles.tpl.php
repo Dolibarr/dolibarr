@@ -28,9 +28,8 @@ if (empty($langs) || ! is_object($langs))
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
-$langs->load("main");
-$langs->load("bills");
-$langs->load("cashdesk");
+// Load translation files required by the page
+$langs->loadLangs(array("main","bills","cashdesk"));
 
 ?>
 
@@ -46,8 +45,7 @@ $societe = new Societe($db);
 $societe->fetch($thirdpartyid);
 /** end add Ditto */
 
-$tab=array();
-$tab = $_SESSION['poscart'];
+$tab = (! empty($_SESSION['poscart'])?$_SESSION['poscart']:array());
 
 $tab_size=count($tab);
 if ($tab_size <= 0) print '<div class="center">'.$langs->trans("NoArticle").'</div><br>';
@@ -61,21 +59,19 @@ else
         if ( $tab[$i]['remise_percent'] > 0 ) {
 
             $remise_percent = ' -'.$tab[$i]['remise_percent'].'%';
-
         } else {
 
             $remise_percent = '';
-
         }
 
         $remise = $tab[$i]['remise'];
 
-        echo ('<p>'.$tab[$i]['qte'].' x '.price2num($tab[$i]['price'], 'MT').$remise_percent.' = '.price(price2num($tab[$i]['total_ht'], 'MT'),0,$langs,0,0,-1,$conf->currency).' '.$langs->trans("HT").' ('.price(price2num($tab[$i]['total_ttc'], 'MT'),0,$langs,0,0,-1,$conf->currency).' '.$langs->trans("TTC").')</p>'."\n");
+        echo ('<p>'.$tab[$i]['qte'].' x '.price2num($tab[$i]['price'], 'MT').$remise_percent.' = '.price(price2num($tab[$i]['total_ht'], 'MT'), 0, $langs, 0, 0, -1, $conf->currency).' '.$langs->trans("HT").' ('.price(price2num($tab[$i]['total_ttc'], 'MT'), 0, $langs, 0, 0, -1, $conf->currency).' '.$langs->trans("TTC").')</p>'."\n");
         echo ('</div>'."\n");
     }
 }
 
-echo ('<p class="cadre_prix_total">'.$langs->trans("Total").' : '.price(price2num($total_ttc, 'MT'),0,$langs,0,0,-1,$conf->currency).'<br></p>'."\n");
+echo ('<p class="cadre_prix_total">'.$langs->trans("Total").' : '.price(price2num($total_ttc, 'MT'), 0, $langs, 0, 0, -1, $conf->currency).'<br></p>'."\n");
 
 ?></div>
 </div>

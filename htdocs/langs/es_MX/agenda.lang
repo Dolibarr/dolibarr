@@ -41,13 +41,11 @@ AgendaUrlOptions1=También puede agregar los siguientes parámetros para filtrar
 AgendaUrlOptions3=<b>logina=%s</b> para restringir la salida a las acciones propiedad del usuario <b>%s</b>.
 AgendaUrlOptionsNotAdmin=<B> logina =!%s </b> para restringir la salida a acciones que no pertenecen al usuario <b> %s </b>.
 AgendaUrlOptions4=<b>logint=%s</b> para restringir la salida a acciones asignadas al usuario <b>%s</b>.
-AgendaUrlOptionsProject=<b>project=PROJECT_ID</b> para restringir la salida a acciones asociadas al proyecto <b>PROJECT_ID</b>.
 ExportDataset_event1=Lista de eventos de la agenda
 DefaultWorkingDays=Rango de días laborales por defecto en una semana (Example: 1-5, 1-6)
 DefaultWorkingHours=Horas laborales por defecto en un día (Ejemplo: 9-18)
 ExtSites=Importar calendarios externos
 ExtSitesEnableThisTool=Mostrar calendarios externos (definidos en la configuración global) en la agenda. No afecta a los calendarios externos definidos por los usuarios.
-AgendaExtNb=Número de calendario %s
 ExtSiteUrlAgenda=URL para acceder al archivo .iCal
 DateActionBegin=Fecha inicial del evento
 DateStartPlusOne=Fecha de inicio + 1 hr

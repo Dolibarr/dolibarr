@@ -2,7 +2,7 @@
 /* Copyright (C) 2004      Rodolphe Quiedeville  <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2014 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
- * Copyright (C) 2005-2009 Regis Houssin         <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2009 Regis Houssin         <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,13 +32,12 @@ require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/facture/modules_facture.php';
 if (! empty($conf->banque->enabled)) require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
-$langs->load('bills');
-$langs->load('banks');
-$langs->load('companies');
+// Load translation files required by the page
+$langs->loadLangs(array('bills', 'banks', 'companies'));
 
 // Security check
-$id=GETPOST("id",'int');
-$action=GETPOST('action','aZ09');
+$id=GETPOST("id", 'int');
+$action=GETPOST('action', 'aZ09');
 $confirm=GETPOST('confirm');
 if ($user->societe_id) $socid=$user->societe_id;
 // TODO ajouter regle pour restreindre acces paiement
@@ -48,7 +47,7 @@ $object = new PaymentSocialContribution($db);
 if ($id > 0)
 {
 	$result=$object->fetch($id);
-	if (! $result) dol_print_error($db,'Failed to get payment id '.$id);
+	if (! $result) dol_print_error($db, 'Failed to get payment id '.$id);
 }
 
 
@@ -75,7 +74,8 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->tax->char
 	}
 }
 
-// Create payment
+// Validate social contribution
+/*
 if ($action == 'confirm_valide' && $confirm == 'yes' && $user->rights->tax->charges->creer)
 {
 	$db->begin();
@@ -112,6 +112,7 @@ if ($action == 'confirm_valide' && $confirm == 'yes' && $user->rights->tax->char
 		$db->rollback();
 	}
 }
+*/
 
 
 /*
@@ -144,19 +145,20 @@ dol_fiche_head($head, $hselected, $langs->trans("PaymentSocialContribution"), -1
  */
 if ($action == 'delete')
 {
-	print $form->formconfirm('card.php?id='.$object->id, $langs->trans("DeletePayment"), $langs->trans("ConfirmDeletePayment"), 'confirm_delete','',0,2);
-
+	print $form->formconfirm('card.php?id='.$object->id, $langs->trans("DeletePayment"), $langs->trans("ConfirmDeletePayment"), 'confirm_delete', '', 0, 2);
 }
 
 /*
  * Validation confirmation of payment
  */
+/*
 if ($action == 'valide')
 {
 	$facid = $_GET['facid'];
 	print $form->formconfirm('card.php?id='.$object->id.'&amp;facid='.$facid, $langs->trans("ValidatePayment"), $langs->trans("ConfirmValidatePayment"), 'confirm_valide','',0,2);
 
 }
+*/
 
 
 $linkback = '<a href="' . DOL_URL_ROOT . '/compta/sociales/payments.php">' . $langs->trans("BackToList") . '</a>';
@@ -176,7 +178,7 @@ print $form->showrefnav($object,'id','',1,'rowid','id');
 print '</td></tr>';*/
 
 // Date
-print '<tr><td>'.$langs->trans('Date').'</td><td colspan="3">'.dol_print_date($object->datep,'day').'</td></tr>';
+print '<tr><td>'.$langs->trans('Date').'</td><td colspan="3">'.dol_print_date($object->datep, 'day').'</td></tr>';
 
 // Mode
 print '<tr><td>'.$langs->trans('Mode').'</td><td colspan="3">'.$langs->trans("PaymentType".$object->type_code).'</td></tr>';
@@ -201,7 +203,7 @@ if (! empty($conf->banque->enabled))
     	print '<tr>';
     	print '<td>'.$langs->trans('BankTransactionLine').'</td>';
 		print '<td colspan="3">';
-		print $bankline->getNomUrl(1,0,'showall');
+		print $bankline->getNomUrl(1, 0, 'showall');
     	print '</td>';
     	print '</tr>';
     }
@@ -238,19 +240,16 @@ if ($resql)
 	print '<td>'.$langs->trans('SocialContribution').'</td>';
     print '<td>'.$langs->trans('Type').'</td>';
 	print '<td>'.$langs->trans('Label').'</td>';
-	print '<td align="right">'.$langs->trans('ExpectedToPay').'</td>';
+	print '<td class="right">'.$langs->trans('ExpectedToPay').'</td>';
 	print '<td align="center">'.$langs->trans('Status').'</td>';
-	print '<td align="right">'.$langs->trans('PayedByThisPayment').'</td>';
+	print '<td class="right">'.$langs->trans('PayedByThisPayment').'</td>';
 	print "</tr>\n";
 
 	if ($num > 0)
 	{
-		$var=True;
-
 		while ($i < $num)
 		{
 			$objp = $db->fetch_object($resql);
-
 
 			print '<tr class="oddeven">';
 			// Ref
@@ -266,11 +265,11 @@ if ($resql)
 			// Label
 			print '<td>'.$objp->libelle.'</td>';
 			// Expected to pay
-			print '<td align="right">'.price($objp->sc_amount).'</td>';
+			print '<td class="right">'.price($objp->sc_amount).'</td>';
 			// Status
-			print '<td align="center">'.$socialcontrib->getLibStatut(4,$objp->amount).'</td>';
+			print '<td align="center">'.$socialcontrib->getLibStatut(4, $objp->amount).'</td>';
 			// Amount payed
-			print '<td align="right">'.price($objp->amount).'</td>';
+			print '<td class="right">'.price($objp->amount).'</td>';
 			print "</tr>\n";
 			if ($objp->paye == 1)	// If at least one invoice is paid, disable delete
 			{
@@ -320,15 +319,13 @@ if ($action == '')
 		}
 		else
 		{
-			print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("CantRemovePaymentWithOneInvoicePaid")).'">'.$langs->trans('Delete').'</a>';
+			print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("CantRemovePaymentWithOneInvoicePaid")).'">'.$langs->trans('Delete').'</a>';
 		}
 	}
 }
 
 print '</div>';
 
-
-
+// End of page
 llxFooter();
-
 $db->close();

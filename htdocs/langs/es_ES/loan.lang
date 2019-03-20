@@ -10,6 +10,7 @@ LoanCapital=Capital
 Insurance=Seguro
 Interest=Interés
 Nbterms=Plazos
+Term=Term
 LoanAccountancyCapitalCode=Cuenta contable capital
 LoanAccountancyInsuranceCode=Cuenta contable seguro
 LoanAccountancyInterestCode=Cuenta contable interés
@@ -17,37 +18,14 @@ ConfirmDeleteLoan=¿Está seguro de querer eliminar este préstamo?
 LoanDeleted=Préstamo eliminado correctamente
 ConfirmPayLoan=¿Esa seguro de querer clasificar como pagado este préstamo?
 LoanPaid=Préstamo pagado
-# Calc
-LoanCalc=Calculadora de préstamos bancarios
-PurchaseFinanceInfo=Información de Compras y Financiamiento
-SalePriceOfAsset=Precio de venta del Capital
-PercentageDown=Porcentaje
-LengthOfMortgage=Duración del préstamo
-AnnualInterestRate=Interés anual
-ExplainCalculations=Explicación de los cálculos
-ShowMeCalculationsAndAmortization=Mostrar los cálculos y amortización
-MortgagePaymentInformation=Información sobre hipoteca
-DownPayment=Depósito
-DownPaymentDesc=El <b>pago inicial</b> = Precio inicial multiplicado por el porcentaje inicial dividido por 100 (para un inicial de 5% se convierte en 5/100 o 0.05)
-InterestRateDesc=La <b>tasa de interés</b> = El porcentaje de interés anual dividido por 100
-MonthlyFactorDesc=El <b>factor mensual</b> = El resultado de la siguiente fórmula
-MonthlyInterestRateDesc=La <b>tasa de interés mensual</b> = La tasa de interés anual dividido por 12 (para los 12 meses en un año)
-MonthTermDesc=El <b>plazo en meses</b> del préstamo = El número de años del préstamo multiplicado por 12
-MonthlyPaymentDesc=El pago mensual se calcula utilizando la siguiente fórmula
-AmortizationPaymentDesc=La <a href="#amortization">amortización</a> desglosa la cantidad de su pago mensual, tanto del interés como del capital.
-AmountFinanced=Importe financiado
-AmortizationMonthlyPaymentOverYears=Amortización para pago mensual <b>%s</b> sobre %s años
-Totalsforyear=Totales por año
-MonthlyPayment=Pago mensual
-LoanCalcDesc=Esta <b> calculadora de hipotecas </b> puede utilizarse para calcular el pago mensual de un préstamo, en base a la cantidad prestada, el plazo del préstamo deseado y el tipo de interés.<br> Esta calculadora incluye también SHP (Seguro Hipotecario Privado) para préstamos con pago inicial de menos del 20 %%. También se tienen en consideración los impuestos sobre la propiedad, y su efecto sobre el total del pago mensual de la hipoteca. <br>
-GoToInterest=%s se destinará al INTERÉS
-GoToPrincipal=%s se destinará al PRINCIPAL
-YouWillSpend=Pagará %s en el año %s
 ListLoanAssociatedProject=Listado de préstamos asociados al proyecto
 AddLoan=Crear crédito
+FinancialCommitment=Prestamo
+InterestAmount=Interés
+CapitalRemain=Capital remain
 # Admin
 ConfigLoan=Configuración del módulo préstamos
 LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Cuenta contable por defecto para el capital
 LOAN_ACCOUNTING_ACCOUNT_INTEREST=Cuenta contable por defecto para el interés
 LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Cuenta contable por defecto para el seguro
-CreateCalcSchedule=Crear/Modificar vencimientos de préstamos
+CreateCalcSchedule=Editar el prestamo

@@ -53,7 +53,9 @@ MemberValidatedInDolibarr=Član %s je potvrđen
 MemberModifiedInDolibarr=Member %s modified
 MemberResiliatedInDolibarr=Member %s terminated
 MemberDeletedInDolibarr=Član %s je obrisan
-MemberSubscriptionAddedInDolibarr=Pretplata za člana %s je dodata
+MemberSubscriptionAddedInDolibarr=Subscription %s for member %s added
+MemberSubscriptionModifiedInDolibarr=Subscription %s for member %s modified
+MemberSubscriptionDeletedInDolibarr=Subscription %s for member %s deleted
 ShipmentValidatedInDolibarr=Isporuka %s je potvrđena
 ShipmentClassifyClosedInDolibarr=Shipment %s classified billed
 ShipmentUnClassifyCloseddInDolibarr=Shipment %s classified reopened
@@ -97,7 +99,8 @@ AgendaUrlOptions1=Možete dodati i sledeće parametre da filtrirate rezultat:
 AgendaUrlOptions3=<b>logina=%s</b> da se zabrani izlaz akcijama čiji je vlasnik korisnik <b>%s</b>.
 AgendaUrlOptionsNotAdmin=<b>logina=!%s</b> to restrict output to actions not owned by user <b>%s</b>.
 AgendaUrlOptions4=<b>logint=%s</b> to restrict output to actions assigned to user <b>%s</b> (owner and others).
-AgendaUrlOptionsProject=<b>project=PROJECT_ID</b> da se zabrani izlaz akcijama povezanim sa projektom <b>PROJECT_ID</b>.
+AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b> to restrict output to actions linked to project <b>__PROJECT_ID__</b>.
+AgendaUrlOptionsNotAutoEvent=<b>notactiontype=systemauto</b> to exclude automatic event.
 AgendaShowBirthdayEvents=Show birthdays of contacts
 AgendaHideBirthdayEvents=Hide birthdays of contacts
 Busy=Zauzet
@@ -109,7 +112,7 @@ ExportCal=Izvezi kalendar
 ExtSites=Uvezi eksterni kalendar
 ExtSitesEnableThisTool=Prikaži eksterni kalendar (definisan u opštim podešavanjima) u agendi. Ne utiče na eksterni kalendar definisan od strane korisnika.
 ExtSitesNbOfAgenda=Broj kalendara
-AgendaExtNb=Kalendar broj %s
+AgendaExtNb=Calendar no. %s
 ExtSiteUrlAgenda=URL za pristup .ical datoteke
 ExtSiteNoLabel=Nema opisa
 VisibleTimeRange=Vidljiv vremenski period

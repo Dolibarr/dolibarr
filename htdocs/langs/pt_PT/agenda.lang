@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - agenda
-IdAgenda=ID do evento
+IdAgenda=Id. de evento
 Actions=Eventos
 Agenda=Agenda
 TMenuAgenda=Agenda
@@ -31,19 +31,20 @@ ViewWeek=Vista semanal
 ViewPerUser=Vista por utilizador
 ViewPerType=Vista por tipo
 AutoActions= Preenchimento automático
-AgendaAutoActionDesc= Defina aqui os eventos para os quais deseja que o Dolibarr crie automaticamente um evento na agenda. Se não for seleccionada nenhuma opção, apenas as acções manuais serão incluídas na agenda. Seguimento automático de ações empresariais efetuadas em objetos (validação, mudanças de estado) não será guardado.
-AgendaSetupOtherDesc= Esta página fornece opções para permitir a exportação dos seus eventos do Dolibarr para um calendário externo (Thunderbird, calendário Google, ...)
+AgendaAutoActionDesc= Aqui você pode definir eventos que você deseja que o Dolibarr crie automaticamente na Agenda. Se nada estiver marcado, somente ações manuais serão incluídas nos registros e exibidas na Agenda. O rastreamento automático de ações de negócios feitas em objetos (validação, mudança de status) não será salvo.
+AgendaSetupOtherDesc= Esta página fornece opções para permitir a exportação de seus eventos Dolibarr para um calendário externo (thunderbird, google calendar, ...)
 AgendaExtSitesDesc=Esta página permite declarar as fontes externas de calendários para ver os seus eventos na agenda do Dolibarr.
 ActionsEvents=Eventos em que o Dolibarr criará uma acção em agenda automáticamente
-EventRemindersByEmailNotEnabled=Os lembretes de eventos por email não foram ativados na configuração do módulo Agenda
+EventRemindersByEmailNotEnabled=Os lembretes de eventos por email não foram ativados na configuração do módulo %s.
 ##### Agenda event labels #####
 NewCompanyToDolibarr=Terceiro %s, criado
 ContractValidatedInDolibarr=Contrato %s, validado
-PropalClosedSignedInDolibarr=Orçamento %s, assinado
-PropalClosedRefusedInDolibarr=Orçamento %s, recusado
-PropalValidatedInDolibarr=Orçamento %s, validado
-PropalClassifiedBilledInDolibarr=Orçamento %s, classificado como faturado
-InvoiceValidatedInDolibarr=Factura %s, validada
+CONTRACT_DELETEInDolibarr=Contrato %s excluído
+PropalClosedSignedInDolibarr=Orçamento %s assinado
+PropalClosedRefusedInDolibarr=Orçamento %s recusado
+PropalValidatedInDolibarr=Orçamento %s validado
+PropalClassifiedBilledInDolibarr=Orçamento %s classificado como faturado
+InvoiceValidatedInDolibarr=Fatura %s, validada
 InvoiceValidatedInDolibarrFromPos=Fatura %s, validada a partir do ponto de venda
 InvoiceBackToDraftInDolibarr=Fatura %s, voltou ao estado de rascunho
 InvoiceDeleteDolibarr=Fatura %s, apagada
@@ -53,7 +54,9 @@ MemberValidatedInDolibarr=Membro %s, validado
 MemberModifiedInDolibarr=Membro %s modificado
 MemberResiliatedInDolibarr=Membro %s, terminado
 MemberDeletedInDolibarr=Membro %s, eliminado
-MemberSubscriptionAddedInDolibarr=Subscrição do membro %s, adicionada
+MemberSubscriptionAddedInDolibarr=Subscrição %s do membro %s adicionada
+MemberSubscriptionModifiedInDolibarr=Subscrição %s do membro %s modificada
+MemberSubscriptionDeletedInDolibarr=Subscrição%s do membro %s eliminada
 ShipmentValidatedInDolibarr=Expedição %s, validada
 ShipmentClassifyClosedInDolibarr=Expedição %s, classificada como faturada
 ShipmentUnClassifyCloseddInDolibarr=Expedição %s, classificada como re-aberta
@@ -66,10 +69,10 @@ OrderBilledInDolibarr=Encomenda %s, classificada como faturada
 OrderApprovedInDolibarr=Encomenda %s, aprovada
 OrderRefusedInDolibarr=Encomenda %s, recusada
 OrderBackToDraftInDolibarr=Encomenda %s, voltou ao estado de rascunho
-ProposalSentByEMail=Orçamento para cliente, %s, enviado por email
+ProposalSentByEMail=Orçamento de %s enviado por e-mail
 ContractSentByEMail=Contrato %s, enviado por email
 OrderSentByEMail=Encomenda de cliente, %s, enviada por email
-InvoiceSentByEMail=Fatura de cliente, %s, enviada por email
+InvoiceSentByEMail=Fatura a cliente, %s, enviada por email
 SupplierOrderSentByEMail=Encomenda a fornecedor, %s, enviada por email
 SupplierInvoiceSentByEMail=Fatura de fornecedor, %s, enviada por email
 ShippingSentByEMail=Expedição %s, enviada por email
@@ -82,7 +85,7 @@ PRODUCT_CREATEInDolibarr=O produto %s foi criado
 PRODUCT_MODIFYInDolibarr=O produto %s foi modificado
 PRODUCT_DELETEInDolibarr=O produto %s foi eliminado
 EXPENSE_REPORT_CREATEInDolibarr=Relatório de despesas %s, criado
-EXPENSE_REPORT_VALIDATEInDolibarr=Relatório de despesas %s, validade
+EXPENSE_REPORT_VALIDATEInDolibarr=Relatório de despesas %s, validado
 EXPENSE_REPORT_APPROVEInDolibarr=Relatório de despesas %s, aprovado
 EXPENSE_REPORT_DELETEInDolibarr=Relatório de despesas %s, eliminado
 EXPENSE_REPORT_REFUSEDInDolibarr=Relatório de despesas %s, recusado
@@ -97,7 +100,8 @@ AgendaUrlOptions1=Também pode adicionar os seguintes parâmetros de filtro de s
 AgendaUrlOptions3=<b>logina=%s</b> para restringir a produção para as acções criadas pelo utilizador <b>%s</b>.
 AgendaUrlOptionsNotAdmin=<b>logina =!%s</b> para restringir a saída às ações que não pertencem ao utilizador <b>%s</b>.
 AgendaUrlOptions4=<b>logint =%s</b> para restringir a saída às ações atribuídas ao utilizador <b>%s</b> (proprietário e outros).
-AgendaUrlOptionsProject=<b>project=PROJECT_ID</b> para restringir a produção para as acções associadas ao projeto <b>PROJECT_ID</b>.
+AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b> para que apenas obtenha eventos vinculados ao projeto <b>__PROJECT_ID__ </b>.
+AgendaUrlOptionsNotAutoEvent=<b> notactiontype = systemauto </ b> para excluir eventos automáticos.
 AgendaShowBirthdayEvents=Mostrar aniversários dos contactos
 AgendaHideBirthdayEvents=Ocultar aniversários dos contactos
 Busy=Ocupado
@@ -107,9 +111,9 @@ DefaultWorkingHours=Horas de trabalho pré-definidas no dia (Exemplo: 9-18)
 # External Sites ical
 ExportCal=Exportar calendário
 ExtSites=Importar calendários externos
-ExtSitesEnableThisTool=Mostrar calendários externos (definidos na configuração global) na agenda. Não afeta os calendários externos definidos pelos utilizadores.
+ExtSitesEnableThisTool=Mostrar calendários externos (definidos na configuração global) na Agenda. Não afeta calendários externos definidos pelos usuários.
 ExtSitesNbOfAgenda=Número de calendários
-AgendaExtNb=Calendário nb %s
+AgendaExtNb=Calendário n.º %s
 ExtSiteUrlAgenda=URL para aceder ao ficheiro .ical
 ExtSiteNoLabel=Sem Descrição
 VisibleTimeRange=Intervalo de tempo visível

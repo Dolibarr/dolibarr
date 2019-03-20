@@ -23,8 +23,7 @@
  */
 
 require '../../main.inc.php';
-$langs->load("companies");
-$langs->load("banks");
+$langs->loadLangs(array("companies", "banks"));
 
 // S�curit� acc�s client
 if ($user->societe_id > 0)
@@ -67,7 +66,7 @@ $sql.= " AND n.fk_soc = s.rowid";
 $sql.= " AND s.entity IN (".getEntity('societe').")";
 if ($socid > 0)	$sql.= " AND s.rowid = " . $user->societe_id;
 
-$sql.= $db->order($sortfield,$sortorder);
+$sql.= $db->order($sortfield, $sortorder);
 $sql.= $db->plimit($conf->liste_limit, $offset);
 
 $result = $db->query($sql);
@@ -77,20 +76,18 @@ if ($result)
 	$i = 0;
 
 	$paramlist='';
-	print_barre_liste($langs->trans("ListOfNotificationsDone"), $page, $_SERVER["PHP_SELF"], $paramlist, $sortfield,$sortorder,'',$num);
+	print_barre_liste($langs->trans("ListOfNotificationsDone"), $page, $_SERVER["PHP_SELF"], $paramlist, $sortfield, $sortorder, '', $num);
 
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
-	print_liste_field_titre("Company",$_SERVER["PHP_SELF"],"s.nom","","",'valign="center"',$sortfield,$sortorder);
-	print_liste_field_titre("Contact",$_SERVER["PHP_SELF"],"c.lastname","","",'valign="center"',$sortfield,$sortorder);
-	print_liste_field_titre("Action",$_SERVER["PHP_SELF"],"a.titre","","",'valign="center"',$sortfield,$sortorder);
+	print_liste_field_titre("Company", $_SERVER["PHP_SELF"], "s.nom", "", "", 'valign="center"', $sortfield, $sortorder);
+	print_liste_field_titre("Contact", $_SERVER["PHP_SELF"], "c.lastname", "", "", 'valign="center"', $sortfield, $sortorder);
+	print_liste_field_titre("Action", $_SERVER["PHP_SELF"], "a.titre", "", "", 'valign="center"', $sortfield, $sortorder);
 	print "</tr>\n";
-	$var=True;
+
 	while ($i < $num)
 	{
 		$obj = $db->fetch_object($result);
-
-
 
 		print '<tr class="oddeven">';
 		print "<td><a href=\"card.php?socid=".$obj->socid."\">".$obj->name."</a></td>\n";
@@ -107,6 +104,6 @@ else
 	dol_print_error($db);
 }
 
-
+// End of page
 llxFooter();
 $db->close();

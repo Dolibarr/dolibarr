@@ -58,3 +58,4 @@ MoreChoices=انتخاب های بیشتر برای رای دهندگان را �
 SurveyExpiredInfo=The poll has been closed or voting delay has expired.
 EmailSomeoneVoted=٪ s را تا به یک خط پر شده است. شما می توانید نظر سنجی خود را در لینک پیدا کنید:٪ s
 ShowSurvey=Show survey
+UserMustBeSameThanUserUsedToVote=You must have voted and use the same user name that the one used to vote, to post a comment

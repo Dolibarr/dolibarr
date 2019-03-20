@@ -1,25 +1,17 @@
 # Dolibarr language file - Source file is en_US - suppliers
-ShowSupplierInvoice=Mostrar Fatura de Suprimentos
 TotalBuyingPriceMinShort=Total de precos de compra dos subprodutos
 TotalSellingPriceMinShort=Total de preços de venda de sub-produtos
 SomeSubProductHaveNoPrices=Algums dos sub-produtos nao tem um preco definido
 ChangeSupplierPrice=Modificar preço de compra
-SupplierPrices=Fornecedor preços
 ReferenceSupplierIsAlreadyAssociatedWithAProduct=Esta referencia de fornecedor ja esta asociada com a referenca: %s
 Availability=Entrega
-ExportDataset_fournisseur_1=Faturas de Fornecedores e Linhas de Fatura
-ExportDataset_fournisseur_2=Faturas Fornecedores e Pagamentos
-ExportDataset_fournisseur_3=Ordems de fornecedor e linhas de ordem
 ConfirmApproveThisOrder=Tem certeza que deseja aprovar o pedido <b>%s</b>?
 DenyingThisOrder=Negar esta pedido
 ConfirmDenyingThisOrder=Você tem certeza que deseja negar este pedido <b>%s</b>?
 ConfirmCancelThisOrder=Você tem certeza que deseja cancelar este pedido <b>%s</b>?
-AddSupplierInvoice=Criar Fatura do Fornecedor
-SentToSuppliers=Enviado para fornecedores
-ListOfSupplierOrders=Lista de pedidos do fornecedor
-MenuOrdersSupplierToBill=Pedidos a se faturar do foprnecedor
 NbDaysToDelivery=Atraso de entrega em dias
 DescNbDaysToDelivery=O maior atraso de entregar os produtos a partir deste fim
 DoNotOrderThisProductToThisSupplier=Não pedir
 NotTheGoodQualitySupplier=Qualidade inadequada
-BuyingPriceNumShort=Fornecedor preços
+AllProductServicePrices=Todos os preços dos produtos / serviços
+AllProductReferencesOfSupplier=Todas as referências de produtos / serviços do fornecedor

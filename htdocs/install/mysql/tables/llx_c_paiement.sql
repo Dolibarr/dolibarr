@@ -1,8 +1,8 @@
 -- ========================================================================
 -- Copyright (C) 2001-2004	Rodolphe Quiedeville		<rodolphe@quiedeville.org>
 -- Copyright (C) 2004-2014	Laurent Destailleur		<eldy@users.sourceforge.net>
--- Copyright (C) 2014		Alexandre Spangaro		<aspangaro.dolibarr@gmail.com>
--- Copyright (C) 2017		Regis Houssin			<regis.houssin@capnetworks.com>
+-- Copyright (C) 2014		Alexandre Spangaro		<aspangaro@open-dsi.fr>
+-- Copyright (C) 2017		Regis Houssin			<regis.houssin@inodbox.com>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 
 create table llx_c_paiement
 (
-  id					integer,
+  id					integer AUTO_INCREMENT PRIMARY KEY,
   entity				integer	DEFAULT 1 NOT NULL,	-- multi company id
   code       		varchar(6)  NOT NULL,
   libelle    		varchar(62),

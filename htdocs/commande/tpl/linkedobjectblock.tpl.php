@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2010-2011	Regis Houssin <regis.houssin@capnetworks.com>
+/* Copyright (C) 2010-2011	Regis Houssin <regis.houssin@inodbox.com>
  * Copyright (C) 2013		Juanjo Menent <jmenent@2byte.es>
  * Copyright (C) 2014       Marcos García <marcosgdf@gmail.com>
  *
@@ -36,34 +36,36 @@ global $noMoreLinkedObjectBlockAfter;
 $langs = $GLOBALS['langs'];
 $linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
 
+// Load translation files required by the page
 $langs->load("orders");
 
 $total=0; $ilink=0;
-$var=true;
 foreach($linkedObjectBlock as $key => $objectlink)
 {
     $ilink++;
 
-    $trclass=($var?'pair':'impair');
+    $trclass='oddeven';
     if ($ilink == count($linkedObjectBlock) && empty($noMoreLinkedObjectBlockAfter) && count($linkedObjectBlock) <= 1) $trclass.=' liste_sub_total';
 ?>
-    <tr class="<?php echo $trclass; ?>">
-        <td><?php echo $langs->trans("CustomerOrder"); ?></td>
-        <td><?php echo $objectlink->getNomUrl(1); ?></td>
-    	<td align="center"><?php echo $objectlink->ref_client; ?></td>
-    	<td align="center"><?php echo dol_print_date($objectlink->date,'day'); ?></td>
-    	<td align="right"><?php
+    <tr class="<?php echo $trclass; ?>" >
+        <td class="linkedcol-element" ><?php echo $langs->trans("CustomerOrder"); ?>
+        <?php if(!empty($showImportButton) && $conf->global->MAIN_ENABLE_IMPORT_LINKED_OBJECT_LINES) print '<a class="objectlinked_importbtn" href="'.$objectlink->getNomUrl(0, '', 0, 1).'&amp;action=selectlines"  data-element="'.$objectlink->element.'"  data-id="'.$objectlink->id.'"  > <i class="fa fa-indent"></i> </a';  ?>
+        </td>
+        <td class="linkedcol-name" ><?php echo $objectlink->getNomUrl(1); ?></td>
+    	<td class="linkedcol-ref" align="center"><?php echo $objectlink->ref_client; ?></td>
+    	<td class="linkedcol-date" align="center"><?php echo dol_print_date($objectlink->date, 'day'); ?></td>
+    	<td class="linkedcol-amount right"><?php
     		if ($user->rights->commande->lire) {
     			$total = $total + $objectlink->total_ht;
     			echo price($objectlink->total_ht);
     		} ?></td>
-    	<td align="right"><?php echo $objectlink->getLibStatut(3); ?></td>
-    	<td align="right">
+    	<td class="linkedcol-statut right"><?php echo $objectlink->getLibStatut(3); ?></td>
+    	<td class="linkedcol-action right">
     		<?php
     		// For now, shipments must stay linked to order, so link is not deletable
     		if($object->element != 'shipping') {
     			?>
-    			<a href="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=dellink&dellinkid='.$key; ?>"><?php echo img_delete($langs->transnoentitiesnoconv("RemoveLink")); ?></a>
+    			<a href="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=dellink&dellinkid='.$key; ?>"><?php echo img_picto($langs->transnoentitiesnoconv("RemoveLink"), 'unlink'); ?></a>
     			<?php
     		}
     		?>
@@ -79,9 +81,9 @@ if (count($linkedObjectBlock) > 1)
         <td></td>
     	<td align="center"></td>
     	<td align="center"></td>
-    	<td align="right"><?php echo price($total); ?></td>
-    	<td align="right"></td>
-    	<td align="right"></td>
+    	<td class="right"><?php echo price($total); ?></td>
+    	<td class="right"></td>
+    	<td class="right"></td>
     </tr>
     <?php
 }

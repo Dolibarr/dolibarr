@@ -1,7 +1,6 @@
 # Dolibarr language file - Source file is en_US - agenda
 Actions=Termine
 LocalAgenda=interner Kalender
-Events=Termine
 EventsNb=Anzahl der Termine
 ListOfActions=Terminliste
 EventOnFullDay=Terminliste
@@ -35,7 +34,6 @@ DefaultWorkingHours=Arbeitszeit (Bsp.: 09-18)
 ExportCal=exportiere Kalender
 ExtSites=importiere externe Kalender
 ExtSitesEnableThisTool=zeige externe Kalender (in generellen Einsteillungen) in Agenda. Betrifft nicht die die externen Kalender, welche von Benutzern definiert wurden.
-AgendaExtNb=Kalendernummer %s
 ExtSiteUrlAgenda=URL für .lcal
 ExtSiteNoLabel=keine Beschreibung
 VisibleTimeRange=sichtbare Zeitspanne

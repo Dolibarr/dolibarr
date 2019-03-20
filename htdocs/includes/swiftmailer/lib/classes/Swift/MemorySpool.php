@@ -16,6 +16,7 @@
 class Swift_MemorySpool implements Swift_Spool
 {
     protected $messages = array();
+    private $flushRetries = 3;
 
     /**
      * Tests if this Transport mechanism has started.
@@ -42,13 +43,21 @@ class Swift_MemorySpool implements Swift_Spool
     }
 
     /**
+     * @param int $retries
+     */
+    public function setFlushRetries($retries)
+    {
+        $this->flushRetries = $retries;
+    }
+
+    /**
      * Stores a message in the queue.
      *
-     * @param Swift_Mime_Message $message The message to store
+     * @param Swift_Mime_SimpleMessage $message The message to store
      *
      * @return bool Whether the operation has succeeded
      */
-    public function queueMessage(Swift_Mime_Message $message)
+    public function queueMessage(Swift_Mime_SimpleMessage $message)
     {
         //clone the message to make sure it is not changed while in the queue
         $this->messages[] = clone $message;
@@ -75,8 +84,25 @@ class Swift_MemorySpool implements Swift_Spool
         }
 
         $count = 0;
-        while ($message = array_pop($this->messages)) {
-            $count += $transport->send($message, $failedRecipients);
+        $retries = $this->flushRetries;
+        while ($retries--) {
+            try {
+                while ($message = array_pop($this->messages)) {
+                    $count += $transport->send($message, $failedRecipients);
+                }
+            } catch (Swift_TransportException $exception) {
+                if ($retries) {
+                    // re-queue the message at the end of the queue to give a chance
+                    // to the other messages to be sent, in case the failure was due to
+                    // this message and not just the transport failing
+                    array_unshift($this->messages, $message);
+
+                    // wait half a second before we try again
+                    usleep(500000);
+                } else {
+                    throw $exception;
+                }
+            }
         }
 
         return $count;

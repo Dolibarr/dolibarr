@@ -53,10 +53,10 @@ class Categories extends DolibarrApi
     /**
      * Constructor
      */
-    function __construct()
+    public function __construct()
     {
-		global $db, $conf;
-		$this->db = $db;
+        global $db, $conf;
+        $this->db = $db;
         $this->category = new Categorie($this->db);
     }
 
@@ -67,25 +67,25 @@ class Categories extends DolibarrApi
      *
      * @param 	int 	$id ID of category
      * @return 	array|mixed data without useless information
-	 *
+     *
      * @throws 	RestException
      */
-    function get($id)
+    public function get($id)
     {
-		if(! DolibarrApiAccess::$user->rights->categorie->lire) {
-			throw new RestException(401);
-		}
+        if (! DolibarrApiAccess::$user->rights->categorie->lire) {
+            throw new RestException(401);
+        }
 
         $result = $this->category->fetch($id);
-        if( ! $result ) {
+        if ( ! $result ) {
             throw new RestException(404, 'category not found');
         }
 
-		if( ! DolibarrApi::_checkAccessToResource('category',$this->category->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
-		}
+        if ( ! DolibarrApi::_checkAccessToResource('category', $this->category->id)) {
+            throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+        }
 
-		return $this->_cleanObjectDatas($this->category);
+        return $this->_cleanObjectDatas($this->category);
     }
 
     /**
@@ -101,23 +101,24 @@ class Categories extends DolibarrApi
      * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
      * @return array                Array of category objects
      *
-	 * @throws RestException
+     * @throws RestException
      */
-    function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $type = '', $sqlfilters = '') {
+    public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $type = '', $sqlfilters = '')
+    {
         global $db, $conf;
 
         $obj_ret = array();
 
-         if(! DolibarrApiAccess::$user->rights->categorie->lire) {
-			throw new RestException(401);
-		}
+        if(! DolibarrApiAccess::$user->rights->categorie->lire) {
+            throw new RestException(401);
+        }
 
         $sql = "SELECT t.rowid";
         $sql.= " FROM ".MAIN_DB_PREFIX."categorie as t";
         $sql.= ' WHERE t.entity IN ('.getEntity('category').')';
         if (!empty($type))
         {
-            $sql.= ' AND t.type='.array_search($type,Categories::$TYPES);
+            $sql.= ' AND t.type='.array_search($type, Categories::$TYPES);
         }
         // Add sql filters
         if ($sqlfilters)
@@ -126,7 +127,7 @@ class Categories extends DolibarrApi
             {
                 throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
             }
-	        $regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+            $regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
             $sql.=" AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
         }
 
@@ -144,7 +145,7 @@ class Categories extends DolibarrApi
         $result = $db->query($sql);
         if ($result)
         {
-        	$i=0;
+            $i=0;
             $num = $db->num_rows($result);
             $min = min($num, ($limit <= 0 ? $num : $limit));
             while ($i < $min)
@@ -163,7 +164,7 @@ class Categories extends DolibarrApi
         if( ! count($obj_ret)) {
             throw new RestException(404, 'No category found');
         }
-		return $obj_ret;
+        return $obj_ret;
     }
 
     /**
@@ -172,11 +173,11 @@ class Categories extends DolibarrApi
      * @param array $request_data   Request data
      * @return int  ID of category
      */
-    function post($request_data = NULL)
+    public function post($request_data = null)
     {
         if(! DolibarrApiAccess::$user->rights->categorie->creer) {
-			throw new RestException(401);
-		}
+            throw new RestException(401);
+        }
 
         // Check mandatory fields
         $result = $this->_validate($request_data);
@@ -197,20 +198,20 @@ class Categories extends DolibarrApi
      * @param array $request_data   Datas
      * @return int
      */
-    function put($id, $request_data = NULL)
+    public function put($id, $request_data = null)
     {
         if(! DolibarrApiAccess::$user->rights->categorie->creer) {
-			throw new RestException(401);
-		}
+            throw new RestException(401);
+        }
 
         $result = $this->category->fetch($id);
         if( ! $result ) {
             throw new RestException(404, 'category not found');
         }
 
-		if( ! DolibarrApi::_checkAccessToResource('category',$this->category->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
-		}
+        if ( ! DolibarrApi::_checkAccessToResource('category', $this->category->id)) {
+            throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+        }
 
         foreach($request_data as $field => $value) {
             if ($field == 'id') continue;
@@ -219,11 +220,11 @@ class Categories extends DolibarrApi
 
         if ($this->category->update(DolibarrApiAccess::$user) > 0)
         {
-            return $this->get ($id);
+            return $this->get($id);
         }
         else
         {
-        	throw new RestException(500, $this->category->error);
+            throw new RestException(500, $this->category->error);
         }
     }
 
@@ -233,22 +234,22 @@ class Categories extends DolibarrApi
      * @param int $id   Category ID
      * @return array
      */
-    function delete($id)
+    public function delete($id)
     {
         if(! DolibarrApiAccess::$user->rights->categorie->supprimer) {
-			throw new RestException(401);
-		}
+            throw new RestException(401);
+        }
         $result = $this->category->fetch($id);
         if( ! $result ) {
             throw new RestException(404, 'category not found');
         }
 
-		if( ! DolibarrApi::_checkAccessToResource('category',$this->category->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
-		}
+        if ( ! DolibarrApi::_checkAccessToResource('category', $this->category->id)) {
+            throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+        }
 
         if (! $this->category->delete(DolibarrApiAccess::$user)) {
-            throw new RestException(401,'error when delete category');
+            throw new RestException(401, 'error when delete category');
         }
 
         return array(
@@ -260,14 +261,16 @@ class Categories extends DolibarrApi
     }
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
     /**
      * Clean sensible object datas
      *
      * @param   Categorie  $object    Object to clean
      * @return    array    Array of cleaned object properties
      */
-    function _cleanObjectDatas($object) {
-
+    protected function _cleanObjectDatas($object)
+    {
+        // phpcs:enable
         $object = parent::_cleanObjectDatas($object);
 
         // Remove fields not relevent to categories
@@ -322,7 +325,7 @@ class Categories extends DolibarrApi
      *
      * @throws RestException
      */
-    function _validate($data)
+    private function _validate($data)
     {
         $category = array();
         foreach (Categories::$FIELDS as $field) {

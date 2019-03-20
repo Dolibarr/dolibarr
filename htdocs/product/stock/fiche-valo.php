@@ -26,13 +26,12 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/stock.lib.php';
 
-$langs->load("products");
-$langs->load("stocks");
-$langs->load("companies");
+// Load translation files required by the page
+$langs->loadLangs(array('products', 'stocks', 'companies'));
 $mesg = '';
 
 // Security check
-$result=restrictedArea($user,'stock');
+$result=restrictedArea($user, 'stock');
 
 
 /*
@@ -42,7 +41,7 @@ $result=restrictedArea($user,'stock');
 $form=new Form($db);
 
 $help_url='EN:Module_Stocks_En|FR:Module_Stock|ES:M&oacute;dulo_Stocks';
-llxHeader("",$langs->trans("WarehouseCard"),$help_url);
+llxHeader("", $langs->trans("WarehouseCard"), $help_url);
 
 if ($_GET["id"])
 {
@@ -65,7 +64,7 @@ if ($_GET["id"])
 
 	// Ref
 	print '<tr><td width="25%">'.$langs->trans("Ref").'</td><td colspan="3">';
-	print $form->showrefnav($entrepot,'id','',1,'rowid','libelle');
+	print $form->showrefnav($entrepot, 'id', '', 1, 'rowid', 'libelle');
 	print '</td>';
 
 	print '<tr><td>'.$langs->trans("LocationSummary").'</td><td colspan="3">'.$entrepot->lieu.'</td></tr>';
@@ -110,7 +109,7 @@ if ($_GET["id"])
 	/* ************************************************************************** */
 
 	print "<div class=\"graph\">\n";
-	$year = strftime("%Y",time());
+	$year = strftime("%Y", time());
 
 	$file=$conf->stock->dir_temp.'/entrepot-'.$entrepot->id.'-'.($year).'.png';
 
@@ -141,5 +140,6 @@ if ($_GET["id"])
 	print "</div>";
 }
 
+// End of page
 llxFooter();
 $db->close();

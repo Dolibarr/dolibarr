@@ -28,13 +28,29 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
  */
 class Link extends CommonObject
 {
-    public $element = 'link';
-    public $table_element = 'links';
+    /**
+	 * @var string ID to identify managed object
+	 */
+	public $element = 'link';
 
-    public $entity;
+    /**
+	 * @var string Name of table without prefix where object is stored
+	 */
+	public $table_element = 'links';
+
+    /**
+	 * @var int Entity
+	 */
+	public $entity;
+
     public $datea;
     public $url;
+
+    /**
+     * @var string Links label
+     */
     public $label;
+
     public $objecttype;
     public $objectid;
 
@@ -46,11 +62,7 @@ class Link extends CommonObject
      */
     public function __construct($db)
     {
-        global $conf;
-
         $this->db = $db;
-
-        return 1;
     }
 
 
@@ -60,7 +72,7 @@ class Link extends CommonObject
      *    @param	User	$user       Object of user that ask creation
      *    @return   int         		>= 0 if OK, < 0 if KO
      */
-    public function create($user='')
+    public function create($user = '')
     {
         global $langs,$conf;
 
@@ -99,7 +111,7 @@ class Link extends CommonObject
 
             if ($this->id > 0) {
                 // Call trigger
-                $result=$this->call_trigger('LINK_CREATE',$user);
+                $result=$this->call_trigger('LINK_CREATE', $user);
                 if ($result < 0) $error++;
                 // End call triggers
             } else {
@@ -124,7 +136,7 @@ class Link extends CommonObject
             if ($this->db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS')
             {
 
-                $this->error=$langs->trans("ErrorCompanyNameAlreadyExists",$this->name);
+                $this->error=$langs->trans("ErrorCompanyNameAlreadyExists", $this->name);
                 $result=-1;
             }
             else
@@ -138,13 +150,13 @@ class Link extends CommonObject
     }
 
     /**
-     *      Update parameters of third party
+     *  Update parameters of third party
      *
-     *      @param  User	$user            			User executing update
-     *      @param  int		$call_trigger    			0=no, 1=yes
-     *      @return int  			           			<0 if KO, >=0 if OK
+     *  @param  User	$user            			User executing update
+     *  @param  int		$call_trigger    			0=no, 1=yes
+     *  @return int  			           			<0 if KO, >=0 if OK
      */
-    public function update($user='', $call_trigger=1)
+    public function update($user = '', $call_trigger = 1)
     {
         global $langs,$conf;
         require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
@@ -162,7 +174,7 @@ class Link extends CommonObject
         }
 
         // Clean parameters
-        $this->url       = clean_url($this->url,1);
+        $this->url       = clean_url($this->url, 1);
         if (empty($this->label)) $this->label = basename($this->url);
         $this->label     = trim($this->label);
 
@@ -185,7 +197,7 @@ class Link extends CommonObject
             if ($call_trigger)
             {
                 // Call trigger
-                $result=$this->call_trigger('LINK_MODIFY',$user);
+                $result=$this->call_trigger('LINK_MODIFY', $user);
                 if ($result < 0) $error++;
                 // End call triggers
             }
@@ -229,7 +241,7 @@ class Link extends CommonObject
      *  @param  string  $sortorder  sort order
      *  @return int                 1 if ok, 0 if no records, -1 if error
      **/
-    public function fetchAll(&$links, $objecttype, $objectid, $sortfield=null, $sortorder=null)
+    public function fetchAll(&$links, $objecttype, $objectid, $sortfield = null, $sortorder = null)
     {
         global $conf;
 
@@ -303,7 +315,7 @@ class Link extends CommonObject
      *  @param 	int		$rowid 		Id of link to load
      *  @return int 				1 if ok, 0 if no record found, -1 if error
      **/
-    public function fetch($rowid=null)
+    public function fetch($rowid = null)
     {
         global $conf;
 
@@ -353,7 +365,7 @@ class Link extends CommonObject
         $error = 0;
 
         // Call trigger
-        $result=$this->call_trigger('LINK_DELETE',$user);
+        $result=$this->call_trigger('LINK_DELETE', $user);
         if ($result < 0) return -1;
         // End call triggers
 
@@ -378,7 +390,5 @@ class Link extends CommonObject
             $this->db->rollback();
             return -1;
         }
-
     }
-
 }

@@ -1,9 +1,9 @@
 # Dolibarr language file - Source file is en_US - oauth
 ConfigOAuth=Konfiguracja Oauth
-OAuthServices=OAuth services
+OAuthServices=Usługi OAuth
 ManualTokenGeneration=Ręczne generowanie tokena
 TokenManager=Token manager
-IsTokenGenerated=Is token generated ?
+IsTokenGenerated=Czy wygenerowano token?
 NoAccessToken=Brak tokenu zapisanego w lokalnej bazie danych
 HasAccessToken=Token wygenerowano i zapisano w lokalnej bazie danych
 NewTokenStored=Token odebrany i zapisany
@@ -13,15 +13,15 @@ RequestAccess=Kliknij tutaj w celu wysłania zapotrzebowania/odnowienia dostępu
 DeleteAccess=Kliknuj tutaj, aby usunąć token
 UseTheFollowingUrlAsRedirectURI=Użyj następującego adresu URL jako Przekierowanie URI podczas tworzenia poświadczeń dostawcy OAuth:
 ListOfSupportedOauthProviders=Enter here credential provided by your OAuth2 provider. Only supported OAuth2 providers are visible here. This setup may be used by other modules that need OAuth2 authentication.
-OAuthSetupForLogin=Page to generate an OAuth token
+OAuthSetupForLogin=Strona do generowania tokena OAuth
 SeePreviousTab=See previous tab
 OAuthIDSecret=OAuth ID and Secret
 TOKEN_REFRESH=Reklamowe Odśwież Present
-TOKEN_EXPIRED=Token expired
+TOKEN_EXPIRED=Token wygasł
 TOKEN_EXPIRE_AT=Token wygaśnie za
 TOKEN_DELETE=Usuń zachowany token
-OAUTH_GOOGLE_NAME=Oauth Google service
-OAUTH_GOOGLE_ID=Oauth Google Id
+OAUTH_GOOGLE_NAME=Usługa Google OAuth
+OAUTH_GOOGLE_ID=ID OAuth Google
 OAUTH_GOOGLE_SECRET=Oauth Google Secret
 OAUTH_GOOGLE_DESC=Go on <a class="notasortlink" href="https://console.developers.google.com/" target="_blank">this page</a> then "Credentials" to create Oauth credentials
 OAUTH_GITHUB_NAME=Serwis Oauth GitHub

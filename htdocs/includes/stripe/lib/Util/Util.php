@@ -7,24 +7,26 @@ use Stripe\StripeObject;
 abstract class Util
 {
     private static $isMbstringAvailable = null;
+    private static $isHashEqualsAvailable = null;
 
     /**
      * Whether the provided array (or other) is a list rather than a dictionary.
+     * A list is defined as an array for which all the keys are consecutive
+     * integers starting at 0. Empty arrays are considered to be lists.
      *
      * @param array|mixed $array
-     * @return boolean True if the given object is a list.
+     * @return boolean true if the given object is a list.
      */
     public static function isList($array)
     {
         if (!is_array($array)) {
             return false;
         }
-
-      // TODO: generally incorrect, but it's correct given Stripe's response
-        foreach (array_keys($array) as $k) {
-            if (!is_numeric($k)) {
-                return false;
-            }
+        if ($array === []) {
+            return true;
+        }
+        if (array_keys($array) !== range(0, count($array) - 1)) {
+            return false;
         }
         return true;
     }
@@ -37,7 +39,7 @@ abstract class Util
      */
     public static function convertStripeObjectToArray($values)
     {
-        $results = array();
+        $results = [];
         foreach ($values as $k => $v) {
             // FIXME: this is an encapsulation violation
             if ($k[0] == '_') {
@@ -63,26 +65,34 @@ abstract class Util
      */
     public static function convertToStripeObject($resp, $opts)
     {
-        $types = array(
+        $types = [
+            // data structures
+            'list' => 'Stripe\\Collection',
+
+            // business objects
             'account' => 'Stripe\\Account',
             'alipay_account' => 'Stripe\\AlipayAccount',
             'apple_pay_domain' => 'Stripe\\ApplePayDomain',
-            'bank_account' => 'Stripe\\BankAccount',
+            'application_fee' => 'Stripe\\ApplicationFee',
+            'balance' => 'Stripe\\Balance',
             'balance_transaction' => 'Stripe\\BalanceTransaction',
+            'bank_account' => 'Stripe\\BankAccount',
+            'bitcoin_receiver' => 'Stripe\\BitcoinReceiver',
+            'bitcoin_transaction' => 'Stripe\\BitcoinTransaction',
             'card' => 'Stripe\\Card',
             'charge' => 'Stripe\\Charge',
             'country_spec' => 'Stripe\\CountrySpec',
             'coupon' => 'Stripe\\Coupon',
             'customer' => 'Stripe\\Customer',
             'dispute' => 'Stripe\\Dispute',
-            'list' => 'Stripe\\Collection',
+            'ephemeral_key' => 'Stripe\\EphemeralKey',
+            'event' => 'Stripe\\Event',
+            'exchange_rate' => 'Stripe\\ExchangeRate',
+            'fee_refund' => 'Stripe\\ApplicationFeeRefund',
+            'file_upload' => 'Stripe\\FileUpload',
             'invoice' => 'Stripe\\Invoice',
             'invoiceitem' => 'Stripe\\InvoiceItem',
-            'event' => 'Stripe\\Event',
-            'file' => 'Stripe\\FileUpload',
-            'token' => 'Stripe\\Token',
-            'transfer' => 'Stripe\\Transfer',
-            'transfer_reversal' => 'Stripe\\TransferReversal',
+            'login_link' => 'Stripe\\LoginLink',
             'order' => 'Stripe\\Order',
             'order_return' => 'Stripe\\OrderReturn',
             'payout' => 'Stripe\\Payout',
@@ -93,15 +103,17 @@ abstract class Util
             'refund' => 'Stripe\\Refund',
             'sku' => 'Stripe\\SKU',
             'source' => 'Stripe\\Source',
+            'source_transaction' => 'Stripe\\SourceTransaction',
             'subscription' => 'Stripe\\Subscription',
             'subscription_item' => 'Stripe\\SubscriptionItem',
             'three_d_secure' => 'Stripe\\ThreeDSecure',
-            'fee_refund' => 'Stripe\\ApplicationFeeRefund',
-            'bitcoin_receiver' => 'Stripe\\BitcoinReceiver',
-            'bitcoin_transaction' => 'Stripe\\BitcoinTransaction',
-        );
+            'token' => 'Stripe\\Token',
+            'topup' => 'Stripe\\Topup',
+            'transfer' => 'Stripe\\Transfer',
+            'transfer_reversal' => 'Stripe\\TransferReversal',
+        ];
         if (self::isList($resp)) {
-            $mapped = array();
+            $mapped = [];
             foreach ($resp as $i) {
                 array_push($mapped, self::convertToStripeObject($i, $opts));
             }
@@ -142,5 +154,85 @@ abstract class Util
         } else {
             return $value;
         }
+    }
+
+    /**
+     * Compares two strings for equality. The time taken is independent of the
+     * number of characters that match.
+     *
+     * @param string $a one of the strings to compare.
+     * @param string $b the other string to compare.
+     * @return bool true if the strings are equal, false otherwise.
+     */
+    public static function secureCompare($a, $b)
+    {
+        if (self::$isHashEqualsAvailable === null) {
+            self::$isHashEqualsAvailable = function_exists('hash_equals');
+        }
+
+        if (self::$isHashEqualsAvailable) {
+            return hash_equals($a, $b);
+        } else {
+            if (strlen($a) != strlen($b)) {
+                return false;
+            }
+
+            $result = 0;
+            for ($i = 0; $i < strlen($a); $i++) {
+                $result |= ord($a[$i]) ^ ord($b[$i]);
+            }
+            return ($result == 0);
+        }
+    }
+
+    /**
+     * @param array $arr A map of param keys to values.
+     * @param string|null $prefix
+     *
+     * @return string A querystring, essentially.
+     */
+    public static function urlEncode($arr, $prefix = null)
+    {
+        if (!is_array($arr)) {
+            return $arr;
+        }
+
+        $r = [];
+        foreach ($arr as $k => $v) {
+            if (is_null($v)) {
+                continue;
+            }
+
+            if ($prefix) {
+                if ($k !== null && (!is_int($k) || is_array($v))) {
+                    $k = $prefix."[".$k."]";
+                } else {
+                    $k = $prefix."[]";
+                }
+            }
+
+            if (is_array($v)) {
+                $enc = self::urlEncode($v, $k);
+                if ($enc) {
+                    $r[] = $enc;
+                }
+            } else {
+                $r[] = urlencode($k)."=".urlencode($v);
+            }
+        }
+
+        return implode("&", $r);
+    }
+
+    public static function normalizeId($id)
+    {
+        if (is_array($id)) {
+            $params = $id;
+            $id = $params['id'];
+            unset($params['id']);
+        } else {
+            $params = [];
+        }
+        return [$id, $params];
     }
 }

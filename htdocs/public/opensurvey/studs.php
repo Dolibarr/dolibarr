@@ -22,17 +22,17 @@
  *	\brief      Page to list surveys
  */
 
-define("NOLOGIN",1);		// This means this output page does not require to be logged.
-define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
-require_once('../../main.inc.php');
-require_once(DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/opensurvey/class/opensurveysondage.class.php");
-require_once(DOL_DOCUMENT_ROOT."/opensurvey/fonctions.php");
+define("NOLOGIN", 1);		// This means this output page does not require to be logged.
+define("NOCSRFCHECK", 1);	// We accept to go on this page from external web site.
+require '../../main.inc.php';
+require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
+require_once DOL_DOCUMENT_ROOT."/core/lib/files.lib.php";
+require_once DOL_DOCUMENT_ROOT."/opensurvey/class/opensurveysondage.class.php";
+require_once DOL_DOCUMENT_ROOT."/opensurvey/fonctions.php";
 
 
 // Init vars
-$action=GETPOST('action','aZ09');
+$action=GETPOST('action', 'aZ09');
 $numsondage = '';
 if (GETPOST('sondage'))
 {
@@ -40,7 +40,7 @@ if (GETPOST('sondage'))
 }
 
 $object=new Opensurveysondage($db);
-$result=$object->fetch(0,$numsondage);
+$result=$object->fetch(0, $numsondage);
 
 $nblignes=$object->fetch_lines();
 
@@ -48,7 +48,7 @@ $nblignes=$object->fetch_lines();
 $canbemodified = ((empty($object->date_fin) || $object->date_fin > dol_now()) && $object->status != Opensurveysondage::STATUS_CLOSED);
 
 // Security check
-if (empty($conf->opensurvey->enabled)) accessforbidden('',0,0,1);
+if (empty($conf->opensurvey->enabled)) accessforbidden('', 0, 0, 1);
 
 
 /*
@@ -57,31 +57,37 @@ if (empty($conf->opensurvey->enabled)) accessforbidden('',0,0,1);
 
 $nbcolonnes = substr_count($object->sujet, ',') + 1;
 
-$listofvoters=explode(',',$_SESSION["savevoter"]);
+$listofvoters=explode(',', $_SESSION["savevoter"]);
 
 // Add comment
-if (GETPOST('ajoutcomment','alpha'))
+if (GETPOST('ajoutcomment', 'alpha'))
 {
 	if (!$canbemodified) accessforbidden();
 
 	$error=0;
 
-	if (! GETPOST('comment','none'))
+	$comment = GETPOST("comment", 'none');
+	$comment_user = GETPOST('commentuser', 'nohtml');
+
+	if (! $comment)
 	{
 		$error++;
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Comment")), null, 'errors');
 	}
-	if (! GETPOST('commentuser','nohtml'))
+	if (! $comment_user)
 	{
 		$error++;
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("User")), null, 'errors');
 	}
 
+	if (! in_array($comment_user, $listofvoters))
+	{
+		setEventMessages($langs->trans("UserMustBeSameThanUserUsedToVote"), null, 'errors');
+		$error++;
+	}
+
 	if (! $error)
 	{
-		$comment = GETPOST("comment",'none');
-		$comment_user = GETPOST('commentuser','nohtml');
-
 		$resql = $object->addComment($comment, $comment_user);
 
 		if (! $resql) dol_print_error($db);
@@ -89,12 +95,12 @@ if (GETPOST('ajoutcomment','alpha'))
 }
 
 // Add vote
-if (GETPOST("boutonp") || GETPOST("boutonp.x") || GETPOST("boutonp_x"))		// boutonp for chrom, boutonp_x for firefox
+if (GETPOST("boutonp") || GETPOST("boutonp.x") || GETPOST("boutonp_x"))		// boutonp for chrome, boutonp_x for firefox
 {
 	if (!$canbemodified) accessforbidden();
 
 	//Si le nom est bien entré
-	if (GETPOST('nom','nohtml'))
+	if (GETPOST('nom', 'nohtml'))
 	{
 		$nouveauchoix = '';
 		for ($i=0;$i<$nbcolonnes;$i++)
@@ -103,7 +109,7 @@ if (GETPOST("boutonp") || GETPOST("boutonp.x") || GETPOST("boutonp_x"))		// bout
 			{
 				$nouveauchoix.="1";
 			}
-			else if (isset($_POST["choix$i"]) && $_POST["choix$i"] == '2')
+			elseif (isset($_POST["choix$i"]) && $_POST["choix$i"] == '2')
 			{
 				$nouveauchoix.="2";
 			}
@@ -112,7 +118,7 @@ if (GETPOST("boutonp") || GETPOST("boutonp.x") || GETPOST("boutonp_x"))		// bout
 			}
 		}
 
-		$nom=substr(GETPOST("nom",'nohtml'),0,64);
+		$nom=substr(GETPOST("nom", 'nohtml'), 0, 64);
 
 		// Check if vote already exists
 		$sql = 'SELECT id_users, nom as name';
@@ -137,7 +143,7 @@ if (GETPOST("boutonp") || GETPOST("boutonp.x") || GETPOST("boutonp_x"))		// bout
 			{
 				// Add voter to session
 				$_SESSION["savevoter"]=$nom.','.(empty($_SESSION["savevoter"])?'':$_SESSION["savevoter"]);	// Save voter
-				$listofvoters=explode(',',$_SESSION["savevoter"]);
+				$listofvoters=explode(',', $_SESSION["savevoter"]);
 
 				if ($object->mailsonde)
 				{
@@ -154,9 +160,12 @@ if (GETPOST("boutonp") || GETPOST("boutonp.x") || GETPOST("boutonp_x"))		// bout
 					if ($email) {
 						include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 
-						$body = $langs->trans('EmailSomeoneVoted', $nom, getUrlSondage($numsondage, true));
+						$application = ($conf->global->MAIN_APPLICATION_TITLE ? $conf->global->MAIN_APPLICATION_TITLE : 'Dolibarr ERP/CRM');
 
-						$cmailfile=new CMailFile("[".MAIN_APPLICATION_TITLE."] ".$langs->trans("Poll").': '.$object->titre, $email, $conf->global->MAIN_MAIL_EMAIL_FROM, $body);
+						$body = str_replace('\n', '<br>', $langs->transnoentities('EmailSomeoneVoted', $nom, getUrlSondage($numsondage, true)));
+						//var_dump($body);exit;
+
+						$cmailfile=new CMailFile("[".$application."] ".$langs->trans("Poll").': '.$object->titre, $email, $conf->global->MAIN_MAIL_EMAIL_FROM, $body, null, null, null, '', '', 0, -1);
 						$result=$cmailfile->sendfile();
 					}
 				}
@@ -202,7 +211,7 @@ if ($testmodifier)
 		{
 			$nouveauchoix.="1";
 		}
-		else if (isset($_POST["choix".$i]) && $_POST["choix".$i] == '2')
+		elseif (isset($_POST["choix".$i]) && $_POST["choix".$i] == '2')
 		{
 			$nouveauchoix.="2";
 		}
@@ -223,7 +232,7 @@ if ($testmodifier)
 }
 
 // Delete comment
-$idcomment=GETPOST('deletecomment','int');
+$idcomment=GETPOST('deletecomment', 'int');
 if ($idcomment)
 {
 	if (!$canbemodified) accessforbidden();
@@ -255,14 +264,14 @@ if (empty($object->ref))     // For survey, id is a hex string
 }
 
 // Define format of choices
-$toutsujet=explode(",",$object->sujet);
+$toutsujet=explode(",", $object->sujet);
 $listofanswers=array();
 foreach ($toutsujet as $value)
 {
-	$tmp=explode('@',$value);
+	$tmp=explode('@', $value);
 	$listofanswers[]=array('label'=>$tmp[0],'format'=>($tmp[1]?$tmp[1]:'checkbox'));
 }
-$toutsujet=str_replace("°","'",$toutsujet);
+$toutsujet=str_replace("°", "'", $toutsujet);
 
 
 print '<div class="survey_invitation">'.$langs->trans("YouAreInivitedToVote").'</div>';
@@ -271,7 +280,7 @@ print $langs->trans("OpenSurveyHowTo").'<br><br>';
 print '<div class="corps"> '."\n";
 
 //affichage du titre du sondage
-$titre=str_replace("\\","",$object->titre);
+$titre=str_replace("\\", "", $object->titre);
 print '<strong>'.dol_htmlentities($titre).'</strong><br><br>'."\n";
 
 //affichage des commentaires du sondage
@@ -358,7 +367,7 @@ if ($object->format=="D")
 		} else {
 			$next = intval($toutsujet[$i+1]);
 		}
-		if ($next && dol_print_date($cur, "%a %e") == dol_print_date($next,"%a %e") && dol_print_date($cur, "%B") == dol_print_date($next, "%B")) {
+		if ($next && dol_print_date($cur, "%a %e") == dol_print_date($next, "%a %e") && dol_print_date($cur, "%B") == dol_print_date($next, "%B")) {
 			$colspan++;
 		} else {
 			print '<td colspan="'.$colspan.'" class="jour">'.dol_print_date($cur, "%a %e").'</td>'."\n";
@@ -374,7 +383,7 @@ if ($object->format=="D")
 		print '<td></td>'."\n";
 
 		for ($i=0; isset($toutsujet[$i]); $i++) {
-			$heures=explode('@',$toutsujet[$i]);
+			$heures=explode('@', $toutsujet[$i]);
 			if (isset($heures[1])) {
 				print '<td class="heure">'.dol_htmlentities($heures[1]).'</td>'."\n";
 			} else {
@@ -393,7 +402,7 @@ else
 
 	for ($i=0; isset($toutsujet[$i]); $i++)
 	{
-		$tmp=explode('@',$toutsujet[$i]);
+		$tmp=explode('@', $toutsujet[$i]);
 		print '<td class="sujet">'.$tmp[0].'</td>'."\n";
 	}
 
@@ -442,7 +451,7 @@ while ($compteur < $num)
 			$car = substr($ensemblereponses, $i, 1);
 			//print 'xx'.$i."-".$car.'-'.$listofanswers[$i]['format'].'zz';
 
-			if (empty($listofanswers[$i]['format']) || ! in_array($listofanswers[$i]['format'],array('yesno','foragainst')))
+			if (empty($listofanswers[$i]['format']) || ! in_array($listofanswers[$i]['format'], array('yesno','foragainst')))
 			{
 				if (((string) $car) == "1") print '<td class="ok">OK</td>'."\n";
 				else print '<td class="non">KO</td>'."\n";
@@ -453,7 +462,7 @@ while ($compteur < $num)
 			if (! empty($listofanswers[$i]['format']) && $listofanswers[$i]['format'] == 'yesno')
 			{
 				if (((string) $car) == "1") print '<td class="ok">'.$langs->trans("Yes").'</td>'."\n";
-				else if (((string) $car) == "0") print '<td class="non">'.$langs->trans("No").'</td>'."\n";
+				elseif (((string) $car) == "0") print '<td class="non">'.$langs->trans("No").'</td>'."\n";
 				else print '<td class="vide">&nbsp;</td>'."\n";
 				// Total
 				if (! isset($sumfor[$i])) $sumfor[$i] = 0;
@@ -464,7 +473,7 @@ while ($compteur < $num)
 			if (! empty($listofanswers[$i]['format']) && $listofanswers[$i]['format'] == 'foragainst')
 			{
 				if (((string) $car) == "1") print '<td class="ok">'.$langs->trans("For").'</td>'."\n";
-				else if (((string) $car) == "0") print '<td class="non">'.$langs->trans("Against").'</td>'."\n";
+				elseif (((string) $car) == "0") print '<td class="non">'.$langs->trans("Against").'</td>'."\n";
 				else print '<td class="vide">&nbsp;</td>'."\n";
 				// Total
 				if (! isset($sumfor[$i])) $sumfor[$i] = 0;
@@ -483,7 +492,7 @@ while ($compteur < $num)
 			{
 				$car = substr($ensemblereponses, $i, 1);
 				print '<td class="vide">';
-				if (empty($listofanswers[$i]['format']) || ! in_array($listofanswers[$i]['format'],array('yesno','foragainst')))
+				if (empty($listofanswers[$i]['format']) || ! in_array($listofanswers[$i]['format'], array('yesno','foragainst')))
 				{
 					print '<input type="checkbox" name="choix'.$i.'" value="1" ';
 					if ($car == '1') print 'checked';
@@ -507,7 +516,7 @@ while ($compteur < $num)
 			for ($i = 0; $i < $nbcolonnes; $i++)
 			{
 				$car = substr($ensemblereponses, $i, 1);
-				if (empty($listofanswers[$i]['format']) || ! in_array($listofanswers[$i]['format'],array('yesno','foragainst')))
+				if (empty($listofanswers[$i]['format']) || ! in_array($listofanswers[$i]['format'], array('yesno','foragainst')))
 				{
 					if (((string) $car) == "1") print '<td class="ok">OK</td>'."\n";
 					else print '<td class="non">KO</td>'."\n";
@@ -518,7 +527,7 @@ while ($compteur < $num)
 				if (! empty($listofanswers[$i]['format']) && $listofanswers[$i]['format'] == 'yesno')
 				{
 					if (((string) $car) == "1") print '<td class="ok">'.$langs->trans("For").'</td>'."\n";
-					else if (((string) $car) == "0") print '<td class="non">'.$langs->trans("Against").'</td>'."\n";
+					elseif (((string) $car) == "0") print '<td class="non">'.$langs->trans("Against").'</td>'."\n";
 					else print '<td class="vide">&nbsp;</td>'."\n";
 					// Total
 					if (! isset($sumfor[$i])) $sumfor[$i] = 0;
@@ -529,7 +538,7 @@ while ($compteur < $num)
 				if (! empty($listofanswers[$i]['format']) && $listofanswers[$i]['format'] == 'foragainst')
 				{
 					if (((string) $car) == "1") print '<td class="ok">'.$langs->trans("For").'</td>'."\n";
-					else if (((string) $car) == "0") print '<td class="non">'.$langs->trans("Against").'</td>'."\n";
+					elseif (((string) $car) == "0") print '<td class="non">'.$langs->trans("Against").'</td>'."\n";
 					else print '<td class="vide">&nbsp;</td>'."\n";
 					// Total
 					if (! isset($sumfor[$i])) $sumfor[$i] = 0;
@@ -583,7 +592,7 @@ if ($ligneamodifier < 0 && (! isset($_SESSION['nom'])))
 	for ($i=0;$i<$nbcolonnes;$i++)
 	{
 		print '<td class="vide">';
-		if (empty($listofanswers[$i]['format']) || ! in_array($listofanswers[$i]['format'],array('yesno','foragainst')))
+		if (empty($listofanswers[$i]['format']) || ! in_array($listofanswers[$i]['format'], array('yesno','foragainst')))
 		{
 			print '<input type="checkbox" name="choix'.$i.'" value="1"';
 			if (isset($_POST['choix'.$i]) && $_POST['choix'.$i] == '1')
@@ -606,7 +615,7 @@ if ($ligneamodifier < 0 && (! isset($_SESSION['nom'])))
 	}
 
 	// Affichage du bouton de formulaire pour inscrire un nouvel utilisateur dans la base
-	print '<td><input type="image" name="boutonp" value="'.$langs->trans("Vote").'" src="'.dol_buildpath('/opensurvey/img/add-24.png',1).'"></td>'."\n";
+	print '<td><input type="image" name="boutonp" value="'.$langs->trans("Vote").'" src="'.dol_buildpath('/opensurvey/img/add-24.png', 1).'"></td>'."\n";
 	print '</tr>'."\n";
 }
 
@@ -614,7 +623,7 @@ if ($ligneamodifier < 0 && (! isset($_SESSION['nom'])))
 $nbofcheckbox=0;
 for ($i=0; $i < $nbcolonnes; $i++)
 {
-	if (empty($listofanswers[$i]['format']) || ! in_array($listofanswers[$i]['format'],array('yesno','foragainst')))
+	if (empty($listofanswers[$i]['format']) || ! in_array($listofanswers[$i]['format'], array('yesno','foragainst')))
 	$nbofcheckbox++;
 	if (isset($sumfor[$i]))
 	{
@@ -641,7 +650,7 @@ if ($object->allow_spy) {
 		if (empty($showsumagainst)) $showsumagainst = 0;
 
 		print '<td>';
-		if (empty($listofanswers[$i]['format']) || ! in_array($listofanswers[$i]['format'],array('yesno','foragainst'))) print $showsumfor;
+		if (empty($listofanswers[$i]['format']) || ! in_array($listofanswers[$i]['format'], array('yesno','foragainst'))) print $showsumfor;
 		if (! empty($listofanswers[$i]['format']) && $listofanswers[$i]['format'] == 'yesno') print $langs->trans("Yes").': '.$showsumfor.'<br>'.$langs->trans("No").': '.$showsumagainst;
 		if (! empty($listofanswers[$i]['format']) && $listofanswers[$i]['format'] == 'foragainst') print $langs->trans("For").': '.$showsumfor.'<br>'.$langs->trans("Against").': '.$showsumagainst;
 		print '</td>'."\n";
@@ -655,9 +664,9 @@ if ($object->allow_spy) {
 		for ($i=0; $i < $nbcolonnes; $i++)
 		{
 			//print 'xx'.(! empty($listofanswers[$i]['format'])).'-'.$sumfor[$i].'-'.$meilleurecolonne;
-			if (empty($listofanswers[$i]['format']) || ! in_array($listofanswers[$i]['format'],array('yesno','foragainst')) && isset($sumfor[$i]) && isset($meilleurecolonne) && $sumfor[$i] == $meilleurecolonne)
+			if (empty($listofanswers[$i]['format']) || ! in_array($listofanswers[$i]['format'], array('yesno','foragainst')) && isset($sumfor[$i]) && isset($meilleurecolonne) && $sumfor[$i] == $meilleurecolonne)
 			{
-				print '<td class="somme"><img src="'.dol_buildpath('/opensurvey/img/medaille.png',1).'"></td>'."\n";
+				print '<td class="somme"><img src="'.dol_buildpath('/opensurvey/img/medaille.png', 1).'"></td>'."\n";
 			} else {
 				print '<td class="somme"></td>'."\n";
 			}
@@ -669,8 +678,8 @@ print '</table>'."\n";
 print '</div>'."\n";
 
 if ($object->allow_spy) {
-	$toutsujet=explode(",",$object->sujet);
-	$toutsujet=str_replace("°","'",$toutsujet);
+	$toutsujet=explode(",", $object->sujet);
+	$toutsujet=str_replace("°", "'", $toutsujet);
 
 	$compteursujet=0;
 	$meilleursujet = '';
@@ -683,14 +692,14 @@ if ($object->allow_spy) {
 
 				if (strpos($toutsujet[$i], '@') !== false) {
 					$toutsujetdate = explode("@", $toutsujet[$i]);
-					$meilleursujet .= dol_print_date($toutsujetdate[0],'daytext'). ' ('.dol_print_date($toutsujetdate[0],'%A').')' . ' - ' . $toutsujetdate[1];
+					$meilleursujet .= dol_print_date($toutsujetdate[0], 'daytext'). ' ('.dol_print_date($toutsujetdate[0], '%A').')' . ' - ' . $toutsujetdate[1];
 				} else {
-					$meilleursujet .= dol_print_date($toutsujet[$i],'daytext'). ' ('.dol_print_date($toutsujet[$i],'%A').')';
+					$meilleursujet .= dol_print_date($toutsujet[$i], 'daytext'). ' ('.dol_print_date($toutsujet[$i], '%A').')';
 				}
 			}
 			else
 			{
-				$tmps=explode('@',$toutsujet[$i]);
+				$tmps=explode('@', $toutsujet[$i]);
 				$meilleursujet .= dol_htmlentities($tmps[0]);
 			}
 
@@ -709,9 +718,9 @@ if ($object->allow_spy) {
 		print '<p class="affichageresultats">'."\n";
 
 		if (isset($meilleurecolonne) && $compteursujet == "1") {
-			print '<img src="'.dol_buildpath('/opensurvey/img/medaille.png',1).'"> ' . $langs->trans('TheBestChoice') . ": <b>".$meilleursujet."</b> " . $langs->trans('with') . " <b>$meilleurecolonne </b>" . $vote_str . ".\n";
+			print '<img src="'.dol_buildpath('/opensurvey/img/medaille.png', 1).'"> ' . $langs->trans('TheBestChoice') . ": <b>".$meilleursujet."</b> " . $langs->trans('with') . " <b>$meilleurecolonne </b>" . $vote_str . ".\n";
 		} elseif (isset($meilleurecolonne)) {
-			print '<img src="'.dol_buildpath('/opensurvey/img/medaille.png',1).'"> ' . $langs->trans('TheBestChoices')  . ": <b>".$meilleursujet."</b> " . $langs->trans('with') . "  <b>$meilleurecolonne </b>" . $vote_str . ".\n";
+			print '<img src="'.dol_buildpath('/opensurvey/img/medaille.png', 1).'"> ' . $langs->trans('TheBestChoices')  . ": <b>".$meilleursujet."</b> " . $langs->trans('with') . "  <b>$meilleurecolonne </b>" . $vote_str . ".\n";
 		}
 
 		print '</p><br>'."\n";
@@ -729,8 +738,12 @@ if ($comments)
 	print "<br><b>" . $langs->trans("CommentsOfVoters") . ":</b><br>\n";
 
 	foreach ($comments as $obj) {
+		// ligne d'un usager pré-authentifié
+		//$mod_ok = (in_array($obj->name, $listofvoters));
+
 		print '<div class="comment"><span class="usercomment">';
-		if (in_array($obj->usercomment, $listofvoters)) print '<a href="'.$_SERVER["PHP_SELF"].'?deletecomment='.$obj->id_comment.'&sondage='.$numsondage.'"> '.img_picto('', 'delete.png').'</a> ';
+		if (in_array($obj->usercomment, $listofvoters)) print '<a href="'.$_SERVER["PHP_SELF"].'?deletecomment='.$obj->id_comment.'&sondage='.$numsondage.'"> '.img_picto('', 'delete.png', '', false, 0, 0, '', 'nomarginleft').'</a> ';
+		//else print img_picto('', 'ellipsis-h', '', false, 0, 0, '', 'nomarginleft').' ';
 		print dol_htmlentities($obj->usercomment).':</span> <span class="comment">'.dol_nl2br(dol_htmlentities($obj->comment))."</span></div>";
 	}
 }
@@ -739,9 +752,9 @@ if ($comments)
 if ($object->allow_comments) {
 	print '<div class="addcomment">' .$langs->trans("AddACommentForPoll") . "<br>\n";
 
-	print '<textarea name="comment" rows="'.ROWS_2.'" class="quatrevingtpercent">'.dol_escape_htmltag(GETPOST('comment','none')).'</textarea><br>'."\n";
+	print '<textarea name="comment" rows="'.ROWS_2.'" class="quatrevingtpercent">'.dol_escape_htmltag(GETPOST('comment', 'none'), 0, 1).'</textarea><br>'."\n";
 	print $langs->trans("Name") .': ';
-	print '<input type="text" name="commentuser" maxlength="64" value="'.GETPOST('commentuser','nohtml').'"> &nbsp; '."\n";
+	print '<input type="text" name="commentuser" maxlength="64" value="'.GETPOST('commentuser', 'nohtml').'"> &nbsp; '."\n";
 	print '<input type="submit" class="button" name="ajoutcomment" value="'.dol_escape_htmltag($langs->trans("AddComment")).'"><br>'."\n";
 	print '</form>'."\n";
 

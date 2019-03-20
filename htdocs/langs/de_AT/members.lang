@@ -19,6 +19,4 @@ Physical=Physisch
 Moral=Rechtlich
 MorPhy=Physisch/Rechtlich
 Filehtpasswd=htpasswd-Datei
-DescADHERENT_MAIL_RESIL_SUBJECT=E-Mail-Betreff für Zurückstellen eines Mitglieds
-DescADHERENT_MAIL_RESIL=E-Mail-Text für Zurückstellen eines Mitglieds
 HTPasswordExport=htpassword-Dateierstellung

@@ -45,7 +45,7 @@ function DoResponse()
     if (!isset($_GET)) {
         global $_GET;
     }
-	if ( !isset( $_GET['Command'] ) || !isset( $_GET['Type'] ) || !isset( $_GET['CurrentFolder'] ) )
+	if ( !isset($_GET['Command']) || !isset($_GET['Type']) || !isset($_GET['CurrentFolder']) )
 		return;
 
 	// Get the main request informaiton.

@@ -15,3 +15,4 @@ THMDescription=Ova vrednost može biti korišćena za procenu cene vremena prove
 TJMDescription=Ova vrednost se trenutno koristi samo informativno i ne uzima se u obzir ni za koji obračun.
 LastSalaries=Latest %s salary payments
 AllSalaries=All salary payments
+SalariesStatistics=Statistiques salaires

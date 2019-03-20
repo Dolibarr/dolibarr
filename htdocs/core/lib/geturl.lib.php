@@ -31,7 +31,7 @@
  * @param	string[]  $addheaders			Array of string to add into header. Example: ('Accept: application/xrds+xml', ....)
  * @return	array						    Returns an associative array containing the response from the server array('content'=>response,'curl_error_no'=>errno,'curl_error_msg'=>errmsg...)
  */
-function getURLContent($url,$postorget='GET',$param='',$followlocation=1,$addheaders=array())
+function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 1, $addheaders = array())
 {
     //declaring of global variables
     global $conf, $langs;
@@ -65,20 +65,25 @@ function getURLContent($url,$postorget='GET',$param='',$followlocation=1,$addhea
 	//curl_setopt($ch, CURLOPT_SSLVERSION, 6); for tls 1.2
 
     //turning off the server and peer verification(TrustManager Concept).
-    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
-    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, FALSE);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
 
     curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, empty($conf->global->MAIN_USE_CONNECT_TIMEOUT)?5:$conf->global->MAIN_USE_CONNECT_TIMEOUT);
     curl_setopt($ch, CURLOPT_TIMEOUT, empty($conf->global->MAIN_USE_RESPONSE_TIMEOUT)?30:$conf->global->MAIN_USE_RESPONSE_TIMEOUT);
 
     //curl_setopt($ch, CURLOPT_SAFE_UPLOAD, true);	// PHP 5.5
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER,1);		// We want response
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);		// We want response
     if ($postorget == 'POST')
     {
     	curl_setopt($ch, CURLOPT_POST, 1);	// POST
     	curl_setopt($ch, CURLOPT_POSTFIELDS, $param);	// Setting param x=a&y=z as POST fields
     }
-    else if ($postorget == 'PUT')
+    elseif ($postorget == 'POSTALREADYFORMATED')
+    {
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST'); // HTTP request is 'POST' but param string is taken as it is
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $param);	// param = content of post, like a xml string
+    }
+    elseif ($postorget == 'PUT')
     {
     	curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT'); // HTTP request is 'PUT'
     	if (! is_array($param)) parse_str($param, $array_param);
@@ -89,17 +94,17 @@ function getURLContent($url,$postorget='GET',$param='',$followlocation=1,$addhea
     	}
     	curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($array_param));	// Setting param x=a&y=z as PUT fields
     }
-    else if ($postorget == 'PUTALREADYFORMATED')
+    elseif ($postorget == 'PUTALREADYFORMATED')
     {
     	curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT'); // HTTP request is 'PUT'
     	curl_setopt($ch, CURLOPT_POSTFIELDS, $param);	// param = content of post, like a xml string
     }
-    else if ($postorget == 'HEAD')
+    elseif ($postorget == 'HEAD')
     {
     	curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'HEAD'); // HTTP request is 'HEAD'
     	curl_setopt($ch, CURLOPT_NOBODY, true);
     }
-    else if ($postorget == 'DELETE')
+    elseif ($postorget == 'DELETE')
     {
     	curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'DELETE');	// POST
     }
@@ -136,7 +141,7 @@ function getURLContent($url,$postorget='GET',$param='',$followlocation=1,$addhea
 		$rep['curl_error_no']=curl_errno($ch);
         $rep['curl_error_msg']=curl_error($ch);
 
-		dol_syslog("getURLContent response array is ".join(',',$rep));
+		dol_syslog("getURLContent response array is ".join(',', $rep));
     }
     else
     {
@@ -208,4 +213,3 @@ function removeHtmlComment($content)
 	$content = preg_replace('/<!--[^\-]+-->/', '', $content);
 	return $content;
 }
-

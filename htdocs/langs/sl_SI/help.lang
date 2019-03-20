@@ -5,9 +5,9 @@ RemoteControlSupport=Direktna Online podpora na daljavo v realnem času
 OtherSupport=Ostale podpore
 ToSeeListOfAvailableRessources=Za kontakt/ogled virov, ki so na voljo:
 HelpCenter=Center za pomoč
-DolibarrHelpCenter=Dolibarr center za pomoč in podporo
-ToGoBackToDolibarr=Sicer kliknite <a href="%s">tukaj za vstop v Dolibarr</a>
-TypeOfSupport=Vir za podporo
+DolibarrHelpCenter=Dolibarr Help and Support Center
+ToGoBackToDolibarr=Otherwise, <a href="%s">click here to continue to use Dolibarr</a>.
+TypeOfSupport=Type of support
 TypeSupportCommunauty=Skupnost (brezplačno)
 TypeSupportCommercial=Komercialni
 TypeOfHelp=Tip
@@ -15,12 +15,9 @@ NeedHelpCenter=Need help or support?
 Efficiency=Učinkovitost
 TypeHelpOnly=Samo pomoč
 TypeHelpDev=Pomoč+razvoj
-TypeHelpDevForm=Pomoč+razvoj+oblikovanje
-ToGetHelpGoOnSparkAngels1=Nekatera podjetja lahko zagotovijo hitro (včasih takojšnjo) in učinkovitejšo online podporo z direktnim dostopom do vašega računalnika. Take pomočnike lahko najdete na <b>%s</b> spletni strani:
-ToGetHelpGoOnSparkAngels3=Lahko si ogledate tudi seznam vseh Dolibarr inštruktorjev, ki so na voljo; kliknite na gumb
-ToGetHelpGoOnSparkAngels2=Včasih v trenutku vašega iskanja ni na voljo nobenega podjetja, zato lahko spremenite filter na "all availability". Tako boste lahko poslali več zahtevkov.
-BackToHelpCenter=Sicer kliknite <a href="%s">tukaj za prehod nazaj na domačo stran za pomoč</a>.
-LinkToGoldMember=Lahko pokličete enega of inštruktorjev, ki jih je Dolibarr izbral vnaprej za vaš jezik (%s) s kliko na ustrezno ikono (status in maksimalna cena se posodobita avtomatsko):
+TypeHelpDevForm=Help+Development+Training
+BackToHelpCenter=Otherwise, <a href="%s">go back to Help center home page</a>.
+LinkToGoldMember=You can call one of the trainers preselected by Dolibarr for your language (%s) by clicking their Widget (status and maximum price are automatically updated):
 PossibleLanguages=Podprti jeziki
-SubscribeToFoundation=POmagajte projektu Dolibarr z včlanitvijo v združenje
+SubscribeToFoundation=Help the Dolibarr project, subscribe to the foundation
 SeeOfficalSupport=Za uradno Dolibarr podporo v vašem jeziku: <br><b><a href="%s" target="_blank">%s</a></b>

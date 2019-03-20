@@ -37,7 +37,7 @@ class DolibarrApi
     /**
      * @var Restler     $r	Restler object
      */
-    var $r;
+    public $r;
 
     /**
      * Constructor
@@ -46,7 +46,7 @@ class DolibarrApi
      * @param   string  $cachedir       Cache dir
      * @param   boolean $refreshCache   Update cache
      */
-    function __construct($db, $cachedir='', $refreshCache=false)
+    public function __construct($db, $cachedir = '', $refreshCache = false)
     {
         global $conf, $dolibarr_main_url_root;
 
@@ -57,14 +57,16 @@ class DolibarrApi
         $production_mode = ( empty($conf->global->API_PRODUCTION_MODE) ? false : true );
         $this->r = new Restler($production_mode, $refreshCache);
 
-        $urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
+        $urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
         $urlwithroot=$urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
 
-        $urlwithouturlrootautodetect=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim(DOL_MAIN_URL_ROOT));
+        $urlwithouturlrootautodetect=preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim(DOL_MAIN_URL_ROOT));
         $urlwithrootautodetect=$urlwithouturlroot.DOL_URL_ROOT; // This is to use local domain autodetected by dolibarr from url
 
         $this->r->setBaseUrls($urlwithouturlroot, $urlwithouturlrootautodetect);
         $this->r->setAPIVersion(1);
+        //$this->r->setSupportedFormats('json');
+        //$this->r->setSupportedFormats('jsonFormat');
     }
 
     /**
@@ -85,17 +87,19 @@ class DolibarrApi
         );
     }*/
 
-
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
     /**
      * Clean sensible object datas
      *
      * @param   object  $object	Object to clean
      * @return	array	Array of cleaned object properties
      */
-    function _cleanObjectDatas($object) {
-
+    protected function _cleanObjectDatas($object)
+    {
+        // phpcs:enable
         // Remove $db object property for object
         unset($object->db);
+        unset($object->isextrafieldmanaged);
 		unset($object->ismultientitymanaged);
 		unset($object->restrictiononfksoc);
 
@@ -140,7 +144,6 @@ class DolibarrApi
         unset($object->class_element_line);
         unset($object->picto);
 
-        unset($object->facturee);		// Replace with billed
         unset($object->fieldsforcombobox);
 		unset($object->comments);
 
@@ -205,6 +208,7 @@ class DolibarrApi
 		return $object;
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 * Check user access to a resource
 	 *
@@ -216,16 +220,18 @@ class DolibarrApi
 	 * @param string	$feature2		Feature to check, second level of permission (optional). Can be or check with 'level1|level2'.
 	 * @param string	$dbt_keyfield   Field name for socid foreign key if not fk_soc. Not used if objectid is null (optional)
 	 * @param string	$dbt_select     Field name for select if not rowid. Not used if objectid is null (optional)
+     * @return bool
 	 * @throws RestException
 	 */
-	static function _checkAccessToResource($resource, $resource_id=0, $dbtablename='', $feature2='', $dbt_keyfield='fk_soc', $dbt_select='rowid') {
-
+    protected static function _checkAccessToResource($resource, $resource_id = 0, $dbtablename = '', $feature2 = '', $dbt_keyfield = 'fk_soc', $dbt_select = 'rowid')
+    {
+        // phpcs:enable
 		// Features/modules to check
 		$featuresarray = array($resource);
 		if (preg_match('/&/', $resource)) {
 			$featuresarray = explode("&", $resource);
 		}
-		else if (preg_match('/\|/', $resource)) {
+		elseif (preg_match('/\|/', $resource)) {
 			$featuresarray = explode("|", $resource);
 		}
 
@@ -235,21 +241,23 @@ class DolibarrApi
 		}
 
 		return checkUserAccessToObject(DolibarrApiAccess::$user, $featuresarray, $resource_id, $dbtablename, $feature2, $dbt_keyfield, $dbt_select);
-	}
+    }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 * Return if a $sqlfilters parameter is valid
 	 *
 	 * @param  string   $sqlfilters     sqlfilter string
 	 * @return boolean                  True if valid, False if not valid
 	 */
-	function _checkFilters($sqlfilters)
+	protected function _checkFilters($sqlfilters)
 	{
+        // phpcs:enable
 	    //$regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
 	    //$tmp=preg_replace_all('/'.$regexstring.'/', '', $sqlfilters);
 	    $tmp=$sqlfilters;
 	    $ok=0;
-	    $i=0; $nb=count($tmp);
+	    $i=0; $nb=strlen($tmp);
 	    $counter=0;
 	    while ($i < $nb)
 	    {
@@ -266,19 +274,22 @@ class DolibarrApi
 	    return true;
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 * Function to forge a SQL criteria
 	 *
 	 * @param  array    $matches       Array of found string by regex search
 	 * @return string                  Forged criteria. Example: "t.field like 'abc%'"
 	 */
-	static function _forge_criteria_callback($matches)
+	protected static function _forge_criteria_callback($matches)
 	{
+        // phpcs:enable
 	    global $db;
 
 	    //dol_syslog("Convert matches ".$matches[1]);
 	    if (empty($matches[1])) return '';
-	    $tmp=explode(':',$matches[1]);
+	    $tmp=explode(':', $matches[1]);
         if (count($tmp) < 3) return '';
 
 	    $tmpescaped=$tmp[2];

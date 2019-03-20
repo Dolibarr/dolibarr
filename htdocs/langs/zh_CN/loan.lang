@@ -10,6 +10,7 @@ LoanCapital=注册资金
 Insurance=保险
 Interest=利率
 Nbterms=一些条款
+Term=Term
 LoanAccountancyCapitalCode=Accounting account capital
 LoanAccountancyInsuranceCode=Accounting account insurance
 LoanAccountancyInterestCode=Accounting account interest
@@ -17,37 +18,14 @@ ConfirmDeleteLoan=确认删除本贷款
 LoanDeleted=成功删除贷款
 ConfirmPayLoan=确认支付本贷款
 LoanPaid=贷款已支付
-# Calc
-LoanCalc=银行贷款计算器
-PurchaseFinanceInfo=购买及财务信息
-SalePriceOfAsset=资产出售价格
-PercentageDown=贬值比率
-LengthOfMortgage=贷款期限
-AnnualInterestRate=年度利率
-ExplainCalculations=解释计算方式
-ShowMeCalculationsAndAmortization=显示计算结果及分期摊销
-MortgagePaymentInformation=抵押付款信息
-DownPayment=定金
-DownPaymentDesc=这个 <b>预付订金</b>（注：订金，根据中国现行法律的有关规定，其不具有定金，不是订金哦，其不具有定金的性质，只是单方行为，不具有明显的担保性质。交付订金的一方主张定金权利的，人民法院不予支持。 = The price of the home multiplied by the percentage down divided by 100 (for 5% down becomes 5/100 or 0.05)这句数学没学好不译了：）
-InterestRateDesc=<b>利率</b> = 按百分比显示的年度利率
-MonthlyFactorDesc=<b>月度因子</b> = 下列公式的结果
-MonthlyInterestRateDesc=<b>月度利率</b> = 年度利率除以12（按每年12个月计算）
-MonthTermDesc=贷款按每月计算的 <b>月限</b> =您借款年限乘以12
-MonthlyPaymentDesc=月度付款按以下公式计算
-AmortizationPaymentDesc= <a href="#摊销">摊销</a> 确定您每月支付的银行利息是多少，而本金又是多少。
-AmountFinanced=财务金额
-AmortizationMonthlyPaymentOverYears=月度付款的摊销：: <b>%s</b> 按 %s 年计算
-Totalsforyear=年度合计
-MonthlyPayment=月度付款
-LoanCalcDesc=This <b>mortgage calculator</b> can be used to figure out monthly payments of a loaning, based on the amount borrowed, the term of the loan desired and the interest rate.<br> This calculator includes also PMI (Private Mortgage Insurance) for loans where less than 20%% is put as a down payment. Also taken into consideration are the town property taxes, and their effect on the total monthly mortgage payment.<br>
-GoToInterest=%s 将指向利率
-GoToPrincipal=%s 将指向注册资金
-YouWillSpend=你将花费 %s 年 %s
 ListLoanAssociatedProject=List of loan associated with the project
 AddLoan=Create loan
+FinancialCommitment=Financial commitment
+InterestAmount=利率
+CapitalRemain=Capital remain
 # Admin
 ConfigLoan=货款模块设置
 LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Accounting account capital by default
 LOAN_ACCOUNTING_ACCOUNT_INTEREST=Accounting account interest by default
 LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Accounting account insurance by default
-CreateCalcSchedule=Créer / Modifier échéancier de pret
+CreateCalcSchedule=Edit financial commitment

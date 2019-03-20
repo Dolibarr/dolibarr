@@ -1,6 +1,7 @@
 # Dolibarr language file - Source file is en_US - orders
 OrderLine=Bestellposition
 OrderToProcess=Zu bearbeitende Bestellung
+CustomerOrder=Ablehnung durch Kontoinhaber
 OrdersInProcess=Bestellunen in Bearbeitung
 StatusOrderValidatedShort=Bestätigt
 StatusOrderValidated=Bestätigt
@@ -13,6 +14,4 @@ TypeContact_commande_internal_SALESREPFOLL=Kundenauftrags-Nachverfolgung durch V
 TypeContact_commande_external_BILLING=Debitorenrechnung Kontakt
 TypeContact_commande_external_SHIPPING=Customer Versand Kontakt
 TypeContact_commande_external_CUSTOMER=Bestellungs-Nachverfolgung durch Kundenkontakt
-TypeContact_order_supplier_internal_SALESREPFOLL=Lieferantenbestellungs-Nachverfolgung durch Vertreter
-TypeContact_order_supplier_external_SHIPPING=Supplier Versand Kontakt
 PDFEinsteinDescription=Eine vollständige Bestellvorlage (Logo, ...)

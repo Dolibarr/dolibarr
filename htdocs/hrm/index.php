@@ -1,8 +1,8 @@
 <?php
 /* Copyright (C) 2011		Dimitri Mouillard	<dmouillard@teclib.com>
  * Copyright (C) 2013-2015	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2012-2014	Regis Houssin		<regis.houssin@capnetworks.com>
- * Copyright (C) 2015-2016	Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2012-2014	Regis Houssin		<regis.houssin@inodbox.com>
+ * Copyright (C) 2015-2016	Alexandre Spangaro	<aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@
  *		\brief      Home page for HRM area.
  */
 
-require('../main.inc.php');
+require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
@@ -36,14 +36,20 @@ if ($conf->deplacement->enabled) require_once DOL_DOCUMENT_ROOT.'/compta/deplace
 if ($conf->expensereport->enabled) require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
 
-$langs->load('users');
-$langs->load('holidays');
-$langs->load('trips');
+// Load translation files required by the page
+$langs->loadLangs(array('users', 'holidays', 'trips', 'boxes'));
 
-$socid=GETPOST("socid");
+$socid=GETPOST("socid", "int");
 
 // Protection if external user
 if ($user->societe_id > 0) accessforbidden();
+
+if (empty($conf->global->MAIN_INFO_SOCIETE_NOM) || empty($conf->global->MAIN_INFO_SOCIETE_COUNTRY)) $setupcompanynotcomplete=1;
+
+$holiday = new Holiday($db);
+$holidaystatic=new Holiday($db);
+
+$max=3;
 
 
 
@@ -51,38 +57,32 @@ if ($user->societe_id > 0) accessforbidden();
  * Actions
  */
 
-// None
-
+// Update sold
+if (! empty($conf->holiday->enabled) && ! empty($setupcompanynotcomplete))
+{
+	$result = $holiday->updateBalance();
+}
 
 
 /*
  * View
  */
 
-$holiday = new Holiday($db);
-$holidaystatic=new Holiday($db);
-
-// Update sold
-if (! empty($conf->holiday->enabled))
-{
-    $result = $holiday->updateBalance();
-}
-
 $childids = $user->getAllChildIds();
 $childids[]=$user->id;
 
 llxHeader('', $langs->trans('HRMArea'));
 
-print load_fiche_titre($langs->trans("HRMArea"),'', 'title_hrm.png');
+print load_fiche_titre($langs->trans("HRMArea"), '', 'title_hrm.png');
 
 
-if (empty($conf->global->MAIN_INFO_SOCIETE_NOM) || empty($conf->global->MAIN_INFO_SOCIETE_COUNTRY)) $setupcompanynotcomplete=1;
 if (! empty($setupcompanynotcomplete))
 {
 	$langs->load("errors");
 	$warnpicto=img_warning($langs->trans("WarningMandatorySetupNotComplete"));
 	print '<br><div class="warning"><a href="'.DOL_URL_ROOT.'/admin/company.php?mainmenu=home'.(empty($setupcompanynotcomplete)?'':'&action=edit').'">'.$warnpicto.' '.$langs->trans("WarningMandatorySetupNotComplete").'</a></div>';
 
+	llxFooter();
 	exit;
 }
 
@@ -140,14 +140,14 @@ if (! empty($conf->holiday->enabled))
 	    print '<td colspan="3">';
 
 	    $out='';
-	    $typeleaves=$holiday->getTypes(1,1);
+	    $typeleaves=$holiday->getTypes(1, 1);
 	    foreach($typeleaves as $key => $val)
 	    {
 	    	$nb_type = $holiday->getCPforUser($user->id, $val['rowid']);
 	    	$nb_holiday += $nb_type;
 	    	$out .= ' - '.$val['label'].': <strong>'.($nb_type?price2num($nb_type):0).'</strong><br>';
 	    }
-	    print $langs->trans('SoldeCPUser', round($nb_holiday,5)).'<br>';
+	    print $langs->trans('SoldeCPUser', round($nb_holiday, 5)).'<br>';
 	    print $out;
 
 	    print '</td>';
@@ -163,10 +163,6 @@ if (! empty($conf->holiday->enabled))
 
 print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
-$max=10;
-
-$langs->load("boxes");
-
 
 
 // Latest leave requests
@@ -176,10 +172,10 @@ if (! empty($conf->holiday->enabled) && $user->rights->holiday->read)
     $sql.= " FROM ".MAIN_DB_PREFIX."holiday as x, ".MAIN_DB_PREFIX."user as u";
     $sql.= " WHERE u.rowid = x.fk_user";
     $sql.= " AND x.entity = ".$conf->entity;
-    if (empty($user->rights->holiday->read_all)) $sql.=' AND x.fk_user IN ('.join(',',$childids).')';
+    if (empty($user->rights->holiday->read_all)) $sql.=' AND x.fk_user IN ('.join(',', $childids).')';
     //if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND x.fk_soc = s. rowid AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
     //if (!empty($socid)) $sql.= " AND x.fk_soc = ".$socid;
-    $sql.= $db->order("x.tms","DESC");
+    $sql.= $db->order("x.tms", "DESC");
     $sql.= $db->plimit($max, 0);
 
     $result = $db->query($sql);
@@ -192,17 +188,17 @@ if (! empty($conf->holiday->enabled) && $user->rights->holiday->read)
         $userstatic=new User($db);
 
         $listhalfday=array('morning'=>$langs->trans("Morning"),"afternoon"=>$langs->trans("Afternoon"));
-        $typeleaves=$holidaystatic->getTypes(1,-1);
+        $typeleaves=$holidaystatic->getTypes(1, -1);
 
         $i = 0;
 
         print '<div class="div-table-responsive">';
         print '<table class="noborder" width="100%">';
         print '<tr class="liste_titre">';
-        print '<th colspan="3">'.$langs->trans("BoxTitleLastLeaveRequests",min($max,$num)).'</th>';
+        print '<th colspan="3">'.$langs->trans("BoxTitleLastLeaveRequests", min($max, $num)).'</th>';
         print '<th>'.$langs->trans("from").'</th>';
         print '<th>'.$langs->trans("to").'</th>';
-        print '<th align="right">'.$langs->trans("DateModificationShort").'</th>';
+        print '<th class="right">'.$langs->trans("DateModificationShort").'</th>';
         print '<th width="16">&nbsp;</th>';
         print '</tr>';
         if ($num)
@@ -223,22 +219,21 @@ if (! empty($conf->holiday->enabled) && $user->rights->holiday->read)
                 $userstatic->statut=$obj->statut;
 
                 print '<tr class="oddeven">';
-                print '<td>'.$holidaystatic->getNomUrl(1).'</td>';
+                print '<td class="nowraponall">'.$holidaystatic->getNomUrl(1).'</td>';
                 print '<td>'.$userstatic->getNomUrl(-1, 'leave').'</td>';
                 print '<td>'.$typeleaves[$obj->fk_type]['label'].'</td>';
 
                 $starthalfday=($obj->halfday == -1 || $obj->halfday == 2)?'afternoon':'morning';
                 $endhalfday=($obj->halfday == 1 || $obj->halfday == 2)?'morning':'afternoon';
 
-                print '<td>'.dol_print_date($obj->date_start,'day').' '.$langs->trans($listhalfday[$starthalfday]);
-                print '<td>'.dol_print_date($obj->date_end,'day').' '.$langs->trans($listhalfday[$endhalfday]);
-                print '<td align="right">'.dol_print_date($db->jdate($obj->dm),'day').'</td>';
-                print '<td>'.$holidaystatic->LibStatut($obj->status,3).'</td>';
+                print '<td>'.dol_print_date($db->jdate($obj->date_start), 'day').' '.$langs->trans($listhalfday[$starthalfday]);
+                print '<td>'.dol_print_date($db->jdate($obj->date_end), 'day').' '.$langs->trans($listhalfday[$endhalfday]);
+                print '<td class="right">'.dol_print_date($db->jdate($obj->dm), 'day').'</td>';
+                print '<td>'.$holidaystatic->LibStatut($obj->status, 3).'</td>';
                 print '</tr>';
 
                 $i++;
             }
-
         }
         else
         {
@@ -258,10 +253,10 @@ if (! empty($conf->deplacement->enabled) && $user->rights->deplacement->lire)
 	if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	$sql.= " WHERE u.rowid = d.fk_user";
 	$sql.= " AND d.entity = ".$conf->entity;
-	if (empty($user->rights->deplacement->readall) && empty($user->rights->deplacement->lire_tous)) $sql.=' AND d.fk_user IN ('.join(',',$childids).')';
+	if (empty($user->rights->deplacement->readall) && empty($user->rights->deplacement->lire_tous)) $sql.=' AND d.fk_user IN ('.join(',', $childids).')';
 	if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND d.fk_soc = s. rowid AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 	if (!empty($socid)) $sql.= " AND d.fk_soc = ".$socid;
-	$sql.= $db->order("d.tms","DESC");
+	$sql.= $db->order("d.tms", "DESC");
 	$sql.= $db->plimit($max, 0);
 
 	$result = $db->query($sql);
@@ -275,9 +270,9 @@ if (! empty($conf->deplacement->enabled) && $user->rights->deplacement->lire)
 		print '<div class="div-table-responsive">';
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
-		print '<th colspan="2">'.$langs->trans("BoxTitleLastModifiedExpenses",min($max,$num)).'</th>';
-		print '<th align="right">'.$langs->trans("FeesKilometersOrAmout").'</th>';
-		print '<th align="right">'.$langs->trans("DateModificationShort").'</th>';
+		print '<th colspan="2">'.$langs->trans("BoxTitleLastModifiedExpenses", min($max, $num)).'</th>';
+		print '<th class="right">'.$langs->trans("FeesKilometersOrAmout").'</th>';
+		print '<th class="right">'.$langs->trans("DateModificationShort").'</th>';
 		print '<th width="16">&nbsp;</th>';
 		print '</tr>';
 		if ($num)
@@ -302,16 +297,15 @@ if (! empty($conf->deplacement->enabled) && $user->rights->deplacement->lire)
 				$userstatic->photo=$obj->photo;
 
 				print '<tr class="oddeven">';
-				print '<td>'.$deplacementstatic->getNomUrl(1).'</td>';
+				print '<td class="nowraponall">'.$deplacementstatic->getNomUrl(1).'</td>';
 				print '<td>'.$userstatic->getNomUrl(-1).'</td>';
-				print '<td align="right">'.$obj->km.'</td>';
-				print '<td align="right">'.dol_print_date($db->jdate($obj->dm),'day').'</td>';
-				print '<td>'.$deplacementstatic->LibStatut($obj->fk_statut,3).'</td>';
+				print '<td class="right">'.$obj->km.'</td>';
+				print '<td class="right">'.dol_print_date($db->jdate($obj->dm), 'day').'</td>';
+				print '<td>'.$deplacementstatic->LibStatut($obj->fk_statut, 3).'</td>';
 				print '</tr>';
 
 				$i++;
 			}
-
 		}
 		else
 		{
@@ -328,13 +322,13 @@ if (! empty($conf->expensereport->enabled) && $user->rights->expensereport->lire
 {
 	$sql = "SELECT u.rowid as uid, u.lastname, u.firstname, u.login, u.email, u.statut, u.photo, x.rowid, x.ref, x.date_debut as date, x.tms as dm, x.total_ttc, x.fk_statut as status";
 	$sql.= " FROM ".MAIN_DB_PREFIX."expensereport as x, ".MAIN_DB_PREFIX."user as u";
-	if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+	//if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	$sql.= " WHERE u.rowid = x.fk_user_author";
 	$sql.= " AND x.entity = ".$conf->entity;
-	if (empty($user->rights->expensereport->readall) && empty($user->rights->expensereport->lire_tous)) $sql.=' AND x.fk_user_author IN ('.join(',',$childids).')';
+	if (empty($user->rights->expensereport->readall) && empty($user->rights->expensereport->lire_tous)) $sql.=' AND x.fk_user_author IN ('.join(',', $childids).')';
 	//if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND x.fk_soc = s. rowid AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 	//if (!empty($socid)) $sql.= " AND x.fk_soc = ".$socid;
-	$sql.= $db->order("x.tms","DESC");
+	$sql.= $db->order("x.tms", "DESC");
 	$sql.= $db->plimit($max, 0);
 
 	$result = $db->query($sql);
@@ -348,9 +342,9 @@ if (! empty($conf->expensereport->enabled) && $user->rights->expensereport->lire
 		print '<div class="div-table-responsive">';
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
-		print '<th colspan="2">'.$langs->trans("BoxTitleLastModifiedExpenses",min($max,$num)).'</th>';
-		print '<th align="right">'.$langs->trans("TotalTTC").'</th>';
-		print '<th align="right">'.$langs->trans("DateModificationShort").'</th>';
+		print '<th colspan="2">'.$langs->trans("BoxTitleLastModifiedExpenses", min($max, $num)).'</th>';
+		print '<th class="right">'.$langs->trans("TotalTTC").'</th>';
+		print '<th class="right">'.$langs->trans("DateModificationShort").'</th>';
 		print '<th width="16">&nbsp;</th>';
 		print '</tr>';
 		if ($num)
@@ -375,16 +369,15 @@ if (! empty($conf->expensereport->enabled) && $user->rights->expensereport->lire
 				$userstatic->photo=$obj->photo;
 
 				print '<tr class="oddeven">';
-				print '<td>'.$expensereportstatic->getNomUrl(1).'</td>';
+				print '<td class="nowraponall">'.$expensereportstatic->getNomUrl(1).'</td>';
 				print '<td>'.$userstatic->getNomUrl(-1).'</td>';
-				print '<td align="right">'.price($obj->total_ttc).'</td>';
-				print '<td align="right">'.dol_print_date($db->jdate($obj->dm),'day').'</td>';
-				print '<td>'.$expensereportstatic->LibStatut($obj->status,3).'</td>';
+				print '<td class="right">'.price($obj->total_ttc).'</td>';
+				print '<td class="right">'.dol_print_date($db->jdate($obj->dm), 'day').'</td>';
+				print '<td>'.$expensereportstatic->LibStatut($obj->status, 3).'</td>';
 				print '</tr>';
 
 				$i++;
 			}
-
 		}
 		else
 		{
@@ -399,8 +392,6 @@ if (! empty($conf->expensereport->enabled) && $user->rights->expensereport->lire
 
 print '</div></div></div>';
 
-
-
+// End of page
 llxFooter();
-
 $db->close();
