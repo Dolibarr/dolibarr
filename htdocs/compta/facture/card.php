@@ -1303,7 +1303,6 @@ if (empty($reshook))
 												$tva_tx = $lines[$i]->tva_tx;
 												$amountdeposit[$tva_tx] += ($lines[$i]->total_ht * $valuedeposit) / 100;
 											}
-																					
 										}
 
 										if($totalamount == 0) {
@@ -1329,7 +1328,7 @@ if (empty($reshook))
 								} elseif ($typeamount=='variable') {
 									$descline.= ' ('. $valuedeposit.'%)';
 								}
-								
+
 								$descline.= ' - '.$srcobject->ref;
 								$result = $object->addline(
 										$descline,
