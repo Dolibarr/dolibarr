@@ -1518,7 +1518,7 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 	{
 		if (! empty($conf->use_javascript_ajax) && $user->rights->categorie->creer && ! empty($conf->global->MAIN_DIRECT_STATUS_UPDATE))
 		{
-			$morehtmlstatus.=ajax_object_onoff($object, 'visible', 'visible', 'Visible', 'Hidden');
+			$morehtmlstatus.=ajax_object_onoff($object, 'visible', 'visible', 'ContentsVisibleByAllShort', 'ContentsNotVisibleByAllShort');
 		}
 		else {
 			$morehtmlstatus.=$object->getLibVisible(6);
