@@ -57,7 +57,8 @@ input.select2-input {
 .liste_titre input[name=search_day_lim], .liste_titre input[name=search_day_start], .liste_titre input[name=search_day_end], .liste_titre input[name=search_day_create],
 .liste_titre input[name=search_day_create], .liste_titre input[name=search_day_start], .liste_titre input[name=search_day_end],
 .liste_titre input[name=search_day_date_when], .liste_titre input[name=search_month_date_when], .liste_titre input[name=search_year_date_when],
-.liste_titre input[name=search_dtstartday], .liste_titre input[name=search_dtendday], .liste_titre input[name=search_dtstartmonth], .liste_titre input[name=search_dtendmonth]
+.liste_titre input[name=search_dtstartday], .liste_titre input[name=search_dtendday], .liste_titre input[name=search_dtstartmonth], .liste_titre input[name=search_dtendmonth],
+select#date_startday, select#date_startmonth, select#date_endday, select#date_endmonth, select#reday, select#remonth
 {
 	margin-right: 4px;
 }
@@ -511,6 +512,9 @@ select.flat.selectlimit {
 .nomarginleft {
 	margin-left: 0px !important;
 }
+.margintoponly {
+	margin-top: 10px !important;
+}
 .marginbottomonly {
 	margin-bottom: 10px !important;
 }
@@ -959,7 +963,17 @@ td.showDragHandle {
 	border-right: 1px solid #d0d0d0;
 	box-shadow: 3px 0 6px -2px #eee;
 	background: rgb(<?php echo $colorbackvmenu1; ?>);
+	transition: left 0.5s ease;
 }
+
+.side-nav, .login_block {
+	transition: left 0.5s ease;
+}
+
+body.sidebar-collapse .side-nav, body.sidebar-collapse .login_block {
+	display: none;
+}
+
 div.blockvmenulogo
 {
 	border-bottom: 0 !important;
@@ -1002,11 +1016,8 @@ div.vmenu, td.vmenu {
 	background: #FFF;
 	padding-left: 20px;
 	padding-right: 20px;
-}
-.side-nav {
 	position: absolute;
-    z-index: 90;
-    display: none;
+    	z-index: 90;
 }
 div.blockvmenulogo
 {
@@ -1822,6 +1833,9 @@ div.login a:hover {
 	color: #<?php echo $colortextbackvmenu; ?>;
 	text-decoration:underline;
 }
+.login_block_elem a span.atoplogin, .login_block_elem span.atoplogin {
+    vertical-align: middle;
+}
 div.login_block_user {
 	display: inline-block;
 	padding-top: 3px;
@@ -2534,11 +2548,16 @@ table.liste, table.noborder, table.formdoc, div.noborder {
 	border-top-color: rgb(<?php echo $colorbackhmenu1 ?>);
 	border-top-style: solid; */
 
+	/*border-bottom-width: 1px;
+	border-bottom-color: rgb(<?php echo $colortopbordertitle1 ?>);
+	border-bottom-style: solid;*/
+
+	margin: 0px 0px 5px 0px;
+}
+table.liste tr:last-of-type td, table.noborder tr:last-of-type td, table.formdoc tr:last-of-type td, div.noborder tr:last-of-type td {
 	border-bottom-width: 1px;
 	border-bottom-color: rgb(<?php echo $colortopbordertitle1 ?>);
 	border-bottom-style: solid;
-
-	margin: 0px 0px 5px 0px;
 }
 div.tabBar div.ficheaddleft table.noborder:last-of-type {
     border-bottom: 1px solid rgb(<?php echo $colortopbordertitle1 ?>);
@@ -2868,8 +2887,9 @@ form.tagtr:last-of-type div.tagtd, tr.pair:last-of-type td, tr.impair:last-of-ty
 tr.pair td .nobordernopadding tr td, tr.impair td .nobordernopadding tr td {
     border-bottom: 0px !important;
 }
-tr.nobottom td, tr.nobottom , td.nobottom {
-    border-bottom: 0px !important;
+table.nobottomiftotal tr.liste_total td {
+	background-color: #fff;
+	border-bottom: 0px !important;
 }
 div.liste_titre .tagtd {
 	vertical-align: middle;
@@ -5637,7 +5657,6 @@ div.tabsElem a.tab {
 	div.login_block {
 		<?php if ($conf->browser->layout == 'phone' && ((GETPOST('testmenuhider', 'int') || ! empty($conf->global->MAIN_TESTMENUHIDER)) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))) { ?>
 		/* Style when phone layout or when using the menuhider */
-		display: none;
 		padding-top: 20px;
 		padding-left: 20px;
     	padding-right: 20px;

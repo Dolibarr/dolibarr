@@ -68,22 +68,6 @@ if (function_exists('get_magic_quotes_gpc'))	// magic_quotes_* deprecated in PHP
 	}
 }
 
-// phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
-/**
- * Security: SQL Injection and XSS Injection (scripts) protection (Filters on GET, POST, PHP_SELF).
- *
- * @param       string      $val        Value
- * @param       string      $type       1=GET, 0=POST, 2=PHP_SELF, 3=GET without sql reserved keywords (the less tolerant test)
- * @return      int                     >0 if there is an injection, 0 if none
- * @deprecated                          use testSqlAndScriptInject
- * @see testSqlAndScriptInject($val, $type)
- */
-function test_sql_and_script_inject($val, $type)
-{
-    // phpcs:enable
-    return testSqlAndScriptInject($val, $type);
-}
-
 /**
  * Security: SQL Injection and XSS Injection (scripts) protection (Filters on GET, POST, PHP_SELF).
  *
@@ -1096,6 +1080,10 @@ if (! function_exists("llxHeader"))
 		// html header
 		top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
 
+		if ($conf->browser->layout == 'phone'){
+		    $morecssonbody.= ' sidebar-collapse';
+		}
+
 		print '<body id="mainbody"'.($morecssonbody?' class="'.$morecssonbody.'"':'').'>' . "\n";
 
 		// top menu and left menu area
@@ -1983,7 +1971,7 @@ function printSearchForm($urlaction, $urlobject, $title, $htmlmorecss, $htmlinpu
 	global $conf,$langs,$user;
 
 	$ret='';
-	$ret.='<form action="'.$urlaction.'" method="post" class="searchform">';
+	$ret.='<form action="'.$urlaction.'" method="post" class="searchform nowraponall">';
 	$ret.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	$ret.='<input type="hidden" name="mode" value="search">';
 	$ret.='<input type="hidden" name="savelogin" value="'.dol_escape_htmltag($user->login).'">';

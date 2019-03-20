@@ -1023,12 +1023,12 @@ class Holiday extends CommonObject
 	 *  Warning: It consumes a lot of memory because it load in ->holiday all holiday of a dedicated user at each call.
 	 *
 	 *  @param 	int		$fk_user		Id user
-	 *  @param 	date	$dateStart		Start date of period to check
-	 *  @param 	date	$dateEnd		End date of period to check
+	 *  @param 	integer	$dateStart		Start date of period to check
+	 *  @param 	integer	$dateEnd		End date of period to check
 	 *  @param  int     $halfday        Tag to define how start and end the period to check:
 	 *                                  0:Full days, 2:Start afternoon end morning, -1:Start afternoon end afternoon, 1:Start morning end morning
 	 * 	@return boolean					False = New range overlap an existing holiday, True = no overlapping (is never on holiday during checked period).
-	 *  @see verifDateHolidayForTimestamp
+	 *  @see verifDateHolidayForTimestamp()
 	 */
 	public function verifDateHolidayCP($fk_user, $dateStart, $dateEnd, $halfday = 0)
 	{
@@ -1107,10 +1107,10 @@ class Holiday extends CommonObject
 	 *	Check that a user is not on holiday for a particular timestamp
 	 *
 	 * 	@param 	int			$fk_user				Id user
-	 *  @param	timestamp	$timestamp				Time stamp date for a day (YYYY-MM-DD) without hours  (= 12:00AM in english and not 12:00PM that is 12:00)
+	 *  @param	integer	    $timestamp				Time stamp date for a day (YYYY-MM-DD) without hours  (= 12:00AM in english and not 12:00PM that is 12:00)
 	 *  @param	string		$status					Filter on holiday status. '-1' = no filter.
 	 * 	@return array								array('morning'=> ,'afternoon'=> ), Boolean is true if user is available for day timestamp.
-	 *  @see verifDateHolidayCP
+	 *  @see verifDateHolidayCP()
 	 */
 	public function verifDateHolidayForTimestamp($fk_user, $timestamp, $status = '-1')
 	{
@@ -1222,7 +1222,7 @@ class Holiday extends CommonObject
 	 *
 	 *	@param      int		$statut     id statut
 	 *	@param      int		$mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
-	 *  @param		date	$startdate	Date holiday should start
+	 *  @param		integer	$startdate	Date holiday should start
 	 *	@return     string      		Label
 	 */
 	public function LibStatut($statut, $mode = 0, $startdate = '')

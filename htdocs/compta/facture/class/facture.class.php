@@ -286,7 +286,7 @@ class Facture extends CommonInvoice
 	 *
 	 *	@param	User	$user      		Object user that create
 	 *	@param  int		$notrigger		1=Does not execute triggers, 0 otherwise
-	 * 	@param	int		$forceduedate	1=Do not recalculate due date from payment condition but force it with value
+	 * 	@param	int		$forceduedate	If set, do not recalculate due date from payment condition but force it with value
 	 *	@return	int						<0 if KO, >0 if OK
 	 */
     public function create(User $user, $notrigger = 0, $forceduedate = 0)
@@ -1321,7 +1321,7 @@ class Facture extends CommonInvoice
 		$sql.= ', f.tms as datem';
 		$sql.= ', f.note_private, f.note_public, f.fk_statut, f.paye, f.close_code, f.close_note, f.fk_user_author, f.fk_user_valid, f.model_pdf, f.last_main_doc';
 		$sql.= ', f.fk_facture_source';
-		$sql.= ', f.fk_mode_reglement, f.fk_cond_reglement, f.fk_projet, f.extraparams';
+		$sql.= ', f.fk_mode_reglement, f.fk_cond_reglement, f.fk_projet as fk_project, f.extraparams';
 		$sql.= ', f.situation_cycle_ref, f.situation_counter, f.situation_final';
 		$sql.= ', f.fk_account';
 		$sql.= ", f.fk_multicurrency, f.multicurrency_code, f.multicurrency_tx, f.multicurrency_total_ht, f.multicurrency_total_tva, f.multicurrency_total_ttc";
@@ -1386,7 +1386,7 @@ class Facture extends CommonInvoice
 				$this->cond_reglement		= $obj->cond_reglement_libelle;
 				$this->cond_reglement_doc	= $obj->cond_reglement_libelle_doc;
 				$this->fk_account           = ($obj->fk_account>0)?$obj->fk_account:null;
-				$this->fk_project			= $obj->fk_projet;
+				$this->fk_project			= $obj->fk_project;
 				$this->fk_facture_source	= $obj->fk_facture_source;
 				$this->note					= $obj->note_private;	// deprecated
 				$this->note_private			= $obj->note_private;
@@ -1670,7 +1670,7 @@ class Facture extends CommonInvoice
 		$sql.= " import_key=".(isset($this->import_key)?"'".$this->db->escape($this->import_key)."'":"null").",";
 		$sql.= " situation_cycle_ref=".(empty($this->situation_cycle_ref)?"null":$this->db->escape($this->situation_cycle_ref)).",";
 		$sql.= " situation_counter=".(empty($this->situation_counter)?"null":$this->db->escape($this->situation_counter)).",";
-		$sql.= " situation_final=".(empty($this->situation_counter)?"0":$this->db->escape($this->situation_counter));
+		$sql.= " situation_final=".(empty($this->situation_final)?"0":$this->db->escape($this->situation_final));
 		$sql.= " WHERE rowid=".$this->id;
 
 		$this->db->begin();
@@ -2537,7 +2537,7 @@ class Facture extends CommonInvoice
 	 *	@param	int		$idwarehouse	Id warehouse to use for stock change.
 	 *	@return	int						<0 if KO, >0 if OK
 	 */
-    public function set_draft($user, $idwarehouse = -1)
+    public function setDraft($user, $idwarehouse = -1)
 	{
         // phpcs:enable
 		global $conf,$langs;
@@ -2865,9 +2865,9 @@ class Facture extends CommonInvoice
 	 *  @param     	string		$desc            	Description of line
 	 *  @param     	double		$pu              	Prix unitaire (HT ou TTC selon price_base_type) (> 0 even for credit note lines)
 	 *  @param     	double		$qty             	Quantity
-	 *  @param     	double		$remise_percent  	Pourcentage de remise de la ligne
-	 *  @param     	int		$date_start      	Date de debut de validite du service
-	 *  @param     	int		$date_end        	Date de fin de validite du service
+	 *  @param     	double		$remise_percent  	Percentage discount of the line
+	 *  @param     	int		    $date_start      	Date de debut de validite du service
+	 *  @param     	int		    $date_end        	Date de fin de validite du service
 	 *  @param     	double		$txtva          	VAT Rate (Can be '8.5', '8.5 (ABC)')
 	 * 	@param		double		$txlocaltax1		Local tax 1 rate
 	 *  @param		double		$txlocaltax2		Local tax 2 rate

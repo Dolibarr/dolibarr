@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2017  Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2017-2019  Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,7 +55,8 @@ foreach($object->fields as $key => $val)
 	elseif ($val['type'] == 'text' || $val['type'] == 'html') $value = GETPOSTISSET($key)?GETPOST($key, 'none'):$object->$key;
 	else $value = GETPOSTISSET($key)?GETPOST($key, 'alpha'):$object->$key;
 	//var_dump($val.' '.$key.' '.$value);
-	print $object->showInputField($val, $key, $value, '', '', '', 0);
+	if ($val['noteditable']) print $object->showOutputField($val, $key, $value, '', '', '', 0);
+	else print $object->showInputField($val, $key, $value, '', '', '', 0);
 	print '</td>';
 	print '</tr>';
 }

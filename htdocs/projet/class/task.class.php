@@ -704,7 +704,7 @@ class Task extends CommonObject
 	{
 		$this->id=0;
 
-		$this->fk_projet='';
+		$this->fk_project='';
 		$this->ref='TK01';
 		$this->fk_task_parent=null;
 		$this->label='Specimen task TK01';

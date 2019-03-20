@@ -38,7 +38,7 @@ class AccountancyCategory // extends CommonObject
 
 	/**
 	 * @var string 		Error string
-	 * @see             errors
+	 * @see             $errors
 	 */
 	public $error;
 
@@ -63,7 +63,7 @@ class AccountancyCategory // extends CommonObject
     public $id;
 
 	/**
-	 * @var mixed Sample property 1
+	 * @var string Accountancy code
 	 */
 	public $code;
 
@@ -73,7 +73,7 @@ class AccountancyCategory // extends CommonObject
     public $label;
 
     /**
-	 * @var mixed Sample property 1
+	 * @var string Accountancy range account
 	 */
 	public $range_account;
 
@@ -83,37 +83,37 @@ class AccountancyCategory // extends CommonObject
 	public $sens;
 
 	/**
-	 * @var mixed Sample property 1
+	 * @var int Category type of accountancy
 	 */
 	public $category_type;
 
 	/**
-	 * @var mixed Sample property 1
+	 * @var string Formula
 	 */
 	public $formula;
 
 	/**
-	 * @var mixed Sample property 1
+	 * @var int     Position
 	 */
 	public $position;
 
 	/**
-	 * @var mixed Sample property 1
+	 * @var int country id
 	 */
 	public $fk_country;
 
 	/**
-	 * @var mixed Sample property 1
+	 * @var int Is active
 	 */
 	public $active;
 
 	/**
-	 * @var mixed Sample property 1
+	 * @var array Lines cptbk
 	 */
 	public $lines_cptbk;
 
 	/**
-	 * @var mixed Sample property 1
+	 * @var array Lines display
 	 */
 	public $lines_display;
 
@@ -151,12 +151,12 @@ class AccountancyCategory // extends CommonObject
 		if (isset($this->code)) $this->code=trim($this->code);
 		if (isset($this->label)) $this->label=trim($this->label);
 		if (isset($this->range_account)) $this->range_account=trim($this->range_account);
-		if (isset($this->sens)) $this->sens=trim($this->sens);
-		if (isset($this->category_type)) $this->category_type=trim($this->category_type);
+		if (isset($this->sens)) $this->sens = (int) $this->sens;
+		if (isset($this->category_type)) $this->category_type = (int) $this->category_type;
 		if (isset($this->formula)) $this->formula=trim($this->formula);
-		if (isset($this->position)) $this->position=trim($this->position);
-		if (isset($this->fk_country)) $this->fk_country=trim($this->fk_country);
-		if (isset($this->active)) $this->active=trim($this->active);
+		if (isset($this->position)) $this->position = (int) $this->position;
+		if (isset($this->fk_country)) $this->fk_country = (int) $this->fk_country;
+		if (isset($this->active)) $this->active = (int) $this->active;
 
 		// Check parameters
 		// Put here code to add control on parameters values
@@ -308,12 +308,12 @@ class AccountancyCategory // extends CommonObject
 		if (isset($this->code)) $this->code=trim($this->code);
 		if (isset($this->label)) $this->label=trim($this->label);
 		if (isset($this->range_account)) $this->range_account=trim($this->range_account);
-		if (isset($this->sens)) $this->sens=trim($this->sens);
-		if (isset($this->category_type)) $this->category_type=trim($this->category_type);
+		if (isset($this->sens)) $this->sens = (int) $this->sens;
+		if (isset($this->category_type)) $this->category_type = (int) $this->category_type;
 		if (isset($this->formula)) $this->formula=trim($this->formula);
-		if (isset($this->position)) $this->position=trim($this->position);
-		if (isset($this->fk_country)) $this->fk_country=trim($this->fk_country);
-		if (isset($this->active)) $this->active=trim($this->active);
+		if (isset($this->position)) $this->position = (int) $this->position;
+		if (isset($this->fk_country)) $this->fk_country = (int) $this->fk_country;
+		if (isset($this->active)) $this->active = (int) $this->active;
 
 
 		// Check parameters
@@ -338,8 +338,8 @@ class AccountancyCategory // extends CommonObject
 		$resql = $this->db->query($sql);
 		if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 
-		if (! $error)
-		{
+		//if (! $error)
+		//{
 			// Uncomment this and change MYOBJECT to your own tag if you
 			// want this action call a trigger.
 			//if (! $notrigger)
@@ -351,7 +351,7 @@ class AccountancyCategory // extends CommonObject
 			//	if ($result < 0) { $error++; $this->errors=$interface->errors; }
 			//	// End call triggers
 			//}
-		}
+		//}
 
 		// Commit or rollback
 		if ($error)
@@ -393,8 +393,8 @@ class AccountancyCategory // extends CommonObject
 		$resql = $this->db->query($sql);
 		if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 
-		if (! $error)
-		{
+		//if (! $error)
+		//{
 			// Uncomment this and change MYOBJECT to your own tag if you
 			// want this action call a trigger.
 			//if (! $notrigger)
@@ -406,7 +406,7 @@ class AccountancyCategory // extends CommonObject
 			//	if ($result < 0) { $error++; $this->errors=$interface->errors; }
 			//	// End call triggers
 			//}
-		}
+		//}
 
 		// Commit or rollback
 		if ($error)

@@ -790,7 +790,7 @@ if (empty($reshook))
 	// Go back to draft
 	if ($action == 'modif' && $usercancreate)
 	{
-		$object->set_draft($user);
+		$object->setDraft($user);
 
 		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
 		{

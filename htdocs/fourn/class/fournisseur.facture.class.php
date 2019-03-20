@@ -578,7 +578,7 @@ class FactureFournisseur extends CommonInvoice
         $sql.= " t.fk_user_author,";
         $sql.= " t.fk_user_valid,";
         $sql.= " t.fk_facture_source,";
-        $sql.= " t.fk_projet,";
+        $sql.= " t.fk_projet as fk_project,";
         $sql.= " t.fk_cond_reglement,";
         $sql.= " t.fk_account,";
         $sql.= " t.fk_mode_reglement,";
@@ -641,8 +641,8 @@ class FactureFournisseur extends CommonInvoice
                 $this->author				= $obj->fk_user_author;
                 $this->fk_user_valid		= $obj->fk_user_valid;
                 $this->fk_facture_source	= $obj->fk_facture_source;
-                $this->fk_project			= $obj->fk_projet;
-	            $this->cond_reglement_id	= $obj->fk_cond_reglement;
+                $this->fk_project			= $obj->fk_project;
+                $this->cond_reglement_id	= $obj->fk_cond_reglement;
 	            $this->cond_reglement_code	= $obj->cond_reglement_code;
 	            $this->cond_reglement		= $obj->cond_reglement_libelle;
 	            $this->cond_reglement_doc	= $obj->cond_reglement_libelle;
@@ -1458,7 +1458,7 @@ class FactureFournisseur extends CommonInvoice
      *	@param	int		$idwarehouse	Id warehouse to use for stock change.
      *	@return	int						<0 if KO, >0 if OK
      */
-    public function set_draft($user, $idwarehouse = -1)
+    public function setDraft($user, $idwarehouse = -1)
     {
         // phpcs:enable
         global $conf,$langs;
@@ -1540,8 +1540,8 @@ class FactureFournisseur extends CommonInvoice
      *	@param		double	$txlocaltax1		LocalTax1 Rate
      *	@param		double	$txlocaltax2		LocalTax2 Rate
      *	@param    	double	$qty             	Quantite
-     *	@param    	int		$fk_product      	Id du produit/service predefini
-     *	@param    	double	$remise_percent  	Pourcentage de remise de la ligne
+     *	@param    	int		$fk_product      	Product/Service ID predefined
+     *	@param    	double	$remise_percent  	Percentage discount of the line
      *	@param    	date	$date_start      	Date de debut de validite du service
      * 	@param    	date	$date_end        	Date de fin de validite du service
      * 	@param    	string	$ventil          	Code de ventilation comptable
@@ -1794,7 +1794,7 @@ class FactureFournisseur extends CommonInvoice
      * @param	  	double		$price_base_type	HT or TTC
      * @param	  	int			$info_bits			Miscellaneous informations of line
      * @param		int			$type				Type of line (0=product, 1=service)
-     * @param     	double		$remise_percent  	Pourcentage de remise de la ligne
+     * @param     	double		$remise_percent  	Percentage discount of the line
      * @param		int			$notrigger			Disable triggers
      * @param      	timestamp	$date_start     	Date start of service
      * @param      	timestamp   $date_end       	Date end of service

@@ -621,7 +621,7 @@ if (empty($reshook))
 			{
 				if (! empty($conf->global->INVOICE_CAN_ALWAYS_BE_EDITED) || ($resteapayer == $object->total_ttc && empty($object->paye)))
 				{
-					$result=$object->set_draft($user, $idwarehouse);
+					$result=$object->setDraft($user, $idwarehouse);
 					if ($result<0) setEventMessages($object->error, $object->errors, 'errors');
 
 					// Define output language
@@ -1298,15 +1298,15 @@ if (empty($reshook))
 											$qualified=1;
 											if (empty($lines[$i]->qty)) $qualified=0;	// We discard qty=0, it is an option
 											if (! empty($lines[$i]->special_code)) $qualified=0;	// We discard special_code (frais port, ecotaxe, option, ...)
-											if ($qualified) $totalamount += $lines[$i]->total_ht; // Fixme : is it not for the customer ? Shouldn't we take total_ttc ?
+											if ($qualified){
+												$totalamount += $lines[$i]->total_ht; // Fixme : is it not for the customer ? Shouldn't we take total_ttc ?
+												$tva_tx = $lines[$i]->tva_tx;
+												$amountdeposit[$tva_tx] += ($lines[$i]->total_ht * $valuedeposit) / 100;
+											}
+																					
 										}
 
-										if ($totalamount != 0) {
-											if ($numlines > 0) $numlines = $numlines-1;
-											$tva_tx = $lines[$numlines]->tva_tx;
-											if (! empty($lines[$numlines]->vat_src_code) && ! preg_match('/\(/', $tva_tx)) $tva_tx .= ' ('.$lines[$numlines]->vat_src_code.')';
-											$amountdeposit[$tva_tx] = ($totalamount * $valuedeposit) / 100;
-										} else {
+										if($totalamount == 0) {
 											$amountdeposit[0] = 0;
 										}
 									} else {
@@ -1317,9 +1317,10 @@ if (empty($reshook))
 
 								$amount_ttc_diff = $amountdeposit[0];
 							}
-
 							foreach ($amountdeposit as $tva => $amount)
 							{
+								if (empty($amount)) continue;
+
 								$arraylist = array('amount' => 'FixAmount','variable' => 'VarAmount');
 								$descline = $langs->trans('Deposit');
 								//$descline.= ' - '.$langs->trans($arraylist[$typeamount]);
@@ -1328,6 +1329,7 @@ if (empty($reshook))
 								} elseif ($typeamount=='variable') {
 									$descline.= ' ('. $valuedeposit.'%)';
 								}
+								
 								$descline.= ' - '.$srcobject->ref;
 								$result = $object->addline(
 										$descline,
@@ -4226,7 +4228,7 @@ elseif ($id > 0 || ! empty($ref))
 				print '<tr class="oddeven"><td>';
 				print $paymentstatic->getNomUrl(1);
 				print '</td>';
-				print '<td>' . dol_print_date($db->jdate($objp->dp), 'day') . '</td>';
+				print '<td>' . dol_print_date($db->jdate($objp->dp), 'dayhour') . '</td>';
 				$label = ($langs->trans("PaymentType" . $objp->payment_code) != ("PaymentType" . $objp->payment_code)) ? $langs->trans("PaymentType" . $objp->payment_code) : $objp->payment_label;
 				print '<td>' . $label . ' ' . $objp->num_paiement . '</td>';
 				if (! empty($conf->banque->enabled))
@@ -4360,10 +4362,9 @@ elseif ($id > 0 || ! empty($ref))
 
 		// Remainder to pay
 		print '<tr><td colspan="' . $nbcols . '" class="right">';
-		if ($resteapayeraffiche >= 0)
-			print $langs->trans('RemainderToPay');
-		else
-			print $langs->trans('ExcessReceived');
+		print $langs->trans('RemainderToPay');
+		if ($resteapayeraffiche < 0)
+		    print ' ('.$langs->trans('ExcessReceived').')';
 		print ' :</td>';
 		print '<td class="right"'.($resteapayeraffiche?' class="amountremaintopay"':(' class="'.$cssforamountpaymentcomplete.'"')).'>' . price($resteapayeraffiche) . '</td>';
 		print '<td class="nowrap">&nbsp;</td></tr>';
@@ -4382,10 +4383,9 @@ elseif ($id > 0 || ! empty($ref))
 
 		// Remainder to pay back
 		print '<tr><td colspan="' . $nbcols . '" class="right">';
-		if ($resteapayeraffiche <= 0)
-			print $langs->trans('RemainderToPayBack');
-		else
-			print $langs->trans('ExcessPaid');
+		print $langs->trans('RemainderToPayBack');
+		if ($resteapayeraffiche > 0)
+			print ' ('.$langs->trans('ExcessPaid').')';
 		print ' :</td>';
 		print '<td class="right"'.($resteapayeraffiche?' class="amountremaintopayback"':(' class="'.$cssforamountpaymentcomplete.'"')).'>' . price($sign * $resteapayeraffiche) . '</td>';
 		print '<td class="nowrap">&nbsp;</td></tr>';

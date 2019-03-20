@@ -381,7 +381,7 @@ class FactureRec extends CommonInvoice
 		$sql.= ', f.date_lim_reglement as dlr';
 		$sql.= ', f.note_private, f.note_public, f.fk_user_author';
         $sql.= ', f.modelpdf';
-		$sql.= ', f.fk_mode_reglement, f.fk_cond_reglement, f.fk_projet';
+		$sql.= ', f.fk_mode_reglement, f.fk_cond_reglement, f.fk_projet as fk_project';
 		$sql.= ', f.fk_account';
 		$sql.= ', f.frequency, f.unit_frequency, f.date_when, f.date_last_gen, f.nb_gen_done, f.nb_gen_max, f.usenewprice, f.auto_validate';
         $sql.= ', f.generate_pdf';
@@ -438,7 +438,7 @@ class FactureRec extends CommonInvoice
 				$this->cond_reglement_code    = $obj->cond_reglement_code;
 				$this->cond_reglement         = $obj->cond_reglement_libelle;
 				$this->cond_reglement_doc     = $obj->cond_reglement_libelle_doc;
-				$this->fk_project             = $obj->fk_projet;
+				$this->fk_project             = $obj->fk_project;
 				$this->fk_account             = $obj->fk_account;
 				$this->fk_facture_source      = $obj->fk_facture_source;
 				$this->note_private           = $obj->note_private;
@@ -681,8 +681,8 @@ class FactureRec extends CommonInvoice
      *	@param    	double		$txtva           	Taux de tva force, sinon -1
 	 * 	@param		double		$txlocaltax1		Local tax 1 rate (deprecated)
 	 *  @param		double		$txlocaltax2		Local tax 2 rate (deprecated)
-     *	@param    	int			$fk_product      	Id du produit/service predefini
-     *	@param    	double		$remise_percent  	Pourcentage de remise de la ligne
+     *	@param    	int			$fk_product      	Product/Service ID predefined
+     *	@param    	double		$remise_percent  	Percentage discount of the line
      *	@param		string		$price_base_type	HT or TTC
      *	@param    	int			$info_bits			VAT npr or not ?
      *	@param    	int			$fk_remise_except	Id remise
@@ -862,8 +862,8 @@ class FactureRec extends CommonInvoice
 	 *	@param    	double		$txtva           	Taux de tva force, sinon -1
 	 * 	@param		double		$txlocaltax1		Local tax 1 rate (deprecated)
 	 *  @param		double		$txlocaltax2		Local tax 2 rate (deprecated)
-	 *	@param    	int			$fk_product      	Id du produit/service predefini
-	 *	@param    	double		$remise_percent  	Pourcentage de remise de la ligne
+	 *	@param    	int			$fk_product      	Product/Service ID predefined
+	 *	@param    	double		$remise_percent  	Percentage discount of the line
 	 *	@param		string		$price_base_type	HT or TTC
 	 *	@param    	int			$info_bits			Bits de type de lignes
 	 *	@param    	int			$fk_remise_except	Id remise

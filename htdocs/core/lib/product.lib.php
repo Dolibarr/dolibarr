@@ -467,7 +467,7 @@ function show_stats_for_company($product, $socid)
  *	@param	int		$unit                Unit key (-3,0,3,98,99...)
  *	@param  string	$measuring_style     Style of unit: weight, volume,...
  *	@return	string	   			         Unit string
- * 	@see	formproduct->load_measuring_units
+ * 	@see	formproduct->selectMeasuringUnits
  */
 function measuring_units_string($unit, $measuring_style = '')
 {
@@ -496,7 +496,7 @@ function measuring_units_string($unit, $measuring_style = '')
  *
  *	@param	int		$unit            Unit key (-3,-2,-1,0,98,99...)
  *	@return	int	   			         Squared unit key (-6,-4,-2,0,98,99...)
- * 	@see	formproduct->load_measuring_units
+ * 	@see	formproduct->selectMeasuringUnits
  */
 function measuring_units_squared($unit)
 {
@@ -516,7 +516,7 @@ function measuring_units_squared($unit)
  *
  *	@param	int		$unit            Unit key (-3,-2,-1,0,98,99...)
  *	@return	int	   			         Cubed unit key (-9,-6,-3,0,88,89...)
- * 	@see	formproduct->load_measuring_units
+ * 	@see	formproduct->selectMeasuringUnits
  */
 function measuring_units_cubed($unit)
 {

@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - loan
-ModuleBuilderDesc=This tool must be used by only by experienced users or developers. It gives you utilities to build or edit your own module.<br>Documentation for alternative <a href="%s" target="_blank">manual development is here</a>.
+ModuleBuilderDesc=This tool must be used only by experienced users or developers. It provides utilities to build or edit your own module.<br>Documentation for alternative <a href="%s" target="_blank">manual development is here</a>.
 EnterNameOfModuleDesc=Enter name of the module/application to create with no spaces. Use uppercase to separate words (For example: MyModule, EcommerceForShop, SyncWithMySystem...)
 EnterNameOfObjectDesc=Enter name of the object to create with no spaces. Use uppercase to separate words (For example: MyObject, Student, Teacher...). The CRUD class file, but also API file, pages to list/add/edit/delete object and SQL files will be generated.
 ModuleBuilderDesc2=Path where modules are generated/edited (first directory for external modules defined into %s): <strong>%s</strong>
@@ -24,7 +24,7 @@ ModuleBuilderDescbuildpackage=You can generate here a "ready to distribute" pack
 EnterNameOfModuleToDeleteDesc=You can delete your module. WARNING: ALL files of module AND structured data and documentation will be deleted!
 EnterNameOfObjectToDeleteDesc=You can delete an object. WARNING: All files related to object will be deleted!
 DangerZone=Danger zone
-BuildPackage=Build package/documentation
+BuildPackage=Build package
 BuildDocumentation=Build documentation
 ModuleIsNotActive=This module is not activated yet. Go to %s to make it live or click here:
 ModuleIsLive=This module has been activated. Any change on it may break a current active feature.
@@ -45,7 +45,7 @@ SpaceOrSpecialCharAreNotAllowed=Spaces or special characters are not allowed.
 FileNotYetGenerated=File not yet generated
 RegenerateClassAndSql=Erase and regenerate class and sql files
 RegenerateMissingFiles=Generate missing files
-SpecificationFile=File with business rules
+SpecificationFile=File of documentation
 LanguageFile=File for language
 ConfirmDeleteProperty=Are you sure you want to delete the property <strong>%s</strong>? This will change code in PHP class but also remove column from table definition of object.
 NotNull=Not NULL
