@@ -43,6 +43,8 @@ $mode=GETPOST("mode", 'alpha');
 $id=GETPOST('id', 'int');
 $taskid=GETPOST('taskid', 'int');
 
+$contextpage=GETPOST('contextpage', 'aZ')?GETPOST('contextpage', 'aZ'):'perdaycard';
+
 $mine=0;
 if ($mode == 'mine') $mine=1;
 
@@ -102,6 +104,39 @@ else
 
 $object=new Task($db);
 
+$arrayfields=array(
+    // Project
+    'p.opp_amount'=>array('label'=>$langs->trans("OpportunityAmountShort"), 'checked'=>0, 'enabled'=>($conf->global->PROJECT_USE_OPPORTUNITIES?1:0), 'position'=>103),
+    'p.fk_opp_status'=>array('label'=>$langs->trans("OpportunityStatusShort"), 'checked'=>0, 'enabled'=>($conf->global->PROJECT_USE_OPPORTUNITIES?1:0), 'position'=>104),
+    'p.opp_percent'=>array('label'=>$langs->trans("OpportunityProbabilityShort"), 'checked'=>0, 'enabled'=>($conf->global->PROJECT_USE_OPPORTUNITIES?1:0), 'position'=>105),
+    'p.budget_amount'=>array('label'=>$langs->trans("Budget"), 'checked'=>0, 'position'=>110),
+    'p.bill_time'=>array('label'=>$langs->trans("BillTimeShort"), 'checked'=>0, 'position'=>115),
+);
+
+// Extra fields
+$extrafields = new ExtraFields($db);
+
+// fetch optionals attributes and labels
+$extralabels = $extrafields->fetch_name_optionals_label('projet');
+if (!empty($extrafields->attributes['projet']['label']))
+{
+    foreach($extrafields->attributes['projet']['label'] as $key => $val)
+    {
+        if (! empty($extrafields->attributes['projet']['list'][$key])) $arrayfields["efp.".$key]=array('label'=>$extrafields->attributes['projet']['label'][$key], 'checked'=>(($extrafields->attributes['projet']['list'][$key]<0)?0:1), 'position'=>$extrafields->attributes['projet']['pos'][$key], 'enabled'=>(abs($extrafields->attributes['projet']['list'][$key])!=3 && $extrafields->attributes['projet']['perms'][$key]));
+    }
+}
+$extralabels+= $extrafields->fetch_name_optionals_label('projet_task', true);
+if (!empty($extrafields->attributes['projet_task']['label']))
+{
+    foreach($extrafields->attributes['projet_task']['label'] as $key => $val)
+    {
+        if (! empty($extrafields->attributes['projet_task']['list'][$key])) $arrayfields["efpt.".$key]=array('label'=>$extrafields->attributes['projet_task']['label'][$key], 'checked'=>(($extrafields->attributes['projet_task']['list'][$key]<0)?0:1), 'position'=>$extrafields->attributes['projet_task']['pos'][$key], 'enabled'=>(abs($extrafields->attributes['projet_task']['list'][$key])!=3 && $extrafields->attributes['projet_task']['perms'][$key]));
+    }
+}
+
+$search_array_options=array();
+$search_array_options_project=$extrafields->getOptionalsFromPost('projet', '', 'search_');
+$search_array_options_task=$extrafields->getOptionalsFromPost('projet_task', '', 'search_task_');
 
 /*
  * Actions
@@ -118,6 +153,9 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_project_ref = '';
 	$search_thirdparty = '';
 	$search_declared_progress = '';
+
+    $search_array_options_project = array();
+    $search_array_options_task = array();
 
 	// We redefine $usertoprocess
 	$usertoprocess=$user;
@@ -137,8 +175,9 @@ if (GETPOST('submitdateselect'))
 	$action = '';
 }
 
+include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
-if ($action == 'addtime' && $user->rights->projet->lire && GETPOST('assigntask'))
+if ($action == 'addtime' && $user->rights->projet->lire && GETPOST('assigntask') && GETPOST('formfilteraction') != 'listafterchangingselectedfields')
 {
 	$action = 'assigntask';
 
@@ -215,7 +254,7 @@ if ($action == 'addtime' && $user->rights->projet->lire && GETPOST('assigntask')
 	$action='';
 }
 
-if ($action == 'addtime' && $user->rights->projet->lire)
+if ($action == 'addtime' && $user->rights->projet->lire && GETPOST('formfilteraction') != 'listafterchangingselectedfields')
 {
 	$timespent_duration=array();
 
@@ -341,7 +380,21 @@ if ($search_task_label)  $morewherefilter.=natural_search(array("t.ref", "t.labe
 if ($search_thirdparty)  $morewherefilter.=natural_search("s.nom", $search_thirdparty);
 if ($search_declared_progress)  $morewherefilter.=natural_search("t.progress", $search_declared_progress, 1);
 
-$tasksarray=$taskstatic->getTasksArray(0, 0, ($project->id?$project->id:0), $socid, 0, $search_project_ref, $onlyopenedproject, $morewherefilter, ($search_usertoprocessid?$search_usertoprocessid:0));    // We want to see all task of opened project i am allowed to see and that match filter, not only my tasks. Later only mine will be editable later.
+$sql = &$morewherefilter;
+
+$search_array_options = $search_array_options_project;
+$extrafieldsobjectprefix='efp.';
+$search_options_pattern='search_options_';
+$extrafieldsobjectkey='projet';
+include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
+
+$search_array_options = $search_array_options_task;
+$extrafieldsobjectprefix='efpt.';
+$search_options_pattern='search_task_options_';
+$extrafieldsobjectkey='projet_task';
+include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
+
+$tasksarray=$taskstatic->getTasksArray(0, 0, ($project->id?$project->id:0), $socid, 0, $search_project_ref, $onlyopenedproject, $morewherefilter, ($search_usertoprocessid?$search_usertoprocessid:0), 0, $extrafields);    // We want to see all task of opened project i am allowed to see and that match filter, not only my tasks. Later only mine will be editable later.
 if ($morewherefilter)	// Get all task without any filter, so we can show total of time spent for not visible tasks
 {
 	$tasksarraywithoutfilter=$taskstatic->getTasksArray(0, 0, ($project->id?$project->id:0), $socid, 0, '', $onlyopenedproject, '', ($search_usertoprocessid?$search_usertoprocessid:0));    // We want to see all task of opened project i am allowed to see and that match filter, not only my tasks. Later only mine will be editable later.
@@ -364,6 +417,21 @@ $param.=($search_thirdparty?'&search_thirdparty='.$search_thirdparty:'');
 $param.=($search_task_ref?'&search_task_ref='.$search_task_ref:'');
 $param.=($search_task_label?'&search_task_label='.$search_task_label:'');
 
+$search_array_options=$search_array_options_project;
+$search_options_pattern='search_options_';
+include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
+
+$search_array_options=$search_array_options_task;
+$search_options_pattern='search_task_options_';
+include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
+
+// Project
+//$search_pattern='search_options_';
+//include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
+// Task
+$search_options_pattern='search_task_options_';
+include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
+
 // Show navigation bar
 $nav ='<a class="inline-block valignmiddle" href="?year='.$prev_year."&amp;month=".$prev_month."&amp;day=".$prev_day.$param.'">'.img_previous($langs->trans("Previous"))."</a>\n";
 $nav.=dol_print_date(dol_mktime(0, 0, 0, $month, $day, $year), "%A").' ';
@@ -378,6 +446,8 @@ $picto='calendarweek';
 print '<form name="addtime" method="POST" action="'.$_SERVER["PHP_SELF"].($project->id > 0 ? '?id='.$project->id : '').'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="addtime">';
+print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
+print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 print '<input type="hidden" name="mode" value="'.$mode.'">';
 $tmp = dol_getdate($daytoparse);
 print '<input type="hidden" name="addtimeyear" value="'.$tmp['year'].'">';
@@ -477,6 +547,23 @@ print '<tr class="liste_titre_filter">';
 if (! empty($conf->global->PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT)) print '<td class="liste_titre"><input type="text" size="4" name="search_project_ref" value="'.dol_escape_htmltag($search_project_ref).'"></td>';
 if (! empty($conf->global->PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT)) print '<td class="liste_titre"><input type="text" size="4" name="search_thirdparty" value="'.dol_escape_htmltag($search_thirdparty).'"></td>';
 print '<td class="liste_titre"><input type="text" size="4" name="search_task_label" value="'.dol_escape_htmltag($search_task_label).'"></td>';
+
+$varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
+$selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
+
+$addcolspan=0;
+foreach ($arrayfields as $key => $val)
+{
+    if ($val['checked'] && substr($key, 0, 5) == 'efpt.') $addcolspan++;
+}
+
+// TASK fields
+$search_options_pattern='search_task_options_';
+$extrafieldsobjectkey='projet_task';
+$extrafieldsobjectprefix='efpt.';
+include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
+
+
 print '<td class="liste_titre"></td>';
 print '<td class="liste_titre right"><input type="text" size="4" name="search_declared_progress" value="'.dol_escape_htmltag($search_declared_progress).'"></td>';
 print '<td class="liste_titre"></td>';
@@ -495,6 +582,13 @@ print '<tr class="liste_titre">';
 if (! empty($conf->global->PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT)) print '<td>'.$langs->trans("Project").'</td>';
 if (! empty($conf->global->PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT)) print '<td>'.$langs->trans("ThirdParty").'</td>';
 print '<td>'.$langs->trans("Task").'</td>';
+
+// TASK fields
+$extrafieldsobjectkey='projet_task';
+$extrafieldsobjectprefix='efpt.';
+include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
+
+
 print '<td class="right leftborder plannedworkload maxwidth100">'.$langs->trans("PlannedWorkload").'</td>';
 print '<td class="right maxwidth100">'.$langs->trans("ProgressDeclared").'</td>';
 /*print '<td class="right maxwidth100">'.$langs->trans("TimeSpent").'</td>';
@@ -541,7 +635,9 @@ elseif (! $isavailable[$daytoparse]['afternoon']) $cssonholiday.='onholidayafter
 
 print '<td class="center'.($cssonholiday?' '.$cssonholiday:'').($cssweekend?' '.$cssweekend:'').'">'.$langs->trans("Duration").'</td>';
 print '<td class="center">'.$langs->trans("Note").'</td>';
-print '<td class="center"></td>';
+//print '<td class="center"></td>';
+print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
+
 print "</tr>\n";
 
 $colspan = 6+(empty($conf->global->PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT)?0:2);
@@ -549,7 +645,7 @@ $colspan = 6+(empty($conf->global->PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT)?0:
 if ($conf->use_javascript_ajax)
 {
 	print '<tr class="liste_total">';
-	print '<td class="liste_total" colspan="'.($colspan-1).'">';
+	print '<td class="liste_total" colspan="'.($colspan-1+$addcolspan).'">';
 	print $langs->trans("Total");
 	print '</td>';
 	print '<td class="liste_total leftborder">';
@@ -586,7 +682,7 @@ if (count($tasksarray) > 0)
 
 	$j=0;
 	$level=0;
-	$totalforvisibletasks = projectLinesPerDay($j, 0, $usertoprocess, $tasksarray, $level, $projectsrole, $tasksrole, $mine, $restrictviewformytask, $daytoparse, $isavailable, 0);
+	$totalforvisibletasks = projectLinesPerDay($j, 0, $usertoprocess, $tasksarray, $level, $projectsrole, $tasksrole, $mine, $restrictviewformytask, $daytoparse, $isavailable, 0, $arrayfields, $extrafields, $extralabels);
 	//var_dump($totalforvisibletasks);
 
 	// Show total for all other tasks
@@ -650,7 +746,7 @@ if (count($tasksarray) > 0)
 	if ($conf->use_javascript_ajax)
 	{
 		print '<tr class="liste_total">';
-		print '<td class="liste_total" colspan="'.($colspan-1).'">';
+		print '<td class="liste_total" colspan="'.($colspan-1+$addcolspan).'">';
 		print $langs->trans("Total");
 		print '</td>';
 		print '<td class="liste_total leftborder">';
