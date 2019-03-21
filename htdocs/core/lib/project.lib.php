@@ -1160,9 +1160,12 @@ function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsr
  * @param   int			$restricteditformytask	0=No restriction, 1=Enable add time only if task is assigned to me, 2=Enable add time only if tasks is assigned to me and hide others
  * @param   array       $isavailable			Array with data that say if user is available for several days for morning and afternoon
  * @param	int			$oldprojectforbreak		Old project id of last project break
+ * @param	array		$arrayfields		    Array of additional column
+ * @param	array		$extrafields		    Array of additional column
+ * @param	array		$extralabels		    Array of additional column
  * @return  array								Array with time spent for $fuser for each day of week on tasks in $lines and substasks
  */
-function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$level, &$projectsrole, &$tasksrole, $mine, $restricteditformytask, &$isavailable, $oldprojectforbreak = 0)
+function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$level, &$projectsrole, &$tasksrole, $mine, $restricteditformytask, &$isavailable, $oldprojectforbreak = 0, $arrayfields=array(), $extrafields='', $extralabels=array())
 {
 	global $conf, $db, $user, $bc, $langs;
 	global $form, $formother, $projectstatic, $taskstatic, $thirdpartystatic;
@@ -1196,6 +1199,8 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
 
 		if ($lines[$i]->fk_task_parent == $parent)
 		{
+            $obj = &$lines[$i]; // To display extrafields
+
 			// If we want all or we have a role on task, we show it
 			if (empty($mine) || ! empty($tasksrole[$lines[$i]->id]))
 			{
@@ -1241,8 +1246,14 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
 
 				if (empty($oldprojectforbreak) || ($oldprojectforbreak != -1 && $oldprojectforbreak != $projectstatic->id))
 				{
+                    $addcolspan=0;
+                    foreach ($arrayfields as $key => $val)
+                    {
+                        if ($val['checked'] && substr($key, 0, 5) == 'efpt.') $addcolspan++;
+                    }
+
 					print '<tr class="oddeven trforbreak">'."\n";
-					print '<td colspan="13">';
+					print '<td colspan="'.(13+$addcolspan).'">';
 					print $projectstatic->getNomUrl(1, '', 0, '<strong>'.$langs->transnoentitiesnoconv("YourRole").':</strong> '.$projectsrole[$lines[$i]->fk_project]);
 					if ($thirdpartystatic->id > 0) print ' - '.$thirdpartystatic->getNomUrl(1);
 					if ($projectstatic->title)
@@ -1250,6 +1261,66 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
 						print ' - ';
 						print $projectstatic->title;
 					}
+
+                    $colspan=5+(empty($conf->global->PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT)?0:2);
+					print '<table class="">';
+
+					print '<tr class="liste_titre">';
+
+					// PROJECT fields
+                    if (! empty($arrayfields['p.fk_opp_status']['checked'])) print_liste_field_titre($arrayfields['p.fk_opp_status']['label'], $_SERVER["PHP_SELF"], 'p.fk_opp_status', "", $param, '', $sortfield, $sortorder, 'center ');
+                    if (! empty($arrayfields['p.opp_amount']['checked']))    print_liste_field_titre($arrayfields['p.opp_amount']['label'], $_SERVER["PHP_SELF"], 'p.opp_amount', "", $param, '', $sortfield, $sortorder, 'right ');
+                    if (! empty($arrayfields['p.opp_percent']['checked']))   print_liste_field_titre($arrayfields['p.opp_percent']['label'], $_SERVER["PHP_SELF"], 'p.opp_percent', "", $param, '', $sortfield, $sortorder, 'right ');
+                    if (! empty($arrayfields['p.budget_amount']['checked'])) print_liste_field_titre($arrayfields['p.budget_amount']['label'], $_SERVER["PHP_SELF"], 'p.budget_amount', "", $param, '', $sortfield, $sortorder, 'right ');
+                    if (! empty($arrayfields['p.bill_time']['checked']))     print_liste_field_titre($arrayfields['p.bill_time']['label'], $_SERVER["PHP_SELF"], 'p.bill_time', "", $param, '', $sortfield, $sortorder, 'right ');
+
+                    $extrafieldsobjectkey='projet';
+                    $extrafieldsobjectprefix='efp.';
+                    include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
+
+                    print '</tr>';
+                    print '<tr>';
+
+                    // PROJECT fields
+                    if (! empty($arrayfields['p.fk_opp_status']['checked']))
+                    {
+                        print '<td class="nowrap">';
+                        $code = dol_getIdFromCode($db, $lines[$i]->fk_opp_status, 'c_lead_status', 'rowid', 'code');
+                        if ($code) print $langs->trans("OppStatus".$code);
+                        print "</td>\n";
+                    }
+                    if (! empty($arrayfields['p.opp_amount']['checked']))
+                    {
+                        print '<td class="nowrap">';
+                        print price($lines[$i]->opp_amount, 0, $langs, 1, 0, -1, $conf->currency);
+                        print "</td>\n";
+                    }
+                    if (! empty($arrayfields['p.opp_percent']['checked']))
+                    {
+                        print '<td class="nowrap">';
+                        print price($lines[$i]->opp_percent, 0, $langs, 1, 0).' %';
+                        print "</td>\n";
+                    }
+                    if (! empty($arrayfields['p.budget_amount']['checked']))
+                    {
+                        print '<td class="nowrap">';
+                        print price($lines[$i]->budget_amount, 0, $langs, 1, 0, 0, $conf->currency);
+                        print "</td>\n";
+                    }
+                    if (! empty($arrayfields['p.bill_time']['checked']))
+                    {
+                        print '<td class="nowrap">';
+                        print yn($lines[$i]->bill_time);
+                        print "</td>\n";
+                    }
+
+                    $extrafieldsobjectkey='projet';
+                    $extrafieldsobjectprefix='efp.';
+                    include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
+
+                    print '</tr>';
+                    print '</table>';
+
 					print '</td>';
 					print '</tr>';
 				}
@@ -1290,7 +1361,13 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
 				//print get_date_range($lines[$i]->date_start,$lines[$i]->date_end,'',$langs,0);
 				print "</td>\n";
 
-				// Planned Workload
+				// TASK extrafields
+                $extrafieldsobjectkey='projet_task';
+                $extrafieldsobjectprefix='efpt.';
+                include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
+
+
+                // Planned Workload
 				print '<td class="leftborder plannedworkload right">';
 				if ($lines[$i]->planned_workload) print convertSecondToTime($lines[$i]->planned_workload, 'allhourmin');
 				else print '--:--';
@@ -1402,7 +1479,7 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
 			{
 				//var_dump('totalforeachday after taskid='.$lines[$i]->id.' and previous one on level '.$level);
 				//var_dump($totalforeachday);
-				$ret = projectLinesPerWeek($inc, $firstdaytoshow, $fuser, $lines[$i]->id, ($parent == 0 ? $lineswithoutlevel0 : $lines), $level, $projectsrole, $tasksrole, $mine, $restricteditformytask, $isavailable, $oldprojectforbreak);
+				$ret = projectLinesPerWeek($inc, $firstdaytoshow, $fuser, $lines[$i]->id, ($parent == 0 ? $lineswithoutlevel0 : $lines), $level, $projectsrole, $tasksrole, $mine, $restricteditformytask, $isavailable, $oldprojectforbreak, $arrayfields, $extrafields, $extralabels);
 				//var_dump('ret with parent='.$lines[$i]->id.' level='.$level);
 				//var_dump($ret);
 				foreach($ret as $key => $val)
