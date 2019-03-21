@@ -1301,7 +1301,6 @@ if (empty($reshook))
 												$tva_tx = $lines[$i]->tva_tx;
 												$amountdeposit[$tva_tx] += ($lines[$i]->total_ht * $valuedeposit) / 100;
 											}
-																					
 										}
 
 										if($totalamount == 0) {
