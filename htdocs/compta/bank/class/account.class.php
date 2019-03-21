@@ -1693,13 +1693,27 @@ class AccountLine extends CommonObject
      */
     public $ref;
 
-	public $datec;
+	/**
+     * Date creation record (datec)
+     *
+     * @var integer
+     */
+    public $datec;	
+    
+    /**
+     * Date (dateo)
+     *
+     * @var integer
+     */
 	public $dateo;
 
 	/**
-	 * Value date
-	 */
+     * Date value (datev)
+     *
+     * @var integer
+     */
 	public $datev;
+	
 	public $amount;
 
     /**
