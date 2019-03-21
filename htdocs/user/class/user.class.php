@@ -7,7 +7,7 @@
  * Copyright (C) 2005-2017  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2005       Lionel Cousteix         <etm_ltd@tiscali.co.uk>
  * Copyright (C) 2011       Herve Prot              <herve.prot@symeos.com>
- * Copyright (C) 2013-2018  Philippe Grand          <philippe.grand@atoo-net.com>
+ * Copyright (C) 2013-2019  Philippe Grand          <philippe.grand@atoo-net.com>
  * Copyright (C) 2013-2015  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2018       charlene Benke          <charlie@patas-monkey.com>
@@ -108,8 +108,19 @@ class User extends CommonObject
 	//! Encrypted password in database (always defined)
 	public $pass_indatabase_crypted;
 
-	public $datec;
-	public $datem;
+	/**
+     * Date creation record (datec)
+     *
+     * @var integer
+     */
+    public $datec;
+    
+	/**
+     * Date modification record (tms)
+     *
+     * @var integer
+     */
+    public $datem;
 
 	//! If this is defined, it is an external user
 	/**

@@ -63,10 +63,28 @@ class Fiscalyear extends CommonObject
 	 * @var string fiscal year label
 	 */
 	public $label;
-
+    
+	/**
+     * Date start (date_start)
+     *
+     * @var integer
+     */
 	public $date_start;
+	
+	/**
+     * Date end (date_end)
+     *
+     * @var integer
+     */
 	public $date_end;
-	public $datec;
+	
+	/**
+     * Date creation record (datec)
+     *
+     * @var integer
+     */
+    public $datec;
+    
 	public $statut;		// 0=open, 1=closed
 
 	/**

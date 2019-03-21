@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005 Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2015 Marcos García       <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -64,7 +64,12 @@ class Bookmark extends CommonObject
 	 */
 	public $fk_user;
 
-    public $datec;
+    /**
+     * Date creation record (datec)
+     *
+     * @var integer
+     */
+    public $datec;	
 
     public $url;
 

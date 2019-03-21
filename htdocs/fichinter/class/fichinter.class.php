@@ -5,8 +5,8 @@
  * Copyright (C) 2011-2013 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2015      Charlie Benke        <charlie@patas-monkey.com>
- * Copyright (C) 2018      Nicolas ZABOURI	<info@inovea-conseil.com>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018      Nicolas ZABOURI	    <info@inovea-conseil.com>
+ * Copyright (C) 2018      Frédéric France      <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -69,12 +69,26 @@ class Fichinter extends CommonObject
 	public $socid;		// Id client
 
 	public $author;
-	public $datec;
+	
+	/**
+     * Date creation record (datec)
+     *
+     * @var integer
+     */
+    public $datec;
+    
 	public $datev;
 	public $dateo;
 	public $datee;
 	public $datet;
-	public $datem;
+	
+	/**
+     * Date modification record (tms)
+     *
+     * @var integer
+     */
+    public $datem;	
+    
 	public $duration;
 	public $statut = 0;		// 0=draft, 1=validated, 2=invoiced, 3=Terminate
 
