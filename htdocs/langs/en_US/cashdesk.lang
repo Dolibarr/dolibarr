@@ -56,3 +56,4 @@ BillsCoinsPad=Bills and Coins Pad
 DolistorePosCategory=TakePOS modules and other POS solutions for Dolibarr
 TakeposNeedsCategories=TakePOS needs product categories to work
 OrderNotes=Order Notes
+AutoPrintTickets=Automatically print tickets
