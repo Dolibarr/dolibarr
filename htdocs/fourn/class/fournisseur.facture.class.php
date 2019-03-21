@@ -113,35 +113,35 @@ class FactureFournisseur extends CommonInvoice
 
     public $author;
     public $libelle;
-    
+
     /**
      * Date creation record (datec)
      *
      * @var integer
      */
     public $datec;
-    
+
     /**
      * Date modification record (tms)
      *
      * @var integer
      */
     public $tms;
-    
+
     /**
      * Invoice date (date)
      *
      * @var integer
      */
-    public $date;             
-    
+    public $date;
+
     /**
      * Max payment date (date_echeance)
      *
      * @var integer
      */
-    public $date_echeance;    
-    
+    public $date_echeance;
+
     public $amount=0;
     public $remise=0;
     public $tva=0;

@@ -114,7 +114,7 @@ class User extends CommonObject
      * @var integer
      */
     public $datec;
-    
+
 	/**
      * Date modification record (tms)
      *

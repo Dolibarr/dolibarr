@@ -1546,8 +1546,8 @@ class Account extends CommonObject
 	 * Some countries show less or more bank account properties to the user
 	 *
 	 * @param  int     $includeibanbic         1=Return also key for IBAN and BIC
-	 * @return array
-	 * @see useDetailedBBAN
+	 * @return array                           Array of fields to show
+	 * @see useDetailedBBAN()
 	 */
 	public function getFieldsToShow($includeibanbic = 0)
 	{
@@ -1698,8 +1698,8 @@ class AccountLine extends CommonObject
      *
      * @var integer
      */
-    public $datec;	
-    
+    public $datec;
+
     /**
      * Date (dateo)
      *
@@ -1713,7 +1713,7 @@ class AccountLine extends CommonObject
      * @var integer
      */
 	public $datev;
-	
+
 	public $amount;
 
     /**

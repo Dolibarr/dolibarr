@@ -62,8 +62,8 @@ class Deplacement extends CommonObject
      *
      * @var integer
      */
-    public $datec;	
-    
+    public $datec;
+
     /**
      * Date (dated)
      *

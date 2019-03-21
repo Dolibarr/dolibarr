@@ -69,26 +69,26 @@ class Fichinter extends CommonObject
 	public $socid;		// Id client
 
 	public $author;
-	
+
 	/**
      * Date creation record (datec)
      *
      * @var integer
      */
     public $datec;
-    
+
 	public $datev;
 	public $dateo;
 	public $datee;
 	public $datet;
-	
+
 	/**
      * Date modification record (tms)
      *
      * @var integer
      */
-    public $datem;	
-    
+    public $datem;
+
 	public $duration;
 	public $statut = 0;		// 0=draft, 1=validated, 2=invoiced, 3=Terminate
 
