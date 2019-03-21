@@ -36,7 +36,18 @@ class UserBankAccount extends Account
 {
     public $socid;
 
-    public $datec;
+    /**
+     * Date creation record (datec)
+     *
+     * @var integer
+     */
+    public $datec;	
+    
+    /**
+     * Date modification record (tms)
+     *
+     * @var integer
+     */
     public $datem;
 
 
