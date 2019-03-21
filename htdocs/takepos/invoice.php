@@ -87,11 +87,12 @@ if (($action=="addline" || $action=="freezone") && $placeid == 0)
 {
 	$invoice->socid = $conf->global->CASHDESK_ID_THIRDPARTY;
 	$invoice->date = dol_now();
-	$invoice->ref = "(PROV-POS-".$place.")";
 	$invoice->module_source = 'takepos';
 	$invoice->pos_source = (string) $place;
 
 	$placeid = $invoice->create($user);
+	$sql="UPDATE ".MAIN_DB_PREFIX."facture set ref='(PROV-POS-".$place.")' where rowid=".$placeid;
+	$db->query($sql);
 }
 
 if ($action == "addline") {
