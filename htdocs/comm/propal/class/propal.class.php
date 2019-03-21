@@ -439,6 +439,7 @@ class Propal extends CommonObject
 		global $mysoc, $conf, $langs;
 
 		dol_syslog(get_class($this)."::addline propalid=$this->id, desc=$desc, pu_ht=$pu_ht, qty=$qty, txtva=$txtva, fk_product=$fk_product, remise_except=$remise_percent, price_base_type=$price_base_type, pu_ttc=$pu_ttc, info_bits=$info_bits, type=$type, fk_remise_except=".$fk_remise_except);
+
 		if ($this->statut == self::STATUS_DRAFT)
 		{
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
@@ -629,7 +630,7 @@ class Propal extends CommonObject
         }
 		else
 		{
-			dol_syslog(get_class($this)."::addline status of order must be Draft to allow use of ->addline()", LOG_ERR);
+			dol_syslog(get_class($this)."::addline status of proposal must be Draft to allow use of ->addline()", LOG_ERR);
 			return -3;
 		}
     }
