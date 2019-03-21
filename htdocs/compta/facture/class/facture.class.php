@@ -1081,7 +1081,7 @@ class Facture extends CommonInvoice
 	 */
     public function createFromOrder($object, User $user)
 	{
-		global $hookmanager;
+		global $conf, $hookmanager;
 
 		$error=0;
 
@@ -1142,8 +1142,12 @@ class Facture extends CommonInvoice
 		$this->fk_delivery_address  = $object->fk_delivery_address;
 		$this->contact_id           = $object->contactid;
 		$this->ref_client           = $object->ref_client;
-		$this->note_private         = $object->note_private;
-		$this->note_public          = $object->note_public;
+
+		if (empty($conf->global->MAIN_DISABLE_PROPAGATE_NOTES_FROM_ORIGIN))
+		{
+		    $this->note_private         = $object->note_private;
+            $this->note_public          = $object->note_public;
+		}
 
         $this->module_source		= $object->module_source;
 		$this->pos_source			= $object->pos_source;
@@ -4381,10 +4385,6 @@ class FactureLigne extends CommonInvoiceLine
 
 	public $date_start;
 	public $date_end;
-
-	// Ne plus utiliser
-	//var $price;         	// P.U. HT apres remise % de ligne (exemple 80)
-	//var $remise;			// Montant calcule de la remise % sur PU HT (exemple 20)
 
 	// From llx_product
 	/**
