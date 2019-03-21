@@ -5100,7 +5100,10 @@ abstract class CommonObject
 			{
     			foreach($extrafields->attributes[$this->table_element]['mandatoryfieldsofotherentities'] as  $tmpkey => $tmpval)
     			{
-    			    $sql.=",".$tmpkey;
+    			    if (! isset($extrafields->attributes[$this->table_element]['type'][$tmpkey]))    // If field not already added previously
+    			    {
+    			        $sql.=",".$tmpkey;
+    			    }
     			}
 			}
 			$sql .= ") VALUES (".$this->id;
@@ -5126,8 +5129,11 @@ abstract class CommonObject
 			{
 			    foreach($extrafields->attributes[$this->table_element]['mandatoryfieldsofotherentities'] as  $tmpkey => $tmpval)
     			{
-    			    if (in_array($tmpval, array('int', 'double'))) $sql.=", 0";
-    			    else $sql.=", ''";
+    			    if (! isset($extrafields->attributes[$this->table_element]['type'][$tmpkey]))    // If field not already added previously
+    			    {
+                        if (in_array($tmpval, array('int', 'double'))) $sql.=", 0";
+                        else $sql.=", ''";
+    			    }
     			}
 			}
 
