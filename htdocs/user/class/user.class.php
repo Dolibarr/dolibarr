@@ -1976,7 +1976,7 @@ class User extends CommonObject
 		}
 		else
 		{
-			$url = $urlwithroot.'/user/passwordforgotten.php?action=validatenewpassword&username='.$this->login."&passwordhash=".dol_hash($password);
+			$url = $urlwithroot.'/user/passwordforgotten.php?action=validatenewpassword&username='.urlencode($this->login)."&passwordhash=".dol_hash($password);
 
 			$mesg.= $outputlangs->transnoentitiesnoconv("RequestToResetPasswordReceived")."\n";
 			$mesg.= $outputlangs->transnoentitiesnoconv("NewKeyWillBe")." :\n\n";
