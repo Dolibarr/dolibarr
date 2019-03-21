@@ -4993,9 +4993,12 @@ abstract class CommonObject
 					$sql.=",".$attributeKey;
 			}
 			// We must insert a default value for fields for other entities that are mandatory to avoid not null error
-			foreach($extrafields->attributes[$this->table_element]['mandatoryfieldsofotherentities'] as  $tmpkey => $tmpval)
+			if (is_array($extrafields->attributes[$this->table_element]['mandatoryfieldsofotherentities']))
 			{
-			    $sql.=",".$tmpkey;
+    			foreach($extrafields->attributes[$this->table_element]['mandatoryfieldsofotherentities'] as  $tmpkey => $tmpval)
+    			{
+    			    $sql.=",".$tmpkey;
+    			}
 			}
 			$sql .= ") VALUES (".$this->id;
 
@@ -5016,10 +5019,13 @@ abstract class CommonObject
 				}
 			}
 			// We must insert a default value for fields for other entities that are mandatory to avoid not null error
-			foreach($extrafields->attributes[$this->table_element]['mandatoryfieldsofotherentities'] as  $tmpkey => $tmpval)
+			if (is_array($extrafields->attributes[$this->table_element]['mandatoryfieldsofotherentities']))
 			{
-			    if (in_array($tmpval, array('int', 'double'))) $sql.=", 0";
-			    else $sql.=", ''";
+			    foreach($extrafields->attributes[$this->table_element]['mandatoryfieldsofotherentities'] as  $tmpkey => $tmpval)
+    			{
+    			    if (in_array($tmpval, array('int', 'double'))) $sql.=", 0";
+    			    else $sql.=", ''";
+    			}
 			}
 
 			$sql.=")";

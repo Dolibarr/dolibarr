@@ -797,7 +797,7 @@ class ExtraFields
 				    if ($tab->entity != 0 && $tab->entity != $conf->entity)
 				    {
 				        // This field is not in current entity. We discard but before we save it into the array of mandatory fields if it is a mandatory field
-				        if ($tab->fieldrequired)
+				        if ($tab->fieldrequired && is_null($tab->fielddefault))
 				        {
 				            $this->attributes[$tab->elementtype]['mandatoryfieldsofotherentities'][$tab->name]=$tab->type;
 				        }
