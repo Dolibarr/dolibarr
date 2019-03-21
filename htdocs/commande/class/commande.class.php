@@ -499,16 +499,22 @@ class Commande extends CommonOrder
 			return -1;
 		}
 
+		dol_syslog(get_class($this)."::set_draft", LOG_DEBUG);
+
 		$this->db->begin();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."commande";
 		$sql.= " SET fk_statut = ".self::STATUS_DRAFT;
 		$sql.= " WHERE rowid = ".$this->id;
 
-		dol_syslog(get_class($this)."::set_draft", LOG_DEBUG);
 		if ($this->db->query($sql))
 		{
-			// If stock is decremented on validate order, we must reincrement it
+		    if (! $error)
+		    {
+		        $this->oldcopy= clone $this;
+		    }
+
+		    // If stock is decremented on validate order, we must reincrement it
 			if (! empty($conf->stock->enabled) && $conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER == 1)
 			{
 				$result = 0;

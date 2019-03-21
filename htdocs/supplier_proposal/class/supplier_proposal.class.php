@@ -1883,14 +1883,39 @@ class SupplierProposal extends CommonObject
         // phpcs:enable
         global $conf,$langs;
 
-        $sql = "UPDATE ".MAIN_DB_PREFIX."supplier_proposal SET fk_statut = 0";
+        $error = 0;
+
+        if ($this->statut == self::STATUS_DRAFT)
+        {
+            dol_syslog(get_class($this)."::setDraft already draft status", LOG_WARNING);
+            return 0;
+        }
+
+        $sql = "UPDATE ".MAIN_DB_PREFIX."supplier_proposal";
+        $sql.= " SET fk_statut = ".self::STATUS_DRAFT;
         $sql.= " WHERE rowid = ".$this->id;
 
         if ($this->db->query($sql))
         {
-            $this->statut = 0;
-            $this->brouillon = 1;
-            return 1;
+            if (!$error) {
+                $this->oldcopy = clone $this;
+            }
+
+            if (!$error) {
+                // Call trigger
+                $result=$this->call_trigger('SUPPLIER_PROPOSAL_UNVALIDATE', $user);
+                if ($result < 0) $error++;
+            }
+
+            if (!$error) {
+                $this->statut=self::STATUS_DRAFT;
+                $this->brouillon = 1;
+                $this->db->commit();
+                return 1;
+            } else {
+                $this->db->rollback();
+                return -1;
+            }
         }
         else
         {

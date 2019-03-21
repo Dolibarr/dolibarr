@@ -1471,16 +1471,22 @@ class FactureFournisseur extends CommonInvoice
             return 0;
         }
 
+        dol_syslog(get_class($this)."::set_draft", LOG_DEBUG);
+
         $this->db->begin();
 
         $sql = "UPDATE ".MAIN_DB_PREFIX."facture_fourn";
-        $sql.= " SET fk_statut = 0";
+        $sql.= " SET fk_statut = ".self::STATUS_DRAFT;
         $sql.= " WHERE rowid = ".$this->id;
 
-        dol_syslog(get_class($this)."::set_draft", LOG_DEBUG);
         $result=$this->db->query($sql);
         if ($result)
         {
+            if (! $error)
+            {
+                $this->oldcopy= clone $this;
+            }
+
             // Si on incremente le produit principal et ses composants a la validation de facture fournisseur, on decremente
             if ($result >= 0 && ! empty($conf->stock->enabled) && ! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_BILL))
             {

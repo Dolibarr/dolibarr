@@ -2554,16 +2554,22 @@ class Facture extends CommonInvoice
 			return 0;
 		}
 
+		dol_syslog(get_class($this)."::set_draft", LOG_DEBUG);
+
 		$this->db->begin();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."facture";
 		$sql.= " SET fk_statut = ".self::STATUS_DRAFT;
 		$sql.= " WHERE rowid = ".$this->id;
 
-		dol_syslog(get_class($this)."::set_draft", LOG_DEBUG);
 		$result=$this->db->query($sql);
 		if ($result)
 		{
+		    if (! $error)
+		    {
+		        $this->oldcopy= clone $this;
+		    }
+
 			// Si on decremente le produit principal et ses composants a la validation de facture, on réincrement
 			if ($this->type != self::TYPE_DEPOSIT && $result >= 0 && ! empty($conf->stock->enabled) && ! empty($conf->global->STOCK_CALCULATE_ON_BILL))
 			{
@@ -2589,6 +2595,7 @@ class Facture extends CommonInvoice
 				$old_statut=$this->statut;
 				$this->brouillon = 1;
 				$this->statut = self::STATUS_DRAFT;
+
 	            // Call trigger
 	            $result=$this->call_trigger('BILL_UNVALIDATE', $user);
 	            if ($result < 0)

@@ -2610,12 +2610,20 @@ class Propal extends CommonObject
         // phpcs:enable
 		$error=0;
 
+		// Protection
+		if ($this->statut <= self::STATUS_DRAFT)
+		{
+		    return 0;
+		}
+
+		dol_syslog(get_class($this)."::setDraft", LOG_DEBUG);
+
 		$this->db->begin();
 
-		$sql = "UPDATE ".MAIN_DB_PREFIX."propal SET fk_statut = ".self::STATUS_DRAFT;
+		$sql = "UPDATE ".MAIN_DB_PREFIX."propal";
+		$sql.= " SET fk_statut = ".self::STATUS_DRAFT;
 		$sql.= " WHERE rowid = ".$this->id;
 
-		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if (!$resql)
 		{
@@ -2626,8 +2634,6 @@ class Propal extends CommonObject
 		if (! $error)
 		{
 			$this->oldcopy= clone $this;
-			$this->statut = self::STATUS_DRAFT;
-			$this->brouillon = 1;
 		}
 
 		if (! $notrigger && empty($error))
@@ -2640,7 +2646,10 @@ class Propal extends CommonObject
 
 		if (! $error)
 		{
-			$this->db->commit();
+		    $this->statut = self::STATUS_DRAFT;
+		    $this->brouillon = 1;
+
+		    $this->db->commit();
 			return 1;
 		}
 		else
