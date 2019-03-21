@@ -69,7 +69,7 @@ class Bookmark extends CommonObject
      *
      * @var integer
      */
-    public $datec;	
+    public $datec;
 
     public $url;
 

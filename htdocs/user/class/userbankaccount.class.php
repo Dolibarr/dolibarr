@@ -41,8 +41,8 @@ class UserBankAccount extends Account
      *
      * @var integer
      */
-    public $datec;	
-    
+    public $datec;
+
     /**
      * Date modification record (tms)
      *
