@@ -1687,20 +1687,21 @@ class ExpenseReport extends CommonObject
 	/**
 	 * addline
 	 *
-	 * @param    float       $qty                Qty
-	 * @param    double      $up                 Value init
-	 * @param    int         $fk_c_type_fees     Type payment
-	 * @param    string      $vatrate            Vat rate (Can be '10' or '10 (ABC)')
-	 * @param    string      $date               Date
-	 * @param    string      $comments           Description
-	 * @param    int         $fk_project         Project id
-	 * @param    int         $fk_c_exp_tax_cat   Car category id
-	 * @param    int         $type               Type line
-	 * @return   int                             <0 if KO, >0 if OK
+	 * @param    float       $qty                      Qty
+	 * @param    double      $up                       Value init
+	 * @param    int         $fk_c_type_fees           Type payment
+	 * @param    string      $vatrate                  Vat rate (Can be '10' or '10 (ABC)')
+	 * @param    string      $date                     Date
+	 * @param    string      $comments                 Description
+	 * @param    int         $fk_project               Project id
+	 * @param    int         $fk_c_exp_tax_cat         Car category id
+	 * @param    int         $type                     Type line
+	 * @param    int         $fk_ecm_files    Id of ECM file to link to this expensereport line
+	 * @return   int                                   <0 if KO, >0 if OK
 	 */
-	public function addline($qty = 0, $up = 0, $fk_c_type_fees = 0, $vatrate = 0, $date = '', $comments = '', $fk_project = 0, $fk_c_exp_tax_cat = 0, $type = 0)
+    public function addline($qty = 0, $up = 0, $fk_c_type_fees = 0, $vatrate = 0, $date = '', $comments = '', $fk_project = 0, $fk_c_exp_tax_cat = 0, $type = 0, $fk_ecm_files = 0)
 	{
-		global $conf,$langs,$mysoc;
+		global $conf, $langs, $mysoc;
 
         dol_syslog(get_class($this)."::addline qty=$qty, up=$up, fk_c_type_fees=$fk_c_type_fees, vatrate=$vatrate, date=$date, fk_project=$fk_project, type=$type, comments=$comments", LOG_DEBUG);
 
@@ -1751,6 +1752,8 @@ class ExpenseReport extends CommonObject
 			$this->line->fk_c_exp_tax_cat = $fk_c_exp_tax_cat;
 			$this->line->comments = $comments;
 			$this->line->fk_projet = $fk_project;
+
+			$this->line->fk_ecm_files = $fk_ecm_files;
 
 			$this->applyOffset();
 			$this->checkRules($type, $seller);
@@ -2585,7 +2588,7 @@ class ExpenseReportLine
 
         $sql = 'INSERT INTO '.MAIN_DB_PREFIX.'expensereport_det';
         $sql.= ' (fk_expensereport, fk_c_type_fees, fk_projet,';
-        $sql.= ' tva_tx, vat_src_code, comments, qty, value_unit, total_ht, total_tva, total_ttc, date, rule_warning_message, fk_c_exp_tax_cat)';
+        $sql.= ' tva_tx, vat_src_code, comments, qty, value_unit, total_ht, total_tva, total_ttc, date, rule_warning_message, fk_c_exp_tax_cat, fk_ecm_files)';
         $sql.= " VALUES (".$this->db->escape($this->fk_expensereport).",";
         $sql.= " ".$this->db->escape($this->fk_c_type_fees).",";
         $sql.= " ".$this->db->escape($this->fk_project>0?$this->fk_project:($this->fk_projet>0?$this->fk_projet:'null')).",";
@@ -2599,7 +2602,8 @@ class ExpenseReportLine
         $sql.= " ".$this->db->escape($this->total_ttc).",";
         $sql.= "'".$this->db->idate($this->date)."',";
 		$sql.= " '".$this->db->escape($this->rule_warning_message)."',";
-		$sql.= " ".$this->db->escape($this->fk_c_exp_tax_cat);
+		$sql.= " ".$this->db->escape($this->fk_c_exp_tax_cat).",";
+		$sql.= " ".($this->fk_ecm_files > 0 ? $this->fk_ecm_files : 'null');
         $sql.= ")";
 
         $resql=$this->db->query($sql);

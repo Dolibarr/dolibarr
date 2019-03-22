@@ -1090,9 +1090,13 @@ if (empty($reshook))
     	$error = 0;
 
     	// First save uploaded file
+    	$fk_ecm_files = 0;
     	if (! empty($_FILES))
     	{
+    	    // Get ID of ECM file
+    	    $idofecmfile = 0;
 
+    	    $fk_ecm_files = $idofecmfile;
     	}
 
 		// if VAT is not used in Dolibarr, set VAT rate to 0 because VAT rate is necessary.
@@ -1144,13 +1148,12 @@ if (empty($reshook))
     		setEventMessages($langs->trans("WarningDateOfLineMustBeInExpenseReportRange"), null, 'warnings');
     	}
 
-    	// S'il y'a eu au moins une erreur
     	if (! $error)
     	{
     		$type = 0;	// TODO What if service ? We should take the type product/service from the type of expense report llx_c_type_fees
 
 			// Insert line
-			$result = $object->addline($qty, $value_unit, $fk_c_type_fees, $vatrate, $date, $comments, $fk_projet, $fk_c_exp_tax_cat, $type);
+    		$result = $object->addline($qty, $value_unit, $fk_c_type_fees, $vatrate, $date, $comments, $fk_projet, $fk_c_exp_tax_cat, $type, $fk_ecm_files);
 			if ($result > 0)
 			{
 				$ret = $object->fetch($object->id); // Reload to get new records
@@ -1709,7 +1712,7 @@ else
 				print '<div class="fichehalfleft">';
 				print '<div class="underbanner clearboth"></div>';
 
-				print '<table class="border centpercent">';
+				print '<table class="border tableforfield centpercent">';
 
 				// Author
 				print '<tr>';
@@ -1853,7 +1856,7 @@ else
 				print '<div class="ficheaddleft">';
 				print '<div class="underbanner clearboth"></div>';
 
-				print '<table class="border centpercent">';
+				print '<table class="border tableforfield centpercent">';
 
 				// Amount
 				print '<tr>';
