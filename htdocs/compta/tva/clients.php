@@ -372,161 +372,156 @@ if (! is_array($x_coll) || ! is_array($x_paye))
 		$subtot_coll_total_ht = 0;
 		$subtot_coll_vat = 0;
 
-		if (is_array($x_both[$thirdparty_id]['coll']['detail']))
-		{
+		if ($min == 0 || ($min > 0 && $x_both[$thirdparty_id]['coll']['totalht'] > $min)) {
 
-			// VAT Rate
-			print "<tr>";
-			print '<td class="tax_rate">';
-			if (is_numeric($thirdparty_id))
-			{
-				$company_static->fetch($thirdparty_id);
-				print $langs->trans("ThirdParty").': '.$company_static->getNomUrl(1);
-			}
-			else
-			{
-				$tmpid = preg_replace('/userid_/','',$thirdparty_id);
-				$user_static->fetch($tmpid);
-				print $langs->trans("User").': '.$user_static->getNomUrl(1);
-			}
-			print '</td><td colspan="'.($span+1).'"></td>';
-			print '</tr>'."\n";
+			if (is_array($x_both[$thirdparty_id]['coll']['detail'])) {
 
-			foreach ($x_both[$thirdparty_id]['coll']['detail'] as $index => $fields) {
-				// Define type
-				// We MUST use dtype (type in line). We can use something else, only if dtype is really unknown.
-				$type=(isset($fields['dtype'])?$fields['dtype']:$fields['ptype']);
-				// Try to enhance type detection using date_start and date_end for free lines where type
-				// was not saved.
-				if (!empty($fields['ddate_start'])) {
-					$type=1;
+				// VAT Rate
+				print "<tr>";
+				print '<td class="tax_rate">';
+				if (is_numeric($thirdparty_id)) {
+					$company_static->fetch($thirdparty_id);
+					print $langs->trans("ThirdParty") . ': ' . $company_static->getNomUrl(1);
+				} else {
+					$tmpid = preg_replace('/userid_/', '', $thirdparty_id);
+					$user_static->fetch($tmpid);
+					print $langs->trans("User") . ': ' . $user_static->getNomUrl(1);
 				}
-				if (!empty($fields['ddate_end'])) {
-					$type=1;
-				}
+				print '</td><td colspan="' . ($span + 1) . '"></td>';
+				print '</tr>' . "\n";
 
-
-				print '<tr class="oddeven">';
-
-				// Ref
-				print '<td class="nowrap" align="left">'.$fields['link'].'</td>';
-
-				// Invoice date
-				print '<td align="left">' . dol_print_date($fields['datef'], 'day') . '</td>';
-
-				// Payment date
-				if ($conf->global->TAX_MODE_SELL_PRODUCT == 'payment' || $conf->global->TAX_MODE_SELL_SERVICE == 'payment') print '<td align="left">' . dol_print_date($fields['datep'], 'day') . '</td>';
-				else print '<td></td>';
-
-				// Rate
-				print '<td align="right">' . $fields['drate'] . '</td>';
-
-				// Description
-				print '<td align="left">';
-				if ($fields['pid'])
-				{
-					$product_static->id=$fields['pid'];
-					$product_static->ref=$fields['pref'];
-					$product_static->type=$fields['dtype'];		// We force with the type of line to have type how line is registered
-					print $product_static->getNomUrl(1);
-					if (dol_string_nohtmltag($fields['descr'])) {
-						print ' - '.dol_trunc(dol_string_nohtmltag($fields['descr']),24);
+				foreach ($x_both[$thirdparty_id]['coll']['detail'] as $index => $fields) {
+					// Define type
+					// We MUST use dtype (type in line). We can use something else, only if dtype is really unknown.
+					$type = (isset($fields['dtype']) ? $fields['dtype'] : $fields['ptype']);
+					// Try to enhance type detection using date_start and date_end for free lines where type
+					// was not saved.
+					if (!empty($fields['ddate_start'])) {
+						$type = 1;
 					}
-				}
-				else
-				{
-					if ($type) {
-						$text = img_object($langs->trans('Service'),'service');
+					if (!empty($fields['ddate_end'])) {
+						$type = 1;
+					}
+
+
+					print '<tr class="oddeven">';
+
+					// Ref
+					print '<td class="nowrap" align="left">' . $fields['link'] . '</td>';
+
+					// Invoice date
+					print '<td align="left">' . dol_print_date($fields['datef'], 'day') . '</td>';
+
+					// Payment date
+					if ($conf->global->TAX_MODE_SELL_PRODUCT == 'payment' || $conf->global->TAX_MODE_SELL_SERVICE == 'payment') {
+						print '<td align="left">' . dol_print_date($fields['datep'], 'day') . '</td>';
 					} else {
-						$text = img_object($langs->trans('Product'),'product');
+						print '<td></td>';
 					}
-					if (preg_match('/^\((.*)\)$/',$fields['descr'],$reg)) {
-						if ($reg[1]=='DEPOSIT') {
-							$fields['descr']=$langs->transnoentitiesnoconv('Deposit');
-						} elseif ($reg[1]=='CREDIT_NOTE') {
-							$fields['descr']=$langs->transnoentitiesnoconv('CreditNote');
+
+					// Rate
+					print '<td align="right">' . $fields['drate'] . '</td>';
+
+					// Description
+					print '<td align="left">';
+					if ($fields['pid']) {
+						$product_static->id = $fields['pid'];
+						$product_static->ref = $fields['pref'];
+						$product_static->type = $fields['dtype'];        // We force with the type of line to have type how line is registered
+						print $product_static->getNomUrl(1);
+						if (dol_string_nohtmltag($fields['descr'])) {
+							print ' - ' . dol_trunc(dol_string_nohtmltag($fields['descr']), 24);
+						}
+					} else {
+						if ($type) {
+							$text = img_object($langs->trans('Service'), 'service');
 						} else {
-							$fields['descr']=$langs->transnoentitiesnoconv($reg[1]);
+							$text = img_object($langs->trans('Product'), 'product');
 						}
-					}
-					print $text.' '.dol_trunc(dol_string_nohtmltag($fields['descr']),24);
+						if (preg_match('/^\((.*)\)$/', $fields['descr'], $reg)) {
+							if ($reg[1] == 'DEPOSIT') {
+								$fields['descr'] = $langs->transnoentitiesnoconv('Deposit');
+							} elseif ($reg[1] == 'CREDIT_NOTE') {
+								$fields['descr'] = $langs->transnoentitiesnoconv('CreditNote');
+							} else {
+								$fields['descr'] = $langs->transnoentitiesnoconv($reg[1]);
+							}
+						}
+						print $text . ' ' . dol_trunc(dol_string_nohtmltag($fields['descr']), 24);
 
-					// Show range
-					print_date_range($fields['ddate_start'],$fields['ddate_end']);
-				}
-				print '</td>';
-
-				// Total HT
-				if ($modetax != 1)
-				{
-					print '<td class="nowrap" align="right">';
-					print price($fields['totalht']);
-					if (price2num($fields['ftotal_ttc']))
-					{
-						//print $fields['dtotal_ttc']."/".$fields['ftotal_ttc']." - ";
-						$ratiolineinvoice=($fields['dtotal_ttc']/$fields['ftotal_ttc']);
-						//print ' ('.round($ratiolineinvoice*100,2).'%)';
+						// Show range
+						print_date_range($fields['ddate_start'], $fields['ddate_end']);
 					}
 					print '</td>';
-				}
 
-				// Payment
-				$ratiopaymentinvoice=1;
-				if ($modetax != 1)
-				{
+					// Total HT
+					if ($modetax != 1) {
+						print '<td class="nowrap" align="right">';
+						print price($fields['totalht']);
+						if (price2num($fields['ftotal_ttc'])) {
+							//print $fields['dtotal_ttc']."/".$fields['ftotal_ttc']." - ";
+							$ratiolineinvoice = ($fields['dtotal_ttc'] / $fields['ftotal_ttc']);
+							//print ' ('.round($ratiolineinvoice*100,2).'%)';
+						}
+						print '</td>';
+					}
+
+					// Payment
+					$ratiopaymentinvoice = 1;
+					if ($modetax != 1) {
+						print '<td class="nowrap" align="right">';
+						//print $fields['totalht']."-".$fields['payment_amount']."-".$fields['ftotal_ttc'];
+						if ($fields['payment_amount'] && $fields['ftotal_ttc']) {
+							$payment_static->id = $fields['payment_id'];
+							print $payment_static->getNomUrl(2);
+						}
+						if (($type == 0 && $conf->global->TAX_MODE_SELL_PRODUCT == 'invoice')
+							|| ($type == 1 && $conf->global->TAX_MODE_SELL_SERVICE == 'invoice')) {
+							print $langs->trans("NA");
+						} else {
+							if (isset($fields['payment_amount']) && price2num($fields['ftotal_ttc'])) {
+								$ratiopaymentinvoice = ($fields['payment_amount'] / $fields['ftotal_ttc']);
+							}
+							print price(price2num($fields['payment_amount'], 'MT'));
+							if (isset($fields['payment_amount'])) {
+								print ' (' . round($ratiopaymentinvoice * 100, 2) . '%)';
+							}
+						}
+						print '</td>';
+					}
+
+					// Total collected
 					print '<td class="nowrap" align="right">';
-					//print $fields['totalht']."-".$fields['payment_amount']."-".$fields['ftotal_ttc'];
-					if ($fields['payment_amount'] && $fields['ftotal_ttc'])
-					{
-						$payment_static->id=$fields['payment_id'];
-						print $payment_static->getNomUrl(2);
-					}
-					if (($type == 0 && $conf->global->TAX_MODE_SELL_PRODUCT == 'invoice')
-						|| ($type == 1 && $conf->global->TAX_MODE_SELL_SERVICE == 'invoice'))
-					{
-						print $langs->trans("NA");
-					} else {
-						if (isset($fields['payment_amount']) && price2num($fields['ftotal_ttc'])) {
-							$ratiopaymentinvoice=($fields['payment_amount']/$fields['ftotal_ttc']);
-						}
-						print price(price2num($fields['payment_amount'],'MT'));
-						if (isset($fields['payment_amount'])) {
-							print ' ('.round($ratiopaymentinvoice*100,2).'%)';
-						}
-					}
+					$temp_ht = $fields['totalht'] * $ratiopaymentinvoice;
+					print price(price2num($temp_ht, 'MT'), 1);
 					print '</td>';
+
+					// VAT
+					print '<td class="nowrap" align="right">';
+					$temp_vat = $fields['vat'] * $ratiopaymentinvoice;
+					print price(price2num($temp_vat, 'MT'), 1);
+					//print price($fields['vat']);
+					print '</td>';
+					print '</tr>';
+
+					$subtot_coll_total_ht += $temp_ht;
+					$subtot_coll_vat += $temp_vat;
+					$x_coll_sum += $temp_vat;
 				}
 
-				// Total collected
-				print '<td class="nowrap" align="right">';
-				$temp_ht=$fields['totalht']*$ratiopaymentinvoice;
-				print price(price2num($temp_ht,'MT'),1);
-				print '</td>';
-
-				// VAT
-				print '<td class="nowrap" align="right">';
-				$temp_vat=$fields['vat']*$ratiopaymentinvoice;
-				print price(price2num($temp_vat,'MT'),1);
-				//print price($fields['vat']);
-				print '</td>';
-				print '</tr>';
-
-				$subtot_coll_total_ht += $temp_ht;
-				$subtot_coll_vat      += $temp_vat;
-				$x_coll_sum           += $temp_vat;
 			}
+			// Total customers for this vat rate
+			print '<tr class="liste_total">';
+			print '<td colspan="4"></td>';
+			print '<td align="right">' . $langs->trans("Total") . ':</td>';
+			if ($modetax != 1) {
+				print '<td class="nowrap" align="right">&nbsp;</td>';
+				print '<td align="right">&nbsp;</td>';
+			}
+			print '<td align="right">' . price(price2num($subtot_coll_total_ht, 'MT')) . '</td>';
+			print '<td class="nowrap" align="right">' . price(price2num($subtot_coll_vat, 'MT')) . '</td>';
+			print '</tr>';
 		}
-		// Total customers for this vat rate
-		print '<tr class="liste_total">';
-		print '<td colspan="4"></td>';
-		print '<td align="right">'.$langs->trans("Total").':</td>';
-		if ($modetax != 1) {
-			print '<td class="nowrap" align="right">&nbsp;</td>';
-			print '<td align="right">&nbsp;</td>';
-		}
-		print '<td align="right">'.price(price2num($subtot_coll_total_ht,'MT')).'</td>';
-		print '<td class="nowrap" align="right">'.price(price2num($subtot_coll_vat,'MT')).'</td>';
-		print '</tr>';
 	}
 
 	if (count($x_coll) == 0)   // Show a total ine if nothing shown
@@ -567,161 +562,153 @@ if (! is_array($x_coll) || ! is_array($x_paye))
 		$subtot_paye_total_ht = 0;
 		$subtot_paye_vat = 0;
 
-		if (is_array($x_both[$thirdparty_id]['paye']['detail']))
-		{
-			print "<tr>";
-			print '<td class="tax_rate">';
-			if (is_numeric($thirdparty_id))
-			{
-				$company_static->fetch($thirdparty_id);
-				print $langs->trans("ThirdParty").': '.$company_static->getNomUrl(1);
-			}
-			else
-			{
-				$tmpid = preg_replace('/userid_/','',$thirdparty_id);
-				$user_static->fetch($tmpid);
-				print $langs->trans("User").': '.$user_static->getNomUrl(1);
-			}
-			print '<td colspan="'.($span+1).'"></td>';
-			print '</tr>'."\n";
+		if ($min == 0 || ($min > 0 && $x_both[$thirdparty_id]['paye']['totalht'] > $min)) {
 
-			foreach ($x_both[$thirdparty_id]['paye']['detail'] as $index=>$fields) {
-				// Define type
-				// We MUST use dtype (type in line). We can use something else, only if dtype is really unknown.
-				$type=(isset($fields['dtype'])?$fields['dtype']:$fields['ptype']);
-				// Try to enhance type detection using date_start and date_end for free lines where type
-				// was not saved.
-				if (!empty($fields['ddate_start'])) {
-					$type=1;
+			if (is_array($x_both[$thirdparty_id]['paye']['detail'])) {
+				print "<tr>";
+				print '<td class="tax_rate">';
+				if (is_numeric($thirdparty_id)) {
+					$company_static->fetch($thirdparty_id);
+					print $langs->trans("ThirdParty") . ': ' . $company_static->getNomUrl(1);
+				} else {
+					$tmpid = preg_replace('/userid_/', '', $thirdparty_id);
+					$user_static->fetch($tmpid);
+					print $langs->trans("User") . ': ' . $user_static->getNomUrl(1);
 				}
-				if (!empty($fields['ddate_end'])) {
-					$type=1;
-				}
+				print '<td colspan="' . ($span + 1) . '"></td>';
+				print '</tr>' . "\n";
 
-
-				print '<tr class="oddeven">';
-
-				// Ref
-				print '<td class="nowrap" align="left">'.$fields['link'].'</td>';
-
-				// Invoice date
-				print '<td align="left">' . dol_print_date($fields['datef'], 'day') . '</td>';
-
-				// Payment date
-				if ($conf->global->TAX_MODE_BUY_PRODUCT == 'payment' || $conf->global->TAX_MODE_BUY_SERVICE == 'payment') print '<td align="left">' . dol_print_date($fields['datep'], 'day') . '</td>';
-				else print '<td></td>';
-
-				// Company name
-				print '<td align="left">' . $fields['company_link'] . '</td>';
-
-				// Description
-				print '<td align="left">';
-				if ($fields['pid'])
-				{
-					$product_static->id=$fields['pid'];
-					$product_static->ref=$fields['pref'];
-					$product_static->type=$fields['dtype'];		// We force with the type of line to have type how line is registered
-					print $product_static->getNomUrl(1);
-					if (dol_string_nohtmltag($fields['descr'])) {
-						print ' - '.dol_trunc(dol_string_nohtmltag($fields['descr']),24);
+				foreach ($x_both[$thirdparty_id]['paye']['detail'] as $index => $fields) {
+					// Define type
+					// We MUST use dtype (type in line). We can use something else, only if dtype is really unknown.
+					$type = (isset($fields['dtype']) ? $fields['dtype'] : $fields['ptype']);
+					// Try to enhance type detection using date_start and date_end for free lines where type
+					// was not saved.
+					if (!empty($fields['ddate_start'])) {
+						$type = 1;
 					}
-				}
-				else
-				{
-					if ($type) {
-						$text = img_object($langs->trans('Service'),'service');
+					if (!empty($fields['ddate_end'])) {
+						$type = 1;
+					}
+
+
+					print '<tr class="oddeven">';
+
+					// Ref
+					print '<td class="nowrap" align="left">' . $fields['link'] . '</td>';
+
+					// Invoice date
+					print '<td align="left">' . dol_print_date($fields['datef'], 'day') . '</td>';
+
+					// Payment date
+					if ($conf->global->TAX_MODE_BUY_PRODUCT == 'payment' || $conf->global->TAX_MODE_BUY_SERVICE == 'payment') {
+						print '<td align="left">' . dol_print_date($fields['datep'], 'day') . '</td>';
 					} else {
-						$text = img_object($langs->trans('Product'),'product');
+						print '<td></td>';
 					}
-					if (preg_match('/^\((.*)\)$/',$fields['descr'],$reg)) {
-						if ($reg[1]=='DEPOSIT') {
-							$fields['descr']=$langs->transnoentitiesnoconv('Deposit');
-						} elseif ($reg[1]=='CREDIT_NOTE') {
-							$fields['descr']=$langs->transnoentitiesnoconv('CreditNote');
+
+					// Company name
+					print '<td align="left">' . $fields['company_link'] . '</td>';
+
+					// Description
+					print '<td align="left">';
+					if ($fields['pid']) {
+						$product_static->id = $fields['pid'];
+						$product_static->ref = $fields['pref'];
+						$product_static->type = $fields['dtype'];        // We force with the type of line to have type how line is registered
+						print $product_static->getNomUrl(1);
+						if (dol_string_nohtmltag($fields['descr'])) {
+							print ' - ' . dol_trunc(dol_string_nohtmltag($fields['descr']), 24);
+						}
+					} else {
+						if ($type) {
+							$text = img_object($langs->trans('Service'), 'service');
 						} else {
-							$fields['descr']=$langs->transnoentitiesnoconv($reg[1]);
+							$text = img_object($langs->trans('Product'), 'product');
 						}
-					}
-					print $text.' '.dol_trunc(dol_string_nohtmltag($fields['descr']),24);
+						if (preg_match('/^\((.*)\)$/', $fields['descr'], $reg)) {
+							if ($reg[1] == 'DEPOSIT') {
+								$fields['descr'] = $langs->transnoentitiesnoconv('Deposit');
+							} elseif ($reg[1] == 'CREDIT_NOTE') {
+								$fields['descr'] = $langs->transnoentitiesnoconv('CreditNote');
+							} else {
+								$fields['descr'] = $langs->transnoentitiesnoconv($reg[1]);
+							}
+						}
+						print $text . ' ' . dol_trunc(dol_string_nohtmltag($fields['descr']), 24);
 
-					// Show range
-					print_date_range($fields['ddate_start'],$fields['ddate_end']);
-				}
-				print '</td>';
-
-				// Total HT
-				if ($modetax != 1)
-				{
-					print '<td class="nowrap" align="right">';
-					print price($fields['totalht']);
-					if (price2num($fields['ftotal_ttc']))
-					{
-						//print $fields['dtotal_ttc']."/".$fields['ftotal_ttc']." - ";
-						$ratiolineinvoice=($fields['dtotal_ttc']/$fields['ftotal_ttc']);
-						//print ' ('.round($ratiolineinvoice*100,2).'%)';
+						// Show range
+						print_date_range($fields['ddate_start'], $fields['ddate_end']);
 					}
 					print '</td>';
-				}
 
-				// Payment
-				$ratiopaymentinvoice=1;
-				if ($modetax != 1)
-				{
+					// Total HT
+					if ($modetax != 1) {
+						print '<td class="nowrap" align="right">';
+						print price($fields['totalht']);
+						if (price2num($fields['ftotal_ttc'])) {
+							//print $fields['dtotal_ttc']."/".$fields['ftotal_ttc']." - ";
+							$ratiolineinvoice = ($fields['dtotal_ttc'] / $fields['ftotal_ttc']);
+							//print ' ('.round($ratiolineinvoice*100,2).'%)';
+						}
+						print '</td>';
+					}
+
+					// Payment
+					$ratiopaymentinvoice = 1;
+					if ($modetax != 1) {
+						print '<td class="nowrap" align="right">';
+						if ($fields['payment_amount'] && $fields['ftotal_ttc']) {
+							$paymentfourn_static->id = $fields['payment_id'];
+							print $paymentfourn_static->getNomUrl(2);
+						}
+
+						if (($type == 0 && $conf->global->TAX_MODE_BUY_PRODUCT == 'invoice')
+							|| ($type == 1 && $conf->global->TAX_MODE_BUY_SERVICE == 'invoice')) {
+							print $langs->trans("NA");
+						} else {
+							if (isset($fields['payment_amount']) && $fields['ftotal_ttc']) {
+								$ratiopaymentinvoice = ($fields['payment_amount'] / $fields['ftotal_ttc']);
+							}
+							print price(price2num($fields['payment_amount'], 'MT'));
+							if (isset($fields['payment_amount'])) {
+								print ' (' . round($ratiopaymentinvoice * 100, 2) . '%)';
+							}
+						}
+						print '</td>';
+					}
+
+					// VAT paid
 					print '<td class="nowrap" align="right">';
-					if ($fields['payment_amount'] && $fields['ftotal_ttc'])
-					{
-						$paymentfourn_static->id=$fields['payment_id'];
-						print $paymentfourn_static->getNomUrl(2);
-					}
-
-					if (($type == 0 && $conf->global->TAX_MODE_BUY_PRODUCT == 'invoice')
-						|| ($type == 1 && $conf->global->TAX_MODE_BUY_SERVICE == 'invoice'))
-					{
-						print $langs->trans("NA");
-					}
-					else
-					{
-						if (isset($fields['payment_amount']) && $fields['ftotal_ttc']) {
-							$ratiopaymentinvoice=($fields['payment_amount']/$fields['ftotal_ttc']);
-						}
-						print price(price2num($fields['payment_amount'],'MT'));
-						if (isset($fields['payment_amount'])) {
-							print ' ('.round($ratiopaymentinvoice*100,2).'%)';
-						}
-					}
+					$temp_ht = $fields['totalht'] * $ratiopaymentinvoice;
+					print price(price2num($temp_ht, 'MT'), 1);
 					print '</td>';
+
+					// VAT
+					print '<td class="nowrap" align="right">';
+					$temp_vat = $fields['vat'] * $ratiopaymentinvoice;
+					print price(price2num($temp_vat, 'MT'), 1);
+					//print price($fields['vat']);
+					print '</td>';
+					print '</tr>';
+
+					$subtot_paye_total_ht += $temp_ht;
+					$subtot_paye_vat += $temp_vat;
+					$x_paye_sum += $temp_vat;
 				}
-
-				// VAT paid
-				print '<td class="nowrap" align="right">';
-				$temp_ht=$fields['totalht']*$ratiopaymentinvoice;
-				print price(price2num($temp_ht,'MT'),1);
-				print '</td>';
-
-				// VAT
-				print '<td class="nowrap" align="right">';
-				$temp_vat=$fields['vat']*$ratiopaymentinvoice;
-				print price(price2num($temp_vat,'MT'),1);
-				//print price($fields['vat']);
-				print '</td>';
-				print '</tr>';
-
-				$subtot_paye_total_ht += $temp_ht;
-				$subtot_paye_vat	  += $temp_vat;
-				$x_paye_sum		   += $temp_vat;
 			}
+			// Total suppliers for this vat rate
+			print '<tr class="liste_total">';
+			print '<td colspan="4"></td>';
+			print '<td align="right">' . $langs->trans("Total") . ':</td>';
+			if ($modetax != 1) {
+				print '<td class="nowrap" align="right">&nbsp;</td>';
+				print '<td align="right">&nbsp;</td>';
+			}
+			print '<td align="right">' . price(price2num($subtot_paye_total_ht, 'MT')) . '</td>';
+			print '<td class="nowrap" align="right">' . price(price2num($subtot_paye_vat, 'MT')) . '</td>';
+			print '</tr>';
 		}
-		// Total suppliers for this vat rate
-		print '<tr class="liste_total">';
-		print '<td colspan="4"></td>';
-		print '<td align="right">'.$langs->trans("Total").':</td>';
-		if ($modetax != 1) {
-			print '<td class="nowrap" align="right">&nbsp;</td>';
-			print '<td align="right">&nbsp;</td>';
-		}
-		print '<td align="right">'.price(price2num($subtot_paye_total_ht,'MT')).'</td>';
-		print '<td class="nowrap" align="right">'.price(price2num($subtot_paye_vat,'MT')).'</td>';
-		print '</tr>';
 	}
 
 	if (count($x_paye) == 0) {  // Show a total line if nothing shown
