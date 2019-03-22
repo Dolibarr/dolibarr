@@ -1091,12 +1091,17 @@ if (empty($reshook))
 
     	// First save uploaded file
     	$fk_ecm_files = 0;
-    	if (! empty($_FILES))
+    	if (GETPOSTISSET('attachfile'))
     	{
-    	    // Get ID of ECM file
-    	    $idofecmfile = 0;
-
-    	    $fk_ecm_files = $idofecmfile;
+    	    $arrayoffiles=GETPOST('attachfile','array');
+    	    if (is_array($arrayoffiles) && ! empty($arrayoffiles[0]))
+    	    {
+    	        include_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
+    	        $relativepath='expensereport/'.$object->ref.'/'.$arrayoffiles[0];
+    	        $ecmfiles=new EcmFiles($db);
+    	        $ecmfiles->fetch(0, '', $relativepath);
+    	        $fk_ecm_files = $ecmfiles->id;
+    	    }
     	}
 
 		// if VAT is not used in Dolibarr, set VAT rate to 0 because VAT rate is necessary.

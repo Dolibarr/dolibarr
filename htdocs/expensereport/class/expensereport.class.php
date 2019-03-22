@@ -1696,7 +1696,7 @@ class ExpenseReport extends CommonObject
 	 * @param    int         $fk_project               Project id
 	 * @param    int         $fk_c_exp_tax_cat         Car category id
 	 * @param    int         $type                     Type line
-	 * @param    int         $fk_ecm_files    Id of ECM file to link to this expensereport line
+	 * @param    int         $fk_ecm_files             Id of ECM file to link to this expensereport line
 	 * @return   int                                   <0 if KO, >0 if OK
 	 */
     public function addline($qty = 0, $up = 0, $fk_c_type_fees = 0, $vatrate = 0, $date = '', $comments = '', $fk_project = 0, $fk_c_exp_tax_cat = 0, $type = 0, $fk_ecm_files = 0)
@@ -2499,6 +2499,9 @@ class ExpenseReportLine
     public $total_ht;
     public $total_tva;
     public $total_ttc;
+
+    public $fk_ecm_files;
+
 
     /**
      * Constructor
