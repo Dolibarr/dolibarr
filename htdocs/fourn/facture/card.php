@@ -2495,7 +2495,7 @@ else
         }
         print '</td>';
 
-		// Conditions de reglement par defaut
+		// Default terms of the settlement
 		$langs->load('bills');
 		print '<tr><td class="nowrap">';
 		print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';

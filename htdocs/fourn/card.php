@@ -225,7 +225,7 @@ if ($object->id > 0)
     print $object->tva_intra;
     print '</td></tr>';
 
-	// Conditions de reglement par defaut
+	// Default terms of the settlement
 	$langs->load('bills');
 	$form = new Form($db);
 	print '<tr><td>';
