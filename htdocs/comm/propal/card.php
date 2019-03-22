@@ -1039,8 +1039,8 @@ if (empty($reshook))
 					$desc = $prod->description;
 				}
 
-				if (!empty($product_desc) && !empty($conf->global->NO_CONCAT_DESCRIPTION)) $desc= $product_desc;
-				else $desc = dol_concatdesc($desc, $product_desc, '', !empty($conf->global->CHANGE_ORDER_CONCAT_DESCRIPTION));
+				if (!empty($product_desc) && !empty($conf->global->MAIN_NO_CONCAT_DESCRIPTION)) $desc= $product_desc;
+				else $desc = dol_concatdesc($desc, $product_desc, '', !empty($conf->global->MAIN_CHANGE_ORDER_CONCAT_DESCRIPTION));
 
 				// Add dimensions into product description
 				/*if (empty($conf->global->MAIN_PRODUCT_DISABLE_AUTOADD_DIM))
