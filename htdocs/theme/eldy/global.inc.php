@@ -1862,7 +1862,7 @@ div.login_block_user {
 	/*<?php if (empty($conf->global->THEME_TOPMENU_DISABLE_IMAGE)) { ?>
 	min-width: 120px;
 	<?php } ?>*/
-	
+
 }
 div.login_block_other {
 	display: inline-block;
@@ -1879,7 +1879,6 @@ div.login_block_other { padding-top: 0; text-align: right; }
 }
 .atoplogin, .atoplogin:hover {
 	color: #<?php echo $colortextbackhmenu; ?> !important;
-	font-weight: normal !important;
 }
 .login_block_getinfo {
 	text-align: center;
@@ -5714,6 +5713,7 @@ div.tabsElem a.tab {
 	}
 	.login_block_elem {
 		padding: 0 !important;
+		height: 38px;
 	}
     li.tmenu, li.tmenusel {
         min-width: 32px;

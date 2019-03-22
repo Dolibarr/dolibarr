@@ -1583,8 +1583,8 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 		}
 
 		$loginBlockMoreClass = '';
-		if(!empty($conf->global->MAIN_TOP_MENU_DROPDOWN)){ $loginBlockMoreClass = 'usedropdown'; }
-		
+		if (!empty($conf->global->MAIN_TOP_MENU_DROPDOWN)) { $loginBlockMoreClass = 'usedropdown'; }
+
 		print '<div class="login_block '.$loginBlockMoreClass.'">'."\n";
 
 		// Add login user link
@@ -1593,11 +1593,11 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 		// Login name with photo and tooltip
 		$mode=-1;
 		$toprightmenu.='<div class="inline-block nowrap"><div class="inline-block login_block_elem login_block_elem_name" style="padding: 0px;">';
-		
-		if(empty($conf->global->MAIN_TOP_MENU_DROPDOWN)){
-		  $toprightmenu.=$user->getNomUrl($mode, '', 1, 0, 11, 0, ($user->firstname ? 'firstname' : -1), 'atoplogin');
+
+		if (empty($conf->global->MAIN_TOP_MENU_DROPDOWN)){
+            $toprightmenu.= $user->getNomUrl($mode, '', 1, 0, 11, 0, ($user->firstname ? 'firstname' : -1), 'atoplogin');
 		}
-		else{
+		else {
 		    $toprightmenu.= top_menu_user($user, $langs);
 		}
 		$toprightmenu.='</div></div>';
@@ -1692,7 +1692,7 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 			}
 		}
 
-		
+
 		// Logout link
 		$toprightmenu.=@Form::textwithtooltip('', $logouthtmltext, 2, 1, $logouttext, 'login_block_elem logout-btn', 2);
 
@@ -1712,30 +1712,35 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 }
 
 
-
-function top_menu_user(user $user, $langs){
+/**
+ * Build the tooltip on user login
+ *
+ * @param   user        $user       User object
+ * @param   Translate   $langs      Language object
+ * @return  string                  HTML content
+ */
+function top_menu_user(User $user, Translate $langs)
+{
     global $langs, $conf, $db, $hookmanager, $user;
     global $dolibarr_main_authentication, $dolibarr_main_demo;
     global $menumanager;
-    
+
     $userImage = $userDropDownImage = '';
     if (! empty($user->photo))
     {
         $userImage = Form::showphoto('userphoto', $user, 0, 0, 0, 'photouserphoto userphoto', 'small', 0, 1);
         $userDropDownImage = Form::showphoto('userphoto', $user, 0, 0, 0, 'dropdown-user-image', 'small', 0, 1);
     }
-    
+
     $dropdownBody = '';
-
-
     $dropdownBody.= '<span id="topmenuloginmoreinfo-btn"><i class="fa fa-caret-right"></i> '.$langs->trans("ShowMoreInfos").'</span>';
     $dropdownBody.= '<div id="topmenuloginmoreinfo" >';
-    
+
     // login infos
-    if (!empty($user->admin)){
+    if (!empty($user->admin)) {
         $dropdownBody.= '<br><b>' . $langs->trans("Administrator").'</b>: '.yn($user->admin);
     }
-    if (! empty($user->socid) )	// Add thirdparty for external users
+    if (! empty($user->socid))	// Add thirdparty for external users
     {
         $thirdpartystatic = new Societe($db);
         $thirdpartystatic->fetch($user->socid);
@@ -1745,7 +1750,8 @@ function top_menu_user(user $user, $langs){
     $type=($user->socid?$langs->trans("External").$company:$langs->trans("Internal"));
     $dropdownBody.= '<br><b>' . $langs->trans("Type") . ':</b> ' . $type;
     $dropdownBody.= '<br><b>' . $langs->trans("Status").'</b>: '.$user->getLibStatut(0);
-    
+    $dropdownBody.= '<br>';
+
     $dropdownBody.= '<br><u>'.$langs->trans("Connection").'</u>';
     $dropdownBody.= '<br><b>'.$langs->trans("IPAddress").'</b>: '.$_SERVER["REMOTE_ADDR"];
     if (! empty($conf->global->MAIN_MODULE_MULTICOMPANY)) $dropdownBody.= '<br><b>'.$langs->trans("ConnectedOnMultiCompany").':</b> '.$conf->entity.' (user entity '.$user->entity.')';
@@ -1762,7 +1768,7 @@ function top_menu_user(user $user, $langs){
     if ($conf->browser->layout == 'phone') $dropdownBody.= '<br><b>'.$langs->trans("Phone").':</b> '.$langs->trans("Yes");
     if (! empty($_SESSION["disablemodules"])) $dropdownBody.= '<br><b>'.$langs->trans("DisabledModules").':</b> <br>'.join(', ', explode(',', $_SESSION["disablemodules"]));
     $dropdownBody.= '</div>';
-    
+
     // Execute hook
     $parameters=array('user'=>$user, 'langs' => $langs);
     $result=$hookmanager->executeHooks('printTopRightMenuLoginDropdownBody', $parameters);    // Note that $action and $object may have been modified by some hooks
@@ -1773,26 +1779,26 @@ function top_menu_user(user $user, $langs){
         }
         else{
             $dropdownBody = $hookmanager->resPrint;		// replace
-        }   
+        }
     }
-    
-    
-    
+
+
+
     $logoutLink ='<a accesskey="l" href="'.DOL_URL_ROOT.'/user/logout.php" class="button-top-menu-dropdown" ><i class="fa fa-sign-out-alt"></i> '.$langs->trans("Logout").'</a>';
     $profilLink ='<a accesskey="l" href="'.DOL_URL_ROOT.'/user/card.php?id='.$user->id.'" class="button-top-menu-dropdown" ><i class="fa fa-user"></i>  '.$langs->trans("Card").'</a>';
-    
-    
+
+
     $profilName = $user->getFullName($langs).' ('.$user->login.')';
-    
+
     if($user->admin){
         $profilName = '<i class="far fa-star classfortooltip" title="'.$langs->trans("Administrator").'" ></i> '.$profilName;
     }
-    
+
     $btnUser = '
     <div id="topmenu-login-dropdown" class="userimg atoplogin dropdown user user-menu">
         <a href="'.DOL_URL_ROOT.'/user/card.php?id='.$user->id.'" class="dropdown-toggle" data-toggle="dropdown">
             '.$userImage.'
-            <span class="hidden-xs">'.($user->firstname ? $user->firstname : $user->login).'</span>
+            <span class="hidden-xs maxwidth200">'.dol_trunc($user->firstname ? $user->firstname : $user->login, 11).'</span>
         </a>
         <div class="dropdown-menu">
             <!-- User image -->
@@ -1807,7 +1813,7 @@ function top_menu_user(user $user, $langs){
 
             <!-- Menu Body -->
             <div class="user-body">'.$dropdownBody.'</div>
-            
+
             <!-- Menu Footer-->
             <div class="user-footer">
                 <div class="pull-left">
@@ -1821,29 +1827,29 @@ function top_menu_user(user $user, $langs){
 
         </div>
     </div>
-<script>
-$( document ).ready(function() {
-    $(document).on("click", function(event) {
-        if (!$(event.target).closest("#topmenu-login-dropdown").length) {
-            // Hide the menus.
-            $("#topmenu-login-dropdown").removeClass("open");
-        }
-    });
+    <script>
+    $( document ).ready(function() {
+        $(document).on("click", function(event) {
+            if (!$(event.target).closest("#topmenu-login-dropdown").length) {
+                // Hide the menus.
+                $("#topmenu-login-dropdown").removeClass("open");
+            }
+        });
 
-    $("#topmenu-login-dropdown .dropdown-toggle").on("click", function(event) {
-        event.preventDefault();
-        $("#topmenu-login-dropdown").toggleClass("open");
-    });
+        $("#topmenu-login-dropdown .dropdown-toggle").on("click", function(event) {
+            event.preventDefault();
+            $("#topmenu-login-dropdown").toggleClass("open");
+        });
 
-    $("#topmenuloginmoreinfo-btn").on("click", function() {
-        $("#topmenuloginmoreinfo").slideToggle();
-    });
+        $("#topmenuloginmoreinfo-btn").on("click", function() {
+            $("#topmenuloginmoreinfo").slideToggle();
+        });
 
-});
-</script>
+    });
+    </script>
     ';
-    
-    
+
+
     return $btnUser;
 }
 

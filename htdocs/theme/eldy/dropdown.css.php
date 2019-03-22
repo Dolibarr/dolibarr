@@ -4,7 +4,7 @@ if (! defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
 /*
  Dropdown
 */
- 
+
 
 .open>.dropdown-menu{ /*, #topmenu-login-dropdown:hover .dropdown-menu*/
     display: block;
@@ -40,12 +40,12 @@ if (! defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
 
 
 /*
-* MENU Dropdown 
+* MENU Dropdown
 */
 .login_block.usedropdown .logout-btn{
     display: none;
 }
- 
+
 .tmenu .open.dropdown, .login_block .open.dropdown, .tmenu .open.dropdown, .login_block .dropdown:hover{
     background: rgba(0, 0, 0, 0.1);
 }
@@ -79,6 +79,7 @@ if (! defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
     height: 175px;
     padding: 10px;
     text-align: center;
+    white-space: normal;
 }
 
 .dropdown-user-image {
@@ -166,4 +167,3 @@ if (! defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
     background-color: #f4f4f4;
     border-color: #ddd;
 }
- 
