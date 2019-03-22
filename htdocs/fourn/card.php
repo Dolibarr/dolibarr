@@ -90,7 +90,7 @@ if (empty($reshook))
 	        $mesg=join(',', $object->errors);
 	    }
 	}
-	// conditions de reglement
+	// terms of the settlement
 	if ($action == 'setconditions' && $user->rights->societe->creer)
 	{
 		$object->fetch($id);
