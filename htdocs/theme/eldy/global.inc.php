@@ -263,7 +263,7 @@ hr { border: 0; border-top: 1px solid #ccc; }
 	margin-top: 0;
 	margin-left: 5px;
 	margin-right: 5px;
-    font-family: <?php print $fontlist ?>;
+    	font-family: <?php print $fontlist ?>;
 	display: inline-block;
 	padding: 4px 14px;
 	text-align: center;
@@ -363,6 +363,9 @@ th .button {
 textarea.centpercent {
 	width: 96%;
 }
+.small, small {
+    font-size: 85%;
+}
 .center {
     text-align: center;
     margin: 0px auto;
@@ -375,6 +378,12 @@ textarea.centpercent {
 }
 .justify {
 	text-align: justify;
+}
+.pull-left {
+    float: left!important;
+}
+.pull-right {
+    float: right!important;
 }
 .nowrap {
 	white-space: <?php print ($dol_optimize_smallscreen?'normal':'nowrap'); ?>;
@@ -1312,6 +1321,16 @@ div#tmenu_tooltip {
 <?php } else { ?>
 	padding-<?php echo $right; ?>: <?php echo ($maxwidthloginblock - 10); ?>px;
 <?php } ?>
+
+  -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+     -khtml-user-select: none; /* Konqueror HTML */
+       -moz-user-select: none; /* Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome and Opera */
+
+
 }
 
 div.topmenuimage {
@@ -1810,13 +1829,15 @@ div.login_block {
 	<?php print $right; ?>: 0;
 	top: <?php print $disableimages?'4px':'0'; ?>;
 	font-weight: bold;
-	<?php echo (empty($disableimages) && $maxwidthloginblock)?'max-width: '.$maxwidthloginblock.'px;':''; ?>
+	line-height: 10px;
+	<?php // echo (empty($disableimages) && $maxwidthloginblock)?'max-width: '.$maxwidthloginblock.'px;':''; ?>
 	<?php if (GETPOST('optioncss', 'aZ09') == 'print') { ?>
 	display: none;
 	<?php } ?>
 }
 div.login_block a {
-	color: #<?php echo $colortextbackvmenu; ?>;
+	color: #<?php echo $colortextbackhmenu; ?>;
+	display: inline-block;
 }
 div.login_block table {
 	display: inline;
@@ -1838,21 +1859,23 @@ div.login a:hover {
 }
 div.login_block_user {
 	display: inline-block;
-	padding-top: 3px;
-	<?php if (empty($conf->global->THEME_TOPMENU_DISABLE_IMAGE)) { ?>
+	/*<?php if (empty($conf->global->THEME_TOPMENU_DISABLE_IMAGE)) { ?>
 	min-width: 120px;
-	<?php } ?>
+	<?php } ?>*/
+
 }
 div.login_block_other {
 	display: inline-block;
 	clear: <?php echo $disableimages?'none':'both'; ?>;
 }
-div.login_block_other { padding-top: 3px; text-align: right; }
+div.login_block_other { padding-top: 0; text-align: right; }
 .login_block_elem {
 	float: right;
 	vertical-align: top;
 	padding: 0px 3px 0px 4px !important;
 	height: 16px;
+	line-height: 50px;
+	height: 50px;
 }
 .atoplogin, .atoplogin:hover {
 	color: #<?php echo $colortextbackhmenu; ?> !important;
@@ -1865,6 +1888,7 @@ div.login_block_other { padding-top: 3px; text-align: right; }
 }
 .login_block_getinfo .atoplogin, .login_block_getinfo .atoplogin:hover {
 	color: #333 !important;
+	font-weight: normal !important;
 }
 .alogin, .alogin:hover {
 	font-weight: normal !important;
@@ -1885,9 +1909,10 @@ img.login, img.printer, img.entity {
 	font-weight: bold;
 }
 .userimg.atoplogin img.userphoto, .userimgatoplogin img.userphoto {		/* size for user photo in login bar */
-	width: 16px;
-    height: 16px;
-    border-radius: 8px;
+	width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background-size: contain;
     background-size: contain;
 }
 img.userphoto {			/* size for user photo in lists */
@@ -5688,6 +5713,7 @@ div.tabsElem a.tab {
 	}
 	.login_block_elem {
 		padding: 0 !important;
+		height: 38px;
 	}
     li.tmenu, li.tmenusel {
         min-width: 32px;
@@ -5719,3 +5745,6 @@ div.tabsElem a.tab {
 		font-size: 12px;
 	}
 }
+
+
+<?php include dol_buildpath($path.'/theme/'.$theme.'/dropdown.css.php', 0); ?>

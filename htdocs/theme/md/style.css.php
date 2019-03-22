@@ -1243,6 +1243,7 @@ div.login_block {
 	/* border-right: none ! important; */
 	top: inherit !important;
 }
+
 .side-nav {
 <?php if (in_array($conf->browser->layout, array('phone','tablet')) && ((GETPOST('testmenuhider') || ! empty($conf->global->MAIN_TESTMENUHIDER)) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))) { ?>
 <?php } else { ?>
@@ -2002,6 +2003,10 @@ table.login_table_securitycode tr td {
 	max-height: 90px;
 }
 
+
+.atoplogin.dropdown .dropdown-menu {
+	display: none;
+}
 
 div.login_block {
 	border-right: 1px solid rgba(0,0,0,0.3);
