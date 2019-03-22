@@ -107,10 +107,11 @@ class Products extends DolibarrApi
      * @param  int    $page       Page number
      * @param  int    $mode       Use this param to filter list (0 for all, 1 for only product, 2 for only service)
      * @param  int    $category   Use this param to filter list by category
+     * @param  int    $supplier   Use this param to filter list by supplier
      * @param  string $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.tobuy:=:0) and (t.tosell:=:1)"
      * @return array                Array of product objects
      */
-    public function index($sortfield = "t.ref", $sortorder = 'ASC', $limit = 100, $page = 0, $mode = 0, $category = 0, $sqlfilters = '')
+    public function index($sortfield = "t.ref", $sortorder = 'ASC', $limit = 100, $page = 0, $mode = 0, $category = 0, $supplier = 0,$sqlfilters = '')
     {
         global $db, $conf;
 
@@ -123,11 +124,18 @@ class Products extends DolibarrApi
         if ($category > 0) {
             $sql.= ", ".MAIN_DB_PREFIX."categorie_product as c";
         }
+        if ($supplier > 0) {
+            $sql.= ", ".MAIN_DB_PREFIX."product_fournisseur_price as s";
+        }        
         $sql.= ' WHERE t.entity IN ('.getEntity('product').')';
         // Select products of given category
         if ($category > 0) {
             $sql.= " AND c.fk_categorie = ".$db->escape($category);
             $sql.= " AND c.fk_product = t.rowid ";
+        }
+        if ($supplier > 0) {
+            $sql.= " AND s.fk_soc = ".$db->escape($supplier);
+            $sql.= " AND s.fk_product = t.rowid ";
         }
         if ($mode == 1) {
             // Show only products
