@@ -4,10 +4,12 @@ English Dolibarr ChangeLog
 
 ***** ChangeLog for 10.0.0 compared to 9.0.0 *****
 For Users:
-NEW: Module ticket is available as a stable module
-NEW: Experimental module "Vendor receptions"
+NEW: Module Ticket is available as a stable module.
+NEW: Experimental module "Vendor receptions".
+NEW: Experimental module "BOM".
 
 For Developers:
+NEW: Module DebugBar is available as a stable module.
 
 
 WARNING:
