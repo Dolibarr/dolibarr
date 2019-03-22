@@ -1895,7 +1895,7 @@ elseif (! empty($object->id))
         $morehtmlref .= '<form method="post" action="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '">';
         $morehtmlref .= '<input type="hidden" name="action" value="set_thirdparty">';
         $morehtmlref .= '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
-        $morehtmlref .= $form->select_company($object->thirdparty->id, 'new_socid', '', '', 0, 0, array(), 0, 'minwidth300');
+        $morehtmlref .= $form->select_company($object->thirdparty->id, 'new_socid', 's.fournisseur = 1', '', 0, 0, array(), 0, 'minwidth300');
         $morehtmlref .= '<input type="submit" class="button valignmiddle" value="' . $langs->trans("Modify") . '">';
         $morehtmlref .= '</form>';
     }
