@@ -1916,7 +1916,7 @@ elseif (! empty($object->id))
 
 	print '</td></tr>';
 
-	// Conditions de reglement par defaut
+	// Default terms of the settlement
 	$langs->load('bills');
 	print '<tr><td class="nowrap">';
 	print '<table class="nobordernopadding centpercent"><tr><td class="nowrap">';
