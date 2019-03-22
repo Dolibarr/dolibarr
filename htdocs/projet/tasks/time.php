@@ -35,7 +35,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 
 // Load translation files required by the page
-$langs->load('projects');
+$langs->loadLangs(array('projects','bills','orders'));
 
 $action     = GETPOST('action', 'alpha');
 $massaction = GETPOST('massaction', 'alpha');											// The bulk action (combo box choice into lists)
@@ -823,7 +823,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 	    if (! empty($withproject) && $projectstatic->bill_time)
 	    {
 	        $arrayofmassactions =  array(
-    	        'generateinvoice'=>$langs->trans("GenerateInvoice"),
+    	        'generateinvoice'=>$langs->trans("GenerateBill"),
     	        //'builddoc'=>$langs->trans("PDFMerge"),
     	    );
     	    //if ($user->rights->projet->creer) $arrayofmassactions['predelete']=$langs->trans("Delete");
@@ -915,7 +915,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 
 	        print '<br>';
 	        print '<div class="center">';
-	        print '<input type="submit" class="button" id="createbills" name="createbills" value="'.$langs->trans('CreateInvoice').'">  ';
+	        print '<input type="submit" class="button" id="createbills" name="createbills" value="'.$langs->trans('GenerateBill').'">  ';
 	        print '<input type="submit" class="button" id="cancel" name="cancel" value="'.$langs->trans('Cancel').'">';
 	        print '</div>';
 	        print '<br>';

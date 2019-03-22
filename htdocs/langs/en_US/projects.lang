@@ -237,7 +237,6 @@ ModuleSalaryToDefineHourlyRateMustBeEnabled=Module 'Salaries' must be enabled to
 NewTaskRefSuggested=Task ref already used, a new task ref is required
 TimeSpentInvoiced=Time spent billed
 TimeSpentForInvoice=Time spent
-GenerateInvoice=Generate invoice
 OneLinePerUser=One line per user
 ServiceToUseOnLines=Service to use on lines
 InvoiceGeneratedFromTimeSpent=Invoice %s has been generated from time spent on project
