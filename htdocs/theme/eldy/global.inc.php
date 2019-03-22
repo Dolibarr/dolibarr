@@ -1859,10 +1859,6 @@ div.login a:hover {
 }
 div.login_block_user {
 	display: inline-block;
-	/*<?php if (empty($conf->global->THEME_TOPMENU_DISABLE_IMAGE)) { ?>
-	min-width: 120px;
-	<?php } ?>*/
-
 }
 div.login_block_other {
 	display: inline-block;
@@ -5746,5 +5742,5 @@ div.tabsElem a.tab {
 	}
 }
 
-
-<?php include dol_buildpath($path.'/theme/'.$theme.'/dropdown.css.php', 0); ?>
+<?php
+include dol_buildpath($path.'/theme/'.$theme.'/dropdown.css.php', 0);

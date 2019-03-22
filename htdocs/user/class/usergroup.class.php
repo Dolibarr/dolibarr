@@ -77,7 +77,7 @@ class UserGroup extends CommonObject
      *
      * @var integer
      */
-    public $datec;				
+    public $datec;
 
 	/**
      * Date modification record (tms)
