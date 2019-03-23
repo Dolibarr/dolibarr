@@ -2657,7 +2657,6 @@ if (GETPOST('modelselected', 'alpha')) {
 
 if ($action != 'presend')
 {
-
 	/*
 	 * Generate documents
 	 */
@@ -2677,11 +2676,15 @@ if ($action != 'presend')
 		$somethingshown = $formfile->numoffiles;
 	}
 
+	// Disabled for expensereport, there is no thirdparty on expensereport, so nothing to define the list of other object we can suggest to link to
+	/*
 	if ($action != 'create' && $action != 'edit' && ($id || $ref))
 	{
 		$linktoelem = $form->showLinkToObjectBlock($object, null, array('expensereport'));
 		$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 	}
+    */
+
 	print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 	// List of actions on element
 	include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
