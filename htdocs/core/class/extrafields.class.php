@@ -1553,7 +1553,7 @@ class ExtraFields
 		}
 		elseif ($type == 'phone')
 		{
-			$value=dol_print_phone($value, '', 0, 0, '', '&nbsp;', 1);
+			$value=dol_print_phone($value, '', 0, 0, '', '&nbsp;', 'phone');
 		}
 		elseif ($type == 'price')
 		{
