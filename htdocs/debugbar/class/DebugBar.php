@@ -51,6 +51,10 @@ class DolibarrDebugBar extends DebugBar
 	 */
 	public function getRenderer()
 	{
-	    return parent::getJavascriptRenderer(DOL_URL_ROOT.'/includes/DebugBar/Resources');
+	    $renderer = parent::getJavascriptRenderer(DOL_URL_ROOT.'/includes/DebugBar/Resources');
+	    //$renderer->disableVendor('jquery');
+	    $renderer->disableVendor('fontawesome');
+	    $renderer->disableVendor('highlightjs');
+	    return $renderer;
 	}
 }
