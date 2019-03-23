@@ -194,7 +194,7 @@ if (! empty($_SERVER['DOCUMENT_ROOT']) && substr($_SERVER['DOCUMENT_ROOT'], -6) 
 	set_include_path($_SERVER['DOCUMENT_ROOT'] . '/htdocs');
 }
 
-// Include the conf.php and functions.lib.php
+// Include the conf.php and functions.lib.php. This defined the constants like DOL_DOCUMENT_ROOT, DOL_DATA_ROOT, DOL_URL_ROOT...
 require_once 'filefunc.inc.php';
 
 // If there is a POST parameter to tell to save automatically some POST parameters into cookies, we do it.
@@ -242,11 +242,23 @@ if (! defined('NOSESSION'))
 	}*/
 }
 
-// Init the 5 global objects, this include will make the new and set properties for: $conf, $db, $langs, $user, $mysoc
+// Init the 5 global objects, this include will make the 'new Xxx()' and set properties for: $conf, $db, $langs, $user, $mysoc
 require_once 'master.inc.php';
 
 // Activate end of page function
 register_shutdown_function('dol_shutdown');
+
+// Load debugbar
+if (! empty($conf->debugbar->enabled))
+{
+    global $debugbar;
+    include_once DOL_DOCUMENT_ROOT.'/debugbar/class/DebugBar.php';
+    $debugbar = new DolibarrDebugBar();
+    $renderer = $debugbar->getRenderer();
+    $conf->global->MAIN_HTML_HEADER .= $renderer->renderHead();
+
+    $debugbar['time']->startMeasure('pageaftermaster', 'Page generation (after environment init)');
+}
 
 // Detection browser
 if (isset($_SERVER["HTTP_USER_AGENT"]))

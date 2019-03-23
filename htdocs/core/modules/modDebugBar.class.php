@@ -54,18 +54,7 @@ class modDebugBar extends DolibarrModules
         $this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
         $this->picto='technic';
 
-        $this->module_parts = array(
-            // Set here all hooks context managed by module. To find available hook context, make a "grep -r '>initHooks(' *" on source code. You can also set hook context 'all'
-            'hooks' => array(
-                'data' => array(
-                    'main',
-                    'login',
-                ),
-                'entity' => '0',
-            ),
-            // Set this to 1 if feature of module are opened to external users
-            'moduleforexternal' => 0,
-        );
+        $this->module_parts = array('moduleforexternal' => 0);
 
         // Data directories to create when module is enabled
         $this->dirs = array();
@@ -80,9 +69,7 @@ class modDebugBar extends DolibarrModules
         // Constants
         // Example: $this->const=array(0=>array('MYMODULE_MYNEWCONST1','chaine','myvalue','This is a constant to add',0),
         //							  1=>array('MYMODULE_MYNEWCONST2','chaine','myvalue','This is another constant to add',0) );
-        $this->const = array(
-            0 => array('DEBUGBAR_LOGS_LINES_NUMBER', 'chaine', '100', 'Number of log lines to show in debug bar', 1)
-        );
+        $this->const = array();
 
         // Boxes
         $this->boxes = array();

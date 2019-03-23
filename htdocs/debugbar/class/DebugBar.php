@@ -31,12 +31,12 @@ class DolibarrDebugBar extends DebugBar
 		global $conf;
 
 		//$this->addCollector(new PhpInfoCollector());
-		$this->addCollector(new DolMessagesCollector());
+		//$this->addCollector(new DolMessagesCollector());
 		$this->addCollector(new DolRequestDataCollector());
 		$this->addCollector(new DolConfigCollector());
 		$this->addCollector(new DolTimeDataCollector());
 		$this->addCollector(new DolMemoryCollector());
-		$this->addCollector(new DolExceptionsCollector());
+		//$this->addCollector(new DolExceptionsCollector());
 		$this->addCollector(new DolQueryCollector());
 		$this->addCollector(new DolibarrCollector());
 		if ($conf->syslog->enabled) {
