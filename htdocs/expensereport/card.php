@@ -33,10 +33,12 @@ require_once DOL_DOCUMENT_ROOT . '/core/class/CMailFile.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formmail.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formprojet.class.php';
 require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
+require_once DOL_DOCUMENT_ROOT . '/ecm/class/ecmfiles.class.php';
 require_once DOL_DOCUMENT_ROOT . '/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/expensereport.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/price.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/images.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/modules/expensereport/modules_expensereport.php';
 require_once DOL_DOCUMENT_ROOT . '/expensereport/class/expensereport.class.php';
 require_once DOL_DOCUMENT_ROOT . '/expensereport/class/paymentexpensereport.class.php';
@@ -1348,6 +1350,7 @@ $formproject = new FormProjets($db);
 $projecttmp = new Project($db);
 $paymentexpensereportstatic=new PaymentExpenseReport($db);
 $bankaccountstatic = new Account($db);
+$ecmfilesstatic = new EcmFiles($db);
 
 // Create
 if ($action == 'create')
@@ -2028,7 +2031,7 @@ else
 					if (! empty($conf->projet->enabled)) print '<td class="minwidth100imp">'.$langs->trans('Project').'</td>';
 					if (!empty($conf->global->MAIN_USE_EXPENSE_IK)) print '<td>'.$langs->trans('CarCategory').'</td>';
 					print '<td class="center">'.$langs->trans('Type').'</td>';
-					print '<td class="left">'.$langs->trans('Description').'</td>';
+					print '<td>'.$langs->trans('Description').'</td>';
 					print '<td class="right">'.$langs->trans('VAT').'</td>';
 					print '<td class="right">'.$langs->trans('PriceUHT').'</td>';
 					print '<td class="right">'.$langs->trans('PriceUTTC').'</td>';
@@ -2038,6 +2041,9 @@ else
 						print '<td class="right">'.$langs->trans('AmountHT').'</td>';
 						print '<td class="right">'.$langs->trans('AmountTTC').'</td>';
 					}
+                    // Picture
+					print '<td>';
+					print '</td>';
 					// Ajout des boutons de modification/suppression
 					if (($object->fk_statut < 2 || $object->fk_statut == 99) && $user->rights->expensereport->creer)
 					{
@@ -2109,6 +2115,37 @@ else
 								print '<td class="right">'.price($line->total_ht).'</td>';
 								print '<td class="right">'.price($line->total_ttc).'</td>';
 							}
+
+							print '<td class="center">';
+							if ($line->fk_ecm_files > 0)
+							{
+							    $modulepart='expensereport';
+							    $maxheightmini=32;
+
+                                $result = $ecmfilesstatic->fetch($line->fk_ecm_files);
+                                if ($result > 0)
+                                {
+                                    $relativepath=preg_replace('/expensereport\//', '', $ecmfilesstatic->filepath);
+                                    $fileinfo = pathinfo($ecmfilesstatic->filepath.'/'.$ecmfilesstatic->filename);
+                                    if (image_format_supported($fileinfo['basename']) > 0)
+                                    {
+                                        $minifile=getImageFileNameForSize($fileinfo['basename'], '_mini'); // For new thumbs using same ext (in lower case howerver) than original
+                                        if (! dol_is_file($conf->expensereport->dir_output.'/'.$relativepath.'/'.$minifile)) $minifile=getImageFileNameForSize($fileinfo['basename'], '_mini', '.png'); // For backward compatibility of old thumbs that were created with filename in lower case and with .png extension
+                                        //print $file['path'].'/'.$minifile.'<br>';
+                                        $urlforhref=getAdvancedPreviewUrl($modulepart, $relativepath.'/'.$fileinfo['filename'].'.'.strtolower($fileinfo['extension']), 1, '&entity='.(!empty($object->entity)?$object->entity:$conf->entity));
+                                        if (empty($urlforhref)) {
+                                            $urlforhref=DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.(!empty($object->entity)?$object->entity:$conf->entity).'&file='.urlencode($relativepath.$fileinfo['filename'].'.'.strtolower($fileinfo['extension']));
+                                            print '<a href="'.$urlforhref.'" class="aphoto" target="_blank">';
+                                        } else {
+                                            print '<a href="'.$urlforhref['url'].'" class="'.$urlforhref['css'].'" target="'.$urlforhref['target'].'" mime="'.$urlforhref['mime'].'">';
+                                        }
+                                        print '<img class="photo" height="'.$maxheightmini.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.(!empty($object->entity)?$object->entity:$conf->entity).'&file='.urlencode($relativepath.'/'.$minifile).'" title="">';
+                                        print '</a>';
+                                    }
+                                    else print '&nbsp;';
+                                }
+							}
+							print '</td>';
 
 							// Ajout des boutons de modification/suppression
 							if (($object->fk_statut < ExpenseReport::STATUS_VALIDATED || $object->fk_statut == ExpenseReport::STATUS_REFUSED) && $user->rights->expensereport->creer)
@@ -2191,6 +2228,11 @@ else
 									print '<td class="right">'.$langs->trans('AmountTTC').'</td>';
 								}
 
+								// Picture
+								print '<td class="center">';
+								//print $line->fk_ecm_files;
+								print '</td>';
+
 								print '<td class="center">';
 								print '<input type="hidden" name="rowid" value="'.$line->rowid.'">';
 								print '<input type="submit" class="button" name="save" value="'.$langs->trans('Save').'">';
@@ -2205,7 +2247,7 @@ else
 				// Add a line
 				if (($object->fk_statut == ExpenseReport::STATUS_DRAFT || $object->fk_statut == ExpenseReport::STATUS_REFUSED) && $action != 'editline' && $user->rights->expensereport->creer)
 				{
-				    $colspan = 10;
+				    $colspan = 11;
 				    if (! empty($conf->global->MAIN_USE_EXPENSE_IK)) $colspan++;
 				    if (! empty($conf->projet->enabled)) $colspan++;
 				    if ($action != 'editline') $colspan++;
@@ -2274,10 +2316,6 @@ else
 				        {
 				            $savingdocmask=dol_sanitizeFileName($object->ref).'-__file__';
 				        }
-				        /*if (in_array($modulepart,array('member')))
-				         {
-				         $savingdocmask=$object->login.'___file__';
-				         }*/
 				    }
 
 				    // Show upload form (document and links)
@@ -2371,7 +2409,10 @@ else
 					print '<td class="right">'.$langs->trans('PriceUHT').'</td>';
 					print '<td class="right">'.$langs->trans('PriceUTTC').'</td>';
 					print '<td class="right">'.$langs->trans('Qty').'</td>';
-					print '<td colspan="3"></td>';
+					print '<td></td>';
+					print '<td></td>';
+					print '<td></td>';
+					print '<td></td>';
 					print '</tr>';
 
 					print '<tr class="oddeven">';
@@ -2431,6 +2472,9 @@ else
 					print '<td class="right">';
 					print '<input type="text" min="0" class="right maxwidth50" name="qty" value="'.dol_escape_htmltag($qty?$qty:1).'">';    // We must be able to enter decimal qty
 					print '</td>';
+
+					// Picture
+					print '<td></td>';
 
 					if ($action != 'editline')
 					{
