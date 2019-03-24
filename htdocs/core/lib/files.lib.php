@@ -1823,16 +1823,19 @@ function deleteFilesIntoDatabaseIndex($dir, $file, $mode = 'uploaded')
  *  @param	string	$fileinput  Input file name
  *  @param  string	$ext        Format of target file (It is also extension added to file if fileoutput is not provided).
  *  @param	string	$fileoutput	Output filename
+ *  @param  string  $page       Page number if we convert a PDF into png
  *  @return	int					<0 if KO, 0=Nothing done, >0 if OK
  */
-function dol_convert_file($fileinput, $ext = 'png', $fileoutput = '')
+function dol_convert_file($fileinput, $ext = 'png', $fileoutput = '', $page='')
 {
 	global $langs;
 	if (class_exists('Imagick'))
 	{
 	    $image=new Imagick();
 		try {
-		    $ret = $image->readImage($fileinput);
+		    $filetoconvert=$fileinput.(($page != '')?'['.$page.']':'');
+		    //var_dump($filetoconvert);
+		    $ret = $image->readImage($filetoconvert);
 		} catch(Exception $e) {
 		    $ext = pathinfo($fileinput, PATHINFO_EXTENSION);
 		    dol_syslog("Failed to read image using Imagick (Try to install package 'apt-get install php-imagick ghostscript' and check there is no policy to disable ".$ext." convertion in /etc/ImageMagick*/policy.xml): ".$e->getMessage(), LOG_WARNING);
