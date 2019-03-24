@@ -66,20 +66,20 @@ if (empty($date_start) || empty($date_end)) // We define date_start and date_end
         {
             $date_start=dol_get_first_day($year_start, empty($conf->global->SOCIETE_FISCAL_MONTH_START)?1:$conf->global->SOCIETE_FISCAL_MONTH_START, false);
             if (empty($conf->global->MAIN_INFO_VAT_RETURN) || $conf->global->MAIN_INFO_VAT_RETURN == 2) $date_end=dol_time_plus_duree($date_start, 3, 'm') - 1;
-            else if ($conf->global->MAIN_INFO_VAT_RETURN == 3) $date_end=dol_time_plus_duree($date_start, 1, 'y') - 1;
-            else if ($conf->global->MAIN_INFO_VAT_RETURN == 1) $date_end=dol_time_plus_duree($date_start, 1, 'm') - 1;
+            elseif ($conf->global->MAIN_INFO_VAT_RETURN == 3) $date_end=dol_time_plus_duree($date_start, 1, 'y') - 1;
+            elseif ($conf->global->MAIN_INFO_VAT_RETURN == 1) $date_end=dol_time_plus_duree($date_start, 1, 'm') - 1;
         }
     }
     else
     {
-        if ($q==1) { $date_start=dol_get_first_day($year_start, 1 ,false); $date_end=dol_get_last_day($year_start, 3, false); }
+        if ($q==1) { $date_start=dol_get_first_day($year_start, 1, false); $date_end=dol_get_last_day($year_start, 3, false); }
         if ($q==2) { $date_start=dol_get_first_day($year_start, 4, false); $date_end=dol_get_last_day($year_start, 6, false); }
         if ($q==3) { $date_start=dol_get_first_day($year_start, 7, false); $date_end=dol_get_last_day($year_start, 9, false); }
         if ($q==4) { $date_start=dol_get_first_day($year_start, 10, false); $date_end=dol_get_last_day($year_start, 12, false); }
     }
 }
 
-$min = price2num(GETPOST("min","alpha"));
+$min = price2num(GETPOST("min", "alpha"));
 if (empty($min)) $min = 0;
 
 // Define modetax (0 or 1)
@@ -89,7 +89,7 @@ if (GETPOSTISSET("modetax")) $modetax=GETPOST("modetax", 'int');
 if (empty($modetax)) $modetax=0;
 
 // Security check
-$socid = GETPOST('socid','int');
+$socid = GETPOST('socid', 'int');
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'tax', '', '', 'charges');
 
@@ -121,7 +121,7 @@ if (isset($_REQUEST['extra_report']) && $_REQUEST['extra_report'] == 1) {
     $special_report = true;
 }
 
-llxHeader('',$langs->trans("VATReport"),'','',0,0,'','',$morequerystring);
+llxHeader('', $langs->trans("VATReport"), '', '', 0, 0, '', '', $morequerystring);
 
 $fsearch.='<br>';
 $fsearch.='  <input type="hidden" name="year" value="'.$year.'">';
@@ -135,7 +135,7 @@ $calcmode='';
 if ($modetax == 0) $calcmode=$langs->trans('OptionVATDefault');
 if ($modetax == 1) $calcmode=$langs->trans('OptionVATDebitOption');
 if ($modetax == 2) $calcmode=$langs->trans('OptionPaymentForProductAndServices');
-$calcmode.='<br>('.$langs->trans("TaxModuleSetupToModifyRules",DOL_URL_ROOT.'/admin/taxes.php').')';
+$calcmode.='<br>('.$langs->trans("TaxModuleSetupToModifyRules", DOL_URL_ROOT.'/admin/taxes.php').')';
 // Set period
 $period=$form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
 $prevyear=$year_start;
@@ -193,7 +193,7 @@ $amountsup=$langs->trans("AmountHT");
 if ($mysoc->tva_assuj) {
     $vatsup.=' ('.$langs->trans("ToGetBack").')';
 }
-report_header($name,'',$period,$periodlink,$description,$builddate,$exportlink,array(),$calcmode);
+report_header($name, '', $period, $periodlink, $description, $builddate, $exportlink, array(), $calcmode);
 
 $vatcust=$langs->trans("VATReceived");
 $vatsup=$langs->trans("VATPaid");
@@ -252,12 +252,12 @@ if (! is_array($x_coll) || ! is_array($x_paye))
                 'drate'     =>$x_coll[$my_coll_thirdpartyid]['drate'][$id],
                 'datef'     =>$x_coll[$my_coll_thirdpartyid]['datef'][$id],
                 'datep'     =>$x_coll[$my_coll_thirdpartyid]['datep'][$id],
-                'company_link'=>$company_static->getNomUrl(1,'',20),
+                'company_link'=>$company_static->getNomUrl(1, '', 20),
                 'ddate_start'=>$x_coll[$my_coll_thirdpartyid]['ddate_start'][$id],
                 'ddate_end'  =>$x_coll[$my_coll_thirdpartyid]['ddate_end'][$id],
                 'totalht'   =>$x_coll[$my_coll_thirdpartyid]['totalht_list'][$id],
                 'vat'       =>$x_coll[$my_coll_thirdpartyid]['vat_list'][$id],
-                'link'      =>$invoice_customer->getNomUrl(1,'',12)
+                'link'      =>$invoice_customer->getNomUrl(1, '', 12)
             );
         }
     }
@@ -320,12 +320,12 @@ if (! is_array($x_coll) || ! is_array($x_paye))
                     'drate'     =>$x_paye[$my_coll_thirdpartyid]['drate'][$id],
                     'datef'     =>$x_paye[$my_paye_thirdpartyid]['datef'][$id],
                     'datep'     =>$x_paye[$my_paye_thirdpartyid]['datep'][$id],
-                    'company_link'=>$company_static->getNomUrl(1,'',20),
+                    'company_link'=>$company_static->getNomUrl(1, '', 20),
                     'ddate_start'=>$x_paye[$my_paye_thirdpartyid]['ddate_start'][$id],
                     'ddate_end'  =>$x_paye[$my_paye_thirdpartyid]['ddate_end'][$id],
                     'totalht'   =>price2num($x_paye[$my_paye_thirdpartyid]['totalht_list'][$id]),
                     'vat'       =>$x_paye[$my_paye_thirdpartyid]['vat_list'][$id],
-                    'link'      =>$invoice_supplier->getNomUrl(1,'',12)
+                    'link'      =>$invoice_supplier->getNomUrl(1, '', 12)
                 );
             }
         }
@@ -512,7 +512,6 @@ if (! is_array($x_coll) || ! is_array($x_paye))
                     $subtot_coll_vat += $temp_vat;
                     $x_coll_sum += $temp_vat;
                 }
-
             }
             // Total customers for this vat rate
             print '<tr class="liste_total">';
@@ -670,18 +669,21 @@ if (! is_array($x_coll) || ! is_array($x_paye))
                         }
 
                         if (($type == 0 && $conf->global->TAX_MODE_BUY_PRODUCT == 'invoice')
-                            || ($type == 1 && $conf->global->TAX_MODE_BUY_SERVICE == 'invoice')) {
-                                print $langs->trans("NA");
-                            } else {
-                                if (isset($fields['payment_amount']) && $fields['ftotal_ttc']) {
-                                    $ratiopaymentinvoice = ($fields['payment_amount'] / $fields['ftotal_ttc']);
-                                }
-                                print price(price2num($fields['payment_amount'], 'MT'));
-                                if (isset($fields['payment_amount'])) {
-                                    print ' (' . round($ratiopaymentinvoice * 100, 2) . '%)';
-                                }
+                            || ($type == 1 && $conf->global->TAX_MODE_BUY_SERVICE == 'invoice'))
+                        {
+                            print $langs->trans("NA");
+                        }
+                        else
+                        {
+                            if (isset($fields['payment_amount']) && $fields['ftotal_ttc']) {
+                                $ratiopaymentinvoice = ($fields['payment_amount'] / $fields['ftotal_ttc']);
                             }
-                            print '</td>';
+                            print price(price2num($fields['payment_amount'], 'MT'));
+                            if (isset($fields['payment_amount'])) {
+                                print ' (' . round($ratiopaymentinvoice * 100, 2) . '%)';
+                            }
+                        }
+                        print '</td>';
                     }
 
                     // VAT paid

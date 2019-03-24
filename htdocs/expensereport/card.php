@@ -26,7 +26,6 @@
  *  \brief      	Page for trip and expense report card
  */
 
-$res=0;
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/CMailFile.class.php';
@@ -1095,7 +1094,7 @@ if (empty($reshook))
     	$fk_ecm_files = 0;
     	if (GETPOSTISSET('attachfile'))
     	{
-    	    $arrayoffiles=GETPOST('attachfile','array');
+    	    $arrayoffiles=GETPOST('attachfile', 'array');
     	    if (is_array($arrayoffiles) && ! empty($arrayoffiles[0]))
     	    {
     	        include_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
