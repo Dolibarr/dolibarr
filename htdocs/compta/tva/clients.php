@@ -377,7 +377,7 @@ if (! is_array($x_coll) || ! is_array($x_paye))
         $subtot_coll_total_ht = 0;
         $subtot_coll_vat = 0;
 
-        if ($min == 0 || ($min > 0 && $x_both[$thirdparty_id]['coll']['totalht'] > $min)) 
+        if ($min == 0 || ($min > 0 && $x_both[$thirdparty_id]['coll']['totalht'] > $min))
         {
             if (is_array($x_both[$thirdparty_id]['coll']['detail']))
             {
@@ -407,7 +407,6 @@ if (! is_array($x_coll) || ! is_array($x_paye))
                     if (!empty($fields['ddate_end'])) {
                         $type = 1;
                     }
-
 
                     print '<tr class="oddeven">';
 
