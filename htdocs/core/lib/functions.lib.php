@@ -437,7 +437,7 @@ function GETPOST($paramname, $check = 'none', $method = 0, $filter = null, $opti
 		}
 	}
 
-	// Substitution variables for GETPOST (used to get final url with variable parameters or final default value with variable paramaters)
+	// Substitution variables for GETPOST (used to get final url with variable parameters or final default value with variable parameters)
 	// Example of variables: __DAY__, __MONTH__, __YEAR__, __MYCOMPANY_COUNTRY_ID__, __USER_ID__, ...
 	// We do this only if var is a GET. If it is a POST, may be we want to post the text with vars as the setup text.
 	if (! is_array($out) && empty($_POST[$paramname]) && empty($noreplace))
@@ -923,7 +923,7 @@ function dol_escape_js($stringtoescape, $mode = 0, $noescapebackslashn = 0)
  *
  *  @param      string		$stringtoescape		String to escape
  *  @param		int			$keepb				1=Preserve b tags (otherwise, remove them)
- *  @param      int         $keepn              1=Preserve \r\n strings (otherwise, replace them with escaped value)
+ *  @param      int         $keepn              1=Preserve \r\n strings (otherwise, replace them with escaped value). Set to 1 when escaping for a <textarea>.
  *  @return     string     				 		Escaped string
  *  @see		dol_string_nohtmltag(), dol_string_nospecial(), dol_string_unaccent()
  */
@@ -982,7 +982,7 @@ function dol_strtoupper($utf8_string)
  */
 function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename = '', $restricttologhandler = '')
 {
-	global $conf, $user;
+    global $conf, $user, $debugbar;
 
 	// If syslog module enabled
 	if (empty($conf->syslog->enabled)) return;
@@ -998,8 +998,8 @@ function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename =
 	if (! empty($message))
 	{
 		// Test log level
-		$logLevels = array(LOG_EMERG, LOG_ALERT, LOG_CRIT, LOG_ERR, LOG_WARNING, LOG_NOTICE, LOG_INFO, LOG_DEBUG);
-		if (!in_array($level, $logLevels, true))
+		$logLevels = array(LOG_EMERG=>'EMERG', LOG_ALERT=>'ALERT', LOG_CRIT=>'CRITICAL', LOG_ERR=>'ERR', LOG_WARNING=>'WARN', LOG_NOTICE=>'NOTICE', LOG_INFO=>'INFO', LOG_DEBUG=>'DEBUG');
+		if (! array_key_exists($level, $logLevels))
 		{
 			throw new Exception('Incorrect log level');
 		}
@@ -1008,9 +1008,10 @@ function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename =
 		$message = preg_replace('/password=\'[^\']*\'/', 'password=\'hidden\'', $message);	// protection to avoid to have value of password in log
 
 		// If adding log inside HTML page is required
-		if (! empty($_REQUEST['logtohtml']) && (! empty($conf->global->MAIN_ENABLE_LOG_TO_HTML) || ! empty($conf->global->MAIN_LOGTOHTML)))   // MAIN_LOGTOHTML kept for backward compatibility
+		if ((! empty($_REQUEST['logtohtml']) && ! empty($conf->global->MAIN_ENABLE_LOG_TO_HTML))
+		    || (! empty($user->rights->debugbar->read) && is_object($debugbar)))
 		{
-			$conf->logbuffer[] = dol_print_date(time(), "%Y-%m-%d %H:%M:%S")." ".$message;
+		    $conf->logbuffer[] = dol_print_date(time(), "%Y-%m-%d %H:%M:%S")." ".$logLevels[$level]." ".$message;
 		}
 
 		//TODO: Remove this. MAIN_ENABLE_LOG_INLINE_HTML should be deprecated and use a log handler dedicated to HTML output
@@ -1385,49 +1386,42 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 					$relativepath = $subdir.'/'.$objectref.'.pdf';
 
 					// Define path to preview pdf file (preview precompiled "file.ext" are "file.ext_preview.png")
-					$fileimage = $file.'_preview.png';              // If PDF has 1 page
-					$fileimagebis = $file.'_preview-0.png';         // If PDF has more than one page
+					$fileimage = $file.'_preview.png';
 					$relativepathimage = $relativepath.'_preview.png';
 
-					// Si fichier PDF existe
-					if (file_exists($file))
+					$pdfexists = file_exists($file);
+
+					// If PDF file exists
+					if ($pdfexists)
 					{
-						$encfile = urlencode($file);
 						// Conversion du PDF en image png si fichier png non existant
-						if ( (! file_exists($fileimage) || (filemtime($fileimage) < filemtime($file)))
-						  && (! file_exists($fileimagebis) || (filemtime($fileimagebis) < filemtime($file)))
-						   )
+						if (! file_exists($fileimage) || (filemtime($fileimage) < filemtime($file)))
 						{
-							if (empty($conf->global->MAIN_DISABLE_PDF_THUMBS))		// If you experienc trouble with pdf thumb generation and imagick, you can disable here.
+							if (empty($conf->global->MAIN_DISABLE_PDF_THUMBS))		// If you experience trouble with pdf thumb generation and imagick, you can disable here.
 							{
 								include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-								$ret = dol_convert_file($file, 'png', $fileimage);
+								$ret = dol_convert_file($file, 'png', $fileimage, '0');     // Convert first page of PDF into a file _preview.png
 								if ($ret < 0) $error++;
 							}
 						}
+					}
 
+					if ($pdfexists && ! $error)
+					{
 						$heightforphotref=70;
 						if (! empty($conf->dol_optimize_smallscreen)) $heightforphotref=60;
-						// Si fichier png PDF d'1 page trouve
+						// If the preview file is found
 						if (file_exists($fileimage))
 						{
 							$phototoshow = '<div class="floatleft inline-block valignmiddle divphotoref"><div class="photoref">';
 							$phototoshow.= '<img height="'.$heightforphotref.'" class="photo photowithmargin photowithborder" src="'.DOL_URL_ROOT . '/viewimage.php?modulepart=apercu'.$modulepart.'&amp;file='.urlencode($relativepathimage).'">';
 							$phototoshow.= '</div></div>';
 						}
-						// Si fichier png PDF de plus d'1 page trouve
-						elseif (file_exists($fileimagebis))
-						{
-							$preview = preg_replace('/\.png/', '', $relativepathimage) . "-0.png";
-							$phototoshow = '<div class="floatleft inline-block valignmiddle divphotoref"><div class="photoref">';
-							$phototoshow.= '<img height="'.$heightforphotref.'" class="photo photowithmargin photowithborder" src="'.DOL_URL_ROOT . '/viewimage.php?modulepart=apercu'.$modulepart.'&amp;file='.urlencode($preview).'"><p>';
-							$phototoshow.= '</div></div>';
-						}
 					}
 				}
 				elseif (! $phototoshow)
 				{
-					$phototoshow = $form->showphoto($modulepart, $object, 0, 0, 0, 'photoref', 'small', 1, 0, $maxvisiblephotos);
+					$phototoshow.= $form->showphoto($modulepart, $object, 0, 0, 0, 'photoref', 'small', 1, 0, $maxvisiblephotos);
 				}
 
 				if ($phototoshow)
@@ -1440,7 +1434,7 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 
 			if (! $phototoshow)      // Show No photo link (picto of pbject)
 			{
-				$morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref">';
+			    $morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref">';
 				if ($object->element == 'action')
 				{
 					$width=80;
@@ -1480,20 +1474,20 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 		if (! empty($conf->use_javascript_ajax) && $user->rights->produit->creer && ! empty($conf->global->MAIN_DIRECT_STATUS_UPDATE)) {
 			$morehtmlstatus.=ajax_object_onoff($object, 'status', 'tosell', 'ProductStatusOnSell', 'ProductStatusNotOnSell');
 		} else {
-			$morehtmlstatus.='<span class="statusrefsell">'.$object->getLibStatut(5, 0).'</span>';
+			$morehtmlstatus.='<span class="statusrefsell">'.$object->getLibStatut(6, 0).'</span>';
 		}
 		$morehtmlstatus.=' &nbsp; ';
 		//$morehtmlstatus.=$langs->trans("Status").' ('.$langs->trans("Buy").') ';
 		if (! empty($conf->use_javascript_ajax) && $user->rights->produit->creer && ! empty($conf->global->MAIN_DIRECT_STATUS_UPDATE)) {
 			$morehtmlstatus.=ajax_object_onoff($object, 'status_buy', 'tobuy', 'ProductStatusOnBuy', 'ProductStatusNotOnBuy');
 		} else {
-			$morehtmlstatus.='<span class="statusrefbuy">'.$object->getLibStatut(5, 1).'</span>';
+			$morehtmlstatus.='<span class="statusrefbuy">'.$object->getLibStatut(6, 1).'</span>';
 		}
 	}
 	elseif (in_array($object->element, array('facture', 'invoice', 'invoice_supplier', 'chargesociales', 'loan')))
 	{
 		$tmptxt=$object->getLibStatut(6, $object->totalpaye);
-		if (empty($tmptxt) || $tmptxt == $object->getLibStatut(3) || $conf->browser->layout=='phone') $tmptxt=$object->getLibStatut(5, $object->totalpaye);
+		if (empty($tmptxt) || $tmptxt == $object->getLibStatut(3)) $tmptxt=$object->getLibStatut(5, $object->totalpaye);
 		$morehtmlstatus.=$tmptxt;
 	}
 	elseif ($object->element == 'contrat' || $object->element == 'contract')
@@ -1516,7 +1510,7 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 	}
 	else { // Generic case
 		$tmptxt=$object->getLibStatut(6);
-		if (empty($tmptxt) || $tmptxt == $object->getLibStatut(3) || $conf->browser->layout=='phone') $tmptxt=$object->getLibStatut(5);
+		if (empty($tmptxt) || $tmptxt == $object->getLibStatut(3)) $tmptxt=$object->getLibStatut(5);
 		$morehtmlstatus.=$tmptxt;
 	}
 
@@ -1790,9 +1784,9 @@ function dol_print_date($time, $format = '', $tzoutput = 'tzserver', $outputlang
 	if (preg_match('/^([0-9]+)\-([0-9]+)\-([0-9]+) ?([0-9]+)?:?([0-9]+)?:?([0-9]+)?/i', $time, $reg)
 	|| preg_match('/^([0-9][0-9][0-9][0-9])([0-9][0-9])([0-9][0-9])([0-9][0-9])([0-9][0-9])([0-9][0-9])$/i', $time, $reg))	// Deprecated. Ex: 1970-01-01, 1970-01-01 01:00:00, 19700101010000
 	{
-		// TODO Remove this.
-		// This part of code should not be used.
+		// TODO Remove this. This part of code should not be used.
 		dol_syslog("Functions.lib::dol_print_date function call with deprecated value of time in page ".$_SERVER["PHP_SELF"], LOG_ERR);
+		//if (function_exists('debug_print_backtrace')) debug_print_backtrace();
 		// Date has format 'YYYY-MM-DD' or 'YYYY-MM-DD HH:MM:SS' or 'YYYYMMDDHHMMSS'
 		$syear	= (! empty($reg[1]) ? $reg[1] : '');
 		$smonth	= (! empty($reg[2]) ? $reg[2] : '');
@@ -2951,7 +2945,7 @@ function dol_trunc($string, $size = 40, $trunc = 'right', $stringencoding = 'UTF
  *  @param		string		$alt				Force alt for bind people
  *  @param		string		$morecss			Add more class css on img tag (For example 'myclascss'). Work only if $moreatt is empty.
  *  @return     string       				    Return img tag
- *  @see        #img_object, #img_picto_common
+ *  @see        img_object(), img_picto_common()
  */
 function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $srconly = 0, $notitle = 0, $alt = '', $morecss = '')
 {
@@ -2979,17 +2973,22 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 
 		//if (in_array($picto, array('switch_off', 'switch_on', 'off', 'on')))
         if (empty($srconly) && in_array($pictowithoutext, array(
-				'bank', 'close_title', 'delete', 'edit', 'ellipsis-h', 'filter', 'grip', 'grip_title', 'list', 'listlight', 'off', 'on', 'play', 'playdisabled', 'printer', 'resize',
-				'note', 'sign-out', 'split', 'switch_off', 'switch_on', 'unlink', 'uparrow', '1downarrow', '1uparrow', '1leftarrow', '1rightarrow',
-				'jabber','skype','twitter','facebook','linkedin'
+				'bank', 'close_title', 'delete', 'edit', 'ellipsis-h', 'filter', 'grip', 'grip_title', 'list', 'listlight', 'note', 'off', 'on', 'play', 'playdisabled', 'printer', 'resize',
+                'note', 'setup', 'sign-out', 'split', 'switch_off', 'switch_on', 'unlink', 'uparrow', '1downarrow', '1uparrow', '1leftarrow', '1rightarrow',
+				'jabber','skype','twitter','facebook','linkedin',
+                'chevron-left','chevron-right','chevron-down','chevron-top'
 			)
 		)) {
 		    $fa='fa';
-		    if (! empty($conf->global->MAIN_USE_FONT_AWESOME_5)) $fa='fas';
+		    if (empty($conf->global->MAIN_DISABLE_FONT_AWESOME_5)) $fa='fas';
 		    $fakey = $pictowithoutext;
 			$facolor = ''; $fasize = '';
 			$marginleftonlyshort = 2;
-			if ($pictowithoutext == 'switch_off') {
+			if ($pictowithoutext == 'setup') {
+			    $fakey = 'fa-cog';
+			    $fasize = '1.4em';
+			}
+			elseif ($pictowithoutext == 'switch_off') {
 				$fakey = 'fa-toggle-off';
 				$facolor = '#999';
 				$fasize = '2em';
@@ -3001,10 +3000,20 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 			}
 			elseif ($pictowithoutext == 'off') {
 				$fakey = 'fa-square-o';
+				if (empty($conf->global->MAIN_DISABLE_FONT_AWESOME_5))
+				{
+				    $fakey = 'fa-square';
+				    $fa='far';
+				}
 				$fasize = '1.3em';
 			}
 			elseif ($pictowithoutext == 'on') {
 				$fakey = 'fa-check-square-o';
+				if (empty($conf->global->MAIN_DISABLE_FONT_AWESOME_5))
+				{
+				    $fakey = 'fa-check-square';
+				    $fa='far';
+				}
 				$fasize = '1.3em';
 			}
 			elseif ($pictowithoutext == 'bank') {
@@ -3021,14 +3030,14 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 			elseif ($pictowithoutext == 'edit') {
 				$fakey = 'fa-pencil';
 				$facolor = '#444';
-				if (! empty($conf->global->MAIN_USE_FONT_AWESOME_5)) $fakey = 'fa-pencil-alt';
+				if (empty($conf->global->MAIN_DISABLE_FONT_AWESOME_5)) $fakey = 'fa-pencil-alt';
 			}
 			elseif ($pictowithoutext == 'filter') {
 				$fakey = 'fa-'.$pictowithoutext;
 			}
 			elseif ($pictowithoutext == 'grip_title' || $pictowithoutext == 'grip') {
 				$fakey = 'fa-arrows';
-				if (! empty($conf->global->MAIN_USE_FONT_AWESOME_5)) $fakey = 'fa-arrows-alt';
+				if (empty($conf->global->MAIN_DISABLE_FONT_AWESOME_5)) $fakey = 'fa-arrows-alt';
 			}
 			elseif ($pictowithoutext == 'listlight') {
 				$fakey = 'fa-download';
@@ -3046,6 +3055,10 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 			}
 			elseif ($pictowithoutext == 'note') {
 				$fakey = 'fa-sticky-note-o';
+				if (empty($conf->global->MAIN_DISABLE_FONT_AWESOME_5))
+				{
+				    $fakey = 'fa-sticky-note'; $fa = 'far';
+				}
 				$facolor = '#999';
 				$marginleftonlyshort=1;
 			}
@@ -3062,7 +3075,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 			elseif ($pictowithoutext == 'sign-out')     {
                 $fakey = 'fa-sign-out';
 			    $marginleftonlyshort=0;
-			    if (! empty($conf->global->MAIN_USE_FONT_AWESOME_5)) $fakey = 'fa-sign-out-alt';
+			    if (empty($conf->global->MAIN_DISABLE_FONT_AWESOME_5)) $fakey = 'fa-sign-out-alt';
 			}
 			elseif ($pictowithoutext == 'unlink')     {
 				$fakey = 'fa-chain-broken';
@@ -3081,7 +3094,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 			}
 			elseif (in_array($pictowithoutext, array('skype', 'twitter', 'facebook', 'linkedin'))) {
 			    $fakey = 'fa-'.$pictowithoutext;
-			    if (! empty($conf->global->MAIN_USE_FONT_AWESOME_5)) $fa = 'fab';
+			    if (empty($conf->global->MAIN_DISABLE_FONT_AWESOME_5)) $fa = 'fab';
 			}
 			elseif ($pictowithoutext == 'split') {
 			    $fakey = 'fa-code-fork';
@@ -4175,7 +4188,7 @@ function print_barre_liste($titre, $page, $file, $options = '', $sortfield = '',
  *
  *	@param	int				$page				Number of page
  *	@param	string			$file				Page URL (in most cases provided with $_SERVER["PHP_SELF"])
- *	@param	string			$options         	Other url paramaters to propagate ("" by default, may include sortfield and sortorder)
+ *	@param	string			$options         	Other url parameters to propagate ("" by default, may include sortfield and sortorder)
  *	@param	integer			$nextpage	    	Do we show a next page button
  *	@param	string			$betweenarrows		HTML content to show between arrows. MUST contains '<li> </li>' tags or '<li><span> </span></li>'.
  *  @param	string			$afterarrows		HTML content to show after arrows. Must NOT contains '<li> </li>' tags.
@@ -4377,7 +4390,7 @@ function price($amount, $form = 0, $outlangs = '', $trunc = 1, $rounding = -1, $
 	{
 		if ($currency_code == 'auto') $currency_code=$conf->currency;
 
-		$listofcurrenciesbefore=array('USD','GBP','AUD','MXN','PEN','CNY');
+		$listofcurrenciesbefore=array('USD','GBP','AUD','HKD','MXN','PEN','CNY');
 		$listoflanguagesbefore=array('nl_NL');
 		if (in_array($currency_code, $listofcurrenciesbefore) || in_array($outlangs->defaultlang, $listoflanguagesbefore))
 		{
@@ -5741,7 +5754,7 @@ function dol_textishtml($msg, $option = 0)
  *  @param  string  $text1          Text 1
  *  @param  string  $text2          Text 2
  *  @param  bool    $forxml         false=Use <br>instead of \n if html content detected, true=Use <br /> instead of \n if html content detected
- *  @param  bool    $invert         invert order of description lines if CONF CHANGE_ORDER_CONCAT_DESCRIPTION is active
+ *  @param  bool    $invert         invert order of description lines (we often use config MAIN_CHANGE_ORDER_CONCAT_DESCRIPTION in this parameter)
  *  @return string                  Text 1 + new line + Text2
  *  @see    dol_textishtml()
  */
@@ -7145,7 +7158,7 @@ function complete_head_from_modules($conf, $langs, $object, &$head, &$h, $type, 
  */
 function printCommonFooter($zone = 'private')
 {
-	global $conf, $hookmanager, $user;
+	global $conf, $hookmanager, $user, $debugbar;
 	global $action;
 	global $micro_start_time;
 
@@ -7153,7 +7166,7 @@ function printCommonFooter($zone = 'private')
 	else print "\n".'<!-- Common footer for public page -->'."\n";
 
 	// A div to store page_y POST parameter so we can read it using javascript
-	print "\n<!-- A div to store page_y POST paramater -->\n";
+	print "\n<!-- A div to store page_y POST parameter -->\n";
 	print '<div id="page_y" style="display: none;">'.$_POST['page_y'].'</div>'."\n";
 
 	$parameters=array();
@@ -7172,11 +7185,10 @@ function printCommonFooter($zone = 'private')
 			{
 				print "\n";
 				print '/* JS CODE TO ENABLE to manage handler to switch left menu page (menuhider) */'."\n";
-				print 'jQuery(".menuhider").click(function() {';
+				print 'jQuery(".menuhider").click(function(event) {';
+				print '  if(!$( "body" ).hasClass( "sidebar-collapse" )){ event.preventDefault(); }'."\n";
 				print '  console.log("We click on .menuhider");'."\n";
-				//print "  $('.side-nav').animate({width:'toggle'},200);\n";     // OK with eldy theme but not with md
-				print "  $('.side-nav').toggle()\n";
-				print "  $('.login_block').toggle()\n";
+				print '  $("body").toggleClass("sidebar-collapse")'."\n";
 				print '});'."\n";
 			}
 
@@ -7310,11 +7322,17 @@ function printCommonFooter($zone = 'private')
 		// Add Xdebug coverage of code
 		if (defined('XDEBUGCOVERAGE'))
 		{
-			print_r(xdebug_get_code_coverage());
+		    print_r(xdebug_get_code_coverage());
 		}
 
-		// If there is some logs in buffer to show
-		if (count($conf->logbuffer))
+		// Add DebugBar data
+	    if (! empty($user->rights->debugbar->read) && is_object($debugbar))
+	    {
+	        $debugbar['time']->stopMeasure('pageaftermaster');
+	        print '<!-- Output debugbar data -->'."\n";
+		    print $debugbar->getRenderer()->render();
+		}
+		elseif (count($conf->logbuffer))    // If there is some logs in buffer to show
 		{
 			print "\n";
 			print "<!-- Start of log output\n";
@@ -7827,6 +7845,7 @@ function getDictvalue($tablename, $field, $id, $checkentity = false, $rowidfield
  */
 function colorIsLight($stringcolor)
 {
+    $stringcolor = str_replace('#', '', $stringcolor);
 	$res = -1;
 	if (!empty($stringcolor))
 	{
@@ -7896,4 +7915,216 @@ function isVisibleToUserType($type_user, &$menuentry, &$listofmodulesforexternal
 function roundUpToNextMultiple($n, $x = 5)
 {
 	return (ceil($n)%$x === 0) ? ceil($n) : round(($n+$x/2)/$x)*$x;
+}
+
+/**
+ * Function dolGetBadge
+ *
+ * @param   string  $label      label of badge no html : use in alt attribute for accessibility
+ * @param   string  $html       optional : label of badge with html
+ * @param   string  $type       type of badge : Primary Secondary Success Danger Warning Info Light Dark status0 status1 status2 status3 status4 status5 status6 status7 status8 status9
+ * @param   string  $mode       default '' , pill, dot
+ * @param   string  $url        the url for link
+ * @param   array   $params     various params for future : recommended rather than adding more fuction arguments
+ * @return  string              Html badge
+ */
+function dolGetBadge($label, $html = '', $type = 'primary', $mode = '', $url = '', $params = array())
+{
+
+    $attr=array(
+        'class'=>'badge'.(!empty($mode)?' badge-'.$mode:'').(!empty($type)?' badge-'.$type:'')
+    );
+
+    if(empty($html)){
+        $html = $label;
+    }
+
+    if(!empty($url)){
+        $attr['href'] = $url;
+    }
+
+    if($mode==='dot')
+    {
+        $attr['class'].= ' classfortooltip';
+        $attr['title'] = $html;
+        $attr['aria-label'] = $label;
+        $html='';
+    }
+
+    // Override attr
+    if(!empty($params['attr']) && is_array($params['attr'])){
+        foreach($params['attr']as $key => $value){
+            $attr[$key] = $value;
+        }
+    }
+
+    // TODO: add hook
+
+    // escape all attribute
+    $attr = array_map('dol_escape_htmltag', $attr);
+
+    $TCompiledAttr = array();
+    foreach($attr as $key => $value){
+        $TCompiledAttr[] = $key.'="'.$value.'"';
+    }
+
+    $compiledAttributes = !empty($TCompiledAttr)?implode(' ', $TCompiledAttr):'';
+
+    $tag = !empty($url)?'a':'span';
+
+    return '<'.$tag.' '.$compiledAttributes.'>'.$html.'</'.$tag.'>';
+}
+
+
+/**
+ * Function dolGetStatus
+ *
+ * @param   string  $statusLabel       Label of badge no html : use in alt attribute for accessibility
+ * @param   string  $statusLabelShort  Short label of badge no html
+ * @param   string  $html              Optional : label of badge with html
+ * @param   string  $statusType        status0 status1 status2 status3 status4 status5 status6 status7 status8 status9 : image name or badge name
+ * @param   int	    $displayMode       0=Long label, 1=Short label, 2=Picto + Short label, 3=Picto, 4=Picto + Long label, 5=Short label + Picto, 6=Long label + Picto
+ * @param   string  $url               The url for link
+ * @param   array   $params            Various params for future : recommended rather than adding more function arguments
+ * @return  string                     Html status string
+ */
+function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $statusType = 'status0', $displayMode = 0, $url = '', $params = array())
+{
+    global $conf;
+
+    // image's filename are still in French
+    $statusImg=array(
+        'status0' => 'statut0'
+        ,'status1' => 'statut1'
+        ,'status2' => 'statut2'
+        ,'status3' => 'statut3'
+        ,'status4' => 'statut4'
+        ,'status5' => 'statut5'
+        ,'status6' => 'statut6'
+        ,'status7' => 'statut7'
+        ,'status8' => 'statut8'
+        ,'status9' => 'statut9'
+    );
+
+    // TODO : add a hook
+
+    if ($displayMode == 0) {
+        $return = !empty($html)?$html:$statusLabel;
+    }
+    elseif ($displayMode == 1) {
+        $return = !empty($html)?$html:(!empty($statusLabelShort)?$statusLabelShort:$statusLabel);
+    }
+    // use status with images
+    elseif (empty($conf->global->MAIN_STATUS_USES_CSS)){
+        $return = '';
+        $htmlLabel      = (in_array($displayMode, array(1,2,5))?'<span class="hideonsmartphone">':'').(!empty($html)?$html:$statusLabel).(in_array($displayMode, array(1,2,5))?'</span>':'');
+        $htmlLabelShort = (in_array($displayMode, array(1,2,5))?'<span class="hideonsmartphone">':'').(!empty($html)?$html:(!empty($statusLabelShort)?$statusLabelShort:$statusLabel)).(in_array($displayMode, array(1,2,5))?'</span>':'');
+
+        if(!empty($statusImg[$statusType])){
+            $htmlImg = img_picto($statusLabel, $statusImg[$statusType]);
+        }else{
+            $htmlImg = img_picto($statusLabel, $statusType);
+        }
+
+        if ($displayMode === 2) {
+            $return =  $htmlImg .' '. $htmlLabel;
+        }
+        elseif ($displayMode === 3) {
+            $return = $htmlImg;
+        }
+        elseif ($displayMode === 4) {
+            $return =  $htmlImg .' '. $htmlLabel;
+        }
+        elseif ($displayMode === 5) {
+            $return = $htmlLabelShort .' '. $htmlImg;
+        }
+        else { // $displayMode >= 6
+            $return = $htmlLabel .' '. $htmlImg;
+        }
+    }
+    // Use new badge
+    elseif (!empty($conf->global->MAIN_STATUS_USES_CSS) && !empty($displayMode)) {
+        $statusLabelShort = !empty($statusLabelShort)?$statusLabelShort:$statusLabel;
+
+        if ($displayMode == 3) {
+            $return = dolGetBadge($statusLabel, '', $statusType, 'dot');
+        }
+        elseif ($displayMode === 5) {
+            $return = dolGetBadge($statusLabelShort, $html, $statusType);
+        }
+        else {
+            $return = dolGetBadge($statusLabel, $html, $statusType);
+        }
+    }
+
+    return $return;
+}
+
+
+/**
+ * Function dolGetButtonAction
+ *
+ * @param string    $label      label of button no html : use in alt attribute for accessibility $html is not empty
+ * @param string    $html       optional : content with html
+ * @param string    $actionType default, delete, danger
+ * @param string    $url        the url for link
+ * @param string    $id         attribute id of button
+ * @param int       $userRight  user action right
+ * @param array     $params     various params for future : recommended rather than adding more function arguments
+ * @return string               html button
+ */
+function dolGetButtonAction($label, $html = '', $actionType = 'default', $url = '', $id = '', $userRight = 1, $params = array())
+{
+    $class = 'butAction' ;
+    if($actionType == 'danger' || $actionType == 'delete'){
+        $class = 'butActionDelete' ;
+    }
+
+    $attr=array(
+        'class' => $class
+        ,'href' => empty($url)?'':$url
+    );
+
+    if(empty($html)){
+        $html = $label;
+    }else{
+        $attr['aria-label'] = $label;
+    }
+
+
+    if(empty($userRight)){
+        $attr['class'] = 'butActionRefused';
+        $attr['href'] = '';
+    }
+
+    if(empty($id)){
+        $attr['id'] = $id;
+    }
+
+    // Override attr
+    if(!empty($params['attr']) && is_array($params['attr'])){
+        foreach($params['attr'] as $key => $value){
+            $attr[$key] = $value;
+        }
+    }
+
+    if(isset($attr['href']) && empty($attr['href'])){
+        unset($attr['href']);
+    }
+
+    // TODO : add a hook
+
+    // escape all attribute
+    $attr = array_map('dol_escape_htmltag', $attr);
+
+    $TCompiledAttr = array();
+    foreach($attr as $key => $value){
+        $TCompiledAttr[] = $key.'="'.$value.'"';
+    }
+
+    $compiledAttributes = !empty($TCompiledAttr)?implode(' ', $TCompiledAttr):'';
+
+    $tag = !empty($attr['href'])?'a':'span';
+
+    return '<div class="inline-block divButAction"><'.$tag.' '.$compiledAttributes.'>'.$html.'</'.$tag.'></div>';
 }

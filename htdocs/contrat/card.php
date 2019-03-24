@@ -457,7 +457,7 @@ if (empty($reshook))
 		// Extrafields
 		$extrafieldsline = new ExtraFields($db);
 		$extralabelsline = $extrafieldsline->fetch_name_optionals_label($object->table_element_line);
-		$array_options = $extrafieldsline->getOptionalsFromPost($extralabelsline, $predef);
+		$array_options = $extrafieldsline->getOptionalsFromPost($object->table_element_line, $predef);
 		// Unset extrafield
 		if (is_array($extralabelsline)) {
 			// Get extra fields
@@ -540,7 +540,7 @@ if (empty($reshook))
 				}
 
 			   	$desc=$prod->description;
-			   	$desc=dol_concatdesc($desc, $product_desc, '', !empty($conf->global->CHANGE_ORDER_CONCAT_DESCRIPTION));
+			   	$desc=dol_concatdesc($desc, $product_desc, '', !empty($conf->global->MAIN_CHANGE_ORDER_CONCAT_DESCRIPTION));
 				$fk_unit = $prod->fk_unit;
 			}
 			else
@@ -737,7 +737,7 @@ if (empty($reshook))
 			// Extrafields
 			$extrafieldsline = new ExtraFields($db);
 			$extralabelsline = $extrafieldsline->fetch_name_optionals_label($objectline->table_element);
-			$array_options = $extrafieldsline->getOptionalsFromPost($extralabelsline, $predef);
+			$array_options = $extrafieldsline->getOptionalsFromPost($object->table_element_line, $predef);
 			$objectline->array_options=$array_options;
 
 			// TODO verifier price_min si fk_product et multiprix
@@ -1364,7 +1364,7 @@ else
         } elseif ($action == 'clone') {
             // Clone confirmation
             $formquestion = array(array('type' => 'other','name' => 'socid','label' => $langs->trans("SelectThirdParty"),'value' => $form->select_company(GETPOST('socid', 'int'), 'socid', '(s.client=1 OR s.client=2 OR s.client=3)')));
-            $formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('CloneContract'), $langs->trans('ConfirmCloneContract', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
+            $formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneContract', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
         }
 
 
@@ -1911,21 +1911,21 @@ else
 				// Si pas encore active
 				if (! $objp->date_debut_reelle) {
 					print $langs->trans("DateStartReal").': ';
-					if ($objp->date_debut_reelle) print dol_print_date($objp->date_debut_reelle, 'day');
+					if ($objp->date_debut_reelle) print dol_print_date($db->jdate($objp->date_debut_reelle), 'day');
 					else print $langs->trans("ContractStatusNotRunning");
 				}
 				// Si active et en cours
 				if ($objp->date_debut_reelle && ! $objp->date_fin_reelle) {
 					print $langs->trans("DateStartReal").': ';
-					print dol_print_date($objp->date_debut_reelle, 'day');
+                    print dol_print_date($db->jdate($objp->date_debut_reelle), 'day');
 				}
 				// Si desactive
 				if ($objp->date_debut_reelle && $objp->date_fin_reelle) {
 					print $langs->trans("DateStartReal").': ';
-					print dol_print_date($objp->date_debut_reelle, 'day');
+                    print dol_print_date($db->jdate($objp->date_debut_reelle), 'day');
 					print ' &nbsp;-&nbsp; ';
 					print $langs->trans("DateEndReal").': ';
-					print dol_print_date($objp->date_fin_reelle, 'day');
+					print dol_print_date($db->jdate($objp->date_fin_reelle), 'day');
 				}
 				if (! empty($objp->comment)) print " &nbsp;-&nbsp; ".$objp->comment;
 				print '</td>';

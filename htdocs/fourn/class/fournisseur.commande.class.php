@@ -2310,6 +2310,7 @@ class CommandeFournisseur extends CommonOrder
             {
             	$this->oldcopy= clone $this;
             	$this->fk_projet = $id_projet;
+            	$this->fk_project = $id_projet;
             }
 
             if (! $notrigger && empty($error))

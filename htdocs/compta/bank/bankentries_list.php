@@ -44,6 +44,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php'
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/salaries/class/paymentsalary.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/paymentvarious.class.php';
 require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/paymentexpensereport.class.php';
 require_once DOL_DOCUMENT_ROOT.'/loan/class/loan.class.php';
@@ -374,6 +375,7 @@ $paymentstatic=new Paiement($db);
 $paymentsupplierstatic=new PaiementFourn($db);
 $paymentvatstatic=new TVA($db);
 $paymentsalstatic=new PaymentSalary($db);
+$paymentvariousstatic=new PaymentVarious($db);
 $donstatic=new Don($db);
 $paymentexpensereportstatic=new PaymentExpenseReport($db);
 $bankstatic=new Account($db);
@@ -1153,13 +1155,13 @@ if ($resql)
     	        if ($links[$key]['type']=='payment')
     	        {
     	            $paymentstatic->id=$links[$key]['url_id'];
-    	            $paymentstatic->ref=$links[$key]['url_id'];
+    	            $paymentstatic->ref=$links[$key]['url_id'];    // FIXME This is id, not ref of payment
     	            print ' '.$paymentstatic->getNomUrl(2);
     	        }
     	        elseif ($links[$key]['type']=='payment_supplier')
     	        {
     	            $paymentsupplierstatic->id=$links[$key]['url_id'];
-    	            $paymentsupplierstatic->ref=$links[$key]['url_id'];
+    	            $paymentsupplierstatic->ref=$links[$key]['url_id'];    // FIXME This is id, not ref of payment
     	            print ' '.$paymentsupplierstatic->getNomUrl(2);
     	        }
     	        elseif ($links[$key]['type']=='payment_sc')
@@ -1198,6 +1200,12 @@ if ($resql)
     	            $paymentexpensereportstatic->id=$links[$key]['url_id'];
     	            $paymentexpensereportstatic->ref=$links[$key]['url_id'];
     	            print ' '.$paymentexpensereportstatic->getNomUrl(2);
+    	        }
+    	        elseif ($links[$key]['type']=='payment_various')
+    	        {
+    	            $paymentvariousstatic->id=$links[$key]['url_id'];
+    	            $paymentvariousstatic->ref=$links[$key]['url_id'];
+    	            print ' '.$paymentvariousstatic->getNomUrl(2);
     	        }
     	        elseif ($links[$key]['type']=='banktransfert')
     	        {

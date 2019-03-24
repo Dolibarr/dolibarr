@@ -621,7 +621,7 @@ if (empty($reshook))
 			{
 				if (! empty($conf->global->INVOICE_CAN_ALWAYS_BE_EDITED) || ($resteapayer == $object->total_ttc && empty($object->paye)))
 				{
-					$result=$object->set_draft($user, $idwarehouse);
+					$result=$object->setDraft($user, $idwarehouse);
 					if ($result<0) setEventMessages($object->error, $object->errors, 'errors');
 
 					// Define output language
@@ -1298,15 +1298,14 @@ if (empty($reshook))
 											$qualified=1;
 											if (empty($lines[$i]->qty)) $qualified=0;	// We discard qty=0, it is an option
 											if (! empty($lines[$i]->special_code)) $qualified=0;	// We discard special_code (frais port, ecotaxe, option, ...)
-											if ($qualified) $totalamount += $lines[$i]->total_ht; // Fixme : is it not for the customer ? Shouldn't we take total_ttc ?
+											if ($qualified){
+												$totalamount += $lines[$i]->total_ht; // Fixme : is it not for the customer ? Shouldn't we take total_ttc ?
+												$tva_tx = $lines[$i]->tva_tx;
+												$amountdeposit[$tva_tx] += ($lines[$i]->total_ht * $valuedeposit) / 100;
+											}
 										}
 
-										if ($totalamount != 0) {
-											if ($numlines > 0) $numlines = $numlines-1;
-											$tva_tx = $lines[$numlines]->tva_tx;
-											if (! empty($lines[$numlines]->vat_src_code) && ! preg_match('/\(/', $tva_tx)) $tva_tx .= ' ('.$lines[$numlines]->vat_src_code.')';
-											$amountdeposit[$tva_tx] = ($totalamount * $valuedeposit) / 100;
-										} else {
+										if($totalamount == 0) {
 											$amountdeposit[0] = 0;
 										}
 									} else {
@@ -1317,9 +1316,10 @@ if (empty($reshook))
 
 								$amount_ttc_diff = $amountdeposit[0];
 							}
-
 							foreach ($amountdeposit as $tva => $amount)
 							{
+								if (empty($amount)) continue;
+
 								$arraylist = array('amount' => 'FixAmount','variable' => 'VarAmount');
 								$descline = $langs->trans('Deposit');
 								//$descline.= ' - '.$langs->trans($arraylist[$typeamount]);
@@ -1328,6 +1328,7 @@ if (empty($reshook))
 								} elseif ($typeamount=='variable') {
 									$descline.= ' ('. $valuedeposit.'%)';
 								}
+
 								$descline.= ' - '.$srcobject->ref;
 								$result = $object->addline(
 										$descline,
@@ -1688,7 +1689,7 @@ if (empty($reshook))
 		// Extrafields
 		$extrafieldsline = new ExtraFields($db);
 		$extralabelsline = $extrafieldsline->fetch_name_optionals_label($object->table_element_line);
-		$array_options = $extrafieldsline->getOptionalsFromPost($extralabelsline, $predef);
+		$array_options = $extrafieldsline->getOptionalsFromPost($object->table_element_line, $predef);
 		// Unset extrafield
 		if (is_array($extralabelsline)) {
 			// Get extra fields
@@ -1843,7 +1844,8 @@ if (empty($reshook))
 					$desc = $prod->description;
 				}
 
-				$desc = dol_concatdesc($desc, $product_desc, '', !empty($conf->global->CHANGE_ORDER_CONCAT_DESCRIPTION));
+				if (!empty($product_desc) && !empty($conf->global->MAIN_NO_CONCAT_DESCRIPTION)) $desc= $product_desc;
+				else $desc = dol_concatdesc($desc, $product_desc, '', !empty($conf->global->MAIN_CHANGE_ORDER_CONCAT_DESCRIPTION));
 
 				// Add custom code and origin country into description
 				if (empty($conf->global->MAIN_PRODUCT_DISABLE_CUSTOMCOUNTRYCODE) && (! empty($prod->customcode) || ! empty($prod->country_code))) {
@@ -2010,7 +2012,7 @@ if (empty($reshook))
 		// Extrafields
 		$extrafieldsline = new ExtraFields($db);
 		$extralabelsline = $extrafieldsline->fetch_name_optionals_label($object->table_element_line);
-		$array_options = $extrafieldsline->getOptionalsFromPost($extralabelsline);
+		$array_options = $extrafieldsline->getOptionalsFromPost($object->table_element_line);
 		// Unset extrafield
 		if (is_array($extralabelsline)) {
 			// Get extra fields
@@ -3245,8 +3247,8 @@ if ($action == 'create')
 			echo ' ('.$langs->trans('LatestRelatedBill').end($objectsrc->linkedObjects['facture'])->getNomUrl(1).')';
 		}
 		echo '</td></tr>';
-		print '<tr><td>' . $langs->trans('TotalHT') . '</td><td colspan="2">' . price($objectsrc->total_ht) . '</td></tr>';
-		print '<tr><td>' . $langs->trans('TotalVAT') . '</td><td colspan="2">' . price($objectsrc->total_tva) . "</td></tr>";
+		print '<tr><td>' . $langs->trans('AmountHT') . '</td><td colspan="2">' . price($objectsrc->total_ht) . '</td></tr>';
+		print '<tr><td>' . $langs->trans('AmountVAT') . '</td><td colspan="2">' . price($objectsrc->total_tva) . "</td></tr>";
 		if ($mysoc->localtax1_assuj == "1" || $objectsrc->total_localtax1 != 0) 		// Localtax1
 		{
 			print '<tr><td>' . $langs->transcountry("AmountLT1", $mysoc->country_code) . '</td><td colspan="2">' . price($objectsrc->total_localtax1) . "</td></tr>";
@@ -3256,7 +3258,7 @@ if ($action == 'create')
 		{
 			print '<tr><td>' . $langs->transcountry("AmountLT2", $mysoc->country_code) . '</td><td colspan="2">' . price($objectsrc->total_localtax2) . "</td></tr>";
 		}
-		print '<tr><td>' . $langs->trans('TotalTTC') . '</td><td colspan="2">' . price($objectsrc->total_ttc) . "</td></tr>";
+		print '<tr><td>' . $langs->trans('AmountTTC') . '</td><td colspan="2">' . price($objectsrc->total_ttc) . "</td></tr>";
 
 		if (!empty($conf->multicurrency->enabled))
 		{
@@ -3608,7 +3610,7 @@ elseif ($id > 0 || ! empty($ref))
 							// array('type' => 'checkbox', 'name' => 'clone_content', 'label' => $langs->trans("CloneMainAttributes"), 'value' => 1)
 							array('type' => 'other','name' => 'socid','label' => $langs->trans("SelectThirdParty"),'value' => $form->select_company($object->socid, 'socid', '(s.client=1 OR s.client=2 OR s.client=3)', 1)));
 		// Paiement incomplet. On demande si motif = escompte ou autre
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?facid=' . $object->id, $langs->trans('CloneInvoice'), $langs->trans('ConfirmCloneInvoice', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?facid=' . $object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneInvoice', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
 	}
 
 	// Call Hook formConfirm
@@ -4226,7 +4228,7 @@ elseif ($id > 0 || ! empty($ref))
 				print '<tr class="oddeven"><td>';
 				print $paymentstatic->getNomUrl(1);
 				print '</td>';
-				print '<td>' . dol_print_date($db->jdate($objp->dp), 'day') . '</td>';
+				print '<td>' . dol_print_date($db->jdate($objp->dp), 'dayhour') . '</td>';
 				$label = ($langs->trans("PaymentType" . $objp->payment_code) != ("PaymentType" . $objp->payment_code)) ? $langs->trans("PaymentType" . $objp->payment_code) : $objp->payment_label;
 				print '<td>' . $label . ' ' . $objp->num_paiement . '</td>';
 				if (! empty($conf->banque->enabled))
@@ -4360,10 +4362,9 @@ elseif ($id > 0 || ! empty($ref))
 
 		// Remainder to pay
 		print '<tr><td colspan="' . $nbcols . '" class="right">';
-		if ($resteapayeraffiche >= 0)
-			print $langs->trans('RemainderToPay');
-		else
-			print $langs->trans('ExcessReceived');
+		print $langs->trans('RemainderToPay');
+		if ($resteapayeraffiche < 0)
+		    print ' ('.$langs->trans('ExcessReceived').')';
 		print ' :</td>';
 		print '<td class="right"'.($resteapayeraffiche?' class="amountremaintopay"':(' class="'.$cssforamountpaymentcomplete.'"')).'>' . price($resteapayeraffiche) . '</td>';
 		print '<td class="nowrap">&nbsp;</td></tr>';
@@ -4382,10 +4383,9 @@ elseif ($id > 0 || ! empty($ref))
 
 		// Remainder to pay back
 		print '<tr><td colspan="' . $nbcols . '" class="right">';
-		if ($resteapayeraffiche <= 0)
-			print $langs->trans('RemainderToPayBack');
-		else
-			print $langs->trans('ExcessPaid');
+		print $langs->trans('RemainderToPayBack');
+		if ($resteapayeraffiche > 0)
+			print ' ('.$langs->trans('ExcessPaid').')';
 		print ' :</td>';
 		print '<td class="right"'.($resteapayeraffiche?' class="amountremaintopayback"':(' class="'.$cssforamountpaymentcomplete.'"')).'>' . price($sign * $resteapayeraffiche) . '</td>';
 		print '<td class="nowrap">&nbsp;</td></tr>';

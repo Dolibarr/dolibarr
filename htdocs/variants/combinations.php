@@ -640,22 +640,7 @@ if (! empty($id) || ! empty($ref))
 				);
 			}
 		} elseif ($action === 'copy') {
-
-            print $form->formconfirm(
-				'combinations.php?id='.$id,
-				$langs->trans('CloneCombinationsProduct'),
-				$langs->trans('ConfirmCloneProductCombinations'),
-				'confirm_copycombination',
-				array(
-					array(
-						'type' => 'text',
-						'label' => $langs->trans('CloneDestinationReference'),
-						'name' => 'dest_product'
-					)
-				),
-				0,
-				1
-			);
+            print $form->formconfirm('combinations.php?id='.$id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneProductCombinations'), 'confirm_copycombination', array(array('type' => 'text', 'label' => $langs->trans('CloneDestinationReference'), 'name' => 'dest_product')), 0, 1);
 		}
 
 		$comb2val = new ProductCombination2ValuePair($db);

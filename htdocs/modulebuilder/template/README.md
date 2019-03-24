@@ -11,7 +11,7 @@ Other modules are available on <a href="https://www.dolistore.com" target="_new"
 
 
 
-### Translations
+## Translations
 
 Translations can be define manually by editing files into directories *langs*. 
 
@@ -26,8 +26,7 @@ There is a [Transifex project](https://transifex.com/projects/p/dolibarr-module-
 
 <!--
 
-Install
--------
+## Installation
 
 ### From the ZIP file and GUI interface
 
@@ -78,17 +77,15 @@ From your browser:
   - You should now be able to find and enable the module
 
 
-
 -->
 
 
-Licenses
---------
+## Licenses
 
-### Main code
+**Main code**
 
 GPLv3 or (at your option) any later version. See file COPYING for more information.
 
-#### Documentation
+**Documentation**
 
 All texts and readmes are licensed under GFDL.

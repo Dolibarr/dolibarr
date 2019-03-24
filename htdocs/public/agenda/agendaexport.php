@@ -106,6 +106,8 @@ if (empty($_GET["exportkey"]) || $conf->global->MAIN_AGENDA_XCAL_EXPORTKEY != $_
 	exit;
 }
 
+// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array of hooks
+$hookmanager->initHooks(array('agendaexport'));
 
 // Define filename with prefix on filters predica (each predica set must have on cache file)
 $shortfilename='dolibarrcalendar';

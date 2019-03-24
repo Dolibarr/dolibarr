@@ -687,14 +687,14 @@ if ($resql)
 	if (! empty($arrayfields['f.ref']['checked']))
 	{
 		print '<td class="liste_titre" align="left">';
-		print '<input class="flat" size="6" type="text" name="search_ref" value="'.dol_escape_htmltag($search_ref).'">';
+		print '<input class="flat maxwidth50imp" type="text" name="search_ref" value="'.dol_escape_htmltag($search_ref).'">';
 		print '</td>';
 	}
 	// Ref customer
 	if (! empty($arrayfields['f.ref_client']['checked']))
 	{
 		print '<td class="liste_titre">';
-		print '<input class="flat" size="6" type="text" name="search_refcustomer" value="'.dol_escape_htmltag($search_refcustomer).'">';
+		print '<input class="flat maxwidth50imp" type="text" name="search_refcustomer" value="'.dol_escape_htmltag($search_refcustomer).'">';
 		print '</td>';
 	}
 	// Type
@@ -737,22 +737,22 @@ if ($resql)
 	// Project
 	if (! empty($arrayfields['p.ref']['checked']))
 	{
-		print '<td class="liste_titre"><input class="flat" type="text" size="6" name="search_project" value="'.$search_project.'"></td>';
+		print '<td class="liste_titre"><input class="flat maxwidth50imp" type="text" name="search_project" value="'.$search_project.'"></td>';
 	}
 	// Thirpdarty
 	if (! empty($arrayfields['s.nom']['checked']))
 	{
-		print '<td class="liste_titre"><input class="flat" type="text" size="6" name="search_societe" value="'.$search_societe.'"></td>';
+		print '<td class="liste_titre"><input class="flat maxwidth75imp" type="text" name="search_societe" value="'.$search_societe.'"></td>';
 	}
 	// Town
-	if (! empty($arrayfields['s.town']['checked'])) print '<td class="liste_titre"><input class="flat" type="text" size="6" name="search_town" value="'.dol_escape_htmltag($search_town).'"></td>';
+	if (! empty($arrayfields['s.town']['checked'])) print '<td class="liste_titre"><input class="flat maxwidth75imp" type="text" name="search_town" value="'.dol_escape_htmltag($search_town).'"></td>';
 	// Zip
-	if (! empty($arrayfields['s.zip']['checked'])) print '<td class="liste_titre"><input class="flat" type="text" size="4" name="search_zip" value="'.dol_escape_htmltag($search_zip).'"></td>';
+	if (! empty($arrayfields['s.zip']['checked'])) print '<td class="liste_titre"><input class="flat maxwidth50imp" type="text" name="search_zip" value="'.dol_escape_htmltag($search_zip).'"></td>';
 	// State
 	if (! empty($arrayfields['state.nom']['checked']))
 	{
 		print '<td class="liste_titre">';
-		print '<input class="flat" size="4" type="text" name="search_state" value="'.dol_escape_htmltag($search_state).'">';
+		print '<input class="flat maxwidth50imp" type="text" name="search_state" value="'.dol_escape_htmltag($search_state).'">';
 		print '</td>';
 	}
 	// Country
@@ -780,35 +780,35 @@ if ($resql)
 	{
 		// Amount
 		print '<td class="liste_titre right">';
-		print '<input class="flat" type="text" size="5" name="search_montant_ht" value="'.dol_escape_htmltag($search_montant_ht).'">';
+		print '<input class="flat" type="text" size="4" name="search_montant_ht" value="'.dol_escape_htmltag($search_montant_ht).'">';
 		print '</td>';
 	}
 	if (! empty($arrayfields['f.total_vat']['checked']))
 	{
 		// Amount
 		print '<td class="liste_titre right">';
-		print '<input class="flat" type="text" size="5" name="search_montant_vat" value="'.dol_escape_htmltag($search_montant_vat).'">';
+		print '<input class="flat" type="text" size="4" name="search_montant_vat" value="'.dol_escape_htmltag($search_montant_vat).'">';
 		print '</td>';
 	}
 	if (! empty($arrayfields['f.total_localtax1']['checked']))
 	{
 		// Localtax1
 		print '<td class="liste_titre right">';
-		print '<input class="flat" type="text" size="5" name="search_montant_localtax1" value="'.$search_montant_localtax1.'">';
+		print '<input class="flat" type="text" size="4" name="search_montant_localtax1" value="'.$search_montant_localtax1.'">';
 		print '</td>';
 	}
 	if (! empty($arrayfields['f.total_localtax2']['checked']))
 	{
 		// Localtax2
 		print '<td class="liste_titre right">';
-		print '<input class="flat" type="text" size="5" name="search_montant_localtax2" value="'.$search_montant_localtax2.'">';
+		print '<input class="flat" type="text" size="4" name="search_montant_localtax2" value="'.$search_montant_localtax2.'">';
 		print '</td>';
 	}
 	if (! empty($arrayfields['f.total_ttc']['checked']))
 	{
 		// Amount
 		print '<td class="liste_titre right">';
-		print '<input class="flat" type="text" size="5" name="search_montant_ttc" value="'.dol_escape_htmltag($search_montant_ttc).'">';
+		print '<input class="flat" type="text" size="4" name="search_montant_ttc" value="'.dol_escape_htmltag($search_montant_ttc).'">';
 		print '</td>';
 	}
 	if (! empty($arrayfields['dynamount_payed']['checked']))

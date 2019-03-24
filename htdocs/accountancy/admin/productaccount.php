@@ -65,6 +65,8 @@ $accounting_product_mode = GETPOST('accounting_product_mode', 'alpha');
 $btn_changeaccount = GETPOST('changeaccount', 'alpha');
 $btn_changetype = GETPOST('changetype', 'alpha');
 
+if (empty($accounting_product_mode)) $accounting_product_mode='ACCOUNTANCY_SELL';
+
 $limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):(empty($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION)?$conf->liste_limit:$conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION);
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
@@ -111,8 +113,6 @@ if ($action == 'update') {
 				'ACCOUNTANCY_SELL',
 				'ACCOUNTANCY_BUY'
 		);
-
-		$accounting_product_mode = GETPOST('accounting_product_mode', 'alpha');
 
 		if (in_array($accounting_product_mode, $accounting_product_modes)) {
 

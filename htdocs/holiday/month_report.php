@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2007-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2011      François Legastelois <flegastelois@teclib.com>
- * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
+/* Copyright (C) 2007-2010  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2011       François Legastelois    <flegastelois@teclib.com>
+ * Copyright (C) 2018-2019  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -110,12 +110,12 @@ print '<tr class="liste_titre">';
 print '<td>' . $langs->trans('Ref') . '</td>';
 print '<td>' . $langs->trans('Employee') . '</td>';
 print '<td>' . $langs->trans('Type') . '</td>';
-print '<td align="center">' . $langs->trans('DateDebCP') . '</td>';
-print '<td align="center">' . $langs->trans('DateFinCP') . '</td>';
-print '<td align="right">' . $langs->trans('NbUseDaysCPShort') . '</td>';
-print '<td align="center">' . $langs->trans('DateStartInMonth') . '</td>';
-print '<td align="center">' . $langs->trans('DateEndInMonth') . '</td>';
-print '<td align="right">' . $langs->trans('NbUseDaysCPShortInMonth') . '</td>';
+print '<td class="center">' . $langs->trans('DateDebCP') . '</td>';
+print '<td class="center">' . $langs->trans('DateFinCP') . '</td>';
+print '<td class="right">' . $langs->trans('NbUseDaysCPShort') . '</td>';
+print '<td class="center">' . $langs->trans('DateStartInMonth') . '</td>';
+print '<td class="center">' . $langs->trans('DateEndInMonth') . '</td>';
+print '<td class="right">' . $langs->trans('NbUseDaysCPShortInMonth') . '</td>';
 print '<td class="maxwidth300">' . $langs->trans('DescCP') . '</td>';
 print '</tr>';
 
@@ -173,20 +173,20 @@ else
       	 print '</td>';
          print '<td>' . $user->getFullName($langs) . '</td>';
          print '<td>' . $obj->label . '</td>';
-         print '<td align="center">' . dol_print_date($obj->date_debut, 'day');
+         print '<td class="center">' . dol_print_date($obj->date_debut, 'day');
          print ' <span class="opacitymedium">('.$langs->trans($listhalfday[$starthalfday]).')</span>';
          print '</td>';
-         print '<td align="center">' . dol_print_date($obj->date_fin, 'day');
+         print '<td class="center">' . dol_print_date($obj->date_fin, 'day');
          print ' <span class="opacitymedium">('.$langs->trans($listhalfday[$endhalfday]).')</span>';
          print '</td>';
-         print '<td align="right">' . num_open_day($date_start, $date_end, 0, 1, $obj->halfday) . '</td>';
-         print '<td align="center">' . dol_print_date($date_start_inmonth, 'day');
+         print '<td class="right">' . num_open_day($date_start, $date_end, 0, 1, $obj->halfday) . '</td>';
+         print '<td class="center">' . dol_print_date($date_start_inmonth, 'day');
          print ' <span class="opacitymedium">('.$langs->trans($listhalfday[$starthalfdayinmonth]).')</span>';
          print '</td>';
-         print '<td align="center">' . dol_print_date($date_end_inmonth, 'day');
+         print '<td class="center">' . dol_print_date($date_end_inmonth, 'day');
          print ' <span class="opacitymedium">('.$langs->trans($listhalfday[$endhalfdayinmonth]).')</span>';
          print '</td>';
-         print '<td align="right">' . num_open_day($date_start_inmonth, $date_end_inmonth, 0, 1, $halfdayinmonth) . '</td>';
+         print '<td class="right">' . num_open_day($date_start_inmonth, $date_end_inmonth, 0, 1, $halfdayinmonth) . '</td>';
          print '<td class="maxwidth300">' . dol_escape_htmltag(dolGetFirstLineOfText($obj->description)) . '</td>';
       print '</tr>';
    }

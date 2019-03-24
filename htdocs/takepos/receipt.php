@@ -3,6 +3,7 @@
  * Copyright (C) 2011      Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2012      Marcos García       <marcosgdf@gmail.com>
  * Copyright (C) 2018      Andreu Bisquerra    <jove@bisquerra.com>
+ * Copyright (C) 2019      Josep Lluís Amador  <joseplluis@lliuretic.cat>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,7 +51,7 @@ $object->fetch($facid);
 </font>
 </center>
 <br>
-<p align="left">
+<p class="left">
 <?php
 $substitutionarray=getCommonSubstitutionArray($langs);
 if (! empty($conf->global->TAKEPOS_HEADER))
@@ -60,7 +61,7 @@ if (! empty($conf->global->TAKEPOS_HEADER))
 }
 ?>
 </p>
-<p align="right">
+<p class="right">
 <?php
 print $langs->trans('Date')." ".dol_print_date($object->date, 'day').'<br>';
 if ($mysoc->country_code == 'ES') print "Factura simplificada ";
@@ -72,10 +73,10 @@ print $object->ref;
 <table width="100%" style="border-top-style: double;">
     <thead>
 	<tr>
-        <th align="center"><?php print $langs->trans("Label"); ?></th>
-        <th align="right"><?php print $langs->trans("Qty"); ?></th>
-        <th align="right"><?php print $langs->trans("Price"); ?></th>
-        <th align="right"><?php print $langs->trans("TotalTTC"); ?></th>
+        <th class="center"><?php print $langs->trans("Label"); ?></th>
+        <th class="right"><?php print $langs->trans("Qty"); ?></th>
+        <th class="right"><?php print $langs->trans("Price"); ?></th>
+        <th class="right"><?php print $langs->trans("TotalTTC"); ?></th>
 	</tr>
     </thead>
     <tbody>
@@ -84,10 +85,12 @@ print $object->ref;
     {
     ?>
     <tr>
-        <td><?php echo $line->product_label;?></td>
-        <td align="right"><?php echo $line->qty;?></td>
-        <td align="right"><?php echo $line->total_ttc/$line->qty;?></td>
-        <td align="right"><?php echo price($line->total_ttc);?></td>
+        <td><?php if (!empty($line->product_label)) echo $line->product_label;
+                  else echo $line->description;?>
+        </td>
+        <td class="right"><?php echo $line->qty;?></td>
+        <td class="right"><?php echo $line->total_ttc/$line->qty;?></td>
+        <td class="right"><?php echo price($line->total_ttc);?></td>
     </tr>
     <?php
     }
@@ -95,16 +98,16 @@ print $object->ref;
     </tbody>
 </table>
 <br>
-<table align="right">
+<table class="right">
 <tr>
-    <th align="right"><?php echo $langs->trans("TotalHT");?></th>
-    <td align="right"><?php echo price($object->total_ht, 1, '', 1, - 1, - 1, $conf->currency)."\n";?></td>
+    <th class="right"><?php echo $langs->trans("TotalHT");?></th>
+    <td class="right"><?php echo price($object->total_ht, 1, '', 1, - 1, - 1, $conf->currency)."\n";?></td>
 </tr>
 <tr>
-    <th align="right"><?php echo $langs->trans("TotalVAT").'</th><td align="right">'.price($object->total_tva, 1, '', 1, - 1, - 1, $conf->currency)."\n";?></td>
+    <th class="right"><?php echo $langs->trans("TotalVAT").'</th><td class="right">'.price($object->total_tva, 1, '', 1, - 1, - 1, $conf->currency)."\n";?></td>
 </tr>
 <tr>
-    <th align="right"><?php echo ''.$langs->trans("TotalTTC").'</th><td align="right">'.price($object->total_ttc, 1, '', 1, - 1, - 1, $conf->currency)."\n";?></td>
+    <th class="right"><?php echo ''.$langs->trans("TotalTTC").'</th><td class="right">'.price($object->total_ttc, 1, '', 1, - 1, - 1, $conf->currency)."\n";?></td>
 </tr>
 </table>
 <div style="border-top-style: double;">

@@ -616,7 +616,7 @@ if ($action == 'create' && $user->rights->projet->creer)
 	// Description
 	print '<tr><td class="tdtop">'.$langs->trans("Description").'</td>';
 	print '<td>';
-	print '<textarea name="description" wrap="soft" class="centpercent" rows="'.ROWS_3.'">'.dol_escape_htmltag(GETPOST("description", 'none')).'</textarea>';
+	print '<textarea name="description" wrap="soft" class="centpercent" rows="'.ROWS_3.'">'.dol_escape_htmltag(GETPOST("description", 'none'), 0, 1).'</textarea>';
 	print '</td></tr>';
 
 	// Bill time

@@ -37,30 +37,16 @@ if (! defined('NOLOGIN'))         define('NOLOGIN', 1);          // File must be
 if (! defined('NOREQUIREHTML'))   define('NOREQUIREHTML', 1);
 if (! defined('NOREQUIREAJAX'))   define('NOREQUIREAJAX', '1');
 
-// Colors
-$colorbackhmenu1='90,50,120';      // topmenu
-$colorbackvmenu1='255,255,255';      // vmenu
-$colortopbordertitle1='';           // top border of tables-lists title. not defined = default to colorbackhmenu1
-$colorbacktitle1='240,240,240';      // title of tables-lists
-$colorbacktabcard1='255,255,255';  // card
-$colorbacktabactive='234,234,234';
-$colorbacklineimpair1='255,255,255';    // line impair
-$colorbacklineimpair2='255,255,255';    // line impair
-$colorbacklinepair1='248,248,248';    // line pair
-$colorbacklinepair2='246,246,246';    // line pair
-$colorbacklinepairhover='230,237,244';    // line pair
-$colorbacklinebreak='214,218,220';
-$colorbackbody='248,248,248';
-$colortexttitlenotab='90,90,90';
-$colortexttitle='20,20,20';
-$colortext='0,0,0';
-$colortextlink='0,0,120';
-$fontsize='14';
-$fontsizesmaller='11';
 
+define('ISLOADEDBYSTEELSHEET', '1');
+
+
+require __DIR__ . '/theme_vars.inc.php';
 if (defined('THEME_ONLY_CONSTANT')) return;
 
+
 session_cache_limiter('public');
+
 
 require_once '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
@@ -308,7 +294,8 @@ textarea.cke_source:focus
 .liste_titre input[name=search_day_lim], .liste_titre input[name=search_day_start], .liste_titre input[name=search_day_end], .liste_titre input[name=search_day_create],
 .liste_titre input[name=search_day_create], .liste_titre input[name=search_day_start], .liste_titre input[name=search_day_end],
 .liste_titre input[name=search_day_date_when], .liste_titre input[name=search_month_date_when], .liste_titre input[name=search_year_date_when],
-.liste_titre input[name=search_dtstartday], .liste_titre input[name=search_dtendday], .liste_titre input[name=search_dtstartmonth], .liste_titre input[name=search_dtendmonth]
+.liste_titre input[name=search_dtstartday], .liste_titre input[name=search_dtendday], .liste_titre input[name=search_dtstartmonth], .liste_titre input[name=search_dtendmonth],
+select#date_startday, select#date_startmonth, select#date_endday, select#date_endmonth, select#reday, select#remonth
 {
 	margin-right: 4px;
 }
@@ -758,6 +745,9 @@ select.flat.selectlimit {
 .nomarginleft {
 	margin-left: 0px !important;
 }
+.margintoponly {
+	margin-top: 10px !important;
+}
 .marginbottomonly {
 	margin-bottom: 10px !important;
 }
@@ -1206,8 +1196,32 @@ td.showDragHandle {
 <?php } ?>
 <?php } ?>
 }
+
+/*
+*	Slide animation
+*/
+.side-nav-vert, #id-right {
+	transition: padding-left 0.5s ease, margin-left 0.5s ease;
+}
+
+.side-nav, .login_block {
+	transition: left 0.5s ease;
+}
+
+body.sidebar-collapse .side-nav-vert, body.sidebar-collapse #id-right {
+	margin-left: 0;padding-left:0
+}
+
+
 .side-nav-vert {
 	margin-left: 228px;
+}
+body.sidebar-collapse .side-nav, body.sidebar-collapse .login_block {
+<?php if (in_array($conf->browser->layout, array('phone','tablet')) && ((GETPOST('testmenuhider') || ! empty($conf->global->MAIN_TESTMENUHIDER)) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))) { ?>
+	left: -240px;
+<?php } else { ?>
+	left: -229px;
+<?php } ?>
 }
 <?php if (empty($conf->global->THEME_DISABLE_STICKY_TOPMENU)) {  ?>
 .side-nav-vert {
@@ -1229,18 +1243,19 @@ div.login_block {
 	/* border-right: none ! important; */
 	top: inherit !important;
 }
+
 .side-nav {
 <?php if (in_array($conf->browser->layout, array('phone','tablet')) && ((GETPOST('testmenuhider') || ! empty($conf->global->MAIN_TESTMENUHIDER)) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))) { ?>
 <?php } else { ?>
 	overflow-x: initial !important;
 	overflow-y: scroll;
 <?php } ?>
-	display: none;
+	display: block;
 
-	position: auto;
-	top: auto;
-	z-index: 90;
+	position: relative;
 }
+
+
 
 div.backgroundsemitransparent {
 	background:rgba(255,255,255,0.6);
@@ -1254,7 +1269,7 @@ div.backgroundsemitransparent {
 
 div.login_block {
 	/* position: initial !important;*/
-	display: none;
+	/*display: none;*/
 }
 .login_block_getinfo {
 	text-align: center;
@@ -1265,7 +1280,9 @@ div.login_block {
 .login_block_getinfo .atoplogin, .login_block_getinfo .atoplogin:hover {
 	color: #333 !important;
 }
-
+.login_block_elem a span.atoplogin, .login_block_elem span.atoplogin {
+    vertical-align: middle;
+}
 
 
 
@@ -1783,7 +1800,8 @@ div.mainmenu.website {
 <?php
 // Add here more div for other menu entries. moduletomainmenu=array('module name'=>'name of class for div')
 
-$moduletomainmenu=array('user'=>'','syslog'=>'','societe'=>'companies','projet'=>'project','propale'=>'commercial','commande'=>'commercial',
+$moduletomainmenu=array(
+	'user'=>'','syslog'=>'','societe'=>'companies','projet'=>'project','propale'=>'commercial','commande'=>'commercial',
 	'produit'=>'products','service'=>'products','stock'=>'products',
 	'don'=>'accountancy','tax'=>'accountancy','banque'=>'accountancy','facture'=>'accountancy','compta'=>'accountancy','accounting'=>'accountancy','adherent'=>'members','import'=>'tools','export'=>'tools','mailing'=>'tools',
 	'contrat'=>'commercial','ficheinter'=>'commercial','ticket'=>'ticket','deplacement'=>'commercial',
@@ -1795,12 +1813,11 @@ foreach($conf->modules as $val)
 {
 	$mainmenuused.=','.(isset($moduletomainmenu[$val])?$moduletomainmenu[$val]:$val);
 }
-//var_dump($mainmenuused);
 $mainmenuusedarray=array_unique(explode(',', $mainmenuused));
 
 $generic=1;
 // Put here list of menu entries when the div.mainmenu.menuentry was previously defined
-$divalreadydefined=array('home','companies','products','commercial','externalsite','accountancy','project','tools','members','agenda','ftp','holiday','hrm','bookmark','cashdesk','takepos','ecm','geoipmaxmind','gravatar','clicktodial','paypal','stripe','webservices','website');
+$divalreadydefined=array('home','companies','products','mrp','commercial','externalsite','accountancy','project','tools','members','agenda','ftp','holiday','hrm','bookmark','cashdesk','takepos','ecm','geoipmaxmind','gravatar','clicktodial','paypal','stripe','webservices','website');
 // Put here list of menu entries we are sure we don't want
 $divnotrequired=array('multicurrency','salaries','ticket','margin','opensurvey','paybox','expensereport','incoterm','prelevement','propal','workflow','notification','supplier_proposal','cron','product','productbatch','expedition');
 foreach($mainmenuusedarray as $val)
@@ -1813,13 +1830,13 @@ foreach($mainmenuusedarray as $val)
 	$found=0; $url='';
 	foreach($conf->file->dol_document_root as $dirroot)
 	{
-		if (file_exists($dirroot."/".$val."/img/".$val.".png"))
-		{
-			$url=dol_buildpath('/'.$val.'/img/'.$val.'.png', 1);
-			$found=1;
-			break;
-		}
-		elseif (file_exists($dirroot."/".$val."/img/".$val.".png"))    // Retro compatibilité
+	    if (file_exists($dirroot."/".$val."/img/".$val."_over.png"))
+	    {
+	        $url=dol_buildpath('/'.$val.'/img/'.$val.'_over.png', 1);
+	        $found=1;
+	        break;
+	    }
+	    elseif (file_exists($dirroot."/".$val."/img/".$val.".png"))    // Retro compatibilité
 		{
 		    $url=dol_buildpath('/'.$val.'/img/'.$val.'.png', 1);
 		    $found=1;
@@ -1829,32 +1846,33 @@ foreach($mainmenuusedarray as $val)
 	// Img file not found
 	if (! $found)
 	{
-		$url=dol_buildpath($path.'/theme/'.$theme.'/img/menus/generic'.$generic.".png", 1);
-		$found=1;
-		if ($generic < 4) $generic++;
-		print "/* A mainmenu entry was found but img file ".$val.".png not found (check /".$val."/img/".$val.".png), so we use a generic one */\n";
+	    if (! defined('DISABLE_FONT_AWSOME') && empty($conf->global->MAIN_DISABLE_FONT_AWESOME_5)) {
+	        print "/* A mainmenu entry was found but img file ".$val.".png not found (check /".$val."/img/".$val.".png), so we use a generic one */\n";
+	        print 'div.mainmenu.'.$val.'::before {
+                    content: "\f249";
+                }';
+	    }
+	    else
+	    {
+	        print "/* A mainmenu entry was found but img file ".$val.".png not found (check /".$val."/img/".$val.".png), so we use a generic one */\n";
+	        $url=dol_buildpath($path.'/theme/'.$theme.'/img/menus/generic'.(min($generic, 4))."_over.png", 1);
+	        print "div.mainmenu.".$val." {\n";
+	        print "	background-image: url(".$url.");\n";
+	        print "}\n";
+	    }
+	    $generic++;
 	}
-	if ($found)
+	else
 	{
 		print "div.mainmenu.".$val." {\n";
 		print "	background-image: url(".$url.");\n";
 		print "}\n";
 	}
 }
-$j=0;
-while ($j++ < 4)
-{
-	$url=dol_buildpath($path.'/theme/'.$theme.'/img/menus/generic'.$j."_over.png", 1);
-	print "div.mainmenu.generic".$j." {\n";
-	print "	background-image: url(".$url.");\n";
-	print "}\n";
-}
 // End of part to add more div class css
 ?>
 
-<?php
-}	// End test if $dol_hide_topmenu
-?>
+<?php }	// End test if $dol_hide_topmenu ?>
 
 .tmenuimage {
     padding:0 0 0 0 !important;
@@ -1985,6 +2003,10 @@ table.login_table_securitycode tr td {
 	max-height: 90px;
 }
 
+
+.atoplogin.dropdown .dropdown-menu {
+	display: none;
+}
 
 div.login_block {
 	border-right: 1px solid rgba(0,0,0,0.3);
@@ -3048,9 +3070,12 @@ tr.pair:last-of-type td, tr.impair:last-of-type td {
 tr.pair td .nobordernopadding tr td, tr.impair td .nobordernopadding tr td {
     border-bottom: 0px !important;
 }
-tr.nobottom td, tr.nobottom , td.nobottom {
-    border-bottom: 0px !important;
+/*
+table.nobottomiftotal tr.liste_total td {
+	background-color: #fff;
+	border-bottom: 0px !important;
 }
+*/
 div.liste_titre .tagtd {
 	vertical-align: middle;
 }
@@ -3333,6 +3358,9 @@ span.boxstatsindicator {
 span.dashboardlineindicator, span.dashboardlineindicatorlate {
 	font-size: 120%;
 	font-weight: normal;
+}
+a.dashboardlineindicatorlate:hover {
+	text-decoration: none;
 }
 .dashboardlineindicatorlate img {
 	width: 16px;
@@ -5740,6 +5768,10 @@ border-top-right-radius: 6px;
 	}
 }
 
+
+<?php if (! defined('DISABLE_FONT_AWSOME') && empty($conf->global->MAIN_DISABLE_FONT_AWESOME_5)) { ?>
+        <?php include dol_buildpath($path.'/theme/'.$theme.'/main_menu_fa_icons.inc.php', 0); ?>
+<?php } ?>
 
 
 <?php

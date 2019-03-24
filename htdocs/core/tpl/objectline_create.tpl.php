@@ -278,6 +278,21 @@ else {
 		    }
 
 		    $form->select_produits_fournisseurs($object->socid, GETPOST('idprodfournprice'), 'idprodfournprice', '', '', $ajaxoptions, 1, $alsoproductwithnosupplierprice, 'maxwidth300');
+            ?>
+            <script type="text/javascript">
+
+                $(document).ready(function(){
+
+                        $(document).on('keypress',function(e) {
+                            if ($('input:focus').length == 0) {
+                                $('#idprodfournprice').select2('open');
+                            }
+                        });
+
+
+                });
+            </script>
+            <?php
 		}
 		echo '<input type="hidden" name="pbq" id="pbq" value="">';
 		echo '</span>';

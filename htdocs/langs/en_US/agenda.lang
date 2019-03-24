@@ -126,7 +126,6 @@ AddEvent=Create event
 MyAvailability=My availability
 ActionType=Event type
 DateActionBegin=Start event date
-CloneAction=Clone event
 ConfirmCloneEvent=Are you sure you want to clone the event <b>%s</b>?
 RepeatEvent=Repeat event
 EveryWeek=Every week

@@ -25,39 +25,28 @@ if (!defined('NOTOKENRENEWAL')) { define('NOTOKENRENEWAL', '1'); }
 if (!defined('NOREQUIREMENU'))  { define('NOREQUIREMENU', '1'); }
 if (!defined('NOREQUIREHTML'))  { define('NOREQUIREHTML', '1'); }
 if (!defined('NOREQUIREAJAX'))  { define('NOREQUIREAJAX', '1'); }
+
 require '../main.inc.php';
-
- // Load $user and permissions
-
 require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
-
 require_once DOL_DOCUMENT_ROOT . '/compta/paiement/class/paiement.class.php';
 
-$langs->loadLangs(
-    array(
-    "bills",
-    "cashdesk"
-    )
-);
+$langs->loadLangs(array("bills", "cashdesk"));
+
 $id = GETPOST('id', 'int');
 $action = GETPOST('action', 'alpha');
 $idproduct = GETPOST('idproduct', 'int');
-$place = GETPOST('place', 'int');
+$place = (GETPOSTISSET('place')?GETPOST('place', 'int'):0);	// $place is id of POS
 $number = GETPOST('number');
 $idline = GETPOST('idline');
 $desc = GETPOST('desc', 'alpha');
 $pay = GETPOST('pay');
-$sql="SELECT rowid FROM ".MAIN_DB_PREFIX."facture where ref='(PROV-POS-".$place.")'";
-$resql = $db->query($sql);
-$row = $db->fetch_array($resql);
-$placeid = $row[0];
 
-if (!$placeid) { $placeid = 0; // not necessary
-} else
-{
-    $invoice = new Facture($db);
-    $invoice->fetch($placeid);
-}
+$placeid = 0;	// $placeid is id of invoice
+
+$invoice = new Facture($db);
+$ret = $invoice->fetch('', '(PROV-POS-'.$place.')');
+if ($ret > 0) $placeid = $invoice->id;
+
 
 /*
 * Actions
@@ -65,53 +54,69 @@ if (!$placeid) { $placeid = 0; // not necessary
 
 if ($action == 'valid' && $user->rights->facture->creer)
 {
-	if ($pay=="cash") $bankaccount=$conf->global->CASHDESK_ID_BANKACCOUNT_CASH;
-	elseif ($pay=="card") $bankaccount=$conf->global->CASHDESK_ID_BANKACCOUNT_CB;
-	elseif ($pay=="cheque") $bankaccount=$conf->global->CASHDESK_ID_BANKACCOUNT_CHEQUE;
+	if ($pay == "cash") $bankaccount = $conf->global->CASHDESK_ID_BANKACCOUNT_CASH;
+	elseif ($pay == "card") $bankaccount = $conf->global->CASHDESK_ID_BANKACCOUNT_CB;
+	elseif ($pay == "cheque") $bankaccount = $conf->global->CASHDESK_ID_BANKACCOUNT_CHEQUE;
+
 	$now=dol_now();
+
 	$invoice = new Facture($db);
 	$invoice->fetch($placeid);
+
 	if (! empty($conf->stock->enabled) and $conf->global->CASHDESK_NO_DECREASE_STOCK!="1") $invoice->validate($user, '', $conf->global->CASHDESK_ID_WAREHOUSE);
 	else $invoice->validate($user);
+
 	// Add the payment
 	$payment=new Paiement($db);
-	$payment->datepaye=$now;
-	$payment->bank_account=$bankaccount;
-	$payment->amounts[$invoice->id]=$invoice->total_ttc;
+	$payment->datepaye = $now;
+	$payment->bank_account = $bankaccount;
+	$payment->amounts[$invoice->id] = $invoice->total_ttc;
 
-  if ($pay=="cash") $payment->paiementid=4;
-	elseif ($pay=="card") $payment->paiementid=6;
-	elseif ($pay=="cheque") $payment->paiementid=7;
-	$payment->num_paiement=$invoice->ref;
+	if ($pay=="cash") $payment->paiementid = 4;
+	elseif ($pay=="card") $payment->paiementid = 6;
+	elseif ($pay=="cheque") $payment->paiementid = 7;
+	$payment->num_payment = $invoice->ref;
 
-  $payment->create($user);
+	$payment->create($user);
 	$payment->addPaymentToBank($user, 'payment', '(CustomerInvoicePayment)', $bankaccount, '', '');
 
-  $invoice->set_paid($user);
+	$invoice->set_paid($user);
 }
 
-if (($action=="addline" || $action=="freezone") && $placeid==0)
+if (($action=="addline" || $action=="freezone") && $placeid == 0)
 {
-	// $place is id of POS, $placeid is id of invoice
-	if ($placeid==0)
-  {
-		$invoice = new Facture($db);
-		$invoice->socid=$conf->global->CASHDESK_ID_THIRDPARTY;
-		$invoice->date=dol_now();
-		$invoice->ref="(PROV-POS)";
-		$invoice->module_source = 'takepos';
-		$invoice->pos_source = (string) (empty($place)?'0':$place);
+	$invoice->socid = $conf->global->CASHDESK_ID_THIRDPARTY;
+	$invoice->date = dol_now();
+	$invoice->module_source = 'takepos';
+	$invoice->pos_source = (string) $place;
 
-		$placeid=$invoice->create($user);
-		$sql="UPDATE ".MAIN_DB_PREFIX."facture set ref='(PROV-POS-".$place.")' where rowid=".$placeid;
-		$db->query($sql);
-	}
+	$placeid = $invoice->create($user);
+	$sql="UPDATE ".MAIN_DB_PREFIX."facture set ref='(PROV-POS-".$place.")' where rowid=".$placeid;
+	$db->query($sql);
 }
 
 if ($action == "addline") {
-    $prod = new Product($db);
+
+	$prod = new Product($db);
     $prod->fetch($idproduct);
-    $invoice->addline($prod->description, $prod->price, 1, $prod->tva_tx, $prod->localtax1_tx, $prod->localtax2_tx, $idproduct, $prod->remise_percent, '', 0, 0, 0, '', $prod->price_base_type, $prod->price_ttc, $prod->type, -1, 0, '', 0, 0, null, 0, '', 0, 100, '', null, 0);
+
+    $price = $prod->price;
+    $tva_tx = $prod->tva_tx;
+    $price_ttc = $prod->price_ttc;
+    $price_base_type = $prod->price_base_type;
+
+    if (! empty($conf->global->PRODUIT_MULTIPRICES))
+    {
+    	$customer = new Societe($db);
+    	$customer->fetch($invoice->socid);
+
+    	$price = $prod->multiprices[$customer->price_level];
+    	$tva_tx = $prod->multiprices_tva_tx[$customer->price_level];
+    	$price_ttc = $prod->multiprices_ttc[$customer->price_level];
+    	$price_base_type = $prod->multiprices_base_type[$customer->price_level];
+    }
+
+    $invoice->addline($prod->description, $price, 1, $tva_tx, $prod->localtax1_tx, $prod->localtax2_tx, $idproduct, $prod->remise_percent, '', 0, 0, 0, '', $price_base_type, $price_ttc, $prod->type, -1, 0, '', 0, 0, null, 0, '', 0, 100, '', null, 0);
     $invoice->fetch($placeid);
 }
 
@@ -180,7 +185,7 @@ if ($action == "updatereduction") {
 if ($action == "order" and $placeid != 0) {
     include_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
 
-    $headerorder = '<html><br><b>' . $langs->trans('Place') . ' ' . $place . '<br><table width="65%"><thead><tr><th align="left">' . $langs->trans("Label") . '</th><th align="right">' . $langs->trans("Qty") . '</th></tr></thead><tbody>';
+    $headerorder = '<html><br><b>' . $langs->trans('Place') . ' ' . $place . '<br><table width="65%"><thead><tr><th class="left">' . $langs->trans("Label") . '</th><th class="right">' . $langs->trans("Qty") . '</th></tr></thead><tbody>';
     $footerorder = '</tbody></table>' . dol_print_date(dol_now(), 'dayhour') . '<br></html>';
     $order_receipt_printer1 = "";
     $order_receipt_printer2 = "";
@@ -197,7 +202,7 @@ if ($action == "order" and $placeid != 0) {
         if ($count > 0) {
             $sql = "UPDATE " . MAIN_DB_PREFIX . "facturedet set special_code='3' where rowid=$line->rowid";
             $db->query($sql);
-            $order_receipt_printer1.= '<tr>' . $line->product_label . '<td align="right">' . $line->qty;
+            $order_receipt_printer1.= '<tr>' . $line->product_label . '<td class="right">' . $line->qty;
 			if (!empty($line->array_options['options_order_notes'])) $order_receipt_printer1.="<br>(".$line->array_options['options_order_notes'].")";
 			$order_receipt_printer1.='</td></tr>';
         }
@@ -214,7 +219,7 @@ if ($action == "order" and $placeid != 0) {
         if ($count > 0) {
             $sql = "UPDATE " . MAIN_DB_PREFIX . "facturedet set special_code='3' where rowid=$line->rowid";
             $db->query($sql);
-            $order_receipt_printer2.= '<tr>' . $line->product_label . '<td align="right">' . $line->qty;
+            $order_receipt_printer2.= '<tr>' . $line->product_label . '<td class="right">' . $line->qty;
 			if (!empty($line->array_options['options_order_notes'])) $order_receipt_printer2.="<br>(".$line->array_options['options_order_notes'].")";
 			$order_receipt_printer2.='</td></tr>';
         }
@@ -329,8 +334,8 @@ print '<div class="div-table-responsive-no-min invoice">';
 print '<table id="tablelines" class="noborder noshadow" width="100%">';
 print '<tr class="liste_titre nodrag nodrop">';
 print '<td class="linecoldescription">' . $langs->trans('Description') . '</td>';
-print '<td class="linecolqty" align="right">' . $langs->trans('Qty') . '</td>';
-print '<td class="linecolht" align="right">' . $langs->trans('TotalHTShort') . '</td>';
+print '<td class="linecolqty right">' . $langs->trans('Qty') . '</td>';
+print '<td class="linecolht right">' . $langs->trans('TotalHTShort') . '</td>';
 print "</tr>\n";
 
 if ($placeid > 0) {
@@ -341,18 +346,18 @@ if ($placeid > 0) {
             print ' order';
         }
         print '" id="' . $line->rowid . '">';
-        print '<td align="left">' . $line->product_label . $line->desc;
+        print '<td class="left">' . $line->product_label . $line->desc;
 		if (!empty($line->array_options['options_order_notes'])) echo "<br>(".$line->array_options['options_order_notes'].")";
 		print '</td>';
-        print '<td align="right">' . $line->qty . '</td>';
-        print '<td align="right">' . price($line->total_ttc) . '</td>';
+        print '<td class="right">' . $line->qty . '</td>';
+        print '<td class="right">' . price($line->total_ttc) . '</td>';
         print '</tr>';
     }
 }
 
 print '</table>';
 
-print '<p style="font-size:120%;" align="right"><b>'.$langs->trans('TotalTTC');
+print '<p style="font-size:120%;" class="right"><b>'.$langs->trans('TotalTTC');
 
 if($conf->global->TAKEPOS_BAR_RESTAURANT) print " ".$langs->trans('Place')." ".$place;
 
@@ -363,15 +368,16 @@ if ($invoice->socid != $conf->global->CASHDESK_ID_THIRDPARTY)
     $soc = new Societe($db);
     if ($invoice->socid > 0) $soc->fetch($invoice->socid);
     else $soc->fetch($conf->global->CASHDESK_ID_THIRDPARTY);
-    print '<p style="font-size:120%;" align="right">';
+    print '<p style="font-size:120%;" class="right">';
     print $langs->trans("Customer").': '.$soc->name;
     print '</p>';
 }
 if ($action=="valid")
 {
-	print '<p style="font-size:120%;" align="center"><b>'.$invoice->ref." ".$langs->trans('BillShortStatusValidated').'</b></p>';
+	print '<p style="font-size:120%;" class="center"><b>'.$invoice->ref." ".$langs->trans('BillShortStatusValidated').'</b></p>';
 	if ($conf->global->TAKEPOSCONNECTOR) print '<center><button type="button" onclick="TakeposPrinting('.$placeid.');">'.$langs->trans('PrintTicket').'</button><center>';
-	else print '<center><button type="button" onclick="Print('.$placeid.');">'.$langs->trans('PrintTicket').'</button><center>';
+	else print '<center><button id="buttonprint" type="button" onclick="Print('.$placeid.');">'.$langs->trans('PrintTicket').'</button><center>';
+    if($conf->global->TAKEPOS_AUTO_PRINT_TICKETS) print '<script language="javascript">$("#buttonprint").click();</script>';
 }
 
 if ($action == "search")

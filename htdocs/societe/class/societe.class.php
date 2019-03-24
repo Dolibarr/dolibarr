@@ -1939,36 +1939,68 @@ class Societe extends CommonObject
 	 *
 	 *	@param	User	$user		Object user
 	 *	@param	int		$commid		Id of user
-	 *	@return	void
+	 *	@return	int					<=0 if KO, >0 if OK
 	 */
     public function add_commercial(User $user, $commid)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		$error=0;
-
 
 		if ($this->id > 0 && $commid > 0)
 		{
-			$sql = "DELETE FROM  ".MAIN_DB_PREFIX."societe_commerciaux";
-			$sql.= " WHERE fk_soc = ".$this->id." AND fk_user =".$commid;
+		    $this->db->begin();
 
-			$this->db->query($sql);
+		    if (! $error)
+		    {
+    			$sql = "DELETE FROM  ".MAIN_DB_PREFIX."societe_commerciaux";
+    			$sql.= " WHERE fk_soc = ".$this->id." AND fk_user =".$commid;
 
-			$sql = "INSERT INTO ".MAIN_DB_PREFIX."societe_commerciaux";
-			$sql.= " ( fk_soc, fk_user )";
-			$sql.= " VALUES (".$this->id.",".$commid.")";
+    			$resql = $this->db->query($sql);
+    			if (! $resql)
+    			{
+    			    dol_syslog(get_class($this)."::add_commercial Error ".$this->db->lasterror());
+    			    $error++;
+    			}
+		    }
 
-			if (! $this->db->query($sql) )
+		    if (! $error)
+    		{
+    			$sql = "INSERT INTO ".MAIN_DB_PREFIX."societe_commerciaux";
+    			$sql.= " (fk_soc, fk_user)";
+    			$sql.= " VALUES (".$this->id.", ".$commid.")";
+
+    			$resql = $this->db->query($sql);
+    			if (! $resql)
+    			{
+    				dol_syslog(get_class($this)."::add_commercial Error ".$this->db->lasterror());
+                    $error++;
+    			}
+    		}
+
+			if (! $error)
 			{
-				dol_syslog(get_class($this)."::add_commercial Erreur");
-			}
-			else {
 				$this->context=array('commercial_modified'=>$commid);
 
 				$result=$this->call_trigger('COMPANY_LINK_SALE_REPRESENTATIVE', $user);
-                if ($result < 0) $error++;
+                if ($result < 0)
+                {
+                    $error++;
+                }
+			}
+
+			if (! $error)
+			{
+                $this->db->commit();
+                return 1;
+			}
+			else
+			{
+			    $this->db->rollback();
+			    return -1;
 			}
 		}
+
+		return 0;
 	}
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -2256,8 +2288,8 @@ class Societe extends CommonObject
 		}
 		elseif ($mode == 6)
 		{
-			if ($statut==0) return '<span class="hideonsmartphone">'.$langs->trans("ActivityCeased").'</span> '.img_picto($langs->trans("ActivityCeased"), 'statut5', 'class="pictostatus"');
-			elseif ($statut==1) return '<span class="hideonsmartphone">'.$langs->trans("InActivity").'</span> '.img_picto($langs->trans("InActivity"), 'statut4', 'class="pictostatus"');
+			if ($statut==0) return $langs->trans("ActivityCeased").' '.img_picto($langs->trans("ActivityCeased"), 'statut5', 'class="pictostatus"');
+			elseif ($statut==1) return $langs->trans("InActivity").' '.img_picto($langs->trans("InActivity"), 'statut4', 'class="pictostatus"');
 		}
 	}
 

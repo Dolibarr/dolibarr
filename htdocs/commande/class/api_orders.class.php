@@ -770,7 +770,7 @@ class Orders extends DolibarrApi
             throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
         }
 
-        $result = $this->commande->set_draft(DolibarrApiAccess::$user, $idwarehouse);
+        $result = $this->commande->setDraft(DolibarrApiAccess::$user, $idwarehouse);
         if ($result == 0) {
             throw new RestException(304, 'Nothing done. May be object is already closed');
         }

@@ -373,8 +373,8 @@ class SupplierProposal extends CommonObject
      * 		@param    	double		$txtva           	Taux de tva
      * 		@param		double		$txlocaltax1		Local tax 1 rate
      *  	@param		double		$txlocaltax2		Local tax 2 rate
-     *		@param    	int			$fk_product      	Id du produit/service predefini
-     * 		@param    	double		$remise_percent  	Pourcentage de remise de la ligne
+     *		@param    	int			$fk_product      	Product/Service ID predefined
+     * 		@param    	double		$remise_percent  	Percentage discount of the line
      * 		@param    	string		$price_base_type	HT or TTC
      * 		@param    	double		$pu_ttc             Prix unitaire TTC
      * 		@param    	int			$info_bits			Bits de type de lignes
@@ -1878,19 +1878,44 @@ class SupplierProposal extends CommonObject
      *	@param		User	$user		Object user that modify
      *	@return		int					<0 if KO, >0 if OK
      */
-    public function set_draft($user)
+    public function setDraft($user)
     {
         // phpcs:enable
         global $conf,$langs;
 
-        $sql = "UPDATE ".MAIN_DB_PREFIX."supplier_proposal SET fk_statut = 0";
+        $error = 0;
+
+        if ($this->statut == self::STATUS_DRAFT)
+        {
+            dol_syslog(get_class($this)."::setDraft already draft status", LOG_WARNING);
+            return 0;
+        }
+
+        $sql = "UPDATE ".MAIN_DB_PREFIX."supplier_proposal";
+        $sql.= " SET fk_statut = ".self::STATUS_DRAFT;
         $sql.= " WHERE rowid = ".$this->id;
 
         if ($this->db->query($sql))
         {
-            $this->statut = 0;
-            $this->brouillon = 1;
-            return 1;
+            if (!$error) {
+                $this->oldcopy = clone $this;
+            }
+
+            if (!$error) {
+                // Call trigger
+                $result=$this->call_trigger('SUPPLIER_PROPOSAL_UNVALIDATE', $user);
+                if ($result < 0) $error++;
+            }
+
+            if (!$error) {
+                $this->statut=self::STATUS_DRAFT;
+                $this->brouillon = 1;
+                $this->db->commit();
+                return 1;
+            } else {
+                $this->db->rollback();
+                return -1;
+            }
         }
         else
         {

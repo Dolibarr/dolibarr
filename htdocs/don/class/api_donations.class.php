@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2019   Thibault FOUCART        <support@ptibogxiv.net>
- * Copyright (C) 2019	Laurent Destailleur		<eldy@users.sourceforge.net>
+/* Copyright (C) 2019       Thibault FOUCART        <support@ptibogxiv.net>
+ * Copyright (C) 2019       Laurent Destailleur     <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -58,7 +58,7 @@ class Donations extends DolibarrApi
      *
      * @param       int         $id         ID of order
      * @return 	array|mixed data without useless information
-	 *
+     *
      * @throws 	RestException
      */
     public function get($id)
@@ -89,13 +89,13 @@ class Donations extends DolibarrApi
      *
      * Get a list of donations
      *
-     * @param string	     $sortfield	        Sort field
-     * @param string	     $sortorder	        Sort order
-     * @param int		       $limit		        Limit for list
-     * @param int		       $page		        Page number
-     * @param string   	   $thirdparty_ids	    Thirdparty ids to filter orders of. {@example '1' or '1,2,3'} {@pattern /^[0-9,]*$/i}
-     * @param string       $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
-     * @return  array                               Array of order objects
+     * @param string    $sortfield          Sort field
+     * @param string    $sortorder          Sort order
+     * @param int       $limit              Limit for list
+     * @param int       $page               Page number
+     * @param string    $thirdparty_ids     Thirdparty ids to filter orders of. {@example '1' or '1,2,3'} {@pattern /^[0-9,]*$/i}
+     * @param string    $sqlfilters         Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
+     * @return  array                       Array of order objects
      *
      * @throws RestException
      */
@@ -177,8 +177,8 @@ class Donations extends DolibarrApi
     public function post($request_data = null)
     {
         if (! DolibarrApiAccess::$user->rights->don->creer) {
-			throw new RestException(401, "Insuffisant rights");
-		}
+            throw new RestException(401, "Insuffisant rights");
+        }
         // Check mandatory fields
         $result = $this->_validate($request_data);
 

@@ -271,7 +271,7 @@ else
     print '<td class="liste_titre"></td>';
 
     // Action column
-    print '<td class="liste_titre" align="right">';
+    print '<td class="liste_titre right">';
     $searchpicto=$form->showFilterButtons();
     print $searchpicto;
     print '</td>';
@@ -286,7 +286,7 @@ else
         foreach($typeleaves as $key => $val)
         {
         	$labeltype = ($langs->trans($val['code'])!=$val['code']) ? $langs->trans($val['code']) : $langs->trans($val['label']);
-        	print_liste_field_titre($labeltype, $_SERVER["PHP_SELF"], '', '', '', 'align="center"');
+        	print_liste_field_titre($labeltype, $_SERVER["PHP_SELF"], '', '', '', '', '', '', 'center ');
         }
     }
     else

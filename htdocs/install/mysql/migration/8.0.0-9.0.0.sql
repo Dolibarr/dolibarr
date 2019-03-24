@@ -48,6 +48,9 @@ create table llx_facture_rec_extrafields
   import_key                varchar(14)
 ) ENGINE=innodb;
 
+ALTER TABLE llx_actioncomm ADD COLUMN email_subject varchar(255) after email_msgid;
+ALTER TABLE llx_actioncomm ADD COLUMN email_tocc varchar(255) after email_to;
+ALTER TABLE llx_actioncomm ADD COLUMN email_tobcc varchar(255) after email_tocc;
 
 -- For 9.0
 ALTER TABLE llx_extrafields ADD COLUMN help text NULL;
@@ -277,6 +280,5 @@ DELETE from llx_accounting_account where rowid in (select minid from tmp_llx_acc
 
 ALTER TABLE llx_accounting_account DROP INDEX uk_accounting_account;
 ALTER TABLE llx_accounting_account ADD UNIQUE INDEX uk_accounting_account (account_number, entity, fk_pcg_version);
-
 
 

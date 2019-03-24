@@ -198,7 +198,7 @@ if (! empty($conf->holiday->enabled) && $user->rights->holiday->read)
         print '<th colspan="3">'.$langs->trans("BoxTitleLastLeaveRequests", min($max, $num)).'</th>';
         print '<th>'.$langs->trans("from").'</th>';
         print '<th>'.$langs->trans("to").'</th>';
-        print '<th align="right">'.$langs->trans("DateModificationShort").'</th>';
+        print '<th class="right">'.$langs->trans("DateModificationShort").'</th>';
         print '<th width="16">&nbsp;</th>';
         print '</tr>';
         if ($num)
@@ -226,9 +226,9 @@ if (! empty($conf->holiday->enabled) && $user->rights->holiday->read)
                 $starthalfday=($obj->halfday == -1 || $obj->halfday == 2)?'afternoon':'morning';
                 $endhalfday=($obj->halfday == 1 || $obj->halfday == 2)?'morning':'afternoon';
 
-                print '<td>'.dol_print_date($obj->date_start, 'day').' '.$langs->trans($listhalfday[$starthalfday]);
-                print '<td>'.dol_print_date($obj->date_end, 'day').' '.$langs->trans($listhalfday[$endhalfday]);
-                print '<td align="right">'.dol_print_date($db->jdate($obj->dm), 'day').'</td>';
+                print '<td>'.dol_print_date($db->jdate($obj->date_start), 'day').' '.$langs->trans($listhalfday[$starthalfday]);
+                print '<td>'.dol_print_date($db->jdate($obj->date_end), 'day').' '.$langs->trans($listhalfday[$endhalfday]);
+                print '<td class="right">'.dol_print_date($db->jdate($obj->dm), 'day').'</td>';
                 print '<td>'.$holidaystatic->LibStatut($obj->status, 3).'</td>';
                 print '</tr>';
 
@@ -271,8 +271,8 @@ if (! empty($conf->deplacement->enabled) && $user->rights->deplacement->lire)
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
 		print '<th colspan="2">'.$langs->trans("BoxTitleLastModifiedExpenses", min($max, $num)).'</th>';
-		print '<th align="right">'.$langs->trans("FeesKilometersOrAmout").'</th>';
-		print '<th align="right">'.$langs->trans("DateModificationShort").'</th>';
+		print '<th class="right">'.$langs->trans("FeesKilometersOrAmout").'</th>';
+		print '<th class="right">'.$langs->trans("DateModificationShort").'</th>';
 		print '<th width="16">&nbsp;</th>';
 		print '</tr>';
 		if ($num)
@@ -299,8 +299,8 @@ if (! empty($conf->deplacement->enabled) && $user->rights->deplacement->lire)
 				print '<tr class="oddeven">';
 				print '<td class="nowraponall">'.$deplacementstatic->getNomUrl(1).'</td>';
 				print '<td>'.$userstatic->getNomUrl(-1).'</td>';
-				print '<td align="right">'.$obj->km.'</td>';
-				print '<td align="right">'.dol_print_date($db->jdate($obj->dm), 'day').'</td>';
+				print '<td class="right">'.$obj->km.'</td>';
+				print '<td class="right">'.dol_print_date($db->jdate($obj->dm), 'day').'</td>';
 				print '<td>'.$deplacementstatic->LibStatut($obj->fk_statut, 3).'</td>';
 				print '</tr>';
 
@@ -322,7 +322,7 @@ if (! empty($conf->expensereport->enabled) && $user->rights->expensereport->lire
 {
 	$sql = "SELECT u.rowid as uid, u.lastname, u.firstname, u.login, u.email, u.statut, u.photo, x.rowid, x.ref, x.date_debut as date, x.tms as dm, x.total_ttc, x.fk_statut as status";
 	$sql.= " FROM ".MAIN_DB_PREFIX."expensereport as x, ".MAIN_DB_PREFIX."user as u";
-	if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+	//if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	$sql.= " WHERE u.rowid = x.fk_user_author";
 	$sql.= " AND x.entity = ".$conf->entity;
 	if (empty($user->rights->expensereport->readall) && empty($user->rights->expensereport->lire_tous)) $sql.=' AND x.fk_user_author IN ('.join(',', $childids).')';
@@ -343,8 +343,8 @@ if (! empty($conf->expensereport->enabled) && $user->rights->expensereport->lire
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
 		print '<th colspan="2">'.$langs->trans("BoxTitleLastModifiedExpenses", min($max, $num)).'</th>';
-		print '<th align="right">'.$langs->trans("TotalTTC").'</th>';
-		print '<th align="right">'.$langs->trans("DateModificationShort").'</th>';
+		print '<th class="right">'.$langs->trans("TotalTTC").'</th>';
+		print '<th class="right">'.$langs->trans("DateModificationShort").'</th>';
 		print '<th width="16">&nbsp;</th>';
 		print '</tr>';
 		if ($num)
@@ -371,8 +371,8 @@ if (! empty($conf->expensereport->enabled) && $user->rights->expensereport->lire
 				print '<tr class="oddeven">';
 				print '<td class="nowraponall">'.$expensereportstatic->getNomUrl(1).'</td>';
 				print '<td>'.$userstatic->getNomUrl(-1).'</td>';
-				print '<td align="right">'.price($obj->total_ttc).'</td>';
-				print '<td align="right">'.dol_print_date($db->jdate($obj->dm), 'day').'</td>';
+				print '<td class="right">'.price($obj->total_ttc).'</td>';
+				print '<td class="right">'.dol_print_date($db->jdate($obj->dm), 'day').'</td>';
 				print '<td>'.$expensereportstatic->LibStatut($obj->status, 3).'</td>';
 				print '</tr>';
 
