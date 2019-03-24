@@ -1826,7 +1826,7 @@ function deleteFilesIntoDatabaseIndex($dir, $file, $mode = 'uploaded')
  *  @param  string  $page       Page number if we convert a PDF into png
  *  @return	int					<0 if KO, 0=Nothing done, >0 if OK
  */
-function dol_convert_file($fileinput, $ext = 'png', $fileoutput = '', $page='')
+function dol_convert_file($fileinput, $ext = 'png', $fileoutput = '', $page = '')
 {
 	global $langs;
 	if (class_exists('Imagick'))
