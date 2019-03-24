@@ -161,7 +161,7 @@ class DoliDBMssql extends DoliDB
 	 *	@param		string	$name		name of database (not used for mysql, used for pgsql)
 	 *	@param		int		$port		Port of database server
 	 *	@return		false|resource|true	Database access handler
-	 *	@see		close
+	 *	@see		close()
 	 */
     public function connect($host, $login, $passwd, $name, $port = 0)
 	{
@@ -216,7 +216,7 @@ class DoliDBMssql extends DoliDB
      *  Close database connexion
      *
      *  @return     bool     True if disconnect successfull, false otherwise
-     *  @see        connect
+     *  @see        connect()
      */
     public function close()
     {
@@ -511,7 +511,7 @@ class DoliDBMssql extends DoliDB
      *
      *	@param	resource	$resultset  Resulset of requests
      *	@return int		    			Nb of lines
-     *	@see    affected_rows
+     *	@see    affected_rows()
 	 */
     public function num_rows($resultset)
 	{
@@ -527,7 +527,7 @@ class DoliDBMssql extends DoliDB
 	 *
 	 *	@param	resource	$resultset   Curseur de la requete voulue
 	 *	@return int		    Nombre de lignes
-	 *	@see    num_rows
+	 *	@see    num_rows()
 	 */
     public function affected_rows($resultset)
 	{

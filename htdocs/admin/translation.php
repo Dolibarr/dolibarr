@@ -224,9 +224,7 @@ else
 
 print load_fiche_titre($langs->trans("Translation"), $enabledisablehtml, 'title_setup');
 
-//print '<span class="opacitymedium">';
-print $langs->trans("TranslationDesc")."<br>\n";
-//print '</span>';
+print '<span class="opacitymedium">'.$langs->trans("TranslationDesc")."</span><br>\n";
 print "<br>\n";
 
 $current_language_code=$langs->defaultlang;

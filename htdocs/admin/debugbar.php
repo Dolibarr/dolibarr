@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2019 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2007      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2013	   Juanjo Menent        <jmenent@2byte.es>
@@ -47,8 +47,9 @@ if ($action == 'set')
 {
 	$db->begin();
 
-	$result = dolibarr_set_const($db, "DEBUGBAR_LOGS_LINES_NUMBER", GETPOST('DEBUGBAR_LOGS_LINES_NUMBER', 'int'), 'chaine', 0, '', 0);
-	if ($result < 0)
+	$result1 = dolibarr_set_const($db, "DEBUGBAR_LOGS_LINES_NUMBER", GETPOST('DEBUGBAR_LOGS_LINES_NUMBER', 'int'), 'chaine', 0, '', 0);
+	$result2 = dolibarr_set_const($db, "DEBUGBAR_USE_LOG_FILE", GETPOST('DEBUGBAR_USE_LOG_FILE', 'int'), 'chaine', 0, '', 0);
+	if ($result1 < 0 || $result2 < 0)
     {
         $error++;
     }
@@ -61,7 +62,7 @@ if ($action == 'set')
 	else
 	{
 		$db->rollback();
-		setEventMessages($error, $errors, 'errors');
+		setEventMessages($error, null, 'errors');
 	}
 }
 
@@ -94,6 +95,12 @@ print "</tr>\n";
 print '<tr class="oddeven"><td>'.$langs->trans("DEBUGBAR_LOGS_LINES_NUMBER").'</td>';
 print '<td colspan="2"><input type="text" class="flat" name="DEBUGBAR_LOGS_LINES_NUMBER" value="'.(empty($conf->global->DEBUGBAR_LOGS_LINES_NUMBER) ? 250 : $conf->global->DEBUGBAR_LOGS_LINES_NUMBER).'">';   // This slow seriously output
 print ' '.$langs->trans("WarningValueHigherSlowsDramaticalyOutput");
+print '</td></tr>';
+
+print '<tr class="oddeven"><td>'.$langs->trans("DEBUGBAR_USE_LOG_FILE").'</td>';
+print '<td colspan="2">';
+print $form->selectyesno('DEBUGBAR_USE_LOG_FILE', $conf->global->DEBUGBAR_USE_LOG_FILE, 1);
+print ' '.$langs->trans("UsingLogFileShowAllRecordOfSubrequestButIsSlower");
 print '</td></tr>';
 
 print '</table>';

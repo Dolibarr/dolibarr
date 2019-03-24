@@ -382,7 +382,8 @@ if ($action=="valid")
 {
 	print '<p style="font-size:120%;" class="center"><b>'.$invoice->ref." ".$langs->trans('BillShortStatusValidated').'</b></p>';
 	if ($conf->global->TAKEPOSCONNECTOR) print '<center><button type="button" onclick="TakeposPrinting('.$placeid.');">'.$langs->trans('PrintTicket').'</button><center>';
-	else print '<center><button type="button" onclick="Print('.$placeid.');">'.$langs->trans('PrintTicket').'</button><center>';
+	else print '<center><button id="buttonprint" type="button" onclick="Print('.$placeid.');">'.$langs->trans('PrintTicket').'</button><center>';
+    if($conf->global->TAKEPOS_AUTO_PRINT_TICKETS) print '<script language="javascript">$("#buttonprint").click();</script>';
 }
 
 if ($action == "search")

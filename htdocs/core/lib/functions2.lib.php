@@ -207,7 +207,7 @@ function dol_print_object_info($object, $usetable = 0)
     $deltadateforuser=round($deltadateforclient-$deltadateforserver);
     //print "x".$deltadateforserver." - ".$deltadateforclient." - ".$deltadateforuser;
 
-    if ($usetable) print '<table class="border centpercent">';
+    if ($usetable) print '<table class="border tableforfield centpercent">';
 
     // Import key
     if (! empty($object->import_key))
@@ -2207,9 +2207,9 @@ function colorStringToArray($stringcolor, $colorifnotfound = array(88,88,88))
  */
 function colorValidateHex($color, $allow_white = true)
 {
-    
+
     if(!$allow_white && ($color === '#fff' || $color === '#ffffff') ) return false;
-    
+
     if(preg_match('/^#[a-f0-9]{6}$/i', $color)) //hex color is valid
     {
         return true;
@@ -2227,23 +2227,23 @@ function colorAdjustBrightness($hex, $steps)
 {
     // Steps should be between -255 and 255. Negative = darker, positive = lighter
     $steps = max(-255, min(255, $steps));
-    
+
     // Normalize into a six character long hex string
     $hex = str_replace('#', '', $hex);
     if (strlen($hex) == 3) {
         $hex = str_repeat(substr($hex, 0, 1), 2).str_repeat(substr($hex, 1, 1), 2).str_repeat(substr($hex, 2, 1), 2);
     }
-    
+
     // Split into three parts: R, G and B
     $color_parts = str_split($hex, 2);
     $return = '#';
-    
+
     foreach ($color_parts as $color) {
         $color   = hexdec($color); // Convert to decimal
         $color   = max(0, min(255, $color + $steps)); // Adjust color
         $return .= str_pad(dechex($color), 2, '0', STR_PAD_LEFT); // Make two char hex code
     }
-    
+
     return $return;
 }
 
@@ -2292,7 +2292,7 @@ function colorHexToRgb($hex, $alpha = false, $returnArray = false)
     else{
         $string = 'rgb('.implode(',', $rgb).')';
     }
-    
+
     if($returnArray){
         return $rgb;
     }
