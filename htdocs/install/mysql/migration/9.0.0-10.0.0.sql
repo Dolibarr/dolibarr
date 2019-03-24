@@ -189,7 +189,7 @@ ALTER TABLE llx_socpeople ADD COLUMN linkedin  varchar(255) after whatsapp;
 ALTER TABLE llx_adherent ADD COLUMN linkedin  varchar(255) after whatsapp;
 ALTER TABLE llx_user ADD COLUMN linkedin  varchar(255) after whatsapp;
 
-ALTER TABLE llx_expensereport_det ADD COLUMN fk_expensereport_line integer DEFAULT NULL;
+ALTER TABLE llx_expensereport_det ADD COLUMN fk_ecm_files integer DEFAULT NULL;
 
 
 CREATE TABLE llx_bom_bom(

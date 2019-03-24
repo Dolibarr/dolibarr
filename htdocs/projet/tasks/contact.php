@@ -220,7 +220,7 @@ if ($id > 0 || ! empty($ref))
             print '<div class="fichehalfleft">';
             print '<div class="underbanner clearboth"></div>';
 
-            print '<table class="border" width="100%">';
+            print '<table class="border tableforfield" width="100%">';
 
             // Visibility
             print '<tr><td class="titlefield">'.$langs->trans("Visibility").'</td><td>';
@@ -254,7 +254,7 @@ if ($id > 0 || ! empty($ref))
             print '<div class="ficheaddleft">';
             print '<div class="underbanner clearboth"></div>';
 
-            print '<table class="border" width="100%">';
+            print '<table class="border tableforfield" width="100%">';
 
             // Description
             print '<td class="titlefield tdtop">'.$langs->trans("Description").'</td><td>';

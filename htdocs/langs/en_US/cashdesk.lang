@@ -57,3 +57,4 @@ DolistorePosCategory=TakePOS modules and other POS solutions for Dolibarr
 TakeposNeedsCategories=TakePOS needs product categories to work
 OrderNotes=Order Notes
 TicketVatGrouped=Group VAT by rate in tickets
+AutoPrintTickets=Automatically print tickets

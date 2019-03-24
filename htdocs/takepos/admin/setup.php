@@ -65,6 +65,7 @@ if (GETPOST('action', 'alpha') == 'set')
     $res = dolibarr_set_const($db, "TAKEPOS_PRINT_SERVER", GETPOST('TAKEPOS_PRINT_SERVER', 'alpha'), 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "TAKEPOS_ORDER_PRINTERS", GETPOST('TAKEPOS_ORDER_PRINTERS', 'alpha'), 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "TAKEPOS_ORDER_NOTES", GETPOST('TAKEPOS_ORDER_NOTES', 'alpha'), 'chaine', 0, '', $conf->entity);
+	$res = dolibarr_set_const($db, "TAKEPOS_AUTO_PRINT_TICKETS", GETPOST('TAKEPOS_AUTO_PRINT_TICKETS', 'int'), 'int', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "TAKEPOS_HEADER", GETPOST('TAKEPOS_HEADER', 'alpha'), 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "TAKEPOS_FOOTER", GETPOST('TAKEPOS_FOOTER', 'alpha'), 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "TAKEPOS_NUMPAD", GETPOST('TAKEPOS_NUMPAD', 'alpha'), 'chaine', 0, '', $conf->entity);
@@ -124,6 +125,13 @@ if (! empty($conf->service->enabled))
 	print $form->selectyesno("CASHDESK_SERVICES", $conf->global->CASHDESK_SERVICES, 1);
 	print "</td></tr>\n";
 }
+print '<tr class="oddeven"><td>';
+print $langs->trans("AutoPrintTickets");
+print '<td colspan="2">';
+print $form->selectyesno("TAKEPOS_AUTO_PRINT_TICKETS", $conf->global->TAKEPOS_AUTO_PRINT_TICKETS, 1);
+print "</td></tr>\n";
+
+
 
 print '<tr class="oddeven"><td>';
 print $form->textwithpicto($langs->trans("RootCategoryForProductsToSell"), $langs->trans("RootCategoryForProductsToSellDesc"));

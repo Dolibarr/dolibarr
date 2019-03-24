@@ -284,7 +284,7 @@ $selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfiel
 if ($massactionbutton) $selectedfields.=$form->showCheckAddButtons('checkforselect', 1);
 
 print '<div class="div-table-responsive">';
-print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
+print '<table class="tagtable nobottomiftotal liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 
 
 // Line for filters fields
