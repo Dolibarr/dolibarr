@@ -378,9 +378,7 @@ if (! is_array($x_coll) || ! is_array($x_paye))
 		$subtot_coll_vat = 0;
 
 		if ($min == 0 || ($min > 0 && $x_both[$thirdparty_id]['coll']['totalht'] > $min)) {
-
 			if (is_array($x_both[$thirdparty_id]['coll']['detail'])) {
-
 				// VAT Rate
 				print "<tr>";
 				print '<td class="tax_rate">';
@@ -513,8 +511,8 @@ if (! is_array($x_coll) || ! is_array($x_paye))
 					$subtot_coll_vat += $temp_vat;
 					$x_coll_sum += $temp_vat;
 				}
-
 			}
+
 			// Total customers for this vat rate
 			print '<tr class="liste_total">';
 			print '<td colspan="4"></td>';
