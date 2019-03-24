@@ -2115,6 +2115,7 @@ else
 								print '<td class="right">'.price($line->total_ttc).'</td>';
 							}
 
+							// Column with preview
 							print '<td class="center">';
 							if ($line->fk_ecm_files > 0)
 							{
@@ -2141,7 +2142,50 @@ else
                                         print '<img class="photo" height="'.$maxheightmini.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.(!empty($object->entity)?$object->entity:$conf->entity).'&file='.urlencode($relativepath.'/'.$minifile).'" title="">';
                                         print '</a>';
                                     }
-                                    else print '&nbsp;';
+                                    else
+                                    {
+                                        $modulepart='expensereport';
+                                        $thumbshown=0;
+                                        if (preg_match('/\.pdf$/i', $ecmfilesstatic->filename))
+                                        {
+                                            $filepdf = $conf->expensereport->dir_output.'/'.$relativepath.$ecmfilesstatic->filename;
+                                            $fileimage = $conf->expensereport->dir_output.'/'.$relativepath.$ecmfilesstatic->filename.'_preview.png';
+                                            $relativepathimage = $relativepath.$ecmfilesstatic->filename.'_preview.png';
+
+                                            $pdfexists = file_exists($filepdf);
+
+                                            if ($pdfexists)
+                                            {
+                                                // Conversion du PDF en image png si fichier png non existant
+                                                if (! file_exists($fileimage) || (filemtime($fileimage) < filemtime($filepdf)))
+                                                {
+                                                    if (empty($conf->global->MAIN_DISABLE_PDF_THUMBS))		// If you experience trouble with pdf thumb generation and imagick, you can disable here.
+                                                    {
+                                                        include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+                                                        $ret = dol_convert_file($filepdf, 'png', $fileimage, '0');     // Convert first page of PDF into a file _preview.png
+                                                        if ($ret < 0) $error++;
+                                                    }
+                                                }
+                                            }
+
+                                            if ($pdfexists && ! $error)
+                                            {
+                                                $heightforphotref=70;
+                                                if (! empty($conf->dol_optimize_smallscreen)) $heightforphotref=60;
+                                                // If the preview file is found
+                                                if (file_exists($fileimage))
+                                                {
+                                                    $thumbshown=1;
+                                                    print '<img height="'.$heightforphotref.'" class="photo photowithmargin photowithborder" src="'.DOL_URL_ROOT . '/viewimage.php?modulepart=apercu'.$modulepart.'&amp;file='.urlencode($relativepathimage).'">';
+                                                }
+                                            }
+                                        }
+
+                                        if (! $thumbshown)
+                                        {
+                                            print img_mime($ecmfilesstatic->filename);
+                                        }
+                                    }
                                 }
 							}
 							print '</td>';
@@ -2166,77 +2210,77 @@ else
 
 						if ($action == 'editline' && $line->rowid == GETPOST('rowid', 'int'))
 						{
-								print '<tr class="oddeven">';
+							print '<tr class="oddeven">';
 
-								print '<td></td>';
+							print '<td></td>';
 
-								// Select date
-								print '<td class="center">';
-								print $form->selectDate($line->date, 'date');
-								print '</td>';
+							// Select date
+							print '<td class="center">';
+							print $form->selectDate($line->date, 'date');
+							print '</td>';
 
-								// Select project
-								if (! empty($conf->projet->enabled))
-								{
-									print '<td>';
-									$formproject->select_projects(-1, $line->fk_project, 'fk_projet', 0, 0, 1, 1, 0, 0, 0, '', 0, 0, 'maxwidth300');
-									print '</td>';
-								}
-
-								if (!empty($conf->global->MAIN_USE_EXPENSE_IK))
-								{
-									print '<td class="fk_c_exp_tax_cat">';
-									$params = array('fk_expense' => $object->id, 'fk_expense_det' => $line->rowid, 'date' => $line->dates);
-									print $form->selectExpenseCategories($line->fk_c_exp_tax_cat, 'fk_c_exp_tax_cat', 1, array(), 'fk_c_type_fees', $userauthor->default_c_exp_tax_cat, $params);
-									print '</td>';
-								}
-
-								// Select type
-								print '<td class="center">';
-								select_type_fees_id($line->fk_c_type_fees, 'fk_c_type_fees');
-								print '</td>';
-
-								// Add comments
+							// Select project
+							if (! empty($conf->projet->enabled))
+							{
 								print '<td>';
-								print '<textarea name="comments" class="flat_ndf centpercent">'.dol_escape_htmltag($line->comments, 0, 1).'</textarea>';
+								$formproject->select_projects(-1, $line->fk_project, 'fk_projet', 0, 0, 1, 1, 0, 0, 0, '', 0, 0, 'maxwidth300');
 								print '</td>';
+							}
 
-								// VAT
-								print '<td class="right">';
-								print $form->load_tva('vatrate', (isset($_POST["vatrate"])?$_POST["vatrate"]:$line->vatrate), $mysoc, '', 0, 0, '', false, 1);
+							if (!empty($conf->global->MAIN_USE_EXPENSE_IK))
+							{
+								print '<td class="fk_c_exp_tax_cat">';
+								$params = array('fk_expense' => $object->id, 'fk_expense_det' => $line->rowid, 'date' => $line->dates);
+								print $form->selectExpenseCategories($line->fk_c_exp_tax_cat, 'fk_c_exp_tax_cat', 1, array(), 'fk_c_type_fees', $userauthor->default_c_exp_tax_cat, $params);
 								print '</td>';
+							}
 
-								// Unit price
-								print '<td class="right">';
-								print '<input type="text" min="0" class="right maxwidth50" id="value_unit_ht" name="value_unit_ht" value="'.dol_escape_htmltag(price2num($line->value_unit_ht)).'" />';
-								print '</td>';
+							// Select type
+							print '<td class="center">';
+							select_type_fees_id($line->fk_c_type_fees, 'fk_c_type_fees');
+							print '</td>';
 
-								// Unit price with tax
-								print '<td class="right">';
-								print '<input type="text" min="0" class="right maxwidth50" id="value_unit" name="value_unit" value="'.dol_escape_htmltag(price2num($line->value_unit)).'" />';
-								print '</td>';
+							// Add comments
+							print '<td>';
+							print '<textarea name="comments" class="flat_ndf centpercent">'.dol_escape_htmltag($line->comments, 0, 1).'</textarea>';
+							print '</td>';
 
-								// Quantity
-								print '<td class="right">';
-								print '<input type="number" min="0" class="right maxwidth50" name="qty" value="'.dol_escape_htmltag($line->qty).'" />';
-								print '</td>';
+							// VAT
+							print '<td class="right">';
+							print $form->load_tva('vatrate', (isset($_POST["vatrate"])?$_POST["vatrate"]:$line->vatrate), $mysoc, '', 0, 0, '', false, 1);
+							print '</td>';
 
-								if ($action != 'editline')
-								{
-									print '<td class="right">'.$langs->trans('AmountHT').'</td>';
-									print '<td class="right">'.$langs->trans('AmountTTC').'</td>';
-								}
+							// Unit price
+							print '<td class="right">';
+							print '<input type="text" min="0" class="right maxwidth50" id="value_unit_ht" name="value_unit_ht" value="'.dol_escape_htmltag(price2num($line->value_unit_ht)).'" />';
+							print '</td>';
 
-								// Picture
-								print '<td class="center">';
-								//print $line->fk_ecm_files;
-								print '</td>';
+							// Unit price with tax
+							print '<td class="right">';
+							print '<input type="text" min="0" class="right maxwidth50" id="value_unit" name="value_unit" value="'.dol_escape_htmltag(price2num($line->value_unit)).'" />';
+							print '</td>';
 
-								print '<td class="center">';
-								print '<input type="hidden" name="rowid" value="'.$line->rowid.'">';
-								print '<input type="submit" class="button" name="save" value="'.$langs->trans('Save').'">';
-								print '<br><input type="submit" class="button" name="cancel" value="'.$langs->trans('Cancel').'">';
-								print '</td>';
+							// Quantity
+							print '<td class="right">';
+							print '<input type="number" min="0" class="right maxwidth50" name="qty" value="'.dol_escape_htmltag($line->qty).'" />';
+							print '</td>';
+
+							if ($action != 'editline')
+							{
+								print '<td class="right">'.$langs->trans('AmountHT').'</td>';
+								print '<td class="right">'.$langs->trans('AmountTTC').'</td>';
+							}
+
+							// Picture
+							print '<td class="center">';
+							//print $line->fk_ecm_files;
+							print '</td>';
+
+							print '<td class="center">';
+							print '<input type="hidden" name="rowid" value="'.$line->rowid.'">';
+							print '<input type="submit" class="button" name="save" value="'.$langs->trans('Save').'">';
+							print '<br><input type="submit" class="button" name="cancel" value="'.$langs->trans('Cancel').'">';
+							print '</td>';
 						}
 
 						$i++;
@@ -2378,8 +2422,6 @@ else
 				                else
 				                {
 				                    $modulepart='expensereport';
-                                    //$conf->global->MAIN_DISABLE_PDF_THUMBS=1;
-
 				                    print '<a href=""><div class="photoref">';
 				                    $thumbshown=0;
 				                    if (preg_match('/\.pdf$/i', $file['name']))
