@@ -1834,7 +1834,8 @@ function dol_convert_file($fileinput, $ext = 'png', $fileoutput = '')
 		try {
 		    $ret = $image->readImage($fileinput);
 		} catch(Exception $e) {
-		    dol_syslog("Failed to read image using Imagick (Try to install package 'apt-get install ghostscript'): ".$e->getMessage(), LOG_WARNING);
+		    $ext = pathinfo($fileinput, PATHINFO_EXTENSION);
+		    dol_syslog("Failed to read image using Imagick (Try to install package 'apt-get install php-imagick ghostscript' and check there is no policy to disable ".$ext." convertion in /etc/ImageMagick*/policy.xml): ".$e->getMessage(), LOG_WARNING);
 			return 0;
 		}
 		if ($ret)

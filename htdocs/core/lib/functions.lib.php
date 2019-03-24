@@ -1393,7 +1393,6 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 					// If PDF file exists
 					if (file_exists($file))
 					{
-						$encfile = urlencode($file);
 						// Conversion du PDF en image png si fichier png non existant
 						if ( (! file_exists($fileimage) || (filemtime($fileimage) < filemtime($file)))
 						  && (! file_exists($fileimagebis) || (filemtime($fileimagebis) < filemtime($file)))
