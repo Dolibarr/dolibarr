@@ -2399,7 +2399,7 @@ else
 				                        break;
 				                    }
 				                }
-				                print '<div class="margintoponly"><input type="checkbox"'.$checked.' name="attachfile[]" value="'.$file['relativename'].'"> '.$file['relativename'].'</div>';
+				                print '<div class="margintoponly"><input type="radio"'.$checked.' name="attachfile[]" value="'.$file['relativename'].'"> '.$file['relativename'].'</div>';
 				                print '</div>';
 				            }
 				            print '</td></tr>';

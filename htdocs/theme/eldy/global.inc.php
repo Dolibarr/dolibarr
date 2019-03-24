@@ -3043,6 +3043,9 @@ table.tableforservicepart1 tr td {
 	border-top: none !important;
 	margin: 0px 0px 0px 0px !important;
 }
+table.noborder.paymenttable {
+    border-bottom: none !important;
+}
 .paymenttable tr td:first-child, .margintable tr td:first-child
 {
 	padding-left: 2px;
