@@ -203,6 +203,7 @@ class DolLogsCollector extends MessagesCollector
 		$class = new ReflectionClass(new LogLevel());
 		$levels = $class->getConstants();
 		$levels['ERR'] = 'error';
+		$levels['WARN'] = 'warning';
 
 		return $levels;
 	}

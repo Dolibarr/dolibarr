@@ -1390,7 +1390,7 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 					$fileimagebis = $file.'_preview-0.png';         // If PDF has more than one page
 					$relativepathimage = $relativepath.'_preview.png';
 
-					// Si fichier PDF existe
+					// If PDF file exists
 					if (file_exists($file))
 					{
 						$encfile = urlencode($file);
@@ -1399,7 +1399,7 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 						  && (! file_exists($fileimagebis) || (filemtime($fileimagebis) < filemtime($file)))
 						   )
 						{
-							if (empty($conf->global->MAIN_DISABLE_PDF_THUMBS))		// If you experienc trouble with pdf thumb generation and imagick, you can disable here.
+							if (empty($conf->global->MAIN_DISABLE_PDF_THUMBS))		// If you experience trouble with pdf thumb generation and imagick, you can disable here.
 							{
 								include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 								$ret = dol_convert_file($file, 'png', $fileimage);
@@ -1428,7 +1428,7 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 				}
 				elseif (! $phototoshow)
 				{
-					$phototoshow = $form->showphoto($modulepart, $object, 0, 0, 0, 'photoref', 'small', 1, 0, $maxvisiblephotos);
+					$phototoshow.= $form->showphoto($modulepart, $object, 0, 0, 0, 'photoref', 'small', 1, 0, $maxvisiblephotos);
 				}
 
 				if ($phototoshow)
@@ -1441,7 +1441,7 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 
 			if (! $phototoshow)      // Show No photo link (picto of pbject)
 			{
-				$morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref">';
+			    $morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref">';
 				if ($object->element == 'action')
 				{
 					$width=80;
@@ -7336,13 +7336,6 @@ function printCommonFooter($zone = 'private')
 	    if (! empty($user->rights->debugbar->read) && is_object($debugbar))
 	    {
 	        $debugbar['time']->stopMeasure('pageaftermaster');
-
-	        /*foreach($conf->logbuffer as $logline)
-	        {
-	            //print $logline."<br>\n";
-	            //$debugbar['log']->addMessage($logline, 'ERR', false);
-	        }*/
-
 	        print '<!-- Output debugbar data -->'."\n";
 		    print $debugbar->getRenderer()->render();
 		}

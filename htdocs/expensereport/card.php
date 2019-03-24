@@ -2282,10 +2282,12 @@ else
 				    print '$(document).ready(function() {
 				        $( ".auploadnewfilenow" ).click(function() {
 				            jQuery(".truploadnewfilenow").toggle();
+                            jQuery(".trattachnewfilenow").hide();
                             return false;
                         });
 				        $( ".aattachtodoc" ).click(function() {
 				            jQuery(".trattachnewfilenow").toggle();
+                            jQuery(".truploadnewfilenow").hide();
                             return false;
                         });';
 				    if (is_array(GETPOST('attachfile', 'array')) && count(GETPOST('attachfile', 'array')))
@@ -2299,13 +2301,11 @@ else
 				    print '</td></tr>';
 
 				    // Add line to upload new file
-				    print '<tr class="oddeven truploadnewfilenow"'.(empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)?' style="display: none"':'').'>';
+				    print '<tr class="oddeven nohover truploadnewfilenow"'.(empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)?' style="display: none"':'').'>';
 				    print '<td colspan="'.$colspan.'">';
 
 				    $modulepart = 'expensereport';
 				    $permission = $user->rights->expensereport->creer;
-
-				    $formfile=new FormFile($db);
 
 				    // We define var to enable the feature to add prefix of uploaded files
 				    $savingdocmask='';
@@ -2351,7 +2351,7 @@ else
 				        $nbLinks=Link::count($db, $object->element, $object->id);
 				        if ($nbFiles >= 0)
 				        {
-				            print '<tr class="oddeven trattachnewfilenow"'.(! GETPOSTISSET('sendit') && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)?' style="display: none"':'').'>';
+				            print '<tr class="oddeven nohover trattachnewfilenow"'.(! GETPOSTISSET('sendit') && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)?' style="display: none"':'').'>';
 				            print '<td colspan="'.$colspan.'">';
 				            //print '<span class="opacitymedium">'.$langs->trans("AttachTheNewLineToTheDocument").'</span><br>';
 				            $modulepart='expensereport';$maxheightmini=48;
@@ -2372,10 +2372,18 @@ else
 				                    } else {
 				                        print '<a href="'.$urlforhref['url'].'" class="'.$urlforhref['css'].'" target="'.$urlforhref['target'].'" mime="'.$urlforhref['mime'].'">';
 				                    }
-				                    print '<img class="photo" height="'.$maxheightmini.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.(!empty($object->entity)?$object->entity:$conf->entity).'&file='.urlencode($relativepath.$minifile).'" title="">';
+				                    print '<div class="photoref">';
+				                    print '<img class="photoexpensereport photorefcenter" height="'.$maxheightmini.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.(!empty($object->entity)?$object->entity:$conf->entity).'&file='.urlencode($relativepath.$minifile).'" title="">';
+				                    print '</div>';
 				                    print '</a>';
 				                }
-				                else print '&nbsp;';
+				                else
+				                {
+				                    print '<a href=""><div class="photoref">';
+				                    //print '<img class="photoexpensereport photorefcenter" height="16" src="'.DOL_URL_ROOT.'/theme/eldy/img/object_trip.png" title="">';
+				                    print img_mime($relativepath.$minifile);
+				                    print '</div></a>';
+				                }
 				                print '<br>';
 				                $checked='';
 				                //var_dump(GETPOST($file['relativename'])); var_dump($file['relativename']); var_dump($_FILES['userfile']['name']);
@@ -2391,7 +2399,7 @@ else
 				                        break;
 				                    }
 				                }
-				                print '<input type="checkbox"'.$checked.' name="attachfile[]" value="'.$file['relativename'].'"> '.$file['relativename'];
+				                print '<div class="margintoponly"><input type="checkbox"'.$checked.' name="attachfile[]" value="'.$file['relativename'].'"> '.$file['relativename'].'</div>';
 				                print '</div>';
 				            }
 				            print '</td></tr>';

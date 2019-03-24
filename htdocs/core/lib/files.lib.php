@@ -1828,19 +1828,18 @@ function deleteFilesIntoDatabaseIndex($dir, $file, $mode = 'uploaded')
 function dol_convert_file($fileinput, $ext = 'png', $fileoutput = '')
 {
 	global $langs;
-
 	if (class_exists('Imagick'))
 	{
-		$image=new Imagick();
+	    $image=new Imagick();
 		try {
-			$ret = $image->readImage($fileinput);
+		    $ret = $image->readImage($fileinput);
 		} catch(Exception $e) {
-			dol_syslog("Failed to read image using Imagick. Try to install package 'apt-get install ghostscript'.", LOG_WARNING);
+		    dol_syslog("Failed to read image using Imagick (Try to install package 'apt-get install ghostscript'): ".$e->getMessage(), LOG_WARNING);
 			return 0;
 		}
 		if ($ret)
 		{
-			$ret = $image->setImageFormat($ext);
+		    $ret = $image->setImageFormat($ext);
 			if ($ret)
 			{
 				if (empty($fileoutput)) $fileoutput=$fileinput.".".$ext;
