@@ -44,27 +44,27 @@ require_once DOL_DOCUMENT_ROOT.'/expensereport/class/paymentexpensereport.class.
 $langs->loadLangs(array("other","compta","banks","bills","companies","product","trips","admin"));
 
 // Date range
-$year=GETPOST("year","int");
+$year=GETPOST("year", "int");
 if (empty($year))
 {
-    $year_current = strftime("%Y",dol_now());
+    $year_current = strftime("%Y", dol_now());
     $year_start = $year_current;
 } else {
     $year_current = $year;
     $year_start = $year;
 }
-$date_start=dol_mktime(0,0,0,GETPOST("date_startmonth"),GETPOST("date_startday"),GETPOST("date_startyear"));
-$date_end=dol_mktime(23,59,59,GETPOST("date_endmonth"),GETPOST("date_endday"),GETPOST("date_endyear"));
+$date_start=dol_mktime(0, 0, 0, GETPOST("date_startmonth"), GETPOST("date_startday"), GETPOST("date_startyear"));
+$date_end=dol_mktime(23, 59, 59, GETPOST("date_endmonth"), GETPOST("date_endday"), GETPOST("date_endyear"));
 // Quarter
 if (empty($date_start) || empty($date_end)) // We define date_start and date_end
 {
     $q=GETPOST("q");
     if (empty($q))
     {
-        if (GETPOST("month")) { $date_start=dol_get_first_day($year_start,GETPOST("month"),false); $date_end=dol_get_last_day($year_start,GETPOST("month"),false); }
+        if (GETPOST("month", 'int')) { $date_start=dol_get_first_day($year_start, GETPOST("month", 'int'), false); $date_end=dol_get_last_day($year_start, GETPOST("month", 'int'), false); }
         else
         {
-            $date_start=dol_get_first_day($year_start,empty($conf->global->SOCIETE_FISCAL_MONTH_START)?1:$conf->global->SOCIETE_FISCAL_MONTH_START,false);
+            $date_start=dol_get_first_day($year_start, empty($conf->global->SOCIETE_FISCAL_MONTH_START)?1:$conf->global->SOCIETE_FISCAL_MONTH_START, false);
             if (empty($conf->global->MAIN_INFO_VAT_RETURN) || $conf->global->MAIN_INFO_VAT_RETURN == 2) $date_end=dol_time_plus_duree($date_start, 3, 'm') - 1;
             else if ($conf->global->MAIN_INFO_VAT_RETURN == 3) $date_end=dol_time_plus_duree($date_start, 1, 'y') - 1;
             else if ($conf->global->MAIN_INFO_VAT_RETURN == 1) $date_end=dol_time_plus_duree($date_start, 1, 'm') - 1;
@@ -72,10 +72,10 @@ if (empty($date_start) || empty($date_end)) // We define date_start and date_end
     }
     else
     {
-        if ($q==1) { $date_start=dol_get_first_day($year_start,1,false); $date_end=dol_get_last_day($year_start,3,false); }
-        if ($q==2) { $date_start=dol_get_first_day($year_start,4,false); $date_end=dol_get_last_day($year_start,6,false); }
-        if ($q==3) { $date_start=dol_get_first_day($year_start,7,false); $date_end=dol_get_last_day($year_start,9,false); }
-        if ($q==4) { $date_start=dol_get_first_day($year_start,10,false); $date_end=dol_get_last_day($year_start,12,false); }
+        if ($q==1) { $date_start=dol_get_first_day($year_start, 1 ,false); $date_end=dol_get_last_day($year_start, 3, false); }
+        if ($q==2) { $date_start=dol_get_first_day($year_start, 4, false); $date_end=dol_get_last_day($year_start, 6, false); }
+        if ($q==3) { $date_start=dol_get_first_day($year_start, 7, false); $date_end=dol_get_last_day($year_start, 9, false); }
+        if ($q==4) { $date_start=dol_get_first_day($year_start, 10, false); $date_end=dol_get_last_day($year_start, 12, false); }
     }
 }
 
@@ -85,7 +85,7 @@ if (empty($min)) $min = 0;
 // Define modetax (0 or 1)
 // 0=normal, 1=option vat for services is on debit, 2=option on payments for products
 $modetax = $conf->global->TAX_MODE;
-if (GETPOSTISSET("modetax")) $modetax=GETPOST("modetax",'int');
+if (GETPOSTISSET("modetax")) $modetax=GETPOST("modetax", 'int');
 if (empty($modetax)) $modetax=0;
 
 // Security check
@@ -371,7 +371,7 @@ if (! is_array($x_coll) || ! is_array($x_paye))
     $object = array(&$x_coll, &$x_paye, &$x_both);
     // Initialize technical object to manage hooks of expenses. Note that conf->hooks_modules contains array array
     $hookmanager->initHooks(array('externalbalance'));
-    $reshook=$hookmanager->executeHooks('addVatLine',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+    $reshook=$hookmanager->executeHooks('addVatLine', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
 
     foreach (array_keys($x_coll) as $thirdparty_id) {
         $subtot_coll_total_ht = 0;
@@ -537,8 +537,8 @@ if (! is_array($x_coll) || ! is_array($x_paye))
             print '<td class="nowrap right">&nbsp;</td>';
             print '<td class="right">&nbsp;</td>';
         }
-        print '<td class="right">'.price(price2num(0,'MT')).'</td>';
-        print '<td class="nowrap right">'.price(price2num(0,'MT')).'</td>';
+        print '<td class="right">'.price(price2num(0, 'MT')).'</td>';
+        print '<td class="nowrap right">'.price(price2num(0, 'MT')).'</td>';
         print '</tr>';
     }
 
@@ -725,8 +725,8 @@ if (! is_array($x_coll) || ! is_array($x_paye))
             print '<td class="nowrap right">&nbsp;</td>';
             print '<td class="right">&nbsp;</td>';
         }
-        print '<td class="right">'.price(price2num(0,'MT')).'</td>';
-        print '<td class="nowrap right">'.price(price2num(0,'MT')).'</td>';
+        print '<td class="right">'.price(price2num(0, 'MT')).'</td>';
+        print '<td class="nowrap right">'.price(price2num(0, 'MT')).'</td>';
         print '</tr>';
     }
 
@@ -738,7 +738,7 @@ if (! is_array($x_coll) || ! is_array($x_paye))
     $diff = $x_coll_sum - $x_paye_sum;
     print '<tr class="liste_total">';
     print '<td class="liste_total" colspan="'.$span.'">'.$langs->trans("TotalToPay").($q?', '.$langs->trans("Quadri").' '.$q:'').'</td>';
-    print '<td class="liste_total nowrap right"><b>'.price(price2num($diff,'MT'))."</b></td>\n";
+    print '<td class="liste_total nowrap right"><b>'.price(price2num($diff, 'MT'))."</b></td>\n";
     print "</tr>\n";
 
     $i++;
