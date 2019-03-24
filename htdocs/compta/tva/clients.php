@@ -482,16 +482,16 @@ if (! is_array($x_coll) || ! is_array($x_paye))
                         if (($type == 0 && $conf->global->TAX_MODE_SELL_PRODUCT == 'invoice')
                             || ($type == 1 && $conf->global->TAX_MODE_SELL_SERVICE == 'invoice')) {
                                 print $langs->trans("NA");
-                            } else {
-                                if (isset($fields['payment_amount']) && price2num($fields['ftotal_ttc'])) {
-                                    $ratiopaymentinvoice = ($fields['payment_amount'] / $fields['ftotal_ttc']);
-                                }
-                                print price(price2num($fields['payment_amount'], 'MT'));
-                                if (isset($fields['payment_amount'])) {
-                                    print ' (' . round($ratiopaymentinvoice * 100, 2) . '%)';
-                                }
+                        } else {
+                            if (isset($fields['payment_amount']) && price2num($fields['ftotal_ttc'])) {
+                                $ratiopaymentinvoice = ($fields['payment_amount'] / $fields['ftotal_ttc']);
                             }
-                            print '</td>';
+                            print price(price2num($fields['payment_amount'], 'MT'));
+                            if (isset($fields['payment_amount'])) {
+                                print ' (' . round($ratiopaymentinvoice * 100, 2) . '%)';
+                            }
+                        }
+                        print '</td>';
                     }
 
                     // Total collected
