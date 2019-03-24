@@ -2148,12 +2148,11 @@ else
                                         $thumbshown=0;
                                         if (preg_match('/\.pdf$/i', $ecmfilesstatic->filename))
                                         {
-                                            $filepdf = $conf->expensereport->dir_output.'/'.$relativepath.$ecmfilesstatic->filename;
-                                            $fileimage = $conf->expensereport->dir_output.'/'.$relativepath.$ecmfilesstatic->filename.'_preview.png';
-                                            $relativepathimage = $relativepath.$ecmfilesstatic->filename.'_preview.png';
+                                            $filepdf = $conf->expensereport->dir_output.'/'.$relativepath.'/'.$ecmfilesstatic->filename;
+                                            $fileimage = $conf->expensereport->dir_output.'/'.$relativepath.'/'.$ecmfilesstatic->filename.'_preview.png';
+                                            $relativepathimage = $relativepath.'/'.$ecmfilesstatic->filename.'_preview.png';
 
                                             $pdfexists = file_exists($filepdf);
-
                                             if ($pdfexists)
                                             {
                                                 // Conversion du PDF en image png si fichier png non existant
