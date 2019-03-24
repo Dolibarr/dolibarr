@@ -2361,8 +2361,7 @@ else
 				                $fileinfo = pathinfo($file['name']);
 				                if (image_format_supported($file['name']) > 0)
 				                {
-				                    $minifile=getImageFileNameForSize($file['name'], '_mini'); // For new thumbs using same ext (in lower case howerver) than original
-				                    //if (! dol_is_file($file['path'].'/'.$minifile)) $minifile=getImageFileNameForSize($file['name'], '_mini', '.png'); // For backward compatibility of old thumbs that were created with filename in lower case and with .png extension
+				                    $minifile=getImageFileNameForSize($file['name'], '_mini'); // For new thumbs using same ext (in lower case however) than original
 				                    //print $file['path'].'/'.$minifile.'<br>';
 				                    $urlforhref=getAdvancedPreviewUrl($modulepart, $fileinfo['relativename'].'.'.strtolower($fileinfo['extension']), 1, '&entity='.(!empty($object->entity)?$object->entity:$conf->entity));
 				                    if (empty($urlforhref)) {
@@ -2378,9 +2377,50 @@ else
 				                }
 				                else
 				                {
+				                    $modulepart='expensereport';
+                                    //$conf->global->MAIN_DISABLE_PDF_THUMBS=1;
+
 				                    print '<a href=""><div class="photoref">';
-				                    //print '<img class="photoexpensereport photorefcenter" height="16" src="'.DOL_URL_ROOT.'/theme/eldy/img/object_trip.png" title="">';
-				                    print img_mime($relativepath.$minifile);
+				                    $thumbshown=0;
+				                    if (preg_match('/\.pdf$/i', $file['name']))
+				                    {
+    				                    $filepdf = $conf->expensereport->dir_output.'/'.$relativepath.$file['name'];
+    				                    $fileimage = $conf->expensereport->dir_output.'/'.$relativepath.$file['name'].'_preview.png';
+    				                    $relativepathimage = $relativepath.$file['name'].'_preview.png';
+
+    				                    $pdfexists = file_exists($filepdf);
+
+    				                    if ($pdfexists)
+    				                    {
+    				                        // Conversion du PDF en image png si fichier png non existant
+    				                        if (! file_exists($fileimage) || (filemtime($fileimage) < filemtime($filepdf)))
+    				                        {
+    				                            if (empty($conf->global->MAIN_DISABLE_PDF_THUMBS))		// If you experience trouble with pdf thumb generation and imagick, you can disable here.
+    				                            {
+    				                                include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+    				                                $ret = dol_convert_file($filepdf, 'png', $fileimage, '0');     // Convert first page of PDF into a file _preview.png
+    				                                if ($ret < 0) $error++;
+    				                            }
+    				                        }
+    				                    }
+
+    				                    if ($pdfexists && ! $error)
+    				                    {
+    				                        $heightforphotref=70;
+    				                        if (! empty($conf->dol_optimize_smallscreen)) $heightforphotref=60;
+    				                        // If the preview file is found
+    				                        if (file_exists($fileimage))
+    				                        {
+    				                            $thumbshown=1;
+    				                            print '<img height="'.$heightforphotref.'" class="photo photowithmargin photowithborder" src="'.DOL_URL_ROOT . '/viewimage.php?modulepart=apercu'.$modulepart.'&amp;file='.urlencode($relativepathimage).'">';
+    				                        }
+    				                    }
+				                    }
+
+				                    if (! $thumbshown)
+				                    {
+				                        print img_mime($minifile);
+				                    }
 				                    print '</div></a>';
 				                }
 				                print '<br>';

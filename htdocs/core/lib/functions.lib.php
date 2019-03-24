@@ -1382,25 +1382,25 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 
 					$filepath = $dir_output . $subdir . "/";
 
-					$file = $filepath . $objectref . ".pdf";
+					$filepdf = $filepath . $objectref . ".pdf";
 					$relativepath = $subdir.'/'.$objectref.'.pdf';
 
 					// Define path to preview pdf file (preview precompiled "file.ext" are "file.ext_preview.png")
-					$fileimage = $file.'_preview.png';
+					$fileimage = $filepdf.'_preview.png';
 					$relativepathimage = $relativepath.'_preview.png';
 
-					$pdfexists = file_exists($file);
+					$pdfexists = file_exists($filepdf);
 
 					// If PDF file exists
 					if ($pdfexists)
 					{
 						// Conversion du PDF en image png si fichier png non existant
-						if (! file_exists($fileimage) || (filemtime($fileimage) < filemtime($file)))
+						if (! file_exists($fileimage) || (filemtime($fileimage) < filemtime($filepdf)))
 						{
 							if (empty($conf->global->MAIN_DISABLE_PDF_THUMBS))		// If you experience trouble with pdf thumb generation and imagick, you can disable here.
 							{
 								include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-								$ret = dol_convert_file($file, 'png', $fileimage, '0');     // Convert first page of PDF into a file _preview.png
+								$ret = dol_convert_file($filepdf, 'png', $fileimage, '0');     // Convert first page of PDF into a file _preview.png
 								if ($ret < 0) $error++;
 							}
 						}
