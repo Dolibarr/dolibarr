@@ -40,10 +40,6 @@ $number = GETPOST('number');
 $idline = GETPOST('idline');
 $desc = GETPOST('desc', 'alpha');
 $pay = GETPOST('pay');
-$sql="SELECT rowid FROM ".MAIN_DB_PREFIX."facture where ref='(PROV-POS-".$place.")'";
-$resql = $db->query($sql);
-$row = $db->fetch_array($resql);
-$placeid = $row[0];
 
 $placeid = 0;	// $placeid is id of invoice
 
@@ -53,7 +49,9 @@ if ($ret > 0) $placeid = $invoice->id;
 
 
 // Retrieve paiementid
-$sql="SELECT id FROM ".MAIN_DB_PREFIX."c_paiement WHERE code='$pay'";
+$sql = "SELECT id FROM ".MAIN_DB_PREFIX."c_paiement";
+$sql.= " WHERE entity IN (".getEntity('c_paiement').")";
+$sql.= " AND code = '$pay'";
 $resql = $db->query($sql);
 $codes = $db->fetch_array($resql);
 $paiementid=$codes[0];

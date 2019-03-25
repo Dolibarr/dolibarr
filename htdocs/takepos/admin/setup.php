@@ -43,7 +43,10 @@ $langs->loadLangs(array("admin", "cashdesk"));
 
 global $db;
 
-$sql="SELECT code, libelle FROM ".MAIN_DB_PREFIX."c_paiement WHERE active=1 ORDER BY libelle";
+$sql = "SELECT code, libelle FROM ".MAIN_DB_PREFIX."c_paiement";
+$sql.= " WHERE entity IN (".getEntity('c_paiement').")";
+$sql.= " AND active = 1";
+$sql.= " ORDER BY libelle";
 $resql = $db->query($sql);
 $paiements = array();
 if($resql){
