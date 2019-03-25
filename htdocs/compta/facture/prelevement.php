@@ -134,7 +134,10 @@ if ($object->id > 0)
 	// For example print 239.2 - 229.3 - 9.9; does not return 0.
 	//$resteapayer=bcadd($object->total_ttc,$totalpaye,$conf->global->MAIN_MAX_DECIMALS_TOT);
 	//$resteapayer=bcadd($resteapayer,$totalavoir,$conf->global->MAIN_MAX_DECIMALS_TOT);
-	$resteapayer = price2num($object->total_ttc - $totalpaye - $totalcreditnotes - $totaldeposits, 'MT');
+	if (is_numeric($object->total_ttc) && is_numeric($totalpaye) && is_numeric($totalcreditnotes) && is_numeric($totaldeposits))
+	{
+	   $resteapayer = price2num($object->total_ttc - $totalpaye - $totalcreditnotes - $totaldeposits, 'MT');
+	}
 
 	if ($object->paye) $resteapayer=0;
 	$resteapayeraffiche=$resteapayer;
@@ -458,7 +461,10 @@ if ($object->id > 0)
 	// Total with tax
 	print '<tr><td>' . $langs->trans('AmountTTC') . '</td><td class="nowrap">' . price($object->total_ttc, 1, '', 1, - 1, - 1, $conf->currency) . '</td></tr>';
 
-    $resteapayer = price2num($object->total_ttc - $totalpaye - $totalcreditnotes - $totaldeposits, 'MT');
+    if (is_numeric($object->total_ttc) && is_numeric($totalpaye) && is_numeric($totalcreditnotes) && is_numeric($totaldeposits))
+	{
+	   $resteapayer = price2num($object->total_ttc - $totalpaye - $totalcreditnotes - $totaldeposits, 'MT');
+	}
 
     // TODO Replace this by an include with same code to show already done payment visible in invoice card
     print '<tr><td>'.$langs->trans('RemainderToPay').'</td><td class="nowrap">'.price($resteapayer, 1, '', 1, - 1, - 1, $conf->currency).'</td></tr>';
