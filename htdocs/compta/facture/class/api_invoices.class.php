@@ -1229,7 +1229,10 @@ class Invoices extends DolibarrApi
     	$totalpaye = $this->invoice->getSommePaiement();
     	$totalcreditnotes = $this->invoice->getSumCreditNotesUsed();
     	$totaldeposits = $this->invoice->getSumDepositsUsed();
-    	$resteapayer = price2num($this->invoice->total_ttc - $totalpaye - $totalcreditnotes - $totaldeposits, 'MT');
+    	if (is_numeric($this->invoice->total_ttc) && is_numeric($totalpaye) && is_numeric($totalcreditnotes) && is_numeric($totaldeposits))
+		{
+    	   $resteapayer = price2num($this->invoice->total_ttc - $totalpaye - $totalcreditnotes - $totaldeposits, 'MT');
+		}
 
     	$this->db->begin();
 
