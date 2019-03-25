@@ -5,7 +5,7 @@
  * Copyright (C) 2005		Marc Barilley			<marc@ocebo.com>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2010-2017	Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2013-2018	Philippe Grand			<philippe.grand@atoo-net.com>
+ * Copyright (C) 2013-2019	Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2014-2016	Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2015		Bahfir Abbes			<bafbes@gmail.com>
@@ -113,10 +113,35 @@ class FactureFournisseur extends CommonInvoice
 
     public $author;
     public $libelle;
-    public $datec;            // Creation date
-    public $tms;              // Last update date
-    public $date;             // Invoice date
-    public $date_echeance;    // Max payment date
+
+    /**
+     * Date creation record (datec)
+     *
+     * @var integer
+     */
+    public $datec;
+
+    /**
+     * Date modification record (tms)
+     *
+     * @var integer
+     */
+    public $tms;
+
+    /**
+     * Invoice date (date)
+     *
+     * @var integer
+     */
+    public $date;
+
+    /**
+     * Max payment date (date_echeance)
+     *
+     * @var integer
+     */
+    public $date_echeance;
+
     public $amount=0;
     public $remise=0;
     public $tva=0;
@@ -1471,16 +1496,22 @@ class FactureFournisseur extends CommonInvoice
             return 0;
         }
 
+        dol_syslog(get_class($this)."::set_draft", LOG_DEBUG);
+
         $this->db->begin();
 
         $sql = "UPDATE ".MAIN_DB_PREFIX."facture_fourn";
-        $sql.= " SET fk_statut = 0";
+        $sql.= " SET fk_statut = ".self::STATUS_DRAFT;
         $sql.= " WHERE rowid = ".$this->id;
 
-        dol_syslog(get_class($this)."::set_draft", LOG_DEBUG);
         $result=$this->db->query($sql);
         if ($result)
         {
+            if (! $error)
+            {
+                $this->oldcopy= clone $this;
+            }
+
             // Si on incremente le produit principal et ses composants a la validation de facture fournisseur, on decremente
             if ($result >= 0 && ! empty($conf->stock->enabled) && ! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_BILL))
             {

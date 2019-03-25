@@ -217,7 +217,7 @@ $formadmin=new FormAdmin($db);
 
 print load_fiche_titre($langs->trans("GUISetup"), '', 'title_setup');
 
-print $langs->trans("DisplayDesc")."<br>\n";
+print '<span class="opacitymedium">'.$langs->trans("DisplayDesc")."</span><br>\n";
 print "<br>\n";
 
 

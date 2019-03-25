@@ -189,7 +189,7 @@ ALTER TABLE llx_socpeople ADD COLUMN linkedin  varchar(255) after whatsapp;
 ALTER TABLE llx_adherent ADD COLUMN linkedin  varchar(255) after whatsapp;
 ALTER TABLE llx_user ADD COLUMN linkedin  varchar(255) after whatsapp;
 
-ALTER TABLE llx_expensereport_det ADD COLUMN fk_expensereport_line integer DEFAULT NULL;
+ALTER TABLE llx_expensereport_det ADD COLUMN fk_ecm_files integer DEFAULT NULL;
 
 
 CREATE TABLE llx_bom_bom(
@@ -270,6 +270,11 @@ ALTER TABLE llx_expensereport_det ADD COLUMN subprice double(24,8) DEFAULT 0 NOT
 
 ALTER TABLE llx_product_attribute_combination ADD INDEX idx_product_att_com_product_parent (fk_product_parent);
 ALTER TABLE llx_product_attribute_combination ADD INDEX idx_product_att_com_product_child (fk_product_child);
+
+ALTER TABLE llx_product ADD COLUMN fk_project integer DEFAULT NULL;
+ALTER TABLE llx_product ADD INDEX idx_product_fk_project (fk_project);
+
+ALTER TABLE llx_actioncomm ADD COLUMN calling_duration integer;
 
 -- Update visible field (disabled by default to not overwrite existing values !)
 -- UPDATE llx_categorie SET visible = 1;

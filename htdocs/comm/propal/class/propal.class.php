@@ -439,6 +439,7 @@ class Propal extends CommonObject
 		global $mysoc, $conf, $langs;
 
 		dol_syslog(get_class($this)."::addline propalid=$this->id, desc=$desc, pu_ht=$pu_ht, qty=$qty, txtva=$txtva, fk_product=$fk_product, remise_except=$remise_percent, price_base_type=$price_base_type, pu_ttc=$pu_ttc, info_bits=$info_bits, type=$type, fk_remise_except=".$fk_remise_except);
+
 		if ($this->statut == self::STATUS_DRAFT)
 		{
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
@@ -629,7 +630,7 @@ class Propal extends CommonObject
         }
 		else
 		{
-			dol_syslog(get_class($this)."::addline status of order must be Draft to allow use of ->addline()", LOG_ERR);
+			dol_syslog(get_class($this)."::addline status of proposal must be Draft to allow use of ->addline()", LOG_ERR);
 			return -3;
 		}
     }
@@ -2610,12 +2611,20 @@ class Propal extends CommonObject
         // phpcs:enable
 		$error=0;
 
+		// Protection
+		if ($this->statut <= self::STATUS_DRAFT)
+		{
+		    return 0;
+		}
+
+		dol_syslog(get_class($this)."::setDraft", LOG_DEBUG);
+
 		$this->db->begin();
 
-		$sql = "UPDATE ".MAIN_DB_PREFIX."propal SET fk_statut = ".self::STATUS_DRAFT;
+		$sql = "UPDATE ".MAIN_DB_PREFIX."propal";
+		$sql.= " SET fk_statut = ".self::STATUS_DRAFT;
 		$sql.= " WHERE rowid = ".$this->id;
 
-		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if (!$resql)
 		{
@@ -2626,8 +2635,6 @@ class Propal extends CommonObject
 		if (! $error)
 		{
 			$this->oldcopy= clone $this;
-			$this->statut = self::STATUS_DRAFT;
-			$this->brouillon = 1;
 		}
 
 		if (! $notrigger && empty($error))
@@ -2640,7 +2647,10 @@ class Propal extends CommonObject
 
 		if (! $error)
 		{
-			$this->db->commit();
+		    $this->statut = self::STATUS_DRAFT;
+		    $this->brouillon = 1;
+
+		    $this->db->commit();
 			return 1;
 		}
 		else

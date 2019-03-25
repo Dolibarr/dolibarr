@@ -87,11 +87,12 @@ if (($action=="addline" || $action=="freezone") && $placeid == 0)
 {
 	$invoice->socid = $conf->global->CASHDESK_ID_THIRDPARTY;
 	$invoice->date = dol_now();
-	$invoice->ref = "(PROV-POS-".$place.")";
 	$invoice->module_source = 'takepos';
 	$invoice->pos_source = (string) $place;
 
 	$placeid = $invoice->create($user);
+	$sql="UPDATE ".MAIN_DB_PREFIX."facture set ref='(PROV-POS-".$place.")' where rowid=".$placeid;
+	$db->query($sql);
 }
 
 if ($action == "addline") {
@@ -375,7 +376,8 @@ if ($action=="valid")
 {
 	print '<p style="font-size:120%;" class="center"><b>'.$invoice->ref." ".$langs->trans('BillShortStatusValidated').'</b></p>';
 	if ($conf->global->TAKEPOSCONNECTOR) print '<center><button type="button" onclick="TakeposPrinting('.$placeid.');">'.$langs->trans('PrintTicket').'</button><center>';
-	else print '<center><button type="button" onclick="Print('.$placeid.');">'.$langs->trans('PrintTicket').'</button><center>';
+	else print '<center><button id="buttonprint" type="button" onclick="Print('.$placeid.');">'.$langs->trans('PrintTicket').'</button><center>';
+    if($conf->global->TAKEPOS_AUTO_PRINT_TICKETS) print '<script language="javascript">$("#buttonprint").click();</script>';
 }
 
 if ($action == "search")

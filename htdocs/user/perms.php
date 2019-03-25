@@ -96,6 +96,9 @@ if (empty($reshook)) {
 			$user->getrights();
 			$menumanager->loadMenu();
 		}
+
+		$object->clearrights();
+		$object->getrights();
 	}
 
 	if ($action == 'delrights' && $caneditperms) {
@@ -109,6 +112,9 @@ if (empty($reshook)) {
 			$user->getrights();
 			$menumanager->loadMenu();
 		}
+
+		$object->clearrights();
+		$object->getrights();
 	}
 }
 
@@ -265,9 +271,9 @@ if (($caneditperms && empty($objMod->rights_admin_allowed)) || empty($object->ad
 	if ($caneditperms)
 	{
 		print '<td class="center nowrap">';
-		print '<a class="reposition" title="'.dol_escape_htmltag($langs->trans("All")).'" alt="'.dol_escape_htmltag($langs->trans("All")).'" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=addrights&amp;entity='.$entity.'&amp;module=allmodules">'.$langs->trans("All")."</a>";
+		print '<a class="reposition commonlink" title="'.dol_escape_htmltag($langs->trans("All")).'" alt="'.dol_escape_htmltag($langs->trans("All")).'" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=addrights&amp;entity='.$entity.'&amp;module=allmodules">'.$langs->trans("All")."</a>";
 		print '/';
-		print '<a class="reposition" title="'.dol_escape_htmltag($langs->trans("None")).'" alt="'.dol_escape_htmltag($langs->trans("None")).'" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delrights&amp;entity='.$entity.'&amp;module=allmodules">'.$langs->trans("None")."</a>";
+		print '<a class="reposition commonlink" title="'.dol_escape_htmltag($langs->trans("None")).'" alt="'.dol_escape_htmltag($langs->trans("None")).'" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delrights&amp;entity='.$entity.'&amp;module=allmodules">'.$langs->trans("None")."</a>";
 		print '</td>';
 	}
 	print '<td class="center" width="24">&nbsp;</td>';

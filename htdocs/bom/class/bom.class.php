@@ -604,7 +604,7 @@ class BOM extends CommonObject
 	 */
 	public function setDraft($user)
 	{
-	    global $conf,$langs;
+	    global $conf, $langs;
 
 	    $error=0;
 
@@ -630,6 +630,11 @@ class BOM extends CommonObject
 	    dol_syslog(get_class($this)."::setDraft", LOG_DEBUG);
 	    if ($this->db->query($sql))
 	    {
+	        if (! $error)
+	        {
+	            $this->oldcopy= clone $this;
+	        }
+
 	        if (!$error) {
 	            // Call trigger
 	            $result=$this->call_trigger('BOM_UNVALIDATE', $user);
@@ -640,7 +645,7 @@ class BOM extends CommonObject
 	            $this->status=self::STATUS_DRAFT;
 	            $this->db->commit();
 	            return 1;
-	        }else {
+	        } else {
 	            $this->db->rollback();
 	            return -1;
 	        }
