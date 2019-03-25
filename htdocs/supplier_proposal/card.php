@@ -937,7 +937,7 @@ if (empty($reshook))
 		$result = $object->availability($_POST['availability_id']);
 	}
 
-	// Conditions de reglement
+	// Terms of the settlement
 	elseif ($action == 'setconditions' && $user->rights->supplier_proposal->creer) {
 		$result = $object->setPaymentTerms(GETPOST('cond_reglement_id', 'int'));
 	}
