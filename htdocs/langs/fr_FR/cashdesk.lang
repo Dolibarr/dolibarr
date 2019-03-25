@@ -51,3 +51,4 @@ RealAmount=Montant réel
 CashFenceDone=Clôture de caisse faite pour la période
 CashDeskBankAccountFor=Compte utilisé pour les paiements en
 NoPaimementModesDefined=Pas de mode de paiement défini dans la configuration de TakePOS
+AutoPrintTickets=Imprimet les tickets automatiquement

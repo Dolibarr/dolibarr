@@ -6610,7 +6610,11 @@ class Form
 		// Can complete the possiblelink array
 		$hookmanager->initHooks(array('commonobject'));
 		$parameters=array('listofidcompanytoscan' => $listofidcompanytoscan);
-		$reshook=$hookmanager->executeHooks('showLinkToObjectBlock', $parameters, $object, $action);    // Note that $action and $object may have been modified by hook
+
+		if (! empty($listofidcompanytoscan))  // If empty, we don't have criteria to scan the object we can link to
+		{
+            $reshook=$hookmanager->executeHooks('showLinkToObjectBlock', $parameters, $object, $action);    // Note that $action and $object may have been modified by hook
+		}
 
 		if (empty($reshook))
 		{

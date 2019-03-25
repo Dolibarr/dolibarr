@@ -26,17 +26,18 @@
  *  \brief      	Page for trip and expense report card
  */
 
-$res=0;
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/CMailFile.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formmail.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formprojet.class.php';
 require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
+require_once DOL_DOCUMENT_ROOT . '/ecm/class/ecmfiles.class.php';
 require_once DOL_DOCUMENT_ROOT . '/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/expensereport.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/price.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/images.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/modules/expensereport/modules_expensereport.php';
 require_once DOL_DOCUMENT_ROOT . '/expensereport/class/expensereport.class.php';
 require_once DOL_DOCUMENT_ROOT . '/expensereport/class/paymentexpensereport.class.php';
@@ -1090,9 +1091,18 @@ if (empty($reshook))
     	$error = 0;
 
     	// First save uploaded file
-    	if (! empty($_FILES))
+    	$fk_ecm_files = 0;
+    	if (GETPOSTISSET('attachfile'))
     	{
-
+    	    $arrayoffiles=GETPOST('attachfile', 'array');
+    	    if (is_array($arrayoffiles) && ! empty($arrayoffiles[0]))
+    	    {
+    	        include_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
+    	        $relativepath='expensereport/'.$object->ref.'/'.$arrayoffiles[0];
+    	        $ecmfiles=new EcmFiles($db);
+    	        $ecmfiles->fetch(0, '', $relativepath);
+    	        $fk_ecm_files = $ecmfiles->id;
+    	    }
     	}
 
 		// if VAT is not used in Dolibarr, set VAT rate to 0 because VAT rate is necessary.
@@ -1111,7 +1121,7 @@ if (empty($reshook))
     	$qty = GETPOST('qty', 'int');
     	if (empty($qty)) $qty=1;
 
-    	if (! $fk_c_type_fees > 0)
+    	if (! ($fk_c_type_fees > 0))
     	{
     		$error++;
     		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type")), null, 'errors');
@@ -1144,13 +1154,12 @@ if (empty($reshook))
     		setEventMessages($langs->trans("WarningDateOfLineMustBeInExpenseReportRange"), null, 'warnings');
     	}
 
-    	// S'il y'a eu au moins une erreur
     	if (! $error)
     	{
     		$type = 0;	// TODO What if service ? We should take the type product/service from the type of expense report llx_c_type_fees
 
 			// Insert line
-			$result = $object->addline($qty, $value_unit, $fk_c_type_fees, $vatrate, $date, $comments, $fk_projet, $fk_c_exp_tax_cat, $type);
+    		$result = $object->addline($qty, $value_unit, $fk_c_type_fees, $vatrate, $date, $comments, $fk_projet, $fk_c_exp_tax_cat, $type, $fk_ecm_files);
 			if ($result > 0)
 			{
 				$ret = $object->fetch($object->id); // Reload to get new records
@@ -1340,6 +1349,7 @@ $formproject = new FormProjets($db);
 $projecttmp = new Project($db);
 $paymentexpensereportstatic=new PaymentExpenseReport($db);
 $bankaccountstatic = new Account($db);
+$ecmfilesstatic = new EcmFiles($db);
 
 // Create
 if ($action == 'create')
@@ -1709,7 +1719,7 @@ else
 				print '<div class="fichehalfleft">';
 				print '<div class="underbanner clearboth"></div>';
 
-				print '<table class="border centpercent">';
+				print '<table class="border tableforfield centpercent">';
 
 				// Author
 				print '<tr>';
@@ -1853,7 +1863,7 @@ else
 				print '<div class="ficheaddleft">';
 				print '<div class="underbanner clearboth"></div>';
 
-				print '<table class="border centpercent">';
+				print '<table class="border tableforfield centpercent">';
 
 				// Amount
 				print '<tr>';
@@ -2020,7 +2030,7 @@ else
 					if (! empty($conf->projet->enabled)) print '<td class="minwidth100imp">'.$langs->trans('Project').'</td>';
 					if (!empty($conf->global->MAIN_USE_EXPENSE_IK)) print '<td>'.$langs->trans('CarCategory').'</td>';
 					print '<td class="center">'.$langs->trans('Type').'</td>';
-					print '<td class="left">'.$langs->trans('Description').'</td>';
+					print '<td>'.$langs->trans('Description').'</td>';
 					print '<td class="right">'.$langs->trans('VAT').'</td>';
 					print '<td class="right">'.$langs->trans('PriceUHT').'</td>';
 					print '<td class="right">'.$langs->trans('PriceUTTC').'</td>';
@@ -2030,6 +2040,9 @@ else
 						print '<td class="right">'.$langs->trans('AmountHT').'</td>';
 						print '<td class="right">'.$langs->trans('AmountTTC').'</td>';
 					}
+                    // Picture
+					print '<td>';
+					print '</td>';
 					// Ajout des boutons de modification/suppression
 					if (($object->fk_statut < 2 || $object->fk_statut == 99) && $user->rights->expensereport->creer)
 					{
@@ -2102,6 +2115,80 @@ else
 								print '<td class="right">'.price($line->total_ttc).'</td>';
 							}
 
+							// Column with preview
+							print '<td class="center">';
+							if ($line->fk_ecm_files > 0)
+							{
+							    $modulepart='expensereport';
+							    $maxheightmini=32;
+
+                                $result = $ecmfilesstatic->fetch($line->fk_ecm_files);
+                                if ($result > 0)
+                                {
+                                    $relativepath=preg_replace('/expensereport\//', '', $ecmfilesstatic->filepath);
+                                    $fileinfo = pathinfo($ecmfilesstatic->filepath.'/'.$ecmfilesstatic->filename);
+                                    if (image_format_supported($fileinfo['basename']) > 0)
+                                    {
+                                        $minifile=getImageFileNameForSize($fileinfo['basename'], '_mini'); // For new thumbs using same ext (in lower case howerver) than original
+                                        if (! dol_is_file($conf->expensereport->dir_output.'/'.$relativepath.'/'.$minifile)) $minifile=getImageFileNameForSize($fileinfo['basename'], '_mini', '.png'); // For backward compatibility of old thumbs that were created with filename in lower case and with .png extension
+                                        //print $file['path'].'/'.$minifile.'<br>';
+                                        $urlforhref=getAdvancedPreviewUrl($modulepart, $relativepath.'/'.$fileinfo['filename'].'.'.strtolower($fileinfo['extension']), 1, '&entity='.(!empty($object->entity)?$object->entity:$conf->entity));
+                                        if (empty($urlforhref)) {
+                                            $urlforhref=DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.(!empty($object->entity)?$object->entity:$conf->entity).'&file='.urlencode($relativepath.$fileinfo['filename'].'.'.strtolower($fileinfo['extension']));
+                                            print '<a href="'.$urlforhref.'" class="aphoto" target="_blank">';
+                                        } else {
+                                            print '<a href="'.$urlforhref['url'].'" class="'.$urlforhref['css'].'" target="'.$urlforhref['target'].'" mime="'.$urlforhref['mime'].'">';
+                                        }
+                                        print '<img class="photo" height="'.$maxheightmini.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.(!empty($object->entity)?$object->entity:$conf->entity).'&file='.urlencode($relativepath.'/'.$minifile).'" title="">';
+                                        print '</a>';
+                                    }
+                                    else
+                                    {
+                                        $modulepart='expensereport';
+                                        $thumbshown=0;
+                                        if (preg_match('/\.pdf$/i', $ecmfilesstatic->filename))
+                                        {
+                                            $filepdf = $conf->expensereport->dir_output.'/'.$relativepath.'/'.$ecmfilesstatic->filename;
+                                            $fileimage = $conf->expensereport->dir_output.'/'.$relativepath.'/'.$ecmfilesstatic->filename.'_preview.png';
+                                            $relativepathimage = $relativepath.'/'.$ecmfilesstatic->filename.'_preview.png';
+
+                                            $pdfexists = file_exists($filepdf);
+                                            if ($pdfexists)
+                                            {
+                                                // Conversion du PDF en image png si fichier png non existant
+                                                if (! file_exists($fileimage) || (filemtime($fileimage) < filemtime($filepdf)))
+                                                {
+                                                    if (empty($conf->global->MAIN_DISABLE_PDF_THUMBS))		// If you experience trouble with pdf thumb generation and imagick, you can disable here.
+                                                    {
+                                                        include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+                                                        $ret = dol_convert_file($filepdf, 'png', $fileimage, '0');     // Convert first page of PDF into a file _preview.png
+                                                        if ($ret < 0) $error++;
+                                                    }
+                                                }
+                                            }
+
+                                            if ($pdfexists && ! $error)
+                                            {
+                                                $heightforphotref=70;
+                                                if (! empty($conf->dol_optimize_smallscreen)) $heightforphotref=60;
+                                                // If the preview file is found
+                                                if (file_exists($fileimage))
+                                                {
+                                                    $thumbshown=1;
+                                                    print '<img height="'.$heightforphotref.'" class="photo photowithmargin photowithborder" src="'.DOL_URL_ROOT . '/viewimage.php?modulepart=apercu'.$modulepart.'&amp;file='.urlencode($relativepathimage).'">';
+                                                }
+                                            }
+                                        }
+
+                                        if (! $thumbshown)
+                                        {
+                                            print img_mime($ecmfilesstatic->filename);
+                                        }
+                                    }
+                                }
+							}
+							print '</td>';
+
 							// Ajout des boutons de modification/suppression
 							if (($object->fk_statut < ExpenseReport::STATUS_VALIDATED || $object->fk_statut == ExpenseReport::STATUS_REFUSED) && $user->rights->expensereport->creer)
 							{
@@ -2122,72 +2209,77 @@ else
 
 						if ($action == 'editline' && $line->rowid == GETPOST('rowid', 'int'))
 						{
-								print '<tr class="oddeven">';
+							print '<tr class="oddeven">';
 
-								print '<td></td>';
+							print '<td></td>';
 
-								// Select date
-								print '<td class="center">';
-								print $form->selectDate($line->date, 'date');
-								print '</td>';
+							// Select date
+							print '<td class="center">';
+							print $form->selectDate($line->date, 'date');
+							print '</td>';
 
-								// Select project
-								if (! empty($conf->projet->enabled))
-								{
-									print '<td>';
-									$formproject->select_projects(-1, $line->fk_project, 'fk_projet', 0, 0, 1, 1, 0, 0, 0, '', 0, 0, 'maxwidth300');
-									print '</td>';
-								}
-
-								if (!empty($conf->global->MAIN_USE_EXPENSE_IK))
-								{
-									print '<td class="fk_c_exp_tax_cat">';
-									$params = array('fk_expense' => $object->id, 'fk_expense_det' => $line->rowid, 'date' => $line->dates);
-									print $form->selectExpenseCategories($line->fk_c_exp_tax_cat, 'fk_c_exp_tax_cat', 1, array(), 'fk_c_type_fees', $userauthor->default_c_exp_tax_cat, $params);
-									print '</td>';
-								}
-
-								// Select type
-								print '<td class="center">';
-								select_type_fees_id($line->fk_c_type_fees, 'fk_c_type_fees');
-								print '</td>';
-
-								// Add comments
+							// Select project
+							if (! empty($conf->projet->enabled))
+							{
 								print '<td>';
-								print '<textarea name="comments" class="flat_ndf centpercent">'.dol_escape_htmltag($line->comments, 0, 1).'</textarea>';
+								$formproject->select_projects(-1, $line->fk_project, 'fk_projet', 0, 0, 1, 1, 0, 0, 0, '', 0, 0, 'maxwidth300');
 								print '</td>';
+							}
 
-								// VAT
-								print '<td class="right">';
-								print $form->load_tva('vatrate', (isset($_POST["vatrate"])?$_POST["vatrate"]:$line->vatrate), $mysoc, '', 0, 0, '', false, 1);
+							if (!empty($conf->global->MAIN_USE_EXPENSE_IK))
+							{
+								print '<td class="fk_c_exp_tax_cat">';
+								$params = array('fk_expense' => $object->id, 'fk_expense_det' => $line->rowid, 'date' => $line->dates);
+								print $form->selectExpenseCategories($line->fk_c_exp_tax_cat, 'fk_c_exp_tax_cat', 1, array(), 'fk_c_type_fees', $userauthor->default_c_exp_tax_cat, $params);
 								print '</td>';
+							}
 
-								// Unit price
-								print '<td class="right">';
-								print '<input type="text" min="0" class="right maxwidth50" id="value_unit_ht" name="value_unit_ht" value="'.dol_escape_htmltag(price2num($line->value_unit_ht)).'" />';
-								print '</td>';
+							// Select type
+							print '<td class="center">';
+							select_type_fees_id($line->fk_c_type_fees, 'fk_c_type_fees');
+							print '</td>';
 
-								// Unit price with tax
-								print '<td class="right">';
-								print '<input type="text" min="0" class="right maxwidth50" id="value_unit" name="value_unit" value="'.dol_escape_htmltag(price2num($line->value_unit)).'" />';
-								print '</td>';
+							// Add comments
+							print '<td>';
+							print '<textarea name="comments" class="flat_ndf centpercent">'.dol_escape_htmltag($line->comments, 0, 1).'</textarea>';
+							print '</td>';
 
-								// Quantity
-								print '<td class="right">';
-								print '<input type="number" min="0" class="right maxwidth50" name="qty" value="'.dol_escape_htmltag($line->qty).'" />';
-								print '</td>';
+							// VAT
+							print '<td class="right">';
+							print $form->load_tva('vatrate', (isset($_POST["vatrate"])?$_POST["vatrate"]:$line->vatrate), $mysoc, '', 0, 0, '', false, 1);
+							print '</td>';
 
-								if ($action != 'editline')
-								{
-									print '<td class="right">'.$langs->trans('AmountHT').'</td>';
-									print '<td class="right">'.$langs->trans('AmountTTC').'</td>';
-								}
+							// Unit price
+							print '<td class="right">';
+							print '<input type="text" min="0" class="right maxwidth50" id="value_unit_ht" name="value_unit_ht" value="'.dol_escape_htmltag(price2num($line->value_unit_ht)).'" />';
+							print '</td>';
 
-								print '<td class="center">';
-								print '<input type="hidden" name="rowid" value="'.$line->rowid.'">';
-								print '<input type="submit" class="button" name="save" value="'.$langs->trans('Save').'">';
-								print '<br><input type="submit" class="button" name="cancel" value="'.$langs->trans('Cancel').'">';
-								print '</td>';
+							// Unit price with tax
+							print '<td class="right">';
+							print '<input type="text" min="0" class="right maxwidth50" id="value_unit" name="value_unit" value="'.dol_escape_htmltag(price2num($line->value_unit)).'" />';
+							print '</td>';
+
+							// Quantity
+							print '<td class="right">';
+							print '<input type="number" min="0" class="right maxwidth50" name="qty" value="'.dol_escape_htmltag($line->qty).'" />';
+							print '</td>';
+
+							if ($action != 'editline')
+							{
+								print '<td class="right">'.$langs->trans('AmountHT').'</td>';
+								print '<td class="right">'.$langs->trans('AmountTTC').'</td>';
+							}
+
+							// Picture
+							print '<td class="center">';
+							//print $line->fk_ecm_files;
+							print '</td>';
+
+							print '<td class="center">';
+							print '<input type="hidden" name="rowid" value="'.$line->rowid.'">';
+							print '<input type="submit" class="button" name="save" value="'.$langs->trans('Save').'">';
+							print '<br><input type="submit" class="button" name="cancel" value="'.$langs->trans('Cancel').'">';
+							print '</td>';
 						}
 
 						$i++;
@@ -2197,7 +2289,7 @@ else
 				// Add a line
 				if (($object->fk_statut == ExpenseReport::STATUS_DRAFT || $object->fk_statut == ExpenseReport::STATUS_REFUSED) && $action != 'editline' && $user->rights->expensereport->creer)
 				{
-				    $colspan = 10;
+				    $colspan = 11;
 				    if (! empty($conf->global->MAIN_USE_EXPENSE_IK)) $colspan++;
 				    if (! empty($conf->projet->enabled)) $colspan++;
 				    if ($action != 'editline') $colspan++;
@@ -2232,10 +2324,12 @@ else
 				    print '$(document).ready(function() {
 				        $( ".auploadnewfilenow" ).click(function() {
 				            jQuery(".truploadnewfilenow").toggle();
+                            jQuery(".trattachnewfilenow").hide();
                             return false;
                         });
 				        $( ".aattachtodoc" ).click(function() {
 				            jQuery(".trattachnewfilenow").toggle();
+                            jQuery(".truploadnewfilenow").hide();
                             return false;
                         });';
 				    if (is_array(GETPOST('attachfile', 'array')) && count(GETPOST('attachfile', 'array')))
@@ -2249,13 +2343,11 @@ else
 				    print '</td></tr>';
 
 				    // Add line to upload new file
-				    print '<tr class="oddeven truploadnewfilenow"'.(empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)?' style="display: none"':'').'>';
+				    print '<tr class="oddeven nohover truploadnewfilenow"'.(empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)?' style="display: none"':'').'>';
 				    print '<td colspan="'.$colspan.'">';
 
 				    $modulepart = 'expensereport';
 				    $permission = $user->rights->expensereport->creer;
-
-				    $formfile=new FormFile($db);
 
 				    // We define var to enable the feature to add prefix of uploaded files
 				    $savingdocmask='';
@@ -2266,10 +2358,6 @@ else
 				        {
 				            $savingdocmask=dol_sanitizeFileName($object->ref).'-__file__';
 				        }
-				        /*if (in_array($modulepart,array('member')))
-				         {
-				         $savingdocmask=$object->login.'___file__';
-				         }*/
 				    }
 
 				    // Show upload form (document and links)
@@ -2305,7 +2393,7 @@ else
 				        $nbLinks=Link::count($db, $object->element, $object->id);
 				        if ($nbFiles >= 0)
 				        {
-				            print '<tr class="oddeven trattachnewfilenow"'.(! GETPOSTISSET('sendit') && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)?' style="display: none"':'').'>';
+				            print '<tr class="oddeven nohover trattachnewfilenow"'.(! GETPOSTISSET('sendit') && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)?' style="display: none"':'').'>';
 				            print '<td colspan="'.$colspan.'">';
 				            //print '<span class="opacitymedium">'.$langs->trans("AttachTheNewLineToTheDocument").'</span><br>';
 				            $modulepart='expensereport';$maxheightmini=48;
@@ -2316,8 +2404,7 @@ else
 				                $fileinfo = pathinfo($file['name']);
 				                if (image_format_supported($file['name']) > 0)
 				                {
-				                    $minifile=getImageFileNameForSize($file['name'], '_mini'); // For new thumbs using same ext (in lower case howerver) than original
-				                    //if (! dol_is_file($file['path'].'/'.$minifile)) $minifile=getImageFileNameForSize($file['name'], '_mini', '.png'); // For backward compatibility of old thumbs that were created with filename in lower case and with .png extension
+				                    $minifile=getImageFileNameForSize($file['name'], '_mini'); // For new thumbs using same ext (in lower case however) than original
 				                    //print $file['path'].'/'.$minifile.'<br>';
 				                    $urlforhref=getAdvancedPreviewUrl($modulepart, $fileinfo['relativename'].'.'.strtolower($fileinfo['extension']), 1, '&entity='.(!empty($object->entity)?$object->entity:$conf->entity));
 				                    if (empty($urlforhref)) {
@@ -2326,10 +2413,57 @@ else
 				                    } else {
 				                        print '<a href="'.$urlforhref['url'].'" class="'.$urlforhref['css'].'" target="'.$urlforhref['target'].'" mime="'.$urlforhref['mime'].'">';
 				                    }
-				                    print '<img class="photo" height="'.$maxheightmini.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.(!empty($object->entity)?$object->entity:$conf->entity).'&file='.urlencode($relativepath.$minifile).'" title="">';
+				                    print '<div class="photoref">';
+				                    print '<img class="photoexpensereport photorefcenter" height="'.$maxheightmini.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.(!empty($object->entity)?$object->entity:$conf->entity).'&file='.urlencode($relativepath.$minifile).'" title="">';
+				                    print '</div>';
 				                    print '</a>';
 				                }
-				                else print '&nbsp;';
+				                else
+				                {
+				                    $modulepart='expensereport';
+				                    print '<a href=""><div class="photoref">';
+				                    $thumbshown=0;
+				                    if (preg_match('/\.pdf$/i', $file['name']))
+				                    {
+    				                    $filepdf = $conf->expensereport->dir_output.'/'.$relativepath.$file['name'];
+    				                    $fileimage = $conf->expensereport->dir_output.'/'.$relativepath.$file['name'].'_preview.png';
+    				                    $relativepathimage = $relativepath.$file['name'].'_preview.png';
+
+    				                    $pdfexists = file_exists($filepdf);
+
+    				                    if ($pdfexists)
+    				                    {
+    				                        // Conversion du PDF en image png si fichier png non existant
+    				                        if (! file_exists($fileimage) || (filemtime($fileimage) < filemtime($filepdf)))
+    				                        {
+    				                            if (empty($conf->global->MAIN_DISABLE_PDF_THUMBS))		// If you experience trouble with pdf thumb generation and imagick, you can disable here.
+    				                            {
+    				                                include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+    				                                $ret = dol_convert_file($filepdf, 'png', $fileimage, '0');     // Convert first page of PDF into a file _preview.png
+    				                                if ($ret < 0) $error++;
+    				                            }
+    				                        }
+    				                    }
+
+    				                    if ($pdfexists && ! $error)
+    				                    {
+    				                        $heightforphotref=70;
+    				                        if (! empty($conf->dol_optimize_smallscreen)) $heightforphotref=60;
+    				                        // If the preview file is found
+    				                        if (file_exists($fileimage))
+    				                        {
+    				                            $thumbshown=1;
+    				                            print '<img height="'.$heightforphotref.'" class="photo photowithmargin photowithborder" src="'.DOL_URL_ROOT . '/viewimage.php?modulepart=apercu'.$modulepart.'&amp;file='.urlencode($relativepathimage).'">';
+    				                        }
+    				                    }
+				                    }
+
+				                    if (! $thumbshown)
+				                    {
+				                        print img_mime($minifile);
+				                    }
+				                    print '</div></a>';
+				                }
 				                print '<br>';
 				                $checked='';
 				                //var_dump(GETPOST($file['relativename'])); var_dump($file['relativename']); var_dump($_FILES['userfile']['name']);
@@ -2345,7 +2479,7 @@ else
 				                        break;
 				                    }
 				                }
-				                print '<input type="checkbox"'.$checked.' name="attachfile[]" value="'.$file['relativename'].'"> '.$file['relativename'];
+				                print '<div class="margintoponly"><input type="radio"'.$checked.' name="attachfile[]" value="'.$file['relativename'].'"> '.$file['relativename'].'</div>';
 				                print '</div>';
 				            }
 				            print '</td></tr>';
@@ -2363,7 +2497,10 @@ else
 					print '<td class="right">'.$langs->trans('PriceUHT').'</td>';
 					print '<td class="right">'.$langs->trans('PriceUTTC').'</td>';
 					print '<td class="right">'.$langs->trans('Qty').'</td>';
-					print '<td colspan="3"></td>';
+					print '<td></td>';
+					print '<td></td>';
+					print '<td></td>';
+					print '<td></td>';
 					print '</tr>';
 
 					print '<tr class="oddeven">';
@@ -2423,6 +2560,9 @@ else
 					print '<td class="right">';
 					print '<input type="text" min="0" class="right maxwidth50" name="qty" value="'.dol_escape_htmltag($qty?$qty:1).'">';    // We must be able to enter decimal qty
 					print '</td>';
+
+					// Picture
+					print '<td></td>';
 
 					if ($action != 'editline')
 					{
@@ -2649,7 +2789,6 @@ if (GETPOST('modelselected', 'alpha')) {
 
 if ($action != 'presend')
 {
-
 	/*
 	 * Generate documents
 	 */
@@ -2669,11 +2808,15 @@ if ($action != 'presend')
 		$somethingshown = $formfile->numoffiles;
 	}
 
+	// Disabled for expensereport, there is no thirdparty on expensereport, so nothing to define the list of other object we can suggest to link to
+	/*
 	if ($action != 'create' && $action != 'edit' && ($id || $ref))
 	{
 		$linktoelem = $form->showLinkToObjectBlock($object, null, array('expensereport'));
 		$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 	}
+    */
+
 	print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 	// List of actions on element
 	include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
