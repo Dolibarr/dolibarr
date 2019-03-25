@@ -3332,7 +3332,10 @@ elseif ($id > 0 || ! empty($ref))
 	// For example print 239.2 - 229.3 - 9.9; does not return 0.
 	// $resteapayer=bcadd($object->total_ttc,$totalpaye,$conf->global->MAIN_MAX_DECIMALS_TOT);
 	// $resteapayer=bcadd($resteapayer,$totalavoir,$conf->global->MAIN_MAX_DECIMALS_TOT);
-	$resteapayer = price2num($object->total_ttc - $totalpaye - $totalcreditnotes - $totaldeposits, 'MT');
+	if (is_numeric($object->total_ttc) && is_numeric($totalpaye) && is_numeric($totalcreditnotes) && is_numeric($totaldeposits))
+	{
+	   $resteapayer = price2num($object->total_ttc - $totalpaye - $totalcreditnotes - $totaldeposits, 'MT');
+	}
 
 	if ($object->paye)
 	{
