@@ -5743,6 +5743,10 @@ div.tabsElem a.tab {
 		min-width: auto;
 		font-size: 12px;
 	}
+
+	.text-plus-circle {
+	   display: none;
+	}
 }
 
 <?php

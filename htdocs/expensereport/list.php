@@ -455,7 +455,7 @@ if ($resql)
 		$newcardbutton='';
 		if ($user->rights->expensereport->creer)
 		{
-			$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/expensereport/card.php?action=create"><span class="valignmiddle">'.$langs->trans('NewTrip').'</span>';
+			$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/expensereport/card.php?action=create"><span class="valignmiddle text-plus-circle">'.$langs->trans('NewTrip').'</span>';
 			$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
 			$newcardbutton.= '</a>';
 		}

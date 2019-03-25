@@ -435,7 +435,7 @@ if ($resql)
 	{
 		$label='NewProduct';
 		if($type == Product::TYPE_SERVICE) $label='NewService';
-		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/product/card.php?action=create&amp;type='.$type.'"><span class="valignmiddle">'.$langs->trans($label).'</span>';
+		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/product/card.php?action=create&amp;type='.$type.'"><span class="valignmiddle text-plus-circle">'.$langs->trans($label).'</span>';
 		$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
 		$newcardbutton.= '</a>';
 	}

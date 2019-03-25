@@ -388,7 +388,7 @@ if ($resql)
 	$newcardbutton='';
 	if($user->rights->supplier_proposal->creer)
 	{
-		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/supplier_proposal/card.php?action=create"><span class="valignmiddle">'.$langs->trans('NewAskPrice').'</span>';
+		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/supplier_proposal/card.php?action=create"><span class="valignmiddle text-plus-circle">'.$langs->trans('NewAskPrice').'</span>';
 		$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
 		$newcardbutton.= '</a>';
 	}

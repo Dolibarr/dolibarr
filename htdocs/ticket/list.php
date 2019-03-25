@@ -462,7 +462,7 @@ if ($projectid) print '<input type="hidden" name="projectid" value="' . $project
 $newcardbutton='';
 if ($user->rights->ticket->write)
 {
-	$newcardbutton = '<a class="butActionNew" href="'.DOL_URL_ROOT.'/ticket/card.php?action=create' . ($socid ? '&socid=' . $socid : '') . ($projectid ? '&origin=projet_project&originid=' . $projectid : '') . '"><span class="valignmiddle">' . $langs->trans('NewTicket').'</span>';
+	$newcardbutton = '<a class="butActionNew" href="'.DOL_URL_ROOT.'/ticket/card.php?action=create' . ($socid ? '&socid=' . $socid : '') . ($projectid ? '&origin=projet_project&originid=' . $projectid : '') . '"><span class="valignmiddle text-plus-circle">' . $langs->trans('NewTicket').'</span>';
 	$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
 	$newcardbutton.= '</a>';
 }
