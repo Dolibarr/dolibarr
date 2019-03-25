@@ -1238,7 +1238,7 @@ $head = array();
 $h=0;
 
 $head[$h][0] = $_SERVER["PHP_SELF"].'?module=initmodule';
-$head[$h][1] = $langs->trans("NewModule").'<span class="fa fa-plus-circle valignmiddle paddingleft"></span>';
+$head[$h][1] = '<span class="valignmiddle text-plus-circle">'.$langs->trans("NewModule").'</span><span class="fa fa-plus-circle valignmiddle paddingleft"></span>';
 $head[$h][2] = 'initmodule';
 $h++;
 

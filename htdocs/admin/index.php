@@ -37,10 +37,10 @@ $hookmanager->initHooks(array('homesetup'));
  * View
  */
 
+$form = new Form($db);
+
 $wikihelp='EN:First_setup|FR:Premiers_paramétrages|ES:Primeras_configuraciones';
 llxHeader('', $langs->trans("Setup"), $wikihelp);
-
-$form = new Form($db);
 
 
 print load_fiche_titre($langs->trans("SetupArea"), '', 'title_setup.png');
@@ -68,7 +68,7 @@ if (! empty($conf->global->MAIN_MOTD_SETUPPAGE))
     }
 }
 
-print $langs->trans("SetupDescription1").' ';
+print $langs->trans("SetupDescription1");
 print $langs->trans("AreaForAdminOnly").' ';
 print $langs->trans("SetupDescription2", $langs->transnoentities("MenuCompanySetup"), $langs->transnoentities("Modules"))."<br><br>";
 
@@ -115,7 +115,7 @@ print $hookmanager->resPrint;
 if (empty($reshook))
 {
 	// Show into other
-	print $langs->trans("SetupDescription5")."<br>";
+    print '<span class="opacitymedium">'.$langs->trans("SetupDescription5")."</span><br>";
 	print "<br>";
 
 	// Show logo

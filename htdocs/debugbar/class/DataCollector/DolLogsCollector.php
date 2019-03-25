@@ -17,7 +17,7 @@ class DolLogsCollector extends MessagesCollector
 	/**
 	 * @var int number of lines to show
 	 */
-	protected $lines;
+	protected $maxnboflines;
 
 	/**
 	 * Constructor
@@ -31,8 +31,10 @@ class DolLogsCollector extends MessagesCollector
 
 		parent::__construct($name);
 
+		$this->nboflines=0;
+		$this->maxnboflines = empty($conf->global->DEBUGBAR_LOGS_LINES_NUMBER) ? 250 : $conf->global->DEBUGBAR_LOGS_LINES_NUMBER;   // High number slows seriously output
+
 		$this->path = $path ?: $this->getLogsFile();
-		$this->lines = empty($conf->global->DEBUGBAR_LOGS_LINES_NUMBER) ? 250 : $conf->global->DEBUGBAR_LOGS_LINES_NUMBER;   // This slow seriously output
 	}
 
 	/**
@@ -68,7 +70,31 @@ class DolLogsCollector extends MessagesCollector
 	 */
 	public function collect()
 	{
-		$this->getStorageLogs($this->path);
+		global $conf;
+
+		$uselogfile=$conf->global->DEBUGBAR_USE_LOGFILE;
+
+		if ($uselogfile)
+		{
+    		$this->getStorageLogs($this->path);
+		}
+		else
+		{
+    	    $log_levels = $this->getLevels();
+
+    	    foreach ($conf->logbuffer as $line) {
+    	        if ($this->nboflines >= $this->maxnboflines)
+    	        {
+    	            break;
+    	        }
+    	        foreach ($log_levels as $level_key => $level) {
+    	            if (strpos(strtolower($line), strtolower($level_key)) == 20) {
+    	                $this->nboflines++;
+    	                $this->addMessage($line, $level, false);
+    	            }
+    	        }
+    	    }
+		}
 
 		return parent::collect();
 	}
@@ -76,14 +102,13 @@ class DolLogsCollector extends MessagesCollector
 	/**
 	 * Get the path to the logs file
 	 *
-	 * @return string      Path of log file
+	 * @return string
 	 */
 	public function getLogsFile()
 	{
-		// default dolibarr log file
-		$path = DOL_DATA_ROOT . '/dolibarr.log';
-
-		return $path;
+	    // default dolibarr log file
+	    $path = DOL_DATA_ROOT . '/dolibarr.log';
+	    return $path;
 	}
 
 	/**
@@ -94,16 +119,16 @@ class DolLogsCollector extends MessagesCollector
 	 */
 	public function getStorageLogs($path)
 	{
-		if (! file_exists($path)) {
-			return;
-		}
+	    if (! file_exists($path)) {
+	        return;
+	    }
 
-		// Load the latest lines
-		$file = implode("", $this->tailFile($path, $this->lines));
+	    // Load the latest lines
+	    $file = implode("", $this->tailFile($path, $this->maxnboflines));
 
-		foreach ($this->getLogs($file) as $log) {
-			$this->addMessage($log['line'], $log['level'], false);
-		}
+	    foreach ($this->getLogs($file) as $log) {
+	        $this->addMessage($log['line'], $log['level'], false);
+	    }
 	}
 
 	/**
@@ -115,32 +140,32 @@ class DolLogsCollector extends MessagesCollector
 	 */
 	protected function tailFile($file, $lines)
 	{
-		$handle = fopen($file, "r");
-		$linecounter = $lines;
-		$pos = -2;
-		$beginning = false;
-		$text = [];
-		while ($linecounter > 0) {
-			$t = " ";
-			while ($t != "\n") {
-				if (fseek($handle, $pos, SEEK_END) == -1) {
-					$beginning = true;
-					break;
-				}
-				$t = fgetc($handle);
-				$pos--;
-			}
-			$linecounter--;
-			if ($beginning) {
-				rewind($handle);
-			}
-			$text[$lines - $linecounter - 1] = fgets($handle);
-			if ($beginning) {
-				break;
-			}
-		}
-		fclose($handle);
-		return array_reverse($text);
+	    $handle = fopen($file, "r");
+	    $linecounter = $lines;
+	    $pos = -2;
+	    $beginning = false;
+	    $text = [];
+	    while ($linecounter > 0) {
+	        $t = " ";
+	        while ($t != "\n") {
+	            if (fseek($handle, $pos, SEEK_END) == -1) {
+	                $beginning = true;
+	                break;
+	            }
+	            $t = fgetc($handle);
+	            $pos--;
+	        }
+	        $linecounter--;
+	        if ($beginning) {
+	            rewind($handle);
+	        }
+	        $text[$lines - $linecounter - 1] = fgets($handle);
+	        if ($beginning) {
+	            break;
+	        }
+	    }
+	    fclose($handle);
+	    return array_reverse($text);
 	}
 
 	/**
@@ -151,21 +176,21 @@ class DolLogsCollector extends MessagesCollector
 	 */
 	public function getLogs($file)
 	{
-		$pattern = "/\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}.*/";
-		$log_levels = $this->getLevels();
-		preg_match_all($pattern, $file, $matches);
-		$log = [];
-		foreach ($matches as $lines) {
-			foreach ($lines as $line) {
-				foreach ($log_levels as $level_key => $level) {
-					if (strpos(strtolower($line), strtolower($level_key)) == 20) {
-						$log[] = ['level' => $level, 'line' => $line];
-					}
-				}
-			}
-		}
-		$log = array_reverse($log);
-		return $log;
+	    $pattern = "/\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}.*/";
+	    $log_levels = $this->getLevels();
+	    preg_match_all($pattern, $file, $matches);
+	    $log = [];
+	    foreach ($matches as $lines) {
+	        foreach ($lines as $line) {
+	            foreach ($log_levels as $level_key => $level) {
+	                if (strpos(strtolower($line), strtolower($level_key)) == 20) {
+	                    $log[] = ['level' => $level, 'line' => $line];
+	                }
+	            }
+	        }
+	    }
+	    $log = array_reverse($log);
+	    return $log;
 	}
 
 	/**
@@ -178,6 +203,7 @@ class DolLogsCollector extends MessagesCollector
 		$class = new ReflectionClass(new LogLevel());
 		$levels = $class->getConstants();
 		$levels['ERR'] = 'error';
+		$levels['WARN'] = 'warning';
 
 		return $levels;
 	}
