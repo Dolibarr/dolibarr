@@ -2,7 +2,7 @@
 /* Copyright (C) 2010-2011      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2010-2014 		Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2015           Marcos García        <marcosgdf@gmail.com>
- * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2018           Frédéric France      <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -791,7 +791,10 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 		//$creditnoteamount=$object->getSumCreditNotesUsed();
 		//$depositsamount=$object->getSumDepositsUsed();
 		//print "x".$creditnoteamount."-".$depositsamount;exit;
-		$resteapayer = price2num($total_ttc - $deja_regle - $creditnoteamount - $depositsamount, 'MT');
+		if (is_numeric($object->total_ttc) && is_numeric($totalpaye) && is_numeric($totalcreditnotes) && is_numeric($totaldeposits))
+    	{
+    	   $resteapayer = price2num($total_ttc - $deja_regle - $creditnoteamount - $depositsamount, 'MT');
+    	}
 		if (! empty($object->paye)) $resteapayer=0;
 
 		if ($deja_regle > 0)
