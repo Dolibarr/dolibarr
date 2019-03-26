@@ -61,9 +61,9 @@ if ($resql) {
 	while ($obj = $db->fetch_object($resql)) {
         $paycode = $obj->code;
         if ($paycode == 'LIQ') $paycode = 'CASH';
-        if ($paycode == 'CB')  $paycode = 'CARD';
+        if ($paycode == 'CB')  $paycode = 'CB';
         if ($paycode == 'CHQ') $paycode = 'CHEQUE';
-        
+
         $accountname="CASHDESK_ID_BANKACCOUNT_".$paycode;
 		if (! empty($conf->global->$accountname) && $conf->global->$accountname > 0) array_push($paiements, $obj);
 	}
@@ -82,7 +82,7 @@ if ($resql) {
 	else print 'received+=parseFloat(price);';
 	?>
 	$('#change1').html(parseFloat(received).toFixed(2));
-	if (parseFloat(received)><?php echo $invoice->total_ttc;?>)
+	if (parseFloat(received) > <?php echo $invoice->total_ttc;?>)
 		{
 		var change=parseFloat(parseFloat(received)-<?php echo $invoice->total_ttc;?>);
 		$('#change2').html(change.toFixed(2));
@@ -140,33 +140,47 @@ $numpad=$conf->global->TAKEPOS_NUMPAD;
 <button type="button" class="calcbutton" onclick="addreceived(<?php if ($numpad==0) print "7"; else print "10";?>);"><?php if ($numpad==0) print "7"; else print "10";?></button>
 <button type="button" class="calcbutton" onclick="addreceived(<?php if ($numpad==0) print "8"; else print "20";?>);"><?php if ($numpad==0) print "8"; else print "20";?></button>
 <button type="button" class="calcbutton" onclick="addreceived(<?php if ($numpad==0) print "9"; else print "50";?>);"><?php if ($numpad==0) print "9"; else print "50";?></button>
-<?php if (count($paiements) >0) : ?>
-<button type="button" class="calcbutton2" onclick="Validate('<?php echo $langs->trans($paiements[0]->code); ?>');"><?php echo $langs->trans($paiements[0]->libelle); ?></button>
-<?php else: ?>
+<?php if (count($paiements) > 0) {
+    $paycode = $paiements[0]->code;
+    if ($paycode == 'LIQ') $paycode = 'cash';
+    if ($paycode == 'CB')  $paycode = 'card';
+    if ($paycode == 'CHQ') $paycode = 'cheque';
+?>
+<button type="button" class="calcbutton2" onclick="Validate('<?php echo $langs->trans($paycode); ?>');"><?php echo $langs->trans($paiements[0]->libelle); ?></button>
+<?php } else { ?>
 <button type="button" class="calcbutton2"><?php echo $langs->trans("NoPaimementModesDefined");?></button>
-<?php endif ?>
+<?php } ?>
 <button type="button" class="calcbutton" onclick="addreceived(<?php if ($numpad==0) print "4"; else print "1";?>);"><?php if ($numpad==0) print "4"; else print "1";?></button>
 <button type="button" class="calcbutton" onclick="addreceived(<?php if ($numpad==0) print "5"; else print "2";?>);"><?php if ($numpad==0) print "5"; else print "2";?></button>
 <button type="button" class="calcbutton" onclick="addreceived(<?php if ($numpad==0) print "6"; else print "5";?>);"><?php if ($numpad==0) print "6"; else print "5";?></button>
-<?php if (count($paiements) >1) : ?>
-<button type="button" class="calcbutton2" onclick="Validate('<?php echo $langs->trans($paiements[1]->code); ?>');"><?php echo $langs->trans($paiements[1]->libelle); ?></button>
-<?php else: ?>
-<?php
+<?php if (count($paiements) > 1) {
+    $paycode = $paiements[1]->code;
+    if ($paycode == 'LIQ') $paycode = 'cash';
+    if ($paycode == 'CB')  $paycode = 'card';
+    if ($paycode == 'CHQ') $paycode = 'cheque';
+?>
+<button type="button" class="calcbutton2" onclick="Validate('<?php echo $langs->trans($paycode); ?>');"><?php echo $langs->trans($paiements[1]->libelle); ?></button>
+<?php } else {
 $button = array_pop($action_buttons);
 ?>
 	<button type="button" class="calcbutton2" onclick="<?php echo $button["function"];?>"><span <?php echo $button["span"];?>><?php echo $button["text"];?></span></button>
-<?php endif ?>
+<?php } ?>
 <button type="button" class="calcbutton" onclick="addreceived(<?php if ($numpad==0) print "1"; else print "0.10";?>);"><?php if ($numpad==0) print "1"; else print "0.10";?></button>
 <button type="button" class="calcbutton" onclick="addreceived(<?php if ($numpad==0) print "2"; else print "0.20";?>);"><?php if ($numpad==0) print "2"; else print "0.20";?></button>
 <button type="button" class="calcbutton" onclick="addreceived(<?php if ($numpad==0) print "3"; else print "0.50";?>);"><?php if ($numpad==0) print "3"; else print "0.50";?></button>
-<?php if (count($paiements) >2) : ?>
-<button type="button" class="calcbutton2" onclick="Validate('<?php echo $langs->trans($paiements[2]->code); ?>');"><?php echo $langs->trans($paiements[2]->libelle); ?></button>
-<?php else: ?>
+<?php if (count($paiements) > 2) {
+    $paycode = $paiements[2]->code;
+    if ($paycode == 'LIQ') $paycode = 'cash';
+    if ($paycode == 'CB')  $paycode = 'card';
+    if ($paycode == 'CHQ') $paycode = 'cheque';
+?>
+<button type="button" class="calcbutton2" onclick="Validate('<?php echo $langs->trans($paycode); ?>');"><?php echo $langs->trans($paiements[2]->libelle); ?></button>
+<?php } else { ?>
 <?php
 $button = array_pop($action_buttons);
 ?>
 	<button type="button" class="calcbutton2" onclick="<?php echo $button["function"];?>"><span <?php echo $button["span"];?>><?php echo $button["text"];?></span></button>
-<?php endif ?>
+<?php } ?>
 <button type="button" class="calcbutton" onclick="addreceived(<?php if ($numpad==0) print "0"; else print "0.01";?>);"><?php if ($numpad==0) print "0"; else print "0.01";?></button>
 <button type="button" class="calcbutton" onclick="addreceived(<?php if ($numpad==0) print "'000'"; else print "0.02";?>);"><?php if ($numpad==0) print "000"; else print "0.02";?></button>
 <button type="button" class="calcbutton" onclick="addreceived(<?php if ($numpad==0) print "'.'"; else print "0.05";?>);"><?php if ($numpad==0) print "."; else print "0.05";?></button>
