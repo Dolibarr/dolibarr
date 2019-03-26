@@ -41,19 +41,38 @@ if (!$user->admin) accessforbidden();
 
 $langs->loadLangs(array("admin", "cashdesk"));
 
+global $db;
+
+$sql = "SELECT code, libelle FROM ".MAIN_DB_PREFIX."c_paiement";
+$sql.= " WHERE entity IN (".getEntity('c_paiement').")";
+$sql.= " AND active = 1";
+$sql.= " ORDER BY libelle";
+$resql = $db->query($sql);
+$paiements = array();
+if($resql){
+	while ($obj = $db->fetch_object($resql)){
+		array_push($paiements, $obj);
+	}
+}
+
 /*
  * Actions
  */
 if (GETPOST('action', 'alpha') == 'set')
 {
 	$db->begin();
-
 	if (GETPOST('socid', 'int') < 0) $_POST["socid"]='';
 
 	$res = dolibarr_set_const($db, "CASHDESK_ID_THIRDPARTY", (GETPOST('socid', 'int') > 0 ? GETPOST('socid', 'int') : ''), 'chaine', 0, '', $conf->entity);
-	$res = dolibarr_set_const($db, "CASHDESK_ID_BANKACCOUNT_CASH", (GETPOST('CASHDESK_ID_BANKACCOUNT_CASH', 'alpha') > 0 ? GETPOST('CASHDESK_ID_BANKACCOUNT_CASH', 'alpha') : ''), 'chaine', 0, '', $conf->entity);
+    
+    $res = dolibarr_set_const($db, "CASHDESK_ID_BANKACCOUNT_CASH", (GETPOST('CASHDESK_ID_BANKACCOUNT_CASH', 'alpha') > 0 ? GETPOST('CASHDESK_ID_BANKACCOUNT_CASH', 'alpha') : ''), 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "CASHDESK_ID_BANKACCOUNT_CHEQUE", (GETPOST('CASHDESK_ID_BANKACCOUNT_CHEQUE', 'alpha') > 0 ? GETPOST('CASHDESK_ID_BANKACCOUNT_CHEQUE', 'alpha') : ''), 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "CASHDESK_ID_BANKACCOUNT_CB", (GETPOST('CASHDESK_ID_BANKACCOUNT_CB', 'alpha') > 0 ? GETPOST('CASHDESK_ID_BANKACCOUNT_CB', 'alpha') : ''), 'chaine', 0, '', $conf->entity);
+    foreach($paiements as $modep) {
+        if (in_array($modep->code, array('LIQ', 'CB', 'CHQ'))) continue;
+		$name="CASHDESK_ID_BANKACCOUNT_".$modep->code;
+		$res = dolibarr_set_const($db, $name, (GETPOST($name, 'alpha') > 0 ? GETPOST($name, 'alpha') : ''), 'chaine', 0, '', $conf->entity);
+    }
 	$res = dolibarr_set_const($db, "CASHDESK_ID_WAREHOUSE", (GETPOST('CASHDESK_ID_WAREHOUSE', 'alpha') > 0 ? GETPOST('CASHDESK_ID_WAREHOUSE', 'alpha') : ''), 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "CASHDESK_NO_DECREASE_STOCK", GETPOST('CASHDESK_NO_DECREASE_STOCK', 'alpha'), 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "CASHDESK_SERVICES", GETPOST('CASHDESK_SERVICES', 'alpha'), 'chaine', 0, '', $conf->entity);
@@ -245,23 +264,28 @@ print $form->select_company($conf->global->CASHDESK_ID_THIRDPARTY, 'socid', 's.c
 print '</td></tr>';
 if (! empty($conf->banque->enabled))
 {
-
-	print '<tr class="oddeven"><td>'.$langs->trans("CashDeskBankAccountForSell").'</td>';
+    print '<tr class="oddeven"><td>'.$langs->trans("CashDeskBankAccountForSell").'</td>';
 	print '<td colspan="2">';
 	$form->select_comptes($conf->global->CASHDESK_ID_BANKACCOUNT_CASH, 'CASHDESK_ID_BANKACCOUNT_CASH', 0, "courant=2", 1);
 	print '</td></tr>';
-
-
 	print '<tr class="oddeven"><td>'.$langs->trans("CashDeskBankAccountForCheque").'</td>';
 	print '<td colspan="2">';
 	$form->select_comptes($conf->global->CASHDESK_ID_BANKACCOUNT_CHEQUE, 'CASHDESK_ID_BANKACCOUNT_CHEQUE', 0, "courant=1", 1);
 	print '</td></tr>';
-
-
 	print '<tr class="oddeven"><td>'.$langs->trans("CashDeskBankAccountForCB").'</td>';
 	print '<td colspan="2">';
 	$form->select_comptes($conf->global->CASHDESK_ID_BANKACCOUNT_CB, 'CASHDESK_ID_BANKACCOUNT_CB', 0, "courant=1", 1);
 	print '</td></tr>';
+    
+	foreach($paiements as $modep) {
+        if (in_array($modep->code, array('LIQ', 'CB', 'CHQ'))) continue;
+		$name="CASHDESK_ID_BANKACCOUNT_".$modep->code;
+		print '<tr class="oddeven"><td>'.$langs->trans("CashDeskBankAccountFor").' '.$langs->trans($modep->libelle).'</td>';
+		print '<td colspan="2">';
+		$cour=preg_match('/^LIQ.*/', $modep->code)?2:1;
+		$form->select_comptes($conf->global->$name, $name, 0, "courant=".$cour, 1);
+		print '</td></tr>';
+	}
 }
 
 if (! empty($conf->stock->enabled))
