@@ -47,18 +47,22 @@ $invoice = new Facture($db);
 $ret = $invoice->fetch('', '(PROV-POS-'.$place.')');
 if ($ret > 0) $placeid = $invoice->id;
 
-
+$paycode = $pay;
+if ($pay == 'cash') $paycode = 'LIQ';
+if ($pay == 'card') $paycode = 'CB';
+if ($pay == 'cheque') $paycode = 'CHQ';
+    
 // Retrieve paiementid
 $sql = "SELECT id FROM ".MAIN_DB_PREFIX."c_paiement";
 $sql.= " WHERE entity IN (".getEntity('c_paiement').")";
-$sql.= " AND code = '$pay'";
+$sql.= " AND code = '".$paycode."'";
 $resql = $db->query($sql);
 $codes = $db->fetch_array($resql);
 $paiementid=$codes[0];
 
 /*
-* Actions
-*/
+ * Actions
+ */
 
 if ($action == 'valid' && $user->rights->facture->creer)
 {
