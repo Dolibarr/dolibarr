@@ -178,10 +178,9 @@ if ($action == 'confirm_collect')
 	dol_include_once('/emailcollector/class/emailcollector.class.php');
 
 	$res = $object->doCollectOneCollector();
-
 	if ($res > 0)
 	{
-		setEventMessages($object->output, null, 'mesgs');
+	    setEventMessages($object->lastresult, null, 'mesgs');
 	}
 	else
 	{
@@ -391,7 +390,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$connectstringsource = $connectstringserver.imap_utf7_encode($sourcedir);
 		$connectstringtarget = $connectstringserver.imap_utf7_encode($targetdir);
 
-		$connection = imap_open($connectstringsource, $object->user, $object->password);
+		$connection = imap_open($connectstringsource, $object->login, $object->password);
 	}
 	else
 	{
