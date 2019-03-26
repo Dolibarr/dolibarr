@@ -66,8 +66,14 @@ $paiementid=$codes[0];
 
 if ($action == 'valid' && $user->rights->facture->creer)
 {
-	$accountname="CASHDESK_ID_BANKACCOUNT_".$pay;
-	$bankaccount=$conf->global->$accountname;
+    if ($pay == "cash") $bankaccount = $conf->global->CASHDESK_ID_BANKACCOUNT_CASH;
+	elseif ($pay == "card") $bankaccount = $conf->global->CASHDESK_ID_BANKACCOUNT_CB;
+	elseif ($pay == "cheque") $bankaccount = $conf->global->CASHDESK_ID_BANKACCOUNT_CHEQUE;
+    else 
+    {
+        $accountname="CASHDESK_ID_BANKACCOUNT_".$pay;
+    	$bankaccount=$conf->global->$accountname;
+    }
 	$now=dol_now();
 
 	$invoice = new Facture($db);
