@@ -293,7 +293,7 @@ if ($resql)
 	$newcardbutton='';
 	if ($user->rights->ficheinter->creer)
 	{
-		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/fichinter/card.php?action=create"><span class="valignmiddle">'.$langs->trans('NewIntervention').'</span>';
+		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/fichinter/card.php?action=create"><span class="valignmiddle text-plus-circle">'.$langs->trans('NewIntervention').'</span>';
 		$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
 		$newcardbutton.= '</a>';
 	}

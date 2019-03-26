@@ -134,7 +134,7 @@ if ($result)
 	$newcardbutton='';
 	if ($user->rights->stock->creer)
 	{
-		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/product/stock/card.php?action=create"><span class="valignmiddle">'.$langs->trans('MenuNewWarehouse').'</span>';
+		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/product/stock/card.php?action=create"><span class="valignmiddle text-plus-circle">'.$langs->trans('MenuNewWarehouse').'</span>';
 		$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
 		$newcardbutton.= '</a>';
 	}

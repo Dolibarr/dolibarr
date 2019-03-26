@@ -245,13 +245,13 @@ print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 $newcardbutton='';
 if (! empty($user->rights->opensurvey->write))
 {
-    $newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/opensurvey/wizard/index.php"><span class="valignmiddle">'.$langs->trans('NewSurvey').'</span>';
+    $newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/opensurvey/wizard/index.php"><span class="valignmiddle text-plus-circle">'.$langs->trans('NewSurvey').'</span>';
     $newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
     $newcardbutton.= '</a>';
 }
 else
 {
-    $newcardbutton='<a class="butActionNewRefused" href="#">'.$langs->trans('NewSurvey');
+    $newcardbutton='<a class="butActionNewRefused" href="#"><span class="valignmiddle text-plus-circle">'.$langs->trans('NewSurvey').'</span>';
     $newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
     $newcardbutton.= '</a>';
 }

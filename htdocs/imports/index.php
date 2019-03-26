@@ -92,7 +92,7 @@ if (count($import->array_import_code))
 {
 	//if ($user->rights->import->run)
 	//{
-	print '<a class="butActionNew" href="'.DOL_URL_ROOT.'/imports/import.php?leftmenu=import">'.$langs->trans("NewImport").'<span class="fa fa-plus-circle valignmiddle"></span></a>';
+	print '<a class="butActionNew" href="'.DOL_URL_ROOT.'/imports/import.php?leftmenu=import"><span class="valignmiddle text-plus-circle">'.$langs->trans("NewImport").'</span><span class="fa fa-plus-circle valignmiddle"></span></a>';
 	//}
 	//else
 	//{

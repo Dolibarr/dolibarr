@@ -800,7 +800,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 		$morehtmlright='';
 		if (! empty($conf->global->STRIPE_ALLOW_LOCAL_CARD))
 		{
-			$morehtmlright='<a class="butActionNew" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&amp;action=createcard">'.$langs->trans("Add").' <span class="fa fa-plus-circle valignmiddle"></span></a>';
+			$morehtmlright='<a class="butActionNew" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&amp;action=createcard"><span class="valignmiddle text-plus-circle">'.$langs->trans("Add").'</span><span class="fa fa-plus-circle valignmiddle"></span></a>';
 		}
 		print load_fiche_titre($langs->trans('StripePaymentModes').($stripeacc?' (Stripe connection with StripeConnect account '.$stripeacc.')':' (Stripe connection with keys from Stripe module setup)'), $morehtmlright, '');
 
@@ -1090,7 +1090,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 	// List of bank accounts
 	print '<br>';
 
-	$morehtmlright='<a class="butActionNew" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&amp;action=create">'.$langs->trans("Add").' <span class="fa fa-plus-circle valignmiddle"></span></a>';
+	$morehtmlright='<a class="butActionNew" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&amp;action=create"><span class="valignmiddle text-plus-circle">'.$langs->trans("Add").'</span><span class="fa fa-plus-circle valignmiddle"></span></a>';
 
 	print load_fiche_titre($langs->trans("BankAccounts"), $morehtmlright, '');
 

@@ -232,7 +232,7 @@ if (! $rowid && $action != 'create' && $action != 'edit')
 		$newcardbutton='';
 		if ($user->rights->adherent->configurer)
 		{
-			$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/adherents/type.php?action=create"><span class="valignmiddle">'.$langs->trans('NewMemberType').'</span>';
+			$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/adherents/type.php?action=create"><span class="valignmiddle text-plus-circle">'.$langs->trans('NewMemberType').'</span>';
 			$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
 			$newcardbutton.= '</a>';
 		}

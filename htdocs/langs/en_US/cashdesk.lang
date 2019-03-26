@@ -58,4 +58,5 @@ TakeposNeedsCategories=TakePOS needs product categories to work
 OrderNotes=Order Notes
 CashDeskBankAccountFor=Account used for payments in
 NoPaimementModesDefined=No paiment mode defined in TakePOS configuration
+TicketVatGrouped=Group VAT by rate in tickets
 AutoPrintTickets=Automatically print tickets

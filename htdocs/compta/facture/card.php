@@ -2698,7 +2698,7 @@ if ($action == 'create')
 			});
 			</script>';
 		}
-		print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&client=3&fournisseur=0&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'">'.$langs->trans("AddThirdParty").' <span class="fa fa-plus-circle valignmiddle"></span></a>';
+		print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&client=3&fournisseur=0&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'"><span class="valignmiddle text-plus-circle">'.$langs->trans("AddThirdParty").'</span><span class="fa fa-plus-circle valignmiddle"></span></a>';
 		print '</td>';
 	}
 	print '</tr>' . "\n";
@@ -3094,7 +3094,7 @@ if ($action == 'create')
 		$langs->load('projects');
 		print '<tr><td>' . $langs->trans('Project') . '</td><td colspan="2">';
 		$numprojet = $formproject->select_projects(($socid > 0 ? $socid : -1), $projectid, 'projectid', 0, 0, 1, 1);
-		print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/card.php?socid=' . $soc->id . '&action=create&status=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create&socid='.$soc->id.($fac_rec?'&fac_rec='.$fac_rec:'')).'">' . $langs->trans("AddProject") . ' <span class="fa fa-plus-circle valignmiddle"></span></a>';
+		print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/card.php?socid=' . $soc->id . '&action=create&status=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create&socid='.$soc->id.($fac_rec?'&fac_rec='.$fac_rec:'')).'"><span class="valignmiddle text-plus-circle">' . $langs->trans("AddProject") . '</span><span class="fa fa-plus-circle valignmiddle"></span></a>';
 		print '</td></tr>';
 	}
 
