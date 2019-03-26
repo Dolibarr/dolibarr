@@ -264,13 +264,26 @@ print $form->select_company($conf->global->CASHDESK_ID_THIRDPARTY, 'socid', 's.c
 print '</td></tr>';
 if (! empty($conf->banque->enabled))
 {
-	
-	foreach($paiements as $modep){
+    print '<tr class="oddeven"><td>'.$langs->trans("CashDeskBankAccountForSell").'</td>';
+	print '<td colspan="2">';
+	$form->select_comptes($conf->global->CASHDESK_ID_BANKACCOUNT_CASH, 'CASHDESK_ID_BANKACCOUNT_CASH', 0, "courant=2", 1);
+	print '</td></tr>';
+	print '<tr class="oddeven"><td>'.$langs->trans("CashDeskBankAccountForCheque").'</td>';
+	print '<td colspan="2">';
+	$form->select_comptes($conf->global->CASHDESK_ID_BANKACCOUNT_CHEQUE, 'CASHDESK_ID_BANKACCOUNT_CHEQUE', 0, "courant=1", 1);
+	print '</td></tr>';
+	print '<tr class="oddeven"><td>'.$langs->trans("CashDeskBankAccountForCB").'</td>';
+	print '<td colspan="2">';
+	$form->select_comptes($conf->global->CASHDESK_ID_BANKACCOUNT_CB, 'CASHDESK_ID_BANKACCOUNT_CB', 0, "courant=1", 1);
+	print '</td></tr>';
+    
+	foreach($paiements as $modep) {
+        if (in_array($modep->code, array('LIQ', 'CB', 'CHQ'))) continue;
 		$name="CASHDESK_ID_BANKACCOUNT_".$modep->code;
 		print '<tr class="oddeven"><td>'.$langs->trans("CashDeskBankAccountFor").' '.$langs->trans($modep->libelle).'</td>';
 		print '<td colspan="2">';
 		$cour=preg_match('/^LIQ.*/', $modep->code)?2:1;
-		$form->select_comptes($conf->global->$name, $name, 0, "courant=$cour", 1);
+		$form->select_comptes($conf->global->$name, $name, 0, "courant=".$cour, 1);
 		print '</td></tr>';
 	}
 }
