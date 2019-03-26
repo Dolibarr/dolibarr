@@ -442,8 +442,21 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	// Add filter
 	print '<tr class="oddeven">';
 	print '<td>';
-	$arrayoftypes=array('from'=>'MailFrom', 'to'=>'MailTo', 'cc'=>'Cc', 'bcc'=>'Bcc', 'subject'=>'Subject', 'body'=>'Body', 'seen'=>'AlreadyRead', 'unseen'=>'NotRead', 'withtrackingid'=>'WithDolTrackingID', 'withouttrackingid'=>'WithoutDolTrackingID');
-	print $form->selectarray('filtertype', $arrayoftypes, '', 1, 0, 0, '', 1);
+	$arrayoftypes=array(
+	    'from'=>'MailFrom',
+	    'to'=>'MailTo',
+	    'cc'=>'Cc',
+	    'bcc'=>'Bcc',
+	    'subject'=>'Subject',
+	    'body'=>'Body',
+	    'X1'=>'---',
+	    'seen'=>'AlreadyRead',
+	    'unseen'=>'NotRead',
+	    'X2'=>'---',
+	    'withtrackingid'=>'WithDolTrackingID',
+	    'withouttrackingid'=>'WithoutDolTrackingID'
+	);
+	print $form->selectarray('filtertype', $arrayoftypes, '', 1, 0, 0, '', 1, 0, 0, '', '', 0, '', 2);
 	print '</td><td>';
 	print '<input type="text" name="rulevalue">';
 	print '</td>';
@@ -461,7 +474,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print '</td>';
 		print '<td>'.$rulefilter['rulevalue'].'</td>';
 		print '<td class="right">';
-		//print $rulefilterobj->getLibStatut(3);
 		print ' <a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=deletefilter&filterid='.$rulefilter['id'].'">'.img_delete().'</a>';
 		print '</td>';
 		print '</tr>';
