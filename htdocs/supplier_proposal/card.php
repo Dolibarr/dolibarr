@@ -932,12 +932,12 @@ if (empty($reshook))
 		$object->setProject(GETPOST('projectid'), 'int');
 	}
 
-	// Delai de livraison
+	// Delivery delay
 	elseif ($action == 'setavailability' && $user->rights->supplier_proposal->creer) {
 		$result = $object->availability($_POST['availability_id']);
 	}
 
-	// Terms of the settlement
+	// Terms of payments
 	elseif ($action == 'setconditions' && $user->rights->supplier_proposal->creer) {
 		$result = $object->setPaymentTerms(GETPOST('cond_reglement_id', 'int'));
 	}
@@ -950,7 +950,7 @@ if (empty($reshook))
 		$result = $object->set_remise_absolue($user, $_POST['remise_absolue']);
 	}
 
-	// Mode de reglement
+	// Payment mode
 	elseif ($action == 'setmode' && $user->rights->supplier_proposal->creer) {
 		$result = $object->setPaymentMethods(GETPOST('mode_reglement_id', 'int'));
 	}
