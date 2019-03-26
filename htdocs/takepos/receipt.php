@@ -103,11 +103,32 @@ print $object->ref;
     <th class="right"><?php echo $langs->trans("TotalHT");?></th>
     <td class="right"><?php echo price($object->total_ht, 1, '', 1, - 1, - 1, $conf->currency)."\n";?></td>
 </tr>
+<?php if($conf->global->TAKEPOS_TICKET_VAT_GROUPPED):?>
+<?php
+	$vat_groups = array();
+	foreach ($object->lines as $line)
+	{
+		if(!array_key_exists($line->tva_tx, $vat_groups)){
+			$vat_groups[$line->tva_tx] = 0;
+		}
+		$vat_groups[$line->tva_tx] += $line->total_tva;
+	}
+	foreach($vat_groups as $key => $val){
+	?>
+	<tr>
+		<th align="right"><?php echo $langs->trans("VAT").' '.vatrate($key, 1);?></th>
+		<td align="right"><?php echo price($val, 1, '', 1, - 1, - 1, $conf->currency)."\n";?></td>
+	</tr>
+<?php
+	}
+?>
+<?php else: ?>
 <tr>
-    <th class="right"><?php echo $langs->trans("TotalVAT").'</th><td class="right">'.price($object->total_tva, 1, '', 1, - 1, - 1, $conf->currency)."\n";?></td>
+	<th class="right"><?php echo $langs->trans("TotalVAT").'</th><td class="right">'.price($object->total_tva, 1, '', 1, - 1, - 1, $conf->currency)."\n";?></td>
 </tr>
+<?php endif ?>
 <tr>
-    <th class="right"><?php echo ''.$langs->trans("TotalTTC").'</th><td class="right">'.price($object->total_ttc, 1, '', 1, - 1, - 1, $conf->currency)."\n";?></td>
+	<th class="right"><?php echo ''.$langs->trans("TotalTTC").'</th><td class="right">'.price($object->total_ttc, 1, '', 1, - 1, - 1, $conf->currency)."\n";?></td>
 </tr>
 </table>
 <div style="border-top-style: double;">
