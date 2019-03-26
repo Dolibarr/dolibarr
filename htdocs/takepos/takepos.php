@@ -449,17 +449,22 @@ $( document ).ready(function() {
 		</div>
 
 <?php
+        
 // TakePOS setup check
-// TODO
 $sql = "SELECT code, libelle FROM ".MAIN_DB_PREFIX."c_paiement";
 $sql.= " WHERE entity IN (".getEntity('c_paiement').")";
 $sql.= " AND active = 1";
 $sql.= " ORDER BY libelle";
 $resql = $db->query($sql);
 $paiementsModes = array();
-if($resql){
+if ($resql){
 	while ($obj = $db->fetch_object($resql)){
-		$accountname="CASHDESK_ID_BANKACCOUNT_".$obj->code;
+        $paycode = $obj->code;
+        if ($paycode == 'LIQ') $paycode = 'CASH';
+        if ($paycode == 'CB')  $paycode = 'CARD';
+        if ($paycode == 'CHQ') $paycode = 'CHEQUE';
+        
+		$accountname="CASHDESK_ID_BANKACCOUNT_".$paycode;
 		if($conf->global->$accountname) array_push($paiementsModes, $obj);
 	}
 }
