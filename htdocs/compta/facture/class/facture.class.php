@@ -2720,6 +2720,12 @@ class Facture extends CommonInvoice
 
 			// Check parameters
 			if ($type < 0) return -1;
+			
+			if ($date_start && $date_end && $date_start > $date_end) {
+				$langs->load("errors");
+				$this->error=$langs->trans('ErrorStartDateGreaterEnd');
+				return -1;
+			}
 
 			$this->db->begin();
 
@@ -2922,6 +2928,12 @@ class Facture extends CommonInvoice
 					if (!$this->error) $this->error=$langs->trans('invoiceLineProgressError');
 					return -3;
 				}
+			}
+			
+			if ($date_start && $date_end && $date_start > $date_end) {
+				$langs->load("errors");
+				$this->error=$langs->trans('ErrorStartDateGreaterEnd');
+				return -1;
 			}
 
 			$this->db->begin();
