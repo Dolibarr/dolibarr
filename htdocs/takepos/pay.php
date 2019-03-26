@@ -57,10 +57,15 @@ $sql.= " AND active = 1";
 $sql.= " ORDER BY libelle";
 $resql = $db->query($sql);
 $paiements = array();
-if($resql){
-	while ($obj = $db->fetch_object($resql)){
-		$accountname="CASHDESK_ID_BANKACCOUNT_".$obj->code;
-		if($conf->global->$accountname) array_push($paiements, $obj);
+if ($resql) {
+	while ($obj = $db->fetch_object($resql)) {
+        $paycode = $obj->code;
+        if ($paycode == 'LIQ') $paycode = 'CASH';
+        if ($paycode == 'CB')  $paycode = 'CARD';
+        if ($paycode == 'CHQ') $paycode = 'CHEQUE';
+        
+        $accountname="CASHDESK_ID_BANKACCOUNT_".$paycode;
+		if ($conf->global->$accountname) array_push($paiements, $obj);
 	}
 }
 ?>
