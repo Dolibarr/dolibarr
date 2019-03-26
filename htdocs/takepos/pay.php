@@ -65,7 +65,7 @@ if ($resql) {
         if ($paycode == 'CHQ') $paycode = 'CHEQUE';
         
         $accountname="CASHDESK_ID_BANKACCOUNT_".$paycode;
-		if ($conf->global->$accountname) array_push($paiements, $obj);
+		if (! empty($conf->global->$accountname) && $conf->global->$accountname > 0) array_push($paiements, $obj);
 	}
 }
 ?>
