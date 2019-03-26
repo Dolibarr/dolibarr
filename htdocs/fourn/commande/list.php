@@ -228,7 +228,7 @@ if (empty($reshook))
 	{
 		$orders = GETPOST('toselect', 'array');
 		$createbills_onebythird = GETPOST('createbills_onebythird', 'int');
-		$validate_invoices = GETPOST('valdate_invoices', 'int');
+		$validate_invoices = GETPOST('validate_invoices', 'int');
 
 		$TFact = array();
 		$TFactThird = array();
@@ -682,7 +682,7 @@ if ($resql)
 		print $langs->trans('ValidateInvoices');
 		print '</td>';
 		print '<td>';
-		print $form->selectyesno('valdate_invoices', 1, 1);
+		print $form->selectyesno('validate_invoices', 1, 1);
 		print '</td>';
 		print '</tr>';
 		print '</table>';
