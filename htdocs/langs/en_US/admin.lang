@@ -1848,7 +1848,6 @@ ECMAutoTree=Show automatic ECM tree
 OperationParamDesc=Define values to use for action, or how to extract values. For example:<br>VALUE:abc<br>REGEX:SUBJECT:([^\s]*)<br>REGEX:BODY:My company name is\s([^\s]*)
 OpeningHours=Opening hours
 OpeningHoursDesc=Enter here the regular opening hours of your company.
-##### Resource ####
 ResourceSetup=Configuration of Resource module
 UseSearchToSelectResource=Use a search form to choose a resource (rather than a drop-down list).
 DisabledResourceLinkUser=Disable feature to link a resource to users
@@ -1872,3 +1871,5 @@ UseDebugBar=Use the debug bar
 DEBUGBAR_LOGS_LINES_NUMBER=Number of last log lines to keep in console
 WarningValueHigherSlowsDramaticalyOutput=Warning, higher values slows dramaticaly output
 DebugBarModuleActivated=Module debugbar is activated and slows dramaticaly the interface
+EXPORTS_SHARE_MODELS=Export models are share with everybody
+ExportSetup=Setup of module Export
