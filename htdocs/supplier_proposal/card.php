@@ -630,7 +630,7 @@ if (empty($reshook))
 					    $desc = $productsupplier->desc_supplier;
 					} else $desc = $productsupplier->description;
 
-					if (trim($product_desc) != trim($desc)) $desc = dol_concatdesc($desc, $product_desc, '', !empty($conf->global->CHANGE_ORDER_CONCAT_DESCRIPTION));
+					if (trim($product_desc) != trim($desc)) $desc = dol_concatdesc($desc, $product_desc, '', !empty($conf->global->MAIN_CHANGE_ORDER_CONCAT_DESCRIPTION));
 
 					$pu_ht = $productsupplier->fourn_pu;
 
@@ -932,12 +932,12 @@ if (empty($reshook))
 		$object->setProject(GETPOST('projectid'), 'int');
 	}
 
-	// Delai de livraison
+	// Delivery delay
 	elseif ($action == 'setavailability' && $user->rights->supplier_proposal->creer) {
 		$result = $object->availability($_POST['availability_id']);
 	}
 
-	// Conditions de reglement
+	// Terms of payments
 	elseif ($action == 'setconditions' && $user->rights->supplier_proposal->creer) {
 		$result = $object->setPaymentTerms(GETPOST('cond_reglement_id', 'int'));
 	}
@@ -950,7 +950,7 @@ if (empty($reshook))
 		$result = $object->set_remise_absolue($user, $_POST['remise_absolue']);
 	}
 
-	// Mode de reglement
+	// Payment mode
 	elseif ($action == 'setmode' && $user->rights->supplier_proposal->creer) {
 		$result = $object->setPaymentMethods(GETPOST('mode_reglement_id', 'int'));
 	}
@@ -1084,7 +1084,7 @@ if ($action == 'create')
 	} else {
 		print '<td colspan="2">';
 		print $form->select_company('', 'socid', 's.fournisseur = 1', 'SelectThirdParty', 0, 0, null, 0, 'minwidth300');
-		print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&client=0&fournisseur=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'">'.$langs->trans("AddThirdParty").' <span class="fa fa-plus-circle valignmiddle"></span></a>';
+		print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&client=0&fournisseur=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'"><span class="valignmiddle text-plus-circle">'.$langs->trans("AddThirdParty").'</span><span class="fa fa-plus-circle valignmiddle"></span></a>';
 		print '</td>';
 	}
 	print '</tr>' . "\n";
@@ -1165,7 +1165,7 @@ if ($action == 'create')
 		print '<td>' . $langs->trans("Project") . '</td><td colspan="2">';
 
 		$numprojet = $formproject->select_projects(($soc->id > 0 ? $soc->id : -1), $projectid, 'projectid', 0, 0, 1, 1);
-		print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/card.php?socid=' . $soc->id . '&action=create&status=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create&socid='.$soc->id).'">' . $langs->trans("AddProject") . ' <span class="fa fa-plus-circle valignmiddle"></span></a>';
+		print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/card.php?socid=' . $soc->id . '&action=create&status=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create&socid='.$soc->id).'"><span class="valignmiddle text-plus-circle">' . $langs->trans("AddProject") . '</span><span class="fa fa-plus-circle valignmiddle"></span></a>';
 
 		print '</td>';
 		print '</tr>';

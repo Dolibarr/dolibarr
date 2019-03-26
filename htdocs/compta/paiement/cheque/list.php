@@ -138,7 +138,7 @@ if ($resql)
 	$newcardbutton='';
 	if ($user->rights->banque->cheque)
 	{
-		$newcardbutton = '<a class="butActionNew" href="'.DOL_URL_ROOT.'/compta/paiement/cheque/card.php?action=new"><span class="valignmiddle">'.$langs->trans('NewCheckDeposit').'</span>';
+		$newcardbutton = '<a class="butActionNew" href="'.DOL_URL_ROOT.'/compta/paiement/cheque/card.php?action=new"><span class="valignmiddle text-plus-circle">'.$langs->trans('NewCheckDeposit').'</span>';
 		$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
 		$newcardbutton.= '</a>';
 	}

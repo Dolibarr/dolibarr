@@ -948,7 +948,7 @@ if ($action == 'create')
             $numprojet=$formproject->select_projects($soc->id, $projectid, 'projectid');
             if ($numprojet==0)
             {
-                print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$soc->id.'&action=create">'.$langs->trans("AddProject").' <span class="fa fa-plus-circle valignmiddle"></span></a>';
+                print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$soc->id.'&action=create"><span class="valignmiddle text-plus-circle">'.$langs->trans("AddProject").'</span><span class="fa fa-plus-circle valignmiddle"></span></a>';
             }
             print '</td></tr>';
         }
@@ -961,7 +961,7 @@ if ($action == 'create')
 			$numcontrat=$formcontract->select_contract($soc->id, GETPOST('contratid', 'int'), 'contratid', 0, 1);
 			if ($numcontrat==0)
 			{
-				print ' &nbsp; <a href="'.DOL_URL_ROOT.'/contrat/card.php?socid='.$soc->id.'&action=create">'.$langs->trans("AddContract").' <span class="fa fa-plus-circle valignmiddle"></span></a>';
+				print ' &nbsp; <a href="'.DOL_URL_ROOT.'/contrat/card.php?socid='.$soc->id.'&action=create"><span class="valignmiddle text-plus-circle">'.$langs->trans("AddContract").'</span><span class="fa fa-plus-circle valignmiddle"></span></a>';
 			}
 			print '</td></tr>';
 		}

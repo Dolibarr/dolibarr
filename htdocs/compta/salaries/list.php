@@ -150,7 +150,7 @@ if ($result)
 	$newcardbutton='';
 	if (! empty($user->rights->salaries->write))
 	{
-		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/compta/salaries/card.php?action=create"><span class="valignmiddle">'.$langs->trans('NewSalaryPayment').'</span>';
+		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/compta/salaries/card.php?action=create"><span class="valignmiddle text-plus-circle">'.$langs->trans('NewSalaryPayment').'</span>';
 		$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
 		$newcardbutton.= '</a>';
 	}

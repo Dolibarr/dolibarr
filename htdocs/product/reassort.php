@@ -115,8 +115,6 @@ $helpurl='EN:Module_Stocks_En|FR:Module_Stock|ES:M&oacute;dulo_Stocks';
 $form=new Form($db);
 $htmlother=new FormOther($db);
 
-$title=$langs->trans("ProductsAndServices");
-
 $sql = 'SELECT p.rowid, p.ref, p.label, p.barcode, p.price, p.price_ttc, p.price_base_type, p.entity,';
 $sql.= ' p.fk_product_type, p.tms as datem,';
 $sql.= ' p.duration, p.tosell as statut, p.tobuy, p.seuil_stock_alerte, p.desiredstock,';
@@ -191,22 +189,22 @@ if ($resql)
 	} else {
 		$texte = $langs->trans("ProductsAndServices");
 	}
-	$texte.=' ('.$langs->trans("Stocks").')';
+	$texte.=' ('.$langs->trans("MenuStocks").')';
 
 	$param='';
-	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
-	if ($sall)	$param.="&sall=".$sall;
-	if ($tosell)	$param.="&tosell=".$tosell;
-	if ($tobuy)		$param.="&tobuy=".$tobuy;
-	if ($type)		$param.="&type=".$type;
-	if ($fourn_id)	$param.="&fourn_id=".$fourn_id;
-	if ($snom)		$param.="&snom=".$snom;
-	if ($sref)		$param.="&sref=".$sref;
-	if ($search_sale) $param.="&search_sale=".$search_sale;
-	if ($search_categ) $param.="&search_categ=".$search_categ;
-	if ($toolowstock) $param.="&toolowstock=".$toolowstock;
-	if ($sbarcode) $param.="&sbarcode=".$sbarcode;
-	if ($catid) $param.="&catid=".$catid;
+	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.urlencode($limit);
+	if ($sall)	    $param.="&sall=".urlencode($sall);
+	if ($tosell)	$param.="&tosell=".urlencode($tosell);
+	if ($tobuy)		$param.="&tobuy=".urlencode($tobuy);
+	if ($type)		$param.="&type=".urlencode($type);
+	if ($fourn_id)	$param.="&fourn_id=".urlencode($fourn_id);
+	if ($snom)		$param.="&snom=".urlencode($snom);
+	if ($sref)		$param.="&sref=".urlencode($sref);
+	if ($search_sale)  $param.="&search_sale=".urlencode($search_sale);
+	if ($search_categ) $param.="&search_categ=".urlencode($search_categ);
+	if ($toolowstock)  $param.="&toolowstock=".urlencode($toolowstock);
+	if ($sbarcode) $param.="&sbarcode=".urlencode($sbarcode);
+	if ($catid)    $param.="&catid=".urlencode($catid);
 
 	llxHeader("", $texte, $helpurl);
 

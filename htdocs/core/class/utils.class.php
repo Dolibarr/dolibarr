@@ -572,12 +572,13 @@ class Utils
 	 */
 	public function generateDoc($module)
 	{
-		global $conf, $langs, $user;
+		global $conf, $langs, $user, $mysoc;
 		global $dirins;
 
 		$error = 0;
 
 		$modulelowercase=strtolower($module);
+		$now=dol_now();
 
 		// Dir for module
 		$dir = $dirins.'/'.$modulelowercase;
@@ -688,16 +689,16 @@ class Utils
 
 					//var_dump($phpfileval['fullname']);
 					$arrayreplacement=array(
-					    'mymodule'=>strtolower($modulename),
-					    'MyModule'=>$modulename,
-					    'MYMODULE'=>strtoupper($modulename),
-					    'My module'=>$modulename,
-					    'my module'=>$modulename,
-					    'Mon module'=>$modulename,
-					    'mon module'=>$modulename,
-					    'htdocs/modulebuilder/template'=>strtolower($modulename),
+					    'mymodule'=>strtolower($module),
+					    'MyModule'=>$module,
+					    'MYMODULE'=>strtoupper($module),
+					    'My module'=>$module,
+					    'my module'=>$module,
+					    'Mon module'=>$module,
+					    'mon module'=>$module,
+					    'htdocs/modulebuilder/template'=>strtolower($module),
 					    '__MYCOMPANY_NAME__'=>$mysoc->name,
-					    '__KEYWORDS__'=>$modulename,
+					    '__KEYWORDS__'=>$module,
 					    '__USER_FULLNAME__'=>$user->getFullName($langs),
 					    '__USER_EMAIL__'=>$user->email,
 					    '__YYYY-MM-DD__'=>dol_print_date($now, 'dayrfc'),

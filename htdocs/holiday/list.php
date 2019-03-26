@@ -340,7 +340,7 @@ else
 	$newcardbutton='';
 	if ($user->rights->holiday->write)
 	{
-		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/holiday/card.php?action=request"><span class="valignmiddle">'.$langs->trans('MenuAddCP').'</span>';
+		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/holiday/card.php?action=request"><span class="valignmiddle text-plus-circle">'.$langs->trans('MenuAddCP').'</span>';
 		$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
 		$newcardbutton.= '</a>';
 	}

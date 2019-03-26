@@ -982,7 +982,7 @@ function dol_strtoupper($utf8_string)
  */
 function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename = '', $restricttologhandler = '')
 {
-	global $conf, $user;
+    global $conf, $user, $debugbar;
 
 	// If syslog module enabled
 	if (empty($conf->syslog->enabled)) return;
@@ -998,8 +998,8 @@ function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename =
 	if (! empty($message))
 	{
 		// Test log level
-		$logLevels = array(LOG_EMERG, LOG_ALERT, LOG_CRIT, LOG_ERR, LOG_WARNING, LOG_NOTICE, LOG_INFO, LOG_DEBUG);
-		if (!in_array($level, $logLevels, true))
+		$logLevels = array(LOG_EMERG=>'EMERG', LOG_ALERT=>'ALERT', LOG_CRIT=>'CRITICAL', LOG_ERR=>'ERR', LOG_WARNING=>'WARN', LOG_NOTICE=>'NOTICE', LOG_INFO=>'INFO', LOG_DEBUG=>'DEBUG');
+		if (! array_key_exists($level, $logLevels))
 		{
 			throw new Exception('Incorrect log level');
 		}
@@ -1008,9 +1008,10 @@ function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename =
 		$message = preg_replace('/password=\'[^\']*\'/', 'password=\'hidden\'', $message);	// protection to avoid to have value of password in log
 
 		// If adding log inside HTML page is required
-		if (! empty($_REQUEST['logtohtml']) && (! empty($conf->global->MAIN_ENABLE_LOG_TO_HTML) || ! empty($conf->global->MAIN_LOGTOHTML)))   // MAIN_LOGTOHTML kept for backward compatibility
+		if ((! empty($_REQUEST['logtohtml']) && ! empty($conf->global->MAIN_ENABLE_LOG_TO_HTML))
+		    || (! empty($user->rights->debugbar->read) && is_object($debugbar)))
 		{
-			$conf->logbuffer[] = dol_print_date(time(), "%Y-%m-%d %H:%M:%S")." ".$message;
+		    $conf->logbuffer[] = dol_print_date(time(), "%Y-%m-%d %H:%M:%S")." ".$logLevels[$level]." ".$message;
 		}
 
 		//TODO: Remove this. MAIN_ENABLE_LOG_INLINE_HTML should be deprecated and use a log handler dedicated to HTML output
@@ -1381,53 +1382,46 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 
 					$filepath = $dir_output . $subdir . "/";
 
-					$file = $filepath . $objectref . ".pdf";
+					$filepdf = $filepath . $objectref . ".pdf";
 					$relativepath = $subdir.'/'.$objectref.'.pdf';
 
 					// Define path to preview pdf file (preview precompiled "file.ext" are "file.ext_preview.png")
-					$fileimage = $file.'_preview.png';              // If PDF has 1 page
-					$fileimagebis = $file.'_preview-0.png';         // If PDF has more than one page
+					$fileimage = $filepdf.'_preview.png';
 					$relativepathimage = $relativepath.'_preview.png';
 
-					// Si fichier PDF existe
-					if (file_exists($file))
+					$pdfexists = file_exists($filepdf);
+
+					// If PDF file exists
+					if ($pdfexists)
 					{
-						$encfile = urlencode($file);
 						// Conversion du PDF en image png si fichier png non existant
-						if ( (! file_exists($fileimage) || (filemtime($fileimage) < filemtime($file)))
-						  && (! file_exists($fileimagebis) || (filemtime($fileimagebis) < filemtime($file)))
-						   )
+						if (! file_exists($fileimage) || (filemtime($fileimage) < filemtime($filepdf)))
 						{
-							if (empty($conf->global->MAIN_DISABLE_PDF_THUMBS))		// If you experienc trouble with pdf thumb generation and imagick, you can disable here.
+							if (empty($conf->global->MAIN_DISABLE_PDF_THUMBS))		// If you experience trouble with pdf thumb generation and imagick, you can disable here.
 							{
 								include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-								$ret = dol_convert_file($file, 'png', $fileimage);
+								$ret = dol_convert_file($filepdf, 'png', $fileimage, '0');     // Convert first page of PDF into a file _preview.png
 								if ($ret < 0) $error++;
 							}
 						}
+					}
 
+					if ($pdfexists && ! $error)
+					{
 						$heightforphotref=70;
 						if (! empty($conf->dol_optimize_smallscreen)) $heightforphotref=60;
-						// Si fichier png PDF d'1 page trouve
+						// If the preview file is found
 						if (file_exists($fileimage))
 						{
 							$phototoshow = '<div class="floatleft inline-block valignmiddle divphotoref"><div class="photoref">';
 							$phototoshow.= '<img height="'.$heightforphotref.'" class="photo photowithmargin photowithborder" src="'.DOL_URL_ROOT . '/viewimage.php?modulepart=apercu'.$modulepart.'&amp;file='.urlencode($relativepathimage).'">';
 							$phototoshow.= '</div></div>';
 						}
-						// Si fichier png PDF de plus d'1 page trouve
-						elseif (file_exists($fileimagebis))
-						{
-							$preview = preg_replace('/\.png/', '', $relativepathimage) . "-0.png";
-							$phototoshow = '<div class="floatleft inline-block valignmiddle divphotoref"><div class="photoref">';
-							$phototoshow.= '<img height="'.$heightforphotref.'" class="photo photowithmargin photowithborder" src="'.DOL_URL_ROOT . '/viewimage.php?modulepart=apercu'.$modulepart.'&amp;file='.urlencode($preview).'"><p>';
-							$phototoshow.= '</div></div>';
-						}
 					}
 				}
 				elseif (! $phototoshow)
 				{
-					$phototoshow = $form->showphoto($modulepart, $object, 0, 0, 0, 'photoref', 'small', 1, 0, $maxvisiblephotos);
+					$phototoshow.= $form->showphoto($modulepart, $object, 0, 0, 0, 'photoref', 'small', 1, 0, $maxvisiblephotos);
 				}
 
 				if ($phototoshow)
@@ -1440,7 +1434,7 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 
 			if (! $phototoshow)      // Show No photo link (picto of pbject)
 			{
-				$morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref">';
+			    $morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref">';
 				if ($object->element == 'action')
 				{
 					$width=80;
@@ -5760,7 +5754,7 @@ function dol_textishtml($msg, $option = 0)
  *  @param  string  $text1          Text 1
  *  @param  string  $text2          Text 2
  *  @param  bool    $forxml         false=Use <br>instead of \n if html content detected, true=Use <br /> instead of \n if html content detected
- *  @param  bool    $invert         invert order of description lines if CONF CHANGE_ORDER_CONCAT_DESCRIPTION is active
+ *  @param  bool    $invert         invert order of description lines (we often use config MAIN_CHANGE_ORDER_CONCAT_DESCRIPTION in this parameter)
  *  @return string                  Text 1 + new line + Text2
  *  @see    dol_textishtml()
  */
@@ -7164,7 +7158,7 @@ function complete_head_from_modules($conf, $langs, $object, &$head, &$h, $type, 
  */
 function printCommonFooter($zone = 'private')
 {
-	global $conf, $hookmanager, $user;
+	global $conf, $hookmanager, $user, $debugbar;
 	global $action;
 	global $micro_start_time;
 
@@ -7328,11 +7322,17 @@ function printCommonFooter($zone = 'private')
 		// Add Xdebug coverage of code
 		if (defined('XDEBUGCOVERAGE'))
 		{
-			print_r(xdebug_get_code_coverage());
+		    print_r(xdebug_get_code_coverage());
 		}
 
-		// If there is some logs in buffer to show
-		if (count($conf->logbuffer))
+		// Add DebugBar data
+	    if (! empty($user->rights->debugbar->read) && is_object($debugbar))
+	    {
+	        $debugbar['time']->stopMeasure('pageaftermaster');
+	        print '<!-- Output debugbar data -->'."\n";
+		    print $debugbar->getRenderer()->render();
+		}
+		elseif (count($conf->logbuffer))    // If there is some logs in buffer to show
 		{
 			print "\n";
 			print "<!-- Start of log output\n";
@@ -8027,7 +8027,7 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
         }
 
         if ($displayMode === 2) {
-            $return =  $htmlImg .' '. $htmlLabel;
+            $return =  $htmlImg .' '. $htmlLabelShort;
         }
         elseif ($displayMode === 3) {
             $return = $htmlImg;

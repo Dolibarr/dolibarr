@@ -261,7 +261,7 @@ else
     	{
     		if (! empty($user->rights->agenda->myactions->create) || ! empty($user->rights->agenda->allactions->create))
     		{
-    			$newcardbutton.='<a class="butActionNew" href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out.'"><span class="valignmiddle">'.$langs->trans("AddAction").'</span>';
+    			$newcardbutton.='<a class="butActionNew" href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out.'"><span class="valignmiddle text-plus-circle">'.$langs->trans("AddAction").'</span>';
     			$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
     			$newcardbutton.= '</a>';
     		}

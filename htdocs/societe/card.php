@@ -2348,7 +2348,7 @@ else
 			        print '<form method="post" action="'.$_SERVER['PHP_SELF'].'?socid='.$object->id.'">';
 			        print '<input type="hidden" name="action" value="set_localtax1">';
 			        print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-			        print '<tr><td>'.$langs->transcountry("TypeLocaltax1", $mysoc->country_code).' <a href="'.$_SERVER["PHP_SELF"].'?action=editRE&amp;socid='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</td>';
+			        print '<tr><td>'.$langs->transcountry("Localtax1", $mysoc->country_code).' <a href="'.$_SERVER["PHP_SELF"].'?action=editRE&amp;socid='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</td>';
 			        if($action == 'editRE')
 			        {
 			            print '<td class="left">';
@@ -2366,7 +2366,7 @@ else
 			        print '<form method="post" action="'.$_SERVER['PHP_SELF'].'?socid='.$object->id.'">';
 			        print '<input type="hidden" name="action" value="set_localtax2">';
 			        print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-			        print '<tr><td>'.$langs->transcountry("TypeLocaltax2", $mysoc->country_code).'<a href="'.$_SERVER["PHP_SELF"].'?action=editIRPF&amp;socid='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</td>';
+			        print '<tr><td>'.$langs->transcountry("Localtax2", $mysoc->country_code).'<a href="'.$_SERVER["PHP_SELF"].'?action=editIRPF&amp;socid='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</td>';
 			        if($action == 'editIRPF'){
 			            print '<td class="left">';
 			            $formcompany->select_localtax(2, $object->localtax2_value, "lt2");
@@ -2387,7 +2387,7 @@ else
 			        print '<form method="post" action="'.$_SERVER['PHP_SELF'].'?socid='.$object->id.'">';
 			        print '<input type="hidden" name="action" value="set_localtax1">';
 			        print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-			        print '<tr><td> '.$langs->transcountry("TypeLocaltax1", $mysoc->country_code).'<a href="'.$_SERVER["PHP_SELF"].'?action=editRE&amp;socid='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</td>';
+			        print '<tr><td> '.$langs->transcountry("Localtax1", $mysoc->country_code).'<a href="'.$_SERVER["PHP_SELF"].'?action=editRE&amp;socid='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</td>';
 			        if($action == 'editRE'){
 			            print '<td class="left">';
 			            $formcompany->select_localtax(1, $object->localtax1_value, "lt1");
@@ -2409,7 +2409,7 @@ else
 			        print '<form method="post" action="'.$_SERVER['PHP_SELF'].'?socid='.$object->id.'">';
 			        print '<input type="hidden" name="action" value="set_localtax2">';
 			        print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-			        print '<tr><td> '.$langs->transcountry("TypeLocaltax2", $mysoc->country_code).' <a href="'.$_SERVER["PHP_SELF"].'?action=editIRPF&amp;socid='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</td>';
+			        print '<tr><td> '.$langs->transcountry("Localtax2", $mysoc->country_code).' <a href="'.$_SERVER["PHP_SELF"].'?action=editIRPF&amp;socid='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</td>';
 			        if($action == 'editIRPF'){
 			            print '<td class="left">';
 			            $formcompany->select_localtax(2, $object->localtax2_value, "lt2");

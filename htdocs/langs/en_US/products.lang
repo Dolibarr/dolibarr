@@ -42,6 +42,7 @@ LastRecordedServices=Latest %s recorded services
 CardProduct0=Product card
 CardProduct1=Service card
 Stock=Stock
+MenuStocks=Stocks
 Stocks=Stocks and location (warehouse) of products
 Movements=Movements
 Sell=Sell

@@ -1374,7 +1374,6 @@ class Contrat extends CommonObject
 
 		if ($this->statut >= 0)
 		{
-			$this->db->begin();
 
 			// Clean parameters
 			$pu_ht=price2num($pu_ht);
@@ -1394,7 +1393,7 @@ class Contrat extends CommonObject
 			if (empty($txtva) || ! is_numeric($txtva)) $txtva=0;
 			if (empty($txlocaltax1) || ! is_numeric($txlocaltax1)) $txlocaltax1=0;
             if (empty($txlocaltax2) || ! is_numeric($txlocaltax2)) $txlocaltax2=0;
-
+			
 			if ($price_base_type=='HT')
 			{
 				$pu=$pu_ht;
@@ -1406,6 +1405,14 @@ class Contrat extends CommonObject
 
 			// Check parameters
 			if (empty($remise_percent)) $remise_percent=0;
+			
+			if ($date_start && $date_end && $date_start > $date_end) {
+				$langs->load("errors");
+				$this->error=$langs->trans('ErrorStartDateGreaterEnd');
+				return -1;
+			}
+			
+			$this->db->begin();
 
 			$localtaxes_type=getLocalTaxesFromRate($txtva, 0, $this->societe, $mysoc);
 
@@ -1595,6 +1602,12 @@ class Contrat extends CommonObject
 		else
 		{
 			$remise_percent=0;
+		}
+		
+		if ($date_start && $date_end && $date_start > $date_end) {
+			$langs->load("errors");
+			$this->error=$langs->trans('ErrorStartDateGreaterEnd');
+			return -1;
 		}
 
 		dol_syslog(get_class($this)."::updateline $rowid, $desc, $pu, $qty, $remise_percent, $date_start, $date_end, $date_debut_reel, $date_fin_reel, $tvatx, $localtax1tx, $localtax2tx, $price_base_type, $info_bits");

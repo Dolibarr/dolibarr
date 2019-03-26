@@ -321,7 +321,7 @@ class DoliDBSqlite3 extends DoliDB
 	 *	@param		string	$name		name of database (not used for mysql, used for pgsql)
 	 *	@param		integer	$port		Port of database server
 	 *	@return		SQLite3				Database access handler
-	 *	@see		close
+	 *	@see		close()
      */
     public function connect($host, $login, $passwd, $name, $port = 0)
     {
@@ -377,7 +377,7 @@ class DoliDBSqlite3 extends DoliDB
      *  Close database connexion
      *
      *  @return     bool     True if disconnect successfull, false otherwise
-     *  @see        connect
+     *  @see        connect()
      */
     public function close()
     {
@@ -557,7 +557,7 @@ class DoliDBSqlite3 extends DoliDB
      *
      *	@param	SQLite3Result	$resultset  Resulset of requests
      *	@return int		    			Nb of lines
-     *	@see    affected_rows
+     *	@see    affected_rows()
      */
     public function num_rows($resultset)
     {
@@ -578,7 +578,7 @@ class DoliDBSqlite3 extends DoliDB
      *
      *	@param	SQLite3Result	$resultset  Resulset of requests
      *	@return int		    			Nb of lines
-     *	@see    affected_rows
+     *	@see    affected_rows()
      */
     public function affected_rows($resultset)
     {
