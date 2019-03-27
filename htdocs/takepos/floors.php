@@ -35,7 +35,10 @@ $id = GETPOST('id', 'int');
 $action = GETPOST('action', 'alpha');
 $left = GETPOST('left', 'alpha');
 $top = GETPOST('top', 'alpha');
-$place = GETPOST('place', 'int');
+
+$place = (GETPOST('place', 'int') > 0 ? GETPOST('place', 'int') : 0);   // $place is id of table for Ba or Restaurant
+$posnb = (GETPOST('posnb', 'int') > 0 ? GETPOST('posnb', 'int') : 0);   // $posnb is id of POS
+
 $newname = GETPOST('newname', 'alpha');
 $mode = GETPOST('mode', 'alpha');
 
@@ -63,7 +66,7 @@ if ($action=="updatename")
 {
     $newname = preg_replace("/[^a-zA-Z0-9\s]/", "", $newname); // Only English chars
     if (strlen($newname) > 3) $newname = substr($newname, 0, 3); // Only 3 chars
-    $db->query("update ".MAIN_DB_PREFIX."takepos_floor_tables set label='".$db->escape($newname)."' where rowid='".$place."'");
+    $db->query("UPDATE ".MAIN_DB_PREFIX."takepos_floor_tables set label='".$db->escape($newname)."' WHERE rowid='".$place."'");
 }
 
 if ($action=="add")

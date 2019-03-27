@@ -45,7 +45,8 @@ $show_files=GETPOST('show_files', 'int');
 $confirm=GETPOST('confirm', 'alpha');
 $toselect = GETPOST('toselect', 'array');
 $idcustomer = GETPOST('idcustomer', 'int');
-$place = (GETPOSTISSET('place')?GETPOST('place', 'int'):0);
+$place = (GETPOST('place', 'int') > 0 ? GETPOST('place', 'int') : 0);   // $place is id of table for Ba or Restaurant
+$posnb = (GETPOST('posnb', 'int') > 0 ? GETPOST('posnb', 'int') : 0);   // $posnb is id of POS
 
 $_GET['optioncss'] = 'print';
 

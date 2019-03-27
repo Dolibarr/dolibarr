@@ -35,7 +35,10 @@ $langs->loadLangs(array("bills", "cashdesk"));
 $id = GETPOST('id', 'int');
 $action = GETPOST('action', 'alpha');
 $idproduct = GETPOST('idproduct', 'int');
-$place = (GETPOSTISSET('place')?GETPOST('place', 'int'):0);	// $place is id of POS
+
+$place = (GETPOST('place', 'int') > 0 ? GETPOST('place', 'int') : 0);   // $place is id of table for Ba or Restaurant
+$posnb = (GETPOST('posnb', 'int') > 0 ? GETPOST('posnb', 'int') : 0);   // $posnb is id of POS
+
 $number = GETPOST('number', 'alpha');
 $idline = GETPOST('idline', 'int');
 $desc = GETPOST('desc', 'alpha');
@@ -124,7 +127,7 @@ if (($action=="addline" || $action=="freezone") && $placeid == 0)
 	$invoice->socid = $conf->global->CASHDESK_ID_THIRDPARTY;
 	$invoice->date = dol_now();
 	$invoice->module_source = 'takepos';
-	$invoice->pos_source = (string) $place;
+	$invoice->pos_source = (string) $posnb;
 
 	$placeid = $invoice->create($user);
 	$sql="UPDATE ".MAIN_DB_PREFIX."facture set ref='(PROV-POS-".$place.")' where rowid=".$placeid;
@@ -178,8 +181,8 @@ if ($action == "deleteline") {
         $invoice->deleteline($idline);
         $invoice->fetch($placeid);
     }
-    elseif ($placeid > 0) { //If exist invoice, but no line selected, proced to delete last line
-        $sql = "SELECT rowid FROM " . MAIN_DB_PREFIX . "facturedet where fk_facture='$placeid' order by rowid DESC";
+    elseif ($placeid > 0) { //If exist invoice, but no line selected, proceed to delete last line
+        $sql = "SELECT rowid FROM " . MAIN_DB_PREFIX . "facturedet where fk_facture='".$placeid."' order by rowid DESC";
         $resql = $db->query($sql);
         $row = $db->fetch_array($resql);
         $deletelineid = $row[0];
@@ -375,54 +378,72 @@ if (! empty($conf->use_javascript_ajax))
     print '<script src="'.DOL_URL_ROOT.'/core/js/lib_foot.js.php?lang='.$langs->defaultlang.($ext?'&'.$ext:'').'"></script>'."\n";
 }
 
+
 print '<div class="div-table-responsive-no-min invoice">';
 print '<table id="tablelines" class="noborder noshadow" width="100%">';
 print '<tr class="liste_titre nodrag nodrop">';
-print '<td class="linecoldescription">' . $langs->trans('Description') . '</td>';
+print '<td class="linecoldescription">';
+print '<span style="font-size:120%;" class="right">';
+if ($conf->global->TAKEPOS_BAR_RESTAURANT)
+{
+    $sql="SELECT floor, label FROM ".MAIN_DB_PREFIX."takepos_floor_tables where rowid=".((int) $place);
+    $resql = $db->query($sql);
+    $obj = $db->fetch_object($resql);
+    if ($obj)
+    {
+        $label = $obj->label;
+        $floor = $obj->floor;
+    }
+    print $langs->trans('Place')." <b>".$label."</b> - ";
+    print $langs->trans('Floor')." <b>".$floor."</b> - ";
+}
+print $langs->trans('TotalTTC');
+print ' : <b>'.price($invoice->total_ttc, 1, '', 1, - 1, - 1, $conf->currency).'</b></span>';
+print '</td>';
 print '<td class="linecolqty right">' . $langs->trans('ReductionShort') . '</td>';
 print '<td class="linecolqty right">' . $langs->trans('Qty') . '</td>';
 print '<td class="linecolht right">' . $langs->trans('TotalHTShort') . '</td>';
 print "</tr>\n";
 
-if ($placeid > 0) {
-    foreach($invoice->lines as $line)
+if ($placeid > 0)
+{
+    $tmplines = array_reverse($invoice->lines);
+    foreach($tmplines as $line)
     {
-        print '<tr class="drag drop oddeven';
+        $htmlforlines = '';
+
+        $htmlforlines.= '<tr class="drag drop oddeven';
         if ($line->special_code == "3") {
-            print ' order';
+            $htmlforlines.= ' order';
         }
-        print '" id="' . $line->id . '">';
-        print '<td class="left">';
-        print $line->product_label;
-        if ($line->product_label && $line->desc) print '<br>';
+        $htmlforlines.= '" id="' . $line->id . '">';
+        $htmlforlines.= '<td class="left">';
+        $htmlforlines.= $line->product_label;
+        if ($line->product_label && $line->desc) $htmlforlines.= '<br>';
         if ($line->product_label != $line->desc)
         {
             $firstline = dolGetFirstLineOfText($line->desc);
             if ($firstline != $line->desc)
             {
-                print $form->textwithpicto(dolGetFirstLineOfText($line->desc), $line->desc);
+                $htmlforlines.= $form->textwithpicto(dolGetFirstLineOfText($line->desc), $line->desc);
             }
             else
             {
-                print $line->desc;
+                $htmlforlines.= $line->desc;
             }
         }
-		if (!empty($line->array_options['options_order_notes'])) echo "<br>(".$line->array_options['options_order_notes'].")";
-		print '</td>';
-		print '<td class="right">' . vatrate($line->remise_percent, true) . '</td>';
-		print '<td class="right">' . $line->qty . '</td>';
-        print '<td class="right">' . price($line->total_ttc) . '</td>';
-        print '</tr>';
+        if (!empty($line->array_options['options_order_notes'])) $htmlforlines.= "<br>(".$line->array_options['options_order_notes'].")";
+        $htmlforlines.= '</td>';
+        $htmlforlines.= '<td class="right">' . vatrate($line->remise_percent, true) . '</td>';
+        $htmlforlines.= '<td class="right">' . $line->qty . '</td>';
+        $htmlforlines.= '<td class="right">' . price($line->total_ttc) . '</td>';
+        $htmlforlines.= '</tr>'."\n";
+
+        print $htmlforlines;
     }
 }
 
 print '</table>';
-
-print '<p style="font-size:120%;" class="right"><b>'.$langs->trans('TotalTTC');
-
-if ($conf->global->TAKEPOS_BAR_RESTAURANT) print " ".$langs->trans('Place')." ".$place;
-
-print ': '.price($invoice->total_ttc, 1, '', 1, - 1, - 1, $conf->currency).'&nbsp;</b></p>';
 
 if ($invoice->socid != $conf->global->CASHDESK_ID_THIRDPARTY)
 {
