@@ -84,6 +84,7 @@ create table llx_mailing_unsubscribe
 ALTER TABLE llx_mailing_unsubscribe ADD UNIQUE uk_mailing_unsubscribe(email, entity, unsubscribegroup);
 
 ALTER TABLE llx_adherent ADD gender VARCHAR(10);
+ALTER TABLE llx_adherent_type ADD morphy VARCHAR(3);
 ALTER TABLE llx_subscription ADD fk_type integer;
 
 -- Add url_id into unique index of bank_url
