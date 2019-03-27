@@ -165,7 +165,6 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
     print '<input type="text" name="MODULEBUILDER_SPECIFIC_VERSION" value="'.$conf->global->MODULEBUILDER_SPECIFIC_VERSION.'">';
     print '</td>';
     print '</tr>';
-
 }
 
 print '<tr class="oddeven">';
