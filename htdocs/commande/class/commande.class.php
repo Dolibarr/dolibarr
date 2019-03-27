@@ -1085,69 +1085,88 @@ class Commande extends CommonOrder
 		foreach($this->lines as $line)
 			$line->fetch_optionals();
 
-			// Load source object
-			$objFrom = clone $this;
+		// Load source object
+		$objFrom = clone $this;
 
-			// Change socid if needed
-			if (! empty($socid) && $socid != $this->socid)
+		// Change socid if needed
+		if (! empty($socid) && $socid != $this->socid)
+		{
+			$objsoc = new Societe($this->db);
+
+			if ($objsoc->fetch($socid)>0)
 			{
-				$objsoc = new Societe($this->db);
-
-				if ($objsoc->fetch($socid)>0)
-				{
-					$this->socid 				= $objsoc->id;
-					$this->cond_reglement_id	= (! empty($objsoc->cond_reglement_id) ? $objsoc->cond_reglement_id : 0);
-					$this->mode_reglement_id	= (! empty($objsoc->mode_reglement_id) ? $objsoc->mode_reglement_id : 0);
-					$this->fk_project			= 0;
-					$this->fk_delivery_address	= 0;
-				}
-
-				// TODO Change product price if multi-prices
+				$this->socid 				= $objsoc->id;
+				$this->cond_reglement_id	= (! empty($objsoc->cond_reglement_id) ? $objsoc->cond_reglement_id : 0);
+				$this->mode_reglement_id	= (! empty($objsoc->mode_reglement_id) ? $objsoc->mode_reglement_id : 0);
+				$this->fk_project			= 0;
+				$this->fk_delivery_address	= 0;
 			}
 
-			$this->id=0;
-			$this->ref = '';
-			$this->statut=self::STATUS_DRAFT;
+			// TODO Change product price if multi-prices
+		}
 
-			// Clear fields
-			$this->user_author_id     = $user->id;
-			$this->user_valid         = '';
-			$this->date				  = dol_now();
-			$this->date_commande	  = dol_now();
-			$this->date_creation      = '';
-			$this->date_validation    = '';
-			if (empty($conf->global->MAIN_KEEP_REF_CUSTOMER_ON_CLONING)) $this->ref_client = '';
+		$this->id=0;
+		$this->ref = '';
+		$this->statut=self::STATUS_DRAFT;
 
-			// Create clone
-			$this->context['createfromclone'] = 'createfromclone';
-			$result=$this->create($user);
-			if ($result < 0) $error++;
+		// Clear fields
+		$this->user_author_id     = $user->id;
+		$this->user_valid         = '';
+		$this->date				  = dol_now();
+		$this->date_commande	  = dol_now();
+		$this->date_creation      = '';
+		$this->date_validation    = '';
+		if (empty($conf->global->MAIN_KEEP_REF_CUSTOMER_ON_CLONING)) $this->ref_client = '';
 
-			if (! $error)
+		// Create clone
+		$this->context['createfromclone'] = 'createfromclone';
+		$result=$this->create($user);
+		if ($result < 0) $error++;
+
+		if (! $error)
+		{
+			// copy internal contacts
+			if ($this->copy_linked_contact($objFrom, 'internal') < 0)
 			{
-				// Hook of thirdparty module
-				if (is_object($hookmanager))
-				{
-					$parameters=array('objFrom'=>$objFrom);
-					$action='';
-					$reshook=$hookmanager->executeHooks('createFrom', $parameters, $this, $action);    // Note that $action and $object may have been modified by some hooks
-					if ($reshook < 0) $error++;
-				}
+				$error++;
 			}
+		}
 
-			unset($this->context['createfromclone']);
+		if (! $error)
+		{
+			// copy external contacts if same company
+			if ($this->socid == $object->socid)
+			{
+				if ($this->copy_linked_contact($objFrom, 'external') < 0)
+					$error++;
+			}
+		}
 
-			// End
-			if (! $error)
+		if (! $error)
+		{
+			// Hook of thirdparty module
+			if (is_object($hookmanager))
 			{
-				$this->db->commit();
-				return $this->id;
+				$parameters=array('objFrom'=>$objFrom);
+				$action='';
+				$reshook=$hookmanager->executeHooks('createFrom', $parameters, $this, $action);    // Note that $action and $object may have been modified by some hooks
+				if ($reshook < 0) $error++;
 			}
-			else
-			{
-				$this->db->rollback();
-				return -1;
-			}
+		}
+
+		unset($this->context['createfromclone']);
+
+		// End
+		if (! $error)
+		{
+			$this->db->commit();
+			return $this->id;
+		}
+		else
+		{
+			$this->db->rollback();
+			return -1;
+		}
 	}
 
 
