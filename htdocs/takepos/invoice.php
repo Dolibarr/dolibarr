@@ -131,8 +131,8 @@ if (($action=="addline" || $action=="freezone") && $placeid == 0)
 	$db->query($sql);
 }
 
-if ($action == "addline") {
-
+if ($action == "addline")
+{
 	$prod = new Product($db);
     $prod->fetch($idproduct);
 
@@ -269,20 +269,14 @@ if ($action == "order" and $placeid != 0) {
  * View
  */
 
+$form = new Form($db);
+
 ?>
-<style>
-.selected {
-    font-weight: bold;
-}
-.order {
-    color: limegreen;
-}
-</style>
 <script language="javascript">
 var selectedline=0;
 var selectedtext="";
 var placeid=<?php echo $placeid;?>;
-$(document).ready(function(){
+$(document).ready(function() {
     $('table tbody tr').click(function(){
         $('table tbody tr').removeClass("selected");
         $(this).addClass("selected");
@@ -321,10 +315,9 @@ if ($action == "search") {
 }
 
 ?>
-});
 
-$(document).ready(function(){
-    $('table tbody tr').click(function(){
+	$('table tbody tr').click(function(){
+		console.log("We click on a line");
         $('table tbody tr').removeClass("selected");
         $(this).addClass("selected");
         if (selectedline==this.id) return; // If is already selected
@@ -352,6 +345,7 @@ if ($action == "search") {
 }
 
 ?>
+
 });
 
 function Print(id){
@@ -371,7 +365,16 @@ function TakeposPrinting(id){
     });
 }
 </script>
+
 <?php
+// Add again js for footer because this content is injected into takepos.php page so all init
+// for tooltip and other js beautifiers must be reexecuted too.
+if (! empty($conf->use_javascript_ajax))
+{
+    print "\n".'<!-- Includes JS Footer of Dolibarr -->'."\n";
+    print '<script src="'.DOL_URL_ROOT.'/core/js/lib_foot.js.php?lang='.$langs->defaultlang.($ext?'&'.$ext:'').'"></script>'."\n";
+}
+
 print '<div class="div-table-responsive-no-min invoice">';
 print '<table id="tablelines" class="noborder noshadow" width="100%">';
 print '<tr class="liste_titre nodrag nodrop">';
@@ -387,8 +390,22 @@ if ($placeid > 0) {
         if ($line->special_code == "3") {
             print ' order';
         }
-        print '" id="' . $line->rowid . '">';
-        print '<td class="left">' . $line->product_label . $line->desc;
+        print '" id="' . $line->id . '">';
+        print '<td class="left">';
+        print $line->product_label;
+        if ($line->product_label && $line->desc) print '<br>';
+        if ($line->product_label != $line->desc)
+        {
+            $firstline = dolGetFirstLineOfText($line->desc);
+            if ($firstline != $line->desc)
+            {
+                print $form->textwithpicto(dolGetFirstLineOfText($line->desc), $line->desc);
+            }
+            else
+            {
+                print $line->desc;
+            }
+        }
 		if (!empty($line->array_options['options_order_notes'])) echo "<br>(".$line->array_options['options_order_notes'].")";
 		print '</td>';
         print '<td class="right">' . $line->qty . '</td>';

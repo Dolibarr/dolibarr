@@ -208,6 +208,13 @@ div.catwatermark{
 	padding-left: 5px;
 }
 
+.selected {
+    font-weight: bold;
+}
+.order {
+    color: limegreen;
+}
+
 .colorwhite {
 	color: white;
 }
