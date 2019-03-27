@@ -1875,7 +1875,7 @@ class BookKeeping extends CommonObject
 				$obj = $this->db->fetch_object($resql);
 			}
 
-			return $obj->label;
+			return $obj;
 		} else {
 			$this->error = "Error " . $this->db->lasterror();
 			dol_syslog(__METHOD__ . " " . $this->error, LOG_ERR);
