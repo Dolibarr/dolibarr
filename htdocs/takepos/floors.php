@@ -25,8 +25,6 @@ if (! defined('NOREQUIREMENU'))		define('NOREQUIREMENU', '1');
 if (! defined('NOREQUIREHTML'))		define('NOREQUIREHTML', '1');
 if (! defined('NOREQUIREAJAX'))		define('NOREQUIREAJAX', '1');
 
-$_GET['theme']="md"; // Force theme. MD theme provides better look and feel to TakePOS
-
 require '../main.inc.php';	// Load $user and permissions
 
 $langs->loadLangs(array("bills","orders","commercial","cashdesk"));
@@ -69,7 +67,8 @@ if ($action=="updatename")
 
 if ($action=="add")
 {
-    $asdf=$db->query("insert into ".MAIN_DB_PREFIX."takepos_floor_tables values ('', '', '', '45', '45', $floor)");
+    $sql="INSERT INTO ".MAIN_DB_PREFIX."takepos_floor_tables(entity, label, leftpos, toppos, floor) VALUES (".$conf->entity.", '', '45', '45', ".$floor.")";
+    $asdf=$db->query($sql);
     $db->query("update ".MAIN_DB_PREFIX."takepos_floor_tables set label=rowid where label=''"); // No empty table names
 }
 
@@ -171,7 +170,13 @@ $( document ).ready(function() {
 
 <div style="position: absolute; left: 25%; bottom: 8%; width:50%; height:3%;">
     <center>
-    <h1><img src="./img/arrow-prev.png" width="5%" onclick="location.href='floors.php?floor=<?php if ($floor>1) { $floor--; echo $floor; $floor++;} else echo "1"; ?>';"><?php echo $langs->trans("Floor")." ".$floor; ?><img src="./img/arrow-next.png" width="5%" onclick="location.href='floors.php?floor=<?php $floor++; echo $floor; ?>';"></h1>
+    <h1>
+    <?php if ($floor>1) { ?>
+    <img class="valignmiddle" src="./img/arrow-prev.png" width="5%" onclick="location.href='floors.php?floor=<?php if ($floor>1) { $floor--; echo $floor; $floor++;} else echo "1"; ?>';">
+    <?php } ?>
+    <span class="valignmiddle"><?php echo $langs->trans("Floor")." ".$floor; ?></span>
+    <img src="./img/arrow-next.png" class="valignmiddle" width="5%" onclick="location.href='floors.php?floor=<?php $floor++; echo $floor; ?>';">
+    </h1>
     </center>
 </div>
 </body>
