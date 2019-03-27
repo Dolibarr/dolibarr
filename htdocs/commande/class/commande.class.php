@@ -1075,7 +1075,7 @@ class Commande extends CommonOrder
 	 */
 	public function createFromClone($socid = 0)
 	{
-		global $user,$hookmanager;
+		global $conf, $user,$hookmanager;
 
 		$error=0;
 
