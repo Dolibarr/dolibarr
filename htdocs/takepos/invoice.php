@@ -116,9 +116,16 @@ if ($action == 'valid' && $user->rights->facture->creer)
     $payment->create($user);
 	$payment->addPaymentToBank($user, 'payment', '(CustomerInvoicePayment)', $bankaccount, '', '');
 
-	if ($invoice->getRemainToPay() == 0)
+	$remaintopay = $invoice->getRemainToPay();
+	if ($remaintopay == 0)
 	{
+	    dol_syslog("Invoice is paid, so we set it to pay");
 	    $result = $invoice->set_paid($user);
+	    if ($result > 0) $invoice->paye = 1;
+	}
+	else
+	{
+	    dol_syslog("Invoice is not paid, remain to pay = ".$remaintopay);
 	}
 }
 
