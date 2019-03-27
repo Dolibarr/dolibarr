@@ -46,7 +46,7 @@ button.calcbutton3 {
 	text-align: center;
 	font-size:120%;
 	overflow: visible; /* removes extra width in IE */
-	width:12%;
+	width:24%;
 	height:24%;
 }
 
@@ -60,7 +60,7 @@ button.actionbutton {
 	text-align: center;
 	overflow: visible; /* removes extra width in IE */
 	width:33%;
-	height:33%;
+	height:24%;
 }
 
 div.wrapper{
@@ -206,6 +206,13 @@ div.catwatermark{
 	padding-bottom:10px;
 	padding-right: 5px;
 	padding-left: 5px;
+}
+
+.selected {
+    font-weight: bold;
+}
+.order {
+    color: limegreen;
 }
 
 .colorwhite {
