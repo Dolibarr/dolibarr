@@ -1116,7 +1116,7 @@ class Commande extends CommonOrder
 			$this->date_commande	  = dol_now();
 			$this->date_creation      = '';
 			$this->date_validation    = '';
-			$this->ref_client         = '';
+			if (empty($conf->global->MAIN_KEEP_REF_CUSTOMER_ON_CLONING)) $this->ref_client = '';
 
 			// Create clone
 			$this->context['createfromclone'] = 'createfromclone';
@@ -1367,7 +1367,7 @@ class Commande extends CommonOrder
 
 			// Check parameters
 			if ($type < 0) return -1;
-			
+
 			if ($date_start && $date_end && $date_start > $date_end) {
 				$langs->load("errors");
 				$this->error=$langs->trans('ErrorStartDateGreaterEnd');
@@ -2947,7 +2947,7 @@ class Commande extends CommonOrder
 			if (empty($txlocaltax2)) $txlocaltax2=0;
 			if (empty($remise_percent)) $remise_percent=0;
 			if (empty($special_code) || $special_code == 3) $special_code=0;
-			
+
 			if ($date_start && $date_end && $date_start > $date_end) {
 				$langs->load("errors");
 				$this->error=$langs->trans('ErrorStartDateGreaterEnd');
@@ -2962,7 +2962,7 @@ class Commande extends CommonOrder
 			$txtva=price2num($txtva);
 			$txlocaltax1=price2num($txlocaltax1);
 			$txlocaltax2=price2num($txlocaltax2);
-			
+
 			$this->db->begin();
 
 			// Calcul du total TTC et de la TVA pour la ligne a partir de
