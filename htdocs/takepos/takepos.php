@@ -506,10 +506,9 @@ $menus[$r++]=array('title'=>$langs->trans("DoPayment"),
 $menus[$r++]=array('title'=>$langs->trans("Logout"),
 					'action'=>'window.location.href=\''.DOL_URL_ROOT.'/user/logout.php\';');
 
-//BAR RESTAURANT specified menu
+// BAR RESTAURANT specific menu
 if($conf->global->TAKEPOS_BAR_RESTAURANT){
-	$menus[$r++]=array('title'=>$langs->trans("Floors"),
-					'action'=>'Floors();');
+	$menus[$r++]=array('title'=>$langs->trans("Floors"), 'action'=>'Floors();');
 	if ($conf->global->TAKEPOS_ORDER_PRINTERS){
 		$menus[$r++]=array('title'=>$langs->trans("Order"),
 		'action'=>'TakeposPrintingOrder();');
