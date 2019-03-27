@@ -40,8 +40,8 @@ $langs->loadLangs(array("bills","orders","commercial","cashdesk","receiptprinter
 
 $categorie = new Categorie($db);
 
-$MAXCATEG = 16;
-$MAXPRODUCT = 32;
+$MAXCATEG = (empty($conf->global->TAKEPOS_NB_MAXCATEG)?16:$conf->global->TAKEPOS_NB_MAXCATEG);
+$MAXPRODUCT = (empty($conf->global->TAKEPOS_NB_MAXPRODUCT)?32:$conf->global->TAKEPOS_NB_MAXPRODUCT);;
 
 
 /*
@@ -111,7 +111,7 @@ var place="<?php echo $place;?>";
 var editaction="qty";
 var editnumber="";
 function PrintCategories(first) {
-	for (i = 0; i < 14; i++) {
+	for (i = 0; i < <?php echo ($MAXCATEG - 2); ?>; i++) {
 		if (typeof (categories[parseInt(i)+parseInt(first)]) == "undefined") break;
 		$("#catdesc"+i).text(categories[parseInt(i)+parseInt(first)]['label']);
         $("#catimg"+i).attr("src","genimg/index.php?query=cat&id="+categories[parseInt(i)+parseInt(first)]['rowid']);
@@ -121,31 +121,32 @@ function PrintCategories(first) {
 }
 
 function MoreCategories(moreorless) {
-	if (moreorless=="more"){
+	console.log("MoreCategories moreorless="+moreorless+" pagecategories="+pagecategories);
+	if (moreorless=="more") {
 		$('#catimg15').animate({opacity: '0.5'}, 1);
 		$('#catimg15').animate({opacity: '1'}, 100);
 		pagecategories=pagecategories+1;
 	}
-	if (moreorless=="less"){
+	if (moreorless=="less") {
 		$('#catimg14').animate({opacity: '0.5'}, 1);
 		$('#catimg14').animate({opacity: '1'}, 100);
 		if (pagecategories==0) return; //Return if no less pages
 		pagecategories=pagecategories-1;
 	}
-	if (typeof (categories[14*pagecategories] && moreorless=="more") == "undefined"){ // Return if no more pages
+	if (typeof (categories[<?php echo ($MAXCATEG - 2); ?> * pagecategories] && moreorless=="more") == "undefined"){ // Return if no more pages
 		pagecategories=pagecategories-1;
 		return;
 	}
-	for (i = 0; i < 14; i++) {
-		if (typeof (categories[i+(14*pagecategories)]) == "undefined"){
-				$("#catdesc"+i).text("");
-				$("#catimg"+i).attr("src","genimg/empty.png");
-				$("#catwatermark"+i).hide();
-				continue;
-			}
-		$("#catdesc"+i).text(categories[i+(14*pagecategories)]['label']);
-        $("#catimg"+i).attr("src","genimg/index.php?query=cat&id="+categories[i+(14*pagecategories)]['rowid']);
-        $("#catdiv"+i).data("rowid",categories[i+(14*pagecategories)]['rowid']);
+	for (i = 0; i < <?php echo ($MAXCATEG - 2); ?>; i++) {
+		if (typeof (categories[i+(<?php echo ($MAXCATEG - 2); ?> * pagecategories)]) == "undefined") {
+			$("#catdesc"+i).text("");
+			$("#catimg"+i).attr("src","genimg/empty.png");
+			$("#catwatermark"+i).hide();
+			continue;
+		}
+		$("#catdesc"+i).text(categories[i+(<?php echo ($MAXCATEG - 2); ?> * pagecategories)]['label']);
+        $("#catimg"+i).attr("src","genimg/index.php?query=cat&id="+categories[i+(<?php echo ($MAXCATEG - 2); ?> * pagecategories)]['rowid']);
+        $("#catdiv"+i).data("rowid",categories[i+(<?php echo ($MAXCATEG - 2); ?> * pagecategories)]['rowid']);
 		$("#catwatermark"+i).show();
 	}
 }
@@ -221,7 +222,7 @@ function MoreProducts(moreorless) {
 			pageproducts=pageproducts-1;
 			return;
 		}
-		idata=30*pageproducts; //product data counter
+		idata=<?php echo ($MAXPRODUCT - 2); ?> * pageproducts; //product data counter
 		ishow=0; //product to show counter
 
 		while (ishow < maxproduct) {
