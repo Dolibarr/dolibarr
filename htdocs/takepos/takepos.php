@@ -179,8 +179,8 @@ function LoadProducts(position, issubcat=false) {
 		console.log("Call ajax.php (in LoadProducts) to get Products of category "+currentcat);
 
 		while (ishow < maxproduct) {
-			console.log("ishow"+ishow+" idata="+idata);
-			console.log(data[idata]);
+			//console.log("ishow"+ishow+" idata="+idata);
+			//console.log(data[idata]);
 			if (typeof (data[idata]) == "undefined") {
 				$("#prodesc"+ishow).text("");
 				$("#proimg"+ishow).attr("src","genimg/empty.png");
