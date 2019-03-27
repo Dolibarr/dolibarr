@@ -14,6 +14,7 @@
  * Copyright (C) 2014-2015	Marcos García				<marcosgdf@gmail.com>
  * Copyright (C) 2015		Jean-François Ferry			<jfefe@aternatik.fr>
  * Copyright (C) 2018-2019  Frédéric France             <frederic.france@netlogic.fr>
+ * Copyright (C) 2019       Thibault Foucart            <support@ptibogxiv.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -5211,6 +5212,40 @@ function yn($yesno, $case = 1, $color = 0)
 	return $result;
 }
 
+/**
+ *	Return automatic or manual in current language
+ *
+ *	@param	string	$automaticmanual			Value to test (1, 'automatic', 'true' or 0, 'manual', 'false')
+ *	@param	integer	$case			1=Yes/No, 0=yes/no, 2=Disabled checkbox, 3=Disabled checkbox + Automatic/Manual
+ *	@param	int		$color			0=texte only, 1=Text is formated with a color font style ('ok' or 'error'), 2=Text is formated with 'ok' color.
+ *	@return	string					HTML string
+ */
+function am($automaticmanual, $case = 1, $color = 0)
+{
+	global $langs;
+	$result='unknown'; $classname='';
+	if ($automaticmanual == 1 || strtolower($automaticmanual) == 'automatic' || strtolower($automaticmanual) == 'true') 	// A mettre avant test sur no a cause du == 0
+	{
+		$result=$langs->trans('automatic');
+		if ($case == 1 || $case == 3) $result=$langs->trans("Automatic");
+		if ($case == 2) $result='<input type="checkbox" value="1" checked disabled>';
+		if ($case == 3) $result='<input type="checkbox" value="1" checked disabled> '.$result;
+
+		$classname='ok';
+	}
+	elseif ($yesno == 0 || strtolower($automaticmanual) == 'manual' || strtolower($automaticmanual) == 'false')
+	{
+		$result=$langs->trans("manual");
+		if ($case == 1 || $case == 3) $result=$langs->trans("Manual");
+		if ($case == 2) $result='<input type="checkbox" value="0" disabled>';
+		if ($case == 3) $result='<input type="checkbox" value="0" disabled> '.$result;
+
+		if ($color == 2) $classname='ok';
+		else $classname='error';
+	}
+	if ($color) return '<font class="'.$classname.'">'.$result.'</font>';
+	return $result;
+}
 
 /**
  *	Return a path to have a the directory according to object where files are stored.
