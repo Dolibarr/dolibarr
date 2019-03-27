@@ -1135,7 +1135,7 @@ class Commande extends CommonOrder
 		if (! $error)
 		{
 			// copy external contacts if same company
-			if ($this->socid == $object->socid)
+			if ($this->socid == $objFrom->socid)
 			{
 				if ($this->copy_linked_contact($objFrom, 'external') < 0)
 					$error++;
