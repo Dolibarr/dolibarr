@@ -1021,8 +1021,6 @@ function pricejs(amount, mode) {
 	var main_rounding_unit = <?php echo (int) $conf->global->MAIN_MAX_DECIMALS_UNIT; ?>;
 	var main_rounding_tot = <?php echo (int) $conf->global->MAIN_MAX_DECIMALS_TOT; ?>;
 
-	console.log(amount);
-
 	if (mode == 'MU') return amount.toFixed(main_rounding_unit);
 	if (mode == 'MT') return amount.toFixed(main_rounding_tot);
 	return 'Bad value for parameter mode';

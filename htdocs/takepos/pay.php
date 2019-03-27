@@ -15,6 +15,12 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ *	\file       htdocs/takepos/pay.php
+ *	\ingroup	takepos
+ *	\brief      Page with the content of the popup to enter payments
+ */
+
 //if (! defined('NOREQUIREUSER'))	define('NOREQUIREUSER', '1');	// Not disabled cause need to load personalized language
 //if (! defined('NOREQUIREDB'))		define('NOREQUIREDB', '1');		// Not disabled cause need to load personalized language
 //if (! defined('NOREQUIRESOC'))		define('NOREQUIRESOC', '1');
@@ -25,26 +31,38 @@ if (! defined('NOREQUIREMENU'))		define('NOREQUIREMENU', '1');
 if (! defined('NOREQUIREHTML'))		define('NOREQUIREHTML', '1');
 if (! defined('NOREQUIREAJAX'))		define('NOREQUIREAJAX', '1');
 
-$_GET['theme']="md"; // Force theme. MD theme provides better look and feel to TakePOS
+//$_GET['theme']="md"; // Force theme. MD theme provides better look and feel to TakePOS
 
 require '../main.inc.php';	// Load $user and permissions
 require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
 
 $place = GETPOST('place', 'int');
+$invoiceid = GETPOST('invoiceid', 'int');
 
 
 /*
  * View
  */
 
-$sql="SELECT rowid FROM ".MAIN_DB_PREFIX."facture where ref='(PROV-POS-".$place.")'";
-$resql = $db->query($sql);
-$row = $db->fetch_array($resql);
-$placeid=$row[0];
-if (! $placeid) $placeid=0; // Invoice does not exist yet
-else{
-	$invoice = new Facture($db);
-	$invoice->fetch($placeid);
+$invoice = new Facture($db);
+if ($invoiceid > 0)
+{
+    $invoice->fetch($invoiceid);
+}
+else
+{
+    $sql="SELECT rowid FROM ".MAIN_DB_PREFIX."facture where ref='(PROV-POS-".$place.")'";
+    $resql = $db->query($sql);
+    $row = $db->fetch_array($resql);
+    $placeid=$row[0];
+    if (! $placeid)
+    {
+        $placeid=0; // Invoice does not exist yet
+    }
+    else
+    {
+    	$invoice->fetch($placeid);
+    }
 }
 
 top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
@@ -74,11 +92,19 @@ if ($resql) {
 <body>
 
 <script>
-	<?php
-	if ($conf->global->TAKEPOS_NUMPAD==0) print "var received='';";
-	else print "var received=0;";
-	?>
-	var alreadypayed = <?php echo $invoice->getRemainToPay(); ?>;
+<?php
+$remaintopay = 0;
+if ($invoice->id > 0)
+{
+    $remaintopay = $invoice->getRemainToPay();
+}
+$alreadypayed = (is_object($invoice) ? ($invoice->total_ttc - $remaintopay) : 0);
+
+if ($conf->global->TAKEPOS_NUMPAD==0) print "var received='';";
+else print "var received=0;";
+
+?>
+	var alreadypayed = <?php echo $alreadypayed ?>;
 
 	function addreceived(price)
 	{
@@ -88,9 +114,9 @@ if ($resql) {
     	?>
     	$('.change1').html(pricejs(parseFloat(received), 'MT'));
     	$('.change1').val(parseFloat(received));
-    	if (parseFloat(received) > <?php echo $invoice->total_ttc;?>)
+    	if ((alreadypayed + parseFloat(received)) > <?php echo $invoice->total_ttc;?>)
    		{
-			var change=parseFloat(parseFloat(received)-<?php echo $invoice->total_ttc;?>);
+			var change=parseFloat(alreadypayed + parseFloat(received) - <?php echo $invoice->total_ttc;?>);
 			$('.change2').html(pricejs(change, 'MT'));
 	    	$('.change2').val(change);
 	    	$('.change1').removeClass('colorred');
@@ -122,8 +148,8 @@ if ($resql) {
 	function reset()
 	{
 		received=0;
-		$('.change1').html(pricejs(alreadypayed, 'MT'));
-		$('.change1').val(price2numjs(alreadypayed));
+		$('.change1').html(pricejs(received, 'MT'));
+		$('.change1').val(price2numjs(received));
 		$('.change2').html(pricejs(received, 'MT'));
 		$('.change2').val(price2numjs(received));
     	$('.change1').removeClass('colorgreen');
@@ -134,12 +160,13 @@ if ($resql) {
 
 	function Validate(payment)
 	{
+		var invoiceid = <?php echo ($invoiceid > 0 ? $invoiceid : 0); ?>;
 		var amountpayed = $("#change1").val();
 		if (amountpayed > <?php echo $invoice->total_ttc; ?>) {
 			amountpayed = <?php echo $invoice->total_ttc; ?>;
 		}
 		console.log("We click on the payment mode to pay amount = "+amountpayed);
-		parent.$("#poslines").load("invoice.php?place=<?php echo $place;?>&action=valid&pay="+payment+"&amount="+amountpayed, function() {
+		parent.$("#poslines").load("invoice.php?place=<?php echo $place;?>&action=valid&pay="+payment+"&amount="+amountpayed+"&invoiceid="+invoiceid, function() {
 			parent.$("#poslines").scrollTop(parent.$("#poslines")[0].scrollHeight);
 			parent.$.colorbox.close();
 		});
@@ -151,8 +178,13 @@ if ($resql) {
 <div style="width:40%; background-color:#222222; border-radius:8px; margin-bottom: 4px;">
 <center><span style='font-family: verdana,arial,helvetica; font-size: 200%;'><font color="white"><?php echo $langs->trans('TotalTTC');?>: </font><span id="totaldisplay" class="colorwhite"><?php echo price($invoice->total_ttc, 1, '', 1, -1, -1) ?></span></font></span></center>
 </div>
+<?php if ($remaintopay != $invoice->total_ttc) { ?>
+<div style="width:40%; background-color:#222222; border-radius:8px; margin-bottom: 4px;">
+<center><span style='font-family: verdana,arial,helvetica; font-size: 200%;'><font color="white"><?php echo $langs->trans('RemainToPay');?>: </font><span id="remaintopaydisplay" class="colorwhite"><?php echo price($remaintopay, 1, '', 1, -1, -1) ?></span></font></span></center>
+</div>
+<?php } ?>
 <div style="width:40%; background-color:#333333; border-radius:8px; margin-bottom: 4px;">
-<center><span style='font-family: verdana,arial,helvetica; font-size: 200%;'><font color="white"><?php echo $langs->trans("AlreadyPaid"); ?>: </font><span class="change1 colorred"><?php echo price(0) ?></span><input type="hidden" id="change1" class="change1" value="0"></font></center>
+<center><span style='font-family: verdana,arial,helvetica; font-size: 200%;'><font color="white"><?php echo $langs->trans("Received"); ?>: </font><span class="change1 colorred"><?php echo price(0) ?></span><input type="hidden" id="change1" class="change1" value="0"></font></center>
 </div>
 <div style="width:40%; background-color:#333333; border-radius:8px; margin-bottom: 4px;">
 <center><span style='font-family: verdana,arial,helvetica; font-size: 200%;'><font color="white"><?php echo $langs->trans("Change"); ?>: </font><span class="change2 colorwhite"><?php echo price(0) ?></span><input type="hidden" id="change2" class="change2" value="0"></font></span></center>
@@ -171,7 +203,7 @@ $action_buttons = array(
 	array(
 		"function" => "parent.$.colorbox.close();",
 		"span" => "id='printtext'",
-		"text" => $langs->trans("GoBack"),
+		"text" => $langs->trans("Cancel"),
 	),
 );
 $numpad=$conf->global->TAKEPOS_NUMPAD;

@@ -42,11 +42,7 @@ $desc = GETPOST('desc', 'alpha');
 $pay = GETPOST('pay', 'alpha');
 $amountofpayment = price2num(GETPOST('amount', 'alpha'));
 
-$placeid = 0;	// $placeid is id of invoice
-
-$invoice = new Facture($db);
-$ret = $invoice->fetch('', '(PROV-POS-'.$place.')');
-if ($ret > 0) $placeid = $invoice->id;
+$invoiceid = GETPOST('invoiceid', 'int');
 
 $paycode = $pay;
 if ($pay == 'cash') $paycode = 'LIQ';       // For backward compatibility
@@ -60,6 +56,21 @@ $sql.= " AND code = '".$db->escape($paycode)."'";
 $resql = $db->query($sql);
 $codes = $db->fetch_array($resql);
 $paiementid=$codes[0];
+
+
+$invoice = new Facture($db);
+if ($invoiceid > 0)
+{
+    $ret = $invoice->fetch($invoiceid);
+}
+else
+{
+    $ret = $invoice->fetch('', '(PROV-POS-'.$place.')');
+}
+if ($ret > 0)
+{
+    $placeid = $invoice->id;
+}
 
 
 /*
@@ -81,8 +92,14 @@ if ($action == 'valid' && $user->rights->facture->creer)
 	$invoice = new Facture($db);
 	$invoice->fetch($placeid);
 
-	if (! empty($conf->stock->enabled) && $conf->global->CASHDESK_NO_DECREASE_STOCK != "1") $invoice->validate($user, '', $conf->global->CASHDESK_ID_WAREHOUSE);
-	else $invoice->validate($user);
+	if (! empty($conf->stock->enabled) && $conf->global->CASHDESK_NO_DECREASE_STOCK != "1")
+	{
+	    $invoice->validate($user, '', $conf->global->CASHDESK_ID_WAREHOUSE);
+	}
+	else
+	{
+	    $invoice->validate($user);
+	}
 
 	// Add the payment
 	$payment=new Paiement($db);
@@ -96,10 +113,9 @@ if ($action == 'valid' && $user->rights->facture->creer)
     $payment->create($user);
 	$payment->addPaymentToBank($user, 'payment', '(CustomerInvoicePayment)', $bankaccount, '', '');
 
-
-	if ($amountofpayment == $invoice->getRemainToPay())
+	if ($invoice->getRemainToPay() == 0)
 	{
-	   $invoice->set_paid($user);
+	    $result = $invoice->set_paid($user);
 	}
 }
 
@@ -248,6 +264,11 @@ if ($action == "order" and $placeid != 0) {
     $invoice->fetch($placeid);
 }
 
+
+/*
+ * View
+ */
+
 ?>
 <style>
 .selected {
@@ -307,10 +328,11 @@ $(document).ready(function(){
         $('table tbody tr').removeClass("selected");
         $(this).addClass("selected");
         if (selectedline==this.id) return; // If is already selected
-          else selectedline=this.id;
+        else selectedline=this.id;
         selectedtext=$('#'+selectedline).find("td:first").html();
     });
 <?php
+
 
 if ($action == "temp" and $ticket_printer1 != "") {
     ?>
@@ -379,7 +401,7 @@ print '</table>';
 
 print '<p style="font-size:120%;" class="right"><b>'.$langs->trans('TotalTTC');
 
-if($conf->global->TAKEPOS_BAR_RESTAURANT) print " ".$langs->trans('Place')." ".$place;
+if ($conf->global->TAKEPOS_BAR_RESTAURANT) print " ".$langs->trans('Place')." ".$place;
 
 print ': '.price($invoice->total_ttc, 1, '', 1, - 1, - 1, $conf->currency).'&nbsp;</b></p>';
 
@@ -392,21 +414,26 @@ if ($invoice->socid != $conf->global->CASHDESK_ID_THIRDPARTY)
     print $langs->trans("Customer").': '.$soc->name;
     print '</p>';
 }
+
 if ($action=="valid")
 {
-	print '<p style="font-size:120%;" class="center"><b>';
+    print '<!-- Area with validated invoice -->'."\n";
+    print '<input type="hidden" name="invoiceid" id="invoiceid" value="'.$invoice->id.'">';
+    print '<p style="font-size:120%;" class="center"><b>';
+    print $invoice->getNomUrl(1, '', 0, 0, '', 0, 0, -1, '_backoffice')." - ";
 	if ($invoice->getRemainToPay() > 0)
 	{
-	    print $invoice->getNomUrl(1)." ".$langs->trans('Generated');
+	    print $langs->trans('Generated');
 	}
 	else
 	{
-	   print $invoice->getNomUrl(1)." ".$langs->trans('BillShortStatusValidated');
+	    if ($invoice->paye) print $langs->trans("Payed");
+	    else print $langs->trans('BillShortStatusValidated');
 	}
 	print '</b></p>';
 	if ($conf->global->TAKEPOSCONNECTOR) print '<center><button type="button" onclick="TakeposPrinting('.$placeid.');">'.$langs->trans('PrintTicket').'</button><center>';
 	else print '<center><button id="buttonprint" type="button" onclick="Print('.$placeid.');">'.$langs->trans('PrintTicket').'</button><center>';
-    if($conf->global->TAKEPOS_AUTO_PRINT_TICKETS) print '<script language="javascript">$("#buttonprint").click();</script>';
+    if ($conf->global->TAKEPOS_AUTO_PRINT_TICKETS) print '<script language="javascript">$("#buttonprint").click();</script>';
 }
 
 if ($action == "search")
