@@ -29,18 +29,19 @@ require '../main.inc.php';	// Load $user and permissions
 
 $langs->loadLangs(array("bills","orders","commercial","cashdesk"));
 
-$floor=GETPOST('floor', 'alpha');
+$floor=GETPOST('floor', 'int');
 if ($floor=="") $floor=1;
 $id = GETPOST('id', 'int');
 $action = GETPOST('action', 'alpha');
 $left = GETPOST('left', 'alpha');
 $top = GETPOST('top', 'alpha');
 $place = GETPOST('place', 'int');
-$newname = GETPOST('newname');
+$newname = GETPOST('newname', 'alpha');
 $mode = GETPOST('mode', 'alpha');
 
-if ($action=="getTables"){
-    $sql="SELECT * from ".MAIN_DB_PREFIX."takepos_floor_tables where floor=".$floor;
+if ($action=="getTables")
+{
+    $sql="SELECT rowid, entity, label, leftpos, toppos, floor FROM ".MAIN_DB_PREFIX."takepos_floor_tables where floor=".$floor;
     $resql = $db->query($sql);
     $rows = array();
     while($row = $db->fetch_array($resql)){
@@ -54,15 +55,15 @@ if ($action=="update")
 {
     if ($left>95) $left=95;
     if ($top>95) $top=95;
-    if ($left>3 or $top>4) $db->query("update ".MAIN_DB_PREFIX."takepos_floor_tables set leftpos=$left, toppos=$top where label='$place'");
-    else $db->query("delete from ".MAIN_DB_PREFIX."takepos_floor_tables where label='$place'");
+    if ($left>3 or $top>4) $db->query("UPDATE ".MAIN_DB_PREFIX."takepos_floor_tables set leftpos=".$left.", toppos=".$top." WHERE rowid='".$place."'");
+    else $db->query("DELETE from ".MAIN_DB_PREFIX."takepos_floor_tables where rowid='".$place."'");
 }
 
 if ($action=="updatename")
 {
     $newname = preg_replace("/[^a-zA-Z0-9\s]/", "", $newname); // Only English chars
     if (strlen($newname) > 3) $newname = substr($newname, 0, 3); // Only 3 chars
-    $db->query("update ".MAIN_DB_PREFIX."takepos_floor_tables set label='$newname' where label='$place'");
+    $db->query("update ".MAIN_DB_PREFIX."takepos_floor_tables set label='".$db->escape($newname)."' where rowid='".$place."'");
 }
 
 if ($action=="add")
@@ -100,6 +101,7 @@ height: 100%;
 var DragDrop='<?php echo $langs->trans("DragDrop"); ?>';
 
 function updateplace(idplace, left, top) {
+	console.log("updateplace idplace="+idplace+" left="+left+" top="+top);
 	$.ajax({
 		type: "POST",
 		url: "floors.php",
@@ -109,12 +111,13 @@ function updateplace(idplace, left, top) {
 	});
 }
 
-function updatename(before) {
-	var after=$("#"+before).text();
+function updatename(rowid) {
+	var after=$("#tablename"+rowid).text();
+	console.log("updatename rowid="+rowid+" after="+after);
 	$.ajax({
 		type: "POST",
 		url: "floors.php",
-		data: { action: "updatename", place: before, newname: after }
+		data: { action: "updatename", place: rowid, newname: after }
 		}).done(function( msg ) {
 		window.location.href='floors.php?mode=edit&floor=<?php echo $floor;?>';
 		});
@@ -129,8 +132,8 @@ $( document ).ready(function() {
 	$.getJSON('./floors.php?action=getTables&floor=<?php echo $floor; ?>', function(data) {
         $.each(data, function(key, val) {
 			<?php if ($mode=="edit"){?>
-			$('body').append('<div class="tablediv" contenteditable onblur="updatename('+val.label+');" style="position: absolute; left: '+val.leftpos+'%; top: '+val.toppos+'%;" id="'+val.label+'">'+val.label+'</div>');
-			$( "#"+val.label ).draggable(
+			$('body').append('<div class="tablediv" contenteditable onblur="updatename('+val.rowid+');" style="position: absolute; left: '+val.leftpos+'%; top: '+val.toppos+'%;" id="tablename'+val.rowid+'">'+val.label+'</div>');
+			$( "#tablename"+val.rowid ).draggable(
 				{
 					start: function() {
 					$("#add").html("<?php echo $langs->trans("Delete"); ?>");
@@ -138,7 +141,7 @@ $( document ).ready(function() {
 					stop: function() {
 					var left=$(this).offset().left*100/$(window).width();
 					var top=$(this).offset().top*100/$(window).height();
-					updateplace($(this).attr('id'), left, top);
+					updateplace($(this).attr('id').substr(9), left, top);
 					}
 				}
 			);
@@ -148,7 +151,7 @@ $( document ).ready(function() {
 			})
 			<?php }
 			else {?>
-			$('body').append('<div class="tablediv" onclick="LoadPlace('+val.label+');" style="position: absolute; left: '+val.leftpos+'%; top: '+val.toppos+'%;" id="'+val.label+'">'+val.label+'</div>');
+			$('body').append('<div class="tablediv" onclick="LoadPlace('+val.rowid+');" style="position: absolute; left: '+val.leftpos+'%; top: '+val.toppos+'%;" id="tablename'+val.rowid+'">'+val.label+'</div>');
 			<?php } ?>
 		});
 	});
