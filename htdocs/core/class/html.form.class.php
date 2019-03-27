@@ -21,6 +21,7 @@
  * Copyright (C) 2018       Nicolas ZABOURI	        <info@inovea-conseil.com>
  * Copyright (C) 2018       Christophe Battarel     <christophe@altairis.fr>
  * Copyright (C) 2018       Josep Lluis Amador      <joseplluis@lliuretic.cat>
+ * Copyright (C) 2019       Thibault FOUCART        <support@ptibogxiv.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -6774,7 +6775,45 @@ class Form
 		return $resultyesno;
 	}
 
+	/**
+	 *	Return an html string with a select combo box to choose yes or no
+	 *
+	 *	@param	string		$htmlname		Name of html select field
+	 *	@param	string		$value			Pre-selected value
+	 *	@param	int			$option			0 return automatic/manual, 1 return 1/0
+	 *	@param	bool		$disabled		true or false
+	 *  @param	int      	$useempty		1=Add empty line
+	 *	@return	string						See option
+	 */
+    public function selectautomanual($htmlname, $value = '', $option = 0, $disabled = false, $useempty = 0)
+	{
+		global $langs;
 
+		$automatic="automatic"; $manual="manual";
+		if ($option)
+		{
+			$automatic="1";
+			$manual="0";
+		}
+
+		$disabled = ($disabled ? ' disabled' : '');
+
+		$resultautomanual = '<select class="flat width100" id="'.$htmlname.'" name="'.$htmlname.'"'.$disabled.'>'."\n";
+		if ($useempty) $resultautomanual .= '<option value="-1"'.(($value < 0)?' selected':'').'>&nbsp;</option>'."\n";
+		if (("$value" == 'automatic') || ($value == 1))
+		{
+			$resultautomanual .= '<option value="'.$automatic.'" selected>'.$langs->trans("Automatic").'</option>'."\n";
+			$resultautomanual .= '<option value="'.$manual.'">'.$langs->trans("Manual").'</option>'."\n";
+		}
+		else
+	   {
+	   		$selected=(($useempty && $value != '0' && $value != 'manual')?'':' selected');
+			$resultautomanual .= '<option value="'.$automatic.'">'.$langs->trans("Automatic").'</option>'."\n";
+			$resultautomanual .= '<option value="'.$manual.'"'.$selected.'>'.$langs->trans("Manual").'</option>'."\n";
+		}
+		$resultautomanual .= '</select>'."\n";
+		return $resultautomanual;
+	}
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
