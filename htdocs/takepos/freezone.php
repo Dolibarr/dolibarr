@@ -60,7 +60,7 @@ if ($action=="freezone") echo '<input type="text" id="number" name="number" styl
 if ($action=="addnote") echo '<input type="hidden" id="number" name="number" value="'.$idline.'">';
 ?>
 <input type="hidden" name="place" value="<?php echo $place;?>">
-<input type="button" style="width:15%;font-size: 200%;" value="OK" onclick="Save();">
+<input type="button" class="button" style="width:15%; font-size: 200%;" value="OK" onclick="Save();">
 </center>
 
 </body>
