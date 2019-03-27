@@ -1848,7 +1848,7 @@ class BookKeeping extends CommonObject
 	 * Description of a root accounting account
 	 *
 	 * @param 	string 	$account	Accounting account
-	 * @return 	string 				Root account
+	 * @return 	stdClass 				Root account
 	 */
 	public function get_compte_racine($account = null)
 	{
