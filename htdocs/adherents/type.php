@@ -58,7 +58,7 @@ if (! $sortorder) {  $sortorder="DESC"; }
 if (! $sortfield) {  $sortfield="d.lastname"; }
 
 $label=GETPOST("label", "alpha");
-$morphy=GETPOST("morphy","alpha");
+$morphy=GETPOST("morphy", "alpha");
 $statut=GETPOST("statut", "int");
 $subscription=GETPOST("subscription", "int");
 $vote=GETPOST("vote", "int");
