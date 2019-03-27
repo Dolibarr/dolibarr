@@ -113,7 +113,7 @@ var pageactions=0;
 var place="<?php echo $place;?>";
 var editaction="qty";
 var editnumber="";
-function PrintCategories(first){
+function PrintCategories(first) {
 	for (i = 0; i < 14; i++) {
 		if (typeof (categories[parseInt(i)+parseInt(first)]) == "undefined") break;
 		$("#catdesc"+i).text(categories[parseInt(i)+parseInt(first)]['label']);
@@ -123,7 +123,7 @@ function PrintCategories(first){
 	}
 }
 
-function MoreCategories(moreorless){
+function MoreCategories(moreorless) {
 	if (moreorless=="more"){
 		$('#catimg15').animate({opacity: '0.5'}, 1);
 		$('#catimg15').animate({opacity: '1'}, 100);
@@ -153,7 +153,7 @@ function MoreCategories(moreorless){
 	}
 }
 
-function LoadProducts(position, issubcat=false){
+function LoadProducts(position, issubcat=false) {
     $('#catimg'+position).animate({opacity: '0.5'}, 1);
 	$('#catimg'+position).animate({opacity: '1'}, 100);
 	if (issubcat==true) currentcat=$('#prodiv'+position).data('rowid');
@@ -262,7 +262,9 @@ function Customer(){
 }
 
 function CloseBill(){
-	$.colorbox({href:"pay.php?place="+place, width:"80%", height:"90%", transition:"none", iframe:"true", title:"<?php echo $langs->trans("CloseBill");?>"});
+	invoiceid = $("#invoiceid").val();
+	console.log("Open popup to enter payment on invoiceid="+invoiceid);
+	$.colorbox({href:"pay.php?place="+place+"&invoiceid="+invoiceid, width:"80%", height:"90%", transition:"none", iframe:"true", title:""});
 }
 
 function Floors(){
@@ -485,7 +487,7 @@ $menus[$r++]=array('title'=>$langs->trans("Customer"),
 					'action'=>'Customer();');
 $menus[$r++]=array('title'=>$langs->trans("BackOffice"),
                     'action'=>'window.open(\''.(DOL_URL_ROOT ? DOL_URL_ROOT : '/').'\', \'_backoffice\');');
-$menus[$r++]=array('title'=>$langs->trans("ValidateBill"),
+$menus[$r++]=array('title'=>$langs->trans("DoPayment"),
 					'action'=>'CloseBill();');
 $menus[$r++]=array('title'=>$langs->trans("Logout"),
 					'action'=>'window.location.href=\''.DOL_URL_ROOT.'/user/logout.php\';');

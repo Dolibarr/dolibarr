@@ -1199,9 +1199,10 @@ class Facture extends CommonInvoice
      *  @param	int  	$notooltip		 			1=Disable tooltip
      *  @param  int     $addlinktonotes  			1=Add link to notes
      *  @param  int     $save_lastsearch_value		-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+     *  @param  string  $target                     Target of link ('', '_self', '_blank', '_parent', '_backoffice', ...)
 	 *  @return string 			         			String with URL
 	 */
-    public function getNomUrl($withpicto = 0, $option = '', $max = 0, $short = 0, $moretitle = '', $notooltip = 0, $addlinktonotes = 0, $save_lastsearch_value = -1)
+    public function getNomUrl($withpicto = 0, $option = '', $max = 0, $short = 0, $moretitle = '', $notooltip = 0, $addlinktonotes = 0, $save_lastsearch_value = -1, $target = '')
 	{
 		global $langs, $conf, $user, $form;
 
@@ -1254,7 +1255,7 @@ class Facture extends CommonInvoice
     		if ($moretitle) $label.=' - '.$moretitle;
         }
 
-		$linkclose='';
+		$linkclose=($target?' target="'.$target.'"':'');
 		if (empty($notooltip) && $user->rights->facture->lire)
 		{
 		    if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
@@ -2720,7 +2721,7 @@ class Facture extends CommonInvoice
 
 			// Check parameters
 			if ($type < 0) return -1;
-			
+
 			if ($date_start && $date_end && $date_start > $date_end) {
 				$langs->load("errors");
 				$this->error=$langs->trans('ErrorStartDateGreaterEnd');
@@ -2929,7 +2930,7 @@ class Facture extends CommonInvoice
 					return -3;
 				}
 			}
-			
+
 			if ($date_start && $date_end && $date_start > $date_end) {
 				$langs->load("errors");
 				$this->error=$langs->trans('ErrorStartDateGreaterEnd');
