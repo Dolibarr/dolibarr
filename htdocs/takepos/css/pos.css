@@ -103,7 +103,6 @@ div.description{
 	width:100%;
 	/* styling below */
 	background-color:black;
-	font-family: 'tahoma';
 	color:white;
 	opacity:0.8; /* transparency */
 	filter:alpha(opacity=80); /* IE transparency */
@@ -209,6 +208,15 @@ div.catwatermark{
 	padding-left: 5px;
 }
 
+.colorwhite {
+	color: white;
+}
+.colorred {
+	color: red;
+}
+.colorgreen {
+	color: green;
+}
 p.description_content{
 	padding:10px;
 	margin:0px;

@@ -1010,6 +1010,25 @@ function dolroundjs(number, decimals) { return +(Math.round(number + "e+" + deci
 
 
 /**
+ * Function similar to PHP price()
+ *
+ * @param  {number|string} amount    The amount to show
+ * @param  {string} mode             'MT' or 'MU'
+ * @return {string}                  The amount with digits
+ */
+function pricejs(amount, mode) {
+	var main_max_dec_shown = <?php echo (int) str_replace('.', '', $conf->global->MAIN_MAX_DECIMALS_SHOWN); ?>;
+	var main_rounding_unit = <?php echo (int) $conf->global->MAIN_MAX_DECIMALS_UNIT; ?>;
+	var main_rounding_tot = <?php echo (int) $conf->global->MAIN_MAX_DECIMALS_TOT; ?>;
+
+	console.log(amount);
+
+	if (mode == 'MU') return amount.toFixed(main_rounding_unit);
+	if (mode == 'MT') return amount.toFixed(main_rounding_tot);
+	return 'Bad value for parameter mode';
+}
+
+/**
  * Function similar to PHP price2num()
  *
  * @param  {number|string} amount    The amount to convert/clean
