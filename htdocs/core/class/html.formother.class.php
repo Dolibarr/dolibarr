@@ -63,8 +63,8 @@ class FormOther
      *    @param    string	$selected          Id modele pre-selectionne
      *    @param    string	$htmlname          Nom de la zone select
      *    @param    string	$type              Type des modeles recherches
-     *    @param    int		$useempty          Affiche valeur vide dans liste
-     *    @param    int		$fk_user          Utilisateur créant le modèle
+     *    @param    int		$useempty          Show an empty value in list
+     *    @param    int		$fk_user           User that has created the template (this is set to null to get all export model when EXPORTS_SHARE_MODELS is on)
      *    @return	void
      */
     public function select_export_model($selected = '', $htmlname = 'exportmodelid', $type = '', $useempty = 0, $fk_user = null)
@@ -73,7 +73,7 @@ class FormOther
         $sql = "SELECT rowid, label";
         $sql.= " FROM ".MAIN_DB_PREFIX."export_model";
         $sql.= " WHERE type = '".$type."'";
-		if (!empty($fk_user)) $sql.=" AND fk_user=".$fk_user;
+		if (!empty($fk_user)) $sql.=" AND fk_user IN (0, ".$fk_user.")";  // An export model
         $sql.= " ORDER BY rowid";
         $result = $this->db->query($sql);
         if ($result)

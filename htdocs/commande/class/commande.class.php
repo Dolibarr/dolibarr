@@ -1367,6 +1367,12 @@ class Commande extends CommonOrder
 
 			// Check parameters
 			if ($type < 0) return -1;
+			
+			if ($date_start && $date_end && $date_start > $date_end) {
+				$langs->load("errors");
+				$this->error=$langs->trans('ErrorStartDateGreaterEnd');
+				return -1;
+			}
 
             $this->db->begin();
 
@@ -2932,7 +2938,6 @@ class Commande extends CommonOrder
 
 		if ($this->statut == Propal::STATUS_DRAFT)
 		{
-			$this->db->begin();
 
 			// Clean parameters
 			if (empty($qty)) $qty=0;
@@ -2942,6 +2947,12 @@ class Commande extends CommonOrder
 			if (empty($txlocaltax2)) $txlocaltax2=0;
 			if (empty($remise_percent)) $remise_percent=0;
 			if (empty($special_code) || $special_code == 3) $special_code=0;
+			
+			if ($date_start && $date_end && $date_start > $date_end) {
+				$langs->load("errors");
+				$this->error=$langs->trans('ErrorStartDateGreaterEnd');
+				return -1;
+			}
 
 			$remise_percent=price2num($remise_percent);
 			$qty=price2num($qty);
@@ -2951,6 +2962,8 @@ class Commande extends CommonOrder
 			$txtva=price2num($txtva);
 			$txlocaltax1=price2num($txlocaltax1);
 			$txlocaltax2=price2num($txlocaltax2);
+			
+			$this->db->begin();
 
 			// Calcul du total TTC et de la TVA pour la ligne a partir de
 			// qty, pu, remise_percent et txtva

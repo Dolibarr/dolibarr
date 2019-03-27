@@ -16,10 +16,10 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-// if (! defined('NOREQUIREUSER'))    define('NOREQUIREUSER','1');    // Not disabled cause need to load personalized language
-// if (! defined('NOREQUIREDB'))        define('NOREQUIREDB','1');        // Not disabled cause need to load personalized language
-// if (! defined('NOREQUIRESOC'))        define('NOREQUIRESOC','1');
-// if (! defined('NOREQUIRETRAN'))        define('NOREQUIRETRAN','1');
+// if (! defined('NOREQUIREUSER'))    define('NOREQUIREUSER', '1');    // Not disabled cause need to load personalized language
+// if (! defined('NOREQUIREDB'))        define('NOREQUIREDB', '1');        // Not disabled cause need to load personalized language
+// if (! defined('NOREQUIRESOC'))        define('NOREQUIRESOC', '1');
+// if (! defined('NOREQUIRETRAN'))        define('NOREQUIRETRAN', '1');
 if (!defined('NOCSRFCHECK'))    { define('NOCSRFCHECK', '1'); }
 if (!defined('NOTOKENRENEWAL')) { define('NOTOKENRENEWAL', '1'); }
 if (!defined('NOREQUIREMENU'))  { define('NOREQUIREMENU', '1'); }
@@ -47,17 +47,33 @@ $invoice = new Facture($db);
 $ret = $invoice->fetch('', '(PROV-POS-'.$place.')');
 if ($ret > 0) $placeid = $invoice->id;
 
+$paycode = $pay;
+if ($pay == 'cash') $paycode = 'LIQ';
+if ($pay == 'card') $paycode = 'CB';
+if ($pay == 'cheque') $paycode = 'CHQ';
+    
+// Retrieve paiementid
+$sql = "SELECT id FROM ".MAIN_DB_PREFIX."c_paiement";
+$sql.= " WHERE entity IN (".getEntity('c_paiement').")";
+$sql.= " AND code = '".$paycode."'";
+$resql = $db->query($sql);
+$codes = $db->fetch_array($resql);
+$paiementid=$codes[0];
 
 /*
-* Actions
-*/
+ * Actions
+ */
 
 if ($action == 'valid' && $user->rights->facture->creer)
 {
-	if ($pay == "cash") $bankaccount = $conf->global->CASHDESK_ID_BANKACCOUNT_CASH;
+    if ($pay == "cash") $bankaccount = $conf->global->CASHDESK_ID_BANKACCOUNT_CASH;
 	elseif ($pay == "card") $bankaccount = $conf->global->CASHDESK_ID_BANKACCOUNT_CB;
 	elseif ($pay == "cheque") $bankaccount = $conf->global->CASHDESK_ID_BANKACCOUNT_CHEQUE;
-
+    else 
+    {
+        $accountname="CASHDESK_ID_BANKACCOUNT_".$pay;
+    	$bankaccount=$conf->global->$accountname;
+    }
 	$now=dol_now();
 
 	$invoice = new Facture($db);
@@ -72,12 +88,10 @@ if ($action == 'valid' && $user->rights->facture->creer)
 	$payment->bank_account = $bankaccount;
 	$payment->amounts[$invoice->id] = $invoice->total_ttc;
 
-	if ($pay=="cash") $payment->paiementid = 4;
-	elseif ($pay=="card") $payment->paiementid = 6;
-	elseif ($pay=="cheque") $payment->paiementid = 7;
-	$payment->num_payment = $invoice->ref;
+	$payment->paiementid=$paiementid;
+	$payment->num_paiement=$invoice->ref;
 
-	$payment->create($user);
+    $payment->create($user);
 	$payment->addPaymentToBank($user, 'payment', '(CustomerInvoicePayment)', $bankaccount, '', '');
 
 	$invoice->set_paid($user);

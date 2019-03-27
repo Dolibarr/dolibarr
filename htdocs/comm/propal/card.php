@@ -1625,7 +1625,7 @@ if ($action == 'create')
 
 	// Terms of payment
 	print '<tr><td class="nowrap fieldrequired">' . $langs->trans('PaymentConditionsShort') . '</td><td>';
-	$form->select_conditions_paiements($soc->cond_reglement_id, 'cond_reglement_id');
+	$form->select_conditions_paiements($soc->cond_reglement_id, 'cond_reglement_id', -1, 1);
 	print '</td></tr>';
 
 	// Mode of payment

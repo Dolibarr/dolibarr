@@ -449,8 +449,26 @@ $( document ).ready(function() {
 		</div>
 
 <?php
+        
 // TakePOS setup check
-if (empty($conf->global->CASHDESK_ID_THIRDPARTY) or empty($conf->global->CASHDESK_ID_BANKACCOUNT_CASH) or empty($conf->global->CASHDESK_ID_BANKACCOUNT_CB)) {
+$sql = "SELECT code, libelle FROM ".MAIN_DB_PREFIX."c_paiement";
+$sql.= " WHERE entity IN (".getEntity('c_paiement').")";
+$sql.= " AND active = 1";
+$sql.= " ORDER BY libelle";
+$resql = $db->query($sql);
+$paiementsModes = array();
+if ($resql){
+	while ($obj = $db->fetch_object($resql)){
+        $paycode = $obj->code;
+        if ($paycode == 'LIQ') $paycode = 'CASH';
+        if ($paycode == 'CB')  $paycode = 'CARD';
+        if ($paycode == 'CHQ') $paycode = 'CHEQUE';
+        
+		$accountname="CASHDESK_ID_BANKACCOUNT_".$paycode;
+		if (! empty($conf->global->$accountname) && $conf->global->$accountname > 0) array_push($paiementsModes, $obj);
+	}
+}
+if (empty($paiementsModes)) {
 	setEventMessages($langs->trans("ErrorModuleSetupNotComplete"), null, 'errors');
 }
 if (count($maincategories)==0) {
