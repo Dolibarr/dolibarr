@@ -31,12 +31,12 @@ if (! defined('NOREQUIREMENU'))		define('NOREQUIREMENU', '1');
 if (! defined('NOREQUIREHTML'))		define('NOREQUIREHTML', '1');
 if (! defined('NOREQUIREAJAX'))		define('NOREQUIREAJAX', '1');
 
-//$_GET['theme']="md"; // Force theme. MD theme provides better look and feel to TakePOS
-
 require '../main.inc.php';	// Load $user and permissions
 require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
 
-$place = GETPOST('place', 'int');
+$place = (GETPOST('place', 'int') > 0 ? GETPOST('place', 'int') : 0);   // $place is id of table for Ba or Restaurant
+$posnb = (GETPOST('posnb', 'int') > 0 ? GETPOST('posnb', 'int') : 0);   // $posnb is id of POS
+
 $invoiceid = GETPOST('invoiceid', 'int');
 
 
@@ -53,15 +53,18 @@ else
 {
     $sql="SELECT rowid FROM ".MAIN_DB_PREFIX."facture where ref='(PROV-POS-".$place.")'";
     $resql = $db->query($sql);
-    $row = $db->fetch_array($resql);
-    $placeid=$row[0];
-    if (! $placeid)
+    $obj = $db->fetch_object($resql);
+    if ($obj)
     {
-        $placeid=0; // Invoice does not exist yet
+        $invoiceid = $obj->rowid;
+    }
+    if (! $invoiceid)
+    {
+        $invoiceid=0; // Invoice does not exist yet
     }
     else
     {
-    	$invoice->fetch($placeid);
+        $invoice->fetch($invoiceid);
     }
 }
 
@@ -167,7 +170,7 @@ else print "var received=0;";
 		}
 		console.log("We click on the payment mode to pay amount = "+amountpayed);
 		parent.$("#poslines").load("invoice.php?place=<?php echo $place;?>&action=valid&pay="+payment+"&amount="+amountpayed+"&invoiceid="+invoiceid, function() {
-			parent.$("#poslines").scrollTop(parent.$("#poslines")[0].scrollHeight);
+			//parent.$("#poslines").scrollTop(parent.$("#poslines")[0].scrollHeight);
 			parent.$.colorbox.close();
 		});
 	}
