@@ -2195,9 +2195,7 @@ class Commande extends CommonOrder
 					$line->fetch($lineid);
 
 					// Memorize previous line for triggers
-					$staticline=new OrderLine($this->db);
-					$staticline->fetch($lineid);
-					$staticline->fetch_optionals($lineid);
+					$staticline = clone $line;
 					$line->oldline = $staticline;
 
 					if ($line->delete($user) > 0)
@@ -3054,7 +3052,7 @@ class Commande extends CommonOrder
 			}
 
 			$this->line->rowid=$rowid;
-			$this->line->label=$label;
+			$this->line->label=!empty($label)?$label:$this->line->oldline->label;
 			$this->line->desc=$desc;
 			$this->line->qty=$qty;
 
