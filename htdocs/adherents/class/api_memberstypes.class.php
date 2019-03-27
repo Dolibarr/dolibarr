@@ -79,6 +79,7 @@ class MembersTypes extends DolibarrApi
      *
      * @param string    $sortfield  Sort field
      * @param string    $sortorder  Sort order
+     * @param string    $nature     Nature of type phy, mor or both (for only both not mor or phy only)
      * @param int       $limit      Limit for list
      * @param int       $page       Page number
      * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.libelle:like:'SO-%') and (t.subscription:=:'1')"
@@ -86,7 +87,7 @@ class MembersTypes extends DolibarrApi
      *
      * @throws RestException
      */
-    public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '')
+    public function index($sortfield = "t.rowid", $sortorder = 'ASC', $nature = 'all', $limit = 100, $page = 0, $sqlfilters = '')
     {
         global $db, $conf;
 
@@ -100,6 +101,15 @@ class MembersTypes extends DolibarrApi
         $sql.= " FROM ".MAIN_DB_PREFIX."adherent_type as t";
         $sql.= ' WHERE t.entity IN ('.getEntity('member_type').')';
 
+        // Nature 
+        if ($nature != 'all') {
+        if ($nature == 'both') {
+        $sql.= ' AND t.morphy IS NULL ';
+        } else {
+        $sql.= ' AND (t.morphy IS NULL OR t.morphy = "'.$nature.'")'; 
+        }      
+        }
+        
         // Add sql filters
         if ($sqlfilters)
         {
