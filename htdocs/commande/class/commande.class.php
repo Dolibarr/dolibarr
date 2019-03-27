@@ -1367,7 +1367,7 @@ class Commande extends CommonOrder
 
 			// Check parameters
 			if ($type < 0) return -1;
-			
+
 			if ($date_start && $date_end && $date_start > $date_end) {
 				$langs->load("errors");
 				$this->error=$langs->trans('ErrorStartDateGreaterEnd');
@@ -2194,6 +2194,12 @@ class Commande extends CommonOrder
 					// For triggers
 					$line->fetch($lineid);
 
+					// Memorize previous line for triggers
+					$staticline=new OrderLine($this->db);
+					$staticline->fetch($lineid);
+					$staticline->fetch_optionals($lineid);
+					$line->oldline = $staticline;
+
 					if ($line->delete($user) > 0)
 					{
 						$result=$this->update_price(1);
@@ -2947,7 +2953,7 @@ class Commande extends CommonOrder
 			if (empty($txlocaltax2)) $txlocaltax2=0;
 			if (empty($remise_percent)) $remise_percent=0;
 			if (empty($special_code) || $special_code == 3) $special_code=0;
-			
+
 			if ($date_start && $date_end && $date_start > $date_end) {
 				$langs->load("errors");
 				$this->error=$langs->trans('ErrorStartDateGreaterEnd');
@@ -2962,7 +2968,7 @@ class Commande extends CommonOrder
 			$txtva=price2num($txtva);
 			$txlocaltax1=price2num($txlocaltax1);
 			$txlocaltax2=price2num($txlocaltax2);
-			
+
 			$this->db->begin();
 
 			// Calcul du total TTC et de la TVA pour la ligne a partir de
