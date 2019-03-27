@@ -449,7 +449,7 @@ $( document ).ready(function() {
 		</div>
 
 <?php
-        
+
 // TakePOS setup check
 $sql = "SELECT code, libelle FROM ".MAIN_DB_PREFIX."c_paiement";
 $sql.= " WHERE entity IN (".getEntity('c_paiement').")";
@@ -463,7 +463,7 @@ if ($resql){
         if ($paycode == 'LIQ') $paycode = 'CASH';
         if ($paycode == 'CB')  $paycode = 'CARD';
         if ($paycode == 'CHQ') $paycode = 'CHEQUE';
-        
+
 		$accountname="CASHDESK_ID_BANKACCOUNT_".$paycode;
 		if (! empty($conf->global->$accountname) && $conf->global->$accountname > 0) array_push($paiementsModes, $obj);
 	}
@@ -484,7 +484,7 @@ $menus[$r++]=array('title'=>$langs->trans("FreeZone"),
 $menus[$r++]=array('title'=>$langs->trans("Customer"),
 					'action'=>'Customer();');
 $menus[$r++]=array('title'=>$langs->trans("BackOffice"),
-                    'action'=>'window.open(\''.(DOL_URL_ROOT ? DOL_URL_ROOT : '/').'\', \'_self\');');
+                    'action'=>'window.open(\''.(DOL_URL_ROOT ? DOL_URL_ROOT : '/').'\', \'_backoffice\');');
 $menus[$r++]=array('title'=>$langs->trans("ValidateBill"),
 					'action'=>'CloseBill();');
 $menus[$r++]=array('title'=>$langs->trans("Logout"),

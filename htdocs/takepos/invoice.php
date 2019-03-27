@@ -36,10 +36,11 @@ $id = GETPOST('id', 'int');
 $action = GETPOST('action', 'alpha');
 $idproduct = GETPOST('idproduct', 'int');
 $place = (GETPOSTISSET('place')?GETPOST('place', 'int'):0);	// $place is id of POS
-$number = GETPOST('number');
-$idline = GETPOST('idline');
+$number = GETPOST('number', 'alpha');
+$idline = GETPOST('idline', 'int');
 $desc = GETPOST('desc', 'alpha');
-$pay = GETPOST('pay');
+$pay = GETPOST('pay', 'alpha');
+$amountofpayment = price2num(GETPOST('amount', 'alpha'));
 
 $placeid = 0;	// $placeid is id of invoice
 
@@ -48,17 +49,18 @@ $ret = $invoice->fetch('', '(PROV-POS-'.$place.')');
 if ($ret > 0) $placeid = $invoice->id;
 
 $paycode = $pay;
-if ($pay == 'cash') $paycode = 'LIQ';
-if ($pay == 'card') $paycode = 'CB';
-if ($pay == 'cheque') $paycode = 'CHQ';
-    
+if ($pay == 'cash') $paycode = 'LIQ';       // For backward compatibility
+if ($pay == 'card') $paycode = 'CB';        // For backward compatibility
+if ($pay == 'cheque') $paycode = 'CHQ';     // For backward compatibility
+
 // Retrieve paiementid
 $sql = "SELECT id FROM ".MAIN_DB_PREFIX."c_paiement";
 $sql.= " WHERE entity IN (".getEntity('c_paiement').")";
-$sql.= " AND code = '".$paycode."'";
+$sql.= " AND code = '".$db->escape($paycode)."'";
 $resql = $db->query($sql);
 $codes = $db->fetch_array($resql);
 $paiementid=$codes[0];
+
 
 /*
  * Actions
@@ -66,10 +68,10 @@ $paiementid=$codes[0];
 
 if ($action == 'valid' && $user->rights->facture->creer)
 {
-    if ($pay == "cash") $bankaccount = $conf->global->CASHDESK_ID_BANKACCOUNT_CASH;
-	elseif ($pay == "card") $bankaccount = $conf->global->CASHDESK_ID_BANKACCOUNT_CB;
-	elseif ($pay == "cheque") $bankaccount = $conf->global->CASHDESK_ID_BANKACCOUNT_CHEQUE;
-    else 
+    if ($pay == "cash") $bankaccount = $conf->global->CASHDESK_ID_BANKACCOUNT_CASH;            // For backward compatibility
+    elseif ($pay == "card") $bankaccount = $conf->global->CASHDESK_ID_BANKACCOUNT_CB;          // For backward compatibility
+    elseif ($pay == "cheque") $bankaccount = $conf->global->CASHDESK_ID_BANKACCOUNT_CHEQUE;    // For backward compatibility
+    else
     {
         $accountname="CASHDESK_ID_BANKACCOUNT_".$pay;
     	$bankaccount=$conf->global->$accountname;
@@ -79,22 +81,26 @@ if ($action == 'valid' && $user->rights->facture->creer)
 	$invoice = new Facture($db);
 	$invoice->fetch($placeid);
 
-	if (! empty($conf->stock->enabled) and $conf->global->CASHDESK_NO_DECREASE_STOCK!="1") $invoice->validate($user, '', $conf->global->CASHDESK_ID_WAREHOUSE);
+	if (! empty($conf->stock->enabled) && $conf->global->CASHDESK_NO_DECREASE_STOCK != "1") $invoice->validate($user, '', $conf->global->CASHDESK_ID_WAREHOUSE);
 	else $invoice->validate($user);
 
 	// Add the payment
 	$payment=new Paiement($db);
 	$payment->datepaye = $now;
-	$payment->bank_account = $bankaccount;
-	$payment->amounts[$invoice->id] = $invoice->total_ttc;
+	$payment->fk_account = $bankaccount;
+	$payment->amounts[$invoice->id] = $amountofpayment;
 
 	$payment->paiementid=$paiementid;
-	$payment->num_paiement=$invoice->ref;
+	$payment->num_payment=$invoice->ref;
 
     $payment->create($user);
 	$payment->addPaymentToBank($user, 'payment', '(CustomerInvoicePayment)', $bankaccount, '', '');
 
-	$invoice->set_paid($user);
+
+	if ($amountofpayment == $invoice->getRemainToPay())
+	{
+	   $invoice->set_paid($user);
+	}
 }
 
 if (($action=="addline" || $action=="freezone") && $placeid == 0)
@@ -388,7 +394,16 @@ if ($invoice->socid != $conf->global->CASHDESK_ID_THIRDPARTY)
 }
 if ($action=="valid")
 {
-	print '<p style="font-size:120%;" class="center"><b>'.$invoice->ref." ".$langs->trans('BillShortStatusValidated').'</b></p>';
+	print '<p style="font-size:120%;" class="center"><b>';
+	if ($invoice->getRemainToPay() > 0)
+	{
+	    print $invoice->getNomUrl(1)." ".$langs->trans('Generated');
+	}
+	else
+	{
+	   print $invoice->getNomUrl(1)." ".$langs->trans('BillShortStatusValidated');
+	}
+	print '</b></p>';
 	if ($conf->global->TAKEPOSCONNECTOR) print '<center><button type="button" onclick="TakeposPrinting('.$placeid.');">'.$langs->trans('PrintTicket').'</button><center>';
 	else print '<center><button id="buttonprint" type="button" onclick="Print('.$placeid.');">'.$langs->trans('PrintTicket').'</button><center>';
     if($conf->global->TAKEPOS_AUTO_PRINT_TICKETS) print '<script language="javascript">$("#buttonprint").click();</script>';
