@@ -61,7 +61,7 @@ if ($action=="change") {
     ?>
     <script>
     parent.$("#poslines").load("invoice.php?place="+<?php print $place;?>, function() {
-        parent.$("#poslines").scrollTop(parent.$("#poslines")[0].scrollHeight);
+        //parent.$("#poslines").scrollTop(parent.$("#poslines")[0].scrollHeight);
         parent.$.colorbox.close();
     });
     </script>

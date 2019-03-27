@@ -407,39 +407,47 @@ print "</tr>\n";
 
 if ($placeid > 0)
 {
-    $tmplines = array_reverse($invoice->lines);
-    foreach($tmplines as $line)
+    if (is_array($invoice->lines) && count($invoice->lines))
     {
-        $htmlforlines = '';
-
-        $htmlforlines.= '<tr class="drag drop oddeven';
-        if ($line->special_code == "3") {
-            $htmlforlines.= ' order';
-        }
-        $htmlforlines.= '" id="' . $line->id . '">';
-        $htmlforlines.= '<td class="left">';
-        $htmlforlines.= $line->product_label;
-        if ($line->product_label && $line->desc) $htmlforlines.= '<br>';
-        if ($line->product_label != $line->desc)
+        $tmplines = array_reverse($invoice->lines);
+        foreach($tmplines as $line)
         {
-            $firstline = dolGetFirstLineOfText($line->desc);
-            if ($firstline != $line->desc)
-            {
-                $htmlforlines.= $form->textwithpicto(dolGetFirstLineOfText($line->desc), $line->desc);
-            }
-            else
-            {
-                $htmlforlines.= $line->desc;
-            }
-        }
-        if (!empty($line->array_options['options_order_notes'])) $htmlforlines.= "<br>(".$line->array_options['options_order_notes'].")";
-        $htmlforlines.= '</td>';
-        $htmlforlines.= '<td class="right">' . vatrate($line->remise_percent, true) . '</td>';
-        $htmlforlines.= '<td class="right">' . $line->qty . '</td>';
-        $htmlforlines.= '<td class="right">' . price($line->total_ttc) . '</td>';
-        $htmlforlines.= '</tr>'."\n";
+            $htmlforlines = '';
 
-        print $htmlforlines;
+            $htmlforlines.= '<tr class="drag drop oddeven';
+            if ($line->special_code == "3") {
+                $htmlforlines.= ' order';
+            }
+            $htmlforlines.= '" id="' . $line->id . '">';
+            $htmlforlines.= '<td class="left">';
+            $htmlforlines.= $line->product_label;
+            if ($line->product_label && $line->desc) $htmlforlines.= '<br>';
+            if ($line->product_label != $line->desc)
+            {
+                $firstline = dolGetFirstLineOfText($line->desc);
+                if ($firstline != $line->desc)
+                {
+                    $htmlforlines.= $form->textwithpicto(dolGetFirstLineOfText($line->desc), $line->desc);
+                }
+                else
+                {
+                    $htmlforlines.= $line->desc;
+                }
+            }
+            if (!empty($line->array_options['options_order_notes'])) $htmlforlines.= "<br>(".$line->array_options['options_order_notes'].")";
+            $htmlforlines.= '</td>';
+            $htmlforlines.= '<td class="right">' . vatrate($line->remise_percent, true) . '</td>';
+            $htmlforlines.= '<td class="right">' . $line->qty . '</td>';
+            $htmlforlines.= '<td class="right">' . price($line->total_ttc) . '</td>';
+            $htmlforlines.= '</tr>'."\n";
+
+            print $htmlforlines;
+        }
+    }
+    else
+    {
+        print '<tr class="drag drop oddeven"><td class="left"><span class="opacitymedium">'.$langs->trans("Empty").'</span></td><td></td><td></td><td></td></tr>';
+
     }
 }
 

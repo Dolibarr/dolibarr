@@ -66,9 +66,9 @@ top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
 <?php
 $categories = $categorie->get_full_arbo('product', 0, (($conf->global->TAKEPOS_ROOT_CATEGORY_ID > 0)?$conf->global->TAKEPOS_ROOT_CATEGORY_ID:0));
 
-//$conf->global->TAKEPOS_ROOT_CATEGORY_ID=0;
 
 // Search root category to know its level
+//$conf->global->TAKEPOS_ROOT_CATEGORY_ID=0;
 $levelofrootcategory=0;
 if ($conf->global->TAKEPOS_ROOT_CATEGORY_ID > 0)
 {
@@ -267,7 +267,7 @@ function ClickProduct(position) {
 
 function deleteline() {
 	$("#poslines").load("invoice.php?action=deleteline&place="+place+"&idline="+selectedline, function() {
-		$('#poslines').scrollTop($('#poslines')[0].scrollHeight);
+		//$('#poslines').scrollTop($('#poslines')[0].scrollHeight);
 	});
 }
 
@@ -295,13 +295,13 @@ function TakeposOrderNotes() {
 
 function Refresh() {
 	$("#poslines").load("invoice.php?place="+place, function() {
-		$('#poslines').scrollTop($('#poslines')[0].scrollHeight);
+		//$('#poslines').scrollTop($('#poslines')[0].scrollHeight);
 	});
 }
 
 function Search() {
 	$("#poslines").load("invoice.php?action=search&place="+place, function() {
-		$('#poslines').scrollTop($('#poslines')[0].scrollHeight);
+		//$('#poslines').scrollTop($('#poslines')[0].scrollHeight);
 	});
 }
 
@@ -334,7 +334,7 @@ function Edit(number){
         if (editaction=='qty' && editnumber!=""){
             $("#poslines").load("invoice.php?action=updateqty&place="+place+"&idline="+selectedline+"&number="+editnumber, function() {
                 editnumber="";
-                $('#poslines').scrollTop($('#poslines')[0].scrollHeight);
+                //$('#poslines').scrollTop($('#poslines')[0].scrollHeight);
                 $("#qty").html("<?php echo $langs->trans("Qty"); ?>");
             });
             return;
@@ -347,7 +347,7 @@ function Edit(number){
         if (editaction=='p' && editnumber!=""){
             $("#poslines").load("invoice.php?action=updateprice&place="+place+"&idline="+selectedline+"&number="+editnumber, function() {
                 editnumber="";
-                $('#poslines').scrollTop($('#poslines')[0].scrollHeight);
+                //$('#poslines').scrollTop($('#poslines')[0].scrollHeight);
                 $("#price").html("<?php echo $langs->trans("Price"); ?>");
             });
             return;
@@ -360,7 +360,7 @@ function Edit(number){
         if (editaction=='r' && editnumber!=""){
             $("#poslines").load("invoice.php?action=updatereduction&place="+place+"&idline="+selectedline+"&number="+editnumber, function() {
                 editnumber="";
-                $('#poslines').scrollTop($('#poslines')[0].scrollHeight);
+                //$('#poslines').scrollTop($('#poslines')[0].scrollHeight);
                 $("#reduction").html("<?php echo $langs->trans("ReductionShort"); ?>");
             });
             return;
@@ -395,13 +395,13 @@ function Edit(number){
 
 function TakeposPrintingOrder(){
 	$("#poslines").load("invoice.php?action=order&place="+place, function() {
-		$('#poslines').scrollTop($('#poslines')[0].scrollHeight);
+		//$('#poslines').scrollTop($('#poslines')[0].scrollHeight);
 	});
 }
 
 function TakeposPrintingTemp(){
 	$("#poslines").load("invoice.php?action=temp&place="+place, function() {
-		$('#poslines').scrollTop($('#poslines')[0].scrollHeight);
+		//$('#poslines').scrollTop($('#poslines')[0].scrollHeight);
 	});
 }
 

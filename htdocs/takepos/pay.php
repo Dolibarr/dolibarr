@@ -170,7 +170,7 @@ else print "var received=0;";
 		}
 		console.log("We click on the payment mode to pay amount = "+amountpayed);
 		parent.$("#poslines").load("invoice.php?place=<?php echo $place;?>&action=valid&pay="+payment+"&amount="+amountpayed+"&invoiceid="+invoiceid, function() {
-			parent.$("#poslines").scrollTop(parent.$("#poslines")[0].scrollHeight);
+			//parent.$("#poslines").scrollTop(parent.$("#poslines")[0].scrollHeight);
 			parent.$.colorbox.close();
 		});
 	}
