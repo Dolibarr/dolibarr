@@ -74,11 +74,21 @@ if ( ($action == 'update' && ! GETPOST("cancel",'alpha'))
 		activateModulesRequiredByCountry($mysoc->country_code);
 	}
 
+	$tmparray=getState(GETPOST('state_id','int'),'all',$db,$langs,0);
+	if (! empty($tmparray['id']))
+	{
+		$mysoc->state_id   =$tmparray['id'];
+		$mysoc->state_code =$tmparray['code'];
+		$mysoc->state_label=$tmparray['label'];
+
+		$s=$mysoc->state_id.':'.$mysoc->state_code.':'.$mysoc->state_label;
+		dolibarr_set_const($db, "MAIN_INFO_SOCIETE_STATE", $s,'chaine',0,'',$conf->entity);
+	}
+
 	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_NOM", GETPOST("nom",'nohtml'),'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_ADDRESS", GETPOST("MAIN_INFO_SOCIETE_ADDRESS",'nohtml'),'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_TOWN", GETPOST("MAIN_INFO_SOCIETE_TOWN",'nohtml'),'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_ZIP", GETPOST("MAIN_INFO_SOCIETE_ZIP",'alpha'),'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_STATE", GETPOST("state_id",'alpha'),'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_REGION", GETPOST("region_code",'alpha'),'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_MONNAIE", GETPOST("currency",'aZ09'),'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_TEL", GETPOST("tel",'alpha'),'chaine',0,'',$conf->entity);
