@@ -379,6 +379,7 @@ print '<div class="div-table-responsive-no-min invoice">';
 print '<table id="tablelines" class="noborder noshadow" width="100%">';
 print '<tr class="liste_titre nodrag nodrop">';
 print '<td class="linecoldescription">' . $langs->trans('Description') . '</td>';
+print '<td class="linecolqty right">' . $langs->trans('ReductionShort') . '</td>';
 print '<td class="linecolqty right">' . $langs->trans('Qty') . '</td>';
 print '<td class="linecolht right">' . $langs->trans('TotalHTShort') . '</td>';
 print "</tr>\n";
@@ -408,7 +409,8 @@ if ($placeid > 0) {
         }
 		if (!empty($line->array_options['options_order_notes'])) echo "<br>(".$line->array_options['options_order_notes'].")";
 		print '</td>';
-        print '<td class="right">' . $line->qty . '</td>';
+		print '<td class="right">' . vatrate($line->remise_percent, true) . '</td>';
+		print '<td class="right">' . $line->qty . '</td>';
         print '<td class="right">' . price($line->total_ttc) . '</td>';
         print '</tr>';
     }
