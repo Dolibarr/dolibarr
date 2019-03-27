@@ -101,13 +101,13 @@ class MembersTypes extends DolibarrApi
         $sql.= " FROM ".MAIN_DB_PREFIX."adherent_type as t";
         $sql.= ' WHERE t.entity IN ('.getEntity('member_type').')';
 
-        // Nature 
+        // Nature
         if ($nature != 'all') {
         if ($nature == 'both') {
         $sql.= ' AND t.morphy IS NULL ';
         } else {
-        $sql.= ' AND (t.morphy IS NULL OR t.morphy = "'.$nature.'")'; 
-        }      
+        $sql.= ' AND (t.morphy IS NULL OR t.morphy = "'.$nature.'")';
+        }
         }
         
         // Add sql filters
