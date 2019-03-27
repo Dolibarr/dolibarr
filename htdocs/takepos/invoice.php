@@ -274,6 +274,28 @@ if ($action == "order" and $placeid != 0) {
     $invoice->fetch($placeid);
 }
 
+$sectionwithinvoicelink='';
+if ($action=="valid")
+{
+    $sectionwithinvoicelink.='<!-- Section with invoice link -->'."\n";
+    $sectionwithinvoicelink.='<input type="hidden" name="invoiceid" id="invoiceid" value="'.$invoice->id.'">';
+    $sectionwithinvoicelink.='<span style="font-size:120%;" class="center"><b>';
+    $sectionwithinvoicelink.=$invoice->getNomUrl(1, '', 0, 0, '', 0, 0, -1, '_backoffice')." - ";
+    if ($invoice->getRemainToPay() > 0)
+    {
+        $sectionwithinvoicelink.=$langs->trans('Generated');
+    }
+    else
+    {
+        if ($invoice->paye) $sectionwithinvoicelink.=$langs->trans("Payed");
+        else $sectionwithinvoicelink.=$langs->trans('BillShortStatusValidated');
+    }
+    $sectionwithinvoicelink.='</b></span>';
+    if ($conf->global->TAKEPOSCONNECTOR) $sectionwithinvoicelink.=' <button type="button" onclick="TakeposPrinting('.$placeid.');">'.$langs->trans('PrintTicket').'</button>';
+    else $sectionwithinvoicelink.=' <button id="buttonprint" type="button" onclick="Print('.$placeid.');">'.$langs->trans('PrintTicket').'</button>';
+    if ($conf->global->TAKEPOS_AUTO_PRINT_TICKETS) $sectionwithinvoicelink.='<script language="javascript">$("#buttonprint").click();</script>';
+}
+
 
 /*
  * View
@@ -406,6 +428,7 @@ if ($conf->global->TAKEPOS_BAR_RESTAURANT)
 }
 print $langs->trans('TotalTTC');
 print ' : <b>'.price($invoice->total_ttc, 1, '', 1, - 1, - 1, $conf->currency).'</b></span>';
+print '<br>'.$sectionwithinvoicelink;
 print '</td>';
 print '<td class="linecolqty right">' . $langs->trans('ReductionShort') . '</td>';
 print '<td class="linecolqty right">' . $langs->trans('Qty') . '</td>';
@@ -468,27 +491,6 @@ if ($invoice->socid != $conf->global->CASHDESK_ID_THIRDPARTY)
     print '<p style="font-size:120%;" class="right">';
     print $langs->trans("Customer").': '.$soc->name;
     print '</p>';
-}
-
-if ($action=="valid")
-{
-    print '<!-- Area with validated invoice -->'."\n";
-    print '<input type="hidden" name="invoiceid" id="invoiceid" value="'.$invoice->id.'">';
-    print '<p style="font-size:120%;" class="center"><b>';
-    print $invoice->getNomUrl(1, '', 0, 0, '', 0, 0, -1, '_backoffice')." - ";
-	if ($invoice->getRemainToPay() > 0)
-	{
-	    print $langs->trans('Generated');
-	}
-	else
-	{
-	    if ($invoice->paye) print $langs->trans("Payed");
-	    else print $langs->trans('BillShortStatusValidated');
-	}
-	print '</b></p>';
-	if ($conf->global->TAKEPOSCONNECTOR) print '<center><button type="button" onclick="TakeposPrinting('.$placeid.');">'.$langs->trans('PrintTicket').'</button><center>';
-	else print '<center><button id="buttonprint" type="button" onclick="Print('.$placeid.');">'.$langs->trans('PrintTicket').'</button><center>';
-    if ($conf->global->TAKEPOS_AUTO_PRINT_TICKETS) print '<script language="javascript">$("#buttonprint").click();</script>';
 }
 
 if ($action == "search")
