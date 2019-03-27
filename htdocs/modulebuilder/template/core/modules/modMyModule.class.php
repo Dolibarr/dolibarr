@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004-2018  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2018       Nicolas ZABOURI         <info@inovea-conseil.com>
+ * Copyright (C) 2018-2019      Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) ---Put here your own copyright and developer email---
  *
@@ -84,11 +84,11 @@ class modMyModule extends DolibarrModules
         // Define some features supported by module (triggers, login, substitutions, menus, css, etc...)
         $this->module_parts = array(
             // Set this to 1 if module has its own trigger directory (core/triggers)
-            'triggers' => 1,
+            'triggers' => 0,
             // Set this to 1 if module has its own login method file (core/login)
             'login' => 0,
             // Set this to 1 if module has its own substitution function file (core/substitutions)
-            'substitutions' => 1,
+            'substitutions' => 0,
             // Set this to 1 if module has its own menus handler directory (core/menus)
             'menus' => 0,
             // Set this to 1 if module overwrite template dir (core/tpl)
@@ -101,19 +101,19 @@ class modMyModule extends DolibarrModules
             'theme' => 0,
             // Set this to relative path of css file if module has its own css file
             'css' => array(
-                '/mymodule/css/mymodule.css.php',
+            //    '/mymodule/css/mymodule.css.php',
             ),
             // Set this to relative path of js file if module must load a js on all pages
             'js' => array(
-                '/mymodule/js/mymodule.js.php',
+             //   '/mymodule/js/mymodule.js.php',
             ),
             // Set here all hooks context managed by module. To find available hook context, make a "grep -r '>initHooks(' *" on source code. You can also set hook context 'all'
             'hooks' => array(
-                'data' => array(
-                    'hookcontext1',
-                    'hookcontext2',
-                ),
-                'entity' => '0',
+             //   'data' => array(
+             //       'hookcontext1',
+             //       'hookcontext2',
+             //   ),
+             //   'entity' => '0',
             ),
             // Set this to 1 if feature of module are opened to external users
             'moduleforexternal' => 0,
@@ -147,7 +147,7 @@ class modMyModule extends DolibarrModules
         //                             2 => array('MYMODULE_MYNEWCONST2', 'chaine', 'myvalue', 'This is another constant to add', 0, 'current', 1)
         // );
         $this->const = array(
-            1 => array('MYMODULE_MYCONSTANT', 'chaine', 'avalue', 'This is a constant to add', 1, 'allentities', 1)
+           // 1 => array('MYMODULE_MYCONSTANT', 'chaine', 'avalue', 'This is a constant to add', 1, 'allentities', 1)
         );
 
         // Some keys to add into the overwriting translation tables
@@ -221,11 +221,11 @@ class modMyModule extends DolibarrModules
         // Boxes/Widgets
         // Add here list of php file(s) stored in mymodule/core/boxes that contains class to show a widget.
         $this->boxes = array(
-            0 => array(
-                'file' => 'mymodulewidget1.php@mymodule',
-                'note' => 'Widget provided by MyModule',
-                'enabledbydefaulton' => 'Home',
-            ),
+          //  0 => array(
+          //      'file' => 'mymodulewidget1.php@mymodule',
+          //      'note' => 'Widget provided by MyModule',
+          //      'enabledbydefaulton' => 'Home',
+          //  ),
             //1=>array('file'=>'mymodulewidget2.php@mymodule','note'=>'Widget provided by MyModule'),
             //2=>array('file'=>'mymodulewidget3.php@mymodule','note'=>'Widget provided by MyModule')
         );
@@ -234,20 +234,20 @@ class modMyModule extends DolibarrModules
         // Cronjobs (List of cron jobs entries to add when module is enabled)
         // unit_frequency must be 60 for minute, 3600 for hour, 86400 for day, 604800 for week
         $this->cronjobs = array(
-            0 => array(
-                'label' => 'MyJob label',
-                'jobtype' => 'method',
-                'class' => '/mymodule/class/myobject.class.php',
-                'objectname' => 'MyObject',
-                'method' => 'doScheduledJob',
-                'parameters' => '',
-                'comment' => 'Comment',
-                'frequency' => 2,
-                'unitfrequency' => 3600,
-                'status' => 0,
-                'test' => '$conf->mymodule->enabled',
-                'priority' => 50,
-            ),
+          //  0 => array(
+          //      'label' => 'MyJob label',
+          //      'jobtype' => 'method',
+          //      'class' => '/mymodule/class/myobject.class.php',
+          //      'objectname' => 'MyObject',
+          //      'method' => 'doScheduledJob',
+          //      'parameters' => '',
+          //      'comment' => 'Comment',
+          //      'frequency' => 2,
+          //      'unitfrequency' => 3600,
+          //      'status' => 0,
+          //      'test' => '$conf->mymodule->enabled',
+          //      'priority' => 50,
+          //  ),
         );
         // Example: $this->cronjobs=array(
         //    0=>array('label'=>'My label', 'jobtype'=>'method', 'class'=>'/dir/class/file.class.php', 'objectname'=>'MyClass', 'method'=>'myMethod', 'parameters'=>'param1, param2', 'comment'=>'Comment', 'frequency'=>2, 'unitfrequency'=>3600, 'status'=>0, 'test'=>'$conf->mymodule->enabled', 'priority'=>50),

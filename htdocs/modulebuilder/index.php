@@ -178,6 +178,7 @@ if ($dirins && $action == 'initmodule' && $modulename)
 		$listofphpfilestoedit = dol_dir_list($destdir, 'files', 1, '\.(php|MD|js|sql|txt|xml|lang)$', '', 'fullname', SORT_ASC, 0, 1);
 		foreach($listofphpfilestoedit as $phpfileval)
 		{
+
 			//var_dump($phpfileval['fullname']);
 			$arrayreplacement=array(
     			'mymodule'=>strtolower($modulename),
@@ -190,6 +191,14 @@ if ($dirins && $action == 'initmodule' && $modulename)
     			'htdocs/modulebuilder/template'=>strtolower($modulename),
     			'---Put here your own copyright and developer email---'=>dol_print_date($now, '%Y').' '.$user->getFullName($langs).($user->email?' <'.$user->email.'>':'')
 			);
+
+			if($conf->global->MAIN_FEATURES_LEVEL >= 2){
+			    if(!empty($conf->global->MODULEBUILDER_SPECIFIC_EDITOR_NAME)) $arrayreplacement['Editor name'] = $conf->global->MODULEBUILDER_SPECIFIC_EDITOR_NAME;
+                if(!empty($conf->global->MODULEBUILDER_SPECIFIC_EDITOR_URL)) $arrayreplacement['https://www.example.com'] = $conf->global->MODULEBUILDER_SPECIFIC_EDITOR_URL;
+                if(!empty($conf->global->MODULEBUILDER_SPECIFIC_AUTHOR)) $arrayreplacement['---Put here your own copyright and developer email---'] = dol_print_date($now, '%Y').' '.$conf->global->MODULEBUILDER_SPECIFIC_AUTHOR;
+                if(!empty($conf->global->MODULEBUILDER_SPECIFIC_VERSION)) $arrayreplacement['1.0'] = $conf->global->MODULEBUILDER_SPECIFIC_VERSION;
+                if(!empty($conf->global->MODULEBUILDER_SPECIFIC_FAMILY)) $arrayreplacement['other'] = $conf->global->MODULEBUILDER_SPECIFIC_FAMILY;
+            }
 
 			$result=dolReplaceInFile($phpfileval['fullname'], $arrayreplacement);
 			//var_dump($result);
