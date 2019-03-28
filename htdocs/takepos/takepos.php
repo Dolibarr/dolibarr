@@ -278,7 +278,7 @@ function deleteline() {
 }
 
 function Customer() {
-	$.colorbox({href:"customers.php?contextpage=poslist&nomassaction=1&place="+place, width:"90%", height:"80%", transition:"none", iframe:"true", title:"<?php echo $langs->trans("Customer");?>"});
+	$.colorbox({href:"../societe/list.php?contextpage=poslist&nomassaction=1&place="+place, width:"90%", height:"80%", transition:"none", iframe:"true", title:"<?php echo $langs->trans("Customer");?>"});
 }
 
 function CloseBill() {
