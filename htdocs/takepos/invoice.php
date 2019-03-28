@@ -415,7 +415,7 @@ if (! empty($conf->use_javascript_ajax))
 
 
 print '<div class="div-table-responsive-no-min invoice">';
-print '<table id="tablelines" class="noborder noshadow" width="100%">';
+print '<table id="tablelines" class="noborder noshadow postablelines" width="100%">';
 print '<tr class="liste_titre nodrag nodrop">';
 print '<td class="linecoldescription">';
 print '<span style="font-size:120%;" class="right">';
@@ -450,13 +450,19 @@ if ($placeid > 0)
         {
             $htmlforlines = '';
 
-            $htmlforlines.= '<tr class="drag drop oddeven';
+            $htmlforlines.= '<tr class="drag drop oddeven posinvoiceline';
             if ($line->special_code == "3") {
                 $htmlforlines.= ' order';
             }
             $htmlforlines.= '" id="' . $line->id . '">';
             $htmlforlines.= '<td class="left">';
-            $htmlforlines.= $line->product_label;
+            //if ($line->product_label) $htmlforlines.= '<b>'.$line->product_label.'</b>';
+            if (isset($line->product_type))
+            {
+                if (empty($line->product_type)) $htmlforlines.=img_object('', 'product').' ';
+                else $htmlforlines.=img_object('', 'service').' ';
+            }
+            if ($line->product_label) $htmlforlines.= $line->product_label;
             if ($line->product_label && $line->desc) $htmlforlines.= '<br>';
             if ($line->product_label != $line->desc)
             {
