@@ -512,7 +512,6 @@ if ($placeid > 0)
     else
     {
         print '<tr class="drag drop oddeven"><td class="left"><span class="opacitymedium">'.$langs->trans("Empty").'</span></td><td></td><td></td><td></td></tr>';
-
     }
 }
 
