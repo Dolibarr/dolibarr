@@ -26,7 +26,7 @@
 
 /**
  *	\file       htdocs/takepos/customers.php
- *	\ingroup    societe
+ *	\ingroup    takepos
  *	\brief      Page to show list of third parties. TODO Merge with societe/list.php
  */
 
