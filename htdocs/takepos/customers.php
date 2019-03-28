@@ -1007,7 +1007,7 @@ while ($i < min($num, $limit))
 
    	$companystatic->fk_prospectlevel=$obj->fk_prospectlevel;
 
-	print '<tr class="oddeven" onclick="location.href=\'customers.php?action=change&idcustomer='.$obj->rowid.'&place='.$place.'\'">';
+	print '<tr class="oddeven" onclick="location.href=\'customers.php?action=change&contextpage=poslist&idcustomer='.$obj->rowid.'&place='.$place.'\'">';
 	if (! empty($arrayfields['s.rowid']['checked']))
 	{
 		print '<td class="tdoverflowmax50">';
