@@ -1059,6 +1059,24 @@ class Facture extends CommonInvoice
 
 		unset($this->context['createfromclone']);
 
+        // Regenerate documents of invoices
+        if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+            $outputlangs = $langs;
+            /*
+            if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $invoice->thirdparty->default_lang;
+            if (! empty($newlang)) {
+                $outputlangs = new Translate("", $conf);
+                $outputlangs->setDefaultLang($newlang);
+            }
+            */
+            $ret = $this->fetch($this->id); // Reload to get new records
+            $result = $this->generateDocument($this->modelpdf, $outputlangs);
+            if ($result < 0) {
+                setEventMessages($this->error, $this->errors, 'errors');
+                $error++;
+            }
+        }
+
 		// End
 		if (! $error)
 		{
@@ -2477,6 +2495,24 @@ class Facture extends CommonInvoice
 				$this->setFinal($user);
                 }
 			}
+
+            // Regenerate documents of invoices
+            if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+                $outputlangs = $langs;
+                /*
+                if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $invoice->thirdparty->default_lang;
+                if (! empty($newlang)) {
+                    $outputlangs = new Translate("", $conf);
+                    $outputlangs->setDefaultLang($newlang);
+                }
+                */
+                $ret = $this->fetch($this->id); // Reload to get new records
+                $result = $this->generateDocument($this->modelpdf, $outputlangs);
+                if ($result < 0) {
+                    setEventMessages($this->error, $this->errors, 'errors');
+                    $error++;
+                }
+            }
 		}
 		else
 		{
