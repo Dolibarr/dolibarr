@@ -304,7 +304,8 @@ if (! empty($force_install_message))
 		            if ($type=='mssql')  { $testfunction='mssql_connect'; $testclass=''; }
 		        	if ($type=='sqlite') { $testfunction=''; $testclass='PDO'; }
 		            if ($type=='sqlite3') { $testfunction=''; $testclass='SQLite3'; }
-		            $option.='<option value="'.$type.'"'.($defaultype == $type?' selected':'');
+		            $option.='<option value="'.$type.'"';
+			    if ($defaultype == $type?' selected':'');
 		            if ($testfunction && ! function_exists($testfunction)) $option.=' disabled';
 		            if ($testclass && ! class_exists($testclass)) $option.=' disabled';
 		            $option.='>';
