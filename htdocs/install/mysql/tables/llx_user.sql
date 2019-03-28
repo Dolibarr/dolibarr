@@ -61,7 +61,6 @@ create table llx_user
   linkedin                  varchar(255),                         	--
   instagram                varchar(255),                        		--
   snapchat                 varchar(255),                        		--
-  googleplus               varchar(255),                        		--
   youtube                  varchar(255),                        		--
   whatsapp                 varchar(255),                        		--
   
