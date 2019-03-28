@@ -350,13 +350,13 @@ print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 $newcardbutton='';
 //if ($user->rights->mymodule->creer)
 //{
-	$newcardbutton='<a class="butActionNew" href="myobject_card.php?action=create&backtopage='.urlencode($_SERVER['PHP_SELF']).'"><span class="valignmiddle">'.$langs->trans('New').'</span>';
+	$newcardbutton='<a class="butActionNew" href="myobject_card.php?action=create&backtopage='.urlencode($_SERVER['PHP_SELF']).'"><span class="valignmiddle text-plus-circle">'.$langs->trans('New').'</span>';
 	$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
 	$newcardbutton.= '</a>';
 //}
 //else
 //{
-//    $newcardbutton='<a class="butActionNewRefused" href="#">'.$langs->trans('New');
+//    $newcardbutton='<a class="butActionNewRefused" href="#"><span class="valignmiddle text-plus-circle">'.$langs->trans('New').'</span>;
 //    $newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
 //    $newcardbutton.= '</a>';
 //}

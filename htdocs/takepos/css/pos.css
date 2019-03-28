@@ -46,7 +46,7 @@ button.calcbutton3 {
 	text-align: center;
 	font-size:120%;
 	overflow: visible; /* removes extra width in IE */
-	width:12%;
+	width:24%;
 	height:24%;
 }
 
@@ -60,7 +60,7 @@ button.actionbutton {
 	text-align: center;
 	overflow: visible; /* removes extra width in IE */
 	width:33%;
-	height:33%;
+	height:24%;
 }
 
 div.wrapper{
@@ -103,7 +103,6 @@ div.description{
 	width:100%;
 	/* styling below */
 	background-color:black;
-	font-family: 'tahoma';
 	color:white;
 	opacity:0.8; /* transparency */
 	filter:alpha(opacity=80); /* IE transparency */
@@ -209,6 +208,22 @@ div.catwatermark{
 	padding-left: 5px;
 }
 
+.selected {
+    font-weight: bold;
+}
+.order {
+    color: limegreen;
+}
+
+.colorwhite {
+	color: white;
+}
+.colorred {
+	color: red;
+}
+.colorgreen {
+	color: green;
+}
 p.description_content{
 	padding:10px;
 	margin:0px;

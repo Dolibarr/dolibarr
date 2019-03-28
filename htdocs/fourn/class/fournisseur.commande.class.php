@@ -1543,6 +1543,11 @@ class CommandeFournisseur extends CommonOrder
 				return -1;
 			}
 			if ($type < 0) return -1;
+			if ($date_start && $date_end && $date_start > $date_end) {
+				$langs->load("errors");
+				$this->error=$langs->trans('ErrorStartDateGreaterEnd');
+				return -1;
+			}
 
 
             $this->db->begin();
@@ -2470,7 +2475,7 @@ class CommandeFournisseur extends CommonOrder
      */
     public function updateline($rowid, $desc, $pu, $qty, $remise_percent, $txtva, $txlocaltax1 = 0, $txlocaltax2 = 0, $price_base_type = 'HT', $info_bits = 0, $type = 0, $notrigger = 0, $date_start = '', $date_end = '', $array_options = 0, $fk_unit = null, $pu_ht_devise = 0, $ref_supplier = '')
     {
-        global $mysoc, $conf;
+        global $mysoc, $conf, $langs;
         dol_syslog(get_class($this)."::updateline $rowid, $desc, $pu, $qty, $remise_percent, $txtva, $price_base_type, $info_bits, $type, $fk_unit");
         include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 
@@ -2478,8 +2483,6 @@ class CommandeFournisseur extends CommonOrder
 
         if ($this->brouillon)
         {
-            $this->db->begin();
-
             // Clean parameters
             if (empty($qty)) $qty=0;
             if (empty($info_bits)) $info_bits=0;
@@ -2500,6 +2503,13 @@ class CommandeFournisseur extends CommonOrder
 
             // Check parameters
             if ($type < 0) return -1;
+            if ($date_start && $date_end && $date_start > $date_end) {
+                $langs->load("errors");
+                $this->error=$langs->trans('ErrorStartDateGreaterEnd');
+                return -1;
+            }
+            
+            $this->db->begin();
 
             // Calcul du total TTC et de la TVA pour la ligne a partir de
             // qty, pu, remise_percent et txtva

@@ -473,6 +473,12 @@ class Propal extends CommonObject
 
 			// Check parameters
 			if ($type < 0) return -1;
+			
+			if ($date_start && $date_end && $date_start > $date_end) {
+				$langs->load("errors");
+				$this->error=$langs->trans('ErrorStartDateGreaterEnd');
+				return -1;
+			}
 
 			$this->db->begin();
 
@@ -666,7 +672,7 @@ class Propal extends CommonObject
 	 */
     public function updateline($rowid, $pu, $qty, $remise_percent, $txtva, $txlocaltax1 = 0.0, $txlocaltax2 = 0.0, $desc = '', $price_base_type = 'HT', $info_bits = 0, $special_code = 0, $fk_parent_line = 0, $skip_update_total = 0, $fk_fournprice = 0, $pa_ht = 0, $label = '', $type = 0, $date_start = '', $date_end = '', $array_options = 0, $fk_unit = null, $pu_ht_devise = 0, $notrigger = 0)
 	{
-		global $mysoc;
+		global $mysoc, $langs;
 
         dol_syslog(get_class($this)."::updateLine rowid=$rowid, pu=$pu, qty=$qty, remise_percent=$remise_percent,
         txtva=$txtva, desc=$desc, price_base_type=$price_base_type, info_bits=$info_bits, special_code=$special_code, fk_parent_line=$fk_parent_line, pa_ht=$pa_ht, type=$type, date_start=$date_start, date_end=$date_end");
@@ -684,6 +690,12 @@ class Propal extends CommonObject
 		if (empty($qty) && empty($special_code)) $special_code=3;    // Set option tag
 		if (! empty($qty) && $special_code == 3) $special_code=0;    // Remove option tag
 		if (empty($type)) $type=0;
+			
+        if ($date_start && $date_end && $date_start > $date_end) {
+            $langs->load("errors");
+            $this->error=$langs->trans('ErrorStartDateGreaterEnd');
+            return -1;
+        }
 
 		if ($this->statut == self::STATUS_DRAFT)
 		{

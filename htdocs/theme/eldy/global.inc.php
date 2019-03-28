@@ -1864,12 +1864,12 @@ div.login_block_other {
 	display: inline-block;
 	clear: <?php echo $disableimages?'none':'both'; ?>;
 }
-div.login_block_other { padding-top: 0; text-align: right; }
+div.login_block_other { padding-top: 0; text-align: right; margin-right: 8px; }
+
 .login_block_elem {
 	float: right;
 	vertical-align: top;
 	padding: 0px 3px 0px 4px !important;
-	height: 16px;
 	line-height: 50px;
 	height: 50px;
 }
@@ -5742,6 +5742,10 @@ div.tabsElem a.tab {
 		line-height: 1.2em;
 		min-width: auto;
 		font-size: 12px;
+	}
+
+	.text-plus-circle {
+	   display: none;
 	}
 }
 

@@ -24,19 +24,27 @@ include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 
 $langs->loadLangs(array("main", "cashdesk"));
 
+$place = (GETPOST('place', 'int') > 0 ? GETPOST('place', 'int') : 0);   // $place is id of table for Ba or Restaurant
+$posnb = (GETPOST('posnb', 'int') > 0 ? GETPOST('posnb', 'int') : 0);   // $posnb is id of POS
+
+$facid=GETPOST('facid', 'int');
+
+
 /*
  * View
  */
 
 top_httphead('text/html');
 
-$facid=GETPOST('facid', 'int');
-$place=GETPOST('place', 'int');
-if ($place>0){
+if ($place > 0)
+{
     $sql="SELECT rowid FROM ".MAIN_DB_PREFIX."facture where ref='(PROV-POS-".$place.")'";
     $resql = $db->query($sql);
-    $row = $db->fetch_array($resql);
-    $facid=$row[0];
+    $obj = $db->fetch_object($resql);
+    if ($obj)
+    {
+        $facid=$obj->rowid;
+    }
 }
 $object=new Facture($db);
 $object->fetch($facid);
@@ -103,11 +111,32 @@ print $object->ref;
     <th class="right"><?php echo $langs->trans("TotalHT");?></th>
     <td class="right"><?php echo price($object->total_ht, 1, '', 1, - 1, - 1, $conf->currency)."\n";?></td>
 </tr>
+<?php if($conf->global->TAKEPOS_TICKET_VAT_GROUPPED):?>
+<?php
+	$vat_groups = array();
+	foreach ($object->lines as $line)
+	{
+		if(!array_key_exists($line->tva_tx, $vat_groups)){
+			$vat_groups[$line->tva_tx] = 0;
+		}
+		$vat_groups[$line->tva_tx] += $line->total_tva;
+	}
+	foreach($vat_groups as $key => $val){
+	?>
+	<tr>
+		<th align="right"><?php echo $langs->trans("VAT").' '.vatrate($key, 1);?></th>
+		<td align="right"><?php echo price($val, 1, '', 1, - 1, - 1, $conf->currency)."\n";?></td>
+	</tr>
+<?php
+	}
+?>
+<?php else: ?>
 <tr>
-    <th class="right"><?php echo $langs->trans("TotalVAT").'</th><td class="right">'.price($object->total_tva, 1, '', 1, - 1, - 1, $conf->currency)."\n";?></td>
+	<th class="right"><?php echo $langs->trans("TotalVAT").'</th><td class="right">'.price($object->total_tva, 1, '', 1, - 1, - 1, $conf->currency)."\n";?></td>
 </tr>
+<?php endif ?>
 <tr>
-    <th class="right"><?php echo ''.$langs->trans("TotalTTC").'</th><td class="right">'.price($object->total_ttc, 1, '', 1, - 1, - 1, $conf->currency)."\n";?></td>
+	<th class="right"><?php echo ''.$langs->trans("TotalTTC").'</th><td class="right">'.price($object->total_ttc, 1, '', 1, - 1, - 1, $conf->currency)."\n";?></td>
 </tr>
 </table>
 <div style="border-top-style: double;">
