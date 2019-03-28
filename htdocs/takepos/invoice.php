@@ -83,7 +83,7 @@ if ($action == 'valid' && $user->rights->facture->creer)
     if ($pay == "cash") $bankaccount = $conf->global->CASHDESK_ID_BANKACCOUNT_CASH;
 	elseif ($pay == "card") $bankaccount = $conf->global->CASHDESK_ID_BANKACCOUNT_CB;
 	elseif ($pay == "cheque") $bankaccount = $conf->global->CASHDESK_ID_BANKACCOUNT_CHEQUE;
-    else 
+    else
     {
         $accountname="CASHDESK_ID_BANKACCOUNT_".$pay;
     	$bankaccount=$conf->global->$accountname;
