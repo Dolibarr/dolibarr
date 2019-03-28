@@ -117,7 +117,10 @@ else print "var received=0;";
     	?>
     	$('.change1').html(pricejs(parseFloat(received), 'MT'));
     	$('.change1').val(parseFloat(received));
-    	if ((alreadypayed + parseFloat(received)) > <?php echo $invoice->total_ttc;?>)
+		alreadypaydplusreceived=price2numjs(alreadypayed + parseFloat(received));
+    	//console.log("already+received = "+alreadypaydplusreceived);
+    	//console.log("total_ttc = "+<?php echo $invoice->total_ttc;?>);
+    	if (alreadypaydplusreceived > <?php echo $invoice->total_ttc;?>)
    		{
 			var change=parseFloat(alreadypayed + parseFloat(received) - <?php echo $invoice->total_ttc;?>);
 			$('.change2').html(pricejs(change, 'MT'));
@@ -131,7 +134,7 @@ else print "var received=0;";
     	{
 			$('.change2').html(pricejs(0, 'MT'));
 	    	$('.change2').val(0);
-	    	if ((alreadypayed + parseFloat(received)) == <?php echo $invoice->total_ttc;?>)
+	    	if (alreadypaydplusreceived == <?php echo $invoice->total_ttc;?>)
 	    	{
 		    	$('.change1').removeClass('colorred');
 		    	$('.change1').addClass('colorgreen');
