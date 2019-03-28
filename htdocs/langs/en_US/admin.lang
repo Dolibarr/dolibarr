@@ -1846,7 +1846,6 @@ FormatZip=Zip
 MainMenuCode=Menu entry code (mainmenu)
 ECMAutoTree=Show automatic ECM tree
 OperationParamDesc=Define values to use for action, or how to extract values. For example:<br>VALUE:abc<br>REGEX:SUBJECT:([^\s]*)<br>REGEX:BODY:My company name is\s([^\s]*)
-##### Resource ####
 ResourceSetup=Configuration du module Resource
 UseSearchToSelectResource=Use a search form to choose a resource (rather than a drop-down list).
 DisabledResourceLinkUser=Disable feature to link a resource to users
@@ -1857,3 +1856,5 @@ DisableProspectCustomerType=Disable the "Prospect + Customer" third party type (
 MAIN_OPTIMIZEFORTEXTBROWSER=Simplify interface for blind person
 MAIN_OPTIMIZEFORTEXTBROWSERDesc=Enable this option if you are a blind person, or use application from a text browser like lynx or links.
 ABankAccountMustBeDefinedOnPaymentModeSetup=Note: The bank account must be defined on the module of each payment mode (Paypal, Stripe, ...) to have this feature working.
+EXPORTS_SHARE_MODELS=Export models are share with everybody
+ExportSetup=Setup of module Export

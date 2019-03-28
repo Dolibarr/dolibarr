@@ -1081,7 +1081,7 @@ class Facture extends CommonInvoice
 	 */
 	function createFromOrder($object, User $user)
 	{
-		global $hookmanager;
+		global $conf, $hookmanager;
 
 		$error=0;
 
@@ -1142,8 +1142,12 @@ class Facture extends CommonInvoice
 		$this->fk_delivery_address  = $object->fk_delivery_address;
 		$this->contact_id           = $object->contactid;
 		$this->ref_client           = $object->ref_client;
-		$this->note_private         = $object->note_private;
-		$this->note_public          = $object->note_public;
+
+		if (empty($conf->global->MAIN_DISABLE_PROPAGATE_NOTES_FROM_ORIGIN))
+		{
+		    $this->note_private         = $object->note_private;
+            $this->note_public          = $object->note_public;
+		}
 
 		$this->origin				= $object->element;
 		$this->origin_id			= $object->id;
@@ -1691,7 +1695,7 @@ class Facture extends CommonInvoice
 		$sql.= " import_key=".(isset($this->import_key)?"'".$this->db->escape($this->import_key)."'":"null").",";
 		$sql.= " situation_cycle_ref=".(empty($this->situation_cycle_ref)?"null":$this->db->escape($this->situation_cycle_ref)).",";
 		$sql.= " situation_counter=".(empty($this->situation_counter)?"null":$this->db->escape($this->situation_counter)).",";
-		$sql.= " situation_final=".(empty($this->situation_counter)?"0":$this->db->escape($this->situation_counter));
+		$sql.= " situation_final=".(empty($this->situation_final)?"0":$this->db->escape($this->situation_final));
 		$sql.= " WHERE rowid=".$this->id;
 
 		$this->db->begin();
@@ -4401,10 +4405,6 @@ class FactureLigne extends CommonInvoiceLine
 
 	public $date_start;
 	public $date_end;
-
-	// Ne plus utiliser
-	//var $price;         	// P.U. HT apres remise % de ligne (exemple 80)
-	//var $remise;			// Montant calcule de la remise % sur PU HT (exemple 20)
 
 	// From llx_product
 	/**

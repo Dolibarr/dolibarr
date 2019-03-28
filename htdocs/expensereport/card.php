@@ -1103,7 +1103,7 @@ if (empty($reshook))
     	$qty = GETPOST('qty','int');
     	if (empty($qty)) $qty=1;
 
-    	if (! $fk_c_type_fees > 0)
+    	if (! ($fk_c_type_fees > 0))
     	{
     		$error++;
     		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type")), null, 'errors');

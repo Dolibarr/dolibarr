@@ -378,7 +378,7 @@ class Project extends CommonObject
                 		if (file_exists($olddir))
                 		{
 							include_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
-							$res=dol_move($olddir, $newdir);
+							$res=@rename($olddir, $newdir);
 							if (! $res)
                 			{
 							    $langs->load("errors");

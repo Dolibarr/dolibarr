@@ -1212,8 +1212,12 @@ class Commande extends CommonOrder
 		$this->fk_delivery_address  = $object->fk_delivery_address;
 		$this->contact_id           = $object->contactid;
 		$this->ref_client           = $object->ref_client;
-		$this->note_private         = $object->note_private;
-		$this->note_public          = $object->note_public;
+
+		if (empty($conf->global->MAIN_DISABLE_PROPAGATE_NOTES_FROM_ORIGIN))
+		{
+            $this->note_private         = $object->note_private;
+            $this->note_public          = $object->note_public;
+		}
 
 		$this->origin				= $object->element;
 		$this->origin_id			= $object->id;
