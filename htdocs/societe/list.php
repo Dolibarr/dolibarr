@@ -228,7 +228,7 @@ if ($action=="change")
     $idcustomer = GETPOST('idcustomer', 'int');
     $place = (GETPOST('place', 'int') > 0 ? GETPOST('place', 'int') : 0);   // $place is id of table for Ba or Restaurant
     $posnb = (GETPOST('posnb', 'int') > 0 ? GETPOST('posnb', 'int') : 0);   // $posnb is id of POS
-    
+
     $sql="UPDATE ".MAIN_DB_PREFIX."facture set fk_soc=".$idcustomer." where ref='(PROV-POS-".$place.")'";
     $resql = $db->query($sql);
     ?>
@@ -569,7 +569,7 @@ if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend','pre
 $massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 
 $newcardbutton='';
-if ($user->rights->societe->creer && $contextpage != 'postlist')
+if ($user->rights->societe->creer && $contextpage != 'poslist')
 {
 	$typefilter='';
 	$label='MenuNewThirdParty';
@@ -1002,7 +1002,7 @@ while ($i < min($num, $limit))
 	print '<tr class="oddeven"';
 	if ($contextpage == 'poslist')
 	{
-	    print ' onclick="location.href=\'list.php?action=change&contextpage=poslist&idcustomer='.$obj->rowid.'&place='.$place.'\'">';
+	    print ' onclick="location.href=\'list.php?action=change&contextpage=poslist&idcustomer='.$obj->rowid.'&place='.$place.'\'"';
 	}
 	print '>';
 	if (! empty($arrayfields['s.rowid']['checked']))
