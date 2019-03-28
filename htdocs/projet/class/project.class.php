@@ -74,7 +74,7 @@ class Project extends CommonObject
 	/**
 	 * @var string
 	 * @deprecated
-	 * @see title
+	 * @see $title
 	 */
 	public $titre;
 
@@ -107,7 +107,7 @@ class Project extends CommonObject
 	/**
 	 * @var int Creation date
 	 * @deprecated
-	 * @see date_c
+	 * @see $date_c
 	 */
 	public $datec;
 
@@ -119,7 +119,7 @@ class Project extends CommonObject
 	/**
 	 * @var int Modification date
 	 * @deprecated
-	 * @see date_m
+	 * @see $date_m
 	 */
 	public $datem;
 
@@ -155,7 +155,7 @@ class Project extends CommonObject
      *
      *  @param      DoliDB		$db      Database handler
      */
-    function __construct($db)
+    public function __construct($db)
     {
         $this->db = $db;
 
@@ -170,7 +170,7 @@ class Project extends CommonObject
      *    @param	int		$notrigger		Disable triggers
      *    @return   int         			<0 if KO, id of created project if OK
      */
-    function create($user, $notrigger = 0)
+    public function create($user, $notrigger = 0)
     {
         global $conf, $langs;
 
@@ -299,11 +299,11 @@ class Project extends CommonObject
      * @param  int		$notrigger  1=Disable all triggers
      * @return int                  <=0 if KO, >0 if OK
      */
-    function update($user, $notrigger = 0)
+    public function update($user, $notrigger = 0)
     {
         global $langs, $conf;
 
-		$error=0;
+        $error=0;
 
         // Clean parameters
         $this->title = trim($this->title);
@@ -378,7 +378,7 @@ class Project extends CommonObject
                 		if (file_exists($olddir))
                 		{
 							include_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
-							$res=dol_move($olddir, $newdir);
+							$res=@rename($olddir, $newdir);
 							if (! $res)
                 			{
 							    $langs->load("errors");
@@ -413,7 +413,7 @@ class Project extends CommonObject
 			        $result = -2;
 			    }
 		        dol_syslog(get_class($this)."::update error " . $result . " " . $this->error, LOG_ERR);
-			}
+            }
         }
         else
         {
@@ -431,9 +431,9 @@ class Project extends CommonObject
      * 	@param		string	$ref		Ref of project
      * 	@return     int      		   	>0 if OK, 0 if not found, <0 if KO
      */
-    function fetch($id, $ref = '')
+    public function fetch($id, $ref = '')
     {
-    	global $conf;
+        global $conf;
 
         if (empty($id) && empty($ref)) return -1;
 
@@ -508,14 +508,14 @@ class Project extends CommonObject
         }
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      * 	Return list of projects
      *
      * 	@param		int		$socid		To filter on a particular third party
      * 	@return		array				List of projects
      */
-    function liste_array($socid = '')
+    public function liste_array($socid = '')
     {
         // phpcs:enable
         global $conf;
@@ -551,7 +551,7 @@ class Project extends CommonObject
         }
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      * 	Return list of elements for type, linked to a project
      *
@@ -563,7 +563,7 @@ class Project extends CommonObject
 	 *	@param		string		$projectkey		Equivalent key  to fk_projet for actual type
      * 	@return		mixed						Array list of object ids linked to project, < 0 or string if error
      */
-    function get_element_list($type, $tablename, $datefieldname = '', $dates = '', $datee = '', $projectkey = 'fk_projet')
+    public function get_element_list($type, $tablename, $datefieldname = '', $dates = '', $datee = '', $projectkey = 'fk_projet')
     {
         // phpcs:enable
         $elements = array();
@@ -595,7 +595,7 @@ class Project extends CommonObject
         else
 		{
             $sql = "SELECT rowid FROM " . MAIN_DB_PREFIX . $tablename." WHERE ".$projectkey." IN (". $ids .") AND entity IN (".getEntity($type).")";
-		}
+        }
 
 		if ($dates > 0)
 		{
@@ -647,7 +647,7 @@ class Project extends CommonObject
      *    @param       int		$notrigger       Disable triggers
      *    @return      int       			      <0 if KO, 0 if not possible, >0 if OK
      */
-    function delete($user, $notrigger = 0)
+    public function delete($user, $notrigger = 0)
     {
         global $langs, $conf;
         require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
@@ -772,7 +772,7 @@ class Project extends CommonObject
      *  	@param     	User		$user		User
      *		@return		int				<0 if KO, 1 if OK
      */
-    function deleteTasks($user)
+    public function deleteTasks($user)
     {
         $countTasks = count($this->lines);
         $deleted = false;
@@ -807,7 +807,7 @@ class Project extends CommonObject
      *      @param      int     $notrigger     1=Disable triggers
      * 		@return		int					   <0 if KO, >0 if OK
      */
-    function setValid($user, $notrigger = 0)
+    public function setValid($user, $notrigger = 0)
     {
         global $langs, $conf;
 
@@ -870,7 +870,7 @@ class Project extends CommonObject
      * 		@param		User	$user		User that close project
      * 		@return		int					<0 if KO, 0 if already closed, >0 if OK
      */
-    function setClose($user)
+    public function setClose($user)
     {
         global $langs, $conf;
 
@@ -933,12 +933,12 @@ class Project extends CommonObject
      *  @param  int			$mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
      * 	@return string      			Label
      */
-    function getLibStatut($mode = 0)
+    public function getLibStatut($mode = 0)
     {
         return $this->LibStatut($this->statut, $mode);
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *  Renvoi status label for a status
      *
@@ -946,7 +946,7 @@ class Project extends CommonObject
      *  @param  int		$mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
      * 	@return string				Label
      */
-    function LibStatut($statut, $mode = 0)
+    public function LibStatut($statut, $mode = 0)
     {
         // phpcs:enable
         global $langs;
@@ -998,7 +998,7 @@ class Project extends CommonObject
      *  @param  int     $save_lastsearch_value    -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
      * 	@return	string					          String with URL
      */
-    function getNomUrl($withpicto = 0, $option = '', $addlabel = 0, $moreinpopup = '', $sep = ' - ', $notooltip = 0, $save_lastsearch_value = -1)
+    public function getNomUrl($withpicto = 0, $option = '', $addlabel = 0, $moreinpopup = '', $sep = ' - ', $notooltip = 0, $save_lastsearch_value = -1)
     {
         global $conf, $langs, $user, $hookmanager;
 
@@ -1089,7 +1089,7 @@ class Project extends CommonObject
      *
      *  @return	void
      */
-    function initAsSpecimen()
+    public function initAsSpecimen()
     {
         global $user, $langs, $conf;
 
@@ -1132,7 +1132,7 @@ class Project extends CommonObject
      * 	@param  string	$mode		Type of permission we want to know: 'read', 'write'
      * 	@return	int					>0 if user has permission, <0 if user has no permission
      */
-    function restrictedProjectArea($user, $mode = 'read')
+    public function restrictedProjectArea($user, $mode = 'read')
     {
         // To verify role of users
         $userAccess = 0;
@@ -1185,7 +1185,7 @@ class Project extends CommonObject
      * @param	string	$filter			additionnal filter on project (statut, ref, ...)
      * @return 	array or string			Array of projects id, or string with projects id separated with "," if list is 1
      */
-    function getProjectsAuthorizedForUser($user, $mode = 0, $list = 0, $socid = 0, $filter = '')
+    public function getProjectsAuthorizedForUser($user, $mode = 0, $list = 0, $socid = 0, $filter = '')
     {
         $projects = array();
         $temp = array();
@@ -1272,21 +1272,21 @@ class Project extends CommonObject
     }
 
      /**
-      * Load an object from its id and create a new one in database
-	  *
-	  *	@param	int		$fromid     	Id of object to clone
-	  *	@param	bool	$clone_contact	Clone contact of project
-	  *	@param	bool	$clone_task		Clone task of project
-	  *	@param	bool	$clone_project_file		Clone file of project
-	  *	@param	bool	$clone_task_file		Clone file of task (if task are copied)
-      *	@param	bool	$clone_note		Clone note of project
-      * @param	bool	$move_date		Move task date on clone
-      *	@param	integer	$notrigger		No trigger flag
-      * @param  int     $newthirdpartyid  New thirdparty id
-	  * @return	int						New id of clone
-	  */
-	function createFromClone($fromid, $clone_contact = false, $clone_task = true, $clone_project_file = false, $clone_task_file = false, $clone_note = true, $move_date = true, $notrigger = 0, $newthirdpartyid = 0)
-	{
+     * Load an object from its id and create a new one in database
+	 *
+	 *  @param	int		$fromid     	Id of object to clone
+	 *  @param	bool	$clone_contact	Clone contact of project
+	 *  @param	bool	$clone_task		Clone task of project
+	 *  @param	bool	$clone_project_file		Clone file of project
+	 *  @param	bool	$clone_task_file		Clone file of task (if task are copied)
+     *  @param	bool	$clone_note		Clone note of project
+     *  @param	bool	$move_date		Move task date on clone
+     *  @param	integer	$notrigger		No trigger flag
+     *  @param  int     $newthirdpartyid  New thirdparty id
+	 *  @return	int						New id of clone
+	 */
+    public function createFromClone($fromid, $clone_contact = false, $clone_task = true, $clone_project_file = false, $clone_task_file = false, $clone_note = true, $move_date = true, $notrigger = 0, $newthirdpartyid = 0)
+    {
 		global $user,$langs,$conf;
 
 		$error=0;
@@ -1366,11 +1366,11 @@ class Project extends CommonObject
 			$clone_project_id=$clone_project->id;
 
 			//Note Update
-			if (!$clone_note)
-       		{
+            if (!$clone_note)
+            {
         	    $clone_project->note_private='';
     			$clone_project->note_public='';
-        	}
+            }
         	else
         	{
         		$this->db->begin();
@@ -1529,18 +1529,18 @@ class Project extends CommonObject
 			dol_syslog(get_class($this)."::createFromClone nbError: ".$error." error : " . $this->error, LOG_ERR);
 			return -1;
 		}
-	}
+    }
 
 
-	 /**
-	  *    Shift project task date from current date to delta
-	  *
-	  *    @param	timestamp		$old_project_dt_start	old project start date
-	  *    @return	int				1 if OK or < 0 if KO
-	  */
-	function shiftTaskDate($old_project_dt_start)
-	{
-		global $user,$langs,$conf;
+    /**
+	 *    Shift project task date from current date to delta
+	 *
+	 *    @param	integer		$old_project_dt_start	Old project start date
+	 *    @return	int				                    1 if OK or < 0 if KO
+	 */
+    public function shiftTaskDate($old_project_dt_start)
+    {
+		global $user, $langs, $conf;
 
 		$error=0;
 
@@ -1573,13 +1573,13 @@ class Project extends CommonObject
 	    	//Calcultate new task start date with difference between old proj start date and origin task start date
 	    	if (!empty($tasktoshiftdate->date_start))
 	    	{
-				$task->date_start			= $this->date_start + ($tasktoshiftdate->date_start - $old_project_dt_start);
+				$task->date_start = $this->date_start + ($tasktoshiftdate->date_start - $old_project_dt_start);
 	    	}
 
 	    	//Calcultate new task end date with difference between origin proj end date and origin task end date
 	    	if (!empty($tasktoshiftdate->date_end))
 	    	{
-				$task->date_end		    	= $this->date_start + ($tasktoshiftdate->date_end - $old_project_dt_start);
+				$task->date_end = $this->date_start + ($tasktoshiftdate->date_end - $old_project_dt_start);
 	    	}
 
 			if ($to_update)
@@ -1600,7 +1600,7 @@ class Project extends CommonObject
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *    Associate element to a project
 	 *
@@ -1608,7 +1608,7 @@ class Project extends CommonObject
 	 *    @param	int		$elementSelectId	Key-rowid of the line of the element to update
 	 *    @return	int							1 if OK or < 0 if KO
      */
-	function update_element($tableName, $elementSelectId)
+	public function update_element($tableName, $elementSelectId)
 	{
         // phpcs:enable
 		$sql="UPDATE ".MAIN_DB_PREFIX.$tableName;
@@ -1629,12 +1629,12 @@ class Project extends CommonObject
 		if (!$resql) {
 			$this->error=$this->db->lasterror();
 			return -1;
-		}else {
+		} else {
 			return 1;
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *    Associate element to a project
 	 *
@@ -1642,7 +1642,7 @@ class Project extends CommonObject
 	 *    @param	int		$elementSelectId	Key-rowid of the line of the element to update
 	 *    @return	int							1 if OK or < 0 if KO
 	 */
-	function remove_element($tableName, $elementSelectId)
+	public function remove_element($tableName, $elementSelectId)
 	{
         // phpcs:enable
 		$sql="UPDATE ".MAIN_DB_PREFIX.$tableName;
@@ -1710,7 +1710,7 @@ class Project extends CommonObject
 	 * @param 	int		$userid			Time spent by a particular user
 	 * @return 	int						<0 if OK, >0 if KO
 	 */
-	public function loadTimeSpent($datestart, $taskid = 0, $userid = 0)
+    public function loadTimeSpent($datestart, $taskid = 0, $userid = 0)
     {
         $error=0;
 
@@ -1766,14 +1766,14 @@ class Project extends CommonObject
     }
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      * Load indicators for dashboard (this->nbtodo and this->nbtodolate)
      *
      * @param	User	$user   Objet user
      * @return WorkboardResponse|int <0 if KO, WorkboardResponse if OK
      */
-    function load_board($user)
+    public function load_board($user)
     {
         // phpcs:enable
         global $conf, $langs;
@@ -1852,13 +1852,13 @@ class Project extends CommonObject
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *      Charge indicateurs this->nb pour le tableau de bord
 	 *
 	 *      @return     int         <0 if KO, >0 if OK
 	 */
-	function load_state_board()
+	public function load_state_board()
 	{
         // phpcs:enable
 	    global $user;
@@ -1918,7 +1918,7 @@ class Project extends CommonObject
 	 *	@param  int		$id       Id of order
 	 *	@return	void
 	 */
-	function info($id)
+	public function info($id)
 	{
 	    $sql = 'SELECT c.rowid, datec as datec, tms as datem,';
 	    $sql.= ' date_close as datecloture,';
@@ -2027,7 +2027,7 @@ class Project extends CommonObject
 	 *  @param  User   $user       Object user we want project allowed to
 	 * 	@return int		           >0 if OK, <0 if KO
 	 */
-	function getLinesArray($user)
+	public function getLinesArray($user)
 	{
 	    require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 	    $taskstatic = new Task($this->db);

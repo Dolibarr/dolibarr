@@ -46,7 +46,7 @@ class modBom extends DolibarrModules
 
 		// Id for module (must be unique).
 		// Use here a free id (See in Home -> System information -> Dolibarr for list of used modules id).
-		$this->numero = 650;		// TODO Go on page https://wiki.dolibarr.org/index.php/List_of_modules_id to reserve id number for your module
+		$this->numero = 650;
 		// Key text used to identify module (for permissions, menus, etc...)
 		$this->rights_class = 'bom';
 
@@ -100,14 +100,14 @@ class modBom extends DolibarrModules
 		$this->dirs = array("/bom/temp");
 
 		// Config pages. Put here list of php page, stored into bom/admin directory, to use to setup module.
-		$this->config_page_url = array("setup.php@bom");
+		$this->config_page_url = array("bom.php");
 
 		// Dependencies
 		$this->hidden = false;			// A condition to hide module
 		$this->depends = array('modProduct');		// List of module class names as string that must be enabled if this module is enabled. Example: array('always1'=>'modModuleToEnable1','always2'=>'modModuleToEnable2', 'FR1'=>'modModuleToEnableFR'...)
 		$this->requiredby = array();	// List of module class names as string to disable if this one is disabled. Example: array('modModuleToDisable1', ...)
 		$this->conflictwith = array();	// List of module class names as string this module is in conflict with. Example: array('modModuleToDisable1', ...)
-		$this->langfiles = array("bom@bom");
+		$this->langfiles = array("mrp");
 		//$this->phpmin = array(5,4);					// Minimum version of PHP required by module
 		$this->need_dolibarr_version = array(9,0);		// Minimum version of Dolibarr required by module
 		$this->warnings_activation = array();			// Warning to show when we activate module. array('always'='text') or array('FR'='textfr','ES'='textes'...)
@@ -121,7 +121,9 @@ class modBom extends DolibarrModules
 		//                             1=>array('BILLOFMATERIALS_MYNEWCONST2','chaine','myvalue','This is another constant to add',0, 'current', 1)
 		// );
 		$this->const = array(
-			//1=>array('BILLOFMATERIALS_MYCONSTANT', 'chaine', 'avalue', 'This is a constant to add', 1, 'allentities', 1)
+			1=>array('BOM_ADDON_PDF', 'chaine', 'avalue', 'Name of PDF model of BOM', 0),
+		    2=>array('BOM_ADDON', 'chaine', 'mod_bom_standard', 'Name of numbering rules of BOM', 0),
+		    3=>array('BOM_ADDON_PDF_ODT_PATH', 'chaine', 'DOL_DATA_ROOT/doctemplates/boms', '', 0)
 		);
 
 		// Some keys to add into the overwriting translation tables
@@ -241,7 +243,7 @@ class modBom extends DolibarrModules
 								'mainmenu'=>'bom',
 								'leftmenu'=>'',
 								'url'=>'/bom/bom_list.php',
-								'langs'=>'bom@bom',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+								'langs'=>'mrp',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 								'position'=>1000+$r,
 								'enabled'=>'$conf->bom->enabled',	// Define condition to show or hide menu entry. Use '$conf->bom->enabled' if entry must be visible if module is enabled.
 								'perms'=>'1',			                // Use 'perms'=>'$user->rights->bom->level1->level2' if you want your menu with a permission rules
@@ -257,7 +259,7 @@ class modBom extends DolibarrModules
 								'mainmenu'=>'bom',
 								'leftmenu'=>'bom_bom_list',
 								'url'=>'/bom/bom_list.php',
-								'langs'=>'bom@bom',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+								'langs'=>'mrp',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 								'position'=>1000+$r,
 								'enabled'=>'$conf->bom->enabled',  // Define condition to show or hide menu entry. Use '$conf->bom->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
 								'perms'=>'1',			                // Use 'perms'=>'$user->rights->bom->level1->level2' if you want your menu with a permission rules
@@ -269,7 +271,7 @@ class modBom extends DolibarrModules
 								'mainmenu'=>'bom',
 								'leftmenu'=>'bom_bom_new',
 								'url'=>'/bom/bom_page.php?action=create',
-								'langs'=>'bom@bom',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+								'langs'=>'mrp',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 								'position'=>1000+$r,
 								'enabled'=>'$conf->bom->enabled',  // Define condition to show or hide menu entry. Use '$conf->bom->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
 								'perms'=>'1',			                // Use 'perms'=>'$user->rights->bom->level1->level2' if you want your menu with a permission rules
@@ -284,7 +286,7 @@ class modBom extends DolibarrModules
 								'mainmenu'=>'bom',
 								'leftmenu'=>'bom_bom',
 								'url'=>'/bom/bom_list.php',
-								'langs'=>'bom@bom',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+								'langs'=>'mrp',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 								'position'=>1100+$r,
 								'enabled'=>'$conf->bom->enabled',  // Define condition to show or hide menu entry. Use '$conf->bom->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
 								'perms'=>'1',			                // Use 'perms'=>'$user->rights->bom->level1->level2' if you want your menu with a permission rules
@@ -297,7 +299,7 @@ class modBom extends DolibarrModules
 								'mainmenu'=>'bom',
 								'leftmenu'=>'bom_bom',
 								'url'=>'/bom/bom_card.php?action=create',
-								'langs'=>'bom@bom',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+								'langs'=>'mrp',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 								'position'=>1100+$r,
 								'enabled'=>'$conf->bom->enabled',  // Define condition to show or hide menu entry. Use '$conf->bom->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
 								'perms'=>'1',			                // Use 'perms'=>'$user->rights->bom->level1->level2' if you want your menu with a permission rules
@@ -312,10 +314,10 @@ class modBom extends DolibarrModules
 
 		/* BEGIN MODULEBUILDER EXPORT BILLOFMATERIALS */
 		/*
-		$langs->load("bom@bom");
+		$langs->load("mrp@mrp");
 		$this->export_code[$r]=$this->rights_class.'_'.$r;
 		$this->export_label[$r]='BomLines';	// Translation key (used only if key ExportDataset_xxx_z not found)
-		$this->export_icon[$r]='bom@bom';
+		$this->export_icon[$r]='bom';
 		$keyforclass = 'Bom'; $keyforclassfile='/mymobule/class/bom.class.php'; $keyforelement='bom';
 		include DOL_DOCUMENT_ROOT.'/core/commonfieldsinexport.inc.php';
 		$keyforselect='bom'; $keyforaliasextra='extra'; $keyforelement='bom';
@@ -346,11 +348,11 @@ class modBom extends DolibarrModules
 		include_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 		$extrafields = new ExtraFields($this->db);
 
-		//$result1=$extrafields->addExtraField('myattr1', "New Attr 1 label", 'boolean', 1,  3, 'thirdparty',   0, 0, '', '', 1, '', 0, 0, '', '', 'bom@bom', '$conf->bom->enabled');
-		//$result2=$extrafields->addExtraField('myattr2', "New Attr 2 label", 'varchar', 1, 10, 'project',      0, 0, '', '', 1, '', 0, 0, '', '', 'bom@bom', '$conf->bom->enabled');
-		//$result3=$extrafields->addExtraField('myattr3', "New Attr 3 label", 'varchar', 1, 10, 'bank_account', 0, 0, '', '', 1, '', 0, 0, '', '', 'bom@bom', '$conf->bom->enabled');
-		//$result4=$extrafields->addExtraField('myattr4', "New Attr 4 label", 'select',  1,  3, 'thirdparty',   0, 1, '', array('options'=>array('code1'=>'Val1','code2'=>'Val2','code3'=>'Val3')), 1,'', 0, 0, '', '', 'bom@bom', '$conf->bom->enabled');
-		//$result5=$extrafields->addExtraField('myattr5', "New Attr 5 label", 'text',    1, 10, 'user',         0, 0, '', '', 1, '', 0, 0, '', '', 'bom@bom', '$conf->bom->enabled');
+		//$result1=$extrafields->addExtraField('myattr1', "New Attr 1 label", 'boolean', 1,  3, 'thirdparty',   0, 0, '', '', 1, '', 0, 0, '', '', 'mrp', '$conf->bom->enabled');
+		//$result2=$extrafields->addExtraField('myattr2', "New Attr 2 label", 'varchar', 1, 10, 'project',      0, 0, '', '', 1, '', 0, 0, '', '', 'mrp', '$conf->bom->enabled');
+		//$result3=$extrafields->addExtraField('myattr3', "New Attr 3 label", 'varchar', 1, 10, 'bank_account', 0, 0, '', '', 1, '', 0, 0, '', '', 'mrp', '$conf->bom->enabled');
+		//$result4=$extrafields->addExtraField('myattr4', "New Attr 4 label", 'select',  1,  3, 'thirdparty',   0, 1, '', array('options'=>array('code1'=>'Val1','code2'=>'Val2','code3'=>'Val3')), 1,'', 0, 0, '', '', 'mrp', '$conf->bom->enabled');
+		//$result5=$extrafields->addExtraField('myattr5', "New Attr 5 label", 'text',    1, 10, 'user',         0, 0, '', '', 1, '', 0, 0, '', '', 'mrp', '$conf->bom->enabled');
 
 		$sql = array();
 

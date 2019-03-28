@@ -247,7 +247,7 @@ if ($resql)
 	print '<input type="hidden" name="page" value="'.$page.'">';
 	print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
-	$newcardbutton = '<a class="butActionNew" href="./card.php?action=create"><span class="valignmiddle">' . $langs->trans("Addanaccount").'</span>';
+	$newcardbutton = '<a class="butActionNew" href="./card.php?action=create"><span class="valignmiddle text-plus-circle">' . $langs->trans("Addanaccount").'</span>';
 	$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
 	$newcardbutton.= '</a>';
 
@@ -307,11 +307,11 @@ if ($resql)
     print '<tr class="liste_titre">';
 	if (! empty($arrayfields['aa.account_number']['checked']))	print_liste_field_titre($arrayfields['aa.account_number']['label'], $_SERVER["PHP_SELF"], "aa.account_number", "", $param, '', $sortfield, $sortorder);
 	if (! empty($arrayfields['aa.label']['checked']))			print_liste_field_titre($arrayfields['aa.label']['label'], $_SERVER["PHP_SELF"], "aa.label", "", $param, '', $sortfield, $sortorder);
-	if (! empty($arrayfields['aa.account_parent']['checked']))	print_liste_field_titre($arrayfields['aa.account_parent']['label'], $_SERVER["PHP_SELF"], "aa.account_parent", "", $param, 'align="left"', $sortfield, $sortorder);
+	if (! empty($arrayfields['aa.account_parent']['checked']))	print_liste_field_titre($arrayfields['aa.account_parent']['label'], $_SERVER["PHP_SELF"], "aa.account_parent", "", $param, '', $sortfield, $sortorder, 'left ');
 	if (! empty($arrayfields['aa.pcg_type']['checked']))		print_liste_field_titre($arrayfields['aa.pcg_type']['label'], $_SERVER["PHP_SELF"], 'aa.pcg_type', '', $param, '', $sortfield, $sortorder, '', $arrayfields['aa.pcg_type']['help']);
 	if (! empty($arrayfields['aa.pcg_subtype']['checked']))		print_liste_field_titre($arrayfields['aa.pcg_subtype']['label'], $_SERVER["PHP_SELF"], 'aa.pcg_subtype', '', $param, '', $sortfield, $sortorder, '', $arrayfields['aa.pcg_subtype']['help']);
 	if (! empty($arrayfields['aa.active']['checked']))			print_liste_field_titre($arrayfields['aa.active']['label'], $_SERVER["PHP_SELF"], 'aa.active', '', $param, '', $sortfield, $sortorder);
-	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', 'align="center"', $sortfield, $sortorder, 'maxwidthsearch ');
+	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
 	print "</tr>\n";
 
 	$accountstatic = new AccountingAccount($db);
@@ -403,7 +403,7 @@ if ($resql)
 		}
 
 		// Action
-		print '<td align="center">';
+		print '<td class="center">';
 		if ($user->rights->accounting->chartofaccount) {
 			print '<a href="./card.php?action=update&id=' . $obj->rowid . '&backtopage='.urlencode($_SERVER["PHP_SELF"].'?chartofaccounts='.$object->id).'">';
 			print img_edit();

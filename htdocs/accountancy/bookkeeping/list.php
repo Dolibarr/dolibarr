@@ -451,7 +451,7 @@ $button.= '</a>';
 
 
 $groupby = ' <a class="nohover marginrightonly" href="'.DOL_URL_ROOT.'/accountancy/bookkeeping/listbyaccount.php?'.$param.'">' . $langs->trans("GroupByAccountAccounting") . '</a>';
-$newcardbutton = '<a class="butActionNew" href="./card.php?action=create"><span class="valignmiddle">' . $langs->trans("NewAccountingMvt").'</span>';
+$newcardbutton = '<a class="butActionNew" href="./card.php?action=create"><span class="valignmiddle text-plus-circle">'.$langs->trans("NewAccountingMvt").'</span>';
 $newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
 $newcardbutton.= '</a>';
 
@@ -606,18 +606,18 @@ print "</tr>\n";
 
 print '<tr class="liste_titre">';
 if (! empty($arrayfields['t.piece_num']['checked']))			print_liste_field_titre($arrayfields['t.piece_num']['label'], $_SERVER['PHP_SELF'], "t.piece_num", "", $param, "", $sortfield, $sortorder);
-if (! empty($arrayfields['t.doc_date']['checked']))				print_liste_field_titre($arrayfields['t.doc_date']['label'], $_SERVER['PHP_SELF'], "t.doc_date", "", $param, 'align="center"', $sortfield, $sortorder);
+if (! empty($arrayfields['t.doc_date']['checked']))				print_liste_field_titre($arrayfields['t.doc_date']['label'], $_SERVER['PHP_SELF'], "t.doc_date", "", $param, '', $sortfield, $sortorder, 'center ');
 if (! empty($arrayfields['t.doc_ref']['checked']))				print_liste_field_titre($arrayfields['t.doc_ref']['label'], $_SERVER['PHP_SELF'], "t.doc_ref", "", $param, "", $sortfield, $sortorder);
 if (! empty($arrayfields['t.numero_compte']['checked']))		print_liste_field_titre($arrayfields['t.numero_compte']['label'], $_SERVER['PHP_SELF'], "t.numero_compte", "", $param, "", $sortfield, $sortorder);
 if (! empty($arrayfields['t.subledger_account']['checked']))	print_liste_field_titre($arrayfields['t.subledger_account']['label'], $_SERVER['PHP_SELF'], "t.subledger_account", "", $param, "", $sortfield, $sortorder);
 if (! empty($arrayfields['t.label_operation']['checked']))		print_liste_field_titre($arrayfields['t.label_operation']['label'], $_SERVER['PHP_SELF'], "t.label_operation", "", $param, "", $sortfield, $sortorder);
-if (! empty($arrayfields['t.debit']['checked']))				print_liste_field_titre($arrayfields['t.debit']['label'], $_SERVER['PHP_SELF'], "t.debit", "", $param, 'class="right"', $sortfield, $sortorder);
-if (! empty($arrayfields['t.credit']['checked']))				print_liste_field_titre($arrayfields['t.credit']['label'], $_SERVER['PHP_SELF'], "t.credit", "", $param, 'class="right"', $sortfield, $sortorder);
-if (! empty($arrayfields['t.lettering_code']['checked']))		print_liste_field_titre($arrayfields['t.lettering_code']['label'], $_SERVER['PHP_SELF'], "t.lettering_code", "", $param, 'class="center"', $sortfield, $sortorder);
-if (! empty($arrayfields['t.code_journal']['checked']))			print_liste_field_titre($arrayfields['t.code_journal']['label'], $_SERVER['PHP_SELF'], "t.code_journal", "", $param, 'align="center"', $sortfield, $sortorder);
-if (! empty($arrayfields['t.date_creation']['checked']))		print_liste_field_titre($arrayfields['t.date_creation']['label'], $_SERVER['PHP_SELF'], "t.date_creation", "", $param, 'align="center"', $sortfield, $sortorder);
-if (! empty($arrayfields['t.tms']['checked']))					print_liste_field_titre($arrayfields['t.tms']['label'], $_SERVER['PHP_SELF'], "t.tms", "", $param, 'align="center"', $sortfield, $sortorder);
-print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', 'align="center"', $sortfield, $sortorder, 'maxwidthsearch ');
+if (! empty($arrayfields['t.debit']['checked']))				print_liste_field_titre($arrayfields['t.debit']['label'], $_SERVER['PHP_SELF'], "t.debit", "", $param, '', $sortfield, $sortorder, 'right ');
+if (! empty($arrayfields['t.credit']['checked']))				print_liste_field_titre($arrayfields['t.credit']['label'], $_SERVER['PHP_SELF'], "t.credit", "", $param, '', $sortfield, $sortorder, 'right ');
+if (! empty($arrayfields['t.lettering_code']['checked']))		print_liste_field_titre($arrayfields['t.lettering_code']['label'], $_SERVER['PHP_SELF'], "t.lettering_code", "", $param, '', $sortfield, $sortorder, 'center ');
+if (! empty($arrayfields['t.code_journal']['checked']))			print_liste_field_titre($arrayfields['t.code_journal']['label'], $_SERVER['PHP_SELF'], "t.code_journal", "", $param, '', $sortfield, $sortorder, 'center ');
+if (! empty($arrayfields['t.date_creation']['checked']))		print_liste_field_titre($arrayfields['t.date_creation']['label'], $_SERVER['PHP_SELF'], "t.date_creation", "", $param, '', $sortfield, $sortorder, 'center ');
+if (! empty($arrayfields['t.tms']['checked']))					print_liste_field_titre($arrayfields['t.tms']['label'], $_SERVER['PHP_SELF'], "t.tms", "", $param, '', $sortfield, $sortorder, 'center ');
+print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
 print "</tr>\n";
 
 
@@ -648,7 +648,7 @@ if ($num > 0)
 		// Document date
 		if (! empty($arrayfields['t.doc_date']['checked']))
 		{
-			print '<td align="center">' . dol_print_date($line->doc_date, 'day') . '</td>';
+			print '<td class="center">' . dol_print_date($line->doc_date, 'day') . '</td>';
 			if (! $i) $totalarray['nbfield']++;
 		}
 
@@ -701,7 +701,7 @@ if ($num > 0)
 		// Lettering code
 		if (! empty($arrayfields['t.lettering_code']['checked']))
 		{
-			print '<td align="center">' . $line->lettering_code . '</td>';
+			print '<td class="center">' . $line->lettering_code . '</td>';
 			if (! $i) $totalarray['nbfield']++;
 		}
 
@@ -711,26 +711,26 @@ if ($num > 0)
 			$accountingjournal = new AccountingJournal($db);
 			$result = $accountingjournal->fetch('', $line->code_journal);
 			$journaltoshow = (($result > 0)?$accountingjournal->getNomUrl(0, 0, 0, '', 0) : $line->code_journal);
-			print '<td align="center">' . $journaltoshow . '</td>';
+			print '<td class="center">' . $journaltoshow . '</td>';
 			if (! $i) $totalarray['nbfield']++;
 		}
 
 		// Creation operation date
 		if (! empty($arrayfields['t.date_creation']['checked']))
 		{
-			print '<td align="center">' . dol_print_date($line->date_creation, 'dayhour') . '</td>';
+			print '<td class="center">' . dol_print_date($line->date_creation, 'dayhour') . '</td>';
 			if (! $i) $totalarray['nbfield']++;
 		}
 
 		// Modification operation date
 		if (! empty($arrayfields['t.tms']['checked']))
 		{
-			print '<td align="center">' . dol_print_date($line->date_modification, 'dayhour') . '</td>';
+			print '<td class="center">' . dol_print_date($line->date_modification, 'dayhour') . '</td>';
 			if (! $i) $totalarray['nbfield']++;
 		}
 
 		// Action column
-		print '<td align="center" class="nowraponall">';
+		print '<td class="nowraponall center">';
 		print '<a href="'.DOL_URL_ROOT.'/accountancy/bookkeeping/card.php?piece_num=' . $line->piece_num . $param . '&page=' . $page . ($sortfield ? '&sortfield='.$sortfield : '') . ($sortorder ? '&sortorder='.$sortorder : '') . '">' . img_edit() . '</a>&nbsp;';
 		print '<a href="' . $_SERVER['PHP_SELF'] . '?action=delmouv&mvt_num=' . $line->piece_num . $param . '&page=' . $page . ($sortfield ? '&sortfield='.$sortfield : '') . ($sortorder ? '&sortorder='.$sortorder : '') . '">' . img_delete() . '</a>';
 		print '</td>';

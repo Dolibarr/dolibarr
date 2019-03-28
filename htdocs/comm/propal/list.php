@@ -438,7 +438,7 @@ if ($resql)
 	$newcardbutton='';
 	if ($user->rights->propal->creer)
 	{
-		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/comm/propal/card.php?action=create"><span class="valignmiddle">'.$langs->trans('NewPropal').'</span>';
+		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/comm/propal/card.php?action=create"><span class="valignmiddle text-plus-circle">'.$langs->trans('NewPropal').'</span>';
 		$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
 		$newcardbutton.= '</a>';
 	}
@@ -564,7 +564,7 @@ if ($resql)
 	if (! empty($arrayfields['country.code_iso']['checked']))
 	{
 		print '<td class="liste_titre" align="center">';
-		print $form->select_country($search_country, 'search_country', '', 0, 'maxwidth100');
+		print $form->select_country($search_country, 'search_country', '', 0, 'minwidth100imp maxwidth100');
 		print '</td>';
 	}
 	// Company type

@@ -66,7 +66,7 @@ class CUnits // extends CommonObject
      *
      *  @param      DoliDb		$db      Database handler
      */
-    function __construct($db)
+    public function __construct($db)
     {
         $this->db = $db;
     }
@@ -79,7 +79,7 @@ class CUnits // extends CommonObject
      *  @param      int		$notrigger   0=launch triggers after, 1=disable triggers
      *  @return     int      		   	 <0 if KO, Id of created object if OK
      */
-    function create($user, $notrigger = 0)
+    public function create($user, $notrigger = 0)
     {
     	global $conf, $langs;
 		$error=0;
@@ -93,29 +93,22 @@ class CUnits // extends CommonObject
 		if (isset($this->unit_type)) $this->active=trim($this->unit_type);
 		if (isset($this->active)) $this->active=trim($this->active);
 
-
-
 		// Check parameters
 		// Put here code to add control on parameters values
 
         // Insert request
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."c_units(";
-
 		$sql.= "rowid,";
 		$sql.= "code,";
 		$sql.= "label,";
 		$sql.= "short_label,";
 		$sql.= "unit_type";
-
-
         $sql.= ") VALUES (";
-
 		$sql.= " ".(! isset($this->id)?'NULL':"'".$this->db->escape($this->id)."'").",";
 		$sql.= " ".(! isset($this->code)?'NULL':"'".$this->db->escape($this->code)."'").",";
 		$sql.= " ".(! isset($this->label)?'NULL':"'".$this->db->escape($this->label)."'").",";
 		$sql.= " ".(! isset($this->short_label)?'NULL':"'".$this->db->escape($this->short_label)."'").",";
 		$sql.= " ".(! isset($this->unit_type)?'NULL':"'".$this->db->escape($this->unit_type)."'");
-
 		$sql.= ")";
 
 		$this->db->begin();
@@ -170,7 +163,7 @@ class CUnits // extends CommonObject
      *  @param		string	$unit_type	unit type
      *  @return     int		<0 if KO, >0 if OK
      */
-    function fetch($id, $code = '', $short_label = '', $unit_type = '')
+    public function fetch($id, $code = '', $short_label = '', $unit_type = '')
     {
     	global $langs;
 
@@ -187,7 +180,6 @@ class CUnits // extends CommonObject
         if ($unit_type)   $sql_where[]= " t.unit_type = '".$this->db->escape($unit_type)."'";
         if ($code) $sql_where[]= " t.code = '".$this->db->escape($code)."'";
         if ($short_label) $sql_where[]= " t.short_label = '".$this->db->escape($short_label)."'";
-
         if (count($sql_where)>0) {
         	$sql.=' WHERE '. implode(' AND ', $sql_where);
         }
@@ -310,7 +302,7 @@ class CUnits // extends CommonObject
      *  @param      int		$notrigger	 0=launch triggers after, 1=disable triggers
      *  @return     int     		   	 <0 if KO, >0 if OK
      */
-    function update($user = null, $notrigger = 0)
+    public function update($user = null, $notrigger = 0)
     {
     	global $conf, $langs;
 		$error=0;
@@ -321,7 +313,6 @@ class CUnits // extends CommonObject
 		if (isset($this->short_label)) $this->libelle=trim($this->short_label);
 		if (isset($this->unit_type)) $this->libelle=trim($this->unit_type);
 		if (isset($this->active)) $this->active=trim($this->active);
-
 
 		// Check parameters
 		// Put here code to add control on parameters values
@@ -383,7 +374,7 @@ class CUnits // extends CommonObject
      *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
 	 *  @return	int					 <0 if KO, >0 if OK
 	 */
-	function delete($user, $notrigger = 0)
+	public function delete($user, $notrigger = 0)
 	{
 		global $conf, $langs;
 		$error=0;

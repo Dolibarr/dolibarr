@@ -48,7 +48,7 @@ class FormSocialContrib
 	    $this->db = $db;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *  Return list of social contributions.
      *  Use mysoc->country_id or mysoc->country_code so they must be defined.
@@ -61,7 +61,7 @@ class FormSocialContrib
      *  @param	string	$morecss		Add more CSS on select
      * 	@return	void
      */
-    function select_type_socialcontrib($selected = '', $htmlname = 'actioncode', $useempty = 0, $maxlen = 40, $help = 1, $morecss = 'minwidth300')
+    public function select_type_socialcontrib($selected = '', $htmlname = 'actioncode', $useempty = 0, $maxlen = 40, $help = 1, $morecss = 'minwidth300')
     {
         // phpcs:enable
         global $conf,$db,$langs,$user,$mysoc;

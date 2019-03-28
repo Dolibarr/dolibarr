@@ -453,7 +453,7 @@ $massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 $newcardbutton='';
 if ($user->rights->societe->contact->creer)
 {
-	$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/contact/card.php?action=create"><span class="valignmiddle">'.$langs->trans('NewContactAddress').'</span>';
+	$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/contact/card.php?action=create"><span class="valignmiddle text-plus-circle">'.$langs->trans('NewContactAddress').'</span>';
 	$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
 	$newcardbutton.= '</a>';
 }
@@ -584,7 +584,7 @@ if (! empty($arrayfields['p.town']['checked']))
 if (! empty($arrayfields['country.code_iso']['checked']))
 {
 	print '<td class="liste_titre center">';
-	print $form->select_country($search_country, 'search_country', '', 0, 'maxwidth100');
+	print $form->select_country($search_country, 'search_country', '', 0, 'minwidth100imp maxwidth100');
 	print '</td>';
 }
 if (! empty($arrayfields['p.phone']['checked']))
@@ -718,7 +718,7 @@ if (! empty($arrayfields['p.phone_perso']['checked']))         print_liste_field
 if (! empty($arrayfields['p.phone_mobile']['checked']))        print_liste_field_titre($arrayfields['p.phone_mobile']['label'], $_SERVER["PHP_SELF"], "p.phone_mobile", $begin, $param, '', $sortfield, $sortorder);
 if (! empty($arrayfields['p.fax']['checked']))                 print_liste_field_titre($arrayfields['p.fax']['label'], $_SERVER["PHP_SELF"], "p.fax", $begin, $param, '', $sortfield, $sortorder);
 if (! empty($arrayfields['p.email']['checked']))               print_liste_field_titre($arrayfields['p.email']['label'], $_SERVER["PHP_SELF"], "p.email", $begin, $param, '', $sortfield, $sortorder);
-if (! empty($arrayfields['p.no_email']['checked']))            print_liste_field_titre($arrayfields['p.no_email']['label'],$_SERVER["PHP_SELF"], "p.no_email", $begin, $param, '', $sortfield, $sortorder, 'center ');
+if (! empty($arrayfields['p.no_email']['checked']))            print_liste_field_titre($arrayfields['p.no_email']['label'], $_SERVER["PHP_SELF"], "p.no_email", $begin, $param, '', $sortfield, $sortorder, 'center ');
 if (! empty($arrayfields['p.skype']['checked']))               print_liste_field_titre($arrayfields['p.skype']['label'], $_SERVER["PHP_SELF"], "p.skype", $begin, $param, '', $sortfield, $sortorder);
 if (! empty($arrayfields['p.twitter']['checked']))             print_liste_field_titre($arrayfields['p.twitter']['label'], $_SERVER["PHP_SELF"], "p.twitter", $begin, $param, '', $sortfield, $sortorder);
 if (! empty($arrayfields['p.facebook']['checked']))            print_liste_field_titre($arrayfields['p.facebook']['label'], $_SERVER["PHP_SELF"], "p.facebook", $begin, $param, '', $sortfield, $sortorder);

@@ -81,7 +81,7 @@ class Tva extends CommonObject
 	 *
 	 *  @param		DoliDB		$db      Database handler
      */
-    function __construct($db)
+    public function __construct($db)
     {
         $this->db = $db;
     }
@@ -93,7 +93,7 @@ class Tva extends CommonObject
      *  @param      User	$user       User that create
      *  @return     int      			<0 if KO, >0 if OK
      */
-    function create($user)
+    public function create($user)
     {
     	global $conf, $langs;
 
@@ -173,7 +173,7 @@ class Tva extends CommonObject
      * @param	int		$notrigger	    0=no, 1=yes (no update trigger)
      * @return  int         			<0 if KO, >0 if OK
      */
-    function update($user, $notrigger = 0)
+    public function update($user, $notrigger = 0)
     {
     	global $conf, $langs;
 
@@ -241,7 +241,7 @@ class Tva extends CommonObject
      *  @param  User	$user       User that load
      *  @return int         		<0 if KO, >0 if OK
      */
-    function fetch($id, $user = null)
+    public function fetch($id, $user = null)
     {
     	global $langs;
         $sql = "SELECT";
@@ -309,7 +309,7 @@ class Tva extends CommonObject
      *	@param	User	$user       User that delete
 	 *	@return	int					<0 if KO, >0 if OK
 	 */
-	function delete($user)
+	public function delete($user)
 	{
 		global $conf, $langs;
 
@@ -343,7 +343,7 @@ class Tva extends CommonObject
      *
      *  @return	void
 	 */
-	function initAsSpecimen()
+	public function initAsSpecimen()
 	{
 		$this->id=0;
 
@@ -365,7 +365,7 @@ class Tva extends CommonObject
      *	@param	int		$year		Year
      *	@return	double				Amount
      */
-    function solde($year = 0)
+    public function solde($year = 0)
     {
 
         $reglee = $this->tva_sum_reglee($year);
@@ -378,14 +378,14 @@ class Tva extends CommonObject
         return $solde;
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      * 	Total of the VAT from invoices emitted by the thirdparty.
      *
      *	@param	int		$year		Year
      *  @return	double				Amount
      */
-    function tva_sum_collectee($year = 0)
+    public function tva_sum_collectee($year = 0)
     {
         // phpcs:enable
 
@@ -419,14 +419,14 @@ class Tva extends CommonObject
         }
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      * 	VAT payed
      *
      *	@param	int		$year		Year
      *	@return	double				Amount
      */
-    function tva_sum_payee($year = 0)
+    public function tva_sum_payee($year = 0)
     {
         // phpcs:enable
 
@@ -461,14 +461,14 @@ class Tva extends CommonObject
     }
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      * 	Total of the VAT payed
      *
      *	@param	int		$year		Year
      *	@return	double				Amount
      */
-    function tva_sum_reglee($year = 0)
+    public function tva_sum_reglee($year = 0)
     {
         // phpcs:enable
 
@@ -510,7 +510,7 @@ class Tva extends CommonObject
 	 *	@param	User	$user		Object user that insert
 	 *	@return	int					<0 if KO, rowid in tva table if OK
      */
-    function addPayment($user)
+    public function addPayment($user)
     {
         global $conf,$langs;
 
@@ -654,14 +654,14 @@ class Tva extends CommonObject
         }
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
 	 *  Update link between payment tva and line generate into llx_bank
      *
      *  @param	int		$id_bank    Id bank account
 	 *	@return	int					<0 if KO, >0 if OK
      */
-	function update_fk_bank($id_bank)
+	public function update_fk_bank($id_bank)
 	{
         // phpcs:enable
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'tva SET fk_bank = '.(int) $id_bank;
@@ -687,23 +687,23 @@ class Tva extends CommonObject
      *  @param	string	$morecss			More CSS
 	 *	@return	string					Chaine with URL
 	 */
-	function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $morecss = '')
+	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $morecss = '')
 	{
 		global $langs, $conf;
 
 		if (! empty($conf->dol_no_mouse_hover)) $notooltip=1;   // Force disable tooltips
 
 		$result='';
-        $label=$langs->trans("ShowVatPayment").': '.$this->ref;
+
+		$label = '<u>' . $langs->trans("ShowVatPayment") . '</u>';
+		$label.= '<br>';
+		$label.= '<b>' . $langs->trans('Ref') . ':</b> ' . $this->ref;
 
         $url = DOL_URL_ROOT.'/compta/tva/card.php?id='.$this->id;
 
         $linkclose='';
         if (empty($notooltip))
         {
-
-
-
         	if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
         	{
         		$label=$langs->trans("ShowMyObject");
@@ -733,7 +733,7 @@ class Tva extends CommonObject
      *
      *	@return		int		Amount of payment already done, <0 if KO
      */
-    function getSommePaiement()
+    public function getSommePaiement()
     {
         $table='paiementcharge';
         $field='fk_charge';
@@ -766,7 +766,7 @@ class Tva extends CommonObject
 	 *	@param	int		$id     Id of vat payment
 	 *	@return	int				<0 if KO, >0 if OK
 	 */
-	function info($id)
+	public function info($id)
 	{
 		$sql = "SELECT t.rowid, t.tms, t.fk_user_modif, t.datec, t.fk_user_creat";
 		$sql.= " FROM ".MAIN_DB_PREFIX."tva as t";
@@ -813,12 +813,12 @@ class Tva extends CommonObject
 	 * @param	int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	 * @return  string				Libelle
 	 */
-	function getLibStatut($mode = 0)
+	public function getLibStatut($mode = 0)
 	{
 	    return $this->LibStatut($this->statut, $mode);
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Renvoi le libelle d'un statut donne
 	 *
@@ -826,7 +826,7 @@ class Tva extends CommonObject
 	 * @param   int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	 * @return	string  		    Libelle du statut
 	 */
-    function LibStatut($status, $mode = 0)
+    public function LibStatut($status, $mode = 0)
     {
         // phpcs:enable
         global $langs;	// TODO Renvoyer le libelle anglais et faire traduction a affichage

@@ -61,7 +61,7 @@ class mod_commande_fournisseur_orchidee extends ModeleNumRefSuppliersOrders
      *
      * 	@return     string      Texte descripif
      */
-	function info()
+    public function info()
     {
     	global $db, $conf, $langs;
 
@@ -85,9 +85,9 @@ class mod_commande_fournisseur_orchidee extends ModeleNumRefSuppliersOrders
 
 		// Parametrage du prefix
 		$texte.= '<tr><td>'.$langs->trans("Mask").':</td>';
-		$texte.= '<td align="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskorder" value="'.$conf->global->COMMANDE_FOURNISSEUR_ORCHIDEE_MASK.'">', $tooltip, 1, 1).'</td>';
+		$texte.= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskorder" value="'.$conf->global->COMMANDE_FOURNISSEUR_ORCHIDEE_MASK.'">', $tooltip, 1, 1).'</td>';
 
-		$texte.= '<td align="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
+		$texte.= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
 
 		$texte.= '</tr>';
 
@@ -102,7 +102,7 @@ class mod_commande_fournisseur_orchidee extends ModeleNumRefSuppliersOrders
      *
      *  @return     string      Example
      */
-    function getExample()
+    public function getExample()
     {
     	global $conf,$langs,$mysoc;
 
@@ -125,7 +125,7 @@ class mod_commande_fournisseur_orchidee extends ModeleNumRefSuppliersOrders
 	 *  @param  Object	    $object		Object
      *  @return string      			Value if OK, 0 if KO
 	*/
-    function getNextValue($objsoc = 0, $object = '')
+    public function getNextValue($objsoc = 0, $object = '')
     {
 		global $db,$conf;
 
@@ -146,7 +146,7 @@ class mod_commande_fournisseur_orchidee extends ModeleNumRefSuppliersOrders
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *  Renvoie la reference de commande suivante non utilisee
      *
@@ -154,7 +154,7 @@ class mod_commande_fournisseur_orchidee extends ModeleNumRefSuppliersOrders
 	 *  @param  Object	    $object		Object
      *  @return string      			Texte descripif
      */
-    function commande_get_num($objsoc = 0, $object = '')
+    public function commande_get_num($objsoc = 0, $object = '')
     {
         // phpcs:enable
         return $this->getNextValue($objsoc, $object);

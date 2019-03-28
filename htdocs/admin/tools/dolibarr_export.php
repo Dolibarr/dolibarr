@@ -446,7 +446,7 @@ print "\n";
 
 
 <br>
-<div align="center"><input type="submit" class="button"
+<div class="center"><input type="submit" class="button"
 	value="<?php echo $langs->trans("GenerateBackup") ?>" id="buttonGo" /><br>
 <br>
 
@@ -575,7 +575,7 @@ print "\n";
 
 ?>
 <br>
-<div align="center"><input type="submit" class="button"
+<div class="center"><input type="submit" class="button"
 	value="<?php echo $langs->trans("GenerateBackup") ?>" id="buttonGo" /><br>
 <br>
 </div>

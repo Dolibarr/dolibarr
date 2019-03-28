@@ -5,8 +5,8 @@
  * Copyright (C) 2011-2013 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2015      Charlie Benke        <charlie@patas-monkey.com>
- * Copyright (C) 2018      Nicolas ZABOURI	<info@inovea-conseil.com>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018      Nicolas ZABOURI	    <info@inovea-conseil.com>
+ * Copyright (C) 2018      Frédéric France      <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -69,12 +69,26 @@ class Fichinter extends CommonObject
 	public $socid;		// Id client
 
 	public $author;
-	public $datec;
+
+	/**
+     * Date creation record (datec)
+     *
+     * @var integer
+     */
+    public $datec;
+
 	public $datev;
 	public $dateo;
 	public $datee;
 	public $datet;
-	public $datem;
+
+	/**
+     * Date modification record (tms)
+     *
+     * @var integer
+     */
+    public $datem;
+
 	public $duration;
 	public $statut = 0;		// 0=draft, 1=validated, 2=invoiced, 3=Terminate
 
@@ -122,20 +136,20 @@ class Fichinter extends CommonObject
 	 *
 	 *  @param	DoliDB	$db		Database handler
 	 */
-	function __construct($db)
-	{
+    public function __construct($db)
+    {
 		$this->db = $db;
 
 		$this->products = array();
-	}
+    }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Load indicators into this->nb for board
 	 *
 	 *  @return     int         <0 if KO, >0 if OK
 	 */
-	function load_state_board()
+    public function load_state_board()
 	{
         // phpcs:enable
 		global $user;
@@ -179,7 +193,7 @@ class Fichinter extends CommonObject
 	 *	@param		int		$notrigger	Disable all triggers
 	 *	@return		int		<0 if KO, >0 if OK
 	 */
-	function create($user, $notrigger = 0)
+    public function create($user, $notrigger = 0)
 	{
 		global $conf, $langs;
 
@@ -313,7 +327,7 @@ class Fichinter extends CommonObject
 	 *	@param		int		$notrigger	Disable all triggers
 	 *	@return		int		<0 if KO, >0 if OK
 	 */
-	function update($user, $notrigger = 0)
+    public function update($user, $notrigger = 0)
 	{
 	 	if (! is_numeric($this->duration)) {
 	 		$this->duration = 0;
@@ -373,13 +387,13 @@ class Fichinter extends CommonObject
 	 *	@param		string	$ref		Ref of intervention
 	 *	@return		int					<0 if KO, >0 if OK
 	 */
-	function fetch($rowid, $ref = '')
+    public function fetch($rowid, $ref = '')
 	{
 		$sql = "SELECT f.rowid, f.ref, f.description, f.fk_soc, f.fk_statut,";
 		$sql.= " f.datec, f.dateo, f.datee, f.datet, f.fk_user_author,";
 		$sql.= " f.date_valid as datev,";
 		$sql.= " f.tms as datem,";
-		$sql.= " f.duree, f.fk_projet, f.note_public, f.note_private, f.model_pdf, f.extraparams, fk_contrat";
+		$sql.= " f.duree, f.fk_projet as fk_project, f.note_public, f.note_private, f.model_pdf, f.extraparams, fk_contrat";
 		$sql.= " FROM ".MAIN_DB_PREFIX."fichinter as f";
 		if ($ref) {
 			$sql.= " WHERE f.entity IN (".getEntity('intervention').")";
@@ -407,15 +421,15 @@ class Fichinter extends CommonObject
 				$this->datet        = $this->db->jdate($obj->datet);
 				$this->datev        = $this->db->jdate($obj->datev);
 				$this->datem        = $this->db->jdate($obj->datem);
-				$this->fk_project   = $obj->fk_projet;
+				$this->fk_project   = $obj->fk_project;
 				$this->note_public  = $obj->note_public;
 				$this->note_private = $obj->note_private;
-				$this->modelpdf     = $obj->model_pdf;
-				$this->fk_contrat	= $obj->fk_contrat;
+				$this->modelpdf = $obj->model_pdf;
+				$this->fk_contrat = $obj->fk_contrat;
 
-				$this->user_creation= $obj->fk_user_author;
+				$this->user_creation = $obj->fk_user_author;
 
-				$this->extraparams	= (array) json_decode($obj->extraparams, true);
+				$this->extraparams = (array) json_decode($obj->extraparams, true);
 
 				if ($this->statut == 0) $this->brouillon = 1;
 
@@ -445,34 +459,55 @@ class Fichinter extends CommonObject
 	 *	Set status to draft
 	 *
 	 *	@param		User	$user	User that set draft
-	 *	@return		int			<0 if KO, >0 if OK
+	 *	@return		int			    <0 if KO, >0 if OK
 	 */
-	function setDraft($user)
+    public function setDraft($user)
 	{
 		global $langs, $conf;
 
-		if ($this->statut != 0)
+		$error=0;
+
+		// Protection
+		if ($this->statut <= self::STATUS_DRAFT)
 		{
-			$this->db->begin();
+		    return 0;
+		}
 
-			$sql = "UPDATE ".MAIN_DB_PREFIX."fichinter";
-			$sql.= " SET fk_statut = 0";
-			$sql.= " WHERE rowid = ".$this->id;
-			$sql.= " AND entity = ".$conf->entity;
+		dol_syslog(get_class($this)."::setDraft", LOG_DEBUG);
 
-			dol_syslog("Fichinter::setDraft", LOG_DEBUG);
-			$resql=$this->db->query($sql);
-			if ($resql)
-			{
-				$this->db->commit();
-				return 1;
+		$this->db->begin();
+
+		$sql = "UPDATE ".MAIN_DB_PREFIX."fichinter";
+		$sql.= " SET fk_statut = ".self::STATUS_DRAFT;
+		$sql.= " WHERE rowid = ".$this->id;
+
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+		    if (!$error) {
+		        $this->oldcopy = clone $this;
+		    }
+
+		    if (!$error) {
+		        // Call trigger
+		        $result=$this->call_trigger('FICHINTER_UNVALIDATE', $user);
+		        if ($result < 0) $error++;
+		    }
+
+			if (!$error) {
+			    $this->statut=self::STATUS_DRAFT;
+			    $this->db->commit();
+			    return 1;
+			} else {
+			    $this->db->rollback();
+			    return -1;
 			}
-			else
-			{
-				$this->db->rollback();
-				$this->error=$this->db->lasterror();
-				return -1;
-			}
+		}
+		else
+		{
+			$this->db->rollback();
+			$this->error=$this->db->lasterror();
+			return -1;
 		}
 	}
 
@@ -483,7 +518,7 @@ class Fichinter extends CommonObject
 	 *  @param		int			$notrigger	1=Does not execute triggers, 0= execute triggers
 	 *	@return		int						<0 if KO, >0 if OK
 	 */
-	function setValid($user, $notrigger = 0)
+    public function setValid($user, $notrigger = 0)
 	{
 		global $conf;
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -595,7 +630,7 @@ class Fichinter extends CommonObject
 	 *
 	 *	@return     float 		Amount
 	 */
-	function getAmount()
+	public function getAmount()
 	{
 		global $db;
 
@@ -653,12 +688,12 @@ class Fichinter extends CommonObject
 	 *	@param      int		$mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
 	 *	@return     string      		Label
 	 */
-	function getLibStatut($mode = 0)
+	public function getLibStatut($mode = 0)
 	{
 		return $this->LibStatut($this->statut, $mode);
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Returns the label of a statut
 	 *
@@ -666,7 +701,7 @@ class Fichinter extends CommonObject
 	 *	@param      int		$mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
 	 *	@return     string      		Label
 	 */
-	function LibStatut($statut, $mode = 0)
+	public function LibStatut($statut, $mode = 0)
 	{
         // phpcs:enable
 		// Init/load array of translation of status
@@ -716,7 +751,7 @@ class Fichinter extends CommonObject
 	 *  @param      int     $save_lastsearch_value		-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
 	 *	@return		string								String with URL
 	 */
-	function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $save_lastsearch_value = -1)
+	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $save_lastsearch_value = -1)
 	{
 		global $conf, $langs, $hookmanager;
 
@@ -782,7 +817,7 @@ class Fichinter extends CommonObject
 	 *	@param	    Societe		$soc		Thirdparty object
 	 *	@return     string					Free reference for intervention
 	 */
-	function getNextNumRef($soc)
+	public function getNextNumRef($soc)
 	{
 		global $conf, $db, $langs;
 		$langs->load("interventions");
@@ -838,7 +873,7 @@ class Fichinter extends CommonObject
 	 *	@param	int		$id      Id of object
 	 *	@return	void
 	 */
-	function info($id)
+	public function info($id)
 	{
 		global $conf;
 
@@ -897,7 +932,7 @@ class Fichinter extends CommonObject
 	 *	@param		int		$notrigger		Disable trigger
 	 *	@return		int						<0 if KO, >0 if OK
 	 */
-	function delete($user, $notrigger = 0)
+	public function delete($user, $notrigger = 0)
 	{
 		global $conf,$langs;
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -1002,16 +1037,16 @@ class Fichinter extends CommonObject
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *	Defines a delivery date of intervention
+	 *  Defines a delivery date of intervention
 	 *
-	 *	@param      User	$user				Object user who define
-	 *	@param      date	$date_delivery   	date of delivery
-	 *	@return     int							<0 if ko, >0 if ok
-	 */
-	function set_date_delivery($user, $date_delivery)
-	{
+	 *  @param      User	$user				Object user who define
+	 *  @param      date	$date_delivery   	date of delivery
+	 *  @return     int							<0 if ko, >0 if ok
+     */
+    public function set_date_delivery($user, $date_delivery)
+    {
         // phpcs:enable
 		global $conf;
 
@@ -1036,7 +1071,7 @@ class Fichinter extends CommonObject
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Define the label of the intervention
 	 *
@@ -1044,7 +1079,7 @@ class Fichinter extends CommonObject
 	 *	@param      string	$description    description
 	 *	@return     int						<0 if KO, >0 if OK
 	 */
-	function set_description($user, $description)
+    public function set_description($user, $description)
 	{
         // phpcs:enable
 		global $conf;
@@ -1071,7 +1106,7 @@ class Fichinter extends CommonObject
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Link intervention to a contract
 	 *
@@ -1079,8 +1114,8 @@ class Fichinter extends CommonObject
 	 *	@param      int		$contractid		Description
 	 *	@return     int						<0 if ko, >0 if ok
 	 */
-	function set_contrat($user, $contractid)
-	{
+    public function set_contrat($user, $contractid)
+    {
         // phpcs:enable
 		global $conf;
 
@@ -1112,7 +1147,7 @@ class Fichinter extends CommonObject
 	 *	@param		int			$socid			Id of thirdparty
 	 *	@return		int							New id of clone
 	 */
-	function createFromClone($socid = 0)
+	public function createFromClone($socid = 0)
 	{
 		global $user,$hookmanager;
 
@@ -1205,7 +1240,7 @@ class Fichinter extends CommonObject
 	 *  @param		array	$array_options			Array option
 	 *	@return    	int             				>0 if ok, <0 if ko
 	 */
-	function addline($user, $fichinterid, $desc, $date_intervention, $duration, $array_options = '')
+	public function addline($user, $fichinterid, $desc, $date_intervention, $duration, $array_options = '')
 	{
 		dol_syslog(get_class($this)."::addline $fichinterid, $desc, $date_intervention, $duration");
 
@@ -1249,7 +1284,7 @@ class Fichinter extends CommonObject
 	 *
 	 *  @return	void
 	 */
-	function initAsSpecimen()
+	public function initAsSpecimen()
 	{
 		global $user,$langs,$conf;
 
@@ -1280,14 +1315,14 @@ class Fichinter extends CommonObject
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Load array lines ->lines
 	 *
 	 *	@return		int		<0 if KO, >0 if OK
 	 */
-	function fetch_lines()
-	{
+    public function fetch_lines()
+    {
         // phpcs:enable
 		$this->lines = array();
 
@@ -1395,7 +1430,7 @@ class FichinterLigne extends CommonObjectLine
 	 *
 	 *  @param  DoliDB  $db     Database handler
 	 */
-	function __construct($db)
+	public function __construct($db)
 	{
 		$this->db = $db;
 	}
@@ -1406,7 +1441,7 @@ class FichinterLigne extends CommonObjectLine
 	 *	@param  int		$rowid		Line id
 	 *	@return	int					<0 if KO, >0 if OK
 	 */
-	function fetch($rowid)
+	public function fetch($rowid)
 	{
 		$sql = 'SELECT ft.rowid, ft.fk_fichinter, ft.description, ft.duree, ft.rang,';
 		$sql.= ' ft.date as datei';
@@ -1443,7 +1478,7 @@ class FichinterLigne extends CommonObjectLine
 	 *	@param		int		$notrigger	Disable all triggers
 	 *	@return		int		<0 if ko, >0 if ok
 	 */
-	function insert($user, $notrigger = 0)
+	public function insert($user, $notrigger = 0)
 	{
 		global $langs,$conf;
 
@@ -1539,7 +1574,7 @@ class FichinterLigne extends CommonObjectLine
 	 *	@param		int		$notrigger	Disable all triggers
 	 *	@return		int		<0 if ko, >0 if ok
 	 */
-	function update($user, $notrigger = 0)
+	public function update($user, $notrigger = 0)
 	{
 		global $langs,$conf;
 
@@ -1600,13 +1635,13 @@ class FichinterLigne extends CommonObjectLine
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Update total duration into llx_fichinter
 	 *
 	 *	@return		int		<0 si ko, >0 si ok
 	 */
-	function update_total()
+	public function update_total()
 	{
         // phpcs:enable
 		global $conf;
@@ -1660,7 +1695,7 @@ class FichinterLigne extends CommonObjectLine
 	 *	@param		int		$notrigger	Disable all triggers
 	 *	@return     int		>0 if ok, <0 if ko
 	 */
-	function deleteline($user, $notrigger = 0)
+	public function deleteline($user, $notrigger = 0)
 	{
 		global $langs,$conf;
 

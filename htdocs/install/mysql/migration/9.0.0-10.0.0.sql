@@ -58,6 +58,8 @@ CREATE TABLE llx_pos_cash_fence(
 
 -- For 10.0
 
+DROP TABLE llx_cotisation;
+
 ALTER TABLE llx_loan ADD COLUMN insurance_amount double(24,8) DEFAULT 0;
 
 ALTER TABLE llx_facture DROP INDEX idx_facture_uk_facnumber;
@@ -82,7 +84,7 @@ create table llx_mailing_unsubscribe
 ALTER TABLE llx_mailing_unsubscribe ADD UNIQUE uk_mailing_unsubscribe(email, entity, unsubscribegroup);
 
 ALTER TABLE llx_adherent ADD gender VARCHAR(10);
-ALTER TABLE llx_subscription ADD fk_type integer(11);
+ALTER TABLE llx_subscription ADD fk_type integer;
 
 -- Add url_id into unique index of bank_url
 ALTER TABLE llx_bank_url DROP INDEX uk_bank_url;
@@ -94,7 +96,7 @@ ALTER TABLE llx_don ADD COLUMN fk_soc integer NULL;
 
 ALTER TABLE llx_payment_various ADD COLUMN subledger_account varchar(32);
 
-ALTER TABLE llx_prelevement_facture_demande ADD COLUMN entity integer(11);
+ALTER TABLE llx_prelevement_facture_demande ADD COLUMN entity integer;
 ALTER TABLE llx_prelevement_facture_demande ADD COLUMN sourcetype varchar(32);
 ALTER TABLE llx_prelevement_facture_demande ADD COLUMN ext_payment_id varchar(128) NULL;
 ALTER TABLE llx_prelevement_facture_demande ADD COLUMN ext_payment_site varchar(128) NULL;
@@ -117,21 +119,21 @@ CREATE TABLE llx_c_units(
 
 ALTER TABLE llx_c_units ADD UNIQUE uk_c_units_code(code);
 
-INSERT INTO llx_c_units (code, scale, label, short_label, unit_type, active) VALUES ('T',  '3','WeightUnitton','T', 'weight', 1);
-INSERT INTO llx_c_units (code, scale, label, short_label, unit_type, active) VALUES ('KG', '0','WeightUnitkg','Kg', 'weight', 1);
-INSERT INTO llx_c_units (code, scale, label, short_label, unit_type, active) VALUES ('G', '-3','WeightUnitg','g', 'weight', 1);
+INSERT INTO llx_c_units (code, scale, label, short_label, unit_type, active) VALUES ('T','3','WeightUnitton','T', 'weight', 1);
+INSERT INTO llx_c_units (code, scale, label, short_label, unit_type, active) VALUES ('KG','0','WeightUnitkg','kg', 'weight', 1);
+INSERT INTO llx_c_units (code, scale, label, short_label, unit_type, active) VALUES ('G','-3','WeightUnitg','g', 'weight', 1);
 INSERT INTO llx_c_units (code, scale, label, short_label, unit_type, active) VALUES ('MG','-6','WeightUnitmg','mg', 'weight', 1);
 INSERT INTO llx_c_units (code, scale, label, short_label, unit_type, active) VALUES ('OZ','98','WeightUnitounce','Oz', 'weight', 1);
 INSERT INTO llx_c_units (code, scale, label, short_label, unit_type, active) VALUES ('LB','99','WeightUnitpound','lb', 'weight', 1);
 
-INSERT INTO llx_c_units (code, scale, label, short_label, unit_type, active) VALUES ('M',  '0','SizeUnitm','m', 'size', 1);
+INSERT INTO llx_c_units (code, scale, label, short_label, unit_type, active) VALUES ('M','0','SizeUnitm','m', 'size', 1);
 INSERT INTO llx_c_units (code, scale, label, short_label, unit_type, active) VALUES ('DM','-1','SizeUnitdm','dm', 'size', 1);
 INSERT INTO llx_c_units (code, scale, label, short_label, unit_type, active) VALUES ('CM','-2','SizeUnitcm','cm', 'size', 1);
 INSERT INTO llx_c_units (code, scale, label, short_label, unit_type, active) VALUES ('MM','-3','SizeUnitmm','mm', 'size', 1);
 INSERT INTO llx_c_units (code, scale, label, short_label, unit_type, active) VALUES ('FT','98','SizeUnitfoot','ft', 'size', 1);
 INSERT INTO llx_c_units (code, scale, label, short_label, unit_type, active) VALUES ('IN','99','SizeUnitinch','in', 'size', 1);
 
-INSERT INTO llx_c_units (code, scale, label, short_label, unit_type, active) VALUES ('M2',  '0','SurfaceUnitm2','m2', 'surface', 1);
+INSERT INTO llx_c_units (code, scale, label, short_label, unit_type, active) VALUES ('M2','0','SurfaceUnitm2','m2', 'surface', 1);
 INSERT INTO llx_c_units (code, scale, label, short_label, unit_type, active) VALUES ('DM2','-2','SurfaceUnitdm2','dm2', 'surface', 1);
 INSERT INTO llx_c_units (code, scale, label, short_label, unit_type, active) VALUES ('CM2','-4','SurfaceUnitcm2','cm2', 'surface', 1);
 INSERT INTO llx_c_units (code, scale, label, short_label, unit_type, active) VALUES ('MM2','-6','SurfaceUnitmm2','mm2', 'surface', 1);
@@ -139,7 +141,7 @@ INSERT INTO llx_c_units (code, scale, label, short_label, unit_type, active) VAL
 INSERT INTO llx_c_units (code, scale, label, short_label, unit_type, active) VALUES ('IN2','99','SurfaceUnitinch2','in2', 'surface', 1);
 
 
-INSERT INTO llx_c_units (code, scale, label, short_label, unit_type, active) VALUES ('M3',  '0','VolumeUnitm3','m3', 'volume', 1);
+INSERT INTO llx_c_units (code, scale, label, short_label, unit_type, active) VALUES ('M3','0','VolumeUnitm3','m3', 'volume', 1);
 INSERT INTO llx_c_units (code, scale, label, short_label, unit_type, active) VALUES ('DM3','-3','VolumeUnitdm3','dm3', 'volume', 1);
 INSERT INTO llx_c_units (code, scale, label, short_label, unit_type, active) VALUES ('CM3','-6','VolumeUnitcm3','cm3', 'volume', 1);
 INSERT INTO llx_c_units (code, scale, label, short_label, unit_type, active) VALUES ('MM3','-9','VolumeUnitmm3','mm3', 'volume', 1);
@@ -149,13 +151,30 @@ INSERT INTO llx_c_units (code, scale, label, short_label, unit_type, active) VAL
 INSERT INTO llx_c_units (code, scale, label, short_label, unit_type, active) VALUES ('L',  '98','VolumeUnitlitre','L', 'volume', 1);
 INSERT INTO llx_c_units (code, scale, label, short_label, unit_type, active) VALUES ('GAL','99','VolumeUnitgallon','gal', 'volume', 1);
 
-INSERT INTO llx_c_units (code, scale, label, short_label, unit_type, active) VALUES ('P',   '0','Piece','p', 'qty', 1);
+INSERT INTO llx_c_units (code, scale, label, short_label, unit_type, active) VALUES ('P','0','Piece','p', 'qty', 1);
 INSERT INTO llx_c_units (code, scale, label, short_label, unit_type, active) VALUES ('SET', '0','Set','set', 'qty', 1);
 
-INSERT INTO llx_c_units (code, scale, label, short_label, unit_type, active) VALUES ('S',       '0','second','s', 'time', 1);
-INSERT INTO llx_c_units (code, scale, label, short_label, unit_type, active) VALUES ('MI',     '60','minute','m', 'time', 1);
-INSERT INTO llx_c_units (code, scale, label, short_label, unit_type, active) VALUES ('H',    '3600','hour','h', 'time', 1);
-INSERT INTO llx_c_units (code, scale, label, short_label, unit_type, active) VALUES ('D','12960000','day','d', 'time', 1);
+INSERT INTO llx_c_units (code, scale, label, short_label, unit_type, active) VALUES ('S','0','second','s', 'time', 1);
+INSERT INTO llx_c_units (code, scale, label, short_label, unit_type, active) VALUES ('MI','60','minute','i', 'time', 1);
+INSERT INTO llx_c_units (code, scale, label, short_label, unit_type, active) VALUES ('H','3600','hour','h', 'time', 1);
+INSERT INTO llx_c_units (code, scale, label, short_label, unit_type, active) VALUES ('D','86400','day','d', 'time', 1);
+INSERT INTO llx_c_units (code, scale, label, short_label, unit_type, active) VALUES ('W','604800','week','w', 'time', 1);
+INSERT INTO llx_c_units (code, scale, label, short_label, unit_type, active) VALUES ('MO','2629800','month','m', 'time', 1);
+INSERT INTO llx_c_units (code, scale, label, short_label, unit_type, active) VALUES ('Y','31557600','year','y', 'time', 1);
+
+UPDATE llx_c_units SET short_label = 'i' WHERE code = 'MI';
+UPDATE llx_c_units SET unit_type = 'weight', short_label = 'kg' WHERE code = 'KG';
+UPDATE llx_c_units SET unit_type = 'weight', short_label = 'g' WHERE code = 'G';
+UPDATE llx_c_units SET unit_type = 'time' WHERE code IN ('S','H','D');
+UPDATE llx_c_units SET unit_type = 'size' WHERE code IN ('M','LM');
+UPDATE llx_c_units SET label = 'SizeUnitm' WHERE code IN ('M');
+UPDATE llx_c_units SET active = 0 WHERE code IN ('LM');
+UPDATE llx_c_units SET unit_type = 'surface' WHERE code IN ('M2');
+UPDATE llx_c_units SET unit_type = 'volume' WHERE code IN ('M3','L');
+UPDATE llx_c_units SET scale = -3, active = 0 WHERE code IN ('L');
+UPDATE llx_c_units SET label = 'VolumeUnitm3' WHERE code IN ('M3');
+UPDATE llx_c_units SET label = 'SurfaceUnitm2' WHERE code IN ('M2');
+
 
 -- Default Warehouse id for a user
 ALTER TABLE llx_user ADD COLUMN fk_warehouse INTEGER NULL;
@@ -170,12 +189,13 @@ ALTER TABLE llx_socpeople ADD COLUMN linkedin  varchar(255) after whatsapp;
 ALTER TABLE llx_adherent ADD COLUMN linkedin  varchar(255) after whatsapp;
 ALTER TABLE llx_user ADD COLUMN linkedin  varchar(255) after whatsapp;
 
-
+ALTER TABLE llx_expensereport_det ADD COLUMN fk_ecm_files integer DEFAULT NULL;
 
 
 CREATE TABLE llx_bom_bom(
 	-- BEGIN MODULEBUILDER FIELDS
-	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL, 
+	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
+	entity integer DEFAULT 1 NOT NULL,
 	ref varchar(128) NOT NULL, 
 	label varchar(255), 
 	description text, 
@@ -183,8 +203,10 @@ CREATE TABLE llx_bom_bom(
 	note_private text, 
 	date_creation datetime NOT NULL, 
 	tms timestamp NOT NULL, 
+	date_valid datetime, 
 	fk_user_creat integer NOT NULL, 
 	fk_user_modif integer, 
+	fk_user_valid integer, 
 	import_key varchar(14), 
 	status integer NOT NULL, 
 	fk_product integer, 
@@ -229,3 +251,27 @@ ALTER TABLE llx_bom_bom ADD INDEX idx_bom_bom_fk_product (fk_product);
 ALTER TABLE llx_bom_bomline ADD INDEX idx_bom_bomline_rowid (rowid);
 ALTER TABLE llx_bom_bomline ADD INDEX idx_bom_bomline_fk_product (fk_product);
 ALTER TABLE llx_bom_bomline ADD INDEX idx_bom_bomline_fk_bom (fk_bom);
+
+ALTER TABLE llx_product_fournisseur_price ADD COLUMN barcode varchar(180) DEFAULT NULL;
+ALTER TABLE llx_product_fournisseur_price ADD COLUMN fk_barcode_type integer DEFAULT NULL;
+ALTER TABLE llx_product_fournisseur_price ADD INDEX idx_product_barcode (barcode);
+ALTER TABLE llx_product_fournisseur_price ADD INDEX idx_product_fk_barcode_type (fk_barcode_type);
+ALTER TABLE llx_product_fournisseur_price ADD UNIQUE INDEX uk_product_barcode (barcode, fk_barcode_type, entity);
+ALTER TABLE llx_product_fournisseur_price ADD CONSTRAINT fk_product_fournisseur_price_barcode_type FOREIGN KEY (fk_barcode_type) REFERENCES llx_c_barcode_type (rowid);
+
+ALTER TABLE llx_facturedet_rec ADD COLUMN buy_price_ht double(24,8) DEFAULT 0;
+ALTER TABLE llx_facturedet_rec ADD COLUMN fk_product_fournisseur_price integer DEFAULT NULL;
+
+ALTER TABLE llx_facturedet_rec ADD COLUMN fk_user_author integer;
+ALTER TABLE llx_facturedet_rec ADD COLUMN fk_user_modif integer;
+
+ALTER TABLE llx_expensereport_det MODIFY COLUMN value_unit double(24,8) NOT NULL;
+ALTER TABLE llx_expensereport_det ADD COLUMN subprice double(24,8) DEFAULT 0 NOT NULL after qty;
+
+ALTER TABLE llx_product_attribute_combination ADD INDEX idx_product_att_com_product_parent (fk_product_parent);
+ALTER TABLE llx_product_attribute_combination ADD INDEX idx_product_att_com_product_child (fk_product_child);
+
+ALTER TABLE llx_product ADD COLUMN fk_project integer DEFAULT NULL;
+ALTER TABLE llx_product ADD INDEX idx_product_fk_project (fk_project);
+
+ALTER TABLE llx_actioncomm ADD COLUMN calling_duration integer;

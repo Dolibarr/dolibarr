@@ -78,7 +78,7 @@ dol_fiche_head($head, 'establishments', $langs->trans("HRM"), -1, "user");
 
 $sql = "SELECT e.rowid, e.name, e.address, e.zip, e.town, e.status";
 $sql.= " FROM ".MAIN_DB_PREFIX."establishment as e";
-$sql.= " WHERE e.entity = ".$conf->entity;
+$sql.= " WHERE e.entity IN (".getEntity('establishment').')';
 $sql.= $db->order($sortfield, $sortorder);
 $sql.= $db->plimit($limit+1, $offset);
 
@@ -95,7 +95,7 @@ if ($result)
 	print_liste_field_titre("Address", $_SERVER["PHP_SELF"], "e.address", "", "", "", $sortfield, $sortorder);
 	print_liste_field_titre("Zipcode", $_SERVER["PHP_SELF"], "e.zip", "", "", "", $sortfield, $sortorder);
 	print_liste_field_titre("Town", $_SERVER["PHP_SELF"], "e.town", "", "", "", $sortfield, $sortorder);
-	print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "e.status", "", "", 'align="right"', $sortfield, $sortorder);
+	print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "e.status", "", "", '', $sortfield, $sortorder, 'right ');
 	print "</tr>\n";
 
 	if ($num > 0)
@@ -117,7 +117,7 @@ if ($result)
 			print '<td class="left">'.$obj->zip.'</td>';
 			print '<td class="left">'.$obj->town.'</td>';
 
-            print '<td align="right">';
+            print '<td class="right">';
 			print $establishmentstatic->getLibStatut(5);
 			print '</td>';
             print "</tr>\n";

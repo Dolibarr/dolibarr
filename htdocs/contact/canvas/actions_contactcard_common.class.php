@@ -32,15 +32,15 @@ abstract class ActionsContactCardCommon
      */
     public $db;
 
-    var $dirmodule;
-    var $targetmodule;
-    var $canvas;
-    var $card;
+    public $dirmodule;
+    public $targetmodule;
+    public $canvas;
+    public $card;
 
 	//! Template container
-	var $tpl = array();
+	public $tpl = array();
 	//! Object container
-	var $object;
+	public $object;
 
 	/**
 	 * @var string Error code (or message)
@@ -60,7 +60,7 @@ abstract class ActionsContactCardCommon
      *  @param	int		$id		Object id
      *  @return	object			Object loaded
      */
-    function getObject($id)
+    public function getObject($id)
     {
     	/*$ret = $this->getInstanceDao();
 
@@ -76,7 +76,7 @@ abstract class ActionsContactCardCommon
     	//}
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *  Set content of ->tpl array, to use into template
      *
@@ -84,7 +84,7 @@ abstract class ActionsContactCardCommon
      *  @param	int			$id			Id
      *  @return	string					HTML output
      */
-    function assign_values(&$action, $id)
+    public function assign_values(&$action, $id)
     {
         // phpcs:enable
         global $conf, $langs, $user, $canvas;
@@ -315,9 +315,9 @@ abstract class ActionsContactCardCommon
             {
                 dol_print_error($this->db);
             }
-            $this->object->country_id	=	$langs->trans("Country".$obj->code)?$langs->trans("Country".$obj->code):$obj->label;
-            $this->object->country_code	=	$obj->code;
-            $this->object->country		=	$langs->trans("Country".$obj->code)?$langs->trans("Country".$obj->code):$obj->label;
+            $this->object->country_id = $langs->trans("Country".$obj->code)?$langs->trans("Country".$obj->code):$obj->label;
+            $this->object->country_code = $obj->code;
+            $this->object->country = $langs->trans("Country".$obj->code)?$langs->trans("Country".$obj->code):$obj->label;
         }
     }
 }

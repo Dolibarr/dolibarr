@@ -171,8 +171,8 @@ elseif ($action == "add") {
 		$object->doc_ref = GETPOST('doc_ref', 'alpha');
 		$object->code_journal = $journal_code;
 		$object->journal_label = $journal_label;
-		$object->fk_doc = GETPOST('fk_doc', 'int');
-		$object->fk_docdet = GETPOST('fk_docdet', 'int');
+		$object->fk_doc = (int) GETPOST('fk_doc', 'int');
+		$object->fk_docdet = (int) GETPOST('fk_docdet', 'int');
 
 		if (floatval($debit) != 0.0) {
 			$object->montant = $debit;
@@ -604,7 +604,7 @@ if ($action == 'create')
 				print_liste_field_titre("LabelOperation");
 				print_liste_field_titre("Debit", "", "", "", "", 'class="right"');
 				print_liste_field_titre("Credit", "", "", "", "", 'class="right"');
-				print_liste_field_titre("Action", "", "", "", "", 'width="60" align="center"');
+				print_liste_field_titre("Action", "", "", "", "", 'width="60" class="center"');
 
 				print "</tr>\n";
 
@@ -644,7 +644,7 @@ if ($action == 'create')
 						print '<td class="right">' . price($line->debit) . '</td>';
 						print '<td class="right">' . price($line->credit) . '</td>';
 
-						print '<td align="center">';
+						print '<td class="center">';
 						print '<a href="' . $_SERVER["PHP_SELF"] . '?action=update&id=' . $line->id . '&piece_num=' . $line->piece_num . '&mode='.$mode.'">';
 						print img_edit();
 						print '</a> &nbsp;';
@@ -661,8 +661,8 @@ if ($action == 'create')
 					print "</tr>\n";
 				}
 
-				$total_debit = price2num($total_debit);
-				$total_credit = price2num($total_credit);
+				$total_debit = price2num($total_debit, 'MT');
+				$total_credit = price2num($total_credit, 'MT');
 
 				if ($total_debit != $total_credit)
 				{

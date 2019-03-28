@@ -65,7 +65,7 @@ class Dolresource extends CommonObject
      *
      *  @param	DoliDb		$db      Database handler
      */
-    function __construct($db)
+    public function __construct($db)
     {
         $this->db = $db;
     }
@@ -77,7 +77,7 @@ class Dolresource extends CommonObject
      *  @param  int		$notrigger   0=launch triggers after, 1=disable triggers
      *  @return int      		   	 <0 if KO, Id of created object if OK
      */
-    function create($user, $notrigger = 0)
+    public function create($user, $notrigger = 0)
     {
         global $conf, $langs, $hookmanager;
         $error=0;
@@ -181,7 +181,7 @@ class Dolresource extends CommonObject
      *    @param	string	$ref	Ref of object
      *    @return   int         	<0 if KO, >0 if OK
      */
-    function fetch($id, $ref = '')
+    public function fetch($id, $ref = '')
     {
     	global $langs;
     	$sql = "SELECT";
@@ -242,7 +242,7 @@ class Dolresource extends CommonObject
      *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
      *  @return int     		   	 <0 if KO, >0 if OK
      */
-	function update($user = null, $notrigger = 0)
+    public function update($user = null, $notrigger = 0)
 	{
 		global $conf, $langs, $hookmanager;
 		$error=0;
@@ -339,14 +339,14 @@ class Dolresource extends CommonObject
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *    Load object in memory from database
      *
      *    @param      int	$id          id object
      *    @return     int         <0 if KO, >0 if OK
      */
-    function fetch_element_resource($id)
+    public function fetch_element_resource($id)
     {
         // phpcs:enable
     	global $langs;
@@ -405,7 +405,7 @@ class Dolresource extends CommonObject
      *    @param	int		$notrigger		Disable all triggers
      *    @return   int						>0 if OK, <0 if KO
      */
-	function delete($rowid, $notrigger = 0)
+    public function delete($rowid, $notrigger = 0)
 	{
 		global $user,$langs,$conf;
 
@@ -484,7 +484,7 @@ class Dolresource extends CommonObject
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *	Load resource objects into $this->lines
      *
@@ -495,7 +495,7 @@ class Dolresource extends CommonObject
      *  @param	array		$filter    	  filter output
      *  @return int          	<0 if KO, >0 if OK
      */
-    function fetch_all($sortorder, $sortfield, $limit, $offset, $filter = '')
+    public function fetch_all($sortorder, $sortfield, $limit, $offset, $filter = '')
     {
         // phpcs:enable
     	global $conf;
@@ -581,7 +581,7 @@ class Dolresource extends CommonObject
     	}
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
      /**
      *	Load all objects into $this->lines
      *
@@ -592,7 +592,7 @@ class Dolresource extends CommonObject
 	 *  @param	array		$filter    	  filter output
 	 *  @return int          	<0 if KO, >0 if OK
      */
-    function fetch_all_resources($sortorder, $sortfield, $limit, $offset, $filter = '')
+    public function fetch_all_resources($sortorder, $sortfield, $limit, $offset, $filter = '')
     {
         // phpcs:enable
    		global $conf;
@@ -659,7 +659,7 @@ class Dolresource extends CommonObject
    		}
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *	Load all objects into $this->lines
      *
@@ -670,7 +670,7 @@ class Dolresource extends CommonObject
      *  @param	array		$filter    	  filter output
      *  @return int          	<0 if KO, >0 if OK
      */
-    function fetch_all_used($sortorder, $sortfield, $limit, $offset = 1, $filter = '')
+    public function fetch_all_used($sortorder, $sortfield, $limit, $offset = 1, $filter = '')
     {
         // phpcs:enable
     	global $conf;
@@ -738,7 +738,7 @@ class Dolresource extends CommonObject
     	}
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      * Fetch all resources available, declared by modules
      * Load available resource in array $this->available_resources
@@ -747,7 +747,7 @@ class Dolresource extends CommonObject
      * @deprecated, remplaced by hook getElementResources
      * @see getElementResources()
      */
-    function fetch_all_available()
+    public function fetch_all_available()
     {
         // phpcs:enable
     	global $conf;
@@ -761,7 +761,7 @@ class Dolresource extends CommonObject
     	return 0;
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *  Update element resource into database
      *
@@ -769,7 +769,7 @@ class Dolresource extends CommonObject
      *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
      *  @return int     		   	 <0 if KO, >0 if OK
      */
-    function update_element_resource($user = null, $notrigger = 0)
+    public function update_element_resource($user = null, $notrigger = 0)
     {
         // phpcs:enable
     	global $conf, $langs;
@@ -839,7 +839,7 @@ class Dolresource extends CommonObject
      * @param string    $resource_type  Type
      * @return array                    Aray of resources
      */
-    function getElementResources($element, $element_id, $resource_type = '')
+    public function getElementResources($element, $element_id, $resource_type = '')
     {
 	    // Links beetween objects are stored in this table
 	    $sql = 'SELECT rowid, resource_id, resource_type, busy, mandatory';
@@ -878,7 +878,7 @@ class Dolresource extends CommonObject
      *
      *  @return     int
      */
-    function fetchElementResources($element, $element_id)
+    public function fetchElementResources($element, $element_id)
     {
         $resources = $this->getElementResources($element, $element_id);
         $i=0;
@@ -890,13 +890,13 @@ class Dolresource extends CommonObject
     }
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *      Load in cache resource type code (setup in dictionary)
      *
      *      @return     int             Nb lignes chargees, 0 si deja chargees, <0 si ko
      */
-    function load_cache_code_type_resource()
+    public function load_cache_code_type_resource()
     {
         // phpcs:enable
     	global $langs;
@@ -941,7 +941,7 @@ class Dolresource extends CommonObject
      *	@param		int  	$notooltip		1=Disable tooltip
      *	@return     string          		String with URL
      */
-    function getNomUrl($withpicto = 0, $option = '', $get_params = '', $notooltip = 0)
+    public function getNomUrl($withpicto = 0, $option = '', $get_params = '', $notooltip = 0)
     {
         global $langs;
 
@@ -973,12 +973,12 @@ class Dolresource extends CommonObject
      *  @param	int		$mode          0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
      *  @return	string 			       Label of status
      */
-    function getLibStatut($mode = 0)
+    public function getLibStatut($mode = 0)
     {
         return $this->LibStatut($this->status, $mode);
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *  Return the status
      *
@@ -986,7 +986,7 @@ class Dolresource extends CommonObject
      *  @param  int		$mode          	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 5=Long label + Picto
      *  @return string 			       	Label of status
      */
-    static function LibStatut($status, $mode = 0)
+    public static function LibStatut($status, $mode = 0)
     {
         // phpcs:enable
         global $langs;

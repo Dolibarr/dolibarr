@@ -243,7 +243,7 @@ if ($resql)
 	print '<td></td>';
 	print '<td></td>';
 	print '<td></td>';
-	print '<td class="liste_titre" align="right">';
+	print '<td class="liste_titre right">';
 	$searchpicto=$form->showFilterButtons();
 	print $searchpicto;
 	print '</td>';
@@ -255,9 +255,9 @@ if ($resql)
 	print_liste_field_titre("RefSupplierShort", $_SERVER["PHP_SELF"], "ppf.ref_fourn", $param, "", "", $sortfield, $sortorder);
 	print_liste_field_titre("Label", $_SERVER["PHP_SELF"], "p.label", $param, "", "", $sortfield, $sortorder);
 	print_liste_field_titre("Supplier", $_SERVER["PHP_SELF"], "ppf.fk_soc", $param, "", "", $sortfield, $sortorder);
-	print_liste_field_titre("BuyingPrice", $_SERVER["PHP_SELF"], "ppf.price", $param, "", 'align="right"', $sortfield, $sortorder);
-	print_liste_field_titre("QtyMin", $_SERVER["PHP_SELF"], "ppf.quantity", $param, "", 'align="right"', $sortfield, $sortorder);
-	print_liste_field_titre("UnitPrice", $_SERVER["PHP_SELF"], "ppf.unitprice", $param, "", 'align="right"', $sortfield, $sortorder);
+	print_liste_field_titre("BuyingPrice", $_SERVER["PHP_SELF"], "ppf.price", $param, "", '', $sortfield, $sortorder, 'right ');
+	print_liste_field_titre("QtyMin", $_SERVER["PHP_SELF"], "ppf.quantity", $param, "", '', $sortfield, $sortorder, 'right ');
+	print_liste_field_titre("UnitPrice", $_SERVER["PHP_SELF"], "ppf.unitprice", $param, "", '', $sortfield, $sortorder, 'right ');
 	print_liste_field_titre('', $_SERVER["PHP_SELF"]);
 	print "</tr>\n";
 
@@ -287,13 +287,13 @@ if ($resql)
 		if ($companystatic->id > 0) print $companystatic->getNomUrl(1, 'supplier');
 		print '</td>';
 
-		print '<td align="right">'.(isset($objp->price) ? price($objp->price) : '').'</td>';
+		print '<td class="right">'.(isset($objp->price) ? price($objp->price) : '').'</td>';
 
-		print '<td align="right">'.$objp->qty.'</td>';
+		print '<td class="right">'.$objp->qty.'</td>';
 
-		print '<td align="right">'.(isset($objp->unitprice) ? price($objp->unitprice) : '').'</td>';
+		print '<td class="right">'.(isset($objp->unitprice) ? price($objp->unitprice) : '').'</td>';
 
-		print '<td align="right"></td>';
+		print '<td class="right"></td>';
 
 		print "</tr>\n";
 		$i++;

@@ -237,7 +237,7 @@ $h++;
 
 dol_fiche_head($head, 'editor', $langs->trans("Menus"), -1);
 
-print $langs->trans("MenusEditorDesc")."<br>\n";
+print '<span class="opacitymedium">'.$langs->trans("MenusEditorDesc")."</span><br>\n";
 print "<br>\n";
 
 
@@ -256,7 +256,7 @@ if ($action == 'delete')
 $newcardbutton='';
 if ($user->admin)
 {
-    $newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/admin/menus/edit.php?menuId=0&action=create&menu_handler='.urlencode($menu_handler).'&backtopage='.urlencode($_SERVER['PHP_SELF']).'"><span class="valignmiddle">'.$langs->trans('New').'</span>';
+    $newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/admin/menus/edit.php?menuId=0&action=create&menu_handler='.urlencode($menu_handler).'&backtopage='.urlencode($_SERVER['PHP_SELF']).'"><span class="valignmiddle text-plus-circle">'.$langs->trans('New').'</span>';
     $newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
     $newcardbutton.= '</a>';
 }

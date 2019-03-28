@@ -53,10 +53,10 @@ class ActionsStripeconnect
 	 *
 	 *	@param	DoliDB	$db		Database handler
 	 */
-	function __construct($db)
-	{
-		$this->db = $db;
-	}
+    public function __construct($db)
+    {
+        $this->db = $db;
+    }
 
 
 	/**
@@ -67,8 +67,8 @@ class ActionsStripeconnect
 	 * @param	string	$action			Action
      * @return bool
 	 */
-	function formObjectOptions($parameters, &$object, &$action)
-	{
+    public function formObjectOptions($parameters, &$object, &$action)
+    {
 		global $db,$conf,$user,$langs,$form;
 
 		if (! empty($conf->stripe->enabled) && (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox', 'alpha')))
@@ -123,8 +123,7 @@ class ActionsStripeconnect
 				$object->fetch_thirdparty();
 				$customer=$stripe->customerStripe($object->thirdparty, $stripe->getStripeAccount($service));
 				$this->resprints.= $customer->id;
-			}
-			else {
+			} else {
 				$this->resprints.= $langs->trans("NoStripe");
 			}
 			$this->resprints.= '</td></tr>';
@@ -141,13 +140,11 @@ class ActionsStripeconnect
 				$object->fetch_thirdparty();
 				$customer=$stripe->customerStripe($object, $stripe->getStripeAccount($service));
 				$this->resprints.= $customer->id;
-			}
-			else {
+			} else {
 				$this->resprints.= $langs->trans("NoStripe");
 			}
 			$this->resprints.= '</td></tr>';
-		}
-		elseif (is_object($object) && $object->element == 'adherent_type'){
+		} elseif (is_object($object) && $object->element == 'adherent_type'){
 			$this->resprints.= '<tr><td>';
 			$this->resprints.= '<table width="100%" class="nobordernopadding"><tr><td>';
 			$this->resprints.= $langs->trans('PlanStripe');
@@ -161,25 +158,24 @@ class ActionsStripeconnect
 				$object->fetch_thirdparty();
 				$customer=$stripe->customerStripe($object, $stripe->getStripeAccount($service));
 				$this->resprints.= $customer->id;
-			}
-			else {
+			} else {
 				$this->resprints.= $langs->trans("NoStripe");
 			}
 			$this->resprints.= '</td></tr>';
 		}
 		return 0;
-	}
+    }
 
 	/**
 	 * addMoreActionsButtons
 	 *
-	 * @param arra	 	$parameters	Parameters
+	 * @param array	 	$parameters	Parameters
 	 * @param Object	$object		Object
 	 * @param string	$action		action
 	 * @return int					0
 	 */
-	function addMoreActionsButtons($parameters, &$object, &$action)
-	{
+    public function addMoreActionsButtons($parameters, &$object, &$action)
+    {
 		global $db,$conf,$user,$langs,$form;
 		if (is_object($object) && $object->element == 'facture'){
 			// On verifie si la facture a des paiements
@@ -234,5 +230,5 @@ class ActionsStripeconnect
 			print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("StripeAutoSubscription")).'">'.$langs->trans("StripeAutoSubscription").'</a>';
 		}
 		return 0;
-	}
+    }
 }

@@ -197,7 +197,7 @@ foreach($listofstatus as $status)
 }
 if (! empty($conf->use_javascript_ajax))
 {
-    print '<tr class="impair"><td align="center" colspan="2">';
+    print '<tr class="impair"><td class="center" colspan="2">';
 
     include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
     $dolgraph = new DolGraph();
@@ -331,9 +331,9 @@ if ($result)
 	print '<table class="noborder" width="100%">';
 
 	print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("LastContracts", 5).'</th>';
-	print '<th align="center">'.$langs->trans("DateModification").'</th>';
+	print '<th class="center">'.$langs->trans("DateModification").'</th>';
 	//print '<th class="left">'.$langs->trans("Status").'</th>';
-	print '<th align="center" width="80" colspan="4">'.$langs->trans("Services").'</th>';
+	print '<th class="center" width="80" colspan="4">'.$langs->trans("Services").'</th>';
 	print "</tr>\n";
 
 	while ($i < $num)
@@ -352,7 +352,7 @@ if ($result)
 		$staticcompany->name=$obj->name;
 		print $staticcompany->getNomUrl(1, '', 20);
 		print '</td>';
-		print '<td align="center">'.dol_print_date($db->jdate($obj->tms), 'dayhour').'</td>';
+		print '<td class="center">'.dol_print_date($db->jdate($obj->tms), 'dayhour').'</td>';
 		//print '<td class="left">'.$staticcontrat->LibStatut($obj->statut,2).'</td>';
 		print '<td class="right" width="32">'.($obj->nb_initial>0 ? $obj->nb_initial.$staticcontratligne->LibStatut(0, 3):'').'</td>';
 		print '<td class="right" width="32">'.($obj->nb_running>0 ? $obj->nb_running.$staticcontratligne->LibStatut(4, 3, 0):'').'</td>';

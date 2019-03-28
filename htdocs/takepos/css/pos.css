@@ -46,7 +46,7 @@ button.calcbutton3 {
 	text-align: center;
 	font-size:120%;
 	overflow: visible; /* removes extra width in IE */
-	width:12%;
+	width:24%;
 	height:24%;
 }
 
@@ -60,7 +60,7 @@ button.actionbutton {
 	text-align: center;
 	overflow: visible; /* removes extra width in IE */
 	width:33%;
-	height:33%;
+	height:24%;
 }
 
 div.wrapper{
@@ -83,7 +83,7 @@ div.wrapper2{
 	width:12.5%;
 	height:25%;
 	margin:0;
-	padding:1px;
+	/* padding:1px; */
 	border: 0.1em solid;
 	box-shadow: 2px 2px 1px #888;
 	text-align: center;
@@ -103,7 +103,6 @@ div.description{
 	width:100%;
 	/* styling below */
 	background-color:black;
-	font-family: 'tahoma';
 	color:white;
 	opacity:0.8; /* transparency */
 	filter:alpha(opacity=80); /* IE transparency */
@@ -155,7 +154,11 @@ div.catwatermark{
 	text-align: center;
 	box-sizing: border-box;
 	overflow: auto;
-	background-color:white;
+	/* background-color:white; */
+	padding-top: 0;
+	padding-bottom: 10px;
+	padding-right: 5px;
+	padding-left: 5px;
 }
 
 .div2{
@@ -163,8 +166,11 @@ div.catwatermark{
 	width: 33%;
 	font-size: 0;
 	float: left;
-	padding-left: 10px;
 	box-sizing: border-box;
+	padding-top: 0;
+	padding-bottom: 10px;
+	padding-right: 5px;
+	padding-left: 5px;
 }
 
 .div3{
@@ -172,6 +178,10 @@ div.catwatermark{
 	width: 33%;
 	float: left;
 	box-sizing: border-box;
+	padding-top: 0;
+	padding-bottom: 10px;
+	padding-right: 5px;
+	padding-left: 5px;
 }
 
 .div4{
@@ -180,7 +190,10 @@ div.catwatermark{
 	float: left;
 	box-sizing: border-box;
 	font-size: 6px;
-	padding:3px;
+	padding-top: 10px;
+	padding-bottom: 10px;
+	padding-right: 5px;
+	padding-left: 5px;
 }
 
 .div5{
@@ -189,9 +202,28 @@ div.catwatermark{
 	float: left;
 	box-sizing: border-box;
 	font-size: 6px;
-	padding:10px;
+	padding-top:10px;
+	padding-bottom:10px;
+	padding-right: 5px;
+	padding-left: 5px;
 }
 
+.selected {
+    font-weight: bold;
+}
+.order {
+    color: limegreen;
+}
+
+.colorwhite {
+	color: white;
+}
+.colorred {
+	color: red;
+}
+.colorgreen {
+	color: green;
+}
 p.description_content{
 	padding:10px;
 	margin:0px;

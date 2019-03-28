@@ -452,7 +452,7 @@ $massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 $newcardbutton='';
 if ($user->rights->projet->creer)
 {
-	$newcardbutton = '<a class="butActionNew" href="'.DOL_URL_ROOT.'/projet/card.php?action=create"><span class="valignmiddle">'.$langs->trans('NewProject').'</span>';
+	$newcardbutton = '<a class="butActionNew" href="'.DOL_URL_ROOT.'/projet/card.php?action=create"><span class="valignmiddle text-plus-circle">'.$langs->trans('NewProject').'</span>';
 	$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
 	$newcardbutton.= '</a>';
 }
@@ -537,7 +537,7 @@ $selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfiel
 if ($massactionbutton) $selectedfields.=$form->showCheckAddButtons('checkforselect', 1);
 
 print '<div class="div-table-responsive">';
-print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
+print '<table class="tagtable nobottomiftotal liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 
 print '<tr class="liste_titre_filter">';
 // Project ref

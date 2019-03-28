@@ -96,7 +96,7 @@ if ((! $versionfrom || preg_match('/version/', $versionfrom)) && (! $versionto |
 	// Test if batch mode
 	$sapi_type = php_sapi_name();
 	$script_file = basename(__FILE__);
-	$path=dirname(__FILE__).'/';
+	$path=__DIR__.'/';
 	if (substr($sapi_type, 0, 3) == 'cli')
 	{
 		print 'Syntax from command line: '.$script_file." x.y.z a.b.c [MAIN_MODULE_NAME1_TO_ENABLE,MAIN_MODULE_NAME2_TO_ENABLE...]\n";
@@ -143,7 +143,7 @@ if (! GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'a
 
     if (!$db->connected)
     {
-        print '<tr><td colspan="4">'.$langs->trans("ErrorFailedToConnectToDatabase", $conf->db->name).'</td><td align="right">'.$langs->trans('Error').'</td></tr>';
+        print '<tr><td colspan="4">'.$langs->trans("ErrorFailedToConnectToDatabase", $conf->db->name).'</td><td class="right">'.$langs->trans('Error').'</td></tr>';
         dolibarr_install_syslog('upgrade2: failed to connect to database :' . $conf->db->name . ' on ' . $conf->db->host . ' for user ' . $conf->db->user, LOG_ERR);
         $error++;
     }
@@ -186,7 +186,7 @@ if (! GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'a
     {
         // Current version is $conf->global->MAIN_VERSION_LAST_UPGRADE
         // Version to install is DOL_VERSION
-        $dolibarrlastupgradeversionarray=preg_split('/[\.-]/', isset($conf->global->MAIN_VERSION_LAST_UPGRADE)?$conf->global->MAIN_VERSION_LAST_UPGRADE:$conf->global->MAIN_VERSION_LAST_INSTALL);
+        $dolibarrlastupgradeversionarray=preg_split('/[\.-]/', isset($conf->global->MAIN_VERSION_LAST_UPGRADE)?$conf->global->MAIN_VERSION_LAST_UPGRADE:(isset($conf->global->MAIN_VERSION_LAST_INSTALL)?$conf->global->MAIN_VERSION_LAST_INSTALL:''));
 
         // Chaque action de migration doit renvoyer une ligne sur 4 colonnes avec
         // dans la 1ere colonne, la description de l'action a faire
@@ -2846,7 +2846,7 @@ function migrate_project_task_actors($db, $langs, $conf)
 
         $db->begin();
 
-        $sql = "SELECT fk_projet_task, fk_user FROM ".MAIN_DB_PREFIX."projet_task_actors";
+        $sql = "SELECT fk_projet_task as fk_project_task, fk_user FROM ".MAIN_DB_PREFIX."projet_task_actors";
         $resql = $db->query($sql);
         if ($resql)
         {
@@ -2868,7 +2868,7 @@ function migrate_project_task_actors($db, $langs, $conf)
                     $sql2.= ") VALUES (";
                     $sql2.= "'".$db->idate(dol_now())."'";
                     $sql2.= ", '4'";
-                    $sql2.= ", ".$obj->fk_projet_task;
+                    $sql2.= ", ".$obj->fk_project_task;
                     $sql2.= ", '180'";
                     $sql2.= ", ".$obj->fk_user;
                     $sql2.= ")";
@@ -3666,13 +3666,13 @@ function migrate_clean_association($db, $langs, $conf, $versionto)
                     if (! $error)
                     {
                         print '<tr><td>'.$langs->trans("MigrationCategorieAssociation").'</td>';
-                        print '<td align="right">'.$langs->trans("RemoveDuplicates").' '.$langs->trans("Success").' ('.$num.'=>'.count($couples).')</td></tr>';
+                        print '<td class="right">'.$langs->trans("RemoveDuplicates").' '.$langs->trans("Success").' ('.$num.'=>'.count($couples).')</td></tr>';
                         $db->commit();
                     }
                     else
                     {
                         print '<tr><td>'.$langs->trans("MigrationCategorieAssociation").'</td>';
-                        print '<td align="right">'.$langs->trans("RemoveDuplicates").' '.$langs->trans("Failed").'</td></tr>';
+                        print '<td class="right">'.$langs->trans("RemoveDuplicates").' '.$langs->trans("Failed").'</td></tr>';
                         $db->rollback();
                     }
                 }
@@ -3680,7 +3680,7 @@ function migrate_clean_association($db, $langs, $conf, $versionto)
             else
             {
                 print '<tr><td>'.$langs->trans("Error").'</td>';
-                print '<td align="right"><div class="error">'.$db->lasterror().'</div></td></tr>';
+                print '<td class="right"><div class="error">'.$db->lasterror().'</div></td></tr>';
             }
         }
     }

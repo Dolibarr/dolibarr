@@ -388,7 +388,7 @@ if ($resql)
 	$newcardbutton='';
 	if($user->rights->supplier_proposal->creer)
 	{
-		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/supplier_proposal/card.php?action=create"><span class="valignmiddle">'.$langs->trans('NewAskPrice').'</span>';
+		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/supplier_proposal/card.php?action=create"><span class="valignmiddle text-plus-circle">'.$langs->trans('NewAskPrice').'</span>';
 		$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
 		$newcardbutton.= '</a>';
 	}
@@ -493,7 +493,7 @@ if ($resql)
 	if (! empty($arrayfields['country.code_iso']['checked']))
 	{
 		print '<td class="liste_titre center">';
-		print $form->select_country($search_country, 'search_country', '', 0, 'maxwidth100');
+		print $form->select_country($search_country, 'search_country', '', 0, 'minwidth100imp maxwidth100');
 		print '</td>';
 	}
 	// Company type

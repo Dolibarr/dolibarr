@@ -89,7 +89,7 @@ class AdherentType extends CommonObject
 	 *
 	 *	@param 		DoliDB		$db		Database handler
 	 */
-	function __construct($db)
+	public function __construct($db)
 	{
 		$this->db = $db;
 		$this->statut = 1;
@@ -103,7 +103,7 @@ class AdherentType extends CommonObject
 	 *  @param	int		$notrigger		1=do not execute triggers, 0 otherwise
 	 *  @return	int						>0 if OK, < 0 if KO
 	 */
-	function create($user, $notrigger = 0)
+	public function create($user, $notrigger = 0)
 	{
 		global $conf;
 
@@ -170,7 +170,7 @@ class AdherentType extends CommonObject
 	 *  @param	int		$notrigger		1=do not execute triggers, 0 otherwise
 	 *  @return	int						>0 if OK, < 0 if KO
 	 */
-	function update($user, $notrigger = 0)
+	public function update($user, $notrigger = 0)
 	{
 		global $conf, $hookmanager;
 
@@ -238,7 +238,7 @@ class AdherentType extends CommonObject
 	 *
 	 *  @return		int		> 0 if OK, 0 if not found, < 0 if KO
 	 */
-	function delete()
+	public function delete()
 	{
 		global $user;
 
@@ -272,7 +272,7 @@ class AdherentType extends CommonObject
 	 *  @param 		int		$rowid			Id of member type to load
 	 *  @return		int						<0 if KO, >0 if OK
 	 */
-	function fetch($rowid)
+	public function fetch($rowid)
 	{
 		$sql = "SELECT d.rowid, d.libelle as label, d.statut, d.subscription, d.mail_valid, d.note, d.vote";
 		$sql .= " FROM ".MAIN_DB_PREFIX."adherent_type as d";
@@ -306,13 +306,13 @@ class AdherentType extends CommonObject
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Return list of members' type
 	 *
 	 *  @return 	array	List of types of members
 	 */
-	function liste_array()
+	public function liste_array()
 	{
         // phpcs:enable
 		global $conf,$langs;
@@ -356,7 +356,7 @@ class AdherentType extends CommonObject
 	 *  									2=Return array of members id only
 	 * 	@return	mixed						Array of members or -1 on error
 	 */
-	function listMembersForMemberType($excludefilter = '', $mode = 0)
+	public function listMembersForMemberType($excludefilter = '', $mode = 0)
 	{
 		global $conf, $user;
 
@@ -404,14 +404,14 @@ class AdherentType extends CommonObject
 	}
 
     /**
-     *    	Return clicable name (with picto eventually)
+     *  Return clicable name (with picto eventually)
      *
-     *		@param		int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
-     *		@param		int		$maxlen			length max label
-     *  	@param		int  	$notooltip		1=Disable tooltip
-     *		@return		string					String with URL
+     *  @param		int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
+     *  @param		int		$maxlen			length max label
+     *  @param		int  	$notooltip		1=Disable tooltip
+     *  @return		string					String with URL
      */
-    function getNomUrl($withpicto = 0, $maxlen = 0, $notooltip = 0)
+    public function getNomUrl($withpicto = 0, $maxlen = 0, $notooltip = 0)
     {
         global $langs;
 
@@ -434,12 +434,12 @@ class AdherentType extends CommonObject
      *
      *     @return string     Return status of a type of member
      */
-	function getLibStatut()
-	{
-		return '';
-	}
+    public function getLibStatut()
+    {
+        return '';
+    }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Retourne chaine DN complete dans l'annuaire LDAP pour l'objet
 	 *
@@ -449,7 +449,7 @@ class AdherentType extends CommonObject
 	 *									2=Return key only (uid=qqq)
 	 *	@return		string				DN
 	 */
-	function _load_ldap_dn($info, $mode = 0)
+	private function _load_ldap_dn($info, $mode = 0)
 	{
         // phpcs:enable
 		global $conf;
@@ -461,13 +461,13 @@ class AdherentType extends CommonObject
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Initialize the info array (array of LDAP values) that will be used to call LDAP functions
 	 *
 	 *	@return		array		Tableau info des attributs
 	 */
-	function _load_ldap_info()
+	private function _load_ldap_info()
 	{
         // phpcs:enable
 		global $conf,$langs;
@@ -502,7 +502,7 @@ class AdherentType extends CommonObject
 	 *
 	 *  @return	void
 	 */
-	function initAsSpecimen()
+	public function initAsSpecimen()
 	{
 		global $conf, $user, $langs;
 
@@ -530,7 +530,7 @@ class AdherentType extends CommonObject
 	 *
 	 *     @return string     Return mail content of type or empty
 	 */
-	function getMailOnValid()
+	public function getMailOnValid()
 	{
 		global $conf;
 
@@ -547,7 +547,7 @@ class AdherentType extends CommonObject
 	 *
 	 *     @return string     Return mail content of type or empty
 	 */
-	function getMailOnSubscription()
+	public function getMailOnSubscription()
 	{
 		global $conf;
 
@@ -565,16 +565,16 @@ class AdherentType extends CommonObject
 	 *
 	 *     @return string     Return mail model content of type or empty
 	 */
-	function getMailOnResiliate()
-	{
-		global $conf;
+    public function getMailOnResiliate()
+    {
+        global $conf;
 
-		// NOTE mail_resiliate not defined so never used
-		if (! empty($this->mail_resiliate) && trim(dol_htmlentitiesbr_decode($this->mail_resiliate)))  // Property not yet defined
-		{
-			return $this->mail_resiliate;
-		}
+        // NOTE mail_resiliate not defined so never used
+        if (! empty($this->mail_resiliate) && trim(dol_htmlentitiesbr_decode($this->mail_resiliate)))  // Property not yet defined
+        {
+            return $this->mail_resiliate;
+        }
 
-		return '';
-	}
+        return '';
+    }
 }

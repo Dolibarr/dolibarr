@@ -113,11 +113,11 @@ if ($result)
 
 	if (! empty($user->rights->accounting->fiscalyear))
 	{
-		$addbutton = '<a class="butActionNew" href="fiscalyear_card.php?action=create"><span class="valignmiddle">' . $langs->trans("NewFiscalYear") .'</span><span class="fa fa-plus-circle valignmiddle"></span></a>';
+		$addbutton = '<a class="butActionNew" href="fiscalyear_card.php?action=create"><span class="valignmiddle text-plus-circle">' . $langs->trans("NewFiscalYear") .'</span><span class="fa fa-plus-circle valignmiddle"></span></a>';
 	}
 	else
 	{
-		$addbutton = '<a class="butActionRefused classfortooltip" href="#"><span class="valignmiddle" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">' . $langs->trans("NewFiscalYear") .'</span><span class="fa fa-plus-circle valignmiddle"></span></a>';
+		$addbutton = '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'"><span class="valignmiddle text-plus-circle">' . $langs->trans("NewFiscalYear") .'</span><span class="fa fa-plus-circle valignmiddle"></span></a>';
 	}
 
 	$title = $langs->trans('AccountingPeriods');
@@ -131,8 +131,8 @@ if ($result)
 	print '<td>' . $langs->trans("Label") . '</td>';
 	print '<td>' . $langs->trans("DateStart") . '</td>';
 	print '<td>' . $langs->trans("DateEnd") . '</td>';
-	print '<td align="center">' . $langs->trans("NumberOfAccountancyEntries") . '</td>';
-	print '<td align="center">' . $langs->trans("NumberOfAccountancyMovements") . '</td>';
+	print '<td class="center">' . $langs->trans("NumberOfAccountancyEntries") . '</td>';
+	print '<td class="center">' . $langs->trans("NumberOfAccountancyMovements") . '</td>';
 	print '<td class="right">' . $langs->trans("Statut") . '</td>';
 	print '</tr>';
 
@@ -147,8 +147,8 @@ if ($result)
 			print '<td class="left">' . $obj->label . '</td>';
 			print '<td class="left">' . dol_print_date($db->jdate($obj->date_start), 'day') . '</td>';
 			print '<td class="left">' . dol_print_date($db->jdate($obj->date_end), 'day') . '</td>';
-			print '<td align="center">' . $object->getAccountancyEntriesByFiscalYear($obj->date_start, $obj->date_end) . '</td>';
-			print '<td align="center">' . $object->getAccountancyMovementsByFiscalYear($obj->date_start, $obj->date_end) . '</td>';
+			print '<td class="center">' . $object->getAccountancyEntriesByFiscalYear($obj->date_start, $obj->date_end) . '</td>';
+			print '<td class="center">' . $object->getAccountancyMovementsByFiscalYear($obj->date_start, $obj->date_end) . '</td>';
 			print '<td class="right">' . $fiscalyearstatic->LibStatut($obj->statut, 5) . '</td>';
 			print '</tr>';
 			$i++;

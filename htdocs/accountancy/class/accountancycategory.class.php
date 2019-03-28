@@ -38,7 +38,7 @@ class AccountancyCategory // extends CommonObject
 
 	/**
 	 * @var string 		Error string
-	 * @see             errors
+	 * @see             $errors
 	 */
 	public $error;
 
@@ -63,7 +63,7 @@ class AccountancyCategory // extends CommonObject
     public $id;
 
 	/**
-	 * @var mixed Sample property 1
+	 * @var string Accountancy code
 	 */
 	public $code;
 
@@ -73,7 +73,7 @@ class AccountancyCategory // extends CommonObject
     public $label;
 
     /**
-	 * @var mixed Sample property 1
+	 * @var string Accountancy range account
 	 */
 	public $range_account;
 
@@ -83,37 +83,37 @@ class AccountancyCategory // extends CommonObject
 	public $sens;
 
 	/**
-	 * @var mixed Sample property 1
+	 * @var int Category type of accountancy
 	 */
 	public $category_type;
 
 	/**
-	 * @var mixed Sample property 1
+	 * @var string Formula
 	 */
 	public $formula;
 
 	/**
-	 * @var mixed Sample property 1
+	 * @var int     Position
 	 */
 	public $position;
 
 	/**
-	 * @var mixed Sample property 1
+	 * @var int country id
 	 */
 	public $fk_country;
 
 	/**
-	 * @var mixed Sample property 1
+	 * @var int Is active
 	 */
 	public $active;
 
 	/**
-	 * @var mixed Sample property 1
+	 * @var array Lines cptbk
 	 */
 	public $lines_cptbk;
 
 	/**
-	 * @var mixed Sample property 1
+	 * @var array Lines display
 	 */
 	public $lines_display;
 
@@ -129,7 +129,7 @@ class AccountancyCategory // extends CommonObject
 	 *
 	 *  @param      DoliDb		$db      Database handler
 	 */
-	function __construct($db)
+	public function __construct($db)
 	{
 		$this->db = $db;
 	}
@@ -142,7 +142,7 @@ class AccountancyCategory // extends CommonObject
 	 *  @param      int		$notrigger   0=launch triggers after, 1=disable triggers
 	 *  @return     int      		   	 <0 if KO, Id of created object if OK
 	 */
-	function create($user, $notrigger = 0)
+	public function create($user, $notrigger = 0)
 	{
 		global $conf, $langs;
 		$error=0;
@@ -151,12 +151,12 @@ class AccountancyCategory // extends CommonObject
 		if (isset($this->code)) $this->code=trim($this->code);
 		if (isset($this->label)) $this->label=trim($this->label);
 		if (isset($this->range_account)) $this->range_account=trim($this->range_account);
-		if (isset($this->sens)) $this->sens=trim($this->sens);
-		if (isset($this->category_type)) $this->category_type=trim($this->category_type);
+		if (isset($this->sens)) $this->sens = (int) $this->sens;
+		if (isset($this->category_type)) $this->category_type = (int) $this->category_type;
 		if (isset($this->formula)) $this->formula=trim($this->formula);
-		if (isset($this->position)) $this->position=trim($this->position);
-		if (isset($this->fk_country)) $this->fk_country=trim($this->fk_country);
-		if (isset($this->active)) $this->active=trim($this->active);
+		if (isset($this->position)) $this->position = (int) $this->position;
+		if (isset($this->fk_country)) $this->fk_country = (int) $this->fk_country;
+		if (isset($this->active)) $this->active = (int) $this->active;
 
 		// Check parameters
 		// Put here code to add control on parameters values
@@ -239,7 +239,7 @@ class AccountancyCategory // extends CommonObject
 	 *  @param		string	$label	Label
 	 *  @return     int          	<0 if KO, >0 if OK
 	 */
-	function fetch($id, $code = '', $label = '')
+	public function fetch($id, $code = '', $label = '')
 	{
 		$sql = "SELECT";
 		$sql.= " t.rowid,";
@@ -299,7 +299,7 @@ class AccountancyCategory // extends CommonObject
 	 *  @param      int		$notrigger	 0=launch triggers after, 1=disable triggers
 	 *  @return     int     		   	 <0 if KO, >0 if OK
 	 */
-	function update($user = null, $notrigger = 0)
+	public function update($user = null, $notrigger = 0)
 	{
 		global $conf, $langs;
 		$error=0;
@@ -308,12 +308,12 @@ class AccountancyCategory // extends CommonObject
 		if (isset($this->code)) $this->code=trim($this->code);
 		if (isset($this->label)) $this->label=trim($this->label);
 		if (isset($this->range_account)) $this->range_account=trim($this->range_account);
-		if (isset($this->sens)) $this->sens=trim($this->sens);
-		if (isset($this->category_type)) $this->category_type=trim($this->category_type);
+		if (isset($this->sens)) $this->sens = (int) $this->sens;
+		if (isset($this->category_type)) $this->category_type = (int) $this->category_type;
 		if (isset($this->formula)) $this->formula=trim($this->formula);
-		if (isset($this->position)) $this->position=trim($this->position);
-		if (isset($this->fk_country)) $this->fk_country=trim($this->fk_country);
-		if (isset($this->active)) $this->active=trim($this->active);
+		if (isset($this->position)) $this->position = (int) $this->position;
+		if (isset($this->fk_country)) $this->fk_country = (int) $this->fk_country;
+		if (isset($this->active)) $this->active = (int) $this->active;
 
 
 		// Check parameters
@@ -338,8 +338,8 @@ class AccountancyCategory // extends CommonObject
 		$resql = $this->db->query($sql);
 		if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 
-		if (! $error)
-		{
+		//if (! $error)
+		//{
 			// Uncomment this and change MYOBJECT to your own tag if you
 			// want this action call a trigger.
 			//if (! $notrigger)
@@ -351,7 +351,7 @@ class AccountancyCategory // extends CommonObject
 			//	if ($result < 0) { $error++; $this->errors=$interface->errors; }
 			//	// End call triggers
 			//}
-		}
+		//}
 
 		// Commit or rollback
 		if ($error)
@@ -379,7 +379,7 @@ class AccountancyCategory // extends CommonObject
 	 *  @param	int		$notrigger	 0=launch triggers after, 1=disable triggers
 	 *  @return	int					 <0 if KO, >0 if OK
 	 */
-	function delete($user, $notrigger = 0)
+	public function delete($user, $notrigger = 0)
 	{
 		global $conf, $langs;
 		$error=0;
@@ -393,8 +393,8 @@ class AccountancyCategory // extends CommonObject
 		$resql = $this->db->query($sql);
 		if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 
-		if (! $error)
-		{
+		//if (! $error)
+		//{
 			// Uncomment this and change MYOBJECT to your own tag if you
 			// want this action call a trigger.
 			//if (! $notrigger)
@@ -406,7 +406,7 @@ class AccountancyCategory // extends CommonObject
 			//	if ($result < 0) { $error++; $this->errors=$interface->errors; }
 			//	// End call triggers
 			//}
-		}
+		//}
 
 		// Commit or rollback
 		if ($error)
@@ -460,7 +460,7 @@ class AccountancyCategory // extends CommonObject
 
 			return - 1;
 		}
-	}
+    }
 
 	/**
 	 * Function to select accounting category of an accounting account present in chart of accounts
@@ -509,12 +509,12 @@ class AccountancyCategory // extends CommonObject
 
 			return - 1;
 		}
-	}
+    }
 
 	/**
 	 * Function to select accounting category of an accounting account present in chart of accounts
 	 *
-	 * @param int $id Id category
+	 * @param int $id      Id of category to know which account to exclude
 	 *
 	 * @return int <0 if KO, 0 if not found, >0 if OK
 	 */
@@ -552,7 +552,7 @@ class AccountancyCategory // extends CommonObject
 
 	        return - 1;
 	    }
-	}
+    }
 
 	/**
 	 * Function to add an accounting account in an accounting category
@@ -569,12 +569,13 @@ class AccountancyCategory // extends CommonObject
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 
-		$sql = "SELECT aa.rowid,aa.account_number ";
+		$sql = "SELECT aa.rowid, aa.account_number";
 		$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_account as aa";
 		$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "accounting_system as asy ON aa.fk_pcg_version = asy.pcg_version";
 		$sql .= " AND asy.rowid = " . $conf->global->CHARTOFACCOUNTS;
 		$sql .= " AND aa.active = 1";
 		$sql .= " AND aa.entity = " . $conf->entity;
+        $sql .= " ORDER BY LENGTH(aa.account_number) DESC;";    // LENGTH is ok with mysql and postgresql
 
 		$this->db->begin();
 
@@ -587,10 +588,16 @@ class AccountancyCategory // extends CommonObject
 			return -1;
 		}
 
-		while ( $obj = $this->db->fetch_object($resql))
+		$accountincptsadded=array();
+		while ($obj = $this->db->fetch_object($resql))
 		{
-			if (array_key_exists(length_accountg($obj->account_number), $cpts))
+		    $account_number_formated=length_accountg($obj->account_number);
+		    if (! empty($accountincptsadded[$account_number_formated])) continue;
+
+		    if (array_key_exists($account_number_formated, $cpts))
 			{
+			    $accountincptsadded[$account_number_formated]=1;
+			    // We found an account number that is in list $cpts of account to add
 				$sql = "UPDATE " . MAIN_DB_PREFIX . "accounting_account";
 				$sql .= " SET fk_accounting_category=" . $id_cat;
 				$sql .= " WHERE rowid=".$obj->rowid;
@@ -617,7 +624,7 @@ class AccountancyCategory // extends CommonObject
 
 			return 1;
 		}
-	}
+    }
 
 	/**
 	 * Function to delete an accounting account from an accounting category
@@ -643,7 +650,7 @@ class AccountancyCategory // extends CommonObject
 		}
 
 		// Commit or rollback
-		if ($error) {
+        if ($error) {
 			foreach ($this->errors as $errmsg) {
 				dol_syslog(__METHOD__ . " " . $errmsg, LOG_ERR);
 				$this->error .= ($this->error ? ', ' . $errmsg : $errmsg);
@@ -651,12 +658,12 @@ class AccountancyCategory // extends CommonObject
 			$this->db->rollback();
 
 			return - 1 * $error;
-		} else {
+        } else {
 			$this->db->commit();
 
-			return 1;
-		}
-	}
+            return 1;
+        }
+    }
 
 	/**
 	 * Function to know all category from accounting account

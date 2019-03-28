@@ -58,7 +58,7 @@ class SocieteTest extends PHPUnit_Framework_TestCase
      *
      * @return SocieteTest
      */
-    function __construct()
+    public function __construct()
     {
     	parent::__construct();
 

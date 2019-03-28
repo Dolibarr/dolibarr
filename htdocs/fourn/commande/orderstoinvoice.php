@@ -500,10 +500,10 @@ if (($action != 'create' && $action != 'add') && !$error) {
 		print '<tr class="liste_titre">';
 		print_liste_field_titre('Ref', 'orderstoinvoice.php', 'c.ref', '', '&amp;socid=' . $socid, '', $sortfield, $sortorder);
 		print_liste_field_titre('RefSupplier', 'orderstoinvoice.php', 'c.ref_supplier', '', '&amp;socid=' . $socid, '', $sortfield, $sortorder);
-		print_liste_field_titre('OrderDate', 'orderstoinvoice.php', 'c.date_commande', '', '&amp;socid=' . $socid, 'align="center"', $sortfield, $sortorder);
-		print_liste_field_titre('DeliveryDate', 'orderstoinvoice.php', 'c.date_livraison', '', '&amp;socid=' . $socid, 'align="center"', $sortfield, $sortorder);
-		print_liste_field_titre('Status', '', '', '', '', 'align="right"');
-		print_liste_field_titre('GenerateBill', '', '', '', '', 'align="center"');
+		print_liste_field_titre('OrderDate', 'orderstoinvoice.php', 'c.date_commande', '', '&amp;socid=' . $socid, '', $sortfield, $sortorder, 'center ');
+		print_liste_field_titre('DeliveryDate', 'orderstoinvoice.php', 'c.date_livraison', '', '&amp;socid=' . $socid, '', $sortfield, $sortorder, 'center ');
+		print_liste_field_titre('Status', '', '', '', '', '', '', '', 'right ');
+		print_liste_field_titre('GenerateBill', '', '', '', '', '', '', '', 'center ');
 		print "</tr>\n";
 
 		// Lignes des champs de filtre
@@ -513,27 +513,27 @@ if (($action != 'create' && $action != 'add') && !$error) {
 		print '<input class="flat" size="10" type="text" name="sref" value="' . $sref . '">';
 		print '</td>';
 		// print '<td class="liste_titre">';
-		print '<td class="liste_titre" align="left">';
+		print '<td class="liste_titre left">';
 		print '<input class="flat" type="text" size="10" name="sref_client" value="' . $sref_client . '">';
         print '</td>';
 
 		// DATE ORDER
-		print '<td class="liste_titre" align="center">';
+		print '<td class="liste_titre center">';
 		print $period;
 		print '</td>';
 
 		// DATE DELIVERY
-		print '<td class="liste_titre" align="center">';
+		print '<td class="liste_titre center">';
 		print $periodely;
 		print '</td>';
 
 		// SEARCH BUTTON
-		print '<td align="right" class="liste_titre">';
+		print '<td class="right liste_titre">';
 		print '<input type="image" class="liste_titre" name="button_search" src="' . img_picto($langs->trans("Search"), 'search.png', '', '', 1) . '"  value="' . dol_escape_htmltag($langs->trans("Search")) . '" title="' . dol_escape_htmltag($langs->trans("Search")) . '">';
 		print '</td>';
 
 		// ALL/NONE
-		print '<td class="liste_titre" align="center">';
+		print '<td class="liste_titre center">';
 		if ($conf->use_javascript_ajax)
 			print '<a href="#" id="checkall">' . $langs->trans("All") . '</a> / <a href="#" id="checknone">' . $langs->trans("None") . '</a>';
 		print '</td>';
@@ -556,7 +556,7 @@ if (($action != 'create' && $action != 'add') && !$error) {
 			print $generic_commande->getNomUrl(1, $objp->fk_statut);
 			print '</td>';
 
-			print '<td width="16" align="right" class="nobordernopadding hideonsmartphone">';
+			print '<td width="16" class="right nobordernopadding hideonsmartphone">';
 			$filename = dol_sanitizeFileName($objp->ref);
 			$filedir = $conf->fournisseur->commande->dir_output . '/' . dol_sanitizeFileName($objp->ref);
 			$urlsource = $_SERVER['PHP_SELF'] . '?id=' . $objp->rowid;
@@ -567,17 +567,17 @@ if (($action != 'create' && $action != 'add') && !$error) {
 			print '<td>' . $objp->ref_supplier . '</td>';
 
 			// Order date
-			print '<td align="center" nowrap>';
+			print '<td class="center nowrap">';
 			print dol_print_date($db->jdate($objp->date_commande), 'day');
 			print '</td>';
 
 			// Delivery date
-			print '<td align="center" nowrap>';
+			print '<td class="center nowrap">';
 			print dol_print_date($db->jdate($objp->date_livraison), 'day');
 			print '</td>';
 
 			// Statut
-			print '<td align="right" class="nowrap">' . $generic_commande->LibStatut($objp->fk_statut, 5) . '</td>';
+			print '<td class="right nowrap">' . $generic_commande->LibStatut($objp->fk_statut, 5) . '</td>';
 
 			// Checkbox
 			print '<td class="center">';

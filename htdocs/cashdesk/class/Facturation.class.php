@@ -21,7 +21,7 @@ include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 
 
 /**
- * Class ot manage invoices for pos module (cashdesk)
+ * Class to manage invoices for pos module (cashdesk)
  */
 class Facturation
 {
@@ -84,7 +84,7 @@ class Facturation
     }
 
 
-    // Methodes de traitement des donnees
+    // Data processing methods
 
 
     /**
@@ -124,14 +124,14 @@ class Facturation
         // Define part of HT, VAT, TTC
         $resultarray=calcul_price_total($this->qte, $this->prix(), $this->remisePercent(), $txtva, -1, -1, 0, 'HT', $vat_npr, $product->type, $mysoc, $localtaxarray);
 
-        // Calcul du total ht sans remise
+        // Calculation of total HT without discount
         $total_ht = $resultarray[0];
         $total_vat = $resultarray[1];
         $total_ttc = $resultarray[2];
         $total_localtax1 = $resultarray[9];
         $total_localtax2 = $resultarray[10];
 
-        // Calcul du montant de la remise
+        // Calculation of the discount amount
         if ($this->remisePercent())
         {
             $remise_percent = $this->remisePercent();
@@ -201,7 +201,7 @@ class Facturation
     }
 
     /**
-     * Calcul du total HT, total TTC et montants TVA
+     * Calculation of total HT, total TTC and VAT amounts
      *
      * @return	int		Total
      */
@@ -240,7 +240,7 @@ class Facturation
     }
 
     /**
-     * Reinitialisation des attributs
+     * Reset attributes
      *
      * @return	void
      */
@@ -257,7 +257,7 @@ class Facturation
     }
 
     /**
-     * Reinitialisation des attributs persistants
+     * Resetting persistent attributes
      *
      *  @return	void
      */
@@ -275,7 +275,7 @@ class Facturation
     }
 
 
-    // Methodes de modification des attributs proteges
+    // Methods for modifying protected attributes
 
     /**
      * Getter for id
@@ -560,7 +560,7 @@ class Facturation
     }
 
     /**
-     * Get totla HT
+     * Get total HT
      *
      * @param	int		$aTotalHt		Total amount
      * @return	int						Total amount

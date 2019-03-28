@@ -218,65 +218,69 @@ if ($object->id)
 		$pdir = get_exdir($object->id, 2, 0, 0, $object, 'category') . $object->id ."/photos/";
 		$dir = $upload_dir.'/'.$pdir;
 
-		print '<br>';
-		print '<table width="100%" valign="top" align="center">';
+		$listofphoto = $object->liste_photos($dir);
 
-		foreach ($object->liste_photos($dir) as $key => $obj)
+		if (is_array($listofphoto) && count($listofphoto))
 		{
-			$nbphoto++;
+    		print '<br>';
+            print '<table width="100%" valign="top" align="center">';
 
+    		foreach ($listofphoto as $key => $obj)
+    		{
+    			$nbphoto++;
 
-			if ($nbbyrow && ($nbphoto % $nbbyrow == 1)) print '<tr align=center valign=middle border=1>';
-			if ($nbbyrow) print '<td width="'.ceil(100/$nbbyrow).'%" class="photo">';
+    			if ($nbbyrow && ($nbphoto % $nbbyrow == 1)) print '<tr align=center valign=middle border=1>';
+    			if ($nbbyrow) print '<td width="'.ceil(100/$nbbyrow).'%" class="photo">';
 
-			print '<a href="'.DOL_URL_ROOT.'/viewimage.php?modulepart=category&entity='.$object->entity.'&file='.urlencode($pdir.$obj['photo']).'" alt="Taille origine" target="_blank">';
+    			print '<a href="'.DOL_URL_ROOT.'/viewimage.php?modulepart=category&entity='.$object->entity.'&file='.urlencode($pdir.$obj['photo']).'" alt="Taille origine" target="_blank">';
 
-			// Si fichier vignette disponible, on l'utilise, sinon on utilise photo origine
-			if ($obj['photo_vignette'])
-			{
-				$filename=$obj['photo_vignette'];
-			}
-			else
-			{
-				$filename=$obj['photo'];
-			}
+    			// Si fichier vignette disponible, on l'utilise, sinon on utilise photo origine
+    			if ($obj['photo_vignette'])
+    			{
+    				$filename=$obj['photo_vignette'];
+    			}
+    			else
+    			{
+    				$filename=$obj['photo'];
+    			}
 
-			// Nom affiche
-			$viewfilename=$obj['photo'];
+    			// Nom affiche
+    			$viewfilename=$obj['photo'];
 
-			// Taille de l'image
-			$object->get_image_size($dir.$filename);
-			$imgWidth = ($object->imgWidth < $maxWidth) ? $object->imgWidth : $maxWidth;
-			$imgHeight = ($object->imgHeight < $maxHeight) ? $object->imgHeight : $maxHeight;
+    			// Taille de l'image
+    			$object->get_image_size($dir.$filename);
+    			$imgWidth = ($object->imgWidth < $maxWidth) ? $object->imgWidth : $maxWidth;
+    			$imgHeight = ($object->imgHeight < $maxHeight) ? $object->imgHeight : $maxHeight;
 
-			print '<img border="0" width="'.$imgWidth.'" height="'.$imgHeight.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=category&entity='.$object->entity.'&file='.urlencode($pdir.$filename).'">';
+    			print '<img border="0" width="'.$imgWidth.'" height="'.$imgHeight.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=category&entity='.$object->entity.'&file='.urlencode($pdir.$filename).'">';
 
-			print '</a>';
-			print '<br>'.$viewfilename;
-			print '<br>';
+    			print '</a>';
+    			print '<br>'.$viewfilename;
+    			print '<br>';
 
-			// On propose la generation de la vignette si elle n'existe pas et si la taille est superieure aux limites
-			if (!$obj['photo_vignette'] && preg_match('/(\.bmp|\.gif|\.jpg|\.jpeg|\.png)$/i', $obj['photo']) && ($object->imgWidth > $maxWidth || $object->imgHeight > $maxHeight))
-			{
-				print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=addthumb&amp;type='.$type.'&amp;file='.urlencode($pdir.$viewfilename).'">'.img_picto($langs->trans('GenerateThumb'), 'refresh').'&nbsp;&nbsp;</a>';
-			}
-			if ($user->rights->categorie->creer)
-			{
-				print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete&amp;type='.$type.'&amp;file='.urlencode($pdir.$viewfilename).'">';
-				print img_delete().'</a>';
-			}
-			if ($nbbyrow) print '</td>';
-			if ($nbbyrow && ($nbphoto % $nbbyrow == 0)) print '</tr>';
+    			// On propose la generation de la vignette si elle n'existe pas et si la taille est superieure aux limites
+    			if (!$obj['photo_vignette'] && preg_match('/(\.bmp|\.gif|\.jpg|\.jpeg|\.png)$/i', $obj['photo']) && ($object->imgWidth > $maxWidth || $object->imgHeight > $maxHeight))
+    			{
+    				print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=addthumb&amp;type='.$type.'&amp;file='.urlencode($pdir.$viewfilename).'">'.img_picto($langs->trans('GenerateThumb'), 'refresh').'&nbsp;&nbsp;</a>';
+    			}
+    			if ($user->rights->categorie->creer)
+    			{
+    				print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete&amp;type='.$type.'&amp;file='.urlencode($pdir.$viewfilename).'">';
+    				print img_delete().'</a>';
+    			}
+    			if ($nbbyrow) print '</td>';
+    			if ($nbbyrow && ($nbphoto % $nbbyrow == 0)) print '</tr>';
+    		}
+
+    		// Ferme tableau
+    		while ($nbphoto % $nbbyrow)
+    		{
+    			print '<td width="'.ceil(100/$nbbyrow).'%">&nbsp;</td>';
+    			$nbphoto++;
+    		}
+
+    		print '</table>';
 		}
-
-		// Ferme tableau
-		while ($nbphoto % $nbbyrow)
-		{
-			print '<td width="'.ceil(100/$nbbyrow).'%">&nbsp;</td>';
-			$nbphoto++;
-		}
-
-		print '</table>';
 
 		if ($nbphoto < 1)
 		{

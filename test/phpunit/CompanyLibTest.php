@@ -57,7 +57,7 @@ class CompanyLibTest extends PHPUnit_Framework_TestCase
      *
      * @return AdminLibTest
      */
-    function __construct()
+    public function __construct()
     {
     	parent::__construct();
 

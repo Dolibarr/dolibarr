@@ -38,7 +38,7 @@ class Setup extends DolibarrApi
     /**
      * Constructor
      */
-    function __construct()
+    public function __construct()
     {
         global $db;
         $this->db = $db;
@@ -61,7 +61,7 @@ class Setup extends DolibarrApi
      * @throws 400 RestException
      * @throws 200 OK
      */
-    function getPaymentTypes($sortfield = "code", $sortorder = 'ASC', $limit = 100, $page = 0, $active = 1, $sqlfilters = '')
+    public function getPaymentTypes($sortfield = "code", $sortorder = 'ASC', $limit = 100, $page = 0, $active = 1, $sqlfilters = '')
     {
         $list = array();
 
@@ -76,7 +76,7 @@ class Setup extends DolibarrApi
             {
                 throw new RestException(400, 'error when validating parameter sqlfilters '.$sqlfilters);
             }
-	          $regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+              $regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
             $sql.=" AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
         }
 
@@ -128,7 +128,7 @@ class Setup extends DolibarrApi
      *
      * @throws RestException
      */
-    function getListOfCountries($sortfield = "code", $sortorder = 'ASC', $limit = 100, $page = 0, $filter = '', $lang = '', $sqlfilters = '')
+    public function getListOfCountries($sortfield = "code", $sortorder = 'ASC', $limit = 100, $page = 0, $filter = '', $lang = '', $sqlfilters = '')
     {
         $list = array();
 
@@ -195,7 +195,7 @@ class Setup extends DolibarrApi
      *
      * @throws RestException
      */
-    function getCountryByID($id, $lang = '')
+    public function getCountryByID($id, $lang = '')
     {
         $country = new Ccountry($this->db);
 
@@ -228,7 +228,7 @@ class Setup extends DolibarrApi
      * @throws 400 RestException
      * @throws 200 OK
      */
-    function getAvailability($sortfield = "code", $sortorder = 'ASC', $limit = 100, $page = 0, $active = 1, $sqlfilters = '')
+    public function getAvailability($sortfield = "code", $sortorder = 'ASC', $limit = 100, $page = 0, $active = 1, $sqlfilters = '')
     {
         $list = array();
 
@@ -273,14 +273,16 @@ class Setup extends DolibarrApi
         return $list;
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
     /**
      * Clean sensible object datas
      *
      * @param object    $object    Object to clean
      * @return array 				Array of cleaned object properties
      */
-    function _cleanObjectDatas($object)
+    protected function _cleanObjectDatas($object)
     {
+        // phpcs:enable
         $object = parent::_cleanObjectDatas($object);
 
         unset($object->error);
@@ -334,7 +336,7 @@ class Setup extends DolibarrApi
      *
      * @throws RestException
      */
-    function getListOfEventTypes($sortfield = "code", $sortorder = 'ASC', $limit = 100, $page = 0, $type = '', $module = '', $active = 1, $sqlfilters = '')
+    public function getListOfEventTypes($sortfield = "code", $sortorder = 'ASC', $limit = 100, $page = 0, $type = '', $module = '', $active = 1, $sqlfilters = '')
     {
         $list = array();
 
@@ -397,7 +399,7 @@ class Setup extends DolibarrApi
      *
      * @throws RestException
      */
-    function getListOfCivilities($sortfield = "code", $sortorder = 'ASC', $limit = 100, $page = 0, $module = '', $active = 1, $sqlfilters = '')
+    public function getListOfCivilities($sortfield = "code", $sortorder = 'ASC', $limit = 100, $page = 0, $module = '', $active = 1, $sqlfilters = '')
     {
         $list = array();
 
@@ -442,7 +444,7 @@ class Setup extends DolibarrApi
 
         return $list;
     }
-    
+
     /**
      * Get the list of currencies.
      *
@@ -458,10 +460,10 @@ class Setup extends DolibarrApi
      *
      * @throws RestException
      */
-    function getListOfCurrencies($sortfield = "code_iso", $sortorder = 'ASC', $limit = 100, $page = 0, $active = 1, $sqlfilters = '')
+    public function getListOfCurrencies($sortfield = "code_iso", $sortorder = 'ASC', $limit = 100, $page = 0, $active = 1, $sqlfilters = '')
     {
         $list = array();
- //TODO link with multicurrency module
+        //TODO link with multicurrency module
         $sql = "SELECT t.code_iso, t.label, t.unicode";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_currencies as t";
         $sql.= " WHERE t.active = ".$active;
@@ -516,7 +518,7 @@ class Setup extends DolibarrApi
      *
      * @throws RestException
      */
-    function getListOfExtrafields($sortfield = "t.pos", $sortorder = 'ASC', $type = '', $sqlfilters = '')
+    public function getListOfExtrafields($sortfield = "t.pos", $sortorder = 'ASC', $type = '', $sqlfilters = '')
     {
         $list = array();
 
@@ -595,7 +597,7 @@ class Setup extends DolibarrApi
      *
      * @throws RestException
      */
-    function getListOfTowns($sortfield = "zip,town", $sortorder = 'ASC', $limit = 100, $page = 0, $zipcode = '', $town = '', $active = 1, $sqlfilters = '')
+    public function getListOfTowns($sortfield = "zip,town", $sortorder = 'ASC', $limit = 100, $page = 0, $zipcode = '', $town = '', $active = 1, $sqlfilters = '')
     {
         $list = array();
 
@@ -659,7 +661,7 @@ class Setup extends DolibarrApi
      * @throws 400 RestException
      * @throws 200 OK
      */
-    function getPaymentTerms($sortfield = "sortorder", $sortorder = 'ASC', $limit = 100, $page = 0, $active = 1, $sqlfilters = '')
+    public function getPaymentTerms($sortfield = "sortorder", $sortorder = 'ASC', $limit = 100, $page = 0, $active = 1, $sqlfilters = '')
     {
         $list = array();
 
@@ -720,7 +722,7 @@ class Setup extends DolibarrApi
      *
      * @throws RestException
      */
-    function getTicketsCategories($sortfield = "code", $sortorder = 'ASC', $limit = 100, $page = 0, $active = 1, $sqlfilters = '')
+    public function getTicketsCategories($sortfield = "code", $sortorder = 'ASC', $limit = 100, $page = 0, $active = 1, $sqlfilters = '')
     {
     	$list = array();
 
@@ -780,13 +782,13 @@ class Setup extends DolibarrApi
      *
      * @throws RestException
      */
-    function getTicketsSeverities($sortfield = "code", $sortorder = 'ASC', $limit = 100, $page = 0, $active = 1, $sqlfilters = '')
+    public function getTicketsSeverities($sortfield = "code", $sortorder = 'ASC', $limit = 100, $page = 0, $active = 1, $sqlfilters = '')
     {
     	$list = array();
 
     	$sql = "SELECT rowid, code, pos,  label, use_default, color, description";
     	$sql.= " FROM ".MAIN_DB_PREFIX."c_ticket_severity as t";
-      $sql.= " WHERE t.active = ".$active;
+        $sql.= " WHERE t.active = ".$active;
     	// Add sql filters
     	if ($sqlfilters)
     	{
@@ -840,13 +842,13 @@ class Setup extends DolibarrApi
      *
      * @throws RestException
      */
-    function getTicketsTypes($sortfield = "code", $sortorder = 'ASC', $limit = 100, $page = 0, $active = 1, $sqlfilters = '')
+    public function getTicketsTypes($sortfield = "code", $sortorder = 'ASC', $limit = 100, $page = 0, $active = 1, $sqlfilters = '')
     {
     	$list = array();
 
     	$sql = "SELECT rowid, code, pos,  label, use_default, description";
     	$sql.= " FROM ".MAIN_DB_PREFIX."c_ticket_type as t";
-      $sql.= " WHERE t.active = ".$active;
+        $sql.= " WHERE t.active = ".$active;
     	if ($type) $sql.=" AND t.type LIKE '%" . $this->db->escape($type) . "%'";
     	if ($module)    $sql.=" AND t.module LIKE '%" . $this->db->escape($module) . "%'";
     	// Add sql filters
@@ -898,7 +900,7 @@ class Setup extends DolibarrApi
      *
      * @throws RestException
      */
-    function getCheckIntegrity($target)
+    public function getCheckIntegrity($target)
     {
     	global $langs, $conf;
 

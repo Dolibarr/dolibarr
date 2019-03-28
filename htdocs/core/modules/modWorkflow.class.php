@@ -37,7 +37,7 @@ class modWorkflow extends DolibarrModules
 	 *
 	 *   @param      DoliDB		$db      Database handler
      */
-    function __construct($db)
+    public function __construct($db)
     {
         $this->db = $db;
 
@@ -137,9 +137,9 @@ class modWorkflow extends DolibarrModules
 	 *		It also creates data directories
 	 *
      *      @param      string	$options    Options when enabling module ('', 'noboxes')
-	 *      @return     int             	1 if OK, 0 if KO
+	 *      @return     int                 1 if OK, 0 if KO
      */
-    function init($options = '')
+    public function init($options = '')
     {
 		// Permissions
 		$this->remove($options);

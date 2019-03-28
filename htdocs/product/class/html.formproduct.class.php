@@ -45,11 +45,11 @@ class FormProduct
 
 
 	/**
-	 *	Constructor
+	 *  Constructor
 	 *
-	 *	@param	DoliDB	$db		Database handler
+	 *  @param  DoliDB  $db     Database handler
 	 */
-	function __construct($db)
+	public function __construct($db)
 	{
 		$this->db = $db;
 	}
@@ -69,7 +69,7 @@ class FormProduct
 	 * @param	array	$exclude		    warehouses ids to exclude
 	 * @return  int  		    		    Nb of loaded lines, 0 if already loaded, <0 if KO
 	 */
-	function loadWarehouses($fk_product = 0, $batch = '', $status = '', $sumStock = true, $exclude = '')
+	public function loadWarehouses($fk_product = 0, $batch = '', $status = '', $sumStock = true, $exclude = '')
 	{
 		global $conf, $langs;
 
@@ -210,7 +210,7 @@ class FormProduct
 	 *  @param  int     $showfullpath   1=Show full path of name (parent ref into label), 0=Show only ref of current warehouse
 	 * 	@return	string					HTML select
 	 */
-	function selectWarehouses($selected = '', $htmlname = 'idwarehouse', $filterstatus = '', $empty = 0, $disabled = 0, $fk_product = 0, $empty_label = '', $showstock = 0, $forcecombo = 0, $events = array(), $morecss = 'minwidth200', $exclude = '', $showfullpath = 1)
+	public function selectWarehouses($selected = '', $htmlname = 'idwarehouse', $filterstatus = '', $empty = 0, $disabled = 0, $fk_product = 0, $empty_label = '', $showstock = 0, $forcecombo = 0, $events = array(), $morecss = 'minwidth200', $exclude = '', $showfullpath = 1)
 	{
 		global $conf,$langs,$user;
 
@@ -255,7 +255,7 @@ class FormProduct
      *    @param    int     $addempty    1=Add an empty value in list, 2=Add an empty value in list only if there is more than 2 entries.
      *    @return   void
      */
-    function formSelectWarehouses($page, $selected = '', $htmlname = 'warehouse_id', $addempty = 0)
+    public function formSelectWarehouses($page, $selected = '', $htmlname = 'warehouse_id', $addempty = 0)
     {
         global $langs;
         if ($htmlname != "none") {
@@ -280,66 +280,78 @@ class FormProduct
         }
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Output a combo box with list of units
 	 *  pour l'instant on ne definit pas les unites dans la base
 	 *
 	 *  @param	string		$name               Name of HTML field
-	 *  @param	string		$measuring_style    Unit to show: weight, size, surface, volume
-	 *  @param  string		$default            Force unit
+	 *  @param	string		$measuring_style    Unit to show: weight, size, surface, volume, time
+	 *  @param  string		$default            Preselected value
 	 * 	@param	int			$adddefault			Add empty unit called "Default"
+	 *  @param  int         $mode               1=Use short label as value, 0=Use rowid
 	 * 	@return	void
+	 *  @deprecated
 	 */
-	function select_measuring_units($name = 'measuring_units', $measuring_style = '', $default = '0', $adddefault = 0)
+	public function select_measuring_units($name = 'measuring_units', $measuring_style = '', $default = '0', $adddefault = 0, $mode = 0)
 	{
         //phpcs:enable
-		print $this->load_measuring_units($name, $measuring_style, $default, $adddefault);
+	    print $this->selectMeasuringUnits($name, $measuring_style, $default, $adddefault, $mode);
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	/**
 	 *  Return a combo box with list of units
 	 *  For the moment, units labels are defined in measuring_units_string
 	 *
-	 *  @param	string		$name                Name of HTML field
-	 *  @param  string		$measuring_style     Unit to show: weight, size, surface, volume
-	 *  @param  string		$default             Force unit
-	 * 	@param	int			$adddefault			Add empty unit called "Default"
-	 * 	@return	string
+	 *  @param  string		$name                Name of HTML field
+	 *  @param  string		$measuring_style     Unit to show: weight, size, surface, volume, time
+	 *  @param  string		$default             Preselected value
+	 *  @param  int			$adddefault			 Add empty unit called "Default"
+	 *  @param  int         $mode                1=Use short label as value, 0=Use rowid
+	 *  @return string
 	 */
-	function load_measuring_units($name = 'measuring_units', $measuring_style = '', $default = '0', $adddefault = 0)
+	public function selectMeasuringUnits($name = 'measuring_units', $measuring_style = '', $default = '0', $adddefault = 0, $mode = 0)
 	{
-        //phpcs:enable
 		global $langs, $conf, $mysoc, $db;
 		$langs->load("other");
 
 		$return = '';
 
-		$measuring_units = array();
-
+		// TODO Use a cache
 		require_once DOL_DOCUMENT_ROOT . '/core/class/cunits.class.php';
 		$measuringUnits = new CUnits($db);
-		$result = $measuringUnits->fetchAll('', '', 0, 0, array(
-				't.unit_type' => $measuring_style,
-				't.active' => 1
-		));
+        $result = $measuringUnits->fetchAll(
+            '',
+            '',
+            0,
+            0,
+            array(
+                't.unit_type' => $measuring_style,
+                't.active' => 1,
+            )
+        );
 		if ($result < 0) {
 			dol_print_error($db);
-			return - 1;
+			return -1;
 		} else {
 			$return .= '<select class="flat" name="' . $name . '">';
 			if ($adddefault)
+			{
 				$return .= '<option value="0">' . $langs->trans("Default") . '</option>';
+			}
 
 			foreach ($measuringUnits->records as $lines)
 			{
-				$return .= '<option value="' . $lines->code . '"';
-				if ($key == $default) {
-					$return .= ' selected';
-				}
-				// $return.= '>'.$value.'</option>';
-				$return .= '>' . $langs->transnoentitiesnoconv($lines->label) . '</option>';
+				$return .= '<option value="';
+				if ($mode == 1) $return .= $lines->short_label;
+				else $return .= $lines->id;
+				$return .= '"';
+				if ($mode == 1 && $lines->short_label == $default) $return .= ' selected';
+				if ($mode == 0 && $lines->id == $default) $return .= ' selected';
+				$return .= '>';
+				if ($measuring_style == 'time') $return.= $langs->trans(ucfirst($lines->label));
+				else $return .= $langs->trans($lines->label);
+				$return .= '</option>';
 			}
 			$return .= '</select>';
 		}
@@ -365,7 +377,7 @@ class FormProduct
 	 *
 	 * 	@return	string					HTML select
 	 */
-	function selectLotStock($selected = '', $htmlname = 'batch_id', $filterstatus = '', $empty = 0, $disabled = 0, $fk_product = 0, $fk_entrepot = 0, $objectLines = array(), $empty_label = '', $forcecombo = 0, $events = array(), $morecss = 'minwidth200')
+	public function selectLotStock($selected = '', $htmlname = 'batch_id', $filterstatus = '', $empty = 0, $disabled = 0, $fk_product = 0, $fk_entrepot = 0, $objectLines = array(), $empty_label = '', $forcecombo = 0, $events = array(), $morecss = 'minwidth200')
 	{
 		global $langs;
 

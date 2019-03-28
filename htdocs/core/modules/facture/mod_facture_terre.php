@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2015 Regis Houssin        <regis.houssin@inodbox.com>
+/* Copyright (C) 2005-2008  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2015  Regis Houssin           <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,39 +18,52 @@
  */
 
 /**
- *	\file       htdocs/core/modules/facture/mod_facture_terre.php
- *	\ingroup    facture
- *	\brief      File containing class for numbering module Terre
+ *  \file       htdocs/core/modules/facture/mod_facture_terre.php
+ *  \ingroup    facture
+ *  \brief      File containing class for numbering module Terre
  */
 require_once DOL_DOCUMENT_ROOT .'/core/modules/facture/modules_facture.php';
 
-/**	    \class      mod_facture_terre
- *		\brief      Classe du modele de numerotation de reference de facture Terre
+/**
+ *  \class      mod_facture_terre
+ *  \brief      Classe du modele de numerotation de reference de facture Terre
  */
 class mod_facture_terre extends ModeleNumRefFactures
 {
-	/**
-     * Dolibarr version of the loaded document
-     * @public string
+    /**
+     * Dolibarr version of the loaded document 'development', 'experimental', 'dolibarr'
+     * @var string
      */
-	public $version = 'dolibarr';		// 'development', 'experimental', 'dolibarr'
+    public $version = 'dolibarr';
 
-	public $prefixinvoice='FA';
+    /**
+     * Prefix for invoices
+     * @var string
+     */
+    public $prefixinvoice='FA';
 
-	public $prefixcreditnote='AV';
+    /**
+     * Prefix for credit note
+     * @var string
+     */
+    public $prefixcreditnote='AV';
 
-	public $prefixdeposit='AC';
+    /**
+     * Prefix for deposit
+     * @var string
+     */
+    public $prefixdeposit='AC';
 
-	/**
-	 * @var string Error code (or message)
-	 */
-	public $error='';
+    /**
+     * @var string Error code (or message)
+     */
+    public $error='';
 
 
 	/**
 	 * Constructor
 	 */
-	function __construct()
+	public function __construct()
 	{
 		if (! empty($conf->global->INVOICE_NUMBERING_TERRE_FORCE_PREFIX))
 		{
@@ -63,7 +76,7 @@ class mod_facture_terre extends ModeleNumRefFactures
 	 *
 	 *  @return     string      Texte descripif
 	 */
-	function info()
+	public function info()
 	{
 		global $langs;
 		$langs->load("bills");
@@ -75,7 +88,7 @@ class mod_facture_terre extends ModeleNumRefFactures
 	 *
 	 *  @return     string      Example
 	 */
-	function getExample()
+	public function getExample()
 	{
 		return $this->prefixinvoice."0501-0001";
 	}
@@ -86,7 +99,7 @@ class mod_facture_terre extends ModeleNumRefFactures
 	 *
 	 *  @return     boolean     false si conflit, true si ok
 	 */
-	function canBeActivated()
+	public function canBeActivated()
 	{
 		global $langs,$conf,$db;
 
@@ -162,12 +175,12 @@ class mod_facture_terre extends ModeleNumRefFactures
 	/**
 	 * Return next value not used or last value used
 	 *
-	 * @param	Societe		$objsoc		Object third party
+	 * @param   Societe		$objsoc		Object third party
 	 * @param   Facture		$invoice	Object invoice
      * @param   string		$mode       'next' for next value or 'last' for last value
 	 * @return  string       			Value
 	 */
-	function getNextValue($objsoc, $invoice, $mode = 'next')
+	public function getNextValue($objsoc, $invoice, $mode = 'next')
 	{
 		global $db;
 
@@ -231,16 +244,16 @@ class mod_facture_terre extends ModeleNumRefFactures
 		else dol_print_error('', 'Bad parameter for getNextValue');
 	}
 
-	/**
-	 * Return next free value
-	 *
-     * @param	Societe		$objsoc     	Object third party
-     * @param	string		$objforref		Object for number to search
-     * @param   string		$mode       	'next' for next value or 'last' for last value
-     * @return  string      				Next free value
-	 */
-	function getNumRef($objsoc, $objforref, $mode = 'next')
-	{
-		return $this->getNextValue($objsoc, $objforref, $mode);
-	}
+    /**
+     *  Return next free value
+     *
+     *  @param  Societe     $objsoc         Object third party
+     *  @param  string      $objforref      Object for number to search
+     *  @param   string     $mode           'next' for next value or 'last' for last value
+     *  @return  string                     Next free value
+     */
+    public function getNumRef($objsoc, $objforref, $mode = 'next')
+    {
+        return $this->getNextValue($objsoc, $objforref, $mode);
+    }
 }

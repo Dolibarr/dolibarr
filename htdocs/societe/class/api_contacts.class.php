@@ -46,7 +46,7 @@ class Contacts extends DolibarrApi
 	/**
 	 * Constructor
 	 */
-	function __construct()
+    public function __construct()
 	{
 		global $db, $conf;
 		$this->db = $db;
@@ -68,7 +68,7 @@ class Contacts extends DolibarrApi
 	 *
 	 * @throws 	RestException
 	 */
-	function get($id, $includecount = 0)
+    public function get($id, $includecount = 0)
 	{
 		if (!DolibarrApiAccess::$user->rights->societe->contact->lire)
 		{
@@ -111,7 +111,7 @@ class Contacts extends DolibarrApi
      *
 	 * @throws RestException
      */
-    function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $sqlfilters = '', $includecount = 0)
+    public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $sqlfilters = '', $includecount = 0)
     {
 		global $db, $conf;
 
@@ -191,7 +191,7 @@ class Contacts extends DolibarrApi
 		            }
 					$obj_ret[] = $this->_cleanObjectDatas($contact_static);
 				}
-        
+
 				$i++;
 			}
 		}
@@ -211,7 +211,7 @@ class Contacts extends DolibarrApi
 	 * @param   array   $request_data   Request datas
 	 * @return  int     ID of contact
 	 */
-    function post($request_data = null)
+    public function post($request_data = null)
     {
 		if (!DolibarrApiAccess::$user->rights->societe->contact->creer)
 		{
@@ -237,7 +237,7 @@ class Contacts extends DolibarrApi
 	 * @param array $request_data   Datas
 	 * @return int
 	 */
-    function put($id, $request_data = null)
+    public function put($id, $request_data = null)
     {
 		if (!DolibarrApiAccess::$user->rights->societe->contact->creer)
 		{
@@ -273,7 +273,7 @@ class Contacts extends DolibarrApi
 	 * @param   int     $id Contact ID
 	 * @return  integer
 	 */
-    function delete($id)
+    public function delete($id)
     {
 		if (!DolibarrApiAccess::$user->rights->societe->contact->supprimer)
 		{
@@ -302,16 +302,16 @@ class Contacts extends DolibarrApi
 	 *
 	 * @url	POST {id}/createUser
 	 */
-    function createUser($id, $request_data = null)
+    public function createUser($id, $request_data = null)
     {
 	    //if (!DolibarrApiAccess::$user->rights->user->user->creer) {
 	    //throw new RestException(401);
 	    //}
 
 	    if (!isset($request_data["login"]))
-	    				throw new RestException(400, "login field missing");
+    		throw new RestException(400, "login field missing");
 	    if (!isset($request_data["password"]))
-	    				throw new RestException(400, "password field missing");
+	    	throw new RestException(400, "password field missing");
 
 	    if (!DolibarrApiAccess::$user->rights->societe->contact->lire) {
 	        throw new RestException(401, 'No permission to read contacts');
@@ -357,7 +357,7 @@ class Contacts extends DolibarrApi
      *
      * @url GET {id}/categories
      */
-	function getCategories($id, $sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0)
+    public function getCategories($id, $sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0)
 	{
 		if (! DolibarrApiAccess::$user->rights->categorie->lire) {
 			throw new RestException(401);
@@ -379,47 +379,48 @@ class Contacts extends DolibarrApi
     }
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
     /**
      * Clean sensible object datas
      *
-     * @param   object  $object    Object to clean
-     * @return    array    Array of cleaned object properties
+     * @param   Object  $object     Object to clean
+     * @return  array               Array of cleaned object properties
      */
-    function _cleanObjectDatas($object)
+    protected function _cleanObjectDatas($object)
     {
+        // phpcs:enable
+        $object = parent::_cleanObjectDatas($object);
 
-    	$object = parent::_cleanObjectDatas($object);
+        unset($object->total_ht);
+        unset($object->total_tva);
+        unset($object->total_localtax1);
+        unset($object->total_localtax2);
+        unset($object->total_ttc);
 
-    	unset($object->total_ht);
-    	unset($object->total_tva);
-    	unset($object->total_localtax1);
-    	unset($object->total_localtax2);
-    	unset($object->total_ttc);
+        unset($object->note);
+        unset($object->lines);
+        unset($object->thirdparty);
 
-    	unset($object->note);
-    	unset($object->lines);
-    	unset($object->thirdparty);
-
-    	return $object;
+        return $object;
     }
 
-	/**
-	 * Validate fields before create or update object
+    /**
+     * Validate fields before create or update object
      *
-	 * @param   array|null     $data   Data to validate
-	 * @return  array
-	 * @throws RestException
-	 */
-    function _validate($data)
+     * @param   array|null     $data   Data to validate
+     * @return  array
+     * @throws  RestException
+     */
+    private function _validate($data)
     {
-		$contact = array();
-		foreach (Contacts::$FIELDS as $field)
-		{
-			if (!isset($data[$field]))
-				throw new RestException(400, "$field field missing");
-			$contact[$field] = $data[$field];
-		}
+        $contact = array();
+        foreach (Contacts::$FIELDS as $field) {
+            if (!isset($data[$field])) {
+                throw new RestException(400, "$field field missing");
+            }
+            $contact[$field] = $data[$field];
+        }
 
-		return $contact;
-	}
+        return $contact;
+    }
 }

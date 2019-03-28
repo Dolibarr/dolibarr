@@ -35,28 +35,28 @@ class Export
      */
     public $db;
 
-	var $array_export_code=array();             // Tableau de "idmodule_numlot"
-	var $array_export_module=array();           // Tableau de "nom de modules"
-	var $array_export_label=array();            // Tableau de "libelle de lots"
-	var $array_export_sql_start=array();        // Tableau des "requetes sql"
-	var $array_export_sql_end=array();          // Tableau des "requetes sql"
-	var $array_export_sql_order=array();        // Tableau des "requetes sql"
+    public $array_export_code=array();             // Tableau de "idmodule_numlot"
+    public $array_export_module=array();           // Tableau de "nom de modules"
+    public $array_export_label=array();            // Tableau de "libelle de lots"
+    public $array_export_sql_start=array();        // Tableau des "requetes sql"
+    public $array_export_sql_end=array();          // Tableau des "requetes sql"
+    public $array_export_sql_order=array();        // Tableau des "requetes sql"
 
-	var $array_export_fields=array();           // Tableau des listes de champ+libelle a exporter
-	var $array_export_TypeFields=array();		// Tableau des listes de champ+Type de filtre
-	var $array_export_FilterValue=array();		// Tableau des listes de champ+Valeur a filtrer
-	var $array_export_entities=array();         // Tableau des listes de champ+alias a exporter
-	var $array_export_dependencies=array();     // array of list of entities that must take care of the DISTINCT if a field is added into export
-	var $array_export_special=array();          // Tableau des operations speciales sur champ
-    var $array_export_examplevalues=array();    // array with examples
+    public $array_export_fields=array();           // Tableau des listes de champ+libelle a exporter
+    public $array_export_TypeFields=array();		// Tableau des listes de champ+Type de filtre
+    public $array_export_FilterValue=array();		// Tableau des listes de champ+Valeur a filtrer
+    public $array_export_entities=array();         // Tableau des listes de champ+alias a exporter
+    public $array_export_dependencies=array();     // array of list of entities that must take care of the DISTINCT if a field is added into export
+    public $array_export_special=array();          // Tableau des operations speciales sur champ
+    public $array_export_examplevalues=array();    // array with examples
 
-	// To store export modules
-	var $hexa;
-	var $hexafiltervalue;
-	var $datatoexport;
-	var $model_name;
+    // To store export modules
+    public $hexa;
+    public $hexafiltervalue;
+    public $datatoexport;
+    public $model_name;
 
-	var $sqlusedforexport;
+    public $sqlusedforexport;
 
 
 	/**
@@ -64,13 +64,13 @@ class Export
 	 *
 	 *    @param  	DoliDB		$db		Database handler
 	 */
-	function __construct($db)
-	{
-		$this->db=$db;
-	}
+    public function __construct($db)
+    {
+        $this->db=$db;
+    }
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *    Load an exportable dataset
 	 *
@@ -78,12 +78,12 @@ class Export
 	 *    @param  	string		$filter    	Load a particular dataset only
 	 *    @return	int						<0 if KO, >0 if OK
 	 */
-	function load_arrays($user, $filter = '')
-	{
+    public function load_arrays($user, $filter = '')
+    {
         // phpcs:enable
-		global $langs,$conf,$mysoc;
+        global $langs,$conf,$mysoc;
 
-		dol_syslog(get_class($this)."::load_arrays user=".$user->id." filter=".$filter);
+        dol_syslog(get_class($this)."::load_arrays user=".$user->id." filter=".$filter);
 
         $i=0;
 
@@ -206,10 +206,10 @@ class Export
 		}
 
 		return 1;
-	}
+    }
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *      Build the sql export request.
 	 *      Arrays this->array_export_xxx are already loaded for required datatoexport
@@ -219,8 +219,8 @@ class Export
 	 *      @param      array	$array_filterValue  Filter records on array of value for fields
 	 *      @return		string						SQL String. Example "select s.rowid as r_rowid, s.status as s_status from ..."
 	 */
-	function build_sql($indice, $array_selected, $array_filterValue)
-	{
+    public function build_sql($indice, $array_selected, $array_filterValue)
+    {
         // phpcs:enable
 		// Build the sql request
 		$sql=$this->array_export_sql_start[$indice];
@@ -273,7 +273,7 @@ class Export
 		return $sql;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *      Build the conditionnal string from filter the query
 	 *
@@ -282,8 +282,8 @@ class Export
 	 *      @param		string	$ValueField		Value of the field for filter. Must not be ''
 	 *      @return		string					sql string of then field ex : "field='xxx'>"
 	 */
-	function build_filterQuery($TypeField, $NameField, $ValueField)
-	{
+    public function build_filterQuery($TypeField, $NameField, $ValueField)
+    {
         // phpcs:enable
 		//print $TypeField." ".$NameField." ".$ValueField;
 		$InfoFieldList = explode(":", $TypeField);
@@ -352,23 +352,23 @@ class Export
 	}
 
 	/**
-	 *	conditionDate
+	 *  conditionDate
 	 *
 	 *  @param 	string	$Field		Field operand 1
 	 *  @param 	string	$Value		Value operand 2
 	 *  @param 	string	$Sens		Comparison operator
 	 *  @return string
 	 */
-	function conditionDate($Field, $Value, $Sens)
-	{
+    public function conditionDate($Field, $Value, $Sens)
+    {
 		// TODO date_format is forbidden, not performant and not portable. Use instead BETWEEN
 		if (strlen($Value)==4) $Condition=" date_format(".$Field.",'%Y') ".$Sens." '".$Value."'";
 		elseif (strlen($Value)==6) $Condition=" date_format(".$Field.",'%Y%m') ".$Sens." '".$Value."'";
 		else  $Condition=" date_format(".$Field.",'%Y%m%d') ".$Sens." ".$Value;
 		return $Condition;
-	}
+    }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *      Build an input field used to filter the query
 	 *
@@ -377,8 +377,8 @@ class Export
 	 *      @param		string	$ValueField		Initial value of the field to filter
 	 *      @return		string					html string of the input field ex : "<input type=text name=... value=...>"
 	 */
-	function build_filterField($TypeField, $NameField, $ValueField)
-	{
+    public function build_filterField($TypeField, $NameField, $ValueField)
+    {
         // phpcs:enable
 		global $conf,$langs;
 
@@ -488,16 +488,16 @@ class Export
 		}
 
 		return $szFilterField;
-	}
+    }
 
-	/**
-	 *      Build an input field used to filter the query
-	 *
-	 *      @param		string	$TypeField		Type of Field to filter
-	 *      @return		string					html string of the input field ex : "<input type=text name=... value=...>"
-	 */
-	function genDocFilter($TypeField)
-	{
+    /**
+     *  Build an input field used to filter the query
+     *
+     *  @param      string  $TypeField      Type of Field to filter
+     *  @return     string                  html string of the input field ex : "<input type=text name=... value=...>"
+     */
+    public function genDocFilter($TypeField)
+    {
         global $langs;
 
 		$szMsg='';
@@ -523,7 +523,7 @@ class Export
 		return $szMsg;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *      Build export file.
 	 *      File is built into directory $conf->export->dir_temp.'/'.$user->id
@@ -537,8 +537,8 @@ class Export
 	 *      @param		string		$sqlquery			If set, transmit the sql request for select (otherwise, sql request is generated from arrays)
 	 *      @return		int								<0 if KO, >0 if OK
 	 */
-	function build_file($user, $model, $datatoexport, $array_selected, $array_filterValue, $sqlquery = '')
- 	{
+    public function build_file($user, $model, $datatoexport, $array_selected, $array_filterValue, $sqlquery = '')
+    {
         // phpcs:enable
 		global $conf,$langs;
 
@@ -698,7 +698,7 @@ class Export
 	 *  @param		User	$user 	Object user that save
 	 *  @return		int				<0 if KO, >0 if OK
 	 */
-	function create($user)
+    public function create($user)
 	{
 		global $conf;
 
@@ -741,11 +741,11 @@ class Export
 	/**
 	 *  Load an export profil from database
 	 *
-	 *  @param		int		$id		Id of profil to load
-	 *  @return		int				<0 if KO, >0 if OK
+	 *  @param      int		$id		Id of profil to load
+	 *  @return     int				<0 if KO, >0 if OK
 	 */
-	function fetch($id)
-	{
+    public function fetch($id)
+    {
 		$sql = 'SELECT em.rowid, em.label, em.type, em.field, em.filter';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'export_model as em';
 		$sql.= ' WHERE em.rowid = '.$id;
@@ -757,12 +757,12 @@ class Export
 			$obj = $this->db->fetch_object($result);
 			if ($obj)
 			{
-				$this->id				= $obj->rowid;
-				$this->model_name		= $obj->label;
-				$this->datatoexport		= $obj->type;
+				$this->id = $obj->rowid;
+				$this->model_name = $obj->label;
+				$this->datatoexport = $obj->type;
 
-				$this->hexa				= $obj->field;
-				$this->hexafiltervalue	= $obj->filter;
+				$this->hexa = $obj->field;
+				$this->hexafiltervalue = $obj->filter;
 
 				return 1;
 			}
@@ -787,7 +787,7 @@ class Export
 	 *  @param      int			$notrigger	    0=launch triggers after, 1=disable triggers
 	 *	@return		int							<0 if KO, >0 if OK
 	 */
-	function delete($user, $notrigger = 0)
+	public function delete($user, $notrigger = 0)
 	{
 		global $conf, $langs;
 		$error=0;
@@ -835,15 +835,15 @@ class Export
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Output list all export models
 	 *  TODO Move this into a class htmlxxx.class.php
 	 *
 	 *	@return	void
 	 */
-	function list_export_model()
-	{
+    public function list_export_model()
+    {
         // phpcs:enable
 		global $conf, $langs;
 
@@ -878,7 +878,7 @@ class Export
 					print '<td>'.str_replace(',', ' , ', $filter['value']).'</td>';
 				}
 				// suppression de l'export
-				print '<td align="right">';
+				print '<td class="right">';
 				print '<a href="'.$_SERVER["PHP_SELF"].'?action=deleteprof&id='.$obj->rowid.'">';
 				print img_delete();
 				print '</a>';
@@ -886,9 +886,8 @@ class Export
 
 				$i++;
 			}
-		}
-		else {
-			dol_print_error($this->db);
-		}
-	}
+        } else {
+            dol_print_error($this->db);
+        }
+    }
 }

@@ -45,13 +45,6 @@ class mod_commande_saphir extends ModeleNumRefCommandes
 	public $error = '';
 
 	/**
-	 * @var string nom
-	 * @deprecated
-	 * @see name
-	 */
-	public $nom='Saphir';
-
-	/**
 	 * @var string name
 	 */
 	public $name='Saphir';
@@ -62,7 +55,7 @@ class mod_commande_saphir extends ModeleNumRefCommandes
      *
      *  @return     string      Texte descripif
      */
-	function info()
+    public function info()
     {
     	global $conf, $langs;
 
@@ -85,9 +78,9 @@ class mod_commande_saphir extends ModeleNumRefCommandes
 
 		// Parametrage du prefix
 		$texte.= '<tr><td>'.$langs->trans("Mask").':</td>';
-		$texte.= '<td align="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskorder" value="'.$conf->global->COMMANDE_SAPHIR_MASK.'">', $tooltip, 1, 1).'</td>';
+		$texte.= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskorder" value="'.$conf->global->COMMANDE_SAPHIR_MASK.'">', $tooltip, 1, 1).'</td>';
 
-		$texte.= '<td align="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
+		$texte.= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
 
 		$texte.= '</tr>';
 
@@ -102,7 +95,7 @@ class mod_commande_saphir extends ModeleNumRefCommandes
      *
      *  @return     string      Example
      */
-    function getExample()
+    public function getExample()
     {
      	global $conf,$langs,$mysoc;
 
@@ -128,7 +121,7 @@ class mod_commande_saphir extends ModeleNumRefCommandes
 	 *  @param  Object		$object		Object we need next value for
 	 *  @return string      			Value if KO, <0 if KO
 	 */
-    function getNextValue($objsoc, $object)
+    public function getNextValue($objsoc, $object)
     {
 		global $db,$conf;
 
@@ -151,7 +144,7 @@ class mod_commande_saphir extends ModeleNumRefCommandes
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Return next free value
 	 *
@@ -159,7 +152,7 @@ class mod_commande_saphir extends ModeleNumRefCommandes
 	 *  @param	string		$objforref	Object for number to search
 	 *  @return string      			Next free value
      */
-    function commande_get_num($objsoc, $objforref)
+    public function commande_get_num($objsoc, $objforref)
     {
         // phpcs:enable
         return $this->getNextValue($objsoc, $objforref);

@@ -125,7 +125,7 @@ class pdf_azur extends ModelePDFPropales
 	 *
 	 *  @param		DoliDB		$db      Database handler
 	 */
-	function __construct($db)
+	public function __construct($db)
 	{
 		global $conf,$langs,$mysoc;
 
@@ -202,7 +202,7 @@ class pdf_azur extends ModelePDFPropales
 		$this->atleastonediscount=0;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
      *  Function to build pdf onto disk
      *
@@ -214,7 +214,7 @@ class pdf_azur extends ModelePDFPropales
      *  @param		int			$hideref			Do not show ref
      *  @return     int             				1=OK, 0=KO
 	 */
-	function write_file($object, $outputlangs, $srctemplatepath = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0)
+	public function write_file($object, $outputlangs, $srctemplatepath = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
         // phpcs:enable
 		global $user,$langs,$conf,$mysoc,$db,$hookmanager,$nblignes;
@@ -837,7 +837,7 @@ class pdf_azur extends ModelePDFPropales
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Show payments table
 	 *
@@ -847,13 +847,13 @@ class pdf_azur extends ModelePDFPropales
      *  @param  Translate	$outputlangs    Object langs for output
      *  @return int             			<0 if KO, >0 if OK
 	 */
-	function _tableau_versements(&$pdf, $object, $posy, $outputlangs)
+	private function _tableau_versements(&$pdf, $object, $posy, $outputlangs)
 	{
         // phpcs:enable
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *   Show miscellaneous information (payment mode, payment term, ...)
 	 *
@@ -863,7 +863,7 @@ class pdf_azur extends ModelePDFPropales
 	 *   @param		Translate	$outputlangs	Langs object
 	 *   @return	void
 	 */
-	function _tableau_info(&$pdf, $object, $posy, $outputlangs)
+	private function _tableau_info(&$pdf, $object, $posy, $outputlangs)
 	{
         // phpcs:enable
 		global $conf;
@@ -1034,7 +1034,7 @@ class pdf_azur extends ModelePDFPropales
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Show total to pay
 	 *
@@ -1045,7 +1045,7 @@ class pdf_azur extends ModelePDFPropales
 	 *	@param	Translate	$outputlangs	Objet langs
 	 *	@return int							Position pour suite
 	 */
-	function _tableau_tot(&$pdf, $object, $deja_regle, $posy, $outputlangs)
+	private function _tableau_tot(&$pdf, $object, $deja_regle, $posy, $outputlangs)
 	{
         // phpcs:enable
 		global $conf,$mysoc;
@@ -1323,7 +1323,7 @@ class pdf_azur extends ModelePDFPropales
 	 *   @param		string		$currency		Currency code
 	 *   @return	void
 	 */
-	function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop = 0, $hidebottom = 0, $currency = '')
+	private function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop = 0, $hidebottom = 0, $currency = '')
 	{
 		global $conf;
 
@@ -1442,7 +1442,7 @@ class pdf_azur extends ModelePDFPropales
 	 *  @param  Translate	$outputlangs	Object lang for output
 	 *  @return	void
 	 */
-	function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
+	private function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
 	{
 		global $conf,$langs;
 
@@ -1665,14 +1665,14 @@ class pdf_azur extends ModelePDFPropales
 	 *      @param	int			$hidefreetext		1=Hide free text
 	 *      @return	int								Return height of bottom margin including footer text
 	 */
-	function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
+	private function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
 	{
 		global $conf;
 		$showdetails=$conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;
 		return pdf_pagefoot($pdf, $outputlangs, 'PROPOSAL_FREE_TEXT', $this->emetteur, $this->marge_basse, $this->marge_gauche, $this->page_hauteur, $object, $showdetails, $hidefreetext);
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Show area for the customer to sign
 	 *
@@ -1682,7 +1682,7 @@ class pdf_azur extends ModelePDFPropales
 	 *	@param	Translate	$outputlangs	Objet langs
 	 *	@return int							Position pour suite
 	 */
-	function _signature_area(&$pdf, $object, $posy, $outputlangs)
+	private function _signature_area(&$pdf, $object, $posy, $outputlangs)
 	{
         // phpcs:enable
 		global $conf;

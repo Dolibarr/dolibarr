@@ -77,8 +77,10 @@ if ($mode)
         $tab='statscountry';
 
         $data = array();
-        $sql.="SELECT COUNT(d.rowid) as nb, MAX(d.datevalid) as lastdate, c.code, c.label";
-        $sql.=" FROM ".MAIN_DB_PREFIX."adherent as d LEFT JOIN ".MAIN_DB_PREFIX."c_country as c on d.country = c.rowid";
+        $sql.="SELECT COUNT(d.rowid) as nb, MAX(d.datevalid) as lastdate, MAX(s.dateadh) as lastsubscriptiondate, c.code, c.label";
+        $sql.=" FROM ".MAIN_DB_PREFIX."adherent as d";
+        $sql.=" LEFT JOIN ".MAIN_DB_PREFIX."c_country as c on d.country = c.rowid";
+        $sql.=" LEFT JOIN ".MAIN_DB_PREFIX."subscription as s ON s.fk_adherent = d.rowid";
         $sql.=" WHERE d.entity IN (".getEntity('adherent').")";
         $sql.=" AND d.statut = 1";
         $sql.=" GROUP BY c.label, c.code";
@@ -92,10 +94,12 @@ if ($mode)
         $tab='statsstate';
 
         $data = array();
-        $sql.="SELECT COUNT(d.rowid) as nb, MAX(d.datevalid) as lastdate, co.code, co.label, c.nom as label2"; //
-        $sql.=" FROM ".MAIN_DB_PREFIX."adherent as d LEFT JOIN ".MAIN_DB_PREFIX."c_departements as c on d.state_id = c.rowid";
+        $sql.="SELECT COUNT(d.rowid) as nb, MAX(d.datevalid) as lastdate, MAX(s.dateadh) as lastsubscriptiondate, co.code, co.label, c.nom as label2"; //
+        $sql.=" FROM ".MAIN_DB_PREFIX."adherent as d";
+        $sql.=" LEFT JOIN ".MAIN_DB_PREFIX."c_departements as c on d.state_id = c.rowid";
         $sql.=" LEFT JOIN ".MAIN_DB_PREFIX."c_regions as r on c.fk_region = r.code_region";
         $sql.=" LEFT JOIN ".MAIN_DB_PREFIX."c_country as co on d.country = co.rowid";
+        $sql.=" LEFT JOIN ".MAIN_DB_PREFIX."subscription as s ON s.fk_adherent = d.rowid";
         $sql.=" WHERE d.entity IN (".getEntity('adherent').")";
         $sql.=" AND d.statut = 1";
         $sql.=" GROUP BY co.label, co.code, c.nom";
@@ -108,10 +112,12 @@ if ($mode)
         $tab='statsregion'; //onglet
 
         $data = array(); //tableau de donnée
-        $sql.="SELECT COUNT(d.rowid) as nb, MAX(d.datevalid) as lastdate, co.code, co.label, r.nom as label2";
-        $sql.=" FROM ".MAIN_DB_PREFIX."adherent as d LEFT JOIN ".MAIN_DB_PREFIX."c_departements as c on d.state_id = c.rowid";
+        $sql.="SELECT COUNT(d.rowid) as nb, MAX(d.datevalid) as lastdate, MAX(s.dateadh) as lastsubscriptiondate, co.code, co.label, r.nom as label2";
+        $sql.=" FROM ".MAIN_DB_PREFIX."adherent as d";
+        $sql.=" LEFT JOIN ".MAIN_DB_PREFIX."c_departements as c on d.state_id = c.rowid";
         $sql.=" LEFT JOIN ".MAIN_DB_PREFIX."c_regions as r on c.fk_region = r.code_region";
         $sql.=" LEFT JOIN ".MAIN_DB_PREFIX."c_country as co on d.country = co.rowid";
+        $sql.=" LEFT JOIN ".MAIN_DB_PREFIX."subscription as s ON s.fk_adherent = d.rowid";
         $sql.=" WHERE d.entity IN (".getEntity('adherent').")";
         $sql.=" AND d.statut = 1";
         $sql.=" GROUP BY co.label, co.code, r.nom"; //+
@@ -124,9 +130,10 @@ if ($mode)
         $tab='statstown';
 
         $data = array();
-        $sql.="SELECT COUNT(d.rowid) as nb, MAX(d.datevalid) as lastdate, c.code, c.label, d.town as label2";
+        $sql.="SELECT COUNT(d.rowid) as nb, MAX(d.datevalid) as lastdate, MAX(s.dateadh) as lastsubscriptiondate, c.code, c.label, d.town as label2";
         $sql.=" FROM ".MAIN_DB_PREFIX."adherent as d";
         $sql.=" LEFT JOIN ".MAIN_DB_PREFIX."c_country as c on d.country = c.rowid";
+        $sql.=" LEFT JOIN ".MAIN_DB_PREFIX."subscription as s ON s.fk_adherent = d.rowid";
         $sql.=" WHERE d.entity IN (".getEntity('adherent').")";
         $sql.=" AND d.statut = 1";
         $sql.=" GROUP BY c.label, c.code, d.town";
@@ -154,7 +161,8 @@ if ($mode)
                             'label_en'=>(($obj->code && $langsen->transnoentitiesnoconv("Country".$obj->code)!="Country".$obj->code)?$langsen->transnoentitiesnoconv("Country".$obj->code):($obj->label?$obj->label:$langs->trans("Unknown"))),
 							'code'=>$obj->code,
 							'nb'=>$obj->nb,
-							'lastdate'=>$db->jdate($obj->lastdate)
+							'lastdate'=>$db->jdate($obj->lastdate),
+                            'lastsubscriptiondate'=>$db->jdate($obj->lastsubscriptiondate)
                 );
             }
             if ($mode == 'memberbyregion') //+
@@ -164,7 +172,8 @@ if ($mode)
                     'label_en'=>(($obj->code && $langsen->transnoentitiesnoconv("Country".$obj->code)!="Country".$obj->code)?$langsen->transnoentitiesnoconv("Country".$obj->code):($obj->label?$obj->label:$langs->trans("Unknown"))),
 				    'label2'=>($obj->label2?$obj->label2:$langs->trans("Unknown")),
 					'nb'=>$obj->nb,
-					'lastdate'=>$db->jdate($obj->lastdate)
+					'lastdate'=>$db->jdate($obj->lastdate),
+                    'lastsubscriptiondate'=>$db->jdate($obj->lastsubscriptiondate)
                 );
 	        }
             if ($mode == 'memberbystate')
@@ -173,7 +182,8 @@ if ($mode)
                             'label_en'=>(($obj->code && $langsen->transnoentitiesnoconv("Country".$obj->code)!="Country".$obj->code)?$langsen->transnoentitiesnoconv("Country".$obj->code):($obj->label?$obj->label:$langs->trans("Unknown"))),
 				            'label2'=>($obj->label2?$obj->label2:$langs->trans("Unknown")),
 							'nb'=>$obj->nb,
-							'lastdate'=>$db->jdate($obj->lastdate)
+							'lastdate'=>$db->jdate($obj->lastdate),
+                            'lastsubscriptiondate'=>$db->jdate($obj->lastsubscriptiondate)
                 );
             }
             if ($mode == 'memberbytown')
@@ -182,7 +192,8 @@ if ($mode)
                             'label_en'=>(($obj->code && $langsen->transnoentitiesnoconv("Country".$obj->code)!="Country".$obj->code)?$langsen->transnoentitiesnoconv("Country".$obj->code):($obj->label?$obj->label:$langs->trans("Unknown"))),
                             'label2'=>($obj->label2?$obj->label2:$langs->trans("Unknown")),
                             'nb'=>$obj->nb,
-                            'lastdate'=>$db->jdate($obj->lastdate)
+                            'lastdate'=>$db->jdate($obj->lastdate),
+                            'lastsubscriptiondate'=>$db->jdate($obj->lastsubscriptiondate)
                 );
             }
 
@@ -233,7 +244,7 @@ else
 // Show graphics
 if (count($arrayjs) && $mode == 'memberbycountry')
 {
-    $color_file = DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/graph-color.php';
+    $color_file = DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
     if (is_readable($color_file)) include_once $color_file;
 
     // Assume we've already included the proper headers so just call our script inline
@@ -276,7 +287,7 @@ if (count($arrayjs) && $mode == 'memberbycountry')
     print "</script>\n";
 
     // print the div tag that will contain the map
-    print '<div align="center" id="'.$mode.'"></div>'."\n";
+    print '<div class="center" id="'.$mode.'"></div>'."\n";
     print '<br>';
 }
 
@@ -286,22 +297,22 @@ if ($mode)
     print '<table class="liste" width="100%">';
     print '<tr class="liste_titre">';
     print '<td>'.$label.'</td>';
-    if ($label2) print '<td align="center">'.$label2.'</td>';
+    if ($label2) print '<td class="center">'.$label2.'</td>';
     print '<td class="right">'.$langs->trans("NbOfMembers").'</td>';
-    print '<td align="center">'.$langs->trans("LastMemberDate").'</td>';
+    print '<td class="center">'.$langs->trans("LastMemberDate").'</td>';
+    print '<td class="center">'.$langs->trans("LatestSubscriptionDate").'</td>';
     print '</tr>';
 
-    $oldyear=0;
     foreach ($data as $val)
     {
         $year = $val['year'];
         print '<tr class="oddeven">';
         print '<td>'.$val['label'].'</td>';
-        if ($label2) print '<td align="center">'.$val['label2'].'</td>';
+        if ($label2) print '<td class="center">'.$val['label2'].'</td>';
         print '<td class="right">'.$val['nb'].'</td>';
-        print '<td align="center">'.dol_print_date($val['lastdate'], 'dayhour').'</td>';
+        print '<td class="center">'.dol_print_date($val['lastdate'], 'dayhour').'</td>';
+        print '<td class="center">'.dol_print_date($val['lastsubscriptiondate'], 'dayhour').'</td>';
         print '</tr>';
-        $oldyear=$year;
     }
 
     print '</table>';

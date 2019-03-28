@@ -61,7 +61,7 @@ class mod_arctic extends ModeleNumRefFicheinter
      *
      *  @return     string      Texte descripif
      */
-	function info()
+    public function info()
     {
     	global $conf, $langs;
 
@@ -84,9 +84,9 @@ class mod_arctic extends ModeleNumRefFicheinter
 
 		// Parametrage du prefix
 		$texte.= '<tr><td>'.$langs->trans("Mask").':</td>';
-		$texte.= '<td align="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskvalue" value="'.$conf->global->FICHINTER_ARTIC_MASK.'">', $tooltip, 1, 1).'</td>';
+		$texte.= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskvalue" value="'.$conf->global->FICHINTER_ARTIC_MASK.'">', $tooltip, 1, 1).'</td>';
 
-		$texte.= '<td align="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
+		$texte.= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
 
 		$texte.= '</tr>';
 
@@ -101,7 +101,7 @@ class mod_arctic extends ModeleNumRefFicheinter
      *
      * @return     string      Example
      */
-    function getExample()
+    public function getExample()
     {
      	global $conf,$langs,$mysoc;
 
@@ -124,7 +124,7 @@ class mod_arctic extends ModeleNumRefFicheinter
 	 *  @param  Object		$object		Object we need next value for
 	 *  @return string      			Value if KO, <0 if KO
 	 */
-    function getNextValue($objsoc = 0, $object = '')
+    public function getNextValue($objsoc = 0, $object = '')
     {
 		global $db,$conf;
 
@@ -152,7 +152,7 @@ class mod_arctic extends ModeleNumRefFicheinter
 	 *  @param	Object		$objforref	Object for number to search
      *  @return string      			Next free value
      */
-    function getNumRef($objsoc, $objforref)
+    public function getNumRef($objsoc, $objforref)
     {
         return $this->getNextValue($objsoc, $objforref);
     }
