@@ -1053,8 +1053,8 @@ Delays_MAIN_DELAY_CHEQUES_TO_DEPOSIT=Check deposit not done
 Delays_MAIN_DELAY_EXPENSEREPORTS=Expense report to approve
 SetupDescription1=Before starting to use Dolibarr some initial parameters must be defined and modules enabled/configured.
 SetupDescription2=The following two sections are mandatory (the two first entries in the Setup menu):
-SetupDescription3=<a href="%s">%s -> %s</a><br>Basic parameters used to customize the default behavior of Dolibarr (e.g for country-related features).
-SetupDescription4=<a href="%s">%s -> %s</a><br>Dolibarr ERP/CRM is a collection of many modules/applications, all more or less independent. The modules relevant to your needs must be enabled and configured. New items/options are added to menus with the activation of a module.
+SetupDescription3=<a href="%s">%s -> %s</a><br>Basic parameters used to customize the default behavior of your application (e.g for country-related features).
+SetupDescription4=<a href="%s">%s -> %s</a><br>This software is a suite of many modules/applications, all more or less independent. The modules relevant to your needs must be enabled and configured. New items/options are added to menus with the activation of a module.
 SetupDescription5=Other Setup menu entries manage optional parameters.
 LogEvents=Security audit events
 Audit=Audit

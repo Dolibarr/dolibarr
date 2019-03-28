@@ -16,6 +16,12 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ *	\file       htdocs/takepos/floors.php
+ *	\ingroup    takepos
+ *	\brief      Main TakePOS screen
+ */
+
 //if (! defined('NOREQUIREUSER'))	define('NOREQUIREUSER','1');	// Not disabled cause need to load personalized language
 //if (! defined('NOREQUIREDB'))		define('NOREQUIREDB','1');		// Not disabled cause need to load personalized language
 //if (! defined('NOREQUIRESOC'))		define('NOREQUIRESOC','1');
@@ -272,7 +278,7 @@ function deleteline() {
 }
 
 function Customer() {
-	$.colorbox({href:"customers.php?nomassaction=1&place="+place, width:"90%", height:"80%", transition:"none", iframe:"true", title:"<?php echo $langs->trans("Customer");?>"});
+	$.colorbox({href:"../societe/list.php?contextpage=poslist&nomassaction=1&place="+place, width:"90%", height:"80%", transition:"none", iframe:"true", title:"<?php echo $langs->trans("Customer");?>"});
 }
 
 function CloseBill() {
@@ -493,17 +499,17 @@ if (count($maincategories)==0) {
 // User menu and external TakePOS modules
 $menus = array();
 $r=0;
-$menus[$r++]=array('title'=>$langs->trans("SearchProduct"),
+$menus[$r++]=array('title'=>'<span class="fas fa-search paddingrightonly"></span>'.$langs->trans("SearchProduct"),
 					'action'=>'Search();');
 $menus[$r++]=array('title'=>$langs->trans("FreeZone"),
                    'action'=>'FreeZone();');
-$menus[$r++]=array('title'=>$langs->trans("Customer"),
+$menus[$r++]=array('title'=>'<span class="far fa-building paddingrightonly"></span>'.$langs->trans("Customer"),
 					'action'=>'Customer();');
-$menus[$r++]=array('title'=>$langs->trans("BackOffice"),
+$menus[$r++]=array('title'=>'<span class="fa fa-home paddingrightonly"></span>'.$langs->trans("BackOffice"),
                     'action'=>'window.open(\''.(DOL_URL_ROOT ? DOL_URL_ROOT : '/').'\', \'_backoffice\');');
 $menus[$r++]=array('title'=>$langs->trans("DoPayment"),
 					'action'=>'CloseBill();');
-$menus[$r++]=array('title'=>$langs->trans("Logout"),
+$menus[$r++]=array('title'=>'<span class="fa fa-sign-out-alt paddingrightonly"></span>'.$langs->trans("Logout"),
 					'action'=>'window.location.href=\''.DOL_URL_ROOT.'/user/logout.php\';');
 
 // BAR RESTAURANT specific menu
