@@ -59,6 +59,17 @@ $object->fetch($facid);
 ?>
 <html>
 <body>
+<style>
+.right {
+    text-align: right;
+}
+.center {
+    text-align: center;
+}
+.left {
+    text-align: left;
+}
+</style>
 <center>
 <font size="4">
 <?php echo '<b>'.$mysoc->name.'</b>';?>
