@@ -558,7 +558,7 @@ print '<td class="liste_titre">&nbsp;</td>';
 print '<td class="liste_titre" align="right">';
 
 // Fields from hook
-$parameters=array();
+$parameters=array('param'=>$param,'sortfield'=>$sortfield,'sortorder'=>$sortorder);
 $reshook=$hookmanager->executeHooks('printFieldListOption',$parameters);    // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 
