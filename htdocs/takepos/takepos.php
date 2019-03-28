@@ -135,6 +135,13 @@ function PrintCategories(first) {
 	}
 }
 
+// Set the focus on search field but only on desktop. On tablet or smartphone, we don't to avoid to have the keyboard open automatically
+function setFocusOnSearchField() {
+	<?php if ($conf->browser->layout == 'classic') { ?>
+		$("#search").focus();
+	<?php } ?>
+}
+
 function MoreCategories(moreorless) {
 	console.log("MoreCategories moreorless="+moreorless+" pagecategories="+pagecategories);
 	if (moreorless=="more") {
@@ -165,7 +172,7 @@ function MoreCategories(moreorless) {
 		$("#catwatermark"+i).show();
 	}
 
-	$("#search").focus();
+	setFocusOnSearchField();
 }
 
 function LoadProducts(position, issubcat=false) {
@@ -218,7 +225,7 @@ function LoadProducts(position, issubcat=false) {
 		}
 	});
 
-	$("#search").focus();
+	setFocusOnSearchField();
 }
 
 function MoreProducts(moreorless) {
@@ -266,7 +273,7 @@ function MoreProducts(moreorless) {
 		}
 	});
 
-	$("#search").focus();
+	setFocusOnSearchField();
 }
 
 function ClickProduct(position) {
@@ -286,7 +293,8 @@ function ClickProduct(position) {
 			//$('#poslines').scrollTop($('#poslines')[0].scrollHeight);
 		});
 	}
-	$("#search").focus();
+
+	setFocusOnSearchField();
 }
 
 function deleteline() {
@@ -331,7 +339,9 @@ function Refresh() {
 
 function ClearSearch() {
 	console.log("ClearSearch");
-	$("#search").val('').focus();
+	$("#search").val('');
+
+	setFocusOnSearchField();
 }
 
 function Search2() {
@@ -372,7 +382,8 @@ function Edit(number) {
                 //$('#poslines').scrollTop($('#poslines')[0].scrollHeight);
                 $("#qty").html("<?php echo $langs->trans("Qty"); ?>");
             });
-        	$("#search").focus();
+
+            setFocusOnSearchField();
             return;
         }
         else {
@@ -387,7 +398,8 @@ function Edit(number) {
                 //$('#poslines').scrollTop($('#poslines')[0].scrollHeight);
                 $("#price").html("<?php echo $langs->trans("Price"); ?>");
             });
-        	$("#search").focus();
+
+            setFocusOnSearchField();
             return;
         }
         else {
@@ -402,7 +414,8 @@ function Edit(number) {
                 //$('#poslines').scrollTop($('#poslines')[0].scrollHeight);
                 $("#reduction").html("<?php echo $langs->trans("ReductionShort"); ?>");
             });
-        	$("#search").focus();
+
+            setFocusOnSearchField();
             return;
         }
         else {

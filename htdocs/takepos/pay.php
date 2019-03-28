@@ -205,11 +205,13 @@ $action_buttons = array(
 		"function" =>"reset()",
 		"span" => "style='font-size: 150%;'",
 		"text" => "C",
+	    "class" => "poscolorblue"
 	),
 	array(
 		"function" => "parent.$.colorbox.close();",
 		"span" => "id='printtext'",
 		"text" => $langs->trans("Cancel"),
+	    "class" => "poscolordelete"
 	),
 );
 $numpad=$conf->global->TAKEPOS_NUMPAD;
@@ -271,8 +273,9 @@ while($i < count($paiements)){
 }
 $class=($i==3)?"calcbutton3":"calcbutton2";
 foreach($action_buttons as $button){
+    $newclass = $class.($button["class"]?" ".$button["class"]:"");
 ?>
-	<button type="button" class="<?php echo $class;?>" onclick="<?php echo $button["function"];?>"><span <?php echo $button["span"];?>><?php echo $button["text"];?></span></button>
+	<button type="button" class="<?php echo $newclass;?>" onclick="<?php echo $button["function"];?>"><span <?php echo $button["span"];?>><?php echo $button["text"];?></span></button>
 <?php
 }
 ?>
