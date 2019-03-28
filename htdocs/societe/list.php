@@ -150,7 +150,7 @@ if (! empty($conf->global->THIRDPARTY_QUICKSEARCH_ON_FIELDS)) $fieldstosearchall
 
 
 // Define list of fields to show into list
-$checkedcustomercode=(in_array($contextpage, array('thirdpartylist', 'customerlist', 'prospectlist')) ? 1 : 0);
+$checkedcustomercode=(in_array($contextpage, array('thirdpartylist', 'customerlist', 'prospectlist', 'poslist')) ? 1 : 0);
 $checkedsuppliercode=(in_array($contextpage, array('supplierlist')) ? 1 : 0);
 $checkedcustomeraccountcode=(in_array($contextpage, array('customerlist')) ? 1 : 0);
 $checkedsupplieraccountcode=(in_array($contextpage, array('supplierlist')) ? 1 : 0);

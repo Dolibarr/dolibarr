@@ -27,7 +27,8 @@
 /**
  *	\file       htdocs/takepos/customers.php
  *	\ingroup    takepos
- *	\brief      Page to show list of third parties. TODO Merge with societe/list.php
+ *	\brief      Page to show list of third parties.
+ *              TODO replace use of this page by societe/list.php?contextpage=poslist
  */
 
 require '../main.inc.php';	// Load $user and permissions
@@ -168,7 +169,7 @@ if (($tmp = $langs->transnoentities("ProfId6".$mysoc->country_code)) && $tmp != 
 if (!empty($conf->barcode->enabled)) $fieldstosearchall['s.barcode']='Gencod';
 
 // Define list of fields to show into list
-$checkedcustomercode=(in_array($contextpage, array('thirdpartylist', 'customerlist', 'prospectlist')) ? 1 : 0);
+$checkedcustomercode=(in_array($contextpage, array('thirdpartylist', 'customerlist', 'prospectlist', 'poslist')) ? 1 : 0);
 $checkedsuppliercode=(in_array($contextpage, array('supplierlist')) ? 1 : 0);
 $checkedcustomeraccountcode=(in_array($contextpage, array('customerlist')) ? 1 : 0);
 $checkedsupplieraccountcode=(in_array($contextpage, array('supplierlist')) ? 1 : 0);
