@@ -313,7 +313,7 @@ $form = new Form($db);
 <script language="javascript">
 var selectedline=0;
 var selectedtext="";
-var placeid=<?php echo $placeid;?>;
+var placeid=<?php echo ($placeid > 0 ? $placeid : 0);?>;
 $(document).ready(function() {
     $('table tbody tr').click(function(){
         $('table tbody tr').removeClass("selected");
@@ -346,9 +346,10 @@ if ($action == "order" and $order_receipt_printer2 != "") {
     <?php
 }
 
-if ($action == "search") {
+// Set focus to search field
+if ($action == "search" || $action == "valid") {
     ?>
-    $('#search').focus();
+	parent.setFocusOnSearchField();
     <?php
 }
 

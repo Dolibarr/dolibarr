@@ -240,10 +240,21 @@ table.postablelines tr td {
 .colorgreen {
 	color: green;
 }
+
+.centerinmiddle {
+	transform: translate(0,-50%);
+    position: relative;
+    top: 50%;
+}
+.trunc {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
 p.description_content{
 	padding:10px;
 	margin:0px;
-
 }
 
 @media screen and (min-width: 892px) {
@@ -297,5 +308,14 @@ p.description_content{
 	}
 	.invoice{
 		font-size: 10px;
+	}
+}
+
+@media screen and (max-width: 767px){
+	div.wrapper {
+		width: 50%;
+	}
+	div.wrapper2 {
+		width: 25%;
 	}
 }

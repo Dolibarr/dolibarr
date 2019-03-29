@@ -47,8 +47,15 @@ $langs->loadLangs(array("bills","orders","commercial","cashdesk","receiptprinter
 
 $categorie = new Categorie($db);
 
-$MAXCATEG = (empty($conf->global->TAKEPOS_NB_MAXCATEG)?16:$conf->global->TAKEPOS_NB_MAXCATEG);
-$MAXPRODUCT = (empty($conf->global->TAKEPOS_NB_MAXPRODUCT)?32:$conf->global->TAKEPOS_NB_MAXPRODUCT);;
+$maxcategbydefaultforthisdevice=16;
+$maxproductbydefaultforthisdevice=32;
+if ($conf->browser->layout == 'phone')
+{
+    $maxcategbydefaultforthisdevice=8;
+    $maxproductbydefaultforthisdevice=16;
+}
+$MAXCATEG = (empty($conf->global->TAKEPOS_NB_MAXCATEG)?$maxcategbydefaultforthisdevice:$conf->global->TAKEPOS_NB_MAXCATEG);
+$MAXPRODUCT = (empty($conf->global->TAKEPOS_NB_MAXPRODUCT)?$maxproductbydefaultforthisdevice:$conf->global->TAKEPOS_NB_MAXPRODUCT);;
 
 
 /*
@@ -118,28 +125,65 @@ var place="<?php echo $place;?>";
 var editaction="qty";
 var editnumber="";
 
+/*
+var app = this;
+app.hasKeyboard = false;
+this.keyboardPress = function() {
+    app.hasKeyboard = true;
+    $(window).unbind("keyup", app.keyboardPress);
+    localStorage.hasKeyboard = true;
+    console.log("has keyboard!")
+}
+$(window).on("keyup", app.keyboardPress)
+if(localStorage.hasKeyboard) {
+    app.hasKeyboard = true;
+    $(window).unbind("keyup", app.keyboardPress);
+    console.log("has keyboard from localStorage")
+}
+*/
+
+function ClearSearch() {
+	console.log("ClearSearch");
+	$("#search").val('');
+	<?php if ($conf->browser->layer == 'classic') { ?>
+	setFocusOnSearchField();
+	<?php } ?>
+}
+
+// Set the focus on search field but only on desktop. On tablet or smartphone, we don't to avoid to have the keyboard open automatically
+function setFocusOnSearchField() {
+	console.log("Call setFocusOnSearchField in page takepos.php");
+	<?php
+	//global $conf;
+	//if ($conf->browser->layout == 'classic') {
+	?>
+	if (app.hasKeyboard)
+	{
+		console.log("has keyboard from localStorage, so we can force focus on search field");
+		$("#search").focus();
+	}
+	<?php
+    //}
+    //?>
+}
+
 function PrintCategories(first) {
 	console.log("PrintCategories");
 	for (i = 0; i < <?php echo ($MAXCATEG - 2); ?>; i++) {
 		if (typeof (categories[parseInt(i)+parseInt(first)]) == "undefined")
 		{
+			$("#catdivdesc"+i).hide();
 			$("#catdesc"+i).text("");
 			$("#catimg"+i).attr("src","genimg/empty.png");
 			$("#catwatermark"+i).hide();
 			continue;
 		}
+		$("#catdivdesc"+i).show();
 		$("#catdesc"+i).text(categories[parseInt(i)+parseInt(first)]['label']);
         $("#catimg"+i).attr("src","genimg/index.php?query=cat&id="+categories[parseInt(i)+parseInt(first)]['rowid']);
         $("#catdiv"+i).data("rowid",categories[parseInt(i)+parseInt(first)]['rowid']);
 		$("#catwatermark"+i).show();
 	}
-}
-
-// Set the focus on search field but only on desktop. On tablet or smartphone, we don't to avoid to have the keyboard open automatically
-function setFocusOnSearchField() {
-	<?php if ($conf->browser->layout == 'classic') { ?>
-		$("#search").focus();
-	<?php } ?>
 }
 
 function MoreCategories(moreorless) {
@@ -161,18 +205,20 @@ function MoreCategories(moreorless) {
 	}
 	for (i = 0; i < <?php echo ($MAXCATEG - 2); ?>; i++) {
 		if (typeof (categories[i+(<?php echo ($MAXCATEG - 2); ?> * pagecategories)]) == "undefined") {
+			$("#catdivdesc"+i).hide();
 			$("#catdesc"+i).text("");
 			$("#catimg"+i).attr("src","genimg/empty.png");
 			$("#catwatermark"+i).hide();
 			continue;
 		}
+		$("#catdivdesc"+i).show();
 		$("#catdesc"+i).text(categories[i+(<?php echo ($MAXCATEG - 2); ?> * pagecategories)]['label']);
         $("#catimg"+i).attr("src","genimg/index.php?query=cat&id="+categories[i+(<?php echo ($MAXCATEG - 2); ?> * pagecategories)]['rowid']);
         $("#catdiv"+i).data("rowid",categories[i+(<?php echo ($MAXCATEG - 2); ?> * pagecategories)]['rowid']);
 		$("#catwatermark"+i).show();
 	}
 
-	setFocusOnSearchField();
+	ClearSearch();
 }
 
 function LoadProducts(position, issubcat=false) {
@@ -189,6 +235,7 @@ function LoadProducts(position, issubcat=false) {
 
 	jQuery.each(subcategories, function(i, val) {
 		if (currentcat==val.fk_parent) {
+			$("#prodivdesc"+ishow).show();
 			$("#prodesc"+ishow).text(val.label);
 			$("#proimg"+ishow).attr("src","genimg/index.php?query=cat&id="+val.rowid);
 			$("#prodiv"+ishow).data("rowid",val.rowid);
@@ -206,6 +253,7 @@ function LoadProducts(position, issubcat=false) {
 			//console.log("ishow"+ishow+" idata="+idata);
 			//console.log(data[idata]);
 			if (typeof (data[idata]) == "undefined") {
+				$("#prodivdesc"+ishow).hide();
 				$("#prodesc"+ishow).text("");
 				$("#proimg"+ishow).attr("src","genimg/empty.png");
 				$("#prodiv"+ishow).data("rowid","");
@@ -213,6 +261,7 @@ function LoadProducts(position, issubcat=false) {
 				ishow++; //Next product to show after print data product
 			}
 			else if ((data[idata]['status']) == "1") {		// Only show products with status=1 (for sell)
+				$("#prodivdesc"+ishow).show();
 				$("#prodesc"+ishow).text(data[parseInt(idata)]['label']);
 				$("#proimg"+ishow).attr("src","genimg/index.php?query=pro&id="+data[idata]['id']);
 				$("#prodiv"+ishow).data("rowid",data[idata]['id']);
@@ -225,7 +274,7 @@ function LoadProducts(position, issubcat=false) {
 		}
 	});
 
-	setFocusOnSearchField();
+	ClearSearch();
 }
 
 function MoreProducts(moreorless) {
@@ -255,6 +304,7 @@ function MoreProducts(moreorless) {
 
 		while (ishow < maxproduct) {
 			if (typeof (data[idata]) == "undefined") {
+				$("#prodivdesc"+ishow).hide();
 				$("#prodesc"+ishow).text("");
 				$("#proimg"+ishow).attr("src","genimg/empty.png");
 				$("#prodiv"+ishow).data("rowid","");
@@ -262,6 +312,7 @@ function MoreProducts(moreorless) {
 			}
 			else if ((data[idata]['status']) == "1") {
 				//Only show products with status=1 (for sell)
+				$("#prodivdesc"+ishow).show();
 				$("#prodesc"+ishow).text(data[parseInt(idata)]['label']);
 				$("#proimg"+ishow).attr("src","genimg/index.php?query=pro&id="+data[idata]['id']);
 				$("#prodiv"+ishow).data("rowid",data[idata]['id']);
@@ -273,7 +324,7 @@ function MoreProducts(moreorless) {
 		}
 	});
 
-	setFocusOnSearchField();
+	ClearSearch();
 }
 
 function ClickProduct(position) {
@@ -294,7 +345,7 @@ function ClickProduct(position) {
 		});
 	}
 
-	setFocusOnSearchField();
+	ClearSearch();
 }
 
 function deleteline() {
@@ -335,13 +386,6 @@ function Refresh() {
 	$("#poslines").load("invoice.php?place="+place, function() {
 		//$('#poslines').scrollTop($('#poslines')[0].scrollHeight);
 	});
-}
-
-function ClearSearch() {
-	console.log("ClearSearch");
-	$("#search").val('');
-
-	setFocusOnSearchField();
 }
 
 function Search2() {
@@ -399,7 +443,7 @@ function Edit(number) {
                 $("#price").html("<?php echo $langs->trans("Price"); ?>");
             });
 
-            setFocusOnSearchField();
+            ClearSearch();
             return;
         }
         else {
@@ -415,7 +459,7 @@ function Edit(number) {
                 $("#reduction").html("<?php echo $langs->trans("ReductionShort"); ?>");
             });
 
-            setFocusOnSearchField();
+            ClearSearch();
             return;
         }
         else {
@@ -549,15 +593,15 @@ if (count($maincategories)==0) {
 // User menu and external TakePOS modules
 $menus = array();
 $r=0;
-//$menus[$r++]=array('title'=>'<span class="fas fa-search paddingrightonly"></span>'.$langs->trans("SearchProduct"), 'action'=>'Search();');
-$menus[$r++]=array('title'=>'<span class="far fa-building paddingrightonly"></span>'.$langs->trans("Customer"), 'action'=>'Customer();');
-$menus[$r++]=array('title'=>'<span class="fa fa-cube paddingrightonly"></span>'.$langs->trans("FreeZone"), 'action'=>'FreeZone();');
-$menus[$r++]=array('title'=>'<span class="far fa-money-bill-alt paddingrightonly"></span>'.$langs->trans("Payment"), 'action'=>'CloseBill();');
+//$menus[$r++]=array('title'=>'<span class="fas fa-search paddingrightonly"></span><div class="trunc">'.$langs->trans("SearchProduct").'</div>', 'action'=>'Search();');
+$menus[$r++]=array('title'=>'<span class="far fa-building paddingrightonly"></span><div class="trunc">'.$langs->trans("Customer").'</div>', 'action'=>'Customer();');
+$menus[$r++]=array('title'=>'<span class="fa fa-cube paddingrightonly"></span><div class="trunc">'.$langs->trans("FreeZone").'</div>', 'action'=>'FreeZone();');
+$menus[$r++]=array('title'=>'<span class="far fa-money-bill-alt paddingrightonly"></span><div class="trunc">'.$langs->trans("Payment").'</div>', 'action'=>'CloseBill();');
 
 // BAR RESTAURANT specific menu
 if ($conf->global->TAKEPOS_BAR_RESTAURANT)
 {
-    $menus[$r++]=array('title'=>'<span class="fa fa-layer-group paddingrightonly"></span>'.$langs->trans("Floors"), 'action'=>'Floors();');
+    $menus[$r++]=array('title'=>'<span class="fa fa-layer-group paddingrightonly"></span><div class="trunc">'.$langs->trans("Floors").'</div>', 'action'=>'Floors();');
 	if ($conf->global->TAKEPOS_ORDER_PRINTERS)
 	{
 		$menus[$r++]=array('title'=>$langs->trans("Order"), 'action'=>'TakeposPrintingOrder();');
@@ -565,17 +609,17 @@ if ($conf->global->TAKEPOS_BAR_RESTAURANT)
 	//add temp ticket button
 	if ($conf->global->TAKEPOS_BAR_RESTAURANT)
 	{
-	    if ($conf->global->TAKEPOSCONNECTOR) $menus[$r++]=array('title'=>'<span class="fa fa-receipt paddingrightonly"></span>'.$langs->trans("Receipt"),'action'=>'TakeposPrinting(placeid);');
-	    else $menus[$r++]=array('title'=>'<span class="fa fa-receipt paddingrightonly"></span>'.$langs->trans("Receipt"),'action'=>'Print(placeid);');
+	    if ($conf->global->TAKEPOSCONNECTOR) $menus[$r++]=array('title'=>'<span class="fa fa-receipt paddingrightonly"></span><div class="trunc">'.$langs->trans("Receipt").'</div>','action'=>'TakeposPrinting(placeid);');
+	    else $menus[$r++]=array('title'=>'<span class="fa fa-receipt paddingrightonly"></span><div class="trunc">'.$langs->trans("Receipt").'</div>','action'=>'Print(placeid);');
 	}
 	if ($conf->global->TAKEPOSCONNECTOR && $conf->global->TAKEPOS_ORDER_NOTES==1)
 	{
-		$menus[$r++]=array('title'=>$langs->trans("OrderNotes"), 'action'=>'TakeposOrderNotes();');
+	    $menus[$r++]=array('title'=>'<span class="fa fa-receipt paddingrightonly"></span><div class="trunc">'.$langs->trans("OrderNotes").'</div>', 'action'=>'TakeposOrderNotes();');
 	}
 }
 
 if ($conf->global->TAKEPOSCONNECTOR) {
-    $menus[$r++]=array('title'=>$langs->trans("DOL_OPEN_DRAWER"), 'action'=>'OpenDrawer();');
+    $menus[$r++]=array('title'=>'<span class="fa fa-receipt paddingrightonly"></span><div class="trunc">'.$langs->trans("DOL_OPEN_DRAWER").'</div>', 'action'=>'OpenDrawer();');
 }
 
 $hookmanager->initHooks(array('takeposfrontend'));
@@ -586,8 +630,8 @@ if (!empty($reshook)) {
 
 if ($r % 3 == 2) $menus[$r++]=array('title'=>'', 'style'=>'visibility: hidden;');
 
-$menus[$r++]=array('title'=>'<span class="fa fa-home paddingrightonly"></span>'.$langs->trans("BackOffice"), 'action'=>'window.open(\''.(DOL_URL_ROOT ? DOL_URL_ROOT : '/').'\', \'_backoffice\');');
-$menus[$r++]=array('title'=>'<span class="fa fa-sign-out-alt paddingrightonly"></span>'.$langs->trans("Logout"), 'action'=>'window.location.href=\''.DOL_URL_ROOT.'/user/logout.php\';');
+$menus[$r++]=array('title'=>'<span class="fa fa-home paddingrightonly"></span><div class="trunc">'.$langs->trans("BackOffice").'</div>', 'action'=>'window.open(\''.(DOL_URL_ROOT ? DOL_URL_ROOT : '/').'\', \'_backoffice\');');
+$menus[$r++]=array('title'=>'<span class="fa fa-sign-out-alt paddingrightonly"></span><div class="trunc">'.$langs->trans("Logout").'</div>', 'action'=>'window.location.href=\''.DOL_URL_ROOT.'/user/logout.php\';');
 
 ?>
 		<!-- Show buttons -->
@@ -624,11 +668,26 @@ $menus[$r++]=array('title'=>'<span class="fa fa-sign-out-alt paddingrightonly"><
 	while ($count < $MAXCATEG)
 	{
 	?>
-			<div class='wrapper' <?php if ($count==($MAXCATEG-2)) echo 'onclick="MoreCategories(\'less\');"'; elseif ($count==($MAXCATEG-1)) echo 'onclick="MoreCategories(\'more\');"'; else echo 'onclick="LoadProducts('.$count.');"';?> id="catdiv<?php echo $count;?>">
-				<img class='imgwrapper' <?php if ($count==($MAXCATEG-2)) echo 'src="img/arrow-prev-top.png"'; if ($count==($MAXCATEG-1)) echo 'src="img/arrow-next-top.png"';?> height="100%" id="catimg<?php echo $count;?>" />
-				<div class='description'>
-					<div class='description_content' id='catdesc<?php echo $count;?>'></div>
+			<div class="wrapper" <?php if ($count==($MAXCATEG-2)) echo 'onclick="MoreCategories(\'less\');"'; elseif ($count==($MAXCATEG-1)) echo 'onclick="MoreCategories(\'more\');"'; else echo 'onclick="LoadProducts('.$count.');"';?> id="catdiv<?php echo $count;?>">
+				<?php
+				if ($count==($MAXCATEG-2)) {
+				    //echo '<img class="imgwrapper" src="img/arrow-prev-top.png" height="100%" id="catimg'.$count.'" />';
+				    echo '<span class="fa fa-chevron-left centerinmiddle" style="font-size: 5em;"></span>';
+				}
+				elseif ($count==($MAXCATEG-1)) {
+				    //echo '<img class="imgwrapper" src="img/arrow-next-top.png" height="100%" id="catimg'.$count.'" />';
+				    echo '<span class="fa fa-chevron-right centerinmiddle" style="font-size: 5em;"></span>';
+				}
+				else
+				{
+				    echo '<img class="imgwrapper" height="100%" id="catimg'.$count.'" />';
+				}
+				?>
+				<?php if ($count!=($MAXCATEG-2) && $count!=($MAXCATEG-1)) { ?>
+				<div class="description" id="catdivdesc<?php echo $count;?>">
+					<div class="description_content" id="catdesc<?php echo $count;?>"></div>
 				</div>
+				<?php } ?>
 				<div class="catwatermark" id='catwatermark<?php echo $count;?>'>+</div>
 			</div>
 	<?php
@@ -645,10 +704,25 @@ $menus[$r++]=array('title'=>'<span class="fa fa-sign-out-alt paddingrightonly"><
     {
     ?>
     			<div class="wrapper2" id='prodiv<?php echo $count;?>' <?php if ($count==($MAXPRODUCT-2)) {?> onclick="MoreProducts('less');" <?php } if ($count==($MAXPRODUCT-1)) {?> onclick="MoreProducts('more');" <?php } else echo 'onclick="ClickProduct('.$count.');"';?>>
-    				<img class="imgwrapper" <?php if ($count==($MAXPRODUCT-2)) echo 'src="img/arrow-prev-top.png"'; if ($count==($MAXPRODUCT-1)) echo 'src="img/arrow-next-top.png"';?> height="100%" id="proimg<?php echo $count;?>" />
-    				<div class="description">
+    				<?php
+    				if ($count==($MAXPRODUCT-2)) {
+    				    //echo '<img class="imgwrapper" src="img/arrow-prev-top.png" height="100%" id="proimg'.$count.'" />';
+    				    echo '<span class="fa fa-chevron-left centerinmiddle" style="font-size: 5em;"></span>';
+    				}
+    				elseif ($count==($MAXPRODUCT-1)) {
+    				    //echo '<img class="imgwrapper" src="img/arrow-next-top.png" height="100%" id="proimg'.$count.'" />';
+    				    echo '<span class="fa fa-chevron-right centerinmiddle" style="font-size: 5em;"></span>';
+    				}
+    				else
+    				{
+    				    echo '<img class="imgwrapper" height="100%" id="proimg'.$count.'" />';
+    				}
+    				?>
+					<?php if ($count!=($MAXPRODUCT-2) && $count!=($MAXPRODUCT-1)) { ?>
+    				<div class="description" id="prodivdesc<?php echo $count;?>">
     					<div class="description_content" id="prodesc<?php echo $count;?>"></div>
     				</div>
+    				<?php } ?>
     				<div class="catwatermark" id='prowatermark<?php echo $count;?>'>+</div>
     			</div>
     <?php

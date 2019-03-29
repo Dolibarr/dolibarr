@@ -175,6 +175,7 @@ else print "var received=0;";
 		parent.$("#poslines").load("invoice.php?place=<?php echo $place;?>&action=valid&pay="+payment+"&amount="+amountpayed+"&invoiceid="+invoiceid, function() {
 			//parent.$("#poslines").scrollTop(parent.$("#poslines")[0].scrollHeight);
 			parent.$.colorbox.close();
+			//parent.setFocusOnSearchField();	// This does not have effect
 		});
 	}
 </script>
