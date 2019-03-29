@@ -218,7 +218,7 @@ table.postablelines tr td {
 
 tr.selected, tr.selected td {
     /* font-weight: bold; */
-	background-color: rgb(210,200,190) !important;
+	background-color: rgb(240,230,210) !important;
 }
 .order {
     color: limegreen;
