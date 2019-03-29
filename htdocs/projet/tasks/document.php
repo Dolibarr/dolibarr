@@ -163,7 +163,7 @@ if ($object->id > 0)
         print '<div class="fichehalfleft">';
         print '<div class="underbanner clearboth"></div>';
 
-        print '<table class="border" width="100%">';
+        print '<table class="border tableforfield centpercent">';
 
         // Visibility
         print '<tr><td class="titlefield">'.$langs->trans("Visibility").'</td><td>';
@@ -197,7 +197,7 @@ if ($object->id > 0)
         print '<div class="ficheaddleft">';
         print '<div class="underbanner clearboth"></div>';
 
-        print '<table class="border" width="100%">';
+        print '<table class="border tableforfield centpercent">';
 
         // Description
         print '<td class="titlefield tdtop">'.$langs->trans("Description").'</td><td>';
@@ -266,7 +266,7 @@ if ($object->id > 0)
 	print '<div class="fichecenter">';
 
 	print '<div class="underbanner clearboth"></div>';
-	print '<table class="border" width="100%">';
+	print '<table class="border tableforfield centpercent">';
 
 	// Files infos
 	print '<tr><td class="titlefield">'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
