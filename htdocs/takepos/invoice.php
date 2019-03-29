@@ -168,7 +168,7 @@ if ($action == "addline")
     	$price_base_type = $prod->multiprices_base_type[$customer->price_level];
     }
 
-    $invoice->addline($prod->description, $price, 1, $tva_tx, $prod->localtax1_tx, $prod->localtax2_tx, $idproduct, $prod->remise_percent, '', 0, 0, 0, '', $price_base_type, $price_ttc, $prod->type, -1, 0, '', 0, 0, null, 0, '', 0, 100, '', null, 0);
+    $idoflineadded = $invoice->addline($prod->description, $price, 1, $tva_tx, $prod->localtax1_tx, $prod->localtax2_tx, $idproduct, $prod->remise_percent, '', 0, 0, 0, '', $price_base_type, $price_ttc, $prod->type, -1, 0, '', 0, 0, null, 0, '', 0, 100, '', null, 0);
     $invoice->fetch($placeid);
 }
 
@@ -204,17 +204,21 @@ if ($action == "deleteline") {
     }
 }
 
-if ($action == "updateqty") {
+if ($action == "updateqty")
+{
     foreach($invoice->lines as $line)
     {
-        if ($line->id == $idline) { $result = $invoice->updateline($line->id, $line->desc, $line->subprice, $number, $line->remise_percent, $line->date_start, $line->date_end, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, 'HT', $line->info_bits, $line->product_type, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->special_code, $line->array_options, $line->situation_percent, $line->fk_unit);
+        if ($line->id == $idline)
+        {
+            $result = $invoice->updateline($line->id, $line->desc, $line->subprice, $number, $line->remise_percent, $line->date_start, $line->date_end, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, 'HT', $line->info_bits, $line->product_type, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->special_code, $line->array_options, $line->situation_percent, $line->fk_unit);
         }
     }
 
     $invoice->fetch($placeid);
 }
 
-if ($action == "updateprice") {
+if ($action == "updateprice")
+{
     foreach($invoice->lines as $line)
     {
         if ($line->id == $idline) { $result = $invoice->updateline($line->id, $line->desc, $number, $line->qty, $line->remise_percent, $line->date_start, $line->date_end, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, 'HT', $line->info_bits, $line->product_type, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->special_code, $line->array_options, $line->situation_percent, $line->fk_unit);
@@ -224,7 +228,8 @@ if ($action == "updateprice") {
     $invoice->fetch($placeid);
 }
 
-if ($action == "updatereduction") {
+if ($action == "updatereduction")
+{
     foreach($invoice->lines as $line)
     {
         if ($line->id == $idline) { $result = $invoice->updateline($line->id, $line->desc, $line->subprice, $line->qty, $number, $line->date_start, $line->date_end, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, 'HT', $line->info_bits, $line->product_type, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->special_code, $line->array_options, $line->situation_percent, $line->fk_unit);
@@ -234,7 +239,8 @@ if ($action == "updatereduction") {
     $invoice->fetch($placeid);
 }
 
-if ($action == "order" and $placeid != 0) {
+if ($action == "order" and $placeid != 0)
+{
     include_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
 
     $headerorder = '<html><br><b>' . $langs->trans('Place') . ' ' . $place . '<br><table width="65%"><thead><tr><th class="left">' . $langs->trans("Label") . '</th><th class="right">' . $langs->trans("Qty") . '</th></tr></thead><tbody>';
@@ -315,13 +321,23 @@ var selectedline=0;
 var selectedtext="";
 var placeid=<?php echo ($placeid > 0 ? $placeid : 0);?>;
 $(document).ready(function() {
-    $('table tbody tr').click(function(){
-        $('table tbody tr').removeClass("selected");
+	var idoflineadded = <?php echo ($idoflineadded?$idoflineadded:0); ?>;
+
+    $('.posinvoiceline').click(function(){
+    	console.log("Click done on "+this.id);
+        $('.posinvoiceline').removeClass("selected");
         $(this).addClass("selected");
         if (selectedline==this.id) return; // If is already selected
-          else selectedline=this.id;
+        else selectedline=this.id;
         selectedtext=$('#'+selectedline).find("td:first").html();
     });
+
+    /* Autoselect the line */
+    if (idoflineadded > 0)
+    {
+        console.log("Auto select "+idoflineadded);
+        $('.posinvoiceline#'+idoflineadded).click();
+    }
 <?php
 
 if ($action == "order" and $order_receipt_printer1 != "") {
@@ -352,18 +368,6 @@ if ($action == "search" || $action == "valid") {
 	parent.setFocusOnSearchField();
     <?php
 }
-
-?>
-
-	$('table tbody tr').click(function(){
-		console.log("We click on a line");
-        $('table tbody tr').removeClass("selected");
-        $(this).addClass("selected");
-        if (selectedline==this.id) return; // If is already selected
-        else selectedline=this.id;
-        selectedtext=$('#'+selectedline).find("td:first").html();
-    });
-<?php
 
 
 if ($action == "temp" and $ticket_printer1 != "") {
@@ -439,7 +443,7 @@ print '<br>'.$sectionwithinvoicelink;
 print '</td>';
 print '<td class="linecolqty right">' . $langs->trans('ReductionShort') . '</td>';
 print '<td class="linecolqty right">' . $langs->trans('Qty') . '</td>';
-print '<td class="linecolht right">' . $langs->trans('TotalHTShort') . '</td>';
+print '<td class="linecolht right nowraponall">' . $langs->trans('TotalHTShort') . '</td>';
 print "</tr>\n";
 
 if ($placeid > 0)

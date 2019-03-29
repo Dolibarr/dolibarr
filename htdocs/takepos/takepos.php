@@ -153,18 +153,10 @@ function ClearSearch() {
 // Set the focus on search field but only on desktop. On tablet or smartphone, we don't to avoid to have the keyboard open automatically
 function setFocusOnSearchField() {
 	console.log("Call setFocusOnSearchField in page takepos.php");
-	<?php
-	//global $conf;
-	//if ($conf->browser->layout == 'classic') {
-	?>
-	if (app.hasKeyboard)
-	{
+	<?php if ($conf->browser->layout == 'classic') { ?>
 		console.log("has keyboard from localStorage, so we can force focus on search field");
 		$("#search").focus();
-	}
-	<?php
-    //}
-    //?>
+	<?php } ?>
 }
 
 function PrintCategories(first) {
@@ -653,7 +645,7 @@ $menus[$r++]=array('title'=>'<span class="fa fa-sign-out-alt paddingrightonly"><
         print '<!-- Show the search input text -->'."\n";
         print '<div class="margintoponly">';
 		print '<input type="text" id="search" name="search" onkeyup="Search2();" style="width:80%;font-size: 150%;" placeholder="'.$langs->trans("Search").'" autofocus> ';
-		print '<a class="marginleftonly" onclick="ClearSearch();">'.img_picto('', 'searchclear').'</a>';
+		print '<a class="marginleftonly hideonsmartphone" onclick="ClearSearch();">'.img_picto('', 'searchclear').'</a>';
 		print '</div>';
 ?>
 		</div>
