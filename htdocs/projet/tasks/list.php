@@ -21,7 +21,7 @@
 /**
  *	\file       htdocs/projet/tasks/list.php
  *	\ingroup    project
- *	\brief      List all task of a project
+ *	\brief      List all tasks of a project
  */
 
 require "../../main.inc.php";

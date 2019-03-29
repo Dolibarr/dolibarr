@@ -729,9 +729,10 @@ class Task extends CommonObject
 	 * @param	string	$morewherefilter	Add more filter into where SQL request (must start with ' AND ...')
 	 * @param	string	$filteronprojuser	Filter on user that is a contact of project
 	 * @param	string	$filterontaskuser	Filter on user assigned to task
+	 * @param   int     $includebilltime    Calculate also the time to bill and billed
 	 * @return 	array						Array of tasks
 	 */
-	public function getTasksArray($usert = null, $userp = null, $projectid = 0, $socid = 0, $mode = 0, $filteronproj = '', $filteronprojstatus = '-1', $morewherefilter = '', $filteronprojuser = 0, $filterontaskuser = 0)
+	public function getTasksArray($usert = null, $userp = null, $projectid = 0, $socid = 0, $mode = 0, $filteronproj = '', $filteronprojstatus = '-1', $morewherefilter = '', $filteronprojuser = 0, $filterontaskuser = 0, $includebilltime = 0)
 	{
 		global $conf;
 
@@ -742,10 +743,14 @@ class Task extends CommonObject
 		// List of tasks (does not care about permissions. Filtering will be done later)
 		$sql = "SELECT ";
 		if ($filteronprojuser > 0 || $filterontaskuser > 0) $sql.= " DISTINCT";		// We may get several time the same record if user has several roles on same project/task
-		$sql.= " p.rowid as projectid, p.ref, p.title as plabel, p.public, p.fk_statut as projectstatus,";
+		$sql.= " p.rowid as projectid, p.ref, p.title as plabel, p.public, p.fk_statut as projectstatus, p.bill_time,";
 		$sql.= " t.rowid as taskid, t.ref as taskref, t.label, t.description, t.fk_task_parent, t.duration_effective, t.progress, t.fk_statut as status,";
 		$sql.= " t.dateo as date_start, t.datee as date_end, t.planned_workload, t.rang,";
 		$sql.= " s.rowid as thirdparty_id, s.nom as thirdparty_name, s.email as thirdparty_email";
+		if ($includebilltime)
+		{
+		    $sql.=" , SUM(tt.task_duration * ".$this->db->ifsql("invoice_id IS NULL", "1", "0").") as tobill, SUM(tt.task_duration * ".$this->db->ifsql("invoice_id IS NULL", "0", "1").") as billed";
+		}
 		$sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON p.fk_soc = s.rowid";
 		if ($mode == 0)
@@ -756,6 +761,10 @@ class Task extends CommonObject
 				$sql.= ", ".MAIN_DB_PREFIX."c_type_contact as ctc";
 			}
 			$sql.= ", ".MAIN_DB_PREFIX."projet_task as t";
+			if ($includebilltime)
+			{
+                $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task_time as tt ON tt.fk_task = t.rowid";
+			}
 			if ($filterontaskuser > 0)
 			{
 				$sql.= ", ".MAIN_DB_PREFIX."element_contact as ec2";
@@ -774,12 +783,20 @@ class Task extends CommonObject
 			if ($filterontaskuser > 0)
 			{
 				$sql.= ", ".MAIN_DB_PREFIX."projet_task as t";
+				if ($includebilltime)
+				{
+				    $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task_time as tt ON tt.fk_task = t.rowid";
+				}
 				$sql.= ", ".MAIN_DB_PREFIX."element_contact as ec2";
 				$sql.= ", ".MAIN_DB_PREFIX."c_type_contact as ctc2";
 			}
 			else
 			{
 				$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task as t on t.fk_projet = p.rowid";
+				if ($includebilltime)
+				{
+				    $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task_time as tt ON tt.fk_task = t.rowid";
+				}
 			}
 			$sql.= " WHERE p.entity IN (".getEntity('project').")";
 		}
@@ -809,6 +826,15 @@ class Task extends CommonObject
 		if ($filteronproj) $sql.= natural_search(array("p.ref", "p.title"), $filteronproj);
 		if ($filteronprojstatus && $filteronprojstatus != '-1') $sql.= " AND p.fk_statut IN (".$filteronprojstatus.")";
 		if ($morewherefilter) $sql.=$morewherefilter;
+		if ($includebilltime)
+		{
+    		$sql.=" GROUP BY p.rowid, p.ref, p.title, p.public, p.fk_statut, p.bill_time,";
+    		$sql.=" t.datec, t.dateo, t.datee, t.tms,";
+    		$sql.=" t.rowid, t.ref, t.label, t.description, t.fk_task_parent, t.duration_effective, t.progress, t.fk_statut,";
+    		$sql.=" t.dateo, t.datee, t.planned_workload, t.rang,";
+    		$sql.=" s.rowid, s.nom, s.email";
+		}
+
 		$sql.= " ORDER BY p.ref, t.rang, t.dateo";
 
 		//print $sql;exit;
@@ -849,12 +875,17 @@ class Task extends CommonObject
 					$tasks[$i]->projectref		= $obj->ref;
 					$tasks[$i]->projectlabel	= $obj->plabel;
 					$tasks[$i]->projectstatus	= $obj->projectstatus;
+					$tasks[$i]->bill_time	   	= $obj->bill_time;
 					$tasks[$i]->label			= $obj->label;
 					$tasks[$i]->description		= $obj->description;
 					$tasks[$i]->fk_parent		= $obj->fk_task_parent;      // deprecated
 					$tasks[$i]->fk_task_parent	= $obj->fk_task_parent;
 					$tasks[$i]->duration		= $obj->duration_effective;
 					$tasks[$i]->planned_workload= $obj->planned_workload;
+
+					$tasks[$i]->tobill  		= $obj->tobill;
+					$tasks[$i]->billed	    	= $obj->billed;
+
 					$tasks[$i]->progress		= $obj->progress;
 					$tasks[$i]->fk_statut		= $obj->status;
 					$tasks[$i]->public			= $obj->public;
