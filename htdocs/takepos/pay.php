@@ -117,7 +117,10 @@ else print "var received=0;";
     	?>
     	$('.change1').html(pricejs(parseFloat(received), 'MT'));
     	$('.change1').val(parseFloat(received));
-    	if ((alreadypayed + parseFloat(received)) > <?php echo $invoice->total_ttc;?>)
+		alreadypaydplusreceived=price2numjs(alreadypayed + parseFloat(received));
+    	//console.log("already+received = "+alreadypaydplusreceived);
+    	//console.log("total_ttc = "+<?php echo $invoice->total_ttc;?>);
+    	if (alreadypaydplusreceived > <?php echo $invoice->total_ttc;?>)
    		{
 			var change=parseFloat(alreadypayed + parseFloat(received) - <?php echo $invoice->total_ttc;?>);
 			$('.change2').html(pricejs(change, 'MT'));
@@ -131,7 +134,7 @@ else print "var received=0;";
     	{
 			$('.change2').html(pricejs(0, 'MT'));
 	    	$('.change2').val(0);
-	    	if ((alreadypayed + parseFloat(received)) == <?php echo $invoice->total_ttc;?>)
+	    	if (alreadypaydplusreceived == <?php echo $invoice->total_ttc;?>)
 	    	{
 		    	$('.change1').removeClass('colorred');
 		    	$('.change1').addClass('colorgreen');
@@ -202,11 +205,13 @@ $action_buttons = array(
 		"function" =>"reset()",
 		"span" => "style='font-size: 150%;'",
 		"text" => "C",
+	    "class" => "poscolorblue"
 	),
 	array(
 		"function" => "parent.$.colorbox.close();",
 		"span" => "id='printtext'",
 		"text" => $langs->trans("Cancel"),
+	    "class" => "poscolordelete"
 	),
 );
 $numpad=$conf->global->TAKEPOS_NUMPAD;
@@ -268,8 +273,9 @@ while($i < count($paiements)){
 }
 $class=($i==3)?"calcbutton3":"calcbutton2";
 foreach($action_buttons as $button){
+    $newclass = $class.($button["class"]?" ".$button["class"]:"");
 ?>
-	<button type="button" class="<?php echo $class;?>" onclick="<?php echo $button["function"];?>"><span <?php echo $button["span"];?>><?php echo $button["text"];?></span></button>
+	<button type="button" class="<?php echo $newclass;?>" onclick="<?php echo $button["function"];?>"><span <?php echo $button["span"];?>><?php echo $button["text"];?></span></button>
 <?php
 }
 ?>

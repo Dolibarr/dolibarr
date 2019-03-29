@@ -4062,7 +4062,8 @@ class Product extends CommonObject
         $linkend='</a>';
 
         $result.=$linkstart;
-        if ($withpicto) {
+        if ($withpicto)
+        {
             if ($this->type == Product::TYPE_PRODUCT) { $result.=(img_object(($notooltip?'':$label), 'product', ($notooltip?'class="paddingright"':'class="paddingright classfortooltip"'), 0, 0, $notooltip?0:1));
             }
             if ($this->type == Product::TYPE_SERVICE) { $result.=(img_object(($notooltip?'':$label), 'service', ($notooltip?'class="paddinright"':'class="paddingright classfortooltip"'), 0, 0, $notooltip?0:1));
@@ -4151,11 +4152,11 @@ class Product extends CommonObject
     {
         // phpcs:enable
         global $conf, $langs;
-        
+
         $langs->load('products');
         if (! empty($conf->productbatch->enabled)) { $langs->load("productbatch");
         }
-        
+
         if ($type == 2) {
             switch ($mode)
             {
@@ -4177,9 +4178,9 @@ class Product extends CommonObject
                     return dolGetStatus($langs->trans('Unknown'));
             }
         }
-        
+
         $statuttrans=empty($status)?'status5':'status4';
-        
+
         if($status == 0){
             // $type   0=Status "to sell", 1=Status "to buy", 2=Status "to Batch"
             if($type==0){
@@ -4210,8 +4211,8 @@ class Product extends CommonObject
                 $labelstatutShort = $langs->trans('ProductStatusOnBatchShort');
             }
         }
-        
-        
+
+
         if($mode>6){
             return dolGetStatus($langs->trans('Unknown'), '', '', 'status0', 0);
         }
