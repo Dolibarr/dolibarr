@@ -903,7 +903,7 @@ if ($action == 'create')
 
 		$numproject=$formproject->select_projects((! empty($societe->id)?$societe->id:-1), $projectid, 'projectid', 0, 0, 1, 1);
 
-		print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$societe->id.'&action=create">'.$langs->trans("AddProject").' <span class="fa fa-plus-circle valignmiddle"></span></a>';
+		print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$societe->id.'&action=create"><span class="valignmiddle text-plus-circle">'.$langs->trans("AddProject").'</span><span class="fa fa-plus-circle valignmiddle"></span></a>';
 		$urloption='?action=create';
 		$url = dol_buildpath('comm/action/card.php', 2).$urloption;
 
@@ -1301,7 +1301,7 @@ if ($id > 0)
 			$numprojet=$formproject->select_projects(($object->socid  > 0 ? $object->socid : -1), $object->fk_project, 'projectid', 0, 0, 1, 0, 0, 0, 0, '', 0);
 			if ($numprojet==0)
 			{
-				print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$object->socid.'&action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit').'">'.$langs->trans("AddProject").' <span class="fa fa-plus-circle valignmiddle"></span></a>';
+				print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$object->socid.'&action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit').'"><span class="valignmiddle text-plus-circle">'.$langs->trans("AddProject").'</span><span class="fa fa-plus-circle valignmiddle"></span></a>';
 			}
 			print '</td></tr>';
 		}
@@ -1391,7 +1391,7 @@ if ($id > 0)
 		// Clone event
 		if($action == 'clone')
 		{
-			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . GETPOST('id'), $langs->trans('CloneAction'), $langs->trans('ConfirmCloneEvent', $object->label), 'confirm_clone', $formquestion, 'yes', 1);
+			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . GETPOST('id'), $langs->trans('ToClone'), $langs->trans('ConfirmCloneEvent', $object->label), 'confirm_clone', $formquestion, 'yes', 1);
 
 			print $formconfirm;
 		}

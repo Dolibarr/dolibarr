@@ -68,22 +68,6 @@ if (function_exists('get_magic_quotes_gpc'))	// magic_quotes_* deprecated in PHP
 	}
 }
 
-// phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
-/**
- * Security: SQL Injection and XSS Injection (scripts) protection (Filters on GET, POST, PHP_SELF).
- *
- * @param       string      $val        Value
- * @param       string      $type       1=GET, 0=POST, 2=PHP_SELF, 3=GET without sql reserved keywords (the less tolerant test)
- * @return      int                     >0 if there is an injection, 0 if none
- * @deprecated                          use testSqlAndScriptInject
- * @see testSqlAndScriptInject($val, $type)
- */
-function test_sql_and_script_inject($val, $type)
-{
-    // phpcs:enable
-    return testSqlAndScriptInject($val, $type);
-}
-
 /**
  * Security: SQL Injection and XSS Injection (scripts) protection (Filters on GET, POST, PHP_SELF).
  *
@@ -210,7 +194,7 @@ if (! empty($_SERVER['DOCUMENT_ROOT']) && substr($_SERVER['DOCUMENT_ROOT'], -6) 
 	set_include_path($_SERVER['DOCUMENT_ROOT'] . '/htdocs');
 }
 
-// Include the conf.php and functions.lib.php
+// Include the conf.php and functions.lib.php. This defined the constants like DOL_DOCUMENT_ROOT, DOL_DATA_ROOT, DOL_URL_ROOT...
 require_once 'filefunc.inc.php';
 
 // If there is a POST parameter to tell to save automatically some POST parameters into cookies, we do it.
@@ -258,11 +242,23 @@ if (! defined('NOSESSION'))
 	}*/
 }
 
-// Init the 5 global objects, this include will make the new and set properties for: $conf, $db, $langs, $user, $mysoc
+// Init the 5 global objects, this include will make the 'new Xxx()' and set properties for: $conf, $db, $langs, $user, $mysoc
 require_once 'master.inc.php';
 
 // Activate end of page function
 register_shutdown_function('dol_shutdown');
+
+// Load debugbar
+if (! empty($conf->debugbar->enabled))
+{
+    global $debugbar;
+    include_once DOL_DOCUMENT_ROOT.'/debugbar/class/DebugBar.php';
+    $debugbar = new DolibarrDebugBar();
+    $renderer = $debugbar->getRenderer();
+    $conf->global->MAIN_HTML_HEADER .= $renderer->renderHead();
+
+    $debugbar['time']->startMeasure('pageaftermaster', 'Page generation (after environment init)');
+}
 
 // Detection browser
 if (isset($_SERVER["HTTP_USER_AGENT"]))
@@ -1096,6 +1092,10 @@ if (! function_exists("llxHeader"))
 		// html header
 		top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
 
+		if ($conf->browser->layout == 'phone'){
+		    $morecssonbody.= ' sidebar-collapse';
+		}
+
 		print '<body id="mainbody"'.($morecssonbody?' class="'.$morecssonbody.'"':'').'>' . "\n";
 
 		// top menu and left menu area
@@ -1285,7 +1285,7 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 		{
 			print '<!-- Includes CSS for font awesome -->'."\n";
 			print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/theme/common/fontawesome/css/font-awesome.min.css'.($ext?'?'.$ext:'').'">'."\n";
-			if (! empty($conf->global->MAIN_USE_FONT_AWESOME_5))
+			if (empty($conf->global->MAIN_DISABLE_FONT_AWESOME_5))
 			{
                 print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/theme/common/fontawesome-5/css/all.min.css'.($ext?'?'.$ext:'').'">'."\n";
                 print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/theme/common/fontawesome-5/css/v4-shims.min.css'.($ext?'?'.$ext:'').'">'."\n";
@@ -1594,7 +1594,10 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 			}
 		}
 
-		print '<div class="login_block">'."\n";
+		$loginBlockMoreClass = '';
+		if (!empty($conf->global->MAIN_TOP_MENU_DROPDOWN)) { $loginBlockMoreClass = 'usedropdown'; }
+
+		print '<div class="login_block '.$loginBlockMoreClass.'">'."\n";
 
 		// Add login user link
 		$toprightmenu.='<div class="login_block_user">';
@@ -1602,7 +1605,13 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 		// Login name with photo and tooltip
 		$mode=-1;
 		$toprightmenu.='<div class="inline-block nowrap"><div class="inline-block login_block_elem login_block_elem_name" style="padding: 0px;">';
-		$toprightmenu.=$user->getNomUrl($mode, '', 1, 0, 11, 0, ($user->firstname ? 'firstname' : -1), 'atoplogin');
+
+		if (empty($conf->global->MAIN_TOP_MENU_DROPDOWN)){
+            $toprightmenu.= $user->getNomUrl($mode, '', 1, 0, 11, 0, ($user->firstname ? 'firstname' : -1), 'atoplogin');
+		}
+		else {
+		    $toprightmenu.= top_menu_user($user, $langs);
+		}
 		$toprightmenu.='</div></div>';
 
 		$toprightmenu.='</div>'."\n";
@@ -1695,8 +1704,9 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 			}
 		}
 
+
 		// Logout link
-		$toprightmenu.=@Form::textwithtooltip('', $logouthtmltext, 2, 1, $logouttext, 'login_block_elem', 2);
+		$toprightmenu.=@Form::textwithtooltip('', $logouthtmltext, 2, 1, $logouttext, 'login_block_elem logout-btn', 2);
 
 		$toprightmenu.='</div>';
 
@@ -1713,6 +1723,147 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 	if (empty($conf->dol_hide_leftmenu) && empty($conf->dol_use_jmobile)) print '<!-- Begin div id-container --><div id="id-container" class="id-container'.($morecss?' '.$morecss:'').'">';
 }
 
+
+/**
+ * Build the tooltip on user login
+ *
+ * @param   user        $user       User object
+ * @param   Translate   $langs      Language object
+ * @return  string                  HTML content
+ */
+function top_menu_user(User $user, Translate $langs)
+{
+    global $langs, $conf, $db, $hookmanager, $user;
+    global $dolibarr_main_authentication, $dolibarr_main_demo;
+    global $menumanager;
+
+    $userImage = $userDropDownImage = '';
+    if (! empty($user->photo))
+    {
+        $userImage = Form::showphoto('userphoto', $user, 0, 0, 0, 'photouserphoto userphoto', 'small', 0, 1);
+        $userDropDownImage = Form::showphoto('userphoto', $user, 0, 0, 0, 'dropdown-user-image', 'small', 0, 1);
+    }
+
+    $dropdownBody = '';
+    $dropdownBody.= '<span id="topmenuloginmoreinfo-btn"><i class="fa fa-caret-right"></i> '.$langs->trans("ShowMoreInfos").'</span>';
+    $dropdownBody.= '<div id="topmenuloginmoreinfo" >';
+
+    // login infos
+    if (!empty($user->admin)) {
+        $dropdownBody.= '<br><b>' . $langs->trans("Administrator").'</b>: '.yn($user->admin);
+    }
+    if (! empty($user->socid))	// Add thirdparty for external users
+    {
+        $thirdpartystatic = new Societe($db);
+        $thirdpartystatic->fetch($user->socid);
+        $companylink = ' '.$thirdpartystatic->getNomUrl(2);	// picto only of company
+        $company=' ('.$langs->trans("Company").': '.$thirdpartystatic->name.')';
+    }
+    $type=($user->socid?$langs->trans("External").$company:$langs->trans("Internal"));
+    $dropdownBody.= '<br><b>' . $langs->trans("Type") . ':</b> ' . $type;
+    $dropdownBody.= '<br><b>' . $langs->trans("Status").'</b>: '.$user->getLibStatut(0);
+    $dropdownBody.= '<br>';
+
+    $dropdownBody.= '<br><u>'.$langs->trans("Connection").'</u>';
+    $dropdownBody.= '<br><b>'.$langs->trans("IPAddress").'</b>: '.$_SERVER["REMOTE_ADDR"];
+    if (! empty($conf->global->MAIN_MODULE_MULTICOMPANY)) $dropdownBody.= '<br><b>'.$langs->trans("ConnectedOnMultiCompany").':</b> '.$conf->entity.' (user entity '.$user->entity.')';
+    $dropdownBody.= '<br><b>'.$langs->trans("AuthenticationMode").':</b> '.$_SESSION["dol_authmode"].(empty($dolibarr_main_demo)?'':' (demo)');
+    $dropdownBody.= '<br><b>'.$langs->trans("ConnectedSince").':</b> '.dol_print_date($user->datelastlogin, "dayhour", 'tzuser');
+    $dropdownBody.= '<br><b>'.$langs->trans("PreviousConnexion").':</b> '.dol_print_date($user->datepreviouslogin, "dayhour", 'tzuser');
+    $dropdownBody.= '<br><b>'.$langs->trans("CurrentTheme").':</b> '.$conf->theme;
+    $dropdownBody.= '<br><b>'.$langs->trans("CurrentMenuManager").':</b> '.$menumanager->name;
+    $langFlag=picto_from_langcode($langs->getDefaultLang());
+    $dropdownBody.= '<br><b>'.$langs->trans("CurrentUserLanguage").':</b> '.($langFlag?$langFlag.' ':'').$langs->getDefaultLang();
+    $dropdownBody.= '<br><b>'.$langs->trans("Browser").':</b> '.$conf->browser->name.($conf->browser->version?' '.$conf->browser->version:'').' ('.$_SERVER['HTTP_USER_AGENT'].')';
+    $dropdownBody.= '<br><b>'.$langs->trans("Layout").':</b> '.$conf->browser->layout;
+    $dropdownBody.= '<br><b>'.$langs->trans("Screen").':</b> '.$_SESSION['dol_screenwidth'].' x '.$_SESSION['dol_screenheight'];
+    if ($conf->browser->layout == 'phone') $dropdownBody.= '<br><b>'.$langs->trans("Phone").':</b> '.$langs->trans("Yes");
+    if (! empty($_SESSION["disablemodules"])) $dropdownBody.= '<br><b>'.$langs->trans("DisabledModules").':</b> <br>'.join(', ', explode(',', $_SESSION["disablemodules"]));
+    $dropdownBody.= '</div>';
+
+    // Execute hook
+    $parameters=array('user'=>$user, 'langs' => $langs);
+    $result=$hookmanager->executeHooks('printTopRightMenuLoginDropdownBody', $parameters);    // Note that $action and $object may have been modified by some hooks
+    if (is_numeric($result))
+    {
+        if ($result == 0){
+            $dropdownBody.= $hookmanager->resPrint;		// add
+        }
+        else{
+            $dropdownBody = $hookmanager->resPrint;		// replace
+        }
+    }
+
+
+
+    $logoutLink ='<a accesskey="l" href="'.DOL_URL_ROOT.'/user/logout.php" class="button-top-menu-dropdown" ><i class="fa fa-sign-out-alt"></i> '.$langs->trans("Logout").'</a>';
+    $profilLink ='<a accesskey="l" href="'.DOL_URL_ROOT.'/user/card.php?id='.$user->id.'" class="button-top-menu-dropdown" ><i class="fa fa-user"></i>  '.$langs->trans("Card").'</a>';
+
+
+    $profilName = $user->getFullName($langs).' ('.$user->login.')';
+
+    if($user->admin){
+        $profilName = '<i class="far fa-star classfortooltip" title="'.$langs->trans("Administrator").'" ></i> '.$profilName;
+    }
+
+    $btnUser = '
+    <div id="topmenu-login-dropdown" class="userimg atoplogin dropdown user user-menu">
+        <a href="'.DOL_URL_ROOT.'/user/card.php?id='.$user->id.'" class="dropdown-toggle" data-toggle="dropdown">
+            '.$userImage.'
+            <span class="hidden-xs maxwidth200">'.dol_trunc($user->firstname ? $user->firstname : $user->login, 11).'</span>
+        </a>
+        <div class="dropdown-menu">
+            <!-- User image -->
+            <div class="user-header">
+                '.$userDropDownImage.'
+
+                <p>
+                    '.$profilName.'
+                    <br/><small class="classfortooltip" title="'.$langs->trans("PreviousConnexion").'" ><i class="fa fa-user-clock"></i> '.dol_print_date($user->datepreviouslogin, "dayhour", 'tzuser').'</small>
+                </p>
+            </div>
+
+            <!-- Menu Body -->
+            <div class="user-body">'.$dropdownBody.'</div>
+
+            <!-- Menu Footer-->
+            <div class="user-footer">
+                <div class="pull-left">
+                    '.$profilLink.'
+                </div>
+                <div class="pull-right">
+                    '.$logoutLink.'
+                </div>
+                <div style="clear:both;"></div>
+            </div>
+
+        </div>
+    </div>
+    <script>
+    $( document ).ready(function() {
+        $(document).on("click", function(event) {
+            if (!$(event.target).closest("#topmenu-login-dropdown").length) {
+                // Hide the menus.
+                $("#topmenu-login-dropdown").removeClass("open");
+            }
+        });
+
+        $("#topmenu-login-dropdown .dropdown-toggle").on("click", function(event) {
+            event.preventDefault();
+            $("#topmenu-login-dropdown").toggleClass("open");
+        });
+
+        $("#topmenuloginmoreinfo-btn").on("click", function() {
+            $("#topmenuloginmoreinfo").slideToggle();
+        });
+
+    });
+    </script>
+    ';
+
+
+    return $btnUser;
+}
 
 /**
  *  Show left menu bar
@@ -1983,7 +2134,7 @@ function printSearchForm($urlaction, $urlobject, $title, $htmlmorecss, $htmlinpu
 	global $conf,$langs,$user;
 
 	$ret='';
-	$ret.='<form action="'.$urlaction.'" method="post" class="searchform">';
+	$ret.='<form action="'.$urlaction.'" method="post" class="searchform nowraponall">';
 	$ret.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	$ret.='<input type="hidden" name="mode" value="search">';
 	$ret.='<input type="hidden" name="savelogin" value="'.dol_escape_htmltag($user->login).'">';

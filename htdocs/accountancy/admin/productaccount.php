@@ -65,6 +65,8 @@ $accounting_product_mode = GETPOST('accounting_product_mode', 'alpha');
 $btn_changeaccount = GETPOST('changeaccount', 'alpha');
 $btn_changetype = GETPOST('changetype', 'alpha');
 
+if (empty($accounting_product_mode)) $accounting_product_mode='ACCOUNTANCY_SELL';
+
 $limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):(empty($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION)?$conf->liste_limit:$conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION);
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
@@ -111,8 +113,6 @@ if ($action == 'update') {
 				'ACCOUNTANCY_SELL',
 				'ACCOUNTANCY_BUY'
 		);
-
-		$accounting_product_mode = GETPOST('accounting_product_mode', 'alpha');
 
 		if (in_array($accounting_product_mode, $accounting_product_modes)) {
 
@@ -333,7 +333,7 @@ if ($result)
 	if ($accounting_product_mode == 'ACCOUNTANCY_BUY') print '<td class="liste_titre"></td>';
 	// Current account
 	print '<td class="liste_titre">';
-	print '<input type="text" class="flat" size="6" name="search_current_account" value="' . dol_escape_htmltag($search_current_account) . '">';
+	print '<input type="text" class="flat" size="6" name="search_current_account" id="search_current_account" value="' . dol_escape_htmltag($search_current_account) . '">';
 	$listofvals=array('withoutvalidaccount'=>$langs->trans("WithoutValidAccount"), 'withvalidaccount'=>$langs->trans("WithValidAccount"));
 	print ' '.$langs->trans("or").' '.$form->selectarray('search_current_account_valid', $listofvals, $search_current_account_valid, 1);
 	print '</td>';
@@ -481,6 +481,14 @@ if ($result)
         	});
 
         	init_savebutton();
+
+            jQuery("#search_current_account").keyup(function() {
+        		if (jQuery("#search_current_account").val() != \'\')
+                {
+                    console.log("We set a value of account to search "+jQuery("#search_current_account").val()+", so we disable the other search criteria on account");
+                    jQuery("#search_current_account_valid").val(-1);
+                }
+        	});
         });
         </script>';
 

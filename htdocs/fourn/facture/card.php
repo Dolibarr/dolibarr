@@ -1076,7 +1076,7 @@ if (empty($reshook))
 			// Extrafields Lines
 			$extrafieldsline = new ExtraFields($db);
 			$extralabelsline = $extrafieldsline->fetch_name_optionals_label($object->table_element_line);
-			$array_options = $extrafieldsline->getOptionalsFromPost($extralabelsline);
+			$array_options = $extrafieldsline->getOptionalsFromPost($object->table_element_line);
 			// Unset extrafield POST Data
 			if (is_array($extralabelsline)) {
 				foreach ($extralabelsline as $key => $value) {
@@ -1153,7 +1153,7 @@ if (empty($reshook))
 		// Extrafields
 		$extrafieldsline = new ExtraFields($db);
 		$extralabelsline = $extrafieldsline->fetch_name_optionals_label($object->table_element_line);
-		$array_options = $extrafieldsline->getOptionalsFromPost($extralabelsline, $predef);
+		$array_options = $extrafieldsline->getOptionalsFromPost($object->table_element_line, $predef);
 		// Unset extrafield
 		if (is_array($extralabelsline)) {
 			// Get extra fields
@@ -1247,7 +1247,7 @@ if (empty($reshook))
 				    $desc = $productsupplier->desc_supplier;
 				} else $desc = $productsupplier->description;
 
-				if (trim($product_desc) != trim($desc)) $desc = dol_concatdesc($desc, $product_desc, '', !empty($conf->global->CHANGE_ORDER_CONCAT_DESCRIPTION));
+				if (trim($product_desc) != trim($desc)) $desc = dol_concatdesc($desc, $product_desc, '', !empty($conf->global->MAIN_CHANGE_ORDER_CONCAT_DESCRIPTION));
 
 				$type = $productsupplier->type;
 				$price_base_type = ($productsupplier->fourn_price_base_type?$productsupplier->fourn_price_base_type:'HT');
@@ -1446,7 +1446,7 @@ if (empty($reshook))
                 }
             }
 
-            $object->set_draft($user, $idwarehouse);
+            $object->setDraft($user, $idwarehouse);
 
 			// Define output language
 			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
@@ -1756,7 +1756,7 @@ if ($action == 'create')
 			});
 			</script>';
 		}
-		print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&client=0&fournisseur=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'">'.$langs->trans("AddThirdParty").' <span class="fa fa-plus-circle valignmiddle"></span></a>';
+		print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&client=0&fournisseur=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'"><span class="valignmiddle text-plus-circle">'.$langs->trans("AddThirdParty").'</span><span class="fa fa-plus-circle valignmiddle"></span></a>';
 	}
 	print '</td></tr>';
 
@@ -2093,8 +2093,8 @@ if ($action == 'create')
 			echo ' ('.$langs->trans('LatestRelatedBill').end($objectsrc->linkedObjects['invoice_supplier'])->getNomUrl(1).')';
 		}
 		echo '</td></tr>';
-		print '<tr><td>'.$langs->trans('TotalHT').'</td><td>'.price($objectsrc->total_ht).'</td></tr>';
-		print '<tr><td>'.$langs->trans('TotalVAT').'</td><td>'.price($objectsrc->total_tva)."</td></tr>";
+		print '<tr><td>'.$langs->trans('AmountHT').'</td><td>'.price($objectsrc->total_ht).'</td></tr>';
+		print '<tr><td>'.$langs->trans('AmountVAT').'</td><td>'.price($objectsrc->total_tva)."</td></tr>";
 		if ($mysoc->localtax1_assuj=="1" || $object->total_localtax1 != 0) //Localtax1
 		{
 			print '<tr><td>'.$langs->transcountry("AmountLT1", $mysoc->country_code).'</td><td>'.price($objectsrc->total_localtax1)."</td></tr>";
@@ -2104,13 +2104,13 @@ if ($action == 'create')
 		{
 			print '<tr><td>'.$langs->transcountry("AmountLT2", $mysoc->country_code).'</td><td>'.price($objectsrc->total_localtax2)."</td></tr>";
 		}
-		print '<tr><td>'.$langs->trans('TotalTTC').'</td><td>'.price($objectsrc->total_ttc)."</td></tr>";
+		print '<tr><td>'.$langs->trans('AmountTTC').'</td><td>'.price($objectsrc->total_ttc)."</td></tr>";
 
 		if (!empty($conf->multicurrency->enabled))
 		{
-			print '<tr><td>' . $langs->trans('MulticurrencyTotalHT') . '</td><td>' . price($objectsrc->multicurrency_total_ht) . '</td></tr>';
-			print '<tr><td>' . $langs->trans('MulticurrencyTotalVAT') . '</td><td>' . price($objectsrc->multicurrency_total_tva) . "</td></tr>";
-			print '<tr><td>' . $langs->trans('MulticurrencyTotalTTC') . '</td><td>' . price($objectsrc->multicurrency_total_ttc) . "</td></tr>";
+			print '<tr><td>' . $langs->trans('MulticurrencyAmountHT') . '</td><td>' . price($objectsrc->multicurrency_total_ht) . '</td></tr>';
+			print '<tr><td>' . $langs->trans('MulticurrencyAmountVAT') . '</td><td>' . price($objectsrc->multicurrency_total_tva) . "</td></tr>";
+			print '<tr><td>' . $langs->trans('MulticurrencyAmountTTC') . '</td><td>' . price($objectsrc->multicurrency_total_ttc) . "</td></tr>";
 		}
 	}
 
@@ -2232,7 +2232,7 @@ else
 			//array('type' => 'checkbox', 'name' => 'clone_content',   'label' => $langs->trans("CloneMainAttributes"),   'value' => 1)
 			);
 			// Paiement incomplet. On demande si motif = escompte ou autre
-			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('CloneInvoice'), $langs->trans('ConfirmCloneInvoice', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
+			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneInvoice', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
 		}
 
 		// Confirmation de la validation
@@ -2480,7 +2480,7 @@ else
         print '<td>'.$form->editfieldval("Label", 'label', $object->label, $object, ($user->rights->fournisseur->facture->creer)).'</td>';
         print '</tr>';
 
-	    $form_permission = $object->statut<FactureFournisseur::STATUS_CLOSED && $user->rights->fournisseur->facture->creer && $object->getSommePaiement() <= 0;
+	    $form_permission = ($object->statut < FactureFournisseur::STATUS_CLOSED) && $user->rights->fournisseur->facture->creer && ($object->getSommePaiement() <= 0);
 
         // Date
         print '<tr><td>'.$form->editfieldkey("DateInvoice", 'datef', $object->datep, $object, $form_permission, 'datepicker').'</td><td colspan="3">';
@@ -2495,7 +2495,7 @@ else
         }
         print '</td>';
 
-		// Conditions de reglement par defaut
+		// Default terms of the settlement
 		$langs->load('bills');
 		print '<tr><td class="nowrap">';
 		print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
@@ -2547,7 +2547,7 @@ else
 			print '<table class="nobordernopadding" width="100%"><tr><td>';
 			print $form->editfieldkey('Currency', 'multicurrency_code', '', $object, 0);
 			print '</td>';
-			if ($action != 'editmulticurrencycode' && ! empty($object->brouillon))
+			if ($action != 'editmulticurrencycode' && $object->statut == FactureFournisseur::STATUS_DRAFT)
 				print '<td class="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editmulticurrencycode&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetMultiCurrencyCode'), 1) . '</a></td>';
 			print '</tr></table>';
 			print '</td><td colspan="3">';
@@ -2564,18 +2564,18 @@ else
 			print '<table class="nobordernopadding" width="100%"><tr><td>';
 			print $form->editfieldkey('CurrencyRate', 'multicurrency_tx', '', $object, 0);
 			print '</td>';
-			if ($action != 'editmulticurrencyrate' && ! empty($object->brouillon) && $object->multicurrency_code && $object->multicurrency_code != $conf->currency)
+			if ($action != 'editmulticurrencyrate' && $object->statut == FactureFournisseur::STATUS_DRAFT && $object->multicurrency_code && $object->multicurrency_code != $conf->currency)
 				print '<td class="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editmulticurrencyrate&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetMultiCurrencyCode'), 1) . '</a></td>';
 			print '</tr></table>';
 			print '</td><td colspan="3">';
 			if ($action == 'editmulticurrencyrate' || $action == 'actualizemulticurrencyrate') {
-				if($action == 'actualizemulticurrencyrate') {
+				if ($action == 'actualizemulticurrencyrate') {
 					list($object->fk_multicurrency, $object->multicurrency_tx) = MultiCurrency::getIdAndTxFromCode($object->db, $object->multicurrency_code);
 				}
 				$form->form_multicurrency_rate($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->multicurrency_tx, 'multicurrency_tx', $object->multicurrency_code);
 			} else {
 				$form->form_multicurrency_rate($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->multicurrency_tx, 'none', $object->multicurrency_code);
-				if($object->statut == $object::STATUS_DRAFT && $object->multicurrency_code && $object->multicurrency_code != $conf->currency) {
+				if ($object->statut == $object::STATUS_DRAFT && $object->multicurrency_code && $object->multicurrency_code != $conf->currency) {
 					print '<div class="inline-block"> &nbsp; &nbsp; &nbsp; &nbsp; ';
 					print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=actualizemulticurrencyrate">'.$langs->trans("ActualizeCurrency").'</a>';
 					print '</div>';
@@ -3234,6 +3234,7 @@ else
 		include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
 	}
 }
+
 
 // End of page
 llxFooter();

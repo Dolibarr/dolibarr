@@ -150,7 +150,7 @@ if ($result)
 	$newcardbutton='';
 	if ($user->rights->tax->charges->creer)
 	{
-		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/compta/tva/card.php?action=create">'.$langs->trans('NewVATPayment');
+		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/compta/tva/card.php?action=create"><span class="valignmiddle text-plus-circle">'.$langs->trans('NewVATPayment').'</span>';
 		$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
 		$newcardbutton.= '</a>';
 	}

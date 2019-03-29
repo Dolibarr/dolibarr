@@ -356,7 +356,7 @@ if ($id > 0 || ! empty($ref))
     print '<div class="fichehalfleft">';
     print '<div class="underbanner clearboth"></div>';
 
-    print '<table class="border" width="100%">';
+    print '<table class="border tableforfield" width="100%">';
 
     // Visibility
     print '<tr><td class="titlefield">'.$langs->trans("Visibility").'</td><td>';
@@ -409,7 +409,7 @@ if ($id > 0 || ! empty($ref))
     print '<div class="ficheaddleft">';
     print '<div class="underbanner clearboth"></div>';
 
-    print '<table class="border" width="100%">';
+    print '<table class="border tableforfield" width="100%">';
 
     // Description
     print '<td class="titlefield tdtop">'.$langs->trans("Description").'</td><td>';
@@ -591,16 +591,16 @@ elseif ($id > 0 || ! empty($ref))
 	{
 		if ($object->public || $userWrite > 0)
 		{
-			$linktocreatetask = '<a class="butActionNew" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=create'.$param.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$object->id).'">'.$langs->trans('AddTask').'<span class="fa fa-plus-circle valignmiddle"></span></a>';
+			$linktocreatetask = '<a class="butActionNew" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=create'.$param.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$object->id).'"><span class="valignmiddle text-plus-circle">'.$langs->trans('AddTask').'</span><span class="fa fa-plus-circle valignmiddle"></span></a>';
 		}
 		else
 		{
-			$linktocreatetask = '<a class="butActionNewRefused" href="#" title="'.$langs->trans("NotOwnerOfProject").'">'.$langs->trans('AddTask').'<span class="fa fa-plus-circle valignmiddle"></span></a>';
+			$linktocreatetask = '<a class="butActionNewRefused" href="#" title="'.$langs->trans("NotOwnerOfProject").'"><span class="valignmiddle text-plus-circle">'.$langs->trans('AddTask').'</span><span class="fa fa-plus-circle valignmiddle"></span></a>';
 		}
 	}
 	else
 	{
-		$linktocreatetask = '<a class="butActionNewRefused" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans('AddTask').'<span class="fa fa-plus-circle valignmiddle"></span></a>';
+		$linktocreatetask = '<a class="butActionNewRefused" href="#" title="'.$langs->trans("NotEnoughPermissions").'"><span class="valignmiddle text-plus-circle">'.$langs->trans('AddTask').'</span><span class="fa fa-plus-circle valignmiddle"></span></a>';
 	}
 
 

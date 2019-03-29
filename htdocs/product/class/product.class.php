@@ -4062,7 +4062,8 @@ class Product extends CommonObject
         $linkend='</a>';
 
         $result.=$linkstart;
-        if ($withpicto) {
+        if ($withpicto)
+        {
             if ($this->type == Product::TYPE_PRODUCT) { $result.=(img_object(($notooltip?'':$label), 'product', ($notooltip?'class="paddingright"':'class="paddingright classfortooltip"'), 0, 0, $notooltip?0:1));
             }
             if ($this->type == Product::TYPE_SERVICE) { $result.=(img_object(($notooltip?'':$label), 'service', ($notooltip?'class="paddinright"':'class="paddingright classfortooltip"'), 0, 0, $notooltip?0:1));
@@ -4159,75 +4160,65 @@ class Product extends CommonObject
         if ($type == 2) {
             switch ($mode)
             {
-            	case 0:
-                	return ($status == 0 ? $langs->trans('ProductStatusNotOnBatch') : $langs->trans('ProductStatusOnBatch'));
-            	case 1:
-                	return ($status == 0 ? $langs->trans('ProductStatusNotOnBatchShort') : $langs->trans('ProductStatusOnBatchShort'));
-            	case 2:
-                	return $this->LibStatut($status, 3, 2).' '.$this->LibStatut($status, 1, 2);
-            	case 3:
-                	if ($status == 0) {
-                    	return img_picto($langs->trans('ProductStatusNotOnBatch'), 'statut5');
-                	}
-                	return img_picto($langs->trans('ProductStatusOnBatch'), 'statut4');
-            	case 4:
-                	return $this->LibStatut($status, 3, 2).' '.$this->LibStatut($status, 0, 2);
-            	case 5:
-                	return $this->LibStatut($status, 1, 2).' '.$this->LibStatut($status, 3, 2);
-            	default:
-                	return $langs->trans('Unknown');
+                case 0:
+                    $label = ($status == 0 ? $langs->trans('ProductStatusNotOnBatch') : $langs->trans('ProductStatusOnBatch'));
+                    return dolGetStatus($label);
+                case 1:
+                    $label = ($status == 0 ? $langs->trans('ProductStatusNotOnBatchShort') : $langs->trans('ProductStatusOnBatchShort'));
+                    return dolGetStatus($label);
+                case 2:
+                    return $this->LibStatut($status, 3, 2).' '.$this->LibStatut($status, 1, 2);
+                case 3:
+                    return dolGetStatus($langs->trans('ProductStatusNotOnBatch'), '', '', empty($status)?'status5':'status4', 3, 'dot');
+                case 4:
+                    return $this->LibStatut($status, 3, 2).' '.$this->LibStatut($status, 0, 2);
+                case 5:
+                    return $this->LibStatut($status, 1, 2).' '.$this->LibStatut($status, 3, 2);
+                default:
+                    return dolGetStatus($langs->trans('Unknown'));
             }
         }
-        if ($mode == 0) {
-            if ($status == 0) {
-                return ($type==0 ? $langs->trans('ProductStatusNotOnSellShort'):$langs->trans('ProductStatusNotOnBuyShort'));
-            } elseif ($status == 1) {
-                return ($type==0 ? $langs->trans('ProductStatusOnSellShort'):$langs->trans('ProductStatusOnBuyShort'));
+
+        $statuttrans=empty($status)?'status5':'status4';
+
+        if($status == 0){
+            // $type   0=Status "to sell", 1=Status "to buy", 2=Status "to Batch"
+            if($type==0){
+                $labelstatut = $langs->trans('ProductStatusNotOnSellShort');
+                $labelstatutShort = $langs->trans('ProductStatusNotOnSell');
+            }
+            elseif($type == 1){
+                $labelstatut = $langs->trans('ProductStatusNotOnBuyShort');
+                $labelstatutShort = $langs->trans('ProductStatusNotOnBuy');
+            }
+            elseif($type == 2){
+                $labelstatut = $langs->trans('ProductStatusNotOnBatch');
+                $labelstatutShort = $langs->trans('ProductStatusNotOnBatchShort');
             }
         }
-        elseif ($mode == 1) {
-            if ($status == 0) {
-                return ($type==0 ? $langs->trans('ProductStatusNotOnSell'):$langs->trans('ProductStatusNotOnBuy'));
-            } elseif ($status == 1) {
-                return ($type==0 ? $langs->trans('ProductStatusOnSell'):$langs->trans('ProductStatusOnBuy'));
+        elseif($status == 1){
+            // $type   0=Status "to sell", 1=Status "to buy", 2=Status "to Batch"
+            if($type==0){
+                $labelstatut = $langs->trans('ProductStatusOnSellShort');
+                $labelstatutShort = $langs->trans('ProductStatusOnSell');
+            }
+            elseif($type == 1){
+                $labelstatut = $langs->trans('ProductStatusOnBuyShort');
+                $labelstatutShort = $langs->trans('ProductStatusOnBuy');
+            }
+            elseif($type == 2){
+                $labelstatut = $langs->trans('ProductStatusOnBatch');
+                $labelstatutShort = $langs->trans('ProductStatusOnBatchShort');
             }
         }
-        elseif ($mode == 2) {
-            if ($status == 0) {
-                return img_picto($langs->trans('ProductStatusNotOnSell'), 'statut5', 'class="pictostatus"').' '.($type==0 ? $langs->trans('ProductStatusNotOnSellShort'):$langs->trans('ProductStatusNotOnBuyShort'));
-            } elseif ($status == 1) {
-                return img_picto($langs->trans('ProductStatusOnSell'), 'statut4', 'class="pictostatus"').' '.($type==0 ? $langs->trans('ProductStatusOnSellShort'):$langs->trans('ProductStatusOnBuyShort'));
-            }
+
+
+        if($mode>6){
+            return dolGetStatus($langs->trans('Unknown'), '', '', 'status0', 0);
         }
-        elseif ($mode == 3) {
-            if ($status == 0) {
-                return img_picto(($type==0 ? $langs->trans('ProductStatusNotOnSell') : $langs->trans('ProductStatusNotOnBuy')), 'statut5', 'class="pictostatus"');
-            } elseif ($status == 1) {
-                return img_picto(($type==0 ? $langs->trans('ProductStatusOnSell') : $langs->trans('ProductStatusOnBuy')), 'statut4', 'class="pictostatus"');
-            }
+        else{
+            return dolGetStatus($labelstatut, $labelstatutShort, '', $statuttrans, $mode);
         }
-        elseif ($mode == 4) {
-            if ($status == 0) {
-                return img_picto($langs->trans('ProductStatusNotOnSell'), 'statut5', 'class="pictostatus"').' '.($type==0 ? $langs->trans('ProductStatusNotOnSell'):$langs->trans('ProductStatusNotOnBuy'));
-            } elseif ($status == 1) {
-                return img_picto($langs->trans('ProductStatusOnSell'), 'statut4', 'class="pictostatus"').' '.($type==0 ? $langs->trans('ProductStatusOnSell'):$langs->trans('ProductStatusOnBuy'));
-            }
-        }
-        elseif ($mode == 5) {
-            if ($status == 0) {
-                return ($type==0 ? $langs->trans('ProductStatusNotOnSellShort'):$langs->trans('ProductStatusNotOnBuyShort')).' '.img_picto(($type==0 ? $langs->trans('ProductStatusNotOnSell'):$langs->trans('ProductStatusNotOnBuy')), 'statut5', 'class="pictostatus"');
-            } elseif ($status == 1) {
-                return ($type==0 ? $langs->trans('ProductStatusOnSellShort'):$langs->trans('ProductStatusOnBuyShort')).' '.img_picto(($type==0 ? $langs->trans('ProductStatusOnSell'):$langs->trans('ProductStatusOnBuy')), 'statut4', 'class="pictostatus"');
-            }
-        }
-        elseif ($mode == 6) {
-            if ($status == 0) {
-                return ($type==0 ? $langs->trans('ProductStatusNotOnSellShort'):$langs->trans('ProductStatusNotOnBuyShort')).' '.img_picto(($type==0 ? $langs->trans('ProductStatusNotOnSell'):$langs->trans('ProductStatusNotOnBuy')), 'statut5', 'class="pictostatus"');
-            } elseif ($status == 1) {
-                return ($type==0 ? $langs->trans('ProductStatusOnSellShort'):$langs->trans('ProductStatusOnBuyShort')).' '.img_picto(($type==0 ? $langs->trans('ProductStatusOnSell'):$langs->trans('ProductStatusOnBuy')), 'statut4', 'class="pictostatus"');
-            }
-        }
-        return $langs->trans('Unknown');
     }
 
 
@@ -4792,7 +4783,7 @@ class Product extends CommonObject
      *
      * @param  Product $object Object product or service
      * @param  string  $type   Barcode type (ean, isbn, ...)
-     * @return void
+     * @return string
      */
     public function get_barcode($object, $type = '')
     {

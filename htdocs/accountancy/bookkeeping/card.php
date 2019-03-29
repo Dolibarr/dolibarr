@@ -171,8 +171,8 @@ elseif ($action == "add") {
 		$object->doc_ref = GETPOST('doc_ref', 'alpha');
 		$object->code_journal = $journal_code;
 		$object->journal_label = $journal_label;
-		$object->fk_doc = GETPOST('fk_doc', 'int');
-		$object->fk_docdet = GETPOST('fk_docdet', 'int');
+		$object->fk_doc = (int) GETPOST('fk_doc', 'int');
+		$object->fk_docdet = (int) GETPOST('fk_docdet', 'int');
 
 		if (floatval($debit) != 0.0) {
 			$object->montant = $debit;
@@ -661,8 +661,8 @@ if ($action == 'create')
 					print "</tr>\n";
 				}
 
-				$total_debit = price2num($total_debit);
-				$total_credit = price2num($total_credit);
+				$total_debit = price2num($total_debit, 'MT');
+				$total_credit = price2num($total_credit, 'MT');
 
 				if ($total_debit != $total_credit)
 				{

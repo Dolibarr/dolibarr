@@ -399,7 +399,7 @@ if ($projectid > 0) {
         print '<div class="fichecenter">';
         print '<div class="underbanner clearboth"></div>';
 
-        print '<table class="border" width="100%">';
+        print '<table class="border tableforfield" width="100%">';
 
         // Visibility
         print '<tr><td class="titlefield">' . $langs->trans("Visibility") . '</td><td>';
@@ -462,7 +462,7 @@ if ($projectid) print '<input type="hidden" name="projectid" value="' . $project
 $newcardbutton='';
 if ($user->rights->ticket->write)
 {
-	$newcardbutton = '<a class="butActionNew" href="'.DOL_URL_ROOT.'/ticket/card.php?action=create' . ($socid ? '&socid=' . $socid : '') . ($projectid ? '&origin=projet_project&originid=' . $projectid : '') . '"><span class="valignmiddle">' . $langs->trans('NewTicket').'</span>';
+	$newcardbutton = '<a class="butActionNew" href="'.DOL_URL_ROOT.'/ticket/card.php?action=create' . ($socid ? '&socid=' . $socid : '') . ($projectid ? '&origin=projet_project&originid=' . $projectid : '') . '"><span class="valignmiddle text-plus-circle">' . $langs->trans('NewTicket').'</span>';
 	$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
 	$newcardbutton.= '</a>';
 }
@@ -640,6 +640,7 @@ while ($i < min($num, $limit))
 			if ($cssforfield || $val['css']) print '"';
 			print '>';
 			if ($key == 'fk_statut') print $object->getLibStatut(5);
+			elseif (in_array($val['type'], array('date','datetime','timestamp'))) print $object->showOutputField($val, $key, $db->jdate($obj->$key), '');
 			else print $object->showOutputField($val, $key, $obj->$key, '');
 			print '</td>';
 			if (! $i) $totalarray['nbfield']++;

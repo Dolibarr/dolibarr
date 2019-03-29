@@ -63,8 +63,8 @@ class FormOther
      *    @param    string	$selected          Id modele pre-selectionne
      *    @param    string	$htmlname          Nom de la zone select
      *    @param    string	$type              Type des modeles recherches
-     *    @param    int		$useempty          Affiche valeur vide dans liste
-     *    @param    int		$fk_user          Utilisateur créant le modèle
+     *    @param    int		$useempty          Show an empty value in list
+     *    @param    int		$fk_user           User that has created the template (this is set to null to get all export model when EXPORTS_SHARE_MODELS is on)
      *    @return	void
      */
     public function select_export_model($selected = '', $htmlname = 'exportmodelid', $type = '', $useempty = 0, $fk_user = null)
@@ -73,7 +73,7 @@ class FormOther
         $sql = "SELECT rowid, label";
         $sql.= " FROM ".MAIN_DB_PREFIX."export_model";
         $sql.= " WHERE type = '".$type."'";
-		if (!empty($fk_user)) $sql.=" AND fk_user=".$fk_user;
+		if (!empty($fk_user)) $sql.=" AND fk_user IN (0, ".$fk_user.")";  // An export model
         $sql.= " ORDER BY rowid";
         $result = $this->db->query($sql);
         if ($result)
@@ -848,7 +848,7 @@ class FormOther
      *      @param	string		$morecss			More Css
      *      @return string
      */
-    public function select_month($selected = '', $htmlname = 'monthid', $useempty = 0, $longlabel = 0, $morecss = '')
+    public function select_month($selected = '', $htmlname = 'monthid', $useempty = 0, $longlabel = 0, $morecss = 'maxwidth50imp valignmiddle')
     {
         // phpcs:enable
         global $langs;
@@ -895,7 +895,7 @@ class FormOther
      *  @param	string		$morecss		More CSS
      *  @return	string
      */
-    public function select_year($selected = '', $htmlname = 'yearid', $useempty = 0, $min_year = 10, $max_year = 5, $offset = 0, $invert = 0, $option = '', $morecss = 'valignmiddle widthauto')
+    public function select_year($selected = '', $htmlname = 'yearid', $useempty = 0, $min_year = 10, $max_year = 5, $offset = 0, $invert = 0, $option = '', $morecss = 'valignmiddle maxwidth75imp')
     {
         // phpcs:enable
         print $this->selectyear($selected, $htmlname, $useempty, $min_year, $max_year, $offset, $invert, $option, $morecss);
@@ -915,7 +915,7 @@ class FormOther
      *  @param	string	$morecss		More css
      *  @return	string
      */
-    public function selectyear($selected = '', $htmlname = 'yearid', $useempty = 0, $min_year = 10, $max_year = 5, $offset = 0, $invert = 0, $option = '', $morecss = 'valignmiddle widthauto')
+    public function selectyear($selected = '', $htmlname = 'yearid', $useempty = 0, $min_year = 10, $max_year = 5, $offset = 0, $invert = 0, $option = '', $morecss = 'valignmiddle maxwidth75imp')
     {
         $out='';
 

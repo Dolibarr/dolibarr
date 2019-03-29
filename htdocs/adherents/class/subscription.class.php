@@ -47,10 +47,33 @@ class Subscription extends CommonObject
      */
     public $picto='payment';
 
-    public $datec;				// Date creation
-    public $datem;				// Date modification
-    public $dateh;				// Subscription start date (date subscription)
-    public $datef;				// Subscription end date
+    /**
+     * Date creation record (datec)
+     *
+     * @var integer
+     */
+    public $datec;
+    
+    /**
+     * Date modification record (tms)
+     *
+     * @var integer
+     */
+    public $datem;
+    
+    /**
+     * Subscription start date (date subscription)
+     *
+     * @var integer
+     */
+    public $dateh;
+    
+    /**
+     * Subscription end date
+     *
+     * @var integer
+     */
+    public $datef;
 
     /**
      * @var int ID

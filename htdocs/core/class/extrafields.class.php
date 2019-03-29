@@ -864,8 +864,8 @@ class ExtraFields
 
 		$sql = "SELECT rowid,name,label,type,size,elementtype,fieldunique,fieldrequired,param,pos,alwayseditable,perms,langs,list,totalizable,fielddefault,fieldcomputed,entity,enabled,help";
 		$sql.= " FROM ".MAIN_DB_PREFIX."extrafields";
-		$sql.= " WHERE entity IN (0,".$conf->entity.")";
-		if ($elementtype) $sql.= " AND elementtype = '".$elementtype."'";	// Filed with object->table_element
+		//$sql.= " WHERE entity IN (0,".$conf->entity.")";    // Filter is done later
+		if ($elementtype) $sql.= " WHERE elementtype = '".$elementtype."'";	// Filed with object->table_element
 		$sql.= " ORDER BY pos";
 
 		$resql=$this->db->query($sql);
@@ -875,6 +875,16 @@ class ExtraFields
 			{
 				while ($tab = $this->db->fetch_object($resql))
 				{
+				    if ($tab->entity != 0 && $tab->entity != $conf->entity)
+				    {
+				        // This field is not in current entity. We discard but before we save it into the array of mandatory fields if it is a mandatory field without default value
+				        if ($tab->fieldrequired && is_null($tab->fielddefault))
+				        {
+				            $this->attributes[$tab->elementtype]['mandatoryfieldsofotherentities'][$tab->name]=$tab->type;
+				        }
+				        continue;
+				    }
+
 					// We can add this attribute to object. TODO Remove this and return $this->attributes[$elementtype]['label']
 					if ($tab->type != 'separate')
 					{
@@ -1643,7 +1653,7 @@ class ExtraFields
 		}
 		elseif ($type == 'phone')
 		{
-			$value=dol_print_phone($value, '', 0, 0, '', '&nbsp;', 1);
+			$value=dol_print_phone($value, '', 0, 0, '', '&nbsp;', 'phone');
 		}
 		elseif ($type == 'price')
 		{

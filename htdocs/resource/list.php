@@ -197,7 +197,7 @@ if($ret == -1) {
 	$newcardbutton='';
 	if ($user->rights->resource->write)
 	{
-		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/resource/card.php?action=create"><span class="valignmiddle">'.$langs->trans('MenuResourceAdd').'</span>';
+		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/resource/card.php?action=create"><span class="valignmiddle text-plus-circle">'.$langs->trans('MenuResourceAdd').'</span>';
 		$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
 		$newcardbutton.= '</a>';
 	}

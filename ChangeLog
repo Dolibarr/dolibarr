@@ -4,10 +4,13 @@ English Dolibarr ChangeLog
 
 ***** ChangeLog for 10.0.0 compared to 9.0.0 *****
 For Users:
-NEW: Module ticket is available as a stable module
-NEW: Experimental module "Vendor receptions"
+NEW: Module Ticket is available as a stable module.
+NEW: Experimental module "Vendor receptions".
+NEW: Experimental module "BOM".
+FIX: Disallow line start date to be after end date
 
 For Developers:
+NEW: Module DebugBar is available as a stable module.
 
 
 WARNING:
@@ -16,6 +19,12 @@ Following changes may create regressions for some external modules, but were nec
 * Method GetUrlTrackingStatus were renamed into getUrlTrackingStatus for consistency with naming rules.
 * API getListOfCivility has been renamed into getListOfCivilities for consistency with naming rules.
 * Deprecated function img_phone as been removed. You can use img_picto(..., 'call|call_out') instead.; 
+* Files for variables of themes were renamed from graph-color.php into theme_vars.inc.php to match naming 
+  convention of extension .inc.php for files to be included.
+* All methods set_draft() were renamed into setDraft().
+* Removed deprecated function function test_sql_and_script_inject that was replaced with testSqlAndScriptInject.
+* Method load_measuring_units were renamed into selectMeasuringUnits and select_measuring_units was deprecated.
+* Hidden option CHANGE_ORDER_CONCAT_DESCRIPTION were renamed into MAIN_CHANGE_ORDER_CONCAT_DESCRIPTION
 
 
 ***** ChangeLog for 9.0.1 compared to 9.0.0 *****

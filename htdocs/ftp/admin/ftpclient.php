@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2011 	   Juanjo Menent		<jmenent@2byte.es>
+/* Copyright (C) 2004-2016  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2011       Juanjo Menent           <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -117,7 +117,7 @@ if (GETPOST('delete', 'alpha'))
 		if ($result3) $result4=dolibarr_del_const($db, "FTP_PASSWORD_" . $entry, $conf->entity);
 		if ($result4) $result5=dolibarr_del_const($db, "FTP_NAME_" . $entry, $conf->entity);
 		if ($result4) $result6=dolibarr_del_const($db, "FTP_PASSIVE_" . $entry, $conf->entity);
-		
+
         if ($result1 && $result2 && $result3 && $result4 && $result5 && $result6)
         {
             $db->commit();
@@ -199,9 +199,9 @@ else
 	print '<td>'.$form->selectyesno('FTP_PASSIVE_'.($lastftpentry+1), $defaultpassive, 2).'</td>';
 	print '<td>'.$langs->trans("No").'</td>';
 	print '</tr>';
-	
+
 	print '</table>';
-	
+
 	?>
 	<br><div class="center"><input type="submit" class="button" value="<?php echo $langs->trans("Add") ?>"></div>
 	<input type="hidden" name="action" value="add">
@@ -236,7 +236,7 @@ else
 			print "<form name=\"externalrssconfig\" action=\"".$_SERVER["PHP_SELF"]."\" method=\"post\">";
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<input type="hidden" name="numero_entry" value="'.$idrss.'">';
-			
+
 			print '<table class="noborder" width="100%">'."\n";
 
 			print '<tr class="liste_titre">';
@@ -250,44 +250,44 @@ else
 			$keyforuser="FTP_USER_" . $idrss;
 			$keyforpassword="FTP_PASSWORD_" . $idrss;
 			$keyforpassive="FTP_PASSIVE_" . $idrss;
-				
+
 			print '<tr class="oddeven">';
 			print "<td>".$langs->trans("Name")."</td>";
 			print "<td><input type=\"text\" class=\"flat\" name=\"FTP_NAME_" . $idrss . "\" value=\"" . $conf->global->$keyforname . "\" size=\"64\"></td>";
 			print "</tr>";
 
-			
+
 			print '<tr class="oddeven">';
 			print "<td>".$langs->trans("Server")."</td>";
 			print "<td><input type=\"text\" class=\"flat\" name=\"FTP_SERVER_" . $idrss . "\" value=\"" . $conf->global->$keyforserver . "\" size=\"64\"></td>";
 			print "</tr>";
 
-			
+
 			print '<tr class="oddeven">';
 			print "<td width=\"100\">".$langs->trans("Port")."</td>";
 			print "<td><input type=\"text\" class=\"flat\" name=\"FTP_PORT_" . $idrss . "\" value=\"" . $conf->global->$keyforport . "\" size=\"64\"></td>";
 			print "</tr>";
 
-			
+
 			print '<tr class="oddeven">';
 			print "<td width=\"100\">".$langs->trans("User")."</td>";
 			print "<td><input type=\"text\" class=\"flat\" name=\"FTP_USER_" . $idrss . "\" value=\"" . $conf->global->$keyforuser . "\" size=\"24\"></td>";
 			print "</tr>";
 
-			
+
 			print '<tr class="oddeven">';
 			print "<td width=\"100\">".$langs->trans("Password")."</td>";
 			print "<td><input type=\"password\" class=\"flat\" name=\"FTP_PASSWORD_" . $idrss . "\" value=\"" . $conf->global->$keyforpassword . "\" size=\"24\"></td>";
 			print "</tr>";
 
-			
+
 			print '<tr class="oddeven">';
 			print "<td width=\"100\">".$langs->trans("FTPPassiveMode")."</td>";
 			print '<td>'.$form->selectyesno('FTP_PASSIVE_'.$idrss, $conf->global->$keyforpassive, 1).'</td>';
 			print "</tr>";
 
 			print "<tr>";
-			print "<td colspan=\"2\" align=\"center\">";
+			print "<td colspan=\"2\" class=\"center\">";
 			print "<input type=\"submit\" class=\"button\" name=\"modify\" value=\"".$langs->trans("Modify")."\">";
 			print " &nbsp; ";
 			print "<input type=\"submit\" class=\"button\" name=\"delete\" value=\"".$langs->trans("Delete")."\">";
@@ -295,10 +295,10 @@ else
 			print "</tr>";
 
 			print '</table>';
-			
+
 			print "</form>";
 			print '<br>';
-			
+
 			$i++;
 		}
 	}

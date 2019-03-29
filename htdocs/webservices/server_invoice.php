@@ -777,7 +777,7 @@ dol_syslog("Function: updateInvoice login=".$authentication['login']." id=".$inv
 			{
 				if ($invoice['status'] == Facture::STATUS_DRAFT)
 				{
-					$result = $object->set_draft($fuser);
+					$result = $object->setDraft($fuser);
 				}
 				if ($invoice['status'] == Facture::STATUS_VALIDATED)
 				{

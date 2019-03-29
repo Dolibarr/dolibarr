@@ -152,7 +152,7 @@ class FormFile
 			$out .= (!empty($accept)?' accept="'.$accept.'"':' accept=""');
 			$out .= '>';
 			$out .= ' ';
-			$out .= '<input type="submit" class="button" name="sendit" value="'.$langs->trans("Upload").'"';
+			$out .= '<input type="submit" class="button reposition" name="sendit" value="'.$langs->trans("Upload").'"';
 			$out .= (empty($conf->global->MAIN_UPLOAD_DOC) || empty($perm)?' disabled':'');
 			$out .= '>';
 
@@ -1044,7 +1044,7 @@ class FormFile
 	 *  @param   int    $disablemove        1=Disable move button, 0=Position move is possible.
 	 *  @param	 int	$addfilterfields	Add line with filters
 	 * 	@return	 int						<0 if KO, nb of files shown if OK
-	 *  @see list_of_autoecmfiles
+	 *  @see list_of_autoecmfiles()
 	 */
 	public function list_of_documents($filearray, $object, $modulepart, $param = '', $forcedownload = 0, $relativepath = '', $permonobject = 1, $useinecm = 0, $textifempty = '', $maxlength = 0, $title = '', $url = '', $showrelpart = 0, $permtoeditline = -1, $upload_dir = '', $sortfield = '', $sortorder = 'ASC', $disablemove = 1, $addfilterfields = 0)
 	{

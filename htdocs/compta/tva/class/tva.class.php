@@ -694,16 +694,16 @@ class Tva extends CommonObject
 		if (! empty($conf->dol_no_mouse_hover)) $notooltip=1;   // Force disable tooltips
 
 		$result='';
-        $label=$langs->trans("ShowVatPayment").': '.$this->ref;
+
+		$label = '<u>' . $langs->trans("ShowVatPayment") . '</u>';
+		$label.= '<br>';
+		$label.= '<b>' . $langs->trans('Ref') . ':</b> ' . $this->ref;
 
         $url = DOL_URL_ROOT.'/compta/tva/card.php?id='.$this->id;
 
         $linkclose='';
         if (empty($notooltip))
         {
-
-
-
         	if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
         	{
         		$label=$langs->trans("ShowMyObject");

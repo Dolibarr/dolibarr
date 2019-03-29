@@ -522,7 +522,7 @@ for ($idw=0;$idw<7;$idw++)
 	print '<td class="liste_titre"></td>';
 }
 // Action column
-print '<td class="liste_titre nowrap" align="right">';
+print '<td class="liste_titre nowrap right">';
 $searchpicto=$form->showFilterAndCheckAddButtons(0);
 print $searchpicto;
 print '</td>';
@@ -532,13 +532,13 @@ print '<tr class="liste_titre">';
 if (! empty($conf->global->PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT)) print '<td>'.$langs->trans("Project").'</td>';
 if (! empty($conf->global->PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT)) print '<td>'.$langs->trans("ThirdParty").'</td>';
 print '<td>'.$langs->trans("Task").'</td>';
-print '<td align="right" class="leftborder plannedworkload maxwidth75">'.$langs->trans("PlannedWorkload").'</td>';
-print '<td align="right" class="maxwidth75">'.$langs->trans("ProgressDeclared").'</td>';
-/*print '<td align="right" class="maxwidth75">'.$langs->trans("TimeSpent").'</td>';
- if ($usertoprocess->id == $user->id) print '<td align="right" class="maxwidth75">'.$langs->trans("TimeSpentByYou").'</td>';
- else print '<td align="right" class="maxwidth75">'.$langs->trans("TimeSpentByUser").'</td>';*/
-print '<td align="right" class="maxwidth75">'.$langs->trans("TimeSpent").'<br>('.$langs->trans("Everybody").')</td>';
-print '<td align="right" class="maxwidth75">'.$langs->trans("TimeSpent").($usertoprocess->firstname?'<br>('.$usertoprocess->firstname.')':'').'</td>';
+print '<td class="leftborder plannedworkload maxwidth75 right">'.$langs->trans("PlannedWorkload").'</td>';
+print '<td class="maxwidth75 right">'.$langs->trans("ProgressDeclared").'</td>';
+/*print '<td class="maxwidth75 right">'.$langs->trans("TimeSpent").'</td>';
+ if ($usertoprocess->id == $user->id) print '<td class="maxwidth75 right">'.$langs->trans("TimeSpentByYou").'</td>';
+ else print '<td class="maxwidth75 right">'.$langs->trans("TimeSpentByUser").'</td>';*/
+print '<td class="maxwidth75 right">'.$langs->trans("TimeSpent").'<br>('.$langs->trans("Everybody").')</td>';
+print '<td class="maxwidth75 right">'.$langs->trans("TimeSpent").($usertoprocess->firstname?'<br>('.$usertoprocess->firstname.')':'').'</td>';
 
 for ($idw=0; $idw<7; $idw++)
 {
