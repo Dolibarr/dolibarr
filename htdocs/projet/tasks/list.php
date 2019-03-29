@@ -208,7 +208,6 @@ if ($search_task_user > 0) $tuser->fetch($search_task_user);
 
 $varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
 $selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
-if ($massactionbutton) $selectedfields.=$form->showCheckAddButtons('checkforselect', 1);
 
 
 $title=$langs->trans("Activities");
@@ -217,7 +216,7 @@ $title=$langs->trans("Activities");
 if ($id)
 {
 	$projectstatic->fetch($id);
-	$projectstatic->societe->fetch($projectstatic->societe->id);
+	$projectstatic->fetch_thirdparty();
 }
 
 // Get list of project id allowed to user (in a string list separated by coma)
@@ -288,6 +287,7 @@ if ($search_task_user > 0)     $sql.=", ".MAIN_DB_PREFIX."element_contact as ect
 $sql.= " WHERE t.fk_projet = p.rowid";
 $sql.= " AND p.entity IN (".getEntity('project').')';
 if (! $user->rights->projet->all->lire) $sql.=" AND p.rowid IN (".($projectsListId?$projectsListId:'0').")";    // public and assigned to projects, or restricted to company for external users
+if (is_object($projectstatic) && $projectstatic->id > 0) $sql.=" AND p.rowid = ".$projectstatic->id;
 // No need to check company, as filtering of projects must be done by getProjectsAuthorizedForUser
 if ($socid) $sql.= "  AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
 if ($search_categ > 0)     $sql.= " AND cs.fk_categorie = ".$db->escape($search_categ);
@@ -408,7 +408,7 @@ if ((is_numeric($search_opp_status) && $search_opp_status >= 0) || in_array($sea
 if ($search_public != '') 		$param.='&search_public='.urlencode($search_public);
 if ($search_project_user != '')   $param.='&search_project_user='.urlencode($search_project_user);
 if ($search_task_user > 0)    	$param.='&search_task_user='.urlencode($search_task_user);
-if ($optioncss != '') $param.='&optioncss='.urlencode($optioncss);
+if ($optioncss != '')           $param.='&optioncss='.urlencode($optioncss);
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
@@ -503,6 +503,7 @@ if (! empty($moreforfilter))
 	print '</div>';
 }
 
+if ($massactionbutton) $selectedfields.=$form->showCheckAddButtons('checkforselect', 1);
 
 print '<div class="div-table-responsive">';
 print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'" id="tablelines3">'."\n";
