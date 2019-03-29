@@ -5,7 +5,7 @@
  * Copyright (C) 2005-2012 Regis Houssin               <regis.houssin@inodbox.com>
  * Copyright (C) 2007      Franky Van Liedekerke       <franky.van.liedekerker@telenet.be>
  * Copyright (C) 2008      Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
- * Copyright (C) 2013      Florian Henry		  	       <florian.henry@open-concept.pro>
+ * Copyright (C) 2013      Florian Henry		  	   <florian.henry@open-concept.pro>
  * Copyright (C) 2013      Alexandre Spangaro 	       <aspangaro@open-dsi.fr>
  * Copyright (C) 2013      Juanjo Menent	 	       <jmenent@2byte.es>
  * Copyright (C) 2015      Marcos García               <marcosgdf@gmail.com>
@@ -81,6 +81,7 @@ class Contact extends CommonObject
 
 	public $civility_id;      // In fact we store civility_code
 	public $civility_code;
+    public $civility_label;
 	public $address;
 	public $zip;
 	public $town;
@@ -717,12 +718,14 @@ class Contact extends CommonObject
 		$sql.= " c.import_key,";
 		$sql.= " c.datec as date_creation, c.tms as date_modification,";
 		$sql.= " co.label as country, co.code as country_code,";
+        $sql.= " ci.label as civility,";
 		$sql.= " d.nom as state, d.code_departement as state_code,";
 		$sql.= " u.rowid as user_id, u.login as user_login,";
 		$sql.= " s.nom as socname, s.address as socaddress, s.zip as soccp, s.town as soccity, s.default_lang as socdefault_lang";
 		$sql.= " FROM ".MAIN_DB_PREFIX."socpeople as c";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as co ON c.fk_pays = co.rowid";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as d ON c.fk_departement = d.rowid";
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_civility as ci ON c.civility = ci.code";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON c.rowid = u.fk_socpeople";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON c.fk_soc = s.rowid";
 		if ($id) $sql.= " WHERE c.rowid = ". $id;
@@ -749,9 +752,10 @@ class Contact extends CommonObject
 				$this->ref				= $obj->rowid;
 				$this->ref_ext			= $obj->ref_ext;
 				$this->civility_id		= $obj->civility_id;
-				$this->civility_code		= $obj->civility_id;
+				$this->civility_code    = $obj->civility_code;
+                $this->civility	        = $obj->civility;
 				$this->lastname			= $obj->lastname;
-				$this->firstname			= $obj->firstname;
+				$this->firstname		= $obj->firstname;
 				$this->address			= $obj->address;
 				$this->zip				= $obj->zip;
 				$this->town				= $obj->town;
@@ -764,29 +768,29 @@ class Contact extends CommonObject
 				$this->departement_code	= $obj->state_code;	       // deprecated
 				$this->state_code		= $obj->state_code;
 				$this->departement		= $obj->state;	           // deprecated
-				$this->state				= $obj->state;
+				$this->state			= $obj->state;
 
 				$this->country_id 		= $obj->country_id;
 				$this->country_code		= $obj->country_id?$obj->country_code:'';
 				$this->country			= $obj->country_id?($langs->trans('Country'.$obj->country_code)!='Country'.$obj->country_code?$langs->transnoentities('Country'.$obj->country_code):$obj->country):'';
 
-				$this->socid				= $obj->fk_soc;
+				$this->socid			= $obj->fk_soc;
 				$this->socname			= $obj->socname;
-				$this->poste				= $obj->poste;
+				$this->poste			= $obj->poste;
 				$this->statut			= $obj->statut;
 
-				$this->phone_pro			= trim($obj->phone);
+				$this->phone_pro		= trim($obj->phone);
 				$this->fax				= trim($obj->fax);
 				$this->phone_perso		= trim($obj->phone_perso);
 				$this->phone_mobile		= trim($obj->phone_mobile);
 
-				$this->email				= $obj->email;
+				$this->email			= $obj->email;
 				$this->jabberid			= $obj->jabberid;
-				$this->skype				= $obj->skype;
-				$this->twitter				= $obj->twitter;
-				$this->facebook				= $obj->facebook;
-				$this->linkedin				= $obj->linkedin;
-				$this->photo				= $obj->photo;
+				$this->skype			= $obj->skype;
+				$this->twitter			= $obj->twitter;
+				$this->facebook			= $obj->facebook;
+				$this->linkedin			= $obj->linkedin;
+				$this->photo			= $obj->photo;
 				$this->priv				= $obj->priv;
 				$this->mail				= $obj->email;
 
