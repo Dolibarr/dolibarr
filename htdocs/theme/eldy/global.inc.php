@@ -908,7 +908,7 @@ select.selectarrowonleft option {
 }
 .linkobject { cursor: pointer; }
 
-table.tableforfield tr>td:first-of-type {
+table.tableforfield tr>td:first-of-type, div.tableforfield div.tagtr>div.tagtd:first-of-type {
 	color: #666;
 }
 

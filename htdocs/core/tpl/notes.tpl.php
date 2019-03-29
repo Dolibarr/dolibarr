@@ -74,7 +74,7 @@ if (! empty($conf->fckeditor->enabled) && ! empty($conf->global->FCKEDITOR_ENABL
 else $typeofdata='textarea:12:95%';
 
 print '<!-- BEGIN PHP TEMPLATE NOTES -->'."\n";
-print '<div class="tagtable border table-border centpercent">'."\n";
+print '<div class="tagtable border table-border tableforfield centpercent">'."\n";
 if ($module != 'product') {
 	// No public note yet on products
 	print '<div class="tagtr pair table-border-row">'."\n";
