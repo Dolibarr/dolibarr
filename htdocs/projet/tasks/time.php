@@ -44,6 +44,7 @@ $cancel     = GETPOST('cancel', 'alpha');
 $toselect   = GETPOST('toselect', 'array');												// Array of ids of elements selected into a list
 $contextpage= GETPOST('contextpage', 'aZ')?GETPOST('contextpage', 'aZ'):'myobjectlist';   // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');											// Go back to a dedicated page
+$optioncss  = GETPOST('optioncss', 'alpha');
 
 $id         = GETPOST('id', 'int');
 $projectid  = GETPOST('projectid', 'int');
@@ -571,36 +572,46 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 			print '<br>';
 		}
 
-			// Link to create time
-			//if ((empty($id) && empty($ref)) || ! empty($projectidforalltimes))
-			//{
-    			if ($user->rights->projet->all->creer || $user->rights->projet->creer)
-    			{
-    				if ($projectstatic->public || $userWrite > 0)
-    			    {
-    			    	if (! empty($projectidforalltimes))		// We are on tab 'Time Spent' of project
-    			    	{
-    			    		$backtourl = $_SERVER['PHP_SELF'].'?projectid='.$projectstatic->id.($withproject?'&withproject=1':'');
-    			    		$linktocreatetime = '<a class="butActionNew" href="'.$_SERVER['PHP_SELF'].'?'.($withproject?'withproject=1':'').'&projectid='.$projectstatic->id.'&action=createtime'.$param.'&backtopage='.urlencode($backtourl).'"><span class="valignmiddle text-plus-circle">'.$langs->trans('AddTimeSpent').'</span><span class="fa fa-plus-circle valignmiddle"></span></a>';
-    			    	}
-    			    	else									// We are on tab 'Time Spent' of task
-    			    	{
-    			    		$backtourl = $_SERVER['PHP_SELF'].'?id='.$object->id.($withproject?'&withproject=1':'');
-    			    		$linktocreatetime = '<a class="butActionNew" href="'.$_SERVER['PHP_SELF'].'?'.($withproject?'withproject=1':'').($object->id > 0 ? '&id='.$object->id : '&projectid='.$projectstatic->id).'&action=createtime'.$param.'&backtopage='.urlencode($backtourl).'"><span class="valignmiddle text-plus-circle">'.$langs->trans('AddTimeSpent').'</span><span class="fa fa-plus-circle valignmiddle"></span></a>';
-    			    	}
-    			    }
-    			    else
-    			    {
-    			    	$linktocreatetime = '<a class="butActionNewRefused" href="#" title="'.$langs->trans("NotOwnerOfProject").'"><span class="valignmiddle text-plus-circle">'.$langs->trans('AddTime').'</span><span class="fa fa-plus-circle valignmiddle"></span></a>';
-    			    }
-    			}
-    			else
-    			{
-    				$linktocreatetime = '<a class="butActionNewRefused" href="#" title="'.$langs->trans("NotEnoughPermissions").'"><span class="valignmiddle text-plus-circle">'.$langs->trans('AddTime').'</span><span class="fa fa-plus-circle valignmiddle"></span></a>';
-    			}
-			//}
+		// Link to create time
+		if ($user->rights->projet->all->creer || $user->rights->projet->creer)
+		{
+			if ($projectstatic->public || $userWrite > 0)
+		    {
+		    	if (! empty($projectidforalltimes))		// We are on tab 'Time Spent' of project
+		    	{
+		    		$backtourl = $_SERVER['PHP_SELF'].'?projectid='.$projectstatic->id.($withproject?'&withproject=1':'');
+		    		$linktocreatetime = '<a class="butActionNew" href="'.$_SERVER['PHP_SELF'].'?'.($withproject?'withproject=1':'').'&projectid='.$projectstatic->id.'&action=createtime'.$param.'&backtopage='.urlencode($backtourl).'"><span class="valignmiddle text-plus-circle">'.$langs->trans('AddTimeSpent').'</span><span class="fa fa-plus-circle valignmiddle"></span></a>';
+		    	}
+		    	else									// We are on tab 'Time Spent' of task
+		    	{
+		    		$backtourl = $_SERVER['PHP_SELF'].'?id='.$object->id.($withproject?'&withproject=1':'');
+		    		$linktocreatetime = '<a class="butActionNew" href="'.$_SERVER['PHP_SELF'].'?'.($withproject?'withproject=1':'').($object->id > 0 ? '&id='.$object->id : '&projectid='.$projectstatic->id).'&action=createtime'.$param.'&backtopage='.urlencode($backtourl).'"><span class="valignmiddle text-plus-circle">'.$langs->trans('AddTimeSpent').'</span><span class="fa fa-plus-circle valignmiddle"></span></a>';
+		    	}
+		    }
+		    else
+		    {
+		    	$linktocreatetime = '<a class="butActionNewRefused" href="#" title="'.$langs->trans("NotOwnerOfProject").'"><span class="valignmiddle text-plus-circle">'.$langs->trans('AddTime').'</span><span class="fa fa-plus-circle valignmiddle"></span></a>';
+		    }
+		}
+		else
+		{
+			$linktocreatetime = '<a class="butActionNewRefused" href="#" title="'.$langs->trans("NotEnoughPermissions").'"><span class="valignmiddle text-plus-circle">'.$langs->trans('AddTime').'</span><span class="fa fa-plus-circle valignmiddle"></span></a>';
+		}
 	}
 
+	$massactionbutton = '';
+	if ($projectstatic->bill_time)
+	{
+	    $arrayofmassactions =  array(
+	        'generateinvoice'=>$langs->trans("GenerateBill"),
+	        //'builddoc'=>$langs->trans("PDFMerge"),
+	    );
+	    //if ($user->rights->projet->creer) $arrayofmassactions['predelete']=$langs->trans("Delete");
+	    if (in_array($massaction, array('presend','predelete','generateinvoice'))) $arrayofmassactions=array();
+	    $massactionbutton=$form->selectMassAction('', $arrayofmassactions);
+	}
+
+	// Show section with information of task. If id of task is not defined and project id defined, then $projectidforalltimes is not empty.
 	if (empty($projectidforalltimes))
 	{
 		$head=task_prepare_head($object);
@@ -645,7 +656,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 		print '<div class="fichehalfleft">';
 
         print '<div class="underbanner clearboth"></div>';
-		print '<table class="border" width="100%">';
+		print '<table class="border tableforfield centpercent">';
 
 		// Date start - Date end
 		print '<tr><td class="titlefield">'.$langs->trans("DateStart").' - '.$langs->trans("DateEnd").'</td><td>';
@@ -671,7 +682,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 		print '<div class="fichehalfright"><div class="ficheaddleft">';
 
 		print '<div class="underbanner clearboth"></div>';
-		print '<table class="border" width="100%">';
+		print '<table class="border tableforfield centpercent">';
 
 		// Progress declared
 		print '<tr><td class="titlefield">'.$langs->trans("ProgressDeclared").'</td><td>';
@@ -700,92 +711,8 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 		print '<div class="clearboth"></div>';
 
 		dol_fiche_end();
-
-		print '<!-- List of time spent for task -->'."\n";
-
-		$title=$langs->trans("ListTaskTimeForTask");
-		//print_barre_liste($title, 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, $linktotasks, $num, $nbtotalofrecords, 'title_generic.png', 0, '', '', 0, 1);
-		print load_fiche_titre($title, $linktocreatetime, 'title_generic.png');
-
-		/*
-		 * Form to add time spent on task
-		 */
-
-		if ($action == 'createtime' && $object->id > 0 && $user->rights->projet->lire)
-		{
-			print '<!-- form to add time spent on task -->'."\n";
-			print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'">';
-			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-			print '<input type="hidden" name="action" value="addtimespent">';
-			print '<input type="hidden" name="id" value="'.$object->id.'">';
-			print '<input type="hidden" name="withproject" value="'.$withproject.'">';
-
-			print '<div class="div-table-responsive-no-min">';
-			print '<table class="noborder nohover" width="100%">';
-
-			print '<tr class="liste_titre">';
-			print '<td>'.$langs->trans("Date").'</td>';
-			print '<td>'.$langs->trans("By").'</td>';
-			print '<td>'.$langs->trans("Note").'</td>';
-			print '<td>'.$langs->trans("NewTimeSpent").'</td>';
-			print '<td>'.$langs->trans("ProgressDeclared").'</td>';
-			print '<td></td>';
-			print "</tr>\n";
-
-			print '<tr class="oddeven">';
-
-			// Date
-			print '<td class="maxwidthonsmartphone">';
-			//$newdate=dol_mktime(12,0,0,$_POST["timemonth"],$_POST["timeday"],$_POST["timeyear"]);
-			$newdate='';
-			print $form->selectDate($newdate, 'time', ($conf->browser->layout == 'phone'?2:1), 1, 2, "timespent_date", 1, 0);
-			print '</td>';
-
-			// Contributor
-			print '<td class="maxwidthonsmartphone">';
-			print img_object('', 'user', 'class="hideonsmartphone"');
-			$contactsoftask=$object->getListContactId('internal');
-			if (count($contactsoftask)>0)
-			{
-				if(in_array($user->id, $contactsoftask)) $userid = $user->id;
-				else $userid=$contactsoftask[0];
-				print $form->select_dolusers((GETPOST('userid')?GETPOST('userid'):$userid), 'userid', 0, '', 0, '', $contactsoftask, 0, 0, 0, '', 0, $langs->trans("ResourceNotAssignedToTheTask"), 'maxwidth200');
-			}
-			else
-			{
-				print img_error($langs->trans('FirstAddRessourceToAllocateTime')).$langs->trans('FirstAddRessourceToAllocateTime');
-			}
-			print '</td>';
-
-			// Note
-			print '<td>';
-			print '<textarea name="timespent_note" class="maxwidth100onsmartphone" rows="'.ROWS_2.'">'.($_POST['timespent_note']?$_POST['timespent_note']:'').'</textarea>';
-			print '</td>';
-
-			// Duration - Time spent
-			print '<td>';
-			print $form->select_duration('timespent_duration', ($_POST['timespent_duration']?$_POST['timespent_duration']:''), 0, 'text');
-			print '</td>';
-
-			// Progress declared
-			print '<td class="nowrap">';
-			print $formother->select_percent(GETPOST('progress')?GETPOST('progress'):$object->progress, 'progress', 0, 5, 0, 100, 1);
-			print '</td>';
-
-			print '<td class="center">';
-			print '<input type="submit" name="save" class="button" value="'.$langs->trans("Add").'">';
-			print ' &nbsp; ';
-			print '<input type="submit" name="cancel" class="button" value="'.$langs->trans("Cancel").'">';
-			print '</td></tr>';
-
-			print '</table>';
-			print '</div>';
-
-			print '</form>';
-
-			print '<br>';
-		}
 	}
+
 
 	if ($projectstatic->id > 0)
 	{
@@ -820,17 +747,6 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 	        }
 	    }
 
-	    if (! empty($withproject) && $projectstatic->bill_time)
-	    {
-	        $arrayofmassactions =  array(
-    	        'generateinvoice'=>$langs->trans("GenerateBill"),
-    	        //'builddoc'=>$langs->trans("PDFMerge"),
-    	    );
-    	    //if ($user->rights->projet->creer) $arrayofmassactions['predelete']=$langs->trans("Delete");
-    	    if (in_array($massaction, array('presend','predelete','generateinvoice'))) $arrayofmassactions=array();
-    	    $massactionbutton=$form->selectMassAction('', $arrayofmassactions);
-	    }
-
 	    $param='';
 	    if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
 	    if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.urlencode($limit);
@@ -856,8 +772,8 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 	    print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 	    if ($action == 'editline') print '<input type="hidden" name="action" value="updateline">';
 	    elseif ($action == 'splitline') print '<input type="hidden" name="action" value="updatesplitline">';
-	    elseif ($action == 'createtime' && empty($id) && $user->rights->projet->lire) print '<input type="hidden" name="action" value="addtimespent">';
-	    elseif ($massaction == 'generateinvoice' && empty($id) && $user->rights->facture->lire) print '<input type="hidden" name="action" value="confirm_generateinvoice">';
+	    elseif ($action == 'createtime' && $user->rights->projet->lire) print '<input type="hidden" name="action" value="addtimespent">';
+	    elseif ($massaction == 'generateinvoice' && $user->rights->facture->lire) print '<input type="hidden" name="action" value="confirm_generateinvoice">';
 	    else print '<input type="hidden" name="action" value="list">';
 	    print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	    print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
@@ -869,8 +785,6 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 
 	    if ($massaction == 'generateinvoice')
 	    {
-	        $langs->load("bills");
-
 	        //var_dump($_REQUEST);
 	        print '<input type="hidden" name="massaction" value="confirm_createbills">';
 
@@ -1001,6 +915,14 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 
 				print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_generic', 0, $linktocreatetime, '', $limit);
 			}
+			else
+			{
+			    print '<!-- List of time spent for project -->'."\n";
+
+			    $title=$langs->trans("ListTaskTimeForTask");
+
+			    print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_generic', 0, $linktocreatetime, '', $limit);
+			}
 
 			$i = 0;
 			while ($i < $num)
@@ -1019,15 +941,16 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 		/*
 		 * Form to add time spent
 		 */
-		if ($action == 'createtime' && empty($id) && $user->rights->projet->lire)
+		if ($action == 'createtime' && $user->rights->projet->lire)
 		{
 			print '<!-- table to add time spent -->'."\n";
+            if (! empty($id)) print '<input type="hidden" name="taskid" value="'.$id.'">';
 
 			print '<table class="noborder nohover" width="100%">';
 
 			print '<tr class="liste_titre">';
 			print '<td>'.$langs->trans("Date").'</td>';
-			print '<td>'.$langs->trans("Task").'</td>';
+			if (empty($id)) print '<td>'.$langs->trans("Task").'</td>';
 			print '<td>'.$langs->trans("By").'</td>';
 			print '<td>'.$langs->trans("Note").'</td>';
 			print '<td>'.$langs->trans("NewTimeSpent").'</td>';
@@ -1049,9 +972,12 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 			print '</td>';
 
 			// Task
-			print '<td class="maxwidthonsmartphone">';
-			$formproject->selectTasks(-1, GETPOST('taskid', 'int'), 'taskid', 0, 0, 1, 1, 0, 0, 'maxwidth300', $projectstatic->id, '');
-			print '</td>';
+			if (empty($id))
+			{
+    			print '<td class="maxwidthonsmartphone">';
+    			$formproject->selectTasks(-1, GETPOST('taskid', 'int'), 'taskid', 0, 0, 1, 1, 0, 0, 'maxwidth300', $projectstatic->id, '');
+    			print '</td>';
+			}
 
 			// Contributor
 			print '<td class="maxwidthonsmartphone">';
