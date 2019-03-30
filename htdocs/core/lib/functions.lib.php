@@ -3675,7 +3675,7 @@ function img_searchclear($titlealt = 'default', $other = '')
  *	@param	string	$text			Text info
  *	@param  integer	$infoonimgalt	Info is shown only on alt of star picto, otherwise it is show on output after the star picto
  *	@param	int		$nodiv			No div
- *  @param  string  $admin          '1'=Info for admin users. '0'=Info for standard users (change only the look), 'xxx'=Other
+ *  @param  string  $admin          '1'=Info for admin users. '0'=Info for standard users (change only the look), 'error','xxx'=Other
  *  @param	string	$morecss		More CSS
  *	@return	string					String with info text
  */

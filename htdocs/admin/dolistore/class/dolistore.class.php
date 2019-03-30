@@ -44,7 +44,6 @@ class Dolistore
 	// setups
 	public $url;         // the url of this page
 	public $shop_url;    // the url of the shop
-	public $vat_rate;    // the vat rate used in the shop (prices are provided without vat)
 	public $lang;        // the integer representing the lang in the store
 	public $debug_api;   // usefull if no dialog
 
@@ -60,7 +59,6 @@ class Dolistore
 
 		$this->url       = DOL_URL_ROOT.'/admin/modules.php?mode=marketplace';
 		$this->shop_url  = 'https://www.dolistore.com/index.php?controller=product&id_product=';
-		$this->vat_rate  = 1.2; // 20% de TVA
 		$this->debug_api = $debug;
 
 		$langtmp    = explode('_', $langs->defaultlang);
@@ -250,7 +248,7 @@ class Dolistore
 
 			// free or pay ?
 			if ($product->price > 0) {
-				$price         = '<h3>'.price(round((float) $product->price * $this->vat_rate, 2)).'&nbsp;&euro;</h3>';
+			    $price         = '<h3>'.price(price2num($product->price, 'MT'), 0, $langs, 1, -1, -1, 'EUR').' '.$langs->trans("HT").'</h3>';
 				$download_link = '<a target="_blank" href="'.$this->shop_url.$product->id.'"><img width="32" src="'.DOL_URL_ROOT.'/admin/dolistore/img/follow.png" /></a>';
 			} else {
 				$price         = '<h3>'.$langs->trans('Free').'</h3>';
