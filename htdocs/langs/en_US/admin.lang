@@ -481,9 +481,11 @@ FilesAttachedToEmail=Attach file
 SendEmailsReminders=Send agenda reminders by emails
 davDescription=Setup a WebDAV server
 DAVSetup=Setup of module DAV
-DAV_ALLOW_PUBLIC_DIR=Enable the public directory (WebDAV directory - no login required)
-DAV_ALLOW_PUBLIC_DIRTooltip=The WebDAV public directory is a WebDAV directory anybody can access (in read and write mode), with no authorization required (login/password account).
-DAV_ALLOW_ECM_DIR=Enable the private directory (root directory of the DMS/ECM module - login required)
+DAV_ALLOW_PRIVATE_DIR=Enable the generic private directory (WebDAV dedicated directory named "private" - login required)
+DAV_ALLOW_PRIVATE_DIRTooltip=The generic private directory is a WebDAV directory anybody can access with its application login/pass.
+DAV_ALLOW_PUBLIC_DIR=Enable the generic public directory (WebDAV dedicated directory named "public" - no login required)
+DAV_ALLOW_PUBLIC_DIRTooltip=The generic public directory is a WebDAV directory anybody can access (in read and write mode), with no authorization required (login/password account).
+DAV_ALLOW_ECM_DIR=Enable the DMS/ECM private directory (root directory of the DMS/ECM module - login required)
 DAV_ALLOW_ECM_DIRTooltip=The root directory where all files are manually uploaded when using the DMS/ECM module. Similarly as access from the web interface, you will need a valid login/password with adecuate permissions to access it.
 # Modules
 Module0Name=Users & Groups
