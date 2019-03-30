@@ -1764,7 +1764,7 @@ function top_menu_user(User $user, Translate $langs)
     $dropdownBody.= '<br><b>' . $langs->trans("Status").'</b>: '.$user->getLibStatut(0);
     $dropdownBody.= '<br>';
 
-    $dropdownBody.= '<br><u>'.$langs->trans("Connection").'</u>';
+    $dropdownBody.= '<br><u>'.$langs->trans("Session").'</u>';
     $dropdownBody.= '<br><b>'.$langs->trans("IPAddress").'</b>: '.$_SERVER["REMOTE_ADDR"];
     if (! empty($conf->global->MAIN_MODULE_MULTICOMPANY)) $dropdownBody.= '<br><b>'.$langs->trans("ConnectedOnMultiCompany").':</b> '.$conf->entity.' (user entity '.$user->entity.')';
     $dropdownBody.= '<br><b>'.$langs->trans("AuthenticationMode").':</b> '.$_SESSION["dol_authmode"].(empty($dolibarr_main_demo)?'':' (demo)');
@@ -1811,6 +1811,8 @@ function top_menu_user(User $user, Translate $langs)
         <a href="'.DOL_URL_ROOT.'/user/card.php?id='.$user->id.'" class="dropdown-toggle" data-toggle="dropdown">
             '.$userImage.'
             <span class="hidden-xs maxwidth200">'.dol_trunc($user->firstname ? $user->firstname : $user->login, 11).'</span>
+            <span class="fa fa-chevron-down" id="dropdown-icon-down"></span>
+            <span class="fa fa-chevron-up hidden" id="dropdown-icon-up"></span>
         </a>
         <div class="dropdown-menu">
             <!-- User image -->
@@ -1839,6 +1841,7 @@ function top_menu_user(User $user, Translate $langs)
 
         </div>
     </div>
+    <!-- Code to show/hide the user drop-down -->
     <script>
     $( document ).ready(function() {
         $(document).on("click", function(event) {
@@ -1851,6 +1854,8 @@ function top_menu_user(User $user, Translate $langs)
         $("#topmenu-login-dropdown .dropdown-toggle").on("click", function(event) {
             event.preventDefault();
             $("#topmenu-login-dropdown").toggleClass("open");
+            $("#dropdown-icon-down").toggle();
+            $("#dropdown-icon-up").toggle();
         });
 
         $("#topmenuloginmoreinfo-btn").on("click", function() {

@@ -5,7 +5,6 @@ if (! defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
  Dropdown
 */
 
-
 .open>.dropdown-menu{ /*, #topmenu-login-dropdown:hover .dropdown-menu*/
     display: block;
 }
@@ -67,7 +66,7 @@ if (! defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
     border-top-left-radius: 0;
     padding: 1px 0 0 0;
     border-top-width: 0;
-    width: 280px;
+    width: 300px;
 }
 .side-nav-vert .user-menu .dropdown-menu {
     margin-top: 0;
@@ -132,7 +131,7 @@ if (! defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
 #topmenuloginmoreinfo{
     display: none;
     clear: both;
-    font-size: 0.9em;
+    font-size: 0.95em;
 }
 
 .button-top-menu-dropdown {
