@@ -637,11 +637,12 @@ else
 			print '<tr><td>'.$langs->trans("AccountancyJournal").'</td>';
 			print '<td>';
 
-			$accountingjournal = new AccountingJournal($db);
-			$accountingjournal->fetch($object->fk_accountancy_journal);
+            if (! empty($object->fk_accountancy_journal)) {
+                $accountingjournal = new AccountingJournal($db);
+                $accountingjournal->fetch($object->fk_accountancy_journal);
 
-			print $accountingjournal->getNomUrl(0,1,1,'',1);
-
+                print $accountingjournal->getNomUrl(0, 1, 1, '', 1);
+            }
 			print '</td></tr>';
 		}
 
