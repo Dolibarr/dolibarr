@@ -830,7 +830,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 	        print $langs->trans('ValidateInvoices');
 	        print '</td>';
 	        print '<td>';
-            print $form->selectyesno('valdate_invoices', 0, 1);
+            print $form->selectyesno('validate_invoices', 0, 1);
 	        print '</td>';
 	        print '</tr>';*/
 	        print '</table>';
