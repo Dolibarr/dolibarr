@@ -115,7 +115,7 @@ class Dolistore
 	 */
 	public function getRemoteProducts($options = array('start' => 0, 'end' => 10, 'per_page' => 50, 'categorie' => 0, 'search' => ''))
 	{
-		global $conf, $langs;
+		global $conf;
 
 		$this->start     = $options['start'];
 		$this->end       = $options['end'];
@@ -139,7 +139,7 @@ class Dolistore
 
 			// make a search to limit the id returned.
 			if ($this->search != '') {
-				$opt2['url'] = $conf->global->MAIN_MODULE_DOLISTORE_API_SRV.'/api/search?query='.$this->search.'&language='.($this->lang);  // It seems for search, key start with
+				$opt2['url'] = $conf->global->MAIN_MODULE_DOLISTORE_API_SRV.'/api/search?query='.$this->search.'&language='.$this->lang;  // It seems for search, key start with
 
 				// Call
 				dol_syslog("Call API with opt2 = ".var_export($opt2, true));
