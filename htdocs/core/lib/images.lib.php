@@ -33,7 +33,7 @@ $quality = 80;
  *      Return if a filename is file name of a supported image format
  *
  *      @param	string	$file       Filename
- *      @return int         		-1=Not image filename, 0=Image filename but format not supported by PHP, 1=Image filename with format supported
+ *      @return int         		-1=Not image filename, 0=Image filename but format not supported by PHP, 1=Image filename with format supported by this PHP
  */
 function image_format_supported($file)
 {

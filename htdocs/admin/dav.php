@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2008-2018 	Laurent Destailleur <eldy@users.sourceforge.net>
+/* Copyright (C) 2008-2019 	Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,7 +36,8 @@ $action = GETPOST('action', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 
 $arrayofparameters=array(
-	'DAV_ALLOW_PUBLIC_DIR'=>array('css'=>'minwidth200', 'enabled'=>1),
+    'DAV_ALLOW_PRIVATE_DIR'=>array('css'=>'minwidth200', 'enabled'=>2),
+    'DAV_ALLOW_PUBLIC_DIR'=>array('css'=>'minwidth200', 'enabled'=>1),
 	'DAV_ALLOW_ECM_DIR'=>array('css'=>'minwidth200', 'enabled'=>$conf->ecm->enabled)
 );
 
@@ -84,7 +85,11 @@ if ($action == 'edit')
 		print '<tr class="oddeven"><td>';
 		print $form->textwithpicto($langs->trans($key), $langs->trans($key.'Tooltip'));
 		print '</td><td>';
-		if ($key == 'DAV_ALLOW_PUBLIC_DIR' || $key == 'DAV_ALLOW_ECM_DIR')
+		if ($key == 'DAV_ALLOW_PRIVATE_DIR')
+		{
+		    print $langs->trans("AlwaysActive");
+		}
+		elseif ($key == 'DAV_ALLOW_PUBLIC_DIR' || $key == 'DAV_ALLOW_ECM_DIR')
 		{
 			print $form->selectyesno($key, $conf->global->$key, 1);
 		}
@@ -114,7 +119,11 @@ else
 		print '<tr class="oddeven"><td>';
 		print $form->textwithpicto($langs->trans($key), $langs->trans($key.'Tooltip'));
 		print '</td><td>';
-		if ($key == 'DAV_ALLOW_PUBLIC_DIR' || $key == 'DAV_ALLOW_ECM_DIR')
+		if ($key == 'DAV_ALLOW_PRIVATE_DIR')
+		{
+		    print $langs->trans("AlwaysActive");
+		}
+		elseif ($key == 'DAV_ALLOW_PUBLIC_DIR' || $key == 'DAV_ALLOW_ECM_DIR')
 		{
 			print yn($conf->global->$key);
 		}

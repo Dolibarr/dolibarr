@@ -40,8 +40,19 @@ class CompanyBankAccount extends Account
 	public $rum;
 	public $date_rum;
 
-	public $datec;
-	public $datem;
+	/**
+     * Date creation record (datec)
+     *
+     * @var integer
+     */
+    public $datec;
+    
+	/**
+     * Date modification record (tms)
+     *
+     * @var integer
+     */
+    public $datem;
 
 
 	/**

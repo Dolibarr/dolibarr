@@ -451,7 +451,7 @@ $button.= '</a>';
 
 
 $groupby = ' <a class="nohover marginrightonly" href="'.DOL_URL_ROOT.'/accountancy/bookkeeping/listbyaccount.php?'.$param.'">' . $langs->trans("GroupByAccountAccounting") . '</a>';
-$newcardbutton = '<a class="butActionNew" href="./card.php?action=create"><span class="valignmiddle">' . $langs->trans("NewAccountingMvt").'</span>';
+$newcardbutton = '<a class="butActionNew" href="./card.php?action=create"><span class="valignmiddle text-plus-circle">'.$langs->trans("NewAccountingMvt").'</span>';
 $newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
 $newcardbutton.= '</a>';
 
@@ -648,7 +648,7 @@ if ($num > 0)
 		// Document date
 		if (! empty($arrayfields['t.doc_date']['checked']))
 		{
-			print '<td align="center">' . dol_print_date($line->doc_date, 'day') . '</td>';
+			print '<td class="center">' . dol_print_date($line->doc_date, 'day') . '</td>';
 			if (! $i) $totalarray['nbfield']++;
 		}
 
@@ -701,7 +701,7 @@ if ($num > 0)
 		// Lettering code
 		if (! empty($arrayfields['t.lettering_code']['checked']))
 		{
-			print '<td align="center">' . $line->lettering_code . '</td>';
+			print '<td class="center">' . $line->lettering_code . '</td>';
 			if (! $i) $totalarray['nbfield']++;
 		}
 
@@ -711,26 +711,26 @@ if ($num > 0)
 			$accountingjournal = new AccountingJournal($db);
 			$result = $accountingjournal->fetch('', $line->code_journal);
 			$journaltoshow = (($result > 0)?$accountingjournal->getNomUrl(0, 0, 0, '', 0) : $line->code_journal);
-			print '<td align="center">' . $journaltoshow . '</td>';
+			print '<td class="center">' . $journaltoshow . '</td>';
 			if (! $i) $totalarray['nbfield']++;
 		}
 
 		// Creation operation date
 		if (! empty($arrayfields['t.date_creation']['checked']))
 		{
-			print '<td align="center">' . dol_print_date($line->date_creation, 'dayhour') . '</td>';
+			print '<td class="center">' . dol_print_date($line->date_creation, 'dayhour') . '</td>';
 			if (! $i) $totalarray['nbfield']++;
 		}
 
 		// Modification operation date
 		if (! empty($arrayfields['t.tms']['checked']))
 		{
-			print '<td align="center">' . dol_print_date($line->date_modification, 'dayhour') . '</td>';
+			print '<td class="center">' . dol_print_date($line->date_modification, 'dayhour') . '</td>';
 			if (! $i) $totalarray['nbfield']++;
 		}
 
 		// Action column
-		print '<td align="center" class="nowraponall">';
+		print '<td class="nowraponall center">';
 		print '<a href="'.DOL_URL_ROOT.'/accountancy/bookkeeping/card.php?piece_num=' . $line->piece_num . $param . '&page=' . $page . ($sortfield ? '&sortfield='.$sortfield : '') . ($sortorder ? '&sortorder='.$sortorder : '') . '">' . img_edit() . '</a>&nbsp;';
 		print '<a href="' . $_SERVER['PHP_SELF'] . '?action=delmouv&mvt_num=' . $line->piece_num . $param . '&page=' . $page . ($sortfield ? '&sortfield='.$sortfield : '') . ($sortorder ? '&sortorder='.$sortorder : '') . '">' . img_delete() . '</a>';
 		print '</td>';

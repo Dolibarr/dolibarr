@@ -466,7 +466,7 @@ if ($resql)
 	$newcardbutton='';
 	if ($user->rights->fournisseur->facture->creer)
 	{
-		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/fourn/facture/card.php?action=create"><span class="valignmiddle">'.$langs->trans('NewBill').'</span>';
+		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/fourn/facture/card.php?action=create"><span class="valignmiddle text-plus-circle">'.$langs->trans('NewBill').'</span>';
 		$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
 		$newcardbutton.= '</a>';
 	}
@@ -518,7 +518,7 @@ if ($resql)
 		print $langs->trans('ValidateInvoices');
 		print '</td>';
 		print '<td>';
-		print $form->selectyesno('valdate_invoices', 1, 1);
+		print $form->selectyesno('validate_invoices', 1, 1);
 		print '</td>';
 		print '</tr>';
 		print '</table>';

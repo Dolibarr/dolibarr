@@ -334,20 +334,21 @@ function project_admin_prepare_head()
 /**
  * Show task lines with a particular parent
  *
- * @param	string	   	$inc				Line number (start to 0, then increased by recursive call)
- * @param   string		$parent				Id of parent project to show (0 to show all)
- * @param   Task[]		$lines				Array of lines
- * @param   int			$level				Level (start to 0, then increased/decrease by recursive call), or -1 to show all level in order of $lines without the recursive groupment feature.
- * @param 	string		$var				Color
- * @param 	int			$showproject		Show project columns
- * @param	int			$taskrole			Array of roles of user for each tasks
- * @param	int			$projectsListId		List of id of project allowed to user (string separated with comma)
- * @param	int			$addordertick		Add a tick to move task
- * @param   int         $projectidfortotallink     0 or Id of project to use on total line (link to see all time consumed for project)
+ * @param	string	   	$inc				    Line number (start to 0, then increased by recursive call)
+ * @param   string		$parent				    Id of parent project to show (0 to show all)
+ * @param   Task[]		$lines				    Array of lines
+ * @param   int			$level				    Level (start to 0, then increased/decrease by recursive call), or -1 to show all level in order of $lines without the recursive groupment feature.
+ * @param 	string		$var				    Color
+ * @param 	int			$showproject		    Show project columns
+ * @param	int			$taskrole			    Array of roles of user for each tasks
+ * @param	int			$projectsListId		    List of id of project allowed to user (string separated with comma)
+ * @param	int			$addordertick		    Add a tick to move task
+ * @param   int         $projectidfortotallink  0 or Id of project to use on total line (link to see all time consumed for project)
  * @param   string      $filterprogresscalc     filter text
+ * @param   string      $showbilltime           Add the column 'TimeToBill' and 'TimeBilled'
  * @return	void
  */
-function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$taskrole, $projectsListId = '', $addordertick = 0, $projectidfortotallink = 0, $filterprogresscalc = '')
+function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$taskrole, $projectsListId = '', $addordertick = 0, $projectidfortotallink = 0, $filterprogresscalc = '', $showbilltime = 0)
 {
 	global $user, $bc, $langs, $conf, $db;
 	global $projectstatic, $taskstatic;
@@ -370,12 +371,14 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 	$numlines=count($lines);
 
 	// We declare counter as global because we want to edit them into recursive call
-	global $total_projectlinesa_spent,$total_projectlinesa_planned,$total_projectlinesa_spent_if_planned;
+	global $total_projectlinesa_spent,$total_projectlinesa_planned,$total_projectlinesa_spent_if_planned,$total_projectlinesa_tobill,$total_projectlinesa_billed;
 	if ($level == 0)
 	{
 		$total_projectlinesa_spent=0;
 		$total_projectlinesa_planned=0;
 		$total_projectlinesa_spent_if_planned=0;
+		$total_projectlinesa_tobill=0;
+		$total_projectlinesa_billed=0;
 	}
 
 	for ($i = 0 ; $i < $numlines ; $i++)
@@ -439,15 +442,25 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 
 				print '<tr '.$bc[$var].' id="row-'.$lines[$i]->id.'">'."\n";
 
+				$projectstatic->id=$lines[$i]->fk_project;
+				$projectstatic->ref=$lines[$i]->projectref;
+				$projectstatic->public=$lines[$i]->public;
+				$projectstatic->title=$lines[$i]->projectlabel;
+				$projectstatic->bill_time=$lines[$i]->bill_time;
+
+				$taskstatic->id=$lines[$i]->id;
+				$taskstatic->ref=$lines[$i]->ref;
+				$taskstatic->label=($taskrole[$lines[$i]->id]?$langs->trans("YourRole").': '.$taskrole[$lines[$i]->id]:'');
+				$taskstatic->projectstatus = $lines[$i]->projectstatus;
+				$taskstatic->progress = $lines[$i]->progress;
+				$taskstatic->fk_statut = $lines[$i]->status;
+				$taskstatic->datee = $lines[$i]->date_end;
+
 				if ($showproject)
 				{
 					// Project ref
 					print "<td>";
 					//if ($showlineingray) print '<i>';
-					$projectstatic->id=$lines[$i]->fk_project;
-					$projectstatic->ref=$lines[$i]->projectref;
-					$projectstatic->public=$lines[$i]->public;
-					$projectstatic->title=$lines[$i]->projectlabel;
 					if ($lines[$i]->public || in_array($lines[$i]->fk_project, $projectsArrayId) || ! empty($user->rights->projet->all->lire)) print $projectstatic->getNomUrl(1);
 					else print $projectstatic->getNomUrl(1, 'nolink');
 					//if ($showlineingray) print '</i>';
@@ -468,9 +481,6 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 				}
 				else
 				{
-					$taskstatic->id=$lines[$i]->id;
-					$taskstatic->ref=$lines[$i]->ref;
-					$taskstatic->label=($taskrole[$lines[$i]->id]?$langs->trans("YourRole").': '.$taskrole[$lines[$i]->id]:'');
 					print $taskstatic->getNomUrl(1, 'withproject');
 				}
 				print '</td>';
@@ -495,10 +505,6 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 
 				// Date end
 				print '<td class="center">';
-				$taskstatic->projectstatus = $lines[$i]->projectstatus;
-				$taskstatic->progress = $lines[$i]->progress;
-				$taskstatic->fk_statut = $lines[$i]->status;
-				$taskstatic->datee = $lines[$i]->date_end;
 				print dol_print_date($lines[$i]->date_end, 'dayhour');
 				if ($taskstatic->hasDelay()) print img_warning($langs->trans("Late"));
 				print '</td>';
@@ -548,6 +554,35 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 				}
 				print '</td>';
 
+				if ($showbilltime)
+				{
+    				// Time not billed
+    				print '<td class="right">';
+    				if ($lines[$i]->bill_time)
+    				{
+    				    print convertSecondToTime($lines[$i]->tobill, 'allhourmin');
+    				    $total_projectlinesa_tobill += $lines[$i]->tobill;
+    				}
+    				else
+    				{
+    				    print '<span class="opacitymedium">'.$langs->trans("NA").'</span>';
+    				}
+    				print '</td>';
+
+    				// Time billed
+    				print '<td class="right">';
+    				if ($lines[$i]->bill_time)
+    				{
+    				    print convertSecondToTime($lines[$i]->billed, 'allhourmin');
+    				    $total_projectlinesa_billed += $lines[$i]->billed;
+    				}
+    				else
+    				{
+    				    print '<span class="opacitymedium">'.$langs->trans("NA").'</span>';
+    				}
+    				print '</td>';
+				}
+
 				// Contacts of task
 				if (! empty($conf->global->PROJECT_SHOW_CONTACTS_IN_LIST))
 				{
@@ -582,7 +617,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 				if ($level >= 0)    // Call sublevels
 				{
 					$level++;
-					if ($lines[$i]->id) projectLinesa($inc, $lines[$i]->id, $lines, $level, $var, $showproject, $taskrole, $projectsListId, $addordertick);
+					if ($lines[$i]->id) projectLinesa($inc, $lines[$i]->id, $lines, $level, $var, $showproject, $taskrole, $projectsListId, $addordertick, $projectidfortotallink, $filterprogresscalc, $showbilltime);
 					$level--;
 				}
 
@@ -597,7 +632,8 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 		}
 	}
 
-	if (($total_projectlinesa_planned > 0 || $total_projectlinesa_spent > 0) && $level <= 0)
+	if (($total_projectlinesa_planned > 0 || $total_projectlinesa_spent > 0 || $total_projectlinesa_tobill > 0 || $total_projectlinesa_billed > 0)
+	    && $level <= 0)
 	{
 		print '<tr class="liste_total nodrag nodrop">';
 		print '<td class="liste_total">'.$langs->trans("Total").'</td>';
@@ -617,6 +653,15 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 		if ($total_projectlinesa_planned) print round(100 * $total_projectlinesa_spent / $total_projectlinesa_planned, 2).' %';
 		print '</td>';
 		print '<td></td>';
+		if ($showbilltime)
+		{
+    		print '<td class="nowrap liste_total right">';
+    		print convertSecondToTime($total_projectlinesa_tobill, 'allhourmin');
+    		print '</td>';
+    		print '<td class="nowrap liste_total right">';
+    		print convertSecondToTime($total_projectlinesa_billed, 'allhourmin');
+    		print '</td>';
+		}
 		// Contacts of task
 		if (! empty($conf->global->PROJECT_SHOW_CONTACTS_IN_LIST))
 		{

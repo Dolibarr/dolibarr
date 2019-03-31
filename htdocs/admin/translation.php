@@ -224,14 +224,12 @@ else
 
 print load_fiche_titre($langs->trans("Translation"), $enabledisablehtml, 'title_setup');
 
-//print '<span class="opacitymedium">';
-print $langs->trans("TranslationDesc")."<br>\n";
-//print '</span>';
-print "<br>\n";
+//print '<span class="opacitymedium">'.$langs->trans("TranslationDesc")."</span><br>\n";
+//print "<br>\n";
 
 $current_language_code=$langs->defaultlang;
 $s=picto_from_langcode($current_language_code);
-print $langs->trans("CurrentUserLanguage").': <strong>'.$s.' '.$current_language_code.'</strong><br>';
+print $form->textwithpicto($langs->trans("CurrentUserLanguage").': <strong>'.$s.' '.$current_language_code.'</strong>', $langs->trans("TranslationDesc")).'<br>';
 
 print '<br>';
 

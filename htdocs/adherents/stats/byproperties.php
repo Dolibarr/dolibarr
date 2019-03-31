@@ -121,8 +121,8 @@ print '<table class="liste" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Nature").'</td>';
 print '<td class="right">'.$langs->trans("NbOfMembers").'</td>';
-print '<td align="center">'.$langs->trans("LastMemberDate").'</td>';
-print '<td align="center">'.$langs->trans("LatestSubscriptionDate").'</td>';
+print '<td class="center">'.$langs->trans("LastMemberDate").'</td>';
+print '<td class="center">'.$langs->trans("LatestSubscriptionDate").'</td>';
 print '</tr>';
 
 if (! $foundphy) $data[]=array('label'=>'phy','nb'=>'0','lastdate'=>'', 'lastsubscriptiondate'=>'');
@@ -133,8 +133,8 @@ foreach ($data as $val)
 	print '<tr class="oddeven">';
 	print '<td>'.$memberstatic->getmorphylib($val['label']).'</td>';
 	print '<td class="right">'.$val['nb'].'</td>';
-	print '<td align="center">'.dol_print_date($val['lastdate'], 'dayhour').'</td>';
-	print '<td align="center">'.dol_print_date($val['lastsubscriptiondate'], 'dayhour').'</td>';
+	print '<td class="center">'.dol_print_date($val['lastdate'], 'dayhour').'</td>';
+	print '<td class="center">'.dol_print_date($val['lastsubscriptiondate'], 'dayhour').'</td>';
 	print '</tr>';
 }
 

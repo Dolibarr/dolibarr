@@ -113,7 +113,7 @@ if ($id > 0)
         print '<div class="fichecenter">';
 
         print '<div class="underbanner clearboth"></div>';
-		print '<table class="border centpercent">';
+		print '<table class="border tableforfield centpercent">';
 
 		$linkback = '<a href="'.DOL_URL_ROOT.'/adherents/list.php">'.$langs->trans("BackToList").'</a>';
 
@@ -128,7 +128,7 @@ if ($id > 0)
 
         // Morphy
         print '<tr><td class="titlefield">'.$langs->trans("Nature").'</td><td class="valeur" >'.$object->getmorphylib().'</td>';
-        /*print '<td rowspan="'.$rowspan.'" align="center" valign="middle" width="25%">';
+        /*print '<td rowspan="'.$rowspan.'" class="center" valign="middle" width="25%">';
         print $form->showphoto('memberphoto',$object);
         print '</td>';*/
         print '</tr>';
@@ -140,10 +140,10 @@ if ($id > 0)
         print '<tr><td>'.$langs->trans("UserTitle").'</td><td class="valeur">'.$object->getCivilityLabel().'&nbsp;</td>';
         print '</tr>';
 
-    	// Nbre fichiers
+    	// Number of Attached Files
 		print '<tr><td>'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
 
-		//Total taille
+		//Total Size Of Attached Files
 		print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.dol_print_size($totalsize, 1, 1).'</td></tr>';
 
 		print '</table>';

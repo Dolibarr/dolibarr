@@ -142,7 +142,7 @@ if ($resql)
 	$newcardbutton='';
 	if ($user->rights->don->creer)
 	{
-		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/don/card.php?action=create"><span class="valignmiddle">'.$langs->trans('NewDonation').'</span>';
+		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/don/card.php?action=create"><span class="valignmiddle text-plus-circle">'.$langs->trans('NewDonation').'</span>';
 		$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
 		$newcardbutton.= '</a>';
 	}
@@ -200,7 +200,7 @@ if ($resql)
     print $searchpicto;
     print '</td>';
     print "</tr>\n";
-    
+
     print '<tr class="liste_titre">';
 	print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "d.rowid", "", $param, "", $sortfield, $sortorder);
     if (! empty($conf->global->DONATION_USE_THIRDPARTIES)) {
@@ -231,7 +231,7 @@ if ($resql)
 		$donationstatic->firstname=$objp->firstname;
 		print "<td>".$donationstatic->getNomUrl(1)."</td>";
     if (! empty($conf->global->DONATION_USE_THIRDPARTIES)) {
-    
+
     $company=new Societe($db);
     $result=$company->fetch($objp->socid);
     if  (!empty($objp->socid) && $company->id > 0)  {

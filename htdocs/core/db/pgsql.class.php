@@ -396,7 +396,7 @@ class DoliDBPgsql extends DoliDB
 	 *	@param		string		$name		Name of database (not used for mysql, used for pgsql)
 	 *	@param		integer		$port		Port of database server
 	 *	@return		false|resource			Database access handler
-	 *	@see		close
+	 *	@see		close()
 	 */
     public function connect($host, $login, $passwd, $name, $port = 0)
 	{
@@ -471,7 +471,7 @@ class DoliDBPgsql extends DoliDB
      *  Close database connexion
      *
      *  @return     boolean     True if disconnect successfull, false otherwise
-     *  @see        connect
+     *  @see        connect()
      */
     public function close()
     {
@@ -605,7 +605,7 @@ class DoliDBPgsql extends DoliDB
      *
      *	@param	resourse	$resultset  Resulset of requests
      *	@return int		    			Nb of lines, -1 on error
-     *	@see    affected_rows
+     *	@see    affected_rows()
      */
     public function num_rows($resultset)
 	{
@@ -1176,7 +1176,7 @@ class DoliDBPgsql extends DoliDB
 		if ($field_desc['default'] != '')
 		{
 			if ($field_desc['type'] == 'double' || $field_desc['type'] == 'tinyint' || $field_desc['type'] == 'int') $sql.=" DEFAULT ".$this->escape($field_desc['default']);
-        	elseif ($field_desc['type'] == 'text') $sql.=" DEFAULT '".$this->escape($field_desc['default'])."'";							// Default not supported on text fields
+        	elseif ($field_desc['type'] != 'text') $sql.=" DEFAULT '".$this->escape($field_desc['default'])."'";							// Default not supported on text fields
 		}
 
 		dol_syslog($sql, LOG_DEBUG);

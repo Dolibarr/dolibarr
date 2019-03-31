@@ -1243,6 +1243,7 @@ div.login_block {
 	/* border-right: none ! important; */
 	top: inherit !important;
 }
+
 .side-nav {
 <?php if (in_array($conf->browser->layout, array('phone','tablet')) && ((GETPOST('testmenuhider') || ! empty($conf->global->MAIN_TESTMENUHIDER)) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))) { ?>
 <?php } else { ?>
@@ -2002,6 +2003,10 @@ table.login_table_securitycode tr td {
 	max-height: 90px;
 }
 
+
+.atoplogin.dropdown .dropdown-menu {
+	display: none;
+}
 
 div.login_block {
 	border-right: 1px solid rgba(0,0,0,0.3);
@@ -3845,7 +3850,7 @@ div.visible {
     display: block;
 }
 
-div.hidden, td.hidden, img.hidden {
+div.hidden, td.hidden, img.hidden, span.hidden {
     display: none;
 }
 
@@ -5758,7 +5763,7 @@ border-top-right-radius: 6px;
 	.titlefield {
 		width: auto !important;		/* We want to ignor the 30%, try to use more if you can */
 	}
-	.tableforfield>tr>td:first-child {
+	.tableforfield>tr>td:first-child, div.tableforfield div.tagtr>div.tagtd:first-of-type {
 		max-width: 100px;			/* but no more than 100px */
 	}
 }

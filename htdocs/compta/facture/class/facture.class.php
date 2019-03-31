@@ -675,7 +675,7 @@ class Facture extends CommonInvoice
 						$vatrate = $line->tva_tx;
 						if ($line->vat_src_code && ! preg_match('/\(.*\)/', $vatrate)) $vatrate.=' ('.$line->vat_src_code.')';
 
-    $result = $this->addline(
+                        $result = $this->addline(
 							$line->desc,
 							$line->subprice,
 							$line->qty,
@@ -1081,7 +1081,7 @@ class Facture extends CommonInvoice
 	 */
     public function createFromOrder($object, User $user)
 	{
-		global $hookmanager;
+		global $conf, $hookmanager;
 
 		$error=0;
 
@@ -1142,8 +1142,12 @@ class Facture extends CommonInvoice
 		$this->fk_delivery_address  = $object->fk_delivery_address;
 		$this->contact_id           = $object->contactid;
 		$this->ref_client           = $object->ref_client;
-		$this->note_private         = $object->note_private;
-		$this->note_public          = $object->note_public;
+
+		if (empty($conf->global->MAIN_DISABLE_PROPAGATE_NOTES_FROM_ORIGIN))
+		{
+		    $this->note_private         = $object->note_private;
+            $this->note_public          = $object->note_public;
+		}
 
         $this->module_source		= $object->module_source;
 		$this->pos_source			= $object->pos_source;
@@ -1195,9 +1199,10 @@ class Facture extends CommonInvoice
      *  @param	int  	$notooltip		 			1=Disable tooltip
      *  @param  int     $addlinktonotes  			1=Add link to notes
      *  @param  int     $save_lastsearch_value		-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+     *  @param  string  $target                     Target of link ('', '_self', '_blank', '_parent', '_backoffice', ...)
 	 *  @return string 			         			String with URL
 	 */
-    public function getNomUrl($withpicto = 0, $option = '', $max = 0, $short = 0, $moretitle = '', $notooltip = 0, $addlinktonotes = 0, $save_lastsearch_value = -1)
+    public function getNomUrl($withpicto = 0, $option = '', $max = 0, $short = 0, $moretitle = '', $notooltip = 0, $addlinktonotes = 0, $save_lastsearch_value = -1, $target = '')
 	{
 		global $langs, $conf, $user, $form;
 
@@ -1250,7 +1255,7 @@ class Facture extends CommonInvoice
     		if ($moretitle) $label.=' - '.$moretitle;
         }
 
-		$linkclose='';
+		$linkclose=($target?' target="'.$target.'"':'');
 		if (empty($notooltip) && $user->rights->facture->lire)
 		{
 		    if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
@@ -2502,7 +2507,7 @@ class Facture extends CommonInvoice
 		{
 			$is_last = $next_invoice->is_last_in_cycle();
 
-			if ($next_invoice->brouillon && $is_last != 1)
+			if ($next_invoice->statut == self::STATUS_DRAFT && $is_last != 1)
 			{
 				$this->error = $langs->trans('updatePriceNextInvoiceErrorUpdateline', $next_invoice->ref);
 				return false;
@@ -2550,16 +2555,22 @@ class Facture extends CommonInvoice
 			return 0;
 		}
 
+		dol_syslog(get_class($this)."::set_draft", LOG_DEBUG);
+
 		$this->db->begin();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."facture";
 		$sql.= " SET fk_statut = ".self::STATUS_DRAFT;
 		$sql.= " WHERE rowid = ".$this->id;
 
-		dol_syslog(get_class($this)."::set_draft", LOG_DEBUG);
 		$result=$this->db->query($sql);
 		if ($result)
 		{
+		    if (! $error)
+		    {
+		        $this->oldcopy= clone $this;
+		    }
+
 			// Si on decremente le produit principal et ses composants a la validation de facture, on réincrement
 			if ($this->type != self::TYPE_DEPOSIT && $result >= 0 && ! empty($conf->stock->enabled) && ! empty($conf->global->STOCK_CALCULATE_ON_BILL))
 			{
@@ -2585,6 +2596,7 @@ class Facture extends CommonInvoice
 				$old_statut=$this->statut;
 				$this->brouillon = 1;
 				$this->statut = self::STATUS_DRAFT;
+
 	            // Call trigger
 	            $result=$this->call_trigger('BILL_UNVALIDATE', $user);
 	            if ($result < 0)
@@ -2668,7 +2680,8 @@ class Facture extends CommonInvoice
 		global $mysoc, $conf, $langs;
 
 		dol_syslog(get_class($this)."::addline id=$this->id,desc=$desc,pu_ht=$pu_ht,qty=$qty,txtva=$txtva, txlocaltax1=$txlocaltax1, txlocaltax2=$txlocaltax2, fk_product=$fk_product,remise_percent=$remise_percent,date_start=$date_start,date_end=$date_end,ventil=$ventil,info_bits=$info_bits,fk_remise_except=$fk_remise_except,price_base_type=$price_base_type,pu_ttc=$pu_ttc,type=$type, fk_unit=$fk_unit", LOG_DEBUG);
-		if (! empty($this->brouillon))
+
+		if ($this->statut == self::STATUS_DRAFT)
 		{
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 
@@ -2708,6 +2721,12 @@ class Facture extends CommonInvoice
 
 			// Check parameters
 			if ($type < 0) return -1;
+
+			if ($date_start && $date_end && $date_start > $date_end) {
+				$langs->load("errors");
+				$this->error=$langs->trans('ErrorStartDateGreaterEnd');
+				return -1;
+			}
 
 			$this->db->begin();
 
@@ -2910,6 +2929,12 @@ class Facture extends CommonInvoice
 					if (!$this->error) $this->error=$langs->trans('invoiceLineProgressError');
 					return -3;
 				}
+			}
+
+			if ($date_start && $date_end && $date_start > $date_end) {
+				$langs->load("errors");
+				$this->error=$langs->trans('ErrorStartDateGreaterEnd');
+				return -1;
 			}
 
 			$this->db->begin();
@@ -4381,10 +4406,6 @@ class FactureLigne extends CommonInvoiceLine
 
 	public $date_start;
 	public $date_end;
-
-	// Ne plus utiliser
-	//var $price;         	// P.U. HT apres remise % de ligne (exemple 80)
-	//var $remise;			// Montant calcule de la remise % sur PU HT (exemple 20)
 
 	// From llx_product
 	/**

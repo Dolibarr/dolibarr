@@ -152,7 +152,7 @@ if ($resql)
 	$newcardbutton='';
 	if($user->rights->tax->charges->creer)
 	{
-		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/compta/sociales/card.php?action=create">'.$langs->trans('MenuNewSocialContribution');
+		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/compta/sociales/card.php?action=create"><span class="valignmiddle text-plus-circle">'.$langs->trans('MenuNewSocialContribution').'</span>';
 		$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
 		$newcardbutton.= '</a>';
 	}

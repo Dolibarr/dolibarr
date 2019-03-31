@@ -5841,10 +5841,10 @@ class Form
 	 *  @param	string			$morecss			Add more class to css styles
 	 *  @param	int				$addjscombo			Add js combo
 	 *  @param  string          $moreparamonempty	Add more param on the empty option line. Not used if show_empty not set
-	 *  @param  int             $disablebademail	Check if an email is found into value and if not disable and colorize entry
+	 *  @param  int             $disablebademail	1=Check if a not valid email, 2=Check string '---', and if found into value, disable and colorize entry
 	 *  @param  int             $nohtmlescape		No html escaping.
 	 * 	@return	string								HTML select string.
-	 *  @see multiselectarray, selectArrayAjax, selectArrayFilter
+	 *  @see multiselectarray(), selectArrayAjax(), selectArrayFilter()
 	 */
 	public static function selectarray($htmlname, $array, $id = '', $show_empty = 0, $key_in_label = 0, $value_as_key = 0, $moreparam = '', $translate = 0, $maxlen = 0, $disabled = 0, $sort = '', $morecss = '', $addjscombo = 0, $moreparamonempty = '', $disablebademail = 0, $nohtmlescape = 0)
 	{
@@ -5902,9 +5902,9 @@ class Form
 				$disabled=''; $style='';
 				if (! empty($disablebademail))
 				{
-					if (! preg_match('/&lt;.+@.+&gt;/', $value))
+				    if (($disablebademail == 1 && ! preg_match('/&lt;.+@.+&gt;/', $value))
+				        || ($disablebademail == 2 && preg_match('/---/', $value)))
 					{
-						//$value=preg_replace('/'.preg_quote($a,'/').'/', $b, $value);
 						$disabled=' disabled';
 						$style=' class="warning"';
 					}
@@ -6610,7 +6610,11 @@ class Form
 		// Can complete the possiblelink array
 		$hookmanager->initHooks(array('commonobject'));
 		$parameters=array('listofidcompanytoscan' => $listofidcompanytoscan);
-		$reshook=$hookmanager->executeHooks('showLinkToObjectBlock', $parameters, $object, $action);    // Note that $action and $object may have been modified by hook
+
+		if (! empty($listofidcompanytoscan))  // If empty, we don't have criteria to scan the object we can link to
+		{
+            $reshook=$hookmanager->executeHooks('showLinkToObjectBlock', $parameters, $object, $action);    // Note that $action and $object may have been modified by hook
+		}
 
 		if (empty($reshook))
 		{

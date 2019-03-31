@@ -207,7 +207,7 @@ else
 
 print load_fiche_titre($langs->trans("DefaultValues"), $enabledisablehtml, 'title_setup');
 
-print $langs->trans("DefaultValuesDesc")."<br>\n";
+print '<span class="opacitymedium">'.$langs->trans("DefaultValuesDesc")."</span><br>\n";
 print "<br>\n";
 
 if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;

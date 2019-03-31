@@ -446,7 +446,7 @@ if ($resql)
 		print '<tr class="oddeven">';
 		print '<td class="tdoverflowmax300">'.$obj->name.'</td>'."\n";
 		print '<td class="tdoverflowmax300">'.dol_escape_htmltag($obj->value).'</td>'."\n";
-		if (empty($conf->multicompany->enabled) || !$user->entity) print '<td align="center" width="80px">'.$obj->entity.'</td>'."\n";	// If superadmin or multicompany disabled
+		if (empty($conf->multicompany->enabled) || !$user->entity) print '<td class="center" width="80px">'.$obj->entity.'</td>'."\n";	// If superadmin or multicompany disabled
 		print "</tr>\n";
 
 		$i++;

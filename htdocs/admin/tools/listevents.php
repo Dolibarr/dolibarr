@@ -238,20 +238,20 @@ if ($result)
 
 	print '<td class="liste_titre" width="15%">'.$form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0).'</td>';
 
-	print '<td align="left" class="liste_titre">';
+	print '<td class="liste_titre left">';
 	print '<input class="flat" type="text" size="10" name="search_code" value="'.$search_code.'">';
 	print '</td>';
 
 	// IP
-	print '<td align="left" class="liste_titre">';
+	print '<td class="liste_titre left">';
 	print '<input class="flat" type="text" size="10" name="search_ip" value="'.$search_ip.'">';
 	print '</td>';
 
-	print '<td align="left" class="liste_titre">';
+	print '<td class="liste_titre left">';
 	print '<input class="flat" type="text" size="10" name="search_user" value="'.$search_user.'">';
 	print '</td>';
 
-	print '<td align="left" class="liste_titre">';
+	print '<td class="liste_titre left">';
 	//print '<input class="flat" type="text" size="10" name="search_desc" value="'.$search_desc.'">';
 	print '</td>';
 
@@ -279,7 +279,7 @@ if ($result)
 		print '<tr class="oddeven">';
 
 		// Date
-		print '<td align="left" class="nowrap">'.dol_print_date($db->jdate($obj->dateevent), '%Y-%m-%d %H:%M:%S').'</td>';
+		print '<td class="nowrap left">'.dol_print_date($db->jdate($obj->dateevent), '%Y-%m-%d %H:%M:%S').'</td>';
 
 		// Code
 		print '<td>'.$obj->type.'</td>';

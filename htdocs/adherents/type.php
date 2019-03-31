@@ -232,7 +232,7 @@ if (! $rowid && $action != 'create' && $action != 'edit')
 		$newcardbutton='';
 		if ($user->rights->adherent->configurer)
 		{
-			$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/adherents/type.php?action=create"><span class="valignmiddle">'.$langs->trans('NewMemberType').'</span>';
+			$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/adherents/type.php?action=create"><span class="valignmiddle text-plus-circle">'.$langs->trans('NewMemberType').'</span>';
 			$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
 			$newcardbutton.= '</a>';
 		}
@@ -256,9 +256,9 @@ if (! $rowid && $action != 'create' && $action != 'edit')
 		print '<tr class="liste_titre">';
 		print '<th>'.$langs->trans("Ref").'</th>';
 		print '<th>'.$langs->trans("Label").'</th>';
-		print '<th align="center">'.$langs->trans("SubscriptionRequired").'</th>';
-		print '<th align="center">'.$langs->trans("VoteAllowed").'</th>';
-		print '<th align="center">'.$langs->trans("Status").'</th>';
+		print '<th class="center">'.$langs->trans("SubscriptionRequired").'</th>';
+		print '<th class="center">'.$langs->trans("VoteAllowed").'</th>';
+		print '<th class="center">'.$langs->trans("Status").'</th>';
 		print '<th>&nbsp;</th>';
 		print "</tr>\n";
 
@@ -277,9 +277,9 @@ if (! $rowid && $action != 'create' && $action != 'edit')
 			//<a href="'.$_SERVER["PHP_SELF"].'?rowid='.$objp->rowid.'">'.img_object($langs->trans("ShowType"),'group').' '.$objp->rowid.'</a>
 			print '</td>';
 			print '<td>'.dol_escape_htmltag($objp->label).'</td>';
-			print '<td align="center">'.yn($objp->subscription).'</td>';
-			print '<td align="center">'.yn($objp->vote).'</td>';
-			print '<td align="center">';
+			print '<td class="center">'.yn($objp->subscription).'</td>';
+			print '<td class="center">'.yn($objp->vote).'</td>';
+			print '<td class="center">';
             if ( !empty($objp->statut) ) {
                 print img_picto($langs->trans("InActivity"), 'statut4');
             } else {
@@ -586,15 +586,15 @@ if ($rowid > 0)
 			// Lignes des champs de filtre
 			print '<tr class="liste_titre_filter">';
 
-			print '<td class="liste_titre" align="left">';
+			print '<td class="liste_titre left">';
 			print '<input class="flat" type="text" name="search_lastname" value="'.dol_escape_htmltag($search_lastname).'" size="12"></td>';
 
-			print '<td class="liste_titre" align="left">';
+			print '<td class="liste_titre left">';
 			print '<input class="flat" type="text" name="search_login" value="'.dol_escape_htmltag($search_login).'" size="7"></td>';
 
 			print '<td class="liste_titre">&nbsp;</td>';
 
-			print '<td class="liste_titre" align="left">';
+			print '<td class="liste_titre left">';
 			print '<input class="flat" type="text" name="search_email" value="'.dol_escape_htmltag($search_email).'" size="12"></td>';
 
 			print '<td class="liste_titre">&nbsp;</td>';
@@ -663,7 +663,7 @@ if ($rowid > 0)
 		        // Date end subscription
 		        if ($datefin)
 		        {
-			        print '<td align="center" class="nowrap">';
+			        print '<td class="nowrap center">';
 		            if ($datefin < dol_now() && $objp->statut > 0)
 		            {
 		                print dol_print_date($datefin, 'day')." ".img_warning($langs->trans("SubscriptionLate"));
@@ -676,7 +676,7 @@ if ($rowid > 0)
 		        }
 		        else
 		        {
-			        print '<td align="left" class="nowrap">';
+			        print '<td class="nowrap left">';
 			        if ($objp->subscription == 'yes')
 			        {
 		                print $langs->trans("SubscriptionNotReceived");
@@ -690,7 +690,7 @@ if ($rowid > 0)
 		        }
 
 		        // Actions
-		        print '<td align="center">';
+		        print '<td class="center">';
 				if ($user->rights->adherent->creer)
 				{
 					print '<a href="card.php?rowid='.$objp->rowid.'&action=edit&backtopage='.urlencode($_SERVER["PHP_SELF"].'?rowid='.$object->id).'">'.img_edit().'</a>';

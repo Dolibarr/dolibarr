@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2018	   Nicolas ZABOURI	<info@inovea-conseil.com>
+ * Copyright (C) 2018-2019	   Nicolas ZABOURI	<info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -190,6 +190,14 @@ if ($dirins && $action == 'initmodule' && $modulename)
     			'htdocs/modulebuilder/template'=>strtolower($modulename),
     			'---Put here your own copyright and developer email---'=>dol_print_date($now, '%Y').' '.$user->getFullName($langs).($user->email?' <'.$user->email.'>':'')
 			);
+
+            if($conf->global->MAIN_FEATURES_LEVEL >= 2){
+                if(!empty($conf->global->MODULEBUILDER_SPECIFIC_EDITOR_NAME)) $arrayreplacement['Editor name'] = $conf->global->MODULEBUILDER_SPECIFIC_EDITOR_NAME;
+                if(!empty($conf->global->MODULEBUILDER_SPECIFIC_EDITOR_URL)) $arrayreplacement['https://www.example.com'] = $conf->global->MODULEBUILDER_SPECIFIC_EDITOR_URL;
+                if(!empty($conf->global->MODULEBUILDER_SPECIFIC_AUTHOR)) $arrayreplacement['---Put here your own copyright and developer email---'] = dol_print_date($now, '%Y').' '.$conf->global->MODULEBUILDER_SPECIFIC_AUTHOR;
+                if(!empty($conf->global->MODULEBUILDER_SPECIFIC_VERSION)) $arrayreplacement['1.0'] = $conf->global->MODULEBUILDER_SPECIFIC_VERSION;
+                if(!empty($conf->global->MODULEBUILDER_SPECIFIC_FAMILY)) $arrayreplacement['other'] = $conf->global->MODULEBUILDER_SPECIFIC_FAMILY;
+            }
 
 			$result=dolReplaceInFile($phpfileval['fullname'], $arrayreplacement);
 			//var_dump($result);
@@ -1238,7 +1246,7 @@ $head = array();
 $h=0;
 
 $head[$h][0] = $_SERVER["PHP_SELF"].'?module=initmodule';
-$head[$h][1] = $langs->trans("NewModule").'<span class="fa fa-plus-circle valignmiddle paddingleft"></span>';
+$head[$h][1] = '<span class="valignmiddle text-plus-circle">'.$langs->trans("NewModule").'</span><span class="fa fa-plus-circle valignmiddle paddingleft"></span>';
 $head[$h][2] = 'initmodule';
 $h++;
 
