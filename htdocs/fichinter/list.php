@@ -110,8 +110,8 @@ if (! empty($conf->global->FICHINTER_DISABLE_DETAILS)) unset($fieldstosearchall[
 $arrayfields=array(
 	'f.ref'=>array('label'=>'Ref', 'checked'=>1),
 	's.nom'=>array('label'=>'ThirdParty', 'checked'=>1),
-    'pr.ref'=>array('label'=>$langs->trans("Project"), 'checked'=>1, 'enabled'=>(empty($conf->projet->enabled)?0:1)),
-    'c.ref'=>array('label'=>$langs->trans("Contract"), 'checked'=>1, 'enabled'=>(empty($conf->contrat->enabled)?0:1)),
+    'pr.ref'=>array('label'=>"Project", 'checked'=>1, 'enabled'=>(empty($conf->projet->enabled)?0:1)),
+    'c.ref'=>array('label'=>"Contract", 'checked'=>1, 'enabled'=>(empty($conf->contrat->enabled)?0:1)),
 	'f.description'=>array('label'=>'Description', 'checked'=>1),
 	'f.datec'=>array('label'=>'DateCreation', 'checked'=>0, 'position'=>500),
 	'f.tms'=>array('label'=>'DateModificationShort', 'checked'=>0, 'position'=>500),
