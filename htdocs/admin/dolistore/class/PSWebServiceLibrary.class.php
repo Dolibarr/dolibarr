@@ -128,6 +128,7 @@ class PrestaShopWebservice
 			CURLOPT_HTTPHEADER => array( 'Expect:' )
 		);
 
+		dol_syslog("curl_init url=".$url);
 		$session = curl_init($url);
 
 		$curl_options = array();
@@ -142,6 +143,7 @@ class PrestaShopWebservice
 			if (!isset($curl_options[$defkey]))
 				$curl_options[$defkey] = $curl_params[$defkey];
 
+		dol_syslog("curl curl_options = ".var_export($curl_options, true));
 		curl_setopt_array($session, $curl_options);
 		$response = curl_exec($session);
 
