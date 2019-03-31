@@ -637,7 +637,7 @@ else
 			print '<tr><td>'.$langs->trans("AccountancyJournal").'</td>';
 			print '<td>';
 
-            if (! empty($object->fk_accountancy_journal)) {
+            if ($object->fk_accountancy_journal > 0) {
                 $accountingjournal = new AccountingJournal($db);
                 $accountingjournal->fetch($object->fk_accountancy_journal);
 
