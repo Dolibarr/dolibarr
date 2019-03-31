@@ -2802,7 +2802,7 @@ else
     	        $resteapayer = $object->total_ttc - $totalpaye;
 
     	        print '<tr><td colspan="'.$nbcols.'" class="right">'.$langs->trans('RemainderToPay').' :</td>';
-    	        print '<td class="right"'.($resteapayer?' class="amountremaintopay"':'').'>'.price($resteapayer).'</td><td></td></tr>';
+    	        print '<td class="right'.($resteapayer?' amountremaintopay':'').'">'.price($resteapayer).'</td><td></td></tr>';
     	    }
 			*/
 
@@ -2912,7 +2912,7 @@ else
 			else
 				print $langs->trans('ExcessPaid');
 			print ' :</td>';
-			print '<td class="right"'.($resteapayeraffiche?' class="amountremaintopay"':(' class="'.$cssforamountpaymentcomplete.'"')).'>' . price($resteapayeraffiche) . '</td>';
+			print '<td class="right'.($resteapayeraffiche?' amountremaintopay':(' '.$cssforamountpaymentcomplete)).'">' . price($resteapayeraffiche) . '</td>';
 			print '<td class="nowrap">&nbsp;</td></tr>';
 		}
 		else // Credit note
@@ -2934,7 +2934,7 @@ else
 			else
 				print $langs->trans('ExcessPaid');
 			print ' :</td>';
-			print '<td class="right"'.($resteapayeraffiche?' class="amountremaintopay"':(' class="'.$cssforamountpaymentcomplete.'"')).'>' . price($sign * $resteapayeraffiche) . '</td>';
+			print '<td class="right'.($resteapayeraffiche?' amountremaintopay':(' '.$cssforamountpaymentcomplete)).'">' . price($sign * $resteapayeraffiche) . '</td>';
 			print '<td class="nowrap">&nbsp;</td></tr>';
 
 			// Sold credit note
