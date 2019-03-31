@@ -80,13 +80,6 @@ if (! $sortfield)
  	$sortfield="f.ref";
 }
 
-$sall=trim((GETPOST('search_all', 'alphanohtml')!='')?GETPOST('search_all', 'alphanohtml'):GETPOST('sall', 'alphanohtml'));
-//$search_ref=GETPOST('search_ref')?GETPOST('search_ref','alpha'):GETPOST('search_inter','alpha');
-//$search_company=GETPOST('search_company','alpha');
-//$search_desc=GETPOST('search_desc','alpha');
-//$search_status=GETPOST('search_status');
-//$optioncss = GETPOST('optioncss','alpha');
-
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $object = new Fichinter($db);
 $hookmanager->initHooks(array('interventionlist'));
