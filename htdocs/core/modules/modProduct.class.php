@@ -325,6 +325,8 @@ class modProduct extends DolibarrModules
             'p.duration' => "Duration",///duration of service
             'p.url' => "PublicUrl",
             'p.accountancy_code_sell' => "ProductAccountancySellCode",
+            'p.accountancy_code_sell_intra' => "ProductAccountancySellIntraCode",
+            'p.accountancy_code_sell_export' => "ProductAccountancySellExportCode",
             'p.accountancy_code_buy' => "ProductAccountancyBuyCode",
             'p.weight' => "Weight",
             'p.weight_units' => "WeightUnits",
