@@ -1003,13 +1003,15 @@ function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsr
 				if (empty($oldprojectforbreak) || ($oldprojectforbreak != -1 && $oldprojectforbreak != $projectstatic->id))
 				{
                     $addcolspan=0;
+                    if (! empty($arrayfields['t.planned_workload']['checked'])) $addcolspan++;
+                    if (! empty($arrayfields['t.progress']['checked'])) $addcolspan++;
                     foreach ($arrayfields as $key => $val)
                     {
                         if ($val['checked'] && substr($key, 0, 5) == 'efpt.') $addcolspan++;
                     }
 
 					print '<tr class="oddeven trforbreak">'."\n";
-					print '<td colspan="'.(9+$addcolspan).'">';
+					print '<td colspan="'.(7+$addcolspan).'">';
 					print $projectstatic->getNomUrl(1, '', 0, '<strong>'.$langs->transnoentitiesnoconv("YourRole").':</strong> '.$projectsrole[$lines[$i]->fk_project]);
 					if ($thirdpartystatic->id > 0) print ' - '.$thirdpartystatic->getNomUrl(1);
 					if ($projectstatic->title)
@@ -1017,7 +1019,7 @@ function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsr
 						print ' - ';
 						print $projectstatic->title;
 					}
-
+					/*
                     $colspan=5+(empty($conf->global->PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT)?0:2);
                     print '<table class="">';
 
@@ -1077,6 +1079,7 @@ function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsr
                     print '</tr>';
                     print '</table>';
 
+					*/
 					print '</td>';
 					print '</tr>';
 				}
@@ -1093,14 +1096,20 @@ function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsr
 				*/
 
 				// Project
-				/*print "<td>";
-				if ($oldprojectforbreak == -1) print $projectstatic->getNomUrl(1,'',0,$langs->transnoentitiesnoconv("YourRole").': '.$projectsrole[$lines[$i]->fk_project]);
-				print "</td>";*/
+				if (! empty($conf->global->PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT))
+				{
+				    print "<td>";
+				    if ($oldprojectforbreak == -1) print $projectstatic->getNomUrl(1,'',0,$langs->transnoentitiesnoconv("YourRole").': '.$projectsrole[$lines[$i]->fk_project]);
+				    print "</td>";
+				}
 
 				// Thirdparty
-				/*print '<td class="tdoverflowmax100">';
-				if ($thirdpartystatic->id > 0) print $thirdpartystatic->getNomUrl(1, 'project', 10);
-				print '</td>';*/
+				if (! empty($conf->global->PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT))
+				{
+				    print '<td class="tdoverflowmax100">';
+				    if ($thirdpartystatic->id > 0) print $thirdpartystatic->getNomUrl(1, 'project', 10);
+				    print '</td>';
+				}
 
 				// Ref
 				print '<td>';
@@ -1122,15 +1131,21 @@ function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsr
                 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 
                 // Planned Workload
-				print '<td class="leftborder plannedworkload right">';
-				if ($lines[$i]->planned_workload) print convertSecondToTime($lines[$i]->planned_workload, 'allhourmin');
-				else print '--:--';
-				print '</td>';
+                if (! empty($arrayfields['t.planned_workload']['checked']))
+                {
+                    print '<td class="leftborder plannedworkload right">';
+				    if ($lines[$i]->planned_workload) print convertSecondToTime($lines[$i]->planned_workload, 'allhourmin');
+				    else print '--:--';
+				    print '</td>';
+                }
 
 				// Progress declared %
-				print '<td class="right">';
-				print $formother->select_percent($lines[$i]->progress, $lines[$i]->id . 'progress');
-				print '</td>';
+                if (! empty($arrayfields['t.progress']['checked']))
+                {
+                    print '<td class="right">';
+				    print $formother->select_percent($lines[$i]->progress, $lines[$i]->id . 'progress');
+				    print '</td>';
+                }
 
 				// Time spent by everybody
 				print '<td class="right">';
@@ -1368,13 +1383,15 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
 				if (empty($oldprojectforbreak) || ($oldprojectforbreak != -1 && $oldprojectforbreak != $projectstatic->id))
 				{
                     $addcolspan=0;
+                    if (! empty($arrayfields['t.planned_workload']['checked'])) $addcolspan++;
+                    if (! empty($arrayfields['t.progress']['checked'])) $addcolspan++;
                     foreach ($arrayfields as $key => $val)
                     {
                         if ($val['checked'] && substr($key, 0, 5) == 'efpt.') $addcolspan++;
                     }
 
 					print '<tr class="oddeven trforbreak">'."\n";
-					print '<td colspan="'.(13+$addcolspan).'">';
+					print '<td colspan="'.(11+$addcolspan).'">';
 					print $projectstatic->getNomUrl(1, '', 0, '<strong>'.$langs->transnoentitiesnoconv("YourRole").':</strong> '.$projectsrole[$lines[$i]->fk_project]);
 					if ($thirdpartystatic->id > 0) print ' - '.$thirdpartystatic->getNomUrl(1);
 					if ($projectstatic->title)
@@ -1383,7 +1400,7 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
 						print $projectstatic->title;
 					}
 
-                    $colspan=5+(empty($conf->global->PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT)?0:2);
+                    /*$colspan=5+(empty($conf->global->PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT)?0:2);
 					print '<table class="">';
 
 					print '<tr class="liste_titre">';
@@ -1441,6 +1458,7 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
 
                     print '</tr>';
                     print '</table>';
+					*/
 
 					print '</td>';
 					print '</tr>';
@@ -1458,14 +1476,20 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
 				*/
 
 				// Project
-				/*print '<td class="nowrap">';
-				if ($oldprojectforbreak == -1) print $projectstatic->getNomUrl(1,'',0,$langs->transnoentitiesnoconv("YourRole").': '.$projectsrole[$lines[$i]->fk_project]);
-				print "</td>";*/
+				if (! empty($conf->global->PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT))
+				{
+    				print '<td class="nowrap">';
+    				if ($oldprojectforbreak == -1) print $projectstatic->getNomUrl(1,'',0,$langs->transnoentitiesnoconv("YourRole").': '.$projectsrole[$lines[$i]->fk_project]);
+    				print "</td>";
+				}
 
 				// Thirdparty
-				/*print '<td class="tdoverflowmax100">';
-				if ($thirdpartystatic->id > 0) print $thirdpartystatic->getNomUrl(1, 'project');
-				print '</td>';*/
+				if (! empty($conf->global->PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT))
+				{
+				    print '<td class="tdoverflowmax100">';
+				    if ($thirdpartystatic->id > 0) print $thirdpartystatic->getNomUrl(1, 'project');
+				    print '</td>';
+				}
 
 				// Ref
 				print '<td class="nowrap">';
@@ -1487,17 +1511,22 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
                 $extrafieldsobjectprefix='efpt.';
                 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 
-
                 // Planned Workload
-				print '<td class="leftborder plannedworkload right">';
-				if ($lines[$i]->planned_workload) print convertSecondToTime($lines[$i]->planned_workload, 'allhourmin');
-				else print '--:--';
-				print '</td>';
+                if (! empty($arrayfields['t.planned_workload']['checked']))
+                {
+    				print '<td class="leftborder plannedworkload right">';
+    				if ($lines[$i]->planned_workload) print convertSecondToTime($lines[$i]->planned_workload, 'allhourmin');
+    				else print '--:--';
+    				print '</td>';
+                }
 
-				// Progress declared %
-				print '<td class="right">';
-				print $formother->select_percent($lines[$i]->progress, $lines[$i]->id . 'progress');
-				print '</td>';
+                if (! empty($arrayfields['t.progress']['checked']))
+                {
+                    // Progress declared %
+    				print '<td class="right">';
+    				print $formother->select_percent($lines[$i]->progress, $lines[$i]->id . 'progress');
+    				print '</td>';
+                }
 
 				// Time spent by everybody
 				print '<td class="right">';

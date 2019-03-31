@@ -63,11 +63,12 @@ $nowday=$nowtmp['mday'];
 $nowmonth=$nowtmp['mon'];
 $nowyear=$nowtmp['year'];
 
-$year=GETPOST('reyear')?GETPOST('reyear'):(GETPOST("year", "int")?GETPOST("year", "int"):(GETPOST("addtimeyear", "int")?GETPOST("addtimeyear", "int"):date("Y")));
-$month=GETPOST('remonth')?GETPOST('remonth'):(GETPOST("month", "int")?GETPOST("month", "int"):(GETPOST("addtimemonth", "int")?GETPOST("addtimemonth", "int"):date("m")));
-$day=GETPOST('reday')?GETPOST('reday'):(GETPOST("day", "int")?GETPOST("day", "int"):(GETPOST("addtimeday", "int")?GETPOST("addtimeday", "int"):date("d")));
-$day = (int) $day;
+$year=GETPOST('reyear', 'int')?GETPOST('reyear', 'int'):(GETPOST("year", "int")?GETPOST("year", "int"):(GETPOST("addtimeyear", "int")?GETPOST("addtimeyear", "int"):date("Y")));
+$month=GETPOST('remonth', 'int')?GETPOST('remonth', 'int'):(GETPOST("month", "int")?GETPOST("month", "int"):(GETPOST("addtimemonth", "int")?GETPOST("addtimemonth", "int"):date("m")));
+$day=GETPOST('reday', 'int')?GETPOST('reday', 'int'):(GETPOST("day", "int")?GETPOST("day", "int"):(GETPOST("addtimeday", "int")?GETPOST("addtimeday", "int"):date("d")));
 $week=GETPOST("week", "int")?GETPOST("week", "int"):date("W");
+
+$day = (int) $day;
 
 $search_categ=GETPOST("search_categ", 'alpha');
 $search_usertoprocessid=GETPOST('search_usertoprocessid', 'int');
@@ -104,39 +105,43 @@ else
 
 $object=new Task($db);
 
-$arrayfields=array(
-    // Project
-    'p.opp_amount'=>array('label'=>$langs->trans("OpportunityAmountShort"), 'checked'=>0, 'enabled'=>($conf->global->PROJECT_USE_OPPORTUNITIES?1:0), 'position'=>103),
-    'p.fk_opp_status'=>array('label'=>$langs->trans("OpportunityStatusShort"), 'checked'=>0, 'enabled'=>($conf->global->PROJECT_USE_OPPORTUNITIES?1:0), 'position'=>104),
-    'p.opp_percent'=>array('label'=>$langs->trans("OpportunityProbabilityShort"), 'checked'=>0, 'enabled'=>($conf->global->PROJECT_USE_OPPORTUNITIES?1:0), 'position'=>105),
-    'p.budget_amount'=>array('label'=>$langs->trans("Budget"), 'checked'=>0, 'position'=>110),
-    'p.bill_time'=>array('label'=>$langs->trans("BillTimeShort"), 'checked'=>0, 'position'=>115),
-);
-
 // Extra fields
 $extrafields = new ExtraFields($db);
 
+$extralabels = array();
 // fetch optionals attributes and labels
-$extralabels = $extrafields->fetch_name_optionals_label('projet');
-if (!empty($extrafields->attributes['projet']['label']))
-{
-    foreach($extrafields->attributes['projet']['label'] as $key => $val)
-    {
-        if (! empty($extrafields->attributes['projet']['list'][$key])) $arrayfields["efp.".$key]=array('label'=>$extrafields->attributes['projet']['label'][$key], 'checked'=>(($extrafields->attributes['projet']['list'][$key]<0)?0:1), 'position'=>$extrafields->attributes['projet']['pos'][$key], 'enabled'=>(abs($extrafields->attributes['projet']['list'][$key])!=3 && $extrafields->attributes['projet']['perms'][$key]));
-    }
-}
-$extralabels+= $extrafields->fetch_name_optionals_label('projet_task', true);
-if (!empty($extrafields->attributes['projet_task']['label']))
+//$extralabels += $extrafields->fetch_name_optionals_label('projet');
+$extralabels += $extrafields->fetch_name_optionals_label('projet_task');
+
+// Definition of fields for list
+$arrayfields=array();
+$arrayfields['t.planned_workload']=array('label'=>'PlannedWorkload', 'checked'=>1, 'enabled'=>1, 'position'=>0);
+$arrayfields['t.progress']=array('label'=>'ProgressDeclared', 'checked'=>1, 'enabled'=>1, 'position'=>0);
+/*$arrayfields=array(
+ // Project
+ 'p.opp_amount'=>array('label'=>$langs->trans("OpportunityAmountShort"), 'checked'=>0, 'enabled'=>($conf->global->PROJECT_USE_OPPORTUNITIES?1:0), 'position'=>103),
+ 'p.fk_opp_status'=>array('label'=>$langs->trans("OpportunityStatusShort"), 'checked'=>0, 'enabled'=>($conf->global->PROJECT_USE_OPPORTUNITIES?1:0), 'position'=>104),
+ 'p.opp_percent'=>array('label'=>$langs->trans("OpportunityProbabilityShort"), 'checked'=>0, 'enabled'=>($conf->global->PROJECT_USE_OPPORTUNITIES?1:0), 'position'=>105),
+ 'p.budget_amount'=>array('label'=>$langs->trans("Budget"), 'checked'=>0, 'position'=>110),
+ 'p.bill_time'=>array('label'=>$langs->trans("BillTimeShort"), 'checked'=>0, 'position'=>115),
+ );
+ */
+// Extra fields
+if (is_array($extrafields->attributes['projet_task']['label']) && count($extrafields->attributes['projet_task']['label']) > 0)
 {
     foreach($extrafields->attributes['projet_task']['label'] as $key => $val)
     {
-        if (! empty($extrafields->attributes['projet_task']['list'][$key])) $arrayfields["efpt.".$key]=array('label'=>$extrafields->attributes['projet_task']['label'][$key], 'checked'=>(($extrafields->attributes['projet_task']['list'][$key]<0)?0:1), 'position'=>$extrafields->attributes['projet_task']['pos'][$key], 'enabled'=>(abs($extrafields->attributes['projet_task']['list'][$key])!=3 && $extrafields->attributes['projet_task']['perms'][$key]));
+        if (! empty($extrafields->attributes['projet_task']['list'][$key]))
+            $arrayfields["efpt.".$key]=array('label'=>$extrafields->attributes['projet_task']['label'][$key], 'checked'=>(($extrafields->attributes['projet_task']['list'][$key]<0)?0:1), 'position'=>$extrafields->attributes['projet_task']['pos'][$key], 'enabled'=>(abs($extrafields->attributes['projet_task']['list'][$key])!=3 && $extrafields->attributes['projet_task']['perms'][$key]));
     }
 }
+$arrayfields = dol_sort_array($arrayfields, 'position');
+
 
 $search_array_options=array();
 $search_array_options_project=$extrafields->getOptionalsFromPost('projet', '', 'search_');
 $search_array_options_task=$extrafields->getOptionalsFromPost('projet_task', '', 'search_task_');
+
 
 /*
  * Actions
@@ -286,7 +291,10 @@ if ($action == 'addtime' && $user->rights->projet->lire && GETPOST('formfilterac
 		foreach($timespent_duration as $key => $val)
 		{
 			$object->fetch($key);
-			$object->progress = GETPOST($key.'progress', 'int');
+
+			if (GETPOSTISSET($taskid . 'progress')) $object->progress = GETPOST($taskid . 'progress', 'int');
+			else unset($object->progress);
+
 			$object->timespent_duration = $val;
 			$object->timespent_fk_user = $usertoprocess->id;
 			$object->timespent_note = GETPOST($key.'note');
@@ -382,12 +390,12 @@ if ($search_declared_progress)  $morewherefilter.=natural_search("t.progress", $
 
 $sql = &$morewherefilter;
 
-$search_array_options = $search_array_options_project;
+/*$search_array_options = $search_array_options_project;
 $extrafieldsobjectprefix='efp.';
 $search_options_pattern='search_options_';
 $extrafieldsobjectkey='projet';
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
-
+*/
 $search_array_options = $search_array_options_task;
 $extrafieldsobjectprefix='efpt.';
 $search_options_pattern='search_task_options_';
@@ -410,27 +418,21 @@ llxHeader("", $title, "", '', '', '', array('/core/js/timesheet.js'));
 //print_barre_liste($title, $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, "", $num, '', 'title_project');
 
 $param='';
-$param.=($mode?'&mode='.$mode:'');
-$param.=($search_project_ref?'&search_project_ref='.$search_project_ref:'');
-$param.=($search_usertoprocessid?'&search_usertoprocessid='.$search_usertoprocessid:'');
-$param.=($search_thirdparty?'&search_thirdparty='.$search_thirdparty:'');
-$param.=($search_task_ref?'&search_task_ref='.$search_task_ref:'');
-$param.=($search_task_label?'&search_task_label='.$search_task_label:'');
+$param.=($mode?'&mode='.urlencode($mode):'');
+$param.=($search_project_ref?'&search_project_ref='.urlencode($search_project_ref):'');
+$param.=($search_usertoprocessid?'&search_usertoprocessid='.urlencode($search_usertoprocessid):'');
+$param.=($search_thirdparty?'&search_thirdparty='.urlencode($search_thirdparty):'');
+$param.=($search_task_ref?'&search_task_ref='.urlencode($search_task_ref):'');
+$param.=($search_task_label?'&search_task_label='.urlencode($search_task_label):'');
 
-$search_array_options=$search_array_options_project;
+/*$search_array_options=$search_array_options_project;
 $search_options_pattern='search_options_';
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
+*/
 
 $search_array_options=$search_array_options_task;
 $search_options_pattern='search_task_options_';
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
-
-// Project
-//$search_pattern='search_options_';
-//include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
-// Task
-$search_options_pattern='search_task_options_';
-include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
 
 // Show navigation bar
 $nav ='<a class="inline-block valignmiddle" href="?year='.$prev_year."&amp;month=".$prev_month."&amp;day=".$prev_day.$param.'">'.img_previous($langs->trans("Previous"))."</a>\n";
@@ -539,6 +541,17 @@ if (! empty($moreforfilter))
 	print '</div>';
 }
 
+$varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
+$selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
+
+// This must be after the $selectedfields
+$addcolspan=0;
+if (! empty($arrayfields['t.planned_workload']['checked'])) $addcolspan++;
+if (! empty($arrayfields['t.progress']['checked'])) $addcolspan++;
+foreach ($arrayfields as $key => $val)
+{
+    if ($val['checked'] && substr($key, 0, 5) == 'efpt.') $addcolspan++;
+}
 
 print '<div class="div-table-responsive">';
 print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'" id="tablelines3">'."\n";
@@ -547,26 +560,20 @@ print '<tr class="liste_titre_filter">';
 if (! empty($conf->global->PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT)) print '<td class="liste_titre"><input type="text" size="4" name="search_project_ref" value="'.dol_escape_htmltag($search_project_ref).'"></td>';
 if (! empty($conf->global->PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT)) print '<td class="liste_titre"><input type="text" size="4" name="search_thirdparty" value="'.dol_escape_htmltag($search_thirdparty).'"></td>';
 print '<td class="liste_titre"><input type="text" size="4" name="search_task_label" value="'.dol_escape_htmltag($search_task_label).'"></td>';
-
-$varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
-$selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
-
-$addcolspan=0;
-foreach ($arrayfields as $key => $val)
-{
-    if ($val['checked'] && substr($key, 0, 5) == 'efpt.') $addcolspan++;
-}
-
 // TASK fields
 $search_options_pattern='search_task_options_';
 $extrafieldsobjectkey='projet_task';
 $extrafieldsobjectprefix='efpt.';
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
-
-
 print '<td class="liste_titre"></td>';
-print '<td class="liste_titre right"><input type="text" size="4" name="search_declared_progress" value="'.dol_escape_htmltag($search_declared_progress).'"></td>';
-print '<td class="liste_titre"></td>';
+if (! empty($arrayfields['t.planned_workload']['checked']))
+{
+    print '<td class="liste_titre right"><input type="text" size="4" name="search_declared_progress" value="'.dol_escape_htmltag($search_declared_progress).'"></td>';
+}
+if (! empty($arrayfields['t.progress']['checked']))
+{
+    print '<td class="liste_titre"></td>';
+}
 print '<td class="liste_titre"></td>';
 print '<td class="liste_titre"></td>';
 print '<td class="liste_titre"></td>';
@@ -582,20 +589,23 @@ print '<tr class="liste_titre">';
 if (! empty($conf->global->PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT)) print '<td>'.$langs->trans("Project").'</td>';
 if (! empty($conf->global->PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT)) print '<td>'.$langs->trans("ThirdParty").'</td>';
 print '<td>'.$langs->trans("Task").'</td>';
-
 // TASK fields
 $extrafieldsobjectkey='projet_task';
 $extrafieldsobjectprefix='efpt.';
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
-
-
-print '<td class="right leftborder plannedworkload maxwidth100">'.$langs->trans("PlannedWorkload").'</td>';
-print '<td class="right maxwidth100">'.$langs->trans("ProgressDeclared").'</td>';
+if (! empty($arrayfields['t.planned_workload']['checked']))
+{
+    print '<td class="right leftborder plannedworkload maxwidth100">'.$langs->trans("PlannedWorkload").'</td>';
+}
+if (! empty($arrayfields['t.progress']['checked']))
+{
+    print '<td class="right maxwidth100">'.$langs->trans("ProgressDeclared").'</td>';
+}
 /*print '<td class="right maxwidth100">'.$langs->trans("TimeSpent").'</td>';
 if ($usertoprocess->id == $user->id) print '<td class="right maxwidth100">'.$langs->trans("TimeSpentByYou").'</td>';
 else print '<td class="right maxwidth100">'.$langs->trans("TimeSpentByUser").'</td>';*/
 print '<td class="right maxwidth100">'.$langs->trans("TimeSpent").'<br>('.$langs->trans("Everybody").')</td>';
-print '<td class="right maxwidth100">'.$langs->trans("TimeSpent").($usertoprocess->firstname?'<br>('.$usertoprocess->firstname.')':'').'</td>';
+print '<td class="right maxwidth100">'.$langs->trans("TimeSpent").($usertoprocess->firstname?'<br>('.dol_trunc($usertoprocess->firstname,10).')':'').'</td>';
 print '<td class="center leftborder">'.$langs->trans("HourStart").'</td>';
 
 // By default, we can edit only tasks we are assigned to
@@ -640,7 +650,7 @@ print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $
 
 print "</tr>\n";
 
-$colspan = 6+(empty($conf->global->PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT)?0:2);
+$colspan=4+(empty($conf->global->PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT)?0:2);
 
 if ($conf->use_javascript_ajax)
 {
@@ -668,9 +678,9 @@ if ($conf->use_javascript_ajax)
 
 	print '<td class="liste_total center'.($cssonholiday?' '.$cssonholiday:'').($cssweekend?' '.$cssweekend:'').'"><div class="totalDay0">&nbsp;</div></td>';
 
-	print '<td class="liste_total"></td>
-                <td class="liste_total"></td>
-                </tr>';
+	print '<td class="liste_total"></td>';
+    print '<td class="liste_total"></td>';
+    print '</tr>';
 }
 
 

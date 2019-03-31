@@ -6304,7 +6304,6 @@ class Form
 				else $array[$key]['checked']=0;
 			}
 		}
-		//var_dump($array);
 
 		$lis='';
 		$listcheckedstring='';
