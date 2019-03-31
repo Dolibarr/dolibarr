@@ -729,10 +729,11 @@ class Task extends CommonObject
 	 * @param	string	$morewherefilter	Add more filter into where SQL request (must start with ' AND ...')
 	 * @param	string	$filteronprojuser	Filter on user that is a contact of project
 	 * @param	string	$filterontaskuser	Filter on user assigned to task
-	 * @param   int     $includebilltime    Calculate also the time to bill and billed
+	 * @param	array	  $extrafields	    Show additional column from project or task
+	 * @param int     $includebilltime  Calculate also the time to bill and billed
 	 * @return 	array						Array of tasks
 	 */
-	public function getTasksArray($usert = null, $userp = null, $projectid = 0, $socid = 0, $mode = 0, $filteronproj = '', $filteronprojstatus = '-1', $morewherefilter = '', $filteronprojuser = 0, $filterontaskuser = 0, $includebilltime = 0)
+	public function getTasksArray($usert = null, $userp = null, $projectid = 0, $socid = 0, $mode = 0, $filteronproj = '', $filteronprojstatus = '-1', $morewherefilter = '', $filteronprojuser = 0, $filterontaskuser = 0, $extrafields=array(), $includebilltime = 0)
 	{
 		global $conf;
 
@@ -746,13 +747,25 @@ class Task extends CommonObject
 		$sql.= " p.rowid as projectid, p.ref, p.title as plabel, p.public, p.fk_statut as projectstatus, p.bill_time,";
 		$sql.= " t.rowid as taskid, t.ref as taskref, t.label, t.description, t.fk_task_parent, t.duration_effective, t.progress, t.fk_statut as status,";
 		$sql.= " t.dateo as date_start, t.datee as date_end, t.planned_workload, t.rang,";
-		$sql.= " s.rowid as thirdparty_id, s.nom as thirdparty_name, s.email as thirdparty_email";
+		$sql.= " s.rowid as thirdparty_id, s.nom as thirdparty_name, s.email as thirdparty_email,";
+    $sql.= " p.fk_opp_status, p.opp_amount, p.opp_percent, p.budget_amount";
+    if (!empty($extrafields->attributes['projet']['label']))
+    {
+        foreach ($extrafields->attributes['projet']['label'] as $key => $val) $sql.=($extrafields->attributes['projet']['type'][$key] != 'separate' ? ",efp.".$key.' as options_'.$key : '');
+    }
+    if (!empty($extrafields->attributes['projet_task']['label']))
+    {
+        foreach ($extrafields->attributes['projet_task']['label'] as $key => $val) $sql.=($extrafields->attributes['projet_task']['type'][$key] != 'separate' ? ",efpt.".$key.' as options_'.$key : '');
+    }
 		if ($includebilltime)
 		{
-		    $sql.=" , SUM(tt.task_duration * ".$this->db->ifsql("invoice_id IS NULL", "1", "0").") as tobill, SUM(tt.task_duration * ".$this->db->ifsql("invoice_id IS NULL", "0", "1").") as billed";
+		    $sql.=", SUM(tt.task_duration * ".$this->db->ifsql("invoice_id IS NULL", "1", "0").") as tobill, SUM(tt.task_duration * ".$this->db->ifsql("invoice_id IS NULL", "0", "1").") as billed";
 		}
-		$sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
+
+    $sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON p.fk_soc = s.rowid";
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."projet_extrafields as efp ON (p.rowid = efp.fk_object)";
+
 		if ($mode == 0)
 		{
 			if ($filteronprojuser > 0)
@@ -770,7 +783,8 @@ class Task extends CommonObject
 				$sql.= ", ".MAIN_DB_PREFIX."element_contact as ec2";
 				$sql.= ", ".MAIN_DB_PREFIX."c_type_contact as ctc2";
 			}
-			$sql.= " WHERE p.entity IN (".getEntity('project').")";
+            $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task_extrafields as efpt ON (t.rowid = efpt.fk_object)";
+            $sql.= " WHERE p.entity IN (".getEntity('project').")";
 			$sql.= " AND t.fk_projet = p.rowid";
 		}
 		elseif ($mode == 1)
@@ -798,7 +812,8 @@ class Task extends CommonObject
 				    $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task_time as tt ON tt.fk_task = t.rowid";
 				}
 			}
-			$sql.= " WHERE p.entity IN (".getEntity('project').")";
+            $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task_extrafields as efpt ON (t.rowid = efpt.fk_object)";
+            $sql.= " WHERE p.entity IN (".getEntity('project').")";
 		}
 		else return 'BadValueForParameterMode';
 
@@ -832,7 +847,16 @@ class Task extends CommonObject
     		$sql.=" t.datec, t.dateo, t.datee, t.tms,";
     		$sql.=" t.rowid, t.ref, t.label, t.description, t.fk_task_parent, t.duration_effective, t.progress, t.fk_statut,";
     		$sql.=" t.dateo, t.datee, t.planned_workload, t.rang,";
-    		$sql.=" s.rowid, s.nom, s.email";
+    		$sql.=" s.rowid, s.nom, s.email,";
+        $sql.=" p.fk_opp_status, p.opp_amount, p.opp_percent, p.budget_amount";
+        if (!empty($extrafields->attributes['projet']['label']))
+        {
+            foreach ($extrafields->attributes['projet']['label'] as $key => $val) $sql.=($extrafields->attributes['projet']['type'][$key] != 'separate' ? ",efp.".$key : '');
+        }
+        if (!empty($extrafields->attributes['projet_task']['label']))
+        {
+            foreach ($extrafields->attributes['projet_task']['label'] as $key => $val) $sql.=($extrafields->attributes['projet_task']['type'][$key] != 'separate' ? ",efpt.".$key : '');
+        }
 		}
 
 		$sql.= " ORDER BY p.ref, t.rang, t.dateo";
@@ -897,6 +921,31 @@ class Task extends CommonObject
 					$tasks[$i]->thirdparty_id	= $obj->thirdparty_id;
 					$tasks[$i]->thirdparty_name	= $obj->thirdparty_name;
 					$tasks[$i]->thirdparty_email= $obj->thirdparty_email;
+
+
+                    $tasks[$i]->fk_opp_status = $obj->fk_opp_status;
+                    $tasks[$i]->opp_amount = $obj->opp_amount;
+                    $tasks[$i]->opp_percent = $obj->opp_percent;
+                    $tasks[$i]->budget_amount = $obj->budget_amount;
+                    $tasks[$i]->bill_time = $obj->bill_time;
+
+                    if (!empty($extrafields->attributes['projet']['label']))
+                    {
+                        foreach ($extrafields->attributes['projet']['label'] as $key => $val)
+                        {
+                            if ($extrafields->attributes['projet']['type'][$key] != 'separate')
+                                $tasks[$i]->{'options_'.$key} = $obj->{'options_'.$key};
+                        }
+                    }
+
+                    if (!empty($extrafields->attributes['projet_task']['label']))
+                    {
+                        foreach ($extrafields->attributes['projet_task']['label'] as $key => $val)
+                        {
+                            if ($extrafields->attributes['projet_task']['type'][$key] != 'separate')
+                                $tasks[$i]->{'options_'.$key} = $obj->{'options_'.$key};
+                        }
+                    }
 				}
 
 				$i++;
