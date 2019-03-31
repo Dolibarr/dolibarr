@@ -8,6 +8,7 @@
  * Copyright (C) 2016      Ferran Marcet        <fmarcet@2byte.es>
  * Copyright (C) 2018      Frédéric France      <frederic.france@netlogic.fr>
  * Copyright (C) 2018      Charlene Benke       <charlie@patas-monkey.com>
+ * Copyright (C) 2019      Nicolas ZABOURI      <info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1158,6 +1159,10 @@ if ($resql)
 		}
 		print '</tr>';
 	}
+
+    $parameters=array('arrayfields'=>$arrayfields, 'sql'=>$sql);
+    $reshook=$hookmanager->executeHooks('printFieldListFooter', $parameters);    // Note that $action and $object may have been modified by hook
+    print $hookmanager->resPrint;
 
 	print "</table>\n";
 	print '</div>';
