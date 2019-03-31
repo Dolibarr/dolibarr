@@ -348,7 +348,7 @@ function project_admin_prepare_head()
  * @param   string      $showbilltime           Add the column 'TimeToBill' and 'TimeBilled'
  * @return	void
  */
-function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$taskrole, $projectsListId = '', $addordertick = 0, $projectidfortotallink = 0, $filterprogresscalc = '', $showbilltime=0)
+function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$taskrole, $projectsListId = '', $addordertick = 0, $projectidfortotallink = 0, $filterprogresscalc = '', $showbilltime = 0)
 {
 	global $user, $bc, $langs, $conf, $db;
 	global $projectstatic, $taskstatic;
