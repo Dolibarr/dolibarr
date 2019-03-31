@@ -1244,7 +1244,7 @@ class FormOther
 	 *  @param	int      	$useempty		1=Add empty line
 	 *	@return	string						See option
 	 */
-    public function selectautomanual($htmlname, $value = '', $option = 0, $disabled = false, $useempty = 0)
+    public function selectAutoManual($htmlname, $value = '', $option = 0, $disabled = false, $useempty = 0)
 	{
 		global $langs;
 
