@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2006  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2018  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2019  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2012-2016  Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2013-2018	Juanjo Menent           <jmenent@2byte.es>
@@ -981,7 +981,7 @@ if ($resql)
 		if (! empty($arrayfields['p.datec']['checked']))
 		{
 			print '<td class="center">';
-			print dol_print_date($obj->date_creation, 'dayhour', 'tzuser');
+			print dol_print_date($db->jdate($obj->date_creation), 'dayhour', 'tzuser');
 			print '</td>';
 			if (! $i) $totalarray['nbfield']++;
 		}
@@ -989,7 +989,7 @@ if ($resql)
 		if (! empty($arrayfields['p.tms']['checked']))
 		{
 			print '<td class="center">';
-			print dol_print_date($obj->date_update, 'dayhour', 'tzuser');
+			print dol_print_date($db->jdate($obj->date_update), 'dayhour', 'tzuser');
 			print '</td>';
 			if (! $i) $totalarray['nbfield']++;
 		}

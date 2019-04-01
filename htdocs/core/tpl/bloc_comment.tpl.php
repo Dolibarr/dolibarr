@@ -64,9 +64,11 @@ if (!empty($object->comments))
 		$fk_user = $comment->fk_user_author;
 		$userstatic->fetch($fk_user);
 
-		if(empty($TColors[$fk_user])) {
-			$bgcolor = random_color(180, 240);
-			if(!empty($userstatic->color)) {
+		if (empty($TColors[$fk_user]))
+		{
+			$bgcolor = randomColor(180, 240);
+			if (!empty($userstatic->color))
+			{
 				$bgcolor = $userstatic->color;
 			}
 			$color = (colorIsLight($bgcolor))?'555':'fff';

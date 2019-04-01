@@ -519,21 +519,21 @@ if ($action == "view_ticketlist")
                     // Date ticket
                     if (!empty($arrayfields['t.datec']['checked'])) {
                         print '<td>';
-                        print dol_print_date($obj->datec, 'dayhour');
+                        print dol_print_date($db->jdate($obj->datec), 'dayhour');
                         print '</td>';
                     }
 
                     // Date read
                     if (!empty($arrayfields['t.date_read']['checked'])) {
                         print '<td>';
-                        print dol_print_date($obj->date_read, 'dayhour');
+                        print dol_print_date($db->jdate($obj->date_read), 'dayhour');
                         print '</td>';
                     }
 
                     // Date close
                     if (!empty($arrayfields['t.date_close']['checked'])) {
                         print '<td>';
-                        print dol_print_date($obj->date_close, 'dayhour');
+                        print dol_print_date($db->jdate($obj->date_close), 'dayhour');
                         print '</td>';
                     }
 
@@ -616,7 +616,7 @@ if ($action == "view_ticketlist")
                     }
 
                     if (!empty($arrayfields['t.tms']['checked'])) {
-                        print '<td>' . dol_print_date($obj->tms, 'dayhour') . '</td>';
+                        print '<td>' . dol_print_date($db->jdate($obj->tms), 'dayhour') . '</td>';
                     }
 
                     // Extra fields

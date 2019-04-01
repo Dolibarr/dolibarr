@@ -2414,28 +2414,39 @@ function getModuleDirForApiClass($module)
     return $moduledirforclass;
 }
 
-/*
+/**
  * Return 2 hexa code randomly
  *
- * @param	$min	int	Between 0 and 255
- * @param	$max	int	Between 0 and 255
- * @return String
+ * @param	int   $min	    Between 0 and 255
+ * @param	int   $max	    Between 0 and 255
+ * @return  string          A color string '12'
  */
-function random_color_part($min = 0, $max = 255)
+function randomColorPart($min = 0, $max = 255)
 {
     return str_pad(dechex(mt_rand($min, $max)), 2, '0', STR_PAD_LEFT);
 }
 
-/*
+/**
  * Return hexadecimal color randomly
  *
- * @param	$min	int	Between 0 and 255
- * @param	$max	int	Between 0 and 255
- * @return String
+ * @param	int   $min	   Between 0 and 255
+ * @param	int   $max	   Between 0 and 255
+ * @return  string         A color string '123456'
  */
-function random_color($min = 0, $max = 255)
+function randomColor($min = 0, $max = 255)
 {
-    return random_color_part($min, $max) . random_color_part($min, $max) . random_color_part($min, $max);
+    return randomColorPart($min, $max) . randomColorPart($min, $max) . randomColorPart($min, $max);
+}
+
+/**
+ * Encode string for xml usage
+ *
+ * @param 	string	$string		String to encode
+ * @return	string				String encoded
+ */
+function dolEscapeXML($string)
+{
+    return strtr($string, array('\''=>'&apos;','"'=>'&quot;','&'=>'&amp;','<'=>'&lt;','>'=>'&gt;'));
 }
 
 /**

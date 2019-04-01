@@ -1049,46 +1049,47 @@ function getProductsForCategory($authentication, $id, $lang = '')
 				if ($res)
 				{
 					$iProduct = 0;
+					$tmpproduct = new Product($db);
+					$products=array();
 					while ($rec = $db->fetch_array($res))
 					{
-						$obj = new Product($db);
-						$obj->fetch($rec['fk_'.$field]);
-						if($obj->status > 0 )
+						$tmpproduct->fetch($rec['fk_'.$field]);
+						if ($tmpproduct->status > 0)
 						{
 							$dir = (!empty($conf->product->dir_output)?$conf->product->dir_output:$conf->service->dir_output);
-							$pdir = get_exdir($obj->id, 2, 0, 0, $product, 'product') . $obj->id ."/photos/";
+							$pdir = get_exdir($tmpproduct->id, 2, 0, 0, $tmpproduct, 'product') . $tmpproduct->id ."/photos/";
 							$dir = $dir . '/'. $pdir;
 
 							$products[] = array(
-						    	'id' => $obj->id,
-					   			'ref' => $obj->ref,
-					   			'ref_ext' => $obj->ref_ext,
-					    		'label' => ! empty($obj->multilangs[$langs->defaultlang]["label"]) ? $obj->multilangs[$langs->defaultlang]["label"] : $obj->label,
-					    		'description' => ! empty($obj->multilangs[$langs->defaultlang]["description"]) ? $obj->multilangs[$langs->defaultlang]["description"] : $obj->description,
-					    		'date_creation' => dol_print_date($obj->date_creation, 'dayhourrfc'),
-					    		'date_modification' => dol_print_date($obj->date_modification, 'dayhourrfc'),
-					            'note' => ! empty($obj->multilangs[$langs->defaultlang]["note"]) ? $obj->multilangs[$langs->defaultlang]["note"] : $obj->note,
-					            'status_tosell' => $obj->status,
-					            'status_tobuy' => $obj->status_buy,
-		                		'type' => $obj->type,
-						        'barcode' => $obj->barcode,
-						        'barcode_type' => $obj->barcode_type,
-		                		'country_id' => $obj->country_id>0?$obj->country_id:'',
-						        'country_code' => $obj->country_code,
-						        'custom_code' => $obj->customcode,
+						    	'id' => $tmpproduct->id,
+					   			'ref' => $tmpproduct->ref,
+					   			'ref_ext' => $tmpproduct->ref_ext,
+					    		'label' => ! empty($tmpproduct->multilangs[$langs->defaultlang]["label"]) ? $tmpproduct->multilangs[$langs->defaultlang]["label"] : $tmpproduct->label,
+					    		'description' => ! empty($tmpproduct->multilangs[$langs->defaultlang]["description"]) ? $tmpproduct->multilangs[$langs->defaultlang]["description"] : $tmpproduct->description,
+					    		'date_creation' => dol_print_date($tmpproduct->date_creation, 'dayhourrfc'),
+					    		'date_modification' => dol_print_date($tmpproduct->date_modification, 'dayhourrfc'),
+					            'note' => ! empty($tmpproduct->multilangs[$langs->defaultlang]["note"]) ? $tmpproduct->multilangs[$langs->defaultlang]["note"] : $tmpproduct->note,
+					            'status_tosell' => $tmpproduct->status,
+					            'status_tobuy' => $tmpproduct->status_buy,
+		                		'type' => $tmpproduct->type,
+						        'barcode' => $tmpproduct->barcode,
+						        'barcode_type' => $tmpproduct->barcode_type,
+		                		'country_id' => $tmpproduct->country_id>0?$tmpproduct->country_id:'',
+						        'country_code' => $tmpproduct->country_code,
+						        'custom_code' => $tmpproduct->customcode,
 
-						        'price_net' => $obj->price,
-						        'price' => $obj->price_ttc,
-						        'vat_rate' => $obj->tva_tx,
+						        'price_net' => $tmpproduct->price,
+						        'price' => $tmpproduct->price_ttc,
+						        'vat_rate' => $tmpproduct->tva_tx,
 
-								'price_base_type' => $obj->price_base_type,
+								'price_base_type' => $tmpproduct->price_base_type,
 
-						        'stock_real' => $obj->stock_reel,
-		                		'stock_alert' => $obj->seuil_stock_alerte,
-						        'pmp' => $obj->pmp,
-		                		'import_key' => $obj->import_key,
+						        'stock_real' => $tmpproduct->stock_reel,
+		                		'stock_alert' => $tmpproduct->seuil_stock_alerte,
+						        'pmp' => $tmpproduct->pmp,
+		                		'import_key' => $tmpproduct->import_key,
 		                		'dir' => $pdir,
-								'images' => $obj->liste_photos($dir, $nbmax)
+								'images' => $tmpproduct->liste_photos($dir, $nbmax)
 							);
 
 							//Retreive all extrafield for thirdsparty
@@ -1096,11 +1097,11 @@ function getProductsForCategory($authentication, $id, $lang = '')
 							$extrafields=new ExtraFields($db);
 							$extralabels=$extrafields->fetch_name_optionals_label('product', true);
 							//Get extrafield values
-							$obj->fetch_optionals();
+							$tmpproduct->fetch_optionals();
 
 							foreach($extrafields->attribute_label as $key=>$label)
 							{
-								$products[$iProduct]=array_merge($products[$iProduct], array('options_'.$key => $obj->array_options['options_'.$key]));
+								$products[$iProduct]=array_merge($products[$iProduct], array('options_'.$key => $tmpproduct->array_options['options_'.$key]));
 							}
 
 							$iProduct++;
@@ -1117,7 +1118,7 @@ function getProductsForCategory($authentication, $id, $lang = '')
 				{
 					$errorcode='NORECORDS_FOR_ASSOCIATION'; $errorlabel='No products associated'.$sql;
 					$objectresp = array('result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel));
-					dol_syslog("getProductsForCategory:: ".$c->error, LOG_DEBUG);
+					dol_syslog("getProductsForCategory:: ".$errorcode, LOG_DEBUG);
 				}
 			}
 			else

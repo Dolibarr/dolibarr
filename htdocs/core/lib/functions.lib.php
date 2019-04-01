@@ -887,17 +887,6 @@ function dol_string_nospecial($str, $newstr = '_', $badcharstoreplace = '')
 
 
 /**
- * Encode string for xml usage
- *
- * @param 	string	$string		String to encode
- * @return	string				String encoded
- */
-function dolEscapeXML($string)
-{
-	return strtr($string, array('\''=>'&apos;','"'=>'&quot;','&'=>'&amp;','<'=>'&lt;','>'=>'&gt;'));
-}
-
-/**
  *  Returns text escaped for inclusion into javascript code
  *
  *  @param      string		$stringtoescape		String to escape
@@ -1785,8 +1774,8 @@ function dol_print_date($time, $format = '', $tzoutput = 'tzserver', $outputlang
 	if (preg_match('/^([0-9]+)\-([0-9]+)\-([0-9]+) ?([0-9]+)?:?([0-9]+)?:?([0-9]+)?/i', $time, $reg)
 	|| preg_match('/^([0-9][0-9][0-9][0-9])([0-9][0-9])([0-9][0-9])([0-9][0-9])([0-9][0-9])([0-9][0-9])$/i', $time, $reg))	// Deprecated. Ex: 1970-01-01, 1970-01-01 01:00:00, 19700101010000
 	{
-		// TODO Remove this. This part of code should not be used.
-		dol_syslog("Functions.lib::dol_print_date function call with deprecated value of time in page ".$_SERVER["PHP_SELF"], LOG_WARNING);
+		// This part of code should not be used.
+		/*dol_syslog("Functions.lib::dol_print_date function called with a bad value from page ".$_SERVER["PHP_SELF"], LOG_WARNING);
 		//if (function_exists('debug_print_backtrace')) debug_print_backtrace();
 		// Date has format 'YYYY-MM-DD' or 'YYYY-MM-DD HH:MM:SS' or 'YYYYMMDDHHMMSS'
 		$syear	= (! empty($reg[1]) ? $reg[1] : '');
@@ -1797,7 +1786,9 @@ function dol_print_date($time, $format = '', $tzoutput = 'tzserver', $outputlang
 		$ssec	= (! empty($reg[6]) ? $reg[6] : '');
 
 		$time=dol_mktime($shour, $smin, $ssec, $smonth, $sday, $syear, true);
-		$ret=adodb_strftime($format, $time+$offsettz+$offsetdst, $to_gmt);
+		$ret=adodb_strftime($format, $time+$offsettz+$offsetdst, $to_gmt);*/
+	    dol_print_error("Functions.lib::dol_print_date function called with a bad value from page ".$_SERVER["PHP_SELF"]);
+	    return '';
 	}
 	else
 	{
