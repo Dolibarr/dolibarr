@@ -2444,9 +2444,12 @@ function randomColor($min = 0, $max = 255)
  * @param 	string	$string		String to encode
  * @return	string				String encoded
  */
-function dolEscapeXML($string)
+if (! function_exists('dolEscapeXML'))
 {
-    return strtr($string, array('\''=>'&apos;','"'=>'&quot;','&'=>'&amp;','<'=>'&lt;','>'=>'&gt;'));
+    function dolEscapeXML($string)
+    {
+        return strtr($string, array('\''=>'&apos;','"'=>'&quot;','&'=>'&amp;','<'=>'&lt;','>'=>'&gt;'));
+    }
 }
 
 /**
