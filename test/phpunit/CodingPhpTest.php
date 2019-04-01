@@ -236,7 +236,20 @@ class CodingPhpTest extends PHPUnit_Framework_TestCase
                     break;
                 }
             }
-            $this->assertTrue($ok, 'Found a tag <br /> that is for xml in file '.$file['fullname'].' You may use <br> instead.');
+            $this->assertTrue($ok, 'Found a tag <br /> that is for xml in file '.$file['fullname'].'. You may use html syntax <br> instead.');
+
+
+            // Test we don't have @var array(
+            $ok=true;
+            $matches=array();
+            // Check string   ='".$this->xxx   with xxx that is not 'escape'. It means we forget a db->escape when forging sql request.
+            preg_match_all('/@var\s+array\(/', $filecontent, $matches, PREG_SET_ORDER);
+            foreach($matches as $key => $val)
+            {
+                $ok=false;
+                break;
+            }
+            $this->assertTrue($ok, 'Found a declaration @var array() instead of @var array in file '.$file['fullname'].'.');
         }
 
         return;
