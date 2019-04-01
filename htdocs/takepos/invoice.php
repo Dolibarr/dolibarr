@@ -41,9 +41,24 @@ $langs->loadLangs(array("bills", "cashdesk"));
 $id = GETPOST('id', 'int');
 $action = GETPOST('action', 'alpha');
 $idproduct = GETPOST('idproduct', 'int');
-
 $place = (GETPOST('place', 'int') > 0 ? GETPOST('place', 'int') : 0);   // $place is id of table for Ba or Restaurant
 $posnb = (GETPOST('posnb', 'int') > 0 ? GETPOST('posnb', 'int') : 0);   // $posnb is id of POS
+
+/**
+ * Abort invoice creationg with a given error message
+ *
+ * @param   string  $message        Message explaining the error to the user
+ * @return	void
+ */
+function fail($message)
+{
+	header($_SERVER['SERVER_PROTOCOL'] . ' 500 Internal Server Error', true, 500);
+	die($message);
+}
+
+
+
+$placeid = 0;	// $placeid is id of invoice
 
 $number = GETPOST('number', 'alpha');
 $idline = GETPOST('idline', 'int');
@@ -100,6 +115,26 @@ if ($action == 'valid' && $user->rights->facture->creer)
 
 	$invoice = new Facture($db);
 	$invoice->fetch($placeid);
+	if($invoice->total_ttc<0){
+		$invoice->type= $invoice::TYPE_CREDIT_NOTE;
+		$sql="SELECT rowid FROM ".MAIN_DB_PREFIX."facture WHERE ";
+		$sql.="fk_soc = '".$invoice->socid."' ";
+		$sql.="AND type <> ".Facture::TYPE_CREDIT_NOTE." ";
+		$sql.="AND fk_statut >= ".$invoice::STATUS_VALIDATED." ";
+		$sql.="ORDER BY rowid DESC";
+		$resql = $db->query($sql);
+		if($resql){
+			$obj = $db->fetch_object($resql);
+			$fk_source=$obj->rowid;
+			if($fk_source == null){
+				fail($langs->transnoentitiesnoconv("NoPreviousBillForCustomer"));
+			}
+		}else{
+			fail($langs->transnoentitiesnoconv("NoPreviousBillForCustomer"));
+		}
+		$invoice->fk_facture_source=$fk_source;
+		$invoice->update($user);
+	}
 
 	if (! empty($conf->stock->enabled) && $conf->global->CASHDESK_NO_DECREASE_STOCK != "1")
 	{

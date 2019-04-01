@@ -6773,8 +6773,6 @@ class Form
 		return $resultyesno;
 	}
 
-
-
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Return list of export templates
