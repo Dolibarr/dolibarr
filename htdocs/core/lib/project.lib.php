@@ -1099,7 +1099,7 @@ function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsr
 				if (! empty($conf->global->PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT))
 				{
 				    print "<td>";
-				    if ($oldprojectforbreak == -1) print $projectstatic->getNomUrl(1,'',0,$langs->transnoentitiesnoconv("YourRole").': '.$projectsrole[$lines[$i]->fk_project]);
+				    if ($oldprojectforbreak == -1) print $projectstatic->getNomUrl(1, '', 0, $langs->transnoentitiesnoconv("YourRole").': '.$projectsrole[$lines[$i]->fk_project]);
 				    print "</td>";
 				}
 
