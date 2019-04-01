@@ -261,7 +261,7 @@ class modAdherent extends DolibarrModules
         // $this->export_label[$r]         Libelle by default if translation of key "ExportXXX" not found (XXX = Code)
         // $this->export_permission[$r]    List of permission codes required to export
         // $this->export_fields_sql[$r]    List of exportable fields in SQL codiffication
-        // $this->export_fields_name[$r]   Liste des champs exportables en codif traduction
+        // $this->export_fields_name[$r]   List of exportable fields in translation codiffication
         // $this->export_sql[$r]           Requete sql qui offre les donnees a l'export
 
         $r++;
