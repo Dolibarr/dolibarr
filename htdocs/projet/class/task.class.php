@@ -729,11 +729,11 @@ class Task extends CommonObject
 	 * @param	string	$morewherefilter	Add more filter into where SQL request (must start with ' AND ...')
 	 * @param	string	$filteronprojuser	Filter on user that is a contact of project
 	 * @param	string	$filterontaskuser	Filter on user assigned to task
-	 * @param	array	  $extrafields	    Show additional column from project or task
-	 * @param int     $includebilltime  Calculate also the time to bill and billed
+	 * @param	array	$extrafields	    Show additional column from project or task
+	 * @param   int     $includebilltime    Calculate also the time to bill and billed
 	 * @return 	array						Array of tasks
 	 */
-	public function getTasksArray($usert = null, $userp = null, $projectid = 0, $socid = 0, $mode = 0, $filteronproj = '', $filteronprojstatus = '-1', $morewherefilter = '', $filteronprojuser = 0, $filterontaskuser = 0, $extrafields=array(), $includebilltime = 0)
+	public function getTasksArray($usert = null, $userp = null, $projectid = 0, $socid = 0, $mode = 0, $filteronproj = '', $filteronprojstatus = '-1', $morewherefilter = '', $filteronprojuser = 0, $filterontaskuser = 0, $extrafields = array(), $includebilltime = 0)
 	{
 		global $conf;
 

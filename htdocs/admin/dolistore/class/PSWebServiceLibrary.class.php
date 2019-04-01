@@ -414,24 +414,26 @@ class PrestaShopWebservice
 	 * }
 	 * ?>
 	 * </code>
-	 * @param array $options Array representing resource to delete.
+	 *
+	 * @param  array       $options        Array representing resource to delete.
+	 * @return boolean                     True
 	 */
 	public function delete($options)
 	{
 	    if (isset($options['url']))
 	        $url = $options['url'];
-	        elseif (isset($options['resource']) && isset($options['id']))
-	        if (is_array($options['id']))
-	            $url = $this->url.'/api/'.$options['resource'].'/?id=['.implode(',', $options['id']).']';
-	            else
-	                $url = $this->url.'/api/'.$options['resource'].'/'.$options['id'];
-	                if (isset($options['id_shop']))
-	                    $url .= '&id_shop='.$options['id_shop'];
-	                    if (isset($options['id_group_shop']))
-	                        $url .= '&id_group_shop='.$options['id_group_shop'];
-	                        $request = self::executeRequest($url, array(CURLOPT_CUSTOMREQUEST => 'DELETE'));
-	                        self::checkStatusCode($request['status_code']);// check the response validity
-	                        return true;
+	    elseif (isset($options['resource']) && isset($options['id']))
+    	    if (is_array($options['id']))
+    	        $url = $this->url.'/api/'.$options['resource'].'/?id=['.implode(',', $options['id']).']';
+    	    else
+    	        $url = $this->url.'/api/'.$options['resource'].'/'.$options['id'];
+	    if (isset($options['id_shop']))
+	        $url .= '&id_shop='.$options['id_shop'];
+	    if (isset($options['id_group_shop']))
+	        $url .= '&id_group_shop='.$options['id_group_shop'];
+	    $request = self::executeRequest($url, array(CURLOPT_CUSTOMREQUEST => 'DELETE'));
+	    self::checkStatusCode($request['status_code']);// check the response validity
+	    return true;
 	}
 }
 
