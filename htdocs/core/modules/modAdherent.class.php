@@ -257,7 +257,7 @@ class modAdherent extends DolibarrModules
         //--------
         $r=0;
 
-        // $this->export_code[$r]          Code unique identifiant l'export (tous modules confondus)
+        // $this->export_code[$r]          Unique code identifying the export (all modules combined)
         // $this->export_label[$r]         Libelle par defaut si traduction de cle "ExportXXX" non trouvee (XXX = Code)
         // $this->export_permission[$r]    Liste des codes permissions requis pour faire l'export
         // $this->export_fields_sql[$r]    Liste des champs exportables en codif sql
