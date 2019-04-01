@@ -68,10 +68,10 @@ class pdf_eratosthene extends ModelePDFCommandes
     public $type;
 
 	/**
-     * @var array Minimum version of PHP required by module.
-	 * e.g.: PHP ≥ 5.3 = array(5, 3)
+     * @var array() Minimum version of PHP required by module.
+	 * e.g.: PHP ≥ 5.4 = array(5, 4)
      */
-	public $phpmin = array(5, 2);
+	public $phpmin = array(5, 4);
 
 	/**
      * Dolibarr version of the loaded document
@@ -79,15 +79,46 @@ class pdf_eratosthene extends ModelePDFCommandes
      */
 	public $version = 'development';
 
+     /**
+     * @var int page_largeur
+     */
     public $page_largeur;
+	
+	/**
+     * @var int page_hauteur
+     */
     public $page_hauteur;
+	
+	/**
+     * @var array format
+     */
     public $format;
+	
+	/**
+     * @var int marge_gauche
+     */
 	public $marge_gauche;
+	
+	/**
+     * @var int marge_droite
+     */
 	public $marge_droite;
+	
+	/**
+     * @var int marge_haute
+     */
 	public $marge_haute;
+	
+	/**
+     * @var int marge_basse
+     */
 	public $marge_basse;
 
-    public $emetteur;	// Objet societe qui emet
+    /**
+	* Issuer
+	* @var Societe
+	*/
+	public $emetteur;
 
 
 	/**
