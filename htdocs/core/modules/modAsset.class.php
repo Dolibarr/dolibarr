@@ -223,7 +223,7 @@ class modAsset extends DolibarrModules
 		// $this->export_permission[$r]    List of permission codes required to export
 		// $this->export_fields_sql[$r]    List of exportable fields in SQL codiffication
 		// $this->export_fields_name[$r]   List of exportable fields in translation codiffication
-		// $this->export_sql[$r]           Requete sql qui offre les donnees a l'export
+		// $this->export_sql[$r]           SQL query that offers data for export
 
 		/*
 		$r++;
