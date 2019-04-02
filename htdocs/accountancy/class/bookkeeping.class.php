@@ -1872,7 +1872,7 @@ class BookKeeping extends CommonObject
 		if ($resql) {
 			$obj = '';
 			if ($this->db->num_rows($resql)) {
-				$obj = $this->db->fetch_object($resql);
+				$obj = $this->db->fetch_array($resql);
 			}
 
 			return $obj;
