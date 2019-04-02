@@ -983,19 +983,42 @@ class Categorie extends CommonObject
 	 *                fulllabel = nom avec chemin complet de la categorie
 	 *                fullpath = chemin complet compose des id
 	 *
-	 * @param   string 	$type        	       Type of categories ('customer', 'supplier', 'contact', 'product', 'member') or (0, 1, 2, ...).
-	 * @param   int    	$markafterid 	       Removed all categories including the leaf $markafterid in category tree.
-	 * @param   int     $keeponlyifinleafid    Keep only of category is inside the leaf starting with this id.
-	 * @return  array|int                      Array of categories. this->cats and this->motherof are set, -1 on error
+	 * @param   string                  $type                   Type of categories ('customer', 'supplier', 'contact', 'product', 'member') or (0, 1, 2, ...).
+	 * @param   int|string|array    	$markafterid            Removed all categories including the leaf $markafterid in category tree (exclude) or Keep only of category is inside the leaf starting with this id.
+     *                                                          $markafterid can be an :    int (id of category)
+     *                                                                                      string (categories ids seprated by comma)
+     *                                                                                      array (list of categories ids)
+     * @param   int                     $include                [=0] Exlude or 1=Include
+	 * @return  array|int               Array of categories. this->cats and this->motherof are set, -1 on error
 	 */
-	public function get_full_arbo($type, $markafterid = 0, $keeponlyifinleafid = 0)
+	public function get_full_arbo($type, $markafterid = 0, $include = 0)
 	{
         // phpcs:enable
 	    global $conf, $langs;
 
 		if (! is_numeric($type)) $type = $this->MAP_ID[$type];
 
-		$this->cats = array();
+        if (is_string($markafterid))
+        {
+            $markafterid = explode(',', $markafterid);
+        }
+        elseif (is_numeric($markafterid))
+        {
+            if ($markafterid > 0)
+            {
+                $markafterid = array($markafterid);
+            }
+            else
+            {
+                $markafterid = array();
+            }
+        }
+        elseif (!is_array($markafterid))
+        {
+            $markafterid = array();
+        }
+
+        $this->cats = array();
 
 		// Init this->motherof that is array(id_son=>id_parent, ...)
 		$this->load_motherof();
@@ -1040,39 +1063,22 @@ class Categorie extends CommonObject
 			$this->build_path_from_id_categ($key, 0);	// Process a branch from the root category key (this category has no parent)
 		}
 
-        // Exclude leaf including $markafterid from tree
-        if ($markafterid)
+        // Include or exclude leaf including $markafterid from tree
+        if (count($markafterid) > 0)
         {
+            $keyfiltercatid = implode('|', $markafterid);
+
             //print "Look to discard category ".$markafterid."\n";
-            $keyfilter1='^'.$markafterid.'$';
-            $keyfilter2='_'.$markafterid.'$';
-            $keyfilter3='^'.$markafterid.'_';
-            $keyfilter4='_'.$markafterid.'_';
+            $keyfilter1 = '^' . $keyfiltercatid . '$';
+            $keyfilter2 = '_' . $keyfiltercatid . '$';
+            $keyfilter3 = '^' . $keyfiltercatid . '_';
+            $keyfilter4 = '_' . $keyfiltercatid . '_';
             foreach($this->cats as $key => $val)
             {
-                if (preg_match('/'.$keyfilter1.'/', $val['fullpath']) || preg_match('/'.$keyfilter2.'/', $val['fullpath'])
-                || preg_match('/'.$keyfilter3.'/', $val['fullpath']) || preg_match('/'.$keyfilter4.'/', $val['fullpath']))
-                {
-                    unset($this->cats[$key]);
-                }
-            }
-        }
-        // Exclude leaf including $markafterid from tree
-        if ($keeponlyifinleafid)
-        {
-            //print "Look to discard category ".$keeponlyifinleafid."\n";
-            $keyfilter1='^'.$keeponlyifinleafid.'$';
-            $keyfilter2='_'.$keeponlyifinleafid.'$';
-            $keyfilter3='^'.$keeponlyifinleafid.'_';
-            $keyfilter4='_'.$keeponlyifinleafid.'_';
-            foreach($this->cats as $key => $val)
-            {
-                if (preg_match('/'.$keyfilter1.'/', $val['fullpath']) || preg_match('/'.$keyfilter2.'/', $val['fullpath'])
-                    || preg_match('/'.$keyfilter3.'/', $val['fullpath']) || preg_match('/'.$keyfilter4.'/', $val['fullpath']))
-                {
-                    // We keep
-                }
-                else
+                $test = (preg_match('/' . $keyfilter1 . '/', $val['fullpath']) || preg_match('/' . $keyfilter2 . '/', $val['fullpath'])
+                    || preg_match('/' . $keyfilter3 . '/', $val['fullpath']) || preg_match('/' . $keyfilter4 . '/', $val['fullpath']));
+
+                if (($test && !$include) || (!$test && $include))
                 {
                     unset($this->cats[$key]);
                 }

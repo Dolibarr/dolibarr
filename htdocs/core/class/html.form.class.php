@@ -3801,16 +3801,20 @@ class Form
 	/**
 	 *    Return list of categories having choosed type
 	 *
-	 *    @param	string|int	$type				Type of category ('customer', 'supplier', 'contact', 'product', 'member'). Old mode (0, 1, 2, ...) is deprecated.
-	 *    @param    string		$selected    		Id of category preselected or 'auto' (autoselect category if there is only one element)
-	 *    @param    string		$htmlname			HTML field name
-	 *    @param    int			$maxlength      	Maximum length for labels
-	 *    @param    int			$excludeafterid 	Exclude all categories after this leaf in category tree.
-	 *    @param	int			$outputmode			0=HTML select string, 1=Array
+	 *    @param	string|int	            $type				Type of category ('customer', 'supplier', 'contact', 'product', 'member'). Old mode (0, 1, 2, ...) is deprecated.
+	 *    @param    string		            $selected    		Id of category preselected or 'auto' (autoselect category if there is only one element)
+	 *    @param    string		            $htmlname			HTML field name
+	 *    @param    int			            $maxlength      	Maximum length for labels
+     *    @param    int|string|array    	$markafterid        Removed all categories including the leaf $markafterid in category tree (exclude) or Keep only of category is inside the leaf starting with this id.
+     *                                                          $markafterid can be an :    int (id of category)
+     *                                                                                      string (categories ids seprated by comma)
+     *                                                                                      array (list of categories ids)
+	 *    @param	int			            $outputmode			0=HTML select string, 1=Array
+     *    @param	int			            $include			[=0] Exlude or 1=Include
 	 *    @return	string
 	 *    @see select_categories()
 	 */
-    public function select_all_categories($type, $selected = '', $htmlname = "parent", $maxlength = 64, $excludeafterid = 0, $outputmode = 0)
+    public function select_all_categories($type, $selected = '', $htmlname = "parent", $maxlength = 64, $markafterid = 0, $outputmode = 0, $include = 0)
 	{
         // phpcs:enable
 		global $conf, $langs;
@@ -3850,7 +3854,7 @@ class Form
 		else
 		{
 			$cat = new Categorie($this->db);
-			$cate_arbo = $cat->get_full_arbo($type, $excludeafterid);
+            $cate_arbo = $cat->get_full_arbo($type, $markafterid, $include);
 		}
 
 		$output = '<select class="flat" name="'.$htmlname.'" id="'.$htmlname.'">';
