@@ -111,7 +111,7 @@ $formother=new FormOther($db);
 
 llxHeader('', $langs->trans('ListPayment'));
 
-if (GETPOST("orphelins","alpha"))
+if (GETPOST("orphelins", "alpha"))
 {
     // Payments not linked to an invoice. Should not happend. For debug only.
     $sql = "SELECT p.rowid, p.ref, p.datep as dp, p.amount,";
@@ -375,7 +375,7 @@ if ($resql)
 
         $i++;
     }
-    
+
     // Show total line
     if (isset($totalarray['pos']))
     {

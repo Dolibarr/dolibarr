@@ -2438,19 +2438,21 @@ function randomColor($min = 0, $max = 255)
     return randomColorPart($min, $max) . randomColorPart($min, $max) . randomColorPart($min, $max);
 }
 
-/**
- * Encode string for xml usage
- *
- * @param 	string	$string		String to encode
- * @return	string				String encoded
- */
+
 if (! function_exists('dolEscapeXML'))
 {
+    /**
+     * Encode string for xml usage
+     *
+     * @param 	string	$string		String to encode
+     * @return	string				String encoded
+     */
     function dolEscapeXML($string)
     {
         return strtr($string, array('\''=>'&apos;','"'=>'&quot;','&'=>'&amp;','<'=>'&lt;','>'=>'&gt;'));
     }
 }
+
 
 /**
  *	Return automatic or manual in current language
