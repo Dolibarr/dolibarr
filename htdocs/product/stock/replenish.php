@@ -307,7 +307,7 @@ $sql.= ' SUM('.$db->ifsql("s.reel IS NULL", "0", "s.reel").') as stock_physique'
 
 // Add fields from hooks
 $parameters=array();
-$reshook=$hookmanager->executeHooks('printFieldListSelect',$parameters);    // Note that $action and $object may have been modified by hook
+$reshook=$hookmanager->executeHooks('printFieldListSelect', $parameters);    // Note that $action and $object may have been modified by hook
 $sql.=$hookmanager->resPrint;
 
 $sql.= ' FROM ' . MAIN_DB_PREFIX . 'product as p';
@@ -322,7 +322,7 @@ if (!empty($conf->global->STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE) && $fk_entre
 
 // Add fields from hooks
 $parameters=array();
-$reshook=$hookmanager->executeHooks('printFieldListJoin',$parameters);    // Note that $action and $object may have been modified by hook
+$reshook=$hookmanager->executeHooks('printFieldListJoin', $parameters);    // Note that $action and $object may have been modified by hook
 $sql.=$hookmanager->resPrint;
 
 $sql.= ' WHERE p.entity IN (' . getEntity('product') . ')';
@@ -407,7 +407,7 @@ if ($usevirtualstock)
 
 // Add where from hooks
 $parameters=array();
-$reshook=$hookmanager->executeHooks('printFieldListWhere',$parameters);    // Note that $action and $object may have been modified by hook
+$reshook=$hookmanager->executeHooks('printFieldListWhere', $parameters);    // Note that $action and $object may have been modified by hook
 $sql.=$hookmanager->resPrint;
 
 $sql.= $db->order($sortfield, $sortorder);
@@ -475,7 +475,7 @@ print $langs->trans('Supplier').' '.$form->select_company($fk_supplier, 'fk_supp
 print '</div>';
 
 $parameters=array();
-$reshook=$hookmanager->executeHooks('printFieldPreListTitle',$parameters);    // Note that $action and $object may have been modified by hook
+$reshook=$hookmanager->executeHooks('printFieldPreListTitle', $parameters);    // Note that $action and $object may have been modified by hook
 if (empty($reshook)) print $hookmanager->resPrint;
 
 print '<div class="inline-block valignmiddle">';
@@ -565,7 +565,7 @@ print '<td class="liste_titre">&nbsp;</td>';
 print '<td class="liste_titre right">';
 // Fields from hook
 $parameters=array('param'=>$param,'sortfield'=>$sortfield,'sortorder'=>$sortorder);
-$reshook=$hookmanager->executeHooks('printFieldListOption',$parameters);    // Note that $action and $object may have been modified by hook
+$reshook=$hookmanager->executeHooks('printFieldListOption', $parameters);    // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 
 $searchpicto=$form->showFilterAndCheckAddButtons(0);
@@ -588,7 +588,7 @@ print_liste_field_titre('SupplierRef', $_SERVER["PHP_SELF"], '', $param, '', '',
 
 // Hook fields
 $parameters=array('param'=>$param,'sortfield'=>$sortfield,'sortorder'=>$sortorder);
-$reshook=$hookmanager->executeHooks('printFieldListTitle',$parameters);    // Note that $action and $object may have been modified by hook
+$reshook=$hookmanager->executeHooks('printFieldListTitle', $parameters);    // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 
 print "</tr>\n";

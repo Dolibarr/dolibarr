@@ -533,7 +533,7 @@ if ($resql)
             $projetstatic->ref=$obj->projet_ref;
             $projetstatic->title=$obj->projet_title;
             if ($projetstatic->id > 0) {
-                print $projetstatic->getNomUrl(1,'');
+                print $projetstatic->getNomUrl(1, '');
             }
             print '</td>';
             if (! $i) $totalarray['nbfield']++;
