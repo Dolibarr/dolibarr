@@ -225,17 +225,30 @@ if ($action == "addnote") {
 }
 
 if ($action == "deleteline") {
-    if ($idline > 0 and $placeid > 0) { //If exist invoice and line, to avoid errors if deleted from other device or no line selected
+    if ($idline > 0 and $placeid > 0) { // If invoice exists and line selected. To avoid errors if deleted from another device or no line selected.
         $invoice->deleteline($idline);
         $invoice->fetch($placeid);
     }
-    elseif ($placeid > 0) { //If exist invoice, but no line selected, proceed to delete last line
+    elseif ($placeid > 0) {             // If invoice exists but no line selected, proceed to delete last line.
         $sql = "SELECT rowid FROM " . MAIN_DB_PREFIX . "facturedet where fk_facture='".$placeid."' order by rowid DESC";
         $resql = $db->query($sql);
         $row = $db->fetch_array($resql);
         $deletelineid = $row[0];
         $invoice->deleteline($deletelineid);
         $invoice->fetch($placeid);
+    }
+}
+
+if ($action == "delete") {
+    if ($placeid > 0) { //If invoice exists
+        $result = $invoice->fetch($placeid);
+        if ($result > 0)
+        {
+            $sql = "DELETE FROM " . MAIN_DB_PREFIX . "facturedet where fk_facture='".$placeid."'";
+            $resql = $db->query($sql);
+
+            $invoice->fetch($placeid);
+        }
     }
 }
 
