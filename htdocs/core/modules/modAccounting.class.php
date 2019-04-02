@@ -212,6 +212,14 @@ class modAccounting extends DolibarrModules
 		$this->rights[$r][5] = 'creer';
 		$r++;
 
+        $this->rights[$r][0] = 50418;
+        $this->rights[$r][1] = 'Export operations of ledger';
+        $this->rights[$r][2] = 'r';
+        $this->rights[$r][3] = 0;
+        $this->rights[$r][4] = 'mouvements';
+        $this->rights[$r][5] = 'export';
+        $r++;
+
 		$this->rights[$r][0] = 50420;
 		$this->rights[$r][1] = 'Report and export reports (turnover, balance, journals, ledger)';
 		$this->rights[$r][2] = 'r';
