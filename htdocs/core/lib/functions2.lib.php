@@ -2462,7 +2462,7 @@ if (! function_exists('dolEscapeXML'))
  *	@param	int		$color			0=texte only, 1=Text is formated with a color font style ('ok' or 'error'), 2=Text is formated with 'ok' color.
  *	@return	string					HTML string
  */
-function autoOrMamual($automaticmanual, $case = 1, $color = 0)
+function autoOrManual($automaticmanual, $case = 1, $color = 0)
 {
     global $langs;
     $result='unknown'; $classname='';
