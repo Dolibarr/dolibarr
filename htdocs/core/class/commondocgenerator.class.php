@@ -1069,4 +1069,54 @@ abstract class CommonDocGenerator
         }
         else  return  false;
     }
+
+    /**
+     *  print standard column content
+     *
+     * @param PDF	$pdf   pdf object
+     * @param float $tab_top tab top position
+     * @param float $tab_height default tab height
+     * @param $outputlangs
+     * @param int $hidetop
+     * @return float height of col tab titles
+     */
+    function pdfTabTitles(&$pdf, $tab_top, $tab_height, $outputlangs, $hidetop = 0)
+    {
+        global $hookmanager;
+
+        foreach ($this->cols as $colKey => $colDef) {
+
+            $parameters = array(
+                'colKey' => $colKey,
+                'pdf' => $pdf,
+                'outputlangs' => $outputlangs,
+                'tab_top' => $tab_top,
+                'tab_height' => $tab_height,
+                'hidetop' => $hidetop
+            );
+
+            $reshook = $hookmanager->executeHooks('pdfTabTitles', $parameters, $this);    // Note that $object may have been modified by hook
+            if ($reshook < 0) {
+                setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+            } elseif (empty($reshook)) {
+                if (!$this->getColumnStatus($colKey)) continue;
+
+                // get title label
+                $colDef['title']['label'] = !empty($colDef['title']['label']) ? $colDef['title']['label'] : $outputlangs->transnoentities($colDef['title']['textkey']);
+
+                // Add column separator
+                if (!empty($colDef['border-left'])) {
+                    $pdf->line($colDef['xStartPos'], $tab_top, $colDef['xStartPos'], $tab_top + $tab_height);
+                }
+
+                if (empty($hidetop)) {
+                    $pdf->SetXY($colDef['xStartPos'] + $colDef['title']['padding'][3], $tab_top + $colDef['title']['padding'][0]);
+                    $textWidth = $colDef['width'] - $colDef['title']['padding'][3] - $colDef['title']['padding'][1];
+                    $pdf->MultiCell($textWidth, 2, $colDef['title']['label'], '', $colDef['title']['align']);
+                    $this->tabTitleHeight = max($pdf->GetY() - $tab_top + $colDef['title']['padding'][2], $this->tabTitleHeight);
+                }
+            }
+        }
+        return $this->tabTitleHeight;
+    }
 }
