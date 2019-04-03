@@ -586,7 +586,7 @@ class Form
 
 		$disabled=0;
 		$ret='<div class="centpercent center">';
-		$ret.='<select class="flat'.(empty($conf->use_javascript_ajax)?'':' hideobject').' massaction massactionselect" name="massaction"'.($disabled?' disabled="disabled"':'').'>';
+		$ret.='<select class="flat'.(empty($conf->use_javascript_ajax)?'':' hideobject').' massaction massactionselect valignmiddle" name="massaction"'.($disabled?' disabled="disabled"':'').'>';
 
 		// Complete list with data from external modules. THe module can use $_SERVER['PHP_SELF'] to know on which page we are, or use the $parameters['currentcontext'] completed by executeHooks.
 		$parameters=array();

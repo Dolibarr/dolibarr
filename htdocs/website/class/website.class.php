@@ -532,7 +532,7 @@ class Website extends CommonObject
         // Check no site with ref exists
 		if ($object->fetch(0, $newref) > 0)
 		{
-			$this->error='NewRefIsAlreadyUsed';
+			$this->error='ErrorNewRefIsAlreadyUsed';
 			return -1;
 		}
 
