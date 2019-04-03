@@ -7039,6 +7039,10 @@ function getLanguageCodeFromCountryCode($countrycode)
     		}
     	}
 	}
+	else
+	{
+        dol_syslog("Warning Exention php-intl is not available", LOG_WARNING);
+	}
 
 	return null;
 }
