@@ -218,12 +218,12 @@ class modAsset extends DolibarrModules
 		//--------
 		$r=1;
 
-		// $this->export_code[$r]          Code unique identifiant l'export (tous modules confondus)
-		// $this->export_label[$r]         Libelle par defaut si traduction de cle "ExportXXX" non trouvee (XXX = Code)
-		// $this->export_permission[$r]    Liste des codes permissions requis pour faire l'export
-		// $this->export_fields_sql[$r]    Liste des champs exportables en codif sql
-		// $this->export_fields_name[$r]   Liste des champs exportables en codif traduction
-		// $this->export_sql[$r]           Requete sql qui offre les donnees a l'export
+		// $this->export_code[$r]          Unique code identifying the export (all modules combined)
+		// $this->export_label[$r]         Libelle by default if translation of key "ExportXXX" not found (XXX = Code)
+		// $this->export_permission[$r]    List of permission codes required to export
+		// $this->export_fields_sql[$r]    List of exportable fields in SQL codiffication
+		// $this->export_fields_name[$r]   List of exportable fields in translation codiffication
+		// $this->export_sql[$r]           SQL query that offers data for export
 
 		/*
 		$r++;
