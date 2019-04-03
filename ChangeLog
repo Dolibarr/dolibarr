@@ -16,6 +16,7 @@ NEW: Module DebugBar is available as a stable module.
 WARNING:
 
 Following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
+* The PHP extension php-intl is not mandatory but should be installed to have new features working correctly.
 * Method GetUrlTrackingStatus were renamed into getUrlTrackingStatus for consistency with naming rules.
 * API getListOfCivility has been renamed into getListOfCivilities for consistency with naming rules.
 * Deprecated function img_phone as been removed. You can use img_picto(..., 'call|call_out') instead.; 

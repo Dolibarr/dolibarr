@@ -161,6 +161,19 @@ else
 }
 
 
+// Check if UTF8 supported
+if (! function_exists("locale_get_primary_language"))
+{
+    $langs->load("errors");
+    print '<img src="../theme/eldy/img/warning.png" alt="Error"> '.$langs->trans("ErrorPHPDoesNotSupportIntl")."<br>\n";
+    // $checksok=0;		// If image ko, just warning. So check must still be 1 (otherwise no way to install)
+}
+else
+{
+    print '<img src="../theme/eldy/img/tick.png" alt="Ok"> '.$langs->trans("PHPSupportIntl")."<br>\n";
+}
+
+
 
 // Check memory
 $memrequiredorig='64M';
