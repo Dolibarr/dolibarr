@@ -1596,10 +1596,7 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 			}
 		}
 
-		$loginBlockMoreClass = '';
-		if (!empty($conf->global->MAIN_TOP_MENU_DROPDOWN)) { $loginBlockMoreClass = 'usedropdown'; }
-
-		print '<div class="login_block '.$loginBlockMoreClass.'">'."\n";
+		print '<div class="login_block usedropdown">'."\n";
 
 		// Add login user link
 		$toprightmenu.='<div class="login_block_user">';
@@ -1608,12 +1605,8 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 		$mode=-1;
 		$toprightmenu.='<div class="inline-block nowrap"><div class="inline-block login_block_elem login_block_elem_name" style="padding: 0px;">';
 
-		if (empty($conf->global->MAIN_TOP_MENU_DROPDOWN)){
-            $toprightmenu.= $user->getNomUrl($mode, '', 1, 0, 11, 0, ($user->firstname ? 'firstname' : -1), 'atoplogin');
-		}
-		else {
-		    $toprightmenu.= top_menu_user($user, $langs);
-		}
+	    $toprightmenu.= top_menu_user($user, $langs);
+
 		$toprightmenu.='</div></div>';
 
 		$toprightmenu.='</div>'."\n";
