@@ -7026,15 +7026,18 @@ function getLanguageCodeFromCountryCode($countrycode)
 	$buildprimarykeytotest = strtolower($countrycode).'-'.strtoupper($countrycode);
 	if (in_array($buildprimarykeytotest, $locales)) return strtolower($countrycode).'_'.strtoupper($countrycode);
 
-	foreach ($locales as $locale)
+	if (function_exists('locale_get_primary_language'))    // Need extension php-intl
 	{
-		$locale_language = locale_get_primary_language($locale);
-		$locale_region = locale_get_region($locale);
-		if (strtoupper($countrycode) == $locale_region)
-		{
-			//var_dump($locale.'-'.$locale_language.'-'.$locale_region);
-			return strtolower($locale_language).'_'.strtoupper($locale_region);
-		}
+	    foreach ($locales as $locale)
+    	{
+    		$locale_language = locale_get_primary_language($locale);
+    		$locale_region = locale_get_region($locale);
+    		if (strtoupper($countrycode) == $locale_region)
+    		{
+    			//var_dump($locale.'-'.$locale_language.'-'.$locale_region);
+    			return strtolower($locale_language).'_'.strtoupper($locale_region);
+    		}
+    	}
 	}
 
 	return null;
