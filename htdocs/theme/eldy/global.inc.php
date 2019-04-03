@@ -979,10 +979,6 @@ td.showDragHandle {
 	transition: left 0.5s ease;
 }
 
-body.sidebar-collapse .side-nav, body.sidebar-collapse .login_block {
-	display: none;
-}
-
 div.blockvmenulogo
 {
 	border-bottom: 0 !important;
@@ -1015,8 +1011,22 @@ div.vmenu, td.vmenu {
 }
 */
 
-/* For smartphone (testmenuhider is on) */
-<?php if ($conf->browser->layout == 'phone' && ((GETPOST('testmenuhider', 'int') || ! empty($conf->global->MAIN_TESTMENUHIDER)) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))) { ?>
+
+.menuhider { display: none !important; }
+
+/* rule to reduce top menu - 3rd reduction: The menu for user is on left */
+@media only screen and (max-width: <?php echo round($nbtopmenuentries * 50, 0) + 12; ?>px)	/* reduction 3 */
+{
+body.sidebar-collapse .side-nav {
+	display: none;
+}
+
+body.sidebar-collapse .login_block {
+	display: none;
+}
+
+.menuhider { display: block !important; }
+
 #id-container {
 	width: 100%;
 }
@@ -1032,10 +1042,10 @@ div.blockvmenulogo
 {
 	border-bottom: 0 !important;
 }
-div.blockvmenusearch {
+/*div.blockvmenusearch {
 	padding-bottom: 12px !important;
 	border-bottom: 1px solid #e0e0e0;
-}
+}*/
 div.blockvmenupair, div.blockvmenuimpair, div.blockvmenubookmarks, div.blockvmenuend {
 	border-top: none !important;
 	border-left: none !important;
@@ -1050,8 +1060,8 @@ div.fiche {
 	margin-<?php print $left; ?>: 9px !important;
 	margin-<?php print $right; ?>: 10px !important;
 }
-<?php } ?>
-
+<?php //} ?>
+}
 
 
 div.fiche {
@@ -5588,8 +5598,8 @@ div.tabsElem a.tab {
 }
 
 /* nboftopmenuentries = <?php echo $nbtopmenuentries ?>, fontsize=<?php echo is_numeric($fontsize)?$fontsize.'px':$fontsize ?> */
-/* rule to reduce top menu - 1st reduction */
-@media only screen and (max-width: <?php echo round($nbtopmenuentries * 91, 0) + 24; ?>px)	/* reduction 1 */
+/* rule to reduce top menu - 1st reduction: Reduce width of top menu icons */
+@media only screen and (max-width: <?php echo round($nbtopmenuentries * 91, 0) + 124; ?>px)	/* reduction 1 */
 {
 	div.tmenucenter {
 	    width: <?php echo round(52); ?>px;	/* size of viewport */
@@ -5621,8 +5631,8 @@ div.tabsElem a.tab {
 		max-width: 300px;
 	}
 }
-/* rule to reduce top menu - 2nd reduction */
-@media only screen and (max-width: <?php echo round($nbtopmenuentries * 75, 0) + 24; ?>px)	/* reduction 2 */
+/* rule to reduce top menu - 2nd reduction: Reduce width of top menu icons again */
+@media only screen and (max-width: <?php echo round($nbtopmenuentries * 74, 0); ?>px)	/* reduction 2 */
 {
 	div.mainmenu {
 		height: 23px;
@@ -5645,8 +5655,8 @@ div.tabsElem a.tab {
     	left: 4px;
 	}
 }
-/* rule to reduce top menu - 3rd reduction */
-@media only screen and (max-width: <?php echo round($nbtopmenuentries * 49, 0) + 12; ?>px)	/* reduction 3 */
+/* rule to reduce top menu - 3rd reduction: The menu for user is on left */
+@media only screen and (max-width: <?php echo round($nbtopmenuentries * 50, 0) + 12; ?>px)	/* reduction 3 */
 {
 	.side-nav {
 		z-index: 200;
@@ -5680,19 +5690,15 @@ div.tabsElem a.tab {
 		min-width: 0;
 		width: 100%;
 	}
+	div.login_block a {
+        color: unset;
+    }
 	div.login_block {
-		<?php if ($conf->browser->layout == 'phone' && ((GETPOST('testmenuhider', 'int') || ! empty($conf->global->MAIN_TESTMENUHIDER)) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))) { ?>
 		/* Style when phone layout or when using the menuhider */
-		padding-top: 20px;
+		padding-top: 10px;
 		padding-left: 20px;
     	padding-right: 20px;
     	padding-bottom: 16px;
-		<?php } else { ?>
-		padding-top: 5px;
-		padding-left: 5px;
-    	padding-right: 5px;
-    	padding-bottom: 5px;
-    	<?php } ?>
 		top: inherit !important;
 		left: 0 !important;
 		text-align: center;
@@ -5703,9 +5709,15 @@ div.tabsElem a.tab {
         height: 50px;
 
     	z-index: 202;
-    	min-width: 190px;
-    	max-width: 190px;
-    	width: 190px;
+    	min-width: 200px;      /* must be width of menu + padding + padding of sidenav */
+    	max-width: 200px;      /* must be width of menu + padding + padding of sidenav */
+    	width: 200px;          /* must be width of menu + padding + padding of sidenav */
+    }
+    .side-nav-vert .user-menu .dropdown-menu {
+        width: 234px !important;
+    }
+    div.login_block_other {
+        margin-right: unset;
     }
 	div.login_block_user, div.login_block_other { clear: both; }
 	.atoplogin, .atoplogin:hover

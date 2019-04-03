@@ -271,7 +271,6 @@ if (isset($_SERVER["HTTP_USER_AGENT"]))
 	//var_dump($conf->browser);
 
 	if ($conf->browser->layout == 'phone') $conf->dol_no_mouse_hover=1;
-	if ($conf->browser->layout == 'phone') $conf->global->MAIN_TESTMENUHIDER=1;
 }
 
 // Force HTTPS if required ($conf->file->main_force_https is 0/1 or https dolibarr root url)
@@ -1092,9 +1091,10 @@ if (! function_exists("llxHeader"))
 		// html header
 		top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
 
-		if ($conf->browser->layout == 'phone'){
+		//if ($conf->browser->layout == 'phone')
+		//{
 		    $morecssonbody.= ' sidebar-collapse';
-		}
+		//}
 
 		print '<body id="mainbody"'.($morecssonbody?' class="'.$morecssonbody.'"':'').'>' . "\n";
 
@@ -1255,7 +1255,6 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 		print "\n";
 
 		if (GETPOST('version', 'int')) $ext='version='.GETPOST('version', 'int');	// usefull to force no cache on css/js
-		if (GETPOST('testmenuhider', 'int') || ! empty($conf->global->MAIN_TESTMENUHIDER)) $ext.='&testmenuhider='.(GETPOST('testmenuhider', 'int')?GETPOST('testmenuhider', 'int'):$conf->global->MAIN_TESTMENUHIDER);
 
 		$themeparam='?lang='.$langs->defaultlang.'&amp;theme='.$conf->theme.(GETPOST('optioncss', 'aZ09')?'&amp;optioncss='.GETPOST('optioncss', 'aZ09', 1):'').'&amp;userid='.$user->id.'&amp;entity='.$conf->entity;
 		$themeparam.=($ext?'&amp;'.$ext:'');
@@ -1810,7 +1809,7 @@ function top_menu_user(User $user, Translate $langs)
     <div id="topmenu-login-dropdown" class="userimg atoplogin dropdown user user-menu">
         <a href="'.DOL_URL_ROOT.'/user/card.php?id='.$user->id.'" class="dropdown-toggle" data-toggle="dropdown">
             '.$userImage.'
-            <span class="hidden-xs maxwidth200">'.dol_trunc($user->firstname ? $user->firstname : $user->login, 11).'</span>
+            <span class="hidden-xs maxwidth200 atoploginusername">'.dol_trunc($user->firstname ? $user->firstname : $user->login, 11).'</span>
             <span class="fa fa-chevron-down" id="dropdown-icon-down"></span>
             <span class="fa fa-chevron-up hidden" id="dropdown-icon-up"></span>
         </a>

@@ -90,7 +90,7 @@ class MenuManager
 		{
 			if (empty($noout)) print_start_menu_array_empty();
 
-			$usemenuhider = (GETPOST('testmenuhider', 'int') || ! empty($conf->global->MAIN_TESTMENUHIDER));
+            $usemenuhider = 1;
 
 			// Show/Hide vertical menu
 			if ($mode != 'jmobile' && $mode != 'topnb' && $usemenuhider &&  empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
