@@ -1771,6 +1771,7 @@ div.mainmenu.members {
 div.mainmenu.menu {
 	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/menu.png', 1) ?>);
 	top: 7px;
+	left: 5px;
 }
 
 div.mainmenu.products {
@@ -1884,6 +1885,10 @@ foreach($mainmenuusedarray as $val)
 a.tmenuimage {
     display: block;
 }
+a.tmenuimage:focus {
+    outline: none;
+}
+
 
 
 /* Login */
@@ -5668,6 +5673,10 @@ border-top-right-radius: 6px;
 	}
 }
 
+.menuhider {
+	width: 40px;
+}
+
 /* nboftopmenuentries = <?php echo $nbtopmenuentries ?>, fontsize=<?php echo $fontsize ?> */
 /* disableimages = <?php echo $disableimages; ?> */
 /* rule to reduce top menu - 1st reduction */
@@ -5688,7 +5697,7 @@ border-top-right-radius: 6px;
     	margin-top: 0px;
 	}
     li.tmenu, li.tmenusel {
-    	min-width: 32px;
+    	min-width: 34px;
     }
     div.mainmenu {
     	min-width: auto;

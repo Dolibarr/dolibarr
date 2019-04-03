@@ -1091,12 +1091,14 @@ if (! function_exists("llxHeader"))
 		// html header
 		top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
 
-		//if ($conf->browser->layout == 'phone')
-		//{
-		    $morecssonbody.= ' sidebar-collapse';
-		//}
+		$tmpcsstouse='sidebar-collapse'.($morecssonbody?' '.$morecssonbody:'');
+		// If theme MD and classic layer, we open the menulayer by default.
+		if ($conf->theme == 'md' && ! in_array($conf->browser->layout, array('phone','tablet')) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
+		{
+		    $tmpcsstouse=$morecssonbody;
+		}
 
-		print '<body id="mainbody"'.($morecssonbody?' class="'.$morecssonbody.'"':'').'>' . "\n";
+		print '<body id="mainbody" class="'.$tmpcsstouse.'">' . "\n";
 
 		// top menu and left menu area
 		if (empty($conf->dol_hide_topmenu) || GETPOST('dol_invisible_topmenu', 'int'))
