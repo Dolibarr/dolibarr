@@ -1277,9 +1277,6 @@ if ($action == 'edit_price' && $object->getRights()->creer)
 		$parameters=array('colspan' => 2);
 		$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
 
-		$parameters=array('colspan' => 2);
-		$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
-
 		print '</table>';
 
 		dol_fiche_end();
@@ -1443,7 +1440,7 @@ if ((empty($conf->global->PRODUIT_CUSTOMER_PRICES) || $action=='showlog_default_
 
     		// Il doit au moins y avoir la ligne de prix initial.
     		// On l'ajoute donc pour remettre a niveau (pb vieilles versions)
-    		//$object->updatePrice($object->price, $object->price_base_type, $user, $newprice_min);
+    		//$object->updatePrice($object->price, $object->price_base_type, $user, $object->tva_tx, $object->price_min);
             if (! empty($conf->global->PRODUIT_MULTIPRICES)) {
             	$object->updatePrice($object->multiprices[1], $object->multiprices_base_type[1], $user, (empty($object->multiprices_tva_tx[1])?0:$object->multiprices_tva_tx[1]), $object->multiprices_min[1], 1);
             } else {

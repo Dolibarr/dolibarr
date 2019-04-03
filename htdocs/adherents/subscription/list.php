@@ -28,7 +28,7 @@ require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/subscription.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
-$langs->load(array("members","companies"));
+$langs->loadLangs(array("members","companies"));
 
 $action=GETPOST('action','aZ09');
 $massaction=GETPOST('massaction','alpha');
@@ -81,11 +81,11 @@ $arrayfields=array(
 	'd.bank'=>array('label'=>$langs->trans("BankAccount"), 'checked'=>1, 'enabled'=>(! empty($conf->banque->enabled))),
 	/*'d.note_public'=>array('label'=>$langs->trans("NotePublic"), 'checked'=>0),
 	 'd.note_private'=>array('label'=>$langs->trans("NotePrivate"), 'checked'=>0),*/
-	'd.datedebut'=>array('label'=>$langs->trans("DateSubscription"), 'checked'=>1, 'position'=>100),
-	'd.datefin'=>array('label'=>$langs->trans("EndSubscription"), 'checked'=>1, 'position'=>101),
+	'c.dateadh'=>array('label'=>$langs->trans("DateSubscription"), 'checked'=>1, 'position'=>100),
+	'c.datef'=>array('label'=>$langs->trans("EndSubscription"), 'checked'=>1, 'position'=>101),
 	'd.amount'=>array('label'=>$langs->trans("Amount"), 'checked'=>1, 'position'=>102),
-	'd.datec'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0, 'position'=>500),
-	'd.tms'=>array('label'=>$langs->trans("DateModificationShort"), 'checked'=>0, 'position'=>500),
+	'c.datec'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0, 'position'=>500),
+	'c.tms'=>array('label'=>$langs->trans("DateModificationShort"), 'checked'=>0, 'position'=>500),
 //	'd.statut'=>array('label'=>$langs->trans("Status"), 'checked'=>1, 'position'=>1000)
 );
 
@@ -329,12 +329,12 @@ if (! empty($arrayfields['d.bank']['checked']))
 	print '</td>';
 }
 
-if (! empty($arrayfields['d.date_debut']['checked']))
+if (! empty($arrayfields['c.dateadh']['checked']))
 {
 	print '<td class="liste_titre">&nbsp;</td>';
 }
 
-if (! empty($arrayfields['d.date_fin']['checked']))
+if (! empty($arrayfields['c.datef']['checked']))
 {
 	print '<td class="liste_titre">&nbsp;</td>';
 }
@@ -353,13 +353,13 @@ $parameters=array('arrayfields'=>$arrayfields);
 $reshook=$hookmanager->executeHooks('printFieldListOption',$parameters);    // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 // Date creation
-if (! empty($arrayfields['d.datec']['checked']))
+if (! empty($arrayfields['c.datec']['checked']))
 {
 	print '<td class="liste_titre">';
 	print '</td>';
 }
 // Date modification
-if (! empty($arrayfields['d.tms']['checked']))
+if (! empty($arrayfields['c.tms']['checked']))
 {
 	print '<td class="liste_titre">';
 	print '</td>';
@@ -399,11 +399,11 @@ if (! empty($arrayfields['d.bank']['checked']))
 {
 	print_liste_field_titre("Account",$_SERVER["PHP_SELF"],"b.fk_account",$pram,"","",$sortfield,$sortorder);
 }
-if (! empty($arrayfields['d.date_debut']['checked']))
+if (! empty($arrayfields['c.dateadh']['checked']))
 {
 	print_liste_field_titre("Date",$_SERVER["PHP_SELF"],"c.dateadh",$param,"",'align="center"',$sortfield,$sortorder);
 }
-if (! empty($arrayfields['d.date_fin']['checked']))
+if (! empty($arrayfields['c.datef']['checked']))
 {
 	print_liste_field_titre("DateEnd",$_SERVER["PHP_SELF"],"c.datef",$param,"",'align="center"',$sortfield,$sortorder);
 }
@@ -418,8 +418,8 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 $parameters=array('arrayfields'=>$arrayfields,'param'=>$param,'sortfield'=>$sortfield,'sortorder'=>$sortorder);
 $reshook=$hookmanager->executeHooks('printFieldListTitle',$parameters);    // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
-if (! empty($arrayfields['d.datec']['checked']))     print_liste_field_titre($arrayfields['d.datec']['label'],$_SERVER["PHP_SELF"],"d.datec","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
-if (! empty($arrayfields['d.tms']['checked']))       print_liste_field_titre($arrayfields['d.tms']['label'],$_SERVER["PHP_SELF"],"d.tms","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
+if (! empty($arrayfields['c.datec']['checked']))     print_liste_field_titre($arrayfields['c.datec']['label'],$_SERVER["PHP_SELF"],"c.datec","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
+if (! empty($arrayfields['c.tms']['checked']))       print_liste_field_titre($arrayfields['c.tms']['label'],$_SERVER["PHP_SELF"],"c.tms","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
 print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"],"",'','','align="center"',$sortfield,$sortorder,'maxwidthsearch ');
 print "</tr>\n";
 
@@ -499,13 +499,13 @@ while ($i < min($num, $limit))
 	}
 
 	// Date start
-	if (! empty($arrayfields['d.date_start']['checked']))
+	if (! empty($arrayfields['c.dateadh']['checked']))
 	{
 		print '<td align="center">'.dol_print_date($db->jdate($obj->dateadh),'day')."</td>\n";
 		if (! $i) $totalarray['nbfield']++;
 	}
 	// Date end
-	if (! empty($arrayfields['d.date_end']['checked']))
+	if (! empty($arrayfields['c.datef']['checked']))
 	{
 		print '<td align="center">'.dol_print_date($db->jdate($obj->datef),'day')."</td>\n";
 		if (! $i) $totalarray['nbfield']++;
@@ -525,7 +525,7 @@ while ($i < min($num, $limit))
 	$reshook=$hookmanager->executeHooks('printFieldListValue',$parameters);    // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	// Date creation
-	if (! empty($arrayfields['d.datec']['checked']))
+	if (! empty($arrayfields['c.datec']['checked']))
 	{
 		print '<td align="center" class="nowrap">';
 		print dol_print_date($db->jdate($obj->date_creation), 'dayhour', 'tzuser');
@@ -533,7 +533,7 @@ while ($i < min($num, $limit))
 		if (! $i) $totalarray['nbfield']++;
 	}
 	// Date modification
-	if (! empty($arrayfields['d.tms']['checked']))
+	if (! empty($arrayfields['c.tms']['checked']))
 	{
 		print '<td align="center" class="nowrap">';
 		print dol_print_date($db->jdate($obj->date_update), 'dayhour', 'tzuser');

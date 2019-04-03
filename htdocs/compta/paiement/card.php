@@ -221,7 +221,12 @@ print '</td></tr>';
 
 // Payment type (VIR, LIQ, ...)
 $labeltype=$langs->trans("PaymentType".$object->type_code)!=("PaymentType".$object->type_code)?$langs->trans("PaymentType".$object->type_code):$object->type_libelle;
-print '<tr><td>'.$langs->trans('PaymentMode').'</td><td>'.$labeltype.'</td></tr>';
+print '<tr><td>'.$langs->trans('PaymentMode').'</td><td>'.$labeltype;
+print $object->num_paiement?' - '.$object->num_paiement:'';
+print '</td></tr>';
+
+// Amount
+print '<tr><td>'.$langs->trans('Amount').'</td><td>'.price($object->amount,'',$langs,0,-1,-1,$conf->currency).'</td></tr>';
 
 $disable_delete = 0;
 // Bank account
@@ -301,9 +306,6 @@ if (! empty($conf->banque->enabled))
 print '<tr><td class="tdtop">'.$form->editfieldkey("Comments",'note',$object->note,$object,$user->rights->facture->paiement).'</td><td>';
 print $form->editfieldval("Note",'note',$object->note,$object,$user->rights->facture->paiement,'textarea:'.ROWS_3.':90%');
 print '</td></tr>';
-
-// Amount
-print '<tr><td>'.$langs->trans('Amount').'</td><td>'.price($object->amount,'',$langs,0,-1,-1,$conf->currency).'</td></tr>';
 
 print '</table>';
 

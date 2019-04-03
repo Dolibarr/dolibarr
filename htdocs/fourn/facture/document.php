@@ -24,7 +24,7 @@
 /**
  *       \file       htdocs/fourn/facture/document.php
  *       \ingroup    facture, fournisseur
- *       \brief      Page de gestion des documents attaches a une facture fournisseur
+ *       \brief      Page to manage documents joined to vendor invoices
  */
 
 require '../../main.inc.php';
@@ -101,6 +101,7 @@ if ($object->id > 0)
     $morehtmlref.=$form->editfieldval("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, 0, 'string', '', null, null, '', 1);
     // Thirdparty
     $morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1);
+    if (empty($conf->global->MAIN_DISABLE_OTHER_LINK) && $object->thirdparty->id > 0) $morehtmlref.=' (<a href="'.DOL_URL_ROOT.'/fourn/facture/list.php?socid='.$object->thirdparty->id.'&search_company='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherBills").'</a>)';
     // Project
     if (! empty($conf->projet->enabled))
     {

@@ -114,6 +114,7 @@ class PaiementFourn extends Paiement
 				$this->date           = $this->db->jdate($obj->dp);
 				$this->datepaye       = $this->db->jdate($obj->dp);
 				$this->numero         = $obj->num_paiement;
+				$this->num_paiement   = $obj->num_paiement;
 				$this->bank_account   = $obj->fk_account;
 				$this->bank_line      = $obj->fk_bank;
 				$this->montant        = $obj->amount;
@@ -572,13 +573,17 @@ class PaiementFourn extends Paiement
 		global $langs;
 
 		$result='';
+
 		$text=$this->ref;   // Sometimes ref contains label
 		if (preg_match('/^\((.*)\)$/i',$text,$reg)) {
 			// Label generique car entre parentheses. On l'affiche en le traduisant
 			if ($reg[1]=='paiement') $reg[1]='Payment';
 			$text=$langs->trans($reg[1]);
 		}
-		$label = $langs->trans("ShowPayment").': '.$text;
+
+		$label = '<u>'.$langs->trans("ShowPayment").'</u><br>';
+		$label.= '<strong>'.$langs->trans("Ref").':</strong> '.$text;
+		if ($this->datepaye ? $this->datepaye : $this->date) $label.= '<br><strong>'.$langs->trans("Date").':</strong> '.dol_print_date($this->datepaye ? $this->datepaye : $this->date, 'dayhour');
 
 		$linkstart = '<a href="'.DOL_URL_ROOT.'/fourn/paiement/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 		$linkend = '</a>';

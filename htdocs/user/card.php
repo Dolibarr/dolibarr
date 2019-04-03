@@ -86,9 +86,11 @@ $socid=0;
 if ($user->societe_id > 0) $socid = $user->societe_id;
 $feature2='user';
 if ($user->id == $id) { $feature2=''; $canreaduser=1; } // A user can always read its own card
-if (!$canreaduser) {
+
+if (! $canreaduser) {
 	$result = restrictedArea($user, 'user', $id, 'user&user', $feature2);
 }
+
 if ($user->id <> $id && ! $canreaduser) accessforbidden();
 
 // Load translation files required by page
@@ -194,32 +196,34 @@ if (empty($reshook)) {
 			$object->birth = $birth;
 			$object->admin = GETPOST("admin", 'alpha');
 			$object->address = GETPOST('address', 'alphanohtml');
-			$object->zip = GETPOST('zipcode', 'alpha');
-			$object->town = GETPOST('town', 'alpha');
+			$object->zip = GETPOST('zipcode', 'alphanohtml');
+			$object->town = GETPOST('town', 'alphanohtml');
 			$object->country_id = GETPOST('country_id', 'int');
 			$object->state_id = GETPOST('state_id', 'int');
-			$object->office_phone = GETPOST("office_phone", 'alpha');
-			$object->office_fax = GETPOST("office_fax", 'alpha');
-			$object->user_mobile = GETPOST("user_mobile");
-			$object->skype = GETPOST("skype", 'alpha');
-			$object->twitter = GETPOST("twitter", 'alpha');
-			$object->facebook = GETPOST("facebook", 'alpha');
+			$object->office_phone = GETPOST("office_phone", 'alphanohtml');
+			$object->office_fax = GETPOST("office_fax", 'alphanohtml');
+			$object->user_mobile = GETPOST("user_mobile", 'alphanohtml');
+
+			$object->skype = GETPOST("skype", 'alphanohtml');
+			$object->twitter = GETPOST("twitter", 'alphanohtml');
+			$object->facebook = GETPOST("facebook", 'alphanohtml');
+
 			$object->email = preg_replace('/\s+/', '', GETPOST("email", 'alpha'));
 			$object->job = GETPOST("job", 'alpha');
-			$object->signature = GETPOST("signature");
-			$object->accountancy_code = GETPOST("accountancy_code");
-			$object->note = GETPOST("note");
-			$object->ldap_sid = GETPOST("ldap_sid");
-			$object->fk_user = GETPOST("fk_user") > 0 ? GETPOST("fk_user") : 0;
-			$object->employee = GETPOST('employee');
+			$object->signature = GETPOST("signature", 'none');
+			$object->accountancy_code = GETPOST("accountancy_code", 'alphanohtml');
+			$object->note = GETPOST("note", 'none');
+			$object->ldap_sid = GETPOST("ldap_sid", 'alphanohtml');
+			$object->fk_user = GETPOST("fk_user", 'int') > 0 ? GETPOST("fk_user", 'int') : 0;
+			$object->employee = GETPOST('employee', 'alphanohtml');
 
-			$object->thm = GETPOST("thm") != '' ? GETPOST("thm") : '';
-			$object->tjm = GETPOST("tjm") != '' ? GETPOST("tjm") : '';
-			$object->salary = GETPOST("salary") != '' ? GETPOST("salary") : '';
-			$object->salaryextra = GETPOST("salaryextra") != '' ? GETPOST("salaryextra") : '';
-			$object->weeklyhours = GETPOST("weeklyhours") != '' ? GETPOST("weeklyhours") : '';
+			$object->thm = GETPOST("thm", 'alphanohtml') != '' ? GETPOST("thm", 'alphanohtml') : '';
+			$object->tjm = GETPOST("tjm", 'alphanohtml') != '' ? GETPOST("tjm", 'alphanohtml') : '';
+			$object->salary = GETPOST("salary", 'alphanohtml') != '' ? GETPOST("salary", 'alphanohtml') : '';
+			$object->salaryextra = GETPOST("salaryextra", 'alphanohtml') != '' ? GETPOST("salaryextra", 'alphanohtml') : '';
+			$object->weeklyhours = GETPOST("weeklyhours", 'alphanohtml') != '' ? GETPOST("weeklyhours", 'alphanohtml') : '';
 
-			$object->color = GETPOST("color") != '' ? GETPOST("color") : '';
+			$object->color = GETPOST("color", 'alphanohtml') != '' ? GETPOST("color", 'alphanohtml') : '';
 			$dateemployment = dol_mktime(0, 0, 0, GETPOST('dateemploymentmonth'), GETPOST('dateemploymentday'), GETPOST('dateemploymentyear'));
 			$object->dateemployment = $dateemployment;
 
@@ -343,13 +347,13 @@ if (empty($reshook)) {
 				$object->api_key = (GETPOST("api_key", 'alpha')) ? GETPOST("api_key", 'alpha') : $object->api_key;
 				if (! empty($user->admin)) $object->admin = GETPOST("admin"); 	// admin flag can only be set/unset by an admin user. A test is also done later when forging sql request
 				$object->address = GETPOST('address', 'alphanohtml');
-				$object->zip = GETPOST('zipcode', 'alpha');
-				$object->town = GETPOST('town', 'alpha');
+				$object->zip = GETPOST('zipcode', 'alphanohtml');
+				$object->town = GETPOST('town', 'alphanohtml');
 				$object->country_id = GETPOST('country_id', 'int');
 				$object->state_id = GETPOST('state_id', 'int');
-				$object->office_phone = GETPOST("office_phone", 'alpha');
-				$object->office_fax = GETPOST("office_fax", 'alpha');
-				$object->user_mobile = GETPOST("user_mobile");
+				$object->office_phone = GETPOST("office_phone", 'alphanohtml');
+				$object->office_fax = GETPOST("office_fax", 'alphanohtml');
+				$object->user_mobile = GETPOST("user_mobile", 'alphanohtml');
 				$object->skype = GETPOST("skype", 'alpha');
 				$object->twitter = GETPOST("twitter", 'alpha');
 				$object->facebook = GETPOST("facebook", 'alpha');
@@ -359,7 +363,7 @@ if (empty($reshook)) {
 				$object->accountancy_code = GETPOST("accountancy_code",'alpha');
 				$object->openid = GETPOST("openid",'alpha');
 				$object->fk_user = GETPOST("fk_user",'int') > 0 ? GETPOST("fk_user",'int') : 0;
-				$object->employee = GETPOST('employee');
+				$object->employee = GETPOST('employee','int');
 
 				$object->thm = GETPOST("thm",'alphanohtml') != '' ? GETPOST("thm",'alphanohtml') : '';
 				$object->tjm = GETPOST("tjm",'alphanohtml') != '' ? GETPOST("tjm",'alphanohtml') : '';
@@ -865,7 +869,7 @@ if ($action == 'create' || $action == 'adduserldap')
 		print '<td>';
 		print $form->selectyesno('admin',GETPOST('admin'),1);
 
-		if (! empty($conf->multicompany->enabled) && ! $user->entity && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE))
+		if (! empty($conf->multicompany->enabled) && ! $user->entity)
 		{
 			if (! empty($conf->use_javascript_ajax))
 			{
@@ -1249,7 +1253,7 @@ else
 			$object->getrights();
 			if (empty($object->nb_rights) && $object->statut != 0 && empty($object->admin)) setEventMessages($langs->trans('UserHasNoPermissions'), null, 'warnings');
 		}
-		
+
 		// Connexion ldap
 		// pour recuperer passDoNotExpire et userChangePassNextLogon
 		if (! empty($conf->ldap->enabled) && ! empty($object->ldap_sid))
@@ -2053,7 +2057,7 @@ else
 				{
 					print $form->selectyesno('admin',$object->admin,1);
 
-					if (! empty($conf->multicompany->enabled) && ! $user->entity && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE))
+					if (! empty($conf->multicompany->enabled) && ! $user->entity)
 					{
 						if ($conf->use_javascript_ajax)
 						{

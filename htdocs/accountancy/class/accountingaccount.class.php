@@ -165,7 +165,7 @@ class AccountingAccount extends CommonObject
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_accounting_category as ca ON a.fk_accounting_category = ca.rowid";
 			$sql .= " WHERE";
 			if ($rowid) {
-				$sql .= " a.rowid = '" . $rowid . "'";
+				$sql .= " a.rowid = " . (int) $rowid;
 			} elseif ($account_number) {
 				$sql .= " a.account_number = '" . $this->db->escape($account_number) . "'";
 			}
@@ -212,9 +212,9 @@ class AccountingAccount extends CommonObject
 	/**
 	 * Insert new accounting account in chart of accounts
 	 *
-	 * @param User $user Use making action
-	 * @param int $notrigger Disable triggers
-	 * @return int <0 if KO, >0 if OK
+	 * @param  User    $user       User making action
+	 * @param  int     $notrigger  Disable triggers
+	 * @return int                 <0 if KO, >0 if OK
 	 */
     function create($user, $notrigger = 0)
     {
@@ -273,11 +273,11 @@ class AccountingAccount extends CommonObject
 		$sql .= ", " . (empty($this->pcg_type) ? 'NULL' : "'" . $this->db->escape($this->pcg_type) . "'");
 		$sql .= ", " . (empty($this->pcg_subtype) ? 'NULL' : "'" . $this->db->escape($this->pcg_subtype) . "'");
 		$sql .= ", " . (empty($this->account_number) ? 'NULL' : "'" . $this->db->escape($this->account_number) . "'");
-		$sql .= ", " . (empty($this->account_parent) ? '0' : "'" . $this->db->escape($this->account_parent) . "'");
-		$sql .= ", " . (empty($this->label) ? 'NULL' : "'" . $this->db->escape($this->label) . "'");
-		$sql .= ", " . (empty($this->account_category) ? 0 : $this->db->escape($this->account_category));
+		$sql .= ", " . (empty($this->account_parent) ? 0 : (int) $this->account_parent);
+		$sql .= ", " . (empty($this->label) ? "''" : "'" . $this->db->escape($this->label) . "'");
+		$sql .= ", " . (empty($this->account_category) ? 0 : (int) $this->account_category);
 		$sql .= ", " . $user->id;
-		$sql .= ", " . (! isset($this->active) ? 'NULL' : $this->db->escape($this->active));
+		$sql .= ", " . (int) $this->active;
 		$sql .= ")";
 
 		$this->db->begin();
@@ -285,7 +285,7 @@ class AccountingAccount extends CommonObject
 		dol_syslog(get_class($this) . "::create sql=" . $sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (! $resql) {
-			$error ++;
+			$error++;
 			$this->errors[] = "Error " . $this->db->lasterror();
 		}
 
@@ -307,12 +307,12 @@ class AccountingAccount extends CommonObject
 
 		// Commit or rollback
 		if ($error) {
-			foreach ( $this->errors as $errmsg ) {
+			foreach ($this->errors as $errmsg) {
 				dol_syslog(get_class($this) . "::create " . $errmsg, LOG_ERR);
 				$this->error .= ($this->error ? ', ' . $errmsg : $errmsg);
 			}
 			$this->db->rollback();
-			return - 1 * $error;
+			return -1 * $error;
 		} else {
 			$this->db->commit();
 			return $this->id;
@@ -344,11 +344,11 @@ class AccountingAccount extends CommonObject
 		$sql .= " , pcg_type = " . ($this->pcg_type ? "'" . $this->db->escape($this->pcg_type) . "'" : "null");
 		$sql .= " , pcg_subtype = " . ($this->pcg_subtype ? "'" . $this->db->escape($this->pcg_subtype) . "'" : "null");
 		$sql .= " , account_number = '" . $this->db->escape($this->account_number) . "'";
-		$sql .= " , account_parent = '" . $this->db->escape($this->account_parent) . "'";
-		$sql .= " , label = " . ($this->label ? "'" . $this->db->escape($this->label) . "'" : "null");
-		$sql .= " , fk_accounting_category = " . (empty($this->account_category) ? 0 : $this->db->escape($this->account_category));
+		$sql .= " , account_parent = " . (int) $this->account_parent;
+		$sql .= " , label = " . ($this->label ? "'" . $this->db->escape($this->label) . "'" : "''");
+		$sql .= " , fk_accounting_category = " . (empty($this->account_category) ? 0 : (int) $this->account_category);
 		$sql .= " , fk_user_modif = " . $user->id;
-		$sql .= " , active = " . $this->active;
+		$sql .= " , active = " . (int) $this->active;
 		$sql .= " WHERE rowid = " . $this->id;
 
 		dol_syslog(get_class($this) . "::update sql=" . $sql, LOG_DEBUG);
@@ -373,10 +373,10 @@ class AccountingAccount extends CommonObject
 		global $langs;
 
 		$sql = "(SELECT fk_code_ventilation FROM " . MAIN_DB_PREFIX . "facturedet";
-		$sql .= " WHERE  fk_code_ventilation=" . $this->id . ")";
-		$sql .= "UNION";
-		$sql .= "(SELECT fk_code_ventilation FROM " . MAIN_DB_PREFIX . "facture_fourn_det";
-		$sql .= " WHERE  fk_code_ventilation=" . $this->id . ")";
+		$sql.= " WHERE fk_code_ventilation=" . $this->id . ")";
+		$sql.= "UNION";
+		$sql.= " (SELECT fk_code_ventilation FROM " . MAIN_DB_PREFIX . "facture_fourn_det";
+		$sql.= " WHERE fk_code_ventilation=" . $this->id . ")";
 
 		dol_syslog(get_class($this) . "::checkUsage sql=" . $sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);

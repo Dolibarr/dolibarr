@@ -383,12 +383,24 @@ class BlockedLog
 
 		// Set object_data
 		$this->object_data=new stdClass();
+		// Add fields to exclude
 		$arrayoffieldstoexclude = array(
-			'table_element','fields','ref_previous','ref_next','origin','origin_id','oldcopy','picto','error','errors','modelpdf',
+			'table_element','fields','ref_previous','ref_next','origin','origin_id','oldcopy','picto','error','errors','modelpdf','last_main_doc','civility_id','contact','contact_id',
 			'table_element_line','ismultientitymanaged','isextrafieldmanaged',
 			'linkedObjectsIds','linkedObjects','fk_delivery_address',
-			'context'
+			'context',
+		    'projet'          // There is already ->fk_project
 		);
+		// Add more fields to exclude depending on object type
+		if ($this->element == 'cashcontrol')
+		{
+		    $arrayoffieldstoexclude = array_merge($arrayoffieldstoexclude, array(
+		        'name','lastname','firstname','region','region_id','region_code','state','state_id','state_code','country','country_id','country_code',
+		        'total_ht','total_tva','total_ttc','total_localtax1','total_localtax2',
+		        'barcode_type','barcode_type_code','barcode_type_label','barcode_type_coder','mode_reglement_id','cond_reglement_id','mode_reglement','cond_reglement','shipping_method_id',
+		        'fk_incoterms','libelle_incoterms','location_incoterms','lines')
+		    );
+		}
 
 		// Add thirdparty info
 		if (empty($object->thirdparty) && method_exists($object, 'fetch_thirdparty')) $object->fetch_thirdparty();

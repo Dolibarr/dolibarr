@@ -18,7 +18,7 @@
 
 /**
  *   	\file       cashcontrol_list.php
- *		\ingroup    bank
+ *		\ingroup    cashdesk|takepos
  *		\brief      List page for cashcontrol
  */
 

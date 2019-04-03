@@ -880,11 +880,13 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
     /**
      * Gives the last date of activation
      *
-     * @return timestamp       Date of last activation
+     * @return timestamp|string       Date of last activation
      */
     function getLastActivationDate()
     {
         global $conf;
+
+        $err = 0;
 
         $sql = "SELECT tms FROM ".MAIN_DB_PREFIX."const";
         $sql.= " WHERE ".$this->db->decrypt('name')." = '".$this->db->escape($this->const_name)."'";
@@ -892,12 +894,14 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
         dol_syslog(get_class($this)."::getLastActiveDate", LOG_DEBUG);
         $resql=$this->db->query($sql);
-        if (! $resql) { $err++;
-        } else
+        if (! $resql)
+        {
+            $err++;
+        }
+        else
         {
             $obj=$this->db->fetch_object($resql);
-            if ($obj) { return $this->db->jdate($obj->tms);
-            }
+            if ($obj) { return $this->db->jdate($obj->tms); }
         }
 
         return '';
@@ -913,14 +917,19 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
     {
         global $conf;
 
-        $sql = "SELECT tms, note FROM ".MAIN_DB_PREFIX."const";
-        $sql.= " WHERE ".$this->db->decrypt('name')." = '".$this->db->escape($this->const_name)."'";
-        $sql.= " AND entity IN (0, ".$conf->entity.")";
+        $err = 0;
+
+		$sql = "SELECT tms, note FROM ".MAIN_DB_PREFIX."const";
+		$sql.= " WHERE ".$this->db->decrypt('name')." = '".$this->db->escape($this->const_name)."'";
+		$sql.= " AND entity IN (0, ".$conf->entity.")";
 
         dol_syslog(get_class($this)."::getLastActiveDate", LOG_DEBUG);
         $resql=$this->db->query($sql);
-        if (! $resql) { $err++;
-        } else
+        if (! $resql)
+        {
+            $err++;
+        }
+        else
         {
             $obj=$this->db->fetch_object($resql);
             $tmp=array();

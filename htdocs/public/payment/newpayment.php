@@ -428,7 +428,7 @@ if ($action == 'charge' && ! empty($conf->stripe->enabled))
 			'dol_version' => DOL_VERSION,
 			'dol_entity'  => $conf->entity,
 			'dol_company' => $mysoc->name,		// Usefull when using multicompany
-			'ipaddress'=>(empty($_SERVER['REMOTE_ADDR'])?'':$_SERVER['REMOTE_ADDR'])
+		    'ipaddress'=> getUserRemoteIP()
 		);
 
 		if (! empty($thirdparty_id)) $metadata["dol_thirdparty_id"] = $thirdparty_id;
@@ -602,7 +602,7 @@ if ($action == 'charge' && ! empty($conf->stripe->enabled))
 	$_SESSION["FinalPaymentAmt"] = $amount;
 	$_SESSION["currencyCodeType"] = $currency;
 	$_SESSION["paymentType"] = '';
-	$_SESSION['ipaddress'] = $_SERVER['REMOTE_ADDR'];  // Payer ip
+	$_SESSION['ipaddress'] = getUserRemoteIP();  // Payer ip
 	$_SESSION['payerID'] = is_object($customer)?$customer->id:'';
 	$_SESSION['TRANSACTIONID'] = is_object($charge)?$charge->id:'';
 
@@ -665,7 +665,7 @@ print '<form id="dolpaymentform" class="center" name="paymentform" action="'.$_S
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">'."\n";
 print '<input type="hidden" name="action" value="dopayment">'."\n";
 print '<input type="hidden" name="tag" value="'.GETPOST("tag",'alpha').'">'."\n";
-print '<input type="hidden" name="suffix" value="'.GETPOST("suffix",'alpha').'">'."\n";
+print '<input type="hidden" name="suffix" value="'.$suffix.'">'."\n";
 print '<input type="hidden" name="securekey" value="'.$SECUREKEY.'">'."\n";
 print '<input type="hidden" name="e" value="'.$entity.'" />';
 print '<input type="hidden" name="forcesandbox" value="'.GETPOST('forcesandbox','alpha').'" />';
@@ -838,6 +838,7 @@ if ($source == 'order')
 	// Debitor
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("ThirdParty");
 	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$order->thirdparty->name.'</b>';
+	print '</td></tr>'."\n";
 
 	// Object
 	$text='<b>'.$langs->trans("PaymentOrderRef",$order->ref).'</b>';
@@ -958,6 +959,7 @@ if ($source == 'invoice')
 	// Debitor
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("ThirdParty");
 	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$invoice->thirdparty->name.'</b>';
+	print '</td></tr>'."\n";
 
 	// Object
 	$text='<b>'.$langs->trans("PaymentInvoiceRef",$invoice->ref).'</b>';
@@ -1295,22 +1297,20 @@ if ($source == 'membersubscription')
 	$fulltag=dol_string_unaccent($fulltag);
 
 	// Creditor
-
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Creditor");
 	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$creditor.'</b>';
 	print '<input type="hidden" name="creditor" value="'.$creditor.'">';
 	print '</td></tr>'."\n";
 
 	// Debitor
-
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Member");
 	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>';
 	if ($member->morphy == 'mor' && ! empty($member->societe)) print $member->societe;
 	else print $member->getFullName($langs);
 	print '</b>';
+	print '</td></tr>'."\n";
 
 	// Object
-
 	$text='<b>'.$langs->trans("PaymentSubscription").'</b>';
 	if (GETPOST('desc','alpha')) $text='<b>'.$langs->trans(GETPOST('desc','alpha')).'</b>';
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Designation");
@@ -1318,6 +1318,13 @@ if ($source == 'membersubscription')
 	print '<input type="hidden" name="source" value="'.dol_escape_htmltag($source).'">';
 	print '<input type="hidden" name="ref" value="'.dol_escape_htmltag($member->ref).'">';
 	print '</td></tr>'."\n";
+
+	if ($object->datefin > 0)
+	{
+	    print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("DateEndSubscription");
+	    print '</td><td class="CTableRow'.($var?'1':'2').'">'.dol_print_date($member->datefin,'day');
+	    print '</td></tr>'."\n";
+	}
 
 	if ($member->last_subscription_date || $member->last_subscription_amount)
 	{
@@ -1337,7 +1344,6 @@ if ($source == 'membersubscription')
 	}
 
 	// Amount
-
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Amount");
 	if (empty($amount))
 	{
@@ -1385,7 +1391,6 @@ if ($source == 'membersubscription')
 	print '</td></tr>'."\n";
 
 	// Tag
-
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("PaymentCode");
 	print '</td><td class="CTableRow'.($var?'1':'2').'"><b style="word-break: break-all;">'.$fulltag.'</b>';
 	print '<input type="hidden" name="tag" value="'.$tag.'">';
@@ -1457,22 +1462,20 @@ if ($source == 'donation')
 	$fulltag=dol_string_unaccent($fulltag);
 
 	// Creditor
-
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Creditor");
 	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$creditor.'</b>';
 	print '<input type="hidden" name="creditor" value="'.$creditor.'">';
 	print '</td></tr>'."\n";
 
 	// Debitor
-
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("ThirdParty");
 	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>';
 	if ($don->morphy == 'mor' && ! empty($don->societe)) print $don->societe;
 	else print $don->getFullName($langs);
 	print '</b>';
+	print '</td></tr>'."\n";
 
 	// Object
-
 	$text='<b>'.$langs->trans("PaymentDonation").'</b>';
 	if (GETPOST('desc','alpha')) $text='<b>'.$langs->trans(GETPOST('desc','alpha')).'</b>';
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Designation");
@@ -1482,7 +1485,6 @@ if ($source == 'donation')
 	print '</td></tr>'."\n";
 
 	// Amount
-
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Amount");
 	if (empty($amount))
 	{
@@ -1530,7 +1532,6 @@ if ($source == 'donation')
 	print '</td></tr>'."\n";
 
 	// Tag
-
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("PaymentCode");
 	print '</td><td class="CTableRow'.($var?'1':'2').'"><b style="word-break: break-all;">'.$fulltag.'</b>';
 	print '<input type="hidden" name="tag" value="'.$tag.'">';
@@ -1589,16 +1590,19 @@ if ($action != 'dopayment')
 		{
 			print '<br><br><span class="amountpaymentcomplete">'.$langs->trans("InvoicePaid").'</span>';
 		}
-		elseif ($source == 'membersubscription' && $object->datefin > dol_now())
-		{
-			print '<br><br><span class="amountpaymentcomplete">'.$langs->trans("MembershipPaid").'</span>';
-		}
 		elseif ($source == 'donation' && $object->paid)
 		{
 			print '<br><br><span class="amountpaymentcomplete">'.$langs->trans("DonationPaid").'</span>';
 		}
 		else
 		{
+		    // Membership can be paid and we still allow to make renewal
+		    if ($source == 'membersubscription' && $object->datefin > dol_now())
+		    {
+		        $langs->load("members");
+		        print '<br><span class="amountpaymentcomplete">'.$langs->trans("MembershipPaid", dol_print_date($object->datefin, 'day')).'</span><br>';
+		    }
+
 			// Buttons for all payments registration methods
 
 			if ((empty($paymentmethod) || $paymentmethod == 'paybox') && ! empty($conf->paybox->enabled))
@@ -1867,7 +1871,7 @@ if (preg_match('/^dopayment/',$action))
 }
 
 
-htmlPrintOnlinePaymentFooter($mysoc,$langs,1,$suffix,$object);
+htmlPrintOnlinePaymentFooter($mysoc, $langs, 1, $suffix, $object);
 
 llxFooter('', 'public');
 

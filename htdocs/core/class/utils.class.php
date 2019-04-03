@@ -613,17 +613,25 @@ class Utils
 			$FILENAMEASCII=strtolower($module).'.asciidoc';
 			$FILENAMEDOC=strtolower($module).'.html';			// TODO Use/text PDF
 
-			$dirofmodule = dol_buildpath(strtolower($module), 0).'/doc';
+			$dirofmodule = dol_buildpath(strtolower($module), 0);
+			$dirofmoduledoc = dol_buildpath(strtolower($module), 0).'/doc';
 			$dirofmoduletmp = dol_buildpath(strtolower($module), 0).'/doc/temp';
-			$outputfiledoc = $dirofmodule.'/'.$FILENAMEDOC;
-			if ($dirofmodule)
+			$outputfiledoc = $dirofmoduledoc.'/'.$FILENAMEDOC;
+			if ($dirofmoduledoc)
 			{
-				if (! dol_is_dir($dirofmodule)) dol_mkdir($dirofmodule);
+				if (! dol_is_dir($dirofmoduledoc)) dol_mkdir($dirofmoduledoc);
 				if (! dol_is_dir($dirofmoduletmp)) dol_mkdir($dirofmoduletmp);
 				if (! is_writable($dirofmoduletmp))
 				{
 					$this->error = 'Dir '.$dirofmoduletmp.' does not exists or is not writable';
 					return -1;
+				}
+
+				$conf->global->MODULEBUILDER_ASCIIDOCTOR='asciidoctor';
+				if (empty($conf->global->MODULEBUILDER_ASCIIDOCTOR))
+				{
+				    $this->error = 'Setup of module ModuleBuilder not complete';
+				    return -1;
 				}
 
 				$destfile=$dirofmoduletmp.'/'.$FILENAMEASCII;
@@ -637,6 +645,7 @@ class Utils
 					foreach ($specs as $spec)
 					{
 						if (preg_match('/notindoc/', $spec['relativename'])) continue;	// Discard file
+						if (preg_match('/example/',  $spec['relativename'])) continue;	// Discard file
 						if (preg_match('/disabled/', $spec['relativename'])) continue;	// Discard file
 
 						$pathtofile = strtolower($module).'/doc/'.$spec['relativename'];
@@ -662,17 +671,26 @@ class Utils
 					// TODO
 					fwrite($fhandle, "TODO...");
 
+
+					fwrite($fhandle, "\n\n\n== CHANGELOG...\n\n");
+
+					// TODO
+					fwrite($fhandle, "TODO...");
+
+
+
 					fclose($fhandle);
 				}
 
-				$conf->global->MODULEBUILDER_ASCIIDOCTOR='asciidoctor';
-				if (empty($conf->global->MODULEBUILDER_ASCIIDOCTOR))
-				{
-					dol_print_error('', 'Module setup not complete');
-					exit;
-				}
+				// Copy some files into temp directory
+				dol_copy($dirofmodule.'/README.md', $dirofmoduletmp.'/README.md', 0, 1);
+				dol_copy($dirofmodule.'/ChangeLog.md', $dirofmoduletmp.'/ChangeLog.md', 0, 1);
 
-				$command=$conf->global->MODULEBUILDER_ASCIIDOCTOR.' '.$destfile.' -n -o '.$dirofmodule.'/'.$FILENAMEDOC;
+				// Launch doc generation
+                $currentdir = getcwd();
+                chdir($dirofmodule);
+
+				$command=$conf->global->MODULEBUILDER_ASCIIDOCTOR.' '.$destfile.' -n -o '.$dirofmoduledoc.'/'.$FILENAMEDOC;
 				$outfile=$dirofmoduletmp.'/out.tmp';
 
 				require_once DOL_DOCUMENT_ROOT.'/core/class/utils.class.php';
@@ -683,6 +701,8 @@ class Utils
 					$this->error = $resarray['error'].' '.$resarray['output'];
 				}
 				$result = ($resarray['result'] == 0) ? 1 : 0;
+
+				chdir($currentdir);
 			}
 			else
 			{

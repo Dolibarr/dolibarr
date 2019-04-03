@@ -178,7 +178,7 @@ class PaymentTerm // extends CommonObject
     	global $langs;
         $sql = "SELECT";
 		$sql.= " t.rowid,";
-		$sql.= " t.entity";
+		$sql.= " t.entity,";
 
 		$sql.= " t.code,";
 		$sql.= " t.sortorder,";
@@ -404,8 +404,6 @@ class PaymentTerm // extends CommonObject
 
 		$object=new PaymentTerm($this->db);
 
-		$object->context['createfromclone'] = 'createfromclone';
-
 		$this->db->begin();
 
 		// Load source object
@@ -417,6 +415,7 @@ class PaymentTerm // extends CommonObject
 		// ...
 
 		// Create clone
+		$object->context['createfromclone'] = 'createfromclone';
 		$result=$object->create($user);
 
 		// Other options
@@ -430,7 +429,7 @@ class PaymentTerm // extends CommonObject
 		//{
 		//}
 
-		unset($this->context['createfromclone']);
+		unset($object->context['createfromclone']);
 
 		// End
 		if (! $error)

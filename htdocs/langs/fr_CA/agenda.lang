@@ -14,7 +14,6 @@ ShipmentDeletedInDolibarr=Envoi %s supprimé
 OrderCreatedInDolibarr=L'ordre %s a été créé
 OrderDeliveredInDolibarr=Commande %s classée Délivrée
 ShippingSentByEMail=Bon expédition %s envoyé par EMail
-InterventionSentByEMail=Intervention %s envoyée par EMail
 ProposalDeleted=Proposition supprimée
 AgendaModelModule=Modèles de document pour l'événement
 AgendaShowBirthdayEvents=Afficher les dates d'anniversaire des contacts

@@ -365,6 +365,7 @@ class Paiement extends CommonObject
                                 if ($invoice->type == Facture::TYPE_DEPOSIT)
                                 {
 			                        $amount_ht = $amount_tva = $amount_ttc = array();
+			                        $multicurrency_amount_ht = $multicurrency_amount_tva = $multicurrency_amount_ttc = array();
 
 									// Insert one discount by VAT rate category
 									$discount = new DiscountAbsolute($this->db);
@@ -383,6 +384,9 @@ class Paiement extends CommonObject
 												$amount_ht[$line->tva_tx] += $line->total_ht;
 												$amount_tva[$line->tva_tx] += $line->total_tva;
 												$amount_ttc[$line->tva_tx] += $line->total_ttc;
+												$multicurrency_amount_ht[$line->tva_tx] += $line->multicurrency_total_ht;
+												$multicurrency_amount_tva[$line->tva_tx] += $line->multicurrency_total_tva;
+												$multicurrency_amount_ttc[$line->tva_tx] += $line->multicurrency_total_ttc;
 												$i++;
 											}
 										}
@@ -391,6 +395,9 @@ class Paiement extends CommonObject
 											$discount->amount_ht = abs($amount_ht[$tva_tx]);
 											$discount->amount_tva = abs($amount_tva[$tva_tx]);
 											$discount->amount_ttc = abs($amount_ttc[$tva_tx]);
+											$discount->multicurrency_amount_ht = abs($multicurrency_amount_ht[$tva_tx]);
+											$discount->multicurrency_amount_tva = abs($multicurrency_amount_tva[$tva_tx]);
+											$discount->multicurrency_amount_ttc = abs($multicurrency_amount_ttc[$tva_tx]);
 											$discount->tva_tx = abs($tva_tx);
 
 											$result = $discount->create($user);
@@ -804,23 +811,55 @@ class Paiement extends CommonObject
     function update_date($date)
     {
         // phpcs:enable
-        if (!empty($date) && $this->statut!=1)
+        $error=0;
+
+        if (!empty($date) && $this->statut != 1)
         {
+            $this->db->begin();
+
+            dol_syslog(get_class($this)."::update_date with date = ".$date, LOG_DEBUG);
+
             $sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
             $sql.= " SET datep = '".$this->db->idate($date)."'";
             $sql.= " WHERE rowid = ".$this->id;
 
-            dol_syslog(get_class($this)."::update_date", LOG_DEBUG);
             $result = $this->db->query($sql);
-            if ($result)
+            if (! $result)
             {
-            	$this->datepaye = $date;
+                $error++;
+                $this->error='Error -1 '.$this->db->error();
+            }
+
+            $type = $this->element;
+
+            $sql = "UPDATE ".MAIN_DB_PREFIX.'bank';
+            $sql.= " SET dateo = '".$this->db->idate($date)."', datev = '".$this->db->idate($date)."'";
+            $sql.= " WHERE rowid IN (SELECT fk_bank FROM ".MAIN_DB_PREFIX."bank_url WHERE type = '".$type."' AND url_id = ".$this->id.")";
+            $sql.= " AND rappro = 0";
+
+            $result = $this->db->query($sql);
+            if (! $result)
+            {
+                $error++;
+                $this->error='Error -1 '.$this->db->error();
+            }
+
+            if (! $error)
+            {
+
+            }
+
+            if (! $error)
+            {
+                $this->datepaye = $date;
                 $this->date = $date;
+
+                $this->db->commit();
                 return 0;
             }
             else
             {
-                $this->error='Error -1 '.$this->db->error();
+                $this->db->rollback();
                 return -2;
             }
         }
@@ -1076,7 +1115,7 @@ class Paiement extends CommonObject
 	/**
 	 * 	get the right way of payment
 	 *
-	 * 	@return 	string 	'dolibarr' if standard comportment or paid in dolibarr currency, 'customer' if payment received from multicurrency inputs
+	 * 	@return 	string 	'dolibarr' if standard comportment or paid in main currency, 'customer' if payment received from multicurrency inputs
 	 */
 	function getWay()
 	{
@@ -1139,7 +1178,9 @@ class Paiement extends CommonObject
 		if (! empty($conf->dol_no_mouse_hover)) $notooltip=1;   // Force disable tooltips
 
 		$result='';
-        $label = $langs->trans("ShowPayment").': '.$this->ref;
+        $label = '<u>'.$langs->trans("ShowPayment").'</u><br>';
+        $label.= '<strong>'.$langs->trans("Ref").':</strong> '.$this->ref;
+        if ($this->date) $label.= '<br><strong>'.$langs->trans("Date").':</strong> '.dol_print_date($this->date, 'dayhour');
         if ($mode == 'withlistofinvoices')
         {
             $arraybill = $this->getBillsArray();

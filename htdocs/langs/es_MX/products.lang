@@ -1,7 +1,6 @@
 # Dolibarr language file - Source file is en_US - products
 ProductId=ID de producto / servicio
 CantBeLessThanMinPrice=El precio de venta no puede ser inferior al mínimo permitido para este producto (%s sin impuestos). Este mensaje también puede aparecer si escribe un descuento demasiado importante.
-ContractStatusClosed=Cerrada
 ErrorProductBadRefOrLabel=Valor incorrecto para referencia o etiqueta.
 ProductsAndServicesArea=Área de productos y servicios
 ProductsArea=Área de producto

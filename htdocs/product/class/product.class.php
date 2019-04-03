@@ -911,9 +911,9 @@ class Product extends CommonObject
             $sql.= ", barcode = ". (empty($this->barcode)?"null":"'".$this->db->escape($this->barcode)."'");
             $sql.= ", fk_barcode_type = ". (empty($this->barcode_type)?"null":$this->db->escape($this->barcode_type));
 
-            $sql.= ", tosell = " . $this->status;
-            $sql.= ", tobuy = " . $this->status_buy;
-            $sql.= ", tobatch = " . ((empty($this->status_batch) || $this->status_batch < 0) ? '0' : $this->status_batch);
+            $sql.= ", tosell = " . (int) $this->status;
+            $sql.= ", tobuy = " . (int) $this->status_buy;
+            $sql.= ", tobatch = " . ((empty($this->status_batch) || $this->status_batch < 0) ? '0' : (int) $this->status_batch);
             $sql.= ", finished = " . ((! isset($this->finished) || $this->finished < 0) ? "null" : (int) $this->finished);
             $sql.= ", weight = " . ($this->weight!='' ? "'".$this->db->escape($this->weight)."'" : 'null');
             $sql.= ", weight_units = " . ($this->weight_units!='' ? "'".$this->db->escape($this->weight_units)."'": 'null');
@@ -932,18 +932,18 @@ class Product extends CommonObject
             $sql.= ", description = '" . $this->db->escape($this->description) ."'";
             $sql.= ", url = " . ($this->url?"'".$this->db->escape($this->url)."'":'null');
             $sql.= ", customcode = '" .        $this->db->escape($this->customcode) ."'";
-            $sql.= ", fk_country = " . ($this->country_id > 0 ? $this->country_id : 'null');
+            $sql.= ", fk_country = " . ($this->country_id > 0 ? (int) $this->country_id : 'null');
             $sql.= ", note = ".(isset($this->note) ? "'" .$this->db->escape($this->note)."'" : 'null');
             $sql.= ", duration = '" . $this->db->escape($this->duration_value . $this->duration_unit) ."'";
             $sql.= ", accountancy_code_buy = '" . $this->db->escape($this->accountancy_code_buy)."'";
             $sql.= ", accountancy_code_sell= '" . $this->db->escape($this->accountancy_code_sell)."'";
             $sql.= ", accountancy_code_sell_intra= '" . $this->db->escape($this->accountancy_code_sell_intra)."'";
             $sql.= ", accountancy_code_sell_export= '" . $this->db->escape($this->accountancy_code_sell_export)."'";
-            $sql.= ", desiredstock = " . ((isset($this->desiredstock) && $this->desiredstock != '') ? $this->desiredstock : "null");
+            $sql.= ", desiredstock = " . ((isset($this->desiredstock) && $this->desiredstock != '') ? (int) $this->desiredstock : "null");
             $sql.= ", cost_price = " . ($this->cost_price != '' ? $this->db->escape($this->cost_price) : 'null');
-            $sql.= ", fk_unit= " . (!$this->fk_unit ? 'NULL' : $this->fk_unit);
+            $sql.= ", fk_unit= " . (!$this->fk_unit ? 'NULL' : (int) $this->fk_unit);
             $sql.= ", price_autogen = " . (!$this->price_autogen ? 0 : 1);
-            $sql.= ", fk_price_expression = ".($this->fk_price_expression != 0 ? $this->fk_price_expression : 'NULL');
+            $sql.= ", fk_price_expression = ".($this->fk_price_expression != 0 ? (int) $this->fk_price_expression : 'NULL');
             $sql.= ", fk_user_modif = ".($user->id > 0 ? $user->id : 'NULL');
             // stock field is not here because it is a denormalized value from product_stock.
             $sql.= " WHERE rowid = " . $id;
@@ -1528,8 +1528,8 @@ class Product extends CommonObject
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     /**
-     *    Read price used by a provider.
-     *    We enter as input couple prodfournprice/qty or triplet qty/product_id/fourn_ref.
+     *  Read price used by a provider.
+     *  We enter as input couple prodfournprice/qty or triplet qty/product_id/fourn_ref.
      *  This also set some properties on product like ->buyprice, ->fourn_pu, ...
      *
      * @param  int    $prodfournprice Id du tarif = rowid table product_fournisseur_price
@@ -1537,7 +1537,8 @@ class Product extends CommonObject
      * @param  int    $product_id     Filter on a particular product id
      * @param  string $fourn_ref      Filter on a supplier price ref. 'none' to exclude ref in search.
      * @param  int    $fk_soc         If of supplier
-     * @return int                         <-1 if KO, -1 if qty not enough, 0 if OK but nothing found, id_product if OK and found. May also initialize some properties like (->ref_supplier, buyprice, fourn_pu, vatrate_supplier...)
+     * @return int                    <-1 if KO, -1 if qty not enough, 0 if OK but nothing found, id_product if OK and found. May also initialize some properties like (->ref_supplier, buyprice, fourn_pu, vatrate_supplier...)
+     * @see find_min_price_product_fournisseur()
      */
     function get_buyprice($prodfournprice, $qty, $product_id=0, $fourn_ref='', $fk_soc=0)
     {
@@ -4241,7 +4242,7 @@ class Product extends CommonObject
     {
         $result=array();
 
-        $sql = "SELECT pb.batch, pb.eatby, pb.sellby, SUM(pb.qty) FROM ".MAIN_DB_PREFIX."product_batch as pb, ".MAIN_DB_PREFIX."product_stock as ps";
+        $sql = "SELECT pb.batch, pb.eatby, pb.sellby, SUM(pb.qty) AS qty FROM ".MAIN_DB_PREFIX."product_batch as pb, ".MAIN_DB_PREFIX."product_stock as ps";
         $sql.= " WHERE pb.fk_product_stock = ps.rowid AND ps.fk_product = ".$this->id." AND pb.batch = '".$this->db->escape($batch)."'";
         $sql.= " GROUP BY pb.batch, pb.eatby, pb.sellby";
         dol_syslog(get_class($this)."::loadBatchInfo load first entry found for lot/serial = ".$batch, LOG_DEBUG);

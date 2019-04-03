@@ -29,7 +29,7 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
-$langs->loadLangs(array("admin", "other"));
+$langs->loadLangs(array("admin", "companies", "other"));
 
 $action=GETPOST('action','alpha');
 $value=GETPOST('value','alpha');
@@ -327,11 +327,13 @@ $head = societe_admin_prepare_head();
 dol_fiche_head($head, 'general', $langs->trans("ThirdParties"), -1, 'company');
 
 $dirsociete=array_merge(array('/core/modules/societe/'),$conf->modules_parts['societe']);
+foreach ($conf->modules_parts['models'] as $mo)		$dirsociete[]=$mo.'core/modules/societe/';	//Add more models
 
 // Module to manage customer/supplier code
 
 print load_fiche_titre($langs->trans("CompanyCodeChecker"),'','');
 
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder" width="100%">'."\n";
 print '<tr class="liste_titre">'."\n";
 print '  <td>'.$langs->trans("Name").'</td>';
@@ -403,7 +405,7 @@ foreach ($dirsociete as $dirroot)
     }
 }
 print '</table>';
-
+print '</div>';
 
 print "<br>";
 
@@ -412,6 +414,7 @@ print "<br>";
 
 print load_fiche_titre($langs->trans("AccountCodeManager"),'','');
 
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td width="140">'.$langs->trans("Name").'</td>';
@@ -473,6 +476,7 @@ foreach ($dirsociete as $dirroot)
     }
 }
 print "</table>\n";
+print '</div>';
 
 
 /*
@@ -504,6 +508,7 @@ else
 	dol_print_error($db);
 }
 
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td width="140">'.$langs->trans("Name").'</td>';
@@ -619,12 +624,14 @@ foreach ($dirsociete as $dirroot)
 	}
 }
 print '</table>';
+print '</div>';
 
 print '<br>';
 
 //IDProf
 print load_fiche_titre($langs->trans("CompanyIdProfChecker"),'','');
 
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Name").'</td>';
@@ -711,8 +718,10 @@ foreach($profid as $key => $val)
 	$i++;
 }
 
-print "</table><br>\n";
+print "</table>\n";
+print '</div>';
 
+print "<br>\n";
 
 print load_fiche_titre($langs->trans("Other"),'','');
 
@@ -723,6 +732,7 @@ print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="updateoptions">';
 
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print "<td>".$langs->trans("Parameters")."</td>\n";
@@ -747,7 +757,7 @@ else
     '2'=>$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch",2).')',
     '3'=>$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch",3).')',
 	);
-	print $form->selectarray("activate_COMPANY_USE_SEARCH_TO_SELECT", $arrval, $conf->global->COMPANY_USE_SEARCH_TO_SELECT);
+	print $form->selectarray("activate_COMPANY_USE_SEARCH_TO_SELECT", $arrval, $conf->global->COMPANY_USE_SEARCH_TO_SELECT, 0, 0, 0, '', 0, 0, 0, '', 'minwidth75imp');
 	print '</td><td align="right">';
 	print '<input type="submit" class="button" name="COMPANY_USE_SEARCH_TO_SELECT" value="'.$langs->trans("Modify").'">';
 	print "</td>";
@@ -771,7 +781,7 @@ else
 	'2'=>$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch",2).')',
 	'3'=>$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch",3).')',
 	);
-	print $form->selectarray("activate_CONTACT_USE_SEARCH_TO_SELECT", $arrval, $conf->global->CONTACT_USE_SEARCH_TO_SELECT);
+	print $form->selectarray("activate_CONTACT_USE_SEARCH_TO_SELECT", $arrval, $conf->global->CONTACT_USE_SEARCH_TO_SELECT, 0, 0, 0, '', 0, 0, 0, '', 'minwidth75imp');
 	print '</td><td align="right">';
 	print '<input type="submit" class="button" name="CONTACT_USE_SEARCH_TO_SELECT" value="'.$langs->trans("Modify").'">';
 	print "</td>";
@@ -891,6 +901,7 @@ print '</tr>';
 */
 
 print '</table>';
+print '</div>';
 
 print '</form>';
 

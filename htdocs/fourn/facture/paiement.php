@@ -69,7 +69,7 @@ if (! $sortorder) $sortorder="DESC";
 if (! $sortfield) $sortfield="p.rowid";
 $optioncss = GETPOST('optioncss','alpha');
 
-$amounts = array();array();
+$amounts = array();
 $amountsresttopay=array();
 $addwarning=0;
 
@@ -248,6 +248,22 @@ if (empty($reshook))
 	    $error=0;
 
 	    $datepaye = dol_mktime(12, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear'));
+
+        // Clean parameters amount if payment is for a credit note
+        if (GETPOST('type') == FactureFournisseur::TYPE_CREDIT_NOTE)
+        {
+            foreach ($amounts as $key => $value)	// How payment is dispatch
+            {
+                $newvalue = price2num($value,'MT');
+                $amounts[$key] = -$newvalue;
+            }
+
+            foreach ($multicurrency_amounts as $key => $value)	// How payment is dispatch
+            {
+                $newvalue = price2num($value,'MT');
+                $multicurrency_amounts[$key] = -$newvalue;
+            }
+        }
 
 	    if (! $error)
 	    {
@@ -429,6 +445,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
             print '<input type="hidden" name="facid" value="'.$facid.'">';
             print '<input type="hidden" name="ref_supplier" value="'.$obj->ref_supplier.'">';
             print '<input type="hidden" name="socid" value="'.$obj->socid.'">';
+            print '<input type="hidden" name="type" id="invoice_type" value="'.$object->type.'">';
             print '<input type="hidden" name="societe" value="'.$obj->name.'">';
 
             dol_fiche_head(null);
@@ -617,11 +634,14 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 							    print '</td>';
 	                        }
 
-	                        print '<td align="right">'.price($objp->total_ttc).'</td>';
+	                        print '<td align="right">'.price($sign * $objp->total_ttc).'</td>';
 
-	                        print '<td align="right">'.price($objp->am).'</td>';
+	                        print '<td align="right">'.price($sign * $objp->am);
+							if ($creditnotes) print '+'.price($creditnotes);
+							if ($deposits) print '+'.price($deposits);
+							print '</td>';
 
-	                        print '<td align="right">'.price($remaintopay).'</td>';
+	                        print '<td align="right">'.price($sign * $remaintopay).'</td>';
 
 	                        // Amount
 	                        print '<td align="center">';
@@ -674,6 +694,8 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 	                        $total+=$objp->total_ht;
 	                        $total_ttc+=$objp->total_ttc;
 	                        $totalrecu+=$objp->am;
+							$totalrecucreditnote+=$creditnotes;
+							$totalrecudeposits+=$deposits;
 	                        $i++;
 	                    }
 	                    if ($i > 1)
@@ -686,8 +708,11 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 							if (!empty($conf->multicurrency->enabled)) print '<td>&nbsp;</td>';
 							if (!empty($conf->multicurrency->enabled)) print '<td>&nbsp;</td>';
 	                        print '<td align="right"><b>'.price($total_ttc).'</b></td>';
-							print '<td align="right"><b>'.price($totalrecu).'</b></td>';
-	                        print '<td align="right"><b>'.price($total_ttc - $totalrecu).'</b></td>';
+							print '<td align="right"><b>'.price($totalrecu);
+							if ($totalrecucreditnote) print '+'.price($totalrecucreditnote);
+							if ($totalrecudeposits) print '+'.price($totalrecudeposits);
+							print	'</b></td>';
+	                        print '<td align="right"><b>'.price(price2num($total_ttc - $totalrecu - $totalrecucreditnote - $totalrecudeposits,'MT')).'</b></td>';
 	                        print '<td align="center" id="result" style="font-weight: bold;"></td>';		// Autofilled
 							if (!empty($conf->multicurrency->enabled)) print '<td align="right" id="multicurrency_result" style="font-weight: bold;"></td>';
 	                        print "</tr>\n";

@@ -1542,7 +1542,7 @@ div#tmenu_tooltip {
 <?php } ?>
 }
 
-div.tmenusep {
+div.topmenuimage {
 <?php if ($disableimages) { ?>
 	display: none;
 <?php } ?>
@@ -1812,6 +1812,12 @@ foreach($mainmenuusedarray as $val)
 		if (file_exists($dirroot."/".$val."/img/".$val."_over.png"))
 		{
 			$url=dol_buildpath('/'.$val.'/img/'.$val.'_over.png', 1);
+			$found=1;
+			break;
+		}
+		else if (file_exists($dirroot."/".$val."/img/".$val.".png"))    // Retro compatibilité
+		{
+			$url=dol_buildpath('/'.$val.'/img/'.$val.'.png', 1);
 			$found=1;
 			break;
 		}
@@ -3917,6 +3923,7 @@ tr.visible {
 	display: inline-block;
 	padding-left: 10px;
 	vertical-align: middle;
+	line-height: 28px;
 }
 .websitetools {
 	float: right;

@@ -149,6 +149,7 @@ if ($action == 'update' && ! empty($permissiontoadd))
 if ($action == "update_extras" && ! empty($permissiontoadd))
 {
 	$object->fetch(GETPOST('id','int'));
+
 	$attributekey = GETPOST('attribute','alpha');
 	$attributekeylong = 'options_'.$attributekey;
 	$object->array_options['options_'.$attributekey] = GETPOST($attributekeylong,' alpha');
@@ -169,6 +170,12 @@ if ($action == "update_extras" && ! empty($permissiontoadd))
 // Action to delete
 if ($action == 'confirm_delete' && ! empty($permissiontodelete))
 {
+    if (! ($object->id > 0))
+    {
+        dol_print_error('', 'Error, object must be fetched before being deleted');
+        exit;
+    }
+
 	$result=$object->delete($user);
 	if ($result > 0)
 	{
@@ -195,7 +202,7 @@ if ($action == 'confirm_clone' && $confirm == 'yes' && ! empty($permissiontoadd)
 	{
 		if ($object->id > 0)
 		{
-			// Because createFromClone modifies the object, we must clone it so that we can restore it later
+			// Because createFromClone modifies the object, we must clone it so that we can restore it later if error
 			$orig = clone $object;
 
 			$result=$object->createFromClone($user, $object->id);

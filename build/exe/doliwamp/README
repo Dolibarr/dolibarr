@@ -5,4 +5,4 @@ DOLIWAMP Package tools
 
 This directory contains files used by makepack-dolibarr.pl
 script to build the all-in-on .EXE package DoliWamp, ready
-to be distributedt (for Windows).
+to be distributed (for Windows).

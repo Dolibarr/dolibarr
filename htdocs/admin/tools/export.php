@@ -35,14 +35,15 @@ $what=GETPOST('what','alpha');
 $export_type=GETPOST('export_type','alpha');
 $file=GETPOST('filename_template','alpha');
 
+// Load variable for pagination
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST('sortfield','alpha');
 $sortorder = GETPOST('sortorder','alpha');
 $page = GETPOST("page",'int');
+if (empty($page) || $page == -1 || GETPOST('button_search','alpha') || GETPOST('button_removefilter','alpha') || (empty($toselect) && $massaction === '0')) { $page = 0; }     // If $page is not defined, or '' or -1 or if we click on clear filters or if we select empty mass action
+$offset = $limit * $page;
 if (! $sortorder) $sortorder="DESC";
 if (! $sortfield) $sortfield="date";
-if ($page < 0) { $page = 0; }
-$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
-$offset = $limit * $page;
 
 if (! $user->admin) accessforbidden();
 

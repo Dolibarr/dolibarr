@@ -308,7 +308,7 @@ if (empty($reshook))
 		// Extrafields
 		$extrafieldsline = new ExtraFields($db);
 		$extralabelsline = $extrafieldsline->fetch_name_optionals_label($object->table_element_line);
-		$array_options = $extrafieldsline->getOptionalsFromPost($extralabelsline, $predef);
+		$array_options = $extrafieldsline->getOptionalsFromPost($object->table_element_line, $predef);
 		// Unset extrafield
 		if (is_array($extralabelsline)) {
 			// Get extra fields
@@ -618,7 +618,7 @@ if (empty($reshook))
 			// Extrafields Lines
 			$extrafieldsline = new ExtraFields($db);
 			$extralabelsline = $extrafieldsline->fetch_name_optionals_label($object->table_element_line);
-			$array_options = $extrafieldsline->getOptionalsFromPost($extralabelsline);
+			$array_options = $extrafieldsline->getOptionalsFromPost($object->table_element_line);
 			// Unset extrafield POST Data
 			if (is_array($extralabelsline)) {
 				foreach ($extralabelsline as $key => $value) {
@@ -1949,7 +1949,7 @@ elseif (! empty($object->id))
 	print '</td><td>';
 	if ($action == 'editmode')
 	{
-		$form->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$object->id,$object->mode_reglement_id,'mode_reglement_id');
+		$form->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$object->id,$object->mode_reglement_id,'mode_reglement_id','DBIT', 1, 1);
 	}
 	else
 	{

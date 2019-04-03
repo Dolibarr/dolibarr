@@ -749,6 +749,7 @@ class User extends CommonObject
 	{
 		dol_syslog(get_class($this)."::clearrights reset user->rights");
 		$this->rights='';
+		$this->nb_rights=0;
 		$this->all_permissions_are_loaded=false;
 		$this->_tab_loaded=array();
 	}
@@ -1502,12 +1503,12 @@ class User extends CommonObject
 		$sql = "UPDATE ".MAIN_DB_PREFIX."user SET";
 		$sql.= " lastname = '".$this->db->escape($this->lastname)."'";
 		$sql.= ", firstname = '".$this->db->escape($this->firstname)."'";
-		$sql.= ", employee = ".$this->employee;
+		$sql.= ", employee = ".(int) $this->employee;
 		$sql.= ", login = '".$this->db->escape($this->login)."'";
 		$sql.= ", api_key = ".($this->api_key ? "'".$this->db->escape($this->api_key)."'" : "null");
 		$sql.= ", gender = ".($this->gender != -1 ? "'".$this->db->escape($this->gender)."'" : "null");	// 'man' or 'woman'
 		$sql.= ", birth=".(strval($this->birth)!='' ? "'".$this->db->idate($this->birth)."'" : 'null');
-		if (! empty($user->admin)) $sql.= ", admin = ".$this->admin;	// admin flag can be set/unset only by an admin user
+		if (! empty($user->admin)) $sql.= ", admin = ".(int) $this->admin;	// admin flag can be set/unset only by an admin user
 		$sql.= ", address = '".$this->db->escape($this->address)."'";
 		$sql.= ", zip = '".$this->db->escape($this->zip)."'";
 		$sql.= ", town = '".$this->db->escape($this->town)."'";
@@ -1585,7 +1586,7 @@ class User extends CommonObject
 					$adh=new Adherent($this->db);
 					$result=$adh->fetch($this->fk_member);
 
-					if ($result >= 0)
+					if ($result > 0)
 					{
 						$adh->firstname=$this->firstname;
 						$adh->lastname=$this->lastname;
@@ -1624,7 +1625,7 @@ class User extends CommonObject
 							$error++;
 						}
 					}
-					else
+					elseif ($result < 0)
 					{
 						$this->error=$adh->error;
 						$this->errors=$adh->errors;
@@ -1962,7 +1963,7 @@ class User extends CommonObject
 		}
 		else
 		{
-			$url = $urlwithroot.'/user/passwordforgotten.php?action=validatenewpassword&username='.$this->login."&passwordhash=".dol_hash($password);
+			$url = $urlwithroot.'/user/passwordforgotten.php?action=validatenewpassword&username='.urlencode($this->login)."&passwordhash=".dol_hash($password);
 
 			$mesg.= $outputlangs->transnoentitiesnoconv("RequestToResetPasswordReceived")."\n";
 			$mesg.= $outputlangs->transnoentitiesnoconv("NewKeyWillBe")." :\n\n";
@@ -2290,7 +2291,7 @@ class User extends CommonObject
 		if ($infologin > 0)
 		{
 			$label.= '<br>';
-			$label.= '<br><u>'.$langs->trans("Connection").'</u>';
+			$label.= '<br><u>'.$langs->trans("Session").'</u>';
 			$label.= '<br><b>'.$langs->trans("IPAddress").'</b>: '.$_SERVER["REMOTE_ADDR"];
 			if (! empty($conf->global->MAIN_MODULE_MULTICOMPANY)) $label.= '<br><b>'.$langs->trans("ConnectedOnMultiCompany").':</b> '.$conf->entity.' (user entity '.$this->entity.')';
 			$label.= '<br><b>'.$langs->trans("AuthenticationMode").':</b> '.$_SESSION["dol_authmode"].(empty($dolibarr_main_demo)?'':' (demo)');
