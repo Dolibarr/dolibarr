@@ -4289,19 +4289,19 @@ class Product extends CommonObject
     /**
      *  Adjust stock in a warehouse for product with batch number
      *
-     * @param  User   $user           user asking change
-     * @param  int    $id_entrepot    id of warehouse
-     * @param  double $nbpiece        nb of units
-     * @param  int    $movement       0 = add, 1 = remove
-     * @param  string $label          Label of stock movement
-     * @param  double $price          Price to use for stock eval
-     * @param  date   $dlc            eat-by date
-     * @param  date   $dluo           sell-by date
-     * @param  string $lot            Lot number
-     * @param  string $inventorycode  Inventory code
-     * @param  string $origin_element Origin element type
-     * @param  int    $origin_id      Origin id of element
-     * @return int                     <0 if KO, >0 if OK
+     * @param  User     $user           user asking change
+     * @param  int      $id_entrepot    id of warehouse
+     * @param  double   $nbpiece        nb of units
+     * @param  int      $movement       0 = add, 1 = remove
+     * @param  string   $label          Label of stock movement
+     * @param  double   $price          Price to use for stock eval
+     * @param  integer  $dlc            eat-by date
+     * @param  integer  $dluo           sell-by date
+     * @param  string   $lot            Lot number
+     * @param  string   $inventorycode  Inventory code
+     * @param  string   $origin_element Origin element type
+     * @param  int      $origin_id      Origin id of element
+     * @return int                      <0 if KO, >0 if OK
      */
     public function correct_stock_batch($user, $id_entrepot, $nbpiece, $movement, $label = '', $price = 0, $dlc = '', $dluo = '', $lot = '', $inventorycode = '', $origin_element = '', $origin_id = null)
     {

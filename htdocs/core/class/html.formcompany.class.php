@@ -215,7 +215,7 @@ class FormCompany
 	 *    @param    integer	$country_codeid    	Country code or id: 0=list for all countries, otherwise country code or country rowid to show
 	 *    @param    string	$htmlname			Id of department. If '', we want only the string with <option>
 	 * 	  @return	string						String with HTML select
-	 *    @see select_country
+	 *    @see select_country()
 	 */
 	public function select_state($selected = '', $country_codeid = 0, $htmlname = 'state_id')
 	{

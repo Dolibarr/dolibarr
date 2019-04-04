@@ -66,7 +66,7 @@ function bomAdminPrepareHead()
 /**
  * Prepare array of tabs for BillOfMaterials
  *
- * @param	BillOfMaterials	$object		BillOfMaterials
+ * @param	BOM	      $object		BillOfMaterials
  * @return 	array					Array of tabs
  */
 function bomPrepareHead($object)

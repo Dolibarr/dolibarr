@@ -82,7 +82,7 @@ class CoreObject extends CommonObject
      *
      * @param   string  $field  name of field
      * @param   string  $type   type of field to test
-     * @return                  value of field or false
+     * @return  boolean         value of field or false
      */
     private function checkFieldType($field, $type)
     {

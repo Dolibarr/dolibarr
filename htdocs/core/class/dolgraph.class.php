@@ -257,7 +257,7 @@ class DolGraph
 	 *
 	 * @param 	array	$data		Data
 	 * @return	void
-	 * @see draw_jflot for syntax of data array
+	 * @see draw_jflot() for syntax of data array
 	 */
 	public function SetData($data)
 	{

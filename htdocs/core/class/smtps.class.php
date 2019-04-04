@@ -1759,7 +1759,7 @@ class SMTPs
      * This function has been modified as provided by SirSir to allow multiline responses when
      * using SMTP Extensions
      *
-     * @param	Handler		$socket			Socket handler
+     * @param	resource    $socket			Socket handler
      * @param	string		$response		Response. Example: "550 5.7.1  https://support.google.com/a/answer/6140680#invalidcred j21sm814390wre.3"
      * @return	boolean						True or false
      */

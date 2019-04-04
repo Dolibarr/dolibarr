@@ -1303,9 +1303,9 @@ class CMailFile
 	 * This function has been modified as provided by SirSir to allow multiline responses when
 	 * using SMTP Extensions.
 	 *
-	 * @param	Socket	$socket			Socket
-	 * @param   string	$response		Response string
-	 * @return  boolean					true if success
+	 * @param	resource	$socket			Socket
+	 * @param   string	    $response		Response string
+	 * @return  boolean		      			true if success
 	 */
 	public function server_parse($socket, $response)
 	{
