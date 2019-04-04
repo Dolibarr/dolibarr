@@ -160,9 +160,13 @@ $arrayfields=array(
 	//'pfp.ref_fourn'=>array('label'=>$langs->trans("RefSupplier"), 'checked'=>1, 'enabled'=>(! empty($conf->barcode->enabled))),
 	'p.label'=>array('label'=>$langs->trans("Label"), 'checked'=>1),
 	'p.fk_product_type'=>array('label'=>$langs->trans("Type"), 'checked'=>0, 'enabled'=>(! empty($conf->produit->enabled) && ! empty($conf->service->enabled))),
-	'p.barcode'=>array('label'=>$langs->trans("Gencod"), 'checked'=>($contextpage != 'servicelist'), 'enabled'=>(! empty($conf->barcode->enabled))),
+	'p.barcode'=>array('label'=>$langs->trans("Gencod"), 'checked'=>1, 'enabled'=>(! empty($conf->barcode->enabled))),
 	'p.duration'=>array('label'=>$langs->trans("Duration"), 'checked'=>($contextpage != 'productlist'), 'enabled'=>(! empty($conf->service->enabled))),
-	'p.sellprice'=>array('label'=>$langs->trans("SellingPrice"), 'checked'=>1, 'enabled'=>empty($conf->global->PRODUIT_MULTIPRICES)),
+    'p.weight'=>array('label'=>$langs->trans("Weight"), 'checked'=>0, 'enabled'=>(! empty($conf->produit->enabled))),
+    'p.length'=>array('label'=>$langs->trans("Length"), 'checked'=>0, 'enabled'=>(! empty($conf->produit->enabled))),
+    'p.surface'=>array('label'=>$langs->trans("Surface"), 'checked'=>0, 'enabled'=>(! empty($conf->produit->enabled))),
+    'p.volume'=>array('label'=>$langs->trans("Volume"), 'checked'=>0, 'enabled'=>(! empty($conf->produit->enabled))),
+    'p.sellprice'=>array('label'=>$langs->trans("SellingPrice"), 'checked'=>1, 'enabled'=>empty($conf->global->PRODUIT_MULTIPRICES)),
 	'p.minbuyprice'=>array('label'=>$langs->trans("BuyingPriceMinShort"), 'checked'=>1, 'enabled'=>(! empty($user->rights->fournisseur->lire))),
 	'p.numbuyprice'=>array('label'=>$langs->trans("BuyingPriceNumShort"), 'checked'=>0, 'enabled'=>(! empty($user->rights->fournisseur->lire))),
 	'p.pmp'=>array('label'=>$langs->trans("PMPValueShort"), 'checked'=>0, 'enabled'=>(! empty($user->rights->fournisseur->lire))),
@@ -550,9 +554,34 @@ if ($resql)
 	if ((string) $type == '1' && ! empty($arrayfields['p.duration']['checked']))
 	{
 		print '<td class="liste_titre">';
-		print '&nbsp;';
 		print '</td>';
 	}
+
+	// Weight
+	if (! empty($arrayfields['p.weight']['checked']))
+	{
+	    print '<td class="liste_titre">';
+	    print '</td>';
+	}
+	// Length
+	if (! empty($arrayfields['p.length']['checked']))
+	{
+	    print '<td class="liste_titre">';
+	    print '</td>';
+	}
+	// Surface
+	if (! empty($arrayfields['p.surface']['checked']))
+	{
+	    print '<td class="liste_titre">';
+	    print '</td>';
+	}
+	// Volume
+	if (! empty($arrayfields['p.volume']['checked']))
+	{
+	    print '<td class="liste_titre">';
+	    print '</td>';
+	}
+
 	// Sell price
 	if (! empty($arrayfields['p.sellprice']['checked']))
 	{
@@ -660,6 +689,10 @@ if ($resql)
     if ((string) $type == '1' && ! empty($arrayfields['p.duration']['checked'])) {
         print_liste_field_titre($arrayfields['p.duration']['label'], $_SERVER["PHP_SELF"], "p.duration", "", $param, '', $sortfield, $sortorder, 'center ');
     }
+	if (! empty($arrayfields['p.weight']['checked']))  print_liste_field_titre($arrayfields['p.weight']['label'], $_SERVER["PHP_SELF"], "p.weight", "", $param, '', $sortfield, $sortorder, 'center ');
+	if (! empty($arrayfields['p.length']['checked']))  print_liste_field_titre($arrayfields['p.length']['label'], $_SERVER["PHP_SELF"], "p.length", "", $param, '', $sortfield, $sortorder, 'center ');
+	if (! empty($arrayfields['p.surface']['checked'])) print_liste_field_titre($arrayfields['p.surface']['label'], $_SERVER["PHP_SELF"], "p.surface", "", $param, '', $sortfield, $sortorder, 'center ');
+	if (! empty($arrayfields['p.volume']['checked']))  print_liste_field_titre($arrayfields['p.volume']['label'], $_SERVER["PHP_SELF"], "p.volume", "", $param, '', $sortfield, $sortorder, 'center ');
     if (! empty($arrayfields['p.sellprice']['checked'])) {
         print_liste_field_titre($arrayfields['p.sellprice']['label'], $_SERVER["PHP_SELF"], "", "", $param, '', $sortfield, $sortorder, 'right ');
     }
@@ -841,8 +874,42 @@ if ($resql)
 			{
 				print $obj->duration;
 			}
+
 			print '</td>';
 			if (! $i) $totalarray['nbfield']++;
+		}
+
+		// Weight
+		if (! empty($arrayfields['p.weight']['checked']))
+		{
+		    print '<td align="center">';
+		    print $obj->weight;
+		    print '</td>';
+		    if (! $i) $totalarray['nbfield']++;
+		}
+		// Length
+		if (! empty($arrayfields['p.length']['checked']))
+		{
+		    print '<td align="center">';
+		    print $obj->length;
+		    print '</td>';
+		    if (! $i) $totalarray['nbfield']++;
+		}
+		// Surface
+		if (! empty($arrayfields['p.surface']['checked']))
+		{
+		    print '<td align="center">';
+		    print $obj->surface;
+		    print '</td>';
+		    if (! $i) $totalarray['nbfield']++;
+		}
+		// Volume
+		if (! empty($arrayfields['p.volume']['checked']))
+		{
+		    print '<td align="center">';
+		    print $obj->volume;
+		    print '</td>';
+		    if (! $i) $totalarray['nbfield']++;
 		}
 
 		// Sell price
