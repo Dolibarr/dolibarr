@@ -91,7 +91,7 @@ $(document).ready(function () {
 <div class="login_center center"<?php print empty($conf->global->MAIN_LOGIN_BACKGROUND)?' style="background-size: cover; background-position: center center; background-attachment: fixed; background-repeat: no-repeat; background-image: linear-gradient(rgb('.$colorbackhmenu1.',0.3), rgb(240,240,240));"':'' ?>>
 <div class="login_vertical_align">
 
-<form id="login" name="login" method="post" action="<?php echo $php_self; ?>">
+<form id="login" name="login" method="post" action="<?php echo DOL_URL_ROOT . $php_self; ?>">
 <input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>" />
 <input type="hidden" name="loginfunction" value="loginfunction" />
 <!-- Add fields to send local user information -->
