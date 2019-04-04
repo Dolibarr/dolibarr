@@ -150,6 +150,7 @@ if (dol_strlen($search_year)) {
 	$sql .= " AND ( bk.doc_date BETWEEN  '" . $db->idate($date_start) . "' AND  '" . $db->idate($date_end) . "' )";
 }
 
+$sql.= ' AND bk.entity IN ('.getEntity('accountingbookkeeping').')';
 $sql .= $db->order($sortfield, $sortorder);
 
 $debit = 0;
