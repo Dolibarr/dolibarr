@@ -722,7 +722,7 @@ while ($i < min($num, $limit))
 		// Title
 		if (! empty($arrayfields['p.title']['checked']))
 		{
-			print '<td class="tdoverflowmax100">';
+			print '<td class="tdoverflowmax200">';
 			print dol_trunc($obj->title, 80);
 			print '</td>';
 			if (! $i) $totalarray['nbfield']++;
