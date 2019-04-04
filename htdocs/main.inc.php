@@ -1234,6 +1234,19 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 		//if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) print '<link rel="copyright" title="GNU General Public License" href="http://www.gnu.org/copyleft/gpl.html#SEC1">'."\n";
 		//if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) print '<link rel="author" title="Dolibarr Development Team" href="https://www.dolibarr.org">'."\n";
 
+        // Mobile appli like icon
+        $manifest=dol_buildpath('/theme/'.$conf->theme.'/manifest.json.php', 1, 1);
+        if(!empty($manifest)){
+            print '<link rel="manifest" href="'.$manifest.'" />'."\n";
+        }
+
+        if(!empty($conf->global->THEME_ELDY_TOPMENU_BACK1)) {
+            // TODO: use auto theme color switch
+            print '<meta name="theme-color" content="rgb('.$conf->global->THEME_ELDY_TOPMENU_BACK1.')">' . "\n";
+        }
+
+
+
 		// Auto refresh page
 		if (GETPOST('autorefresh', 'int') > 0) print '<meta http-equiv="refresh" content="'.GETPOST('autorefresh', 'int').'">';
 
