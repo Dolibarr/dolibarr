@@ -1245,8 +1245,6 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
             print '<meta name="theme-color" content="rgb('.$conf->global->THEME_ELDY_TOPMENU_BACK1.')">' . "\n";
         }
 
-
-
 		// Auto refresh page
 		if (GETPOST('autorefresh', 'int') > 0) print '<meta http-equiv="refresh" content="'.GETPOST('autorefresh', 'int').'">';
 
