@@ -16,6 +16,7 @@ NEW: Module DebugBar is available as a stable module.
 WARNING:
 
 Following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
+* The PHP extension php-intl is not mandatory but should be installed to have new features working correctly.
 * Method GetUrlTrackingStatus were renamed into getUrlTrackingStatus for consistency with naming rules.
 * API getListOfCivility has been renamed into getListOfCivilities for consistency with naming rules.
 * Deprecated function img_phone as been removed. You can use img_picto(..., 'call|call_out') instead.; 
@@ -24,7 +25,10 @@ Following changes may create regressions for some external modules, but were nec
 * All methods set_draft() were renamed into setDraft().
 * Removed deprecated function function test_sql_and_script_inject that was replaced with testSqlAndScriptInject.
 * Method load_measuring_units were renamed into selectMeasuringUnits and select_measuring_units was deprecated.
-* Hidden option CHANGE_ORDER_CONCAT_DESCRIPTION were renamed into MAIN_CHANGE_ORDER_CONCAT_DESCRIPTION
+* Hidden option CHANGE_ORDER_CONCAT_DESCRIPTION were renamed into MAIN_CHANGE_ORDER_CONCAT_DESCRIPTION.
+* Method dolEscapeXML was moved from functions.lib.php into function2.lib.php (not used enough to be loaded by default).
+* Removed deprecated use of string in dol_print_date(). Only date allowed.
+
 
 
 ***** ChangeLog for 9.0.1 compared to 9.0.0 *****

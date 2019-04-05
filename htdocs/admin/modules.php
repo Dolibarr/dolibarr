@@ -888,7 +888,8 @@ if ($mode == 'marketplace')
     {
     	// $options is array with filter criterias
     	//var_dump($options);
-    	$dolistore->getRemoteData($options);
+    	$dolistore->getRemoteCategories();
+    	$dolistore->getRemoteProducts($options);
 
 	    print '<span class="opacitymedium">'.$langs->trans('DOLISTOREdescriptionLong').'</span><br><br>';
 

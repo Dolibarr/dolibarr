@@ -8,8 +8,10 @@
 	<exclude-pattern type="relative">documents</exclude-pattern>
 	<exclude-pattern type="relative">htdocs/custom</exclude-pattern>
 	<exclude-pattern type="relative">htdocs/includes</exclude-pattern>
+	<exclude-pattern type="relative">htdocs/install/doctemplates/websites</exclude-pattern>
 	<exclude-pattern type="relative">htdocs/conf.php</exclude-pattern>
 	<exclude-pattern type="relative">*/nltechno*</exclude-pattern>
+	<exclude-pattern type="relative">*/htdocs/includes</exclude-pattern>
 	<exclude-pattern type="relative">*/htdocs/includes</exclude-pattern>
 
 	<!-- List of all tests -->

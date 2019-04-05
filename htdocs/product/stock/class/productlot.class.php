@@ -54,11 +54,6 @@ class Productlot extends CommonObject
     public $ismultientitymanaged = 1;
 
 	/**
-	 * @var ProductlotLine[] Lines
-	 */
-	public $lines = array();
-
-	/**
 	 * @var int Entity
 	 */
 	public $entity;

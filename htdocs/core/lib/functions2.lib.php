@@ -2414,26 +2414,77 @@ function getModuleDirForApiClass($module)
     return $moduledirforclass;
 }
 
-/*
+/**
  * Return 2 hexa code randomly
  *
- * @param	$min	int	Between 0 and 255
- * @param	$max	int	Between 0 and 255
- * @return String
+ * @param	int   $min	    Between 0 and 255
+ * @param	int   $max	    Between 0 and 255
+ * @return  string          A color string '12'
  */
-function random_color_part($min = 0, $max = 255)
+function randomColorPart($min = 0, $max = 255)
 {
     return str_pad(dechex(mt_rand($min, $max)), 2, '0', STR_PAD_LEFT);
 }
 
-/*
+/**
  * Return hexadecimal color randomly
  *
- * @param	$min	int	Between 0 and 255
- * @param	$max	int	Between 0 and 255
- * @return String
+ * @param	int   $min	   Between 0 and 255
+ * @param	int   $max	   Between 0 and 255
+ * @return  string         A color string '123456'
  */
-function random_color($min = 0, $max = 255)
+function randomColor($min = 0, $max = 255)
 {
-    return random_color_part($min, $max) . random_color_part($min, $max) . random_color_part($min, $max);
+    return randomColorPart($min, $max) . randomColorPart($min, $max) . randomColorPart($min, $max);
+}
+
+
+if (! function_exists('dolEscapeXML'))
+{
+    /**
+     * Encode string for xml usage
+     *
+     * @param 	string	$string		String to encode
+     * @return	string				String encoded
+     */
+    function dolEscapeXML($string)
+    {
+        return strtr($string, array('\''=>'&apos;','"'=>'&quot;','&'=>'&amp;','<'=>'&lt;','>'=>'&gt;'));
+    }
+}
+
+
+/**
+ *	Return automatic or manual in current language
+ *
+ *	@param	string	$automaticmanual			Value to test (1, 'automatic', 'true' or 0, 'manual', 'false')
+ *	@param	integer	$case			1=Yes/No, 0=yes/no, 2=Disabled checkbox, 3=Disabled checkbox + Automatic/Manual
+ *	@param	int		$color			0=texte only, 1=Text is formated with a color font style ('ok' or 'error'), 2=Text is formated with 'ok' color.
+ *	@return	string					HTML string
+ */
+function autoOrManual($automaticmanual, $case = 1, $color = 0)
+{
+    global $langs;
+    $result='unknown'; $classname='';
+    if ($automaticmanual == 1 || strtolower($automaticmanual) == 'automatic' || strtolower($automaticmanual) == 'true') 	// A mettre avant test sur no a cause du == 0
+    {
+        $result=$langs->trans('automatic');
+        if ($case == 1 || $case == 3) $result=$langs->trans("Automatic");
+        if ($case == 2) $result='<input type="checkbox" value="1" checked disabled>';
+        if ($case == 3) $result='<input type="checkbox" value="1" checked disabled> '.$result;
+
+        $classname='ok';
+    }
+    elseif ($yesno == 0 || strtolower($automaticmanual) == 'manual' || strtolower($automaticmanual) == 'false')
+    {
+        $result=$langs->trans("manual");
+        if ($case == 1 || $case == 3) $result=$langs->trans("Manual");
+        if ($case == 2) $result='<input type="checkbox" value="0" disabled>';
+        if ($case == 3) $result='<input type="checkbox" value="0" disabled> '.$result;
+
+        if ($color == 2) $classname='ok';
+        else $classname='error';
+    }
+    if ($color) return '<font class="'.$classname.'">'.$result.'</font>';
+    return $result;
 }

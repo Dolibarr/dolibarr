@@ -1075,7 +1075,7 @@ class Commande extends CommonOrder
 	 */
 	public function createFromClone($socid = 0)
 	{
-		global $user,$hookmanager;
+		global $conf, $user,$hookmanager;
 
 		$error=0;
 
@@ -1085,69 +1085,88 @@ class Commande extends CommonOrder
 		foreach($this->lines as $line)
 			$line->fetch_optionals();
 
-			// Load source object
-			$objFrom = clone $this;
+		// Load source object
+		$objFrom = clone $this;
 
-			// Change socid if needed
-			if (! empty($socid) && $socid != $this->socid)
+		// Change socid if needed
+		if (! empty($socid) && $socid != $this->socid)
+		{
+			$objsoc = new Societe($this->db);
+
+			if ($objsoc->fetch($socid)>0)
 			{
-				$objsoc = new Societe($this->db);
-
-				if ($objsoc->fetch($socid)>0)
-				{
-					$this->socid 				= $objsoc->id;
-					$this->cond_reglement_id	= (! empty($objsoc->cond_reglement_id) ? $objsoc->cond_reglement_id : 0);
-					$this->mode_reglement_id	= (! empty($objsoc->mode_reglement_id) ? $objsoc->mode_reglement_id : 0);
-					$this->fk_project			= 0;
-					$this->fk_delivery_address	= 0;
-				}
-
-				// TODO Change product price if multi-prices
+				$this->socid 				= $objsoc->id;
+				$this->cond_reglement_id	= (! empty($objsoc->cond_reglement_id) ? $objsoc->cond_reglement_id : 0);
+				$this->mode_reglement_id	= (! empty($objsoc->mode_reglement_id) ? $objsoc->mode_reglement_id : 0);
+				$this->fk_project			= 0;
+				$this->fk_delivery_address	= 0;
 			}
 
-			$this->id=0;
-			$this->ref = '';
-			$this->statut=self::STATUS_DRAFT;
+			// TODO Change product price if multi-prices
+		}
 
-			// Clear fields
-			$this->user_author_id     = $user->id;
-			$this->user_valid         = '';
-			$this->date				  = dol_now();
-			$this->date_commande	  = dol_now();
-			$this->date_creation      = '';
-			$this->date_validation    = '';
-			$this->ref_client         = '';
+		$this->id=0;
+		$this->ref = '';
+		$this->statut=self::STATUS_DRAFT;
 
-			// Create clone
-			$this->context['createfromclone'] = 'createfromclone';
-			$result=$this->create($user);
-			if ($result < 0) $error++;
+		// Clear fields
+		$this->user_author_id     = $user->id;
+		$this->user_valid         = '';
+		$this->date				  = dol_now();
+		$this->date_commande	  = dol_now();
+		$this->date_creation      = '';
+		$this->date_validation    = '';
+		if (empty($conf->global->MAIN_KEEP_REF_CUSTOMER_ON_CLONING)) $this->ref_client = '';
 
-			if (! $error)
+		// Create clone
+		$this->context['createfromclone'] = 'createfromclone';
+		$result=$this->create($user);
+		if ($result < 0) $error++;
+
+		if (! $error)
+		{
+			// copy internal contacts
+			if ($this->copy_linked_contact($objFrom, 'internal') < 0)
 			{
-				// Hook of thirdparty module
-				if (is_object($hookmanager))
-				{
-					$parameters=array('objFrom'=>$objFrom);
-					$action='';
-					$reshook=$hookmanager->executeHooks('createFrom', $parameters, $this, $action);    // Note that $action and $object may have been modified by some hooks
-					if ($reshook < 0) $error++;
-				}
+				$error++;
 			}
+		}
 
-			unset($this->context['createfromclone']);
+		if (! $error)
+		{
+			// copy external contacts if same company
+			if ($this->socid == $objFrom->socid)
+			{
+				if ($this->copy_linked_contact($objFrom, 'external') < 0)
+					$error++;
+			}
+		}
 
-			// End
-			if (! $error)
+		if (! $error)
+		{
+			// Hook of thirdparty module
+			if (is_object($hookmanager))
 			{
-				$this->db->commit();
-				return $this->id;
+				$parameters=array('objFrom'=>$objFrom);
+				$action='';
+				$reshook=$hookmanager->executeHooks('createFrom', $parameters, $this, $action);    // Note that $action and $object may have been modified by some hooks
+				if ($reshook < 0) $error++;
 			}
-			else
-			{
-				$this->db->rollback();
-				return -1;
-			}
+		}
+
+		unset($this->context['createfromclone']);
+
+		// End
+		if (! $error)
+		{
+			$this->db->commit();
+			return $this->id;
+		}
+		else
+		{
+			$this->db->rollback();
+			return -1;
+		}
 	}
 
 
@@ -1367,7 +1386,7 @@ class Commande extends CommonOrder
 
 			// Check parameters
 			if ($type < 0) return -1;
-			
+
 			if ($date_start && $date_end && $date_start > $date_end) {
 				$langs->load("errors");
 				$this->error=$langs->trans('ErrorStartDateGreaterEnd');
@@ -2947,7 +2966,7 @@ class Commande extends CommonOrder
 			if (empty($txlocaltax2)) $txlocaltax2=0;
 			if (empty($remise_percent)) $remise_percent=0;
 			if (empty($special_code) || $special_code == 3) $special_code=0;
-			
+
 			if ($date_start && $date_end && $date_start > $date_end) {
 				$langs->load("errors");
 				$this->error=$langs->trans('ErrorStartDateGreaterEnd');
@@ -2962,7 +2981,7 @@ class Commande extends CommonOrder
 			$txtva=price2num($txtva);
 			$txlocaltax1=price2num($txlocaltax1);
 			$txlocaltax2=price2num($txlocaltax2);
-			
+
 			$this->db->begin();
 
 			// Calcul du total TTC et de la TVA pour la ligne a partir de

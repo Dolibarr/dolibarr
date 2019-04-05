@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2004  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2016  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2005-2019  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2012       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2013-2015  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2015       Florian Henry           <florian.henry@open-concept.pro>
@@ -38,7 +38,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/client.class.php';
 
-$langs->loadLangs(array("companies", "commercial", "customers", "suppliers", "bills", "compta", "categories"));
+$langs->loadLangs(array("companies", "commercial", "customers", "suppliers", "bills", "compta", "categories", "cashdesk"));
 
 $action=GETPOST('action', 'alpha');
 $massaction=GETPOST('massaction', 'alpha');
@@ -46,6 +46,11 @@ $show_files=GETPOST('show_files', 'int');
 $confirm=GETPOST('confirm', 'alpha');
 $toselect = GETPOST('toselect', 'array');
 $contextpage=GETPOST('contextpage', 'aZ')?GETPOST('contextpage', 'aZ'):'thirdpartylist';
+
+if ($contextpage == 'poslist')
+{
+    $_GET['optioncss'] = 'print';
+}
 
 // Security check
 $socid = GETPOST('socid', 'int');
@@ -150,7 +155,7 @@ if (! empty($conf->global->THIRDPARTY_QUICKSEARCH_ON_FIELDS)) $fieldstosearchall
 
 
 // Define list of fields to show into list
-$checkedcustomercode=(in_array($contextpage, array('thirdpartylist', 'customerlist', 'prospectlist')) ? 1 : 0);
+$checkedcustomercode=(in_array($contextpage, array('thirdpartylist', 'customerlist', 'prospectlist', 'poslist')) ? 1 : 0);
 $checkedsuppliercode=(in_array($contextpage, array('supplierlist')) ? 1 : 0);
 $checkedcustomeraccountcode=(in_array($contextpage, array('customerlist')) ? 1 : 0);
 $checkedsupplieraccountcode=(in_array($contextpage, array('supplierlist')) ? 1 : 0);
@@ -217,6 +222,25 @@ $object = new Societe($db);
 /*
  * Actions
  */
+
+if ($action=="change")
+{
+    $idcustomer = GETPOST('idcustomer', 'int');
+    $place = (GETPOST('place', 'int') > 0 ? GETPOST('place', 'int') : 0);   // $place is id of table for Ba or Restaurant
+    $posnb = (GETPOST('posnb', 'int') > 0 ? GETPOST('posnb', 'int') : 0);   // $posnb is id of POS
+
+    $sql="UPDATE ".MAIN_DB_PREFIX."facture set fk_soc=".$idcustomer." where ref='(PROV-POS-".$place.")'";
+    $resql = $db->query($sql);
+    ?>
+    <script>
+    parent.$("#poslines").load("invoice.php?place="+<?php print $place;?>, function() {
+        //parent.$("#poslines").scrollTop(parent.$("#poslines")[0].scrollHeight);
+        parent.$.colorbox.close();
+    });
+    </script>
+    <?php
+    exit;
+}
 
 if (GETPOST('cancel', 'alpha')) { $action='list'; $massaction=''; }
 if (! GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction=''; }
@@ -468,11 +492,11 @@ if ($num == 1 && ! empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && 
     $obj = $db->fetch_object($resql);
     $id = $obj->rowid;
     if (!empty($conf->global->SOCIETE_ON_SEARCH_AND_LIST_GO_ON_CUSTOMER_OR_SUPPLIER_CARD)) {
-        if ( $obj->client > 0) {
+        if ($obj->client > 0) {
             header("Location: ".DOL_URL_ROOT.'/comm/card.php?socid='.$id);
             exit;
         }
-        if ( $obj->fournisseur > 0){
+        if ($obj->fournisseur > 0) {
             header("Location: ".DOL_URL_ROOT.'/fourn/card.php?socid='.$id);
             exit;
         }
@@ -545,7 +569,7 @@ if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend','pre
 $massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 
 $newcardbutton='';
-if ($user->rights->societe->creer)
+if ($user->rights->societe->creer && $contextpage != 'poslist')
 {
 	$typefilter='';
 	$label='MenuNewThirdParty';
@@ -975,7 +999,12 @@ while ($i < min($num, $limit))
    	$companystatic->fk_prospectlevel=$obj->fk_prospectlevel;
    	$companystatic->fk_parent = $obj->fk_parent;
 
-	print '<tr class="oddeven">';
+	print '<tr class="oddeven"';
+	if ($contextpage == 'poslist')
+	{
+	    print ' onclick="location.href=\'list.php?action=change&contextpage=poslist&idcustomer='.$obj->rowid.'&place='.$place.'\'"';
+	}
+	print '>';
 	if (! empty($arrayfields['s.rowid']['checked']))
 	{
 		print '<td class="tdoverflowmax50">';
@@ -988,7 +1017,14 @@ while ($i < min($num, $limit))
 		$savalias = $obj->name_alias;
 		if (! empty($arrayfields['s.name_alias']['checked'])) $companystatic->name_alias='';
 		print '<td class="tdoverflowmax200">';
-		print $companystatic->getNomUrl(1, '', 100, 0, 1);
+		if ($contextpage == 'poslist')
+		{
+		    print $obj->name;
+		}
+		else
+		{
+		    print $companystatic->getNomUrl(1, '', 100, 0, 1);
+		}
 		print "</td>\n";
 		$companystatic->name_alias = $savalias;
         if (! $i) $totalarray['nbfield']++;

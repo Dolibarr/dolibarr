@@ -586,7 +586,7 @@ class Form
 
 		$disabled=0;
 		$ret='<div class="centpercent center">';
-		$ret.='<select class="flat'.(empty($conf->use_javascript_ajax)?'':' hideobject').' massaction massactionselect" name="massaction"'.($disabled?' disabled="disabled"':'').'>';
+		$ret.='<select class="flat'.(empty($conf->use_javascript_ajax)?'':' hideobject').' massaction massactionselect valignmiddle" name="massaction"'.($disabled?' disabled="disabled"':'').'>';
 
 		// Complete list with data from external modules. THe module can use $_SERVER['PHP_SELF'] to know on which page we are, or use the $parameters['currentcontext'] completed by executeHooks.
 		$parameters=array();
@@ -2321,7 +2321,7 @@ class Form
 	 * constructProductListOption.
 	 * This define value for &$opt and &$optJson.
 	 *
-	 * @param 	resultset	$objp			    Resultset of fetch
+	 * @param 	resource	$objp			    Resultset of fetch
 	 * @param 	string		$opt			    Option (var used for returned value in string option format)
 	 * @param 	string		$optJson		    Option (var used for returned value in json format)
 	 * @param 	int			$price_level	    Price level
@@ -5153,7 +5153,7 @@ class Form
 	 *  @param  datetime    $adddateof      Add a link "Date of invoice" using the following date.
 	 *  @return	string|void					Nothing or string if nooutput is 1
      *  @deprecated
-	 *  @see    form_date, select_month, select_year, select_dayofweek
+	 *  @see    form_date(), select_month(), select_year(), select_dayofweek()
 	 */
     public function select_date($set_time = '', $prefix = 're', $h = 0, $m = 0, $empty = 0, $form_name = "", $d = 1, $addnowlink = 0, $nooutput = 0, $disabled = 0, $fullday = '', $addplusone = '', $adddateof = '')
     {
@@ -6056,7 +6056,7 @@ class Form
 	 *  @param  string  $placeholder            String to use as placeholder
 	 *  @param  integer $acceptdelayedhtml      1 = caller is requesting to have html js content not returned but saved into global $delayedhtmlcontent (so caller can show it at end of page to avoid flash FOUC effect)
 	 *  @return	string   						HTML select string
-	 *  @see selectArrayAjax, ajax_combobox in ajax.lib.php
+	 *  @see selectArrayAjax(), ajax_combobox() in ajax.lib.php
 	 */
 	public static function selectArrayFilter($htmlname, $array, $id = '', $moreparam = '', $disableFiltering = 0, $disabled = 0, $minimumInputLength = 1, $morecss = '', $callurlonselect = 0, $placeholder = '', $acceptdelayedhtml = 0)
 	{
@@ -6304,7 +6304,6 @@ class Form
 				else $array[$key]['checked']=0;
 			}
 		}
-		//var_dump($array);
 
 		$lis='';
 		$listcheckedstring='';
@@ -6773,8 +6772,6 @@ class Form
 		$resultyesno .= '</select>'."\n";
 		return $resultyesno;
 	}
-
-
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**

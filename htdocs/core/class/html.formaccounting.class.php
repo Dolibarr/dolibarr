@@ -224,9 +224,9 @@ class FormAccounting extends Form
 	/**
 	 * Return select filter with date of transaction
 	 *
-	 * @param string $htmlname Name of select field
-	 * @param string $selectedkey Value
-	 * @return string HTML edit field
+	 * @param string $htmlname         Name of select field
+	 * @param string $selectedkey      Value
+	 * @return string                  HTML edit field
 	 */
     public function select_bookkeeping_importkey($htmlname = 'importkey', $selectedkey = '')
     {
@@ -247,7 +247,7 @@ class FormAccounting extends Form
 		}
 
 		while ($obj = $this->db->fetch_object($resql)) {
-			$options[$obj->import_key] = dol_print_date($obj->import_key, 'dayhourtext');
+			$options[$obj->import_key] = $obj->import_key;
 		}
 
 		return Form::selectarray($htmlname, $options, $selectedkey);

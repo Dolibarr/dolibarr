@@ -532,7 +532,7 @@ class Website extends CommonObject
         // Check no site with ref exists
 		if ($object->fetch(0, $newref) > 0)
 		{
-			$this->error='NewRefIsAlreadyUsed';
+			$this->error='ErrorNewRefIsAlreadyUsed';
 			return -1;
 		}
 
@@ -1106,7 +1106,9 @@ class Website extends CommonObject
 		$pageid = 0;
 		if (! empty($websitepagefile))
 		{
-			$pageid = str_replace(array('.tpl.php', 'page'), array('', ''), basename($websitepagefile));
+		    $websitepagefileshort=basename($websitepagefile);
+		    if ($websitepagefileshort == 'index.php') $pageid = $website->fk_default_home;
+		    else $pageid = str_replace(array('.tpl.php', 'page'), array('', ''), $websitepagefileshort);
 			if ($pageid > 0)
 			{
 				$tmppage->fetch($pageid);
@@ -1173,7 +1175,7 @@ class Website extends CommonObject
 			height: '.$HEIGHTOPTION.'px;
 			overflow: hidden;
 			transition: all .3s ease;
-			margin: 0 50px 0 0;
+			margin: 0 0 0 0;
 			vertical-align: top;
 		}
 		.componentSelectLang'.$htmlname.':hover, .componentSelectLang'.$htmlname.':hover a { background-color: #fff; color: #000 !important; }

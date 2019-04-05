@@ -90,7 +90,7 @@ class LoanSchedule extends CommonObject
 
 	/**
 	 * @deprecated
-	 * @see amount, amounts
+	 * @see $amount, $amounts
 	 */
 	public $total;
 
@@ -177,7 +177,6 @@ class LoanSchedule extends CommonObject
 		if ($totalamount != 0 && ! $error)
 		{
 		    $this->amount_capital=$totalamount;
-            $this->total=$totalamount;    // deprecated
 		    $this->db->commit();
 			return $this->id;
 		}

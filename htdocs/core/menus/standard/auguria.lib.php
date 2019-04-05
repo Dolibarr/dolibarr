@@ -53,7 +53,8 @@ function print_auguria_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout
 
 	if (empty($noout)) print_start_menu_array_auguria();
 
-	$usemenuhider = (GETPOST('testmenuhider', 'int') || ! empty($conf->global->MAIN_TESTMENUHIDER));
+    $usemenuhider = 1;
+    global $usemenuhider;
 
 	// Show/Hide vertical menu
 	if ($mode != 'jmobile' && $mode != 'topnb' && $usemenuhider && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
@@ -264,7 +265,7 @@ function print_left_auguria_menu($db, $menu_array_before, $menu_array_after, &$t
 	$mainmenu=($forcemainmenu?$forcemainmenu:$_SESSION["mainmenu"]);
 	$leftmenu=($forceleftmenu?'':(empty($_SESSION["leftmenu"])?'none':$_SESSION["leftmenu"]));
 
-	$usemenuhider = (GETPOST('testmenuhider', 'int') || ! empty($conf->global->MAIN_TESTMENUHIDER));
+	$usemenuhider = 0;
 	global $usemenuhider;
 
 	// Show logo company
@@ -393,7 +394,7 @@ function print_left_auguria_menu($db, $menu_array_before, $menu_array_after, &$t
 					{
                         $langs->load('accountancy');
                         $journallabel=$langs->transnoentities($objp->label);	// Labels in this table are set by loading llx_accounting_abc.sql. Label can be 'ACCOUNTING_SELL_JOURNAL', 'InventoryJournal', ...
-                        if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy/', $leftmenu)) $newmenu->add('/accountancy/journal/'.$nature.'journal.php?mainmenu=accountancy&leftmenu=accountancy_journal&id_journal='.$objp->rowid, $journallabel, 2, $user->rights->accounting->comptarapport->lire);
+                        if (empty($leftmenu) || preg_match('/accountancy/', $leftmenu)) $newmenu->add('/accountancy/journal/'.$nature.'journal.php?mainmenu=accountancy&leftmenu=accountancy_journal&id_journal='.$objp->rowid, $journallabel, 2, $user->rights->accounting->comptarapport->lire);
 					}
 					$i++;
 				}

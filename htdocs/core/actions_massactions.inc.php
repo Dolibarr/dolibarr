@@ -539,7 +539,7 @@ if ($massaction == 'confirm_createbills')   // Create bills from orders
 {
     $orders = GETPOST('toselect', 'array');
     $createbills_onebythird = GETPOST('createbills_onebythird', 'int');
-    $validate_invoices = GETPOST('valdate_invoices', 'int');
+    $validate_invoices = GETPOST('validate_invoices', 'int');
 
     $TFact = array();
     $TFactThird = array();

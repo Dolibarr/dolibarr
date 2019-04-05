@@ -104,8 +104,8 @@ class MouvementStock extends CommonObject
 	 *	@param		string	$label			Label of stock movement
 	 *	@param		string	$inventorycode	Inventory code
 	 *	@param		string	$datem			Force date of movement
-	 *	@param		date	$eatby			eat-by date. Will be used if lot does not exists yet and will be created.
-	 *	@param		date	$sellby			sell-by date. Will be used if lot does not exists yet and will be created.
+	 *	@param		integer	$eatby			eat-by date. Will be used if lot does not exists yet and will be created.
+	 *	@param		integer	$sellby			sell-by date. Will be used if lot does not exists yet and will be created.
 	 *	@param		string	$batch			batch number
 	 *	@param		boolean	$skip_batch		If set to true, stock movement is done without impacting batch record
 	 * 	@param		int		$id_product_batch	Id product_batch (when skip_batch is false and we already know which record of product_batch to use)
@@ -707,8 +707,8 @@ class MouvementStock extends CommonObject
 	 * 	@param		int		$price			    Price
 	 * 	@param		string	$label			    Label of stock movement
 	 * 	@param		string	$datem			    Force date of movement
-	 *	@param		date	$eatby			    eat-by date
-	 *	@param		date	$sellby			    sell-by date
+	 *	@param		integer	$eatby			    eat-by date
+	 *	@param		integer	$sellby			    sell-by date
 	 *	@param		string	$batch			    batch number
 	 * 	@param		int		$id_product_batch	Id product_batch
 	 *  @param      string  $inventorycode      Inventory code
@@ -732,8 +732,8 @@ class MouvementStock extends CommonObject
 	 * 	@param		int		$qty			     Quantity
 	 * 	@param		int		$price			     Price
 	 * 	@param		string	$label			     Label of stock movement
-	 *	@param		date	$eatby			     eat-by date
-	 *	@param		date	$sellby			     sell-by date
+	 *	@param		integer	$eatby			     eat-by date
+	 *	@param		integer	$sellby			     sell-by date
 	 *	@param		string	$batch			     batch number
 	 * 	@param		string	$datem			     Force date of movement
 	 * 	@param		int		$id_product_batch    Id product_batch
@@ -776,7 +776,7 @@ class MouvementStock extends CommonObject
 	 * Count number of product in stock before a specific date
 	 *
 	 * @param 	int			$productidselected		Id of product to count
-	 * @param 	timestamp	$datebefore				Date limit
+	 * @param 	integer 	$datebefore				Date limit
 	 * @return	int			Number
 	 */
 	public function calculateBalanceForProductBefore($productidselected, $datebefore)

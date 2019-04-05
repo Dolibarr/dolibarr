@@ -25,8 +25,8 @@
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 
 
-/** \class      PaymentLoan
- *  \brief      Class to manage payments of loans
+/**
+ * Class to manage payments of loans
  */
 class PaymentLoan extends CommonObject
 {
@@ -89,12 +89,6 @@ class PaymentLoan extends CommonObject
      * @var int user ID
      */
     public $fk_user_modif;
-
-	/**
-	 * @deprecated
-	 * @see amount, amounts
-	 */
-    public $total;
 
 	/**
 	 *	Constructor
@@ -178,7 +172,6 @@ class PaymentLoan extends CommonObject
 		if ($totalamount != 0 && ! $error)
 		{
 			$this->amount_capital=$totalamount;
-			$this->total=$totalamount;    // deprecated
 			$this->db->commit();
 			return $this->id;
 		}
@@ -448,7 +441,7 @@ class PaymentLoan extends CommonObject
 			$acc = new Account($this->db);
 			$acc->fetch($accountid);
 
-			$total=$this->total;
+			$total=$this->amount_capital;
 			if ($mode == 'payment_loan') $total=-$total;
 
 			// Insert payment into llx_bank

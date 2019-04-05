@@ -281,7 +281,7 @@ class Facturation
      * Getter for id
      *
      * @param	int		$aId	Id
-     * @return  id
+     * @return  int             Id
      */
     public function id($aId = null)
     {
@@ -542,8 +542,8 @@ class Facturation
     /**
      * Get payment date
      *
-     * @param	date		$aPaiementLe		Date
-     * @return	date							Date
+     * @param	integer		$aPaiementLe		Date
+     * @return	integer							Date
      */
     public function paiementLe($aPaiementLe = null)
     {

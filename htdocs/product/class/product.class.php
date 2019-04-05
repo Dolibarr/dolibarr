@@ -4062,7 +4062,8 @@ class Product extends CommonObject
         $linkend='</a>';
 
         $result.=$linkstart;
-        if ($withpicto) {
+        if ($withpicto)
+        {
             if ($this->type == Product::TYPE_PRODUCT) { $result.=(img_object(($notooltip?'':$label), 'product', ($notooltip?'class="paddingright"':'class="paddingright classfortooltip"'), 0, 0, $notooltip?0:1));
             }
             if ($this->type == Product::TYPE_SERVICE) { $result.=(img_object(($notooltip?'':$label), 'service', ($notooltip?'class="paddinright"':'class="paddingright classfortooltip"'), 0, 0, $notooltip?0:1));
@@ -4151,11 +4152,11 @@ class Product extends CommonObject
     {
         // phpcs:enable
         global $conf, $langs;
-        
+
         $langs->load('products');
         if (! empty($conf->productbatch->enabled)) { $langs->load("productbatch");
         }
-        
+
         if ($type == 2) {
             switch ($mode)
             {
@@ -4177,9 +4178,9 @@ class Product extends CommonObject
                     return dolGetStatus($langs->trans('Unknown'));
             }
         }
-        
+
         $statuttrans=empty($status)?'status5':'status4';
-        
+
         if($status == 0){
             // $type   0=Status "to sell", 1=Status "to buy", 2=Status "to Batch"
             if($type==0){
@@ -4210,8 +4211,8 @@ class Product extends CommonObject
                 $labelstatutShort = $langs->trans('ProductStatusOnBatchShort');
             }
         }
-        
-        
+
+
         if($mode>6){
             return dolGetStatus($langs->trans('Unknown'), '', '', 'status0', 0);
         }
@@ -4288,19 +4289,19 @@ class Product extends CommonObject
     /**
      *  Adjust stock in a warehouse for product with batch number
      *
-     * @param  User   $user           user asking change
-     * @param  int    $id_entrepot    id of warehouse
-     * @param  double $nbpiece        nb of units
-     * @param  int    $movement       0 = add, 1 = remove
-     * @param  string $label          Label of stock movement
-     * @param  double $price          Price to use for stock eval
-     * @param  date   $dlc            eat-by date
-     * @param  date   $dluo           sell-by date
-     * @param  string $lot            Lot number
-     * @param  string $inventorycode  Inventory code
-     * @param  string $origin_element Origin element type
-     * @param  int    $origin_id      Origin id of element
-     * @return int                     <0 if KO, >0 if OK
+     * @param  User     $user           user asking change
+     * @param  int      $id_entrepot    id of warehouse
+     * @param  double   $nbpiece        nb of units
+     * @param  int      $movement       0 = add, 1 = remove
+     * @param  string   $label          Label of stock movement
+     * @param  double   $price          Price to use for stock eval
+     * @param  integer  $dlc            eat-by date
+     * @param  integer  $dluo           sell-by date
+     * @param  string   $lot            Lot number
+     * @param  string   $inventorycode  Inventory code
+     * @param  string   $origin_element Origin element type
+     * @param  int      $origin_id      Origin id of element
+     * @return int                      <0 if KO, >0 if OK
      */
     public function correct_stock_batch($user, $id_entrepot, $nbpiece, $movement, $label = '', $price = 0, $dlc = '', $dluo = '', $lot = '', $inventorycode = '', $origin_element = '', $origin_id = null)
     {

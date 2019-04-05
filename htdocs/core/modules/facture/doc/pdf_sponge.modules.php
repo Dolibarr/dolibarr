@@ -43,7 +43,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
  */
 class pdf_sponge extends ModelePDFFactures
 {
-     /**
+    /**
      * @var DoliDb Database handler
      */
     public $db;
@@ -70,9 +70,9 @@ class pdf_sponge extends ModelePDFFactures
 
 	/**
      * @var array Minimum version of PHP required by module.
-	 * e.g.: PHP ≥ 5.3 = array(5, 3)
+	 * e.g.: PHP ≥ 5.4 = array(5, 4)
      */
-	public $phpmin = array(5, 2);
+	public $phpmin = array(5, 4);
 
 	/**
      * Dolibarr version of the loaded document
@@ -80,15 +80,46 @@ class pdf_sponge extends ModelePDFFactures
      */
 	public $version = 'development';
 
+     /**
+     * @var int page_largeur
+     */
     public $page_largeur;
+	
+	/**
+     * @var int page_hauteur
+     */
     public $page_hauteur;
+	
+	/**
+     * @var array format
+     */
     public $format;
+	
+	/**
+     * @var int marge_gauche
+     */
 	public $marge_gauche;
+	
+	/**
+     * @var int marge_droite
+     */
 	public $marge_droite;
+	
+	/**
+     * @var int marge_haute
+     */
 	public $marge_haute;
+	
+	/**
+     * @var int marge_basse
+     */
 	public $marge_basse;
 
-	public $emetteur;	// Objet societe qui emet
+    /**
+	* Issuer
+	* @var Societe
+	*/
+	public $emetteur;
 
 	/**
 	 * @var bool Situation invoice type
@@ -928,7 +959,7 @@ class pdf_sponge extends ModelePDFFactures
 				$invoice->fetch($obj->fk_facture_source);
 
 				$pdf->SetXY($tab3_posx, $tab3_top+$y);
-				$pdf->MultiCell(20, 3, dol_print_date($obj->datef, 'day', false, $outputlangs, true), 0, 'L', 0);
+				$pdf->MultiCell(20, 3, dol_print_date($db->jdate($obj->datef), 'day', false, $outputlangs, true), 0, 'L', 0);
 				$pdf->SetXY($tab3_posx+21, $tab3_top+$y);
 				$pdf->MultiCell(20, 3, price(($conf->multicurrency->enabled && $object->multicurrency_tx != 1) ? $obj->multicurrency_amount_ttc : $obj->amount_ttc, 0, $outputlangs), 0, 'L', 0);
 				$pdf->SetXY($tab3_posx+40, $tab3_top+$y);
@@ -1829,7 +1860,7 @@ class pdf_sponge extends ModelePDFFactures
 	 *  Define Array Column Field
 	 *
 	 *  @param	object			$object    		common object
-	 *  @param	outputlangs		$outputlangs    langs
+	 *  @param	Translate		$outputlangs    langs
      *  @param	int			   $hidedetails		Do not show line details
      *  @param	int			   $hidedesc		Do not show desc
      *  @param	int			   $hideref			Do not show ref

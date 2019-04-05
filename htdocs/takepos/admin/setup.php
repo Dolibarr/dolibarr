@@ -64,7 +64,7 @@ if (GETPOST('action', 'alpha') == 'set')
 	if (GETPOST('socid', 'int') < 0) $_POST["socid"]='';
 
 	$res = dolibarr_set_const($db, "CASHDESK_ID_THIRDPARTY", (GETPOST('socid', 'int') > 0 ? GETPOST('socid', 'int') : ''), 'chaine', 0, '', $conf->entity);
-    
+
     $res = dolibarr_set_const($db, "CASHDESK_ID_BANKACCOUNT_CASH", (GETPOST('CASHDESK_ID_BANKACCOUNT_CASH', 'alpha') > 0 ? GETPOST('CASHDESK_ID_BANKACCOUNT_CASH', 'alpha') : ''), 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "CASHDESK_ID_BANKACCOUNT_CHEQUE", (GETPOST('CASHDESK_ID_BANKACCOUNT_CHEQUE', 'alpha') > 0 ? GETPOST('CASHDESK_ID_BANKACCOUNT_CHEQUE', 'alpha') : ''), 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "CASHDESK_ID_BANKACCOUNT_CB", (GETPOST('CASHDESK_ID_BANKACCOUNT_CB', 'alpha') > 0 ? GETPOST('CASHDESK_ID_BANKACCOUNT_CB', 'alpha') : ''), 'chaine', 0, '', $conf->entity);
@@ -177,7 +177,8 @@ if ($conf->global->TAKEPOSCONNECTOR){
 
 // Bar Restaurant mode
 print '<tr class="oddeven"><td>';
-print 'Bar Restaurant';
+print $langs->trans("EnableBarOrRestaurantFeatures");
+print '</td>';
 print '<td colspan="2">';
 print $form->selectyesno("TAKEPOS_BAR_RESTAURANT", $conf->global->TAKEPOS_BAR_RESTAURANT, 1);
 print "</td></tr>\n";
@@ -276,7 +277,7 @@ if (! empty($conf->banque->enabled))
 	print '<td colspan="2">';
 	$form->select_comptes($conf->global->CASHDESK_ID_BANKACCOUNT_CB, 'CASHDESK_ID_BANKACCOUNT_CB', 0, "courant=1", 1);
 	print '</td></tr>';
-    
+
 	foreach($paiements as $modep) {
         if (in_array($modep->code, array('LIQ', 'CB', 'CHQ'))) continue;
 		$name="CASHDESK_ID_BANKACCOUNT_".$modep->code;

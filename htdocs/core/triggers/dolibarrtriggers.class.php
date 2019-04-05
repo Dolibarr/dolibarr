@@ -61,7 +61,7 @@ abstract class DolibarrTriggers
 	 * Error reported by the trigger
 	 * @var string
 	 * @deprecated Use $this->errors
-	 * @see errors
+	 * @see $errors
 	 */
 	public $error = '';
 

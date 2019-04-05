@@ -271,7 +271,6 @@ if (isset($_SERVER["HTTP_USER_AGENT"]))
 	//var_dump($conf->browser);
 
 	if ($conf->browser->layout == 'phone') $conf->dol_no_mouse_hover=1;
-	if ($conf->browser->layout == 'phone') $conf->global->MAIN_TESTMENUHIDER=1;
 }
 
 // Force HTTPS if required ($conf->file->main_force_https is 0/1 or https dolibarr root url)
@@ -1092,11 +1091,15 @@ if (! function_exists("llxHeader"))
 		// html header
 		top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
 
-		if ($conf->browser->layout == 'phone'){
-		    $morecssonbody.= ' sidebar-collapse';
+		$tmpcsstouse='sidebar-collapse'.($morecssonbody?' '.$morecssonbody:'');
+		// If theme MD and classic layer, we open the menulayer by default.
+		if ($conf->theme == 'md' && ! in_array($conf->browser->layout, array('phone','tablet')) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
+		{
+		    global $mainmenu;
+		    if ($mainmenu != 'website') $tmpcsstouse=$morecssonbody;  // We do not use sidebar-collpase by default to have menuhider open by default.
 		}
 
-		print '<body id="mainbody"'.($morecssonbody?' class="'.$morecssonbody.'"':'').'>' . "\n";
+		print '<body id="mainbody" class="'.$tmpcsstouse.'">' . "\n";
 
 		// top menu and left menu area
 		if (empty($conf->dol_hide_topmenu) || GETPOST('dol_invisible_topmenu', 'int'))
@@ -1255,7 +1258,6 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 		print "\n";
 
 		if (GETPOST('version', 'int')) $ext='version='.GETPOST('version', 'int');	// usefull to force no cache on css/js
-		if (GETPOST('testmenuhider', 'int') || ! empty($conf->global->MAIN_TESTMENUHIDER)) $ext.='&testmenuhider='.(GETPOST('testmenuhider', 'int')?GETPOST('testmenuhider', 'int'):$conf->global->MAIN_TESTMENUHIDER);
 
 		$themeparam='?lang='.$langs->defaultlang.'&amp;theme='.$conf->theme.(GETPOST('optioncss', 'aZ09')?'&amp;optioncss='.GETPOST('optioncss', 'aZ09', 1):'').'&amp;userid='.$user->id.'&amp;entity='.$conf->entity;
 		$themeparam.=($ext?'&amp;'.$ext:'');
@@ -1594,10 +1596,7 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 			}
 		}
 
-		$loginBlockMoreClass = '';
-		if (!empty($conf->global->MAIN_TOP_MENU_DROPDOWN)) { $loginBlockMoreClass = 'usedropdown'; }
-
-		print '<div class="login_block '.$loginBlockMoreClass.'">'."\n";
+		print '<div class="login_block usedropdown">'."\n";
 
 		// Add login user link
 		$toprightmenu.='<div class="login_block_user">';
@@ -1606,12 +1605,8 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 		$mode=-1;
 		$toprightmenu.='<div class="inline-block nowrap"><div class="inline-block login_block_elem login_block_elem_name" style="padding: 0px;">';
 
-		if (empty($conf->global->MAIN_TOP_MENU_DROPDOWN)){
-            $toprightmenu.= $user->getNomUrl($mode, '', 1, 0, 11, 0, ($user->firstname ? 'firstname' : -1), 'atoplogin');
-		}
-		else {
-		    $toprightmenu.= top_menu_user($user, $langs);
-		}
+	    $toprightmenu.= top_menu_user($user, $langs);
+
 		$toprightmenu.='</div></div>';
 
 		$toprightmenu.='</div>'."\n";
@@ -1764,7 +1759,7 @@ function top_menu_user(User $user, Translate $langs)
     $dropdownBody.= '<br><b>' . $langs->trans("Status").'</b>: '.$user->getLibStatut(0);
     $dropdownBody.= '<br>';
 
-    $dropdownBody.= '<br><u>'.$langs->trans("Connection").'</u>';
+    $dropdownBody.= '<br><u>'.$langs->trans("Session").'</u>';
     $dropdownBody.= '<br><b>'.$langs->trans("IPAddress").'</b>: '.$_SERVER["REMOTE_ADDR"];
     if (! empty($conf->global->MAIN_MODULE_MULTICOMPANY)) $dropdownBody.= '<br><b>'.$langs->trans("ConnectedOnMultiCompany").':</b> '.$conf->entity.' (user entity '.$user->entity.')';
     $dropdownBody.= '<br><b>'.$langs->trans("AuthenticationMode").':</b> '.$_SESSION["dol_authmode"].(empty($dolibarr_main_demo)?'':' (demo)');
@@ -1810,7 +1805,9 @@ function top_menu_user(User $user, Translate $langs)
     <div id="topmenu-login-dropdown" class="userimg atoplogin dropdown user user-menu">
         <a href="'.DOL_URL_ROOT.'/user/card.php?id='.$user->id.'" class="dropdown-toggle" data-toggle="dropdown">
             '.$userImage.'
-            <span class="hidden-xs maxwidth200">'.dol_trunc($user->firstname ? $user->firstname : $user->login, 11).'</span>
+            <span class="hidden-xs maxwidth200 atoploginusername">'.dol_trunc($user->firstname ? $user->firstname : $user->login, 11).'</span>
+            <span class="fa fa-chevron-down" id="dropdown-icon-down"></span>
+            <span class="fa fa-chevron-up hidden" id="dropdown-icon-up"></span>
         </a>
         <div class="dropdown-menu">
             <!-- User image -->
@@ -1839,6 +1836,7 @@ function top_menu_user(User $user, Translate $langs)
 
         </div>
     </div>
+    <!-- Code to show/hide the user drop-down -->
     <script>
     $( document ).ready(function() {
         $(document).on("click", function(event) {
@@ -1851,6 +1849,8 @@ function top_menu_user(User $user, Translate $langs)
         $("#topmenu-login-dropdown .dropdown-toggle").on("click", function(event) {
             event.preventDefault();
             $("#topmenu-login-dropdown").toggleClass("open");
+            $("#dropdown-icon-down").toggle();
+            $("#dropdown-icon-up").toggle();
         });
 
         $("#topmenuloginmoreinfo-btn").on("click", function() {

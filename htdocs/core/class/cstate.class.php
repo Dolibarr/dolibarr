@@ -54,7 +54,7 @@ class Cstate // extends CommonObject
 	/**
 	 * @var string
 	 * @deprecated
-	 * @see name
+	 * @see $name
 	 */
 	public $nom='';
 

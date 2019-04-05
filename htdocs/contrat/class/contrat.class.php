@@ -1393,7 +1393,7 @@ class Contrat extends CommonObject
 			if (empty($txtva) || ! is_numeric($txtva)) $txtva=0;
 			if (empty($txlocaltax1) || ! is_numeric($txlocaltax1)) $txlocaltax1=0;
             if (empty($txlocaltax2) || ! is_numeric($txlocaltax2)) $txlocaltax2=0;
-			
+
 			if ($price_base_type=='HT')
 			{
 				$pu=$pu_ht;
@@ -1405,13 +1405,13 @@ class Contrat extends CommonObject
 
 			// Check parameters
 			if (empty($remise_percent)) $remise_percent=0;
-			
+
 			if ($date_start && $date_end && $date_start > $date_end) {
 				$langs->load("errors");
 				$this->error=$langs->trans('ErrorStartDateGreaterEnd');
 				return -1;
 			}
-			
+
 			$this->db->begin();
 
 			$localtaxes_type=getLocalTaxesFromRate($txtva, 0, $this->societe, $mysoc);
@@ -1603,7 +1603,7 @@ class Contrat extends CommonObject
 		{
 			$remise_percent=0;
 		}
-		
+
 		if ($date_start && $date_end && $date_start > $date_end) {
 			$langs->load("errors");
 			$this->error=$langs->trans('ErrorStartDateGreaterEnd');

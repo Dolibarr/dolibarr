@@ -173,10 +173,10 @@ else
       	 print '</td>';
          print '<td>' . $user->getFullName($langs) . '</td>';
          print '<td>' . $obj->label . '</td>';
-         print '<td class="center">' . dol_print_date($obj->date_debut, 'day');
+         print '<td class="center">' . dol_print_date($db->jdate($obj->date_debut), 'day');
          print ' <span class="opacitymedium">('.$langs->trans($listhalfday[$starthalfday]).')</span>';
          print '</td>';
-         print '<td class="center">' . dol_print_date($obj->date_fin, 'day');
+         print '<td class="center">' . dol_print_date($db->jdate($obj->date_fin), 'day');
          print ' <span class="opacitymedium">('.$langs->trans($listhalfday[$endhalfday]).')</span>';
          print '</td>';
          print '<td class="right">' . num_open_day($date_start, $date_end, 0, 1, $obj->halfday) . '</td>';

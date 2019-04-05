@@ -26,7 +26,7 @@
 /**
  *	\file       htdocs/compta/paiement/list.php
  *  \ingroup    compta
- *  \brief      Page liste des paiements des factures clients
+ *  \brief      Payment page for customer invoices
  */
 
 require '../../main.inc.php';
@@ -37,9 +37,12 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('bills', 'compta', 'companies'));
+$langs->loadLangs(array('bills', 'banks', 'compta', 'companies'));
 
-// Security check
+$action		= GETPOST('action', 'alpha');
+$confirm	= GETPOST('confirm', 'alpha');
+$optioncss = GETPOST('optioncss', 'alpha');
+
 $facid	= GETPOST('facid', 'int');
 $socid	= GETPOST('socid', 'int');
 $userid	= GETPOST('userid', 'int');
@@ -47,6 +50,7 @@ $day	= GETPOST('day', 'int');
 $month	= GETPOST('month', 'int');
 $year	= GETPOST('year', 'int');
 
+// Security check
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'facture', $facid, '');
 
@@ -83,7 +87,7 @@ $arrayfields=array();
  * Actions
  */
 
-if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // Both test are required to be compatible with all browsers
+if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All tests are required to be compatible with all browsers
 {
 	$search_ref="";
 	$search_account="";
@@ -94,22 +98,22 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 
     $day='';
     $year='';
     $month='';
+    $search_array_options=array();
 }
-
 
 
 /*
  * 	View
  */
 
-llxHeader('', $langs->trans('ListPayment'));
-
 $form=new Form($db);
 $formother=new FormOther($db);
 
-if (GETPOST("orphelins"))
+llxHeader('', $langs->trans('ListPayment'));
+
+if (GETPOST("orphelins", "alpha"))
 {
-    // Paiements lies a aucune facture (pour aide au diagnostic)
+    // Payments not linked to an invoice. Should not happend. For debug only.
     $sql = "SELECT p.rowid, p.ref, p.datep as dp, p.amount,";
     $sql.= " p.statut, p.num_paiement,";
     $sql.= " c.code as paiement_code";
@@ -197,7 +201,6 @@ $resql = $db->query($sql);
 if ($resql)
 {
     $num = $db->num_rows($resql);
-    $i = 0;
 
     $param='';
     if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
@@ -213,6 +216,7 @@ if ($resql)
     if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<input type="hidden" name="action" value="list">';
+    print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
     print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
     print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
     print '<input type="hidden" name="page" value="'.$page.'">';
@@ -228,18 +232,18 @@ if ($resql)
     print '<td class="liste_titre left">';
     print '<input class="flat" type="text" size="4" name="search_ref" value="'.dol_escape_htmltag($search_ref).'">';
     print '</td>';
-    print '<td class="liste_titre" align="center">';
+    print '<td class="liste_titre center">';
     if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat width25 valignmiddle" type="text" maxlength="2" name="day" value="'.dol_escape_htmltag($day).'">';
     print '<input class="flat width25 valignmiddle" type="text" maxlength="2" name="month" value="'.dol_escape_htmltag($month).'">';
     $formother->select_year($year?$year:-1, 'year', 1, 20, 5);
     print '</td>';
-    print '<td class="liste_titre" align="left">';
+    print '<td class="liste_titre">';
     print '<input class="flat" type="text" size="6" name="search_company" value="'.dol_escape_htmltag($search_company).'">';
     print '</td>';
     print '<td class="liste_titre">';
     $form->select_types_paiements($search_paymenttype, 'search_paymenttype', '', 2, 1, 1);
     print '</td>';
-    print '<td class="liste_titre" align="left">';
+    print '<td class="liste_titre">';
     print '<input class="flat" type="text" size="4" name="search_payment_num" value="'.dol_escape_htmltag($search_payment_num).'">';
     print '</td>';
     if (! empty($conf->banque->enabled))
@@ -264,7 +268,7 @@ if ($resql)
 
     print '<tr class="liste_titre">';
     print_liste_field_titre("RefPayment", $_SERVER["PHP_SELF"], "p.rowid", "", $param, "", $sortfield, $sortorder);
-    print_liste_field_titre("Date", $_SERVER["PHP_SELF"], "dp", "", $param, 'align="center"', $sortfield, $sortorder);
+    print_liste_field_titre("Date", $_SERVER["PHP_SELF"], "dp", "", $param, '', $sortfield, $sortorder, 'center ');
     print_liste_field_titre("ThirdParty", $_SERVER["PHP_SELF"], "s.nom", "", $param, "", $sortfield, $sortorder);
     print_liste_field_titre("Type", $_SERVER["PHP_SELF"], "c.libelle", "", $param, "", $sortfield, $sortorder);
     print_liste_field_titre("Numero", $_SERVER["PHP_SELF"], "p.num_paiement", "", $param, "", $sortfield, $sortorder);
@@ -283,6 +287,8 @@ if ($resql)
     print_liste_field_titre('', $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'maxwidthsearch ');
     print "</tr>\n";
 
+    $i = 0;
+    $totalarray=array();
     while ($i < min($num, $limit))
     {
         $objp = $db->fetch_object($resql);
@@ -290,35 +296,39 @@ if ($resql)
         $paymentstatic->id=$objp->rowid;
         $paymentstatic->ref=$objp->ref;
 
+        $companystatic->id=$objp->socid;
+        $companystatic->name=$objp->name;
+        $companystatic->email=$objp->email;
+
         print '<tr class="oddeven">';
 
         print '<td>';
         print $paymentstatic->getNomUrl(1);
         print '</td>';
+        if (! $i) $totalarray['nbfield']++;
 
         // Date
         $dateformatforpayment = 'day';
         if (! empty($conf->global->INVOICE_USE_HOURS_FOR_PAYMENT)) $dateformatforpayment='dayhour';
         print '<td align="center">'.dol_print_date($db->jdate($objp->dp), $dateformatforpayment).'</td>';
+        if (! $i) $totalarray['nbfield']++;
 
         // Thirdparty
         print '<td>';
         if ($objp->socid > 0)
         {
-            $companystatic->id=$objp->socid;
-            $companystatic->name=$objp->name;
-            $companystatic->email=$objp->email;
-
             print $companystatic->getNomUrl(1, '', 24);
         }
-        else print '&nbsp;';
         print '</td>';
+        if (! $i) $totalarray['nbfield']++;
 
         // Type
         print '<td>'.$langs->trans("PaymentTypeShort".$objp->paiement_code).'</td>';
+        if (! $i) $totalarray['nbfield']++;
 
         // Payment number
         print '<td>'.$objp->num_paiement.'</td>';
+        if (! $i) $totalarray['nbfield']++;
 
         // Account
 	    if (! empty($conf->banque->enabled))
@@ -338,11 +348,15 @@ if ($resql)
 
 	            print $accountstatic->getNomUrl(1);
 	        }
-	        else print '&nbsp;';
 	        print '</td>';
+	        if (! $i) $totalarray['nbfield']++;
 	    }
+
 	    // Amount
         print '<td class="right">'.price($objp->amount).'</td>';
+        if (! $i) $totalarray['nbfield']++;
+        $totalarray['pos'][7]='amount';
+        $totalarray['val']['amount'] += $objp->amount;
 
         if (! empty($conf->global->BILL_ADD_PAYMENT_VALIDATION))
         {
@@ -351,13 +365,39 @@ if ($resql)
             print $paymentstatic->LibStatut($objp->statut, 5);
             if ($objp->statut == 0) print '</a>';
             print '</td>';
+            if (! $i) $totalarray['nbfield']++;
         }
 
-		print '<td>&nbsp;</td>';
-        print '</tr>';
+		print '<td></td>';
+		if (! $i) $totalarray['nbfield']++;
+
+		print '</tr>';
 
         $i++;
     }
+
+    // Show total line
+    if (isset($totalarray['pos']))
+    {
+        print '<tr class="liste_total">';
+        $i=0;
+        while ($i < $totalarray['nbfield'])
+        {
+            $i++;
+            if (! empty($totalarray['pos'][$i]))  print '<td class="right">'.price($totalarray['val'][$totalarray['pos'][$i]]).'</td>';
+            else
+            {
+                if ($i == 1)
+                {
+                    if ($num < $limit) print '<td class="left">'.$langs->trans("Total").'</td>';
+                    else print '<td class="left">'.$langs->trans("Totalforthispage").'</td>';
+                }
+                else print '<td></td>';
+            }
+        }
+        print '</tr>';
+    }
+
     print "</table>\n";
     print "</div>";
     print "</form>\n";

@@ -39,7 +39,7 @@ abstract class CommonObjectLine extends CommonObject
 	 * Id of the line
 	 * @var int
 	 * @deprecated Try to use id property as possible (even if field into database is still rowid)
-	 * @see id
+	 * @see $id
 	 */
 	public $rowid;
 

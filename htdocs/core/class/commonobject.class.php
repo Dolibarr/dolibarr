@@ -3286,7 +3286,7 @@ abstract class CommonObject
 	 *	@param  string	$targettype		Object target type
 	 *  @param	int		$rowid			Row id of line to delete. If defined, other parameters are not used.
 	 *	@return     					int	>0 if OK, <0 if KO
-	 *	@see	add_object_linked, updateObjectLinked, fetchObjectLinked
+	 *	@see	add_object_linked(), updateObjectLinked(), fetchObjectLinked()
 	 */
 	public function deleteObjectLinked($sourceid = null, $sourcetype = '', $targetid = null, $targettype = '', $rowid = '')
 	{

@@ -88,13 +88,16 @@ function marges_prepare_head()
 	$head[$h][1] = $langs->trans($title);
 	$head[$h][2] = 'agentMargins';
 
-	
+
 	if ($user->rights->margins->creer) {
 		$h++;
 		$head[$h][0] = DOL_URL_ROOT."/margin/checkMargins.php";
 		$head[$h][1] = $langs->trans('CheckMargins');
 		$head[$h][2] = 'checkMargins';
 	}
+
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'margins', 'remove');
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'margins');
 
 	return $head;
 }

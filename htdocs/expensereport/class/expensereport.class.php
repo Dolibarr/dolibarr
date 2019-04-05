@@ -1318,7 +1318,7 @@ class ExpenseReport extends CommonObject
      * setDeny
      *
      * @param User      $fuser      User
-     * @param Details   $details    Details
+     * @param string    $details    Details
      * @param int       $notrigger  Disable triggers
      * @return int
      */
@@ -2088,10 +2088,10 @@ class ExpenseReport extends CommonObject
     /**
      * periode_existe
      *
-     * @param   User    $fuser          User
-     * @param   Date    $date_debut     Start date
-     * @param   Date    $date_fin       End date
-     * @return  int                     <0 if KO, >0 if OK
+     * @param   User       $fuser          User
+     * @param   integer    $date_debut     Start date
+     * @param   integer    $date_fin       End date
+     * @return  int                        <0 if KO, >0 if OK
      */
     public function periode_existe($fuser, $date_debut, $date_fin)
     {
