@@ -44,7 +44,7 @@ class mod_expedition_safor extends ModelNumRefExpedition
 	/**
 	 * @var string Nom du modele
 	 * @deprecated
-	 * @see name
+	 * @see $name
 	 */
 	public $nom='Safor';
 

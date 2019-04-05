@@ -44,7 +44,7 @@ class mod_contract_serpis extends ModelNumRefContracts
 	/**
 	 * @var string Nom du modele
 	 * @deprecated
-	 * @see name
+	 * @see $name
 	 */
 	public $nom='Serpis';
 

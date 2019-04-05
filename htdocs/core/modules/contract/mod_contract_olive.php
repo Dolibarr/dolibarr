@@ -35,7 +35,7 @@ class mod_contract_olive extends ModelNumRefContracts
     /**
 	 * @var string Nom du modele
 	 * @deprecated
-	 * @see name
+	 * @see $name
 	 */
 	public $nom='Olive';
 

@@ -44,7 +44,7 @@ class mod_expensereport_sand extends ModeleNumRefExpenseReport
 	/**
 	 * @var string Nom du modele
 	 * @deprecated
-	 * @see name
+	 * @see $name
 	 */
 	public $nom='Sand';
 
