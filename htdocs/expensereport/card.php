@@ -2391,7 +2391,8 @@ else
 				        $arrayoffiles=dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png|'.preg_quote(dol_sanitizeFileName($object->ref.'.pdf'), '/').')$');
 				        $nbFiles = count($arrayoffiles);
 				        $nbLinks=Link::count($db, $object->element, $object->id);
-				        if ($nbFiles >= 0)
+
+				        if ($nbFiles > 0)
 				        {
 				            print '<tr class="oddeven nohover trattachnewfilenow"'.(! GETPOSTISSET('sendit') && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)?' style="display: none"':'').'>';
 				            print '<td colspan="'.$colspan.'">';
@@ -2482,6 +2483,13 @@ else
 				                print '<div class="margintoponly"><input type="radio"'.$checked.' name="attachfile[]" value="'.$file['relativename'].'"> '.$file['relativename'].'</div>';
 				                print '</div>';
 				            }
+				            print '</td></tr>';
+				        }
+				        else
+				        {
+				            print '<tr class="oddeven nohover trattachnewfilenow"'.(! GETPOSTISSET('sendit') && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)?' style="display: none"':'').'>';
+				            print '<td colspan="'.$colspan.'">';
+				            print '<span class="opacitymedium">'.$langs->trans("NoFilesUploadedYet").'</span>';
 				            print '</td></tr>';
 				        }
 				    }
