@@ -536,6 +536,10 @@ hr { border: 0; border-top: 1px solid #ccc; }
     box-shadow: none;
     -webkit-box-shadow: none;
 }
+.button_search, .button_removefilter {
+    border: unset;
+    background: unset;
+}
 form {
     padding:0px;
     margin:0px;
