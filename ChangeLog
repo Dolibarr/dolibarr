@@ -28,7 +28,7 @@ Following changes may create regressions for some external modules, but were nec
 * Hidden option CHANGE_ORDER_CONCAT_DESCRIPTION were renamed into MAIN_CHANGE_ORDER_CONCAT_DESCRIPTION.
 * Method dolEscapeXML was moved from functions.lib.php into function2.lib.php (not used enough to be loaded by default).
 * Removed deprecated use of string in dol_print_date(). Only date allowed.
-
+* Deprecated property ->fk_departement is now ->state_id everywhere.
 
 
 ***** ChangeLog for 9.0.1 compared to 9.0.0 *****

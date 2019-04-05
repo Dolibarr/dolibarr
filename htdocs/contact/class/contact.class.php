@@ -337,7 +337,6 @@ class Contact extends CommonObject
 		$this->zip=(empty($this->zip)?'':$this->zip);
 		$this->town=(empty($this->town)?'':$this->town);
 		$this->country_id=($this->country_id > 0?$this->country_id:$this->country_id);
-		$this->state_id=($this->state_id > 0?$this->state_id:$this->fk_departement);
 		if (empty($this->statut)) $this->statut = 0;
 
 		$this->db->begin();
@@ -709,7 +708,7 @@ class Contact extends CommonObject
 		$sql = "SELECT c.rowid, c.entity, c.fk_soc, c.ref_ext, c.civility as civility_id, c.lastname, c.firstname,";
 		$sql.= " c.address, c.statut, c.zip, c.town,";
 		$sql.= " c.fk_pays as country_id,";
-		$sql.= " c.fk_departement,";
+		$sql.= " c.fk_departement as state_id,";
 		$sql.= " c.birthday,";
 		$sql.= " c.poste, c.phone, c.phone_perso, c.phone_mobile, c.fax, c.email, c.jabberid, c.skype, c.twitter, c.facebook, c.linkedin,";
         $sql.= " c.photo,";
@@ -759,12 +758,9 @@ class Contact extends CommonObject
 				$this->date_creation     = $this->db->jdate($obj->date_creation);
 				$this->date_modification = $this->db->jdate($obj->date_modification);
 
-				$this->fk_departement	= $obj->fk_departement;    // deprecated
-				$this->state_id			= $obj->fk_departement;
-				$this->departement_code	= $obj->state_code;	       // deprecated
+				$this->state_id			= $obj->state_id;
 				$this->state_code		= $obj->state_code;
-				$this->departement		= $obj->state;	           // deprecated
-				$this->state				= $obj->state;
+				$this->state			= $obj->state;
 
 				$this->country_id 		= $obj->country_id;
 				$this->country_code		= $obj->country_id?$obj->country_code:'';
