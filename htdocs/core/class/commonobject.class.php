@@ -7517,4 +7517,35 @@ abstract class CommonObject
             }
         }
     }
+
+    /**
+     *  copy related categories to another object
+     *
+     * @param  int		$fromId	Id object source
+     * @param  int		$toId	Id object cible
+     * @param  string	$type	Type of category ('product', ...)
+     * @return int      < 0 si erreur, > 0 si ok
+     */
+	function cloneCategories($fromId, $toId, $type='')
+	{
+		$this->db->begin();
+
+		if (empty($type)) $type = $this->table_element;
+
+		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+		$categorystatic = new Categorie($this->db);
+
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."categorie_" . $categorystatic->MAP_CAT_TABLE[$type] . " (fk_categorie, fk_product)";
+		$sql.= " SELECT fk_categorie, $toId FROM ".MAIN_DB_PREFIX."categorie_" . $categorystatic->MAP_CAT_TABLE[$type];
+		$sql.= " WHERE fk_product = '".$fromId."'";
+
+		if (! $this->db->query($sql))
+		{
+			$this->db->rollback();die($sql);
+			return -1;
+		}
+
+		$this->db->commit();
+		return 1;
+	}
 }
