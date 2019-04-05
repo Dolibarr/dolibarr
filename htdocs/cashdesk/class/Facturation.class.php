@@ -142,7 +142,11 @@ class Facturation
         $this->montantRemise($montant_remise_ht);
 
         $newcartarray=$_SESSION['poscart'];
-        $i=count($newcartarray);
+
+        $i = 0;
+        if (!is_null($newcartarray) && !is_empty($newcartarray)) {
+            $i=count($newcartarray);	
+        }
 
         $newcartarray[$i]['id']=$i;
         $newcartarray[$i]['ref']=$product->ref;
