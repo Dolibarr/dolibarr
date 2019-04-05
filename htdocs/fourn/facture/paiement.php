@@ -136,7 +136,7 @@ if (empty($reshook))
 	        if (substr($key, 0, 7) == 'amount_')
 	        {
 	            $cursorfacid = substr($key, 7);
-	            $amounts[$cursorfacid] = price2num(trim(GETPOST($key)));
+	            $amounts[$cursorfacid] = (float) price2num(trim(GETPOST($key)));
 	            $totalpayment = $totalpayment + $amounts[$cursorfacid];
 	            if (! empty($amounts[$cursorfacid])) $atleastonepaymentnotnull++;
 	            $result=$tmpinvoice->fetch($cursorfacid);
