@@ -144,7 +144,7 @@ class Facturation
         $newcartarray=$_SESSION['poscart'];
 
         $i = 0;
-        if (!is_null($newcartarray) && !is_empty($newcartarray)) {
+        if (!is_null($newcartarray) && !empty($newcartarray)) {
             $i=count($newcartarray);	
         }
 
