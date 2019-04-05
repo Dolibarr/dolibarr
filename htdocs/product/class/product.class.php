@@ -3611,7 +3611,6 @@ class Product extends CommonObject
         return 1;
     }
 
-
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *  Recopie les fournisseurs et prix fournisseurs d'un produit/service sur un autre
