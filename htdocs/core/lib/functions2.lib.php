@@ -2457,10 +2457,10 @@ if (! function_exists('dolEscapeXML'))
 /**
  *	Return automatic or manual in current language
  *
- *	@param	string	$automaticmanual			Value to test (1, 'automatic', 'true' or 0, 'manual', 'false')
- *	@param	integer	$case			1=Yes/No, 0=yes/no, 2=Disabled checkbox, 3=Disabled checkbox + Automatic/Manual
- *	@param	int		$color			0=texte only, 1=Text is formated with a color font style ('ok' or 'error'), 2=Text is formated with 'ok' color.
- *	@return	string					HTML string
+ *	@param	string	$automaticmanual   Value to test (1, 'automatic', 'true' or 0, 'manual', 'false')
+ *	@param	integer	$case			   1=Yes/No, 0=yes/no, 2=Disabled checkbox, 3=Disabled checkbox + Automatic/Manual
+ *	@param	int		$color			   0=texte only, 1=Text is formated with a color font style ('ok' or 'error'), 2=Text is formated with 'ok' color.
+ *	@return	string					   HTML string
  */
 function autoOrManual($automaticmanual, $case = 1, $color = 0)
 {
@@ -2475,7 +2475,7 @@ function autoOrManual($automaticmanual, $case = 1, $color = 0)
 
         $classname='ok';
     }
-    elseif ($yesno == 0 || strtolower($automaticmanual) == 'manual' || strtolower($automaticmanual) == 'false')
+    elseif ($automaticmanual == 0 || strtolower($automaticmanual) == 'manual' || strtolower($automaticmanual) == 'false')
     {
         $result=$langs->trans("manual");
         if ($case == 1 || $case == 3) $result=$langs->trans("Manual");
