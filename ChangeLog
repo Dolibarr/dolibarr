@@ -16,6 +16,7 @@ NEW: Module DebugBar is available as a stable module.
 WARNING:
 
 Following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
+* PHP 5.4 is no more supported. Minimum PHP is now 5.5+.
 * The PHP extension php-intl is not mandatory but should be installed to have new features working correctly.
 * Method GetUrlTrackingStatus were renamed into getUrlTrackingStatus for consistency with naming rules.
 * API getListOfCivility has been renamed into getListOfCivilities for consistency with naming rules.
