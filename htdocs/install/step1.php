@@ -956,7 +956,7 @@ function write_conf_file($conffile)
         fputs($fp, '$dolibarr_nocsrfcheck=\'0\';');
         fputs($fp, "\n");
 
-		fputs($fp, '$dolibarr_main_cookie_cryptkey=\''.$key.'\';');
+		fputs($fp, '$dolibarr_main_instance_unique_id=\''.$key.'\';');
 		fputs($fp, "\n");
 
 		fputs($fp, '$dolibarr_mailing_limit_sendbyweb=\'0\';');

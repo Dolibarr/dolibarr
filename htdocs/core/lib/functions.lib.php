@@ -574,34 +574,41 @@ if (! function_exists('dol_getprefix'))
 {
     /**
      *  Return a prefix to use for this Dolibarr instance, for session/cookie names or email id.
-     *  The prefix for session is unique in a web context only and is unique for instance and avoid conflict
-     *  between multi-instances, even when having two instances with same root dir or two instances in same virtual servers.
-     *  The prefix for email is unique if MAIL_PREFIX_FOR_EMAIL_ID is set to a value, otherwise value may be same than other instance.
+     *  The prefix is unique for instance and avoid conflict between multi-instances, even when having two instances with same root dir
+     *  or two instances in same virtual servers.
      *
      *  @param  string  $mode                   '' (prefix for session name) or 'email' (prefix for email id)
      *  @return	string                          A calculated prefix
      */
     function dol_getprefix($mode = '')
     {
-		global $conf;
+        global $conf;
 
 		// If prefix is for email
 		if ($mode == 'email')
 		{
-			if (! empty($conf->global->MAIL_PREFIX_FOR_EMAIL_ID))	// If MAIL_PREFIX_FOR_EMAIL_ID is set (a value initialized with a random value is recommended)
+		    if (! empty($conf->global->MAIL_PREFIX_FOR_EMAIL_ID))	// If MAIL_PREFIX_FOR_EMAIL_ID is set (a value initialized with a random value is recommended)
 			{
 				if ($conf->global->MAIL_PREFIX_FOR_EMAIL_ID != 'SERVER_NAME') return $conf->global->MAIL_PREFIX_FOR_EMAIL_ID;
 				elseif (isset($_SERVER["SERVER_NAME"])) return $_SERVER["SERVER_NAME"];
 			}
+
+			// The recommended value (may be not defined for old versions)
+			if (! empty($conf->file->instance_unique_id)) return $conf->file->instance_unique_id;
+
+			// For backward compatibility
 			return dol_hash(DOL_DOCUMENT_ROOT.DOL_URL_ROOT, '3');
 		}
 
+		// The recommended value (may be not defined for old versions)
+		if (! empty($conf->file->instance_unique_id)) return $conf->file->instance_unique_id;
+
+		// For backward compatibility
 		if (isset($_SERVER["SERVER_NAME"]) && isset($_SERVER["DOCUMENT_ROOT"]))
 		{
 			return dol_hash($_SERVER["SERVER_NAME"].$_SERVER["DOCUMENT_ROOT"].DOL_DOCUMENT_ROOT.DOL_URL_ROOT, '3');
-			// Use this for a "readable" key
-			//return dol_sanitizeFileName($_SERVER["SERVER_NAME"].$_SERVER["DOCUMENT_ROOT"].DOL_DOCUMENT_ROOT.DOL_URL_ROOT);
 		}
+
 		return dol_hash(DOL_DOCUMENT_ROOT.DOL_URL_ROOT, '3');
 	}
 }

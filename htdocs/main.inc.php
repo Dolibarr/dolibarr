@@ -398,7 +398,7 @@ if ((! defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && ! empty($conf->
 }
 
 // Disable modules (this must be after session_start and after conf has been loaded)
-if (GETPOST('disablemodules', 'alpha'))  $_SESSION["disablemodules"]=GETPOST('disablemodules', 'alpha');
+if (GETPOSTISSET('disablemodules'))  $_SESSION["disablemodules"]=GETPOST('disablemodules', 'alpha');
 if (! empty($_SESSION["disablemodules"]))
 {
 	$disabled_modules=explode(',', $_SESSION["disablemodules"]);
@@ -426,7 +426,7 @@ if(is_array($modulepart) && count($modulepart)>0)
 		if(in_array($module, $modulepart))
 		{
 			$conf->modulepart = $module;
-                        break;
+            break;
 		}
 	}
 }
@@ -437,7 +437,7 @@ if(is_array($modulepart) && count($modulepart)>0)
 $login='';
 if (! defined('NOLOGIN'))
 {
-	// $authmode lists the different means of identification to be tested in order of preference.
+	// $authmode lists the different method of identification to be tested in order of preference.
 	// Example: 'http', 'dolibarr', 'ldap', 'http,forceuser', '...'
 
 	if (defined('MAIN_AUTHENTICATION_MODE'))

@@ -1875,3 +1875,4 @@ WarningValueHigherSlowsDramaticalyOutput=Warning, higher values slows dramatical
 DebugBarModuleActivated=Module debugbar is activated and slows dramaticaly the interface
 EXPORTS_SHARE_MODELS=Export models are share with everybody
 ExportSetup=Setup of module Export
+InstanceUniqueID=Unique ID of the instance
