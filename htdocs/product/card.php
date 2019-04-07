@@ -119,7 +119,12 @@ $result=restrictedArea($user, 'produit|service', $fieldvalue, 'product&product',
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('productcard','globalcard'));
 
-
+// Periodic price
+if (! empty($conf->global->PRODUIT_ATTRIBUTES_PERIODIC))
+{
+	$date_price=dol_mktime(0, 0, 0, GETPOST('date_pricemonth', 'int'), GETPOST('date_priceday', 'int'), GETPOST('date_priceyear', 'int'));
+	$date_end_price=dol_mktime(0, 0, 0, GETPOST('date_end_pricemonth', 'int'), GETPOST('date_end_priceday', 'int'), GETPOST('date_end_priceyear', 'int'));
+}
 
 /*
  * Actions
@@ -216,6 +221,14 @@ if (empty($reshook))
 
             $object->ref                   = $ref;
             $object->label                 = GETPOST('label');
+			
+			// Periodic price
+			if (! empty($conf->global->PRODUIT_ATTRIBUTES_PERIODIC))
+			{
+				$object->date_price			   = $date_price;
+				$object->date_end_price		   = $date_end_price;
+			}
+			
             $object->price_base_type       = GETPOST('price_base_type');
 
             if ($object->price_base_type == 'TTC')
@@ -383,6 +396,14 @@ if (empty($reshook))
                 $object->label                  = GETPOST('label');
                 $object->description            = dol_htmlcleanlastbr(GETPOST('desc', 'none'));
             	$object->url					= GETPOST('url');
+
+				// Periodic price
+				if (! empty($conf->global->PRODUIT_ATTRIBUTES_PERIODIC))
+				{
+					$object->date_price  			= empty($_POST["date_price"])?'':$date_price;
+					$object->date_end_price    		= empty($_POST["date_end_price"])?'':$date_end_price;
+				}
+
     			if (! empty($conf->global->MAIN_DISABLE_NOTES_TAB))
     			{
                 	$object->note_private           = dol_htmlcleanlastbr(GETPOST('note_private', 'none'));
@@ -1157,6 +1178,20 @@ else
             $defaultva=get_default_tva($mysoc, $mysoc);
             print $form->load_tva("tva_tx", $defaultva, $mysoc, $mysoc, 0, 0, '', false, 1);
             print '</td></tr>';
+			
+			// Periodic price
+			if (! empty($conf->global->PRODUIT_ATTRIBUTES_PERIODIC))
+			{
+				// Date start price
+				print '<tr><td>'.$langs->trans("DateStart").'</td><td>';
+				print $form->selectDate(($date_price?$date_price:''), 'date_price', 0, 0, 0, '', 1, 0);
+				print '</td></tr>';
+
+				// Date end price
+				print '<tr><td>'.$langs->trans("DateEnd").'</td><td>';
+				print $form->selectDate(($date_end_price?$date_end_price:-1), 'date_end_price', 0, 0, 0, '', 1, 0);
+				print '</td></tr>';
+			}
 
             print '</table>';
 
