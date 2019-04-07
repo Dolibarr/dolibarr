@@ -120,7 +120,7 @@ $result=restrictedArea($user, 'produit|service', $fieldvalue, 'product&product',
 $hookmanager->initHooks(array('productcard','globalcard'));
 
 // Periodic price
-if (! empty($conf->global->PRODUIT_ATTRIBUTES_PERIODIC))
+if (! empty($conf->global->PRODUCT_PERIODIC_PRICES))
 {
 	$date_price=dol_mktime(0, 0, 0, GETPOST('date_pricemonth', 'int'), GETPOST('date_priceday', 'int'), GETPOST('date_priceyear', 'int'));
 	$date_end_price=dol_mktime(0, 0, 0, GETPOST('date_end_pricemonth', 'int'), GETPOST('date_end_priceday', 'int'), GETPOST('date_end_priceyear', 'int'));
@@ -223,7 +223,7 @@ if (empty($reshook))
             $object->label                 = GETPOST('label');
 			
 			// Periodic price
-			if (! empty($conf->global->PRODUIT_ATTRIBUTES_PERIODIC))
+			if (! empty($conf->global->PRODUCT_PERIODIC_PRICES))
 			{
 				$object->date_price			   = $date_price;
 				$object->date_end_price		   = $date_end_price;
@@ -398,7 +398,7 @@ if (empty($reshook))
             	$object->url					= GETPOST('url');
 
 				// Periodic price
-				if (! empty($conf->global->PRODUIT_ATTRIBUTES_PERIODIC))
+				if (! empty($conf->global->PRODUCT_PERIODIC_PRICES))
 				{
 					$object->date_price  			= empty($_POST["date_price"])?'':$date_price;
 					$object->date_end_price    		= empty($_POST["date_end_price"])?'':$date_end_price;
@@ -1180,7 +1180,7 @@ else
             print '</td></tr>';
 			
 			// Periodic price
-			if (! empty($conf->global->PRODUIT_ATTRIBUTES_PERIODIC))
+			if (! empty($conf->global->PRODUCT_PERIODIC_PRICES))
 			{
 				// Date start price
 				print '<tr><td>'.$langs->trans("DateStart").'</td><td>';
