@@ -78,7 +78,7 @@ if ((! empty($conf->global->PRODUIT_MULTIPRICES)  || ! empty($conf->global->PROD
 $hookmanager->initHooks(array('productpricecard','globalcard'));
 
 // Periodic price
-if (! empty($conf->global->PRODUIT_ATTRIBUTES_PERIODIC))
+if (! empty($conf->global->PRODUCT_PERIODIC_PRICES))
 {
 	$date_price=dol_mktime(0, 0, 0, GETPOST('date_pricemonth', 'int'), GETPOST('date_priceday', 'int'), GETPOST('date_priceyear', 'int'));
 	$date_end_price=dol_mktime(0, 0, 0, GETPOST('date_end_pricemonth', 'int'), GETPOST('date_end_priceday', 'int'), GETPOST('date_end_priceyear', 'int'));
@@ -157,7 +157,7 @@ if (empty($reshook))
 	    $object->localtax2_type = $localtax2_type;
 
 		// Periodic price
-		if (! empty($conf->global->PRODUIT_ATTRIBUTES_PERIODIC))
+		if (! empty($conf->global->PRODUCT_PERIODIC_PRICES))
 		{
 			$object->date_end_price = $date_end_price;
 			$object->date_price = $date_price;
@@ -178,7 +178,7 @@ if (empty($reshook))
 	        $localtaxarray=array();    // We do not store localtaxes into product, we will use instead the "vat code" to retreive them.
 			
 			// Periodic price
-			if (! empty($conf->global->PRODUIT_ATTRIBUTES_PERIODIC))
+			if (! empty($conf->global->PRODUCT_PERIODIC_PRICES))
 			{
 				$object->updatePrice(0, $object->price_base_type, $user, $tva_tx, '', 0, $npr, 0, 0, $localtaxarray, $vatratecode, $object->date_price, $object->date_end_price);
 			}
@@ -1302,7 +1302,7 @@ if ($action == 'edit_price' && $object->getRights()->creer)
 		print '</tr>';
 		
 		// Periodic price
-		if (! empty($conf->global->PRODUIT_ATTRIBUTES_PERIODIC))
+		if (! empty($conf->global->PRODUCT_PERIODIC_PRICES))
 		{
 			// Price date start
 			print '<tr><td>'.$langs->trans("DateStart").'</td><td>';
@@ -1509,7 +1509,7 @@ if ((empty($conf->global->PRODUIT_CUSTOMER_PRICES) || $action=='showlog_default_
     		print '<tr class="liste_titre">';
     		print '<td>' . $langs->trans("AppliedPricesFrom") . '</td>';
 			// Periodic price
-			if (! empty($conf->global->PRODUIT_ATTRIBUTES_PERIODIC))
+			if (! empty($conf->global->PRODUCT_PERIODIC_PRICES))
 			{
 				print '<td>' . $langs->trans("DateEnd") . '</td>';
 			}
@@ -1547,7 +1547,7 @@ if ((empty($conf->global->PRODUIT_CUSTOMER_PRICES) || $action=='showlog_default_
     			// Date
     			print "<td>" . dol_print_date($db->jdate($objp->dp), "dayhour") . "</td>";
 				// Periodic price
-				if (! empty($conf->global->PRODUIT_ATTRIBUTES_PERIODIC))
+				if (! empty($conf->global->PRODUCT_PERIODIC_PRICES))
 				{
 					print "<td>" . dol_print_date($db->jdate($objp->date_end_price), "dayhour") . "</td>";
 				}
@@ -1760,7 +1760,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 		print '</td></tr>';
 		
 		// Periodic price
-		if (! empty($conf->global->PRODUIT_ATTRIBUTES_PERIODIC))
+		if (! empty($conf->global->PRODUCT_PERIODIC_PRICES))
 		{
 			// Price date start
 			print '<tr><td>'.$langs->trans("DateStart").'</td><td>';
@@ -1865,7 +1865,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 		print '</tr>';
 		
 		// Periodic price
-		if (! empty($conf->global->PRODUIT_ATTRIBUTES_PERIODIC))
+		if (! empty($conf->global->PRODUCT_PERIODIC_PRICES))
 		{
 			// Price date start
 			print '<tr><td>'.$langs->trans("DateStart").'</td><td>';
