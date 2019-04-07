@@ -103,7 +103,7 @@ class EmailCollector extends CommonObject
         //'filter' => array('type'=>'text', 'label'=>'Filter', 'visible'=>1, 'enabled'=>1, 'position'=>105),
         //'actiontodo' => array('type'=>'varchar(255)', 'label'=>'ActionToDo', 'visible'=>1, 'enabled'=>1, 'position'=>106),
         'target_directory' => array('type'=>'varchar(255)', 'label'=>'MailboxTargetDirectory', 'visible'=>1, 'enabled'=>1, 'position'=>110, 'notnull'=>0, 'comment'=>"Where to store messages once processed"),
-        'datelastresult' => array('type'=>'datetime', 'label'=>'DateLastResult', 'visible'=>1, 'enabled'=>'$action != "create" && $action != "edit"', 'position'=>121, 'notnull'=>-1,),
+        'datelastresult' => array('type'=>'datetime', 'label'=>'DateLastResult', 'visible'=>1, 'enabled'=>'$action != "create"', 'position'=>121, 'notnull'=>-1,),
         'codelastresult' => array('type'=>'varchar(16)', 'label'=>'CodeLastResult', 'visible'=>1, 'enabled'=>'$action != "create" && $action != "edit"', 'position'=>122, 'notnull'=>-1,),
         'lastresult' => array('type'=>'varchar(255)', 'label'=>'LastResult', 'visible'=>1, 'enabled'=>'$action != "create" && $action != "edit"', 'position'=>123, 'notnull'=>-1,),
         'note_public' => array('type'=>'html', 'label'=>'NotePublic', 'visible'=>0, 'enabled'=>1, 'position'=>61, 'notnull'=>-1,),
