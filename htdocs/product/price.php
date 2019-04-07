@@ -77,6 +77,12 @@ if ((! empty($conf->global->PRODUIT_MULTIPRICES)  || ! empty($conf->global->PROD
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('productpricecard','globalcard'));
 
+// Periodic price
+if (! empty($conf->global->PRODUIT_ATTRIBUTES_PERIODIC))
+{
+	$date_price=dol_mktime(0, 0, 0, GETPOST('date_pricemonth', 'int'), GETPOST('date_priceday', 'int'), GETPOST('date_priceyear', 'int'));
+	$date_end_price=dol_mktime(0, 0, 0, GETPOST('date_end_pricemonth', 'int'), GETPOST('date_end_priceday', 'int'), GETPOST('date_end_priceyear', 'int'));
+}
 
 /*
  * Actions
@@ -150,6 +156,13 @@ if (empty($reshook))
 	    $object->localtax1_type = $localtax1_type;
 	    $object->localtax2_type = $localtax2_type;
 
+		// Periodic price
+		if (! empty($conf->global->PRODUIT_ATTRIBUTES_PERIODIC))
+		{
+			$object->date_end_price = $date_end_price;
+			$object->date_price = $date_price;
+		}
+
 	    $db->begin();
 
 	    $resql = $object->update($object->id, $user);
@@ -163,7 +176,16 @@ if (empty($reshook))
 	    {
 	        //$localtaxarray=array('0'=>$localtax1_type,'1'=>$localtax1,'2'=>$localtax2_type,'3'=>$localtax2);
 	        $localtaxarray=array();    // We do not store localtaxes into product, we will use instead the "vat code" to retreive them.
-	        $object->updatePrice(0, $object->price_base_type, $user, $tva_tx, '', 0, $npr, 0, 0, $localtaxarray, $vatratecode);
+			
+			// Periodic price
+			if (! empty($conf->global->PRODUIT_ATTRIBUTES_PERIODIC))
+			{
+				$object->updatePrice(0, $object->price_base_type, $user, $tva_tx, '', 0, $npr, 0, 0, $localtaxarray, $vatratecode, $object->date_price, $object->date_end_price);
+			}
+			else
+			{
+				$object->updatePrice(0, $object->price_base_type, $user, $tva_tx, '', 0, $npr, 0, 0, $localtaxarray, $vatratecode);
+			}
 	    }
 
 	    if (! $error)
@@ -326,6 +348,8 @@ if (empty($reshook))
 				'price_min' => $_POST["price_min"],
 				'price_base_type' => $_POST["price_base_type"],
 			    'default_vat_code' => $vatratecode,
+			    'date_end_price' => $date_end_price,
+			    'date_price' => $date_price,
 				'vat_tx' => $tva_tx,                                                                                        // default_vat_code should be used in priority in a future
 				'npr' => $npr,                                                                                              // default_vat_code should be used in priority in a future
 			    'localtaxes_array' => array('0'=>$localtax1_type, '1'=>$localtax1, '2'=>$localtax2_type, '3'=>$localtax2)   // default_vat_code should be used in priority in a future
@@ -353,7 +377,7 @@ if (empty($reshook))
 				}
 
 				if($object->multiprices[$key]!=$newprice || $object->multiprices_min[$key]!=$newprice_min || $object->multiprices_base_type[$key]!=$val['price_base_type'])
-       				$res = $object->updatePrice($newprice, $val['price_base_type'], $user, $val['vat_tx'], $newprice_min, $key, $val['npr'], $psq, 0, $val['localtaxes_array'], $val['default_vat_code']);
+       				$res = $object->updatePrice($newprice, $val['price_base_type'], $user, $val['vat_tx'], $newprice_min, $key, $val['npr'], $psq, 0, $val['localtaxes_array'], $val['default_vat_code'], $val['date_price'], $val['date_end_price']);
 				else $res=0;
 
 
@@ -1276,6 +1300,20 @@ if ($action == 'edit_price' && $object->getRights()->creer)
 		}
 		print '</td>';
 		print '</tr>';
+		
+		// Periodic price
+		if (! empty($conf->global->PRODUIT_ATTRIBUTES_PERIODIC))
+		{
+			// Price date start
+			print '<tr><td>'.$langs->trans("DateStart").'</td><td>';
+			print $form->selectDate(($object->date_price?$object->date_price:''), 'date_price', 0, 0, 0, '', 1, 0);
+			print '</td></tr>';
+
+			// Price date end
+			print '<tr><td>'.$langs->trans("DateEnd").'</td><td>';
+			print $form->selectDate(($object->date_end_price?$object->date_end_price:-1), 'date_end_price', 0, 0, 0, '', 1, 0);
+			print '</td></tr>';
+		}
 
 		$parameters=array('colspan' => 2);
 		$reshook=$hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action);    // Note that $action and $object may have been modified by hook
@@ -1420,7 +1458,7 @@ if ((empty($conf->global->PRODUIT_CUSTOMER_PRICES) || $action=='showlog_default_
 {
     $sql = "SELECT p.rowid, p.price, p.price_ttc, p.price_base_type, p.tva_tx, p.default_vat_code, p.recuperableonly, p.localtax1_tx, p.localtax1_type, p.localtax2_tx, p.localtax2_type,";
     $sql .= " p.price_level, p.price_min, p.price_min_ttc,p.price_by_qty,";
-    $sql .= " p.date_price as dp, p.fk_price_expression, u.rowid as user_id, u.login";
+    $sql .= " p.date_price as dp, p.date_end_price, p.fk_price_expression, u.rowid as user_id, u.login";
     $sql .= " FROM " . MAIN_DB_PREFIX . "product_price as p,";
     $sql .= " " . MAIN_DB_PREFIX . "user as u";
     $sql .= " WHERE fk_product = " . $object->id;
@@ -1470,6 +1508,11 @@ if ((empty($conf->global->PRODUIT_CUSTOMER_PRICES) || $action=='showlog_default_
 
     		print '<tr class="liste_titre">';
     		print '<td>' . $langs->trans("AppliedPricesFrom") . '</td>';
+			// Periodic price
+			if (! empty($conf->global->PRODUIT_ATTRIBUTES_PERIODIC))
+			{
+				print '<td>' . $langs->trans("DateEnd") . '</td>';
+			}
 
     		if (! empty($conf->global->PRODUIT_MULTIPRICES) || ! empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES)) {
     			print '<td class="center">' . $langs->trans("PriceLevel") . '</td>';
@@ -1503,6 +1546,11 @@ if ((empty($conf->global->PRODUIT_CUSTOMER_PRICES) || $action=='showlog_default_
     			print '<tr class="oddeven">';
     			// Date
     			print "<td>" . dol_print_date($db->jdate($objp->dp), "dayhour") . "</td>";
+				// Periodic price
+				if (! empty($conf->global->PRODUIT_ATTRIBUTES_PERIODIC))
+				{
+					print "<td>" . dol_print_date($db->jdate($objp->date_end_price), "dayhour") . "</td>";
+				}
 
     			// Price level
     			if (! empty($conf->global->PRODUIT_MULTIPRICES) || ! empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES)) {
@@ -1710,6 +1758,20 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 			print '<td class="left">'.$langs->trans("MinimumRecommendedPrice", price($maxpricesupplier, 0, '', 1, -1, -1, 'auto')).' '.img_warning().'</td>';
 		}
 		print '</td></tr>';
+		
+		// Periodic price
+		if (! empty($conf->global->PRODUIT_ATTRIBUTES_PERIODIC))
+		{
+			// Price date start
+			print '<tr><td>'.$langs->trans("DateStart").'</td><td>';
+			print $form->selectDate(($object->date_price?$object->date_price:''), 'date_price', 0, 0, 0, '', 1, 0);
+			print '</td></tr>';
+
+			// Price date end
+			print '<tr><td>'.$langs->trans("DateEnd").'</td><td>';
+			print $form->selectDate(($object->date_end_price?$object->date_end_price:-1), 'date_end_price', 0, 0, 0, '', 1, 0);
+			print '</td></tr>';
+		}
 
 		// Update all child soc
 		print '<tr><td width="15%">';
@@ -1801,6 +1863,20 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 			print '<td class="left">'.$langs->trans("MinimumRecommendedPrice", price($maxpricesupplier, 0, '', 1, -1, -1, 'auto')).' '.img_warning().'</td>';
 		}
 		print '</tr>';
+		
+		// Periodic price
+		if (! empty($conf->global->PRODUIT_ATTRIBUTES_PERIODIC))
+		{
+			// Price date start
+			print '<tr><td>'.$langs->trans("DateStart").'</td><td>';
+			print $form->selectDate(($object->date_price?$object->date_price:''), 'date_price', 0, 0, 0, '', 1, 0);
+			print '</td></tr>';
+
+			// Price date end
+			print '<tr><td>'.$langs->trans("DateEnd").'</td><td>';
+			print $form->selectDate(($object->date_end_price?$object->date_end_price:-1), 'date_end_price', 0, 0, 0, '', 1, 0);
+			print '</td></tr>';
+		}
 
 		// Update all child soc
 		print '<tr><td>';
