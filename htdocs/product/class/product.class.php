@@ -100,7 +100,21 @@ class Product extends CommonObject
      * @var int
      */
     public $type = self::TYPE_PRODUCT;
-
+	
+	/**
+     * Date start price
+     *
+     * @var date
+     */
+    public $date_price;
+	
+	/**
+     * Date end price
+     *
+     * @var date
+     */
+    public $date_end_price;
+	
     /**
      * Selling price
      *
@@ -1506,6 +1520,12 @@ class Product extends CommonObject
         global $conf;
 
         $now=dol_now();
+		
+		// Periodic price
+		if(isset($this->date_price))
+		{
+			$now = $this->date_price;
+		}
 
         // Clean parameters
         if (empty($this->price_by_qty)) {
@@ -1513,9 +1533,9 @@ class Product extends CommonObject
         }
 
         // Add new price
-        $sql = "INSERT INTO ".MAIN_DB_PREFIX."product_price(price_level,date_price, fk_product, fk_user_author, price, price_ttc, price_base_type,tosell, tva_tx, default_vat_code, recuperableonly,";
+        $sql = "INSERT INTO ".MAIN_DB_PREFIX."product_price(price_level, date_price, date_end_price, fk_product, fk_user_author, price, price_ttc, price_base_type,tosell, tva_tx, default_vat_code, recuperableonly,";
         $sql.= " localtax1_tx, localtax2_tx, localtax1_type, localtax2_type, price_min,price_min_ttc,price_by_qty,entity,fk_price_expression) ";
-        $sql.= " VALUES(".($level?$level:1).", '".$this->db->idate($now)."',".$this->id.",".$user->id.",".$this->price.",".$this->price_ttc.",'".$this->db->escape($this->price_base_type)."',".$this->status.",".$this->tva_tx.", ".($this->default_vat_code?("'".$this->db->escape($this->default_vat_code)."'"):"null").",".$this->tva_npr.",";
+        $sql.= " VALUES(".($level?$level:1).", '".$this->db->idate($now)."', " . ($this->date_end_price != '' ? "'".$this->db->idate($this->date_end_price)."'" : 'null')." ,".$this->id.",".$user->id.",".$this->price.",".$this->price_ttc.",'".$this->db->escape($this->price_base_type)."',".$this->status.",".$this->tva_tx.", ".($this->default_vat_code?("'".$this->db->escape($this->default_vat_code)."'"):"null").",".$this->tva_npr.",";
         $sql.= " ".$this->localtax1_tx.", ".$this->localtax2_tx.", '".$this->db->escape($this->localtax1_type)."', '".$this->db->escape($this->localtax2_type)."', ".$this->price_min.",".$this->price_min_ttc.",".$this->price_by_qty.",".$conf->entity.",".($this->fk_price_expression > 0?$this->fk_price_expression:'null');
         $sql.= ")";
 
@@ -1831,9 +1851,11 @@ class Product extends CommonObject
      * @param  int    $ignore_autogen    Used to avoid infinite loops
      * @param  array  $localtaxes_array  Array with localtaxes info array('0'=>type1,'1'=>rate1,'2'=>type2,'3'=>rate2) (loaded by getLocalTaxesFromRate(vatrate, 0, ...) function).
      * @param  string $newdefaultvatcode Default vat code
+     * @param  date   $date_price 		 Date begin price
+     * @param  date   $date_end_price	 Date end price
      * @return int                            <0 if KO, >0 if OK
      */
-    public function updatePrice($newprice, $newpricebase, $user, $newvat = '', $newminprice = 0, $level = 0, $newnpr = 0, $newpbq = 0, $ignore_autogen = 0, $localtaxes_array = array(), $newdefaultvatcode = '')
+    public function updatePrice($newprice, $newpricebase, $user, $newvat = '', $newminprice = 0, $level = 0, $newnpr = 0, $newpbq = 0, $ignore_autogen = 0, $localtaxes_array = array(), $newdefaultvatcode = '', $date_price=null, $date_end_price=null)
     {
         global $conf,$langs;
 
@@ -1969,6 +1991,10 @@ class Product extends CommonObject
 
                 // Price by quantity
                 $this->price_by_qty = $newpbq;
+				
+				// Price preiodic
+                $this->date_price = $date_price;
+                $this->date_end_price = $date_end_price;
 
                 $this->_log_price($user, $level);    // Save price for level into table product_price
 
@@ -3570,8 +3596,8 @@ class Product extends CommonObject
 
         // les prix
         $sql = "INSERT ".MAIN_DB_PREFIX."product_price (";
-        $sql.= " fk_product, date_price, price, tva_tx, localtax1_tx, localtax2_tx, fk_user_author, tosell)";
-        $sql.= " SELECT ".$toId . ", date_price, price, tva_tx, localtax1_tx, localtax2_tx, fk_user_author, tosell";
+        $sql.= " fk_product, date_price, date_end_price, price, tva_tx, localtax1_tx, localtax2_tx, fk_user_author, tosell)";
+        $sql.= " SELECT ".$toId . ", date_price, date_end_price, price, tva_tx, localtax1_tx, localtax2_tx, fk_user_author, tosell";
         $sql.= " FROM ".MAIN_DB_PREFIX."product_price ";
         $sql.= " WHERE fk_product = ". $fromId;
 
