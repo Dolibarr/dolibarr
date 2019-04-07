@@ -28,6 +28,7 @@ create table llx_product_price
   tms				timestamp,
   fk_product		integer NOT NULL,
   date_price		datetime NOT NULL,
+  date_end_price datetime DEFAULT NULL,
   price_level		smallint NULL DEFAULT 1,
   price				double(24,8) DEFAULT NULL,
   price_ttc			double(24,8) DEFAULT NULL,
