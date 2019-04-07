@@ -275,3 +275,5 @@ ALTER TABLE llx_product ADD COLUMN fk_project integer DEFAULT NULL;
 ALTER TABLE llx_product ADD INDEX idx_product_fk_project (fk_project);
 
 ALTER TABLE llx_actioncomm ADD COLUMN calling_duration integer;
+
+ALTER TABLE llx_product_price ADD COLUMN date_end_price datetime DEFAULT NULL AFTER date_price;
