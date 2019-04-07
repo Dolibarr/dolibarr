@@ -4,13 +4,15 @@ English Dolibarr ChangeLog
 
 ***** ChangeLog for 10.0.0 compared to 9.0.0 *****
 For Users:
-NEW: Module Ticket is available as a stable module.
+NEW: Module "Ticket" is available as a stable module.
+NEW: module "Email Collector" is available as a stable module.
+NEW: module "TakePOS" is available as a stable module.
 NEW: Experimental module "Vendor receptions".
 NEW: Experimental module "BOM".
-FIX: Disallow line start date to be after end date
+FIX: Disallow line start date if after end date.
 
 For Developers:
-NEW: Module DebugBar is available as a stable module.
+NEW: Module "DebugBar" is available as a stable module.
 
 
 WARNING:
