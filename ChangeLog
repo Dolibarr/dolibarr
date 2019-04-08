@@ -34,7 +34,7 @@ Following changes may create regressions for some external modules, but were nec
 * Method dolEscapeXML was moved from functions.lib.php into function2.lib.php (not used enough to be loaded by default).
 * Removed deprecated use of string in dol_print_date(). Only date allowed.
 * Deprecated property ->fk_departement is now ->state_id everywhere.
-
+* Removed the method 4 of GETPOST (to get $_COOKIE). It was not used and not recommanded to use in Dolibarr.
 
 
 ***** ChangeLog for 9.0.2 compared to 9.0.1 *****

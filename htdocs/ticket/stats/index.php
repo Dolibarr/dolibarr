@@ -251,7 +251,7 @@ $liststatus=array(
         Ticket::STATUS_CLOSED=>$langs->trans("StatusClosed"),
         Ticket::STATUS_WAITING=>$langs->trans("StatusWaiting")
     );
-print $form->selectarray('object_status', $liststatus, GETPOST('object_status'), -4);
+print $form->selectarray('object_status', $liststatus, GETPOST('object_status', 'int'), -4);
 print '</td></tr>';
 // Year
 print '<tr><td class="left">'.$langs->trans("Year").'</td><td class="left">';
