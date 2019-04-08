@@ -137,11 +137,9 @@ class pdf_espadon extends ModelePdfExpedition
 
 		// Get source company
 		$this->emetteur=$mysoc;
-		if (! $this->emetteur->country_code) $this->emetteur->country_code=substr($langs->defaultlang,-2);    // By default if not defined
-
+		if (! $this->emetteur->country_code) $this->emetteur->country_code=substr($langs->defaultlang, -2);    // By default if not defined
 
 		$this->tabTitleHeight = 5; // default height
-
 	}
 
 	/**
@@ -155,7 +153,7 @@ class pdf_espadon extends ModelePdfExpedition
      *  @param		int			$hideref			Do not show ref
      *  @return     int         	    			1=OK, 0=KO
 	 */
-	function write_file($object,$outputlangs,$srctemplatepath='',$hidedetails=0,$hidedesc=0,$hideref=0)
+	function write_file($object, $outputlangs, $srctemplatepath = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
 		// phpcs:enable
 		global $user,$conf,$langs,$hookmanager;
@@ -190,25 +188,25 @@ class pdf_espadon extends ModelePdfExpedition
 				$realpath='';
 
                 foreach ($objphoto->liste_photos($dir, 1) as $key => $obj)
+                {
+                    if (empty($conf->global->CAT_HIGH_QUALITY_IMAGES))		// If CAT_HIGH_QUALITY_IMAGES not defined, we use thumb if defined and then original photo
+                    {
+                        if ($obj['photo_vignette'])
                         {
-                            if (empty($conf->global->CAT_HIGH_QUALITY_IMAGES))		// If CAT_HIGH_QUALITY_IMAGES not defined, we use thumb if defined and then original photo
-                            {
-                                if ($obj['photo_vignette'])
-                                {
-                                    $filename=$obj['photo_vignette'];
-                                }
-                                else
-                                {
-                                    $filename=$obj['photo'];
-                                }
-                            }
-                            else
-                            {
-                                $filename=$obj['photo'];
-                            }
+                            $filename=$obj['photo_vignette'];
+                        }
+                        else
+                        {
+                            $filename=$obj['photo'];
+                        }
+                    }
+                    else
+                    {
+                        $filename=$obj['photo'];
+                    }
 
-                            $realpath = $dir.$filename;
-                            break;
+                    $realpath = $dir.$filename;
+                    break;
                 }
 
                 if ($realpath) $realpatharray[$i]=$realpath;
@@ -263,7 +261,7 @@ class pdf_espadon extends ModelePdfExpedition
 		        $heightforfreetext= (isset($conf->global->MAIN_PDF_FREETEXT_HEIGHT)?$conf->global->MAIN_PDF_FREETEXT_HEIGHT:5);	// Height reserved to output the free text on last page
 	            $heightforfooter = $this->marge_basse + 8;	// Height reserved to output the footer (value include bottom margin)
 	            if ($conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS >0) $heightforfooter+= 6;
-                $pdf->SetAutoPageBreak(1,0);
+                $pdf->SetAutoPageBreak(1, 0);
 
                 if (class_exists('TCPDF'))
                 {
@@ -282,7 +280,7 @@ class pdf_espadon extends ModelePdfExpedition
 				$pagenb=0;
 				$pdf->SetDrawColor(128, 128, 128);
 
-				if (method_exists($pdf,'AliasNbPages')) $pdf->AliasNbPages();
+				if (method_exists($pdf, 'AliasNbPages')) $pdf->AliasNbPages();
 
 				$pdf->SetTitle($outputlangs->convToOutputCharset($object->ref));
 				$pdf->SetSubject($outputlangs->transnoentities("Shipment"));
@@ -428,7 +426,7 @@ class pdf_espadon extends ModelePdfExpedition
 					    // We start with Photo of product line
 					    if (isset($imglinesize['width']) && isset($imglinesize['height']) && ($curY + $imglinesize['height']) > ($this->page_hauteur-($heightforfooter+$heightforfreetext+$heightforsignature+$heightforinfotot)))	// If photo too high, we moved completely on new page
 					    {
-					        $pdf->AddPage('','',true);
+					        $pdf->AddPage('', '', true);
 					        if (! empty($tplidx)) $pdf->useTemplate($tplidx);
 					        //if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
 					        $pdf->setPage($pageposbefore+1);
@@ -467,7 +465,7 @@ class pdf_espadon extends ModelePdfExpedition
 					        {
 					            if ($i == ($nblignes-1))	// No more lines, and no space left to show total, so we create a new page
 					            {
-					                $pdf->AddPage('','',true);
+					                $pdf->AddPage('', '', true);
 					                if (! empty($tplidx)) $pdf->useTemplate($tplidx);
 					                //if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
 					                $pdf->setPage($pageposafter+1);
@@ -510,37 +508,37 @@ class pdf_espadon extends ModelePdfExpedition
 					$weighttxt='';
 					if ($object->lines[$i]->fk_product_type == 0 && $object->lines[$i]->weight)
 					{
-					    $weighttxt=round($object->lines[$i]->weight * $object->lines[$i]->qty_shipped, 5).' '.measuring_units_string($object->lines[$i]->weight_units,"weight");
+					    $weighttxt=round($object->lines[$i]->weight * $object->lines[$i]->qty_shipped, 5).' '.measuring_units_string($object->lines[$i]->weight_units, "weight");
 					}
 					$voltxt='';
 					if ($object->lines[$i]->fk_product_type == 0 && $object->lines[$i]->volume)
 					{
-					    $voltxt=round($object->lines[$i]->volume * $object->lines[$i]->qty_shipped, 5).' '.measuring_units_string($object->lines[$i]->volume_units?$object->lines[$i]->volume_units:0,"volume");
+					    $voltxt=round($object->lines[$i]->volume * $object->lines[$i]->qty_shipped, 5).' '.measuring_units_string($object->lines[$i]->volume_units?$object->lines[$i]->volume_units:0, "volume");
 					}
 
 
 					if ($this->getColumnStatus('weight'))
 					{
 					    $this->printStdColumnContent($pdf, $curY, 'weight', $weighttxt.(($weighttxt && $voltxt)?'<br>':'').$voltxt, array('html'=>1));
-					    $nexY = max($pdf->GetY(),$nexY);
+					    $nexY = max($pdf->GetY(), $nexY);
 					}
 
 					if ($this->getColumnStatus('qty_asked'))
 					{
 					    $this->printStdColumnContent($pdf, $curY, 'qty_asked', $object->lines[$i]->qty_asked);
-					    $nexY = max($pdf->GetY(),$nexY);
+					    $nexY = max($pdf->GetY(), $nexY);
 					}
 
 					if ($this->getColumnStatus('qty_shipped'))
 					{
 					    $this->printStdColumnContent($pdf, $curY, 'qty_shipped', $object->lines[$i]->qty_shipped);
-					    $nexY = max($pdf->GetY(),$nexY);
+					    $nexY = max($pdf->GetY(), $nexY);
 					}
 
 					if ($this->getColumnStatus('subprice'))
 					{
 					    $this->printStdColumnContent($pdf, $curY, 'subprice', price($object->lines[$i]->subprice, 0, $outputlangs));
-					    $nexY = max($pdf->GetY(),$nexY);
+					    $nexY = max($pdf->GetY(), $nexY);
 					}
 
 
@@ -616,7 +614,7 @@ class pdf_espadon extends ModelePdfExpedition
 
 				$pdf->Close();
 
-				$pdf->Output($file,'F');
+				$pdf->Output($file, 'F');
 
 				// Add pdfgeneration hook
 				$hookmanager->initHooks(array('pdfgeneration'));
@@ -638,13 +636,13 @@ class pdf_espadon extends ModelePdfExpedition
 			}
 			else
 			{
-				$this->error=$langs->transnoentities("ErrorCanNotCreateDir",$dir);
+				$this->error=$langs->transnoentities("ErrorCanNotCreateDir", $dir);
 				return 0;
 			}
 		}
 		else
 		{
-			$this->error=$langs->transnoentities("ErrorConstantNotDefined","EXP_OUTPUTDIR");
+			$this->error=$langs->transnoentities("ErrorConstantNotDefined", "EXP_OUTPUTDIR");
 			return 0;
 		}
 	}
@@ -660,7 +658,7 @@ class pdf_espadon extends ModelePdfExpedition
 	 *	@param	Translate	$outputlangs	Objet langs
 	 *	@return int							Position pour suite
 	 */
-	function _tableau_tot(&$pdf, $object, $deja_regle, $posy, $outputlangs)
+	public function _tableau_tot(&$pdf, $object, $deja_regle, $posy, $outputlangs)
 	{
 		// phpcs:enable
 		global $conf,$mysoc;
@@ -728,7 +726,6 @@ class pdf_espadon extends ModelePdfExpedition
 		        $y = $tab2_top + ($tab2_hl * $index);
 		        $this->printStdColumnContent($pdf, $y, 'weight', $totalVolumetoshow);
 		    }
-
 		}
 
 		if ($this->getColumnStatus('qty_asked') && $totalOrdered)
@@ -763,7 +760,7 @@ class pdf_espadon extends ModelePdfExpedition
 	 *   @param		int			$hidebottom		Hide bottom bar of array
 	 *   @return	void
 	 */
-	function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop=0, $hidebottom=0)
+	public function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop = 0, $hidebottom = 0)
 	{
 		global $conf;
 
@@ -775,7 +772,7 @@ class pdf_espadon extends ModelePdfExpedition
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
 		// Amount in (at tab_top - 1)
-		$pdf->SetTextColor(0,0,0);
+		$pdf->SetTextColor(0, 0, 0);
 		$pdf->SetFont('', '', $default_font_size - 2);
 
 		if (empty($hidetop))
@@ -784,7 +781,7 @@ class pdf_espadon extends ModelePdfExpedition
 			if (! empty($conf->global->MAIN_PDF_TITLE_BACKGROUND_COLOR)) $pdf->Rect($this->marge_gauche, $tab_top, $this->page_largeur-$this->marge_droite-$this->marge_gauche, 5, 'F', null, explode(',',$conf->global->MAIN_PDF_TITLE_BACKGROUND_COLOR));
 		}
 
-		$pdf->SetDrawColor(128,128,128);
+		$pdf->SetDrawColor(128, 128, 128);
 		$pdf->SetFont('', '', $default_font_size - 1);
 
 		// Output Rect
@@ -848,7 +845,7 @@ class pdf_espadon extends ModelePdfExpedition
 			else
 			{
 				$pdf->SetTextColor(200, 0, 0);
-				$pdf->SetFont('','B', $default_font_size - 2);
+				$pdf->SetFont('', 'B', $default_font_size - 2);
 				$pdf->MultiCell($w, 3, $outputlangs->transnoentities("ErrorLogoFileNotFound",$logo), 0, 'L');
 				$pdf->MultiCell($w, 3, $outputlangs->transnoentities("ErrorGoToGlobalSetup"), 0, 'L');
 			}
@@ -943,10 +940,10 @@ class pdf_espadon extends ModelePdfExpedition
 				$text=$linkedobject->ref;
 				if ($linkedobject->ref_client) $text.=' ('.$linkedobject->ref_client.')';
 				$Yoff = $Yoff+8;
-				$pdf->SetXY($this->page_largeur - $this->marge_droite - $w,$Yoff);
+				$pdf->SetXY($this->page_largeur - $this->marge_droite - $w, $Yoff);
 				$pdf->MultiCell($w, 2, $outputlangs->transnoentities("RefOrder") ." : ".$outputlangs->transnoentities($text), 0, 'R');
 				$Yoff = $Yoff+3;
-				$pdf->SetXY($this->page_largeur - $this->marge_droite - $w,$Yoff);
+				$pdf->SetXY($this->page_largeur - $this->marge_droite - $w, $Yoff);
 				$pdf->MultiCell($w, 2, $outputlangs->transnoentities("OrderDate")." : ".dol_print_date($linkedobject->date, "day", false, $outputlangs, true), 0, 'R');
 			}
 		}
@@ -957,7 +954,7 @@ class pdf_espadon extends ModelePdfExpedition
 			$carac_emetteur='';
 		 	// Add internal contact of origin element if defined
 			$arrayidcontact=array();
-			if (! empty($origin) && is_object($object->$origin)) $arrayidcontact=$object->$origin->getIdContact('internal','SALESREPFOLL');
+			if (! empty($origin) && is_object($object->$origin)) $arrayidcontact=$object->$origin->getIdContact('internal', 'SALESREPFOLL');
 		 	if (is_array($arrayidcontact) && count($arrayidcontact) > 0)
 		 	{
 		 		$object->fetch_user(reset($arrayidcontact));
@@ -1061,21 +1058,21 @@ class pdf_espadon extends ModelePdfExpedition
 	{
 		global $conf;
 		$showdetails=$conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;
-		return pdf_pagefoot($pdf,$outputlangs,'SHIPPING_FREE_TEXT',$this->emetteur,$this->marge_basse,$this->marge_gauche,$this->page_hauteur,$object,$showdetails,$hidefreetext);
+		return pdf_pagefoot($pdf, $outputlangs, 'SHIPPING_FREE_TEXT', $this->emetteur, $this->marge_basse, $this->marge_gauche, $this->page_hauteur, $object, $showdetails, $hidefreetext);
 	}
 
 	/**
 	 *   	Define Array Column Field
 	 *
-	 *   	@param	object			$object    		common object
-	 *   	@param	Translate		$outputlangs    langs
+	 *   	@param	object		   $object    	    common object
+	 *   	@param	Translate	   $outputlangs     langs
 	 *      @param	int			   $hidedetails		Do not show line details
 	 *      @param	int			   $hidedesc		Do not show desc
 	 *      @param	int			   $hideref			Do not show ref
 	 *      @return	null
 	 */
-	function defineColumnField($object,$outputlangs,$hidedetails=0,$hidedesc=0,$hideref=0){
-
+	public function defineColumnField($object, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
+	{
 	    global $conf, $hookmanager;
 
 	    // Default field style for content

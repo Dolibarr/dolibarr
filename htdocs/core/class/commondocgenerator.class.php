@@ -1080,7 +1080,7 @@ abstract class CommonDocGenerator
      * @param int       $hidetop        Hide top
      * @return float                    Height of col tab titles
      */
-    function pdfTabTitles(&$pdf, $tab_top, $tab_height, $outputlangs, $hidetop = 0)
+    public function pdfTabTitles(&$pdf, $tab_top, $tab_height, $outputlangs, $hidetop = 0)
     {
         global $hookmanager;
 
