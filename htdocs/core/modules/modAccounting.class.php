@@ -22,8 +22,8 @@
 
 /**
  * \file		htdocs/core/modules/modAccounting.class.php
- * \ingroup		Accounting
- * \brief		Module to activate accounting module
+ * \ingroup		Double entry accounting
+ * \brief		Module to activate the double entry accounting module
  */
 include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 
@@ -48,7 +48,7 @@ class modAccounting extends DolibarrModules
 		$this->module_position = '61';
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i', '', get_class($this));
-		$this->description = "Accounting management";
+		$this->description = "Double entry accounting management";
 
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or 'dolibarr_deprecated' or version
 		$this->version = 'dolibarr';
