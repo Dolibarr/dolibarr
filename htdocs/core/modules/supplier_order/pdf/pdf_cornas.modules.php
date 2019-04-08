@@ -639,7 +639,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 
 
 					$parameters=array(
-					    'object' => $object,21
+					    'object' => $object,
 					    'i' => $i,
 					    'pdf' =>& $pdf,
 					    'curY' =>& $curY,
