@@ -607,7 +607,7 @@ class Expedition extends CommonObject
 				$this->getUrlTrackingStatus($obj->tracking_number);
 
 				/*
-				 * Thirparty
+				 * Thirdparty
 				 */
 				$result=$this->fetch_thirdparty();
 

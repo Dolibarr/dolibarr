@@ -2115,6 +2115,10 @@ function getElementProperties($element_type)
         $subelement='facturefournisseur';
         $classfile='fournisseur.facture';
     }
+    if ($element_type == "service") {
+        $classpath = 'product/class';
+        $subelement='product';
+    }
 
     if (!isset($classfile)) $classfile = strtolower($subelement);
     if (!isset($classname)) $classname = ucfirst($subelement);
