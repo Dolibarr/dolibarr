@@ -1071,14 +1071,14 @@ abstract class CommonDocGenerator
     }
 
     /**
-     *  print standard column content
+     * Print standard column content
      *
-     * @param PDF	$pdf   pdf object
-     * @param float $tab_top tab top position
-     * @param float $tab_height default tab height
-     * @param $outputlangs
-     * @param int $hidetop
-     * @return float height of col tab titles
+     * @param PDF	    $pdf            Pdf object
+     * @param float     $tab_top        Tab top position
+     * @param float     $tab_height     Default tab height
+     * @param Translate $outputlangs    Output language
+     * @param int       $hidetop        Hide top
+     * @return float                    Height of col tab titles
      */
     function pdfTabTitles(&$pdf, $tab_top, $tab_height, $outputlangs, $hidetop = 0)
     {

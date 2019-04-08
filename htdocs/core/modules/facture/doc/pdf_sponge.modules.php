@@ -180,7 +180,7 @@ class pdf_sponge extends ModelePDFFactures
 		// Define position of columns
 		$this->posxdesc=$this->marge_gauche+1; // used for notes ans other stuff
 
-		
+
 		$this->tabTitleHeight = 5; // default height
 
 		//  Use new system for position of columns, view  $this->defineColumnField()
@@ -224,7 +224,7 @@ class pdf_sponge extends ModelePDFFactures
 	    if(!empty($conf->global->MAIN_PDF_DISABLE_COL_HEAD_TITLE)){
 	        $hidetop=$conf->global->MAIN_PDF_DISABLE_COL_HEAD_TITLE;
 	    }
-	    
+
 	    // Loop on each lines to detect if there is at least one image to show
 	    $realpatharray=array();
 	    $this->atleastonephoto = false;
@@ -564,11 +564,11 @@ class pdf_sponge extends ModelePDFFactures
 			$pdf->startTransaction();
 			$this->pdfTabTitles($pdf, $tab_top, $tab_height, $outputlangs, $hidetop);
 			$pdf->rollbackTransaction(true);
-			
+
 			$iniY = $tab_top + $this->tabTitleHeight + 2;
 			$curY = $tab_top + $this->tabTitleHeight + 2;
 			$nexY = $tab_top + $this->tabTitleHeight + 2;
-				
+
 	            // Loop on each lines
 	            $pageposbeforeprintlines=$pdf->getPage();
 	            $pagenb = $pageposbeforeprintlines;
@@ -1555,12 +1555,10 @@ class pdf_sponge extends ModelePDFFactures
 
 
 		$this->pdfTabTitles($pdf, $tab_top, $tab_height, $outputlangs, $hidetop);
-		
+
 		if (empty($hidetop)){
 		    $pdf->line($this->marge_gauche, $tab_top+$this->tabTitleHeight, $this->page_largeur-$this->marge_droite, $tab_top+$this->tabTitleHeight);	// line prend une position y en 2eme param et 4eme param
 		}
-
-		
 	}
 
 	/**

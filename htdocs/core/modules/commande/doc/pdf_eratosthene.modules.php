@@ -83,32 +83,32 @@ class pdf_eratosthene extends ModelePDFCommandes
      * @var int page_largeur
      */
     public $page_largeur;
-	
+
 	/**
      * @var int page_hauteur
      */
     public $page_hauteur;
-	
+
 	/**
      * @var array format
      */
     public $format;
-	
+
 	/**
      * @var int marge_gauche
      */
 	public $marge_gauche;
-	
+
 	/**
      * @var int marge_droite
      */
 	public $marge_droite;
-	
+
 	/**
      * @var int marge_haute
      */
 	public $marge_haute;
-	
+
 	/**
      * @var int marge_basse
      */
@@ -209,38 +209,38 @@ class pdf_eratosthene extends ModelePDFCommandes
 		if(!empty($conf->global->MAIN_PDF_DISABLE_COL_HEAD_TITLE)){
 		    $hidetop=$conf->global->MAIN_PDF_DISABLE_COL_HEAD_TITLE;
 		}
-		
+
 		// Loop on each lines to detect if there is at least one image to show
 		$realpatharray=array();
 		$this->atleastonephoto = false;
 		if (! empty($conf->global->MAIN_GENERATE_ORDERS_WITH_PICTURE))
 		{
 		    $objphoto = new Product($this->db);
-		    
+
 		    for ($i = 0 ; $i < $nblignes ; $i++)
 		    {
 		        if (empty($object->lines[$i]->fk_product)) continue;
-		        
+
 		        $objphoto->fetch($object->lines[$i]->fk_product);
 		        //var_dump($objphoto->ref);exit;
 		        if (! empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO))
 		        {
-		            $pdir[0] = get_exdir($objphoto->id,2,0,0,$objphoto,'product') . $objphoto->id ."/photos/";
-		            $pdir[1] = get_exdir(0,0,0,0,$objphoto,'product') . dol_sanitizeFileName($objphoto->ref).'/';
+		            $pdir[0] = get_exdir($objphoto->id, 2, 0, 0, $objphoto, 'product') . $objphoto->id ."/photos/";
+		            $pdir[1] = get_exdir(0, 0, 0, 0, $objphoto, 'product') . dol_sanitizeFileName($objphoto->ref).'/';
 		        }
 		        else
 		        {
-		            $pdir[0] = get_exdir(0,0,0,0,$objphoto,'product') . dol_sanitizeFileName($objphoto->ref).'/';				// default
-		            $pdir[1] = get_exdir($objphoto->id,2,0,0,$objphoto,'product') . $objphoto->id ."/photos/";	// alternative
+		            $pdir[0] = get_exdir(0, 0, 0, 0, $objphoto, 'product') . dol_sanitizeFileName($objphoto->ref).'/';				// default
+		            $pdir[1] = get_exdir($objphoto->id, 2, 0, 0, $objphoto, 'product') . $objphoto->id ."/photos/";	// alternative
 		        }
-		        
+
 		        $arephoto = false;
 		        foreach ($pdir as $midir)
 		        {
 		            if (! $arephoto)
 		            {
 		                $dir = $conf->product->dir_output.'/'.$midir;
-		                
+
 		                foreach ($objphoto->liste_photos($dir,1) as $key => $obj)
 		                {
 		                    if (empty($conf->global->CAT_HIGH_QUALITY_IMAGES))		// If CAT_HIGH_QUALITY_IMAGES not defined, we use thumb if defined and then original photo
@@ -258,19 +258,19 @@ class pdf_eratosthene extends ModelePDFCommandes
 		                    {
 		                        $filename=$obj['photo'];
 		                    }
-		                    
+
 		                    $realpath = $dir.$filename;
 		                    $arephoto = true;
 		                    $this->atleastonephoto = true;
 		                }
 		            }
 		        }
-		        
+
 		        if ($realpath && $arephoto) $realpatharray[$i]=$realpath;
 		    }
 		}
-		
-		
+
+
 
 		if ($conf->commande->dir_output)
 		{
@@ -541,11 +541,11 @@ class pdf_eratosthene extends ModelePDFCommandes
 				$pdf->startTransaction();
 				$this->pdfTabTitles($pdf, $tab_top, $tab_height, $outputlangs, $hidetop);
 				$pdf->rollbackTransaction(true);
-				
+
 				$iniY = $tab_top + $this->tabTitleHeight + 2;
 				$curY = $tab_top + $this->tabTitleHeight + 2;
 				$nexY = $tab_top + $this->tabTitleHeight + 2;
-				
+
 				// Loop on each lines
 				$pageposbeforeprintlines=$pdf->getPage();
 				$pagenb = $pageposbeforeprintlines;
@@ -554,7 +554,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 					$curY = $nexY;
 					$pdf->SetFont('', '', $default_font_size - 1);   // Into loop to work with multipage
 					$pdf->SetTextColor(0, 0, 0);
-					
+
 					// Define size of image if we need it
 					$imglinesize=array();
 					if (! empty($realpatharray[$i])) $imglinesize=pdf_getSizeForImage($realpatharray[$i]);
@@ -569,20 +569,20 @@ class pdf_eratosthene extends ModelePDFCommandes
 					$showpricebeforepagebreak=1;
 					$posYAfterImage=0;
 					$posYAfterDescription=0;
-					
+
 					if($this->getColumnStatus('photo'))
 					{
 					    // We start with Photo of product line
 					    if (isset($imglinesize['width']) && isset($imglinesize['height']) && ($curY + $imglinesize['height']) > ($this->page_hauteur-($heightforfooter+$heightforfreetext+$heightforinfotot)))	// If photo too high, we moved completely on new page
 					    {
-					        $pdf->AddPage('','',true);
+					        $pdf->AddPage('', '', true);
 					        if (! empty($tplidx)) $pdf->useTemplate($tplidx);
 					        $pdf->setPage($pageposbefore+1);
-					        
+
 					        $curY = $tab_top_newpage;
 					        $showpricebeforepagebreak=0;
 					    }
-					    
+
 					    if (!empty($this->cols['photo']) && isset($imglinesize['width']) && isset($imglinesize['height']))
 					    {
 					        $pdf->Image($realpatharray[$i], $this->getColumnContentXStart('photo'), $curY, $imglinesize['width'], $imglinesize['height'], '', '', '', 2, 300);	// Use 300 dpi
@@ -628,11 +628,11 @@ class pdf_eratosthene extends ModelePDFCommandes
     					$posYAfterDescription=$pdf->GetY();
 					}
 
-					
-					
-					$nexY = max($pdf->GetY(),$posYAfterImage);
-					
-	
+
+
+					$nexY = max($pdf->GetY(), $posYAfterImage);
+
+
 					$pageposafter=$pdf->getPage();
 
 					$pdf->setPage($pageposbefore);
@@ -1088,7 +1088,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 		$total_ht = ($conf->multicurrency->enabled && $object->mylticurrency_tx != 1 ? $object->multicurrency_total_ht : $object->total_ht);
 		$pdf->SetXY($col2x, $tab2_top + 0);
 		$pdf->MultiCell($largcol2, $tab2_hl, price($total_ht + (! empty($object->remise)?$object->remise:0), 0, $outputlangs), 0, 'R', 1);
-		
+
 		// Show VAT by rates and total
 		$pdf->SetFillColor(248, 248, 248);
 
@@ -1354,12 +1354,10 @@ class pdf_eratosthene extends ModelePDFCommandes
 
 
 		$this->pdfTabTitles($pdf, $tab_top, $tab_height, $outputlangs, $hidetop);
-		
+
 		if (empty($hidetop)){
 		    $pdf->line($this->marge_gauche, $tab_top+$this->tabTitleHeight, $this->page_largeur-$this->marge_droite, $tab_top+$this->tabTitleHeight);	// line prend une position y en 2eme param et 4eme param
 		}
-
-		
 	}
 
 	/**

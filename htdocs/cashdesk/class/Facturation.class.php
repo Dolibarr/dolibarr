@@ -145,7 +145,7 @@ class Facturation
 
         $i = 0;
         if (!is_null($newcartarray) && !empty($newcartarray)) {
-            $i=count($newcartarray);	
+            $i=count($newcartarray);
         }
 
         $newcartarray[$i]['id']=$i;
