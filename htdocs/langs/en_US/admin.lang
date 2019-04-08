@@ -1880,3 +1880,4 @@ InstanceUniqueID=Unique ID of the instance
 SmallerThan=Smaller than
 LargerThan=Larger than
 IfTrackingIDFoundEventWillBeLinked=Note that If a tracking ID is found into incoming email, the event will be automatically linked to the related objects.
+WithGMailYouCanCreateADedicatedPassword=With a GMail account, if you enabled the 2 steps validation, it is recommanded to create a dedicated second password for the application instead of using your own account passsword from https://myaccount.google.com/.
