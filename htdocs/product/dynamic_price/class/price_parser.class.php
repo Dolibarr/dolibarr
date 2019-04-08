@@ -300,7 +300,7 @@ class PriceParser
         }
 
         //Get the product data (use ignore_expression to avoid possible recursion)
-        $product_supplier->fetch($product_supplier->id, '', '', 1);
+        $product_supplier->fetch($product_supplier->id, '', '', '', 1);
 
         //Accessible values by expressions
         $extra_values = array_merge($extra_values, array(
