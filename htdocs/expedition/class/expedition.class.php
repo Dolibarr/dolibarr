@@ -2417,7 +2417,7 @@ class ExpeditionLigne extends CommonObjectLine
 
     /**
      * @deprecated
-     * @see product_ref
+     * @see $product_ref
      */
     public $ref;
 
