@@ -101,7 +101,7 @@ if ($action == 'add_element_resource' && ! $cancel)
 		header("Location: ".$_SERVER['PHP_SELF'].'?element='.$element.'&element_id='.$objstat->id);
 		exit;
 	}
-    else if ($objstat)
+    elseif ($objstat)
     {
         setEventMessages($objstat->error, $objstat->errors, 'errors');
     }
@@ -421,7 +421,7 @@ else
 			dol_fiche_end();
 		}
 	}
-	
+
 	// Specific to product/service module
 	if (($element_id || $element_ref) && ($element == 'product' || $element == 'service'))
 	{
@@ -432,7 +432,7 @@ else
 
 		if (is_object($product))
 		{
-			
+
 			$head = product_prepare_head($product);
 			$titre=$langs->trans("CardProduct".$product->type);
 			$picto=($product->type==Product::TYPE_SERVICE?'service':'product');

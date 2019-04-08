@@ -142,6 +142,7 @@ class pdf_espadon extends ModelePdfExpedition
 		$this->tabTitleHeight = 5; // default height
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Function to build pdf onto disk
 	 *
@@ -153,7 +154,7 @@ class pdf_espadon extends ModelePdfExpedition
      *  @param		int			$hideref			Do not show ref
      *  @return     int         	    			1=OK, 0=KO
 	 */
-	function write_file($object, $outputlangs, $srctemplatepath = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0)
+	public function write_file($object, $outputlangs, $srctemplatepath = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
 		// phpcs:enable
 		global $user,$conf,$langs,$hookmanager;
@@ -568,7 +569,7 @@ class pdf_espadon extends ModelePdfExpedition
 						{
 							$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforfooter, 0, $outputlangs, 1, 1);
 						}
-						$this->_pagefoot($pdf, $object,$outputlangs, 1);
+						$this->_pagefoot($pdf, $object, $outputlangs, 1);
 						$pagenb++;
 						$pdf->setPage($pagenb);
 						$pdf->setPageOrientation('', 1, 0);	// The only function to edit the bottom margin of current page to set it.
@@ -658,7 +659,7 @@ class pdf_espadon extends ModelePdfExpedition
 	 *	@param	Translate	$outputlangs	Objet langs
 	 *	@return int							Position pour suite
 	 */
-	public function _tableau_tot(&$pdf, $object, $deja_regle, $posy, $outputlangs)
+	private function _tableau_tot(&$pdf, $object, $deja_regle, $posy, $outputlangs)
 	{
 		// phpcs:enable
 		global $conf,$mysoc;
@@ -760,7 +761,7 @@ class pdf_espadon extends ModelePdfExpedition
 	 *   @param		int			$hidebottom		Hide bottom bar of array
 	 *   @return	void
 	 */
-	public function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop = 0, $hidebottom = 0)
+	private function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop = 0, $hidebottom = 0)
 	{
 		global $conf;
 
@@ -778,7 +779,7 @@ class pdf_espadon extends ModelePdfExpedition
 		if (empty($hidetop))
 		{
 			//$conf->global->MAIN_PDF_TITLE_BACKGROUND_COLOR='230,230,230';
-			if (! empty($conf->global->MAIN_PDF_TITLE_BACKGROUND_COLOR)) $pdf->Rect($this->marge_gauche, $tab_top, $this->page_largeur-$this->marge_droite-$this->marge_gauche, 5, 'F', null, explode(',',$conf->global->MAIN_PDF_TITLE_BACKGROUND_COLOR));
+			if (! empty($conf->global->MAIN_PDF_TITLE_BACKGROUND_COLOR)) $pdf->Rect($this->marge_gauche, $tab_top, $this->page_largeur-$this->marge_droite-$this->marge_gauche, 5, 'F', null, explode(',', $conf->global->MAIN_PDF_TITLE_BACKGROUND_COLOR));
 		}
 
 		$pdf->SetDrawColor(128, 128, 128);
@@ -793,8 +794,6 @@ class pdf_espadon extends ModelePdfExpedition
 		if (empty($hidetop)){
 		    $pdf->line($this->marge_gauche, $tab_top+$this->tabTitleHeight, $this->page_largeur-$this->marge_droite, $tab_top+$this->tabTitleHeight);	// line prend une position y en 2eme param et 4eme param
 		}
-
-
 	}
 
 	/**
@@ -831,7 +830,7 @@ class pdf_espadon extends ModelePdfExpedition
 		$posy=$this->marge_haute;
 		$posx=$this->page_largeur-$this->marge_droite-$w;
 
-		$pdf->SetXY($this->marge_gauche,$posy);
+		$pdf->SetXY($this->marge_gauche, $posy);
 
 		// Logo
 		$logo=$conf->mycompany->dir_output.'/logos/'.$this->emetteur->logo;
@@ -846,7 +845,7 @@ class pdf_espadon extends ModelePdfExpedition
 			{
 				$pdf->SetTextColor(200, 0, 0);
 				$pdf->SetFont('', 'B', $default_font_size - 2);
-				$pdf->MultiCell($w, 3, $outputlangs->transnoentities("ErrorLogoFileNotFound",$logo), 0, 'L');
+				$pdf->MultiCell($w, 3, $outputlangs->transnoentities("ErrorLogoFileNotFound", $logo), 0, 'L');
 				$pdf->MultiCell($w, 3, $outputlangs->transnoentities("ErrorGoToGlobalSetup"), 0, 'L');
 			}
 		}
@@ -905,7 +904,7 @@ class pdf_espadon extends ModelePdfExpedition
     			$posy+=4;
     			$pdf->SetXY($posx, $posy);
     			$pdf->SetTextColor(0, 0, 60);
-    			$pdf->MultiCell($w, 4, $outputlangs->transnoentities("DateDeliveryPlanned")." : ".dol_print_date($object->date_delivery,"day",false,$outputlangs,true), '', 'R');
+    			$pdf->MultiCell($w, 4, $outputlangs->transnoentities("DateDeliveryPlanned")." : ".dol_print_date($object->date_delivery, "day", false, $outputlangs, true), '', 'R');
 		}
 
 		if (! empty($object->thirdparty->code_client))
@@ -984,7 +983,7 @@ class pdf_espadon extends ModelePdfExpedition
 
 			// Show sender name
 			$pdf->SetXY($posx+2, $posy+3);
-			$pdf->SetFont('', 'B',$default_font_size);
+			$pdf->SetFont('', 'B', $default_font_size);
 			$pdf->MultiCell($widthrecbox-2, 4, $outputlangs->convToOutputCharset($this->emetteur->name), 0, 'L');
 			$posy=$pdf->getY();
 
@@ -996,7 +995,7 @@ class pdf_espadon extends ModelePdfExpedition
 
 			// If SHIPPING contact defined, we use it
 			$usecontact=false;
-			$arrayidcontact=$object->$origin->getIdContact('external','SHIPPING');
+			$arrayidcontact=$object->$origin->getIdContact('external', 'SHIPPING');
 			if (count($arrayidcontact) > 0)
 			{
 				$usecontact=true;
@@ -1013,7 +1012,7 @@ class pdf_espadon extends ModelePdfExpedition
 
 			$carac_client_name= pdfBuildThirdpartyName($thirdparty, $outputlangs);
 
-			$carac_client=pdf_build_address($outputlangs,$this->emetteur, $object->thirdparty, (!empty($object->contact)?$object->contact:null), $usecontact, 'targetwithdetails', $object);
+			$carac_client=pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, (!empty($object->contact)?$object->contact:null), $usecontact, 'targetwithdetails', $object);
 
 			// Show recipient
 			$widthrecbox=!empty($conf->global->MAIN_PDF_USE_ISO_LOCATION) ? 92 : 100;
@@ -1042,7 +1041,7 @@ class pdf_espadon extends ModelePdfExpedition
 			$pdf->MultiCell($widthrecbox, 4, $carac_client, 0, 'L');
 		}
 
-		$pdf->SetTextColor(0,0,0);
+		$pdf->SetTextColor(0, 0, 0);
 	}
 
 	/**

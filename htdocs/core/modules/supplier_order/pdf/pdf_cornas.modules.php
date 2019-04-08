@@ -475,7 +475,6 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 
 				            $posyafter = $tab_top_newpage;
 				        }
-
 				    }
 
 				    $tab_height = $tab_height - $height_note;
@@ -856,8 +855,8 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 			$pdf->SetFont('', '', $default_font_size - 2);
 			$pdf->SetXY($posxval, $posy);
 			$lib_condition_paiement=$outputlangs->transnoentities("PaymentCondition".$object->cond_reglement_code)!=('PaymentCondition'.$object->cond_reglement_code)?$outputlangs->transnoentities("PaymentCondition".$object->cond_reglement_code):$outputlangs->convToOutputCharset($object->cond_reglement);
-			$lib_condition_paiement=str_replace('\n',"\n",$lib_condition_paiement);
-			$pdf->MultiCell(80, 4, $lib_condition_paiement,0,'L');
+			$lib_condition_paiement=str_replace('\n', "\n", $lib_condition_paiement);
+			$pdf->MultiCell(80, 4, $lib_condition_paiement, 0, 'L');
 
 	        $posy=$pdf->GetY()+3;
 	    }
@@ -987,11 +986,11 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 			//if (! empty($conf->global->FACTURE_LOCAL_TAX1_OPTION) && $conf->global->FACTURE_LOCAL_TAX1_OPTION=='localtax1on')
 			//{
     			//Local tax 1
-			foreach( $this->localtax1 as $localtax_type => $localtax_rate )
+			foreach ($this->localtax1 as $localtax_type => $localtax_rate)
 			{
 				if (in_array((string) $localtax_type, array('2','4','6'))) continue;
 
-				foreach( $localtax_rate as $tvakey => $tvaval )
+				foreach ($localtax_rate as $tvakey => $tvaval)
 				{
 					if ($tvakey != 0)    // On affiche pas taux 0
 					{
@@ -1001,7 +1000,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 						$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
 
 						$tvacompl='';
-						if (preg_match('/\*/',$tvakey))
+						if (preg_match('/\*/', $tvakey))
 						{
 							$tvakey=str_replace('*', '', $tvakey);
 							$tvacompl = " (".$outputlangs->transnoentities("NonPercuRecuperable").")";
@@ -1155,7 +1154,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 
 		    if (empty($hidetop))
 		    {
-		        $pdf->SetXY($colDef['xStartPos'] + $colDef['title']['padding'][3], $tab_top + $colDef['title']['padding'][0] );
+		        $pdf->SetXY($colDef['xStartPos'] + $colDef['title']['padding'][3], $tab_top + $colDef['title']['padding'][0]);
 
 		        $textWidth = $colDef['width'] - $colDef['title']['padding'][3] -$colDef['title']['padding'][1];
 		        $pdf->MultiCell($textWidth, 2, $colDef['title']['label'], '', $colDef['title']['align']);
@@ -1196,12 +1195,12 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 		//Print content
 
 		$pdf->SetTextColor(0, 0, 60);
-		$pdf->SetFont('', 'B',$default_font_size + 3);
+		$pdf->SetFont('', 'B', $default_font_size + 3);
 
 		$posx=$this->page_largeur-$this->marge_droite-100;
 		$posy=$this->marge_haute;
 
-		$pdf->SetXY($this->marge_gauche,$posy);
+		$pdf->SetXY($this->marge_gauche, $posy);
 
 		// Logo
 		$logo=$conf->mycompany->dir_output.'/logos/'.$this->emetteur->logo;
@@ -1216,7 +1215,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 			{
 				$pdf->SetTextColor(200, 0, 0);
 				$pdf->SetFont('', 'B', $default_font_size - 2);
-				$pdf->MultiCell(100, 3, $outputlangs->transnoentities("ErrorLogoFileNotFound",$logo), 0, 'L');
+				$pdf->MultiCell(100, 3, $outputlangs->transnoentities("ErrorLogoFileNotFound", $logo), 0, 'L');
 				$pdf->MultiCell(100, 3, $outputlangs->transnoentities("ErrorGoToModuleSetup"), 0, 'L');
 			}
 		}
@@ -1237,7 +1236,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 		{
 			$posy+=4;
 			$pdf->SetFont('', 'B', $default_font_size);
-			$pdf->SetXY($posx,$posy);
+			$pdf->SetXY($posx, $posy);
 			$pdf->SetTextColor(0, 0, 60);
 			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("RefSupplier")." : " . $outputlangs->convToOutputCharset($object->ref_supplier), '', 'R');
 			$posy+=1;
@@ -1263,7 +1262,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 			$posy+=5;
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetTextColor(0, 0, 60);
-			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("OrderDate")." : " . dol_print_date($object->date_commande,"day", false, $outputlangs, true), '', 'R');
+			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("OrderDate")." : " . dol_print_date($object->date_commande, "day", false, $outputlangs, true), '', 'R');
 		}
 		else
 		{
@@ -1294,7 +1293,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 		// Get contact
 		if (!empty($conf->global->DOC_SHOW_FIRST_SALES_REP))
 		{
-    		$arrayidcontact=$object->getIdContact('internal','SALESREPFOLL');
+    		$arrayidcontact=$object->getIdContact('internal', 'SALESREPFOLL');
     		if (count($arrayidcontact) > 0)
     		{
     		    $usertmp=new User($this->db);
@@ -1440,7 +1439,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 	 *      @param	int			   $hideref			Do not show ref
 	 *      @return	null
 	 */
-	function defineColumnField($object, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
+	public function defineColumnField($object, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
 	    global $conf, $hookmanager;
 
@@ -1651,7 +1650,6 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 	        return 0;
 	    }
 	    return ($a['rank'] > $b['rank']) ? -1 : 1;
-
 	}
 
 	/**
