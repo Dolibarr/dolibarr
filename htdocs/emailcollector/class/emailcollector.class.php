@@ -103,9 +103,10 @@ class EmailCollector extends CommonObject
         //'filter' => array('type'=>'text', 'label'=>'Filter', 'visible'=>1, 'enabled'=>1, 'position'=>105),
         //'actiontodo' => array('type'=>'varchar(255)', 'label'=>'ActionToDo', 'visible'=>1, 'enabled'=>1, 'position'=>106),
         'target_directory' => array('type'=>'varchar(255)', 'label'=>'MailboxTargetDirectory', 'visible'=>1, 'enabled'=>1, 'position'=>110, 'notnull'=>0, 'comment'=>"Where to store messages once processed"),
-        'datelastresult' => array('type'=>'datetime', 'label'=>'DateLastResult', 'visible'=>1, 'enabled'=>'$action != "create"', 'position'=>121, 'notnull'=>-1,),
+        'datelastresult' => array('type'=>'datetime', 'label'=>'DateLastCollectResult', 'visible'=>1, 'enabled'=>'$action != "create" && $action != "edit"', 'position'=>121, 'notnull'=>-1,),
         'codelastresult' => array('type'=>'varchar(16)', 'label'=>'CodeLastResult', 'visible'=>1, 'enabled'=>'$action != "create" && $action != "edit"', 'position'=>122, 'notnull'=>-1,),
         'lastresult' => array('type'=>'varchar(255)', 'label'=>'LastResult', 'visible'=>1, 'enabled'=>'$action != "create" && $action != "edit"', 'position'=>123, 'notnull'=>-1,),
+        'datelastok' => array('type'=>'datetime', 'label'=>'DateLastcollectResultOk', 'visible'=>1, 'enabled'=>'$action != "create"', 'position'=>125, 'notnull'=>-1,),
         'note_public' => array('type'=>'html', 'label'=>'NotePublic', 'visible'=>0, 'enabled'=>1, 'position'=>61, 'notnull'=>-1,),
         'note_private' => array('type'=>'html', 'label'=>'NotePrivate', 'visible'=>0, 'enabled'=>1, 'position'=>62, 'notnull'=>-1,),
         'date_creation' => array('type'=>'datetime', 'label'=>'DateCreation', 'visible'=>-2, 'enabled'=>1, 'position'=>500, 'notnull'=>1,),
@@ -757,7 +758,7 @@ class EmailCollector extends CommonObject
             }
             if ($tmpclass && ($tmpclass != $object->element)) continue;	// Property is for another type of object
 
-            if (property_exists($object, $tmpproperty))
+            if (property_exists($object, $tmpproperty) || preg_match('/^options_/', $tmpproperty))
             {
                 $sourcestring='';
                 $sourcefield='';
@@ -794,7 +795,8 @@ class EmailCollector extends CommonObject
                 }
                 elseif (preg_match('/^SET:(.*)$/', $valueforproperty, $reg))
                 {
-                    $object->$tmpproperty = $reg[1];
+                    if (preg_match('/^options_/', $tmpproperty)) $object->array_options[preg_replace('/^options_/', '', $tmpproperty)] = $reg[1];
+                    else $object->$tmpproperty = $reg[1];
                 }
                 else
                 {
@@ -868,6 +870,7 @@ class EmailCollector extends CommonObject
             $this->error = 'Failed to open IMAP connection '.$connectstringsource;
             return -3;
         }
+        imap_errors();  // Clear stack of errors.
 
         // $conf->global->MAIL_PREFIX_FOR_EMAIL_ID must be defined
         $host=dol_getprefix('email');
@@ -875,7 +878,7 @@ class EmailCollector extends CommonObject
         // Define the IMAP search string
         // See https://tools.ietf.org/html/rfc3501#section-6.4.4
         //$search='ALL';
-        $search='UNDELETED NOT DRAFT';
+        $search='UNDELETED';  // Seems not supported by some servers
         $searchhead='';
         $searchfilterdoltrackid=0;
         $searchfilternodoltrackid=0;
@@ -903,8 +906,9 @@ class EmailCollector extends CommonObject
         if (empty($targetdir))	// Use last date as filter if there is no targetdir defined.
         {
             $fromdate=0;
-            if ($this->datelastresult && $this->codelastresult == 'OK') $fromdate = $this->datelastresult;
-            if ($fromdate > 0) $search.=($search?' ':'').'SINCE '.dol_print_date($fromdate - 1, 'dayhourrfc');
+            if ($this->datelastok) $fromdate = $this->datelastok;
+            if ($fromdate > 0) $search.=($search?' ':'').'SINCE '.date('j-M-Y', $fromdate - 1); // SENTSINCE not supported. Date must be X-Abc-9999 (X on 1 digit if < 10)
+            //$search.=($search?' ':'').'SINCE 8-Apr-2018';
         }
         dol_syslog("IMAP search string = ".$search);
         //var_dump($search);
@@ -914,11 +918,21 @@ class EmailCollector extends CommonObject
         $nbactiondone=0;
 
         // Scan IMAP inbox
-        $arrayofemail= imap_search($connection, $search);
-        //var_dump($arrayofemail);exit;
+        $arrayofemail= imap_search($connection, $search, null, "UTF-8");
+        if ($arrayofemail === false)
+        {
+            // Nothing found or search string not understood
+            $mapoferrrors = imap_errors();
+            if ($mapoferrrors !== false)
+            {
+                $error++;
+                $this->error = "Search string not understood - ".join(',', $mapoferrrors);
+                $this->errors[] = $this->error;
+            }
+        }
 
         // Loop on each email found
-        if (! empty($arrayofemail) && count($arrayofemail) > 0)
+        if (! $error && ! empty($arrayofemail) && count($arrayofemail) > 0)
         {
             foreach($arrayofemail as $imapemail)
             {
@@ -1076,16 +1090,18 @@ class EmailCollector extends CommonObject
                  $partplain=1;
                  }*/
 
-                //var_dump($structure);
-                //var_dump($parthtml);var_dump($partplain);
+                /*var_dump($structure);
+                var_dump($parthtml);
+                var_dump($partplain);*/
 
-                $messagetext = imap_fetchbody($connection, $imapemail, ($parthtml != '-1' ? $parthtml : ($partplain != '-1' ? $partplain : 0)), FT_PEEK);
+                $messagetext = imap_fetchbody($connection, $imapemail, ($parthtml != '-1' ? $parthtml : ($partplain != '-1' ? $partplain : 1)), FT_PEEK);
 
-                //var_dump($overview);
-                //var_dump($header);
-                //var_dump($message);
+                //var_dump($messagetext);
                 //var_dump($structure->parts[0]->parts);
-                //var_dump($messagetext);exit;
+                //print $header;
+                //print $messagetext;
+                //exit;
+
                 $fromstring=$overview[0]->from;
                 $sender=$overview[0]->sender;
                 $to=$overview[0]->to;
@@ -1244,6 +1260,25 @@ class EmailCollector extends CommonObject
                     // Make Operation
                     dol_syslog("Execute action ".$operation['type']." actionparam=".$operation['actionparam'].' thirdpartystatic->id='.$thirdpartystatic->id.' contactstatic->id='.$contactstatic->id.' projectstatic->id='.$projectstatic->id);
 
+                    $description = $descriptionfull = '';
+                    if (in_array($operation['type'], array('recordevent', 'project', 'ticket')))
+                    {
+                        $description = $langs->trans("ProjectCreatedByEmailCollector", $msgid);
+                        $description = dol_concatdesc($description, "-----");
+                        $description = dol_concatdesc($description, $langs->trans("Topic").' : '.$subject);
+                        $description = dol_concatdesc($description, $langs->trans("From").' : '.$fromstring);
+                        if ($sender) $description = dol_concatdesc($description, $langs->trans("Sender").' : '.$sender);
+                        $description = dol_concatdesc($description, $langs->trans("To").' : '.$to);
+                        //if ($cc) $description = dol_concatdesc($description, $langs->trans("Cc").' : '.$cc);
+                        //if ($bcc) $description = dol_concatdesc($description, $langs->trans("Bcc").' : '.$bcc);
+                        $description = dol_concatdesc($description, "-----");
+                        $description = dol_concatdesc($description, $messagetext);
+
+                        $descriptionfull = $description;
+                        $descriptionfull = dol_concatdesc($descriptionfull, "----- Header");
+                        $descriptionfull = dol_concatdesc($descriptionfull, $header);
+                    }
+
                     // Search and create thirdparty
                     if ($operation['type'] == 'loadthirdparty' || $operation['type'] == 'loadandcreatethirdparty')
                     {
@@ -1354,6 +1389,10 @@ class EmailCollector extends CommonObject
                     elseif ($operation['type'] == 'recordevent')
                     {
                         $actioncode = 'EMAIL_IN';
+                        // If we scan the Sent box, we use the code for out email
+                        if ($this->source_directory == 'Sent') {
+                            $actioncode = 'EMAIL_OUT';
+                        }
 
                         if ($projectstatic->id > 0)
                         {
@@ -1373,8 +1412,8 @@ class EmailCollector extends CommonObject
 
                         $actioncomm->type_code   = 'AC_OTH_AUTO';		// Type of event ('AC_OTH', 'AC_OTH_AUTO', 'AC_XXX'...)
                         $actioncomm->code        = 'AC_'.$actioncode;
-                        $actioncomm->label       = $langs->trans("ActionAC_EMAIL_IN").' - '.$langs->trans("MailFrom").' '.$from;
-                        $actioncomm->note        = $messagetext;
+                        $actioncomm->label       = $langs->trans("ActionAC_".$actioncode).' - '.$langs->trans("MailFrom").' '.$from;
+                        $actioncomm->note        = $descriptionfull;
                         $actioncomm->fk_project  = $projectstatic->id;
                         $actioncomm->datep       = $date;
                         $actioncomm->datef       = $date;
@@ -1421,17 +1460,16 @@ class EmailCollector extends CommonObject
                     // Create event
                     elseif ($operation['type'] == 'project')
                     {
-                        $note_private = $langs->trans("ProjectCreatedByEmailCollector", $msgid);
                         $projecttocreate = new Project($this->db);
                         if ($thirdpartystatic->id > 0)
                         {
                             $projecttocreate->socid = $thirdpartystatic->id;
-                            if ($thirdpartyfoundby) $note_private .= ' - Third party found from '.$thirdpartyfoundby;
+                            if ($thirdpartyfoundby) $messagetext .= dol_concatdesc($messagetext, 'Third party found from '.$thirdpartyfoundby);
                         }
                         if ($contactstatic->id > 0)
                         {
                             $projecttocreate->contact_id = $contactstatic->id;
-                            if ($contactfoundby) $note_private .= ' - Contact/address found from '.$contactfoundby;
+                            if ($contactfoundby) $messagetext .= dol_concatdesc($messagetext, 'Contact/address found from '.$contactfoundby);
                         }
 
                         $id_opp_status = dol_getIdFromCode($this->db, 'PROSP', 'c_lead_status', 'code', 'rowid');
@@ -1442,8 +1480,8 @@ class EmailCollector extends CommonObject
                         $projecttocreate->date_end = '';
                         $projecttocreate->opp_status = $id_opp_status;
                         $projecttocreate->opp_percent = $percent_opp_status;
-                        $projecttocreate->description = dol_concatdesc(dol_concatdesc($note_private, dolGetFirstLineOfText(dol_string_nohtmltag($messagetext, 2), 3)), '...'.$langs->transnoentities("SeePrivateNote").'...');
-                        $projecttocreate->note_private = dol_concatdesc($note_private, dol_string_nohtmltag($messagetext, 2));
+                        $projecttocreate->description = dol_concatdesc(dolGetFirstLineOfText(dol_string_nohtmltag($description, 2), 8), '...'.$langs->transnoentities("SeePrivateNote").'...');
+                        $projecttocreate->note_private = dol_concatdesc($descriptionfull, dol_string_nohtmltag($descriptionfull, 2));
                         $projecttocreate->entity = $conf->entity;
 
                         // Get next project Ref
@@ -1654,6 +1692,7 @@ class EmailCollector extends CommonObject
         $this->debuginfo = 'IMAP search string used : '.$search;
         if ($searchhead) $this->debuginfo .= '<br>Then search string into email header : '.$searchhead;
 
+        if (! $error) $this->datelastok = $now;
 
         if (! empty($this->errors)) $this->lastresult.= " - ".join(" - ", $this->errors);
         $this->codelastresult = ($error ? 'KO' : 'OK');
