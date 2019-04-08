@@ -285,5 +285,6 @@ DELETE from llx_accounting_account where rowid in (select minid from tmp_llx_acc
 ALTER TABLE llx_accounting_account DROP INDEX uk_accounting_account;
 ALTER TABLE llx_accounting_account ADD UNIQUE INDEX uk_accounting_account (account_number, entity, fk_pcg_version);
 
+UPDATE llx_projet SET fk_opp_status = NULL WHERE fk_opp_status = -1;
 
 
