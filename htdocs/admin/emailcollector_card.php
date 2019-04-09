@@ -554,10 +554,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		}
 		print '</td>';
 		print '<td>'.$ruleaction['actionparam'].'</td>';
-		print '<td class="right">';
-		//print $ruleactionobj->getLibStatut(3);
-		print ' <a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=deleteoperation&operationid='.$ruleaction['id'].'">'.img_delete().'</a>';
-		print '</td>';
+		// Move up/down
 		print '<td class="center linecolmove tdlineupdown">';
 		if ($i > 0)
 		{
@@ -567,6 +564,10 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			print '<a class="lineupdown" href="'.$_SERVER['PHP_SELF'].'?action=down&amp;rowid='.$ruleaction['id'].'">'.img_down('default', 0, 'imgdownforline').'</a>';
 		}
 		print '</td>';
+		// Delete
+		print '<td class="right">';
+		print ' <a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=deleteoperation&operationid='.$ruleaction['id'].'">'.img_delete().'</a>';
+		print '</td>';
 		print '</tr>';
 		$i++;
 	}
@@ -575,6 +576,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '</table>';
 
 	if (! empty($conf->use_javascript_ajax)) {
+	    $urltorefreshaftermove = DOL_URL_ROOT.'/admin/emailcollector_card.php?id='.$id;
 		include DOL_DOCUMENT_ROOT . '/core/tpl/ajaxrow.tpl.php';
 	}
 

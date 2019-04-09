@@ -734,9 +734,10 @@ class EmailCollector extends CommonObject
      * @param	string	$actionparam	Action parameters
      * @param	string	$messagetext	Body
      * @param	string	$subject		Subject
+     * @param   string  $header         Header
      * @return	int						0=OK, Nb of error if error
      */
-    private function overwritePropertiesOfObject(&$object, $actionparam, $messagetext, $subject)
+    private function overwritePropertiesOfObject(&$object, $actionparam, $messagetext, $subject, $header)
     {
         $errorforthisaction = 0;
 
@@ -776,21 +777,35 @@ class EmailCollector extends CommonObject
                     $sourcefield=$regforregex[1];
                     $regexstring=$regforregex[2];
                 }
-
                 if (! empty($sourcefield) && ! empty($regexstring))
                 {
                     if (strtolower($sourcefield) == 'body') $sourcestring=$messagetext;
                     elseif (strtolower($sourcefield) == 'subject') $sourcestring=$subject;
+                    elseif (strtolower($sourcefield) == 'header') $sourcestring=$header;
 
-                    $regforval=array();
-                    if (preg_match('/'.preg_quote($regexstring, '/').'/', $sourcestring, $regforval))
+                    if ($sourcestring)
                     {
-                        // Overwrite param $tmpproperty
-                        $object->$tmpproperty = $regforval[1];
+                        $regforval=array();
+                        //var_dump($regexstring);var_dump($sourcestring);
+                        if (preg_match('/'.$regexstring.'/ms', $sourcestring, $regforval))
+                        {
+                            //var_dump($regforval[1]);exit;
+                            // Overwrite param $tmpproperty
+                            $object->$tmpproperty = isset($regforval[1])?trim($regforval[1]):null;
+                        }
+                        else
+                        {
+                            // Regex not found
+                            $object->$tmpproperty = null;
+                        }
+                        //var_dump($object->$tmpproperty);exit;
                     }
                     else
                     {
                         // Nothing can be done for this param
+                        $errorforthisaction++;
+                        $this->errors = 'The extract rule to use has on an unknown source (must be HEADER, SUBJECT or BODY)';
+                        $this->errors[] = $this->error;
                     }
                 }
                 elseif (preg_match('/^SET:(.*)$/', $valueforproperty, $reg))
@@ -1360,7 +1375,7 @@ class EmailCollector extends CommonObject
                                         $thirdpartystatic->email = $from;
 
                                         // Overwrite values with values extracted from source email
-                                        $errorforthisaction = $this->overwritePropertiesOfObject($thirdpartystatic, $operation['actionparam'], $messagetext, $subject);
+                                        $errorforthisaction = $this->overwritePropertiesOfObject($thirdpartystatic, $operation['actionparam'], $messagetext, $subject, $header);
 
                                         if ($errorforthisaction)
                                         {
@@ -1441,7 +1456,7 @@ class EmailCollector extends CommonObject
                         //$actioncomm->extraparams = $extraparams;
 
                         // Overwrite values with values extracted from source email
-                        $errorforthisaction = $this->overwritePropertiesOfObject($actioncommn, $operation['actionparam'], $messagetext, $subject);
+                        $errorforthisaction = $this->overwritePropertiesOfObject($actioncommn, $operation['actionparam'], $messagetext, $subject, $header);
 
                         if ($errorforthisaction)
                         {
@@ -1513,7 +1528,7 @@ class EmailCollector extends CommonObject
                         $projecttocreate->ref = $defaultref;
 
                         // Overwrite values with values extracted from source email
-                        $errorforthisaction = $this->overwritePropertiesOfObject($projecttocreate, $operation['actionparam'], $messagetext, $subject);
+                        $errorforthisaction = $this->overwritePropertiesOfObject($projecttocreate, $operation['actionparam'], $messagetext, $subject, $header);
 
                         if ($errorforthisaction)
                         {
@@ -1597,7 +1612,7 @@ class EmailCollector extends CommonObject
                         $tickettocreate->ref = $defaultref;
 
                         // Overwrite values with values extracted from source email
-                        $errorforthisaction = $this->overwritePropertiesOfObject($tickettocreate, $operation['actionparam'], $messagetext, $subject);
+                        $errorforthisaction = $this->overwritePropertiesOfObject($tickettocreate, $operation['actionparam'], $messagetext, $subject, $header);
 
                         if ($errorforthisaction)
                         {
