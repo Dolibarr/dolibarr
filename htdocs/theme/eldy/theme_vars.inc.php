@@ -48,6 +48,7 @@ $colorbacklineimpair2='255,255,255';    // line impair
 $colorbacklinepair1='250,250,250';    // line pair
 $colorbacklinepair2='250,250,250';    // line pair
 $colorbacklinepairhover='230,237,244';	// line hover
+$colorbacklinepairchecked='230,237,244';	// line checked
 $colorbacklinebreak='223,218,220';		// line break
 $colorbackbody='255,255,255';
 $colortexttitlenotab='100,60,20';

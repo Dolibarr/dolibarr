@@ -1711,8 +1711,8 @@ SomethingMakeInstallFromWebNotPossible2=For this reason, process to upgrade desc
 InstallModuleFromWebHasBeenDisabledByFile=Install of external module from application has been disabled by your administrator. You must ask him to remove the file <strong>%s</strong> to allow this feature.
 ConfFileMustContainCustom=Installing or building an external module from application need to save the module files into directory <strong>%s</strong>. To have this directory processed by Dolibarr, you must setup your <strong>conf/conf.php</strong> to add the 2 directive lines:<br><strong>$dolibarr_main_url_root_alt='/custom';</strong><br><strong>$dolibarr_main_document_root_alt='%s/custom';</strong>
 HighlightLinesOnMouseHover=Highlight table lines when mouse move passes over
-HighlightLinesColor=Highlight color of the line when the mouse passes over (keep empty for no highlight)
-HighlightLinesChecked=Highlight color of the line when it is checked (keep empty for no highlight)
+HighlightLinesColor=Highlight color of the line when the mouse passes over (use 'ffffff' for no highlight)
+HighlightLinesChecked=Highlight color of the line when it is checked (use 'ffffff' for no highlight)
 TextTitleColor=Text color of Page title
 LinkColor=Color of links
 PressF5AfterChangingThis=Press CTRL+F5 on keyboard or clear your browser cache after changing this value to have it effective

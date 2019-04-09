@@ -62,7 +62,7 @@ if (!empty($conf->multicurrency->enabled) && $this->multicurrency_code != $conf-
 <?php
 $coldisplay=-1; // We remove first td
 ?>
-<tr <?php echo $bc[$var]; ?>>
+<tr class="oddeven tredited">
 	<?php if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) { ?>
 		<td class="linecolnum center"><?php $coldisplay++; ?><?php echo ($i+1); ?></td>
 	<?php } ?>
