@@ -254,7 +254,6 @@ $formother = new FormOther($db);
 $formproject = new FormProjets($db);
 
 $title=$langs->trans("Projects");
-//if ($search_project_user == $user->id) $title=$langs->trans("MyProjects");
 
 
 // Get list of project id allowed to user (in a string list separated by coma)
@@ -467,17 +466,17 @@ print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="type" value="'.$type.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
-print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_project', 0, $newcardbutton, '', $limit);
-
 // Show description of content
-print '<div class="opacitymedium">';
-if ($search_project_user == $user->id) print $langs->trans("MyProjectsDesc").'<br><br>';
+$texthelp='';
+if ($search_project_user == $user->id) $texthelp.=$langs->trans("MyProjectsDesc");
 else
 {
-	if ($user->rights->projet->all->lire && ! $socid) print $langs->trans("ProjectsDesc").'<br><br>';
-	else print $langs->trans("ProjectsPublicDesc").'<br><br>';
+    if ($user->rights->projet->all->lire && ! $socid) $texthelp.=$langs->trans("ProjectsDesc");
+    else $texthelp.=$langs->trans("ProjectsPublicDesc");
 }
-print '</div>';
+
+print_barre_liste($form->textwithpicto($title, $texthelp), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_project', 0, $newcardbutton, '', $limit);
+
 
 $topicmail="Information";
 $modelmail="project";
