@@ -29,6 +29,7 @@ CREATE TABLE llx_emailcollector_emailcollector(
         datelastresult datetime, 
         codelastresult varchar(16), 
         lastresult varchar(255),
+        datelastok datetime,
         note_public text, 
         note_private text, 
         date_creation datetime NOT NULL, 

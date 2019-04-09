@@ -106,7 +106,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 
 	/**
 	 * Issuer
-	 * @var Company object that emits
+	 * @var Societe object that emits
 	 */
 	public $emetteur;
 

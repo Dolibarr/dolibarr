@@ -600,8 +600,7 @@ function dolSaveMasterFile($filemaster)
 	$mastercontent = '<?php'."\n";
 	$mastercontent.= '// File generated to link to the master file - DO NOT MODIFY - It is just an include'."\n";
 	$mastercontent.= "if (! defined('USEDOLIBARRSERVER') && ! defined('USEDOLIBARREDITOR')) require_once '".DOL_DOCUMENT_ROOT."/master.inc.php';\n";
-	$mastercontent.= "\n";
-
+	$mastercontent.= '?>'."\n";
 	$result = file_put_contents($filemaster, $mastercontent);
 	if (! empty($conf->global->MAIN_UMASK))
 		@chmod($filemaster, octdec($conf->global->MAIN_UMASK));
@@ -629,8 +628,7 @@ function dolSavePageAlias($filealias, $object, $objectpage)
 	$aliascontent.= 'global $dolibarr_main_data_root;'."\n";
 	$aliascontent.= 'if (empty($dolibarr_main_data_root)) require \'./page'.$objectpage->id.'.tpl.php\'; ';
 	$aliascontent.= 'else require $dolibarr_main_data_root.\'/website/\'.$website->ref.\'/page'.$objectpage->id.'.tpl.php\';'."\n";
-	$aliascontent.= "\n";
-
+	$aliascontent.= '?>'."\n";
 	$result = file_put_contents($filealias, $aliascontent);
 	if (! empty($conf->global->MAIN_UMASK)) {
         @chmod($filealias, octdec($conf->global->MAIN_UMASK));
@@ -701,7 +699,7 @@ function dolSavePageContent($filetpl, $object, $objectpage)
 
 	$tplcontent.= '<?php // BEGIN PHP'."\n";
 	$tplcontent.= '$tmp = ob_get_contents(); ob_end_clean(); dolWebsiteOutput($tmp);'."\n";
-	$tplcontent.= "// END PHP"."\n";
+	$tplcontent.= "// END PHP ?>"."\n";
 
 	//var_dump($filetpl);exit;
 	$result = file_put_contents($filetpl, $tplcontent);
@@ -741,8 +739,7 @@ function dolSaveIndexPage($pathofwebsite, $fileindex, $filetpl, $filewrapper)
 	$indexcontent.= '	redirectToContainer($_GET[\'pageref\'], $_GET[\'pagealiasalt\'], $_GET[\'pageid\']);'."\n";
 	$indexcontent.= "}\n";
 	$indexcontent.= "include_once './".basename($filetpl)."'\n";
-	$indexcontent.= '// END PHP'."\n";
-
+	$indexcontent.= '// END PHP ?>'."\n";
 	$result1 = file_put_contents($fileindex, $indexcontent);
 	if (! empty($conf->global->MAIN_UMASK))
 		@chmod($fileindex, octdec($conf->global->MAIN_UMASK));

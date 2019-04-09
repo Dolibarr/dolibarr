@@ -2365,7 +2365,7 @@ class Ticket extends CommonObject
         global $conf;
 
         $defaultref = '';
-        $modele = empty($conf->global->TICKETSUP_ADDON) ? 'mod_ticket_simple' : $conf->global->TICKETSUP_ADDON;
+        $modele = empty($conf->global->TICKET_ADDON) ? 'mod_ticket_simple' : $conf->global->TICKET_ADDON;
 
         // Search template files
         $file = '';

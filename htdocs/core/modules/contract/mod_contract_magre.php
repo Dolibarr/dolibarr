@@ -43,7 +43,7 @@ class mod_contract_magre extends ModelNumRefContracts
 	/**
 	 * @var string nom
 	 * @deprecated
-	 * @see name
+	 * @see $name
 	 */
 	public $nom='Magre';
 

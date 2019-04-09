@@ -116,7 +116,7 @@ class pdf_einstein extends ModelePDFCommandes
 
 	/**
 	 * Issuer
-	 * @var Company object that emits
+	 * @var Societe    object that emits
 	 */
     public $emetteur;
 
