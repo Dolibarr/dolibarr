@@ -2590,12 +2590,17 @@ table.liste, table.noborder, table.formdoc, div.noborder {
 
 	margin: 0px 0px 5px 0px;
 }
-table.liste tr:last-of-type td, table.noborder tr:last-of-type td, table.formdoc tr:last-of-type td, div.noborder tr:last-of-type td {
+#tablelines {
 	border-bottom-width: 1px;
 	border-bottom-color: rgb(<?php echo $colortopbordertitle1 ?>);
 	border-bottom-style: solid;
 }
-div.tabBar div.ficheaddleft table.noborder:last-of-type {
+table.liste tr:last-of-type td, table.noborder:not(#tablelines) tr:last-of-type td, table.formdoc tr:last-of-type td, div.noborder tr:last-of-type td {
+	border-bottom-width: 1px;
+	border-bottom-color: rgb(<?php echo $colortopbordertitle1 ?>);
+	border-bottom-style: solid;
+}
+div.tabBar div.ficheaddleft table.noborder:not(.margintable):not(.paymenttable):last-of-type {
     border-bottom: 1px solid rgb(<?php echo $colortopbordertitle1 ?>);
 }
 div.tabBar table.border>tbody>tr:last-of-type>td {
@@ -2621,6 +2626,7 @@ tr.liste_titre_filter td.liste_titre {
 }
 .liste_titre_create td, .liste_titre_create th, .liste_titre_create .tagtd
 {
+    border-bottom-width: 0 !important;
     border-top-width: 1px;
     border-top-color: rgb(<?php echo $colortopbordertitle1 ?>);
     border-top-style: solid;
@@ -2851,8 +2857,13 @@ div.pagination li.paginationafterarrows {
 {
 	background: rgb(<?php echo $colorbacklinepairhover; ?>) !important;		/* Must be background to be stronger than background of odd or even */
 }
-.tredited {
+.tredited, .tredited td {
 	background: rgb(<?php echo $colorbacklinepairchecked; ?>) !important;   /* Must be background to be stronger than background of odd or even */
+	border-bottom: 0 !important;
+}
+.treditedlinefordate {
+	background: rgb(<?php echo $colorbacklinepairchecked; ?>) !important;   /* Must be background to be stronger than background of odd or even */
+    border-bottom: 0px;
 }
 <?php if ($colorbacklinepairchecked) { ?>
 .highlight {

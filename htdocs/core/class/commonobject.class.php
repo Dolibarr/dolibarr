@@ -4039,7 +4039,7 @@ abstract class CommonObject
 
 			$i++;
 		}
-		print "</tbody>\n";
+		print "</tbody><!-- end printObjectLines() -->\n";
 	}
 
 	/**
