@@ -785,7 +785,7 @@ if ($resql)
 	if (! empty($arrayfields['f.fk_cond_reglement']['checked']))
 	{
 		print '<td class="liste_titre" align="left">';
-		$form->select_conditions_paiements($search_paymentterms, 'search_paymentterms', -1, 1);
+		$form->select_conditions_paiements($search_paymentterms, 'search_paymentterms', -1, 1, 1);
 		print '</td>';
 	}
 	if (! empty($arrayfields['f.total_ht']['checked']))
