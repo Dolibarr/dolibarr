@@ -161,7 +161,7 @@ class Commande extends CommonOrder
 
 	/**
 	 * @deprecated
-	 * @see date
+	 * @see $date
 	 */
 	public $date_commande;
 
@@ -1331,7 +1331,7 @@ class Commande extends CommonOrder
 	 * 	@param		double			$pu_ht_devise		Unit price in currency
 	 *	@return     int             					>0 if OK, <0 if KO
 	 *
-	 *	@see        add_product
+	 *	@see        add_product()
 	 *
 	 *	Les parametres sont deja cense etre juste et avec valeurs finales a l'appel
 	 *	de cette methode. Aussi, pour le taux tva, il doit deja avoir ete defini
@@ -3905,7 +3905,7 @@ class OrderLine extends CommonOrderLine
 	 * Id of parent order
 	 * @var int
 	 * @deprecated Use fk_commande
-	 * @see fk_commande
+	 * @see $fk_commande
 	 */
 	public $commande_id;
 
@@ -3932,7 +3932,7 @@ class OrderLine extends CommonOrderLine
 
 	/**
 	 * @deprecated
-	 * @see remise_percent, fk_remise_except
+	 * @see $remise_percent, $fk_remise_except
 	 */
 	public $remise;
 

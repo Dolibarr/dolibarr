@@ -623,7 +623,7 @@ if (empty($reshook))
 	{
 		$db->begin();
 
-		$result=$object->cloture($user, 4, '');
+		$result=$object->cloture($user, Propal::STATUS_BILLED, '');
 		if ($result < 0)
 		{
 			setEventMessages($object->error, $object->errors, 'errors');

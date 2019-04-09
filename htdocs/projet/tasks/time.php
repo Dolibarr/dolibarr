@@ -611,7 +611,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 	        'generateinvoice'=>$langs->trans("GenerateBill"),
 	        //'builddoc'=>$langs->trans("PDFMerge"),
 	    );
-	    //if ($user->rights->projet->creer) $arrayofmassactions['predelete']=$langs->trans("Delete");
+	    //if ($user->rights->projet->creer) $arrayofmassactions['predelete']='<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
 	    if (in_array($massaction, array('presend','predelete','generateinvoice'))) $arrayofmassactions=array();
 	    $massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 	}

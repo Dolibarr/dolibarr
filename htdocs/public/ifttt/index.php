@@ -36,7 +36,7 @@ if (! defined('NOCSRFCHECK'))    define("NOCSRFCHECK", 1);	// We accept to go on
  *
  * @return	void
  */
-function llxHeaderVierge()
+function llxHeaderIFTTT()
 {
     print '<html><title>IFTTT API</title><body>';
 }
@@ -45,7 +45,7 @@ function llxHeaderVierge()
  *
  * @return	void
  */
-function llxFooterVierge()
+function llxFooterIFTTT()
 {
     print '</body></html>';
 }
@@ -61,9 +61,9 @@ if (empty($conf->global->IFTTT_DOLIBARR_ENDPOINT_SECUREKEY))
 {
 	$user->getrights();
 
-	llxHeaderVierge();
+	llxHeaderIFTTT();
 	print '<div class="error">Module Agenda was not configured properly.</div>';
-	llxFooterVierge();
+	llxFooterIFTTT();
 	exit;
 }
 
@@ -72,9 +72,9 @@ if (empty($_GET["securekey"]) || $conf->global->IFTTT_DOLIBARR_ENDPOINT_SECUREKE
 {
 	$user->getrights();
 
-	llxHeaderVierge();
+	llxHeaderIFTTT();
 	print '<div class="error">Bad value for securekey.</div>';
-	llxFooterVierge();
+	llxFooterIFTTT();
 	exit;
 }
 
@@ -83,6 +83,6 @@ if (empty($_GET["securekey"]) || $conf->global->IFTTT_DOLIBARR_ENDPOINT_SECUREKE
 $hookmanager->initHooks(array('iftttapi'));
 
 
-llxHeaderVierge();
+llxHeaderIFTTT();
 print '<div class="error">TODO</div>';
-llxFooterVierge();
+llxFooterIFTTT();

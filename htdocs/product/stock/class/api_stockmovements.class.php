@@ -38,7 +38,7 @@ class StockMovements extends DolibarrApi
     );
 
     /**
-     * @var MouvmeentStock $stockmovement {@type MouvementStock}
+     * @var MouvementStock $stockmovement {@type MouvementStock}
      */
     public $stockmovement;
 

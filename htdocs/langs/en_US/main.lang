@@ -967,3 +967,5 @@ Inventory=Inventory
 AnalyticCode=Analytic code
 TMenuMRP=MRP
 ShowMoreInfos=Show More Infos
+NoFilesUploadedYet=Please upload a document first
+SeePrivateNote=See private note

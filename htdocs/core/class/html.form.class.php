@@ -596,12 +596,13 @@ class Form
 			$ret.='<option value="0"'.($disabled?' disabled="disabled"':'').'>-- '.$langs->trans("SelectAction").' --</option>';
 			foreach($arrayofaction as $code => $label)
 			{
-				$ret.='<option value="'.$code.'"'.($disabled?' disabled="disabled"':'').'>'.$label.'</option>';
+				$ret.='<option value="'.$code.'"'.($disabled?' disabled="disabled"':'').' data-html="'.dol_escape_htmltag($label).'">'.$label.'</option>';
 			}
 		}
 		$ret.=$hookmanager->resPrint;
 
 		$ret.='</select>';
+		$ret.=ajax_combobox('.massactionselect');
 		// Warning: if you set submit button to disabled, post using 'Enter' will no more work if there is no another input submit. So we add a hidden button
 		$ret.='<input type="submit" name="confirmmassactioninvisible" style="display: none" tabindex="-1">';	// Hidden button BEFORE so it is the one used when we submit with ENTER.
 		$ret.='<input type="submit" disabled name="confirmmassaction" class="button'.(empty($conf->use_javascript_ajax)?'':' hideobject').' massaction massactionconfirmed" value="'.dol_escape_htmltag($langs->trans("Confirm")).'">';
@@ -3801,16 +3802,21 @@ class Form
 	/**
 	 *    Return list of categories having choosed type
 	 *
-	 *    @param	string|int	$type				Type of category ('customer', 'supplier', 'contact', 'product', 'member'). Old mode (0, 1, 2, ...) is deprecated.
-	 *    @param    string		$selected    		Id of category preselected or 'auto' (autoselect category if there is only one element)
-	 *    @param    string		$htmlname			HTML field name
-	 *    @param    int			$maxlength      	Maximum length for labels
-	 *    @param    int			$excludeafterid 	Exclude all categories after this leaf in category tree.
-	 *    @param	int			$outputmode			0=HTML select string, 1=Array
+	 *    @param	string|int	            $type				Type of category ('customer', 'supplier', 'contact', 'product', 'member'). Old mode (0, 1, 2, ...) is deprecated.
+	 *    @param    string		            $selected    		Id of category preselected or 'auto' (autoselect category if there is only one element)
+	 *    @param    string		            $htmlname			HTML field name
+	 *    @param    int			            $maxlength      	Maximum length for labels
+     *    @param    int|string|array    	$markafterid        Keep only or removed all categories including the leaf $markafterid in category tree (exclude) or Keep only of category is inside the leaf starting with this id.
+     *                                                          $markafterid can be an :
+     *                                                          - int (id of category)
+     *                                                          - string (categories ids seprated by comma)
+     *                                                          - array (list of categories ids)
+	 *    @param	int			            $outputmode			0=HTML select string, 1=Array
+     *    @param	int			            $include			[=0] Removed or 1=Keep only
 	 *    @return	string
 	 *    @see select_categories()
 	 */
-    public function select_all_categories($type, $selected = '', $htmlname = "parent", $maxlength = 64, $excludeafterid = 0, $outputmode = 0)
+    public function select_all_categories($type, $selected = '', $htmlname = "parent", $maxlength = 64, $markafterid = 0, $outputmode = 0, $include = 0)
 	{
         // phpcs:enable
 		global $conf, $langs;
@@ -3850,7 +3856,7 @@ class Form
 		else
 		{
 			$cat = new Categorie($this->db);
-			$cate_arbo = $cat->get_full_arbo($type, $excludeafterid);
+            $cate_arbo = $cat->get_full_arbo($type, $markafterid, $include);
 		}
 
 		$output = '<select class="flat" name="'.$htmlname.'" id="'.$htmlname.'">';
@@ -5828,7 +5834,7 @@ class Form
 	 *  Note: Do not apply langs->trans function on returned content, content may be entity encoded twice.
 	 *
 	 *	@param	string			$htmlname			Name of html select area. Must start with "multi" if this is a multiselect
-	 *	@param	array			$array				Array (key => value)
+	 *	@param	array			$array				Array like array(key => value) or array(key=>array('label'=>..., 'data-...'=>...))
 	 *	@param	string|string[]	$id					Preselected key or preselected keys for multiselect
 	 *	@param	int|string		$show_empty			0 no empty value allowed, 1 or string to add an empty value into list (key is -1 and value is '' or '&nbsp;' if 1, key is -1 and value is text if string), <0 to add an empty value with key that is this value.
 	 *	@param	int				$key_in_label		1 to show key into label with format "[key] value"
@@ -5889,7 +5895,8 @@ class Form
 			{
 				foreach($array as $key => $value)
 				{
-					$array[$key]=$langs->trans($value);
+				    if (! is_array($value)) $array[$key]=$langs->trans($value);
+				    else $array[$key]['label']=$langs->trans($value['label']);
 				}
 			}
 
@@ -5897,8 +5904,11 @@ class Form
 			if ($sort == 'ASC') asort($array);
 			elseif ($sort == 'DESC') arsort($array);
 
-			foreach($array as $key => $value)
+			foreach($array as $key => $tmpvalue)
 			{
+			    if (is_array($tmpvalue)) $value=$tmpvalue['label'];
+			    else $value = $tmpvalue;
+
 				$disabled=''; $style='';
 				if (! empty($disablebademail))
 				{
@@ -5926,6 +5936,13 @@ class Form
 				$out.=$style.$disabled;
 				if ($id != '' && $id == $key && ! $disabled) $out.=' selected';		// To preselect a value
 				if ($nohtmlescape) $out.=' data-html="'.dol_escape_htmltag($selectOptionValue).'"';
+				if (is_array($tmpvalue))
+				{
+				    foreach($tmpvalue as $keyforvalue => $valueforvalue)
+				    {
+				        if (preg_match('/^data-/', $keyforvalue)) $out.=' '.$keyforvalue.'="'.$valueforvalue.'"';
+				    }
+				}
 				$out.='>';
 				//var_dump($selectOptionValue);
 				$out.=$selectOptionValue;
@@ -7288,8 +7305,10 @@ class Form
 		global $conf, $langs;
 
 		$out='<div class="nowrap">';
-		$out.='<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"), 'search.png', '', '', 1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
-		$out.='<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"), 'searchclear.png', '', '', 1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
+		//$out.='<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"), 'search.png', '', '', 1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+		//$out.='<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"), 'searchclear.png', '', '', 1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
+		$out.='<button type="submit" class="liste_titre button_search" name="button_search_x" value="x"><span class="fa fa-search"></span></button>';
+		$out.='<button type="submit" class="liste_titre button_removefilter" name="button_removefilter_x" value="x"><span class="fa fa-remove"></span></button>';
 		$out.='</div>';
 
 		return $out;
