@@ -85,7 +85,7 @@ if (! $sortorder) $sortorder="DESC";
 if (GETPOST('search_fk_status', 'alpha') == 'non_closed') $_GET['search_fk_statut'][]='openall';     // For backward compatibility
 
 // Initialize array of search criterias
-$search_all=trim(GETPOST("search_all", 'alpha'));
+$search_all=trim(GETPOSTISSET("search_all")?GETPOSTISSET("search_all", 'alpha'):GETPOST('sall'));
 $search=array();
 foreach($object->fields as $key => $val)
 {
@@ -190,9 +190,6 @@ $socstatic = new Societe($db);
 $help_url = '';
 $title = $langs->trans('TicketList');
 
-llxHeader('', $title, $help_url);
-
-
 
 // Build and execute select
 // --------------------------------------------------------------------
@@ -294,6 +291,9 @@ if ($num == 1 && ! empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && 
 
 // Output page
 // --------------------------------------------------------------------
+
+llxHeader('', $title, $help_url);
+
 
 if ($socid && !$projectid && $user->rights->societe->lire) {
     $socstat = new Societe($db);
@@ -468,10 +468,10 @@ $objecttmp=new Ticket($db);
 $trackid='tick'.$object->id;
 include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
-if ($sall)
+if ($search_all)
 {
 	foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
-	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $sall) . join(', ', $fieldstosearchall).'</div>';
+	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all) . join(', ', $fieldstosearchall).'</div>';
 }
 
 $moreforfilter = '';

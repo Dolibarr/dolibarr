@@ -58,7 +58,7 @@ if (isset($_SESSION['email_customer'])) {
     $email = $_SESSION['email_customer'];
 }
 
-$object = new ActionsTicket($db);
+$object = new Ticket($db);
 
 
 
@@ -83,7 +83,7 @@ if ($action == "view_ticketlist") {
     } else {
         if (!isValidEmail($email)) {
             $error++;
-            array_push($object->errors, $langs->trans("ErrorEmailInvalid"));
+            array_push($object->errors, $langs->trans("ErrorEmailOrTrackingInvalid"));
             $action = '';
         }
     }
@@ -91,9 +91,9 @@ if ($action == "view_ticketlist") {
     if (!$error) {
     	$ret = $object->fetch('', '', $track_id);
 
-        if ($ret && $object->dao->id > 0) {
+        if ($ret && $object->id > 0) {
             // vérifie si l'adresse email est bien dans les contacts du ticket
-            $contacts = $object->dao->liste_contact(-1, 'external');
+            $contacts = $object->liste_contact(-1, 'external');
             foreach ($contacts as $contact) {
                 if ($contact['email'] == $email) {
                     $display_ticket_list = true;
@@ -104,12 +104,24 @@ if ($action == "view_ticketlist") {
                     $display_ticket_list = false;
                 }
             }
-
-            if ($object->dao->fk_soc > 0) {
-                $object->dao->fetch_thirdparty();
+            if ($object->fk_soc > 0) {
+                $object->fetch_thirdparty();
+                if ($email == $object->thirdparty->email) {
+                    $display_ticket_list = true;
+                    $_SESSION['email_customer'] = $email;
+                    $_SESSION['track_id_customer'] = $track_id;
+                }
             }
-
-            if ($email == $object->dao->origin_email || $email == $object->dao->thirdparty->email) {
+            if ($object->fk_user_create > 0) {
+                $tmpuser=new User($db);
+                $tmpuser->fetch($object->fk_user_create);
+                if ($email == $tmpuser->email) {
+                    $display_ticket_list = true;
+                    $_SESSION['email_customer'] = $email;
+                    $_SESSION['track_id_customer'] = $track_id;
+                }
+            }
+            if ($email == $object->origin_email) {
                 $display_ticket_list = true;
                 $_SESSION['email_customer'] = $email;
                 $_SESSION['track_id_customer'] = $track_id;
@@ -127,7 +139,7 @@ if ($action == "view_ticketlist") {
     }
 }
 
-$object->doActions($action);
+//$object->doActions($action);
 
 
 
@@ -138,10 +150,11 @@ $object->doActions($action);
 $form = new Form($db);
 $user_assign = new User($db);
 $user_create = new User($db);
-$formticket = new FormTicket($db);
+$formTicket = new FormTicket($db);
 
 $arrayofjs = array();
 $arrayofcss = array('/ticket/css/styles.css.php');
+
 llxHeaderTicket($langs->trans("Tickets"), "", 0, 0, $arrayofjs, $arrayofcss);
 
 if (!$conf->global->TICKET_ENABLE_PUBLIC_INTERFACE) {
@@ -154,7 +167,6 @@ print '<div style="margin: 0 auto; width:60%">';
 
 if ($action == "view_ticketlist")
 {
-
     if ($display_ticket_list) {
         // Filters
         $search_fk_status = GETPOST("search_fk_status", 'alpha');
@@ -266,7 +278,6 @@ if ($action == "view_ticketlist")
         if (!$sortfield) {
             $sortfield = 't.datec';
         }
-
         if (!$sortorder) {
             $sortorder = 'DESC';
         }
@@ -430,7 +441,6 @@ if ($action == "view_ticketlist")
                 /*
                  * Filter bar
                  */
-                $formTicket = new FormTicket($db);
 
                 print '<tr class="liste_titre">';
 
