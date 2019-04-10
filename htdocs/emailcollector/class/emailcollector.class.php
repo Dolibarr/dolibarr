@@ -1275,23 +1275,23 @@ class EmailCollector extends CommonObject
                     // Make Operation
                     dol_syslog("Execute action ".$operation['type']." actionparam=".$operation['actionparam'].' thirdpartystatic->id='.$thirdpartystatic->id.' contactstatic->id='.$contactstatic->id.' projectstatic->id='.$projectstatic->id);
 
-                    $description = $descriptionfull = '';
+                    $actioncode = 'EMAIL_IN';
+                    // If we scan the Sent box, we use the code for out email
+                    if ($this->source_directory == 'Sent') $actioncode = 'EMAIL_OUT';
+
+                    $description = $descriptiontitle = $descriptionmeta = $descriptionfull = '';
                     if (in_array($operation['type'], array('recordevent', 'project', 'ticket')))
                     {
-                        $description = $langs->trans("ProjectCreatedByEmailCollector", $msgid);
-                        $description = dol_concatdesc($description, "-----");
-                        $description = dol_concatdesc($description, $langs->trans("Topic").' : '.$subject);
-                        $description = dol_concatdesc($description, $langs->trans("From").' : '.$fromstring);
-                        if ($sender) $description = dol_concatdesc($description, $langs->trans("Sender").' : '.$sender);
-                        $description = dol_concatdesc($description, $langs->trans("To").' : '.$to);
-                        //if ($cc) $description = dol_concatdesc($description, $langs->trans("Cc").' : '.$cc);
-                        //if ($bcc) $description = dol_concatdesc($description, $langs->trans("Bcc").' : '.$bcc);
-                        $description = dol_concatdesc($description, "-----");
-                        $description = dol_concatdesc($description, $messagetext);
+                        if ($operation['type'] == 'project') $descriptiontitle = $langs->trans("ProjectCreatedByEmailCollector", $msgid);
+                        elseif ($operation['type'] == 'ticket') $descriptiontitle = $langs->trans("TicketCreatedByEmailCollector", $msgid);
+                        else $descriptiontitle = $langs->trans("ActionAC_".$actioncode).' - '.$langs->trans("MailFrom").' '.$from;
 
-                        $descriptionfull = $description;
-                        $descriptionfull = dol_concatdesc($descriptionfull, "----- Header");
-                        $descriptionfull = dol_concatdesc($descriptionfull, $header);
+                        $descriptionmeta = dol_concatdesc($descriptionmeta, $langs->trans("Topic").' : '.$subject);
+                        $descriptionmeta = dol_concatdesc($descriptionmeta, $langs->trans("From").' : '.$fromstring);
+                        if ($sender) $descriptionmeta = dol_concatdesc($descriptionmeta, $langs->trans("Sender").' : '.$sender);
+                        $descriptionmeta = dol_concatdesc($descriptionmeta, $langs->trans("To").' : '.$to);
+                        //if ($cc) $descriptionmeta = dol_concatdesc($descriptionmeta, $langs->trans("Cc").' : '.$cc);
+                        //if ($bcc) $descriptionmeta = dol_concatdesc($descriptionmeta, $langs->trans("Bcc").' : '.$bcc);
                     }
 
                     // Search and create thirdparty
@@ -1327,26 +1327,42 @@ class EmailCollector extends CommonObject
                                 {
                                     if (strtolower($sourcefield) == 'body') $sourcestring=$messagetext;
                                     elseif (strtolower($sourcefield) == 'subject') $sourcestring=$subject;
+                                    elseif (strtolower($sourcefield) == 'header') $sourcestring=$header;
 
-                                    $regforval=array();
-                                    if (preg_match('/'.$regexstring.'/', $sourcestring, $regforval))	// Do not use preg_quote here, string is already a regex syntax, for example string is 'Name:\s([^\s]*)'
+                                    if ($sourcestring)
                                     {
-                                        // Overwrite param $tmpproperty
-                                        $nametouseforthirdparty = $regforval[1];
+                                        $regforval=array();
+                                        //var_dump($regexstring);var_dump($sourcestring);
+                                        if (preg_match('/'.$regexstring.'/ms', $sourcestring, $regforval))
+                                        {
+                                            //var_dump($regforval[1]);exit;
+                                            // Overwrite param $tmpproperty
+                                            $nametouseforthirdparty = isset($regforval[1])?trim($regforval[1]):null;
+                                        }
+                                        else
+                                        {
+                                            // Regex not found
+                                            $nametouseforthirdparty = null;
+                                        }
+                                        //var_dump($object->$tmpproperty);exit;
                                     }
                                     else
                                     {
                                         // Nothing can be done for this param
+                                        $errorforthisaction++;
+                                        $this->errors = 'The extract rule to use to load thirdparty has on an unknown source (must be HEADER, SUBJECT or BODY)';
+                                        $this->errors[] = $this->error;
                                     }
-                                    //var_dump($sourcestring); var_dump($regexstring);var_dump($nametouseforthirdparty);exit;
                                 }
                                 elseif (preg_match('/^SET:(.*)$/', $valueforproperty, $reg))
                                 {
+                                    //if (preg_match('/^options_/', $tmpproperty)) $object->array_options[preg_replace('/^options_/', '', $tmpproperty)] = $reg[1];
+                                    //else $object->$tmpproperty = $reg[1];
                                     $nametouseforthirdparty = $reg[1];
                                 }
                                 else
                                 {
-                                    $errorforactions++;
+                                    $errorforthisaction++;
                                     $this->error = 'Bad syntax for description of action parameters: '.$actionparam;
                                     $this->errors[] = $this->error;
                                     break;
@@ -1403,24 +1419,28 @@ class EmailCollector extends CommonObject
                     // Create event
                     elseif ($operation['type'] == 'recordevent')
                     {
-                        $actioncode = 'EMAIL_IN';
-                        // If we scan the Sent box, we use the code for out email
-                        if ($this->source_directory == 'Sent') {
-                            $actioncode = 'EMAIL_OUT';
-                        }
-
                         if ($projectstatic->id > 0)
                         {
-                            if ($projectfoundby) $messagetext .= ' - Project found from '.$projectfoundby;
+                            if ($projectfoundby) $descriptionmeta .= dol_concatdesc($descriptionmeta, 'Project found from '.$projectfoundby);
                         }
                         if ($thirdpartystatic->id > 0)
                         {
-                            if ($thirdpartyfoundby) $messagetext .= ' - Third party found from '.$thirdpartyfoundby;
+                            if ($thirdpartyfoundby) $descriptionmeta .= dol_concatdesc($descriptionmeta, 'Third party found from '.$thirdpartyfoundby);
                         }
                         if ($contactstatic->id > 0)
                         {
-                            if ($contactfoundby) $messagetext .= ' - Contact/address found from '.$contactfoundby;
+                            if ($contactfoundby) $descriptionmeta .= dol_concatdesc($descriptionmeta, 'Contact/address found from '.$contactfoundby);
                         }
+
+                        $description = $descriptiontitle;
+                        $description = dol_concatdesc($description, "-----");
+                        $description = dol_concatdesc($description, $descriptionmeta);
+                        $description = dol_concatdesc($description, "-----");
+                        $description = dol_concatdesc($description, $messagetext);
+
+                        $descriptionfull = $description;
+                        $descriptionfull = dol_concatdesc($descriptionfull, "----- Header");
+                        $descriptionfull = dol_concatdesc($descriptionfull, $header);
 
                         // Insert record of emails sent
                         $actioncomm = new ActionComm($this->db);
@@ -1479,13 +1499,23 @@ class EmailCollector extends CommonObject
                         if ($thirdpartystatic->id > 0)
                         {
                             $projecttocreate->socid = $thirdpartystatic->id;
-                            if ($thirdpartyfoundby) $messagetext .= dol_concatdesc($messagetext, 'Third party found from '.$thirdpartyfoundby);
+                            if ($thirdpartyfoundby) $descriptionmeta .= dol_concatdesc($descriptionmeta, 'Third party found from '.$thirdpartyfoundby);
                         }
                         if ($contactstatic->id > 0)
                         {
                             $projecttocreate->contact_id = $contactstatic->id;
-                            if ($contactfoundby) $messagetext .= dol_concatdesc($messagetext, 'Contact/address found from '.$contactfoundby);
+                            if ($contactfoundby) $descriptionmeta .= dol_concatdesc($descriptionmeta, 'Contact/address found from '.$contactfoundby);
                         }
+
+                        $description = $descriptiontitle;
+                        $description = dol_concatdesc($description, "-----");
+                        $description = dol_concatdesc($description, $descriptionmeta);
+                        $description = dol_concatdesc($description, "-----");
+                        $description = dol_concatdesc($description, $messagetext);
+
+                        $descriptionfull = $description;
+                        $descriptionfull = dol_concatdesc($descriptionfull, "----- Header");
+                        $descriptionfull = dol_concatdesc($descriptionfull, $header);
 
                         $id_opp_status = dol_getIdFromCode($this->db, 'PROSP', 'c_lead_status', 'code', 'rowid');
                         $percent_opp_status = dol_getIdFromCode($this->db, 'PROSP', 'c_lead_status', 'code', 'percent');
@@ -1495,7 +1525,7 @@ class EmailCollector extends CommonObject
                         $projecttocreate->date_end = '';
                         $projecttocreate->opp_status = $id_opp_status;
                         $projecttocreate->opp_percent = $percent_opp_status;
-                        $projecttocreate->description = dol_concatdesc(dolGetFirstLineOfText(dol_string_nohtmltag($description, 2), 8), '...'.$langs->transnoentities("SeePrivateNote").'...');
+                        $projecttocreate->description = dol_concatdesc(dolGetFirstLineOfText(dol_string_nohtmltag($description, 2), 10), '...'.$langs->transnoentities("SeePrivateNote").'...');
                         $projecttocreate->note_private = dol_concatdesc($descriptionfull, dol_string_nohtmltag($descriptionfull, 2));
                         $projecttocreate->entity = $conf->entity;
 
@@ -1557,18 +1587,27 @@ class EmailCollector extends CommonObject
                     // Create event
                     elseif ($operation['type'] == 'ticket')
                     {
-                        $note_private = $langs->trans("TicketCreatedByEmailCollector", $msgid);
                         $tickettocreate = new Ticket($this->db);
                         if ($thirdpartystatic->id > 0)
                         {
                             $tickettocreate->socid = $thirdpartystatic->id;
-                            if ($thirdpartyfoundby) $note_private .= ' - Third party found from '.$thirdpartyfoundby;
+                            if ($thirdpartyfoundby) $descriptionmeta .= dol_concatdesc($descriptionmeta, 'Third party found from '.$thirdpartyfoundby);
                         }
                         if ($contactstatic->id > 0)
                         {
                             $tickettocreate->contact_id = $contactstatic->id;
-                            if ($contactfoundby) $note_private .= ' - Contact/address found from '.$contactfoundby;
+                            if ($contactfoundby) $descriptionmeta .= dol_concatdesc($descriptionmeta, 'Contact/address found from '.$contactfoundby);
                         }
+
+                        $description = $descriptiontitle;
+                        $description = dol_concatdesc($description, "-----");
+                        $description = dol_concatdesc($description, $descriptionmeta);
+                        $description = dol_concatdesc($description, "-----");
+                        $description = dol_concatdesc($description, $messagetext);
+
+                        $descriptionfull = $description;
+                        $descriptionfull = dol_concatdesc($descriptionfull, "----- Header");
+                        $descriptionfull = dol_concatdesc($descriptionfull, $header);
 
                         $tickettocreate->title = $subject;
                         $tickettocreate->type_code = 0;
@@ -1623,7 +1662,7 @@ class EmailCollector extends CommonObject
                             if (is_numeric($tickettocreate->ref) && $tickettocreate->ref <= 0)
                             {
                                 $errorforactions++;
-                                $this->error = 'Failed to create ticket: Can\'t get a valid value for ticket Ref';
+                                $this->error = "Failed to create ticket: Can't get a valid value for ticket Ref. Check the numbering module used to generate the reference in setup of module Ticket.";
                             }
                             else
                             {
