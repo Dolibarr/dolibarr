@@ -390,9 +390,11 @@ if ($action == "new_public_message" && GETPOST('btn_add_message')) {
     $object->newMessagePublic($user, $action);
 }
 
-if ($action == "confirm_close" && GETPOST('confirm', 'alpha') == 'yes' && $user->rights->ticket->write) {
+if ($action == "confirm_close" && GETPOST('confirm', 'alpha') == 'yes' && $user->rights->ticket->write)
+{
     $object->fetch(GETPOST('id', 'int'), '', GETPOST('track_id', 'alpha'));
-    if ($object->close()) {
+
+    if ($object->close($user)) {
         // Log action in ticket logs table
         $log_action = $langs->trans('TicketLogClosedBy', $user->getFullName($langs));
 
@@ -1213,7 +1215,8 @@ if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'd
 			$action = 'presend';
 		}
 
-		if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'dellink' || $action == 'delete' || $action == 'edit_message_init')
+		//if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'dellink' || $action == 'delete' || $action == 'edit_message_init')
+		if ($action != 'add_message')
 		{
 			print '<div class="fichecenter"><div class="fichehalfleft">';
 			print '<a name="builddoc"></a>'; // ancre

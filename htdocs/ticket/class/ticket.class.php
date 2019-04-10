@@ -1751,11 +1751,12 @@ class Ticket extends CommonObject
     /**
      *    Close a ticket
      *
-     *    @return     int		<0 if KO, >0 if OK
+     *    @param    User    $user      User that close
+     *    @return   int		           <0 if KO, >0 if OK
      */
-    public function close()
+    public function close(User $user)
     {
-        global $conf, $user, $langs;
+        global $conf, $langs;
 
         if ($this->fk_statut != 9) { // not closed
             $this->db->begin();
@@ -1776,7 +1777,7 @@ class Ticket extends CommonObject
                     foreach ($this->linkedObjectsIds['fichinter'] as $fichinter_id) {
                         $fichinter = new Fichinter($this->db);
                         $fichinter->fetch($fichinter_id);
-                        if($fichinter->statut == 0) {
+                        if ($fichinter->statut == 0) {
                             $result = $fichinter->setValid($user);
                             if (!$result) {
                                 $this->errors[] = $fichinter->error;
