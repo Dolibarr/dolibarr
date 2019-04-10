@@ -520,8 +520,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '<tr class="oddeven">';
 	print '<td>';
 	$arrayoftypes=array(
-	    'loadthirdparty'=>'LoadThirdPartyFromName',
-	    'loadandcreatethirdparty'=>'LoadThirdPartyFromNameOrCreate',
+	    'loadthirdparty'=>$langs->trans('LoadThirdPartyFromName', $langs->transnoentities("ThirdPartyName")),
+	    'loadandcreatethirdparty'=>$langs->trans('LoadThirdPartyFromNameOrCreate', $langs->transnoentities("ThirdPartyName")),
 	    'recordevent'=>'RecordEvent');
 	if ($conf->projet->enabled) $arrayoftypes['project']='CreateLeadAndThirdParty';
 	if ($conf->ticket->enabled) $arrayoftypes['ticket']='CreateTicketAndThirdParty';

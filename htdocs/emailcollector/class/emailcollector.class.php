@@ -1380,7 +1380,15 @@ class EmailCollector extends CommonObject
                                 }
                                 elseif ($result == 0)
                                 {
-                                    if ($operation['type'] == 'loadandcreatethirdparty')
+                                    if ($operation['type'] == 'loadthirdparty')
+                                    {
+                                        dol_syslog("Third party with name ".$nametouseforthirdparty." was not found");
+
+                                        $errorforactions++;
+                                        $this->error = 'ErrorFailedToLoadThirdParty';
+                                        $this->errors[] = 'ErrorFailedToLoadThirdParty';
+                                    }
+                                    elseif ($operation['type'] == 'loadandcreatethirdparty')
                                     {
                                         dol_syslog("Third party with name ".$nametouseforthirdparty." was not found. We try to create it.");
 
@@ -1406,10 +1414,6 @@ class EmailCollector extends CommonObject
                                                 $this->errors = $thirdpartystatic->errors;
                                             }
                                         }
-                                    }
-                                    else
-                                    {
-                                        dol_syslog("Third party with name ".$nametouseforthirdparty." was not found");
                                     }
                                 }
                             }
@@ -1565,10 +1569,10 @@ class EmailCollector extends CommonObject
                         }
                         else
                         {
-                            if (is_numeric($projecttocreate->ref) && $projecttocreate->ref <= 0)
+                            if (empty($projecttocreate->ref) || (is_numeric($projecttocreate->ref) && $projecttocreate->ref <= 0))
                             {
                                 $errorforactions++;
-                                $this->error = 'Failed to create project: Can\'t get a valid value for project Ref';
+                                $this->error = 'Failed to create project: Can\'t get a valid value for project Ref with numbering template '.$modele;
                             }
                             else
                             {
