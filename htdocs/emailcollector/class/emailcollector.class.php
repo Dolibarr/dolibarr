@@ -1612,7 +1612,7 @@ class EmailCollector extends CommonObject
                         $descriptionfull = dol_concatdesc($descriptionfull, "----- Header");
                         $descriptionfull = dol_concatdesc($descriptionfull, $header);
 
-                        $tickettocreate->title = $subject;
+                        $tickettocreate->subject = $subject;
                         $tickettocreate->message = $description;
                         $tickettocreate->type_code = 0;
                         $tickettocreate->category_code = 0;
