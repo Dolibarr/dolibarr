@@ -367,8 +367,9 @@ if ($user->rights->agenda->myactions->create || $user->rights->agenda->allaction
 
 	//$param='month='.$monthshown.'&year='.$year;
 	$hourminsec='100000';
-	$newcardbutton = '<a class="butActionNew" href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&datep='.sprintf("%04d%02d%02d", $tmpforcreatebutton['year'], $tmpforcreatebutton['mon'], $tmpforcreatebutton['mday']).$hourminsec.'&backtopage='.urlencode($_SERVER["PHP_SELF"].($newparam?'?'.$newparam:'')).'"><span class="valignmiddle text-plus-circle">'.$langs->trans("AddAction").'</span>';
-	$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
+	$newcardbutton = '<a class="title-button" href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&datep='.sprintf("%04d%02d%02d", $tmpforcreatebutton['year'], $tmpforcreatebutton['mon'], $tmpforcreatebutton['mday']).$hourminsec.'&backtopage='.urlencode($_SERVER["PHP_SELF"].($newparam?'?'.$newparam:'')).'">';
+    $newcardbutton.= '<span class="fa fa-plus-circle"></span>';
+	$newcardbutton.= '<span class="text-plus-circle">'.$langs->trans("AddAction").'</span>';
 	$newcardbutton.= '</a>';
 }
 
