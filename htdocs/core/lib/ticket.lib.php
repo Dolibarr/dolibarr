@@ -81,7 +81,6 @@ function ticket_prepare_head($object)
     $head[$h][2] = 'tabTicket';
     $h++;
 
-
     if (empty($conf->global->MAIN_DISABLE_CONTACTS_TAB) && empty($user->socid))
     {
     	$nbContact = count($object->liste_contact(-1, 'internal')) + count($object->liste_contact(-1, 'external'));
@@ -96,9 +95,9 @@ function ticket_prepare_head($object)
 
     // Attached files
     include_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
-    $upload_dir = $conf->ticket->dir_output . "/" . $object->track_id;
+    $upload_dir = $conf->ticket->dir_output . "/" . $object->ref;
     $nbFiles = count(dol_dir_list($upload_dir, 'files'));
-    $head[$h][0] = dol_buildpath('/ticket/document.php', 1) . '?track_id=' . $object->track_id;
+    $head[$h][0] = dol_buildpath('/ticket/document.php', 1) . '?id=' . $object->id;
     $head[$h][1] = $langs->trans("Documents");
     if ($nbFiles > 0) {
         $head[$h][1] .= ' <span class="badge">' . $nbFiles . '</span>';

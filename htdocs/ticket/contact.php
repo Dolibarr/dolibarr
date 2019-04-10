@@ -50,9 +50,6 @@ $source = GETPOST('source', 'alpha');
 $ligne = GETPOST('ligne', 'int');
 $lineid = GETPOST('lineid', 'int');
 
-
-
-
 // Protection if external user
 if ($user->societe_id > 0) {
     $socid = $user->societe_id;
@@ -64,8 +61,9 @@ $url_page_current = dol_buildpath('/ticket/contact.php', 1);
 
 $object = new Ticket($db);
 
+
 /*
- * Ajout d'un nouveau contact
+ * Actions
  */
 
 if ($action == 'addcontact' && $user->rights->ticket->write) {
@@ -110,9 +108,12 @@ if ($action == 'deletecontact' && $user->rights->ticket->write) {
     }
 }
 
+
+
 /*
  * View
  */
+
 $help_url = 'FR:DocumentationModuleTicket';
 llxHeader('', $langs->trans("TicketContacts"), $help_url);
 
@@ -120,12 +121,6 @@ $form = new Form($db);
 $formcompany = new FormCompany($db);
 $contactstatic = new Contact($db);
 $userstatic = new User($db);
-
-/* *************************************************************************** */
-/*                                                                             */
-/* Mode vue et edition                                                         */
-/*                                                                             */
-/* *************************************************************************** */
 
 if ($id > 0 || !empty($track_id) || !empty($ref)) {
 	if ($object->fetch($id, $ref, $track_id) > 0)
@@ -146,7 +141,7 @@ if ($id > 0 || !empty($track_id) || !empty($ref)) {
 
         $head = ticket_prepare_head($object);
 
-        dol_fiche_head($head, 'contact', $langs->trans("Ticket"), 0, 'ticket');
+        dol_fiche_head($head, 'contact', $langs->trans("Ticket"), -1, 'ticket');
 
         $morehtmlref ='<div class="refidno">';
         $morehtmlref.= $object->subject;
