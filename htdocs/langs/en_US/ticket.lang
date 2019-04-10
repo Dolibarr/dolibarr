@@ -53,7 +53,7 @@ TypeContact_ticket_external_SUPPORTCLI=Customer contact / incident tracking
 TypeContact_ticket_external_CONTRIBUTOR=External contributor
 
 OriginEmail=Email source
-Notify_TICKETMESSAGE_SENTBYMAIL=Send ticket answer by email
+Notify_TICKET_SENTBYMAIL=Send ticket message by email
 
 # Status
 NotRead=Not read

@@ -282,4 +282,5 @@ DELETE FROM llx_const WHERE name = 'THEME_ELDY_USE_HOVER' AND value = '0';
 DELETE FROM llx_const WHERE name = 'THEME_ELDY_USE_CHECKED' AND value = '0';
 
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('TICKET_CLOSE','Ticket closed','Executed when a ticket is closed','ticket',164);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('TICKET_SENTBYMAIL','Ticket message sent by email','Executed when a message is sent from the ticket record','ticket',166);
 

@@ -285,7 +285,6 @@ class modTicket extends DolibarrModules
             array("sql" => "insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (110121, 'ticket',  'internal', 'CONTRIBUTOR', 'Intervenant', 1);", "ignoreerror" => 1),
             array("sql" => "insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (110122, 'ticket',  'external', 'SUPPORTCLI', 'Contact client suivi incident', 1);", "ignoreerror" => 1),
             array("sql" => "insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (110123, 'ticket',  'external', 'CONTRIBUTOR', 'Intervenant', 1);", "ignoreerror" => 1),
-            array("sql" => "insert into llx_c_action_trigger (rowid,code,label,description,elementtype,rang) values ('','TICKETMESSAGE_SENTBYMAIL','Send email for ticket','Executed when a response is made on a ticket','ticket','');", "ignoreerror" => 1),
         );
 
         return $this->_init($sql, $options);
