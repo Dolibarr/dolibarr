@@ -216,7 +216,7 @@ else $sql.=" WHERE 1 = 1";
 
 foreach($search as $key => $val)
 {
-	if ($key == 'fk_statut')
+    if ($key == 'fk_statut')
 	{
 	    $tmpstatus='';
 	    if ($search['fk_statut'] == 'openall' || in_array('openall', $search['fk_statut'])) $tmpstatus.=($tmpstatus?',':'')."'0', '1', '3', '4', '5', '6'";
@@ -225,8 +225,13 @@ foreach($search as $key => $val)
 	    elseif (is_array($search[$key]) && count($search[$key])) $sql.=natural_search($key, join(',', $search[$key]), 2);
 	    continue;
 	}
+	if ($key == 'fk_user_assign')
+	{
+	    if ($search[$key] > 0) $sql.=natural_search($key, $search[$key], 2);
+	    continue;
+	}
 	$mode_search=(($object->isInt($object->fields[$key]) || $object->isFloat($object->fields[$key]))?1:0);
-    if ($search[$key] != '') $sql.=natural_search($key, $search[$key], (($key == 'fk_statut')?2:$mode_search));
+    if ($search[$key] != '') $sql.=natural_search($key, $search[$key], $mode_search);
 }
 if ($search_all) $sql.= natural_search(array_keys($fieldstosearchall), $search_all);
 if ($search_fk_soc)     $sql.= natural_search('fk_soc', $search_fk_soc, 2);
@@ -243,22 +248,6 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListWhere', $parameters, $object);    // Note that $action and $object may have been modified by hook
 $sql.=$hookmanager->resPrint;
-
-/* If a group by is required
-$sql.= " GROUP BY "
-foreach($object->fields as $key => $val)
-{
-	$sql.='t.'.$key.', ';
-}
-// Add fields from extrafields
-if (! empty($extrafields->attributes[$object->table_element]['label'])) {
-	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) $sql.=($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? "ef.".$key.', ' : '');
-// Add where from hooks
-$parameters=array();
-$reshook=$hookmanager->executeHooks('printFieldListGroupBy',$parameters);    // Note that $action and $object may have been modified by hook
-$sql.=$hookmanager->resPrint;
-$sql=preg_replace('/, $/','', $sql);
-*/
 
 $sql.=$db->order($sortfield, $sortorder);
 
