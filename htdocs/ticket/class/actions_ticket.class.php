@@ -286,6 +286,8 @@ class ActionsTicket
     public function viewTicketOriginalMessage($user, $action, $object)
     {
         global $langs;
+
+        print '<!-- initial message of ticket -->'."\n";
         if (!empty($user->rights->ticket->manage) && $action == 'edit_message_init') {
             // MESSAGE
 
@@ -326,14 +328,15 @@ class ActionsTicket
 
             //print '<div>' . $object->message . '</div>';
         }
+        if ($user->rights->ticket->manage && $action == 'edit_message_init') {
+            print '<div class="center">';
+            print ' <input type="submit" class="button" value="' . $langs->trans('Modify') . '">';
+            print ' <input type="submit" class="button" name="cancel" value="' . $langs->trans('Cancel') . '">';
+            print '</div>';
+        }
         print '</td>';
         print '</tr>';
         print '</table>';
-        if ($user->rights->ticket->manage && $action == 'edit_message_init') {
-            print ' <input type="submit" class="button" value="' . $langs->trans('Modify') . '">';
-            print ' <input type="submit" class="button" name="cancel" value="' . $langs->trans('Cancel') . '">';
-            print '</form>';
-        }
     }
     /**
      * View html list of message for ticket

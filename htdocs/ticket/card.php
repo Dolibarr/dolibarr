@@ -644,7 +644,6 @@ if ($action == 'create' || $action == 'presend')
 if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'dellink' || $action == 'add_message' || $action == 'close' || $action == 'delete' || $action == 'editcustomer' || $action == 'progression' || $action == 'reopen'
 	|| $action == 'editsubject' || $action == 'edit_extras' || $action == 'update_extras' || $action == 'edit_extrafields' || $action == 'set_extrafields' || $action == 'classify' || $action == 'sel_contract' || $action == 'edit_message_init' || $action == 'set_status' || $action == 'dellink')
 {
-
     if ($res > 0)
     {
         // or for unauthorized internals users
@@ -959,12 +958,7 @@ if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'd
         $actionobject->viewTicketOriginalMessage($user, $action, $object);
 
 
-        /***************************************************
-         *
-         *      Classification and actions on ticket
-         *
-         ***************************************************/
-
+        // Classification of ticket
         print '<form method="post" name="formticketproperties" action="' . $url_page_current . '">';
         print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
         print '<input type="hidden" name="action" value="change_property">';
@@ -991,24 +985,27 @@ if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'd
         print '</tr>';
         if (GETPOST('set', 'alpha') == 'properties' && $user->rights->ticket->write) {
             print '<tr>';
+            // Type
             print '<td class="titlefield">';
             print $langs->trans('TicketChangeType');
             print '</td><td>';
             print $formticket->selectTypesTickets($object->type_code, 'update_value_type', '', 2);
             print '</td>';
             print '</tr>';
-            print '<tr>';
-            print '<td>';
-            print $langs->trans('TicketChangeSeverity');
-            print '</td><td>';
-            print $formticket->selectSeveritiesTickets($object->severity_code, 'update_value_severity', '', 2);
-            print '</td>';
-            print '</tr>';
+            // Group
             print '<tr>';
             print '<td>';
             print $langs->trans('TicketChangeCategory');
             print '</td><td>';
             print $formticket->selectGroupTickets($object->category_code, 'update_value_category', '', 2);
+            print '</td>';
+            print '</tr>';
+            // Severity
+            print '<tr>';
+            print '<td>';
+            print $langs->trans('TicketChangeSeverity');
+            print '</td><td>';
+            print $formticket->selectSeveritiesTickets($object->severity_code, 'update_value_severity', '', 2);
             print '</td>';
             print '</tr>';
         } else {
@@ -1019,18 +1016,16 @@ if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'd
                 print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
             }*/
             print '</td></tr>';
-
-            // Severity
-            print '<tr><td>' . $langs->trans("TicketSeverity") . '</td><td>';
-            print $langs->getLabelFromKey($db, $object->severity_code, 'c_ticket_severity', 'code', 'label');
-            /*if ($user->admin && !$noadmininfo) {
-                print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
-            }*/
-            print '</td></tr>';
-
             // Group
             print '<tr><td>' . $langs->trans("TicketGroup") . '</td><td>';
             print $langs->getLabelFromKey($db, $object->category_code, 'c_ticket_category', 'code', 'label');
+            /*if ($user->admin && !$noadmininfo) {
+             print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
+             }*/
+            print '</td></tr>';
+            // Severity
+            print '<tr><td>' . $langs->trans("TicketSeverity") . '</td><td>';
+            print $langs->getLabelFromKey($db, $object->severity_code, 'c_ticket_severity', 'code', 'label');
             /*if ($user->admin && !$noadmininfo) {
              print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
              }*/
@@ -1215,7 +1210,6 @@ if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'd
 			$action = 'presend';
 		}
 
-		//if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'dellink' || $action == 'delete' || $action == 'edit_message_init')
 		if ($action != 'add_message')
 		{
 			print '<div class="fichecenter"><div class="fichehalfleft">';
@@ -1236,7 +1230,7 @@ if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'd
 			print '</div><!-- fichecenter -->';
 			print '<br style="clear: both">';
 		}
-		elseif ($action == 'add_message')
+		else
 		{
 			$action='new_message';
 			$modelmail='ticket_send';
