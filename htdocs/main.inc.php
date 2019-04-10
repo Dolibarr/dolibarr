@@ -1743,7 +1743,7 @@ function top_menu_user(User $user, Translate $langs)
         if ($object->gender == 'man') $nophoto='/public/theme/common/user_man.png';
         if ($object->gender == 'woman') $nophoto='/public/theme/common/user_woman.png';
 
-        $userImage = '<img class="photo dphotouserphoto userphoto" alt="No photo" src="'.DOL_URL_ROOT.$nophoto.'">';
+        $userImage = '<img class="photo photouserphoto userphoto" alt="No photo" src="'.DOL_URL_ROOT.$nophoto.'">';
         $userDropDownImage = '<img class="photo dropdown-user-image" alt="No photo" src="'.DOL_URL_ROOT.$nophoto.'">';
     }
 
