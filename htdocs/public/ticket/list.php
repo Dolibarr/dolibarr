@@ -197,7 +197,7 @@ if ($action == "view_ticketlist")
         $search_array_options = $extrafields->getOptionalsFromPost('ticket', '', 'search_');
 
         $filter = array();
-        $param = '';
+        $param = 'action=view_ticketlist';
 
         // Definition of fields for list
         $arrayfields = array(
@@ -259,12 +259,10 @@ if ($action == "view_ticketlist")
                 $param .= '&search_fk_user_create=' . $search_fk_user_create;
             }
         }
-
         if ((isset($search_fk_status) && $search_fk_status != '') && $search_fk_status != '-1' && $search_fk_status != 'non_closed') {
             $filter['t.fk_statut'] = $search_fk_status;
             $param .= '&search_fk_status=' . $search_fk_status;
         }
-
         if (isset($search_fk_status) && $search_fk_status == 'non_closed') {
             $filter['t.fk_statut'] = array(0, 1, 3, 4, 5, 6);
             $param .= '&search_fk_status=non_closed';
@@ -372,9 +370,7 @@ if ($action == "view_ticketlist")
                 $num = $db->num_rows($resql);
                 print_barre_liste($langs->trans('TicketList'), $page, 'public/list.php', $param, $sortfield, $sortorder, '', $num, $num_total, 'ticket');
 
-                /*
-                * Search bar
-                */
+                // Search bar
                 print '<form method="get" action="' . $url_form . '" id="searchFormList" >' . "\n";
                 print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
                 print '<input type="hidden" name="action" value="view_ticketlist">';
@@ -398,9 +394,6 @@ if ($action == "view_ticketlist")
                 }
                 if (!empty($arrayfields['t.ref']['checked'])) {
                     print_liste_field_titre($arrayfields['t.ref']['label'], $url_page_current, 't.ref', '', $param, '', $sortfield, $sortorder);
-                }
-                if (!empty($arrayfields['t.fk_statut']['checked'])) {
-                    print_liste_field_titre($arrayfields['t.fk_statut']['label'], $url_page_current, 't.fk_statut', '', $param, '', $sortfield, $sortorder);
                 }
                 if (!empty($arrayfields['t.subject']['checked'])) {
                     print_liste_field_titre($arrayfields['t.subject']['label']);
@@ -435,6 +428,9 @@ if ($action == "view_ticketlist")
                         }
                     }
                 }
+                if (!empty($arrayfields['t.fk_statut']['checked'])) {
+                    print_liste_field_titre($arrayfields['t.fk_statut']['label'], $url_page_current, 't.fk_statut', '', $param, '', $sortfield, $sortorder);
+                }
                 print_liste_field_titre($selectedfields, $url_page_current, "", '', '', 'align="right"', $sortfield, $sortorder, 'maxwidthsearch ');
                 print '</tr>';
 
@@ -457,14 +453,6 @@ if ($action == "view_ticketlist")
 
                 if (!empty($arrayfields['t.ref']['checked'])) {
                     print '<td class="liste_titre"></td>';
-                }
-
-                // Status
-                if (!empty($arrayfields['t.fk_statut']['checked'])) {
-                    print '<td class="liste_titre">';
-                    $selected = ($search_fk_status != "non_closed" ? $search_fk_status : '');
-                    //$object->printSelectStatus($selected);
-                    print '</td>';
                 }
 
                 if (!empty($arrayfields['t.subject']['checked'])) {
@@ -516,6 +504,14 @@ if ($action == "view_ticketlist")
                     }
                 }
 
+                // Status
+                if (!empty($arrayfields['t.fk_statut']['checked'])) {
+                    print '<td class="liste_titre">';
+                    $selected = ($search_fk_status != "non_closed" ? $search_fk_status : '');
+                    //$object->printSelectStatus($selected);
+                    print '</td>';
+                }
+
                 print '<td class="liste_titre nowraponall right">';
                 print '<input type="image" class="liste_titre" name="button_search" src="' . img_picto($langs->trans("Search"), 'search.png', '', '', 1) . '" value="' . dol_escape_htmltag($langs->trans("Search")) . '" title="' . dol_escape_htmltag($langs->trans("Search")) . '">';
                 print '<input type="image" class="liste_titre" name="button_removefilter" src="' . img_picto($langs->trans("Search"), 'searchclear.png', '', '', 1) . '" value="' . dol_escape_htmltag($langs->trans("RemoveFilter")) . '" title="' . dol_escape_htmltag($langs->trans("RemoveFilter")) . '">';
@@ -547,18 +543,10 @@ if ($action == "view_ticketlist")
                         print '</td>';
                     }
 
-                    // ref
+                    // Ref
                     if (!empty($arrayfields['t.ref']['checked'])) {
                         print '<td>';
                         print $obj->ref;
-                        print '</td>';
-                    }
-
-                    // Statut
-                    if (!empty($arrayfields['t.fk_statut']['checked'])) {
-                        print '<td>';
-                        $object->fk_statut = $obj->fk_statut;
-                        print $object->getLibStatut(2);
                         print '</td>';
                     }
 
@@ -645,7 +633,17 @@ if ($action == "view_ticketlist")
                             }
                         }
                     }
+
+                    // Statut
+                    if (!empty($arrayfields['t.fk_statut']['checked'])) {
+                        print '<td>';
+                        $object->fk_statut = $obj->fk_statut;
+                        print $object->getLibStatut(2);
+                        print '</td>';
+                    }
+
                     print '<td></td>';
+
                     $i++;
                     print '</tr>';
                 }
@@ -680,7 +678,7 @@ if ($action == "view_ticketlist")
     print '<form method="post" name="form_view_ticketlist"  enctype="multipart/form-data" action="' . $_SERVER['PHP_SELF'] . '">';
     print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
     print '<input type="hidden" name="action" value="view_ticketlist">';
-    print '<input type="hidden" name="search_fk_status" value="non_closed">';
+    //print '<input type="hidden" name="search_fk_status" value="non_closed">';
 
     print '<p><label for="track_id" style="display: inline-block; width: 30%; "><span class="fieldrequired">' . $langs->trans("OneOfTicketTrackId") . '</span></label>';
     print '<input size="30" id="track_id" name="track_id" value="' . (GETPOST('track_id', 'alpha') ? GETPOST('track_id', 'alpha') : '') . '" />';
