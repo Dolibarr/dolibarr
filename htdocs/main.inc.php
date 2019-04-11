@@ -1920,10 +1920,13 @@ function left_menu($menu_array_before, $helppagename = '', $notused = '', $menu_
 		}
 		else
 		{
-			foreach($arrayresult as $key => $val)
-			{
-				$searchform.=printSearchForm($val['url'], $val['url'], $val['label'], 'maxwidth125', 'sall', $val['shortcut'], 'searchleft'.$key, img_picto('', $val['img'], '', false, 1, 1));
-			}
+		    if (is_array(arrayresult))
+		    {
+    			foreach($arrayresult as $key => $val)
+    			{
+    				$searchform.=printSearchForm($val['url'], $val['url'], $val['label'], 'maxwidth125', 'sall', $val['shortcut'], 'searchleft'.$key, img_picto('', $val['img'], '', false, 1, 1));
+    			}
+		    }
 		}
 
 		// Execute hook printSearchForm
