@@ -2698,6 +2698,87 @@ class Ticket extends CommonObject
         }
     }
 
+
+    /**
+     * Send ticket by email to linked contacts
+     *
+     * @param string $subject          Email subject
+     * @param string $message          Email message
+     * @param int    $send_internal_cc Receive a copy on internal email ($conf->global->TICKET_NOTIFICATION_EMAIL_FROM)
+     * @param array  $array_receiver   Array of receiver. exemple array('name' => 'John Doe', 'email' => 'john@doe.com', etc...)
+     * @return void
+     */
+    public function sendTicketMessageByEmail($subject, $message, $send_internal_cc = 0, $array_receiver = array())
+    {
+        global $conf, $langs;
+
+        if ($conf->global->TICKET_DISABLE_ALL_MAILS) {
+            dol_syslog(get_class($this) . '::sendTicketMessageByEmail: Emails are disable into ticket setup by option TICKETSUP_DISABLE_ALL_MAILS', LOG_WARNING);
+            return '';
+        }
+
+        $langs->load("mails");
+
+        include_once DOL_DOCUMENT_ROOT . '/contact/class/contact.class.php';
+        //$contactstatic = new Contact($this->db);
+
+        // If no receiver defined, load all ticket linked contacts
+        if (!is_array($array_receiver) || !count($array_receiver) > 0) {
+            $array_receiver = $this->getInfosTicketInternalContact();
+            $array_receiver = array_merge($array_receiver, $this->getInfosTicketExternalContact());
+        }
+
+        if ($send_internal_cc) {
+            $sendtocc = $conf->global->TICKET_NOTIFICATION_EMAIL_FROM;
+        }
+
+        $from = $conf->global->TICKET_NOTIFICATION_EMAIL_FROM;
+        if (is_array($array_receiver) && count($array_receiver) > 0) {
+            foreach ($array_receiver as $key => $receiver) {
+                // Create form object
+                include_once DOL_DOCUMENT_ROOT . '/core/class/html.formmail.class.php';
+                $formmail = new FormMail($this->db);
+
+                $attachedfiles = $formmail->get_attached_files();
+                $filepath = $attachedfiles['paths'];
+                $filename = $attachedfiles['names'];
+                $mimetype = $attachedfiles['mimes'];
+
+                $message_to_send = dol_nl2br($message);
+
+                // Envoi du mail
+                if (!empty($conf->global->TICKET_DISABLE_MAIL_AUTOCOPY_TO)) {
+                    $old_MAIN_MAIL_AUTOCOPY_TO = $conf->global->MAIN_MAIL_AUTOCOPY_TO;
+                    $conf->global->MAIN_MAIL_AUTOCOPY_TO = '';
+                }
+                include_once DOL_DOCUMENT_ROOT . '/core/class/CMailFile.class.php';
+                $mailfile = new CMailFile($subject, $receiver, $from, $message_to_send, $filepath, $mimetype, $filename, $sendtocc, '', $deliveryreceipt, -1);
+                if ($mailfile->error) {
+                    setEventMessages($mailfile->error, null, 'errors');
+                } else {
+                    $result = $mailfile->sendfile();
+                    if ($result) {
+                        setEventMessages($langs->trans('MailSuccessfulySent', $mailfile->getValidAddress($from, 2), $mailfile->getValidAddress($receiver, 2)), null, 'mesgs');
+                    } else {
+                        $langs->load("other");
+                        if ($mailfile->error) {
+                            setEventMessages($langs->trans('ErrorFailedToSendMail', $from, $receiver), null, 'errors');
+                            dol_syslog($langs->trans('ErrorFailedToSendMail', $from, $receiver) . ' : ' . $mailfile->error);
+                        } else {
+                            setEventMessages('No mail sent. Feature is disabled by option MAIN_DISABLE_ALL_MAILS', null, 'errors');
+                        }
+                    }
+                }
+                if (!empty($conf->global->TICKET_DISABLE_MAIL_AUTOCOPY_TO)) {
+                    $conf->global->MAIN_MAIL_AUTOCOPY_TO = $old_MAIN_MAIL_AUTOCOPY_TO;
+                }
+            }
+        } else {
+            $langs->load("other");
+            setEventMessages($langs->trans('ErrorMailRecipientIsEmptyForSendTicketMessage'), null, 'warnings');
+        }
+    }
+
     /**
      * Add new message on a ticket (public area)
      *
