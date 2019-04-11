@@ -6346,7 +6346,7 @@ class Form
 
         <dl class="dropdown">
             <dt>
-            <a href="#">
+            <a href="#'.$htmlname.'">
               '.img_picto('', 'list').'
             </a>
             <input type="hidden" class="'.$htmlname.'" name="'.$htmlname.'" value="'.$listcheckedstring.'">
