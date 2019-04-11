@@ -48,7 +48,7 @@ $main_option = array(
     'ACCOUNTING_EXPORT_PREFIX_SPEC',
 );
 
-$configuration = AccountancyExport::getTypeConfig();
+$configuration = AccountingExport::getTypeConfig();
 
 $listparam = $configuration['param'];
 
@@ -89,7 +89,7 @@ if ($action == 'update') {
 		if (! dolibarr_set_const($db, 'ACCOUNTING_EXPORT_MODELCSV', $modelcsv, 'chaine', 0, '', $conf->entity)) {
 			$error ++;
 		}
-		//if ($modelcsv==AccountancyExport::$EXPORT_TYPE_QUADRATUS || $modelcsv==AccountancyExport::$EXPORT_TYPE_CIEL) {
+		//if ($modelcsv==AccountingExport::$EXPORT_TYPE_QUADRATUS || $modelcsv==AccountingExport::$EXPORT_TYPE_CIEL) {
 		//	dolibarr_set_const($db, 'ACCOUNTING_EXPORT_FORMAT', 'txt', 'chaine', 0, '', $conf->entity);
 		//}
 	} else {
@@ -117,7 +117,7 @@ if ($action == 'update') {
 
 	if (! $error) {
         // reload
-        $configuration = AccountancyExport::getTypeConfig();
+        $configuration = AccountingExport::getTypeConfig();
         $listparam = $configuration['param'];
         setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	} else {
@@ -235,7 +235,7 @@ if (! $conf->use_javascript_ajax) {
 	print "</td>";
 } else {
 	print '<td>';
-	$listmodelcsv = AccountancyExport::getType();
+	$listmodelcsv = AccountingExport::getType();
 	print $form->selectarray("ACCOUNTING_EXPORT_MODELCSV", $listmodelcsv, $conf->global->ACCOUNTING_EXPORT_MODELCSV, 0);
 
 	print '</td>';

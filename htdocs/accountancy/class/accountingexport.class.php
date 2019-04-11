@@ -36,7 +36,7 @@ require_once DOL_DOCUMENT_ROOT . '/core/lib/functions.lib.php';
 /**
  * Manage the different format accountancy export
  */
-class AccountancyExport
+class AccountingExport
 {
 	// Type of export. Used into $conf->global->ACCOUNTING_EXPORT_MODELCSV
     public static $EXPORT_TYPE_NORMAL = 1;	 			// CSV

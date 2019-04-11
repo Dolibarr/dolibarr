@@ -357,12 +357,12 @@ if ($action == 'export_file') {
 	}
 	else
 	{
-		$accountancyexport = new AccountancyExport($db);
-		$accountancyexport->export($object->lines);
+		$accountingexport = new AccountingExport($db);
+		$accountingexport->export($object->lines);
 
-		if (!empty($accountancyexport->errors))
+		if (!empty($accountingexport->errors))
 		{
-			setEventMessages('', $accountancyexport->errors, 'errors');
+			setEventMessages('', $accountingexport->errors, 'errors');
 		}
 		exit;
 	}
@@ -442,7 +442,7 @@ print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="page" value="'.$page.'">';
 
-$listofformat=AccountancyExport::getType();
+$listofformat=AccountingExport::getType();
 $button = '<a class="butAction" name="button_export_file" href="'.$_SERVER["PHP_SELF"].'?action=export_file'.($param?'&'.$param:'').'">';
 if (count($filter)) $button.= $langs->trans("ExportFilteredList");
 else $button.= $langs->trans("ExportList");
