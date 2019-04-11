@@ -204,7 +204,7 @@ class Contact extends CommonObject
 	public function create($user)
 	{
 		global $conf, $langs;
-    
+
 		$error=0;
 		$now=dol_now();
 
@@ -695,7 +695,7 @@ class Contact extends CommonObject
 	public function fetch($id, $user = null, $ref_ext = '', $email = '')
 	{
 		global $langs;
-        
+
         $langs->load("dict");
 
 		dol_syslog(get_class($this)."::fetch id=".$id, LOG_DEBUG);
@@ -708,7 +708,7 @@ class Contact extends CommonObject
 
 		$langs->load("companies");
 
-		$sql = "SELECT c.rowid, c.entity, c.fk_soc, c.ref_ext, c.civility as civility_id, c.lastname, c.firstname,";
+		$sql = "SELECT c.rowid, c.entity, c.fk_soc, c.ref_ext, c.civility as civility_code, c.lastname, c.firstname,";
 		$sql.= " c.address, c.statut, c.zip, c.town,";
 		$sql.= " c.fk_pays as country_id,";
 		$sql.= " c.fk_departement as state_id,";
@@ -750,10 +750,11 @@ class Contact extends CommonObject
 				$this->entity			= $obj->entity;
 				$this->ref				= $obj->rowid;
 				$this->ref_ext			= $obj->ref_ext;
-				$this->civility_id		= $obj->civility_id;
-				$this->civility_code    = $obj->civility_id;
-                $this->civility	        = $langs->trans("Civility".$obj->civility_id);
-				$this->lastname			= $obj->lastname;
+
+				$this->civility_code    = $obj->civility_code;
+				$this->civility	        = $obj->civility_code?($langs->trans("Civility".$obj->civility_code) != ("Civility".$obj->civility_code) ? $langs->trans("Civility".$obj->civility_code) : $obj->civility_code):'';
+
+                $this->lastname			= $obj->lastname;
 				$this->firstname		= $obj->firstname;
 				$this->address			= $obj->address;
 				$this->zip				= $obj->zip;
