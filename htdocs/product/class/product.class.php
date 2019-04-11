@@ -3580,7 +3580,7 @@ class Product extends CommonObject
         {
             //
         }
-        if (! empty($conf->accounting->enabled) && $this->status)
+        if (! empty($conf->accounting->enabled) && $this->status && !empty($conf->global->MAIN_FEATURES_LEVEL))
         {
         	include_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
         	$label.= '<br><b>' . $langs->trans('ProductAccountancySellCode') . ':</b> '. length_accountg($this->accountancy_code_sell);
