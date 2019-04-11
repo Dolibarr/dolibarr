@@ -1348,7 +1348,7 @@ class EmailCollector extends CommonObject
                                     else
                                     {
                                         // Nothing can be done for this param
-                                        $errorforthisaction++;
+                                        $errorforaction++;
                                         $this->error = 'The extract rule to use to load thirdparty has on an unknown source (must be HEADER, SUBJECT or BODY)';
                                         $this->errors[] = $this->error;
                                     }
@@ -1361,7 +1361,7 @@ class EmailCollector extends CommonObject
                                 }
                                 else
                                 {
-                                    $errorforthisaction++;
+                                    $errorforaction++;
                                     $this->error = 'Bad syntax for description of action parameters: '.$actionparam;
                                     $this->errors[] = $this->error;
                                     break;
