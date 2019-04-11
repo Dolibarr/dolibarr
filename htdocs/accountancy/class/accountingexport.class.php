@@ -26,7 +26,7 @@
  */
 
 /**
- * \file		htdocs/accountancy/class/accountancyexport.class.php
+ * \file		htdocs/accountancy/class/accountingexport.class.php
  * \ingroup		Advanced accountancy
  * \brief 		Class accountancy export
  */

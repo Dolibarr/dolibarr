@@ -25,7 +25,7 @@
  * \brief 		List operation of book keeping
  */
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountancyexport.class.php';
+require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingexport.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/accountancy/class/bookkeeping.class.php';
 require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingjournal.class.php';
