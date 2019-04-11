@@ -224,9 +224,9 @@ class Contact extends CommonObject
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."socpeople (";
 		$sql.= " datec";
 		$sql.= ", fk_soc";
-    $sql.= ", lastname";
-    $sql.= ", firstname";
-    $sql.= ", fk_user_creat";
+        $sql.= ", lastname";
+        $sql.= ", firstname";
+        $sql.= ", fk_user_creat";
 		$sql.= ", priv";
 		$sql.= ", statut";
 		$sql.= ", canvas";
@@ -238,14 +238,14 @@ class Contact extends CommonObject
 		if ($this->socid > 0) $sql.= " ".$this->db->escape($this->socid).",";
 		else $sql.= "null,";
 		$sql.= "'".$this->db->escape($this->lastname)."',";
-    $sql.= "'".$this->db->escape($this->firstname)."',";
-    $sql.= " ".($user->id > 0 ? "'".$this->db->escape($user->id)."'":"null").",";
+        $sql.= "'".$this->db->escape($this->firstname)."',";
+        $sql.= " ".($user->id > 0 ? "'".$this->db->escape($user->id)."'":"null").",";
 		$sql.= " ".$this->db->escape($this->priv).",";
 		$sql.= " ".$this->db->escape($this->statut).",";
-    $sql.= " ".(! empty($this->canvas)?"'".$this->db->escape($this->canvas)."'":"null").",";
-    $sql.= " ".$this->db->escape($this->entity).",";
-    $sql.= "'".$this->db->escape($this->ref_ext)."',";
-    $sql.= " ".(! empty($this->import_key)?"'".$this->db->escape($this->import_key)."'":"null");
+        $sql.= " ".(! empty($this->canvas)?"'".$this->db->escape($this->canvas)."'":"null").",";
+        $sql.= " ".$this->db->escape($this->entity).",";
+        $sql.= "'".$this->db->escape($this->ref_ext)."',";
+        $sql.= " ".(! empty($this->import_key)?"'".$this->db->escape($this->import_key)."'":"null");
 		$sql.= ")";
 
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
@@ -696,8 +696,8 @@ class Contact extends CommonObject
 	public function fetch($id, $user = null, $ref_ext = '', $email = '')
 	{
 		global $langs;
-
-    $langs->load("dict");
+        
+        $langs->load("dict");
 
 		dol_syslog(get_class($this)."::fetch id=".$id, LOG_DEBUG);
 
@@ -753,7 +753,7 @@ class Contact extends CommonObject
 				$this->ref_ext			= $obj->ref_ext;
 				$this->civility_id		= $obj->civility_id;
 				$this->civility_code    = $obj->civility_id;
-        $this->civility	        = $langs->trans("Civility".$obj->civility_id);
+                $this->civility	        = $langs->trans("Civility".$obj->civility_id);
 				$this->lastname			= $obj->lastname;
 				$this->firstname		= $obj->firstname;
 				$this->address			= $obj->address;
