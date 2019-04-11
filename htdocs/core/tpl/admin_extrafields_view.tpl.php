@@ -103,7 +103,8 @@ if (is_array($extrafields->attributes[$elementtype]['type']) && count($extrafiel
 }
 else
 {
-	$colspan=9;
+	$colspan=13;
+	if (! empty($conf->multicompany->enabled))  $colspan++;
 
 	print '<tr class="oddeven">';
 	print '<td class="opacitymedium" colspan="'.$colspan.'">';

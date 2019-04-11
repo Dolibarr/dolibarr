@@ -1265,7 +1265,6 @@ class EmailCollector extends CommonObject
                 }
 
 
-
                 // Do operations
                 foreach($this->actions as $operation)
                 {
@@ -1381,7 +1380,15 @@ class EmailCollector extends CommonObject
                                 }
                                 elseif ($result == 0)
                                 {
-                                    if ($operation['type'] == 'loadandcreatethirdparty')
+                                    if ($operation['type'] == 'loadthirdparty')
+                                    {
+                                        dol_syslog("Third party with name ".$nametouseforthirdparty." was not found");
+
+                                        $errorforactions++;
+                                        $this->error = 'ErrorFailedToLoadThirdParty';
+                                        $this->errors[] = 'ErrorFailedToLoadThirdParty';
+                                    }
+                                    elseif ($operation['type'] == 'loadandcreatethirdparty')
                                     {
                                         dol_syslog("Third party with name ".$nametouseforthirdparty." was not found. We try to create it.");
 
@@ -1407,10 +1414,6 @@ class EmailCollector extends CommonObject
                                                 $this->errors = $thirdpartystatic->errors;
                                             }
                                         }
-                                    }
-                                    else
-                                    {
-                                        dol_syslog("Third party with name ".$nametouseforthirdparty." was not found");
                                     }
                                 }
                             }
@@ -1476,7 +1479,7 @@ class EmailCollector extends CommonObject
                         //$actioncomm->extraparams = $extraparams;
 
                         // Overwrite values with values extracted from source email
-                        $errorforthisaction = $this->overwritePropertiesOfObject($actioncommn, $operation['actionparam'], $messagetext, $subject, $header);
+                        $errorforthisaction = $this->overwritePropertiesOfObject($actioncomm, $operation['actionparam'], $messagetext, $subject, $header);
 
                         if ($errorforthisaction)
                         {
@@ -1566,10 +1569,10 @@ class EmailCollector extends CommonObject
                         }
                         else
                         {
-                            if (is_numeric($projecttocreate->ref) && $projecttocreate->ref <= 0)
+                            if (empty($projecttocreate->ref) || (is_numeric($projecttocreate->ref) && $projecttocreate->ref <= 0))
                             {
                                 $errorforactions++;
-                                $this->error = 'Failed to create project: Can\'t get a valid value for project Ref';
+                                $this->error = 'Failed to create project: Can\'t get a valid value for project Ref with numbering template '.$modele;
                             }
                             else
                             {
@@ -1609,11 +1612,12 @@ class EmailCollector extends CommonObject
                         $descriptionfull = dol_concatdesc($descriptionfull, "----- Header");
                         $descriptionfull = dol_concatdesc($descriptionfull, $header);
 
-                        $tickettocreate->title = $subject;
+                        $tickettocreate->subject = $subject;
+                        $tickettocreate->message = $description;
                         $tickettocreate->type_code = 0;
                         $tickettocreate->category_code = 0;
                         $tickettocreate->severity_code = 0;
-                        $tickettocreate->origin_email = $fromstring;
+                        $tickettocreate->origin_email = $from;
                         $tickettocreate->fk_user_create = $user->id;
                         $tickettocreate->entity = $conf->entity;
                         $tickettocreate->datec = $date;
