@@ -804,7 +804,7 @@ class EmailCollector extends CommonObject
                     {
                         // Nothing can be done for this param
                         $errorforthisaction++;
-                        $this->errors = 'The extract rule to use has on an unknown source (must be HEADER, SUBJECT or BODY)';
+                        $this->error = 'The extract rule to use has on an unknown source (must be HEADER, SUBJECT or BODY)';
                         $this->errors[] = $this->error;
                     }
                 }
@@ -1349,7 +1349,7 @@ class EmailCollector extends CommonObject
                                     {
                                         // Nothing can be done for this param
                                         $errorforthisaction++;
-                                        $this->errors = 'The extract rule to use to load thirdparty has on an unknown source (must be HEADER, SUBJECT or BODY)';
+                                        $this->error = 'The extract rule to use to load thirdparty has on an unknown source (must be HEADER, SUBJECT or BODY)';
                                         $this->errors[] = $this->error;
                                     }
                                 }
