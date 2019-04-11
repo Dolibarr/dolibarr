@@ -1735,8 +1735,16 @@ function top_menu_user(User $user, Translate $langs)
     $userImage = $userDropDownImage = '';
     if (! empty($user->photo))
     {
-        $userImage = Form::showphoto('userphoto', $user, 0, 0, 0, 'photouserphoto userphoto', 'small', 0, 1);
-        $userDropDownImage = Form::showphoto('userphoto', $user, 0, 0, 0, 'dropdown-user-image', 'small', 0, 1);
+        $userImage          = Form::showphoto('userphoto', $user, 0, 0, 0, 'photouserphoto userphoto', 'small', 0, 1);
+        $userDropDownImage  = Form::showphoto('userphoto', $user, 0, 0, 0, 'dropdown-user-image', 'small', 0, 1);
+    }
+    else{
+        $nophoto='/public/theme/common/user_anonymous.png';
+        if ($object->gender == 'man') $nophoto='/public/theme/common/user_man.png';
+        if ($object->gender == 'woman') $nophoto='/public/theme/common/user_woman.png';
+
+        $userImage = '<img class="photo photouserphoto userphoto" alt="No photo" src="'.DOL_URL_ROOT.$nophoto.'">';
+        $userDropDownImage = '<img class="photo dropdown-user-image" alt="No photo" src="'.DOL_URL_ROOT.$nophoto.'">';
     }
 
     $dropdownBody = '';
@@ -1912,10 +1920,13 @@ function left_menu($menu_array_before, $helppagename = '', $notused = '', $menu_
 		}
 		else
 		{
-			foreach($arrayresult as $key => $val)
-			{
-				$searchform.=printSearchForm($val['url'], $val['url'], $val['label'], 'maxwidth125', 'sall', $val['shortcut'], 'searchleft'.$key, img_picto('', $val['img'], '', false, 1, 1));
-			}
+		    if (is_array(arrayresult))
+		    {
+    			foreach($arrayresult as $key => $val)
+    			{
+    				$searchform.=printSearchForm($val['url'], $val['url'], $val['label'], 'maxwidth125', 'sall', $val['shortcut'], 'searchleft'.$key, img_picto('', $val['img'], '', false, 1, 1));
+    			}
+		    }
 		}
 
 		// Execute hook printSearchForm

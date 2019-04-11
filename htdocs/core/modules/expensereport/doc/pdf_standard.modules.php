@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2015       Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2015       Alexandre Spangaro      <aspangaro@open-dsi.fr>
- * Copyright (C) 2016-2018  Philippe Grand          <philippe.grand@atoo-net.com>
+ * Copyright (C) 2016-2019  Philippe Grand          <philippe.grand@atoo-net.com>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2018       Francis Appels          <francis.appels@z-application.com>
  * Copyright (C) 2019       Markus Welters          <markus@welters.de>
@@ -65,9 +65,9 @@ class pdf_standard extends ModeleExpenseReport
 
     /**
      * @var array Minimum version of PHP required by module.
-	 * e.g.: PHP ≥ 5.4 = array(5, 4)
+     * e.g.: PHP ≥ 5.5 = array(5, 5)
      */
-	public $phpmin = array(5, 4);
+	public $phpmin = array(5, 5);
 
 	/**
      * Dolibarr version of the loaded document

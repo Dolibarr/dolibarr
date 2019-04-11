@@ -61,7 +61,6 @@ NoTripsToExportCSV=Aucun rapport de dépenses à exporter pour cette période.
 ExpenseReportPayment=Paiement du rapport de dépenses
 ExpenseReportsToApprove=Rapports de dépenses à approuver
 ExpenseReportsToPay=Rapports de dépenses à payer
-CloneExpenseReport=Rapport de dépenses de clones
 ConfirmCloneExpenseReport=Êtes-vous sûr de vouloir cloner ce rapport de dépenses?
 expenseReportRangeMoreThan=plus que 1%d
 expenseReportCoefUndefined=(Valeur non définie)

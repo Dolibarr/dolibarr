@@ -290,6 +290,7 @@ CurrencyXOF=CFA BCEAO فرانک
 CurrencySingXOF=فرانک CFA BCEAO
 CurrencyXPF=فرانک CFP
 CurrencySingXPF=CFP فرانک
+CurrencyCentEUR=cents
 CurrencyCentSingEUR=در صد
 CurrencyCentINR=paisa
 CurrencyCentSingINR=paise

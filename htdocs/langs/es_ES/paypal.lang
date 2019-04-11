@@ -32,3 +32,4 @@ PaypalLiveEnabled=Paypal en vivo habilitado (de lo contrario, modo prueba/sandbo
 PaypalImportPayment=Importe pagos Paypal
 PostActionAfterPayment=Acciones después de los pagos
 ARollbackWasPerformedOnPostActions=Se realizó una reversión en todas las acciones. Debe completar las acciones manualmente si son necesarias.
+ValidationOfPaymentFailed=La validación del pago Paypal ha fallado

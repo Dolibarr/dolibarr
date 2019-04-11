@@ -24,13 +24,13 @@ ExpenseReportWaitingForApproval=Foi submetido um relatório de despesas para apr
 ExpenseReportWaitingForApprovalMessage=A new expense report has been submitted and is waiting for approval.<br> - User: %s<br> - Period: %s<br>Click here to validate: %s
 ExpenseReportWaitingForReApproval=An expense report has been submitted for re-approval
 ExpenseReportWaitingForReApprovalMessage=An expense report has been submitted and is waiting for re-approval.<br>The %s, you refused to approve the expense report for this reason: %s.<br>A new version has been proposed and waiting for your approval.<br> - User: %s<br> - Period: %s<br>Click here to validate: %s
-ExpenseReportApproved=An expense report was approved
+ExpenseReportApproved=Um relatório de despesas foi aprovado
 ExpenseReportApprovedMessage=The expense report %s was approved.<br> - User: %s<br> - Approved by: %s<br>Click here to show the expense report: %s
-ExpenseReportRefused=An expense report was refused
+ExpenseReportRefused=Um relatório de despesas foi recusado
 ExpenseReportRefusedMessage=The expense report %s was refused.<br> - User: %s<br> - Refused by: %s<br> - Motive for refusal: %s<br>Click here to show the expense report: %s
 ExpenseReportCanceled=An expense report was canceled
 ExpenseReportCanceledMessage=The expense report %s was canceled.<br> - User: %s<br> - Canceled by: %s<br> - Motive for cancellation: %s<br>Click here to show the expense report: %s
-ExpenseReportPaid=An expense report was paid
+ExpenseReportPaid=Um relatório de despesas foi pago
 ExpenseReportPaidMessage=The expense report %s was paid.<br> - User: %s<br> - Paid by: %s<br>Click here to show the expense report: %s
 TripId=Id expense report
 AnyOtherInThisListCanValidate=Pessoa para informar para validação.
@@ -73,23 +73,19 @@ EX_PAR_VP=Parking PV
 EX_CAM_VP=PV maintenance and repair
 DefaultCategoryCar=Default transportation mode
 DefaultRangeNumber=Número do intervalo predefinido
-
+UploadANewFileNow=Upload a new document now
 Error_EXPENSEREPORT_ADDON_NotDefined=Error, the rule for expense report numbering ref was not defined into setup of module 'Expense Report'
 ErrorDoubleDeclaration=You have declared another expense report into a similar date range.
 AucuneLigne=There is no expense report declared yet
-
 ModePaiement=Modo de pagamento
-
 VALIDATOR=Utilizador responsável pela aprovação
 VALIDOR=Aprovado por
 AUTHOR=Registado por
 AUTHORPAIEMENT=Paga por
 REFUSEUR=Negado por
 CANCEL_USER=Eliminada por
-
 MOTIF_REFUS=Motivo
 MOTIF_CANCEL=Motivo
-
 DATE_REFUS=Negada em
 DATE_SAVE=Data da validação
 DATE_CANCEL=Data do cancelamento
@@ -113,7 +109,6 @@ NoTripsToExportCSV=nenhum relatório de despesas para exportar para este períod
 ExpenseReportPayment=Expense report payment
 ExpenseReportsToApprove=Expense reports to approve
 ExpenseReportsToPay=Expense reports to pay
-CloneExpenseReport=Clone expense report
 ConfirmCloneExpenseReport=Are you sure you want to clone this expense report ?
 ExpenseReportsIk=Expense report milles index
 ExpenseReportsRules=Expense report rules
@@ -140,7 +135,6 @@ OnExpense=Expense line
 ExpenseReportRuleSave=Expense report rule saved
 ExpenseReportRuleErrorOnSave=Error: %s
 RangeNum=Range %d
-
 ExpenseReportConstraintViolationError=Constraint violation id [%s]: %s  is superior to %s %s
 byEX_DAY=by day (limitation to %s)
 byEX_MON=by month (limitation to %s)
@@ -151,7 +145,7 @@ nolimitbyEX_DAY=by day (no limitation)
 nolimitbyEX_MON=by month (no limitation)
 nolimitbyEX_YEA=by year (no limitation)
 nolimitbyEX_EXP=by line (no limitation)
-
 CarCategory=Category of car
 ExpenseRangeOffset=Offset amount: %s
 RangeIk=Mileage range
+AttachTheNewLineToTheDocument=Attach the new line to an existing document
