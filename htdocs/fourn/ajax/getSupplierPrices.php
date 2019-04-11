@@ -86,12 +86,46 @@ if ($idprod > 0)
 
 	// Add price for costprice
 	$price=$producttmp->cost_price;
+	if (empty($price))
+	{
+		// get costprice for subproducts if any
+		$producttmp->get_sousproduits_arbo();
+		$prods_arbo=$producttmp->get_arbo_each_prod();
+		if (!empty($prods_arbo))
+		{
+			$price = 0;
+			foreach($prods_arbo as $child)
+			{
+				$sousprod = new Product($db);
+				$sousprod->fetch($child['id']);
+				$price += $sousprod->cost_price;
+			}
+		}
+	}
+
 	$prices[] = array("id" => 'costprice', "price" => price2num($price), "label" => $langs->trans("CostPrice").': '.price($price, 0, $langs, 0, 0, -1, $conf->currency), "title" => $langs->trans("PMPValueShort").': '.price($price, 0, $langs, 0, 0, -1, $conf->currency));  // For price field, we must use price2num(), for label or title, price()
 
 	if(!empty($conf->stock->enabled))
 	{
 		// Add price for pmp
 		$price=$producttmp->pmp;
+		if (empty($price))
+		{
+			// get pmp for subproducts if any
+			$producttmp->get_sousproduits_arbo();
+			$prods_arbo=$producttmp->get_arbo_each_prod();
+			if (!empty($prods_arbo))
+			{
+				$price = 0;
+				foreach($prods_arbo as $child)
+				{
+					$sousprod = new Product($db);
+					$sousprod->fetch($child['id']);
+					$price += $sousprod->pmp;
+				}
+			}
+		}
+
 		$prices[] = array("id" => 'pmpprice', "price" => price2num($price), "label" => $langs->trans("PMPValueShort").': '.price($price, 0, $langs, 0, 0, -1, $conf->currency), "title" => $langs->trans("PMPValueShort").': '.price($price, 0, $langs, 0, 0, -1, $conf->currency));  // For price field, we must use price2num(), for label or title, price()
 	}
 }
