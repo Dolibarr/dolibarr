@@ -176,8 +176,20 @@ class Adherent extends CommonObject
 
     public $photo;
 
-	public $datec;
-	public $datem;
+	/**
+     * Date creation record (datec)
+     *
+     * @var integer
+     */
+    public $datec;
+    
+	/**
+     * Date modification record (tms)
+     *
+     * @var integer
+     */
+    public $datem;
+    
 	public $datevalid;
 
 	public $gender;
@@ -1866,7 +1878,7 @@ class Adherent extends CommonObject
 
 		$error=0;
 
-		// Check paramaters
+		// Check parameters
 		if ($this->statut == 0)
 		{
 			dol_syslog(get_class($this)."::resiliate statut of member does not allow this", LOG_WARNING);

@@ -63,7 +63,7 @@ llxHeader('', $langs->trans("WorkflowSetup"), '');
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("WorkflowSetup"), $linkback, 'title_setup');
 
-print $langs->trans("WorkflowDesc").'<br>';
+print '<span class="opacitymedium">'.$langs->trans("WorkflowDesc").'</span><br>';
 print "<br>";
 
 // List of workflow we can enable

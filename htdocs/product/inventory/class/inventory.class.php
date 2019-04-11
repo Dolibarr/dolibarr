@@ -156,27 +156,27 @@ class Inventory extends CommonObject
 	/**
 	 * @var int    Name of subtable line
 	 */
-	//public $table_element_line = 'inventorydet';
+	public $table_element_line = 'inventorydet';
 
 	/**
 	 * @var int    Field with ID of parent key if this field has a parent
 	 */
-	//public $fk_element = 'fk_inventory';
+	public $fk_element = 'fk_inventory';
 
 	/**
 	 * @var int    Name of subtable class that manage subtable lines
 	 */
-	//public $class_element_line = 'Inventoryline';
+	public $class_element_line = 'Inventoryline';
 
 	/**
 	 * @var array  Array of child tables (child tables to delete before deleting a record)
 	 */
-	//protected $childtables=array('inventorydet');
+	protected $childtables=array('inventorydet');
 
 	/**
 	 * @var InventoryLine[]     Array of subtable lines
 	 */
-	//public $lines = array();
+	public $lines = array();
 
 
 
@@ -499,9 +499,9 @@ class Inventory extends CommonObject
 }
 
 /**
- * Class InventoryObjectLine
+ * Class InventoryLine
  */
-class InventoryObjectLine
+class InventoryLine
 {
 	/**
 	 * @var int ID

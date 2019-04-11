@@ -7,7 +7,7 @@
  * Copyright (C) 2005-2017  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2005       Lionel Cousteix         <etm_ltd@tiscali.co.uk>
  * Copyright (C) 2011       Herve Prot              <herve.prot@symeos.com>
- * Copyright (C) 2013-2018  Philippe Grand          <philippe.grand@atoo-net.com>
+ * Copyright (C) 2013-2019  Philippe Grand          <philippe.grand@atoo-net.com>
  * Copyright (C) 2013-2015  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2018       charlene Benke          <charlie@patas-monkey.com>
@@ -110,18 +110,29 @@ class User extends CommonObject
 	//! Encrypted password in database (always defined)
 	public $pass_indatabase_crypted;
 
-	public $datec;
-	public $datem;
+	/**
+     * Date creation record (datec)
+     *
+     * @var integer
+     */
+    public $datec;
+
+	/**
+     * Date modification record (tms)
+     *
+     * @var integer
+     */
+    public $datem;
 
 	//! If this is defined, it is an external user
 	/**
 	 * @deprecated
-	 * @see socid
+	 * @see $socid
 	 */
 	public $societe_id;
 	/**
 	 * @deprecated
-	 * @see contactid
+	 * @see $contactid
 	 */
 	public $contact_id;
 	public $socid;
@@ -514,7 +525,7 @@ class User extends CommonObject
 	 *  @param	int		$entity			Entity to use
 	 *  @param  int	    $notrigger		1=Does not execute triggers, 0=Execute triggers
 	 *  @return int						> 0 if OK, < 0 if KO
-	 *  @see	clearrights, delrights, getrights
+	 *  @see	clearrights(), delrights(), getrights()
 	 */
 	public function addrights($rid, $allmodule = '', $allperms = '', $entity = 0, $notrigger = 0)
 	{
@@ -640,7 +651,7 @@ class User extends CommonObject
 	 *  @param	int		$entity		Entity to use
 	 *  @param  int	    $notrigger	1=Does not execute triggers, 0=Execute triggers
 	 *  @return int         		> 0 if OK, < 0 if OK
-	 *  @see	clearrights, addrights, getrights
+	 *  @see	clearrights(), addrights(), getrights()
 	 */
 	public function delrights($rid, $allmodule = '', $allperms = '', $entity = 0, $notrigger = 0)
 	{
@@ -756,12 +767,13 @@ class User extends CommonObject
 	 *  Clear all permissions array of user
 	 *
 	 *  @return	void
-	 *  @see	getrights
+	 *  @see	getrights()
 	 */
 	public function clearrights()
 	{
 		dol_syslog(get_class($this)."::clearrights reset user->rights");
 		$this->rights='';
+		$this->nb_rights=0;
 		$this->all_permissions_are_loaded=false;
 		$this->_tab_loaded=array();
 	}
@@ -773,7 +785,7 @@ class User extends CommonObject
 	 *	@param  string	$moduletag		Limit permission for a particular module ('' by default means load all permissions)
 	 *  @param	int		$forcereload	Force reload of permissions even if they were already loaded (ignore cache)
 	 *	@return	void
-	 *  @see	clearrights, delrights, addrights
+	 *  @see	clearrights(), delrights(), addrights()
 	 */
 	public function getrights($moduletag = '', $forcereload = 0)
 	{
@@ -1989,7 +2001,7 @@ class User extends CommonObject
 		}
 		else
 		{
-			$url = $urlwithroot.'/user/passwordforgotten.php?action=validatenewpassword&username='.$this->login."&passwordhash=".dol_hash($password);
+			$url = $urlwithroot.'/user/passwordforgotten.php?action=validatenewpassword&username='.urlencode($this->login)."&passwordhash=".dol_hash($password);
 
 			$mesg.= $outputlangs->transnoentitiesnoconv("RequestToResetPasswordReceived")."\n";
 			$mesg.= $outputlangs->transnoentitiesnoconv("NewKeyWillBe")." :\n\n";
@@ -2317,7 +2329,7 @@ class User extends CommonObject
 		if ($infologin > 0)
 		{
 			$label.= '<br>';
-			$label.= '<br><u>'.$langs->trans("Connection").'</u>';
+			$label.= '<br><u>'.$langs->trans("Session").'</u>';
 			$label.= '<br><b>'.$langs->trans("IPAddress").'</b>: '.$_SERVER["REMOTE_ADDR"];
 			if (! empty($conf->global->MAIN_MODULE_MULTICOMPANY)) $label.= '<br><b>'.$langs->trans("ConnectedOnMultiCompany").':</b> '.$conf->entity.' (user entity '.$this->entity.')';
 			$label.= '<br><b>'.$langs->trans("AuthenticationMode").':</b> '.$_SESSION["dol_authmode"].(empty($dolibarr_main_demo)?'':' (demo)');
@@ -2803,8 +2815,7 @@ class User extends CommonObject
 	/**
 	 *  Update user using data from the LDAP
 	 *
-	 *  @param	ldapuser	$ldapuser	Ladp User
-	 *
+	 *  @param	Object	$ldapuser	Ladp User
 	 *  @return int  				<0 if KO, >0 if OK
 	 */
 	public function update_ldap2dolibarr(&$ldapuser)
@@ -2845,7 +2856,7 @@ class User extends CommonObject
 	 * Return and array with all instanciated first level children users of current user
 	 *
 	 * @return	void
-	 * @see getAllChildIds
+	 * @see getAllChildIds()
 	 */
 	public function get_children()
 	{
@@ -3022,7 +3033,7 @@ class User extends CommonObject
 	 *
 	 *  @param      int      $addcurrentuser    1=Add also current user id to the list.
 	 *	@return		array		      		  	Array of user id lower than user (all levels under user). This overwrite this->users.
-	 *  @see get_children
+	 *  @see get_children()
 	 */
     public function getAllChildIds($addcurrentuser = 0)
     {

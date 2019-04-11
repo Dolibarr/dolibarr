@@ -61,7 +61,7 @@ class UserGroup extends CommonObject
 	/**
 	 * @var string
 	 * @deprecated
-	 * @see name
+	 * @see $name
 	 */
 	public $nom;
 
@@ -72,9 +72,19 @@ class UserGroup extends CommonObject
 
 	public $globalgroup;	// Global group
 
-	public $datec;			// Creation date of group
+	/**
+     * Date creation record (datec)
+     *
+     * @var integer
+     */
+    public $datec;
 
-	public $datem;			// Modification date of group
+	/**
+     * Date modification record (tms)
+     *
+     * @var integer
+     */
+    public $datem;
 
 	public $note;			// Description
 
@@ -100,7 +110,7 @@ class UserGroup extends CommonObject
 
 
 	/**
-	 *  Charge un objet group avec toutes ces caracteristiques (except ->members array)
+	 *  Charge un objet group avec toutes ses caracteristiques (except ->members array)
 	 *
 	 *	@param      int		$id				Id of group to load
 	 *	@param      string	$groupname		Name of group to load

@@ -136,6 +136,10 @@ if (! empty($conf->holiday->enabled) && empty($conf->global->MAIN_SEARCHFORM_HOL
 {
 	$arrayresult['searchintoleaves']=array('position'=>220, 'img'=>'object_holiday', 'label'=>$langs->trans("SearchIntoLeaves", $search_boxvalue), 'text'=>img_picto('', 'object_holiday').' '.$langs->trans("SearchIntoLeaves", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/holiday/list.php?mainmenu=hrm'.($search_boxvalue?'&sall='.urlencode($search_boxvalue):''));
 }
+if (! empty($conf->ticket->enabled) && empty($conf->global->MAIN_SEARCHFORM_TICKET_DISABLED) && $user->rights->ticket->read)
+{
+    $arrayresult['searchintotickets']=array('position'=>220, 'img'=>'object_ticket', 'label'=>$langs->trans("SearchIntoTickets", $search_boxvalue), 'text'=>img_picto('', 'object_ticket').' '.$langs->trans("SearchIntoTickets", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/ticket/list.php?mainmenu=ticket'.($search_boxvalue?'&sall='.urlencode($search_boxvalue):''));
+}
 
 
 /* Do we really need this. We already have a select for users, and we should be able to filter into user list on employee flag

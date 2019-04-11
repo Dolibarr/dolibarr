@@ -1,7 +1,9 @@
+MRPArea=MRP Area
 MenuBOM=Bills of material
+LatestBOMModified=Latest %s Bills of materials modified
 BillOfMaterials=Bill of Material
 BOMsSetup=Setup of module BOM
-ListOfBOMs=List of bills of material (BOM)
+ListOfBOMs=List of bills of material - BOM
 NewBOM=New bill of material
 ProductBOMHelp=Product to create with this BOM
 BOMsNumberingModules=BOM numbering templates

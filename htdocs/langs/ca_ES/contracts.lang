@@ -85,7 +85,6 @@ NoteListOfYourExpiredServices=Aquest llistat només conté els serveis de contra
 StandardContractsTemplate=Plantilla de contracte Standard
 ContactNameAndSignature=Per %s, nom i signatura:
 OnlyLinesWithTypeServiceAreUsed=Només les línies amb tipus "Servei" seran clonades.
-CloneContract=Clona el contracte
 ConfirmCloneContract=Are you sure you want to clone the contract <b>%s</b>?
 LowerDateEndPlannedShort=Baixa data de finalització planificada dels serveis actius 
 SendContractRef=Informació del contracte __REF__

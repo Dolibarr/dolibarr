@@ -1044,7 +1044,7 @@ class FormFile
 	 *  @param   int    $disablemove        1=Disable move button, 0=Position move is possible.
 	 *  @param	 int	$addfilterfields	Add line with filters
 	 * 	@return	 int						<0 if KO, nb of files shown if OK
-	 *  @see list_of_autoecmfiles
+	 *  @see list_of_autoecmfiles()
 	 */
 	public function list_of_documents($filearray, $object, $modulepart, $param = '', $forcedownload = 0, $relativepath = '', $permonobject = 1, $useinecm = 0, $textifempty = '', $maxlength = 0, $title = '', $url = '', $showrelpart = 0, $permtoeditline = -1, $upload_dir = '', $sortfield = '', $sortorder = 'ASC', $disablemove = 1, $addfilterfields = 0)
 	{
@@ -1139,7 +1139,7 @@ class FormFile
 			}
 
 			print '<div class="div-table-responsive-no-min">';
-			print '<table width="100%" id="tablelines" class="'.(($useinecm && $useinecm != 6)?'liste noborder':'liste').'">'."\n";
+			print '<table width="100%" id="tablelines" class="liste noborder nobottom">'."\n";
 
 			if (! empty($addfilterfields))
 			{
@@ -1156,10 +1156,10 @@ class FormFile
 
 			print '<tr class="liste_titre nodrag nodrop">';
 			//print $url.' sortfield='.$sortfield.' sortorder='.$sortorder;
-			print_liste_field_titre('Documents2', $url, "name", "", $param, '', $sortfield, $sortorder, ' left');
-			print_liste_field_titre('Size', $url, "size", "", $param, '', $sortfield, $sortorder, ' right');
-			print_liste_field_titre('Date', $url, "date", "", $param, '', $sortfield, $sortorder, ' center');
-			if (empty($useinecm) || $useinecm == 4 || $useinecm == 5 || $useinecm == 6) print_liste_field_titre('', $url, "", "", $param, '', $sortfield, $sortorder, ' center');	// Preview
+			print_liste_field_titre('Documents2', $url, "name", "", $param, '', $sortfield, $sortorder, 'left ');
+			print_liste_field_titre('Size', $url, "size", "", $param, '', $sortfield, $sortorder, 'right ');
+			print_liste_field_titre('Date', $url, "date", "", $param, '', $sortfield, $sortorder, 'center ');
+			if (empty($useinecm) || $useinecm == 4 || $useinecm == 5 || $useinecm == 6) print_liste_field_titre('', $url, "", "", $param, '', $sortfield, $sortorder, 'center ');	// Preview
 			print_liste_field_titre('');
 			print_liste_field_titre('');
 			if (! $disablemove) print_liste_field_titre('');
@@ -1432,7 +1432,7 @@ class FormFile
 	 *  @param	string 	$url				Full url to use for click links ('' = autodetect)
 	 *  @param	int		$addfilterfields	Add line with filters
 	 *  @return int                 		<0 if KO, nb of files shown if OK
-	 *  @see list_of_documents
+	 *  @see list_of_documents()
 	 */
 	public function list_of_autoecmfiles($upload_dir, $filearray, $modulepart, $param, $forcedownload = 0, $relativepath = '', $permtodelete = 1, $useinecm = 0, $textifempty = '', $maxlength = 0, $url = '', $addfilterfields = 0)
 	{
@@ -1734,7 +1734,7 @@ class FormFile
 
 		print '<form action="' . $_SERVER['PHP_SELF'] . ($param?'?'.$param:'') . '" method="POST">';
 
-		print '<table width="100%" class="liste">';
+		print '<table width="100%" class="liste noborder nobottom">';
 		print '<tr class="liste_titre">';
         print_liste_field_titre(
 			$langs->trans("Links"),
@@ -1742,9 +1742,10 @@ class FormFile
 			"name",
 			"",
 			$param,
-			'class="left"',
+			'',
 			$sortfield,
-			$sortorder
+			$sortorder,
+            ''
 		);
         print_liste_field_titre(
 			"",
@@ -1752,7 +1753,10 @@ class FormFile
 			"",
 			"",
 			"",
-			'class="right"'
+			'',
+            '',
+            '',
+            'right '
 		);
         print_liste_field_titre(
 			$langs->trans("Date"),
@@ -1760,9 +1764,10 @@ class FormFile
 			"date",
 			"",
 			$param,
-			'class="center"',
+			'',
 			$sortfield,
-			$sortorder
+			$sortorder,
+            'center '
 		);
         print_liste_field_titre(
 			'',
@@ -1770,7 +1775,10 @@ class FormFile
 			"",
 			"",
 			$param,
-			'class="center"'
+			'',
+            '',
+            '',
+            'center '
 		);
 		print_liste_field_titre('', '', '');
 		print '</tr>';

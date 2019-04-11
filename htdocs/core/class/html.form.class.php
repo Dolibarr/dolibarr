@@ -438,7 +438,7 @@ class Form
 	 *  @param  string      $tooltiptrigger		''=Tooltip on hover, 'abc'=Tooltip on click (abc is a unique key)
 	 *  @param	int			$forcenowrap		Force no wrap between text and picto (works with notabs=2 only)
 	 *	@return	string							Code html du tooltip (texte+picto)
-	 *	@see	Use function textwithpicto if you can.
+	 *	@see	textwithpicto() Use thisfunction if you can.
 	 *  TODO Move this as static as soon as everybody use textwithpicto or @Form::textwithtooltip
 	 */
     public function textwithtooltip($text, $htmltext, $tooltipon = 1, $direction = 0, $img = '', $extracss = '', $notabs = 2, $incbefore = '', $noencodehtmltext = 0, $tooltiptrigger = '', $forcenowrap = 0)
@@ -586,7 +586,7 @@ class Form
 
 		$disabled=0;
 		$ret='<div class="centpercent center">';
-		$ret.='<select class="flat'.(empty($conf->use_javascript_ajax)?'':' hideobject').' massaction massactionselect" name="massaction"'.($disabled?' disabled="disabled"':'').'>';
+		$ret.='<select class="flat'.(empty($conf->use_javascript_ajax)?'':' hideobject').' massaction massactionselect valignmiddle" name="massaction"'.($disabled?' disabled="disabled"':'').'>';
 
 		// Complete list with data from external modules. THe module can use $_SERVER['PHP_SELF'] to know on which page we are, or use the $parameters['currentcontext'] completed by executeHooks.
 		$parameters=array();
@@ -596,12 +596,13 @@ class Form
 			$ret.='<option value="0"'.($disabled?' disabled="disabled"':'').'>-- '.$langs->trans("SelectAction").' --</option>';
 			foreach($arrayofaction as $code => $label)
 			{
-				$ret.='<option value="'.$code.'"'.($disabled?' disabled="disabled"':'').'>'.$label.'</option>';
+				$ret.='<option value="'.$code.'"'.($disabled?' disabled="disabled"':'').' data-html="'.dol_escape_htmltag($label).'">'.$label.'</option>';
 			}
 		}
 		$ret.=$hookmanager->resPrint;
 
 		$ret.='</select>';
+		$ret.=ajax_combobox('.massactionselect');
 		// Warning: if you set submit button to disabled, post using 'Enter' will no more work if there is no another input submit. So we add a hidden button
 		$ret.='<input type="submit" name="confirmmassactioninvisible" style="display: none" tabindex="-1">';	// Hidden button BEFORE so it is the one used when we submit with ENTER.
 		$ret.='<input type="submit" disabled name="confirmmassaction" class="button'.(empty($conf->use_javascript_ajax)?'':' hideobject').' massaction massactionconfirmed" value="'.dol_escape_htmltag($langs->trans("Confirm")).'">';
@@ -1587,7 +1588,7 @@ class Form
 	 *  @param  int		$outputmode     0=HTML select string, 1=Array
 	 *  @param  bool	$multiple       add [] in the name of element and add 'multiple' attribut
 	 * 	@return	string					HTML select string
-	 *  @see select_dolgroups
+	 *  @see select_dolgroups()
 	 */
     public function select_dolusers($selected = '', $htmlname = 'userid', $show_empty = 0, $exclude = null, $disabled = 0, $include = '', $enableonly = '', $force_entity = '0', $maxlength = 0, $showstatus = 0, $morefilter = '', $show_every = 0, $enableonlytext = '', $morecss = '', $noactive = 0, $outputmode = 0, $multiple = false)
 	{
@@ -1795,7 +1796,7 @@ class Form
 	 *  @param	array	$listofcontactid	Array with properties of each contact
 	 *  @param	array	$listofotherid		Array with properties of each other contact
 	 * 	@return	string					HTML select string
-	 *  @see select_dolgroups
+	 *  @see select_dolgroups()
 	 */
     public function select_dolusers_forevent($action = '', $htmlname = 'userid', $show_empty = 0, $exclude = null, $disabled = 0, $include = '', $enableonly = '', $force_entity = '0', $maxlength = 0, $showstatus = 0, $morefilter = '', $showproperties = 0, $listofuserid = array(), $listofcontactid = array(), $listofotherid = array())
 	{
@@ -2321,7 +2322,7 @@ class Form
 	 * constructProductListOption.
 	 * This define value for &$opt and &$optJson.
 	 *
-	 * @param 	resultset	$objp			    Resultset of fetch
+	 * @param 	resource	$objp			    Resultset of fetch
 	 * @param 	string		$opt			    Option (var used for returned value in string option format)
 	 * @param 	string		$optJson		    Option (var used for returned value in json format)
 	 * @param 	int			$price_level	    Price level
@@ -3532,7 +3533,10 @@ class Form
 		$langs->load('bills');
 
 		$opt = '<option value ="" selected></option>';
-		$sql = 'SELECT rowid, ref, situation_cycle_ref, situation_counter, situation_final, fk_soc FROM ' . MAIN_DB_PREFIX . 'facture WHERE situation_counter>=1';
+		$sql = 'SELECT rowid, ref, situation_cycle_ref, situation_counter, situation_final, fk_soc';
+		$sql.= ' FROM ' . MAIN_DB_PREFIX . 'facture';
+		$sql.= ' WHERE entity IN ('.getEntity('invoice').')';
+		$sql.= ' AND situation_counter>=1';
 		$sql.= ' ORDER by situation_cycle_ref, situation_counter desc';
 		$resql = $this->db->query($sql);
 		if ($resql && $this->db->num_rows($resql) > 0) {
@@ -3798,16 +3802,21 @@ class Form
 	/**
 	 *    Return list of categories having choosed type
 	 *
-	 *    @param	string|int	$type				Type of category ('customer', 'supplier', 'contact', 'product', 'member'). Old mode (0, 1, 2, ...) is deprecated.
-	 *    @param    string		$selected    		Id of category preselected or 'auto' (autoselect category if there is only one element)
-	 *    @param    string		$htmlname			HTML field name
-	 *    @param    int			$maxlength      	Maximum length for labels
-	 *    @param    int			$excludeafterid 	Exclude all categories after this leaf in category tree.
-	 *    @param	int			$outputmode			0=HTML select string, 1=Array
+	 *    @param	string|int	            $type				Type of category ('customer', 'supplier', 'contact', 'product', 'member'). Old mode (0, 1, 2, ...) is deprecated.
+	 *    @param    string		            $selected    		Id of category preselected or 'auto' (autoselect category if there is only one element)
+	 *    @param    string		            $htmlname			HTML field name
+	 *    @param    int			            $maxlength      	Maximum length for labels
+     *    @param    int|string|array    	$markafterid        Keep only or removed all categories including the leaf $markafterid in category tree (exclude) or Keep only of category is inside the leaf starting with this id.
+     *                                                          $markafterid can be an :
+     *                                                          - int (id of category)
+     *                                                          - string (categories ids seprated by comma)
+     *                                                          - array (list of categories ids)
+	 *    @param	int			            $outputmode			0=HTML select string, 1=Array
+     *    @param	int			            $include			[=0] Removed or 1=Keep only
 	 *    @return	string
 	 *    @see select_categories()
 	 */
-    public function select_all_categories($type, $selected = '', $htmlname = "parent", $maxlength = 64, $excludeafterid = 0, $outputmode = 0)
+    public function select_all_categories($type, $selected = '', $htmlname = "parent", $maxlength = 64, $markafterid = 0, $outputmode = 0, $include = 0)
 	{
         // phpcs:enable
 		global $conf, $langs;
@@ -3847,7 +3856,7 @@ class Form
 		else
 		{
 			$cat = new Categorie($this->db);
-			$cate_arbo = $cat->get_full_arbo($type, $excludeafterid);
+            $cate_arbo = $cat->get_full_arbo($type, $markafterid, $include);
 		}
 
 		$output = '<select class="flat" name="'.$htmlname.'" id="'.$htmlname.'">';
@@ -3916,7 +3925,7 @@ class Form
 	 *       print '});'."\n";
 	 *       print '</script>'."\n";
 	 *
-	 *     @param  	string		$page        	   	Url of page to call if confirmation is OK. Can contains paramaters (param 'action' and 'confirm' will be reformated)
+	 *     @param  	string		$page        	   	Url of page to call if confirmation is OK. Can contains parameters (param 'action' and 'confirm' will be reformated)
 	 *     @param	string		$title       	   	Title
 	 *     @param	string		$question    	   	Question
 	 *     @param 	string		$action      	   	Action
@@ -4377,7 +4386,7 @@ class Form
 	 *    @param    int			$displaymin		Display minutes selector
 	 *    @param	int			$nooutput		1=No print output, return string
 	 *    @return	string
-	 *    @see		selectDate
+	 *    @see		selectDate()
 	 */
     public function form_date($page, $selected, $htmlname, $displayhour = 0, $displaymin = 0, $nooutput = 0)
 	{
@@ -5150,7 +5159,7 @@ class Form
 	 *  @param  datetime    $adddateof      Add a link "Date of invoice" using the following date.
 	 *  @return	string|void					Nothing or string if nooutput is 1
      *  @deprecated
-	 *  @see    form_date, select_month, select_year, select_dayofweek
+	 *  @see    form_date(), select_month(), select_year(), select_dayofweek()
 	 */
     public function select_date($set_time = '', $prefix = 're', $h = 0, $m = 0, $empty = 0, $form_name = "", $d = 1, $addnowlink = 0, $nooutput = 0, $disabled = 0, $fullday = '', $addplusone = '', $adddateof = '')
     {
@@ -5170,7 +5179,7 @@ class Form
 	 *              - local date in user area, if set_time is '' (so if set_time is '', output may differs when done from two different location)
 	 *              - Empty (fields empty), if set_time is -1 (in this case, parameter empty must also have value 1)
 	 *
-	 *  @param  timestamp   $set_time       Pre-selected date (must be a local PHP server timestamp), -1 to keep date not preselected, '' to use current date with 00:00 hour (Parameter 'empty' must be 0 or 2).
+	 *  @param  integer     $set_time       Pre-selected date (must be a local PHP server timestamp), -1 to keep date not preselected, '' to use current date with 00:00 hour (Parameter 'empty' must be 0 or 2).
 	 *  @param	string		$prefix			Prefix for fields name
 	 *  @param	int			$h				1 or 2=Show also hours (2=hours on a new line), -1 has same effect but hour and minutes are prefilled with 23:59 if date is empty, 3 show hour always empty
 	 *	@param	int			$m				1=Show also minutes, -1 has same effect but hour and minutes are prefilled with 23:59 if date is empty, 3 show minutes always empty
@@ -5183,7 +5192,7 @@ class Form
 	 *  @param	string		$addplusone		Add a link "+1 hour". Value must be name of another selectDate field.
 	 *  @param  datetime    $adddateof      Add a link "Date of invoice" using the following date.
 	 * 	@return string                      Html for selectDate
-	 *  @see    form_date, select_month, select_year, select_dayofweek
+	 *  @see    form_date(), select_month(), select_year(), select_dayofweek()
 	 */
     public function selectDate($set_time = '', $prefix = 're', $h = 0, $m = 0, $empty = 0, $form_name = "", $d = 1, $addnowlink = 0, $disabled = 0, $fullday = '', $addplusone = '', $adddateof = '')
 	{
@@ -5634,7 +5643,7 @@ class Form
 	 * @param	string			$moreparams			More params provided to ajax call
 	 * @param	int				$forcecombo			Force to load all values and output a standard combobox (with no beautification)
 	 * @return	string								Return HTML string
-	 * @see selectForFormsList select_thirdparty
+	 * @see selectForFormsList() select_thirdparty
 	 */
     public function selectForForms($objectdesc, $htmlname, $preselectedvalue, $showempty = '', $searchkey = '', $placeholder = '', $morecss = '', $moreparams = '', $forcecombo = 0)
 	{
@@ -5704,7 +5713,7 @@ class Form
 	 * @param	int				$forcecombo			Force to load all values and output a standard combobox (with no beautification)
 	 * @param	int				$outputmode			0=HTML select string, 1=Array
 	 * @return	string								Return HTML string
-	 * @see selectForForms
+	 * @see selectForForms()
 	 */
     public function selectForFormsList($objecttmp, $htmlname, $preselectedvalue, $showempty = '', $searchkey = '', $placeholder = '', $morecss = '', $moreparams = '', $forcecombo = 0, $outputmode = 0)
 	{
@@ -5825,7 +5834,7 @@ class Form
 	 *  Note: Do not apply langs->trans function on returned content, content may be entity encoded twice.
 	 *
 	 *	@param	string			$htmlname			Name of html select area. Must start with "multi" if this is a multiselect
-	 *	@param	array			$array				Array (key => value)
+	 *	@param	array			$array				Array like array(key => value) or array(key=>array('label'=>..., 'data-...'=>...))
 	 *	@param	string|string[]	$id					Preselected key or preselected keys for multiselect
 	 *	@param	int|string		$show_empty			0 no empty value allowed, 1 or string to add an empty value into list (key is -1 and value is '' or '&nbsp;' if 1, key is -1 and value is text if string), <0 to add an empty value with key that is this value.
 	 *	@param	int				$key_in_label		1 to show key into label with format "[key] value"
@@ -5838,10 +5847,10 @@ class Form
 	 *  @param	string			$morecss			Add more class to css styles
 	 *  @param	int				$addjscombo			Add js combo
 	 *  @param  string          $moreparamonempty	Add more param on the empty option line. Not used if show_empty not set
-	 *  @param  int             $disablebademail	Check if an email is found into value and if not disable and colorize entry
+	 *  @param  int             $disablebademail	1=Check if a not valid email, 2=Check string '---', and if found into value, disable and colorize entry
 	 *  @param  int             $nohtmlescape		No html escaping.
 	 * 	@return	string								HTML select string.
-	 *  @see multiselectarray, selectArrayAjax, selectArrayFilter
+	 *  @see multiselectarray(), selectArrayAjax(), selectArrayFilter()
 	 */
 	public static function selectarray($htmlname, $array, $id = '', $show_empty = 0, $key_in_label = 0, $value_as_key = 0, $moreparam = '', $translate = 0, $maxlen = 0, $disabled = 0, $sort = '', $morecss = '', $addjscombo = 0, $moreparamonempty = '', $disablebademail = 0, $nohtmlescape = 0)
 	{
@@ -5886,7 +5895,8 @@ class Form
 			{
 				foreach($array as $key => $value)
 				{
-					$array[$key]=$langs->trans($value);
+				    if (! is_array($value)) $array[$key]=$langs->trans($value);
+				    else $array[$key]['label']=$langs->trans($value['label']);
 				}
 			}
 
@@ -5894,14 +5904,17 @@ class Form
 			if ($sort == 'ASC') asort($array);
 			elseif ($sort == 'DESC') arsort($array);
 
-			foreach($array as $key => $value)
+			foreach($array as $key => $tmpvalue)
 			{
+			    if (is_array($tmpvalue)) $value=$tmpvalue['label'];
+			    else $value = $tmpvalue;
+
 				$disabled=''; $style='';
 				if (! empty($disablebademail))
 				{
-					if (! preg_match('/&lt;.+@.+&gt;/', $value))
+				    if (($disablebademail == 1 && ! preg_match('/&lt;.+@.+&gt;/', $value))
+				        || ($disablebademail == 2 && preg_match('/---/', $value)))
 					{
-						//$value=preg_replace('/'.preg_quote($a,'/').'/', $b, $value);
 						$disabled=' disabled';
 						$style=' class="warning"';
 					}
@@ -5923,6 +5936,13 @@ class Form
 				$out.=$style.$disabled;
 				if ($id != '' && $id == $key && ! $disabled) $out.=' selected';		// To preselect a value
 				if ($nohtmlescape) $out.=' data-html="'.dol_escape_htmltag($selectOptionValue).'"';
+				if (is_array($tmpvalue))
+				{
+				    foreach($tmpvalue as $keyforvalue => $valueforvalue)
+				    {
+				        if (preg_match('/^data-/', $keyforvalue)) $out.=' '.$keyforvalue.'="'.$valueforvalue.'"';
+				    }
+				}
 				$out.='>';
 				//var_dump($selectOptionValue);
 				$out.=$selectOptionValue;
@@ -5951,7 +5971,7 @@ class Form
 	 *  @param  string  $placeholder            String to use as placeholder
 	 *  @param  integer $acceptdelayedhtml      1 = caller is requesting to have html js content not returned but saved into global $delayedhtmlcontent (so caller can show it at end of page to avoid flash FOUC effect)
 	 * 	@return	string   						HTML select string
-	 *  @see selectArrayFilter, ajax_combobox in ajax.lib.php
+	 *  @see selectArrayFilter(), ajax_combobox() in ajax.lib.php
 	 */
 	public static function selectArrayAjax($htmlname, $url, $id = '', $moreparam = '', $moreparamtourl = '', $disabled = 0, $minimumInputLength = 1, $morecss = '', $callurlonselect = 0, $placeholder = '', $acceptdelayedhtml = 0)
 	{
@@ -6053,7 +6073,7 @@ class Form
 	 *  @param  string  $placeholder            String to use as placeholder
 	 *  @param  integer $acceptdelayedhtml      1 = caller is requesting to have html js content not returned but saved into global $delayedhtmlcontent (so caller can show it at end of page to avoid flash FOUC effect)
 	 *  @return	string   						HTML select string
-	 *  @see selectArrayAjax, ajax_combobox in ajax.lib.php
+	 *  @see selectArrayAjax(), ajax_combobox() in ajax.lib.php
 	 */
 	public static function selectArrayFilter($htmlname, $array, $id = '', $moreparam = '', $disableFiltering = 0, $disabled = 0, $minimumInputLength = 1, $morecss = '', $callurlonselect = 0, $placeholder = '', $acceptdelayedhtml = 0)
 	{
@@ -6171,7 +6191,7 @@ class Form
 	 *  @param	string	$placeholder	String to use as placeholder
 	 *  @param	int		$addjscombo		Add js combo
 	 *	@return	string					HTML multiselect string
-	 *  @see selectarray, selectArrayAjax, selectArrayFilter
+	 *  @see selectarray(), selectArrayAjax(), selectArrayFilter()
 	 */
 	public static function multiselectarray($htmlname, $array, $selected = array(), $key_in_label = 0, $value_as_key = 0, $morecss = '', $translate = 0, $width = 0, $moreattrib = '', $elemtype = '', $placeholder = '', $addjscombo = -1)
 	{
@@ -6281,7 +6301,7 @@ class Form
 	 *	@param	array	$array			Array with array of fields we could show. This array may be modified according to setup of user.
 	 *  @param  string  $varpage        Id of context for page. Can be set by caller with $varpage=(empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage);
 	 *	@return	string					HTML multiselect string
-	 *  @see selectarray
+	 *  @see selectarray()
 	 */
 	public static function multiSelectArrayWithCheckbox($htmlname, &$array, $varpage)
 	{
@@ -6301,7 +6321,6 @@ class Form
 				else $array[$key]['checked']=0;
 			}
 		}
-		//var_dump($array);
 
 		$lis='';
 		$listcheckedstring='';
@@ -6327,7 +6346,7 @@ class Form
 
         <dl class="dropdown">
             <dt>
-            <a href="#">
+            <a href="#'.$htmlname.'">
               '.img_picto('', 'list').'
             </a>
             <input type="hidden" class="'.$htmlname.'" name="'.$htmlname.'" value="'.$listcheckedstring.'">
@@ -6607,7 +6626,11 @@ class Form
 		// Can complete the possiblelink array
 		$hookmanager->initHooks(array('commonobject'));
 		$parameters=array('listofidcompanytoscan' => $listofidcompanytoscan);
-		$reshook=$hookmanager->executeHooks('showLinkToObjectBlock', $parameters, $object, $action);    // Note that $action and $object may have been modified by hook
+
+		if (! empty($listofidcompanytoscan))  // If empty, we don't have criteria to scan the object we can link to
+		{
+            $reshook=$hookmanager->executeHooks('showLinkToObjectBlock', $parameters, $object, $action);    // Note that $action and $object may have been modified by hook
+		}
 
 		if (empty($reshook))
 		{
@@ -6766,8 +6789,6 @@ class Form
 		$resultyesno .= '</select>'."\n";
 		return $resultyesno;
 	}
-
-
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
@@ -7181,7 +7202,7 @@ class Form
 	 * 	@param	string	$force_entity	'0' or Ids of environment to force
 	 * 	@param	bool	$multiple		add [] in the name of element and add 'multiple' attribut (not working with ajax_autocompleter)
 	 *  @return	string
-	 *  @see select_dolusers
+	 *  @see select_dolusers()
 	 */
     public function select_dolgroups($selected = '', $htmlname = 'groupid', $show_empty = 0, $exclude = '', $disabled = 0, $include = '', $enableonly = '', $force_entity = '0', $multiple = false)
 	{
@@ -7284,8 +7305,10 @@ class Form
 		global $conf, $langs;
 
 		$out='<div class="nowrap">';
-		$out.='<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"), 'search.png', '', '', 1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
-		$out.='<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"), 'searchclear.png', '', '', 1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
+		//$out.='<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"), 'search.png', '', '', 1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+		//$out.='<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"), 'searchclear.png', '', '', 1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
+		$out.='<button type="submit" class="liste_titre button_search" name="button_search_x" value="x"><span class="fa fa-search"></span></button>';
+		$out.='<button type="submit" class="liste_titre button_removefilter" name="button_removefilter_x" value="x"><span class="fa fa-remove"></span></button>';
 		$out.='</div>';
 
 		return $out;

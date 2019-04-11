@@ -75,6 +75,8 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be inclu
 //$isdraft = (($object->statut == MyObject::STATUS_DRAFT) ? 1 : 0);
 //$result = restrictedArea($user, 'mymodule', $object->id, '', '', 'fk_soc', 'rowid', $isdraft);
 
+$debuginfo='';
+
 
 /*
  * Actions
@@ -178,14 +180,15 @@ if ($action == 'confirm_collect')
 	dol_include_once('/emailcollector/class/emailcollector.class.php');
 
 	$res = $object->doCollectOneCollector();
-
 	if ($res > 0)
 	{
-		setEventMessages($object->output, null, 'mesgs');
+	    $debuginfo = $object->debuginfo;
+	    setEventMessages($object->lastresult, null, 'mesgs');
 	}
 	else
 	{
-		setEventMessages($object->error, null, 'errors');
+	    $debuginfo = $object->debuginfo;
+	    setEventMessages($object->error, null, 'errors');
 	}
 
 	$action = '';
@@ -391,7 +394,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$connectstringsource = $connectstringserver.imap_utf7_encode($sourcedir);
 		$connectstringtarget = $connectstringserver.imap_utf7_encode($targetdir);
 
-		$connection = imap_open($connectstringsource, $object->user, $object->password);
+		$connection = imap_open($connectstringsource, $object->login, $object->password);
 	}
 	else
 	{
@@ -443,10 +446,46 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	// Add filter
 	print '<tr class="oddeven">';
 	print '<td>';
-	$arrayoftypes=array('from'=>'MailFrom', 'to'=>'MailTo', 'cc'=>'Cc', 'bcc'=>'Bcc', 'subject'=>'Subject', 'body'=>'Body', 'seen'=>'AlreadyRead', 'unseen'=>'NotRead', 'withtrackingid'=>'WithDolTrackingID', 'withouttrackingid'=>'WithoutDolTrackingID');
-	print $form->selectarray('filtertype', $arrayoftypes, '', 1, 0, 0, '', 1);
+	$arrayoftypes=array(
+	    'from'=>array('label'=>'MailFrom', 'data-placeholder'=>'SearchString'),
+	    'to'=>array('label'=>'MailTo', 'data-placeholder'=>'SearchString'),
+	    'cc'=>array('label'=>'Cc', 'data-placeholder'=>'SearchString'),
+	    'bcc'=>array('label'=>'Bcc', 'data-placeholder'=>'SearchString'),
+	    'subject'=>array('label'=>'Subject', 'data-placeholder'=>'SearchString'),
+	    'body'=>array('label'=>'Body', 'data-placeholder'=>'SearchString'),
+	    'header'=>array('label'=>'Header', 'data-placeholder'=>'HeaderKey SearchString'),                // HEADER key value
+	    'X1'=>'---',
+	    'seen'=>array('label'=>'AlreadyRead', 'data-noparam'=>1),
+	    'unseen'=>array('label'=>'NotRead', 'data-noparam'=>1),
+	    'smaller'=>array('label'=>'SmallerThan', 'data-placeholder'=>'NumberOfBytes'),
+	    'larger'=>array('label'=>'LargerThan', 'data-placeholder'=>'NumberOfBytes'),
+	    'X2'=>'---',
+	    'withtrackingid'=>array('label'=>'WithDolTrackingID', 'data-noparam'=>1),
+	    'withouttrackingid'=>array('label'=>'WithoutDolTrackingID', 'data-noparam'=>1)
+	);
+	print $form->selectarray('filtertype', $arrayoftypes, '', 1, 0, 0, '', 1, 0, 0, '', '', 0, '', 2);
+
+	print "\n";
+	print '<script>';
+	print 'jQuery("#filtertype").change(function() {
+        console.log("We change a filter");
+        if (jQuery("#filtertype option:selected").attr("data-noparam")) {
+            jQuery("#rulevalue").attr("placeholder", "");
+            jQuery("#rulevalue").text(""); jQuery("#rulevalue").prop("disabled", true);
+        }
+        else { jQuery("#rulevalue").prop("disabled", false); }
+        jQuery("#rulevalue").attr("placeholder", (jQuery("#filtertype option:selected").attr("data-placeholder")));
+    ';
+	$noparam=array();
+	foreach($arrayoftypes as $key => $value)
+	{
+	   if ($value['noparam']) $noparam[]=$key;
+	}
+	print '})';
+	print '</script>'."\n";
+
 	print '</td><td>';
-	print '<input type="text" name="rulevalue">';
+	print '<input type="text" name="rulevalue" id="rulevalue">';
 	print '</td>';
 	print '<td class="right"><input type="submit" name="addfilter" id="addfilter" class="flat button" value="'.$langs->trans("Add").'"></td>';
 	print '</tr>';
@@ -458,11 +497,10 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 		print '<tr class="oddeven">';
 		print '<td>';
-		print $langs->trans($arrayoftypes[$rulefilter['type']]);
+		print $langs->trans($arrayoftypes[$rulefilter['type']]['label']);
 		print '</td>';
 		print '<td>'.$rulefilter['rulevalue'].'</td>';
 		print '<td class="right">';
-		//print $rulefilterobj->getLibStatut(3);
 		print ' <a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=deletefilter&filterid='.$rulefilter['id'].'">'.img_delete().'</a>';
 		print '</td>';
 		print '</tr>';
@@ -481,8 +519,12 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	// Add operation
 	print '<tr class="oddeven">';
 	print '<td>';
-	$arrayoftypes=array('loadthirdparty'=>'LoadThirdPartyFromName', 'loadandcreatethirdparty'=>'LoadThirdPartyFromNameOrCreate', 'recordevent'=>'RecordEvent');
+	$arrayoftypes=array(
+	    'loadthirdparty'=>$langs->trans('LoadThirdPartyFromName', $langs->transnoentities("ThirdPartyName")),
+	    'loadandcreatethirdparty'=>$langs->trans('LoadThirdPartyFromNameOrCreate', $langs->transnoentities("ThirdPartyName")),
+	    'recordevent'=>'RecordEvent');
 	if ($conf->projet->enabled) $arrayoftypes['project']='CreateLeadAndThirdParty';
+	if ($conf->ticket->enabled) $arrayoftypes['ticket']='CreateTicketAndThirdParty';
 	print $form->selectarray('operationtype', $arrayoftypes, '', 1, 0, 0, '', 1);
 	print '</td><td>';
 	print '<input type="text" name="operationparam">';
@@ -506,12 +548,13 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print '<tr class="drag drop oddeven" id="row-'.$ruleaction['id'].'">';
 		print '<td>';
 		print $langs->trans($arrayoftypes[$ruleaction['type']]);
+		if (in_array($ruleaction['type'], array('recordevent')))
+		{
+            print $form->textwithpicto('', $langs->transnoentitiesnoconv('IfTrackingIDFoundEventWillBeLinked'));
+		}
 		print '</td>';
 		print '<td>'.$ruleaction['actionparam'].'</td>';
-		print '<td class="right">';
-		//print $ruleactionobj->getLibStatut(3);
-		print ' <a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=deleteoperation&operationid='.$ruleaction['id'].'">'.img_delete().'</a>';
-		print '</td>';
+		// Move up/down
 		print '<td class="center linecolmove tdlineupdown">';
 		if ($i > 0)
 		{
@@ -521,6 +564,10 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			print '<a class="lineupdown" href="'.$_SERVER['PHP_SELF'].'?action=down&amp;rowid='.$ruleaction['id'].'">'.img_down('default', 0, 'imgdownforline').'</a>';
 		}
 		print '</td>';
+		// Delete
+		print '<td class="right">';
+		print ' <a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=deleteoperation&operationid='.$ruleaction['id'].'">'.img_delete().'</a>';
+		print '</td>';
 		print '</tr>';
 		$i++;
 	}
@@ -529,6 +576,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '</table>';
 
 	if (! empty($conf->use_javascript_ajax)) {
+	    $urltorefreshaftermove = DOL_URL_ROOT.'/admin/emailcollector_card.php?id='.$id;
 		include DOL_DOCUMENT_ROOT . '/core/tpl/ajaxrow.tpl.php';
 	}
 
@@ -559,6 +607,12 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		}
 		print '</div>' . "\n";
 	}
+
+	if (! empty($debuginfo))
+	{
+	    print info_admin($debuginfo);
+	}
+
 
 	// Select mail models is same action as presend
 	if (GETPOST('modelselected')) {

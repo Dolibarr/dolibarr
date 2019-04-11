@@ -92,7 +92,7 @@ if (count($import->array_import_code))
 {
 	//if ($user->rights->import->run)
 	//{
-	print '<a class="butActionNew" href="'.DOL_URL_ROOT.'/imports/import.php?leftmenu=import">'.$langs->trans("NewImport").'<span class="fa fa-plus-circle valignmiddle"></span></a>';
+	print '<a class="butActionNew" href="'.DOL_URL_ROOT.'/imports/import.php?leftmenu=import"><span class="valignmiddle text-plus-circle">'.$langs->trans("NewImport").'</span><span class="fa fa-plus-circle valignmiddle"></span></a>';
 	//}
 	//else
 	//{
@@ -111,7 +111,7 @@ print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td colspan="2">'.$langs->trans("AvailableFormats").'</td>';
 print '<td>'.$langs->trans("LibraryShort").'</td>';
-print '<td align="right">'.$langs->trans("LibraryVersion").'</td>';
+print '<td class="right">'.$langs->trans("LibraryVersion").'</td>';
 print '</tr>';
 
 include_once DOL_DOCUMENT_ROOT.'/core/modules/import/modules_import.php';
@@ -125,7 +125,7 @@ foreach($liste as $key)
 	$text=$model->getDriverDescForKey($key);
 	print '<td>'.$form->textwithpicto($model->getDriverLabelForKey($key), $text).'</td>';
 	print '<td>'.$model->getLibLabelForKey($key).'</td>';
-	print '<td class="nowrap" align="right">'.$model->getLibVersionForKey($key).'</td>';
+	print '<td class="nowrap right">'.$model->getLibVersionForKey($key).'</td>';
 	print '</tr>';
 }
 

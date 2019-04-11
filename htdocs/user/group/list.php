@@ -143,7 +143,7 @@ if ($resql)
     $newcardbutton='';
     if ($caneditperms)
     {
-    	$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/user/group/card.php?action=create&leftmenu="><span class="valignmiddle">'.$langs->trans('NewGroup').'</span>';
+    	$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/user/group/card.php?action=create&leftmenu="><span class="valignmiddle text-plus-circle">'.$langs->trans('NewGroup').'</span>';
     	$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
     	$newcardbutton.= '</a>';
     }
@@ -184,6 +184,7 @@ if ($resql)
     print_liste_field_titre("NbOfUsers", $_SERVER["PHP_SELF"], "nb", $param, "", '', $sortfield, $sortorder, 'center ');
     print_liste_field_titre("NbOfPermissions", $_SERVER["PHP_SELF"], "nbpermissions", $param, "", '', $sortfield, $sortorder, 'center ');
     print_liste_field_titre("DateCreationShort", $_SERVER["PHP_SELF"], "g.datec", $param, "", '', $sortfield, $sortorder, 'center ');
+    print_liste_field_titre("", $_SERVER["PHP_SELF"]);
     print "</tr>\n";
 
     $grouptemp = new UserGroup($db);
@@ -212,7 +213,8 @@ if ($resql)
         }
         print '<td class="center">'.$obj->nb.'</td>';
         print '<td class="center">'.$obj->nbpermissions.'</td>';
-        print '<td class="right nowrap">'.dol_print_date($db->jdate($obj->datec), "dayhour").'</td>';
+        print '<td class="center nowrap">'.dol_print_date($db->jdate($obj->datec), "dayhour").'</td>';
+        print '<td></td>';
         print "</tr>\n";
         $i++;
     }

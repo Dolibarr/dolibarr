@@ -15,6 +15,12 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ *	\file       htdocs/takepos/floors.php
+ *	\ingroup    takepos
+ *	\brief      Popup to enter a free line
+ */
+
 //if (! defined('NOREQUIREUSER'))	define('NOREQUIREUSER','1');	// Not disabled cause need to load personalized language
 //if (! defined('NOREQUIREDB'))		define('NOREQUIREDB','1');		// Not disabled cause need to load personalized language
 //if (! defined('NOREQUIRESOC'))		define('NOREQUIRESOC','1');
@@ -29,9 +35,12 @@ require '../main.inc.php';	// Load $user and permissions
 
 $langs->loadLangs(array("bills", "cashdesk"));
 
-$place = GETPOST('place', 'int');
+$place = (GETPOST('place', 'int') > 0 ? GETPOST('place', 'int') : 0);   // $place is id of table for Ba or Restaurant
+$posnb = (GETPOST('posnb', 'int') > 0 ? GETPOST('posnb', 'int') : 0);   // $posnb is id of POS
+
 $idline = GETPOST('idline', 'int');
-$action = GETPOST('action');
+$action = GETPOST('action', 'alpha');
+
 
 /*
  * View
@@ -60,7 +69,7 @@ if ($action=="freezone") echo '<input type="text" id="number" name="number" styl
 if ($action=="addnote") echo '<input type="hidden" id="number" name="number" value="'.$idline.'">';
 ?>
 <input type="hidden" name="place" value="<?php echo $place;?>">
-<input type="button" style="width:15%;font-size: 200%;" value="OK" onclick="Save();">
+<input type="button" class="button" style="width:15%; font-size: 200%;" value="OK" onclick="Save();">
 </center>
 
 </body>

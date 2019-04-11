@@ -416,14 +416,15 @@ class Productbatch extends CommonObject
      *  Find first detail record that match eather eat-by or sell-by or batch within given warehouse
      *
      *  @param	int			$fk_product_stock   id product_stock for objet
-     *  @param	date		$eatby    			eat-by date for object - deprecated: a search must be done on batch number
-     *  @param	date		$sellby   			sell-by date for object - deprecated: a search must be done on batch number
+     *  @param	integer		$eatby    			eat-by date for object - deprecated: a search must be done on batch number
+     *  @param	integer		$sellby   			sell-by date for object - deprecated: a search must be done on batch number
      *  @param	string		$batch_number   	batch number for object
      *  @return int          					<0 if KO, >0 if OK
      */
     public function find($fk_product_stock = 0, $eatby = '', $sellby = '', $batch_number = '')
     {
     	global $langs;
+
 		$where = array();
 		$sql = "SELECT";
 		$sql.= " t.rowid,";

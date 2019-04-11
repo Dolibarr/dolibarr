@@ -33,10 +33,7 @@ $langs->loadLangs(array("admin","other","website"));
 
 if (! $user->admin) accessforbidden();
 
-if (! ((GETPOST('testmenuhider', 'int') || ! empty($conf->global->MAIN_TESTMENUHIDER)) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)))
-{
-	$conf->dol_hide_leftmenu = 1;   // Force hide of left menu.
-}
+$conf->dol_hide_leftmenu = 1;   // Force hide of left menu.
 
 $error=0;
 $website=GETPOST('website', 'alpha');

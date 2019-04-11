@@ -1105,7 +1105,7 @@ else
                 print '<div class="fichehalfleft">';
                 print '<div class="underbanner clearboth"></div>';
 
-                print '<table class="border centpercent">';
+                print '<table class="border tableforfield centpercent">';
                 print '<tbody>';
 
                 // User
@@ -1213,7 +1213,7 @@ else
                 print '<div class="underbanner clearboth"></div>';
 
 				// Info workflow
-                print '<table class="border centpercent">'."\n";
+                print '<table class="border tableforfield centpercent">'."\n";
                 print '<tbody>';
 
                 if (! empty($object->fk_user_create))

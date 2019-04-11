@@ -82,7 +82,7 @@ if (empty($conf) || ! is_object($conf))
 		{
 		    print '<td class="fieldrequired">'.$langs->trans("Product").'</td>';
 		    print '<td>';
-		    print $form->select_produits(GETPOST('product_id'), 'product_id', (empty($conf->global->STOCK_SUPPORTS_SERVICES)?'0':''), 20, 0, -1, 2, '', 0, null, 0, 1, 0, 'maxwidth500');
+		    print $form->select_produits(GETPOST('product_id', 'int'), 'product_id', (empty($conf->global->STOCK_SUPPORTS_SERVICES)?'0':''), 0, 0, -1, 2, '', 0, null, 0, 1, 0, 'maxwidth500');
 		    print '</td>';
 		}
 

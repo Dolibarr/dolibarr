@@ -668,7 +668,7 @@ class Mailing extends CommonObject
 	 *
 	 *  @param	int		$statut        	Id statut
 	 *  @param  int		$mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
-	 *  @param	strin	$desc			Desc error
+	 *  @param	string	$desc			Desc error
 	 *  @return string        			Label
 	 */
 	public static function libStatutDest($statut, $mode = 0, $desc = '')

@@ -181,16 +181,16 @@ if (! GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'a
         $version=$db->getVersion();
         $versionarray=$db->getVersionArray();
         print '<tr><td>'.$langs->trans("ServerVersion").'</td>';
-        print '<td align="right">'.$version.'</td></tr>';
+        print '<td class="right">'.$version.'</td></tr>';
         dolibarr_install_syslog("upgrade: " . $langs->transnoentities("ServerVersion") . ": " .$version);
         if ($db->type == 'mysqli' && function_exists('mysqli_get_charset'))
         {
         	$tmparray = $db->db->get_charset();
         	print '<tr><td>'.$langs->trans("ClientCharset").'</td>';
-        	print '<td align="right">'.$tmparray->charset.'</td></tr>';
+        	print '<td class="right">'.$tmparray->charset.'</td></tr>';
         	dolibarr_install_syslog("upgrade: " . $langs->transnoentities("ClientCharset") . ": " .$tmparray->charset);
         	print '<tr><td>'.$langs->trans("ClientSortingCharset").'</td>';
-        	print '<td align="right">'.$tmparray->collation.'</td></tr>';
+        	print '<td class="right">'.$tmparray->collation.'</td></tr>';
         	dolibarr_install_syslog("upgrade: " . $langs->transnoentities("ClientCollation") . ": " .$tmparray->collation);
         }
 
@@ -201,7 +201,7 @@ if (! GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'a
         	&& versioncompare($versionarray, $versionmindb) < 0)
         {
         	// Warning: database version too low.
-        	print "<tr><td>".$langs->trans("ErrorDatabaseVersionTooLow", join('.', $versionarray), join('.', $versionmindb))."</td><td align=\"right\">".$langs->trans("Error")."</td></tr>\n";
+        	print "<tr><td>".$langs->trans("ErrorDatabaseVersionTooLow", join('.', $versionarray), join('.', $versionmindb))."</td><td class=\"right\">".$langs->trans("Error")."</td></tr>\n";
         	dolibarr_install_syslog("upgrade: " . $langs->transnoentities("ErrorDatabaseVersionTooLow", join('.', $versionarray), join('.', $versionmindb)));
         	$ok=0;
         }
@@ -228,7 +228,7 @@ if (! GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'a
 		        )
 		        {
 		        	// Warning: database version too low.
-		        	print '<tr><td><div class="warning">'.$langs->trans("ErrorDatabaseVersionForbiddenForMigration", join('.', $versionarray), $listofforbiddenversion)."</div></td><td align=\"right\">".$langs->trans("Error")."</td></tr>\n";
+		        	print '<tr><td><div class="warning">'.$langs->trans("ErrorDatabaseVersionForbiddenForMigration", join('.', $versionarray), $listofforbiddenversion)."</div></td><td class=\"right\">".$langs->trans("Error")."</td></tr>\n";
 		        	dolibarr_install_syslog("upgrade: " . $langs->transnoentities("ErrorDatabaseVersionForbiddenForMigration", join('.', $versionarray), $listofforbiddenversion));
 		        	$ok=0;
 		        	break;
@@ -367,7 +367,7 @@ if (! GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'a
 	        	if (in_array($dir.$file, $listoffileprocessed)) continue;
 
 	        	print '<tr><td colspan="2"><hr></td></tr>';
-	            print '<tr><td class="nowrap">'.$langs->trans("ChoosedMigrateScript").'</td><td align="right">'.$file.'</td></tr>'."\n";
+	            print '<tr><td class="nowrap">'.$langs->trans("ChoosedMigrateScript").'</td><td class="right">'.$file.'</td></tr>'."\n";
 
 	            // Run sql script
 	            $ok=run_sql($dir.$file, 0, '', 1);
@@ -401,7 +401,7 @@ if (! GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'a
 	            	if (in_array($modulefilelong, $listoffileprocessed)) continue;
 
 	            	print '<tr><td colspan="2"><hr></td></tr>';
-	            	print '<tr><td class="nowrap">'.$langs->trans("ChoosedMigrateScript").' (external modules)</td><td align="right">'.$modulefileshort.'</td></tr>'."\n";
+	            	print '<tr><td class="nowrap">'.$langs->trans("ChoosedMigrateScript").' (external modules)</td><td class="right">'.$modulefileshort.'</td></tr>'."\n";
 
 		            // Run sql script
 	            	$okmodule=run_sql($modulefilelong, 0, '', 1);	// Note: Result of migration of external module should not decide if we continue migration of Dolibarr or not.

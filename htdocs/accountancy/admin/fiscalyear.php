@@ -113,11 +113,11 @@ if ($result)
 
 	if (! empty($user->rights->accounting->fiscalyear))
 	{
-		$addbutton = '<a class="butActionNew" href="fiscalyear_card.php?action=create"><span class="valignmiddle">' . $langs->trans("NewFiscalYear") .'</span><span class="fa fa-plus-circle valignmiddle"></span></a>';
+		$addbutton = '<a class="butActionNew" href="fiscalyear_card.php?action=create"><span class="valignmiddle text-plus-circle">' . $langs->trans("NewFiscalYear") .'</span><span class="fa fa-plus-circle valignmiddle"></span></a>';
 	}
 	else
 	{
-		$addbutton = '<a class="butActionRefused classfortooltip" href="#"><span class="valignmiddle" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">' . $langs->trans("NewFiscalYear") .'</span><span class="fa fa-plus-circle valignmiddle"></span></a>';
+		$addbutton = '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'"><span class="valignmiddle text-plus-circle">' . $langs->trans("NewFiscalYear") .'</span><span class="fa fa-plus-circle valignmiddle"></span></a>';
 	}
 
 	$title = $langs->trans('AccountingPeriods');

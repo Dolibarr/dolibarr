@@ -59,7 +59,7 @@ llxHeader('', $title);
 $newcardbutton='';
 if ($user->rights->produit->creer)
 {
-	$newcardbutton='<a href="'.DOL_URL_ROOT.'/variants/create.php" class="butActionNew"><span class="valignmiddle">'.$langs->trans('Create').'</span>';
+	$newcardbutton='<a href="'.DOL_URL_ROOT.'/variants/create.php" class="butActionNew"><span class="valignmiddle text-plus-circle">'.$langs->trans('Create').'</span>';
 	$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
 	$newcardbutton.= '</a>';
 }

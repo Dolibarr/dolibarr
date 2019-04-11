@@ -284,8 +284,8 @@ print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Description").'</td>';
 print '<td class="nowrap">'.$langs->trans("Example").'</td>';
-print '<td align="center" width="60">'.$langs->trans("Status").'</td>';
-print '<td align="center" width="16">'.$langs->trans("ShortInfo").'</td>';
+print '<td class="center" width="60">'.$langs->trans("Status").'</td>';
+print '<td class="center" width="16">'.$langs->trans("ShortInfo").'</td>';
 print '</tr>'."\n";
 
 clearstatcache();
@@ -344,7 +344,7 @@ foreach ($dirmodels as $reldir)
                             else print $tmp;
                             print '</td>'."\n";
 
-                            print '<td align="center">';
+                            print '<td class="center">';
                             //print "> ".$conf->global->FACTURE_ADDON." - ".$file;
                             if ($conf->global->FACTURE_ADDON == $file || $conf->global->FACTURE_ADDON.'.php' == $file)
                             {
@@ -415,7 +415,7 @@ foreach ($dirmodels as $reldir)
                                 }
                             }
 
-                            print '<td align="center">';
+                            print '<td class="center">';
                             print $form->textwithpicto('', $htmltooltip, 1, 0);
 
                             if ($conf->global->FACTURE_ADDON.'.php' == $file)  // If module is the one used, we show existing errors
@@ -472,10 +472,10 @@ print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Description").'</td>';
-print '<td align="center" width="60">'.$langs->trans("Status").'</td>';
-print '<td align="center" width="60">'.$langs->trans("Default").'</td>';
-print '<td align="center" width="32">'.$langs->trans("ShortInfo").'</td>';
-print '<td align="center" width="32">'.$langs->trans("Preview").'</td>';
+print '<td class="center" width="60">'.$langs->trans("Status").'</td>';
+print '<td class="center" width="60">'.$langs->trans("Default").'</td>';
+print '<td class="center" width="32">'.$langs->trans("ShortInfo").'</td>';
+print '<td class="center" width="32">'.$langs->trans("Preview").'</td>';
 print "</tr>\n";
 
 clearstatcache();
@@ -528,7 +528,7 @@ foreach ($dirmodels as $reldir)
 	                            // Active
 	                            if (in_array($name, $def))
 	                            {
-	                            	print '<td align="center">'."\n";
+	                            	print '<td class="center">'."\n";
 	                            	print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&value='.$name.'">';
 	                            	print img_picto($langs->trans("Enabled"), 'switch_on');
 	                            	print '</a>';
@@ -536,13 +536,13 @@ foreach ($dirmodels as $reldir)
 	                            }
 	                            else
 	                            {
-	                                print "<td align=\"center\">\n";
+	                                print '<td class="center">'."\n";
 	                                print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&value='.$name.'&scan_dir='.$module->scandir.'&label='.urlencode($module->name).'">'.img_picto($langs->trans("SetAsDefault"), 'switch_off').'</a>';
 	                                print "</td>";
 	                            }
 
 	                            // Defaut
-	                            print "<td align=\"center\">";
+	                            print '<td class="center">';
 	                            if ($conf->global->FACTURE_ADDON_PDF == "$name")
 	                            {
 	                                print img_picto($langs->trans("Default"), 'on');
@@ -570,12 +570,12 @@ foreach ($dirmodels as $reldir)
 	                            $htmltooltip.='<br>'.$langs->trans("WatermarkOnDraftInvoices").': '.yn($module->option_draft_watermark, 1, 1);
 
 
-	                            print '<td align="center">';
+	                            print '<td class="center">';
 	                            print $form->textwithpicto('', $htmltooltip, 1, 0);
 	                            print '</td>';
 
 	                            // Preview
-	                            print '<td align="center">';
+	                            print '<td class="center">';
 	                            if ($module->type == 'pdf')
 	                            {
 	                                print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"), 'bill').'</a>';
@@ -742,7 +742,7 @@ print load_fiche_titre($langs->trans("OtherOptions"), '', '');
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td>';
-print '<td align="center" width="60">'.$langs->trans("Value").'</td>';
+print '<td class="center" width="60">'.$langs->trans("Value").'</td>';
 print '<td width="80">&nbsp;</td>';
 print "</tr>\n";
 
@@ -752,7 +752,7 @@ print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />';
 print '<input type="hidden" name="action" value="setforcedate" />';
 print '<tr class="oddeven"><td>';
 print $langs->trans("ForceInvoiceDate");
-print '</td><td width="60" align="center">';
+print '</td><td width="60" class="center">';
 print $form->selectyesno("forcedate", $conf->global->FAC_FORCE_DATE_VALIDATION, 1);
 print '</td><td class="right">';
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'" />';
@@ -828,7 +828,7 @@ print load_fiche_titre($langs->trans("Notifications"), '', '');
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td>';
-print '<td align="center" width="60"></td>';
+print '<td class="center" width="60"></td>';
 print '<td width="80">&nbsp;</td>';
 print "</tr>\n";
 

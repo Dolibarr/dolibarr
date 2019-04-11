@@ -5,4 +5,3 @@ NewCheckDeposit=New cheque deposit
 NewCheckDepositOn=Create receipt for deposit to account: %s
 NoWaitingChecks=No cheques awaiting deposit.
 DateChequeReceived=Cheque reception date
-NbOfCheques=Number of cheques

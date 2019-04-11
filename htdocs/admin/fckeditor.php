@@ -148,7 +148,7 @@ else
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre">';
     print '<td colspan="2">'.$langs->trans("ActivateFCKeditor").'</td>';
-    print '<td align="center" width="100">'.$langs->trans("Action").'</td>';
+    print '<td class="center" width="100">'.$langs->trans("Action").'</td>';
     print "</tr>\n";
 
     // Modules
@@ -160,7 +160,7 @@ else
         print '<tr class="oddeven">';
         print '<td width="16">'.img_object("", $picto[$const]).'</td>';
         print '<td>'.$langs->trans($desc).'</td>';
-        print '<td align="center" width="100">';
+        print '<td class="center" width="100">';
         $constante = 'FCKEDITOR_ENABLE_'.$const;
         $value = (isset($conf->global->$constante)?$conf->global->$constante:0);
         if ($value == 0)

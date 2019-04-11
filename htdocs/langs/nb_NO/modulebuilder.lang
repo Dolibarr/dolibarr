@@ -1,8 +1,8 @@
 # Dolibarr language file - Source file is en_US - loan
-ModuleBuilderDesc=Disse verktøyene må kun brukes av erfarne brukere eller utviklere. Det gir deg et verktøy til å bygge eller redigere din egen modul (Dokumentasjon for alternativ <a href="%s" target="_blank"> manuell utvikling er her </a>).
+ModuleBuilderDesc=This tool must be used only by experienced users or developers. It provides utilities to build or edit your own module.<br>Documentation for alternative <a href="%s" target="_blank">manual development is here</a>.
 EnterNameOfModuleDesc=Skriv inn navnet på modulen/applikasjonen du  vil opprette, uten mellomrom. Bruk stor bokstav til å skille ord (For eksempel: MyModule, EcommerceForShop, SyncWithMySystem ...)
 EnterNameOfObjectDesc=Skriv inn navnet på objektet som skal opprettes, uten mellomrom. Bruk stor bokstav til å skille ord (For eksempel: MyObject, Student, Lærer ...). CRUD-klassefilen, men også API-filen, sider for å liste/legge til/redigere/slette objekt og SQL-filer blir generert .
-ModuleBuilderDesc2=Sti hvor moduler genereres/redigeres (første alternative katalog definert i %s): <strong>%s</strong>
+ModuleBuilderDesc2=Path where modules are generated/edited (first directory for external modules defined into %s): <strong>%s</strong>
 ModuleBuilderDesc3=Genererte/redigerbare moduler funnet: <strong> %s</strong>
 ModuleBuilderDesc4=En modul detekteres som "redigerbar" når filen<strong>%s</strong> eksisterer i roten av modulkatalogen
 NewModule=Ny modul
@@ -13,7 +13,7 @@ ModuleInitialized=Modul initialisert
 FilesForObjectInitialized=Filer for nytt objekt '%s' initialisert
 FilesForObjectUpdated=Filer for objektet '%s' oppdatert (.sql-filer og .class.php-fil)
 ModuleBuilderDescdescription=Skriv inn all generell informasjon som beskriver modulen din her.
-ModuleBuilderDescspecifications=Du kan skrive inn en lang tekst for å beskrive spesifikasjonene til modulen din, som ikke allerede er strukturert i andre faner. Du har alle reglene som skal utvikles innen rekkevidde. Også dette tekstinnholdet vil bli inkludert i den genererte dokumentasjonen (se siste faneblad). Du kan bruke Markdown-format, men det anbefales at du bruker Asciidoc-formatet (Sammenligning mellom .md og .asciidoc: http://asciidoctor.org/docs/user-manual/#compared-to-markdown)
+ModuleBuilderDescspecifications=Du kan skrive inn en detaljert tekst for å beskrive spesifikasjonene til modulen din, som ikke allerede er strukturert i andre faner. Du har alle reglene som skal utvikles innen rekkevidde. Også dette tekstinnholdet vil bli inkludert i den genererte dokumentasjonen (se siste faneblad). Du kan bruke Markdown-format, men det anbefales at du bruker Asciidoc-formatet (Sammenligning mellom .md og .asciidoc: http://asciidoctor.org/docs/user-manual/#compared-to-markdown)
 ModuleBuilderDescobjects=Her defineres de objektene du vil administrere med modulen din. En CRUD DAO-klasse, SQL-filer, en side med en oversikt over objekter, å opprette/redigere/vise en post og en API vil bli generert.
 ModuleBuilderDescmenus=Denne fanen er dedikert for å definere menyoppføringer som tilbys av modulen din.
 ModuleBuilderDescpermissions=Denne fanener dedikert til å definere de nye tillatelsene du vil gi med modulen din.
@@ -24,7 +24,7 @@ ModuleBuilderDescbuildpackage=Her kan du generere en "klar til å distribuere" p
 EnterNameOfModuleToDeleteDesc=Du kan slette modulen din. ADVARSEL: Alle filer i modulen, men også strukturerte data og dokumentasjon, vil definitivt gå tapt!
 EnterNameOfObjectToDeleteDesc=Du kan slette et objekt. ADVARSEL: Alle filer relatert til objekt går tapt!
 DangerZone=Faresone
-BuildPackage=Bygg pakke/dokumentasjon
+BuildPackage=Bygg pakke
 BuildDocumentation=Bygg dokumentasjon
 ModuleIsNotActive=Denne modulen er ikke aktivert enda. Gå inn på %s for å aktivere eller klikk her:
 ModuleIsLive=Denne modulen er blitt aktivert. Enhver endring på den kan ødelegge en gjeldende aktiv funksjon.
@@ -40,12 +40,12 @@ PageForAgendaTab=PHP-side for hendelsesfanen
 PageForDocumentTab=PHP-side for dokumentfan
 PageForNoteTab=PHP-side for notatfane
 PathToModulePackage=Sti til zip-fil av modul/applikasjonspakke
-PathToModuleDocumentation=Sti til fil med modul/applikasjonsdokumentasjon
+PathToModuleDocumentation=Path to file of module/application documentation (%s)
 SpaceOrSpecialCharAreNotAllowed=Mellomrom eller spesialtegn er ikke tillatt.
 FileNotYetGenerated=Filen er ikke generert ennå
 RegenerateClassAndSql=Slett og regenerer klasse- og sql-filer
 RegenerateMissingFiles=Generer manglende filer
-SpecificationFile=Fil med forretningsregler
+SpecificationFile=File of documentation
 LanguageFile=Språkfil
 ConfirmDeleteProperty=Er du sikker på at du vil slette egenskapen<strong> %s</strong>? Dette vil endre kode i PHP klassen, og fjerne kolonne fra tabelldefinisjon av objekt.
 NotNull=Ikke NULL
@@ -76,7 +76,7 @@ ListOfMenusEntries=Liste over menyoppføringer
 ListOfPermissionsDefined=Liste over definerte tillatelser
 SeeExamples=Se eksempler her
 EnabledDesc=Betingelse for å ha dette feltet aktivt (Eksempler: 1 eller $conf->global->MYMODULE_MYOPTION)
-VisibleDesc=Er feltet synlig? (Eksempler: 0=Aldri synlig, 1=Synlig på liste og opprett/oppdater/vis skjemaer, 2=Bare synlig på listen, 3=Synlig på opprett/oppdater/vis kun skjema. Bruk av negativ verdi betyr at feltet ikke vises som standard på listen, men kan velges for visning)
+VisibleDesc=Is the field visible ? (Examples: 0=Never visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create). Using a negative value means field is not shown by default on list but can be selected for viewing). It can be an expression, for example: preg_match('/public/', $_SERVER['PHP_SELF'])?0:1
 IsAMeasureDesc=Kan verdien av feltet bli kumulert for å få en total i listen? (Eksempler: 1 eller 0)
 SearchAllDesc=Er feltet brukt til å søke fra hurtigsøkingsverktøyet? (Eksempler: 1 eller 0)
 SpecDefDesc=Skriv inn all dokumentasjon du vil gi med modulen din, som ikke allerede er definert av andre faner. Du kan bruke .md eller bedre,  .asciidoc-syntaksen.
@@ -88,7 +88,7 @@ TriggerDefDesc=Definer koden som skal utføres for hver forretningshendelse utf�
 SeeIDsInUse=Se IDer som brukes i installasjonen din
 SeeReservedIDsRangeHere=Se område av reserverte IDer
 ToolkitForDevelopers=Verktøy for Dolibarr-utviklere
-TryToUseTheModuleBuilder=Hvis du har kunnskap i SQL og PHP, kan du prøve å bruke veiviseren for modulbyggeren. Bare aktiver modulen og bruk veiviseren ved å klikke på <span class = "fa fa-bug"> </span> i øverste høyre meny. Advarsel: Dette er en utviklerfunksjon, feil bruk kan ødelegge applikasjonen din.
+TryToUseTheModuleBuilder=Hvis du har kunnskap i SQL og PHP, kan du prøve å bruke veiviseren for modulbyggeren. <br>Aktiver modulen<strong>%s</strong> og bruk veiviseren ved å klikke på <span class="fa fa-bug"></span> i øverste høyre meny. <br>Advarsel: Dette er en avansert utviklerfunksjon, <b>IKKE </b>eksperimenter med en produktiv applikasjon!
 SeeTopRightMenu=Se <span class="fa fa-bug"></span> i øverste høyre meny
 AddLanguageFile=Legg til språkfil
 YouCanUseTranslationKey=Her kan du bruke en nøkkel som er oversettelsesnøkkelen funnet i språkfilen (se kategorien "Språk")
@@ -96,6 +96,17 @@ DropTableIfEmpty=(Slett tabell hvis tom)
 TableDoesNotExists=Tabellen %s finnes ikke
 TableDropped=Tabell %s slettet
 InitStructureFromExistingTable=Bygg struktur-matrisestrengen fra en eksisterende tabell
-UseAboutPage=Ikke tillat "om" siden
-UseDocFolder=Ikke tillat dokumentasjonsmappen
+UseAboutPage=Deaktiver "om"-siden
+UseDocFolder=Deaktiver dokumentasjonsmappen
 UseSpecificReadme=Bruk en bestemt Les-meg
+RealPathOfModule=Virkelig bane til modulen
+ContentCantBeEmpty=Innholdet i filen kan ikke være tomt
+WidgetDesc=You can generate and edit here the widgets that will be embedded with your module.
+CLIDesc=You can generate here some command line scripts you want to provide with your module.
+CLIFile=CLI File
+NoCLIFile=No CLI files
+UseSpecificEditorName = Use a specific editor name
+UseSpecificEditorURL = Use a specific editor URL
+UseSpecificFamily = Use a specific family
+UseSpecificAuthor = Use a specific author
+UseSpecificVersion = Use a specific initial version

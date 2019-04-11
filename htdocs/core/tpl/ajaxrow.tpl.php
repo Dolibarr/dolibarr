@@ -77,8 +77,8 @@ $(document).ready(function(){
 					function() {
 						console.log("tableDND end of ajax call");
 						if (reloadpage == 1) {
-							//console.log('<?php echo dol_escape_js($_SERVER['QUERY_STRING']); ?>');
-							location.href = '<?php echo dol_escape_js($_SERVER['PHP_SELF']).'?'.dol_escape_js($_SERVER['QUERY_STRING']); ?>';
+							//console.log('<?php echo $urltorefreshaftermove.' - '.$_SERVER['PHP_SELF'].' - '.dol_escape_js($_SERVER['QUERY_STRING']); ?>');
+							location.href = '<?php echo dol_escape_js(empty($urltorefreshaftermove) ? ($_SERVER['PHP_SELF'].'?'.dol_escape_js($_SERVER['QUERY_STRING'])) : $urltorefreshaftermove); ?>';
 						} else {
 							$("#<?php echo $tagidfortablednd; ?> .drag").each(
 									function( intIndex ) {

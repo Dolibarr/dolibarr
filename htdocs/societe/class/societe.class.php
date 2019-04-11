@@ -14,6 +14,7 @@
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2017       Rui Strecht			    <rui.strecht@aliartalentos.com>
  * Copyright (C) 2018	    Philippe Grand	        <philippe.grand@atoo-net.com>
+ * Copyright (C) 2019	    Josep Lluís Amador      <joseplluis@lliuretic.cat>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1251,7 +1252,7 @@ class Societe extends CommonObject
 		$sql .= ', s.fk_forme_juridique as forme_juridique_code';
 		$sql .= ', s.webservices_url, s.webservices_key';
 		$sql .= ', s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur, s.parent, s.barcode';
-		$sql .= ', s.fk_departement, s.fk_pays as country_id, s.fk_stcomm, s.remise_supplier, s.mode_reglement, s.cond_reglement, s.fk_account, s.tva_assuj';
+		$sql .= ', s.fk_departement as state_id, s.fk_pays as country_id, s.fk_stcomm, s.remise_supplier, s.mode_reglement, s.cond_reglement, s.fk_account, s.tva_assuj';
 		$sql .= ', s.mode_reglement_supplier, s.cond_reglement_supplier, s.localtax1_assuj, s.localtax1_value, s.localtax2_assuj, s.localtax2_value, s.fk_prospectlevel, s.default_lang, s.logo';
 		$sql .= ', s.fk_shipping_method';
 		$sql .= ', s.outstanding_limit, s.import_key, s.canvas, s.fk_incoterms, s.location_incoterms';
@@ -1278,7 +1279,7 @@ class Societe extends CommonObject
 		$sql .= ' WHERE s.entity IN ('.getEntity($this->element).')';
 		if ($rowid)     $sql .= ' AND s.rowid = '.$rowid;
 		if ($ref)       $sql .= " AND s.nom = '".$this->db->escape($ref)."'";
-		if ($ref_alias) $sql .= " AND s.nom_alias = '".$this->db->escape($ref_alias)."'";
+		if ($ref_alias) $sql .= " AND s.name_alias = '".$this->db->escape($ref_alias)."'";
 		if ($ref_ext)   $sql .= " AND s.ref_ext = '".$this->db->escape($ref_ext)."'";
 		if ($ref_int)   $sql .= " AND s.ref_int = '".$this->db->escape($ref_int)."'";
 		if ($idprof1)   $sql .= " AND s.siren = '".$this->db->escape($idprof1)."'";
@@ -1327,7 +1328,7 @@ class Societe extends CommonObject
 				$this->country_code = $obj->country_id?$obj->country_code:'';
 				$this->country 		= $obj->country_id?($langs->trans('Country'.$obj->country_code)!='Country'.$obj->country_code?$langs->transnoentities('Country'.$obj->country_code):$obj->country):'';
 
-				$this->state_id     = $obj->fk_departement;
+				$this->state_id     = $obj->state_id;
 				$this->state_code   = $obj->state_code;
 				$this->state        = ($obj->state!='-'?$obj->state:'');
 
@@ -1456,7 +1457,7 @@ class Societe extends CommonObject
 	 *    Delete a third party from database and all its dependencies (contacts, rib...)
 	 *
 	 *    @param	int		$id             Id of third party to delete
-	 *    @param    User    $fuser          User who ask to delete thirparty
+	 *    @param    User    $fuser          User who ask to delete thirdparty
 	 *    @param    int		$call_trigger   0=No, 1=yes
 	 *    @return	int						<0 if KO, 0 if nothing done, >0 if OK
 	 */
