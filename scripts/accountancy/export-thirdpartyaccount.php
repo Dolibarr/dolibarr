@@ -20,7 +20,7 @@
  */
 
 /**
- * \file 		htdocs/accountancy/admin/export-thirdpartyaccount.php
+ * \file 		htdocs/accounting/admin/export-thirdpartyaccount.php
  * \ingroup		Accounting Expert
  * \brief		Page to detect empty accounting account
  */
@@ -150,7 +150,7 @@ $sql .= ")";
 
 $sql .= "ORDER BY name ASC";
 
-dol_syslog('accountancy/admin/thirdpartyaccount.php:: $sql=' . $sql);
+dol_syslog('accounting/admin/thirdpartyaccount.php:: $sql=' . $sql);
 $resql = $db->query($sql);
 if ($resql) {
 	$num = $db->num_rows($resql);

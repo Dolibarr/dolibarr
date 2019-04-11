@@ -2987,7 +2987,7 @@ function getFilesUpdated(&$file_list, SimpleXMLElement $dir, $path = '', $pathre
 		}
 	}
 
-	foreach ($dir->dir as $subdir)			// $subdir['name'] is  '' or '/accountancy/admin' for example
+	foreach ($dir->dir as $subdir)			// $subdir['name'] is  '' or '/accounting/admin' for example
 	{
 		getFilesUpdated($file_list, $subdir, $path.$subdir['name'].'/', $pathref, $checksumconcat);
 	}

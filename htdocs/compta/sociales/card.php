@@ -36,7 +36,7 @@ if (! empty($conf->projet->enabled))
 	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
 if (! empty($conf->accounting->enabled)) {
-	include_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingjournal.class.php';
+	include_once DOL_DOCUMENT_ROOT . '/accounting/class/accountingjournal.class.php';
 }
 
 // Load translation files required by the page

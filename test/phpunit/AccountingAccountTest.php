@@ -27,7 +27,7 @@ global $conf,$user,$langs,$db;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
-require_once dirname(__FILE__).'/../../htdocs/accountancy/class/accountingaccount.class.php';
+require_once dirname(__FILE__).'/../../htdocs/accounting/class/accountingaccount.class.php';
 
 if (empty($user->id)) {
     print "Load permissions for admin user nb 1\n";

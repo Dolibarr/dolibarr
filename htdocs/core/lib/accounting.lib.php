@@ -36,7 +36,7 @@ function accounting_prepare_head(AccountingAccount $object)
 	$h = 0;
 	$head = array ();
 
-	$head[$h][0] = DOL_URL_ROOT.'/accountancy/admin/card.php?id=' . $object->id;
+	$head[$h][0] = DOL_URL_ROOT.'/accounting/admin/card.php?id=' . $object->id;
 	$head[$h][1] = $langs->trans("Card");
 	$head[$h][2] = 'card';
 	$h ++;

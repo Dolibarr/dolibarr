@@ -155,7 +155,7 @@ function societe_prepare_head(Societe $object)
 		// Tab to accountancy
 		if (! empty($conf->accounting->enabled) && $object->client>0)
 		{
-			$head[$h][0] = DOL_URL_ROOT.'/accountancy/bookkeeping/thirdparty_lettering_customer.php?socid='.$object->id;
+			$head[$h][0] = DOL_URL_ROOT.'/accounting/bookkeeping/thirdparty_lettering_customer.php?socid='.$object->id;
 			$head[$h][1] = $langs->trans("TabLetteringCustomer");
 			$head[$h][2] = 'lettering_customer';
 			$h++;
@@ -164,7 +164,7 @@ function societe_prepare_head(Societe $object)
 		// Tab to accountancy
 		if (! empty($conf->accounting->enabled) && $object->fournisseur>0)
 		{
-			$head[$h][0] = DOL_URL_ROOT.'/accountancy/bookkeeping/thirdparty_lettering_supplier.php?socid='.$object->id;
+			$head[$h][0] = DOL_URL_ROOT.'/accounting/bookkeeping/thirdparty_lettering_supplier.php?socid='.$object->id;
 			$head[$h][1] = $langs->trans("TabLetteringSupplier");
 			$head[$h][2] = 'lettering_supplier';
 			$h++;
