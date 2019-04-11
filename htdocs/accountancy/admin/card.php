@@ -202,7 +202,7 @@ if ($action == 'add' && $user->rights->accounting->chartofaccount)
 $form = new Form($db);
 $formaccounting = new FormAccounting($db);
 
-$accountsystem = new AccountancySystem($db);
+$accountsystem = new AccountingSystem($db);
 $accountsystem->fetch($conf->global->CHARTOFACCOUNTS);
 
 $title = $langs->trans('AccountAccounting') ." - ". $langs->trans('Card');
