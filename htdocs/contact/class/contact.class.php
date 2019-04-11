@@ -81,7 +81,7 @@ class Contact extends CommonObject
 
 	public $civility_id;      // In fact we store civility_code
 	public $civility_code;
-    public $civility_label;
+  public $civility;
 	public $address;
 	public $zip;
 	public $town;
@@ -204,7 +204,7 @@ class Contact extends CommonObject
 	public function create($user)
 	{
 		global $conf, $langs;
-
+    
 		$error=0;
 		$now=dol_now();
 
@@ -224,9 +224,9 @@ class Contact extends CommonObject
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."socpeople (";
 		$sql.= " datec";
 		$sql.= ", fk_soc";
-        $sql.= ", lastname";
-        $sql.= ", firstname";
-        $sql.= ", fk_user_creat";
+    $sql.= ", lastname";
+    $sql.= ", firstname";
+    $sql.= ", fk_user_creat";
 		$sql.= ", priv";
 		$sql.= ", statut";
 		$sql.= ", canvas";
@@ -238,14 +238,14 @@ class Contact extends CommonObject
 		if ($this->socid > 0) $sql.= " ".$this->db->escape($this->socid).",";
 		else $sql.= "null,";
 		$sql.= "'".$this->db->escape($this->lastname)."',";
-        $sql.= "'".$this->db->escape($this->firstname)."',";
-        $sql.= " ".($user->id > 0 ? "'".$this->db->escape($user->id)."'":"null").",";
+    $sql.= "'".$this->db->escape($this->firstname)."',";
+    $sql.= " ".($user->id > 0 ? "'".$this->db->escape($user->id)."'":"null").",";
 		$sql.= " ".$this->db->escape($this->priv).",";
 		$sql.= " ".$this->db->escape($this->statut).",";
-        $sql.= " ".(! empty($this->canvas)?"'".$this->db->escape($this->canvas)."'":"null").",";
-        $sql.= " ".$this->db->escape($this->entity).",";
-        $sql.= "'".$this->db->escape($this->ref_ext)."',";
-        $sql.= " ".(! empty($this->import_key)?"'".$this->db->escape($this->import_key)."'":"null");
+    $sql.= " ".(! empty($this->canvas)?"'".$this->db->escape($this->canvas)."'":"null").",";
+    $sql.= " ".$this->db->escape($this->entity).",";
+    $sql.= "'".$this->db->escape($this->ref_ext)."',";
+    $sql.= " ".(! empty($this->import_key)?"'".$this->db->escape($this->import_key)."'":"null");
 		$sql.= ")";
 
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
@@ -697,6 +697,8 @@ class Contact extends CommonObject
 	{
 		global $langs;
 
+    $langs->load("dict");
+
 		dol_syslog(get_class($this)."::fetch id=".$id, LOG_DEBUG);
 
 		if (empty($id) && empty($ref_ext))
@@ -718,14 +720,12 @@ class Contact extends CommonObject
 		$sql.= " c.import_key,";
 		$sql.= " c.datec as date_creation, c.tms as date_modification,";
 		$sql.= " co.label as country, co.code as country_code,";
-        $sql.= " ci.label as civility,";
 		$sql.= " d.nom as state, d.code_departement as state_code,";
 		$sql.= " u.rowid as user_id, u.login as user_login,";
 		$sql.= " s.nom as socname, s.address as socaddress, s.zip as soccp, s.town as soccity, s.default_lang as socdefault_lang";
 		$sql.= " FROM ".MAIN_DB_PREFIX."socpeople as c";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as co ON c.fk_pays = co.rowid";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as d ON c.fk_departement = d.rowid";
-		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_civility as ci ON c.civility = ci.code";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON c.rowid = u.fk_socpeople";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON c.fk_soc = s.rowid";
 		if ($id) $sql.= " WHERE c.rowid = ". $id;
@@ -752,8 +752,8 @@ class Contact extends CommonObject
 				$this->ref				= $obj->rowid;
 				$this->ref_ext			= $obj->ref_ext;
 				$this->civility_id		= $obj->civility_id;
-				$this->civility_code    = $obj->civility_code;
-                $this->civility	        = $obj->civility;
+				$this->civility_code    = $obj->civility_id;
+        $this->civility	        = $langs->trans("Civility".$obj->civility_id);
 				$this->lastname			= $obj->lastname;
 				$this->firstname		= $obj->firstname;
 				$this->address			= $obj->address;
