@@ -79,7 +79,7 @@ $tabname[32]= MAIN_DB_PREFIX."c_accounting_category";
 
 // Dictionary labels
 $tablib=array();
-$tablib[32]= "DictionaryAccountancyCategory";
+$tablib[32]= "DictionaryAccountingCategory";
 
 // Requests to extract data
 $tabsql=array();
@@ -404,7 +404,7 @@ if ($action == 'disable_favorite')
 $form = new Form($db);
 $formadmin=new FormAdmin($db);
 
-llxHeader('', $langs->trans('DictionaryAccountancyCategory'));
+llxHeader('', $langs->trans('DictionaryAccountingCategory'));
 
 $titre=$langs->trans($tablib[$id]);
 $linkback='';

@@ -122,7 +122,7 @@ $modecompta = $conf->global->ACCOUNTING_MODE;
 if (! empty($conf->accounting->enabled)) $modecompta='BOOKKEEPING';
 if (GETPOST("modecompta", 'alpha')) $modecompta=GETPOST("modecompta", 'alpha');
 
-$AccCat = new AccountancyCategory($db);
+$AccCat = new AccountingCategory($db);
 
 
 

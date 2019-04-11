@@ -135,7 +135,7 @@ if ($user->societe_id > 0)
 if (! $user->rights->accounting->comptarapport->lire)
 	accessforbidden();
 
-$AccCat = new AccountancyCategory($db);
+$AccCat = new AccountingCategory($db);
 
 
 /*

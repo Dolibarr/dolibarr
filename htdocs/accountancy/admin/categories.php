@@ -51,7 +51,7 @@ if (empty($user->rights->accounting->chartofaccount))
 	accessforbidden();
 }
 
-$accountingcategory = new AccountancyCategory($db);
+$accountingcategory = new AccountingCategory($db);
 
 
 /*
