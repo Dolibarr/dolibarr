@@ -21,7 +21,7 @@
 
 /**
  * \file 		htdocs/accountancy/customer/lines.php
- * \ingroup 	Advanced accountancy
+ * \ingroup 	Accounting
  * \brief 		Page of detail of the lines of ventilation of invoices customers
  */
 require '../../main.inc.php';

@@ -17,7 +17,7 @@
 
 /**
  *  \file       htdocs/accountancy/admin/fiscalyear.php
- *  \ingroup    Advanced accountancy
+ *  \ingroup    Accounting
  *  \brief      Setup page to configure fiscal year
  */
 

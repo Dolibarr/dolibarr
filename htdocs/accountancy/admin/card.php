@@ -19,7 +19,7 @@
 
 /**
  *  \file       htdocs/accountancy/admin/card.php
- *  \ingroup    Advanced accountancy
+ *  \ingroup    Accounting
  *  \brief      Card of accounting account
  */
 

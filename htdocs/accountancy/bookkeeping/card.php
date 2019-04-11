@@ -21,7 +21,7 @@
 
 /**
  * \file		htdocs/accountancy/bookkeeping/card.php
- * \ingroup		Advanced accountancy
+ * \ingroup		Accounting
  * \brief		Page to show book-entry
  */
 

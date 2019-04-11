@@ -19,7 +19,7 @@
 
 /**
  * \file	htdocs/accountancy/class/accountingcategory.class.php
- * \ingroup Advanced accountancy
+ * \ingroup Accounting
  * \brief	File of class to manage categories of an accounting category_type
  */
 

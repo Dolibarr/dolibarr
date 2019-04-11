@@ -20,7 +20,7 @@
 
 /**
  * \file        htdocs/accountancy/admin/importaccounts.php
- * \ingroup		Advanced accountancy
+ * \ingroup		Accounting
  * \brief 		Page import accounting account
  */
 require '../../main.inc.php';

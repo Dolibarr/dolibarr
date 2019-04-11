@@ -23,7 +23,7 @@
  */
 /**
  * \file 	htdocs/accountancy/supplier/card.php
- * \ingroup Advanced accountancy
+ * \ingroup Accounting
  * \brief 	Card supplier ventilation
  */
 require '../../main.inc.php';

@@ -18,7 +18,7 @@
 
 /**
  * \file        htdocs/accountancy/admin/fiscalyear_card.php
- * \ingroup     Advanced accountancy
+ * \ingroup     Accounting
  * \brief       Page to show a fiscal year
  */
 

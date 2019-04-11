@@ -19,7 +19,7 @@
 
 /**
  * \file 		htdocs/accountancy/admin/account.php
- * \ingroup     Advanced accountancy
+ * \ingroup     Accounting
  * \brief		List accounting account
  */
 

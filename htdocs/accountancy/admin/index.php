@@ -24,7 +24,7 @@
 
 /**
  * \file		htdocs/accountancy/admin/index.php
- * \ingroup		Advanced accountancy
+ * \ingroup		Accounting
  * \brief		Setup page to configure accounting expert module
  */
 

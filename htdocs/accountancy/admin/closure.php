@@ -18,7 +18,7 @@
 
 /**
  * \file		htdocs/accountancy/admin/closure.php
- * \ingroup		Advanced accountancy
+ * \ingroup		Accounting
  * \brief		Setup page to configure accounting expert module
  */
 require '../../main.inc.php';

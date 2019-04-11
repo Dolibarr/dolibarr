@@ -22,7 +22,7 @@
 
 /**
  * \file 	htdocs/accountancy/customer/index.php
- * \ingroup Advanced accountancy
+ * \ingroup Accounting
  * \brief 	Home customer journalization page
  */
 

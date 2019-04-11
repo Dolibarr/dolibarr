@@ -27,7 +27,7 @@
 
 /**
  *  \file       htdocs/accountancy/journal/bankjournal.php
- *  \ingroup    Advanced accountancy
+ *  \ingroup    Accounting
  *  \brief      Page with bank journal
  */
 require '../../main.inc.php';

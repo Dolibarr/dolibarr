@@ -21,7 +21,7 @@
 
 /**
  * \file 		htdocs/accountancy/expensereport/lines.php
- * \ingroup 	Advanced accountancy
+ * \ingroup 	Accounting
  * \brief 		Page of detail of the lines of ventilation of expense reports
  */
 require '../../main.inc.php';

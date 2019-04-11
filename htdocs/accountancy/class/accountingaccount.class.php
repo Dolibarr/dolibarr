@@ -22,7 +22,7 @@
 
 /**
  *  \file       htdocs/accountancy/class/accountingaccount.class.php
- *  \ingroup    Advanced accountancy
+ *  \ingroup    Accounting
  *  \brief      File of class to manage accounting accounts
  */
 

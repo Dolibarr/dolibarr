@@ -19,7 +19,7 @@
 
 /**
  * 	\file		htdocs/core/lib/accounting.lib.php
- * 	\ingroup	Advanced accountancy
+ * 	\ingroup	Accounting
  * 	\brief		Library of accountancy functions
  */
 

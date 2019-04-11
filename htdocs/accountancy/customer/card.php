@@ -19,7 +19,7 @@
 
 /**
  * \file 	htdocs/accountancy/customer/card.php
- * \ingroup Advanced accountancy
+ * \ingroup Accounting
  * \brief 	Card customer ventilation
  */
 require '../../main.inc.php';
