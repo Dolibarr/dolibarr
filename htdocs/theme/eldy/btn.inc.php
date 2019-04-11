@@ -171,6 +171,14 @@ a.butActionNewRefused>span.fa-plus-circle, a.butActionNewRefused>span.fa-plus-ci
     background-color: #fbfbfb;
 }
 
+.title-button-icon{
+
+}
+
+.title-button-label{
+    color: #666666;
+}
+
 .title-button:hover, a.title-button:hover {
     border-radius: 3px;
     position: relative;
@@ -181,6 +189,10 @@ a.butActionNewRefused>span.fa-plus-circle, a.butActionNewRefused>span.fa-plus-ci
     font-size: 12px;
     text-decoration: none;
     box-shadow: none;
+}
+
+.title-button:hover .title-button-label{
+    color: #ffffff;
 }
 
 .title-button>.fa {
