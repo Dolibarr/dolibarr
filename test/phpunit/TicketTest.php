@@ -349,7 +349,7 @@ class TicketTest extends PHPUnit_Framework_TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$result=$localobject->close();
+		$result=$localobject->close($user);
 		print __METHOD__." id=".$localobject->id." result=".$result."\n";
 
 		$this->assertGreaterThan(0, $result);
