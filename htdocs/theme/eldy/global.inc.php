@@ -309,6 +309,7 @@ hr { border: 0; border-top: 1px solid #ccc; }
 }
 .button_search, .button_removefilter {
     border: unset;
+    background-color: unset;
 }
 form {
     padding:0px;
