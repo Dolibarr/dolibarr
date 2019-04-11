@@ -5,7 +5,7 @@
  * Copyright (C) 2005-2012 Regis Houssin               <regis.houssin@inodbox.com>
  * Copyright (C) 2007      Franky Van Liedekerke       <franky.van.liedekerker@telenet.be>
  * Copyright (C) 2008      Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
- * Copyright (C) 2013      Florian Henry		  	       <florian.henry@open-concept.pro>
+ * Copyright (C) 2013      Florian Henry		  	   <florian.henry@open-concept.pro>
  * Copyright (C) 2013      Alexandre Spangaro 	       <aspangaro@open-dsi.fr>
  * Copyright (C) 2013      Juanjo Menent	 	       <jmenent@2byte.es>
  * Copyright (C) 2015      Marcos García               <marcosgdf@gmail.com>
@@ -81,6 +81,7 @@ class Contact extends CommonObject
 
 	public $civility_id;      // In fact we store civility_code
 	public $civility_code;
+  public $civility;
 	public $address;
 	public $zip;
 	public $town;
@@ -203,7 +204,7 @@ class Contact extends CommonObject
 	public function create($user)
 	{
 		global $conf, $langs;
-
+    
 		$error=0;
 		$now=dol_now();
 
@@ -694,6 +695,8 @@ class Contact extends CommonObject
 	public function fetch($id, $user = null, $ref_ext = '', $email = '')
 	{
 		global $langs;
+        
+        $langs->load("dict");
 
 		dol_syslog(get_class($this)."::fetch id=".$id, LOG_DEBUG);
 
@@ -748,9 +751,10 @@ class Contact extends CommonObject
 				$this->ref				= $obj->rowid;
 				$this->ref_ext			= $obj->ref_ext;
 				$this->civility_id		= $obj->civility_id;
-				$this->civility_code		= $obj->civility_id;
+				$this->civility_code    = $obj->civility_id;
+                $this->civility	        = $langs->trans("Civility".$obj->civility_id);
 				$this->lastname			= $obj->lastname;
-				$this->firstname			= $obj->firstname;
+				$this->firstname		= $obj->firstname;
 				$this->address			= $obj->address;
 				$this->zip				= $obj->zip;
 				$this->town				= $obj->town;
@@ -766,23 +770,23 @@ class Contact extends CommonObject
 				$this->country_code		= $obj->country_id?$obj->country_code:'';
 				$this->country			= $obj->country_id?($langs->trans('Country'.$obj->country_code)!='Country'.$obj->country_code?$langs->transnoentities('Country'.$obj->country_code):$obj->country):'';
 
-				$this->socid				= $obj->fk_soc;
+				$this->socid			= $obj->fk_soc;
 				$this->socname			= $obj->socname;
-				$this->poste				= $obj->poste;
+				$this->poste			= $obj->poste;
 				$this->statut			= $obj->statut;
 
-				$this->phone_pro			= trim($obj->phone);
+				$this->phone_pro		= trim($obj->phone);
 				$this->fax				= trim($obj->fax);
 				$this->phone_perso		= trim($obj->phone_perso);
 				$this->phone_mobile		= trim($obj->phone_mobile);
 
-				$this->email				= $obj->email;
+				$this->email			= $obj->email;
 				$this->jabberid			= $obj->jabberid;
-				$this->skype				= $obj->skype;
-				$this->twitter				= $obj->twitter;
-				$this->facebook				= $obj->facebook;
-				$this->linkedin				= $obj->linkedin;
-				$this->photo				= $obj->photo;
+				$this->skype			= $obj->skype;
+				$this->twitter			= $obj->twitter;
+				$this->facebook			= $obj->facebook;
+				$this->linkedin			= $obj->linkedin;
+				$this->photo			= $obj->photo;
 				$this->priv				= $obj->priv;
 				$this->mail				= $obj->email;
 
