@@ -1391,7 +1391,7 @@ if (empty($reshook))
 									$desc=(! empty($lines[$i]->desc)?$lines[$i]->desc:$lines[$i]->libelle);
 									if ($object->situation_counter == 1) $lines[$i]->situation_percent =  0;
 
-									if ($lines[$i]->subprice < 0 && empty($conf->global->KEEP_DISCOUNT_LINES_FROM_ORIGIN))
+									if ($lines[$i]->subprice < 0 && empty($conf->global->INVOICE_KEEP_DISCOUNT_LINES_AS_IN_ORIGIN))
 									{
 										// Negative line, we create a discount line
 										$discount = new DiscountAbsolute($db);
