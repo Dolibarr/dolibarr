@@ -24,7 +24,7 @@
 
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
-require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountancycategory.class.php';
+require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingcategory.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formaccounting.class.php';
 
 $error = 0;
