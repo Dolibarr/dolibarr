@@ -7,6 +7,7 @@
  * Copyright (C) 2015	   Claudio Aschieri		<c.aschieri@19.coop>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
  * Copyright (C) 2016-2018 Ferran Marcet        <fmarcet@2byte.es>
+ * Copyright (C) 2019      Nicolas ZABOURI      <info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -368,7 +369,7 @@ $arrayofmassactions =  array(
 	'presend'=>$langs->trans("SendByMail"),
 	'builddoc'=>$langs->trans("PDFMerge"),
 );
-if ($user->rights->contrat->supprimer) $arrayofmassactions['predelete']=$langs->trans("Delete");
+if ($user->rights->contrat->supprimer) $arrayofmassactions['predelete']='<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
 if (in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
 $massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 
@@ -801,6 +802,10 @@ while ($i < min($num, $limit))
 	$i++;
 }
 $db->free($resql);
+
+$parameters=array('arrayfields'=>$arrayfields, 'sql'=>$sql);
+$reshook=$hookmanager->executeHooks('printFieldListFooter', $parameters);    // Note that $action and $object may have been modified by hook
+print $hookmanager->resPrint;
 
 print '</table>';
 print '</div>';

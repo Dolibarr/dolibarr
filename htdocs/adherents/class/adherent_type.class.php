@@ -56,7 +56,7 @@ class AdherentType extends CommonObject
 	/**
 	 * @var string
 	 * @deprecated Use label
-	 * @see label
+	 * @see $label
 	 */
 	public $libelle;
 

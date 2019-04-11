@@ -422,6 +422,7 @@ if ($action == 'charge' && ! empty($conf->stripe->enabled))
 	dol_syslog("POST vatnumber = ".$vatnumber, LOG_DEBUG, 0, '_stripe');
 
 	$error = 0;
+    $errormessage = '';
 
 	try {
 		$metadata = array(
@@ -555,60 +556,71 @@ $charge = \Stripe\Charge::create(array(
 		print('Message is:' . $err['message'] . "\n");
 
 		$error++;
-		dol_syslog($e->getMessage(), LOG_WARNING, 0, '_stripe');
+		$errormessage="ErrorCard ".$e->getMessage()." err=".var_export($err, true);
+		dol_syslog($errormessage, LOG_WARNING, 0, '_stripe');
 		setEventMessages($e->getMessage(), null, 'errors');
 		$action='';
 	} catch (\Stripe\Error\RateLimit $e) {
 		// Too many requests made to the API too quickly
 		$error++;
-		dol_syslog($e->getMessage(), LOG_WARNING, 0, '_stripe');
+		$errormessage="ErrorRateLimit ".$e->getMessage();
+		dol_syslog($errormessage, LOG_WARNING, 0, '_stripe');
 		setEventMessages($e->getMessage(), null, 'errors');
 		$action='';
 	} catch (\Stripe\Error\InvalidRequest $e) {
 		// Invalid parameters were supplied to Stripe's API
 		$error++;
-		dol_syslog($e->getMessage(), LOG_WARNING, 0, '_stripe');
+		$errormessage="ErrorInvalidRequest ".$e->getMessage();
+		dol_syslog($errormessage, LOG_WARNING, 0, '_stripe');
 		setEventMessages($e->getMessage(), null, 'errors');
 		$action='';
 	} catch (\Stripe\Error\Authentication $e) {
 		// Authentication with Stripe's API failed
 		// (maybe you changed API keys recently)
 		$error++;
-		dol_syslog($e->getMessage(), LOG_WARNING, 0, '_stripe');
+		$errormessage="ErrorAuthentication ".$e->getMessage();
+		dol_syslog($errormessage, LOG_WARNING, 0, '_stripe');
 		setEventMessages($e->getMessage(), null, 'errors');
 		$action='';
 	} catch (\Stripe\Error\ApiConnection $e) {
 		// Network communication with Stripe failed
 		$error++;
-		dol_syslog($e->getMessage(), LOG_WARNING, 0, '_stripe');
+		$errormessage="ErrorApiConnection ".$e->getMessage();
+		dol_syslog($errormessage, LOG_WARNING, 0, '_stripe');
 		setEventMessages($e->getMessage(), null, 'errors');
 		$action='';
 	} catch (\Stripe\Error\Base $e) {
 		// Display a very generic error to the user, and maybe send
 		// yourself an email
 		$error++;
-		dol_syslog($e->getMessage(), LOG_WARNING, 0, '_stripe');
+		$errormessage="ErrorBase ".$e->getMessage();
+		dol_syslog($errormessage, LOG_WARNING, 0, '_stripe');
 		setEventMessages($e->getMessage(), null, 'errors');
 		$action='';
 	} catch (Exception $e) {
 		// Something else happened, completely unrelated to Stripe
 		$error++;
-		dol_syslog($e->getMessage(), LOG_WARNING, 0, '_stripe');
+		$errormessage="ErrorException ".$e->getMessage();
+		dol_syslog($errormessage, LOG_WARNING, 0, '_stripe');
 		setEventMessages($e->getMessage(), null, 'errors');
 		$action='';
 	}
+
+	$remoteip = getUserRemoteIP();
 
 	$_SESSION["onlinetoken"] = $stripeToken;
 	$_SESSION["FinalPaymentAmt"] = $amount;
 	$_SESSION["currencyCodeType"] = $currency;
 	$_SESSION["paymentType"] = '';
-	$_SESSION['ipaddress'] = getUserRemoteIP();  // Payer ip
+	$_SESSION['ipaddress'] = ($remoteip?$remoteip:'unknown');  // Payer ip
 	$_SESSION['payerID'] = is_object($customer)?$customer->id:'';
 	$_SESSION['TRANSACTIONID'] = is_object($charge)?$charge->id:'';
+	$_SESSION['errormessage'] = $errormessage;
 
-	dol_syslog("Action charge stripe result=".$error." ip=".$_SESSION['ipaddress'], LOG_DEBUG, 0, '_stripe');
+	dol_syslog("Action charge stripe ip=".$remoteip, LOG_DEBUG, 0, '_stripe');
 	dol_syslog("onlinetoken=".$_SESSION["onlinetoken"]." FinalPaymentAmt=".$_SESSION["FinalPaymentAmt"]." currencyCodeType=".$_SESSION["currencyCodeType"]." payerID=".$_SESSION['payerID']." TRANSACTIONID=".$_SESSION['TRANSACTIONID'], LOG_DEBUG, 0, '_stripe');
 	dol_syslog("FULLTAG=".$FULLTAG, LOG_DEBUG, 0, '_stripe');
+	dol_syslog("error=".$error." errormessage=".$errormessage, LOG_DEBUG, 0, '_stripe');
 	dol_syslog("Now call the redirect to paymentok or paymentko", LOG_DEBUG, 0, '_stripe');
 
 	if ($error)

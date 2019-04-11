@@ -772,7 +772,7 @@ if ($object->socid) {
 			$remaintopay = $object->amount - $totalpaid;
 
 			print "<tr><td colspan=\"3\" class=\"right\">".$langs->trans("RemainderToPay")." :</td>";
-			print '<td class="right"'.($resteapayeraffiche?' class="amountremaintopay"':'').'><b>'.price($remaintopay)."</b></td></tr>\n";
+			print '<td class="right'.($resteapayeraffiche?' amountremaintopay':'').'">'.price($remaintopay)."</td></tr>\n";
 		}
 		print "</table>";
 		$db->free($resql);

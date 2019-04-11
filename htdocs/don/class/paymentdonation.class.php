@@ -79,7 +79,7 @@ class PaymentDonation extends CommonObject
 
 	/**
 	 * @deprecated
-	 * @see amount, amounts
+	 * @see $amount, $amounts
 	 */
 	public $total;
 

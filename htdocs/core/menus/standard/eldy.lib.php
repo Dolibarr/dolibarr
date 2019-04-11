@@ -53,7 +53,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 
 	if (empty($noout)) print_start_menu_array();
 
-	$usemenuhider = (GETPOST('testmenuhider', 'int') || ! empty($conf->global->MAIN_TESTMENUHIDER));
+    $usemenuhider = 1;
 
 	// Show/Hide vertical menu
 	if ($mode != 'jmobile' && $mode != 'topnb' && $usemenuhider && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
@@ -183,7 +183,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 	// MRP
 	$menu_arr[] = array(
 	    'name' => 'TMenuMRP',
-	    'link' => '/bom/bom_list.php?mainmenu=mrp&amp;leftmenu=',
+	    'link' => '/mrp/index.php?mainmenu=mrp&amp;leftmenu=',
 	    'title' => $langs->trans("TMenuMRP"),
 	    'level' => 0,
 	    'enabled' => $showmode = isVisibleToUserType(
@@ -650,7 +650,7 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 	$mainmenu=($forcemainmenu?$forcemainmenu:$_SESSION["mainmenu"]);
 	$leftmenu=($forceleftmenu?'':(empty($_SESSION["leftmenu"])?'none':$_SESSION["leftmenu"]));
 
-	$usemenuhider = (GETPOST('testmenuhider', 'int') || ! empty($conf->global->MAIN_TESTMENUHIDER));
+    $usemenuhider = 0;
 
 	// Show logo company
 	if (empty($conf->global->MAIN_MENU_INVERT) && empty($noout) && ! empty($conf->global->MAIN_SHOW_LOGO) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
@@ -1057,7 +1057,7 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 			{
 				$langs->load("orders");
 				if (! empty($conf->facture->enabled)) $newmenu->add("/commande/list.php?leftmenu=orders&amp;viewstatut=-3&amp;billed=0&amp;contextpage=billableorders", $langs->trans("MenuOrdersToBill2"), 0, $user->rights->commande->lire, '', $mainmenu, 'orders');
-				//                  if ($usemenuhider || empty($leftmenu) || $leftmenu=="orders") $newmenu->add("/commande/", $langs->trans("StatusOrderToBill"), 1, $user->rights->commande->lire);
+				//if ($usemenuhider || empty($leftmenu) || $leftmenu=="orders") $newmenu->add("/commande/", $langs->trans("StatusOrderToBill"), 1, $user->rights->commande->lire);
 			}
 
 			// Supplier Orders to bill
@@ -1067,7 +1067,7 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 				{
 					$langs->load("supplier");
 					$newmenu->add("/fourn/commande/list.php?leftmenu=orders&amp;search_status=5&amp;billed=0", $langs->trans("MenuOrdersSupplierToBill"), 0, $user->rights->commande->lire, '', $mainmenu, 'orders');
-					//                  if ($usemenuhider || empty($leftmenu) || $leftmenu=="orders") $newmenu->add("/commande/", $langs->trans("StatusOrderToBill"), 1, $user->rights->commande->lire);
+					//if ($usemenuhider || empty($leftmenu) || $leftmenu=="orders") $newmenu->add("/commande/", $langs->trans("StatusOrderToBill"), 1, $user->rights->commande->lire);
 				}
 			}
 

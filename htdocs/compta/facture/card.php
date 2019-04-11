@@ -1391,7 +1391,7 @@ if (empty($reshook))
 									$desc=(! empty($lines[$i]->desc)?$lines[$i]->desc:$lines[$i]->libelle);
 									if ($object->situation_counter == 1) $lines[$i]->situation_percent =  0;
 
-									if ($lines[$i]->subprice < 0)
+									if ($lines[$i]->subprice < 0 && empty($conf->global->INVOICE_KEEP_DISCOUNT_LINES_AS_IN_ORIGIN))
 									{
 										// Negative line, we create a discount line
 										$discount = new DiscountAbsolute($db);
@@ -2588,22 +2588,47 @@ if ($action == 'create')
 			if (empty($socid))
 				$soc = $objectsrc->thirdparty;
 
-			$cond_reglement_id 	= (! empty($objectsrc->cond_reglement_id)?$objectsrc->cond_reglement_id:(! empty($soc->cond_reglement_id)?$soc->cond_reglement_id:0));
-			$mode_reglement_id 	= (! empty($objectsrc->mode_reglement_id)?$objectsrc->mode_reglement_id:(! empty($soc->mode_reglement_id)?$soc->mode_reglement_id:0));
-			$fk_account         = (! empty($objectsrc->fk_account)?$objectsrc->fk_account:(! empty($soc->fk_account)?$soc->fk_account:0));
-			$remise_percent 	= (! empty($objectsrc->remise_percent)?$objectsrc->remise_percent:(! empty($soc->remise_percent)?$soc->remise_percent:0));
-			$remise_absolue 	= (! empty($objectsrc->remise_absolue)?$objectsrc->remise_absolue:(! empty($soc->remise_absolue)?$soc->remise_absolue:0));
-			$dateinvoice		= (empty($dateinvoice)?(empty($conf->global->MAIN_AUTOFILL_DATE)?-1:''):$dateinvoice);
+			$dateinvoice = (empty($dateinvoice)?(empty($conf->global->MAIN_AUTOFILL_DATE)?-1:''):$dateinvoice);
 
-			if (!empty($conf->multicurrency->enabled))
-			{
-				if (!empty($objectsrc->multicurrency_code)) $currency_code = $objectsrc->multicurrency_code;
-				if (!empty($conf->global->MULTICURRENCY_USE_ORIGIN_TX) && !empty($objectsrc->multicurrency_tx))	$currency_tx = $objectsrc->multicurrency_tx;
+			if ($element == 'expedition') {
+				$ref_client		= (! empty($objectsrc->ref_customer)?$objectsrc->ref_customer:'');
+
+				$elem = $subelem = $objectsrc->origin;
+				$expeoriginid = $objectsrc->origin_id;
+				dol_include_once('/'.$elem.'/class/'.$subelem.'.class.php');
+				$classname = ucfirst($subelem);
+
+				$expesrc = new $classname($db);
+				$expesrc->fetch($expeoriginid);
+
+				$cond_reglement_id 	= (! empty($expesrc->cond_reglement_id)?$expesrc->cond_reglement_id:(! empty($soc->cond_reglement_id)?$soc->cond_reglement_id:1));
+				$mode_reglement_id 	= (! empty($expesrc->mode_reglement_id)?$expesrc->mode_reglement_id:(! empty($soc->mode_reglement_id)?$soc->mode_reglement_id:0));
+				$fk_account         = (! empty($expesrc->fk_account)?$expesrc->fk_account:(! empty($soc->fk_account)?$soc->fk_account:0));
+				$remise_percent 	= (! empty($expesrc->remise_percent)?$expesrc->remise_percent:(! empty($soc->remise_percent)?$soc->remise_percent:0));
+				$remise_absolue 	= (! empty($expesrc->remise_absolue)?$expesrc->remise_absolue:(! empty($soc->remise_absolue)?$soc->remise_absolue:0));
+
+				//Replicate extrafields
+				$expesrc->fetch_optionals($expeoriginid);
+				$object->array_options=$expesrc->array_options;
 			}
+			else
+			{
+				$cond_reglement_id 	= (! empty($objectsrc->cond_reglement_id)?$objectsrc->cond_reglement_id:(! empty($soc->cond_reglement_id)?$soc->cond_reglement_id:0));
+				$mode_reglement_id 	= (! empty($objectsrc->mode_reglement_id)?$objectsrc->mode_reglement_id:(! empty($soc->mode_reglement_id)?$soc->mode_reglement_id:0));
+				$fk_account         = (! empty($objectsrc->fk_account)?$objectsrc->fk_account:(! empty($soc->fk_account)?$soc->fk_account:0));
+				$remise_percent 	= (! empty($objectsrc->remise_percent)?$objectsrc->remise_percent:(! empty($soc->remise_percent)?$soc->remise_percent:0));
+				$remise_absolue 	= (! empty($objectsrc->remise_absolue)?$objectsrc->remise_absolue:(! empty($soc->remise_absolue)?$soc->remise_absolue:0));
 
-			// Replicate extrafields
-			$objectsrc->fetch_optionals($originid);
-			$object->array_options = $objectsrc->array_options;
+				if (!empty($conf->multicurrency->enabled))
+				{
+					if (!empty($objectsrc->multicurrency_code)) $currency_code = $objectsrc->multicurrency_code;
+					if (!empty($conf->global->MULTICURRENCY_USE_ORIGIN_TX) && !empty($objectsrc->multicurrency_tx))	$currency_tx = $objectsrc->multicurrency_tx;
+				}
+
+				// Replicate extrafields
+				$objectsrc->fetch_optionals($originid);
+				$object->array_options = $objectsrc->array_options;
+			}
 		}
 	}
 	else
@@ -4280,7 +4305,7 @@ elseif ($id > 0 || ! empty($ref))
 			print $langs->trans('AlreadyPaidNoCreditNotesNoDeposits');
 		else
 			print $langs->trans('AlreadyPaid');
-		print ' :</td><td class="right"'.(($totalpaye > 0)?' class="amountalreadypaid"':'').'>' . price($totalpaye) . '</td><td>&nbsp;</td></tr>';
+		print ' :</td><td class="right'.(($totalpaye > 0)?' amountalreadypaid':'').'">' . price($totalpaye) . '</td><td>&nbsp;</td></tr>';
 
 		$resteapayeraffiche = $resteapayer;
 		$cssforamountpaymentcomplete = 'amountpaymentcomplete';
@@ -4359,14 +4384,13 @@ elseif ($id > 0 || ! empty($ref))
 
 		// Billed
 		print '<tr><td colspan="' . $nbcols . '" class="right">' . $langs->trans("Billed") . ' :</td><td class="right">' . price($object->total_ttc) . '</td><td>&nbsp;</td></tr>';
-
 		// Remainder to pay
 		print '<tr><td colspan="' . $nbcols . '" class="right">';
 		print $langs->trans('RemainderToPay');
 		if ($resteapayeraffiche < 0)
 		    print ' ('.$langs->trans('ExcessReceived').')';
 		print ' :</td>';
-		print '<td class="right"'.($resteapayeraffiche?' class="amountremaintopay"':(' class="'.$cssforamountpaymentcomplete.'"')).'>' . price($resteapayeraffiche) . '</td>';
+		print '<td class="right'.($resteapayeraffiche?' amountremaintopay':(' '.$cssforamountpaymentcomplete)).'">' . price($resteapayeraffiche) . '</td>';
 		print '<td class="nowrap">&nbsp;</td></tr>';
 	}
 	else // Credit note
@@ -4387,7 +4411,7 @@ elseif ($id > 0 || ! empty($ref))
 		if ($resteapayeraffiche > 0)
 			print ' ('.$langs->trans('ExcessPaid').')';
 		print ' :</td>';
-		print '<td class="right"'.($resteapayeraffiche?' class="amountremaintopayback"':(' class="'.$cssforamountpaymentcomplete.'"')).'>' . price($sign * $resteapayeraffiche) . '</td>';
+		print '<td class="right'.($resteapayeraffiche?' amountremaintopayback':(' '.$cssforamountpaymentcomplete)).'">' . price($sign * $resteapayeraffiche) . '</td>';
 		print '<td class="nowrap">&nbsp;</td></tr>';
 
 		// Sold credit note

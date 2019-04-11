@@ -143,7 +143,7 @@ if ($object->id)
     }
 
 
-    print '<table class="border" width="100%">';
+    print '<table class="border tableforfield centpercent">';
     print '<tr><td class="titlefield">'.$langs->trans("NbOfAttachedFiles").'</td><td>'.count($filearray).'</td></tr>';
     print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td>'.dol_print_size($totalsize, 1, 1).'</td></tr>';
     print "</table>\n";

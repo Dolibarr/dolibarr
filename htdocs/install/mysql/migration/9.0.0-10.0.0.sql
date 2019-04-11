@@ -275,3 +275,12 @@ ALTER TABLE llx_product ADD COLUMN fk_project integer DEFAULT NULL;
 ALTER TABLE llx_product ADD INDEX idx_product_fk_project (fk_project);
 
 ALTER TABLE llx_actioncomm ADD COLUMN calling_duration integer;
+
+ALTER TABLE llx_emailcollector_emailcollector ADD COLUMN datelastok datetime;
+
+DELETE FROM llx_const WHERE name = 'THEME_ELDY_USE_HOVER' AND value = '0';
+DELETE FROM llx_const WHERE name = 'THEME_ELDY_USE_CHECKED' AND value = '0';
+
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('TICKET_CLOSE','Ticket closed','Executed when a ticket is closed','ticket',164);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('TICKET_SENTBYMAIL','Ticket message sent by email','Executed when a message is sent from the ticket record','ticket',166);
+

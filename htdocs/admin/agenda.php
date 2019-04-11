@@ -134,8 +134,7 @@ $head=agenda_prepare_head();
 
 dol_fiche_head($head, 'autoactions', $langs->trans("Agenda"), -1, 'action');
 
-print $langs->trans("AgendaAutoActionDesc")."<br>\n";
-print $langs->trans("OnlyActiveElementsAreShown", 'modules.php').'<br>';
+print '<span class="opacitymedium">'.$langs->trans("AgendaAutoActionDesc")." ".$langs->trans("OnlyActiveElementsAreShown", 'modules.php').'</span><br>';
 print "<br>\n";
 
 print '<div class="div-table-responsive">';		// You can use div-table-responsive-no-min if you dont need reserved height for your table

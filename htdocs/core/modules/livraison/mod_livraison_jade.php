@@ -48,7 +48,7 @@ class mod_livraison_jade extends ModeleNumRefDeliveryOrder
 	/**
 	 * @var string Nom du modele
 	 * @deprecated
-	 * @see name
+	 * @see $name
 	 */
 	public $nom='Jade';
 

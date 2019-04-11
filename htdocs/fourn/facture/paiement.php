@@ -28,7 +28,7 @@
 /**
  *	\file       htdocs/fourn/facture/paiement.php
  *	\ingroup    fournisseur,facture
- *	\brief      Payment page for suppliers invoices
+ *	\brief      Payment page for supplier invoices
  */
 
 require '../../main.inc.php';
@@ -38,11 +38,13 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
+// Load translation files required by the page
 $langs->loadLangs(array('companies', 'bills', 'banks', 'compta'));
 
-// Security check
 $action		= GETPOST('action', 'alpha');
 $confirm	= GETPOST('confirm', 'alpha');
+$optioncss = GETPOST('optioncss', 'alpha');
+
 $facid		= GETPOST('facid', 'int');
 $socid		= GETPOST('socid', 'int');
 $accountid	= GETPOST('accountid', 'int');
@@ -50,24 +52,23 @@ $day		= GETPOST('day', 'int');
 $month		= GETPOST('month', 'int');
 $year		= GETPOST('year', 'int');
 
-$search_ref=GETPOST("search_ref", "int");
+$search_ref=GETPOST("search_ref", "alpha");
 $search_account=GETPOST("search_account", "int");
 $search_paymenttype=GETPOST("search_paymenttype");
 $search_amount=GETPOST("search_amount", 'alpha');    // alpha because we must be able to search on "< x"
 $search_company=GETPOST("search_company", 'alpha');
 $search_payment_num=GETPOST('search_payment_num', 'alpha');
 
+$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
 $page = GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
-$offset = $conf->liste_limit * $page;
+$offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
 if (! $sortorder) $sortorder="DESC";
 if (! $sortfield) $sortfield="p.rowid";
-$optioncss = GETPOST('optioncss', 'alpha');
 
 $amounts = array();
 $amountsresttopay=array();
@@ -84,7 +85,7 @@ if ($user->societe_id > 0)
 
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('paymentsupplier'));
+$hookmanager->initHooks(array('paymentsupplierlist'));
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
@@ -333,20 +334,20 @@ if (empty($reshook))
  * View
  */
 
+$form=new Form($db);
+$formother=new FormOther($db);
+
 $supplierstatic=new Societe($db);
 $invoicesupplierstatic = new FactureFournisseur($db);
 
 llxHeader('', $langs->trans('ListPayment'));
-
-$form=new Form($db);
-$formother=new FormOther($db);
 
 if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paiement')
 {
     $object = new FactureFournisseur($db);
     $result = $object->fetch($facid);
 
-    $datefacture=dol_mktime(12, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear'));
+    $datefacture=dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
     $dateinvoice=($datefacture==''?(empty($conf->global->MAIN_AUTOFILL_DATE)?-1:''):$datefacture);
 
     $sql = 'SELECT s.nom as name, s.rowid as socid,';
@@ -767,7 +768,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 /*
  * Show list
  */
-if (empty($action))
+if (empty($action) || $action == 'list')
 {
     $limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
     $sortfield = GETPOST("sortfield", 'alpha');
@@ -861,9 +862,10 @@ if (empty($action))
 
         print_barre_liste($langs->trans('SupplierPayments'), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_accountancy.png', 0, '', '', $limit);
 
-        print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">';
+        print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
         if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
         print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+        print '<input type="hidden" name="action" value="list">';
         print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
         print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
         print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
@@ -899,18 +901,21 @@ if (empty($action))
         print '<input class="flat width25 valignmiddle" type="text" maxlength="2" name="month" value="'.dol_escape_htmltag($month).'">';
         $formother->select_year($year?$year:-1, 'year', 1, 20, 5);
         print '</td>';
-        print '<td class="liste_titre left">';
+        print '<td class="liste_titre">';
         print '<input class="flat" type="text" size="6" name="search_company" value="'.dol_escape_htmltag($search_company).'">';
         print '</td>';
         print '<td class="liste_titre">';
         $form->select_types_paiements($search_paymenttype, 'search_paymenttype', '', 2, 1, 1);
         print '</td>';
-        print '<td class="liste_titre left">';
+        print '<td class="liste_titre">';
         print '<input class="flat" type="text" size="4" name="search_payment_num" value="'.dol_escape_htmltag($search_payment_num).'">';
         print '</td>';
-        print '<td class="liste_titre">';
-        $form->select_comptes($search_account, 'search_account', 0, '', 1);
-        print '</td>';
+        if (! empty($conf->banque->enabled))
+        {
+            print '<td class="liste_titre">';
+	        $form->select_comptes($search_account, 'search_account', 0, '', 1);
+	        print '</td>';
+        }
         print '<td class="liste_titre right">';
         print '<input class="flat" type="text" size="4" name="search_amount" value="'.dol_escape_htmltag($search_amount).'">';
         print '</td>';
@@ -926,12 +931,21 @@ if (empty($action))
         print_liste_field_titre("ThirdParty", $_SERVER["PHP_SELF"], 's.nom', '', $param, '', $sortfield, $sortorder);
         print_liste_field_titre("Type", $_SERVER["PHP_SELF"], 'c.libelle', '', $param, '', $sortfield, $sortorder);
         print_liste_field_titre("Numero", $_SERVER["PHP_SELF"], "p.num_paiement", "", $param, "", $sortfield, $sortorder);
-        print_liste_field_titre("Account", $_SERVER["PHP_SELF"], 'ba.label', '', $param, '', $sortfield, $sortorder);
+        if (! empty($conf->banque->enabled))
+        {
+            print_liste_field_titre("Account", $_SERVER["PHP_SELF"], 'ba.label', '', $param, '', $sortfield, $sortorder);
+        }
         print_liste_field_titre("Amount", $_SERVER["PHP_SELF"], 'p.amount', '', $param, '', $sortfield, $sortorder, 'right ');
-        //print_liste_field_titre("Invoice",$_SERVER["PHP_SELF"],'ref_supplier','',$param,'',$sortfield,$sortorder);
-        print_liste_field_titre('');
+        
+        $parameters=array('arrayfields'=>$arrayfields,'param'=>$param,'sortfield'=>$sortfield,'sortorder'=>$sortorder);
+        $reshook=$hookmanager->executeHooks('printFieldListTitle', $parameters);    // Note that $action and $object may have been modified by hook
+        print $hookmanager->resPrint;
+        
+        print_liste_field_titre('', $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'maxwidthsearch ');
         print "</tr>\n";
 
+        $i = 0;
+        $totalarray=array();
         while ($i < min($num, $limit))
         {
             $objp = $db->fetch_object($resql);
@@ -940,32 +954,46 @@ if (empty($action))
 
             // Ref payment
             print '<td class="nowrap"><a href="'.DOL_URL_ROOT.'/fourn/paiement/card.php?id='.$objp->pid.'">'.img_object($langs->trans('ShowPayment'), 'payment').' '.$objp->pid.'</a></td>';
-
+            if (! $i) $totalarray['nbfield']++;
+            
             // Date
             $dateformatforpayment = 'day';
             if (! empty($conf->global->INVOICE_USE_HOURS_FOR_PAYMENT)) $dateformatforpayment='dayhour';
             print '<td class="nowrap center">'.dol_print_date($db->jdate($objp->dp), $dateformatforpayment)."</td>\n";
-
+            if (! $i) $totalarray['nbfield']++;
+            
             // Thirdparty
             print '<td>';
             if ($objp->socid) print '<a href="'.DOL_URL_ROOT.'/societe/card.php?socid='.$objp->socid.'">'.img_object($langs->trans('ShowCompany'), 'company').' '.dol_trunc($objp->name, 32).'</a>';
             else print '&nbsp;';
             print '</td>';
-
+            if (! $i) $totalarray['nbfield']++;
+            
             // Type
             $payment_type = $langs->trans("PaymentType".$objp->paiement_type)!=("PaymentType".$objp->paiement_type)?$langs->trans("PaymentType".$objp->paiement_type):$objp->paiement_libelle;
             print '<td>'.$payment_type.' '.dol_trunc($objp->num_paiement, 32)."</td>\n";
-
+            if (! $i) $totalarray['nbfield']++;
+            
             // Payment number
             print '<td>'.$objp->num_paiement.'</td>';
-
-            print '<td>';
-            if ($objp->bid) print '<a href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?account='.$objp->bid.'">'.img_object($langs->trans("ShowAccount"), 'account').' '.dol_trunc($objp->label, 24).'</a>';
-            else print '&nbsp;';
-            print '</td>';
-
+            if (! $i) $totalarray['nbfield']++;
+            
+            // Account
+            if (! empty($conf->banque->enabled))
+            {
+                print '<td>';
+	            if ($objp->bid) print '<a href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?account='.$objp->bid.'">'.img_object($langs->trans("ShowAccount"), 'account').' '.dol_trunc($objp->label, 24).'</a>';
+    	        else print '&nbsp;';
+        	    print '</td>';
+            	if (! $i) $totalarray['nbfield']++;
+            }
+            
+            // Amount
             print '<td class="right">'.price($objp->pamount).'</td>';
-
+            if (! $i) $totalarray['nbfield']++;
+            $totalarray['pos'][7]='amount';
+            $totalarray['val']['amount'] += $objp->pamount;
+            
             // Ref invoice
             /*$invoicesupplierstatic->ref=$objp->ref_supplier;
             $invoicesupplierstatic->id=$objp->facid;
@@ -973,10 +1001,35 @@ if (empty($action))
             print $invoicesupplierstatic->getNomUrl(1);
             print '</td>';*/
 
-			print '<td>&nbsp;</td>';
+			print '<td></td>';
+			if (! $i) $totalarray['nbfield']++;
+			
             print '</tr>';
             $i++;
         }
+        
+        // Show total line
+        if (isset($totalarray['pos']))
+        {
+            print '<tr class="liste_total">';
+            $i=0;
+            while ($i < $totalarray['nbfield'])
+            {
+                $i++;
+                if (! empty($totalarray['pos'][$i]))  print '<td class="right">'.price($totalarray['val'][$totalarray['pos'][$i]]).'</td>';
+                else
+                {
+                    if ($i == 1)
+                    {
+                        if ($num < $limit) print '<td class="left">'.$langs->trans("Total").'</td>';
+                        else print '<td class="left">'.$langs->trans("Totalforthispage").'</td>';
+                    }
+                    else print '<td></td>';
+                }
+            }
+            print '</tr>';
+        }
+        
         print "</table>";
         print "</div>";
         print "</form>\n";

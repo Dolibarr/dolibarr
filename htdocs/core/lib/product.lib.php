@@ -127,6 +127,25 @@ function product_prepare_head($object)
             $h++;
         }
     }
+    
+    // Tab to link resources
+    if (!empty($conf->resource->enabled))
+    {
+        if ($object->isProduct() && ! empty($conf->global->RESOURCE_ON_PRODUCTS))
+        {
+            $head[$h][0] = DOL_URL_ROOT . '/resource/element_resource.php?element=product&ref=' . $object->ref;
+            $head[$h][1] = $langs->trans("Resources");
+            $head[$h][2] = 'resources';
+            $h++;
+        }
+        if ($object->isService() && ! empty($conf->global->RESOURCE_ON_SERVICES))
+        {
+            $head[$h][0] = DOL_URL_ROOT . '/resource/element_resource.php?element=service&ref=' . $object->ref;
+            $head[$h][1] = $langs->trans("Resources");
+            $head[$h][2] = 'resources';
+            $h++;
+        }
+    }
 
     // Show more tabs from modules
     // Entries must be declared in modules descriptor with line

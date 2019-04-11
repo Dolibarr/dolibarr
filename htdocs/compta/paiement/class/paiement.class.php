@@ -58,13 +58,13 @@ class Paiement extends CommonObject
 
 	/**
 	 * @deprecated
-	 * @see amount, amounts
+	 * @see $amount, $amounts
 	 */
     public $total;
 
 	/**
 	 * @deprecated
-	 * @see amount, amounts
+	 * @see $amount, $amounts
 	 */
 	public $montant;
 

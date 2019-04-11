@@ -1042,7 +1042,7 @@ class Fichinter extends CommonObject
 	 *  Defines a delivery date of intervention
 	 *
 	 *  @param      User	$user				Object user who define
-	 *  @param      date	$date_delivery   	date of delivery
+	 *  @param      integer	$date_delivery   	date of delivery
 	 *  @return     int							<0 if ko, >0 if ok
      */
     public function set_date_delivery($user, $date_delivery)
@@ -1235,7 +1235,7 @@ class Fichinter extends CommonObject
 	 *  @param      user	$user					User that do the action
 	 *	@param    	int		$fichinterid			Id of intervention
 	 *	@param    	string	$desc					Line description
-	 *	@param      date	$date_intervention  	Intervention date
+	 *	@param      integer	$date_intervention  	Intervention date
 	 *	@param      int		$duration            	Intervention duration
 	 *  @param		array	$array_options			Array option
 	 *	@return    	int             				>0 if ok, <0 if ko

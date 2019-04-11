@@ -9,6 +9,7 @@
  * Copyright (C) 2006      Marc Barilley/Ocebo  <marc@ocebo.com>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerker@telenet.be>
  * Copyright (C) 2007      Patrick Raguin 		<patrick.raguin@gmail.com>
+ * Copyright (C) 2019       Thibault FOUCART        <support@ptibogxiv.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -326,7 +327,7 @@ class FormOther
      * @param   int     $showempty      Add also an empty line
      * @param   string  $morecss        More CSS
      * @return  string		        	Html combo list code
-     * @see	select_all_categories
+     * @see	select_all_categories()
      */
     public function select_categories($type, $selected = 0, $htmlname = 'search_categ', $nocateg = 0, $showempty = 1, $morecss = '')
     {
@@ -617,7 +618,7 @@ class FormOther
      *  @param	string		$color				String with hex (FFFFFF) or comma RGB ('255,255,255')
      *  @param	string		$textifnotdefined	Text to show if color not defined
      *  @return	string							HTML code for color thumb
-     *  @see selectColor
+     *  @see selectColor()
      */
     public static function showColor($color, $textifnotdefined = '')
     {
@@ -660,7 +661,7 @@ class FormOther
      *  @param 	array		$arrayofcolors	Array of colors. Example: array('29527A','5229A3','A32929','7A367A','B1365F','0D7813')
      *  @param	string		$morecss		Add css style into input field
      *  @return	string
-     *  @see showColor
+     *  @see showColor()
      */
     public static function selectColor($set_color = '', $prefix = 'f_color', $form_name = '', $showcolorbox = 1, $arrayofcolors = '', $morecss = '')
     {
@@ -1232,4 +1233,44 @@ class FormOther
             dol_print_error($this->db);
         }
     }
+
+    /**
+	 *	Return an html string with a select combo box to choose yes or no
+	 *
+	 *	@param	string		$htmlname		Name of html select field
+	 *	@param	string		$value			Pre-selected value
+	 *	@param	int			$option			0 return automatic/manual, 1 return 1/0
+	 *	@param	bool		$disabled		true or false
+	 *  @param	int      	$useempty		1=Add empty line
+	 *	@return	string						See option
+	 */
+    public function selectAutoManual($htmlname, $value = '', $option = 0, $disabled = false, $useempty = 0)
+	{
+		global $langs;
+
+		$automatic="automatic"; $manual="manual";
+		if ($option)
+		{
+			$automatic="1";
+			$manual="0";
+		}
+
+		$disabled = ($disabled ? ' disabled' : '');
+
+		$resultautomanual = '<select class="flat width100" id="'.$htmlname.'" name="'.$htmlname.'"'.$disabled.'>'."\n";
+		if ($useempty) $resultautomanual .= '<option value="-1"'.(($value < 0)?' selected':'').'>&nbsp;</option>'."\n";
+		if (("$value" == 'automatic') || ($value == 1))
+		{
+			$resultautomanual .= '<option value="'.$automatic.'" selected>'.$langs->trans("Automatic").'</option>'."\n";
+			$resultautomanual .= '<option value="'.$manual.'">'.$langs->trans("Manual").'</option>'."\n";
+		}
+		else
+	   {
+	   		$selected=(($useempty && $value != '0' && $value != 'manual')?'':' selected');
+			$resultautomanual .= '<option value="'.$automatic.'">'.$langs->trans("Automatic").'</option>'."\n";
+			$resultautomanual .= '<option value="'.$manual.'"'.$selected.'>'.$langs->trans("Manual").'</option>'."\n";
+		}
+		$resultautomanual .= '</select>'."\n";
+		return $resultautomanual;
+	}
 }

@@ -459,7 +459,7 @@ if ($resql)
 		//'builddoc'=>$langs->trans("PDFMerge"),
 	);
 	//if($user->rights->fournisseur->facture->creer) $arrayofmassactions['createbills']=$langs->trans("CreateInvoiceForThisCustomer");
-	if ($user->rights->fournisseur->facture->supprimer) $arrayofmassactions['predelete']=$langs->trans("Delete");
+	if ($user->rights->fournisseur->facture->supprimer) $arrayofmassactions['predelete']='<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
 	if (in_array($massaction, array('presend','predelete','createbills'))) $arrayofmassactions=array();
 	$massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 
@@ -518,7 +518,7 @@ if ($resql)
 		print $langs->trans('ValidateInvoices');
 		print '</td>';
 		print '<td>';
-		print $form->selectyesno('valdate_invoices', 1, 1);
+		print $form->selectyesno('validate_invoices', 1, 1);
 		print '</td>';
 		print '</tr>';
 		print '</table>';

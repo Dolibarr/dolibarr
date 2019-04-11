@@ -35,15 +35,31 @@ if (!defined('NOREQUIREAJAX'))  { define('NOREQUIREAJAX', '1'); }
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT . '/compta/paiement/class/paiement.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/class/html.form.class.php';
 
 $langs->loadLangs(array("bills", "cashdesk"));
 
 $id = GETPOST('id', 'int');
 $action = GETPOST('action', 'alpha');
 $idproduct = GETPOST('idproduct', 'int');
-
 $place = (GETPOST('place', 'int') > 0 ? GETPOST('place', 'int') : 0);   // $place is id of table for Ba or Restaurant
 $posnb = (GETPOST('posnb', 'int') > 0 ? GETPOST('posnb', 'int') : 0);   // $posnb is id of POS
+
+/**
+ * Abort invoice creationg with a given error message
+ *
+ * @param   string  $message        Message explaining the error to the user
+ * @return	void
+ */
+function fail($message)
+{
+	header($_SERVER['SERVER_PROTOCOL'] . ' 500 Internal Server Error', true, 500);
+	die($message);
+}
+
+
+
+$placeid = 0;	// $placeid is id of invoice
 
 $number = GETPOST('number', 'alpha');
 $idline = GETPOST('idline', 'int');
@@ -100,6 +116,26 @@ if ($action == 'valid' && $user->rights->facture->creer)
 
 	$invoice = new Facture($db);
 	$invoice->fetch($placeid);
+	if($invoice->total_ttc<0){
+		$invoice->type= $invoice::TYPE_CREDIT_NOTE;
+		$sql="SELECT rowid FROM ".MAIN_DB_PREFIX."facture WHERE ";
+		$sql.="fk_soc = '".$invoice->socid."' ";
+		$sql.="AND type <> ".Facture::TYPE_CREDIT_NOTE." ";
+		$sql.="AND fk_statut >= ".$invoice::STATUS_VALIDATED." ";
+		$sql.="ORDER BY rowid DESC";
+		$resql = $db->query($sql);
+		if($resql){
+			$obj = $db->fetch_object($resql);
+			$fk_source=$obj->rowid;
+			if($fk_source == null){
+				fail($langs->transnoentitiesnoconv("NoPreviousBillForCustomer"));
+			}
+		}else{
+			fail($langs->transnoentitiesnoconv("NoPreviousBillForCustomer"));
+		}
+		$invoice->fk_facture_source=$fk_source;
+		$invoice->update($user);
+	}
 
 	if (! empty($conf->stock->enabled) && $conf->global->CASHDESK_NO_DECREASE_STOCK != "1")
 	{
@@ -168,7 +204,7 @@ if ($action == "addline")
     	$price_base_type = $prod->multiprices_base_type[$customer->price_level];
     }
 
-    $invoice->addline($prod->description, $price, 1, $tva_tx, $prod->localtax1_tx, $prod->localtax2_tx, $idproduct, $prod->remise_percent, '', 0, 0, 0, '', $price_base_type, $price_ttc, $prod->type, -1, 0, '', 0, 0, null, 0, '', 0, 100, '', null, 0);
+    $idoflineadded = $invoice->addline($prod->description, $price, 1, $tva_tx, $prod->localtax1_tx, $prod->localtax2_tx, $idproduct, $prod->remise_percent, '', 0, 0, 0, '', $price_base_type, $price_ttc, $prod->type, -1, 0, '', 0, 0, null, 0, '', 0, 100, '', null, 0);
     $invoice->fetch($placeid);
 }
 
@@ -190,11 +226,11 @@ if ($action == "addnote") {
 }
 
 if ($action == "deleteline") {
-    if ($idline > 0 and $placeid > 0) { //If exist invoice and line, to avoid errors if deleted from other device or no line selected
+    if ($idline > 0 and $placeid > 0) { // If invoice exists and line selected. To avoid errors if deleted from another device or no line selected.
         $invoice->deleteline($idline);
         $invoice->fetch($placeid);
     }
-    elseif ($placeid > 0) { //If exist invoice, but no line selected, proceed to delete last line
+    elseif ($placeid > 0) {             // If invoice exists but no line selected, proceed to delete last line.
         $sql = "SELECT rowid FROM " . MAIN_DB_PREFIX . "facturedet where fk_facture='".$placeid."' order by rowid DESC";
         $resql = $db->query($sql);
         $row = $db->fetch_array($resql);
@@ -204,17 +240,34 @@ if ($action == "deleteline") {
     }
 }
 
-if ($action == "updateqty") {
+if ($action == "delete") {
+    if ($placeid > 0) { //If invoice exists
+        $result = $invoice->fetch($placeid);
+        if ($result > 0)
+        {
+            $sql = "DELETE FROM " . MAIN_DB_PREFIX . "facturedet where fk_facture='".$placeid."'";
+            $resql = $db->query($sql);
+
+            $invoice->fetch($placeid);
+        }
+    }
+}
+
+if ($action == "updateqty")
+{
     foreach($invoice->lines as $line)
     {
-        if ($line->id == $idline) { $result = $invoice->updateline($line->id, $line->desc, $line->subprice, $number, $line->remise_percent, $line->date_start, $line->date_end, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, 'HT', $line->info_bits, $line->product_type, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->special_code, $line->array_options, $line->situation_percent, $line->fk_unit);
+        if ($line->id == $idline)
+        {
+            $result = $invoice->updateline($line->id, $line->desc, $line->subprice, $number, $line->remise_percent, $line->date_start, $line->date_end, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, 'HT', $line->info_bits, $line->product_type, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->special_code, $line->array_options, $line->situation_percent, $line->fk_unit);
         }
     }
 
     $invoice->fetch($placeid);
 }
 
-if ($action == "updateprice") {
+if ($action == "updateprice")
+{
     foreach($invoice->lines as $line)
     {
         if ($line->id == $idline) { $result = $invoice->updateline($line->id, $line->desc, $number, $line->qty, $line->remise_percent, $line->date_start, $line->date_end, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, 'HT', $line->info_bits, $line->product_type, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->special_code, $line->array_options, $line->situation_percent, $line->fk_unit);
@@ -224,7 +277,8 @@ if ($action == "updateprice") {
     $invoice->fetch($placeid);
 }
 
-if ($action == "updatereduction") {
+if ($action == "updatereduction")
+{
     foreach($invoice->lines as $line)
     {
         if ($line->id == $idline) { $result = $invoice->updateline($line->id, $line->desc, $line->subprice, $line->qty, $number, $line->date_start, $line->date_end, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, 'HT', $line->info_bits, $line->product_type, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->special_code, $line->array_options, $line->situation_percent, $line->fk_unit);
@@ -234,7 +288,8 @@ if ($action == "updatereduction") {
     $invoice->fetch($placeid);
 }
 
-if ($action == "order" and $placeid != 0) {
+if ($action == "order" and $placeid != 0)
+{
     include_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
 
     $headerorder = '<html><br><b>' . $langs->trans('Place') . ' ' . $place . '<br><table width="65%"><thead><tr><th class="left">' . $langs->trans("Label") . '</th><th class="right">' . $langs->trans("Qty") . '</th></tr></thead><tbody>';
@@ -285,19 +340,20 @@ if ($action=="valid")
 {
     $sectionwithinvoicelink.='<!-- Section with invoice link -->'."\n";
     $sectionwithinvoicelink.='<input type="hidden" name="invoiceid" id="invoiceid" value="'.$invoice->id.'">';
-    $sectionwithinvoicelink.='<span style="font-size:120%;" class="center"><b>';
+    $sectionwithinvoicelink.='<span style="font-size:120%;" class="center">';
     $sectionwithinvoicelink.=$invoice->getNomUrl(1, '', 0, 0, '', 0, 0, -1, '_backoffice')." - ";
-    if ($invoice->getRemainToPay() > 0)
+    $remaintopay = $invoice->getRemainToPay();
+    if ($remaintopay > 0)
     {
-        $sectionwithinvoicelink.=$langs->trans('Generated');
+        $sectionwithinvoicelink.=$langs->trans('RemainToPay').': <span class="amountremaintopay" style="font-size: unset">'.price($remaintopay, 1, $langs, 1, -1, -1, $conf->currency).'</span>';
     }
     else
     {
-        if ($invoice->paye) $sectionwithinvoicelink.=$langs->trans("Payed");
+        if ($invoice->paye) $sectionwithinvoicelink.='<span class="amountpaymentcomplete" style="font-size: unset">'.$langs->trans("Payed").'</span>';
         else $sectionwithinvoicelink.=$langs->trans('BillShortStatusValidated');
     }
-    $sectionwithinvoicelink.='</b></span>';
-    if ($conf->global->TAKEPOSCONNECTOR) $sectionwithinvoicelink.=' <button type="button" onclick="TakeposPrinting('.$placeid.');">'.$langs->trans('PrintTicket').'</button>';
+    $sectionwithinvoicelink.='</span>';
+    if ($conf->global->TAKEPOSCONNECTOR) $sectionwithinvoicelink.=' <button id="buttonprint" type="button" onclick="TakeposPrinting('.$placeid.');">'.$langs->trans('PrintTicket').'</button>';
     else $sectionwithinvoicelink.=' <button id="buttonprint" type="button" onclick="Print('.$placeid.');">'.$langs->trans('PrintTicket').'</button>';
     if ($conf->global->TAKEPOS_AUTO_PRINT_TICKETS) $sectionwithinvoicelink.='<script language="javascript">$("#buttonprint").click();</script>';
 }
@@ -315,13 +371,23 @@ var selectedline=0;
 var selectedtext="";
 var placeid=<?php echo ($placeid > 0 ? $placeid : 0);?>;
 $(document).ready(function() {
-    $('table tbody tr').click(function(){
-        $('table tbody tr').removeClass("selected");
+	var idoflineadded = <?php echo ($idoflineadded?$idoflineadded:0); ?>;
+
+    $('.posinvoiceline').click(function(){
+    	console.log("Click done on "+this.id);
+        $('.posinvoiceline').removeClass("selected");
         $(this).addClass("selected");
         if (selectedline==this.id) return; // If is already selected
-          else selectedline=this.id;
+        else selectedline=this.id;
         selectedtext=$('#'+selectedline).find("td:first").html();
     });
+
+    /* Autoselect the line */
+    if (idoflineadded > 0)
+    {
+        console.log("Auto select "+idoflineadded);
+        $('.posinvoiceline#'+idoflineadded).click();
+    }
 <?php
 
 if ($action == "order" and $order_receipt_printer1 != "") {
@@ -352,18 +418,6 @@ if ($action == "search" || $action == "valid") {
 	parent.setFocusOnSearchField();
     <?php
 }
-
-?>
-
-	$('table tbody tr').click(function(){
-		console.log("We click on a line");
-        $('table tbody tr').removeClass("selected");
-        $(this).addClass("selected");
-        if (selectedline==this.id) return; // If is already selected
-        else selectedline=this.id;
-        selectedtext=$('#'+selectedline).find("td:first").html();
-    });
-<?php
 
 
 if ($action == "temp" and $ticket_printer1 != "") {
@@ -439,7 +493,7 @@ print '<br>'.$sectionwithinvoicelink;
 print '</td>';
 print '<td class="linecolqty right">' . $langs->trans('ReductionShort') . '</td>';
 print '<td class="linecolqty right">' . $langs->trans('Qty') . '</td>';
-print '<td class="linecolht right">' . $langs->trans('TotalHTShort') . '</td>';
+print '<td class="linecolht right nowraponall">' . $langs->trans('TotalHTShort') . '</td>';
 print "</tr>\n";
 
 if ($placeid > 0)

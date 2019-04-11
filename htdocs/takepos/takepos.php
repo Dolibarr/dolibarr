@@ -77,7 +77,7 @@ top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
 <script type="text/javascript" src="js/jquery.colorbox-min.js"></script>	<!-- TODO It seems we don't need this -->
 <script language="javascript">
 <?php
-$categories = $categorie->get_full_arbo('product', 0, (($conf->global->TAKEPOS_ROOT_CATEGORY_ID > 0)?$conf->global->TAKEPOS_ROOT_CATEGORY_ID:0));
+$categories = $categorie->get_full_arbo('product', (($conf->global->TAKEPOS_ROOT_CATEGORY_ID > 0)?$conf->global->TAKEPOS_ROOT_CATEGORY_ID:0), 1);
 
 
 // Search root category to know its level
@@ -153,18 +153,10 @@ function ClearSearch() {
 // Set the focus on search field but only on desktop. On tablet or smartphone, we don't to avoid to have the keyboard open automatically
 function setFocusOnSearchField() {
 	console.log("Call setFocusOnSearchField in page takepos.php");
-	<?php
-	//global $conf;
-	//if ($conf->browser->layout == 'classic') {
-	?>
-	if (app.hasKeyboard)
-	{
+	<?php if ($conf->browser->layout == 'classic') { ?>
 		console.log("has keyboard from localStorage, so we can force focus on search field");
 		$("#search").focus();
-	}
-	<?php
-    //}
-    //?>
+	<?php } ?>
 }
 
 function PrintCategories(first) {
@@ -388,6 +380,16 @@ function Refresh() {
 	});
 }
 
+function New() {
+	console.log("New");
+	var r = confirm('<?php echo $langs->trans("ConfirmDeletionOfThisPOSSale"); ?>');
+	if (r == true) {
+    	$("#poslines").load("invoice.php?action=delete&place="+place, function() {
+    		//$('#poslines').scrollTop($('#poslines')[0].scrollHeight);
+    	});
+	}
+}
+
 function Search2() {
 	console.log("Search2");
 	pageproducts=0;
@@ -593,7 +595,17 @@ if (count($maincategories)==0) {
 // User menu and external TakePOS modules
 $menus = array();
 $r=0;
-//$menus[$r++]=array('title'=>'<span class="fas fa-search paddingrightonly"></span><div class="trunc">'.$langs->trans("SearchProduct").'</div>', 'action'=>'Search();');
+
+if (empty($conf->global->TAKEPOS_BAR_RESTAURANT))
+{
+    $menus[$r++]=array('title'=>'<span class="fa fa-layer-group paddingrightonly"></span><div class="trunc">'.$langs->trans("New").'</div>', 'action'=>'New();');
+}
+else
+{
+    // BAR RESTAURANT specific menu
+    $menus[$r++]=array('title'=>'<span class="fa fa-layer-group paddingrightonly"></span><div class="trunc">'.$langs->trans("Floors").'</div>', 'action'=>'Floors();');
+}
+
 $menus[$r++]=array('title'=>'<span class="far fa-building paddingrightonly"></span><div class="trunc">'.$langs->trans("Customer").'</div>', 'action'=>'Customer();');
 $menus[$r++]=array('title'=>'<span class="fa fa-cube paddingrightonly"></span><div class="trunc">'.$langs->trans("FreeZone").'</div>', 'action'=>'FreeZone();');
 $menus[$r++]=array('title'=>'<span class="far fa-money-bill-alt paddingrightonly"></span><div class="trunc">'.$langs->trans("Payment").'</div>', 'action'=>'CloseBill();');
@@ -601,7 +613,6 @@ $menus[$r++]=array('title'=>'<span class="far fa-money-bill-alt paddingrightonly
 // BAR RESTAURANT specific menu
 if ($conf->global->TAKEPOS_BAR_RESTAURANT)
 {
-    $menus[$r++]=array('title'=>'<span class="fa fa-layer-group paddingrightonly"></span><div class="trunc">'.$langs->trans("Floors").'</div>', 'action'=>'Floors();');
 	if ($conf->global->TAKEPOS_ORDER_PRINTERS)
 	{
 		$menus[$r++]=array('title'=>$langs->trans("Order"), 'action'=>'TakeposPrintingOrder();');
@@ -653,7 +664,7 @@ $menus[$r++]=array('title'=>'<span class="fa fa-sign-out-alt paddingrightonly"><
         print '<!-- Show the search input text -->'."\n";
         print '<div class="margintoponly">';
 		print '<input type="text" id="search" name="search" onkeyup="Search2();" style="width:80%;font-size: 150%;" placeholder="'.$langs->trans("Search").'" autofocus> ';
-		print '<a class="marginleftonly" onclick="ClearSearch();">'.img_picto('', 'searchclear').'</a>';
+		print '<a class="marginleftonly hideonsmartphone" onclick="ClearSearch();">'.img_picto('', 'searchclear').'</a>';
 		print '</div>';
 ?>
 		</div>

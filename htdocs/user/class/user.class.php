@@ -125,12 +125,12 @@ class User extends CommonObject
 	//! If this is defined, it is an external user
 	/**
 	 * @deprecated
-	 * @see socid
+	 * @see $socid
 	 */
 	public $societe_id;
 	/**
 	 * @deprecated
-	 * @see contactid
+	 * @see $contactid
 	 */
 	public $contact_id;
 	public $socid;
@@ -517,7 +517,7 @@ class User extends CommonObject
 	 *  @param	int		$entity			Entity to use
 	 *  @param  int	    $notrigger		1=Does not execute triggers, 0=Execute triggers
 	 *  @return int						> 0 if OK, < 0 if KO
-	 *  @see	clearrights, delrights, getrights
+	 *  @see	clearrights(), delrights(), getrights()
 	 */
 	public function addrights($rid, $allmodule = '', $allperms = '', $entity = 0, $notrigger = 0)
 	{
@@ -643,7 +643,7 @@ class User extends CommonObject
 	 *  @param	int		$entity		Entity to use
 	 *  @param  int	    $notrigger	1=Does not execute triggers, 0=Execute triggers
 	 *  @return int         		> 0 if OK, < 0 if OK
-	 *  @see	clearrights, addrights, getrights
+	 *  @see	clearrights(), addrights(), getrights()
 	 */
 	public function delrights($rid, $allmodule = '', $allperms = '', $entity = 0, $notrigger = 0)
 	{
@@ -759,7 +759,7 @@ class User extends CommonObject
 	 *  Clear all permissions array of user
 	 *
 	 *  @return	void
-	 *  @see	getrights
+	 *  @see	getrights()
 	 */
 	public function clearrights()
 	{
@@ -777,7 +777,7 @@ class User extends CommonObject
 	 *	@param  string	$moduletag		Limit permission for a particular module ('' by default means load all permissions)
 	 *  @param	int		$forcereload	Force reload of permissions even if they were already loaded (ignore cache)
 	 *	@return	void
-	 *  @see	clearrights, delrights, addrights
+	 *  @see	clearrights(), delrights(), addrights()
 	 */
 	public function getrights($moduletag = '', $forcereload = 0)
 	{
@@ -2799,8 +2799,7 @@ class User extends CommonObject
 	/**
 	 *  Update user using data from the LDAP
 	 *
-	 *  @param	ldapuser	$ldapuser	Ladp User
-	 *
+	 *  @param	Object	$ldapuser	Ladp User
 	 *  @return int  				<0 if KO, >0 if OK
 	 */
 	public function update_ldap2dolibarr(&$ldapuser)
@@ -2841,7 +2840,7 @@ class User extends CommonObject
 	 * Return and array with all instanciated first level children users of current user
 	 *
 	 * @return	void
-	 * @see getAllChildIds
+	 * @see getAllChildIds()
 	 */
 	public function get_children()
 	{
@@ -3018,7 +3017,7 @@ class User extends CommonObject
 	 *
 	 *  @param      int      $addcurrentuser    1=Add also current user id to the list.
 	 *	@return		array		      		  	Array of user id lower than user (all levels under user). This overwrite this->users.
-	 *  @see get_children
+	 *  @see get_children()
 	 */
     public function getAllChildIds($addcurrentuser = 0)
     {
