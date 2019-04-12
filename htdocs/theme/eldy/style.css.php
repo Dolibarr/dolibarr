@@ -3196,6 +3196,10 @@ table.tableforservicepart1:first-of-type tr:first-of-type td {
 table.tableforservicepart1 tr td {
     border-top: 0px;
 }
+// Payment Screen : Pointer cursor in the autofill image
+table.noborder .AutoFillAmout {
+	cursor:pointer;
+}
 
 .paymenttable, .margintable {
 	/*border-top-width: <?php echo $borderwidth ?>px !important;
@@ -3211,6 +3215,8 @@ table.tableforservicepart1 tr td {
 .paymenttable, .margintable tr td {
 	height: 22px;
 }
+
+
 
 /* Disable shadows */
 .noshadow {
