@@ -4138,6 +4138,10 @@ A.none, A.none:active, A.none:visited, A.none:hover {
 /*  CKEditor                                                                      */
 /* ============================================================================== */
 
+body.cke_show_borders {
+    margin: 5px !important;
+}
+
 .cke_dialog {
     border: 1px #bbb solid ! important;
 }
