@@ -852,8 +852,11 @@ if ($resql)
 			$remaintopay = $obj->total_ttc - $totalpay;
 
             //If invoice has been converted and the conversion has been used, we dont have remain to pay on invoice
-            if($facturestatic->type == FactureFournisseur::TYPE_CREDIT_NOTE && $facturestatic->statut == FactureFournisseur::STATUS_CLOSED) {
-                if($facturestatic->isCreditNoteUsed())$remaintopay=0;
+            if($facturestatic->type == FactureFournisseur::TYPE_CREDIT_NOTE) {
+
+                if($facturestatic->isCreditNoteUsed()){
+                    $remaintopay=-$facturestatic->getSumFromThisCreditNotesNotUsed();
+                }
             }
 
 			print '<tr class="oddeven">';

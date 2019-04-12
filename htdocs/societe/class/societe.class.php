@@ -3778,11 +3778,11 @@ class Societe extends CommonObject
 
 					$outstandingOpened+=$obj->total_ttc - $paiement - $creditnotes - $deposits;
 				}
+				
+                //if credit note is converted but not used
+                if($mode == 'supplier' && $obj->type == FactureFournisseur::TYPE_CREDIT_NOTE  && $tmpobject->isCreditNoteUsed())$outstandingOpened-=$tmpobject->getSumFromThisCreditNotesNotUsed();
 
-                if($mode == 'supplier' && $obj->type == FactureFournisseur::TYPE_CREDIT_NOTE && $obj->fk_statut == FactureFournisseur::STATUS_CLOSED && !$tmpobject->isCreditNoteUsed()) { //if credit note is converted but not used
-                    if(empty($paiement)) $paiement = $tmpobject->getSommePaiement();
-                    $outstandingOpened+=$obj->total_ttc-$paiement;
-                }
+
 			}
 			return array('opened'=>$outstandingOpened, 'total_ht'=>$outstandingTotal, 'total_ttc'=>$outstandingTotalIncTax);	// 'opened' is 'incl taxes'
 		}
