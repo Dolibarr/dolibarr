@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2019  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2015-2017  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2017       Ferran Marcet           <fmarcet@2byte.es>
@@ -1243,6 +1243,21 @@ if (empty($reshook))
     	$object = new ExpenseReport($db);
     	$object->fetch($id);
 
+    	// First save uploaded file
+    	$fk_ecm_files = 0;
+    	if (GETPOSTISSET('attachfile'))
+    	{
+    	    $arrayoffiles=GETPOST('attachfile', 'array');
+    	    if (is_array($arrayoffiles) && ! empty($arrayoffiles[0]))
+    	    {
+    	        include_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
+    	        $relativepath='expensereport/'.$object->ref.'/'.$arrayoffiles[0];
+    	        $ecmfiles=new EcmFiles($db);
+    	        $ecmfiles->fetch(0, '', $relativepath);
+    	        $fk_ecm_files = $ecmfiles->id;
+    	    }
+    	}
+
     	$rowid = $_POST['rowid'];
     	$type_fees_id = GETPOST('fk_c_type_fees', 'int');
 		$fk_c_exp_tax_cat = GETPOST('fk_c_exp_tax_cat', 'int');
@@ -1284,7 +1299,7 @@ if (empty($reshook))
     	if (! $error)
     	{
     	    // TODO Use update method of ExpenseReportLine
-    		$result = $object->updateline($rowid, $type_fees_id, $projet_id, $vatrate, $comments, $qty, $value_unit, $date, $id, $fk_c_exp_tax_cat);
+    	    $result = $object->updateline($rowid, $type_fees_id, $projet_id, $vatrate, $comments, $qty, $value_unit, $date, $id, $fk_c_exp_tax_cat, $fk_ecm_files);
     		if ($result >= 0)
     		{
     			if ($result > 0)
@@ -2248,6 +2263,16 @@ else
         				    ';
 						    print '</script>'."\n";
 						    print '</td></tr>';
+
+						    $filenamelinked='';
+						    if ($line->fk_ecm_files > 0)
+						    {
+						        $result = $ecmfilesstatic->fetch($line->fk_ecm_files);
+						        if ($result > 0)
+						        {
+						            $filenamelinked = $ecmfilesstatic->filename;
+						        }
+						    }
 
 						    $tredited='tredited';
 						    include DOL_DOCUMENT_ROOT.'/expensereport/tpl/expensereport_addfile.tpl.php';
