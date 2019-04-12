@@ -311,6 +311,9 @@ hr { border: 0; border-top: 1px solid #ccc; }
     border: unset;
     background-color: unset;
 }
+.button_search:hover, .button_removefilter:hover {
+    cursor: pointer;
+}
 form {
     padding:0px;
     margin:0px;
