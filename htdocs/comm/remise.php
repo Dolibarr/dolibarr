@@ -106,7 +106,7 @@ if ($socid > 0)
 
 	$head = societe_prepare_head($object);
 
-	$isCustomer = $object->client == 1 || $object->client == 3;
+	$isCustomer = ($object->client == 1 || $object->client == 3);
 	$isSupplier = $object->fournisseur == 1;
 
 	print '<form method="POST" action="remise.php?id='.$object->id.'">';
@@ -122,7 +122,7 @@ if ($socid > 0)
 
     print '<div class="underbanner clearboth"></div>';
 
-    if(! $isCustomer && ! $isSupplier) {
+    if (! $isCustomer && ! $isSupplier) {
     	print '<p class="opacitymedium">'.$langs->trans('ThirdpartyIsNeitherCustomerNorClientSoCannotHaveDiscounts').'</p>';
 
     	dol_fiche_end();
@@ -136,13 +136,13 @@ if ($socid > 0)
 
 	print '<table class="border centpercent">';
 
-	if($isCustomer) {
+	if ($isCustomer) {
 		// Customer discount
 		print '<tr><td class="titlefield">';
 		print $langs->trans("CustomerRelativeDiscount").'</td><td>'.price2num($object->remise_percent)."%</td></tr>";
 	}
 
-	if($isSupplier) {
+	if ($isSupplier) {
 		// Supplier discount
 		print '<tr><td class="titlefield">';
 		print $langs->trans("SupplierRelativeDiscount").'</td><td>'.price2num($object->remise_supplier_percent)."%</td></tr>";
@@ -155,21 +155,28 @@ if ($socid > 0)
 
 	print '<div class="underbanner clearboth"></div>';
 
-	if($isCustomer && ! $isSupplier) {
-		print '<input type="hidden" name="discount_type" value="0" />';
-	}
-
-	if(! $isCustomer && $isSupplier) {
-		print '<input type="hidden" name="discount_type" value="1" />';
-	}
+	/*if (! ($isCustomer && $isSupplier))
+	{
+	    if ($isCustomer && ! $isSupplier) {
+	        print '<input type="hidden" name="discount_type" value="0" />';
+	    }
+	    if (! $isCustomer && $isSupplier) {
+	        print '<input type="hidden" name="discount_type" value="1" />';
+	    }
+	}*/
 
 	print '<table class="border centpercent">';
 
-	if($isCustomer && $isSupplier) {
+	if ($isCustomer || $isSupplier)
+	{
 		// Discount type
-		print '<tr><td class="titlefield fieldrequired">'.$langs->trans('DiscountType').'</td>';
-		print '<td><input type="radio" name="discount_type" id="discount_type_0" selected value="0"/> <label for="discount_type_0">'.$langs->trans('Customer').'</label>';
-		print ' <input type="radio" name="discount_type" id="discount_type_1" selected value="1"/> <label for="discount_type_1">'.$langs->trans('Supplier').'</label>';
+		print '<tr><td class="titlefield fieldrequired">'.$langs->trans('DiscountType').'</td><td>';
+		if ($isCustomer) {
+			print '<input type="radio" name="discount_type" id="discount_type_0" checked value="0"/> <label for="discount_type_0">'.$langs->trans('Customer').'</label>';
+		}
+		if ($isSupplier) {
+		    print ' <input type="radio" name="discount_type" id="discount_type_1"'.($isCustomer?'':' checked').' value="1"/> <label for="discount_type_1">'.$langs->trans('Supplier').'</label>';
+		}
 		print '</td></tr>';
 	}
 

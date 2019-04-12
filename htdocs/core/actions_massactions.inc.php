@@ -519,7 +519,7 @@ if ($massaction == 'confirm_createbills')
 		else {
 			// Load extrafields of order
 			$cmd->fetch_optionals();
-			
+
 			$objecttmp->socid = $cmd->socid;
 			$objecttmp->type = Facture::TYPE_STANDARD;
 			$objecttmp->cond_reglement_id	= $cmd->cond_reglement_id;
@@ -577,6 +577,12 @@ if ($massaction == 'confirm_createbills')
 				for ($i=0;$i<$num;$i++)
 				{
 					$desc=($lines[$i]->desc?$lines[$i]->desc:$lines[$i]->libelle);
+					// If we build one invoice for several order, we must put the invoice of order on the line
+					if (! empty($createbills_onebythird))
+					{
+					    $desc=dol_concatdesc($desc, $langs->trans("Order").' '.$cmd->ref.' - '.dol_print_date($cmd->date, 'day', $langs));
+					}
+
 					if ($lines[$i]->subprice < 0)
 					{
 						// Negative line, we create a discount line

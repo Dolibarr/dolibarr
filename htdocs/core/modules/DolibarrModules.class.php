@@ -888,6 +888,8 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 	{
 		global $conf;
 
+        $err = 0;
+
 		$sql = "SELECT tms FROM ".MAIN_DB_PREFIX."const";
 		$sql.= " WHERE ".$this->db->decrypt('name')." = '".$this->db->escape($this->const_name)."'";
 		$sql.= " AND entity IN (0, ".$conf->entity.")";
@@ -913,6 +915,8 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 	function getLastActivationInfo()
 	{
 		global $conf;
+
+        $err = 0;
 
 		$sql = "SELECT tms, note FROM ".MAIN_DB_PREFIX."const";
 		$sql.= " WHERE ".$this->db->decrypt('name')." = '".$this->db->escape($this->const_name)."'";

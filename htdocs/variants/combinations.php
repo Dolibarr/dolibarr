@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2016	Marcos García	      <marcosgdf@gmail.com>
  * Copyright (C) 2017	Laurent Destailleur   <eldy@users.sourceforge.net>
+ * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,9 +31,9 @@ $langs->load("other");
 $var = false;
 $id = GETPOST('id', 'int');
 $valueid = GETPOST('valueid', 'int');
-$ref = GETPOST('ref');
-$weight_impact = (float) GETPOST('weight_impact');
-$price_impact = (float) GETPOST('price_impact');
+$ref = GETPOST('ref', 'alpha');
+$weight_impact = GETPOST('weight_impact', 'alpha');
+$price_impact = GETPOST('price_impact', 'alpha');
 $price_impact_percent = (bool) GETPOST('price_impact_percent');
 $form = new Form($db);
 

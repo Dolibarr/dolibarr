@@ -835,7 +835,7 @@ class DoliDBMysqli extends DoliDB
         if ($field_desc['default'] != '')
         {
 			if ($field_desc['type'] == 'double' || $field_desc['type'] == 'tinyint' || $field_desc['type'] == 'int') $sql.=" DEFAULT ".$this->escape($field_desc['default']);
-        	elseif ($field_desc['type'] == 'text') $sql.=" DEFAULT '".$this->escape($field_desc['default'])."'";							// Default not supported on text fields
+			elseif ($field_desc['type'] != 'text') $sql.=" DEFAULT '".$this->escape($field_desc['default'])."'";							// Default not supported on text fields
         }
 
         dol_syslog(get_class($this)."::DDLUpdateField ".$sql,LOG_DEBUG);
