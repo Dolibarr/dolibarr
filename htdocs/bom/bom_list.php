@@ -452,11 +452,13 @@ while ($i < min($num, $limit))
     foreach($object->fields as $key => $val)
     {
 	    $cssforfield='';
-	    if (in_array($val['type'], array('date', 'datetime', 'timestamp'))) $cssforfield.=($cssforfield?' ':'').'center';
+	    if (in_array($val['type'], array('date','datetime','timestamp'))) $cssforfield.=($cssforfield?' ':'').'center';
 	    elseif ($key == 'status') $cssforfield.=($cssforfield?' ':'').'center';
-        if (in_array($val['type'], array('timestamp'))) $cssforfield.=($cssforfield?' ':'').'nowrap';
-        elseif ($key == 'ref') $cssforfield.=($cssforfield?' ':'').'nowrap';
-        if (in_array($val['type'], array('double(24,8)', 'double(6,3)', 'integer', 'real'))) $cssforfield.=($cssforfield?' ':'').'right';
+
+	    if (in_array($val['type'], array('timestamp'))) $cssforfield.=($cssforfield?' ':'').'nowrap';
+	    elseif ($key == 'ref') $cssforfield.=($cssforfield?' ':'').'nowrap';
+
+	    if (in_array($val['type'], array('double(24,8)', 'double(6,3)', 'integer', 'real'))) $cssforfield.=($cssforfield?' ':'').'right';
 
         if (! empty($arrayfields['t.'.$key]['checked']))
         {
