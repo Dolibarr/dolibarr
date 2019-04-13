@@ -195,15 +195,9 @@ function dol_dir_list($path, $types = "all", $recursive = 0, $filter = "", $excl
 			closedir($dir);
 
 			// Obtain a list of columns
-			if (! empty($sortcriteria))
+			if (! empty($sortcriteria) && $sortorder)
 			{
-				$myarray=array();
-				foreach ($file_list as $key => $row)
-				{
-					$myarray[$key] = (isset($row[$sortcriteria])?$row[$sortcriteria]:'');
-				}
-				// Sort the data
-				if ($sortorder) array_multisort($myarray, $sortorder, $file_list);
+			    $file_list = dol_sort_array($file_list, $sortcriteria, ($sortorder == SORT_ASC ? 'asc' : 'desc'));
 			}
 		}
 	}
