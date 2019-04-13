@@ -323,7 +323,9 @@ input, select {
 	margin-bottom:1px;
 	margin-top:1px;
 }
-
+input.button.massactionconfirmed {
+    margin: 4px;
+}
 
 textarea {
 	border-radius: 0;
