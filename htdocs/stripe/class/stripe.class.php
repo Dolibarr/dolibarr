@@ -83,7 +83,6 @@ class Stripe extends CommonObject
 	 */
 	public function getStripeAccount($mode = 'StripeTest', $fk_soc = null)
 	{
-	{
 		global $conf;
 
 		$sql = "SELECT tokenstring";
