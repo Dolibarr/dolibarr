@@ -344,18 +344,8 @@ print '<input type="hidden" name="viewstatut" value="'.$viewstatut.'">';
 
 // Line with explanation and button new job
 $newcardbutton='';
-if ($user->rights->cron->create)
-{
-	$newcardbutton.='<a class="butActionNew" style="margin-right: 0px;margin-left: 0px;" href="'.DOL_URL_ROOT.'/cron/card.php?action=create"><span class="valignmiddle text-plus-circle">'.$langs->trans("CronCreateJob").'</span>';
-	$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
-	$newcardbutton.= '</a>';
-}
-else
-{
-	$newcardbutton.='<a class="butActionNewRefused" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'"><span class="valignmiddle text-plus-circle">'.$langs->trans("CronCreateJob").'</span>';
-	$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
-	$newcardbutton.= '</a>';
-}
+$newcardbutton.= dolGetButtonTitle($langs->trans('New'), $langs->trans('CronCreateJob'), 'fa fa-plus-circle', DOL_URL_ROOT.'/societe/card.php?action=create'.$typefilter, '',$user->rights->cron->create);
+
 
 print_barre_liste($pagetitle, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_setup', 0, $newcardbutton, '', $limit);
 

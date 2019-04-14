@@ -142,10 +142,7 @@ if ($resql)
 	$newcardbutton='';
 	if ($user->rights->don->creer)
 	{
-		$newcardbutton='<a class="title-button" href="'.DOL_URL_ROOT.'/don/card.php?action=create">';
-		$newcardbutton.= '<span class="fa fa-plus-circle title-button-icon"></span>';
-        $newcardbutton.= '<span class="title-button-label text-plus-circle">'.$langs->trans('NewDonation').'</span>';
-		$newcardbutton.= '</a>';
+        $newcardbutton.= dolGetButtonTitle($langs->trans('NewDonation'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/don/card.php?action=create');
 	}
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">'."\n";
