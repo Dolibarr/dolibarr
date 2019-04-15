@@ -6,7 +6,7 @@
  * Copyright (C) 2013      Peter Fontaine       <contact@peterfontaine.fr>
  * Copyright (C) 2015-2016 Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2017      Ferran Marcet        <fmarcet@2byte.es>
- * Copyright (C) 2018      ptibogxiv            <support@ptibogxiv.net>
+ * Copyright (C) 2018-2019 Thibault FOUCART     <support@ptibogxiv.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,7 +40,6 @@ require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.p
 require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
 
 $langs->loadLangs(array("companies","commercial","banks","bills",'paypal','stripe','withdrawals'));
-
 
 // Security check
 $socid = GETPOST("socid", "int");
@@ -83,7 +82,6 @@ if (! empty($conf->stripe->enabled))
 	$stripeacc = $stripe->getStripeAccount($service);								// Get Stripe OAuth connect account (no network access here)
 	$stripecu = $stripe->getStripeCustomerAccount($object->id, $servicestatus);		// Get remote Stripe customer 'cus_...' (no network access here)
 }
-
 
 
 /*
@@ -786,6 +784,63 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 		print '</td></tr>';
 	}
     }
+    
+	if ($object->fournisseur)
+	{
+		print '<tr><td class="titlefield">';
+		print $langs->trans('SupplierCode').'</td><td colspan="2">';
+		print $object->code_fournisseur;
+		if ($object->check_codefournisseur() <> 0) print ' <font class="error">('.$langs->trans("WrongSupplierCode").')</font>';
+		print '</td></tr>';
+		$sql = "SELECT count(*) as nb from ".MAIN_DB_PREFIX."facture where fk_soc = ".$socid;
+		$resql=$db->query($sql);
+		if (!$resql) dol_print_error($db);
+
+		$obj = $db->fetch_object($resql);
+		$nbFactsClient = $obj->nb;
+		$thirdTypeArray['customer']=$langs->trans("customer");
+		if ($conf->propal->enabled && $user->rights->propal->lire) $elementTypeArray['propal']=$langs->transnoentitiesnoconv('Proposals');
+		if ($conf->commande->enabled && $user->rights->commande->lire) $elementTypeArray['order']=$langs->transnoentitiesnoconv('Orders');
+		if ($conf->facture->enabled && $user->rights->facture->lire) $elementTypeArray['invoice']=$langs->transnoentitiesnoconv('Invoices');
+		if ($conf->contrat->enabled && $user->rights->contrat->lire) $elementTypeArray['contract']=$langs->transnoentitiesnoconv('Contracts');
+
+	if (! empty($conf->stripe->enabled))
+	{
+		$permissiontowrite = $user->rights->societe->creer;
+    $stripesupplieracc = $stripe->getStripeAccount($service, $object->id);								// Get Stripe OAuth connect account (no network access here)
+    
+		// Stripe customer key 'cu_....' stored into llx_societe_account
+		print '<tr><td class="titlefield">';
+		//print $langs->trans('StripeCustomerId');
+		print $form->editfieldkey("StripeSupplierId", 'key_account', $stripesupplieracc, $object, $permissiontowrite, 'string', '', 0, 2, 'socid');
+		print '</td><td>';
+		//print $stripecu;
+		print $form->editfieldval("StripeSupplierId", 'key_account', $stripesupplieracc, $object, $permissiontowrite, 'string', '', null, null, '', 2, '', 'socid');
+		if (! empty($conf->stripe->enabled) && $stripesupplieracc && $action != 'editkey_account')
+		{
+		    $connect='';
+			
+			$url='https://dashboard.stripe.com/test/'.$stripesupplieracc;
+			if ($servicestatus)
+			{
+				$url='https://dashboard.stripe.com/'.$stripesupplieracc;
+			}
+			print ' <a href="'.$url.'" target="_stripe">'.img_picto($langs->trans('ShowInStripe'), 'object_globe').'</a>';
+		}
+		print '</td><td class="right">';
+		if (empty($stripesupplieracc))
+		{
+			print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
+			print '<input type="hidden" name="action" value="synccustomertostripe">';
+			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			print '<input type="hidden" name="socid" value="'.$object->id.'">';
+			print '<input type="hidden" name="companybankid" value="'.$rib->id.'">';
+			print '<input type="submit" class="button" name="syncstripecustomer" value="'.$langs->trans("CreateSupplierOnStripe").'">';
+			print '</form>';
+		}
+		print '</td></tr>';
+	}
+    }    
 
 	print '</table>';
 	print '</div>';
