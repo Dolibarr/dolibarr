@@ -8215,7 +8215,7 @@ function dolGetButtonTitle($label, $helpText = '', $iconClass = 'fa fa-file', $u
 
     $button ='<'.$tag.' '.$compiledAttributes.' >';
     $button.= '<span class="'.$iconClass.' valignmiddle"></span>';
-    $button.= '<span class="valignmiddle text-plus-circle">'.$label.'</span>';
+    $button.= '<span class="valignmiddle text-plus-circle title-button-label">'.$label.'</span>';
     $button.= '</'.$tag.'>';
 
     return $button;

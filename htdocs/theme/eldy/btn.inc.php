@@ -171,11 +171,11 @@ a.butActionNewRefused>span.fa-plus-circle, a.butActionNewRefused>span.fa-plus-ci
     background-color: #fbfbfb;
 }
 
-.title-button-icon{
+.title-button > .title-button-icon{
 
 }
 
-.title-button-label{
+.title-button > .title-button-label{
     color: #666666;
 }
 
@@ -191,9 +191,29 @@ a.butActionNewRefused>span.fa-plus-circle, a.butActionNewRefused>span.fa-plus-ci
     box-shadow: none;
 }
 
+.title-button.title-button-refused, a.title-button.title-button-refused, .title-button.title-button-refused:hover, a.title-button.title-button-refused:hover {
+        color: #8a8a8a;
+        cursor: not-allowed;
+        background-color: #fbfbfb;
+        background: repeating-linear-gradient(
+            45deg,
+            #ffffff,
+            #f1f1f1 4px,
+            #f1f1f1 4px,
+            #f1f1f1 4px
+    );
+}
+
+
+
 .title-button:hover .title-button-label{
     color: #ffffff;
 }
+
+    .title-button.title-button-refused .title-button-label, .title-button.title-button-refused:hover .title-button-label{
+    color: #8a8a8a;
+}
+
 
 .title-button>.fa {
     font-size: 20px;
