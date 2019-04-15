@@ -340,10 +340,8 @@ else
 	$newcardbutton='';
 	if ($user->rights->holiday->write)
 	{
-		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/holiday/card.php?action=request"><span class="valignmiddle text-plus-circle">'.$langs->trans('MenuAddCP').'</span>';
-		$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
-		$newcardbutton.= '</a>';
-	}
+		$newcardbutton.= dolGetButtonTitle($langs->trans('MenuAddCP'), '', 'fa fa-plus-circle',DOL_URL_ROOT.'/holiday/card.php?action=request');
+    }
 
 	print_barre_liste($langs->trans("ListeCP"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_hrm.png', 0, $newcardbutton, '', $limit);
 

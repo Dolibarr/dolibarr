@@ -280,10 +280,8 @@ if ($resql)
 	$newcardbutton='';
 	if ($user->rights->expedition->creer)
 	{
-		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/expedition/card.php?action=create2"><span class="valignmiddle text-plus-circle">'.$langs->trans('NewSending').'</span>';
-		$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
-		$newcardbutton.= '</a>';
-	}
+        $newcardbutton.= dolGetButtonTitle($langs->trans('NewSending'), '', 'fa fa-plus-circle',DOL_URL_ROOT.'/expedition/card.php?action=create2');
+    }
 
 	$i = 0;
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">'."\n";
