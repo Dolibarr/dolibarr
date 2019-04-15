@@ -2022,7 +2022,7 @@ if ($action == 'create')
 	print '<tr><td>'.$langs->trans('NotePublic').'</td>';
 	print '<td>';
 	$note_public = $object->getDefaultCreateValueFor('note_public');
-	$doleditor = new DolEditor('note_public', $note_public, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, '90%');
+	$doleditor = new DolEditor('note_public', $note_public, '', 80, 'dolibarr_notes', 'In', 0, true, true, ROWS_3, '90%');
 	print $doleditor->Create(1);
 	print '</td>';
    // print '<td><textarea name="note" wrap="soft" cols="60" rows="'.ROWS_5.'"></textarea></td>';
@@ -2032,7 +2032,7 @@ if ($action == 'create')
 	print '<tr><td>'.$langs->trans('NotePrivate').'</td>';
 	print '<td>';
 	$note_private = $object->getDefaultCreateValueFor('note_private');
-	$doleditor = new DolEditor('note_private', $note_private, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, '90%');
+	$doleditor = new DolEditor('note_private', $note_private, '', 80, 'dolibarr_notes', 'In', 0, true, true, ROWS_3, '90%');
 	print $doleditor->Create(1);
 	print '</td>';
 	// print '<td><textarea name="note" wrap="soft" cols="60" rows="'.ROWS_5.'"></textarea></td>';
