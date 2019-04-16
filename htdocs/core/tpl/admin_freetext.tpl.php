@@ -64,7 +64,7 @@ if (! empty($conf->global->MAIN_MULTILANGS) )
 	}
 }
 
-if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT))
+if (empty($conf->modFckeditor->enabled) || empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT))
 {
     print '<textarea name="freetext" class="flat" cols="120">'.$conf->global->$freetextconfvar.'</textarea>';
 }
@@ -97,10 +97,10 @@ if (! empty($conf->global->MAIN_MULTILANGS) )
 		$('#freetextlang').change(function()
 		{
 			<?php
-				if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT))
+				if (empty($conf->modFckeditor->enabled) || empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT))
 				{
 				?>
-					$('#freetext').html(freetext[$(this).val()]);
+					$('textarea[name=freetext]').val(freetext[$(this).val()]);
 				<?php
 				}
 				else
