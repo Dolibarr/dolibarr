@@ -2492,3 +2492,21 @@ function autoOrManual($automaticmanual, $case = 1, $color = 0)
     if ($color) return '<font class="'.$classname.'">'.$result.'</font>';
     return $result;
 }
+
+
+/**
+ * Convert links to local wrapper to medias files into a string into a public external URL readable on internet
+ * 
+ * @param   string      $notetoshow      Text to convert
+ * @return  string                       String
+ */
+function convertBackOfficeMediasLinksToPublicLinks($notetoshow)
+{
+    global $dolibarr_main_url_root;
+    // Define $urlwithroot
+    $urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
+    $urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
+    //$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
+    $notetoshow=preg_replace('/src="[a-zA-Z0-9_\/\-\.]*(viewimage\.php\?modulepart=medias[^"]*)"/', 'src="'.$urlwithroot.'/\1"', $notetoshow);
+    return $notetoshow;
+}

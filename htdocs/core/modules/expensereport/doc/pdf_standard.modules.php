@@ -325,7 +325,8 @@ class pdf_standard extends ModeleExpenseReport
 					$substitutionarray=pdf_getSubstitutionArray($outputlangs, null, $object);
 					complete_substitutions_array($substitutionarray, $outputlangs, $object);
 					$notetoshow = make_substitutions($notetoshow, $substitutionarray, $outputlangs);
-
+					$notetoshow = convertBackOfficeMediasLinksToPublicLinks($notetoshow);
+					
 					$tab_top = 95;
 
 					$pdf->SetFont('', '', $default_font_size - 1);
