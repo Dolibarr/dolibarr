@@ -8160,7 +8160,7 @@ function dolGetButtonTitle($label, $helpText = '', $iconClass = 'fa fa-file', $u
     }
 
     $class = 'btnTitle' ;
-    $conf->global->MAIN_USE_NEW_TITLE_BUTTON = 1;
+
     // hidden conf keep during button transition TODO: remove this block
     if(empty($conf->global->MAIN_USE_NEW_TITLE_BUTTON)){
         $class = 'butActionNew';
