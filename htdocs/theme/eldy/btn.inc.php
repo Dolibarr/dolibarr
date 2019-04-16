@@ -134,13 +134,10 @@ a.butActionNewRefused>span.fa-plus-circle, a.butActionNewRefused>span.fa-plus-ci
     background-color: transparent ! important;
 }
 
-<?php if (! empty($conf->global->MAIN_BUTTON_HIDE_UNAUTHORIZED) && (! $user->admin)) { ?>
-.butActionRefused, .butActionNewRefused {
-    display: none;
-}
-<?php } ?>
 
-
+/*
+TITLE BUTTON
+ */
 
 .title-button, a.title-button {
     display: inline-block;
@@ -195,27 +192,28 @@ a.butActionNewRefused>span.fa-plus-circle, a.butActionNewRefused>span.fa-plus-ci
         color: #8a8a8a;
         cursor: not-allowed;
         background-color: #fbfbfb;
-        background: repeating-linear-gradient(
-            45deg,
-            #ffffff,
-            #f1f1f1 4px,
-            #f1f1f1 4px,
-            #f1f1f1 4px
-    );
+        background: repeating-linear-gradient( 45deg, #ffffff, #f1f1f1 4px, #f1f1f1 4px, #f1f1f1 4px );
 }
-
-
 
 .title-button:hover .title-button-label{
     color: #ffffff;
 }
 
-    .title-button.title-button-refused .title-button-label, .title-button.title-button-refused:hover .title-button-label{
+.title-button.title-button-refused .title-button-label, .title-button.title-button-refused:hover .title-button-label{
     color: #8a8a8a;
 }
-
 
 .title-button>.fa {
     font-size: 20px;
     display: block;
 }
+
+
+
+
+
+<?php if (! empty($conf->global->MAIN_BUTTON_HIDE_UNAUTHORIZED) && (! $user->admin)) { ?>
+.butActionRefused, .butActionNewRefused, .title-button.title-button-refused {
+    display: none !important;
+}
+<?php } ?>

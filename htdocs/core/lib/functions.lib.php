@@ -8146,15 +8146,25 @@ function dolGetButtonAction($label, $html = '', $actionType = 'default', $url = 
  * @param string    $iconClass  class for icon element
  * @param string    $url        the url for link
  * @param string    $id         attribute id of button
- * @param int       $status     0 no user rights, 1 active, -1 Feature Disabled
+ * @param int       $status     0 no user rights, 1 active, -1 Feature Disabled, -2 disable Other reason use helpText as tooltip
  * @param array     $params     various params for future : recommended rather than adding more function arguments
  * @return string               html button
  */
 function dolGetButtonTitle($label, $helpText = '', $iconClass = 'fa fa-file', $url = '', $id = '', $status = 1, $params = array())
 {
-    global $langs;
+    global $langs, $conf, $user;
+
+    // Actually this conf is used in css too for external module compatibility and smooth transition to this function
+    if (! empty($conf->global->MAIN_BUTTON_HIDE_UNAUTHORIZED) && (! $user->admin) && $status <= 0) {
+        return '';
+    }
 
     $class = 'title-button' ;
+
+    // hidden conf keep during button transition TODO: remove this block
+    if(empty($conf->global->MAIN_USE_NEW_TITLE_BUTTON)){
+        $class = 'butActionNew';
+    }
 
     $attr=array(
         'class' => $class
@@ -8165,15 +8175,22 @@ function dolGetButtonTitle($label, $helpText = '', $iconClass = 'fa fa-file', $u
         $attr['title'] = dol_escape_htmltag($helpText);
     }
 
-    if(empty($status)){
+    if($status <= 0){
         $attr['class'] .= ' title-button-refused';
-        $attr['title'] = dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions"));
+
+        // hidden conf keep during button transition TODO: remove this block
+        if(empty($conf->global->MAIN_USE_NEW_TITLE_BUTTON)){
+            $attr['class'] = 'butActionRefused';
+        }
+
         $attr['href'] = '';
-    }
-    elseif($status < 0){
-        $attr['class'] .= ' title-button-refused';
-        $attr['title'] = dol_escape_htmltag($langs->transnoentitiesnoconv("FeatureDisabled"));
-        $attr['href'] = '';
+
+        if($status == -1){ // Not enough permissions
+            $attr['title'] = dol_escape_htmltag($langs->transnoentitiesnoconv("FeatureDisabled"));
+        }
+        elseif($status == 0){ // disable
+            $attr['title'] = dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions"));
+        }
     }
 
     if(!empty($attr['title'])){
@@ -8222,6 +8239,13 @@ function dolGetButtonTitle($label, $helpText = '', $iconClass = 'fa fa-file', $u
     $button.= '<span class="'.$iconClass.' valignmiddle"></span>';
     $button.= '<span class="valignmiddle text-plus-circle title-button-label">'.$label.'</span>';
     $button.= '</'.$tag.'>';
+
+    // hidden conf keep during button transition TODO: remove this block
+    if(empty($conf->global->MAIN_USE_NEW_TITLE_BUTTON)){
+        $button='<'.$tag.' '.$compiledAttributes.' ><span class="text-plus-circle">'.$label.'</span>';
+        $button.= '<span class="'.$iconClass.' valignmiddle"></span>';
+        $button.= '</'.$tag.'>';
+    }
 
     return $button;
 }
