@@ -874,9 +874,10 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 
 	$dims=$pdf->getPageDimensions();
 
-	if ( ! empty($conf->global->$paramfreetext."_".$outputlangs->defaultlang) )
+	$paramfreetextlang = $paramfreetext."_".$outputlangs->defaultlang;
+	if ( ! empty($conf->global->$paramfreetextlang) )
 	{
-		$paramfreetext .= "_".$outputlangs->defaultlang;
+		$paramfreetext = $paramfreetextlang;
 	}
 
 	// Line of free text
