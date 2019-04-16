@@ -8146,11 +8146,11 @@ function dolGetButtonAction($label, $html = '', $actionType = 'default', $url = 
  * @param string    $iconClass  class for icon element
  * @param string    $url        the url for link
  * @param string    $id         attribute id of button
- * @param int       $userRight  user action right
+ * @param int       $status     0 no user rights, 1 active, -1 Feature Disabled
  * @param array     $params     various params for future : recommended rather than adding more function arguments
  * @return string               html button
  */
-function dolGetButtonTitle($label, $helpText = '', $iconClass = 'fa fa-file', $url = '', $id = '', $userRight = 1, $params = array())
+function dolGetButtonTitle($label, $helpText = '', $iconClass = 'fa fa-file', $url = '', $id = '', $status = 1, $params = array())
 {
     global $langs;
 
@@ -8165,9 +8165,14 @@ function dolGetButtonTitle($label, $helpText = '', $iconClass = 'fa fa-file', $u
         $attr['title'] = dol_escape_htmltag($helpText);
     }
 
-    if(empty($userRight)){
+    if(empty($status)){
         $attr['class'] .= ' title-button-refused';
         $attr['title'] = dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions"));
+        $attr['href'] = '';
+    }
+    elseif($status < 0){
+        $attr['class'] .= ' title-button-refused';
+        $attr['title'] = dol_escape_htmltag($langs->transnoentitiesnoconv("FeatureDisabled"));
         $attr['href'] = '';
     }
 

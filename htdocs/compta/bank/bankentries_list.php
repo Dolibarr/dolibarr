@@ -756,34 +756,16 @@ if ($resql)
 		{
 			if (empty($conf->global->BANK_USE_OLD_VARIOUS_PAYMENT))	// If direct entries is done using miscellaneous payments
 			{
-				if ($user->rights->banque->modifier) {
-					$newcardbutton = '<a class="butActionNew" href="'.DOL_URL_ROOT.'/compta/bank/various_payment/card.php?action=create&accountid='.$search_account.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.urlencode($search_account)).'"><span class="valignmiddle text-plus-circle">'.$langs->trans("AddBankRecord").'</span>';
-					$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
-					$newcardbutton.= '</a>';
-				} else {
-					$newcardbutton = '<a class="butActionNewRefused" title="'.$langs->trans("NotEnoughPermissions").'" href="#"><span class="valignmiddle text-plus-circle">'.$langs->trans("AddBankRecord").'</span>';
-					$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
-					$newcardbutton.= '</a>';
-				}
+			    $newcardbutton = dolGetButtonTitle($langs->trans('AddBankRecord'), '', 'fa fa-plus-circle',DOL_URL_ROOT.'/compta/bank/various_payment/card.php?action=create&accountid='.$search_account.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.urlencode($search_account)), '', $user->rights->banque->modifier);
 			}
-			else													// If direct entries is not done using miscellaneous payments
+			else												// If direct entries is not done using miscellaneous payments
 			{
-				if ($user->rights->banque->modifier) {
-					$newcardbutton = '<a class="butActionNew" href="'.$_SERVER["PHP_SELF"].'?action=addline&page='.$page.$param.'"><span class="valignmiddle text-plus-circle">'.$langs->trans("AddBankRecord").'</span>';
-					$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
-					$newcardbutton.= '</a>';
-				} else {
-					$newcardbutton = '<a class="butActionNewRefused" title="'.$langs->trans("NotEnoughPermissions").'" href="#"><span class="valignmiddle text-plus-circle">'.$langs->trans("AddBankRecord").'</span>';
-					$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
-					$newcardbutton.= '</a>';
-				}
+                $newcardbutton = dolGetButtonTitle($langs->trans('AddBankRecord'), '', 'fa fa-plus-circle',$_SERVER["PHP_SELF"].'?action=addline&page='.$page.$param, '', $user->rights->banque->modifier);
 			}
 		}
 		else
 		{
-			$newcardbutton = '<a class="butActionNewRefused" title="'.$langs->trans("FeatureDisabled").'" href="#"><span class="valignmiddle text-plus-circle">'.$langs->trans("AddBankRecord").'</span>';
-			$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
-			$newcardbutton.= '</a>';
+            $newcardbutton = dolGetButtonTitle($langs->trans('AddBankRecord'), '', 'fa fa-plus-circle',$_SERVER["PHP_SELF"].'?action=addline&page='.$page.$param, '', -1);
 		}
 	}
 
