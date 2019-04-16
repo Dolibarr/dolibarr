@@ -139,7 +139,7 @@ a.butActionNewRefused>span.fa-plus-circle, a.butActionNewRefused>span.fa-plus-ci
 TITLE BUTTON
  */
 
-.title-button, a.title-button {
+.btnTitle, a.btnTitle {
     display: inline-block;
     padding: 6px 12px;
     font-size: 14px
@@ -168,15 +168,15 @@ TITLE BUTTON
     background-color: #fbfbfb;
 }
 
-.title-button > .title-button-icon{
+.btnTitle > .btnTitle-icon{
 
 }
 
-.title-button > .title-button-label{
+.btnTitle > .btnTitle-label{
     color: #666666;
 }
 
-.title-button:hover, a.title-button:hover {
+.btnTitle:hover, a.btnTitle:hover {
     border-radius: 3px;
     position: relative;
     margin: 0 0 0 10px;
@@ -188,22 +188,22 @@ TITLE BUTTON
     box-shadow: none;
 }
 
-.title-button.title-button-refused, a.title-button.title-button-refused, .title-button.title-button-refused:hover, a.title-button.title-button-refused:hover {
+.btnTitle.refused, a.btnTitle.refused, .btnTitle.refused:hover, a.btnTitle.refused:hover {
         color: #8a8a8a;
         cursor: not-allowed;
         background-color: #fbfbfb;
         background: repeating-linear-gradient( 45deg, #ffffff, #f1f1f1 4px, #f1f1f1 4px, #f1f1f1 4px );
 }
 
-.title-button:hover .title-button-label{
+.btnTitle:hover .btnTitle-label{
     color: #ffffff;
 }
 
-.title-button.title-button-refused .title-button-label, .title-button.title-button-refused:hover .title-button-label{
+.btnTitle.refused .btnTitle-label, .btnTitle.refused:hover .btnTitle-label{
     color: #8a8a8a;
 }
 
-.title-button>.fa {
+.btnTitle>.fa {
     font-size: 20px;
     display: block;
 }
@@ -213,7 +213,7 @@ TITLE BUTTON
 
 
 <?php if (! empty($conf->global->MAIN_BUTTON_HIDE_UNAUTHORIZED) && (! $user->admin)) { ?>
-.butActionRefused, .butActionNewRefused, .title-button.title-button-refused {
+.butActionRefused, .butActionNewRefused, .btnTitle.refused {
     display: none !important;
 }
 <?php } ?>

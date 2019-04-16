@@ -8159,8 +8159,8 @@ function dolGetButtonTitle($label, $helpText = '', $iconClass = 'fa fa-file', $u
         return '';
     }
 
-    $class = 'title-button' ;
-
+    $class = 'btnTitle' ;
+    $conf->global->MAIN_USE_NEW_TITLE_BUTTON = 1;
     // hidden conf keep during button transition TODO: remove this block
     if(empty($conf->global->MAIN_USE_NEW_TITLE_BUTTON)){
         $class = 'butActionNew';
@@ -8176,11 +8176,11 @@ function dolGetButtonTitle($label, $helpText = '', $iconClass = 'fa fa-file', $u
     }
 
     if($status <= 0){
-        $attr['class'] .= ' title-button-refused';
+        $attr['class'] .= ' refused';
 
         // hidden conf keep during button transition TODO: remove this block
         if(empty($conf->global->MAIN_USE_NEW_TITLE_BUTTON)){
-            $attr['class'] = 'butActionRefused';
+            $attr['class'] = 'butActionNewRefused';
         }
 
         $attr['href'] = '';
@@ -8236,8 +8236,8 @@ function dolGetButtonTitle($label, $helpText = '', $iconClass = 'fa fa-file', $u
 
 
     $button ='<'.$tag.' '.$compiledAttributes.' >';
-    $button.= '<span class="'.$iconClass.' valignmiddle"></span>';
-    $button.= '<span class="valignmiddle text-plus-circle title-button-label">'.$label.'</span>';
+    $button.= '<span class="'.$iconClass.' valignmiddle btnTitle-icon"></span>';
+    $button.= '<span class="valignmiddle text-plus-circle btnTitle-label">'.$label.'</span>';
     $button.= '</'.$tag.'>';
 
     // hidden conf keep during button transition TODO: remove this block
