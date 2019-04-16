@@ -64,7 +64,7 @@ if (! empty($conf->global->MAIN_MULTILANGS) )
 	}
 }
 
-if (empty($conf->modFckeditor->enabled) || empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT))
+if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT))
 {
     print '<textarea name="freetext" class="flat" cols="120">'.$conf->global->$freetextconfvar.'</textarea>';
 }
@@ -83,6 +83,8 @@ if (! empty($conf->global->MAIN_MULTILANGS) )
 {
 ?>
 	<script type="text/javascript">
+	$(document).ready(function() // CKEDITOR must be loaded
+	{
 		var freetext = [];
 		freetext["0"] = "<?php echo $conf->global->$freetextvar;?>";
 <?php
@@ -97,7 +99,7 @@ if (! empty($conf->global->MAIN_MULTILANGS) )
 		$('#freetextlang').change(function()
 		{
 			<?php
-				if (empty($conf->modFckeditor->enabled) || empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT))
+				if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT))
 				{
 				?>
 					$('textarea[name=freetext]').val(freetext[$(this).val()]);
@@ -111,6 +113,7 @@ if (! empty($conf->global->MAIN_MULTILANGS) )
 				}
 				?>
 		});
+	});
 	</script>
 <?php
 }
