@@ -897,7 +897,7 @@ if ($source == 'order')
 	}
 
     $stripe = new Stripe($db);
-    $stripeacc = $stripe->getStripeAccount($service);							// Stripe OAuth connect account of dolibarr user (no network access here)
+    $stripeacc = $stripe->getStripeAccount($service);
     $stripecu = $stripe->customerStripe($order->thirdparty, $stripeacc, $servicestatus, 1);
 	//  for dev only
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("PaymentIntent");
@@ -916,8 +916,7 @@ if ($source == 'order')
 	$shipToZip=$order->thirdparty->zip;
 	$shipToStreet2='';
 	$phoneNum=$order->thirdparty->phone;
-	if ($shipToName && $shipToStreet && $shipToCity && $shipToCountryCode && $shipToZip)
-	{
+	if ($shipToName && $shipToStreet && $shipToCity && $shipToCountryCode && $shipToZip) {
 		print '<input type="hidden" name="shipToName" value="'.$shipToName.'">'."\n";
 		print '<input type="hidden" name="shipToStreet" value="'.$shipToStreet.'">'."\n";
 		print '<input type="hidden" name="shipToCity" value="'.$shipToCity.'">'."\n";
@@ -1049,7 +1048,7 @@ if ($source == 'invoice')
     }
 
     $stripe = new Stripe($db);
-    $stripeacc = $stripe->getStripeAccount($service);								// Stripe OAuth connect account of dolibarr user (no network access here)
+    $stripeacc = $stripe->getStripeAccount($service);
     $stripecu = $stripe->customerStripe($invoice->thirdparty, $stripeacc, $servicestatus, 1);
     //  for dev only
     print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("PaymentIntent");
@@ -1588,7 +1587,7 @@ if ($source == 'donation')
 	}
 
     $stripe = new Stripe($db);
-    $stripeacc = $stripe->getStripeAccount($service);								// Stripe OAuth connect account of dolibarr user (no network access here)
+    $stripeacc = $stripe->getStripeAccount($service);
     $stripecu = $stripe->customerStripe($don->thirdparty, $stripeacc, $servicestatus, 1);
 	//  for dev only
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("PaymentIntent");
