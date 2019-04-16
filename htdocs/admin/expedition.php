@@ -57,6 +57,7 @@ if (empty($conf->global->EXPEDITION_ADDON_NUMBER))
  */
 
 include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
+include DOL_DOCUMENT_ROOT.'/core/actions_setfreetext.inc.php';
 
 if ($action == 'updateMask')
 {
@@ -76,14 +77,6 @@ if ($action == 'updateMask')
 
 elseif ($action == 'set_param')
 {
-	$freetext=GETPOST('SHIPPING_FREE_TEXT', 'none');	// No alpha here, we want exact string
-	$res = dolibarr_set_const($db, "SHIPPING_FREE_TEXT", $freetext, 'chaine', 0, '', $conf->entity);
-	if ($res <= 0)
-	{
-		$error++;
-		setEventMessages($langs->trans("Error"), null, 'errors');
-	}
-
 	$draft=GETPOST('SHIPPING_DRAFT_WATERMARK', 'alpha');
 	$res = dolibarr_set_const($db, "SHIPPING_DRAFT_WATERMARK", trim($draft), 'chaine', 0, '', $conf->entity);
 	if ($res <= 0)
@@ -466,46 +459,34 @@ print '<br>';
  */
 print load_fiche_titre($langs->trans("OtherOptions"));
 
+print '<table class="noborder" width="100%">';
+print '<tr class="liste_titre">';
+print '<td>'.$langs->trans("Parameter").'</td>';
+print '<td class="center" width="60">'.$langs->trans("Value").'</td>';
+print "<td>&nbsp;</td>\n";
+print "</tr>\n";
+
+// free text
+$freetexttitle = $langs->trans("FreeLegalTextOnShippings");
+$freetextvar = "SHIPPING_FREE_TEXT";
+require_once(DOL_DOCUMENT_ROOT.'/core/tpl/admin_freetext.tpl.php');
+
+
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="set_param">';
 
-print "<table class=\"noborder\" width=\"100%\">";
-print "<tr class=\"liste_titre\">";
-print "<td>".$langs->trans("Parameter")."</td>\n";
-print "</tr>";
-
-$substitutionarray=pdf_getSubstitutionArray($langs, null, null, 2);
-$substitutionarray['__(AnyTranslationKey)__']=$langs->trans("Translation");
-$htmltext = '<i>'.$langs->trans("AvailableVariables").':<br>';
-foreach($substitutionarray as $key => $val)	$htmltext.=$key.'<br>';
-$htmltext.='</i>';
-
-print '<tr><td>';
-print $form->textwithpicto($langs->trans("FreeLegalTextOnShippings"), $langs->trans("AddCRIfTooLong").'<br><br>'.$htmltext, 1, 'help', '', 0, 2, 'freetexttooltip').'<br>';
-$variablename='SHIPPING_FREE_TEXT';
-if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT))
-{
-    print '<textarea name="'.$variablename.'" class="flat" cols="120">'.$conf->global->$variablename.'</textarea>';
-}
-else
-{
-    include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-    $doleditor=new DolEditor($variablename, $conf->global->$variablename, '', 80, 'dolibarr_notes');
-    print $doleditor->Create();
-}
-print "</td></tr>\n";
-
 print '<tr><td>';
 print $form->textwithpicto($langs->trans("WatermarkOnDraftContractCards"), $htmltext, 1, 'help', '', 0, 2, 'watermarktooltip').'<br>';
+print '</td><td>';
 print '<input size="50" class="flat" type="text" name="SHIPPING_DRAFT_WATERMARK" value="'.$conf->global->SHIPPING_DRAFT_WATERMARK.'">';
+print '</td><td class="right">';
+print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 print "</td></tr>\n";
 
-print '</table>';
-
-print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></div>';
-
 print '</form>';
+
+print '</table>';
 
 // End of page
 llxFooter();

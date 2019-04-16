@@ -54,6 +54,8 @@ $specimenthirdparty->initAsSpecimen();
  * Actions
  */
 
+include DOL_DOCUMENT_ROOT.'/core/actions_setfreetext.inc.php';
+
 if ($action == 'updateMask')
 {
     $maskconstorder=GETPOST('maskconstorder', 'alpha');
@@ -168,17 +170,15 @@ elseif ($action == 'addcat')
 
 elseif ($action == 'set_SUPPLIER_ORDER_OTHER')
 {
-    $freetext = GETPOST('SUPPLIER_ORDER_FREE_TEXT', 'none');	// No alpha here, we want exact string
 	$doubleapproval = GETPOST('SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED', 'alpha');
 	$doubleapproval = price2num($doubleapproval);
 
-    $res1 = dolibarr_set_const($db, "SUPPLIER_ORDER_FREE_TEXT", $freetext, 'chaine', 0, '', $conf->entity);
-    $res2 = dolibarr_set_const($db, "SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED", $doubleapproval, 'chaine', 0, '', $conf->entity);
+    $res = dolibarr_set_const($db, "SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED", $doubleapproval, 'chaine', 0, '', $conf->entity);
 
     // TODO We add/delete permission here until permission can have a condition on a global var
     include_once DOL_DOCUMENT_ROOT.'/core/modules/modFournisseur.class.php';
     $newmodule=new modFournisseur($db);
-    
+
     if ($conf->global->SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED)
     {
     	// clear default rights array
@@ -191,7 +191,7 @@ elseif ($action == 'set_SUPPLIER_ORDER_OTHER')
     	$newmodule->rights[$r][3] = 0;
     	$newmodule->rights[$r][4] = 'commande';
     	$newmodule->rights[$r][5] = 'approve2';
-    	
+
     	// Insert
     	$newmodule->insert_permissions(1);
     }
@@ -199,7 +199,7 @@ elseif ($action == 'set_SUPPLIER_ORDER_OTHER')
     {
     	// Remove all rights with Permission1190
     	$newmodule->delete_permissions();
-    	
+
     	// Add all right without Permission1190
     	$newmodule->insert_permissions(1);
     }
@@ -541,34 +541,12 @@ else
 }
 */
 
-$substitutionarray=pdf_getSubstitutionArray($langs, null, null, 2);
-$substitutionarray['__(AnyTranslationKey)__']=$langs->trans("Translation");
-$htmltext = '<i>'.$langs->trans("AvailableVariables").':<br>';
-foreach($substitutionarray as $key => $val)	$htmltext.=$key.'<br>';
-$htmltext.='</i>';
-
-print '<tr class="oddeven"><td colspan="2">';
-print $form->textwithpicto($langs->trans("FreeLegalTextOnOrders"), $langs->trans("AddCRIfTooLong").'<br><br>'.$htmltext, 1, 'help', '', 0, 2, 'freetexttooltip').'<br>';
-$variablename='SUPPLIER_ORDER_FREE_TEXT';
-if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT))
-{
-    print '<textarea name="'.$variablename.'" class="flat" cols="120">'.$conf->global->$variablename.'</textarea>';
-}
-else
-{
-    include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-    $doleditor=new DolEditor($variablename, $conf->global->$variablename, '', 80, 'dolibarr_notes');
-    print $doleditor->Create();
-}
-print '</td><td class="right">';
-print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
-print "</td></tr>\n";
-
-print '</table><br>';
-
 print '</form>';
 
-
+// free text
+$freetexttitle = $langs->trans("FreeLegalTextOnOrders");
+$freetextvar = "SUPPLIER_ORDER_FREE_TEXT";
+require_once(DOL_DOCUMENT_ROOT.'/core/tpl/admin_freetext.tpl.php');
 
 /*
  * Notifications

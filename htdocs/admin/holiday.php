@@ -52,6 +52,7 @@ if (empty($conf->global->HOLIDAY_ADDON))
  */
 
 include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
+include DOL_DOCUMENT_ROOT.'/core/actions_setfreetext.inc.php';
 
 if ($action == 'updateMask')
 {
@@ -159,13 +160,10 @@ elseif ($action == 'setmod')
 
 elseif ($action == 'set_other')
 {
-	$freetext= GETPOST('HOLIDAY_FREE_TEXT', 'none');	// No alpha here, we want exact string
-	$res1 = dolibarr_set_const($db, "HOLIDAY_FREE_TEXT", $freetext, 'chaine', 0, '', $conf->entity);
-
 	$draft= GETPOST('HOLIDAY_DRAFT_WATERMARK', 'alpha');
-	$res2 = dolibarr_set_const($db, "HOLIDAY_DRAFT_WATERMARK", trim($draft), 'chaine', 0, '', $conf->entity);
+	$res = dolibarr_set_const($db, "HOLIDAY_DRAFT_WATERMARK", trim($draft), 'chaine', 0, '', $conf->entity);
 
-	if (! $res1 > 0 || ! $res2 > 0) $error++;
+	if (! $res > 0) $error++;
 
  	if (! $error)
     {
@@ -464,54 +462,36 @@ print "<br>";
  * Other options
  */
 
-print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print '<input type="hidden" name="action" value="set_other">';
-
 print load_fiche_titre($langs->trans("OtherOptions"), '', '');
+
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td>';
 print '<td align="center" width="60">'.$langs->trans("Value").'</td>';
+print "<td>&nbsp;</td>\n";
 print "</tr>\n";
 
-$substitutionarray=pdf_getSubstitutionArray($langs, array('objectamount'), null, 2);
-$substitutionarray['__(AnyTranslationKey)__']=$langs->trans("Translation");
-$htmltext = '<i>'.$langs->trans("AvailableVariables").':<br>';
-foreach($substitutionarray as $key => $val)	$htmltext.=$key.'<br>';
-$htmltext.='</i>';
+// free text
+$freetexttitle = $langs->trans("FreeLegalTextOnHolidays");
+$freetextvar = "HOLIDAY_FREE_TEXT";
+require_once(DOL_DOCUMENT_ROOT.'/core/tpl/admin_freetext.tpl.php');
 
-print '<tr class="oddeven"><td colspan="2">';
-print $form->textwithpicto($langs->trans("FreeLegalTextOnHolidays"), $langs->trans("AddCRIfTooLong").'<br><br>'.$htmltext, 1, 'help', '', 0, 2, 'tooltiphelp');
-print '<br>';
-$variablename='HOLIDAY_FREE_TEXT';
-if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT))
-{
-    print '<textarea name="'.$variablename.'" class="flat" cols="120">'.$conf->global->$variablename.'</textarea>';
-}
-else
-{
-    include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-    $doleditor=new DolEditor($variablename, $conf->global->$variablename, '', 80, 'dolibarr_notes');
-    print $doleditor->Create();
-}
-print '</td></tr>'."\n";
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="action" value="set_other">';
 
 //Use draft Watermark
-
 print '<tr class="oddeven"><td>';
 print $form->textwithpicto($langs->trans("WatermarkOnDraftHolidayCards"), $htmltext, 1, 'help', '', 0, 2, 'watermarktooltip').'<br>';
 print '</td><td>';
 print '<input size="50" class="flat" type="text" name="HOLIDAY_DRAFT_WATERMARK" value="'.$conf->global->HOLIDAY_DRAFT_WATERMARK.'">';
+print '</td><td class="right">';
+print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 print '</td></tr>'."\n";
 
-print '</table>';
-
-print '<div class="center">';
-print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
-print '</div>';
-
 print '</form>';
+
+print '</table>';
 }
 
 
