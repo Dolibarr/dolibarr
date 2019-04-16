@@ -1808,9 +1808,7 @@ if (preg_match('/^dopayment/', $action))
 		?>
 
 	    // Create a Stripe client.
-	    var stripe = Stripe('<?php echo $stripearrayofkeys['publishable_key']; // Defined into config.php ?>', {
-  betas: ['payment_intent_beta_3']
-  });
+	    var stripe = Stripe('<?php echo $stripearrayofkeys['publishable_key']; // Defined into config.php ?>');
 
 	    // Create an instance of Elements
 	    var elements = stripe.elements();
