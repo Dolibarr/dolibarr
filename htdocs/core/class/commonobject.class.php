@@ -6130,6 +6130,12 @@ abstract class CommonObject
 				$value=price($value);
 			}
 		}
+		elseif ($type == 'real')
+		{
+		    if (!empty($value)) {
+		        $value=price($value);
+		    }
+		}
 		elseif ($type == 'boolean')
 		{
 			$checked='';

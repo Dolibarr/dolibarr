@@ -2525,13 +2525,14 @@ class FactureFournisseur extends CommonInvoice
     /**
      *	Load an object from its id and create a new one in database
      *
+     *	@param      User	$user        	User that clone
      *	@param      int		$fromid     	Id of object to clone
      *	@param		int		$invertdetail	Reverse sign of amounts for lines
      * 	@return		int						New id of clone
      */
-    public function createFromClone($fromid, $invertdetail = 0)
+    public function createFromClone(User $user, $fromid, $invertdetail = 0)
     {
-        global $user,$langs;
+        global $langs;
 
         $error=0;
 
@@ -2545,13 +2546,13 @@ class FactureFournisseur extends CommonInvoice
         $object->statut=self::STATUS_DRAFT;
 
         // Clear fields
-        $object->ref_supplier=$langs->trans("CopyOf").' '.$object->ref_supplier;
+        $object->ref_supplier       = (empty($this->ref_supplier) ? $langs->trans("CopyOf").' '.$object->ref_supplier : $this->ref_supplier);
         $object->author             = $user->id;
         $object->user_valid         = '';
         $object->fk_facture_source  = 0;
         $object->date_creation      = '';
         $object->date_validation    = '';
-        $object->date               = '';
+        $object->date               = (empty($this->date) ? '' : $this->date);
         $object->date_echeance      = '';
         $object->ref_client         = '';
         $object->close_code         = '';

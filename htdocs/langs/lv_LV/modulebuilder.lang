@@ -1,8 +1,8 @@
 # Dolibarr language file - Source file is en_US - loan
-ModuleBuilderDesc=Šo rīku drīkst izmantot tikai pieredzējuši lietotāji vai izstrādātāji. Tas dod jums utilītus, lai izveidotu vai rediģētu savu moduli. <br> Dokumentācija alternatīvai <a href="%s" target="_blank"> manuālajai izstrādei ir pieejama šeit </a>.
+ModuleBuilderDesc=Šo rīku izmanto tikai pieredzējuši lietotāji vai izstrādātāji. Tas nodrošina komunālo pakalpojumu, lai izveidotu vai rediģētu savu moduli. <br> Dokumentācija alternatīvai <a href="%s" target="_blank"> manuālai izstrādei šeit ir </a>.
 EnterNameOfModuleDesc=Enter name of the module/application to create with no spaces. Use uppercase to separate words (For example: MyModule, EcommerceForShop, SyncWithMySystem...)
 EnterNameOfObjectDesc=Enter name of the object to create with no spaces. Use uppercase to separate words (For example: MyObject, Student, Teacher...). The CRUD class file, but also API file, pages to list/add/edit/delete object and SQL files will be generated.
-ModuleBuilderDesc2=Path where modules are generated/edited (first alternative directory defined into %s): <strong>%s</strong>
+ModuleBuilderDesc2=Ceļš, kurā tiek ģenerēti / rediģēti moduļi (pirmais ārējo moduļu katalogs, kas definēts %s): <strong> %s </strong>
 ModuleBuilderDesc3=Atrastie / rediģējamie moduļi: <strong> %s </strong>
 ModuleBuilderDesc4=Modulis identificēts kā "rediģējams", kad moduļa saknes direktorijā  atrodas fails <strong> %s </strong>
 NewModule=Jauns modulis
@@ -24,7 +24,7 @@ ModuleBuilderDescbuildpackage=Jūs varat ģenerēt šeit moduļa "gatavs izplat�
 EnterNameOfModuleToDeleteDesc=Varat izdzēst savu moduli. BRĪDINĀJUMS: visi moduļa un strukturēto datu un dokumentācijas faili tiks dzēsti!
 EnterNameOfObjectToDeleteDesc=Jūs varat izdzēst objektu. BRĪDINĀJUMS: visi ar objektu saistītie faili tiks dzēsti!
 DangerZone=Bīstamā zona
-BuildPackage=Veidojiet paketi / dokumentāciju
+BuildPackage=Izveidot paketi
 BuildDocumentation=Izveidot dokumentāciju
 ModuleIsNotActive=Šis modulis vēl nav aktivizēts. Lai to veiktu, spiediet uz %s vai noklikšķiniet šeit:
 ModuleIsLive=Šis modulis ir aktivizēts. Jebkuras izmaiņas tajā var pārtraukt pašreizējo aktīvo funkciju.
@@ -40,12 +40,12 @@ PageForAgendaTab=PHP lappuse notikumu cilnē
 PageForDocumentTab=PHP lapas cilnei
 PageForNoteTab=PHP lapa piezīmju cilnē
 PathToModulePackage=Ceļš uz moduļa / pieteikuma pakotnes rāvienu
-PathToModuleDocumentation=Ceļš uz moduļa / lietojumprogrammas dokumentāciju
+PathToModuleDocumentation=Ceļš uz moduļa / lietojumprogrammas dokumentācijas failu (%s)
 SpaceOrSpecialCharAreNotAllowed=Spaces vai speciālās rakstzīmes nav atļautas.
 FileNotYetGenerated=Fails vēl nav izveidots
 RegenerateClassAndSql=Dzēst un atjaunot klases un sql failus
 RegenerateMissingFiles=Izveidot trūkstošos failus
-SpecificationFile=Fails ar uzņēmējdarbības noteikumiem
+SpecificationFile=Dokumentācijas fails
 LanguageFile=Valoda
 ConfirmDeleteProperty=Vai tiešām vēlaties dzēst īpašumu <strong> %s </strong>? Tas mainīs kodu PHP klasē, un no tabulas definīcijas kolonnas noņems arī objektu.
 NotNull=Nav NULL
@@ -76,7 +76,7 @@ ListOfMenusEntries=Izvēlnes ierakstu saraksts
 ListOfPermissionsDefined=Noteikto atļauju saraksts
 SeeExamples=Skatiet piemērus šeit
 EnabledDesc=Nosacījums, lai šis lauks būtu aktīvs (piemēri: 1 vai $ conf-> globāla-> MYMODULE_MYOPTION)
-VisibleDesc=Vai lauks ir redzams? (Piemēri: 0 = Nekad nav redzams, 1 = Redzams sarakstā un izveido / atjaunina / skata veidlapas, 2 = Redzams tikai sarakstā, 3 = Redzams tikai veidojot / atjauninot / skata formu. saraksta noklusējums, bet to var atlasīt skatīšanai)
+VisibleDesc=Vai lauks ir redzams? (Piemēri: 0 = nekad nav redzams, 1 = redzams sarakstā un veidot / atjaunināt / skatīt veidlapas, 2 = redzams tikai sarakstā, 3 = redzams tikai veidot / atjaunināt / skatīt veidlapu (nav saraksts), 4 = redzams sarakstā un tikai atjaunināšanas / skatīšanas veidlapa (netiek veidota). Negatīvās vērtības izmantošana laukā sarakstā netiek parādīta pēc noklusējuma, bet to var atlasīt apskatei). Tas var būt izteiksme, piemēram: preg_match ('/ public /', $ _SERVER ['PHP_SELF'])? 0: 1
 IsAMeasureDesc=Vai lauka vērtību var uzkrāties, lai kopsumma tiktu iekļauta sarakstā? (Piemēri: 1 vai 0)
 SearchAllDesc=Vai laukums tiek izmantots, lai veiktu meklēšanu no ātrās meklēšanas rīka? (Piemēri: 1 vai 0)
 SpecDefDesc=Ievadiet šeit visu dokumentāciju, ko vēlaties iesniegt ar savu moduli, kuru vēl nav definējušas citas cilnes. Jūs varat izmantot .md vai labāku, bagātīgo .asciidoc sintaksi.
@@ -100,3 +100,13 @@ UseAboutPage=Atspējot par lapu
 UseDocFolder=Atspējot dokumentācijas mapi
 UseSpecificReadme=Izmantot īpašu IzlasiMani
 RealPathOfModule=Reālais moduļa ceļš
+ContentCantBeEmpty=Faila saturs nevar būt tukšs
+WidgetDesc=Šeit varat ģenerēt un rediģēt logrīkus, kas tiks iestrādāti jūsu modulī.
+CLIDesc=Šeit varat izveidot dažus komandrindas skriptus, kurus vēlaties nodrošināt ar savu moduli.
+CLIFile=CLI fails
+NoCLIFile=Nav CLI failu
+UseSpecificEditorName = Izmantojiet konkrētu redaktora nosaukumu
+UseSpecificEditorURL = Izmantojiet konkrētu redaktora URL
+UseSpecificFamily = Izmantojiet noteiktu ģimeni
+UseSpecificAuthor = Izmantojiet noteiktu autoru
+UseSpecificVersion = Izmantojiet konkrētu sākotnējo versiju

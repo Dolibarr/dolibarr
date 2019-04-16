@@ -88,6 +88,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
             print '<br>';
             $checked='';
             //var_dump(GETPOST($file['relativename'])); var_dump($file['relativename']); var_dump($_FILES['userfile']['name']);
+            // If a file was just uploaded, we check to preselect it
             foreach($_FILES['userfile']['name'] as $tmpfile)
             {
                 if ($file['relativename'] == (GETPOST('savingdocmask', 'alpha') ? dol_sanitizeFileName($object->ref.'-') : '').$tmpfile)
@@ -99,6 +100,11 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
                     $checked=' checked';
                     break;
                 }
+            }
+            // If we edit a line already linked, then $filenamelinked is defined to the filename (without path) of linked file
+            if (! empty($filenamelinked) && $filenamelinked == $file['relativename'])
+            {
+                $checked=' checked';
             }
             print '<div class="margintoponly"><input type="radio"'.$checked.' name="attachfile[]" value="'.$file['relativename'].'"> '.$file['relativename'].'</div>';
             print '</div>';

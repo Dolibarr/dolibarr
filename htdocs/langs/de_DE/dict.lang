@@ -290,6 +290,7 @@ CurrencyXOF=CFA Francs BCEAO
 CurrencySingXOF=CFA Franc BCEAO
 CurrencyXPF=CFP Francs
 CurrencySingXPF=CFP Franc
+CurrencyCentEUR=cents
 CurrencyCentSingEUR=Cent
 CurrencyCentINR=Paisa
 CurrencyCentSingINR=Paise
@@ -306,7 +307,7 @@ DemandReasonTypeSRC_WOM=Mund-zu-Mund-Propaganda
 DemandReasonTypeSRC_PARTNER=Partner
 DemandReasonTypeSRC_EMPLOYEE=Angestellter
 DemandReasonTypeSRC_SPONSORING=Sponsoring
-DemandReasonTypeSRC_SRC_CUSTOMER=Incoming contact of a customer
+DemandReasonTypeSRC_SRC_CUSTOMER=Eingehender Kontakt eines Kunden
 #### Paper formats ####
 PaperFormatEU4A0=Format 4A0
 PaperFormatEU2A0=Format 2A0

@@ -228,54 +228,6 @@ class ActionsTicket
     }
 
     /**
-     * View list of logs with timeline view
-     *
-     * @param 	boolean 	$show_user 	Show user who make action
-     * @param	Ticket	$object		Object
-     * @return void
-     */
-    public function viewTimelineTicketLogs($show_user = true, $object = true)
-    {
-        global $conf, $langs;
-
-        // Load logs in cache
-        $ret = $object->loadCacheLogsTicket();
-
-        if (is_array($object->cache_logs_ticket) && count($object->cache_logs_ticket) > 0) {
-            print '<section id="cd-timeline">';
-
-            foreach ($object->cache_logs_ticket as $id => $arraylogs) {
-                print '<div class="cd-timeline-block">';
-                print '<div class="cd-timeline-img">';
-                //print '<img src="img/history.png" alt="">';
-                print '</div> <!-- cd-timeline-img -->';
-
-                print '<div class="cd-timeline-content">';
-                print dol_nl2br($arraylogs['message']);
-
-                print '<span class="cd-date">';
-                print dol_print_date($arraylogs['datec'], 'dayhour');
-
-                if ($show_user) {
-                    if ($arraylogs['fk_user_create'] > 0) {
-                        $userstat = new User($this->db);
-                        $res = $userstat->fetch($arraylogs['fk_user_create']);
-                        if ($res) {
-                            print '<br><small>'.$userstat->getNomUrl(1).'</small>';
-                        }
-                    }
-                }
-                print '</span>';
-                print '</div> <!-- cd-timeline-content -->';
-                print '</div> <!-- cd-timeline-block -->';
-            }
-            print '</section>';
-        } else {
-            print '<div class="info">' . $langs->trans('NoLogForThisTicket') . '</div>';
-        }
-    }
-
-    /**
      * Show ticket original message
      *
      * @param 	User		$user		User wich display
@@ -467,104 +419,6 @@ class ActionsTicket
         }
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-    /**
-     * load_previous_next_ref
-     *
-     * @param string		$filter			Filter
-     * @param int			$fieldid		Id
-     * @return int			0
-     */
-    public function load_previous_next_ref($filter, $fieldid)
-    {
-        // phpcs:enable
-        $this->getInstanceDao();
-        return $object->load_previous_next_ref($filter, $fieldid);
-    }
-
-    /**
-     * Send ticket by email to linked contacts
-     *
-     * @param string $subject          Email subject
-     * @param string $message          Email message
-     * @param int    $send_internal_cc Receive a copy on internal email ($conf->global->TICKET_NOTIFICATION_EMAIL_FROM)
-     * @param array  $array_receiver   Array of receiver. exemple array('name' => 'John Doe', 'email' => 'john@doe.com', etc...)
-     * @return void
-     */
-    public function sendTicketMessageByEmail($subject, $message, $send_internal_cc = 0, $array_receiver = array())
-    {
-        global $conf, $langs;
-
-        if ($conf->global->TICKET_DISABLE_ALL_MAILS) {
-            dol_syslog(get_class($this) . '::sendTicketMessageByEmail: Emails are disable into ticket setup by option TICKETSUP_DISABLE_ALL_MAILS', LOG_WARNING);
-            return '';
-        }
-
-        $langs->load("mails");
-
-        if (!class_exists('Contact')) {
-            include_once DOL_DOCUMENT_ROOT . '/contact/class/contact.class.php';
-        }
-
-        $contactstatic = new Contact($this->db);
-
-        // If no receiver defined, load all ticket linked contacts
-        if (!is_array($array_receiver) || !count($array_receiver) > 0) {
-            $array_receiver = $object->getInfosTicketInternalContact();
-            $array_receiver = array_merge($array_receiver, $object->getInfosTicketExternalContact());
-        }
-
-        if ($send_internal_cc) {
-            $sendtocc = $conf->global->TICKET_NOTIFICATION_EMAIL_FROM;
-        }
-
-        $from = $conf->global->TICKET_NOTIFICATION_EMAIL_FROM;
-        if (is_array($array_receiver) && count($array_receiver) > 0) {
-            foreach ($array_receiver as $key => $receiver) {
-                // Create form object
-                include_once DOL_DOCUMENT_ROOT . '/core/class/html.formmail.class.php';
-                $formmail = new FormMail($this->db);
-
-                $attachedfiles = $formmail->get_attached_files();
-                $filepath = $attachedfiles['paths'];
-                $filename = $attachedfiles['names'];
-                $mimetype = $attachedfiles['mimes'];
-
-                $message_to_send = dol_nl2br($message);
-
-                // Envoi du mail
-                if (!empty($conf->global->TICKET_DISABLE_MAIL_AUTOCOPY_TO)) {
-                    $old_MAIN_MAIL_AUTOCOPY_TO = $conf->global->MAIN_MAIL_AUTOCOPY_TO;
-                    $conf->global->MAIN_MAIL_AUTOCOPY_TO = '';
-                }
-                include_once DOL_DOCUMENT_ROOT . '/core/class/CMailFile.class.php';
-                $mailfile = new CMailFile($subject, $receiver, $from, $message_to_send, $filepath, $mimetype, $filename, $sendtocc, '', $deliveryreceipt, -1);
-                if ($mailfile->error) {
-                    setEventMessages($mailfile->error, null, 'errors');
-                } else {
-                    $result = $mailfile->sendfile();
-                    if ($result) {
-                        setEventMessages($langs->trans('MailSuccessfulySent', $mailfile->getValidAddress($from, 2), $mailfile->getValidAddress($receiver, 2)), null, 'mesgs');
-                    } else {
-                        $langs->load("other");
-                        if ($mailfile->error) {
-                            setEventMessages($langs->trans('ErrorFailedToSendMail', $from, $receiver), null, 'errors');
-                            dol_syslog($langs->trans('ErrorFailedToSendMail', $from, $receiver) . ' : ' . $mailfile->error);
-                        } else {
-                            setEventMessages('No mail sent. Feature is disabled by option MAIN_DISABLE_ALL_MAILS', null, 'errors');
-                        }
-                    }
-                }
-                if (!empty($conf->global->TICKET_DISABLE_MAIL_AUTOCOPY_TO)) {
-                    $conf->global->MAIN_MAIL_AUTOCOPY_TO = $old_MAIN_MAIL_AUTOCOPY_TO;
-                }
-            }
-        } else {
-            $langs->load("other");
-            setEventMessages($langs->trans('ErrorMailRecipientIsEmptyForSendTicketMessage'), null, 'warnings');
-        }
-    }
-
     /**
      * Print html navbar with link to set ticket status
      *
@@ -610,17 +464,6 @@ class ActionsTicket
             }
         }
         print '</div></div></div><br>';
-    }
-
-
-      /**
-       * deleteObjectLinked
-       *
-       * @return number
-       */
-    public function deleteObjectLinked()
-    {
-        return $this->dao->deleteObjectLinked();
     }
 
     /**

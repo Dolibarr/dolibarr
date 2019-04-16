@@ -538,7 +538,7 @@ class AccountancyExport
 			//print substr(length_accountg($line->numero_compte), 0, 2) . $separator;
 			print '"'.dol_trunc($line->label_operation, 40, 'right', 'UTF-8', 1).'"' . $separator;
 			print '"'.dol_trunc($line->piece_num, 15, 'right', 'UTF-8', 1).'"'.$separator;
-			print price2num($line->montant).$separator;
+			print price2num(abs($line->montant)).$separator;
 			print $line->sens.$separator;
 			print $date . $separator;
 			//print 'EUR';

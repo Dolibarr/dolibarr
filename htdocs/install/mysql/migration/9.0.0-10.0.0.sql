@@ -271,6 +271,11 @@ ALTER TABLE llx_expensereport_det ADD COLUMN subprice double(24,8) DEFAULT 0 NOT
 ALTER TABLE llx_product_attribute_combination ADD INDEX idx_product_att_com_product_parent (fk_product_parent);
 ALTER TABLE llx_product_attribute_combination ADD INDEX idx_product_att_com_product_child (fk_product_child);
 
+ALTER TABLE llx_user ADD COLUMN fk_user_expense_validator integer after fk_user;
+ALTER TABLE llx_user ADD COLUMN fk_user_holiday_validator integer after fk_user_expense_validator;
+ALTER TABLE llx_user ADD COLUMN personal_email varchar(255) after email;
+ALTER TABLE llx_user ADD COLUMN personal_mobile varchar(20) after user_mobile;
+
 ALTER TABLE llx_product ADD COLUMN fk_project integer DEFAULT NULL;
 ALTER TABLE llx_product ADD INDEX idx_product_fk_project (fk_project);
 
