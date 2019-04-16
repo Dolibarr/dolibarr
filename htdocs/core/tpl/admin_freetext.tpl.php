@@ -23,6 +23,7 @@
  * $conf, $langs, $db
  * The following vars may also be defined:
  * $freetextlang
+ * $freetextsubstitutionexclude
  */
 
 // Protection to avoid direct call of template
@@ -32,7 +33,7 @@ if (empty($conf) || ! is_object($conf))
 	exit;
 }
 
-$substitutionarray=pdf_getSubstitutionArray($langs, null, null, 2);
+$substitutionarray=pdf_getSubstitutionArray($langs, $freetextsubstitutionexclude, null, 2);
 $substitutionarray['__(AnyTranslationKey)__']=$langs->trans("Translation");
 $htmltext = '<i>'.$langs->trans("AvailableVariables").':<br>';
 foreach($substitutionarray as $key => $val)	$htmltext.=$key.'<br>';
