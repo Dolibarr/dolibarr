@@ -412,7 +412,7 @@ class FormOther
         if ($showempty) $out.='<option value="0">&nbsp;</option>';
 
         // Get list of users allowed to be viewed
-        $sql_usr = "SELECT u.rowid, u.lastname, u.firstname, u.statut, u.login";
+        $sql_usr = "SELECT DISTINCT u.rowid, u.lastname, u.firstname, u.statut, u.login";
         $sql_usr.= " FROM ".MAIN_DB_PREFIX."user as u";
 
         if (! empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE))
@@ -437,7 +437,7 @@ class FormOther
         if (empty($user->rights->user->user->lire) && $user->socid)
         {
             $sql_usr.=" UNION ";
-            $sql_usr.= "SELECT u2.rowid, u2.lastname, u2.firstname, u2.statut, u2.login";
+            $sql_usr.= "SELECT DISTINCT u2.rowid, u2.lastname, u2.firstname, u2.statut, u2.login";
             $sql_usr.= " FROM ".MAIN_DB_PREFIX."user as u2, ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 
             if (! empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE))
