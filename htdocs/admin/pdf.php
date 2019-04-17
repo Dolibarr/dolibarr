@@ -115,7 +115,7 @@ $arraydetailsforpdffoot = array(
 
 print load_fiche_titre($langs->trans("PDF"), '', 'title_setup');
 
-print $langs->trans("PDFDesc")."<br>\n";
+print '<span class="opacitymedium">'.$langs->trans("PDFDesc")."</span><br>\n";
 print "<br>\n";
 
 $noCountryCode = (empty($mysoc->country_code) ? true : false);

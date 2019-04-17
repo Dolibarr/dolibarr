@@ -125,11 +125,11 @@ if ($action == "set")
         $versionarray=$db->getVersionArray();
         print '<tr><td>'.$langs->trans("DatabaseVersion").'</td>';
         print '<td>'.$version.'</td></tr>';
-        //print '<td align="right">'.join('.',$versionarray).'</td></tr>';
+        //print '<td class="right">'.join('.',$versionarray).'</td></tr>';
 
         print '<tr><td>'.$langs->trans("DatabaseName").'</td>';
         print '<td>'.$db->database_name.'</td></tr>';
-        //print '<td align="right">'.join('.',$versionarray).'</td></tr>';
+        //print '<td class="right">'.join('.',$versionarray).'</td></tr>';
     }
 
     $requestnb=0;

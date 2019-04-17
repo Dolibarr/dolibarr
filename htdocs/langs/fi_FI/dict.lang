@@ -290,6 +290,7 @@ CurrencyXOF=CFA-frangia BCEAO
 CurrencySingXOF=CFA: n frangin BCEAO
 CurrencyXPF=YKP Francs
 CurrencySingXPF=CFP-frangi
+CurrencyCentEUR=cents
 CurrencyCentSingEUR=sentti
 CurrencyCentINR=paisa
 CurrencyCentSingINR=paise

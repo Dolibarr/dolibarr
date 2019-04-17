@@ -743,7 +743,7 @@ if ($id > 0)
 				$staytopay = $object->capital - $totalpaid;
 
 				print '<tr><td colspan="5" class="right">'.$langs->trans("RemainderToPay").' :</td>';
-				print '<td class="right"'.($staytopay?' class="amountremaintopay"':'class="amountpaymentcomplete"').'>';
+				print '<td class="right'.($staytopay?' amountremaintopay':' amountpaymentcomplete').'">';
 				print price($staytopay, 0, $langs, 0, 0, -1, $conf->currency);
 				print '</td></tr>';
 			}

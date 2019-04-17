@@ -24,6 +24,7 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/ticket/class/actions_ticket.class.php';
 require_once DOL_DOCUMENT_ROOT.'/ticket/class/ticketstats.class.php';
+require_once DOL_DOCUMENT_ROOT.'/ticket/class/ticket.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 
 $WIDTH=DolGraph::getDefaultGraphSizeForStats('width');
@@ -57,7 +58,7 @@ $langs->loadLangs(array('orders', 'companies', 'other', 'tickets'));
  */
 
 $form=new Form($db);
-//$formticket=new FormTicket($db);
+$object=new Ticket($db);
 
 $title=$langs->trans("Statistics");
 $dir=$conf->ticket->dir_temp;
@@ -69,7 +70,7 @@ print load_fiche_titre($title, '', 'title_ticket.png');
 dol_mkdir($dir);
 
 $stats = new TicketStats($db, $socid, ($userid>0?$userid:0));
-if ($object_status != '' && $object_status >= -1) $stats->where .= ' AND c.fk_statut IN ('.$db->escape($object_status).')';
+if ($object_status != '' && $object_status >= -1) $stats->where .= ' AND fk_statut IN ('.$db->escape($object_status).')';
 
 
 // Build graphic number of object
@@ -242,16 +243,8 @@ print '<tr><td class="left">'.$langs->trans("CreatedBy").'</td><td class="left">
 print $form->select_dolusers($userid, 'userid', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
 // Status
 print '<tr><td class="left">'.$langs->trans("Status").'</td><td class="left">';
-$liststatus=array(
-        Ticket::STATUS_NOT_READ=>$langs->trans("StatusNotRead"),
-        Ticket::STATUS_READ=>$langs->trans("StatusRead"),
-        Ticket::STATUS_ASSIGNED=>$langs->trans("StatusAssigned"),
-        Ticket::STATUS_IN_PROGRESS=>$langs->trans("StatusInProgress"),
-        Ticket::STATUS_ANSWERED=>$langs->trans("StatusAnswered"),
-        Ticket::STATUS_CLOSED=>$langs->trans("StatusClosed"),
-        Ticket::STATUS_WAITING=>$langs->trans("StatusWaiting")
-    );
-print $form->selectarray('object_status', $liststatus, GETPOST('object_status'), -4);
+$liststatus = $object->fields['fk_statut']['arrayofkeyval'];
+print $form->selectarray('object_status', $liststatus, GETPOST('object_status', 'int'), -4, 0, 0, '', 1);
 print '</td></tr>';
 // Year
 print '<tr><td class="left">'.$langs->trans("Year").'</td><td class="left">';

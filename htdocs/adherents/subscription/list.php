@@ -240,14 +240,14 @@ $arrayofmassactions =  array(
 	//'presend'=>$langs->trans("SendByMail"),
 	//'builddoc'=>$langs->trans("PDFMerge"),
 );
-//if ($user->rights->adherent->supprimer) $arrayofmassactions['predelete']=$langs->trans("Delete");
+//if ($user->rights->adherent->supprimer) $arrayofmassactions['predelete']='<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
 if (in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
 $massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 
 $newcardbutton='';
 if ($user->rights->adherent->cotisation->creer)
 {
-	$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/adherents/list.php?status=-1,1"><span class="valignmiddle">'.$langs->trans('NewSubscription').'</span>';
+	$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/adherents/list.php?status=-1,1"><span class="valignmiddle text-plus-circle">'.$langs->trans('NewSubscription').'</span>';
 	$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
 	$newcardbutton.= '</a>';
 }
@@ -284,7 +284,7 @@ $selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfiel
 if ($massactionbutton) $selectedfields.=$form->showCheckAddButtons('checkforselect', 1);
 
 print '<div class="div-table-responsive">';
-print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
+print '<table class="tagtable nobottomiftotal liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 
 
 // Line for filters fields
@@ -299,33 +299,33 @@ if (! empty($conf->global->MAIN_SHOW_TECHNICAL_ID))
 // Ref
 if (! empty($arrayfields['d.ref']['checked']))
 {
-	print '<td class="liste_titre" align="left">';
+	print '<td class="liste_titre left">';
 	print '<input class="flat" type="text" name="search_ref" value="'.dol_escape_htmltag($search_ref).'" size="4"></td>';
 }
 
 // Type
 if (! empty($arrayfields['d.fk_type']['checked']))
 {
-	print '<td class="liste_titre" align="left">';
+	print '<td class="liste_titre left">';
 	print '<input class="flat" type="text" name="search_type" value="'.dol_escape_htmltag($search_type).'" size="7">';
   print'</td>';
 }
 
 if (! empty($arrayfields['d.lastname']['checked']))
 {
-	print '<td class="liste_titre" align="left">';
+	print '<td class="liste_titre left">';
 	print '<input class="flat" type="text" name="search_lastname" value="'.dol_escape_htmltag($search_lastname).'" size="7"></td>';
 }
 
 if (! empty($arrayfields['d.firstname']['checked']))
 {
-	print '<td class="liste_titre" align="left">';
+	print '<td class="liste_titre left">';
 	print '<input class="flat" type="text" name="search_firstname" value="'.dol_escape_htmltag($search_firstname).'" size="12"></td>';
 }
 
 if (! empty($arrayfields['d.login']['checked']))
 {
-	print '<td class="liste_titre" align="left">';
+	print '<td class="liste_titre left">';
 	print '<input class="flat" type="text" name="search_login" value="'.dol_escape_htmltag($search_login).'" size="7"></td>';
 }
 
@@ -339,7 +339,7 @@ if (! empty($arrayfields['t.libelle']['checked']))
 if (! empty($arrayfields['d.bank']['checked']))
 {
 	print '<td class="liste_titre">';
-	print $form->select_comptes($search_account, 'search_account', 0, '', 1);
+	$form->select_comptes($search_account, 'search_account', 0, '', 1);
 	print '</td>';
 }
 
@@ -529,13 +529,13 @@ while ($i < min($num, $limit))
 	// Date start
 	if (! empty($arrayfields['c.dateadh']['checked']))
 	{
-		print '<td align="center">'.dol_print_date($db->jdate($obj->dateadh), 'day')."</td>\n";
+		print '<td class="center">'.dol_print_date($db->jdate($obj->dateadh), 'day')."</td>\n";
 		if (! $i) $totalarray['nbfield']++;
 	}
 	// Date end
 	if (! empty($arrayfields['c.datef']['checked']))
 	{
-		print '<td align="center">'.dol_print_date($db->jdate($obj->datef), 'day')."</td>\n";
+		print '<td class="center">'.dol_print_date($db->jdate($obj->datef), 'day')."</td>\n";
 		if (! $i) $totalarray['nbfield']++;
 	}
 	// Price
@@ -555,7 +555,7 @@ while ($i < min($num, $limit))
 	// Date creation
 	if (! empty($arrayfields['c.datec']['checked']))
 	{
-		print '<td align="center" class="nowrap">';
+		print '<td class="nowrap center">';
 		print dol_print_date($db->jdate($obj->date_creation), 'dayhour', 'tzuser');
 		print '</td>';
 		if (! $i) $totalarray['nbfield']++;
@@ -563,13 +563,13 @@ while ($i < min($num, $limit))
 	// Date modification
 	if (! empty($arrayfields['c.tms']['checked']))
 	{
-		print '<td align="center" class="nowrap">';
+		print '<td class="nowrap center">';
 		print dol_print_date($db->jdate($obj->date_update), 'dayhour', 'tzuser');
 		print '</td>';
 		if (! $i) $totalarray['nbfield']++;
 	}
 	// Action column
-	print '<td align="center">';
+	print '<td class="center">';
 	if ($massactionbutton || $massaction)   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 	{
 		$selected=0;

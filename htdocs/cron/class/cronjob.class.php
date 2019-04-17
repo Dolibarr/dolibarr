@@ -67,7 +67,13 @@ class Cronjob extends CommonObject
 	public $md5params;
 	public $module_name;
 	public $priority;
+	/**
+	 * @var string|int     Date for last job execution
+	 */
 	public $datelastrun='';
+	/**
+	 * @var string|int     Date for next job execution
+	 */
 	public $datenextrun='';
 	public $dateend='';
 	public $datestart='';
@@ -1220,7 +1226,7 @@ class Cronjob extends CommonObject
 		$result=$user->fetch('', $userlogin);
 		if ($result<0)
 		{
-			$this->error="User Error:".$user->error;
+			$this->error="User Error : ".$user->error;
 			dol_syslog(get_class($this)."::reprogram_jobs ".$this->error, LOG_ERR);
 			return -1;
 		}

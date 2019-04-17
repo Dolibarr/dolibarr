@@ -110,7 +110,7 @@ if (empty($reshook))
 		if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
 	}
 
-	// conditions de reglement
+	// terms of the settlement
 	if ($action == 'setconditions' && $user->rights->societe->creer)
 	{
 		$object->fetch($id);
@@ -317,7 +317,7 @@ if ($object->id > 0)
 	print $object->tva_intra;
 	print '</td></tr>';
 
-	// Conditions de reglement par defaut
+	// default terms of the settlement
 	$langs->load('bills');
 	print '<tr><td>';
 	print '<table width="100%" class="nobordernopadding"><tr><td>';

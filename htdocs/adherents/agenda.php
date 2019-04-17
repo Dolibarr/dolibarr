@@ -151,7 +151,7 @@ if ($object->id > 0)
 	$newcardbutton = '';
     if (! empty($conf->agenda->enabled))
     {
-    	$newcardbutton.='<a class="butActionNew" href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&backtopage=1&origin=member&originid='.$id.'"><span class="valignmiddle">'.$langs->trans("AddAction").'</span>';
+    	$newcardbutton.='<a class="butActionNew" href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&backtopage=1&origin=member&originid='.$id.'"><span class="valignmiddle text-plus-circle">'.$langs->trans("AddAction").'</span>';
     	$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
     	$newcardbutton.= '</a>';
     }

@@ -73,7 +73,12 @@ class DiscountAbsolute
 	 */
 	public $description;
 
-    public $datec;					// Date creation
+    /**
+     * Date creation record (datec)
+     *
+     * @var integer
+     */
+    public $datec;
 
     /**
      * @var int ID invoice line when a discount is used into an invoice line (for absolute discounts)

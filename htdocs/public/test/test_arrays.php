@@ -227,9 +227,9 @@ if (! empty($moreforfilter))
 </tr>
 </thead>
 <tbody>
-<tr class="pair"><td><?php echo $productspecimen->getNomUrl(1); ?></td><td align="right">b1</td><td class="tdlineupdown" align="left">c1</td></tr>
-<tr class="impair nowrap"><td>a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2</td><td align="right">b2</td><td class="tdlineupdown" align="left">c2</td></tr>
-<tr class="pair"><td>a3</td><td align="right">b3</td><td class="tdlineupdown" align="left">c3</td></tr>
+<tr class="pair"><td><?php echo $productspecimen->getNomUrl(1); ?></td><td class="right">b1</td><td class="tdlineupdown left">c1</td></tr>
+<tr class="impair nowrap"><td>a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2</td><td align="right">b2</td><td class="tdlineupdown left">c2</td></tr>
+<tr class="pair"><td>a3</td><td class="right">b3</td><td class="tdlineupdown left">c3</td></tr>
 </tbody>
 </table>
 

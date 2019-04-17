@@ -27,9 +27,18 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formsocialcontrib.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('compta', 'banks', 'bills'));
+
+$action=GETPOST('action', 'alpha');
+$massaction=GETPOST('massaction', 'alpha');
+$show_files=GETPOST('show_files', 'int');
+$confirm=GETPOST('confirm', 'alpha');
+$toselect = GETPOST('toselect', 'array');
+$contextpage=GETPOST('contextpage', 'aZ')?GETPOST('contextpage', 'aZ'):'sclist';
 
 // Security check
 $socid = isset($_GET["socid"])?$_GET["socid"]:'';
@@ -40,6 +49,9 @@ $search_ref = GETPOST('search_ref', 'int');
 $search_label = GETPOST('search_label', 'alpha');
 $search_amount = GETPOST('search_amount', 'alpha');
 $search_status = GETPOST('search_status', 'int');
+$search_day_lim		= GETPOST('search_day_lim', 'int');
+$search_month_lim	= GETPOST('search_month_lim', 'int');
+$search_year_lim	= GETPOST('search_year_lim', 'int');
 
 $limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
@@ -78,7 +90,11 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_status='';
     $search_typeid="";
 	$year="";
-	$month="";
+	$search_day_lim='';
+	$search_year_lim='';
+	$search_month_lim='';
+	$toselect='';
+	$search_array_options=array();
 }
 
 
@@ -87,6 +103,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
  */
 
 $form = new Form($db);
+$formother = new FormOther($db);
 $formsocialcontrib = new FormSocialContrib($db);
 $chargesociale_static=new ChargeSociales($db);
 
@@ -106,6 +123,8 @@ if ($search_ref)	$sql.=" AND cs.rowid=".$db->escape($search_ref);
 if ($search_label) 	$sql.=natural_search("cs.libelle", $search_label);
 if ($search_amount) $sql.=natural_search("cs.amount", price2num(trim($search_amount)), 1);
 if ($search_status != '' && $search_status >= 0) $sql.=" AND cs.paye = ".$db->escape($search_status);
+$sql.= dolSqlDateFilter("cs.periode", $search_day_lim, $search_month_lim, $search_year_lim);
+//$sql.= dolSqlDateFilter("cs.periode", 0, 0, $year);
 if ($year > 0)
 {
     $sql .= " AND (";
@@ -152,7 +171,7 @@ if ($resql)
 	$newcardbutton='';
 	if($user->rights->tax->charges->creer)
 	{
-		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/compta/sociales/card.php?action=create">'.$langs->trans('MenuNewSocialContribution');
+		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/compta/sociales/card.php?action=create"><span class="valignmiddle text-plus-circle">'.$langs->trans('MenuNewSocialContribution').'</span>';
 		$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
 		$newcardbutton.= '</a>';
 	}
@@ -192,19 +211,23 @@ if ($resql)
 		print '<tr class="liste_titre_filter">';
 		// Ref
 		print '<td class="liste_titre" align="left">';
-		print '<input class="flat" type="text" size="3" name="search_ref" value="'.dol_escape_htmltag($search_ref).'">';
+		print '<input class="flat maxwidth75" type="text" name="search_ref" value="'.dol_escape_htmltag($search_ref).'">';
 		print '</td>';
 		// Label
-		print '<td class="liste_titre"><input type="text" class="flat" size="8" name="search_label" value="'.dol_escape_htmltag($search_label).'"></td>';
+		print '<td class="liste_titre"><input type="text" class="flat maxwidth100" name="search_label" value="'.dol_escape_htmltag($search_label).'"></td>';
 		// Type
 		print '<td class="liste_titre" align="left">';
 	    $formsocialcontrib->select_type_socialcontrib($search_typeid, 'search_typeid', 1, 0, 0, 'maxwidth100onsmartphone');
 	    print '</td>';
 		// Period end date
-		print '<td class="liste_titre">&nbsp;</td>';
+		print '<td class="liste_titre center">';
+		if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="search_day_lim" value="'.dol_escape_htmltag($search_day_lim).'">';
+		print '<input class="flat valignmiddle width25" type="text" size="1" maxlength="2" name="search_month_lim" value="'.dol_escape_htmltag($search_month_lim).'">';
+		$formother->select_year($search_year_lim?$search_year_lim:-1, 'search_year_lim', 1, 20, 5, 0, 0, '', 'widthauto valignmiddle');
+		print '</td>';
 	    // Amount
 		print '<td class="liste_titre right">';
-		print '<input class="flat" type="text" size="6" name="search_amount" value="'.dol_escape_htmltag($search_amount).'">';
+		print '<input class="flat maxwidth75" type="text" name="search_amount" value="'.dol_escape_htmltag($search_amount).'">';
 		print '</td>';
 		print '<td class="liste_titre">&nbsp;</td>';
 		// Status

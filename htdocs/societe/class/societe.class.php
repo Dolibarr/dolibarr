@@ -14,6 +14,7 @@
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2017       Rui Strecht			    <rui.strecht@aliartalentos.com>
  * Copyright (C) 2018	    Philippe Grand	        <philippe.grand@atoo-net.com>
+ * Copyright (C) 2019	    Josep Lluís Amador      <joseplluis@lliuretic.cat>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1251,7 +1252,7 @@ class Societe extends CommonObject
 		$sql .= ', s.fk_forme_juridique as forme_juridique_code';
 		$sql .= ', s.webservices_url, s.webservices_key';
 		$sql .= ', s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur, s.parent, s.barcode';
-		$sql .= ', s.fk_departement, s.fk_pays as country_id, s.fk_stcomm, s.remise_supplier, s.mode_reglement, s.cond_reglement, s.fk_account, s.tva_assuj';
+		$sql .= ', s.fk_departement as state_id, s.fk_pays as country_id, s.fk_stcomm, s.remise_supplier, s.mode_reglement, s.cond_reglement, s.fk_account, s.tva_assuj';
 		$sql .= ', s.mode_reglement_supplier, s.cond_reglement_supplier, s.localtax1_assuj, s.localtax1_value, s.localtax2_assuj, s.localtax2_value, s.fk_prospectlevel, s.default_lang, s.logo';
 		$sql .= ', s.fk_shipping_method';
 		$sql .= ', s.outstanding_limit, s.import_key, s.canvas, s.fk_incoterms, s.location_incoterms';
@@ -1278,7 +1279,7 @@ class Societe extends CommonObject
 		$sql .= ' WHERE s.entity IN ('.getEntity($this->element).')';
 		if ($rowid)     $sql .= ' AND s.rowid = '.$rowid;
 		if ($ref)       $sql .= " AND s.nom = '".$this->db->escape($ref)."'";
-		if ($ref_alias) $sql .= " AND s.nom_alias = '".$this->db->escape($ref_alias)."'";
+		if ($ref_alias) $sql .= " AND s.name_alias = '".$this->db->escape($ref_alias)."'";
 		if ($ref_ext)   $sql .= " AND s.ref_ext = '".$this->db->escape($ref_ext)."'";
 		if ($ref_int)   $sql .= " AND s.ref_int = '".$this->db->escape($ref_int)."'";
 		if ($idprof1)   $sql .= " AND s.siren = '".$this->db->escape($idprof1)."'";
@@ -1327,7 +1328,7 @@ class Societe extends CommonObject
 				$this->country_code = $obj->country_id?$obj->country_code:'';
 				$this->country 		= $obj->country_id?($langs->trans('Country'.$obj->country_code)!='Country'.$obj->country_code?$langs->transnoentities('Country'.$obj->country_code):$obj->country):'';
 
-				$this->state_id     = $obj->fk_departement;
+				$this->state_id     = $obj->state_id;
 				$this->state_code   = $obj->state_code;
 				$this->state        = ($obj->state!='-'?$obj->state:'');
 
@@ -1456,7 +1457,7 @@ class Societe extends CommonObject
 	 *    Delete a third party from database and all its dependencies (contacts, rib...)
 	 *
 	 *    @param	int		$id             Id of third party to delete
-	 *    @param    User    $fuser          User who ask to delete thirparty
+	 *    @param    User    $fuser          User who ask to delete thirdparty
 	 *    @param    int		$call_trigger   0=No, 1=yes
 	 *    @return	int						<0 if KO, 0 if nothing done, >0 if OK
 	 */
@@ -1939,36 +1940,68 @@ class Societe extends CommonObject
 	 *
 	 *	@param	User	$user		Object user
 	 *	@param	int		$commid		Id of user
-	 *	@return	void
+	 *	@return	int					<=0 if KO, >0 if OK
 	 */
     public function add_commercial(User $user, $commid)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		$error=0;
-
 
 		if ($this->id > 0 && $commid > 0)
 		{
-			$sql = "DELETE FROM  ".MAIN_DB_PREFIX."societe_commerciaux";
-			$sql.= " WHERE fk_soc = ".$this->id." AND fk_user =".$commid;
+		    $this->db->begin();
 
-			$this->db->query($sql);
+		    if (! $error)
+		    {
+    			$sql = "DELETE FROM  ".MAIN_DB_PREFIX."societe_commerciaux";
+    			$sql.= " WHERE fk_soc = ".$this->id." AND fk_user =".$commid;
 
-			$sql = "INSERT INTO ".MAIN_DB_PREFIX."societe_commerciaux";
-			$sql.= " ( fk_soc, fk_user )";
-			$sql.= " VALUES (".$this->id.",".$commid.")";
+    			$resql = $this->db->query($sql);
+    			if (! $resql)
+    			{
+    			    dol_syslog(get_class($this)."::add_commercial Error ".$this->db->lasterror());
+    			    $error++;
+    			}
+		    }
 
-			if (! $this->db->query($sql) )
+		    if (! $error)
+    		{
+    			$sql = "INSERT INTO ".MAIN_DB_PREFIX."societe_commerciaux";
+    			$sql.= " (fk_soc, fk_user)";
+    			$sql.= " VALUES (".$this->id.", ".$commid.")";
+
+    			$resql = $this->db->query($sql);
+    			if (! $resql)
+    			{
+    				dol_syslog(get_class($this)."::add_commercial Error ".$this->db->lasterror());
+                    $error++;
+    			}
+    		}
+
+			if (! $error)
 			{
-				dol_syslog(get_class($this)."::add_commercial Erreur");
-			}
-			else {
 				$this->context=array('commercial_modified'=>$commid);
 
 				$result=$this->call_trigger('COMPANY_LINK_SALE_REPRESENTATIVE', $user);
-                if ($result < 0) $error++;
+                if ($result < 0)
+                {
+                    $error++;
+                }
+			}
+
+			if (! $error)
+			{
+                $this->db->commit();
+                return 1;
+			}
+			else
+			{
+			    $this->db->rollback();
+			    return -1;
 			}
 		}
+
+		return 0;
 	}
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -2256,8 +2289,8 @@ class Societe extends CommonObject
 		}
 		elseif ($mode == 6)
 		{
-			if ($statut==0) return '<span class="hideonsmartphone">'.$langs->trans("ActivityCeased").'</span> '.img_picto($langs->trans("ActivityCeased"), 'statut5', 'class="pictostatus"');
-			elseif ($statut==1) return '<span class="hideonsmartphone">'.$langs->trans("InActivity").'</span> '.img_picto($langs->trans("InActivity"), 'statut4', 'class="pictostatus"');
+			if ($statut==0) return $langs->trans("ActivityCeased").' '.img_picto($langs->trans("ActivityCeased"), 'statut5', 'class="pictostatus"');
+			elseif ($statut==1) return $langs->trans("InActivity").' '.img_picto($langs->trans("InActivity"), 'statut4', 'class="pictostatus"');
 		}
 	}
 

@@ -539,7 +539,9 @@ abstract class CommonDocGenerator
 			'line_product_type'=>$line->product_type,
 			'line_desc'=>$line->desc,
 			'line_vatrate'=>vatrate($line->tva_tx, true, $line->info_bits),
-			'line_up'=>price2num($line->subprice),
+		    'line_localtax1_rate'=>vatrate($line->localtax1_tx),
+		    'line_localtax2_rate'=>vatrate($line->localtax1_tx),
+		    'line_up'=>price2num($line->subprice),
 			'line_up_locale'=>price($line->subprice, 0, $outputlangs),
 			'line_total_up'=>price2num($line->subprice * $line->qty),
 			'line_total_up_locale'=>price($line->subprice * $line->qty, 0, $outputlangs),
@@ -1066,5 +1068,55 @@ abstract class CommonDocGenerator
             return true;
         }
         else  return  false;
+    }
+
+    /**
+     * Print standard column content
+     *
+     * @param PDF	    $pdf            Pdf object
+     * @param float     $tab_top        Tab top position
+     * @param float     $tab_height     Default tab height
+     * @param Translate $outputlangs    Output language
+     * @param int       $hidetop        Hide top
+     * @return float                    Height of col tab titles
+     */
+    public function pdfTabTitles(&$pdf, $tab_top, $tab_height, $outputlangs, $hidetop = 0)
+    {
+        global $hookmanager;
+
+        foreach ($this->cols as $colKey => $colDef) {
+
+            $parameters = array(
+                'colKey' => $colKey,
+                'pdf' => $pdf,
+                'outputlangs' => $outputlangs,
+                'tab_top' => $tab_top,
+                'tab_height' => $tab_height,
+                'hidetop' => $hidetop
+            );
+
+            $reshook = $hookmanager->executeHooks('pdfTabTitles', $parameters, $this);    // Note that $object may have been modified by hook
+            if ($reshook < 0) {
+                setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+            } elseif (empty($reshook)) {
+                if (!$this->getColumnStatus($colKey)) continue;
+
+                // get title label
+                $colDef['title']['label'] = !empty($colDef['title']['label']) ? $colDef['title']['label'] : $outputlangs->transnoentities($colDef['title']['textkey']);
+
+                // Add column separator
+                if (!empty($colDef['border-left'])) {
+                    $pdf->line($colDef['xStartPos'], $tab_top, $colDef['xStartPos'], $tab_top + $tab_height);
+                }
+
+                if (empty($hidetop)) {
+                    $pdf->SetXY($colDef['xStartPos'] + $colDef['title']['padding'][3], $tab_top + $colDef['title']['padding'][0]);
+                    $textWidth = $colDef['width'] - $colDef['title']['padding'][3] - $colDef['title']['padding'][1];
+                    $pdf->MultiCell($textWidth, 2, $colDef['title']['label'], '', $colDef['title']['align']);
+                    $this->tabTitleHeight = max($pdf->GetY() - $tab_top + $colDef['title']['padding'][2], $this->tabTitleHeight);
+                }
+            }
+        }
+        return $this->tabTitleHeight;
     }
 }

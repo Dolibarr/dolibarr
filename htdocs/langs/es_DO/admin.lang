@@ -7,5 +7,3 @@ Permission93=Eliminar impuestos e ITBIS
 DictionaryVAT=Tasa de ITBIS (Impuesto sobre ventas en EEUU)
 UnitPriceOfProduct=Precio unitario sin ITBIS de un producto
 OptionVatMode=Opción de carga de ITBIS
-OptionVatDefaultDesc=La carga del ITBIS es: <br>-en el envío de los bienes (en la práctica se usa la fecha de la factura)<br>-sobre el pago por los servicios
-OptionVatDebitOptionDesc=La carga del ITBIS es: <br>-en el envío de los bienes (en la práctica se usa la fecha de la factura)<br>-sobre la facturación de los servicios

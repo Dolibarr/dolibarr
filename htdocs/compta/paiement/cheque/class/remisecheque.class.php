@@ -773,7 +773,7 @@ class RemiseCheque extends CommonObject
 	 *	Reopen linked invoices and create a new negative payment.
 	 *
 	 *	@param	int		$bank_id 		   Id of bank transaction line concerned
-	 *	@param	date	$rejection_date    Date to use on the negative payment
+	 *	@param	integer	$rejection_date    Date to use on the negative payment
 	 * 	@return	int                        Id of negative payment line created
 	 */
     public function rejectCheck($bank_id, $rejection_date)

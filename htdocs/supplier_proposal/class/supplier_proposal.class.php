@@ -89,7 +89,7 @@ class SupplierProposal extends CommonObject
 
     /**
      * @deprecated
-     * @see user_author_id
+     * @see $user_author_id
      */
     public $author;
 
@@ -101,7 +101,7 @@ class SupplierProposal extends CommonObject
 
     /**
      * @deprecated
-     * @see date_creation
+     * @see $date_creation
      */
     public $datec;
 
@@ -113,7 +113,7 @@ class SupplierProposal extends CommonObject
 
     /**
      * @deprecated
-     * @see date_validation
+     * @see $date_validation
      */
     public $datev;
 
@@ -130,19 +130,19 @@ class SupplierProposal extends CommonObject
 
     /**
      * @deprecated
-     * @see price_ht
+     * @see $price_ht
      */
     public $price;
 
     /**
      * @deprecated
-     * @see total_tva
+     * @see $total_tva
      */
     public $tva;
 
     /**
      * @deprecated
-     * @see total_ttc
+     * @see $total_ttc
      */
     public $total;
 
@@ -373,8 +373,8 @@ class SupplierProposal extends CommonObject
      * 		@param    	double		$txtva           	Taux de tva
      * 		@param		double		$txlocaltax1		Local tax 1 rate
      *  	@param		double		$txlocaltax2		Local tax 2 rate
-     *		@param    	int			$fk_product      	Id du produit/service predefini
-     * 		@param    	double		$remise_percent  	Pourcentage de remise de la ligne
+     *		@param    	int			$fk_product      	Product/Service ID predefined
+     * 		@param    	double		$remise_percent  	Percentage discount of the line
      * 		@param    	string		$price_base_type	HT or TTC
      * 		@param    	double		$pu_ttc             Prix unitaire TTC
      * 		@param    	int			$info_bits			Bits de type de lignes
@@ -393,7 +393,7 @@ class SupplierProposal extends CommonObject
      * 		@param		double		$pu_ht_devise		Amount in currency
      *    	@return    	int         	    			>0 if OK, <0 if KO
      *
-     *    	@see       	add_product
+     *    	@see       	add_product()
      */
     public function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1 = 0, $txlocaltax2 = 0, $fk_product = 0, $remise_percent = 0, $price_base_type = 'HT', $pu_ttc = 0, $info_bits = 0, $type = 0, $rang = -1, $special_code = 0, $fk_parent_line = 0, $fk_fournprice = 0, $pa_ht = 0, $label = '', $array_option = 0, $ref_supplier = '', $fk_unit = '', $origin = '', $origin_id = 0, $pu_ht_devise = 0)
     {
@@ -1104,7 +1104,7 @@ class SupplierProposal extends CommonObject
      *
      *	@param 		User	$user	User that create
      *	@return    	int				Id of the new object if ok, <0 if ko
-     *	@see       	create
+     *	@see       	create()
      */
     public function create_from($user)
     {
@@ -1878,19 +1878,44 @@ class SupplierProposal extends CommonObject
      *	@param		User	$user		Object user that modify
      *	@return		int					<0 if KO, >0 if OK
      */
-    public function set_draft($user)
+    public function setDraft($user)
     {
         // phpcs:enable
         global $conf,$langs;
 
-        $sql = "UPDATE ".MAIN_DB_PREFIX."supplier_proposal SET fk_statut = 0";
+        $error = 0;
+
+        if ($this->statut == self::STATUS_DRAFT)
+        {
+            dol_syslog(get_class($this)."::setDraft already draft status", LOG_WARNING);
+            return 0;
+        }
+
+        $sql = "UPDATE ".MAIN_DB_PREFIX."supplier_proposal";
+        $sql.= " SET fk_statut = ".self::STATUS_DRAFT;
         $sql.= " WHERE rowid = ".$this->id;
 
         if ($this->db->query($sql))
         {
-            $this->statut = 0;
-            $this->brouillon = 1;
-            return 1;
+            if (!$error) {
+                $this->oldcopy = clone $this;
+            }
+
+            if (!$error) {
+                // Call trigger
+                $result=$this->call_trigger('SUPPLIER_PROPOSAL_UNVALIDATE', $user);
+                if ($result < 0) $error++;
+            }
+
+            if (!$error) {
+                $this->statut=self::STATUS_DRAFT;
+                $this->brouillon = 1;
+                $this->db->commit();
+                return 1;
+            } else {
+                $this->db->rollback();
+                return -1;
+            }
         }
         else
         {
@@ -2735,7 +2760,7 @@ class SupplierProposalLine extends CommonObjectLine
 
     /**
      * @deprecated
-     * @see product_type
+     * @see $product_type
      */
     public $fk_product_type;
     /**
@@ -2806,7 +2831,7 @@ class SupplierProposalLine extends CommonObjectLine
 
     /**
      * @deprecated
-     * @see product_label
+     * @see $product_label
      */
     public $libelle;
 

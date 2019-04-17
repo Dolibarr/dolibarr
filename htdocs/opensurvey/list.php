@@ -225,7 +225,7 @@ $arrayofmassactions =  array(
     //'presend'=>$langs->trans("SendByMail"),
     //'builddoc'=>$langs->trans("PDFMerge"),
 );
-if ($user->rights->opensurvey->write) $arrayofmassactions['predelete']=$langs->trans("Delete");
+if ($user->rights->opensurvey->write) $arrayofmassactions['predelete']='<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
 if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
 $massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 
@@ -245,13 +245,13 @@ print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 $newcardbutton='';
 if (! empty($user->rights->opensurvey->write))
 {
-    $newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/opensurvey/wizard/index.php"><span class="valignmiddle">'.$langs->trans('NewSurvey').'</span>';
+    $newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/opensurvey/wizard/index.php"><span class="valignmiddle text-plus-circle">'.$langs->trans('NewSurvey').'</span>';
     $newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
     $newcardbutton.= '</a>';
 }
 else
 {
-    $newcardbutton='<a class="butActionNewRefused" href="#">'.$langs->trans('NewSurvey');
+    $newcardbutton='<a class="butActionNewRefused" href="#"><span class="valignmiddle text-plus-circle">'.$langs->trans('NewSurvey').'</span>';
     $newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
     $newcardbutton.= '</a>';
 }
@@ -315,7 +315,7 @@ $parameters=array('arrayfields'=>$arrayfields);
 $reshook=$hookmanager->executeHooks('printFieldListOption', $parameters, $object);    // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 // Action column
-print '<td class="liste_titre" align="right">';
+print '<td class="liste_titre" class="right">';
 $searchpicto=$form->showFilterButtons();
 print $searchpicto;
 print '</td>';
@@ -401,13 +401,13 @@ while ($i < min($num, $limit))
 	print '</td>';
 
 	// Nb of voters
-	print'<td align="right">'.$nbuser.'</td>'."\n";
+	print'<td class="right">'.$nbuser.'</td>'."\n";
 
-	print '<td align="center">'.dol_print_date($db->jdate($obj->date_fin), 'day');
+	print '<td class="center">'.dol_print_date($db->jdate($obj->date_fin), 'day');
 	if ($db->jdate($obj->date_fin) < $now && $obj->status == Opensurveysondage::STATUS_VALIDATED) { print img_warning($langs->trans("Expired")); }
 	print '</td>';
 
-	print'<td align="center">'.$opensurvey_static->getLibStatut(5).'</td>'."\n";
+	print'<td class="center">'.$opensurvey_static->getLibStatut(5).'</td>'."\n";
 
 	// Extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
@@ -416,7 +416,7 @@ while ($i < min($num, $limit))
 	$reshook=$hookmanager->executeHooks('printFieldListValue', $parameters, $object);    // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	// Action column
-	print '<td class="nowrap" align="center">';
+	print '<td class="nowrap center">';
 	if ($massactionbutton || $massaction)   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 	{
 	    $selected=0;
@@ -437,7 +437,7 @@ if (isset($totalarray['pos']))
     while ($i < $totalarray['nbfield'])
     {
         $i++;
-        if (! empty($totalarray['pos'][$i]))  print '<td align="right">'.price($totalarray['val'][$totalarray['pos'][$i]]).'</td>';
+        if (! empty($totalarray['pos'][$i]))  print '<td class="right">'.price($totalarray['val'][$totalarray['pos'][$i]]).'</td>';
         else
         {
             if ($i == 1)

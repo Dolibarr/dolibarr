@@ -176,11 +176,11 @@ if ($id > 0 || $ref)
     {
     	if (! empty($user->rights->agenda->myactions->create) || ! empty($user->rights->agenda->allactions->create))
     	{
-        	$morehtmlcenter.='<a class="butActionNew" href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out.'">'.$langs->trans("AddAction").'<span class="fa fa-plus-circle valignmiddle"></span></a>';
+        	$morehtmlcenter.='<a class="butActionNew" href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out.'"><span class="valignmiddle text-plus-circle">'.$langs->trans("AddAction").'</span><span class="fa fa-plus-circle valignmiddle"></span></a>';
     	}
     	else
     	{
-        	$morehtmlcenter.='<a class="butActionNewRefused" href="#">'.$langs->trans("AddAction").'<span class="fa fa-plus-circle valignmiddle"></span></a>';
+        	$morehtmlcenter.='<a class="butActionNewRefused" href="#"><span class="valignmiddle text-plus-circle">'.$langs->trans("AddAction").'</span><span class="fa fa-plus-circle valignmiddle"></span></a>';
     	}
     }
 

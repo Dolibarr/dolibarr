@@ -61,15 +61,10 @@ if (! $sortfield) $sortfield="position_name";
 $object = new Ticket($db);
 $result = $object->fetch($id, $ref, $track_id);
 
-// to match  document rules and compatibility
-$old_ref = $object->ref;
-$object->ref = $object->track_id;
-
-
 if ($result < 0) {
 	setEventMessages($object->error, $object->errors, 'errors');
 } else {
-    $upload_dir = $conf->ticket->dir_output . "/" . dol_sanitizeFileName($object->track_id);
+    $upload_dir = $conf->ticket->dir_output . "/" . dol_sanitizeFileName($object->ref);
 }
 
 
@@ -78,8 +73,6 @@ if ($result < 0) {
  */
 
 include_once DOL_DOCUMENT_ROOT . '/core/actions_linkedfiles.inc.php';
-
-$object->ref = $old_ref;
 
 
 
@@ -193,7 +186,7 @@ if ($object->id)
         $totalsize += $file['size'];
     }
 
-    $object->ref = $object->track_id;	// For compatibility we use track ID for directory
+    //$object->ref = $object->track_id;	// For compatibility we use track ID for directory
     $modulepart = 'ticket';
   	$permission = $user->rights->ticket->write;
   	$permtoedit = $user->rights->ticket->write;

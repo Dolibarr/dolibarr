@@ -842,7 +842,7 @@ function show_theme($fuser, $edit = 0, $foruserprofile = false)
 				if ($color != 'e6edf0') print '<input type="text" class="colorthumb" disabled="disabled" style="padding: 1px; margin-top: 0; margin-bottom: 0; background-color: #'.$color.'" value="'.$color.'">';
 				else print $langs->trans("Default");
 			}
-			else print $langs->trans("None");
+			else print $langs->trans("Default");
 		}
 		print ' &nbsp; <span class="nowraponall">('.$langs->trans("Default").': <strong>e6edf0</strong>) ';
 		print $form->textwithpicto('', $langs->trans("NotSupportedByAllThemes").', '.$langs->trans("PressF5AfterChangingThis"));
@@ -886,7 +886,7 @@ function show_theme($fuser, $edit = 0, $foruserprofile = false)
 				if ($color != 'e6edf0') print '<input type="text" class="colorthumb" disabled="disabled" style="padding: 1px; margin-top: 0; margin-bottom: 0; background-color: #'.$color.'" value="'.$color.'">';
 				else print $langs->trans("Default");
 			}
-			else print $langs->trans("None");
+			else print $langs->trans("Default");
 		}
 		print ' &nbsp; <span class="nowraponall">('.$langs->trans("Default").': <strong>e6edf0</strong>) ';
 		print $form->textwithpicto('', $langs->trans("NotSupportedByAllThemes").', '.$langs->trans("PressF5AfterChangingThis"));
@@ -898,6 +898,7 @@ function show_theme($fuser, $edit = 0, $foruserprofile = false)
 	// Use MAIN_OPTIMIZEFORTEXTBROWSER
 	if ($foruserprofile)
 	{
+	    //$default=yn($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER);
 	    $default=$langs->trans('No');
 	    print '<tr class="oddeven">';
 	    print '<td>'.$langs->trans("MAIN_OPTIMIZEFORTEXTBROWSER").'</td>';
@@ -918,14 +919,32 @@ function show_theme($fuser, $edit = 0, $foruserprofile = false)
    	            if (empty($fuser->conf->MAIN_OPTIMIZEFORTEXTBROWSER)) print ' ('.$langs->trans("ForcedByGlobalSetup").')';
    	        }
    	    }
-   	    print ' &nbsp; ('.$langs->trans("Default").': <strong>'.yn(0).'</strong>) ';
+   	    print ' &nbsp; ('.$langs->trans("Default").': <strong>'.$default.'</strong>) ';
 	    print $form->textwithpicto('', $langs->trans("MAIN_OPTIMIZEFORTEXTBROWSERDesc"));
 	    print '</td>';
 	    print '</tr>';
 	}
 	else
 	{
-	    // TODO
+	    /*var_dump($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER);
+	    $default=$langs->trans('No');
+	    print '<tr class="oddeven">';
+	    print '<td>'.$langs->trans("MAIN_OPTIMIZEFORTEXTBROWSER").'</td>';
+	    print '<td colspan="'.($colspan-1).'">';
+	    if ($edit)
+	    {
+	        print $form->selectyesno('MAIN_OPTIMIZEFORTEXTBROWSER', $conf->global->MAIN_OPTIMIZEFORTEXTBROWSER, 1);
+	    }
+	    else
+	    {
+	        print yn($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER);
+	    }
+	    print ' &nbsp; ('.$langs->trans("Default").': <strong>'.$default.'</strong>) ';
+	    print $form->textwithpicto('', $langs->trans("MAIN_OPTIMIZEFORTEXTBROWSERDesc"));
+	    print '</span>';
+	    print '</td>';
+	    print '</tr>';
+	    */
 	}
 
 	print '</table>';

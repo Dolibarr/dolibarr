@@ -94,13 +94,19 @@ foreach($object->fields as $key => $val)
 if (empty($action) && empty($id) && empty($ref)) $action='view';
 
 // Load object
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be include, not include_once  // Must be include, not include_once. Include fetch and fetch_thirdparty but not fetch_optionals
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be include, not include_once.
 
 // Security check - Protection if external user
 //if ($user->societe_id > 0) access_forbidden();
 //if ($user->societe_id > 0) $socid = $user->societe_id;
 //$isdraft = (($object->statut == MyObject::STATUS_DRAFT) ? 1 : 0);
 //$result = restrictedArea($user, 'mymodule', $object->id, '', '', 'fk_soc', 'rowid', $isdraft);
+
+$permissionnote=$user->rights->mymodule->write;	// Used by the include of actions_setnotes.inc.php
+$permissiondellink=$user->rights->mymodule->write;	// Used by the include of actions_dellink.inc.php
+$permissionedit=$user->rights->mymodule->write; // Used by the include of actions_lineupdown.inc.php
+$permissiontoadd=$user->rights->mymodule->write; // Used by the include of actions_addupdatedelete.inc.php
+
 
 
 /*
@@ -117,7 +123,6 @@ if (empty($reshook))
 {
     $error=0;
 
-    $permissiontoadd = $user->rights->mymodule->write;
     $permissiontodelete = $user->rights->mymodule->delete || ($permissiontoadd && $object->status == 0);
     $backurlforlist = dol_buildpath('/mymodule/myobject_list.php', 1);
     if (empty($backtopage)) {

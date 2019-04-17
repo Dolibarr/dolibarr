@@ -62,3 +62,4 @@ CreateCustomerOnStripe=Créer client sur Stripe
 CreateCardOnStripe=Créer carte sur Stripe
 ShowInStripe=Afficher dans Stripe
 StripeUserAccountForActions=Compte d'utilisateur à utiliser pour certains e-mails de notification d'événements Stripe (Stripe payouts)
+StripePayoutList=Liste des paiements Stripe

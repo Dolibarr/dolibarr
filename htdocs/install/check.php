@@ -76,8 +76,8 @@ if (! empty($useragent))
 
 
 // Check PHP version
-$arrayphpminversionerror = array(5,4,0);
-$arrayphpminversionwarning = array(5,4,0);
+$arrayphpminversionerror = array(5,5,0);
+$arrayphpminversionwarning = array(5,5,0);
 if (versioncompare(versionphparray(), $arrayphpminversionerror) < 0)        // Minimum to use (error if lower)
 {
 	print '<img src="../theme/eldy/img/error.png" alt="Error"> '.$langs->trans("ErrorPHPVersionTooLow", versiontostring($arrayphpminversionerror));
@@ -158,6 +158,19 @@ if (! function_exists("utf8_encode"))
 else
 {
 	print '<img src="../theme/eldy/img/tick.png" alt="Ok"> '.$langs->trans("PHPSupportUTF8")."<br>\n";
+}
+
+
+// Check if UTF8 supported
+if (! function_exists("locale_get_primary_language"))
+{
+    $langs->load("errors");
+    print '<img src="../theme/eldy/img/warning.png" alt="Error"> '.$langs->trans("ErrorPHPDoesNotSupportIntl")."<br>\n";
+    // $checksok=0;		// If image ko, just warning. So check must still be 1 (otherwise no way to install)
+}
+else
+{
+    print '<img src="../theme/eldy/img/tick.png" alt="Ok"> '.$langs->trans("PHPSupportIntl")."<br>\n";
 }
 
 

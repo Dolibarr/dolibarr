@@ -14,5 +14,6 @@ ProjectsDedicatedToThisThirdParty=Mit diesem Geschäftspartner verknüpfte Proje
 LinkedToAnotherCompany=Mit Geschäftspartner verknüpft
 ThisWillAlsoRemoveTasks=Diese Aktion löscht ebenfalls alle Aufgaben zum Projekt (<b>%s</b> akutelle Aufgaben) und alle Zeitaufwände.
 CloneTaskFiles=Aufgabe (n) clonen beigetreten Dateien (falls Aufgabe (n) geklont)
+ProjectModifiedInDolibarr=Projekt %s bearbeitet
 ProjectReferers=Verknüpfte Objekte
 ResourceNotAssignedToTheTask=Nicht der Aufgabe zugewiesen
