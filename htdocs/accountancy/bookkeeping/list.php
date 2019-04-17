@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013-2016  Olivier Geffroy         <jeff@jeffinfo.com>
  * Copyright (C) 2013-2016  Florian Henry           <florian.henry@open-concept.pro>
- * Copyright (C) 2013-2018  Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2013-2019  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2016-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
@@ -100,7 +100,7 @@ $formaccounting = new FormAccounting($db);
 $formother = new FormOther($db);
 $form = new Form($db);
 
-if (! in_array($action, array('export_file', 'delmouv', 'delmouvconfirm')) && ! isset($_POST['begin']) && ! isset($_GET['begin']) && ! isset($_POST['formfilteraction']) && GETPOST('page', 'int') == '' && ! GETPOST('noreset', 'int'))
+if (! in_array($action, array('export_file', 'delmouv', 'delmouvconfirm')) && ! isset($_POST['begin']) && ! isset($_GET['begin']) && ! isset($_POST['formfilteraction']) && GETPOST('page', 'int') == '' && ! GETPOST('noreset', 'int') && $user->rights->accounting->mouvements->export)
 {
 	if (empty($search_date_start) && empty($search_date_end) && ! GETPOSTISSET('restore_lastsearch_values'))
 	{
@@ -283,7 +283,7 @@ if (! empty($search_lettering_code)) {
 }
 
 
-if ($action == 'delbookkeeping') {
+if ($action == 'delbookkeeping' && $user->rights->accounting->mouvements->supprimer) {
 
 	$import_key = GETPOST('importkey', 'alpha');
 
@@ -296,7 +296,7 @@ if ($action == 'delbookkeeping') {
 		exit();
 	}
 }
-if ($action == 'delbookkeepingyearconfirm') {
+if ($action == 'delbookkeepingyearconfirm' && $user->rights->accounting->mouvements->supprimer_tous) {
 
 	$delyear = GETPOST('delyear', 'int');
 	if ($delyear==-1) {
@@ -327,7 +327,7 @@ if ($action == 'delbookkeepingyearconfirm') {
 		exit;
 	}
 }
-if ($action == 'delmouvconfirm') {
+if ($action == 'delmouvconfirm' && $user->rights->accounting->mouvements->supprimer) {
 
 	$mvt_num = GETPOST('mvt_num', 'int');
 
@@ -347,7 +347,7 @@ if ($action == 'delmouvconfirm') {
 }
 
 // Export into a file with format defined into setup (FEC, CSV, ...)
-if ($action == 'export_file') {
+if ($action == 'export_file' && $user->rights->accounting->mouvements->export) {
 
 	$result = $object->fetchAll($sortorder, $sortfield, 0, 0, $filter);
 
@@ -442,18 +442,30 @@ print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="page" value="'.$page.'">';
 
-$listofformat=AccountancyExport::getType();
-$button = '<a class="butAction" name="button_export_file" href="'.$_SERVER["PHP_SELF"].'?action=export_file'.($param?'&'.$param:'').'">';
-if (count($filter)) $button.= $langs->trans("ExportFilteredList");
-else $button.= $langs->trans("ExportList");
-//$button.=' ('.$listofformat[$conf->global->ACCOUNTING_EXPORT_MODELCSV].')';
-$button.= '</a>';
-
+if ($user->rights->accounting->mouvements->export) {
+    $listofformat=AccountancyExport::getType();
+    $button = '<a class="butAction" name="button_export_file" href="'.$_SERVER["PHP_SELF"].'?action=export_file'.($param?'&'.$param:'').'" title="'.$listofformat[$conf->global->ACCOUNTING_EXPORT_MODELCSV].'">';
+    if (count($filter)) $button.= $langs->trans("ExportFilteredList");
+    else $button.= $langs->trans("ExportList");
+    $button.= '</a>';
+} else {
+    $button = '<span class="butActionRefused" title="' . $langs->trans("NotEnoughPermissions") . '">';
+    if (count($filter)) $button.= $langs->trans("ExportFilteredList");
+    else $button.= $langs->trans("ExportList");
+    $button.= '</span>';
+}
 
 $groupby = ' <a class="nohover marginrightonly" href="'.DOL_URL_ROOT.'/accountancy/bookkeeping/listbyaccount.php?'.$param.'">' . $langs->trans("GroupByAccountAccounting") . '</a>';
-$newcardbutton = '<a class="butActionNew" href="./card.php?action=create"><span class="valignmiddle text-plus-circle">'.$langs->trans("NewAccountingMvt").'</span>';
-$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
-$newcardbutton.= '</a>';
+
+if ($user->rights->accounting->mouvements->creer) {
+    $newcardbutton = '<a class="butActionNew" href="./card.php?action=create"><span class="valignmiddle text-plus-circle">'.$langs->trans("NewAccountingMvt").'</span>';
+    $newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
+    $newcardbutton.= '</a>';
+} else {
+    $newcardbutton = '<span class="butActionRefused" title="' . $langs->trans("NotEnoughPermissions") . '"><span class="valignmiddle text-plus-circle">' . $langs->trans("NewAccountingMvt") . '</span>';
+    $newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
+    $newcardbutton.= '</span>';
+}
 
 print_barre_liste($title_page, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $button, $result, $nbtotalofrecords, 'title_accountancy', 0, $groupby.$newcardbutton, '', $limit);
 
@@ -731,8 +743,12 @@ if ($num > 0)
 
 		// Action column
 		print '<td class="nowraponall center">';
-		print '<a href="'.DOL_URL_ROOT.'/accountancy/bookkeeping/card.php?piece_num=' . $line->piece_num . $param . '&page=' . $page . ($sortfield ? '&sortfield='.$sortfield : '') . ($sortorder ? '&sortorder='.$sortorder : '') . '">' . img_edit() . '</a>&nbsp;';
-		print '<a href="' . $_SERVER['PHP_SELF'] . '?action=delmouv&mvt_num=' . $line->piece_num . $param . '&page=' . $page . ($sortfield ? '&sortfield='.$sortfield : '') . ($sortorder ? '&sortorder='.$sortorder : '') . '">' . img_delete() . '</a>';
+        if ($user->rights->accounting->mouvements->creer) {
+            print '<a href="' . DOL_URL_ROOT . '/accountancy/bookkeeping/card.php?piece_num=' . $line->piece_num . $param . '&page=' . $page . ($sortfield ? '&sortfield=' . $sortfield : '') . ($sortorder ? '&sortorder=' . $sortorder : '') . '">' . img_edit() . '</a>';
+        }
+		if ($user->rights->accounting->mouvements->supprimer) {
+            print '&nbsp;<a href="' . $_SERVER['PHP_SELF'] . '?action=delmouv&mvt_num=' . $line->piece_num . $param . '&page=' . $page . ($sortfield ? '&sortfield=' . $sortfield : '') . ($sortorder ? '&sortorder=' . $sortorder : '') . '">' . img_delete() . '</a>';
+        }
 		print '</td>';
 		if (! $i) $totalarray['nbfield']++;
 
@@ -766,10 +782,11 @@ print "</table>";
 print '</div>';
 
 // TODO Replace this with mass delete action
-print '<div class="tabsAction tabsActionNoBottom">' . "\n";
-print '<a class="butActionDelete" name="button_delmvt" href="'.$_SERVER["PHP_SELF"].'?action=delbookkeepingyear'.($param?'&'.$param:'').'">' . $langs->trans("DeleteMvt") . '</a>';
-print '</div>';
-
+if ($user->rights->accounting->mouvements->supprimer_tous) {
+    print '<div class="tabsAction tabsActionNoBottom">' . "\n";
+    print '<a class="butActionDelete" name="button_delmvt" href="' . $_SERVER["PHP_SELF"] . '?action=delbookkeepingyear' . ($param ? '&' . $param : '') . '">' . $langs->trans("DeleteMvt") . '</a>';
+    print '</div>';
+}
 
 print '</form>';
 
