@@ -26,6 +26,7 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/treeview.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 if (! empty($conf->projet->enabled)) {
     require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
@@ -178,7 +179,9 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 $form=new Form($db);
 
 $pagetitle=$langs->trans('ResourceElementPage');
-llxHeader('', $pagetitle, '');
+$arrayofjs=array('/includes/jquery/plugins/jquerytreeview/jquery.treeview.js', '/includes/jquery/plugins/jquerytreeview/lib/jquery.cookie.js');
+$arrayofcss=array('/includes/jquery/plugins/jquerytreeview/jquery.treeview.css');
+llxHeader('',$pagetitle,'','',0,0,$arrayofjs,$arrayofcss);
 
 
 // Load available resource, declared by modules
