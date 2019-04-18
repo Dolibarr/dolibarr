@@ -1553,6 +1553,18 @@ class Societe extends CommonObject
 				}
 			}
 
+			// Remove third party  TODO trigger for external action linked to these accounts
+			if (! $error)
+			{
+				$sql = "DELETE FROM ".MAIN_DB_PREFIX."societe";
+				$sql.= " WHERE rowid = " . $id;
+				if (! $this->db->query($sql))
+				{
+					$error++;
+					$this->errors[] = $this->db->lasterror();
+				}
+			}
+
 			// Remove third party
 			if (! $error)
 			{
