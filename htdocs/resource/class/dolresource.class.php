@@ -41,12 +41,17 @@ class Dolresource extends CommonObject
 
     public $picto = 'resource';
 
+    //Link related
 	public $resource_id;
 	public $resource_type;
 	public $element_id;
 	public $element_type;
 	public $busy;
 	public $mandatory;
+	public $fk_parent;
+
+    //Max tree depth
+    const MAX_DEPTH = 50;
 
 	/**
      * @var int ID
@@ -352,6 +357,7 @@ class Dolresource extends CommonObject
     	global $langs;
     	$sql = "SELECT";
     	$sql.= " t.rowid,";
+   		$sql.= " t.fk_parent,";
    		$sql.= " t.resource_id,";
 		$sql.= " t.resource_type,";
 		$sql.= " t.element_id,";
@@ -372,6 +378,7 @@ class Dolresource extends CommonObject
     			$obj = $this->db->fetch_object($resql);
 
     			$this->id				=	$obj->rowid;
+    			$this->fk_parent		=	$obj->fk_parent;
     			$this->resource_id		=	$obj->resource_id;
     			$this->resource_type	=	$obj->resource_type;
     			$this->element_id		=	$obj->element_id;
@@ -842,7 +849,7 @@ class Dolresource extends CommonObject
     public function getElementResources($element, $element_id, $resource_type = '')
     {
 	    // Links beetween objects are stored in this table
-	    $sql = 'SELECT rowid, resource_id, resource_type, busy, mandatory';
+	    $sql = 'SELECT rowid, resource_id, resource_type, fk_parent, busy, mandatory';
 	    $sql.= ' FROM '.MAIN_DB_PREFIX.'element_resources';
 	    $sql.= " WHERE element_id=".$element_id." AND element_type='".$this->db->escape($element)."'";
 	    if($resource_type)
@@ -861,6 +868,7 @@ class Dolresource extends CommonObject
 
 	    		$resources[$i] = array(
 	    			'rowid' => $obj->rowid,
+	    			'fk_parent' => $obj->fk_parent,
 	    			'resource_id' => $obj->resource_id,
 	    			'resource_type'=>$obj->resource_type,
 	    			'busy'=>$obj->busy,
@@ -992,5 +1000,173 @@ class Dolresource extends CommonObject
         global $langs;
 
         return '';
+    }
+    
+    /**
+     * Rebuilt the tree structure of resource links for element in the form of a table:
+     *                link = resource link object
+     *                resource = resource object
+     *                childs = link child ids
+     *                path = name with full path to the resource
+     *                status = the status of resource
+     *                level = link depth in tree (1 as root)
+     *                root = the root link id
+     * These variables are processed by processTreeDependency:
+     *                status_priority = the status with highest priority from resource/childs
+     *                satisfied = dependency is satisfied
+     *                dependency = the dependent resource ids (only on root, includes root itself)
+     *
+     * @param   int $element_id Type of id
+     * @param   string $element_type Type of element
+     *
+     * @return  array|int               Array of resources or error int.
+     * @throws Exception
+     */
+    function getFullTree($element_id, $element_type)
+    {
+        dol_syslog(__METHOD__, LOG_DEBUG);
+        $tree = array();
+
+        // Init $resources array
+        $res = new Dolresource($this->db);
+        $sql = "SELECT DISTINCT t.rowid, t.fk_parent, t.resource_id, t.resource_type, t.busy, t.mandatory";
+        $sql.= ' FROM '.MAIN_DB_PREFIX .'element_resources as t ';
+        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX.$res->table_element." as tr ON tr.rowid=t.resource_id";
+        $sql.= " WHERE tr.entity IN (".getEntity('resource', 1).")";
+        $sql.= " AND t.element_id = ".$element_id;
+        $sql.= " AND t.element_type = '".$this->db->escape($element_type)."'";
+
+        $resql = $this->db->query($sql);
+        if ($resql)
+        {
+            while ($obj = $this->db->fetch_object($resql))
+            {
+                $id = $obj->rowid;
+                $resource = fetchObjectByElement($obj->resource_id, $obj->resource_type);
+                if (is_object($resource) && $resource->id == $obj->resource_id && $resource instanceof Dolresource)
+                {
+                    $resource_type = $obj->resource_type;
+                    if ($resource_type == "resource") $resource_type = "dolresource";
+
+                    $link = new Dolresource($this->db);
+                    $link->id = $id;
+                    $link->fk_parent = $obj->fk_parent;
+                    $link->resource_id = $obj->resource_id;
+                    $link->resource_type = $resource_type;
+                    $link->element_id = $element_id;
+                    $link->element_type = $element_type;
+                    $link->mandatory = $obj->mandatory;
+                    $link->busy = $obj->busy;
+
+                    $tree[$id]['link'] = $link;
+                    $tree[$id]['resource'] = $resource;
+                    $tree[$id]['path'] = $resource->ref;
+                    $tree[$id]['childs'] = array();
+                    $tree[$id]['level'] = 1;
+                    $tree[$id]['dependency'] = array($resource->id => $resource);
+
+                    unset($link);
+                }
+                unset($resource);
+            }
+        }
+        else
+        {
+            $this->error=$this->db->lasterror();
+            dol_syslog(__METHOD__." ".$this->error);
+            return -1;
+        }
+
+        // We rescan resources to fill the data that can only be filled when all resources are loaded
+        foreach($tree as $id => &$data)
+        {
+            $level = 1;
+            $link = $data['link'];
+
+            if (!empty($link->fk_parent)) {
+                // Check if parent is valid, if not remove the orphaned entry from tree
+                if (empty($tree[$link->fk_parent])) {
+                    unset($tree[$id]);
+                    continue;
+                }
+
+                // Add myself to parent childs
+                $tree[$link->fk_parent]['childs'][] = $id;
+
+                // Go for each parent recursively
+                $cursor = $id;
+                while ($level <= Dolresource::MAX_DEPTH && !empty($tree[$cursor]['link']->fk_parent))
+                {
+                    $level++;
+                    $cursor = $tree[$cursor]['link']->fk_parent;
+                    $data['path'] = $tree[$cursor]['resource']->ref.' >> '.$data['path'];
+                }
+                $data['root'] = $cursor;
+            }
+            else
+            {
+                $data['root'] = $id;
+            }
+            //Define level
+            $data['level'] = $level;
+        }
+        unset($data); //Release the reference
+        
+        $tree=dol_sort_array($tree, 'path', 'asc', true, false, true);
+        dol_syslog(__METHOD__." finish", LOG_DEBUG);
+        return $tree;
+    }
+
+    /**
+     *    Filters the passed tree, returns root status.
+     *
+     *    @param	array	$tree				Resource tree
+     *    @param	string	$resource_type		Type of resource
+     *    @param	int		$exclude_resource	Exclude the leafs with this resource id or containing this resource.
+     *    @return	bool						Returns if root is excluded
+     */
+    function filterTree(&$tree, $resource_type='', $exclude_resource=0)
+    {
+        if (!empty($resource_type))
+        {
+            //Keep only resources with this type
+            foreach ($tree as $id => $data)
+            {
+                $link = $data['link'];
+                if ($link->resource_type != $resource_type)
+                {
+                    unset($tree[$id]);
+                }
+            }
+        }
+
+        $root_excluded = false;
+        if (!empty($exclude_resource))
+        {
+            //Remove all linked resources and their parents which have excluded resource
+            foreach ($tree as $id => $data) {
+                if ($data['resource']->id == $exclude_resource) {
+                    $link = $data['link'];
+                    if (!empty($link->fk_parent)) {
+                        unset($tree[$link->fk_parent]);
+                    } else {
+                        //Remove this resource without parent, also block root from adding more of this
+                        $root_excluded = true;
+                        unset($tree[$id]);
+                    }
+                }
+            }
+        }
+
+        //Unset if parent is missing, this cleans orphaned leafs caused by $excluderesource
+        foreach($tree as $id => $data)
+        {
+            $link = $data['link'];
+            if (!empty($link->fk_parent) && empty($tree[$link->fk_parent])) {
+                unset($tree[$id]);
+            }
+        }
+
+        return $root_excluded;
     }
 }

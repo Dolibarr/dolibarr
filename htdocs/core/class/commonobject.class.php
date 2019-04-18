@@ -4374,9 +4374,10 @@ abstract class CommonObject
 	 *	@param		string	$resource_type		'resource'
 	 *	@param		int		$busy				Busy or not
 	 *	@param		int		$mandatory			Mandatory or not
+	 *	@param		int		$parent				Parent link for this link
 	 *	@return		int							<=0 if KO, >0 if OK
 	 */
-	public function add_element_resource($resource_id, $resource_type, $busy = 0, $mandatory = 0)
+	public function add_element_resource($resource_id, $resource_type, $busy = 0, $mandatory = 0, $parent = 0)
 	{
         // phpcs:enable
 		$this->db->begin();
@@ -4388,6 +4389,7 @@ abstract class CommonObject
 		$sql.= ", element_type";
 		$sql.= ", busy";
 		$sql.= ", mandatory";
+		$sql.= ", fk_parent";
 		$sql.= ") VALUES (";
 		$sql.= $resource_id;
 		$sql.= ", '".$this->db->escape($resource_type)."'";
@@ -4395,6 +4397,7 @@ abstract class CommonObject
 		$sql.= ", '".$this->db->escape($this->element)."'";
 		$sql.= ", '".$this->db->escape($busy)."'";
 		$sql.= ", '".$this->db->escape($mandatory)."'";
+		$sql.= ", '".$this->db->escape($parent)."'";
 		$sql.= ")";
 
 		dol_syslog(get_class($this)."::add_element_resource", LOG_DEBUG);

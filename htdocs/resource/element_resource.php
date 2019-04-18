@@ -67,6 +67,8 @@ $mandatory              = GETPOST('mandatory', 'int');
 $cancel                 = GETPOST('cancel', 'alpha');
 $confirm                = GETPOST('confirm', 'alpha');
 $socid                  = GETPOST('socid', 'int');
+$selected               = GETPOST('selected', 'int') != "-1" ? intval(GETPOST('selected', 'int')) : "";
+$parent                 = intval(GETPOST('parent','int'));
 
 if ($socid > 0) // Special for thirdparty
 {
@@ -74,6 +76,15 @@ if ($socid > 0) // Special for thirdparty
     $element = 'societe';
 }
 
+if (!$element_id && $element_ref && $element) {
+    $element_obj = fetchObjectByElement($element_id, $element, $element_ref);
+    //Fill element id if ref was used
+    if (is_object($element_obj)) {
+        $element_id = $element_obj->id;
+    }
+    unset($element_obj);
+}
+$element_url = $element_ref ? ('&ref='.$element_ref) : ('&element_id='.$element_id);
 
 
 /*
@@ -91,19 +102,19 @@ if ($action == 'add_element_resource' && ! $cancel)
 	}
 	else
 	{
-		$objstat = fetchObjectByElement($element_id, $element, $element_ref);
-		$objstat->element = $element; // For externals module, we need to keep @xx
-		$res = $objstat->add_element_resource($resource_id, $resource_type, $busy, $mandatory);
+		$element_obj = fetchObjectByElement($element_id, $element, $element_ref);
+		$element_obj->element = $element; // For externals module, we need to keep @xx
+		$res = $element_obj->add_element_resource($resource_id, $resource_type, $busy, $mandatory, $parent);
 	}
 	if (! $error && $res > 0)
 	{
 		setEventMessages($langs->trans('ResourceLinkedWithSuccess'), null, 'mesgs');
-		header("Location: ".$_SERVER['PHP_SELF'].'?element='.$element.'&element_id='.$objstat->id);
+		header("Location: ".$_SERVER['PHP_SELF'].'?element='.$element.$element_url);
 		exit;
 	}
-    elseif ($objstat)
+    elseif ($element_obj)
     {
-        setEventMessages($objstat->error, $objstat->errors, 'errors');
+        setEventMessages($element_obj->error, $element_obj->errors, 'errors');
     }
 }
 
@@ -453,6 +464,28 @@ else
 	$reshook=$hookmanager->executeHooks('printElementTab', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
 	if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
+	$res_tree = $object->getFullTree($element_id, $element);
+    if ($res_tree < 0)
+    {
+        setEventMessages($object->error, $object->errors, 'errors');
+    }
+    
+    //Call hook
+    $parameters=array(
+        'tree'=>$res_tree,
+        'element_id'=>$element_id,
+        'element_type'=>$element,
+    );
+    $action='';
+    $reshook=$hookmanager->executeHooks('linkedResourcesTree', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
+    if ($reshook < 0)
+    {
+        setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+    }
+    elseif ($reshook == 0 && !empty($hookmanager->resArray))
+    {
+        if (isset($hookmanager->resArray)) $res_tree = $hookmanager->resArray;
+    }
 
 	//print load_fiche_titre($langs->trans('ResourcesLinkedToElement'),'','');
 	print '<br>';
@@ -471,9 +504,11 @@ else
 			$path = '';
 			if(strpos($resource_obj, '@'))
 				$path .= '/'.$element_prop['module'];
+			
+			$filtered_tree = $res_tree; //Copy the tree
+			$root_excluded = $object->filterTree($filtered_tree, $resource_obj, $selected);
 
 			$linked_resources = $object->getElementResources($element, $element_id, $resource_obj);
-
 
 			// If we have a specific template we use it
 			if(file_exists(dol_buildpath($path.'/core/tpl/resource_'.$element_prop['element'].'_add.tpl.php')))

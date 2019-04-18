@@ -157,6 +157,72 @@ class FormResource
     	return $out;
     }
 
+    /**
+     *    Return list of resources having choosed type
+     *
+     *    @param    array   $tree           Resource tree
+     *    @param    array   $root_excluded  Exclude root from selectable
+     *    @param    string  $selected       Id of resource preselected or 'auto' (autoselect resource if there is only one element)
+     *    @param    string  $htmlname       HTML field name
+     *    @param    int     $maxlength      Maximum length for labels
+     *    @param    int     $outputmode     0=HTML select string, 1=Array, 2=Hidden mode
+     *    @return   string
+     */
+    function select_tree_resources($tree, $root_excluded, $selected='', $htmlname="parent", $maxlength=64, $outputmode=0)
+    {
+        global $langs;
+        $langs->load("resource");
+	    $output = "";
+
+        if ($outputmode != 2) $output.= '<select class="flat" name="'.$htmlname.'">';
+
+        $outarray=array();
+        if (is_array($tree))
+        {
+            if (!$root_excluded)
+            {
+                if ($outputmode == 2)
+                {
+                    $output.= '<input type="hidden" name="'.$htmlname.'" value="-1">';
+                }
+                else
+                {
+                    $output.= '<option value="-1">'.$langs->trans("Root").'</option>';
+                }
+            }
+            elseif (count($tree) == 0)
+            {
+                //There is no apparent resource linked because all are excluded
+                if ($outputmode == 2)
+                {
+                    $output.= '<input type="hidden" name="'.$htmlname.'" value="0">';
+                }
+                else
+                {
+                    $output.= '<option value="0" disabled>'.$langs->trans("AllResourcesExcluded").'</option>';
+                }
+            }
+            if ($outputmode != 2)
+            {
+                foreach($tree as $id => $data)
+                {
+                    $add = '';
+                    if ($id == $selected || ($selected == 'auto' && count($tree) == 1))
+                    {
+                        $add = 'selected ';
+                    }
+                    $output.= '<option '.$add.'value="'.$id.'">'.dol_trunc($tree[$id]['path'],$maxlength,'middle').'</option>';
+
+                    $outarray[$id] = $tree[$id]['path'];
+                }
+            }
+        }
+
+        if ($outputmode != 2) $output.= '</select>';
+        if ($outputmode == 1) return $outarray;
+        return $output;
+    }
+
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *  Return html list of tickets type
