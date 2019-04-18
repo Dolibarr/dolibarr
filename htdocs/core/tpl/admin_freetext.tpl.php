@@ -93,7 +93,7 @@ if (! empty($conf->global->MAIN_MULTILANGS) )
 		foreach ($langs_available as $key => $value)
 		{
 			$freetextlangvar = $freetextvar."_".$key;
-			print 'freetext["'.$key.'"] = "'.$conf->global->$freetextlangvar.'";';
+			print 'freetext["'.$key.'"] = "'.dol_escape_js($conf->global->$freetextlangvar,2).'";';
 		}
 ?>
 		$('#freetextlang').change(function()
