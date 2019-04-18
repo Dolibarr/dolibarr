@@ -31,7 +31,7 @@ class mod_contract_magre extends ModelNumRefContracts
 {
 	/**
      * Dolibarr version of the loaded document
-     * @public string
+     * @var string
      */
 	public $version = 'dolibarr';
 
