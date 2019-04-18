@@ -121,25 +121,26 @@ if ($action == 'add_element_resource' && ! $cancel)
 // Update ressource
 if ($action == 'update_linked_resource' && $user->rights->resource->write && !GETPOST('cancel', 'alpha') )
 {
-	$res = $object->fetch_element_resource($lineid);
-	if($res)
+	$result = $object->fetch_element_resource($lineid);
+	
+	if($result)
 	{
 		$object->busy = $busy;
 		$object->mandatory = $mandatory;
 
 		$result = $object->update_element_resource($user);
-
-		if ($result >= 0)
-		{
-			setEventMessages($langs->trans('RessourceLineSuccessfullyUpdated'), null, 'mesgs');
-			header("Location: ".$_SERVER['PHP_SELF']."?element=".$element."&element_id=".$element_id);
-			exit;
-		}
-		else
-		{
-			setEventMessages($object->error, $object->errors, 'errors');
-		}
 	}
+
+    if ($result >= 0)
+    {
+        setEventMessages($langs->trans('RessourceLineSuccessfullyUpdated'), null, 'mesgs');
+        header("Location: ".$_SERVER['PHP_SELF']."?element=".$element.$element_url);
+        exit;
+    }
+    else
+    {
+        setEventMessages($object->error, $object->errors, 'errors');
+    }
 }
 
 // Delete a resource linked to an element
