@@ -1,5 +1,7 @@
 <?php
-/* This program is free software; you can redistribute it and/or modify
+/* Copyright (C) 2019-2020 AXeL-dev <contact.axel.dev@gmail.com>
+ *
+ * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
@@ -103,19 +105,4 @@ class modDebugBar extends DolibarrModules
 
         return $this->_init($sql, $options);
     }
-
-	/**
-	 * Function called after module configuration.
-	 *
-	 * @return     void
-	 */
-	public function loadSettings()
-	{
-		$this->addPermission("use", "UseDebugBar", "u");
-
-		$this->enableHooks(array(
-			'main',
-			'login'
-		));
-	}
 }
