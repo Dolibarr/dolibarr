@@ -33,7 +33,7 @@ class mod_task_simple extends ModeleNumRefTask
 {
 	/**
      * Dolibarr version of the loaded document
-     * @public string
+     * @var string
      */
 	public $version = 'dolibarr';		// 'development', 'experimental', 'dolibarr'
 

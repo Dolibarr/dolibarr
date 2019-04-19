@@ -35,7 +35,7 @@ class mod_bom_advanced extends ModeleNumRefboms
 {
 	/**
      * Dolibarr version of the loaded document
-     * @public string
+     * @var string
      */
 	public $version = 'dolibarr';		// 'development', 'experimental', 'dolibarr'
 
