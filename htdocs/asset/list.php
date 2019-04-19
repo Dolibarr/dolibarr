@@ -295,6 +295,14 @@ if ($user->rights->asset->delete) $arrayofmassactions['predelete']='<span class=
 if (in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
 $massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 
+$newcardbutton='';
+if ($user->rights->asset->write)
+{
+    $newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/asset/card.php?action=create"><span class="valignmiddle text-plus-circle">'.$langs->trans('NewAsset').'</span>';
+    $newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
+    $newcardbutton.= '</a>';
+}
+
 print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
 if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -305,7 +313,7 @@ print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
-print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_companies', 0, '', '', $limit);
+print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_companies', 0, $newcardbutton, '', $limit);
 
 // Add code for pre mass action (confirmation or email presend form)
 $topicmail="SendAssetsRef";
