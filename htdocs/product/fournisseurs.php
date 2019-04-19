@@ -149,6 +149,8 @@ if (empty($reshook))
 		if (empty($id_fourn)) $id_fourn=GETPOST("search_id_fourn");
 		$ref_fourn=GETPOST("ref_fourn");
 		if (empty($ref_fourn)) $ref_fourn=GETPOST("search_ref_fourn");
+		$ref_fourn_old=GETPOST("ref_fourn_old");
+		if (empty($ref_fourn_old)) $ref_fourn_old = $ref_fourn;
 		$quantity=GETPOST("qty");
 		$remise_percent=price2num(GETPOST('remise_percent', 'alpha'));
 		$npr = preg_match('/\*/', $_POST['tva_tx']) ? 1 : 0 ;
@@ -228,7 +230,7 @@ if (empty($reshook))
 
 			if (! $error)
 			{
-				$ret=$object->add_fournisseur($user, $id_fourn, $ref_fourn, $quantity);    // This insert record with no value for price. Values are update later with update_buyprice
+				$ret=$object->add_fournisseur($user, $id_fourn, $ref_fourn_old, $quantity);    // This insert record with no value for price. Values are update later with update_buyprice
 				if ($ret == -3)
 				{
 					$error++;
@@ -427,7 +429,6 @@ if ($id > 0 || $ref)
 					$supplier->fetch($socid);
 					print $supplier->getNomUrl(1);
 					print '<input type="hidden" name="id_fourn" value="'.$socid.'">';
-					print '<input type="hidden" name="ref_fourn" value="'.$object->fourn_ref.'">';
 					print '<input type="hidden" name="ref_fourn_price_id" value="'.$rowid.'">';
 					print '<input type="hidden" name="rowid" value="'.$rowid.'">';
 					print '<input type="hidden" name="socid" value="'.$socid.'">';
@@ -454,7 +455,8 @@ if ($id > 0 || $ref)
 				print '<tr><td class="fieldrequired">'.$langs->trans("SupplierRef").'</td><td>';
 				if ($rowid)
 				{
-					print $object->fourn_ref;
+                    print '<input type="hidden" name="ref_fourn_old" value="'.$object->ref_supplier.'">';
+                    print '<input class="flat" name="ref_fourn" size="12" value="'.$object->ref_supplier.'">';
 				}
 				else
 				{
