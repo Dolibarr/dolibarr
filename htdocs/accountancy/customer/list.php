@@ -457,7 +457,7 @@ if ($result) {
 		}
 		if ($objp->code_sell_l == -1) $objp->code_sell_l='';
 
-        if ($objp->country_code == $mysoc->country_code) {  // If buyer in same country than seller
+		if ($objp->country_code == $mysoc->country_code || empty($objp->country_code)) {  // If buyer in same country than seller (if not defined, we assume it is same country)
             $objp->code_sell_p = $objp->code_sell;
             $objp->aarowid_suggest = $objp->aarowid;
         } else {
