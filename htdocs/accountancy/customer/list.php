@@ -215,7 +215,7 @@ $sql.= " p.rowid as product_id, p.ref as product_ref, p.label as product_label, 
 $sql.= " p.accountancy_code_sell_intra as code_sell_intra, p.accountancy_code_sell_export as code_sell_export,";
 $sql.= " aa.rowid as aarowid, aa2.rowid as aarowid_intra, aa3.rowid as aarowid_export,";
 $sql.= " co.code as country_code, co.label as country,";
-$sql.= " s.tva_intra";
+$sql.= " s.tva_intra, s.fk_pays as country_sell";
 $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListSelect', $parameters);    // Note that $action and $object may have been modified by hook
 $sql.=$hookmanager->resPrint;
@@ -440,7 +440,7 @@ if ($result) {
 		$code_sell_p_notset = '';
 		$objp->aarowid_suggest = $objp->aarowid;
 
-        $isinEEC = isInEEC($objp->country_code);
+        $isinEEC = isInEEC($objp, $country_code_in_EEC);
 
     	if ($objp->type_l == 1) {
 			$objp->code_sell_l = (! empty($conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT) ? $conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT : '');
@@ -458,12 +458,14 @@ if ($result) {
         if ($objp->country_sell == '1') {
             $objp->code_sell_p = $objp->code_sell;
             $objp->aarowid_suggest = $objp->aarowid;
-        } elseif ($isinEEC === true) {
-            $objp->code_sell_p = $objp->code_sell_intra;
-            $objp->aarowid_suggest = $objp->aarowid_intra;
         } else {
-            $objp->code_sell_p = $objp->code_sell_export;
-            $objp->aarowid_suggest = $objp->aarowid_export;
+            if ($isinEEC == true) {
+                $objp->code_sell_p = $objp->code_sell_intra;
+                $objp->aarowid_suggest = $objp->aarowid_intra;
+            } else {
+                $objp->code_sell_p = $objp->code_sell_export;
+                $objp->aarowid_suggest = $objp->aarowid_export;
+            }
         }
 
 		if (! empty($objp->code_sell)) {
