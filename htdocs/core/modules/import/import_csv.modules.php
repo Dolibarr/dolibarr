@@ -64,7 +64,7 @@ class ImportCsv extends ModeleImports
 
 	/**
      * Dolibarr version of driver
-     * @public string
+     * @var string
      */
 	public $version = 'dolibarr';
 
