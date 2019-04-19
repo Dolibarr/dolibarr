@@ -1556,7 +1556,7 @@ class Societe extends CommonObject
 			// Remove third party  TODO trigger for external action linked to these accounts
 			if (! $error)
 			{
-				$sql = "DELETE FROM ".MAIN_DB_PREFIX."societe";
+				$sql = "DELETE FROM ".MAIN_DB_PREFIX."societe_account";
 				$sql.= " WHERE rowid = " . $id;
 				if (! $this->db->query($sql))
 				{
