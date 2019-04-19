@@ -1557,7 +1557,7 @@ class Societe extends CommonObject
 			if (! $error)
 			{
 				$sql = "DELETE FROM ".MAIN_DB_PREFIX."societe_account";
-				$sql.= " WHERE rowid = " . $id;
+				$sql.= " WHERE fk_soc = " . $id;
 				if (! $this->db->query($sql))
 				{
 					$error++;
