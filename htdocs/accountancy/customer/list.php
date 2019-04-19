@@ -215,7 +215,7 @@ $sql.= " p.rowid as product_id, p.ref as product_ref, p.label as product_label, 
 $sql.= " p.accountancy_code_sell_intra as code_sell_intra, p.accountancy_code_sell_export as code_sell_export,";
 $sql.= " aa.rowid as aarowid, aa2.rowid as aarowid_intra, aa3.rowid as aarowid_export,";
 $sql.= " co.code as country_code, co.label as country,";
-$sql.= " s.tva_intra, s.fk_pays as country_sell";
+$sql.= " s.tva_intra";
 $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListSelect', $parameters);    // Note that $action and $object may have been modified by hook
 $sql.=$hookmanager->resPrint;
@@ -421,6 +421,8 @@ if ($result) {
 	$facture_static = new Facture($db);
 	$product_static = new Product($db);
 
+    $isSellerInEEC = isInEEC($mysoc);
+
 	while ( $i < min($num_lines, $limit) ) {
 		$objp = $db->fetch_object($result);
 
@@ -440,7 +442,7 @@ if ($result) {
 		$code_sell_p_notset = '';
 		$objp->aarowid_suggest = $objp->aarowid;
 
-        $isinEEC = isInEEC($objp);
+        $isBuyerInEEC = isInEEC($objp);
 
     	if ($objp->type_l == 1) {
 			$objp->code_sell_l = (! empty($conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT) ? $conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT : '');
@@ -455,14 +457,14 @@ if ($result) {
 		}
 		if ($objp->code_sell_l == -1) $objp->code_sell_l='';
 
-        if ($objp->country_sell == '1') {
+        if ($objp->country_code == $mysoc->country_code) {  // If buyer in same country than seller
             $objp->code_sell_p = $objp->code_sell;
             $objp->aarowid_suggest = $objp->aarowid;
         } else {
-            if ($isinEEC == true) {
+            if ($isSellerInEEC && $isBuyerInEEC) {          // European intravat sale
                 $objp->code_sell_p = $objp->code_sell_intra;
                 $objp->aarowid_suggest = $objp->aarowid_intra;
-            } else {
+            } else {                                        // Foreign sale
                 $objp->code_sell_p = $objp->code_sell_export;
                 $objp->aarowid_suggest = $objp->aarowid_export;
             }
