@@ -31,7 +31,7 @@ class mod_expedition_ribera extends ModelNumRefExpedition
 {
 	/**
      * Dolibarr version of the loaded document
-     * @public string
+     * @var string
      */
 	public $version = 'dolibarr';
 

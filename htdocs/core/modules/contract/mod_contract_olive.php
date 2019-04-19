@@ -54,7 +54,7 @@ class mod_contract_olive extends ModelNumRefContracts
 
 	/**
      * Dolibarr version of the loaded document
-     * @public string
+     * @var string
      */
 	public $version = 'dolibarr';    		// 'development', 'experimental', 'dolibarr'
 
