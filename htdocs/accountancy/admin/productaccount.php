@@ -318,8 +318,11 @@ if ($result)
 	$varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
 	$selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
 
+	$buttonsave = '<input type="submit" class="button" id="changeaccount" name="changeaccount" value="' . $langs->trans("Save") . '">';
+	//print '<br><div class="center">'.$buttonsave.'</div>';
+	
 	$texte=$langs->trans("ListOfProductsServices");
-	print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, '', 0, '', '', $limit);
+	print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $buttonsave, $num, $nbtotalofrecords, '', 0, '', '', $limit);
 
 	print '<div class="div-table-responsive">';
 	print '<table class="liste '.($moreforfilter?"listwithfilterbefore":"").'">';
@@ -474,8 +477,8 @@ if ($result)
 
 	            if (atleastoneselected) jQuery("#changeaccount").removeAttr(\'disabled\');
 	            else jQuery("#changeaccount").attr(\'disabled\',\'disabled\');
-	            if (atleastoneselected) jQuery("#changeaccount").attr(\'class\',\'butAction\');
-	            else jQuery("#changeaccount").attr(\'class\',\'butActionRefused\');
+	            if (atleastoneselected) jQuery("#changeaccount").attr(\'class\',\'button\');
+	            else jQuery("#changeaccount").attr(\'class\',\'button\');
         	}
         	jQuery(".checkforselect, #checkallactions").click(function() {
         		init_savebutton();
@@ -492,9 +495,6 @@ if ($result)
         	});
         });
         </script>';
-
-
-	print '<br><div class="center"><input type="submit" class="butAction" id="changeaccount" name="changeaccount" value="' . $langs->trans("Save") . '"></div>';
 
 	print '</form>';
 
