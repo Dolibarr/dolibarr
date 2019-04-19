@@ -321,7 +321,7 @@ if ($modecompta == 'CREANCES-DETTES')
 
     //select thirdparty
     print '</br>';
-    print $langs->trans("ThirdParty") . ': ' . $form->select_thirdparty_list($selected_soc, 'search_soc','',1);
+    print $langs->trans("ThirdParty") . ': ' . $form->select_thirdparty_list($selected_soc, 'search_soc', '', 1);
     print '</td>';
 
     print '<td colspan="5" class="right">';
