@@ -440,7 +440,7 @@ if ($result) {
 		$code_sell_p_notset = '';
 		$objp->aarowid_suggest = $objp->aarowid;
 
-        $isinEEC = isInEEC($objp, $country_code_in_EEC);
+        $isinEEC = isInEEC($objp);
 
     	if ($objp->type_l == 1) {
 			$objp->code_sell_l = (! empty($conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT) ? $conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT : '');
