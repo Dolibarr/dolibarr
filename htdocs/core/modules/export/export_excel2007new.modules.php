@@ -35,7 +35,7 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 class ExportExcel2007new extends ModeleExports
 {
 	/**
-	 * @var int ID
+	 * @var string ID
 	 */
 	public $id;
 
