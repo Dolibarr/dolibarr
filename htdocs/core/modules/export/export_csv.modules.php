@@ -33,7 +33,7 @@ set_time_limit(0);
 class ExportCsv extends ModeleExports
 {
 	/**
-	 * @var int ID
+	 * @var string ID ex: csv, tsv, excel...
 	 */
 	public $id;
 
