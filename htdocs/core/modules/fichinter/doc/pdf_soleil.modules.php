@@ -136,10 +136,10 @@ class pdf_soleil extends ModelePDFFicheinter
 		$this->marge_basse =isset($conf->global->MAIN_PDF_MARGIN_BOTTOM)?$conf->global->MAIN_PDF_MARGIN_BOTTOM:10;
 
 		$this->option_logo = 1;                    // Display logo
-		$this->option_tva = 1;                     // Manage the vat option FACTURE_TVAOPTION
-		$this->option_modereg = 1;                 // Display payment mode
-		$this->option_condreg = 1;                 // Display payment terms
-		$this->option_codeproduitservice = 1;      // Display product-service code
+		$this->option_tva = 0;                     // Manage the vat option FACTURE_TVAOPTION
+		$this->option_modereg = 0;                 // Display payment mode
+		$this->option_condreg = 0;                 // Display payment terms
+		$this->option_codeproduitservice = 0;      // Display product-service code
 		$this->option_multilang = 1;               // Available in several languages
 		$this->option_draft_watermark = 1;		   // Support add of a watermark on drafts
 
