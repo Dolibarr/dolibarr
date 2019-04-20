@@ -289,3 +289,9 @@ DELETE FROM llx_const WHERE name = 'THEME_ELDY_USE_CHECKED' AND value = '0';
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('TICKET_CLOSE','Ticket closed','Executed when a ticket is closed','ticket',164);
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('TICKET_SENTBYMAIL','Ticket message sent by email','Executed when a message is sent from the ticket record','ticket',166);
 
+ALTER TABLE llx_element_resources ADD fk_parent INTEGER DEFAULT 0 NOT NULL AFTER rowid;
+
+ALTER TABLE llx_element_resources DROP INDEX idx_element_resources_idx1;
+ALTER TABLE llx_element_resources DROP INDEX idx_element_element_element_id;
+ALTER TABLE llx_element_resources ADD INDEX idx_element_resources_resource (resource_id, resource_type);
+ALTER TABLE llx_element_resources ADD INDEX idx_element_resources_element (element_id, element_type);

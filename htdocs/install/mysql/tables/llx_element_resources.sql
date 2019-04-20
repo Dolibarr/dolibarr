@@ -20,6 +20,7 @@
 CREATE TABLE llx_element_resources
 (
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
+  fk_parent       integer DEFAULT 0 NOT NULL,
   element_id	  integer,
   element_type    varchar(64),
   resource_id     integer,			-- id of resource or id of user
