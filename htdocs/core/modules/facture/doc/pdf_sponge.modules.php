@@ -166,8 +166,8 @@ class pdf_sponge extends ModelePDFFactures
 		$this->option_condreg = 1;                 // Display payment terms
 		$this->option_codeproduitservice = 1;      // Display product-service code
 		$this->option_multilang = 1;               // Available in several languages
-		$this->option_escompte = 0;                // Displays if there has been a discount
-		$this->option_credit_note = 0;             // Support credit notes
+		$this->option_escompte = 1;                // Displays if there has been a discount
+		$this->option_credit_note = 1;             // Support credit notes
 		$this->option_freetext = 1;				   // Support add of a personalised text
 		$this->option_draft_watermark = 1;		   // Support add of a watermark on drafts
 
