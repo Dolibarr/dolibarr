@@ -12,9 +12,9 @@ $form= new Form($db);
 if (! empty($conf->use_javascript_ajax))
 {
 	print '<div id="'.$resource_obj.'iddivjstreecontrol">';
-	print '<a href="#">'.img_picto('','object_category').' '.$langs->trans("UndoExpandAll").'</a>';
+	print '<a href="#">'.img_picto('', 'object_category').' '.$langs->trans("UndoExpandAll").'</a>';
 	print '&nbsp;&nbsp;|&nbsp;&nbsp;';
-	print '<a href="#">'.img_picto('','object_category-expanded').' '.$langs->trans("ExpandAll").'</a>';
+	print '<a href="#">'.img_picto('', 'object_category-expanded').' '.$langs->trans("ExpandAll").'</a>';
 	print '</div>';
 }
 
@@ -93,14 +93,14 @@ $nbofentries=(count($data) - 1);
 if ($nbofentries > 0)
 {
 	print '<tr '.$bc[0].'><td colspan="5">';
-	tree_recur($data,$data[0],0, $resource_obj.'iddivjstree');
+	tree_recur($data, $data[0], 0, $resource_obj.'iddivjstree');
 	print '</td></tr>';
 }
 else
 {
 	print '<tr><td colspan="5">';
 	print '<table class="nobordernopadding"><tr class="nobordernopadding">';
-	print '<td>'.img_picto_common('','treemenu/branchbottom.gif').'</td>';
+	print '<td>'.img_picto_common('', 'treemenu/branchbottom.gif').'</td>';
 	print '<td valign="middle">'.$langs->trans("NoResourceLinked").'</td>';
 	print '</table></tr>';
 	print '</td></tr>';

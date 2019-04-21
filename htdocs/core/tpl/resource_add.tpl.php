@@ -33,19 +33,19 @@ $out .= $formresources->select_resource_list($selected, 'fk_resource', '', 1, 1,
 // Parent
 $outputmode = !empty($selected) && ($element == "product" || $element == 'service')?0:2;
 if ($outputmode == 0) $out .= ' '.$langs->trans("In").' ';
-$out .= $formresources->select_tree_resources($filtered_tree, $root_excluded, $parent, 'parent', 64, $outputmode);
+$out .= $formresources->selectTreeResources($filtered_tree, $root_excluded, $parent, 'parent', 64, $outputmode);
 
 //Close resource sel div
 $out .= '</div>';
 
 //Mandatory
 $out .= '<div class="tagtd"><label>'.$langs->trans('Busy').'</label> ';
-$out .= $form->selectyesno('busy',$busy?$busy:1,1);
+$out .= $form->selectyesno('busy', $busy?$busy:1, 1);
 $out .= '</div>';
 
 //Mandatory
 $out .= '<div class="tagtd"><label>'.$langs->trans('Mandatory').'</label> ';
-$out .= $form->selectyesno('mandatory',$mandatory==""?1:$mandatory,1);
+$out .= $form->selectyesno('mandatory', $mandatory==""?1:$mandatory, 1);
 $out .= '</div>';
 
 $out .= '<div class="tagtd right">';

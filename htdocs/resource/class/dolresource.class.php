@@ -1022,7 +1022,7 @@ class Dolresource extends CommonObject
      * @return  array|int               Array of resources or error int.
      * @throws Exception
      */
-    function getFullTree($element_id, $element_type)
+    public function getFullTree($element_id, $element_type)
     {
         dol_syslog(__METHOD__, LOG_DEBUG);
         $tree = array();
@@ -1125,7 +1125,7 @@ class Dolresource extends CommonObject
      *    @param	int		$exclude_resource	Exclude the leafs with this resource id or containing this resource.
      *    @return	bool						Returns if root is excluded
      */
-    function filterTree(&$tree, $resource_type='', $exclude_resource=0)
+    public function filterTree(&$tree, $resource_type = '', $exclude_resource = 0)
     {
         if (!empty($resource_type))
         {

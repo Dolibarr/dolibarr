@@ -69,7 +69,7 @@ $cancel                 = GETPOST('cancel', 'alpha');
 $confirm                = GETPOST('confirm', 'alpha');
 $socid                  = GETPOST('socid', 'int');
 $selected               = GETPOST('selected', 'int') != "-1" ? intval(GETPOST('selected', 'int')) : "";
-$parent                 = intval(GETPOST('parent','int'));
+$parent                 = intval(GETPOST('parent', 'int'));
 
 if ($socid > 0) // Special for thirdparty
 {
@@ -181,7 +181,7 @@ $form=new Form($db);
 $pagetitle=$langs->trans('ResourceElementPage');
 $arrayofjs=array('/includes/jquery/plugins/jquerytreeview/jquery.treeview.js', '/includes/jquery/plugins/jquerytreeview/lib/jquery.cookie.js');
 $arrayofcss=array('/includes/jquery/plugins/jquerytreeview/jquery.treeview.css');
-llxHeader('',$pagetitle,'','',0,0,$arrayofjs,$arrayofcss);
+llxHeader('', $pagetitle, '', '', 0, 0, $arrayofjs, $arrayofcss);
 
 
 // Load available resource, declared by modules

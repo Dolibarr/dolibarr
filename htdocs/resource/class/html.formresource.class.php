@@ -168,7 +168,7 @@ class FormResource
      *    @param    int     $outputmode     0=HTML select string, 1=Array, 2=Hidden mode
      *    @return   string
      */
-    function select_tree_resources($tree, $root_excluded, $selected='', $htmlname="parent", $maxlength=64, $outputmode=0)
+    public function selectTreeResources($tree, $root_excluded, $selected = '', $htmlname = "parent", $maxlength = 64, $outputmode = 0)
     {
         global $langs;
         $langs->load("resource");
@@ -211,7 +211,7 @@ class FormResource
                     {
                         $add = 'selected ';
                     }
-                    $output.= '<option '.$add.'value="'.$id.'">'.dol_trunc($tree[$id]['path'],$maxlength,'middle').'</option>';
+                    $output.= '<option '.$add.'value="'.$id.'">'.dol_trunc($tree[$id]['path'], $maxlength, 'middle').'</option>';
 
                     $outarray[$id] = $tree[$id]['path'];
                 }
