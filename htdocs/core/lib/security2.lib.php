@@ -448,14 +448,13 @@ function encodedecode_dbpassconf($level = 0)
  * @return		string								New value for password
  * @see dol_hash()
  */
-function getRandomPassword($generic = false, $replaceambiguouschars = null)
+function getRandomPassword($generic = false, $replaceambiguouschars = null, $length = 32)
 {
 	global $db,$conf,$langs,$user;
 
 	$generated_password='';
 	if ($generic)
 	{
-		$length = 32;
 		$lowercase = "qwertyuiopasdfghjklzxcvbnm";
 		$uppercase = "ASDFGHJKLZXCVBNMQWERTYUIOP";
 		$numbers = "1234567890";
