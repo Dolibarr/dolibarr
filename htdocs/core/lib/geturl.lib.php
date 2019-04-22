@@ -22,10 +22,10 @@
  */
 
 /**
- * Function get content from an URL (use proxy if proxy defined)
+ * Function to get a content from an URL (use proxy if proxy defined)
  *
  * @param	string	  $url 				    URL to call.
- * @param	string    $postorget		    'POST', 'GET', 'HEAD', 'PUT', 'PUTALREADYFORMATED', 'DELETE'
+ * @param	string    $postorget		    'POST', 'GET', 'HEAD', 'PUT', 'PUTALREADYFORMATED', 'POSTALREADYFORMATED', 'DELETE'
  * @param	string    $param			    Parameters of URL (x=value1&y=value2) or may be a formated content with PUTALREADYFORMATED
  * @param	integer   $followlocation		1=Follow location, 0=Do not follow
  * @param	string[]  $addheaders			Array of string to add into header. Example: ('Accept: application/xrds+xml', ....)
