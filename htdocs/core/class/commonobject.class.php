@@ -5475,7 +5475,7 @@ abstract class CommonObject
 			{
 				$morecss = 'minwidth100imp';
 			}
-			elseif ($type == 'datetime')
+			elseif ($type == 'datetime' || $type == 'time')
 			{
 				$morecss = 'minwidth200imp';
 			}
@@ -5519,7 +5519,20 @@ abstract class CommonObject
 			// TODO Must also support $moreparam
 			$out = $form->selectDate($value, $keyprefix.$key.$keysuffix, $showtime, $showtime, $required, '', 1, (($keyprefix != 'search_' && $keyprefix != 'search_options_') ? 1 : 0), 0, 1);
 		}
-		elseif (in_array($type, array('int','integer')))
+		elseif ($type=='time')
+		{
+			$tmp=explode(',',$size);
+			$newsize=$tmp[0];
+
+			$showtime = 1;
+
+			// Do not show current date when field not required (see selectDate() method)
+			if (!$required && $value == '') $value = '-1';
+
+			// TODO Must also support $moreparam
+			$out = $form->selectDate($value, $keyprefix.$key.$keysuffix, $showtime, $showtime, $required, '', 0, (($keyprefix != 'search_' && $keyprefix != 'search_options_') ? 1 : 0), 0, 1,'','',1);
+		}
+		elseif (in_array($type,array('int','integer')))
 		{
 			$tmp=explode(',', $size);
 			$newsize=$tmp[0];
@@ -6072,7 +6085,7 @@ abstract class CommonObject
 			{
 				$morecss = 'minwidth100imp';
 			}
-			elseif ($type == 'datetime')
+			elseif ($type == 'datetime'|| $type == 'time')
 			{
 				$morecss = 'minwidth200imp';
 			}
@@ -6120,6 +6133,14 @@ abstract class CommonObject
 		{
 			if(! empty($value)) {
 				$value=dol_print_date($value, 'dayhour');
+			} else {
+				$value='';
+			}
+		}
+		elseif ($type == 'time')
+		{
+			if(! empty($value)) {
+				$value=dol_print_date($value,'hour');
 			} else {
 				$value='';
 			}
