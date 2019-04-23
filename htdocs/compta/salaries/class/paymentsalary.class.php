@@ -115,13 +115,9 @@ class PaymentSalary extends CommonObject
         $error=0;
 
         // Clean parameters
-        $this->fk_user=trim($this->fk_user);
         $this->amount=trim($this->amount);
         $this->label=trim($this->label);
         $this->note=trim($this->note);
-        $this->fk_bank=trim($this->fk_bank);
-        $this->fk_user_author=trim($this->fk_user_author);
-        $this->fk_user_modif=trim($this->fk_user_modif);
 
         // Check parameters
         if (empty($this->fk_user) || $this->fk_user < 0)
@@ -140,16 +136,16 @@ class PaymentSalary extends CommonObject
         $sql.= " datep='".$this->db->idate($this->datep)."',";
         $sql.= " datev='".$this->db->idate($this->datev)."',";
         $sql.= " amount=".price2num($this->amount).",";
-        $sql.= " fk_projet='".$this->db->escape($this->fk_project)."',";
+        $sql.= " fk_projet=".((int) $this->fk_project).",";
         $sql.= " fk_typepayment=".$this->fk_typepayment."',";
         $sql.= " num_payment='".$this->db->escape($this->num_payment)."',";
         $sql.= " label='".$this->db->escape($this->label)."',";
         $sql.= " datesp='".$this->db->idate($this->datesp)."',";
         $sql.= " dateep='".$this->db->idate($this->dateep)."',";
         $sql.= " note='".$this->db->escape($this->note)."',";
-        $sql.= " fk_bank=".($this->fk_bank > 0 ? "'".$this->db->escape($this->fk_bank)."'":"null").",";
-        $sql.= " fk_user_author=".$this->fk_user_author.",";
-        $sql.= " fk_user_modif=".$this->fk_user_modif;
+        $sql.= " fk_bank=".($this->fk_bank > 0 ? (int) $this->fk_bank : 'null').",";
+        $sql.= " fk_user_author=".((int) $this->fk_user_author).",";
+        $sql.= " fk_user_modif=".($this->fk_user_modif > 0 ? (int) $this->fk_user_modif : 'null');
 
         $sql.= " WHERE rowid=".$this->id;
 

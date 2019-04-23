@@ -114,22 +114,17 @@ class AdvanceTargetingMailing extends CommonObject
 		$error=0;
 
 		// Clean parameters
-		if (isset($this->fk_element)) $this->fk_element=trim($this->fk_element);
+		if (isset($this->fk_element)) $this->fk_element=(int) $this->fk_element;
 		if (isset($this->type_element)) $this->type_element=trim($this->type_element);
 
 		if (isset($this->name)) $this->name=trim($this->name);
 		if (isset($this->filtervalue)) $this->filtervalue=trim($this->filtervalue);
-		if (isset($this->fk_user_author)) $this->fk_user_author=trim($this->fk_user_author);
-		if (isset($this->fk_user_mod)) $this->fk_user_mod=trim($this->fk_user_mod);
-
-
 
 		// Check parameters
 		// Put here code to add control on parameters values
 
 		// Insert request
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."advtargetemailing(";
-
 		$sql.= "name,";
 		$sql.= "entity,";
 		$sql.= "fk_element,";
@@ -138,10 +133,7 @@ class AdvanceTargetingMailing extends CommonObject
 		$sql.= "fk_user_author,";
 		$sql.= "datec,";
 		$sql.= "fk_user_mod";
-
-
 		$sql.= ") VALUES (";
-
 		$sql.= " ".(! isset($this->name)?'NULL':"'".$this->db->escape($this->name)."'").",";
 		$sql.= " ".$conf->entity.",";
 		$sql.= " ".(! isset($this->fk_element)?'NULL':"'".$this->db->escape($this->fk_element)."'").",";
@@ -149,9 +141,7 @@ class AdvanceTargetingMailing extends CommonObject
 		$sql.= " ".(! isset($this->filtervalue)?'NULL':"'".$this->db->escape($this->filtervalue)."'").",";
 		$sql.= " ".$user->id.",";
 		$sql.= " '".$this->db->idate(dol_now())."',";
-		$sql.= " ".$user->id;
-
-
+		$sql.= " null";
 		$sql.= ")";
 
 		$this->db->begin();
@@ -396,14 +386,10 @@ class AdvanceTargetingMailing extends CommonObject
 		$error=0;
 
 		// Clean parameters
-		if (isset($this->fk_element)) $this->fk_element=trim($this->fk_element);
+		if (isset($this->fk_element)) $this->fk_element=(int) $this->fk_element;
 		if (isset($this->type_element)) $this->type_element=trim($this->type_element);
 		if (isset($this->name)) $this->name=trim($this->name);
 		if (isset($this->filtervalue)) $this->filtervalue=trim($this->filtervalue);
-		if (isset($this->fk_user_author)) $this->fk_user_author=trim($this->fk_user_author);
-		if (isset($this->fk_user_mod)) $this->fk_user_mod=trim($this->fk_user_mod);
-
-
 
 		// Check parameters
 		// Put here code to add a control on parameters values
@@ -417,7 +403,6 @@ class AdvanceTargetingMailing extends CommonObject
 		$sql.= " type_element=".(isset($this->type_element)?"'".$this->db->escape($this->type_element)."'":"null").",";
 		$sql.= " filtervalue=".(isset($this->filtervalue)?"'".$this->db->escape($this->filtervalue)."'":"null").",";
 		$sql.= " fk_user_mod=".$user->id;
-
 		$sql.= " WHERE rowid=".$this->id;
 
 		$this->db->begin();
