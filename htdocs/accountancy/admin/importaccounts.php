@@ -22,6 +22,7 @@
  * \file        htdocs/accountancy/admin/importaccounts.php
  * \ingroup		Advanced accountancy
  * \brief 		Page import accounting account
+ * @TODO What is this page for ? Remove this ?
  */
 require '../../main.inc.php';
 
