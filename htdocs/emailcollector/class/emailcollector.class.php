@@ -184,7 +184,7 @@ class EmailCollector extends CommonObject
      */
     public function __construct(DoliDB $db)
     {
-        global $conf, $langs, $user;
+        global $conf, $langs;
 
         $this->db = $db;
 
@@ -234,7 +234,7 @@ class EmailCollector extends CommonObject
      */
     public function createFromClone(User $user, $fromid)
     {
-        global $langs, $hookmanager, $extrafields;
+        global $langs, $extrafields;
         $error = 0;
 
         dol_syslog(__METHOD__, LOG_DEBUG);
@@ -337,8 +337,6 @@ class EmailCollector extends CommonObject
 
         $obj_ret = array();
 
-        $socid = $user->societe_id ? $user->societe_id : '';
-
         $sql = "SELECT s.rowid";
         $sql.= " FROM ".MAIN_DB_PREFIX."emailcollector_emailcollector as s";
         $sql.= ' WHERE s.entity IN ('.getEntity('emailcollector').')';
@@ -358,6 +356,7 @@ class EmailCollector extends CommonObject
         $result = $this->db->query($sql);
         if ($result) {
             $num = $this->db->num_rows($result);
+            $i = 0;
             while ($i < $num)
             {
                 $obj = $this->db->fetch_object($result);
@@ -415,14 +414,11 @@ class EmailCollector extends CommonObject
      */
     public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
     {
-        global $db, $conf, $langs, $hookmanager;
-        global $dolibarr_main_authentication, $dolibarr_main_demo;
-        global $menumanager;
+        global $conf, $langs, $hookmanager;
 
         if (! empty($conf->dol_no_mouse_hover)) $notooltip=1;   // Force disable tooltips
 
         $result = '';
-        $companylink = '';
 
         $label = '<u>' . $langs->trans("EmailCollector") . '</u>';
         $label.= '<br>';
@@ -1023,6 +1019,7 @@ class EmailCollector extends CommonObject
                 function createPartArray($structure, $prefix = "")
                 {
                     //print_r($structure);
+                    $part_array=array();
                     if (count($structure->parts) > 0) {    // There some sub parts
                         foreach ($structure->parts as $count => $part) {
                             add_part_to_array($part, $prefix.($count+1), $part_array);
@@ -1348,7 +1345,7 @@ class EmailCollector extends CommonObject
                                     else
                                     {
                                         // Nothing can be done for this param
-                                        $errorforaction++;
+                                        $errorforactions++;
                                         $this->error = 'The extract rule to use to load thirdparty has on an unknown source (must be HEADER, SUBJECT or BODY)';
                                         $this->errors[] = $this->error;
                                     }
@@ -1361,7 +1358,7 @@ class EmailCollector extends CommonObject
                                 }
                                 else
                                 {
-                                    $errorforaction++;
+                                    $errorforactions++;
                                     $this->error = 'Bad syntax for description of action parameters: '.$actionparam;
                                     $this->errors[] = $this->error;
                                     break;
