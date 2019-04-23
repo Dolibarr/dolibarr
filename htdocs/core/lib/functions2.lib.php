@@ -565,6 +565,28 @@ function isValidUrl($url, $http = 0, $pass = 0, $port = 0, $path = 0, $query = 0
 }
 
 /**
+ *	Check if VAT numero is valid (check done on syntax only, no database or remote access)
+ *
+ *	@param	Societe   $company       VAT number
+ *	@return int					                 1=Check is OK, 0=Check is KO
+ */
+function isValidVATID($company)
+{
+    if ($company->isInEEC())    // Syntax check rules for EEC countries
+    {
+        $vatprefix = $company->country_code;
+        if ($vatprefix == 'GR') $vatprefix = '(EL|GR)';
+        else $vatprefix = preg_quote($vatprefix, '/');
+        if (! preg_match('/^'.$vatprefix.'[a-zA-Z0-9\-\.]{5,10}$/', $company->tva_intra))
+        {
+            return 0;
+        }
+    }
+
+    return 1;
+}
+
+/**
  *	Clean an url string
  *
  *	@param	string	$url		Url
