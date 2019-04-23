@@ -3214,7 +3214,7 @@ class User extends CommonObject
 
 		$sql="SELECT t.rowid";
 		$sql.= ' FROM '.MAIN_DB_PREFIX .$this->table_element.' as t ';
-		$sql.= " WHERE 1";
+		$sql.= " WHERE t.entity IN (".getEntity('user').")";
 
 		// Manage filter
 		$sqlwhere = array();
