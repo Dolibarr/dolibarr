@@ -403,6 +403,7 @@ class AdvanceTargetingMailing extends CommonObject
 		$sql.= " type_element=".(isset($this->type_element)?"'".$this->db->escape($this->type_element)."'":"null").",";
 		$sql.= " filtervalue=".(isset($this->filtervalue)?"'".$this->db->escape($this->filtervalue)."'":"null").",";
 		$sql.= " fk_user_mod=".$user->id;
+
 		$sql.= " WHERE rowid=".$this->id;
 
 		$this->db->begin();

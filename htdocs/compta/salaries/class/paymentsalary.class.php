@@ -143,7 +143,7 @@ class PaymentSalary extends CommonObject
         $sql.= " datesp='".$this->db->idate($this->datesp)."',";
         $sql.= " dateep='".$this->db->idate($this->dateep)."',";
         $sql.= " note='".$this->db->escape($this->note)."',";
-        $sql.= " fk_bank=".($this->fk_bank > 0 ? (int) $this->fk_bank : 'null').",";
+        $sql.= " fk_bank=".($this->fk_bank > 0 ? (int) $this->fk_bank : "null").",";
         $sql.= " fk_user_author=".((int) $this->fk_user_author).",";
         $sql.= " fk_user_modif=".($this->fk_user_modif > 0 ? (int) $this->fk_user_modif : 'null');
 

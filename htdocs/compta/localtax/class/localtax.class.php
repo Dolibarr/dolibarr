@@ -182,9 +182,9 @@ class Localtax extends CommonObject
 		$sql.= " amount=".price2num($this->amount).",";
 		$sql.= " label='".$this->db->escape($this->label)."',";
 		$sql.= " note='".$this->db->escape($this->note)."',";
-		$sql.= " fk_bank=".((int) $this->fk_bank).",";
-		$sql.= " fk_user_creat=".((int) $this->fk_user_creat).",";
-		$sql.= " fk_user_modif=".((int) $this->fk_user_modif);
+		$sql.= " fk_bank=".(int) $this->fk_bank.",";
+		$sql.= " fk_user_creat=".(int) $this->fk_user_creat.",";
+		$sql.= " fk_user_modif=".(int) $this->fk_user_modif;
 		$sql.= " WHERE rowid=".$this->id;
 
         dol_syslog(get_class($this)."::update", LOG_DEBUG);
