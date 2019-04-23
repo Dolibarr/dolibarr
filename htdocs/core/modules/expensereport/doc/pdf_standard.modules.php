@@ -326,7 +326,7 @@ class pdf_standard extends ModeleExpenseReport
 					complete_substitutions_array($substitutionarray, $outputlangs, $object);
 					$notetoshow = make_substitutions($notetoshow, $substitutionarray, $outputlangs);
 					$notetoshow = convertBackOfficeMediasLinksToPublicLinks($notetoshow);
-					
+
 					$tab_top = 95;
 
 					$pdf->SetFont('', '', $default_font_size - 1);
@@ -767,11 +767,10 @@ class pdf_standard extends ModeleExpenseReport
 				$pdf->MultiCell(80, 4, $expense_receiver, 0, 'L');
 			}
 
-			if (! empty($conf->global->MAIN_INVERT_SENDER_RECIPIENT)) $posx=$this->marge_gauche;
-
 			// Show recipient
 			$posy=50;
-			$posx=10;
+			$posx=100;
+			if (! empty($conf->global->MAIN_INVERT_SENDER_RECIPIENT)) $posx=$this->marge_gauche;
 
 			// Show recipient frame
 			$pdf->SetTextColor(0, 0, 0);
