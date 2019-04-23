@@ -2225,6 +2225,10 @@ div.tabBar table.tableforservicepart2:last-child {
 	height: unset;
     padding-top: 0 !important;
 }
+/* Payment Screen : Pointer cursor in the autofill image */
+table.noborder .AutoFillAmout {
+	cursor:pointer;
+}
 
 div.popuptabset {
 	padding: 6px;
