@@ -577,4 +577,29 @@ class InventoryLine extends CommonObjectLine
 	    //if ($result > 0 && ! empty($this->table_element_line)) $this->fetchLines();
 	    return $result;
 	}
+
+	/**
+	 * Update object into database
+	 *
+	 * @param  User $user      User that modifies
+	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
+	 * @return int             <0 if KO, >0 if OK
+	 */
+	public function update(User $user, $notrigger = false)
+	{
+	    return $this->updateCommon($user, $notrigger);
+	}
+
+	/**
+	 * Delete object in database
+	 *
+	 * @param User $user       User that deletes
+	 * @param bool $notrigger  false=launch triggers after, true=disable triggers
+	 * @return int             <0 if KO, >0 if OK
+	 */
+	public function delete(User $user, $notrigger = false)
+	{
+	    return $this->deleteCommon($user, $notrigger);
+	    //return $this->deleteCommon($user, $notrigger, 1);
+	}
 }
