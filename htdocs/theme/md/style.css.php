@@ -659,6 +659,15 @@ textarea.centpercent {
 .cursornotallowed {
 	cursor: not-allowed;
 }
+.backgroundblank {
+    background-color: #fff;
+}
+.checkboxattachfilelabel {
+    font-size: 0.85em;
+    opacity: 0.7;
+}
+
+/* Themes for badges */
 .badge {
 	display: inline-block;
 	min-width: 10px;

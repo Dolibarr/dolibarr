@@ -145,7 +145,11 @@ if (empty($reshook))
 
 	include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 
-	if (GETPOST('sendit', 'alpha')) $action='';
+	if (GETPOSTISSET('sendit'))    // If we just submit a file
+	{
+	    if ($action == 'updateline') $action='editline';   // To avoid to make the updateline now
+	    else $action='';                                   // To avoid to make the addline now
+	}
 
     include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; 	// Must be include, not include_once
 
@@ -2004,7 +2008,7 @@ else
 			        print '<tr><td colspan="' . $nbcols . '" class="right">'.$langs->trans("AmountExpected").':</td><td class="right">'.price($object->total_ttc).'</td><td></td></tr>';
 
 			        print '<tr><td colspan="' . $nbcols . '" class="right">'.$langs->trans("RemainderToPay").':</td>';
-			        print '<td align="right'.($resteapayeraffiche?' amountremaintopay':(' '.$cssforamountpaymentcomplete)).'">'.price($resteapayeraffiche).'</td><td></td></tr>';
+			        print '<td class="right'.($resteapayeraffiche?' amountremaintopay':(' '.$cssforamountpaymentcomplete)).'">'.price($resteapayeraffiche).'</td><td></td></tr>';
 
 				    $db->free($resql);
 				}
@@ -2209,7 +2213,7 @@ else
 							{
 								print '<td class="nowrap right">';
 
-								print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=editline&amp;rowid='.$line->rowid.'#'.$line->rowid.'">';
+								print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=editline&amp;rowid='.$line->rowid.'">';
 								print img_edit();
 								print '</a> &nbsp; ';
 								print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete_line&amp;rowid='.$line->rowid.'">';
@@ -2224,14 +2228,18 @@ else
 
 						if ($action == 'editline' && $line->rowid == GETPOST('rowid', 'int'))
 						{
-
-						    // Add line with link to add new file or attach to an existing file
-						    $colspan = 12;
+						    // Add line with link to add new file or attach line to an existing file
+						    $colspan = 10;
 						    if (! empty($conf->projet->enabled)) $colspan++;
 						    if (!empty($conf->global->MAIN_USE_EXPENSE_IK)) $colspan++;
 
 						    print '<tr class="tredited">';
-						    print '<td colspan="'.$colspan.'" class="liste_titre">';
+
+						    print '<td class="center">';
+						    print $numline;
+						    print '</td>';
+
+						    print '<td colspan="'.($colspan-1).'" class="liste_titre">';
 						    print '<a href="" class="commonlink auploadnewfilenow reposition">'.$langs->trans("UploadANewFileNow");
 						    print img_picto($langs->trans("UploadANewFileNow"), 'chevron-down', '', false, 0, 0, '', 'marginleftonly');
 						    print '</a>';
@@ -2355,7 +2363,9 @@ else
 				}
 
 				// Add a line
-				if (($object->fk_statut == ExpenseReport::STATUS_DRAFT || $object->fk_statut == ExpenseReport::STATUS_REFUSED) && $action != 'editline' && $user->rights->expensereport->creer)
+				if (($object->fk_statut == ExpenseReport::STATUS_DRAFT || $object->fk_statut == ExpenseReport::STATUS_REFUSED)
+				    && $action != 'editline'
+				    && $user->rights->expensereport->creer)
 				{
 				    $colspan = 11;
 				    if (! empty($conf->global->MAIN_USE_EXPENSE_IK)) $colspan++;
@@ -2399,10 +2409,10 @@ else
 				            jQuery(".trattachnewfilenow").toggle();
                             jQuery(".truploadnewfilenow").hide();
                             return false;
-                        });';
-				    if (is_array(GETPOST('attachfile', 'array')) && count(GETPOST('attachfile', 'array')))
+                        });'."\n";
+				    if (is_array(GETPOST('attachfile', 'array')) && count(GETPOST('attachfile', 'array')) && $action != 'updateline')
 				    {
-				        print 'jQuery(".trattachnewfilenow").toggle();'."\n";
+				        print 'jQuery(".trattachnewfilenow").show();'."\n";
 				    }
 				    print '
                     });
