@@ -3754,6 +3754,11 @@ function dol_print_error($db = '', $error = '', $errors = null)
 		$syslog.="pid=".dol_getmypid();
 	}
 
+	if (! empty($conf->modules))
+	{
+	   $out.="<b>".$langs->trans("Modules").":</b> ".join(', ', $conf->modules)."<br>\n";
+	}
+
 	if (is_object($db))
 	{
 		if ($_SERVER['DOCUMENT_ROOT'])  // Mode web
