@@ -397,7 +397,8 @@ class ModeleBoxes // Can't be abtract as it is instantiated to build "empty" box
 		$orders = array();
 		$i = 0;
 
-		$dirwidget=array_merge(array('/core/boxes/'));
+		//$dirwidget=array_merge(array('/core/boxes/'), $conf->modules_parts['widgets']);
+		$dirwidget=array('/core/boxes/');	// $conf->modules_parts['widgets'] is not required
 		if (is_array($forcedirwidget))
 		{
 			$dirwidget=$forcedirwidget;

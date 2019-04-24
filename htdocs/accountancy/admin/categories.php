@@ -60,7 +60,7 @@ $accountingcategory = new AccountancyCategory($db);
 
 // si ajout de comptes
 if (! empty($selectcpt)) {
-	$cpts = array ();
+	$cpts = array();
 	foreach ($selectcpt as $selectedoption) {
 		if (! array_key_exists($selectedoption, $cpts))
 			$cpts[$selectedoption] = "'" . $selectedoption . "'";
@@ -71,13 +71,13 @@ if (! empty($selectcpt)) {
 	if ($return<0) {
 		setEventMessages($langs->trans('errors'), $accountingcategory->errors, 'errors');
 	} else {
-		setEventMessages($langs->trans('SetupSaved'), null, 'mesgs');
+		setEventMessages($langs->trans('RecordModifiedSuccessfully'), null, 'mesgs');
 	}
 }
 if ($action == 'delete') {
 	if ($cpt_id) {
 		if ($accountingcategory->deleteCptCat($cpt_id)) {
-			setEventMessages($langs->trans('CategoryDeleted'), null, 'mesgs');
+			setEventMessages($langs->trans('AccountRemovedFromGroup'), null, 'mesgs');
 		} else {
 			setEventMessages($langs->trans('errors'), null, 'errors');
 		}
@@ -173,8 +173,9 @@ if ($action == 'display' || $action == 'delete') {
 				print '<td>' . $cpt->label . '</td>';
 				print '<td class="right">';
 				print "<a href= '".$_SERVER['PHP_SELF']."?action=delete&account_category=" . $cat_id . "&cptid=" . $cpt->rowid."'>";
-				print img_delete($langs->trans("DeleteFromCat")).' ';
-				print $langs->trans("DeleteFromCat")."</a>";
+				print $langs->trans("DeleteFromCat");
+				print img_picto($langs->trans("DeleteFromCat"), 'unlink');
+				print "</a>";
 				print "</td>";
 				print "</tr>\n";
 			}

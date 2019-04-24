@@ -7,7 +7,7 @@
  * Copyright (C) 2005-2017  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2005       Lionel Cousteix         <etm_ltd@tiscali.co.uk>
  * Copyright (C) 2011       Herve Prot              <herve.prot@symeos.com>
- * Copyright (C) 2013-2018  Philippe Grand          <philippe.grand@atoo-net.com>
+ * Copyright (C) 2013-2019  Philippe Grand          <philippe.grand@atoo-net.com>
  * Copyright (C) 2013-2015  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2018       charlene Benke          <charlie@patas-monkey.com>
@@ -70,6 +70,7 @@ class User extends CommonObject
 	public $gender;
 	public $birth;
 	public $email;
+	public $personal_email;
 
 	public $skype;
 	public $twitter;
@@ -92,6 +93,7 @@ class User extends CommonObject
 	public $office_phone;
 	public $office_fax;
 	public $user_mobile;
+    public $personal_mobile;
 	public $admin;
 	public $login;
 	public $api_key;
@@ -108,18 +110,29 @@ class User extends CommonObject
 	//! Encrypted password in database (always defined)
 	public $pass_indatabase_crypted;
 
-	public $datec;
-	public $datem;
+	/**
+     * Date creation record (datec)
+     *
+     * @var integer
+     */
+    public $datec;
+
+	/**
+     * Date modification record (tms)
+     *
+     * @var integer
+     */
+    public $datem;
 
 	//! If this is defined, it is an external user
 	/**
 	 * @deprecated
-	 * @see socid
+	 * @see $socid
 	 */
 	public $societe_id;
 	/**
 	 * @deprecated
-	 * @see contactid
+	 * @see $contactid
 	 */
 	public $contact_id;
 	public $socid;
@@ -134,6 +147,8 @@ class User extends CommonObject
 	 * @var int User ID
 	 */
 	public $fk_user;
+	public $fk_user_expense_validator;
+    public $fk_user_holiday_validator;
 
 	public $clicktodial_url;
 	public $clicktodial_login;
@@ -231,12 +246,12 @@ class User extends CommonObject
 		$login=trim($login);
 
 		// Get user
-		$sql = "SELECT u.rowid, u.lastname, u.firstname, u.employee, u.gender, u.birth, u.email, u.job, u.skype, u.twitter, u.facebook, u.linkedin,";
-		$sql.= " u.signature, u.office_phone, u.office_fax, u.user_mobile,";
+		$sql = "SELECT u.rowid, u.lastname, u.firstname, u.employee, u.gender, u.birth, u.email, u.personal_email, u.job, u.skype, u.twitter, u.facebook, u.linkedin,";
+		$sql.= " u.signature, u.office_phone, u.office_fax, u.user_mobile, u.personal_mobile,";
 		$sql.= " u.address, u.zip, u.town, u.fk_state as state_id, u.fk_country as country_id,";
 		$sql.= " u.admin, u.login, u.note,";
 		$sql.= " u.pass, u.pass_crypted, u.pass_temp, u.api_key,";
-		$sql.= " u.fk_soc, u.fk_socpeople, u.fk_member, u.fk_user, u.ldap_sid,";
+		$sql.= " u.fk_soc, u.fk_socpeople, u.fk_member, u.fk_user, u.ldap_sid, u.fk_user_expense_validator, u.fk_user_holiday_validator,";
 		$sql.= " u.statut, u.lang, u.entity,";
 		$sql.= " u.datec as datec,";
 		$sql.= " u.tms as datem,";
@@ -334,9 +349,11 @@ class User extends CommonObject
 				$this->state        = ($obj->state!='-'?$obj->state:'');
 
 				$this->office_phone	= $obj->office_phone;
-				$this->office_fax = $obj->office_fax;
-				$this->user_mobile = $obj->user_mobile;
+				$this->office_fax   = $obj->office_fax;
+				$this->user_mobile  = $obj->user_mobile;
+                $this->personal_mobile = $obj->personal_mobile;
 				$this->email		= $obj->email;
+                $this->personal_email = $obj->personal_email;
 				$this->skype		= $obj->skype;
 				$this->twitter		= $obj->twitter;
 				$this->facebook		= $obj->facebook;
@@ -371,6 +388,8 @@ class User extends CommonObject
 				$this->contactid            = $obj->fk_socpeople;
 				$this->fk_member            = $obj->fk_member;
 				$this->fk_user        		= $obj->fk_user;
+                $this->fk_user_expense_validator = $obj->fk_user_expense_validator;
+                $this->fk_user_holiday_validator = $obj->fk_user_holiday_validator;
 
 				$this->default_range = $obj->default_range;
 				$this->default_c_exp_tax_cat = $obj->default_c_exp_tax_cat;
@@ -506,7 +525,7 @@ class User extends CommonObject
 	 *  @param	int		$entity			Entity to use
 	 *  @param  int	    $notrigger		1=Does not execute triggers, 0=Execute triggers
 	 *  @return int						> 0 if OK, < 0 if KO
-	 *  @see	clearrights, delrights, getrights
+	 *  @see	clearrights(), delrights(), getrights()
 	 */
 	public function addrights($rid, $allmodule = '', $allperms = '', $entity = 0, $notrigger = 0)
 	{
@@ -632,7 +651,7 @@ class User extends CommonObject
 	 *  @param	int		$entity		Entity to use
 	 *  @param  int	    $notrigger	1=Does not execute triggers, 0=Execute triggers
 	 *  @return int         		> 0 if OK, < 0 if OK
-	 *  @see	clearrights, addrights, getrights
+	 *  @see	clearrights(), addrights(), getrights()
 	 */
 	public function delrights($rid, $allmodule = '', $allperms = '', $entity = 0, $notrigger = 0)
 	{
@@ -748,12 +767,13 @@ class User extends CommonObject
 	 *  Clear all permissions array of user
 	 *
 	 *  @return	void
-	 *  @see	getrights
+	 *  @see	getrights()
 	 */
 	public function clearrights()
 	{
 		dol_syslog(get_class($this)."::clearrights reset user->rights");
 		$this->rights='';
+		$this->nb_rights=0;
 		$this->all_permissions_are_loaded=false;
 		$this->_tab_loaded=array();
 	}
@@ -765,7 +785,7 @@ class User extends CommonObject
 	 *	@param  string	$moduletag		Limit permission for a particular module ('' by default means load all permissions)
 	 *  @param	int		$forcereload	Force reload of permissions even if they were already loaded (ignore cache)
 	 *	@return	void
-	 *  @see	clearrights, delrights, addrights
+	 *  @see	clearrights(), delrights(), addrights()
 	 */
 	public function getrights($moduletag = '', $forcereload = 0)
 	{
@@ -1470,7 +1490,9 @@ class User extends CommonObject
 		$this->office_phone = trim($this->office_phone);
 		$this->office_fax   = trim($this->office_fax);
 		$this->user_mobile  = trim($this->user_mobile);
+        $this->personal_mobile  = trim($this->personal_mobile);
 		$this->email        = trim($this->email);
+        $this->personal_email = trim($this->personal_email);
 
 		$this->skype        = trim($this->skype);
 		$this->twitter      = trim($this->twitter);
@@ -1525,7 +1547,9 @@ class User extends CommonObject
 		$sql.= ", office_phone = '".$this->db->escape($this->office_phone)."'";
 		$sql.= ", office_fax = '".$this->db->escape($this->office_fax)."'";
 		$sql.= ", user_mobile = '".$this->db->escape($this->user_mobile)."'";
+        $sql.= ", personal_mobile = '".$this->db->escape($this->personal_mobile)."'";
 		$sql.= ", email = '".$this->db->escape($this->email)."'";
+        $sql.= ", personal_email = '".$this->db->escape($this->personal_email)."'";
 		$sql.= ", skype = '".$this->db->escape($this->skype)."'";
 		$sql.= ", twitter = '".$this->db->escape($this->twitter)."'";
 		$sql.= ", facebook = '".$this->db->escape($this->facebook)."'";
@@ -1540,6 +1564,8 @@ class User extends CommonObject
 		$sql.= ", photo = ".($this->photo?"'".$this->db->escape($this->photo)."'":"null");
 		$sql.= ", openid = ".($this->openid?"'".$this->db->escape($this->openid)."'":"null");
 		$sql.= ", fk_user = ".($this->fk_user > 0?"'".$this->db->escape($this->fk_user)."'":"null");
+        $sql.= ", fk_user_expense_validator = ".($this->fk_user_expense_validator > 0?"'".$this->db->escape($this->fk_user_expense_validator)."'":"null");
+        $sql.= ", fk_user_holiday_validator = ".($this->fk_user_holiday_validator > 0?"'".$this->db->escape($this->fk_user_holiday_validator)."'":"null");
 		if (isset($this->thm) || $this->thm != '')                 $sql.= ", thm= ".($this->thm != ''?"'".$this->db->escape($this->thm)."'":"null");
 		if (isset($this->tjm) || $this->tjm != '')                 $sql.= ", tjm= ".($this->tjm != ''?"'".$this->db->escape($this->tjm)."'":"null");
 		if (isset($this->salary) || $this->salary != '')           $sql.= ", salary= ".($this->salary != ''?"'".$this->db->escape($this->salary)."'":"null");
@@ -1975,7 +2001,7 @@ class User extends CommonObject
 		}
 		else
 		{
-			$url = $urlwithroot.'/user/passwordforgotten.php?action=validatenewpassword&username='.$this->login."&passwordhash=".dol_hash($password);
+			$url = $urlwithroot.'/user/passwordforgotten.php?action=validatenewpassword&username='.urlencode($this->login)."&passwordhash=".dol_hash($password);
 
 			$mesg.= $outputlangs->transnoentitiesnoconv("RequestToResetPasswordReceived")."\n";
 			$mesg.= $outputlangs->transnoentitiesnoconv("NewKeyWillBe")." :\n\n";
@@ -2303,7 +2329,7 @@ class User extends CommonObject
 		if ($infologin > 0)
 		{
 			$label.= '<br>';
-			$label.= '<br><u>'.$langs->trans("Connection").'</u>';
+			$label.= '<br><u>'.$langs->trans("Session").'</u>';
 			$label.= '<br><b>'.$langs->trans("IPAddress").'</b>: '.$_SERVER["REMOTE_ADDR"];
 			if (! empty($conf->global->MAIN_MODULE_MULTICOMPANY)) $label.= '<br><b>'.$langs->trans("ConnectedOnMultiCompany").':</b> '.$conf->entity.' (user entity '.$this->entity.')';
 			$label.= '<br><b>'.$langs->trans("AuthenticationMode").':</b> '.$_SESSION["dol_authmode"].(empty($dolibarr_main_demo)?'':' (demo)');
@@ -2652,6 +2678,7 @@ class User extends CommonObject
 		$this->gender='man';
 		$this->note='This is a note';
 		$this->email='email@specimen.com';
+        $this->personal_email='personalemail@specimen.com';
 		$this->skype='skypepseudo';
 		$this->twitter='twitterpseudo';
 		$this->facebook='facebookpseudo';
@@ -2659,6 +2686,7 @@ class User extends CommonObject
 		$this->office_phone='0999999999';
 		$this->office_fax='0999999998';
 		$this->user_mobile='0999999997';
+        $this->personal_mobile='0999999996';
 		$this->admin=0;
 		$this->login='dolibspec';
 		$this->pass='dolibspec';
@@ -2787,8 +2815,7 @@ class User extends CommonObject
 	/**
 	 *  Update user using data from the LDAP
 	 *
-	 *  @param	ldapuser	$ldapuser	Ladp User
-	 *
+	 *  @param	Object	$ldapuser	Ladp User
 	 *  @return int  				<0 if KO, >0 if OK
 	 */
 	public function update_ldap2dolibarr(&$ldapuser)
@@ -2829,7 +2856,7 @@ class User extends CommonObject
 	 * Return and array with all instanciated first level children users of current user
 	 *
 	 * @return	void
-	 * @see getAllChildIds
+	 * @see getAllChildIds()
 	 */
 	public function get_children()
 	{
@@ -3006,7 +3033,7 @@ class User extends CommonObject
 	 *
 	 *  @param      int      $addcurrentuser    1=Add also current user id to the list.
 	 *	@return		array		      		  	Array of user id lower than user (all levels under user). This overwrite this->users.
-	 *  @see get_children
+	 *  @see get_children()
 	 */
     public function getAllChildIds($addcurrentuser = 0)
     {

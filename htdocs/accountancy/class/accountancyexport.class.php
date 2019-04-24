@@ -31,20 +31,15 @@
  * \brief 		Class accountancy export
  */
 
-/**
- * Class AccountancyExport
- *
- * Manage the different format accountancy export
- */
-
 require_once DOL_DOCUMENT_ROOT . '/core/lib/functions.lib.php';
 
+/**
+ * Manage the different format accountancy export
+ */
 class AccountancyExport
 {
-	/**
-	 * @var Type of export. Defined by $conf->global->ACCOUNTING_EXPORT_MODELCSV
-	 */
-	public static $EXPORT_TYPE_NORMAL = 1;	 			// CSV
+	// Type of export. Used into $conf->global->ACCOUNTING_EXPORT_MODELCSV
+    public static $EXPORT_TYPE_NORMAL = 1;	 			// CSV
 	public static $EXPORT_TYPE_CONFIGURABLE = 10;		// CSV
 	public static $EXPORT_TYPE_CEGID = 2;
 	public static $EXPORT_TYPE_COALA = 3;
@@ -535,14 +530,18 @@ class AccountancyExport
 			print $line->id . $separator;
 			print $date . $separator;
 			print $line->code_journal . $separator;
-			print length_accountg($line->numero_compte) . $separator;
-			print substr(length_accountg($line->numero_compte), 0, 2) . $separator;
+			if (empty($line->subledger_account)) {
+                print $line->numero_compte . $separator;
+            } else {
+                print $line->subledger_account . $separator;
+            }
+			//print substr(length_accountg($line->numero_compte), 0, 2) . $separator;
 			print '"'.dol_trunc($line->label_operation, 40, 'right', 'UTF-8', 1).'"' . $separator;
 			print '"'.dol_trunc($line->piece_num, 15, 'right', 'UTF-8', 1).'"'.$separator;
-			print price2num($line->montant).$separator;
+			print price2num(abs($line->montant)).$separator;
 			print $line->sens.$separator;
 			print $date . $separator;
-			print 'EUR';
+			//print 'EUR';
 			print $end_line;
 		}
 	}

@@ -95,6 +95,7 @@ PROJECT_MODIFYInDolibarr=Project %s modified
 PROJECT_DELETEInDolibarr=Project %s deleted
 TICKET_CREATEInDolibarr=Ticket %s created
 TICKET_MODIFYInDolibarr=Ticket %s modified
+TICKET_CLOSEInDolibarr=Ticket %s closed
 TICKET_DELETEInDolibarr=Ticket %s deleted
 ##### End agenda events #####
 AgendaModelModule=Document templates for event
@@ -126,7 +127,6 @@ AddEvent=Create event
 MyAvailability=My availability
 ActionType=Event type
 DateActionBegin=Start event date
-CloneAction=Clone event
 ConfirmCloneEvent=Are you sure you want to clone the event <b>%s</b>?
 RepeatEvent=Repeat event
 EveryWeek=Every week

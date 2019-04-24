@@ -121,7 +121,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes')
 	$result=$object->delete($user);
 	if ($result > 0)
 	{
-		header("Location: index.php");
+		header("Location: list.php");
 		exit;
 	}
 	else
@@ -419,7 +419,7 @@ if ($id > 0)
 
 			);
 
-			print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('CloneTax'), $langs->trans('ConfirmCloneTax', $object->ref), 'confirm_clone', $formclone, 'yes');
+			print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneTax', $object->ref), 'confirm_clone', $formclone, 'yes');
 		}
 
 		// Confirmation de la suppression de la charge
@@ -665,7 +665,7 @@ if ($id > 0)
 			$cssforamountpaymentcomplete = 'amountpaymentcomplete';
 
 			print '<tr><td colspan="'.$nbcols.'" class="right">'.$langs->trans("RemainderToPay")." :</td>";
-			print '<td class="right"'.($resteapayer?' class="amountremaintopay"':(' class="'.$cssforamountpaymentcomplete.'"')).'>'.price($resteapayer)."</td></tr>\n";
+			print '<td class="right'.($resteapayer?' amountremaintopay':(' '.$cssforamountpaymentcomplete)).'">'.price($resteapayer)."</td></tr>\n";
 
 			print "</table>";
 			$db->free($resql);

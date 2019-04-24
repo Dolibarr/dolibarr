@@ -139,10 +139,10 @@ function dol_convertToWord($num, $langs, $currency = false, $centimes = false)
  * Function to return number or amount in text.
  *
  * @deprecated
- * @param	float 	$numero			Number to convert
- * @param	Lang	$langs			Language
- * @param	string	$numorcurrency	'number' or 'amount'
- * @return 	string  				Text of the number or -1 in case TOO LONG (more than 1000000000000.99)
+ * @param	float 	    $numero			Number to convert
+ * @param	Translate	$langs			Language
+ * @param	string	    $numorcurrency	'number' or 'amount'
+ * @return 	string  	       			Text of the number or -1 in case TOO LONG (more than 1000000000000.99)
  */
 function dolNumberToWord($numero, $langs, $numorcurrency = 'number')
 {

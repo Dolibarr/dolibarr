@@ -47,7 +47,7 @@ You can use a Web server and a supported database (MariaDB, MySQL or PostgreSQL)
 
   git clone https://github.com/dolibarr/dolibarr -b x.y     (where x.y is main version like 3.6, 9.0, ...)
 
-- Set up your web server to use "*dolibarr/htdocs*" as root if you'r web server does not have directory to point to already defined. 
+- Set up your web server to use "*dolibarr/htdocs*" as root if your web server does not have an already defined directory to point to. 
  
 - Create an empty `htdocs/conf/conf.php` file and set *write* permissions for your web server user (*write* permission will be removed once install is finished)
 

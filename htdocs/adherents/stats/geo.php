@@ -244,7 +244,7 @@ else
 // Show graphics
 if (count($arrayjs) && $mode == 'memberbycountry')
 {
-    $color_file = DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/graph-color.php';
+    $color_file = DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
     if (is_readable($color_file)) include_once $color_file;
 
     // Assume we've already included the proper headers so just call our script inline
@@ -287,7 +287,7 @@ if (count($arrayjs) && $mode == 'memberbycountry')
     print "</script>\n";
 
     // print the div tag that will contain the map
-    print '<div align="center" id="'.$mode.'"></div>'."\n";
+    print '<div class="center" id="'.$mode.'"></div>'."\n";
     print '<br>';
 }
 
@@ -297,10 +297,10 @@ if ($mode)
     print '<table class="liste" width="100%">';
     print '<tr class="liste_titre">';
     print '<td>'.$label.'</td>';
-    if ($label2) print '<td align="center">'.$label2.'</td>';
+    if ($label2) print '<td class="center">'.$label2.'</td>';
     print '<td class="right">'.$langs->trans("NbOfMembers").'</td>';
-    print '<td align="center">'.$langs->trans("LastMemberDate").'</td>';
-    print '<td align="center">'.$langs->trans("LatestSubscriptionDate").'</td>';
+    print '<td class="center">'.$langs->trans("LastMemberDate").'</td>';
+    print '<td class="center">'.$langs->trans("LatestSubscriptionDate").'</td>';
     print '</tr>';
 
     foreach ($data as $val)
@@ -308,10 +308,10 @@ if ($mode)
         $year = $val['year'];
         print '<tr class="oddeven">';
         print '<td>'.$val['label'].'</td>';
-        if ($label2) print '<td align="center">'.$val['label2'].'</td>';
+        if ($label2) print '<td class="center">'.$val['label2'].'</td>';
         print '<td class="right">'.$val['nb'].'</td>';
-        print '<td align="center">'.dol_print_date($val['lastdate'], 'dayhour').'</td>';
-        print '<td align="center">'.dol_print_date($val['lastsubscriptiondate'], 'dayhour').'</td>';
+        print '<td class="center">'.dol_print_date($val['lastdate'], 'dayhour').'</td>';
+        print '<td class="center">'.dol_print_date($val['lastsubscriptiondate'], 'dayhour').'</td>';
         print '</tr>';
     }
 

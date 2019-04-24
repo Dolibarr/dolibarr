@@ -448,6 +448,8 @@ class ActionsDatapolicy
             }
         }
 
-        echo $jsscript;
+        $this->resprint = $jsscript;
+
+        return 0;
     }
 }

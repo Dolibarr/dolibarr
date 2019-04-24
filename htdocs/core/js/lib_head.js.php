@@ -816,7 +816,7 @@ function confirmConstantAction(action, url, code, input, box, entity, yesButton,
 
 
 /**
- * Function to output a dialog bog for copy/paste
+ * Function to output a dialog box for copy/paste
  *
  * @param	string	text	Text to put into copy/paste area
  * @param	string	text2	Text to put under the copy/paste area
@@ -1008,6 +1008,23 @@ function getParameterByName(name, valueifnotfound)
 // Another solution, easier, to build a javascript rounding function
 function dolroundjs(number, decimals) { return +(Math.round(number + "e+" + decimals) + "e-" + decimals); }
 
+
+/**
+ * Function similar to PHP price()
+ *
+ * @param  {number|string} amount    The amount to show
+ * @param  {string} mode             'MT' or 'MU'
+ * @return {string}                  The amount with digits
+ */
+function pricejs(amount, mode) {
+	var main_max_dec_shown = <?php echo (int) str_replace('.', '', $conf->global->MAIN_MAX_DECIMALS_SHOWN); ?>;
+	var main_rounding_unit = <?php echo (int) $conf->global->MAIN_MAX_DECIMALS_UNIT; ?>;
+	var main_rounding_tot = <?php echo (int) $conf->global->MAIN_MAX_DECIMALS_TOT; ?>;
+
+	if (mode == 'MU') return amount.toFixed(main_rounding_unit);
+	if (mode == 'MT') return amount.toFixed(main_rounding_tot);
+	return 'Bad value for parameter mode';
+}
 
 /**
  * Function similar to PHP price2num()

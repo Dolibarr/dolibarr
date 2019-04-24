@@ -38,11 +38,12 @@ if (! $user->admin)
 $action=GETPOST('action', 'aZ09');
 
 
-if ($action == 'setproductionmode')
+if ($action == 'set')
 {
-	$status = GETPOST('status', 'alpha');
+    $res1 = dolibarr_set_const($db, 'IFTTT_SERVICE_KEY', GETPOST('IFTTT_SERVICE_KEY', 'alpha'), 'chaine', 0, '', 0);
+    $res2 = dolibarr_set_const($db, 'IFTTT_DOLIBARR_ENDPOINT_SECUREKEY', GETPOST('IFTTT_DOLIBARR_ENDPOINT_SECUREKEY', 'alpha'), 'chaine', 0, '', 0);
 
-	if (dolibarr_set_const($db, 'IFTTT_PRODUCTION_MODE', $status, 'chaine', 0, '', 0) > 0)
+	if ($res1 > 0 && $res2)
 	{
    		header("Location: ".$_SERVER["PHP_SELF"]);
    	    exit;
@@ -63,41 +64,47 @@ llxHeader();
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("IFTTTSetup"), $linkback, 'title_setup');
 
-print $langs->trans("IFTTTDesc")."<br>\n";
+print '<span class="opacitymedium">'.$langs->trans("IFTTTDesc")."</span><br>\n";
 print "<br>\n";
 
-//print '<form name="apisetupform" action="'.$_SERVER["PHP_SELF"].'" method="post">';
+print '<form name="apisetupform" action="'.$_SERVER["PHP_SELF"].'" method="post">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="action" value="set">';
 print '<table class="noborder" width="100%">';
 
 print '<tr class="liste_titre">';
 print "<td>".$langs->trans("Parameter")."</td>";
-print '<td align="center">'.$langs->trans("Value")."</td>";
+print '<td>'.$langs->trans("Value")."</td>";
 print "<td>&nbsp;</td>";
 print "</tr>";
 
-print '<tr class="impair">';
-print '<td>'.$langs->trans("ProductionMode").'</td>';
-$production_mode=(empty($conf->global->IFTTT_PRODUCTION_MODE)?false:true);
-if ($production_mode)
-{
-    print '<td align="center"><a href="'.$_SERVER['PHP_SELF'].'?action=setproductionmode&value='.($i+1).'&status=0">';
-    print img_picto($langs->trans("Activated"), 'switch_on');
-    print '</a></td>';
-}
-else
-{
-    print '<td align="center"><a href="'.$_SERVER['PHP_SELF'].'?action=setproductionmode&value='.($i+1).'&status=1">';
-    print img_picto($langs->trans("Disabled"), 'switch_off');
-    print '</a></td>';
-}
-print '<td>&nbsp;</td>';
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans("IFTTT_SERVICE_KEY").'</td>';
+print '<td>';
+print '<input type="text" name="IFTTT_SERVICE_KEY" value="'.$conf->global->IFTTT_SERVICE_KEY.'">';
+print '</td>';
+print '<td>'.$langs->trans("YouWillFindItOnYourIFTTTAccount").'</td>';
+print '</tr>';
+
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans("IFTTT_DOLIBARR_ENDPOINT_SECUREKEY").'</td>';
+print '<td>';
+print '<input type="text" name="IFTTT_DOLIBARR_ENDPOINT_SECUREKEY" value="'.$conf->global->IFTTT_DOLIBARR_ENDPOINT_SECUREKEY.'">';
+print '</td>';
+print '<td></td>';
 print '</tr>';
 
 print '</table>';
+
+print '<div class="center">';
+print '<input type="submit" name="save" class="button" value="'.$langs->trans("Save").'">';
+print '</div>';
+
+print '</form>';
+
 print '<br><br>';
 
-/*
+
 
 // Define $urlwithroot
 $urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
@@ -106,26 +113,14 @@ $urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain
 
 // Show message
 $message='';
-$url=$urlwithroot.'/api/index.php/login?login=<strong>auserlogin</strong>&password=<strong>thepassword</strong>[&reset=1]';
-$message.=$langs->trans("UrlToGetKeyToUseAPIs").':<br>';
-$message.=img_picto('', 'object_globe.png').' '.$url;
+$url=$urlwithroot.'/public/ifttt/index.php?securekey='.$conf->global->IFTTT_DOLIBARR_ENDPOINT_SECUREKEY;
+$message.=$langs->trans("UrlForIFTTT").':<br>';
+$message.=img_picto('', 'object_globe.png').' <input type="text" class="quatrevingtpercent" id="endpointforifttt" name="endpointforifttt" value="'.$url.'">';
 print $message;
+print ajax_autoselect("endpointforifttt");
 print '<br>';
 print '<br>';
 
-// Explorer
-print '<u>'.$langs->trans("ApiExporerIs").':</u><br>';
-if (dol_is_dir(DOL_DOCUMENT_ROOT.'/includes/restler/framework/Luracast/Restler/explorer'))
-{
-    $url=DOL_MAIN_URL_ROOT.'/api/index.php/explorer';
-    print img_picto('', 'object_globe.png').' <a href="'.$url.'" target="_blank">'.$url."</a><br>\n";
-}
-else
-{
-    print $langs->trans("NotAvailableWithThisDistribution");
-}
-
-*/
 
 llxFooter();
 $db->close();

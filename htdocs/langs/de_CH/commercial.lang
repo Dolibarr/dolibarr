@@ -1,8 +1,25 @@
 # Dolibarr language file - Source file is en_US - commercial
+Commercial=Vertrieb
 CommercialArea=Vertriebs - Übersicht
+NewAction=Neue/r Termin/Aufgabe
+ConfirmDeleteAction=Willst du dieses Ereignis wirklich löschen?
 CardAction=Ereignisse Übersicht
 ActionOnCompany=Verknüpfte Firma
 TaskRDVWith=Treffen mit %s
+SaleRepresentativesOfThirdParty=Vertriebsmitarbeiter des Partners
+LastDoneTasks=Die neuesten %s erledigten Aufgaben.
+StatusActionDone=Abgeschlossen
+ActionAC_EMAIL_IN=E-Mail Eingang
 ActionAC_RDV=Treffen
 ActionAC_INT=Eingriff vor Ort
+ActionAC_REL=Kundenrechnung senden(Erinnerung)
 ActionAC_CLO=Schliessen
+ActionAC_COM=Kundenbestellung per Post verschicken
+ActionAC_SUP_ORD=Lieferantenbestellung per Post senden
+ActionAC_SUP_INV=Lieferantenrechnung per Post senden
+ToOfferALinkForOnlineSignature=Link zur Digitalen Unterschrift
+WelcomeOnOnlineSignaturePage=Willkommen auf der Seite zum Offerten von %s zu aktzeptieren.
+ThisScreenAllowsYouToSignDocFrom=Hier kannst du die Offerte akzeptieren, unterzeichen oder zurückweisen.
+ThisIsInformationOnDocumentToSign=Hier die Informationen zum Dokument, das zu akzeptieren oder zurückzuweisen ist.
+SignatureProposalRef=Unterschrift zur Offerte %s
+FeatureOnlineSignDisabled=Hoppla, online unterschreiben ist entweder deaktiviert - oder die Offerte wurde erstellt, bevor online unterschreiben aktiviert worden war.

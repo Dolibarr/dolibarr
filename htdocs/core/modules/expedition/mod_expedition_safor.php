@@ -30,7 +30,7 @@ class mod_expedition_safor extends ModelNumRefExpedition
 {
 	/**
      * Dolibarr version of the loaded document
-     * @public string
+     * @var string
      */
 	public $version = 'dolibarr';
 
@@ -44,7 +44,7 @@ class mod_expedition_safor extends ModelNumRefExpedition
 	/**
 	 * @var string Nom du modele
 	 * @deprecated
-	 * @see name
+	 * @see $name
 	 */
 	public $nom='Safor';
 

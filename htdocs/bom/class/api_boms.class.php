@@ -162,11 +162,12 @@ class BOMs extends DolibarrApi
         if ($result)
         {
             $num = $db->num_rows($result);
+            $i = 0;
             while ($i < $num)
             {
                 $obj = $db->fetch_object($result);
                 $bom_static = new BOM($db);
-                if($bom_static->fetch($obj->rowid)) {
+                if ($bom_static->fetch($obj->rowid)) {
                     $obj_ret[] = $this->_cleanObjectDatas($bom_static);
                 }
                 $i++;

@@ -41,10 +41,7 @@ $langs->loadLangs(array("admin","other","website","errors"));
 
 if (! $user->rights->website->read) accessforbidden();
 
-if (! ((GETPOST('testmenuhider', 'int') || ! empty($conf->global->MAIN_TESTMENUHIDER)) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)))
-{
-	$conf->dol_hide_leftmenu = 1;   // Force hide of left menu.
-}
+$conf->dol_hide_leftmenu = 1;   // Force hide of left menu.
 
 $error=0;
 $websitekey=GETPOST('website', 'alpha');
@@ -213,6 +210,20 @@ $htmlheadercontentdefault.='-->'."\n";
  * Actions
  */
 
+// Protections
+if ($action == 'updatesource' && (GETPOST('refreshsite_x') || GETPOST('refreshsite.x') || GETPOST('refreshpage_x') || GETPOST('refreshpage.x')))
+{
+    $action = 'preview';    // To avoid to update another page or another site when we click on button to select another site or page.
+}
+if (GETPOST('refreshsite', 'alpha'))		// If we change the site, we reset the pageid and cancel addsite action.
+{
+    $pageid=0;
+    if ($action == 'addsite') $action = 'preview';
+    if ($action == 'updatesource') $action = 'preview';
+}
+if (GETPOST('refreshpage', 'alpha') && ! in_array($action, array('updatecss'))) $action='preview';
+
+
 $backtopage=$_SERVER["PHP_SELF"].'?file_manager=1&website='.$websitekey.'&pageid='.$pageid.(GETPOST('section_dir', 'alpha')?'&section_dir='.urlencode(GETPOST('section_dir', 'alpha')):'');	// used after a confirm_deletefile into actions_linkedfiles.inc.php
 include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 
@@ -269,15 +280,6 @@ if ($action == 'adddir' && $permtouploadfile)
 	clearstatcache();
 }
 */
-
-
-if (GETPOST('refreshsite', 'alpha'))		// If we change the site, we reset the pageid and cancel addsite action.
-{
-	$pageid=0;
-	if ($action == 'addsite') $action = 'preview';
-}
-if (GETPOST('refreshpage', 'alpha') && ! in_array($action, array('updatecss'))) $action='preview';
-
 
 // Add site
 if ($action == 'addsite')
@@ -1755,7 +1757,7 @@ if (! GETPOST('hide_websitemenu'))
 	$out.=ajax_combobox('website');
 	print $out;
 	//print '<input type="submit" class="button" name="refreshsite" value="'.$langs->trans("Load").'">';
-	print '<input type="image" class="valignmiddle" src="'.img_picto('', 'refresh', '', 0, 1).'" name="refreshpage" value="'.$langs->trans("Load").'">';
+	print '<input type="image" class="valignmiddle" src="'.img_picto('', 'refresh', '', 0, 1).'" name="refreshsite" value="'.$langs->trans("Load").'">';
 
 
 	if ($websitekey)
@@ -2132,7 +2134,14 @@ if (! GETPOST('hide_websitemenu'))
 		if (GETPOST('editsource', 'alpha') || GETPOST('editcontent', 'alpha'))
 		{
 			$htmltext=$langs->transnoentitiesnoconv("YouCanEditHtmlSource").'<br>';
-			print $form->textwithpicto($langs->trans("SyntaxHelp"), $htmltext, 1, 'help', 'inline-block', 1, 2, 'tooltipsubstitution');
+            if ($conf->browser->layout == 'phone')
+            {
+                print $form->textwithpicto('', $htmltext, 1, 'help', 'inline-block', 1, 2, 'tooltipsubstitution');
+            }
+            else
+            {
+                print $form->textwithpicto($langs->trans("SyntaxHelp"), $htmltext, 1, 'help', 'inline-block', 1, 2, 'tooltipsubstitution');
+            }
 		}
 		print '</div>';	// end websitehelp
 
@@ -2913,11 +2922,12 @@ if ($action == 'preview' || $action == 'createfromclone' || $action == 'createpa
 		// Change the contenteditable to "true" or "false" when mode Edit Inline is on or off
 		if (empty($conf->global->WEBSITE_EDITINLINE))
 		{
+		    // Remove the contenteditable="true"
 			$newcontent = preg_replace('/(div|section)(\s[^\>]*)contenteditable="true"/', '\1\2', $newcontent);
 		}
 		else
 		{
-			// TODO Add the contenteditable="true" when mode Edit Inline is on
+			// Keep the contenteditable="true" when mode Edit Inline is on
 		}
 		$out.=dolWebsiteReplacementOfLinks($object, $newcontent)."\n";
 		//$out.=$newcontent;

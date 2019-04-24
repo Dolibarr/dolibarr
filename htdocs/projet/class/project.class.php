@@ -74,7 +74,7 @@ class Project extends CommonObject
 	/**
 	 * @var string
 	 * @deprecated
-	 * @see title
+	 * @see $title
 	 */
 	public $titre;
 
@@ -107,7 +107,7 @@ class Project extends CommonObject
 	/**
 	 * @var int Creation date
 	 * @deprecated
-	 * @see date_c
+	 * @see $date_c
 	 */
 	public $datec;
 
@@ -119,7 +119,7 @@ class Project extends CommonObject
 	/**
 	 * @var int Modification date
 	 * @deprecated
-	 * @see date_m
+	 * @see $date_m
 	 */
 	public $datem;
 
@@ -190,10 +190,10 @@ class Project extends CommonObject
             dol_syslog(get_class($this)."::create error -1 ref null", LOG_ERR);
             return -1;
         }
-        if (! empty($conf->global->PROJECT_THIRDPARTY_REQUIRED) && ! $this->socid > 0)
+        if (! empty($conf->global->PROJECT_THIRDPARTY_REQUIRED) && ! ($this->socid > 0))
         {
             $this->error = 'ErrorFieldsRequired';
-            dol_syslog(get_class($this)."::create error -1 ref null", LOG_ERR);
+            dol_syslog(get_class($this)."::create error -1 thirdparty not defined and option PROJECT_THIRDPARTY_REQUIRED is set", LOG_ERR);
             return -1;
         }
 
@@ -226,7 +226,7 @@ class Project extends CommonObject
         $sql.= ", " . ($this->socid > 0 ? $this->socid : "null");
         $sql.= ", " . $user->id;
         $sql.= ", ".(is_numeric($this->statut) ? $this->statut : '0');
-        $sql.= ", ".(is_numeric($this->opp_status) ? $this->opp_status : 'NULL');
+        $sql.= ", ".((is_numeric($this->opp_status) && $this->opp_status > 0) ? $this->opp_status : 'NULL');
         $sql.= ", ".(is_numeric($this->opp_percent) ? $this->opp_percent : 'NULL');
         $sql.= ", " . ($this->public ? 1 : 0);
         $sql.= ", '".$this->db->idate($now)."'";
@@ -378,7 +378,7 @@ class Project extends CommonObject
                 		if (file_exists($olddir))
                 		{
 							include_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
-							$res=dol_move($olddir, $newdir);
+							$res=@rename($olddir, $newdir);
 							if (! $res)
                 			{
 							    $langs->load("errors");
@@ -1535,12 +1535,12 @@ class Project extends CommonObject
     /**
 	 *    Shift project task date from current date to delta
 	 *
-	 *    @param	timestamp		$old_project_dt_start	old project start date
-	 *    @return	int				1 if OK or < 0 if KO
+	 *    @param	integer		$old_project_dt_start	Old project start date
+	 *    @return	int				                    1 if OK or < 0 if KO
 	 */
     public function shiftTaskDate($old_project_dt_start)
     {
-		global $user,$langs,$conf;
+		global $user, $langs, $conf;
 
 		$error=0;
 

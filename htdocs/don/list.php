@@ -1,9 +1,9 @@
 <?php
-/* Copyright (C) 2001-2003	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2004-2018	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
- * Copyright (C) 2013		Cédric Salvador			<csalvador@gpcsolutions.fr>
- * Copyright (C) 2019		Thibault FOUCART		<support@ptibogxiv.net>
+/* Copyright (C) 2001-2003  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2018  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2013       Cédric Salvador         <csalvador@gpcsolutions.fr>
+ * Copyright (C) 2019       Thibault FOUCART        <support@ptibogxiv.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,9 +20,9 @@
  */
 
 /**
- *	\file       htdocs/don/list.php
- *	\ingroup    donations
- *	\brief      List of donations
+ *  \file       htdocs/don/list.php
+ *  \ingroup    donations
+ *  \brief      List of donations
  */
 
 require '../main.inc.php';
@@ -86,7 +86,7 @@ llxHeader('', $langs->trans("Donations"), 'EN:Module_Donations|FR:Module_Dons|ES
 $donationstatic=new Don($db);
 
 // Genere requete de liste des dons
-$sql = "SELECT d.rowid, d.datedon, d.fk_soc, d.firstname, d.lastname, d.societe,";
+$sql = "SELECT d.rowid, d.datedon, d.fk_soc as socid, d.firstname, d.lastname, d.societe,";
 $sql.= " d.amount, d.fk_statut as statut, ";
 $sql.= " p.rowid as pid, p.ref, p.title, p.public";
 $sql.= " FROM ".MAIN_DB_PREFIX."don as d LEFT JOIN ".MAIN_DB_PREFIX."projet AS p";
@@ -142,7 +142,7 @@ if ($resql)
 	$newcardbutton='';
 	if ($user->rights->don->creer)
 	{
-		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/don/card.php?action=create"><span class="valignmiddle">'.$langs->trans('NewDonation').'</span>';
+		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/don/card.php?action=create"><span class="valignmiddle text-plus-circle">'.$langs->trans('NewDonation').'</span>';
 		$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
 		$newcardbutton.= '</a>';
 	}
@@ -154,7 +154,7 @@ if ($resql)
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
     print '<input type="hidden" name="page" value="'.$page.'">';
-	print '<input type="hidden" name="type" value="'.$type.'">';
+    print '<input type="hidden" name="type" value="'.$type.'">';
 
 	print_barre_liste($langs->trans("Donations"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_generic.png', 0, $newcardbutton);
 
@@ -172,41 +172,51 @@ if ($resql)
     print '<td class="liste_titre">';
     print '<input class="flat" size="10" type="text" name="search_ref" value="'.$search_ref.'">';
     print '</td>';
+    if (! empty($conf->global->DONATION_USE_THIRDPARTIES)) {
+    print '<td class="liste_titre">';
+    print '<input class="flat" size="10" type="text" name="search_thirdparty" value="'.$search_thirdparty.'">';
+    print '</td>';
+    } else {
     print '<td class="liste_titre">';
     print '<input class="flat" size="10" type="text" name="search_company" value="'.$search_company.'">';
     print '</td>';
+    }
     print '<td class="liste_titre">';
     print '<input class="flat" size="10" type="text" name="search_name" value="'.$search_name.'">';
     print '</td>';
-    print '<td class="liste_titre" align="left">';
+    print '<td class="liste_titre left">';
     print '&nbsp;';
     print '</td>';
     if (! empty($conf->projet->enabled))
     {
-        print '<td class="liste_titre" align="right">';
+        print '<td class="liste_titre right">';
         print '&nbsp;';
         print '</td>';
     }
-    print '<td class="liste_titre" align="right"><input name="search_amount" class="flat" type="text" size="8" value="'.$search_amount.'"></td>';
-    print '<td class="liste_titre" align="right"></td>';
-    print '<td class="liste_titre" align="right">';
+    print '<td class="liste_titre right"><input name="search_amount" class="flat" type="text" size="8" value="'.$search_amount.'"></td>';
+    print '<td class="liste_titre right"></td>';
+    print '<td class="liste_titre right">';
     $searchpicto=$form->showFilterAndCheckAddButtons(0);
     print $searchpicto;
     print '</td>';
-	print "</tr>\n";
+    print "</tr>\n";
 
-	print '<tr class="liste_titre">';
+    print '<tr class="liste_titre">';
 	print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "d.rowid", "", $param, "", $sortfield, $sortorder);
+    if (! empty($conf->global->DONATION_USE_THIRDPARTIES)) {
+	print_liste_field_titre("ThirdParty", $_SERVER["PHP_SELF"], "d.fk_soc", "", $param, "", $sortfield, $sortorder);
+    } else {
 	print_liste_field_titre("Company", $_SERVER["PHP_SELF"], "d.societe", "", $param, "", $sortfield, $sortorder);
+    }
 	print_liste_field_titre("Name", $_SERVER["PHP_SELF"], "d.lastname", "", $param, "", $sortfield, $sortorder);
-	print_liste_field_titre("Date", $_SERVER["PHP_SELF"], "d.datedon", "", $param, 'align="center"', $sortfield, $sortorder);
+	print_liste_field_titre("Date", $_SERVER["PHP_SELF"], "d.datedon", "", $param, '', $sortfield, $sortorder, 'center ');
 	if (! empty($conf->projet->enabled))
 	{
 	    $langs->load("projects");
 	    print_liste_field_titre("Project", $_SERVER["PHP_SELF"], "fk_projet", "", $param, "", $sortfield, $sortorder);
 	}
-	print_liste_field_titre("Amount", $_SERVER["PHP_SELF"], "d.amount", "", $param, 'align="right"', $sortfield, $sortorder);
-	print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "d.fk_statut", "", $param, 'align="right"', $sortfield, $sortorder);
+	print_liste_field_titre("Amount", $_SERVER["PHP_SELF"], "d.amount", "", $param, '', $sortfield, $sortorder, 'right ');
+	print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "d.fk_statut", "", $param, '', $sortfield, $sortorder, 'right ');
 	print_liste_field_titre('');
 	print "</tr>\n";
 
@@ -219,10 +229,21 @@ if ($resql)
 		$donationstatic->ref=$objp->rowid;
 		$donationstatic->lastname=$objp->lastname;
 		$donationstatic->firstname=$objp->firstname;
-		print "<td>".$donationstatic->getNomUrl(1)."</td>\n";
-        print "<td>".$objp->societe."</td>\n";
-		print "<td>".$donationstatic->getFullName($langs)."</td>\n";
-		print '<td align="center">'.dol_print_date($db->jdate($objp->datedon), 'day').'</td>';
+		print "<td>".$donationstatic->getNomUrl(1)."</td>";
+    if (! empty($conf->global->DONATION_USE_THIRDPARTIES)) {
+
+    $company=new Societe($db);
+    $result=$company->fetch($objp->socid);
+    if  (!empty($objp->socid) && $company->id > 0)  {
+        print "<td>".$company->getNomUrl(1)."</td>";
+    } else {
+        print "<td>".$objp->societe."</td>";
+    }
+    } else {
+        print "<td>".$objp->societe."</td>";
+    }
+		print "<td>".$donationstatic->getFullName($langs)."</td>";
+		print '<td class="center">'.dol_print_date($db->jdate($objp->datedon), 'day').'</td>';
 		if (! empty($conf->projet->enabled))
 		{
 			print "<td>";
@@ -238,20 +259,20 @@ if ($resql)
 			else print '&nbsp;';
 			print "</td>\n";
 		}
-		print '<td align="right">'.price($objp->amount).'</td>';
-		print '<td align="right">'.$donationstatic->LibStatut($objp->statut, 5).'</td>';
+		print '<td class="right">'.price($objp->amount).'</td>';
+		print '<td class="right">'.$donationstatic->LibStatut($objp->statut, 5).'</td>';
         print '<td></td>';
 		print "</tr>";
 		$i++;
 	}
-	print "</table>";
-	print '</div>';
+    print "</table>";
+    print '</div>';
     print "</form>\n";
     $db->free($resql);
 }
 else
 {
-	dol_print_error($db);
+    dol_print_error($db);
 }
 
 llxFooter();

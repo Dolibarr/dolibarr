@@ -120,7 +120,7 @@ echo $this->control->tpl['ajax_selectcountry']; ?>
 </tr>
 
 <tr>
-	<td align="center" colspan="4"><input type="submit" class="button" value="<?php echo $langs->trans("Add"); ?>"></td>
+	<td class="center" colspan="4"><input type="submit" class="button" value="<?php echo $langs->trans("Add"); ?>"></td>
 </tr>
 
 </table><br>

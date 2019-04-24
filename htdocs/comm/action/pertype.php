@@ -555,7 +555,7 @@ $cachethirdparties=array();
 $cachecontacts=array();
 
 // Define theme_datacolor array
-$color_file = DOL_DOCUMENT_ROOT."/theme/".$conf->theme."/graph-color.php";
+$color_file = DOL_DOCUMENT_ROOT."/theme/".$conf->theme."/theme_vars.inc.php";
 if (is_readable($color_file))
 {
     include_once $color_file;

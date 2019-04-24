@@ -113,13 +113,13 @@ $db=getDoliDBInstance($conf->db->type, $conf->db->host, $conf->db->user, $conf->
 if ($db->connected)
 {
     print '<tr><td class="nowrap">';
-    print $langs->trans("ServerConnection")." : $dolibarr_main_db_host</td><td align=\"right\">".$langs->trans("OK")."</td></tr>";
+    print $langs->trans("ServerConnection")." : $dolibarr_main_db_host</td><td class=\"right\">".$langs->trans("OK")."</td></tr>";
     dolibarr_install_syslog("repair: " . $langs->transnoentities("ServerConnection") . ": " . $dolibarr_main_db_host . $langs->transnoentities("OK"));
     $ok = 1;
 }
 else
 {
-    print "<tr><td>".$langs->trans("ErrorFailedToConnectToDatabase", $dolibarr_main_db_name)."</td><td align=\"right\">".$langs->transnoentities("Error")."</td></tr>";
+    print "<tr><td>".$langs->trans("ErrorFailedToConnectToDatabase", $dolibarr_main_db_name)."</td><td class=\"right\">".$langs->transnoentities("Error")."</td></tr>";
     dolibarr_install_syslog("repair: " . $langs->transnoentities("ErrorFailedToConnectToDatabase", $dolibarr_main_db_name));
     $ok = 0;
 }
@@ -129,13 +129,13 @@ if ($ok)
     if($db->database_selected)
     {
         print '<tr><td class="nowrap">';
-        print $langs->trans("DatabaseConnection")." : ".$dolibarr_main_db_name."</td><td align=\"right\">".$langs->trans("OK")."</td></tr>";
+        print $langs->trans("DatabaseConnection")." : ".$dolibarr_main_db_name."</td><td class=\"right\">".$langs->trans("OK")."</td></tr>";
         dolibarr_install_syslog("repair: database connection successful: " . $dolibarr_main_db_name);
         $ok=1;
     }
     else
     {
-        print "<tr><td>".$langs->trans("ErrorFailedToConnectToDatabase", $dolibarr_main_db_name)."</td><td align=\"right\">".$langs->trans("Error")."</td></tr>";
+        print "<tr><td>".$langs->trans("ErrorFailedToConnectToDatabase", $dolibarr_main_db_name)."</td><td class=\"right\">".$langs->trans("Error")."</td></tr>";
         dolibarr_install_syslog("repair: " . $langs->transnoentities("ErrorFailedToConnectToDatabase", $dolibarr_main_db_name));
         $ok=0;
     }
@@ -147,9 +147,9 @@ if ($ok)
     $version=$db->getVersion();
     $versionarray=$db->getVersionArray();
     print '<tr><td>'.$langs->trans("ServerVersion").'</td>';
-    print '<td align="right">'.$version.'</td></tr>';
+    print '<td class="right">'.$version.'</td></tr>';
     dolibarr_install_syslog("repair: " . $langs->transnoentities("ServerVersion") . ": " . $version);
-    //print '<td align="right">'.join('.',$versionarray).'</td></tr>';
+    //print '<td class="right">'.join('.',$versionarray).'</td></tr>';
 }
 
 $conf->setValues($db);
@@ -206,7 +206,7 @@ if ($ok && GETPOST('standard', 'alpha'))
     foreach($filelist as $file)
     {
         print '<tr><td class="nowrap">*** ';
-        print $langs->trans("Script").'</td><td align="right">'.$file.'</td></tr>';
+        print $langs->trans("Script").'</td><td class="right">'.$file.'</td></tr>';
 
         $name = substr($file, 0, dol_strlen($file) - 4);
 

@@ -137,10 +137,10 @@ print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<table class="nobordernopadding" width="100%">';
 print "<tr class=\"liste_titre\">";
 print '<td colspan="2">'.$langs->trans("ECMSearchByKeywords").'</td></tr>';
-print "<tr ".$bc[false]."><td>".$langs->trans("Ref").':</td><td align="right"><input type="text" name="search_ref" class="flat" size="10"></td></tr>';
-print "<tr ".$bc[false]."><td>".$langs->trans("Title").':</td><td align="right"><input type="text" name="search_title" class="flat" size="10"></td></tr>';
-print "<tr ".$bc[false]."><td>".$langs->trans("Keyword").':</td><td align="right"><input type="text" name="search_keyword" class="flat" size="10"></td></tr>';
-print "<tr ".$bc[false].'><td colspan="2" align="center"><input type="submit" class="button" value="'.$langs->trans("Search").'"></td></tr>';
+print "<tr ".$bc[false]."><td>".$langs->trans("Ref").':</td><td class="right"><input type="text" name="search_ref" class="flat" size="10"></td></tr>';
+print "<tr ".$bc[false]."><td>".$langs->trans("Title").':</td><td class="right"><input type="text" name="search_title" class="flat" size="10"></td></tr>';
+print "<tr ".$bc[false]."><td>".$langs->trans("Keyword").':</td><td class="right"><input type="text" name="search_keyword" class="flat" size="10"></td></tr>';
+print "<tr ".$bc[false].'><td colspan="2" class="center"><input type="submit" class="button" value="'.$langs->trans("Search").'"></td></tr>';
 print "</table></form>";
 //print $langs->trans("ECMSectionManualDesc");
 
@@ -162,7 +162,7 @@ foreach($sectionauto as $sectioncur)
 	print "<td>".$sectioncur['label'].':</td>';
 	print '<td';
 	//if ($butshown % 2 == 1)
-		print ' align="right"';
+		print ' class="right"';
 	print '>';
 	print '<input type="text" name="search_'.$sectioncur['module'].'" class="flat" size="14">';
 	print '</td>';
@@ -173,7 +173,7 @@ foreach($sectionauto as $sectioncur)
 //if ($butshown % 2 == 1)
 //	print '<td>&nbsp;</td><td>&nbsp;</td></tr>';
 
-print '<tr '. $bc[false].'><td colspan="4" align="center"><input type="submit" class="button" value="'.$langs->trans("Search").'"></td></tr>';
+print '<tr '. $bc[false].'><td colspan="4" class="center"><input type="submit" class="button" value="'.$langs->trans("Search").'"></td></tr>';
 print "</table></form>";
 //print $langs->trans("ECMSectionAutoDesc");
 

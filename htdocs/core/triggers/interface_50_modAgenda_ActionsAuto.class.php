@@ -786,7 +786,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		// TODO Merge all previous cases into this generic one
 		else	// $action = TICKET_CREATE, TICKET_MODIFY, TICKET_DELETE, ...
 		{
-		    // Note: We are here only if $conf->global->MAIN_AGENDA_ACTIONAUTO_action is on (tested at begining of this function)
+		    // Note: We are here only if $conf->global->MAIN_AGENDA_ACTIONAUTO_action is on (tested at begining of this function). Key can be set in agenda setup if defined into c_action_trigger
 		    // Load translation files required by the page
             $langs->loadLangs(array("agenda","other"));
 

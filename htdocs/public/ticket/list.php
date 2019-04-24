@@ -58,7 +58,7 @@ if (isset($_SESSION['email_customer'])) {
     $email = $_SESSION['email_customer'];
 }
 
-$object = new ActionsTicket($db);
+$object = new Ticket($db);
 
 
 
@@ -83,7 +83,7 @@ if ($action == "view_ticketlist") {
     } else {
         if (!isValidEmail($email)) {
             $error++;
-            array_push($object->errors, $langs->trans("ErrorEmailInvalid"));
+            array_push($object->errors, $langs->trans("ErrorEmailOrTrackingInvalid"));
             $action = '';
         }
     }
@@ -91,9 +91,9 @@ if ($action == "view_ticketlist") {
     if (!$error) {
     	$ret = $object->fetch('', '', $track_id);
 
-        if ($ret && $object->dao->id > 0) {
+        if ($ret && $object->id > 0) {
             // vérifie si l'adresse email est bien dans les contacts du ticket
-            $contacts = $object->dao->liste_contact(-1, 'external');
+            $contacts = $object->liste_contact(-1, 'external');
             foreach ($contacts as $contact) {
                 if ($contact['email'] == $email) {
                     $display_ticket_list = true;
@@ -104,12 +104,24 @@ if ($action == "view_ticketlist") {
                     $display_ticket_list = false;
                 }
             }
-
-            if ($object->dao->fk_soc > 0) {
-                $object->dao->fetch_thirdparty();
+            if ($object->fk_soc > 0) {
+                $object->fetch_thirdparty();
+                if ($email == $object->thirdparty->email) {
+                    $display_ticket_list = true;
+                    $_SESSION['email_customer'] = $email;
+                    $_SESSION['track_id_customer'] = $track_id;
+                }
             }
-
-            if ($email == $object->dao->origin_email || $email == $object->dao->thirdparty->email) {
+            if ($object->fk_user_create > 0) {
+                $tmpuser=new User($db);
+                $tmpuser->fetch($object->fk_user_create);
+                if ($email == $tmpuser->email) {
+                    $display_ticket_list = true;
+                    $_SESSION['email_customer'] = $email;
+                    $_SESSION['track_id_customer'] = $track_id;
+                }
+            }
+            if ($email == $object->origin_email) {
                 $display_ticket_list = true;
                 $_SESSION['email_customer'] = $email;
                 $_SESSION['track_id_customer'] = $track_id;
@@ -127,7 +139,7 @@ if ($action == "view_ticketlist") {
     }
 }
 
-$object->doActions($action);
+//$object->doActions($action);
 
 
 
@@ -138,10 +150,11 @@ $object->doActions($action);
 $form = new Form($db);
 $user_assign = new User($db);
 $user_create = new User($db);
-$formticket = new FormTicket($db);
+$formTicket = new FormTicket($db);
 
 $arrayofjs = array();
 $arrayofcss = array('/ticket/css/styles.css.php');
+
 llxHeaderTicket($langs->trans("Tickets"), "", 0, 0, $arrayofjs, $arrayofcss);
 
 if (!$conf->global->TICKET_ENABLE_PUBLIC_INTERFACE) {
@@ -154,7 +167,6 @@ print '<div style="margin: 0 auto; width:60%">';
 
 if ($action == "view_ticketlist")
 {
-
     if ($display_ticket_list) {
         // Filters
         $search_fk_status = GETPOST("search_fk_status", 'alpha');
@@ -185,7 +197,7 @@ if ($action == "view_ticketlist")
         $search_array_options = $extrafields->getOptionalsFromPost('ticket', '', 'search_');
 
         $filter = array();
-        $param = '';
+        $param = 'action=view_ticketlist';
 
         // Definition of fields for list
         $arrayfields = array(
@@ -247,12 +259,10 @@ if ($action == "view_ticketlist")
                 $param .= '&search_fk_user_create=' . $search_fk_user_create;
             }
         }
-
         if ((isset($search_fk_status) && $search_fk_status != '') && $search_fk_status != '-1' && $search_fk_status != 'non_closed') {
             $filter['t.fk_statut'] = $search_fk_status;
             $param .= '&search_fk_status=' . $search_fk_status;
         }
-
         if (isset($search_fk_status) && $search_fk_status == 'non_closed') {
             $filter['t.fk_statut'] = array(0, 1, 3, 4, 5, 6);
             $param .= '&search_fk_status=non_closed';
@@ -266,7 +276,6 @@ if ($action == "view_ticketlist")
         if (!$sortfield) {
             $sortfield = 't.datec';
         }
-
         if (!$sortorder) {
             $sortorder = 'DESC';
         }
@@ -361,9 +370,7 @@ if ($action == "view_ticketlist")
                 $num = $db->num_rows($resql);
                 print_barre_liste($langs->trans('TicketList'), $page, 'public/list.php', $param, $sortfield, $sortorder, '', $num, $num_total, 'ticket');
 
-                /*
-                * Search bar
-                */
+                // Search bar
                 print '<form method="get" action="' . $url_form . '" id="searchFormList" >' . "\n";
                 print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
                 print '<input type="hidden" name="action" value="view_ticketlist">';
@@ -387,9 +394,6 @@ if ($action == "view_ticketlist")
                 }
                 if (!empty($arrayfields['t.ref']['checked'])) {
                     print_liste_field_titre($arrayfields['t.ref']['label'], $url_page_current, 't.ref', '', $param, '', $sortfield, $sortorder);
-                }
-                if (!empty($arrayfields['t.fk_statut']['checked'])) {
-                    print_liste_field_titre($arrayfields['t.fk_statut']['label'], $url_page_current, 't.fk_statut', '', $param, '', $sortfield, $sortorder);
                 }
                 if (!empty($arrayfields['t.subject']['checked'])) {
                     print_liste_field_titre($arrayfields['t.subject']['label']);
@@ -424,13 +428,15 @@ if ($action == "view_ticketlist")
                         }
                     }
                 }
+                if (!empty($arrayfields['t.fk_statut']['checked'])) {
+                    print_liste_field_titre($arrayfields['t.fk_statut']['label'], $url_page_current, 't.fk_statut', '', $param, '', $sortfield, $sortorder);
+                }
                 print_liste_field_titre($selectedfields, $url_page_current, "", '', '', 'align="right"', $sortfield, $sortorder, 'maxwidthsearch ');
                 print '</tr>';
 
                 /*
                  * Filter bar
                  */
-                $formTicket = new FormTicket($db);
 
                 print '<tr class="liste_titre">';
 
@@ -447,14 +453,6 @@ if ($action == "view_ticketlist")
 
                 if (!empty($arrayfields['t.ref']['checked'])) {
                     print '<td class="liste_titre"></td>';
-                }
-
-                // Status
-                if (!empty($arrayfields['t.fk_statut']['checked'])) {
-                    print '<td class="liste_titre">';
-                    $selected = ($search_fk_status != "non_closed" ? $search_fk_status : '');
-                    //$object->printSelectStatus($selected);
-                    print '</td>';
                 }
 
                 if (!empty($arrayfields['t.subject']['checked'])) {
@@ -506,7 +504,15 @@ if ($action == "view_ticketlist")
                     }
                 }
 
-                print '<td class="liste_titre nowraponall" align="right">';
+                // Status
+                if (!empty($arrayfields['t.fk_statut']['checked'])) {
+                    print '<td class="liste_titre">';
+                    $selected = ($search_fk_status != "non_closed" ? $search_fk_status : '');
+                    //$object->printSelectStatus($selected);
+                    print '</td>';
+                }
+
+                print '<td class="liste_titre nowraponall right">';
                 print '<input type="image" class="liste_titre" name="button_search" src="' . img_picto($langs->trans("Search"), 'search.png', '', '', 1) . '" value="' . dol_escape_htmltag($langs->trans("Search")) . '" title="' . dol_escape_htmltag($langs->trans("Search")) . '">';
                 print '<input type="image" class="liste_titre" name="button_removefilter" src="' . img_picto($langs->trans("Search"), 'searchclear.png', '', '', 1) . '" value="' . dol_escape_htmltag($langs->trans("RemoveFilter")) . '" title="' . dol_escape_htmltag($langs->trans("RemoveFilter")) . '">';
                 print '</td>';
@@ -519,36 +525,28 @@ if ($action == "view_ticketlist")
                     // Date ticket
                     if (!empty($arrayfields['t.datec']['checked'])) {
                         print '<td>';
-                        print dol_print_date($obj->datec, 'dayhour');
+                        print dol_print_date($db->jdate($obj->datec), 'dayhour');
                         print '</td>';
                     }
 
                     // Date read
                     if (!empty($arrayfields['t.date_read']['checked'])) {
                         print '<td>';
-                        print dol_print_date($obj->date_read, 'dayhour');
+                        print dol_print_date($db->jdate($obj->date_read), 'dayhour');
                         print '</td>';
                     }
 
                     // Date close
                     if (!empty($arrayfields['t.date_close']['checked'])) {
                         print '<td>';
-                        print dol_print_date($obj->date_close, 'dayhour');
+                        print dol_print_date($db->jdate($obj->date_close), 'dayhour');
                         print '</td>';
                     }
 
-                    // ref
+                    // Ref
                     if (!empty($arrayfields['t.ref']['checked'])) {
                         print '<td>';
                         print $obj->ref;
-                        print '</td>';
-                    }
-
-                    // Statut
-                    if (!empty($arrayfields['t.fk_statut']['checked'])) {
-                        print '<td>';
-                        $object->fk_statut = $obj->fk_statut;
-                        print $object->getLibStatut(2);
                         print '</td>';
                     }
 
@@ -616,7 +614,7 @@ if ($action == "view_ticketlist")
                     }
 
                     if (!empty($arrayfields['t.tms']['checked'])) {
-                        print '<td>' . dol_print_date($obj->tms, 'dayhour') . '</td>';
+                        print '<td>' . dol_print_date($db->jdate($obj->tms), 'dayhour') . '</td>';
                     }
 
                     // Extra fields
@@ -635,7 +633,17 @@ if ($action == "view_ticketlist")
                             }
                         }
                     }
+
+                    // Statut
+                    if (!empty($arrayfields['t.fk_statut']['checked'])) {
+                        print '<td>';
+                        $object->fk_statut = $obj->fk_statut;
+                        print $object->getLibStatut(2);
+                        print '</td>';
+                    }
+
                     print '<td></td>';
+
                     $i++;
                     print '</tr>';
                 }
@@ -664,13 +672,13 @@ if ($action == "view_ticketlist")
         print '<div class="error">Not Allowed<br><a href="' . $_SERVER['PHP_SELF'] . '?track_id=' . $object->dao->track_id . '">' . $langs->trans('Back') . '</a></div>';
     }
 } else {
-    print '<p style="text-align: center">' . $langs->trans("TicketPublicMsgViewLogIn") . '</p>';
+    print '<p class="center">' . $langs->trans("TicketPublicMsgViewLogIn") . '</p>';
 
     print '<div id="form_view_ticket">';
     print '<form method="post" name="form_view_ticketlist"  enctype="multipart/form-data" action="' . $_SERVER['PHP_SELF'] . '">';
     print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
     print '<input type="hidden" name="action" value="view_ticketlist">';
-    print '<input type="hidden" name="search_fk_status" value="non_closed">';
+    //print '<input type="hidden" name="search_fk_status" value="non_closed">';
 
     print '<p><label for="track_id" style="display: inline-block; width: 30%; "><span class="fieldrequired">' . $langs->trans("OneOfTicketTrackId") . '</span></label>';
     print '<input size="30" id="track_id" name="track_id" value="' . (GETPOST('track_id', 'alpha') ? GETPOST('track_id', 'alpha') : '') . '" />';

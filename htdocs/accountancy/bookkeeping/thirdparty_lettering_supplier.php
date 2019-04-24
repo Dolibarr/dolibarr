@@ -142,13 +142,12 @@ $sql .= " bk.subledger_account, bk.numero_compte , bk.label_compte, bk.debit, ";
 $sql .= " bk.credit, bk.montant , bk.sens , bk.code_journal , bk.piece_num, bk.lettering_code ";
 $sql .= " FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping as bk";
 $sql .= " WHERE (bk.subledger_account =  '" . $object->code_compta_fournisseur . "' AND bk.numero_compte = '" . $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER . "' )";
-
 if (dol_strlen($search_year)) {
 	$date_start = dol_mktime(0, 0, 0, 1, 1, $search_year);
 	$date_end = dol_mktime(23, 59, 59, 12, 31, $search_year);
 	$sql .= " AND ( bk.doc_date BETWEEN  '".$db->idate($date_start)."' AND  '".$db->idate($date_end)."' )";
 }
-
+$sql.= ' AND bk.entity IN ('.getEntity('accountingbookkeeping').')';
 $sql.= $db->order($sortfield, $sortorder);
 
 $debit = 0;

@@ -1,8 +1,10 @@
 # Dolibarr language file - Source file is en_US - hrm
+HRM_EMAIL_EXTERNAL_SERVICE=E-Mail zum Unterdrücken externer HRM Dienste
 Establishments=Betriebe
 Establishment=Betrieb
 NewEstablishment=Neuer Betrieb
 DeleteEstablishment=Betrieb löschen
+ConfirmDeleteEstablishment=Willst du diesen Betrieb wirklich löschen?
 OpenEtablishment=Betrieb wählen
 CloseEtablishment=Betrieb schliessen
 DictionaryDepartment=Personalverwaltung - Abteilungsliste

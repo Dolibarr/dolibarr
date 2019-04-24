@@ -155,7 +155,7 @@ print '<input type="hidden" name="action" value="update">';
 
 dol_fiche_head($head, 'handler', $langs->trans("Menus"), -1);
 
-print $langs->trans("MenusDesc")."<br>\n";
+print '<span class="opacitymedium">'.$langs->trans("MenusDesc")."</span><br>\n";
 print "<br>\n";
 
 

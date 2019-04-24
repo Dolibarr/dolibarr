@@ -878,7 +878,7 @@ class Export
 					print '<td>'.str_replace(',', ' , ', $filter['value']).'</td>';
 				}
 				// suppression de l'export
-				print '<td align="right">';
+				print '<td class="right">';
 				print '<a href="'.$_SERVER["PHP_SELF"].'?action=deleteprof&id='.$obj->rowid.'">';
 				print img_delete();
 				print '</a>';

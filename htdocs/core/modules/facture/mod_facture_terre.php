@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2015 Regis Houssin        <regis.houssin@inodbox.com>
+/* Copyright (C) 2005-2008  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2015  Regis Houssin           <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,33 +18,46 @@
  */
 
 /**
- *	\file       htdocs/core/modules/facture/mod_facture_terre.php
- *	\ingroup    facture
- *	\brief      File containing class for numbering module Terre
+ *  \file       htdocs/core/modules/facture/mod_facture_terre.php
+ *  \ingroup    facture
+ *  \brief      File containing class for numbering module Terre
  */
 require_once DOL_DOCUMENT_ROOT .'/core/modules/facture/modules_facture.php';
 
-/**	    \class      mod_facture_terre
- *		\brief      Classe du modele de numerotation de reference de facture Terre
+/**
+ *  \class      mod_facture_terre
+ *  \brief      Classe du modele de numerotation de reference de facture Terre
  */
 class mod_facture_terre extends ModeleNumRefFactures
 {
-	/**
-     * Dolibarr version of the loaded document
-     * @public string
+    /**
+     * Dolibarr version of the loaded document 'development', 'experimental', 'dolibarr'
+     * @var string
      */
-	public $version = 'dolibarr';		// 'development', 'experimental', 'dolibarr'
+    public $version = 'dolibarr';
 
-	public $prefixinvoice='FA';
+    /**
+     * Prefix for invoices
+     * @var string
+     */
+    public $prefixinvoice='FA';
 
-	public $prefixcreditnote='AV';
+    /**
+     * Prefix for credit note
+     * @var string
+     */
+    public $prefixcreditnote='AV';
 
-	public $prefixdeposit='AC';
+    /**
+     * Prefix for deposit
+     * @var string
+     */
+    public $prefixdeposit='AC';
 
-	/**
-	 * @var string Error code (or message)
-	 */
-	public $error='';
+    /**
+     * @var string Error code (or message)
+     */
+    public $error='';
 
 
 	/**
@@ -162,7 +175,7 @@ class mod_facture_terre extends ModeleNumRefFactures
 	/**
 	 * Return next value not used or last value used
 	 *
-	 * @param	Societe		$objsoc		Object third party
+	 * @param   Societe		$objsoc		Object third party
 	 * @param   Facture		$invoice	Object invoice
      * @param   string		$mode       'next' for next value or 'last' for last value
 	 * @return  string       			Value
@@ -234,10 +247,10 @@ class mod_facture_terre extends ModeleNumRefFactures
     /**
      *  Return next free value
      *
-     *  @param	Societe		$objsoc     	Object third party
-     *  @param	string		$objforref		Object for number to search
-     *  @param   string		$mode       	'next' for next value or 'last' for last value
-     *  @return  string      				Next free value
+     *  @param  Societe     $objsoc         Object third party
+     *  @param  string      $objforref      Object for number to search
+     *  @param   string     $mode           'next' for next value or 'last' for last value
+     *  @return  string                     Next free value
      */
     public function getNumRef($objsoc, $objforref, $mode = 'next')
     {

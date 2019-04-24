@@ -207,7 +207,7 @@ function dol_print_object_info($object, $usetable = 0)
     $deltadateforuser=round($deltadateforclient-$deltadateforserver);
     //print "x".$deltadateforserver." - ".$deltadateforclient." - ".$deltadateforuser;
 
-    if ($usetable) print '<table class="border centpercent">';
+    if ($usetable) print '<table class="border tableforfield centpercent">';
 
     // Import key
     if (! empty($object->import_key))
@@ -562,6 +562,28 @@ function isValidUrl($url, $http = 0, $pass = 0, $port = 0, $path = 0, $query = 0
     //print $urlregex.' - '.$url.' - '.$ValidUrl;
 
     return $ValidUrl;
+}
+
+/**
+ *	Check if VAT numero is valid (check done on syntax only, no database or remote access)
+ *
+ *	@param	Societe   $company       VAT number
+ *	@return int					                 1=Check is OK, 0=Check is KO
+ */
+function isValidVATID($company)
+{
+    if ($company->isInEEC())    // Syntax check rules for EEC countries
+    {
+        $vatprefix = $company->country_code;
+        if ($vatprefix == 'GR') $vatprefix = '(EL|GR)';
+        else $vatprefix = preg_quote($vatprefix, '/');
+        if (! preg_match('/^'.$vatprefix.'[a-zA-Z0-9\-\.]{5,10}$/', $company->tva_intra))
+        {
+            return 0;
+        }
+    }
+
+    return 1;
 }
 
 /**
@@ -1453,7 +1475,7 @@ function weight_convert($weight, &$from_unit, $to_unit)
  *	@param	array	$tab        Array (key=>value) with all parameters to save
  *	@return int         		<0 if KO, >0 if OK
  *
- *	@see		dolibarr_get_const, dolibarr_set_const, dolibarr_del_const
+ *	@see		dolibarr_get_const(), dolibarr_set_const(), dolibarr_del_const()
  */
 function dol_set_user_param($db, $conf, &$user, $tab)
 {
@@ -1553,7 +1575,7 @@ function version_os()
  * 	Return PHP version
  *
  * 	@return		string			PHP version
- *  @see		versionphparray
+ *  @see		versionphparray()
  */
 function version_php()
 {
@@ -1564,7 +1586,7 @@ function version_php()
  * 	Return Dolibarr version
  *
  * 	@return		string			Dolibarr version
- *  @see		versiondolibarrarray
+ *  @see		versiondolibarrarray()
  */
 function version_dolibarr()
 {
@@ -2115,6 +2137,10 @@ function getElementProperties($element_type)
         $subelement='facturefournisseur';
         $classfile='fournisseur.facture';
     }
+    if ($element_type == "service") {
+        $classpath = 'product/class';
+        $subelement='product';
+    }
 
     if (!isset($classfile)) $classfile = strtolower($subelement);
     if (!isset($classname)) $classname = ucfirst($subelement);
@@ -2137,7 +2163,7 @@ function getElementProperties($element_type)
  *
  * @param	int     	$element_id 	Element id
  * @param	string  	$element_type 	Element type
- * @param	ref     	$element_ref 	Element ref (Use this if element_id but not both)
+ * @param	string     	$element_ref 	Element ref (Use this or element_id but not both)
  * @return 	int|object 					object || 0 || -1 if error
  */
 function fetchObjectByElement($element_id, $element_type, $element_ref = '')
@@ -2167,7 +2193,7 @@ function fetchObjectByElement($element_id, $element_type, $element_ref = '')
  *  @param	array	$arraycolor			Array
  *  @param	string	$colorifnotfound	Color code to return if entry not defined or not a RGB format
  *  @return	string						RGB hex value (without # before). For example: 'FF00FF', '01FF02'
- *  @see	colorStringToArray
+ *  @see	colorStringToArray()
  */
 function colorArrayToHex($arraycolor, $colorifnotfound = '888888')
 {
@@ -2183,12 +2209,13 @@ function colorArrayToHex($arraycolor, $colorifnotfound = '888888')
  *
  *  @param	string	$stringcolor		String with hex (FFFFFF) or comma RGB ('255,255,255')
  *  @param	array	$colorifnotfound	Color code array to return if entry not defined
- *  @return	string						RGB hex value (without # before). For example: FF00FF
- *  @see	colorArrayToHex
+ *  @return	array   					RGB hex value (without # before). For example: FF00FF
+ *  @see	colorArrayToHex()
  */
 function colorStringToArray($stringcolor, $colorifnotfound = array(88,88,88))
 {
 	if (is_array($stringcolor)) return $stringcolor;	// If already into correct output format, we return as is
+	$reg=array();
 	$tmp=preg_match('/^#?([0-9a-fA-F][0-9a-fA-F])([0-9a-fA-F][0-9a-fA-F])([0-9a-fA-F][0-9a-fA-F])$/', $stringcolor, $reg);
 	if (! $tmp)
 	{
@@ -2198,6 +2225,108 @@ function colorStringToArray($stringcolor, $colorifnotfound = array(88,88,88))
 	}
 	return array(hexdec($reg[1]),hexdec($reg[2]),hexdec($reg[3]));
 }
+
+/**
+ * @param string $color the color you need to valid
+ * @param boolean $allow_white in case of white isn't valid
+ * @return boolean
+ */
+function colorValidateHex($color, $allow_white = true)
+{
+
+    if(!$allow_white && ($color === '#fff' || $color === '#ffffff') ) return false;
+
+    if(preg_match('/^#[a-f0-9]{6}$/i', $color)) //hex color is valid
+    {
+        return true;
+    }
+    return false;
+}
+
+
+/**
+ * @param string $hex color in hex
+ * @param integer $steps Steps should be between -255 and 255. Negative = darker, positive = lighter
+ * @return string
+ */
+function colorAdjustBrightness($hex, $steps)
+{
+    // Steps should be between -255 and 255. Negative = darker, positive = lighter
+    $steps = max(-255, min(255, $steps));
+
+    // Normalize into a six character long hex string
+    $hex = str_replace('#', '', $hex);
+    if (strlen($hex) == 3) {
+        $hex = str_repeat(substr($hex, 0, 1), 2).str_repeat(substr($hex, 1, 1), 2).str_repeat(substr($hex, 2, 1), 2);
+    }
+
+    // Split into three parts: R, G and B
+    $color_parts = str_split($hex, 2);
+    $return = '#';
+
+    foreach ($color_parts as $color) {
+        $color   = hexdec($color); // Convert to decimal
+        $color   = max(0, min(255, $color + $steps)); // Adjust color
+        $return .= str_pad(dechex($color), 2, '0', STR_PAD_LEFT); // Make two char hex code
+    }
+
+    return $return;
+}
+
+/**
+ * @param string $hex color in hex
+ * @param integer $percent 0 to 100
+ * @return string
+ */
+function colorDarker($hex, $percent)
+{
+    $steps = intval(255 * $percent / 100) * -1;
+    return colorAdjustBrightness($hex, $steps);
+}
+
+/**
+ * @param string $hex color in hex
+ * @param integer $percent 0 to 100
+ * @return string
+ */
+function colorLighten($hex, $percent)
+{
+    $steps = intval(255 * $percent / 100);
+    return colorAdjustBrightness($hex, $steps);
+}
+
+
+/**
+ * @param string $hex color in hex
+ * @param float $alpha 0 to 1
+ * @param bool $returnArray set to 1 to return an array instead of string
+ * @return string|array
+ */
+function colorHexToRgb($hex, $alpha = false, $returnArray = false)
+{
+    $string = '';
+    $hex      = str_replace('#', '', $hex);
+    $length   = strlen($hex);
+    $rgb = array();
+    $rgb['r'] = hexdec($length == 6 ? substr($hex, 0, 2) : ($length == 3 ? str_repeat(substr($hex, 0, 1), 2) : 0));
+    $rgb['g'] = hexdec($length == 6 ? substr($hex, 2, 2) : ($length == 3 ? str_repeat(substr($hex, 1, 1), 2) : 0));
+    $rgb['b'] = hexdec($length == 6 ? substr($hex, 4, 2) : ($length == 3 ? str_repeat(substr($hex, 2, 1), 2) : 0));
+    if ( $alpha !== false ) {
+        $rgb['a'] = floatval($alpha);
+        $string = 'rgba('.implode(',', $rgb).')';
+    }
+    else{
+        $string = 'rgb('.implode(',', $rgb).')';
+    }
+
+    if($returnArray){
+        return $rgb;
+    }
+    else{
+        return $string;
+    }
+}
+
 
 /**
  * Applies the Cartesian product algorithm to an array
@@ -2311,26 +2440,95 @@ function getModuleDirForApiClass($module)
     return $moduledirforclass;
 }
 
-/*
+/**
  * Return 2 hexa code randomly
  *
- * @param	$min	int	Between 0 and 255
- * @param	$max	int	Between 0 and 255
- * @return String
+ * @param	int   $min	    Between 0 and 255
+ * @param	int   $max	    Between 0 and 255
+ * @return  string          A color string '12'
  */
-function random_color_part($min = 0, $max = 255)
+function randomColorPart($min = 0, $max = 255)
 {
     return str_pad(dechex(mt_rand($min, $max)), 2, '0', STR_PAD_LEFT);
 }
 
-/*
+/**
  * Return hexadecimal color randomly
  *
- * @param	$min	int	Between 0 and 255
- * @param	$max	int	Between 0 and 255
- * @return String
+ * @param	int   $min	   Between 0 and 255
+ * @param	int   $max	   Between 0 and 255
+ * @return  string         A color string '123456'
  */
-function random_color($min = 0, $max = 255)
+function randomColor($min = 0, $max = 255)
 {
-    return random_color_part($min, $max) . random_color_part($min, $max) . random_color_part($min, $max);
+    return randomColorPart($min, $max) . randomColorPart($min, $max) . randomColorPart($min, $max);
+}
+
+
+if (! function_exists('dolEscapeXML'))
+{
+    /**
+     * Encode string for xml usage
+     *
+     * @param 	string	$string		String to encode
+     * @return	string				String encoded
+     */
+    function dolEscapeXML($string)
+    {
+        return strtr($string, array('\''=>'&apos;','"'=>'&quot;','&'=>'&amp;','<'=>'&lt;','>'=>'&gt;'));
+    }
+}
+
+
+/**
+ *	Return automatic or manual in current language
+ *
+ *	@param	string	$automaticmanual   Value to test (1, 'automatic', 'true' or 0, 'manual', 'false')
+ *	@param	integer	$case			   1=Yes/No, 0=yes/no, 2=Disabled checkbox, 3=Disabled checkbox + Automatic/Manual
+ *	@param	int		$color			   0=texte only, 1=Text is formated with a color font style ('ok' or 'error'), 2=Text is formated with 'ok' color.
+ *	@return	string					   HTML string
+ */
+function autoOrManual($automaticmanual, $case = 1, $color = 0)
+{
+    global $langs;
+    $result='unknown'; $classname='';
+    if ($automaticmanual == 1 || strtolower($automaticmanual) == 'automatic' || strtolower($automaticmanual) == 'true') 	// A mettre avant test sur no a cause du == 0
+    {
+        $result=$langs->trans('automatic');
+        if ($case == 1 || $case == 3) $result=$langs->trans("Automatic");
+        if ($case == 2) $result='<input type="checkbox" value="1" checked disabled>';
+        if ($case == 3) $result='<input type="checkbox" value="1" checked disabled> '.$result;
+
+        $classname='ok';
+    }
+    elseif ($automaticmanual == 0 || strtolower($automaticmanual) == 'manual' || strtolower($automaticmanual) == 'false')
+    {
+        $result=$langs->trans("manual");
+        if ($case == 1 || $case == 3) $result=$langs->trans("Manual");
+        if ($case == 2) $result='<input type="checkbox" value="0" disabled>';
+        if ($case == 3) $result='<input type="checkbox" value="0" disabled> '.$result;
+
+        if ($color == 2) $classname='ok';
+        else $classname='error';
+    }
+    if ($color) return '<font class="'.$classname.'">'.$result.'</font>';
+    return $result;
+}
+
+
+/**
+ * Convert links to local wrapper to medias files into a string into a public external URL readable on internet
+ *
+ * @param   string      $notetoshow      Text to convert
+ * @return  string                       String
+ */
+function convertBackOfficeMediasLinksToPublicLinks($notetoshow)
+{
+    global $dolibarr_main_url_root;
+    // Define $urlwithroot
+    $urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
+    $urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
+    //$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
+    $notetoshow=preg_replace('/src="[a-zA-Z0-9_\/\-\.]*(viewimage\.php\?modulepart=medias[^"]*)"/', 'src="'.$urlwithroot.'/\1"', $notetoshow);
+    return $notetoshow;
 }

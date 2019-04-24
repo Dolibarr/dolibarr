@@ -264,7 +264,7 @@ function pdf_getHeightForLogo($logo, $url = false)
  * @param 	TCPDF     $pdf				PDF initialized object
  * @param 	string    $htmlcontent		HTML Contect
  * @return 	int							Height
- * @see getStringHeight
+ * @see getStringHeight()
  */
 function pdfGetHeightForHtmlContent(&$pdf, $htmlcontent)
 {
@@ -341,14 +341,14 @@ function pdfBuildThirdpartyName($thirdparty, Translate $outputlangs, $includeali
 /**
  *   	Return a string with full address formated for output on documents
  *
- * 		@param	Translate	$outputlangs		Output langs object
- *   	@param  Societe		$sourcecompany		Source company object
- *   	@param  Societe		$targetcompany		Target company object
- *      @param  Contact		$targetcontact		Target contact object
- * 		@param	int			$usecontact			Use contact instead of company
- * 		@param	int			$mode				Address type ('source', 'target', 'targetwithdetails', 'targetwithdetails_xxx': target but include also phone/fax/email/url)
- *      @param  Object      $object             Object we want to build document for
- * 		@return	string							String with full address
+ * 		@param	Translate	          $outputlangs		    Output langs object
+ *   	@param  Societe		          $sourcecompany		Source company object
+ *   	@param  Societe|string|null   $targetcompany		Target company object
+ *      @param  Contact|string|null	  $targetcontact	    Target contact object
+ * 		@param	int			          $usecontact		    Use contact instead of company
+ * 		@param	string  	          $mode				    Address type ('source', 'target', 'targetwithdetails', 'targetwithdetails_xxx': target but include also phone/fax/email/url)
+ *      @param  Object                $object               Object we want to build document for
+ * 		@return	string					    		        String with full address
  */
 function pdf_build_address($outputlangs, $sourcecompany, $targetcompany = '', $targetcontact = '', $usecontact = 0, $mode = 'source', $object = null)
 {
@@ -357,18 +357,14 @@ function pdf_build_address($outputlangs, $sourcecompany, $targetcompany = '', $t
 	if ($mode == 'source' && ! is_object($sourcecompany)) return -1;
 	if ($mode == 'target' && ! is_object($targetcompany)) return -1;
 
-	if (! empty($sourcecompany->state_id) && empty($sourcecompany->departement)) $sourcecompany->departement=getState($sourcecompany->state_id); //TODO deprecated
-	if (! empty($sourcecompany->state_id) && empty($sourcecompany->state))       $sourcecompany->state=getState($sourcecompany->state_id);
-	if (! empty($sourcecompany->state_id) && !isset($sourcecompany->departement_id))   $sourcecompany->departement_id=getState($sourcecompany->state_id, '2');
-	if (! empty($targetcompany->state_id) && empty($targetcompany->departement)) $targetcompany->departement=getState($targetcompany->state_id); //TODO deprecated
-	if (! empty($targetcompany->state_id) && empty($targetcompany->state))       $targetcompany->state=getState($targetcompany->state_id);
-	if (! empty($targetcompany->state_id) && !isset($targetcompany->departement_id))   $targetcompany->departement_id=getState($targetcompany->state_id, '2');
+	if (! empty($sourcecompany->state_id) && empty($sourcecompany->state))             $sourcecompany->state=getState($sourcecompany->state_id);
+	if (! empty($targetcompany->state_id) && empty($targetcompany->state))             $targetcompany->state=getState($targetcompany->state_id);
 
 	$reshook=0;
 	$stringaddress = '';
 	if (is_object($hookmanager))
 	{
-		$parameters = array('sourcecompany'=>&$sourcecompany,'targetcompany'=>&$targetcompany,'targetcontact'=>$targetcontact,'outputlangs'=>$outputlangs,'mode'=>$mode,'usecontact'=>$usecontact);
+		$parameters = array('sourcecompany'=>&$sourcecompany, 'targetcompany'=>&$targetcompany, 'targetcontact'=>&$targetcontact, 'outputlangs'=>$outputlangs, 'mode'=>$mode, 'usecontact'=>$usecontact);
 		$action='';
 		$reshook = $hookmanager->executeHooks('pdf_build_address', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
 		$stringaddress.=$hookmanager->resPrint;

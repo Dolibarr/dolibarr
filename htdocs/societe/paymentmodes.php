@@ -472,7 +472,7 @@ if (empty($reshook))
 		$_POST['lang_id'] = GETPOST('lang_idrib'.GETPOST('companybankid', 'int'), 'alpha');
 		$_POST['model'] =  GETPOST('modelrib'.GETPOST('companybankid', 'int'), 'alpha');
 	}
-
+	https://dashboard.stripe.com/search?query=risk_level%3Ahighest&account=acct_1CVGWQLYhjvFj9Sz
 	$id = $socid;
 	$upload_dir = $conf->societe->multidir_output[$object->entity];
 	$permissioncreate=$user->rights->societe->creer;
@@ -750,7 +750,6 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 		if ($conf->commande->enabled && $user->rights->commande->lire) $elementTypeArray['order']=$langs->transnoentitiesnoconv('Orders');
 		if ($conf->facture->enabled && $user->rights->facture->lire) $elementTypeArray['invoice']=$langs->transnoentitiesnoconv('Invoices');
 		if ($conf->contrat->enabled && $user->rights->contrat->lire) $elementTypeArray['contract']=$langs->transnoentitiesnoconv('Contracts');
-	}
 
 	if (! empty($conf->stripe->enabled))
 	{
@@ -762,9 +761,10 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 		print '</td><td>';
 		//print $stripecu;
 		print $form->editfieldval("StripeCustomerId", 'key_account', $stripecu, $object, $permissiontowrite, 'string', '', null, null, '', 2, '', 'socid');
-		if ($stripecu && $action != 'editkey_account')
+		if (! empty($conf->stripe->enabled) && $stripecu && $action != 'editkey_account')
 		{
-			if (! empty($conf->stripe->enabled) && !empty($stripeacc)) $connect=$stripeacc.'/';
+		    $connect='';
+			if (!empty($stripeacc)) $connect=$stripeacc.'/';
 			$url='https://dashboard.stripe.com/'.$connect.'test/customers/'.$stripecu;
 			if ($servicestatus)
 			{
@@ -785,6 +785,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 		}
 		print '</td></tr>';
 	}
+    }
 
 	print '</table>';
 	print '</div>';
@@ -799,7 +800,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 		$morehtmlright='';
 		if (! empty($conf->global->STRIPE_ALLOW_LOCAL_CARD))
 		{
-			$morehtmlright='<a class="butActionNew" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&amp;action=createcard">'.$langs->trans("Add").' <span class="fa fa-plus-circle valignmiddle"></span></a>';
+			$morehtmlright='<a class="butActionNew" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&amp;action=createcard"><span class="valignmiddle text-plus-circle">'.$langs->trans("Add").'</span><span class="fa fa-plus-circle valignmiddle"></span></a>';
 		}
 		print load_fiche_titre($langs->trans('StripePaymentModes').($stripeacc?' (Stripe connection with StripeConnect account '.$stripeacc.')':' (Stripe connection with keys from Stripe module setup)'), $morehtmlright, '');
 
@@ -818,6 +819,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 			}
 		}
 
+		print '<!-- List of stripe payments -->'."\n";
 		print '<div class="div-table-responsive-no-min">';		// You can use div-table-responsive-no-min if you dont need reserved height for your table
 		print '<table class="liste" width="100%">'."\n";
 		print '<tr class="liste_titre">';
@@ -879,15 +881,17 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 							print '</td>';
 							print '<td>';
 							print $companypaymentmodetemp->stripe_card_ref;
-							/*if ($companypaymentmodetemp->stripe_card_ref)
+							if ($companypaymentmodetemp->stripe_card_ref)
 							{
-								$url='https://dashboard.stripe.com/test/card/'.$companypaymentmodetemp->stripe_card_ref;
+							    $connect='';
+							    if (!empty($stripeacc)) $connect=$stripeacc.'/';
+							    $url='https://dashboard.stripe.com/'.$connect.'test/search?query='.$companypaymentmodetemp->stripe_card_ref;
 								if ($servicestatus)
 								{
-									$url='https://dashboard.stripe.com/card/'.$companypaymentmodetemp->stripe_card_ref;
+									$url='https://dashboard.stripe.com/'.$connect.'search?query='.$companypaymentmodetemp->stripe_card_ref;
 								}
 								print ' <a href="'.$url.'" target="_stripe">'.img_picto($langs->trans('ShowInStripe'), 'object_globe').'</a>';
-							}*/
+							}
 							print '</td>';
 							print '<td>';
 							print img_credit_card($companypaymentmodetemp->type);
@@ -971,13 +975,17 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 				}
 				// Src ID
 				print '<td>';
+				$connect='';
+				print $src->id;
 				if (!empty($stripeacc)) $connect=$stripeacc.'/';
-				$url='https://dashboard.stripe.com/'.$connect.'test/sources/'.$src->id;
+				//$url='https://dashboard.stripe.com/'.$connect.'test/sources/'.$src->id;
+				$url='https://dashboard.stripe.com/'.$connect.'test/search?query='.$src->id;
 				if ($servicestatus)
 				{
-					$url='https://dashboard.stripe.com/'.$connect.'sources/'.$src->id;
+				    //$url='https://dashboard.stripe.com/'.$connect.'sources/'.$src->id;
+				    $url='https://dashboard.stripe.com/'.$connect.'search?query='.$src->id;
 				}
-				print $src->id." <a href='".$url."' target='_stripe'>".img_picto($langs->trans('ShowInStripe'), 'object_globe')."</a>";
+				print " <a href='".$url."' target='_stripe'>".img_picto($langs->trans('ShowInStripe'), 'object_globe')."</a>";
 				print '</td>';
 				// Img of credit card
 				print '<td>';
@@ -1082,7 +1090,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 	// List of bank accounts
 	print '<br>';
 
-	$morehtmlright='<a class="butActionNew" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&amp;action=create">'.$langs->trans("Add").' <span class="fa fa-plus-circle valignmiddle"></span></a>';
+	$morehtmlright='<a class="butActionNew" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&amp;action=create"><span class="valignmiddle text-plus-circle">'.$langs->trans("Add").'</span><span class="fa fa-plus-circle valignmiddle"></span></a>';
 
 	print load_fiche_titre($langs->trans("BankAccounts"), $morehtmlright, '');
 

@@ -747,7 +747,7 @@ class Categorie extends CommonObject
 	 * @param   string     $type       Type of category ('customer', 'supplier', 'contact', 'product', 'member')
 	 * @param   int        $onlyids    Return only ids of objects (consume less memory)
 	 * @return  array|int              -1 if KO, array of instance of object if OK
-	 * @see containsObject
+	 * @see containsObject()
 	 */
 	public function getObjectsInCateg($type, $onlyids = 0)
 	{
@@ -794,7 +794,7 @@ class Categorie extends CommonObject
 	 * @param   string $type      		Type of category ('customer', 'supplier', 'contact', 'product', 'member')
 	 * @param   int    $object_id 		Id of the object to search
 	 * @return  int                     Number of occurrences
-	 * @see getObjectsInCateg
+	 * @see getObjectsInCateg()
 	 */
 	public function containsObject($type, $object_id)
 	{
@@ -909,7 +909,7 @@ class Categorie extends CommonObject
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 * Return childs of a category
+	 * Return direct childs id of a category into an array
 	 *
 	 * @return	array|int   <0 KO, array ok
 	 */
@@ -922,7 +922,7 @@ class Categorie extends CommonObject
 		$res  = $this->db->query($sql);
 		if ($res)
 		{
-			$cats = array ();
+			$cats = array();
 			while ($rec = $this->db->fetch_array($res))
 			{
 				$cat = new Categorie($this->db);
@@ -940,16 +940,14 @@ class Categorie extends CommonObject
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 * 	Load this->motherof that is array(id_son=>id_parent, ...)
+	 * 	Load the array this->motherof that is array(id_son=>id_parent, ...)
 	 *
 	 *	@return		int		<0 if KO, >0 if OK
 	 */
 	protected function load_motherof()
 	{
         // phpcs:enable
-		global $conf;
-
-		$this->motherof=array();
+	    $this->motherof=array();
 
 		// Load array[child]=parent
 		$sql = "SELECT fk_parent as id_parent, rowid as id_son";
@@ -985,19 +983,43 @@ class Categorie extends CommonObject
 	 *                fulllabel = nom avec chemin complet de la categorie
 	 *                fullpath = chemin complet compose des id
 	 *
-	 * @param   string 	$type        	Type of categories ('customer', 'supplier', 'contact', 'product', 'member') or (0, 1, 2, ...).
-	 * @param   int    	$markafterid 	Removed all categories including the leaf $markafterid in category tree.
-	 *
+	 * @param   string                  $type                   Type of categories ('customer', 'supplier', 'contact', 'product', 'member') or (0, 1, 2, ...).
+	 * @param   int|string|array        $markafterid            Keep only or removed all categories including the leaf $markafterid in category tree (exclude) or Keep only of category is inside the leaf starting with this id.
+     *                                                          $markafterid can be an :
+     *                                                          - int (id of category)
+     *                                                          - string (categories ids seprated by comma)
+     *                                                          - array (list of categories ids)
+     * @param   int                     $include                [=0] Removed or 1=Keep only
 	 * @return  array|int               Array of categories. this->cats and this->motherof are set, -1 on error
 	 */
-	public function get_full_arbo($type, $markafterid = 0)
+	public function get_full_arbo($type, $markafterid = 0, $include = 0)
 	{
         // phpcs:enable
 	    global $conf, $langs;
 
 		if (! is_numeric($type)) $type = $this->MAP_ID[$type];
 
-		$this->cats = array();
+        if (is_string($markafterid))
+        {
+            $markafterid = explode(',', $markafterid);
+        }
+        elseif (is_numeric($markafterid))
+        {
+            if ($markafterid > 0)
+            {
+                $markafterid = array($markafterid);
+            }
+            else
+            {
+                $markafterid = array();
+            }
+        }
+        elseif (!is_array($markafterid))
+        {
+            $markafterid = array();
+        }
+
+        $this->cats = array();
 
 		// Init this->motherof that is array(id_son=>id_parent, ...)
 		$this->load_motherof();
@@ -1007,9 +1029,9 @@ class Categorie extends CommonObject
 		$sql = "SELECT DISTINCT c.rowid, c.label, c.description, c.color, c.fk_parent, c.visible";	// Distinct reduce pb with old tables with duplicates
 		if (! empty($conf->global->MAIN_MULTILANGS)) $sql.= ", t.label as label_trans, t.description as description_trans";
 		$sql.= " FROM ".MAIN_DB_PREFIX."categorie as c";
-		if (! empty($conf->global->MAIN_MULTILANGS)) $sql.= " LEFT  JOIN ".MAIN_DB_PREFIX."categorie_lang as t ON t.fk_category=c.rowid AND t.lang='".$current_lang."'";
+		if (! empty($conf->global->MAIN_MULTILANGS)) $sql.= " LEFT  JOIN ".MAIN_DB_PREFIX."categorie_lang as t ON t.fk_category=c.rowid AND t.lang='".$this->db->escape($current_lang)."'";
 		$sql .= " WHERE c.entity IN (" . getEntity('category') . ")";
-		$sql .= " AND c.type = " . $type;
+		$sql .= " AND c.type = " . (int) $type;
 
 		dol_syslog(get_class($this)."::get_full_arbo get category list", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -1042,18 +1064,22 @@ class Categorie extends CommonObject
 			$this->build_path_from_id_categ($key, 0);	// Process a branch from the root category key (this category has no parent)
 		}
 
-        // Exclude leaf including $markafterid from tree
-        if ($markafterid)
+        // Include or exclude leaf including $markafterid from tree
+        if (count($markafterid) > 0)
         {
+            $keyfiltercatid = implode('|', $markafterid);
+
             //print "Look to discard category ".$markafterid."\n";
-            $keyfilter1='^'.$markafterid.'$';
-            $keyfilter2='_'.$markafterid.'$';
-            $keyfilter3='^'.$markafterid.'_';
-            $keyfilter4='_'.$markafterid.'_';
+            $keyfilter1 = '^' . $keyfiltercatid . '$';
+            $keyfilter2 = '_' . $keyfiltercatid . '$';
+            $keyfilter3 = '^' . $keyfiltercatid . '_';
+            $keyfilter4 = '_' . $keyfiltercatid . '_';
             foreach($this->cats as $key => $val)
             {
-                if (preg_match('/'.$keyfilter1.'/', $val['fullpath']) || preg_match('/'.$keyfilter2.'/', $val['fullpath'])
-                || preg_match('/'.$keyfilter3.'/', $val['fullpath']) || preg_match('/'.$keyfilter4.'/', $val['fullpath']))
+                $test = (preg_match('/' . $keyfilter1 . '/', $val['fullpath']) || preg_match('/' . $keyfilter2 . '/', $val['fullpath'])
+                    || preg_match('/' . $keyfilter3 . '/', $val['fullpath']) || preg_match('/' . $keyfilter4 . '/', $val['fullpath']));
+
+                if (($test && !$include) || (!$test && $include))
                 {
                     unset($this->cats[$key]);
                 }
@@ -1070,7 +1096,8 @@ class Categorie extends CommonObject
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *	For category id_categ and its childs available in this->cats, define property fullpath and fulllabel
+	 *	For category id_categ and its childs available in this->cats, define property fullpath and fulllabel.
+	 *  This function is a memory scan only from $this->cats and $this->motherof, no database access must be done here.
 	 *
 	 * 	@param		int		$id_categ		id_categ entry to update
 	 * 	@param		int		$protection		Deep counter to avoid infinite loop
@@ -1174,6 +1201,19 @@ class Categorie extends CommonObject
 		}
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *	Returns the top level categories (which are not child)
+	 *
+	 *	@param		int		$type		Type of category (0, 1, ...)
+	 *	@return		array
+	 */
+	public function get_main_categories($type = null)
+	{
+	    // phpcs:enable
+	    return $this->get_all_categories($type, true);
+	}
+
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * 	Check if no category with same label already exists for this cat's parent or root and for this cat's type
@@ -1225,18 +1265,6 @@ class Categorie extends CommonObject
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/**
-	 *	Returns the top level categories (which are not girls)
-	 *
-	 *	@param		int		$type		Type of category (0, 1, ...)
-	 *	@return		array
-	 */
-	public function get_main_categories($type = null)
-	{
-        // phpcs:enable
-		return $this->get_all_categories($type, true);
-	}
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**

@@ -8,6 +8,7 @@
   styles:
     - brands
   unicode: f26e
+  voted: false
 accessible-icon:
   changes:
     - 5.0.0
@@ -22,6 +23,7 @@ accessible-icon:
   styles:
     - brands
   unicode: f368
+  voted: false
 accusoft:
   changes:
     - 5.0.0
@@ -31,6 +33,7 @@ accusoft:
   styles:
     - brands
   unicode: f369
+  voted: false
 acquisitions-incorporated:
   changes:
     - 5.4.0
@@ -47,6 +50,7 @@ acquisitions-incorporated:
   styles:
     - brands
   unicode: f6af
+  voted: false
 ad:
   changes:
     - 5.3.0
@@ -56,6 +60,7 @@ ad:
   styles:
     - solid
   unicode: f641
+  voted: false
 address-book:
   changes:
     - '4.7'
@@ -68,6 +73,7 @@ address-book:
     - solid
     - regular
   unicode: f2b9
+  voted: false
 address-card:
   changes:
     - '4.7'
@@ -80,6 +86,7 @@ address-card:
     - solid
     - regular
   unicode: f2bb
+  voted: false
 adjust:
   changes:
     - '1'
@@ -91,6 +98,7 @@ adjust:
   styles:
     - solid
   unicode: f042
+  voted: false
 adn:
   changes:
     - '3.2'
@@ -101,6 +109,23 @@ adn:
   styles:
     - brands
   unicode: f170
+  voted: false
+adobe:
+  changes:
+    - 5.6.0
+  label: Adobe
+  search:
+    terms:
+      - acrobat
+      - app
+      - design
+      - illustrator
+      - indesign
+      - photoshop
+  styles:
+    - brands
+  unicode: f778
+  voted: false
 adversal:
   changes:
     - 5.0.0
@@ -110,6 +135,7 @@ adversal:
   styles:
     - brands
   unicode: f36a
+  voted: false
 affiliatetheme:
   changes:
     - 5.0.0
@@ -119,6 +145,7 @@ affiliatetheme:
   styles:
     - brands
   unicode: f36b
+  voted: false
 air-freshener:
   changes:
     - 5.2.0
@@ -128,6 +155,7 @@ air-freshener:
   styles:
     - solid
   unicode: f5d0
+  voted: false
 algolia:
   changes:
     - 5.0.0
@@ -137,6 +165,7 @@ algolia:
   styles:
     - brands
   unicode: f36c
+  voted: false
 align-center:
   changes:
     - '1'
@@ -149,6 +178,7 @@ align-center:
   styles:
     - solid
   unicode: f037
+  voted: false
 align-justify:
   changes:
     - '1'
@@ -160,6 +190,7 @@ align-justify:
   styles:
     - solid
   unicode: f039
+  voted: false
 align-left:
   changes:
     - '1'
@@ -171,6 +202,7 @@ align-left:
   styles:
     - solid
   unicode: f036
+  voted: false
 align-right:
   changes:
     - '1'
@@ -182,6 +214,7 @@ align-right:
   styles:
     - solid
   unicode: f038
+  voted: false
 alipay:
   changes:
     - 5.3.0
@@ -191,6 +224,7 @@ alipay:
   styles:
     - brands
   unicode: f642
+  voted: false
 allergies:
   changes:
     - 5.0.7
@@ -205,6 +239,7 @@ allergies:
   styles:
     - solid
   unicode: f461
+  voted: false
 amazon:
   changes:
     - '4.4'
@@ -215,6 +250,7 @@ amazon:
   styles:
     - brands
   unicode: f270
+  voted: false
 amazon-pay:
   changes:
     - 5.0.2
@@ -224,6 +260,7 @@ amazon-pay:
   styles:
     - brands
   unicode: f42c
+  voted: false
 ambulance:
   changes:
     - '3'
@@ -239,6 +276,7 @@ ambulance:
   styles:
     - solid
   unicode: f0f9
+  voted: false
 american-sign-language-interpreting:
   changes:
     - '4.6'
@@ -249,6 +287,7 @@ american-sign-language-interpreting:
   styles:
     - solid
   unicode: f2a3
+  voted: false
 amilia:
   changes:
     - 5.0.0
@@ -258,6 +297,7 @@ amilia:
   styles:
     - brands
   unicode: f36d
+  voted: false
 anchor:
   changes:
     - '3.1'
@@ -269,6 +309,7 @@ anchor:
   styles:
     - solid
   unicode: f13d
+  voted: false
 android:
   changes:
     - '3.2'
@@ -280,6 +321,7 @@ android:
   styles:
     - brands
   unicode: f17b
+  voted: false
 angellist:
   changes:
     - '4.2'
@@ -290,6 +332,7 @@ angellist:
   styles:
     - brands
   unicode: f209
+  voted: false
 angle-double-down:
   changes:
     - '3'
@@ -301,6 +344,7 @@ angle-double-down:
   styles:
     - solid
   unicode: f103
+  voted: false
 angle-double-left:
   changes:
     - '3'
@@ -316,6 +360,7 @@ angle-double-left:
   styles:
     - solid
   unicode: f100
+  voted: false
 angle-double-right:
   changes:
     - '3'
@@ -331,6 +376,7 @@ angle-double-right:
   styles:
     - solid
   unicode: f101
+  voted: false
 angle-double-up:
   changes:
     - '3'
@@ -342,6 +388,7 @@ angle-double-up:
   styles:
     - solid
   unicode: f102
+  voted: false
 angle-down:
   changes:
     - '3'
@@ -353,6 +400,7 @@ angle-down:
   styles:
     - solid
   unicode: f107
+  voted: false
 angle-left:
   changes:
     - '3'
@@ -366,6 +414,7 @@ angle-left:
   styles:
     - solid
   unicode: f104
+  voted: false
 angle-right:
   changes:
     - '3'
@@ -379,6 +428,7 @@ angle-right:
   styles:
     - solid
   unicode: f105
+  voted: false
 angle-up:
   changes:
     - '3'
@@ -390,6 +440,7 @@ angle-up:
   styles:
     - solid
   unicode: f106
+  voted: false
 angry:
   changes:
     - 5.1.0
@@ -405,6 +456,7 @@ angry:
     - solid
     - regular
   unicode: f556
+  voted: false
 angrycreative:
   changes:
     - 5.0.0
@@ -414,6 +466,7 @@ angrycreative:
   styles:
     - brands
   unicode: f36e
+  voted: false
 angular:
   changes:
     - 5.0.0
@@ -423,6 +476,7 @@ angular:
   styles:
     - brands
   unicode: f420
+  voted: false
 ankh:
   changes:
     - 5.3.0
@@ -439,6 +493,7 @@ ankh:
   styles:
     - solid
   unicode: f644
+  voted: false
 app-store:
   changes:
     - 5.0.0
@@ -448,6 +503,7 @@ app-store:
   styles:
     - brands
   unicode: f36f
+  voted: false
 app-store-ios:
   changes:
     - 5.0.0
@@ -457,6 +513,7 @@ app-store-ios:
   styles:
     - brands
   unicode: f370
+  voted: false
 apper:
   changes:
     - 5.0.0
@@ -466,6 +523,7 @@ apper:
   styles:
     - brands
   unicode: f371
+  voted: false
 apple:
   changes:
     - '3.2'
@@ -474,13 +532,16 @@ apple:
   label: Apple
   search:
     terms:
-      - food
       - fruit
+      - ios
       - mac
+      - operating system
+      - os
       - osx
   styles:
     - brands
   unicode: f179
+  voted: false
 apple-alt:
   changes:
     - 5.2.0
@@ -488,7 +549,6 @@ apple-alt:
   search:
     terms:
       - fall
-      - food
       - fruit
       - fuji
       - macintosh
@@ -496,6 +556,7 @@ apple-alt:
   styles:
     - solid
   unicode: f5d1
+  voted: false
 apple-pay:
   changes:
     - 5.0.0
@@ -505,6 +566,7 @@ apple-pay:
   styles:
     - brands
   unicode: f415
+  voted: true
 archive:
   changes:
     - '3.2'
@@ -519,6 +581,7 @@ archive:
   styles:
     - solid
   unicode: f187
+  voted: false
 archway:
   changes:
     - 5.1.0
@@ -532,6 +595,7 @@ archway:
   styles:
     - solid
   unicode: f557
+  voted: false
 arrow-alt-circle-down:
   changes:
     - 5.0.0
@@ -544,6 +608,7 @@ arrow-alt-circle-down:
     - solid
     - regular
   unicode: f358
+  voted: false
 arrow-alt-circle-left:
   changes:
     - 5.0.0
@@ -557,6 +622,7 @@ arrow-alt-circle-left:
     - solid
     - regular
   unicode: f359
+  voted: false
 arrow-alt-circle-right:
   changes:
     - 5.0.0
@@ -570,6 +636,7 @@ arrow-alt-circle-right:
     - solid
     - regular
   unicode: f35a
+  voted: false
 arrow-alt-circle-up:
   changes:
     - 5.0.0
@@ -581,6 +648,7 @@ arrow-alt-circle-up:
     - solid
     - regular
   unicode: f35b
+  voted: false
 arrow-circle-down:
   changes:
     - '2'
@@ -592,6 +660,7 @@ arrow-circle-down:
   styles:
     - solid
   unicode: f0ab
+  voted: false
 arrow-circle-left:
   changes:
     - '2'
@@ -604,6 +673,7 @@ arrow-circle-left:
   styles:
     - solid
   unicode: f0a8
+  voted: false
 arrow-circle-right:
   changes:
     - '2'
@@ -616,6 +686,7 @@ arrow-circle-right:
   styles:
     - solid
   unicode: f0a9
+  voted: false
 arrow-circle-up:
   changes:
     - '2'
@@ -626,6 +697,7 @@ arrow-circle-up:
   styles:
     - solid
   unicode: f0aa
+  voted: false
 arrow-down:
   changes:
     - '1'
@@ -637,6 +709,7 @@ arrow-down:
   styles:
     - solid
   unicode: f063
+  voted: false
 arrow-left:
   changes:
     - '1'
@@ -649,6 +722,7 @@ arrow-left:
   styles:
     - solid
   unicode: f060
+  voted: false
 arrow-right:
   changes:
     - '1'
@@ -661,6 +735,7 @@ arrow-right:
   styles:
     - solid
   unicode: f061
+  voted: false
 arrow-up:
   changes:
     - '1'
@@ -671,6 +746,7 @@ arrow-up:
   styles:
     - solid
   unicode: f062
+  voted: false
 arrows-alt:
   changes:
     - '2'
@@ -691,6 +767,7 @@ arrows-alt:
   styles:
     - solid
   unicode: f0b2
+  voted: false
 arrows-alt-h:
   changes:
     - 5.0.0
@@ -702,6 +779,7 @@ arrows-alt-h:
   styles:
     - solid
   unicode: f337
+  voted: false
 arrows-alt-v:
   changes:
     - 5.0.0
@@ -713,6 +791,17 @@ arrows-alt-v:
   styles:
     - solid
   unicode: f338
+  voted: false
+artstation:
+  changes:
+    - 5.6.0
+  label: Artstation
+  search:
+    terms: []
+  styles:
+    - brands
+  unicode: f77a
+  voted: true
 assistive-listening-systems:
   changes:
     - '4.6'
@@ -723,6 +812,7 @@ assistive-listening-systems:
   styles:
     - solid
   unicode: f2a2
+  voted: false
 asterisk:
   changes:
     - '1'
@@ -734,6 +824,7 @@ asterisk:
   styles:
     - solid
   unicode: f069
+  voted: false
 asymmetrik:
   changes:
     - 5.0.0
@@ -743,6 +834,7 @@ asymmetrik:
   styles:
     - brands
   unicode: f372
+  voted: false
 at:
   changes:
     - '4.2'
@@ -755,6 +847,7 @@ at:
   styles:
     - solid
   unicode: f1fa
+  voted: false
 atlas:
   changes:
     - 5.1.0
@@ -769,6 +862,17 @@ atlas:
   styles:
     - solid
   unicode: f558
+  voted: false
+atlassian:
+  changes:
+    - 5.6.0
+  label: Atlassian
+  search:
+    terms: []
+  styles:
+    - brands
+  unicode: f77b
+  voted: true
 atom:
   changes:
     - 5.2.0
@@ -781,6 +885,7 @@ atom:
   styles:
     - solid
   unicode: f5d2
+  voted: false
 audible:
   changes:
     - 5.0.0
@@ -790,6 +895,7 @@ audible:
   styles:
     - brands
   unicode: f373
+  voted: false
 audio-description:
   changes:
     - '4.6'
@@ -800,6 +906,7 @@ audio-description:
   styles:
     - solid
   unicode: f29e
+  voted: false
 autoprefixer:
   changes:
     - 5.0.0
@@ -809,6 +916,7 @@ autoprefixer:
   styles:
     - brands
   unicode: f41c
+  voted: false
 avianex:
   changes:
     - 5.0.0
@@ -818,6 +926,7 @@ avianex:
   styles:
     - brands
   unicode: f374
+  voted: false
 aviato:
   changes:
     - 5.0.0
@@ -827,6 +936,7 @@ aviato:
   styles:
     - brands
   unicode: f421
+  voted: false
 award:
   changes:
     - 5.1.0
@@ -842,6 +952,7 @@ award:
   styles:
     - solid
   unicode: f559
+  voted: true
 aws:
   changes:
     - 5.0.0
@@ -852,6 +963,42 @@ aws:
   styles:
     - brands
   unicode: f375
+  voted: false
+baby:
+  changes:
+    - 5.6.0
+  label: Baby
+  search:
+    terms:
+      - diaper
+      - human
+      - infant
+      - kid
+      - offspring
+      - person
+      - sprout
+  styles:
+    - solid
+  unicode: f77c
+  voted: true
+baby-carriage:
+  changes:
+    - 5.6.0
+  label: Baby Carriage
+  search:
+    terms:
+      - buggy
+      - carrier
+      - infant
+      - push
+      - stroller
+      - transportation
+      - walk
+      - wheels
+  styles:
+    - solid
+  unicode: f77d
+  voted: true
 backspace:
   changes:
     - 5.1.0
@@ -865,6 +1012,7 @@ backspace:
   styles:
     - solid
   unicode: f55a
+  voted: true
 backward:
   changes:
     - '1'
@@ -877,6 +1025,23 @@ backward:
   styles:
     - solid
   unicode: f04a
+  voted: false
+bacon:
+  changes:
+    - 5.7.0
+  label: Bacon
+  search:
+    terms:
+      - breakfast
+      - ham
+      - meat
+      - pancetta
+      - pork
+      - vegan
+  styles:
+    - solid
+  unicode: f7e5
+  voted: false
 balance-scale:
   changes:
     - '4.4'
@@ -893,6 +1058,7 @@ balance-scale:
   styles:
     - solid
   unicode: f24e
+  voted: false
 ban:
   changes:
     - '1'
@@ -913,6 +1079,7 @@ ban:
   styles:
     - solid
   unicode: f05e
+  voted: false
 band-aid:
   changes:
     - 5.0.7
@@ -925,6 +1092,7 @@ band-aid:
   styles:
     - solid
   unicode: f462
+  voted: false
 bandcamp:
   changes:
     - '4.7'
@@ -935,6 +1103,7 @@ bandcamp:
   styles:
     - brands
   unicode: f2d5
+  voted: false
 barcode:
   changes:
     - '1'
@@ -946,6 +1115,7 @@ barcode:
   styles:
     - solid
   unicode: f02a
+  voted: false
 bars:
   changes:
     - '2'
@@ -968,6 +1138,7 @@ bars:
   styles:
     - solid
   unicode: f0c9
+  voted: false
 baseball-ball:
   changes:
     - 5.0.5
@@ -977,6 +1148,7 @@ baseball-ball:
   styles:
     - solid
   unicode: f433
+  voted: false
 basketball-ball:
   changes:
     - 5.0.5
@@ -986,6 +1158,7 @@ basketball-ball:
   styles:
     - solid
   unicode: f434
+  voted: false
 bath:
   changes:
     - '4.7'
@@ -996,6 +1169,7 @@ bath:
   styles:
     - solid
   unicode: f2cd
+  voted: false
 battery-empty:
   changes:
     - '4.4'
@@ -1008,6 +1182,7 @@ battery-empty:
   styles:
     - solid
   unicode: f244
+  voted: false
 battery-full:
   changes:
     - '4.4'
@@ -1020,6 +1195,7 @@ battery-full:
   styles:
     - solid
   unicode: f240
+  voted: false
 battery-half:
   changes:
     - '4.4'
@@ -1032,6 +1208,7 @@ battery-half:
   styles:
     - solid
   unicode: f242
+  voted: false
 battery-quarter:
   changes:
     - '4.4'
@@ -1044,6 +1221,7 @@ battery-quarter:
   styles:
     - solid
   unicode: f243
+  voted: false
 battery-three-quarters:
   changes:
     - '4.4'
@@ -1056,6 +1234,7 @@ battery-three-quarters:
   styles:
     - solid
   unicode: f241
+  voted: false
 bed:
   changes:
     - '4.3'
@@ -1070,6 +1249,7 @@ bed:
   styles:
     - solid
   unicode: f236
+  voted: false
 beer:
   changes:
     - '3'
@@ -1087,6 +1267,7 @@ beer:
   styles:
     - solid
   unicode: f0fc
+  voted: false
 behance:
   changes:
     - '4.1'
@@ -1097,6 +1278,7 @@ behance:
   styles:
     - brands
   unicode: f1b4
+  voted: false
 behance-square:
   changes:
     - '4.1'
@@ -1108,6 +1290,7 @@ behance-square:
   styles:
     - brands
   unicode: f1b5
+  voted: false
 bell:
   changes:
     - '2'
@@ -1123,6 +1306,7 @@ bell:
     - solid
     - regular
   unicode: f0f3
+  voted: false
 bell-slash:
   changes:
     - '4.2'
@@ -1130,11 +1314,18 @@ bell-slash:
     - 5.2.0
   label: Bell Slash
   search:
-    terms: []
+    terms:
+      - alert
+      - cancel
+      - disabled
+      - notification
+      - 'off'
+      - reminder
   styles:
     - solid
     - regular
   unicode: f1f6
+  voted: false
 bezier-curve:
   changes:
     - 5.1.0
@@ -1149,6 +1340,7 @@ bezier-curve:
   styles:
     - solid
   unicode: f55b
+  voted: false
 bible:
   changes:
     - 5.3.0
@@ -1161,6 +1353,7 @@ bible:
   styles:
     - solid
   unicode: f647
+  voted: false
 bicycle:
   changes:
     - '4.2'
@@ -1175,6 +1368,7 @@ bicycle:
   styles:
     - solid
   unicode: f206
+  voted: false
 bimobject:
   changes:
     - 5.0.0
@@ -1184,6 +1378,7 @@ bimobject:
   styles:
     - brands
   unicode: f378
+  voted: false
 binoculars:
   changes:
     - '4.2'
@@ -1195,6 +1390,22 @@ binoculars:
   styles:
     - solid
   unicode: f1e5
+  voted: false
+biohazard:
+  changes:
+    - 5.6.0
+    - 5.7.0
+  label: Biohazard
+  search:
+    terms:
+      - danger
+      - dangerous
+      - medical
+      - waste
+  styles:
+    - solid
+  unicode: f780
+  voted: true
 birthday-cake:
   changes:
     - '4.2'
@@ -1205,18 +1416,22 @@ birthday-cake:
   styles:
     - solid
   unicode: f1fd
+  voted: false
 bitbucket:
   changes:
     - '3.2'
     - 5.0.0
+    - 5.6.0
   label: Bitbucket
   search:
     terms:
+      - atlassian
       - bitbucket-square
       - git
   styles:
     - brands
   unicode: f171
+  voted: false
 bitcoin:
   changes:
     - 5.0.0
@@ -1226,6 +1441,7 @@ bitcoin:
   styles:
     - brands
   unicode: f379
+  voted: false
 bity:
   changes:
     - 5.0.0
@@ -1235,6 +1451,7 @@ bity:
   styles:
     - brands
   unicode: f37a
+  voted: false
 black-tie:
   changes:
     - '4.4'
@@ -1245,6 +1462,7 @@ black-tie:
   styles:
     - brands
   unicode: f27e
+  voted: false
 blackberry:
   changes:
     - 5.0.0
@@ -1254,6 +1472,7 @@ blackberry:
   styles:
     - brands
   unicode: f37b
+  voted: false
 blender:
   changes:
     - 5.0.13
@@ -1263,6 +1482,7 @@ blender:
   styles:
     - solid
   unicode: f517
+  voted: false
 blender-phone:
   changes:
     - 5.4.0
@@ -1275,16 +1495,40 @@ blender-phone:
   styles:
     - solid
   unicode: f6b6
+  voted: false
 blind:
   changes:
     - '4.6'
     - 5.0.0
   label: Blind
   search:
-    terms: []
+    terms:
+      - cane
+      - disability
+      - person
+      - sight
   styles:
     - solid
   unicode: f29d
+  voted: false
+blog:
+  changes:
+    - 5.6.0
+  label: Blog
+  search:
+    terms:
+      - journal
+      - log
+      - online
+      - personal
+      - post
+      - web 2.0
+      - wordpress
+      - writing
+  styles:
+    - solid
+  unicode: f781
+  voted: true
 blogger:
   changes:
     - 5.0.0
@@ -1294,6 +1538,7 @@ blogger:
   styles:
     - brands
   unicode: f37c
+  voted: false
 blogger-b:
   changes:
     - 5.0.0
@@ -1303,6 +1548,7 @@ blogger-b:
   styles:
     - brands
   unicode: f37d
+  voted: false
 bluetooth:
   changes:
     - '4.5'
@@ -1313,6 +1559,7 @@ bluetooth:
   styles:
     - brands
   unicode: f293
+  voted: false
 bluetooth-b:
   changes:
     - '4.5'
@@ -1323,6 +1570,7 @@ bluetooth-b:
   styles:
     - brands
   unicode: f294
+  voted: false
 bold:
   changes:
     - '1'
@@ -1333,10 +1581,12 @@ bold:
   styles:
     - solid
   unicode: f032
+  voted: false
 bolt:
   changes:
     - '2'
     - 5.0.0
+    - 5.5.0
   label: Lightning Bolt
   search:
     terms:
@@ -1347,6 +1597,7 @@ bolt:
   styles:
     - solid
   unicode: f0e7
+  voted: false
 bomb:
   changes:
     - '4.1'
@@ -1357,6 +1608,7 @@ bomb:
   styles:
     - solid
   unicode: f1e2
+  voted: false
 bone:
   changes:
     - 5.2.0
@@ -1366,6 +1618,7 @@ bone:
   styles:
     - solid
   unicode: f5d7
+  voted: false
 bong:
   changes:
     - 5.1.0
@@ -1381,6 +1634,7 @@ bong:
   styles:
     - solid
   unicode: f55c
+  voted: false
 book:
   changes:
     - '1'
@@ -1393,6 +1647,7 @@ book:
   styles:
     - solid
   unicode: f02d
+  voted: false
 book-dead:
   changes:
     - 5.4.0
@@ -1416,6 +1671,17 @@ book-dead:
   styles:
     - solid
   unicode: f6b7
+  voted: false
+book-medical:
+  changes:
+    - 5.7.0
+  label: Medical Book
+  search:
+    terms: []
+  styles:
+    - solid
+  unicode: f7e6
+  voted: false
 book-open:
   changes:
     - 5.0.13
@@ -1432,6 +1698,7 @@ book-open:
   styles:
     - solid
   unicode: f518
+  voted: true
 book-reader:
   changes:
     - 5.2.0
@@ -1442,6 +1709,7 @@ book-reader:
   styles:
     - solid
   unicode: f5da
+  voted: false
 bookmark:
   changes:
     - '1'
@@ -1454,6 +1722,7 @@ bookmark:
     - solid
     - regular
   unicode: f02e
+  voted: false
 bowling-ball:
   changes:
     - 5.0.5
@@ -1463,6 +1732,7 @@ bowling-ball:
   styles:
     - solid
   unicode: f436
+  voted: false
 box:
   changes:
     - 5.0.7
@@ -1473,15 +1743,18 @@ box:
   styles:
     - solid
   unicode: f466
+  voted: false
 box-open:
   changes:
     - 5.0.9
+    - 5.7.0
   label: Box Open
   search:
     terms: []
   styles:
     - solid
   unicode: f49e
+  voted: false
 boxes:
   changes:
     - 5.0.7
@@ -1491,6 +1764,7 @@ boxes:
   styles:
     - solid
   unicode: f468
+  voted: false
 braille:
   changes:
     - '4.6'
@@ -1501,6 +1775,7 @@ braille:
   styles:
     - solid
   unicode: f2a1
+  voted: false
 brain:
   changes:
     - 5.2.0
@@ -1517,6 +1792,29 @@ brain:
   styles:
     - solid
   unicode: f5dc
+  voted: false
+bread-slice:
+  changes:
+    - 5.7.0
+  label: Bread Slice
+  search:
+    terms:
+      - bake
+      - bakery
+      - baking
+      - dough
+      - flour
+      - gluten
+      - grain
+      - sandwich
+      - sourdough
+      - toast
+      - wheat
+      - yeast
+  styles:
+    - solid
+  unicode: f7ec
+  voted: false
 briefcase:
   changes:
     - '2'
@@ -1533,6 +1831,7 @@ briefcase:
   styles:
     - solid
   unicode: f0b1
+  voted: false
 briefcase-medical:
   changes:
     - 5.0.7
@@ -1543,6 +1842,7 @@ briefcase-medical:
   styles:
     - solid
   unicode: f469
+  voted: false
 broadcast-tower:
   changes:
     - 5.0.13
@@ -1555,6 +1855,7 @@ broadcast-tower:
   styles:
     - solid
   unicode: f519
+  voted: true
 broom:
   changes:
     - 5.0.13
@@ -1573,6 +1874,7 @@ broom:
   styles:
     - solid
   unicode: f51a
+  voted: true
 brush:
   changes:
     - 5.1.0
@@ -1586,6 +1888,7 @@ brush:
   styles:
     - solid
   unicode: f55d
+  voted: false
 btc:
   changes:
     - '3.2'
@@ -1596,6 +1899,7 @@ btc:
   styles:
     - brands
   unicode: f15a
+  voted: false
 bug:
   changes:
     - '3.2'
@@ -1608,6 +1912,7 @@ bug:
   styles:
     - solid
   unicode: f188
+  voted: false
 building:
   changes:
     - '4.1'
@@ -1624,6 +1929,7 @@ building:
     - solid
     - regular
   unicode: f1ad
+  voted: false
 bullhorn:
   changes:
     - '2'
@@ -1640,6 +1946,7 @@ bullhorn:
   styles:
     - solid
   unicode: f0a1
+  voted: false
 bullseye:
   changes:
     - '3.1'
@@ -1652,16 +1959,24 @@ bullseye:
   styles:
     - solid
   unicode: f140
+  voted: false
 burn:
   changes:
     - 5.0.7
   label: Burn
   search:
     terms:
+      - caliente
       - energy
+      - fire
+      - flame
+      - gas
+      - heat
+      - hot
   styles:
     - solid
   unicode: f46a
+  voted: false
 buromobelexperte:
   changes:
     - 5.0.0
@@ -1671,6 +1986,7 @@ buromobelexperte:
   styles:
     - brands
   unicode: f37f
+  voted: false
 bus:
   changes:
     - '4.2'
@@ -1686,6 +2002,7 @@ bus:
   styles:
     - solid
   unicode: f207
+  voted: false
 bus-alt:
   changes:
     - 5.1.0
@@ -1699,6 +2016,7 @@ bus-alt:
   styles:
     - solid
   unicode: f55e
+  voted: false
 business-time:
   changes:
     - 5.3.0
@@ -1713,6 +2031,7 @@ business-time:
   styles:
     - solid
   unicode: f64a
+  voted: false
 buysellads:
   changes:
     - '4.3'
@@ -1723,6 +2042,7 @@ buysellads:
   styles:
     - brands
   unicode: f20d
+  voted: false
 calculator:
   changes:
     - '4.2'
@@ -1734,6 +2054,7 @@ calculator:
   styles:
     - solid
   unicode: f1ec
+  voted: false
 calendar:
   changes:
     - '3.1'
@@ -1751,10 +2072,13 @@ calendar:
     - solid
     - regular
   unicode: f133
+  voted: false
 calendar-alt:
   changes:
     - '1'
     - 5.0.0
+    - 5.6.0
+    - 5.7.0
   label: Alternate Calendar
   search:
     terms:
@@ -1768,6 +2092,7 @@ calendar-alt:
     - solid
     - regular
   unicode: f073
+  voted: false
 calendar-check:
   changes:
     - '4.4'
@@ -1780,15 +2105,41 @@ calendar-check:
       - appointment
       - confirm
       - correct
+      - date
       - done
+      - event
       - ok
+      - schedule
       - select
       - success
+      - tick
+      - time
       - todo
+      - when
   styles:
     - solid
     - regular
   unicode: f274
+  voted: false
+calendar-day:
+  changes:
+    - 5.6.0
+  label: Calendar with Day Focus
+  search:
+    terms:
+      - date
+      - detail
+      - event
+      - focus
+      - schedule
+      - single day
+      - time
+      - today
+      - when
+  styles:
+    - solid
+  unicode: f783
+  voted: true
 calendar-minus:
   changes:
     - '4.4'
@@ -1803,6 +2154,7 @@ calendar-minus:
     - solid
     - regular
   unicode: f272
+  voted: false
 calendar-plus:
   changes:
     - '4.4'
@@ -1818,6 +2170,7 @@ calendar-plus:
     - solid
     - regular
   unicode: f271
+  voted: false
 calendar-times:
   changes:
     - '4.4'
@@ -1833,6 +2186,26 @@ calendar-times:
     - solid
     - regular
   unicode: f273
+  voted: false
+calendar-week:
+  changes:
+    - 5.6.0
+  label: Calendar with Week Focus
+  search:
+    terms:
+      - date
+      - detail
+      - event
+      - focus
+      - schedule
+      - single week
+      - time
+      - today
+      - when
+  styles:
+    - solid
+  unicode: f784
+  voted: true
 camera:
   changes:
     - '1'
@@ -1846,6 +2219,7 @@ camera:
   styles:
     - solid
   unicode: f030
+  voted: false
 camera-retro:
   changes:
     - '1'
@@ -1859,6 +2233,7 @@ camera-retro:
   styles:
     - solid
   unicode: f083
+  voted: false
 campground:
   changes:
     - 5.4.0
@@ -1873,6 +2248,37 @@ campground:
   styles:
     - solid
   unicode: f6bb
+  voted: false
+canadian-maple-leaf:
+  changes:
+    - 5.6.0
+  label: Canadian Maple Leaf
+  search:
+    terms:
+      - canada
+      - flag
+      - flora
+      - nature
+      - plant
+  styles:
+    - brands
+  unicode: f785
+candy-cane:
+  changes:
+    - 5.6.0
+  label: Candy Cane
+  search:
+    terms:
+      - candy
+      - christmas
+      - holiday
+      - mint
+      - peppermint
+      - striped
+      - xmas
+  styles:
+    - solid
+  unicode: f786
 cannabis:
   changes:
     - 5.1.0
@@ -1896,6 +2302,7 @@ cannabis:
   styles:
     - solid
   unicode: f55f
+  voted: false
 capsules:
   changes:
     - 5.0.7
@@ -1907,6 +2314,7 @@ capsules:
   styles:
     - solid
   unicode: f46b
+  voted: false
 car:
   changes:
     - '4.1'
@@ -1921,6 +2329,7 @@ car:
   styles:
     - solid
   unicode: f1b9
+  voted: false
 car-alt:
   changes:
     - 5.2.0
@@ -1930,6 +2339,7 @@ car-alt:
   styles:
     - solid
   unicode: f5de
+  voted: false
 car-battery:
   changes:
     - 5.2.0
@@ -1939,6 +2349,7 @@ car-battery:
   styles:
     - solid
   unicode: f5df
+  voted: false
 car-crash:
   changes:
     - 5.2.0
@@ -1948,6 +2359,7 @@ car-crash:
   styles:
     - solid
   unicode: f5e1
+  voted: false
 car-side:
   changes:
     - 5.2.0
@@ -1957,6 +2369,7 @@ car-side:
   styles:
     - solid
   unicode: f5e4
+  voted: false
 caret-down:
   changes:
     - '2'
@@ -1972,6 +2385,7 @@ caret-down:
   styles:
     - solid
   unicode: f0d7
+  voted: false
 caret-left:
   changes:
     - '2'
@@ -1986,6 +2400,7 @@ caret-left:
   styles:
     - solid
   unicode: f0d9
+  voted: false
 caret-right:
   changes:
     - '2'
@@ -2000,6 +2415,7 @@ caret-right:
   styles:
     - solid
   unicode: f0da
+  voted: false
 caret-square-down:
   changes:
     - '3.2'
@@ -2015,6 +2431,7 @@ caret-square-down:
     - solid
     - regular
   unicode: f150
+  voted: false
 caret-square-left:
   changes:
     - '4'
@@ -2029,6 +2446,7 @@ caret-square-left:
     - solid
     - regular
   unicode: f191
+  voted: false
 caret-square-right:
   changes:
     - '3.2'
@@ -2043,6 +2461,7 @@ caret-square-right:
     - solid
     - regular
   unicode: f152
+  voted: false
 caret-square-up:
   changes:
     - '3.2'
@@ -2055,6 +2474,7 @@ caret-square-up:
     - solid
     - regular
   unicode: f151
+  voted: false
 caret-up:
   changes:
     - '2'
@@ -2067,6 +2487,20 @@ caret-up:
   styles:
     - solid
   unicode: f0d8
+  voted: false
+carrot:
+  changes:
+    - 5.6.0
+  label: Carrot
+  search:
+    terms:
+      - bugs bunny
+      - holiday
+      - orange
+      - vegetable
+  styles:
+    - solid
+  unicode: f787
 cart-arrow-down:
   changes:
     - '4.3'
@@ -2078,6 +2512,7 @@ cart-arrow-down:
   styles:
     - solid
   unicode: f218
+  voted: false
 cart-plus:
   changes:
     - '4.3'
@@ -2093,6 +2528,28 @@ cart-plus:
   styles:
     - solid
   unicode: f217
+  voted: false
+cash-register:
+  changes:
+    - 5.6.0
+  label: Cash Register
+  search:
+    terms:
+      - buy
+      - cha-ching
+      - change
+      - checkout
+      - commerce
+      - leaerboard
+      - machine
+      - pay
+      - payment
+      - purchase
+      - store
+  styles:
+    - solid
+  unicode: f788
+  voted: true
 cat:
   changes:
     - 5.4.0
@@ -2109,6 +2566,7 @@ cat:
   styles:
     - solid
   unicode: f6be
+  voted: true
 cc-amazon-pay:
   changes:
     - 5.0.2
@@ -2118,10 +2576,12 @@ cc-amazon-pay:
   styles:
     - brands
   unicode: f42d
+  voted: false
 cc-amex:
   changes:
     - '4.2'
     - 5.0.0
+    - 5.7.0
   label: American Express Credit Card
   search:
     terms:
@@ -2129,6 +2589,7 @@ cc-amex:
   styles:
     - brands
   unicode: f1f3
+  voted: false
 cc-apple-pay:
   changes:
     - 5.0.0
@@ -2138,6 +2599,7 @@ cc-apple-pay:
   styles:
     - brands
   unicode: f416
+  voted: false
 cc-diners-club:
   changes:
     - '4.4'
@@ -2148,6 +2610,7 @@ cc-diners-club:
   styles:
     - brands
   unicode: f24c
+  voted: false
 cc-discover:
   changes:
     - '4.2'
@@ -2158,6 +2621,7 @@ cc-discover:
   styles:
     - brands
   unicode: f1f2
+  voted: false
 cc-jcb:
   changes:
     - '4.4'
@@ -2168,6 +2632,7 @@ cc-jcb:
   styles:
     - brands
   unicode: f24b
+  voted: false
 cc-mastercard:
   changes:
     - '4.2'
@@ -2178,6 +2643,7 @@ cc-mastercard:
   styles:
     - brands
   unicode: f1f1
+  voted: false
 cc-paypal:
   changes:
     - '4.2'
@@ -2188,6 +2654,7 @@ cc-paypal:
   styles:
     - brands
   unicode: f1f4
+  voted: false
 cc-stripe:
   changes:
     - '4.2'
@@ -2198,6 +2665,7 @@ cc-stripe:
   styles:
     - brands
   unicode: f1f5
+  voted: false
 cc-visa:
   changes:
     - '4.2'
@@ -2208,6 +2676,7 @@ cc-visa:
   styles:
     - brands
   unicode: f1f0
+  voted: false
 centercode:
   changes:
     - 5.0.0
@@ -2217,6 +2686,20 @@ centercode:
   styles:
     - brands
   unicode: f380
+  voted: false
+centos:
+  changes:
+    - 5.6.0
+  label: Centos
+  search:
+    terms:
+      - linux
+      - operating system
+      - os
+  styles:
+    - brands
+  unicode: f789
+  voted: true
 certificate:
   changes:
     - '2'
@@ -2229,6 +2712,7 @@ certificate:
   styles:
     - solid
   unicode: f0a3
+  voted: false
 chair:
   changes:
     - 5.4.0
@@ -2240,6 +2724,7 @@ chair:
   styles:
     - solid
   unicode: f6c0
+  voted: true
 chalkboard:
   changes:
     - 5.0.13
@@ -2255,6 +2740,7 @@ chalkboard:
   styles:
     - solid
   unicode: f51b
+  voted: false
 chalkboard-teacher:
   changes:
     - 5.0.13
@@ -2271,6 +2757,7 @@ chalkboard-teacher:
   styles:
     - solid
   unicode: f51c
+  voted: false
 charging-station:
   changes:
     - 5.2.0
@@ -2280,6 +2767,7 @@ charging-station:
   styles:
     - solid
   unicode: f5e7
+  voted: false
 chart-area:
   changes:
     - '4.2'
@@ -2293,6 +2781,7 @@ chart-area:
   styles:
     - solid
   unicode: f1fe
+  voted: false
 chart-bar:
   changes:
     - '1'
@@ -2308,6 +2797,7 @@ chart-bar:
     - solid
     - regular
   unicode: f080
+  voted: false
 chart-line:
   changes:
     - '4.2'
@@ -2319,11 +2809,14 @@ chart-line:
       - activity
       - analytics
       - dashboard
+      - gain
       - graph
+      - increase
       - line-chart
   styles:
     - solid
   unicode: f201
+  voted: false
 chart-pie:
   changes:
     - '4.2'
@@ -2338,6 +2831,7 @@ chart-pie:
   styles:
     - solid
   unicode: f200
+  voted: false
 check:
   changes:
     - '1'
@@ -2363,6 +2857,7 @@ check:
   styles:
     - solid
   unicode: f00c
+  voted: false
 check-circle:
   changes:
     - '1'
@@ -2378,12 +2873,14 @@ check-circle:
       - ok
       - select
       - success
+      - tick
       - todo
       - 'yes'
   styles:
     - solid
     - regular
   unicode: f058
+  voted: false
 check-double:
   changes:
     - 5.1.0
@@ -2407,6 +2904,7 @@ check-double:
   styles:
     - solid
   unicode: f560
+  voted: true
 check-square:
   changes:
     - '3.1'
@@ -2423,12 +2921,32 @@ check-square:
       - ok
       - select
       - success
+      - tick
       - todo
       - 'yes'
   styles:
     - solid
     - regular
   unicode: f14a
+  voted: false
+cheese:
+  changes:
+    - 5.7.0
+  label: Cheese
+  search:
+    terms:
+      - cheddar
+      - curd
+      - gouda
+      - melt
+      - parmesan
+      - sandwich
+      - swiss
+      - wedge
+  styles:
+    - solid
+  unicode: f7ef
+  voted: false
 chess:
   changes:
     - 5.0.5
@@ -2438,6 +2956,7 @@ chess:
   styles:
     - solid
   unicode: f439
+  voted: false
 chess-bishop:
   changes:
     - 5.0.5
@@ -2447,15 +2966,18 @@ chess-bishop:
   styles:
     - solid
   unicode: f43a
+  voted: false
 chess-board:
   changes:
     - 5.0.5
+    - 5.7.0
   label: Chess Board
   search:
     terms: []
   styles:
     - solid
   unicode: f43c
+  voted: false
 chess-king:
   changes:
     - 5.0.5
@@ -2465,6 +2987,7 @@ chess-king:
   styles:
     - solid
   unicode: f43f
+  voted: false
 chess-knight:
   changes:
     - 5.0.5
@@ -2474,6 +2997,7 @@ chess-knight:
   styles:
     - solid
   unicode: f441
+  voted: false
 chess-pawn:
   changes:
     - 5.0.5
@@ -2483,6 +3007,7 @@ chess-pawn:
   styles:
     - solid
   unicode: f443
+  voted: false
 chess-queen:
   changes:
     - 5.0.5
@@ -2492,6 +3017,7 @@ chess-queen:
   styles:
     - solid
   unicode: f445
+  voted: false
 chess-rook:
   changes:
     - 5.0.5
@@ -2501,6 +3027,7 @@ chess-rook:
   styles:
     - solid
   unicode: f447
+  voted: false
 chevron-circle-down:
   changes:
     - '3.1'
@@ -2515,6 +3042,7 @@ chevron-circle-down:
   styles:
     - solid
   unicode: f13a
+  voted: false
 chevron-circle-left:
   changes:
     - '3.1'
@@ -2528,6 +3056,7 @@ chevron-circle-left:
   styles:
     - solid
   unicode: f137
+  voted: false
 chevron-circle-right:
   changes:
     - '3.1'
@@ -2541,6 +3070,7 @@ chevron-circle-right:
   styles:
     - solid
   unicode: f138
+  voted: false
 chevron-circle-up:
   changes:
     - '3.1'
@@ -2552,6 +3082,7 @@ chevron-circle-up:
   styles:
     - solid
   unicode: f139
+  voted: false
 chevron-down:
   changes:
     - '1'
@@ -2562,6 +3093,7 @@ chevron-down:
   styles:
     - solid
   unicode: f078
+  voted: false
 chevron-left:
   changes:
     - '1'
@@ -2575,6 +3107,7 @@ chevron-left:
   styles:
     - solid
   unicode: f053
+  voted: false
 chevron-right:
   changes:
     - '1'
@@ -2588,6 +3121,7 @@ chevron-right:
   styles:
     - solid
   unicode: f054
+  voted: false
 chevron-up:
   changes:
     - '1'
@@ -2598,6 +3132,7 @@ chevron-up:
   styles:
     - solid
   unicode: f077
+  voted: false
 child:
   changes:
     - '4.1'
@@ -2608,6 +3143,7 @@ child:
   styles:
     - solid
   unicode: f1ae
+  voted: false
 chrome:
   changes:
     - '4.4'
@@ -2619,6 +3155,7 @@ chrome:
   styles:
     - brands
   unicode: f268
+  voted: false
 church:
   changes:
     - 5.0.13
@@ -2631,6 +3168,7 @@ church:
   styles:
     - solid
   unicode: f51d
+  voted: true
 circle:
   changes:
     - '3'
@@ -2645,6 +3183,7 @@ circle:
     - solid
     - regular
   unicode: f111
+  voted: false
 circle-notch:
   changes:
     - '4.1'
@@ -2656,6 +3195,7 @@ circle-notch:
   styles:
     - solid
   unicode: f1ce
+  voted: false
 city:
   changes:
     - 5.3.0
@@ -2670,6 +3210,24 @@ city:
   styles:
     - solid
   unicode: f64f
+  voted: false
+clinic-medical:
+  changes:
+    - 5.7.0
+  label: Medical Clinic
+  search:
+    terms:
+      - doctor
+      - general practitioner
+      - hospital
+      - infirmary
+      - medicine
+      - office
+      - outpatient
+  styles:
+    - solid
+  unicode: f7f2
+  voted: false
 clipboard:
   changes:
     - 5.0.0
@@ -2681,10 +3239,11 @@ clipboard:
     - solid
     - regular
   unicode: f328
+  voted: false
 clipboard-check:
   changes:
     - 5.0.7
-  label: Clipboard Check
+  label: Clipboard with Check
   search:
     terms:
       - accept
@@ -2694,11 +3253,13 @@ clipboard-check:
       - ok
       - select
       - success
+      - tick
       - todo
       - 'yes'
   styles:
     - solid
   unicode: f46c
+  voted: false
 clipboard-list:
   changes:
     - 5.0.7
@@ -2712,11 +3273,13 @@ clipboard-list:
       - intinerary
       - ol
       - schedule
+      - tick
       - todo
       - ul
   styles:
     - solid
   unicode: f46d
+  voted: false
 clock:
   changes:
     - '1'
@@ -2734,6 +3297,7 @@ clock:
     - solid
     - regular
   unicode: f017
+  voted: false
 clone:
   changes:
     - '4.4'
@@ -2747,6 +3311,7 @@ clone:
     - solid
     - regular
   unicode: f24d
+  voted: false
 closed-captioning:
   changes:
     - '4.2'
@@ -2759,6 +3324,7 @@ closed-captioning:
     - solid
     - regular
   unicode: f20a
+  voted: false
 cloud:
   changes:
     - '2'
@@ -2771,6 +3337,7 @@ cloud:
   styles:
     - solid
   unicode: f0c2
+  voted: false
 cloud-download-alt:
   changes:
     - 5.0.0
@@ -2778,27 +3345,77 @@ cloud-download-alt:
   label: Alternate Cloud Download
   search:
     terms:
-      - cloud-download
+      - export
   styles:
     - solid
   unicode: f381
+  voted: false
+cloud-meatball:
+  changes:
+    - 5.5.0
+  label: Cloud with (a chance of) Meatball
+  search:
+    terms: []
+  styles:
+    - solid
+  unicode: f73b
+  voted: false
 cloud-moon:
   changes:
     - 5.4.0
+    - 5.5.0
   label: Cloud with Moon
   search:
     terms:
+      - crescent
       - evening
       - halloween
       - holiday
+      - lunar
       - night
       - sky
   styles:
     - solid
   unicode: f6c3
+  voted: false
+cloud-moon-rain:
+  changes:
+    - 5.5.0
+  label: Cloud with Moon and Rain
+  search:
+    terms: []
+  styles:
+    - solid
+  unicode: f73c
+  voted: false
+cloud-rain:
+  changes:
+    - 5.5.0
+  label: Cloud with Rain
+  search:
+    terms:
+      - precipitation
+  styles:
+    - solid
+  unicode: f73d
+  voted: false
+cloud-showers-heavy:
+  changes:
+    - 5.5.0
+  label: Cloud with Heavy Showers
+  search:
+    terms:
+      - precipitation
+      - rain
+      - storm
+  styles:
+    - solid
+  unicode: f740
+  voted: false
 cloud-sun:
   changes:
     - 5.4.0
+    - 5.5.0
   label: Cloud with Sun
   search:
     terms:
@@ -2810,6 +3427,17 @@ cloud-sun:
   styles:
     - solid
   unicode: f6c4
+  voted: false
+cloud-sun-rain:
+  changes:
+    - 5.5.0
+  label: Cloud with Sun and Rain
+  search:
+    terms: []
+  styles:
+    - solid
+  unicode: f743
+  voted: false
 cloud-upload-alt:
   changes:
     - 5.0.0
@@ -2821,6 +3449,7 @@ cloud-upload-alt:
   styles:
     - solid
   unicode: f382
+  voted: false
 cloudscale:
   changes:
     - 5.0.0
@@ -2830,6 +3459,7 @@ cloudscale:
   styles:
     - brands
   unicode: f383
+  voted: false
 cloudsmith:
   changes:
     - 5.0.0
@@ -2839,6 +3469,7 @@ cloudsmith:
   styles:
     - brands
   unicode: f384
+  voted: false
 cloudversify:
   changes:
     - 5.0.0
@@ -2848,6 +3479,7 @@ cloudversify:
   styles:
     - brands
   unicode: f385
+  voted: false
 cocktail:
   changes:
     - 5.1.0
@@ -2860,6 +3492,7 @@ cocktail:
   styles:
     - solid
   unicode: f561
+  voted: false
 code:
   changes:
     - '3.1'
@@ -2872,6 +3505,7 @@ code:
   styles:
     - solid
   unicode: f121
+  voted: false
 code-branch:
   changes:
     - 5.0.0
@@ -2890,6 +3524,7 @@ code-branch:
   styles:
     - solid
   unicode: f126
+  voted: false
 codepen:
   changes:
     - '4.1'
@@ -2900,6 +3535,7 @@ codepen:
   styles:
     - brands
   unicode: f1cb
+  voted: false
 codiepie:
   changes:
     - '4.5'
@@ -2910,6 +3546,7 @@ codiepie:
   styles:
     - brands
   unicode: f284
+  voted: false
 coffee:
   changes:
     - '3'
@@ -2929,6 +3566,7 @@ coffee:
   styles:
     - solid
   unicode: f0f4
+  voted: false
 cog:
   changes:
     - '1'
@@ -2940,6 +3578,7 @@ cog:
   styles:
     - solid
   unicode: f013
+  voted: false
 cogs:
   changes:
     - '1'
@@ -2952,6 +3591,7 @@ cogs:
   styles:
     - solid
   unicode: f085
+  voted: false
 coins:
   changes:
     - 5.0.13
@@ -2961,6 +3601,7 @@ coins:
   styles:
     - solid
   unicode: f51e
+  voted: true
 columns:
   changes:
     - '2'
@@ -2974,6 +3615,7 @@ columns:
   styles:
     - solid
   unicode: f0db
+  voted: false
 comment:
   changes:
     - '1'
@@ -2996,6 +3638,7 @@ comment:
     - solid
     - regular
   unicode: f075
+  voted: false
 comment-alt:
   changes:
     - '4.4'
@@ -3018,6 +3661,7 @@ comment-alt:
     - solid
     - regular
   unicode: f27a
+  voted: false
 comment-dollar:
   changes:
     - 5.3.0
@@ -3027,6 +3671,7 @@ comment-dollar:
   styles:
     - solid
   unicode: f651
+  voted: false
 comment-dots:
   changes:
     - 5.0.9
@@ -3037,6 +3682,20 @@ comment-dots:
     - solid
     - regular
   unicode: f4ad
+  voted: false
+comment-medical:
+  changes:
+    - 5.7.0
+  label: Alternate Medical Chat
+  search:
+    terms:
+      - advice
+      - diagnose
+      - prescription
+  styles:
+    - solid
+  unicode: f7f5
+  voted: false
 comment-slash:
   changes:
     - 5.0.9
@@ -3046,6 +3705,7 @@ comment-slash:
   styles:
     - solid
   unicode: f4b3
+  voted: false
 comments:
   changes:
     - '1'
@@ -3068,6 +3728,7 @@ comments:
     - solid
     - regular
   unicode: f086
+  voted: false
 comments-dollar:
   changes:
     - 5.3.0
@@ -3077,6 +3738,7 @@ comments-dollar:
   styles:
     - solid
   unicode: f653
+  voted: false
 compact-disc:
   changes:
     - 5.0.13
@@ -3090,6 +3752,7 @@ compact-disc:
   styles:
     - solid
   unicode: f51f
+  voted: true
 compass:
   changes:
     - '3.2'
@@ -3106,6 +3769,7 @@ compass:
     - solid
     - regular
   unicode: f14e
+  voted: false
 compress:
   changes:
     - 5.0.0
@@ -3120,6 +3784,24 @@ compress:
   styles:
     - solid
   unicode: f066
+  voted: false
+compress-arrows-alt:
+  changes:
+    - 5.6.0
+  label: Alternate Compress Arrows
+  search:
+    terms:
+      - collapse
+      - fullscreen
+      - minimize
+      - move
+      - resize
+      - shrink
+      - smaller
+  styles:
+    - solid
+  unicode: f78c
+  voted: true
 concierge-bell:
   changes:
     - 5.1.0
@@ -3133,6 +3815,18 @@ concierge-bell:
   styles:
     - solid
   unicode: f562
+  voted: false
+confluence:
+  changes:
+    - 5.6.0
+  label: Confluence
+  search:
+    terms:
+      - atlassian
+  styles:
+    - brands
+  unicode: f78d
+  voted: true
 connectdevelop:
   changes:
     - '4.3'
@@ -3143,6 +3837,7 @@ connectdevelop:
   styles:
     - brands
   unicode: f20e
+  voted: false
 contao:
   changes:
     - '4.4'
@@ -3153,6 +3848,7 @@ contao:
   styles:
     - brands
   unicode: f26d
+  voted: false
 cookie:
   changes:
     - 5.1.0
@@ -3161,13 +3857,13 @@ cookie:
     terms:
       - baked good
       - chips
-      - food
       - snack
       - sweet
       - treat
   styles:
     - solid
   unicode: f563
+  voted: true
 cookie-bite:
   changes:
     - 5.1.0
@@ -3178,13 +3874,13 @@ cookie-bite:
       - bitten
       - chips
       - eating
-      - food
       - snack
       - sweet
       - treat
   styles:
     - solid
   unicode: f564
+  voted: true
 copy:
   changes:
     - '2'
@@ -3200,6 +3896,7 @@ copy:
     - solid
     - regular
   unicode: f0c5
+  voted: false
 copyright:
   changes:
     - '4.2'
@@ -3211,6 +3908,7 @@ copyright:
     - solid
     - regular
   unicode: f1f9
+  voted: false
 couch:
   changes:
     - 5.0.9
@@ -3222,6 +3920,7 @@ couch:
   styles:
     - solid
   unicode: f4b8
+  voted: false
 cpanel:
   changes:
     - 5.0.0
@@ -3231,6 +3930,7 @@ cpanel:
   styles:
     - brands
   unicode: f388
+  voted: false
 creative-commons:
   changes:
     - '4.4'
@@ -3243,6 +3943,7 @@ creative-commons:
   styles:
     - brands
   unicode: f25e
+  voted: false
 creative-commons-by:
   changes:
     - 5.0.11
@@ -3252,6 +3953,7 @@ creative-commons-by:
   styles:
     - brands
   unicode: f4e7
+  voted: false
 creative-commons-nc:
   changes:
     - 5.0.11
@@ -3261,6 +3963,7 @@ creative-commons-nc:
   styles:
     - brands
   unicode: f4e8
+  voted: false
 creative-commons-nc-eu:
   changes:
     - 5.0.11
@@ -3270,6 +3973,7 @@ creative-commons-nc-eu:
   styles:
     - brands
   unicode: f4e9
+  voted: false
 creative-commons-nc-jp:
   changes:
     - 5.0.11
@@ -3279,6 +3983,7 @@ creative-commons-nc-jp:
   styles:
     - brands
   unicode: f4ea
+  voted: false
 creative-commons-nd:
   changes:
     - 5.0.11
@@ -3288,6 +3993,7 @@ creative-commons-nd:
   styles:
     - brands
   unicode: f4eb
+  voted: false
 creative-commons-pd:
   changes:
     - 5.0.11
@@ -3297,15 +4003,17 @@ creative-commons-pd:
   styles:
     - brands
   unicode: f4ec
+  voted: false
 creative-commons-pd-alt:
   changes:
     - 5.0.11
-  label: Creative Commons Public Domain Alternate
+  label: Alternate Creative Commons Public Domain
   search:
     terms: []
   styles:
     - brands
   unicode: f4ed
+  voted: false
 creative-commons-remix:
   changes:
     - 5.0.11
@@ -3315,6 +4023,7 @@ creative-commons-remix:
   styles:
     - brands
   unicode: f4ee
+  voted: false
 creative-commons-sa:
   changes:
     - 5.0.11
@@ -3324,6 +4033,7 @@ creative-commons-sa:
   styles:
     - brands
   unicode: f4ef
+  voted: false
 creative-commons-sampling:
   changes:
     - 5.0.11
@@ -3333,6 +4043,7 @@ creative-commons-sampling:
   styles:
     - brands
   unicode: f4f0
+  voted: false
 creative-commons-sampling-plus:
   changes:
     - 5.0.11
@@ -3342,6 +4053,7 @@ creative-commons-sampling-plus:
   styles:
     - brands
   unicode: f4f1
+  voted: false
 creative-commons-share:
   changes:
     - 5.0.11
@@ -3351,6 +4063,7 @@ creative-commons-share:
   styles:
     - brands
   unicode: f4f2
+  voted: false
 creative-commons-zero:
   changes:
     - 5.0.11
@@ -3361,6 +4074,7 @@ creative-commons-zero:
   styles:
     - brands
   unicode: f4f3
+  voted: false
 credit-card:
   changes:
     - '2'
@@ -3379,6 +4093,7 @@ credit-card:
     - solid
     - regular
   unicode: f09d
+  voted: false
 critical-role:
   changes:
     - 5.4.0
@@ -3395,6 +4110,7 @@ critical-role:
   styles:
     - brands
   unicode: f6c9
+  voted: false
 crop:
   changes:
     - '3.1'
@@ -3407,6 +4123,7 @@ crop:
   styles:
     - solid
   unicode: f125
+  voted: false
 crop-alt:
   changes:
     - 5.1.0
@@ -3416,6 +4133,7 @@ crop-alt:
   styles:
     - solid
   unicode: f565
+  voted: false
 cross:
   changes:
     - 5.3.0
@@ -3427,6 +4145,7 @@ cross:
   styles:
     - solid
   unicode: f654
+  voted: false
 crosshairs:
   changes:
     - '1'
@@ -3440,6 +4159,7 @@ crosshairs:
   styles:
     - solid
   unicode: f05b
+  voted: false
 crow:
   changes:
     - 5.0.13
@@ -3455,6 +4175,7 @@ crow:
   styles:
     - solid
   unicode: f520
+  voted: false
 crown:
   changes:
     - 5.0.13
@@ -3464,6 +4185,20 @@ crown:
   styles:
     - solid
   unicode: f521
+  voted: true
+crutch:
+  changes:
+    - 5.7.0
+  label: Crutch
+  search:
+    terms:
+      - cane
+      - injury
+      - wheelchair
+  styles:
+    - solid
+  unicode: f7f7
+  voted: false
 css3:
   changes:
     - '3.1'
@@ -3475,6 +4210,7 @@ css3:
   styles:
     - brands
   unicode: f13c
+  voted: false
 css3-alt:
   changes:
     - 5.0.0
@@ -3484,6 +4220,7 @@ css3-alt:
   styles:
     - brands
   unicode: f38b
+  voted: false
 cube:
   changes:
     - '4.1'
@@ -3495,6 +4232,7 @@ cube:
   styles:
     - solid
   unicode: f1b2
+  voted: false
 cubes:
   changes:
     - '4.1'
@@ -3506,6 +4244,7 @@ cubes:
   styles:
     - solid
   unicode: f1b3
+  voted: false
 cut:
   changes:
     - '2'
@@ -3518,6 +4257,7 @@ cut:
   styles:
     - solid
   unicode: f0c4
+  voted: false
 cuttlefish:
   changes:
     - 5.0.0
@@ -3527,6 +4267,7 @@ cuttlefish:
   styles:
     - brands
   unicode: f38c
+  voted: false
 d-and-d:
   changes:
     - 5.0.0
@@ -3536,6 +4277,23 @@ d-and-d:
   styles:
     - brands
   unicode: f38d
+  voted: false
+d-and-d-beyond:
+  changes:
+    - 5.4.0
+  label: D&D Beyond
+  search:
+    terms:
+      - Dungeons & Dragons
+      - d&d
+      - dnd
+      - fantasy
+      - gaming
+      - tabletop
+  styles:
+    - brands
+  unicode: f6ca
+  voted: false
 dashcube:
   changes:
     - '4.3'
@@ -3547,6 +4305,7 @@ dashcube:
   styles:
     - brands
   unicode: f210
+  voted: false
 database:
   changes:
     - '4.1'
@@ -3557,6 +4316,7 @@ database:
   styles:
     - solid
   unicode: f1c0
+  voted: false
 deaf:
   changes:
     - '4.6'
@@ -3567,16 +4327,38 @@ deaf:
   styles:
     - solid
   unicode: f2a4
+  voted: false
 delicious:
   changes:
     - '4.1'
     - 5.0.0
-  label: Delicious Logo
+    - 5.7.0
+  label: Delicious
   search:
     terms: []
   styles:
     - brands
   unicode: f1a5
+  voted: false
+democrat:
+  changes:
+    - 5.5.0
+  label: Democrat
+  search:
+    terms:
+      - american
+      - democratic party
+      - donkey
+      - election
+      - left
+      - left-wing
+      - liberal
+      - politics
+      - usa
+  styles:
+    - solid
+  unicode: f747
+  voted: false
 deploydog:
   changes:
     - 5.0.0
@@ -3586,6 +4368,7 @@ deploydog:
   styles:
     - brands
   unicode: f38e
+  voted: false
 deskpro:
   changes:
     - 5.0.0
@@ -3595,6 +4378,7 @@ deskpro:
   styles:
     - brands
   unicode: f38f
+  voted: false
 desktop:
   changes:
     - '3'
@@ -3614,6 +4398,7 @@ desktop:
   styles:
     - solid
   unicode: f108
+  voted: false
 dev:
   changes:
     - 5.4.0
@@ -3623,6 +4408,7 @@ dev:
   styles:
     - brands
   unicode: f6cc
+  voted: true
 deviantart:
   changes:
     - '4.1'
@@ -3633,6 +4419,7 @@ deviantart:
   styles:
     - brands
   unicode: f1bd
+  voted: false
 dharmachakra:
   changes:
     - 5.3.0
@@ -3645,15 +4432,46 @@ dharmachakra:
   styles:
     - solid
   unicode: f655
+  voted: false
+dhl:
+  changes:
+    - 5.6.0
+  label: DHL
+  search:
+    terms:
+      - 'Dalsey, Hillblom and Lynn'
+      - german
+      - package
+      - shipping
+  styles:
+    - brands
+  unicode: f790
 diagnoses:
   changes:
     - 5.0.7
+    - 5.7.0
   label: Diagnoses
   search:
-    terms: []
+    terms:
+      - analyze
+      - detect
+      - diagnosis
+      - examine
+      - medicine
   styles:
     - solid
   unicode: f470
+  voted: false
+diaspora:
+  changes:
+    - 5.6.0
+  label: Diaspora
+  search:
+    terms: []
+  styles:
+    - brands
+  unicode: f791
+  voted: true
 dice:
   changes:
     - 5.0.13
@@ -3667,6 +4485,7 @@ dice:
   styles:
     - solid
   unicode: f522
+  voted: true
 dice-d20:
   changes:
     - 5.4.0
@@ -3684,6 +4503,7 @@ dice-d20:
   styles:
     - solid
   unicode: f6cf
+  voted: true
 dice-d6:
   changes:
     - 5.4.0
@@ -3701,6 +4521,7 @@ dice-d6:
   styles:
     - solid
   unicode: f6d1
+  voted: false
 dice-five:
   changes:
     - 5.0.13
@@ -3714,6 +4535,7 @@ dice-five:
   styles:
     - solid
   unicode: f523
+  voted: true
 dice-four:
   changes:
     - 5.0.13
@@ -3727,6 +4549,7 @@ dice-four:
   styles:
     - solid
   unicode: f524
+  voted: true
 dice-one:
   changes:
     - 5.0.13
@@ -3740,6 +4563,7 @@ dice-one:
   styles:
     - solid
   unicode: f525
+  voted: true
 dice-six:
   changes:
     - 5.0.13
@@ -3753,6 +4577,7 @@ dice-six:
   styles:
     - solid
   unicode: f526
+  voted: true
 dice-three:
   changes:
     - 5.0.13
@@ -3766,6 +4591,7 @@ dice-three:
   styles:
     - solid
   unicode: f527
+  voted: true
 dice-two:
   changes:
     - 5.0.13
@@ -3779,6 +4605,7 @@ dice-two:
   styles:
     - solid
   unicode: f528
+  voted: true
 digg:
   changes:
     - '4.1'
@@ -3789,15 +4616,18 @@ digg:
   styles:
     - brands
   unicode: f1a6
+  voted: false
 digital-ocean:
   changes:
     - 5.0.0
+    - 5.7.0
   label: Digital Ocean
   search:
     terms: []
   styles:
     - brands
   unicode: f391
+  voted: false
 digital-tachograph:
   changes:
     - 5.1.0
@@ -3807,6 +4637,7 @@ digital-tachograph:
   styles:
     - solid
   unicode: f566
+  voted: true
 directions:
   changes:
     - 5.2.0
@@ -3816,6 +4647,7 @@ directions:
   styles:
     - solid
   unicode: f5eb
+  voted: false
 discord:
   changes:
     - 5.0.0
@@ -3825,6 +4657,7 @@ discord:
   styles:
     - brands
   unicode: f392
+  voted: false
 discourse:
   changes:
     - 5.0.0
@@ -3835,6 +4668,7 @@ discourse:
   styles:
     - brands
   unicode: f393
+  voted: false
 divide:
   changes:
     - 5.0.13
@@ -3844,6 +4678,7 @@ divide:
   styles:
     - solid
   unicode: f529
+  voted: false
 dizzy:
   changes:
     - 5.1.0
@@ -3858,6 +4693,7 @@ dizzy:
     - solid
     - regular
   unicode: f567
+  voted: false
 dna:
   changes:
     - 5.0.7
@@ -3870,6 +4706,7 @@ dna:
   styles:
     - solid
   unicode: f471
+  voted: false
 dochub:
   changes:
     - 5.0.0
@@ -3879,6 +4716,7 @@ dochub:
   styles:
     - brands
   unicode: f394
+  voted: false
 docker:
   changes:
     - 5.0.0
@@ -3888,6 +4726,7 @@ docker:
   styles:
     - brands
   unicode: f395
+  voted: false
 dog:
   changes:
     - 5.4.0
@@ -3904,6 +4743,7 @@ dog:
   styles:
     - solid
   unicode: f6d3
+  voted: false
 dollar-sign:
   changes:
     - '3.2'
@@ -3920,6 +4760,7 @@ dollar-sign:
   styles:
     - solid
   unicode: f155
+  voted: false
 dolly:
   changes:
     - 5.0.7
@@ -3929,6 +4770,7 @@ dolly:
   styles:
     - solid
   unicode: f472
+  voted: false
 dolly-flatbed:
   changes:
     - 5.0.7
@@ -3938,6 +4780,7 @@ dolly-flatbed:
   styles:
     - solid
   unicode: f474
+  voted: false
 donate:
   changes:
     - 5.0.9
@@ -3949,6 +4792,7 @@ donate:
   styles:
     - solid
   unicode: f4b9
+  voted: false
 door-closed:
   changes:
     - 5.0.13
@@ -3958,6 +4802,7 @@ door-closed:
   styles:
     - solid
   unicode: f52a
+  voted: true
 door-open:
   changes:
     - 5.0.13
@@ -3967,6 +4812,7 @@ door-open:
   styles:
     - solid
   unicode: f52b
+  voted: true
 dot-circle:
   changes:
     - '4'
@@ -3981,6 +4827,7 @@ dot-circle:
     - solid
     - regular
   unicode: f192
+  voted: false
 dove:
   changes:
     - 5.0.9
@@ -3994,6 +4841,7 @@ dove:
   styles:
     - solid
   unicode: f4ba
+  voted: false
 download:
   changes:
     - '1'
@@ -4001,10 +4849,11 @@ download:
   label: Download
   search:
     terms:
-      - import
+      - export
   styles:
     - solid
   unicode: f019
+  voted: false
 draft2digital:
   changes:
     - 5.0.0
@@ -4014,6 +4863,7 @@ draft2digital:
   styles:
     - brands
   unicode: f396
+  voted: false
 drafting-compass:
   changes:
     - 5.1.0
@@ -4026,6 +4876,7 @@ drafting-compass:
   styles:
     - solid
   unicode: f568
+  voted: false
 dragon:
   changes:
     - 5.4.0
@@ -4039,6 +4890,7 @@ dragon:
   styles:
     - solid
   unicode: f6d5
+  voted: false
 draw-polygon:
   changes:
     - 5.2.0
@@ -4048,6 +4900,7 @@ draw-polygon:
   styles:
     - solid
   unicode: f5ee
+  voted: false
 dribbble:
   changes:
     - 5.0.0
@@ -4057,6 +4910,7 @@ dribbble:
   styles:
     - brands
   unicode: f17d
+  voted: false
 dribbble-square:
   changes:
     - 5.0.0
@@ -4066,6 +4920,7 @@ dribbble-square:
   styles:
     - brands
   unicode: f397
+  voted: false
 dropbox:
   changes:
     - '3.2'
@@ -4077,6 +4932,7 @@ dropbox:
   styles:
     - brands
   unicode: f16b
+  voted: false
 drum:
   changes:
     - 5.1.0
@@ -4091,6 +4947,7 @@ drum:
   styles:
     - solid
   unicode: f569
+  voted: true
 drum-steelpan:
   changes:
     - 5.1.0
@@ -4109,15 +4966,25 @@ drum-steelpan:
   styles:
     - solid
   unicode: f56a
+  voted: false
 drumstick-bite:
   changes:
     - 5.4.0
+    - 5.7.0
   label: Drumstick with Bite Taken Out
   search:
-    terms: []
+    terms:
+      - bone
+      - chicken
+      - leg
+      - meat
+      - poultry
+      - seasonal
+      - turkey
   styles:
     - solid
   unicode: f6d7
+  voted: false
 drupal:
   changes:
     - '4.1'
@@ -4128,6 +4995,7 @@ drupal:
   styles:
     - brands
   unicode: f1a9
+  voted: false
 dumbbell:
   changes:
     - 5.0.5
@@ -4142,6 +5010,43 @@ dumbbell:
   styles:
     - solid
   unicode: f44b
+  voted: false
+dumpster:
+  changes:
+    - 5.6.0
+  label: Dumpster
+  search:
+    terms:
+      - alley
+      - bin
+      - commercial
+      - trash
+      - waste
+  styles:
+    - solid
+  unicode: f793
+  voted: true
+dumpster-fire:
+  changes:
+    - 5.6.0
+  label: Dumpster Fire
+  search:
+    terms:
+      - alley
+      - bin
+      - commercial
+      - danger
+      - dangerous
+      - euphemism
+      - flame
+      - heat
+      - hot
+      - trash
+      - waste
+  styles:
+    - solid
+  unicode: f794
+  voted: true
 dungeon:
   changes:
     - 5.4.0
@@ -4149,6 +5054,7 @@ dungeon:
   search:
     terms:
       - Dungeons & Dragons
+      - building
       - d&d
       - dnd
       - door
@@ -4158,6 +5064,7 @@ dungeon:
   styles:
     - solid
   unicode: f6d9
+  voted: false
 dyalog:
   changes:
     - 5.0.0
@@ -4167,6 +5074,7 @@ dyalog:
   styles:
     - brands
   unicode: f399
+  voted: false
 earlybirds:
   changes:
     - 5.0.0
@@ -4176,15 +5084,18 @@ earlybirds:
   styles:
     - brands
   unicode: f39a
+  voted: false
 ebay:
   changes:
     - 5.0.11
+    - 5.7.0
   label: eBay
   search:
     terms: []
   styles:
     - brands
   unicode: f4f4
+  voted: true
 edge:
   changes:
     - '4.5'
@@ -4197,6 +5108,7 @@ edge:
   styles:
     - brands
   unicode: f282
+  voted: false
 edit:
   changes:
     - '1'
@@ -4213,6 +5125,21 @@ edit:
     - solid
     - regular
   unicode: f044
+  voted: false
+egg:
+  changes:
+    - 5.7.0
+  label: Egg
+  search:
+    terms:
+      - breakfast
+      - chicken
+      - easter
+      - yolk
+  styles:
+    - solid
+  unicode: f7fb
+  voted: false
 eject:
   changes:
     - '1'
@@ -4223,6 +5150,7 @@ eject:
   styles:
     - solid
   unicode: f052
+  voted: false
 elementor:
   changes:
     - 5.0.3
@@ -4232,6 +5160,7 @@ elementor:
   styles:
     - brands
   unicode: f430
+  voted: true
 ellipsis-h:
   changes:
     - '3.1'
@@ -4253,6 +5182,7 @@ ellipsis-h:
   styles:
     - solid
   unicode: f141
+  voted: false
 ellipsis-v:
   changes:
     - '3.1'
@@ -4274,6 +5204,7 @@ ellipsis-v:
   styles:
     - solid
   unicode: f142
+  voted: false
 ello:
   changes:
     - 5.2.0
@@ -4283,6 +5214,7 @@ ello:
   styles:
     - brands
   unicode: f5f1
+  voted: true
 ember:
   changes:
     - 5.0.0
@@ -4293,6 +5225,7 @@ ember:
   styles:
     - brands
   unicode: f423
+  voted: false
 empire:
   changes:
     - '4.1'
@@ -4303,6 +5236,7 @@ empire:
   styles:
     - brands
   unicode: f1d1
+  voted: false
 envelope:
   changes:
     - '2'
@@ -4321,6 +5255,7 @@ envelope:
     - solid
     - regular
   unicode: f0e0
+  voted: false
 envelope-open:
   changes:
     - '4.7'
@@ -4339,6 +5274,7 @@ envelope-open:
     - solid
     - regular
   unicode: f2b6
+  voted: false
 envelope-open-text:
   changes:
     - 5.3.0
@@ -4348,6 +5284,7 @@ envelope-open-text:
   styles:
     - solid
   unicode: f658
+  voted: false
 envelope-square:
   changes:
     - '4.1'
@@ -4365,6 +5302,7 @@ envelope-square:
   styles:
     - solid
   unicode: f199
+  voted: false
 envira:
   changes:
     - '4.6'
@@ -4376,6 +5314,7 @@ envira:
   styles:
     - brands
   unicode: f299
+  voted: false
 equals:
   changes:
     - 5.0.13
@@ -4385,6 +5324,7 @@ equals:
   styles:
     - solid
   unicode: f52c
+  voted: false
 eraser:
   changes:
     - '3.1'
@@ -4397,16 +5337,19 @@ eraser:
   styles:
     - solid
   unicode: f12d
+  voted: false
 erlang:
   changes:
     - 5.0.0
     - 5.0.3
+    - 5.7.0
   label: Erlang
   search:
     terms: []
   styles:
     - brands
   unicode: f39d
+  voted: false
 ethereum:
   changes:
     - 5.0.2
@@ -4416,6 +5359,25 @@ ethereum:
   styles:
     - brands
   unicode: f42e
+  voted: true
+ethernet:
+  changes:
+    - 5.6.0
+  label: Ethernet
+  search:
+    terms:
+      - cable
+      - cat 5
+      - cat 6
+      - connection
+      - hardware
+      - internet
+      - network
+      - wired
+  styles:
+    - solid
+  unicode: f796
+  voted: true
 etsy:
   changes:
     - '4.7'
@@ -4426,6 +5388,7 @@ etsy:
   styles:
     - brands
   unicode: f2d7
+  voted: false
 euro-sign:
   changes:
     - '3.2'
@@ -4437,6 +5400,7 @@ euro-sign:
   styles:
     - solid
   unicode: f153
+  voted: false
 exchange-alt:
   changes:
     - 5.0.0
@@ -4453,6 +5417,7 @@ exchange-alt:
   styles:
     - solid
   unicode: f362
+  voted: false
 exclamation:
   changes:
     - '3.1'
@@ -4472,6 +5437,7 @@ exclamation:
   styles:
     - solid
   unicode: f12a
+  voted: false
 exclamation-circle:
   changes:
     - '1'
@@ -4491,10 +5457,12 @@ exclamation-circle:
   styles:
     - solid
   unicode: f06a
+  voted: false
 exclamation-triangle:
   changes:
     - '1'
     - 5.0.0
+    - 5.6.1
   label: Exclamation Triangle
   search:
     terms:
@@ -4510,6 +5478,7 @@ exclamation-triangle:
   styles:
     - solid
   unicode: f071
+  voted: false
 expand:
   changes:
     - 5.0.0
@@ -4522,6 +5491,7 @@ expand:
   styles:
     - solid
   unicode: f065
+  voted: false
 expand-arrows-alt:
   changes:
     - 5.0.0
@@ -4536,6 +5506,7 @@ expand-arrows-alt:
   styles:
     - solid
   unicode: f31e
+  voted: false
 expeditedssl:
   changes:
     - '4.4'
@@ -4546,6 +5517,7 @@ expeditedssl:
   styles:
     - brands
   unicode: f23e
+  voted: false
 external-link-alt:
   changes:
     - 5.0.0
@@ -4558,6 +5530,7 @@ external-link-alt:
   styles:
     - solid
   unicode: f35d
+  voted: false
 external-link-square-alt:
   changes:
     - 5.0.0
@@ -4570,10 +5543,12 @@ external-link-square-alt:
   styles:
     - solid
   unicode: f360
+  voted: false
 eye:
   changes:
     - '1'
     - 5.0.0
+    - 5.7.0
   label: Eye
   search:
     terms:
@@ -4588,6 +5563,7 @@ eye:
     - solid
     - regular
   unicode: f06e
+  voted: false
 eye-dropper:
   changes:
     - '4.2'
@@ -4600,10 +5576,12 @@ eye-dropper:
   styles:
     - solid
   unicode: f1fb
+  voted: false
 eye-slash:
   changes:
     - '1'
     - 5.0.0
+    - 5.7.0
   label: Eye Slash
   search:
     terms:
@@ -4619,6 +5597,7 @@ eye-slash:
     - solid
     - regular
   unicode: f070
+  voted: false
 facebook:
   changes:
     - '2'
@@ -4631,6 +5610,7 @@ facebook:
   styles:
     - brands
   unicode: f09a
+  voted: false
 facebook-f:
   changes:
     - 5.0.0
@@ -4641,6 +5621,7 @@ facebook-f:
   styles:
     - brands
   unicode: f39e
+  voted: false
 facebook-messenger:
   changes:
     - 5.0.0
@@ -4650,6 +5631,7 @@ facebook-messenger:
   styles:
     - brands
   unicode: f39f
+  voted: false
 facebook-square:
   changes:
     - '1'
@@ -4661,6 +5643,7 @@ facebook-square:
   styles:
     - brands
   unicode: f082
+  voted: false
 fantasy-flight-games:
   changes:
     - 5.4.0
@@ -4677,6 +5660,7 @@ fantasy-flight-games:
   styles:
     - brands
   unicode: f6dc
+  voted: false
 fast-backward:
   changes:
     - '1'
@@ -4692,6 +5676,7 @@ fast-backward:
   styles:
     - solid
   unicode: f049
+  voted: false
 fast-forward:
   changes:
     - '1'
@@ -4705,6 +5690,7 @@ fast-forward:
   styles:
     - solid
   unicode: f050
+  voted: false
 fax:
   changes:
     - '4.1'
@@ -4716,6 +5702,7 @@ fax:
   styles:
     - solid
   unicode: f1ac
+  voted: false
 feather:
   changes:
     - 5.0.13
@@ -4730,6 +5717,7 @@ feather:
   styles:
     - solid
   unicode: f52d
+  voted: true
 feather-alt:
   changes:
     - 5.1.0
@@ -4743,6 +5731,33 @@ feather-alt:
   styles:
     - solid
   unicode: f56b
+  voted: true
+fedex:
+  changes:
+    - 5.6.0
+  label: FedEx
+  search:
+    terms:
+      - Federal Express
+      - package
+      - shipping
+  styles:
+    - brands
+  unicode: f797
+fedora:
+  changes:
+    - 5.6.0
+    - 5.6.3
+  label: Fedora
+  search:
+    terms:
+      - linux
+      - operating system
+      - os
+  styles:
+    - brands
+  unicode: f798
+  voted: true
 female:
   changes:
     - '3.2'
@@ -4758,6 +5773,7 @@ female:
   styles:
     - solid
   unicode: f182
+  voted: false
 fighter-jet:
   changes:
     - '3'
@@ -4778,6 +5794,21 @@ fighter-jet:
   styles:
     - solid
   unicode: f0fb
+  voted: false
+figma:
+  changes:
+    - 5.6.0
+    - 5.7.0
+  label: Figma
+  search:
+    terms:
+      - app
+      - design
+      - interface
+  styles:
+    - brands
+  unicode: f799
+  voted: false
 file:
   changes:
     - '3.2'
@@ -4794,6 +5825,7 @@ file:
     - solid
     - regular
   unicode: f15b
+  voted: false
 file-alt:
   changes:
     - '3.2'
@@ -4811,10 +5843,12 @@ file-alt:
     - solid
     - regular
   unicode: f15c
+  voted: false
 file-archive:
   changes:
     - '4.1'
     - 5.0.0
+    - 5.7.0
   label: Archive File
   search:
     terms:
@@ -4828,6 +5862,7 @@ file-archive:
     - solid
     - regular
   unicode: f1c6
+  voted: false
 file-audio:
   changes:
     - '4.1'
@@ -4839,6 +5874,7 @@ file-audio:
     - solid
     - regular
   unicode: f1c7
+  voted: false
 file-code:
   changes:
     - '4.1'
@@ -4850,6 +5886,7 @@ file-code:
     - solid
     - regular
   unicode: f1c9
+  voted: false
 file-contract:
   changes:
     - 5.1.0
@@ -4864,6 +5901,7 @@ file-contract:
   styles:
     - solid
   unicode: f56c
+  voted: false
 file-csv:
   changes:
     - 5.4.0
@@ -4874,15 +5912,18 @@ file-csv:
   styles:
     - solid
   unicode: f6dd
+  voted: false
 file-download:
   changes:
     - 5.1.0
   label: File Download
   search:
-    terms: []
+    terms:
+      - export
   styles:
     - solid
   unicode: f56d
+  voted: true
 file-excel:
   changes:
     - '4.1'
@@ -4894,15 +5935,19 @@ file-excel:
     - solid
     - regular
   unicode: f1c3
+  voted: false
 file-export:
   changes:
     - 5.1.0
+    - 5.7.0
   label: File Export
   search:
-    terms: []
+    terms:
+      - download
   styles:
     - solid
   unicode: f56e
+  voted: true
 file-image:
   changes:
     - '4.1'
@@ -4914,15 +5959,19 @@ file-image:
     - solid
     - regular
   unicode: f1c5
+  voted: false
 file-import:
   changes:
     - 5.1.0
+    - 5.7.0
   label: File Import
   search:
-    terms: []
+    terms:
+      - upload
   styles:
     - solid
   unicode: f56f
+  voted: true
 file-invoice:
   changes:
     - 5.1.0
@@ -4935,6 +5984,7 @@ file-invoice:
   styles:
     - solid
   unicode: f570
+  voted: true
 file-invoice-dollar:
   changes:
     - 5.1.0
@@ -4951,6 +6001,7 @@ file-invoice-dollar:
   styles:
     - solid
   unicode: f571
+  voted: true
 file-medical:
   changes:
     - 5.0.7
@@ -4960,6 +6011,7 @@ file-medical:
   styles:
     - solid
   unicode: f477
+  voted: false
 file-medical-alt:
   changes:
     - 5.0.7
@@ -4969,6 +6021,7 @@ file-medical-alt:
   styles:
     - solid
   unicode: f478
+  voted: false
 file-pdf:
   changes:
     - '4.1'
@@ -4980,6 +6033,7 @@ file-pdf:
     - solid
     - regular
   unicode: f1c1
+  voted: false
 file-powerpoint:
   changes:
     - '4.1'
@@ -4991,6 +6045,7 @@ file-powerpoint:
     - solid
     - regular
   unicode: f1c4
+  voted: false
 file-prescription:
   changes:
     - 5.1.0
@@ -5004,6 +6059,7 @@ file-prescription:
   styles:
     - solid
   unicode: f572
+  voted: false
 file-signature:
   changes:
     - 5.1.0
@@ -5017,15 +6073,18 @@ file-signature:
   styles:
     - solid
   unicode: f573
+  voted: true
 file-upload:
   changes:
     - 5.1.0
   label: File Upload
   search:
-    terms: []
+    terms:
+      - import
   styles:
     - solid
   unicode: f574
+  voted: true
 file-video:
   changes:
     - '4.1'
@@ -5037,6 +6096,7 @@ file-video:
     - solid
     - regular
   unicode: f1c8
+  voted: false
 file-word:
   changes:
     - '4.1'
@@ -5048,6 +6108,7 @@ file-word:
     - solid
     - regular
   unicode: f1c2
+  voted: false
 fill:
   changes:
     - 5.1.0
@@ -5061,6 +6122,7 @@ fill:
   styles:
     - solid
   unicode: f575
+  voted: false
 fill-drip:
   changes:
     - 5.1.0
@@ -5076,6 +6138,7 @@ fill-drip:
   styles:
     - solid
   unicode: f576
+  voted: false
 film:
   changes:
     - '1'
@@ -5087,6 +6150,7 @@ film:
   styles:
     - solid
   unicode: f008
+  voted: false
 filter:
   changes:
     - '2'
@@ -5099,6 +6163,7 @@ filter:
   styles:
     - solid
   unicode: f0b0
+  voted: false
 fingerprint:
   changes:
     - 5.1.0
@@ -5116,10 +6181,13 @@ fingerprint:
   styles:
     - solid
   unicode: f577
+  voted: true
 fire:
   changes:
     - '1'
     - 5.0.0
+    - 5.6.0
+    - 5.6.3
   label: fire
   search:
     terms:
@@ -5131,6 +6199,21 @@ fire:
   styles:
     - solid
   unicode: f06d
+  voted: false
+fire-alt:
+  changes:
+    - 5.6.3
+  label: Alternate Fire
+  search:
+    terms:
+      - caliente
+      - flame
+      - heat
+      - hot
+      - popular
+  styles:
+    - solid
+  unicode: f7e4
 fire-extinguisher:
   changes:
     - '3.1'
@@ -5141,6 +6224,7 @@ fire-extinguisher:
   styles:
     - solid
   unicode: f134
+  voted: false
 firefox:
   changes:
     - '4.4'
@@ -5153,6 +6237,7 @@ firefox:
   styles:
     - brands
   unicode: f269
+  voted: false
 first-aid:
   changes:
     - 5.0.7
@@ -5162,6 +6247,7 @@ first-aid:
   styles:
     - solid
   unicode: f479
+  voted: false
 first-order:
   changes:
     - '4.6'
@@ -5172,6 +6258,7 @@ first-order:
   styles:
     - brands
   unicode: f2b0
+  voted: false
 first-order-alt:
   changes:
     - 5.0.12
@@ -5181,6 +6268,7 @@ first-order-alt:
   styles:
     - brands
   unicode: f50a
+  voted: false
 firstdraft:
   changes:
     - 5.0.0
@@ -5190,6 +6278,7 @@ firstdraft:
   styles:
     - brands
   unicode: f3a1
+  voted: false
 fish:
   changes:
     - 5.1.0
@@ -5198,10 +6287,12 @@ fish:
     terms:
       - fauna
       - gold
+      - seafood
       - swimming
   styles:
     - solid
   unicode: f578
+  voted: true
 fist-raised:
   changes:
     - 5.4.0
@@ -5221,6 +6312,7 @@ fist-raised:
   styles:
     - solid
   unicode: f6de
+  voted: false
 flag:
   changes:
     - '1'
@@ -5228,28 +6320,53 @@ flag:
   label: flag
   search:
     terms:
+      - country
       - notice
       - notification
       - notify
+      - pole
       - report
+      - symbol
   styles:
     - solid
     - regular
   unicode: f024
+  voted: false
 flag-checkered:
   changes:
     - '3.1'
     - 5.0.0
+    - 5.7.0
   label: flag-checkered
   search:
     terms:
       - notice
       - notification
       - notify
+      - pole
+      - racing
       - report
+      - symbol
   styles:
     - solid
   unicode: f11e
+  voted: false
+flag-usa:
+  changes:
+    - 5.5.0
+  label: United States of America Flag
+  search:
+    terms:
+      - betsy ross
+      - country
+      - old glory
+      - stars
+      - stripes
+      - symbol
+  styles:
+    - solid
+  unicode: f74d
+  voted: false
 flask:
   changes:
     - '2'
@@ -5264,6 +6381,7 @@ flask:
   styles:
     - solid
   unicode: f0c3
+  voted: false
 flickr:
   changes:
     - '3.2'
@@ -5274,6 +6392,7 @@ flickr:
   styles:
     - brands
   unicode: f16e
+  voted: false
 flipboard:
   changes:
     - 5.0.5
@@ -5284,6 +6403,7 @@ flipboard:
   styles:
     - brands
   unicode: f44d
+  voted: true
 flushed:
   changes:
     - 5.1.0
@@ -5297,6 +6417,7 @@ flushed:
     - solid
     - regular
   unicode: f579
+  voted: false
 fly:
   changes:
     - 5.0.0
@@ -5306,6 +6427,7 @@ fly:
   styles:
     - brands
   unicode: f417
+  voted: false
 folder:
   changes:
     - '1'
@@ -5318,6 +6440,7 @@ folder:
     - solid
     - regular
   unicode: f07b
+  voted: false
 folder-minus:
   changes:
     - 5.3.0
@@ -5331,6 +6454,7 @@ folder-minus:
   styles:
     - solid
   unicode: f65d
+  voted: false
 folder-open:
   changes:
     - '1'
@@ -5342,6 +6466,7 @@ folder-open:
     - solid
     - regular
   unicode: f07c
+  voted: false
 folder-plus:
   changes:
     - 5.3.0
@@ -5355,6 +6480,7 @@ folder-plus:
   styles:
     - solid
   unicode: f65e
+  voted: false
 font:
   changes:
     - '1'
@@ -5366,6 +6492,7 @@ font:
   styles:
     - solid
   unicode: f031
+  voted: false
 font-awesome:
   changes:
     - '4.6'
@@ -5377,6 +6504,7 @@ font-awesome:
   styles:
     - brands
   unicode: f2b4
+  voted: false
 font-awesome-alt:
   changes:
     - 5.0.0
@@ -5386,6 +6514,7 @@ font-awesome-alt:
   styles:
     - brands
   unicode: f35c
+  voted: false
 font-awesome-flag:
   changes:
     - 5.0.0
@@ -5396,6 +6525,7 @@ font-awesome-flag:
   styles:
     - brands
   unicode: f425
+  voted: false
 font-awesome-logo-full:
   changes:
     - 5.0.11
@@ -5410,6 +6540,7 @@ font-awesome-logo-full:
     - solid
     - brands
   unicode: f4e6
+  voted: false
 fonticons:
   changes:
     - '4.4'
@@ -5420,6 +6551,7 @@ fonticons:
   styles:
     - brands
   unicode: f280
+  voted: false
 fonticons-fi:
   changes:
     - 5.0.0
@@ -5429,6 +6561,7 @@ fonticons-fi:
   styles:
     - brands
   unicode: f3a2
+  voted: false
 football-ball:
   changes:
     - 5.0.5
@@ -5441,6 +6574,7 @@ football-ball:
   styles:
     - solid
   unicode: f44e
+  voted: false
 fort-awesome:
   changes:
     - '4.5'
@@ -5453,6 +6587,7 @@ fort-awesome:
   styles:
     - brands
   unicode: f286
+  voted: false
 fort-awesome-alt:
   changes:
     - 5.0.0
@@ -5463,6 +6598,7 @@ fort-awesome-alt:
   styles:
     - brands
   unicode: f3a3
+  voted: false
 forumbee:
   changes:
     - '4.3'
@@ -5473,6 +6609,7 @@ forumbee:
   styles:
     - brands
   unicode: f211
+  voted: false
 forward:
   changes:
     - '1'
@@ -5485,6 +6622,7 @@ forward:
   styles:
     - solid
   unicode: f04e
+  voted: false
 foursquare:
   changes:
     - '3.2'
@@ -5495,6 +6633,7 @@ foursquare:
   styles:
     - brands
   unicode: f180
+  voted: false
 free-code-camp:
   changes:
     - '4.7'
@@ -5505,6 +6644,7 @@ free-code-camp:
   styles:
     - brands
   unicode: f2c5
+  voted: false
 freebsd:
   changes:
     - 5.0.0
@@ -5514,6 +6654,7 @@ freebsd:
   styles:
     - brands
   unicode: f3a4
+  voted: false
 frog:
   changes:
     - 5.0.13
@@ -5533,6 +6674,7 @@ frog:
   styles:
     - solid
   unicode: f52e
+  voted: false
 frown:
   changes:
     - '3.1'
@@ -5551,6 +6693,7 @@ frown:
     - solid
     - regular
   unicode: f119
+  voted: false
 frown-open:
   changes:
     - 5.1.0
@@ -5566,6 +6709,7 @@ frown-open:
     - solid
     - regular
   unicode: f57a
+  voted: false
 fulcrum:
   changes:
     - 5.0.12
@@ -5575,6 +6719,7 @@ fulcrum:
   styles:
     - brands
   unicode: f50b
+  voted: false
 funnel-dollar:
   changes:
     - 5.3.0
@@ -5584,6 +6729,7 @@ funnel-dollar:
   styles:
     - solid
   unicode: f662
+  voted: false
 futbol:
   changes:
     - '4.2'
@@ -5599,24 +6745,30 @@ futbol:
     - solid
     - regular
   unicode: f1e3
+  voted: false
 galactic-republic:
   changes:
     - 5.0.12
   label: Galactic Republic
   search:
-    terms: []
+    terms:
+      - politics
+      - star wars
   styles:
     - brands
   unicode: f50c
+  voted: false
 galactic-senate:
   changes:
     - 5.0.12
   label: Galactic Senate
   search:
-    terms: []
+    terms:
+      - star wars
   styles:
     - brands
   unicode: f50d
+  voted: false
 gamepad:
   changes:
     - '3.1'
@@ -5628,6 +6780,7 @@ gamepad:
   styles:
     - solid
   unicode: f11b
+  voted: false
 gas-pump:
   changes:
     - 5.0.13
@@ -5637,6 +6790,7 @@ gas-pump:
   styles:
     - solid
   unicode: f52f
+  voted: true
 gavel:
   changes:
     - '2'
@@ -5651,6 +6805,7 @@ gavel:
   styles:
     - solid
   unicode: f0e3
+  voted: false
 gem:
   changes:
     - 5.0.0
@@ -5662,6 +6817,7 @@ gem:
     - solid
     - regular
   unicode: f3a5
+  voted: false
 genderless:
   changes:
     - '4.4'
@@ -5672,6 +6828,7 @@ genderless:
   styles:
     - solid
   unicode: f22d
+  voted: false
 get-pocket:
   changes:
     - '4.4'
@@ -5682,6 +6839,7 @@ get-pocket:
   styles:
     - brands
   unicode: f265
+  voted: false
 gg:
   changes:
     - '4.4'
@@ -5692,6 +6850,7 @@ gg:
   styles:
     - brands
   unicode: f260
+  voted: false
 gg-circle:
   changes:
     - '4.4'
@@ -5702,6 +6861,7 @@ gg-circle:
   styles:
     - brands
   unicode: f261
+  voted: false
 ghost:
   changes:
     - 5.4.0
@@ -5720,22 +6880,45 @@ ghost:
   styles:
     - solid
   unicode: f6e2
+  voted: false
 gift:
   changes:
     - '1'
     - 5.0.0
     - 5.0.9
+    - 5.6.0
   label: gift
   search:
     terms:
+      - christmas
       - generosity
       - giving
+      - holiday
       - party
       - present
       - wrapped
+      - xmas
   styles:
     - solid
   unicode: f06b
+  voted: false
+gifts:
+  changes:
+    - 5.6.0
+  label: Gifts
+  search:
+    terms:
+      - christmas
+      - generosity
+      - giving
+      - holiday
+      - party
+      - present
+      - wrapped
+      - xmas
+  styles:
+    - solid
+  unicode: f79c
 git:
   changes:
     - '4.1'
@@ -5746,6 +6929,7 @@ git:
   styles:
     - brands
   unicode: f1d3
+  voted: false
 git-square:
   changes:
     - '4.1'
@@ -5756,6 +6940,7 @@ git-square:
   styles:
     - brands
   unicode: f1d2
+  voted: false
 github:
   changes:
     - '2'
@@ -5767,6 +6952,7 @@ github:
   styles:
     - brands
   unicode: f09b
+  voted: false
 github-alt:
   changes:
     - '3'
@@ -5778,6 +6964,7 @@ github-alt:
   styles:
     - brands
   unicode: f113
+  voted: false
 github-square:
   changes:
     - '1'
@@ -5789,6 +6976,7 @@ github-square:
   styles:
     - brands
   unicode: f092
+  voted: false
 gitkraken:
   changes:
     - 5.0.0
@@ -5798,10 +6986,12 @@ gitkraken:
   styles:
     - brands
   unicode: f3a6
+  voted: false
 gitlab:
   changes:
     - '4.6'
     - 5.0.0
+    - 5.7.0
   label: GitLab
   search:
     terms:
@@ -5809,6 +6999,7 @@ gitlab:
   styles:
     - brands
   unicode: f296
+  voted: false
 gitter:
   changes:
     - 5.0.0
@@ -5818,6 +7009,27 @@ gitter:
   styles:
     - brands
   unicode: f426
+  voted: false
+glass-cheers:
+  changes:
+    - 5.6.0
+  label: Glass Cheers
+  search:
+    terms:
+      - alcohol
+      - bar
+      - beverage
+      - celebration
+      - champagne
+      - clink
+      - drink
+      - holiday
+      - new year's eve
+      - party
+      - toast
+  styles:
+    - solid
+  unicode: f79f
 glass-martini:
   changes:
     - '1'
@@ -5830,12 +7042,11 @@ glass-martini:
       - bar
       - beverage
       - drink
-      - glass
       - liquor
-      - martini
   styles:
     - solid
   unicode: f000
+  voted: false
 glass-martini-alt:
   changes:
     - 5.1.0
@@ -5845,6 +7056,23 @@ glass-martini-alt:
   styles:
     - solid
   unicode: f57b
+  voted: false
+glass-whiskey:
+  changes:
+    - 5.6.0
+  label: Glass Whiskey
+  search:
+    terms:
+      - alcohol
+      - bar
+      - beverage
+      - drink
+      - liquor
+      - neat
+      - seasonal
+  styles:
+    - solid
+  unicode: f7a0
 glasses:
   changes:
     - 5.0.13
@@ -5860,6 +7088,7 @@ glasses:
   styles:
     - solid
   unicode: f530
+  voted: true
 glide:
   changes:
     - '4.6'
@@ -5870,6 +7099,7 @@ glide:
   styles:
     - brands
   unicode: f2a5
+  voted: false
 glide-g:
   changes:
     - '4.6'
@@ -5880,6 +7110,7 @@ glide-g:
   styles:
     - brands
   unicode: f2a6
+  voted: false
 globe:
   changes:
     - '2'
@@ -5907,6 +7138,7 @@ globe:
   styles:
     - solid
   unicode: f0ac
+  voted: false
 globe-africa:
   changes:
     - 5.1.0
@@ -5931,6 +7163,7 @@ globe-africa:
   styles:
     - solid
   unicode: f57c
+  voted: false
 globe-americas:
   changes:
     - 5.1.0
@@ -5955,6 +7188,7 @@ globe-americas:
   styles:
     - solid
   unicode: f57d
+  voted: false
 globe-asia:
   changes:
     - 5.1.0
@@ -5979,6 +7213,32 @@ globe-asia:
   styles:
     - solid
   unicode: f57e
+  voted: false
+globe-europe:
+  changes:
+    - 5.6.0
+  label: Globe with Europe shown
+  search:
+    terms:
+      - all
+      - country
+      - earth
+      - global
+      - gps
+      - language
+      - localize
+      - location
+      - map
+      - online
+      - place
+      - planet
+      - translate
+      - travel
+      - world
+  styles:
+    - solid
+  unicode: f7a2
+  voted: true
 gofore:
   changes:
     - 5.0.0
@@ -5988,6 +7248,7 @@ gofore:
   styles:
     - brands
   unicode: f3a7
+  voted: false
 golf-ball:
   changes:
     - 5.0.5
@@ -5997,6 +7258,7 @@ golf-ball:
   styles:
     - solid
   unicode: f450
+  voted: false
 goodreads:
   changes:
     - 5.0.0
@@ -6006,6 +7268,7 @@ goodreads:
   styles:
     - brands
   unicode: f3a8
+  voted: false
 goodreads-g:
   changes:
     - 5.0.0
@@ -6015,6 +7278,7 @@ goodreads-g:
   styles:
     - brands
   unicode: f3a9
+  voted: false
 google:
   changes:
     - '4.1'
@@ -6025,6 +7289,7 @@ google:
   styles:
     - brands
   unicode: f1a0
+  voted: false
 google-drive:
   changes:
     - 5.0.0
@@ -6034,6 +7299,7 @@ google-drive:
   styles:
     - brands
   unicode: f3aa
+  voted: false
 google-play:
   changes:
     - 5.0.0
@@ -6043,6 +7309,7 @@ google-play:
   styles:
     - brands
   unicode: f3ab
+  voted: false
 google-plus:
   changes:
     - '4.6'
@@ -6055,6 +7322,7 @@ google-plus:
   styles:
     - brands
   unicode: f2b3
+  voted: false
 google-plus-g:
   changes:
     - '2'
@@ -6067,6 +7335,7 @@ google-plus-g:
   styles:
     - brands
   unicode: f0d5
+  voted: false
 google-plus-square:
   changes:
     - '2'
@@ -6078,6 +7347,7 @@ google-plus-square:
   styles:
     - brands
   unicode: f0d4
+  voted: false
 google-wallet:
   changes:
     - '4.2'
@@ -6088,9 +7358,11 @@ google-wallet:
   styles:
     - brands
   unicode: f1ee
+  voted: false
 gopuram:
   changes:
     - 5.3.0
+    - 5.7.0
   label: Gopuram
   search:
     terms:
@@ -6102,6 +7374,7 @@ gopuram:
   styles:
     - solid
   unicode: f664
+  voted: false
 graduation-cap:
   changes:
     - '4.1'
@@ -6116,6 +7389,7 @@ graduation-cap:
   styles:
     - solid
   unicode: f19d
+  voted: false
 gratipay:
   changes:
     - '3.2'
@@ -6130,6 +7404,7 @@ gratipay:
   styles:
     - brands
   unicode: f184
+  voted: false
 grav:
   changes:
     - '4.7'
@@ -6140,6 +7415,7 @@ grav:
   styles:
     - brands
   unicode: f2d6
+  voted: false
 greater-than:
   changes:
     - 5.0.13
@@ -6149,6 +7425,7 @@ greater-than:
   styles:
     - solid
   unicode: f531
+  voted: true
 greater-than-equal:
   changes:
     - 5.0.13
@@ -6158,6 +7435,7 @@ greater-than-equal:
   styles:
     - solid
   unicode: f532
+  voted: true
 grimace:
   changes:
     - 5.1.0
@@ -6171,6 +7449,7 @@ grimace:
     - solid
     - regular
   unicode: f57f
+  voted: false
 grin:
   changes:
     - 5.1.0
@@ -6185,6 +7464,7 @@ grin:
     - solid
     - regular
   unicode: f580
+  voted: false
 grin-alt:
   changes:
     - 5.1.0
@@ -6199,6 +7479,7 @@ grin-alt:
     - solid
     - regular
   unicode: f581
+  voted: false
 grin-beam:
   changes:
     - 5.1.0
@@ -6213,6 +7494,7 @@ grin-beam:
     - solid
     - regular
   unicode: f582
+  voted: false
 grin-beam-sweat:
   changes:
     - 5.1.0
@@ -6226,6 +7508,7 @@ grin-beam-sweat:
     - solid
     - regular
   unicode: f583
+  voted: false
 grin-hearts:
   changes:
     - 5.1.0
@@ -6240,6 +7523,7 @@ grin-hearts:
     - solid
     - regular
   unicode: f584
+  voted: false
 grin-squint:
   changes:
     - 5.1.0
@@ -6254,6 +7538,7 @@ grin-squint:
     - solid
     - regular
   unicode: f585
+  voted: false
 grin-squint-tears:
   changes:
     - 5.1.0
@@ -6268,6 +7553,7 @@ grin-squint-tears:
     - solid
     - regular
   unicode: f586
+  voted: false
 grin-stars:
   changes:
     - 5.1.0
@@ -6281,6 +7567,7 @@ grin-stars:
     - solid
     - regular
   unicode: f587
+  voted: false
 grin-tears:
   changes:
     - 5.1.0
@@ -6294,6 +7581,7 @@ grin-tears:
     - solid
     - regular
   unicode: f588
+  voted: false
 grin-tongue:
   changes:
     - 5.1.0
@@ -6307,6 +7595,7 @@ grin-tongue:
     - solid
     - regular
   unicode: f589
+  voted: false
 grin-tongue-squint:
   changes:
     - 5.1.0
@@ -6320,6 +7609,7 @@ grin-tongue-squint:
     - solid
     - regular
   unicode: f58a
+  voted: false
 grin-tongue-wink:
   changes:
     - 5.1.0
@@ -6333,6 +7623,7 @@ grin-tongue-wink:
     - solid
     - regular
   unicode: f58b
+  voted: false
 grin-wink:
   changes:
     - 5.1.0
@@ -6349,6 +7640,7 @@ grin-wink:
     - solid
     - regular
   unicode: f58c
+  voted: false
 grip-horizontal:
   changes:
     - 5.1.0
@@ -6363,6 +7655,37 @@ grip-horizontal:
   styles:
     - solid
   unicode: f58d
+  voted: true
+grip-lines:
+  changes:
+    - 5.6.0
+  label: Grip Lines
+  search:
+    terms:
+      - affordance
+      - drag
+      - drop
+      - grab
+      - handle
+  styles:
+    - solid
+  unicode: f7a4
+  voted: true
+grip-lines-vertical:
+  changes:
+    - 5.6.0
+  label: Grip Lines Vertical
+  search:
+    terms:
+      - affordance
+      - drag
+      - drop
+      - grab
+      - handle
+  styles:
+    - solid
+  unicode: f7a5
+  voted: true
 grip-vertical:
   changes:
     - 5.1.0
@@ -6377,6 +7700,7 @@ grip-vertical:
   styles:
     - solid
   unicode: f58e
+  voted: true
 gripfire:
   changes:
     - 5.0.0
@@ -6386,6 +7710,7 @@ gripfire:
   styles:
     - brands
   unicode: f3ac
+  voted: false
 grunt:
   changes:
     - 5.0.0
@@ -6395,6 +7720,24 @@ grunt:
   styles:
     - brands
   unicode: f3ad
+  voted: false
+guitar:
+  changes:
+    - 5.6.0
+  label: Guitar
+  search:
+    terms:
+      - acoustic
+      - instrument
+      - music
+      - rock
+      - rock and roll
+      - song
+      - strings
+  styles:
+    - solid
+  unicode: f7a6
+  voted: true
 gulp:
   changes:
     - 5.0.0
@@ -6404,6 +7747,7 @@ gulp:
   styles:
     - brands
   unicode: f3ae
+  voted: false
 h-square:
   changes:
     - '3'
@@ -6416,6 +7760,7 @@ h-square:
   styles:
     - solid
   unicode: f0fd
+  voted: false
 hacker-news:
   changes:
     - '4.1'
@@ -6426,6 +7771,7 @@ hacker-news:
   styles:
     - brands
   unicode: f1d4
+  voted: false
 hacker-news-square:
   changes:
     - 5.0.0
@@ -6435,6 +7781,7 @@ hacker-news-square:
   styles:
     - brands
   unicode: f3af
+  voted: false
 hackerrank:
   changes:
     - 5.2.0
@@ -6444,6 +7791,27 @@ hackerrank:
   styles:
     - brands
   unicode: f5f7
+  voted: true
+hamburger:
+  changes:
+    - 5.7.0
+  label: Hamburger
+  search:
+    terms:
+      - bacon
+      - beef
+      - burger
+      - burger king
+      - cheeseburger
+      - fast food
+      - grill
+      - ground beef
+      - mcdonalds
+      - sandwich
+  styles:
+    - solid
+  unicode: f805
+  voted: false
 hammer:
   changes:
     - 5.4.0
@@ -6458,6 +7826,7 @@ hammer:
   styles:
     - solid
   unicode: f6e3
+  voted: true
 hamsa:
   changes:
     - 5.3.0
@@ -6474,6 +7843,7 @@ hamsa:
   styles:
     - solid
   unicode: f665
+  voted: false
 hand-holding:
   changes:
     - 5.0.9
@@ -6483,6 +7853,7 @@ hand-holding:
   styles:
     - solid
   unicode: f4bd
+  voted: false
 hand-holding-heart:
   changes:
     - 5.0.9
@@ -6492,6 +7863,7 @@ hand-holding-heart:
   styles:
     - solid
   unicode: f4be
+  voted: false
 hand-holding-usd:
   changes:
     - 5.0.9
@@ -6507,6 +7879,7 @@ hand-holding-usd:
   styles:
     - solid
   unicode: f4c0
+  voted: false
 hand-lizard:
   changes:
     - '4.4'
@@ -6518,6 +7891,21 @@ hand-lizard:
     - solid
     - regular
   unicode: f258
+  voted: false
+hand-middle-finger:
+  changes:
+    - 5.7.0
+  label: Hand with Middle Finger Raised
+  search:
+    terms:
+      - flip the bird
+      - gesture
+      - hate
+      - rude
+  styles:
+    - solid
+  unicode: f806
+  voted: true
 hand-paper:
   changes:
     - '4.4'
@@ -6530,6 +7918,7 @@ hand-paper:
     - solid
     - regular
   unicode: f256
+  voted: false
 hand-peace:
   changes:
     - '4.4'
@@ -6541,6 +7930,7 @@ hand-peace:
     - solid
     - regular
   unicode: f25b
+  voted: false
 hand-point-down:
   changes:
     - '2'
@@ -6555,6 +7945,7 @@ hand-point-down:
     - solid
     - regular
   unicode: f0a7
+  voted: false
 hand-point-left:
   changes:
     - '2'
@@ -6572,6 +7963,7 @@ hand-point-left:
     - solid
     - regular
   unicode: f0a5
+  voted: false
 hand-point-right:
   changes:
     - '2'
@@ -6589,6 +7981,7 @@ hand-point-right:
     - solid
     - regular
   unicode: f0a4
+  voted: false
 hand-point-up:
   changes:
     - '2'
@@ -6603,6 +7996,7 @@ hand-point-up:
     - solid
     - regular
   unicode: f0a6
+  voted: false
 hand-pointer:
   changes:
     - '4.4'
@@ -6615,6 +8009,7 @@ hand-pointer:
     - solid
     - regular
   unicode: f25a
+  voted: false
 hand-rock:
   changes:
     - '4.4'
@@ -6626,6 +8021,7 @@ hand-rock:
     - solid
     - regular
   unicode: f255
+  voted: false
 hand-scissors:
   changes:
     - '4.4'
@@ -6637,6 +8033,7 @@ hand-scissors:
     - solid
     - regular
   unicode: f257
+  voted: false
 hand-spock:
   changes:
     - '4.4'
@@ -6648,6 +8045,7 @@ hand-spock:
     - solid
     - regular
   unicode: f259
+  voted: false
 hands:
   changes:
     - 5.0.9
@@ -6657,6 +8055,7 @@ hands:
   styles:
     - solid
   unicode: f4c2
+  voted: false
 hands-helping:
   changes:
     - 5.0.9
@@ -6670,6 +8069,7 @@ hands-helping:
   styles:
     - solid
   unicode: f4c4
+  voted: false
 handshake:
   changes:
     - '4.7'
@@ -6684,6 +8084,7 @@ handshake:
     - solid
     - regular
   unicode: f2b5
+  voted: false
 hanukiah:
   changes:
     - 5.4.0
@@ -6698,6 +8099,21 @@ hanukiah:
   styles:
     - solid
   unicode: f6e6
+  voted: false
+hard-hat:
+  changes:
+    - 5.7.0
+  label: Hard Hat
+  search:
+    terms:
+      - construction
+      - hardhat
+      - helmet
+      - safety
+  styles:
+    - solid
+  unicode: f807
+  voted: true
 hashtag:
   changes:
     - '4.5'
@@ -6708,6 +8124,7 @@ hashtag:
   styles:
     - solid
   unicode: f292
+  voted: false
 hat-wizard:
   changes:
     - 5.4.0
@@ -6715,13 +8132,14 @@ hat-wizard:
   search:
     terms:
       - Dungeons & Dragons
+      - accessory
       - buckle
-      - cloth
       - clothing
       - d&d
       - dnd
       - fantasy
       - halloween
+      - head
       - holiday
       - mage
       - magic
@@ -6730,6 +8148,7 @@ hat-wizard:
   styles:
     - solid
   unicode: f6e8
+  voted: false
 haykal:
   changes:
     - 5.3.0
@@ -6742,6 +8161,7 @@ haykal:
   styles:
     - solid
   unicode: f666
+  voted: false
 hdd:
   changes:
     - '2'
@@ -6759,6 +8179,7 @@ hdd:
     - solid
     - regular
   unicode: f0a0
+  voted: false
 heading:
   changes:
     - '4.1'
@@ -6770,6 +8191,7 @@ heading:
   styles:
     - solid
   unicode: f1dc
+  voted: false
 headphones:
   changes:
     - '1'
@@ -6785,6 +8207,7 @@ headphones:
   styles:
     - solid
   unicode: f025
+  voted: false
 headphones-alt:
   changes:
     - 5.1.0
@@ -6799,6 +8222,7 @@ headphones-alt:
   styles:
     - solid
   unicode: f58f
+  voted: true
 headset:
   changes:
     - 5.1.0
@@ -6818,6 +8242,7 @@ headset:
   styles:
     - solid
   unicode: f590
+  voted: true
 heart:
   changes:
     - '1'
@@ -6829,10 +8254,31 @@ heart:
       - favorite
       - like
       - love
+      - relationship
   styles:
     - solid
     - regular
   unicode: f004
+  voted: false
+heart-broken:
+  changes:
+    - 5.6.0
+  label: Heart Broken
+  search:
+    terms:
+      - breakup
+      - crushed
+      - dislike
+      - dumped
+      - grief
+      - love
+      - lovesick
+      - relationship
+      - sad
+  styles:
+    - solid
+  unicode: f7a9
+  voted: true
 heartbeat:
   changes:
     - '4.3'
@@ -6847,6 +8293,7 @@ heartbeat:
   styles:
     - solid
   unicode: f21e
+  voted: false
 helicopter:
   changes:
     - 5.0.13
@@ -6861,6 +8308,7 @@ helicopter:
   styles:
     - solid
   unicode: f533
+  voted: true
 highlighter:
   changes:
     - 5.1.0
@@ -6875,6 +8323,7 @@ highlighter:
   styles:
     - solid
   unicode: f591
+  voted: true
 hiking:
   changes:
     - 5.4.0
@@ -6886,11 +8335,13 @@ hiking:
       - fall
       - fitness
       - outdoors
+      - person
       - seasonal
       - walking
   styles:
     - solid
   unicode: f6ec
+  voted: false
 hippo:
   changes:
     - 5.4.0
@@ -6903,6 +8354,7 @@ hippo:
   styles:
     - solid
   unicode: f6ed
+  voted: false
 hips:
   changes:
     - 5.0.5
@@ -6912,6 +8364,7 @@ hips:
   styles:
     - brands
   unicode: f452
+  voted: false
 hire-a-helper:
   changes:
     - 5.0.0
@@ -6921,6 +8374,7 @@ hire-a-helper:
   styles:
     - brands
   unicode: f3b0
+  voted: false
 history:
   changes:
     - '4.1'
@@ -6931,6 +8385,7 @@ history:
   styles:
     - solid
   unicode: f1da
+  voted: false
 hockey-puck:
   changes:
     - 5.0.5
@@ -6940,27 +8395,52 @@ hockey-puck:
   styles:
     - solid
   unicode: f453
+  voted: false
+holly-berry:
+  changes:
+    - 5.6.0
+  label: Holly Berry
+  search:
+    terms:
+      - catwoman
+      - christmas
+      - decoration
+      - flora
+      - halle
+      - holiday
+      - ororo munroe
+      - plant
+      - storm
+      - xmas
+  styles:
+    - solid
+  unicode: f7aa
 home:
   changes:
     - '1'
     - 5.0.0
+    - 5.7.0
   label: home
   search:
     terms:
+      - building
       - house
       - main
   styles:
     - solid
   unicode: f015
+  voted: false
 hooli:
   changes:
     - 5.0.0
+    - 5.7.0
   label: Hooli
   search:
     terms: []
   styles:
     - brands
   unicode: f427
+  voted: false
 hornbill:
   changes:
     - 5.1.0
@@ -6970,6 +8450,7 @@ hornbill:
   styles:
     - brands
   unicode: f592
+  voted: false
 horse:
   changes:
     - 5.4.0
@@ -6983,6 +8464,20 @@ horse:
   styles:
     - solid
   unicode: f6f0
+  voted: false
+horse-head:
+  changes:
+    - 5.6.0
+  label: Horse Head
+  search:
+    terms:
+      - equus
+      - fauna
+      - mammmal
+      - neigh
+  styles:
+    - solid
+  unicode: f7ab
 hospital:
   changes:
     - '3'
@@ -6997,6 +8492,7 @@ hospital:
     - solid
     - regular
   unicode: f0f8
+  voted: false
 hospital-alt:
   changes:
     - 5.0.7
@@ -7009,6 +8505,7 @@ hospital-alt:
   styles:
     - solid
   unicode: f47d
+  voted: false
 hospital-symbol:
   changes:
     - 5.0.7
@@ -7018,6 +8515,7 @@ hospital-symbol:
   styles:
     - solid
   unicode: f47e
+  voted: false
 hot-tub:
   changes:
     - 5.1.0
@@ -7027,6 +8525,27 @@ hot-tub:
   styles:
     - solid
   unicode: f593
+  voted: false
+hotdog:
+  changes:
+    - 5.7.0
+  label: Hot Dog
+  search:
+    terms:
+      - bun
+      - chili
+      - frankfurt
+      - frankfurter
+      - kosher
+      - polish
+      - sandwich
+      - sausage
+      - vienna
+      - weiner
+  styles:
+    - solid
+  unicode: f80f
+  voted: false
 hotel:
   changes:
     - 5.1.0
@@ -7038,6 +8557,7 @@ hotel:
   styles:
     - solid
   unicode: f594
+  voted: false
 hotjar:
   changes:
     - 5.0.0
@@ -7047,6 +8567,7 @@ hotjar:
   styles:
     - brands
   unicode: f3b1
+  voted: false
 hourglass:
   changes:
     - '4.4'
@@ -7058,6 +8579,7 @@ hourglass:
     - solid
     - regular
   unicode: f254
+  voted: false
 hourglass-end:
   changes:
     - '4.4'
@@ -7068,6 +8590,7 @@ hourglass-end:
   styles:
     - solid
   unicode: f253
+  voted: false
 hourglass-half:
   changes:
     - '4.4'
@@ -7078,6 +8601,7 @@ hourglass-half:
   styles:
     - solid
   unicode: f252
+  voted: false
 hourglass-start:
   changes:
     - '4.4'
@@ -7088,17 +8612,20 @@ hourglass-start:
   styles:
     - solid
   unicode: f251
+  voted: false
 house-damage:
   changes:
     - 5.4.0
-  label: House Damage
+  label: Damaged House
   search:
     terms:
+      - building
       - devastation
       - home
   styles:
     - solid
   unicode: f6f1
+  voted: false
 houzz:
   changes:
     - '4.4'
@@ -7110,6 +8637,7 @@ houzz:
   styles:
     - brands
   unicode: f27c
+  voted: false
 hryvnia:
   changes:
     - 5.4.0
@@ -7120,6 +8648,7 @@ hryvnia:
   styles:
     - solid
   unicode: f6f2
+  voted: true
 html5:
   changes:
     - '3.1'
@@ -7130,6 +8659,7 @@ html5:
   styles:
     - brands
   unicode: f13b
+  voted: false
 hubspot:
   changes:
     - 5.0.0
@@ -7139,6 +8669,7 @@ hubspot:
   styles:
     - brands
   unicode: f3b2
+  voted: false
 i-cursor:
   changes:
     - '4.4'
@@ -7149,6 +8680,40 @@ i-cursor:
   styles:
     - solid
   unicode: f246
+  voted: false
+ice-cream:
+  changes:
+    - 5.7.0
+  label: Ice Cream
+  search:
+    terms:
+      - chocolate
+      - cone
+      - dessert
+      - frozen
+      - scoop
+      - sorbet
+      - vanilla
+      - yogurt
+  styles:
+    - solid
+  unicode: f810
+  voted: false
+icicles:
+  changes:
+    - 5.6.0
+  label: Icicles
+  search:
+    terms:
+      - cold
+      - frozen
+      - hanging
+      - ice
+      - seasonal
+      - sharp
+  styles:
+    - solid
+  unicode: f7ad
 id-badge:
   changes:
     - '4.7'
@@ -7161,6 +8726,7 @@ id-badge:
     - solid
     - regular
   unicode: f2c1
+  voted: false
 id-card:
   changes:
     - '4.7'
@@ -7176,6 +8742,7 @@ id-card:
     - solid
     - regular
   unicode: f2c2
+  voted: false
 id-card-alt:
   changes:
     - 5.0.7
@@ -7186,6 +8753,23 @@ id-card-alt:
   styles:
     - solid
   unicode: f47f
+  voted: false
+igloo:
+  changes:
+    - 5.6.0
+  label: Igloo
+  search:
+    terms:
+      - dome
+      - dwelling
+      - eskimo
+      - home
+      - house
+      - ice
+      - seasonal
+  styles:
+    - solid
+  unicode: f7ae
 image:
   changes:
     - '1'
@@ -7200,6 +8784,7 @@ image:
     - solid
     - regular
   unicode: f03e
+  voted: false
 images:
   changes:
     - '1'
@@ -7214,6 +8799,7 @@ images:
     - solid
     - regular
   unicode: f302
+  voted: false
 imdb:
   changes:
     - '4.7'
@@ -7224,6 +8810,7 @@ imdb:
   styles:
     - brands
   unicode: f2d8
+  voted: false
 inbox:
   changes:
     - '1'
@@ -7234,6 +8821,7 @@ inbox:
   styles:
     - solid
   unicode: f01c
+  voted: false
 indent:
   changes:
     - '1'
@@ -7244,6 +8832,7 @@ indent:
   styles:
     - solid
   unicode: f03c
+  voted: false
 industry:
   changes:
     - '4.4'
@@ -7251,11 +8840,13 @@ industry:
   label: Industry
   search:
     terms:
+      - building
       - factory
       - manufacturing
   styles:
     - solid
   unicode: f275
+  voted: false
 infinity:
   changes:
     - 5.0.13
@@ -7266,6 +8857,7 @@ infinity:
   styles:
     - solid
   unicode: f534
+  voted: true
 info:
   changes:
     - '3.1'
@@ -7280,6 +8872,7 @@ info:
   styles:
     - solid
   unicode: f129
+  voted: false
 info-circle:
   changes:
     - '1'
@@ -7294,6 +8887,7 @@ info-circle:
   styles:
     - solid
   unicode: f05a
+  voted: false
 instagram:
   changes:
     - '4.6'
@@ -7304,6 +8898,20 @@ instagram:
   styles:
     - brands
   unicode: f16d
+  voted: false
+intercom:
+  changes:
+    - 5.6.0
+  label: Intercom
+  search:
+    terms:
+      - app
+      - customer
+      - messenger
+  styles:
+    - brands
+  unicode: f7af
+  voted: false
 internet-explorer:
   changes:
     - '4.4'
@@ -7316,6 +8924,20 @@ internet-explorer:
   styles:
     - brands
   unicode: f26b
+  voted: false
+invision:
+  changes:
+    - 5.6.0
+  label: InVision
+  search:
+    terms:
+      - app
+      - design
+      - interface
+  styles:
+    - brands
+  unicode: f7b0
+  voted: false
 ioxhost:
   changes:
     - '4.2'
@@ -7326,6 +8948,7 @@ ioxhost:
   styles:
     - brands
   unicode: f208
+  voted: false
 italic:
   changes:
     - '1'
@@ -7337,6 +8960,7 @@ italic:
   styles:
     - solid
   unicode: f033
+  voted: false
 itunes:
   changes:
     - 5.0.0
@@ -7346,6 +8970,7 @@ itunes:
   styles:
     - brands
   unicode: f3b4
+  voted: false
 itunes-note:
   changes:
     - 5.0.0
@@ -7355,15 +8980,18 @@ itunes-note:
   styles:
     - brands
   unicode: f3b5
+  voted: false
 java:
   changes:
     - 5.0.10
+    - 5.7.0
   label: Java
   search:
     terms: []
   styles:
     - brands
   unicode: f4e4
+  voted: false
 jedi:
   changes:
     - 5.3.0
@@ -7374,9 +9002,11 @@ jedi:
   styles:
     - solid
   unicode: f669
+  voted: false
 jedi-order:
   changes:
     - 5.0.12
+    - 5.7.0
   label: Jedi Order
   search:
     terms:
@@ -7384,6 +9014,7 @@ jedi-order:
   styles:
     - brands
   unicode: f50e
+  voted: false
 jenkins:
   changes:
     - 5.0.0
@@ -7393,6 +9024,18 @@ jenkins:
   styles:
     - brands
   unicode: f3b6
+  voted: false
+jira:
+  changes:
+    - 5.6.0
+  label: Jira
+  search:
+    terms:
+      - atlassian
+  styles:
+    - brands
+  unicode: f7b1
+  voted: true
 joget:
   changes:
     - 5.0.0
@@ -7402,6 +9045,7 @@ joget:
   styles:
     - brands
   unicode: f3b7
+  voted: false
 joint:
   changes:
     - 5.1.0
@@ -7420,6 +9064,7 @@ joint:
   styles:
     - solid
   unicode: f595
+  voted: false
 joomla:
   changes:
     - '4.1'
@@ -7430,6 +9075,7 @@ joomla:
   styles:
     - brands
   unicode: f1aa
+  voted: false
 journal-whills:
   changes:
     - 5.3.0
@@ -7443,6 +9089,7 @@ journal-whills:
   styles:
     - solid
   unicode: f66a
+  voted: false
 js:
   changes:
     - 5.0.0
@@ -7452,6 +9099,7 @@ js:
   styles:
     - brands
   unicode: f3b8
+  voted: false
 js-square:
   changes:
     - 5.0.0
@@ -7462,6 +9110,7 @@ js-square:
   styles:
     - brands
   unicode: f3b9
+  voted: false
 jsfiddle:
   changes:
     - '4.1'
@@ -7472,6 +9121,7 @@ jsfiddle:
   styles:
     - brands
   unicode: f1cc
+  voted: false
 kaaba:
   changes:
     - 5.3.0
@@ -7485,6 +9135,7 @@ kaaba:
   styles:
     - solid
   unicode: f66b
+  voted: false
 kaggle:
   changes:
     - 5.2.0
@@ -7494,6 +9145,7 @@ kaggle:
   styles:
     - brands
   unicode: f5fa
+  voted: true
 key:
   changes:
     - '1'
@@ -7506,6 +9158,7 @@ key:
   styles:
     - solid
   unicode: f084
+  voted: false
 keybase:
   changes:
     - 5.0.11
@@ -7515,6 +9168,7 @@ keybase:
   styles:
     - brands
   unicode: f4f5
+  voted: true
 keyboard:
   changes:
     - '3.1'
@@ -7528,6 +9182,7 @@ keyboard:
     - solid
     - regular
   unicode: f11c
+  voted: false
 keycdn:
   changes:
     - 5.0.0
@@ -7537,6 +9192,7 @@ keycdn:
   styles:
     - brands
   unicode: f3ba
+  voted: false
 khanda:
   changes:
     - 5.3.0
@@ -7550,6 +9206,7 @@ khanda:
   styles:
     - solid
   unicode: f66d
+  voted: false
 kickstarter:
   changes:
     - 5.0.0
@@ -7559,6 +9216,7 @@ kickstarter:
   styles:
     - brands
   unicode: f3bb
+  voted: false
 kickstarter-k:
   changes:
     - 5.0.0
@@ -7568,6 +9226,7 @@ kickstarter-k:
   styles:
     - brands
   unicode: f3bc
+  voted: false
 kiss:
   changes:
     - 5.1.0
@@ -7584,6 +9243,7 @@ kiss:
     - solid
     - regular
   unicode: f596
+  voted: false
 kiss-beam:
   changes:
     - 5.1.0
@@ -7599,6 +9259,7 @@ kiss-beam:
     - solid
     - regular
   unicode: f597
+  voted: false
 kiss-wink-heart:
   changes:
     - 5.1.0
@@ -7614,6 +9275,7 @@ kiss-wink-heart:
     - solid
     - regular
   unicode: f598
+  voted: false
 kiwi-bird:
   changes:
     - 5.0.13
@@ -7625,6 +9287,7 @@ kiwi-bird:
   styles:
     - solid
   unicode: f535
+  voted: false
 korvue:
   changes:
     - 5.0.2
@@ -7634,6 +9297,7 @@ korvue:
   styles:
     - brands
   unicode: f42f
+  voted: false
 landmark:
   changes:
     - 5.3.0
@@ -7643,9 +9307,11 @@ landmark:
       - building
       - historic
       - memoroable
+      - politics
   styles:
     - solid
   unicode: f66f
+  voted: false
 language:
   changes:
     - '4.1'
@@ -7662,6 +9328,7 @@ language:
   styles:
     - solid
   unicode: f1ab
+  voted: false
 laptop:
   changes:
     - '3'
@@ -7683,6 +9350,7 @@ laptop:
   styles:
     - solid
   unicode: f109
+  voted: false
 laptop-code:
   changes:
     - 5.2.0
@@ -7692,6 +9360,20 @@ laptop-code:
   styles:
     - solid
   unicode: f5fc
+  voted: false
+laptop-medical:
+  changes:
+    - 5.7.0
+  label: Laptop Medical
+  search:
+    terms:
+      - ehr
+      - electronic health records
+      - history
+  styles:
+    - solid
+  unicode: f812
+  voted: false
 laravel:
   changes:
     - 5.0.0
@@ -7702,6 +9384,7 @@ laravel:
   styles:
     - brands
   unicode: f3bd
+  voted: false
 lastfm:
   changes:
     - '4.2'
@@ -7712,6 +9395,7 @@ lastfm:
   styles:
     - brands
   unicode: f202
+  voted: false
 lastfm-square:
   changes:
     - '4.2'
@@ -7723,6 +9407,7 @@ lastfm-square:
   styles:
     - brands
   unicode: f203
+  voted: false
 laugh:
   changes:
     - 5.1.0
@@ -7737,6 +9422,7 @@ laugh:
     - solid
     - regular
   unicode: f599
+  voted: false
 laugh-beam:
   changes:
     - 5.1.0
@@ -7750,6 +9436,7 @@ laugh-beam:
     - solid
     - regular
   unicode: f59a
+  voted: false
 laugh-squint:
   changes:
     - 5.1.0
@@ -7763,6 +9450,7 @@ laugh-squint:
     - solid
     - regular
   unicode: f59b
+  voted: false
 laugh-wink:
   changes:
     - 5.1.0
@@ -7776,6 +9464,7 @@ laugh-wink:
     - solid
     - regular
   unicode: f59c
+  voted: false
 layer-group:
   changes:
     - 5.2.0
@@ -7786,6 +9475,7 @@ layer-group:
   styles:
     - solid
   unicode: f5fd
+  voted: false
 leaf:
   changes:
     - '1'
@@ -7801,6 +9491,7 @@ leaf:
   styles:
     - solid
   unicode: f06c
+  voted: false
 leanpub:
   changes:
     - '4.3'
@@ -7811,6 +9502,7 @@ leanpub:
   styles:
     - brands
   unicode: f212
+  voted: false
 lemon:
   changes:
     - '1'
@@ -7818,11 +9510,15 @@ lemon:
   label: Lemon
   search:
     terms:
-      - food
+      - citrus
+      - lemonade
+      - lime
+      - tart
   styles:
     - solid
     - regular
   unicode: f094
+  voted: false
 less:
   changes:
     - 5.0.0
@@ -7832,6 +9528,7 @@ less:
   styles:
     - brands
   unicode: f41d
+  voted: false
 less-than:
   changes:
     - 5.0.13
@@ -7841,6 +9538,7 @@ less-than:
   styles:
     - solid
   unicode: f536
+  voted: true
 less-than-equal:
   changes:
     - 5.0.13
@@ -7850,6 +9548,7 @@ less-than-equal:
   styles:
     - solid
   unicode: f537
+  voted: true
 level-down-alt:
   changes:
     - 5.0.0
@@ -7860,6 +9559,7 @@ level-down-alt:
   styles:
     - solid
   unicode: f3be
+  voted: false
 level-up-alt:
   changes:
     - 5.0.0
@@ -7870,6 +9570,7 @@ level-up-alt:
   styles:
     - solid
   unicode: f3bf
+  voted: false
 life-ring:
   changes:
     - '4.1'
@@ -7882,6 +9583,7 @@ life-ring:
     - solid
     - regular
   unicode: f1cd
+  voted: false
 lightbulb:
   changes:
     - '3'
@@ -7896,6 +9598,7 @@ lightbulb:
     - solid
     - regular
   unicode: f0eb
+  voted: false
 line:
   changes:
     - 5.0.0
@@ -7905,6 +9608,7 @@ line:
   styles:
     - brands
   unicode: f3c0
+  voted: false
 link:
   changes:
     - '2'
@@ -7916,6 +9620,7 @@ link:
   styles:
     - solid
   unicode: f0c1
+  voted: false
 linkedin:
   changes:
     - '1'
@@ -7927,6 +9632,7 @@ linkedin:
   styles:
     - brands
   unicode: f08c
+  voted: false
 linkedin-in:
   changes:
     - '2'
@@ -7939,6 +9645,7 @@ linkedin-in:
   styles:
     - brands
   unicode: f0e1
+  voted: false
 linode:
   changes:
     - '4.7'
@@ -7949,6 +9656,7 @@ linode:
   styles:
     - brands
   unicode: f2b8
+  voted: false
 linux:
   changes:
     - '3.2'
@@ -7960,6 +9668,7 @@ linux:
   styles:
     - brands
   unicode: f17c
+  voted: false
 lira-sign:
   changes:
     - '4'
@@ -7972,6 +9681,7 @@ lira-sign:
   styles:
     - solid
   unicode: f195
+  voted: false
 list:
   changes:
     - '1'
@@ -7989,6 +9699,7 @@ list:
   styles:
     - solid
   unicode: f03a
+  voted: false
 list-alt:
   changes:
     - '1'
@@ -8007,6 +9718,7 @@ list-alt:
     - solid
     - regular
   unicode: f022
+  voted: false
 list-ol:
   changes:
     - '2'
@@ -8023,6 +9735,7 @@ list-ol:
   styles:
     - solid
   unicode: f0cb
+  voted: false
 list-ul:
   changes:
     - '2'
@@ -8038,6 +9751,7 @@ list-ul:
   styles:
     - solid
   unicode: f0ca
+  voted: false
 location-arrow:
   changes:
     - '3.1'
@@ -8055,6 +9769,7 @@ location-arrow:
   styles:
     - solid
   unicode: f124
+  voted: false
 lock:
   changes:
     - '1'
@@ -8068,6 +9783,7 @@ lock:
   styles:
     - solid
   unicode: f023
+  voted: false
 lock-open:
   changes:
     - '3.1'
@@ -8084,6 +9800,7 @@ lock-open:
   styles:
     - solid
   unicode: f3c1
+  voted: false
 long-arrow-alt-down:
   changes:
     - 5.0.0
@@ -8094,6 +9811,7 @@ long-arrow-alt-down:
   styles:
     - solid
   unicode: f309
+  voted: false
 long-arrow-alt-left:
   changes:
     - 5.0.0
@@ -8106,6 +9824,7 @@ long-arrow-alt-left:
   styles:
     - solid
   unicode: f30a
+  voted: false
 long-arrow-alt-right:
   changes:
     - 5.0.0
@@ -8116,6 +9835,7 @@ long-arrow-alt-right:
   styles:
     - solid
   unicode: f30b
+  voted: false
 long-arrow-alt-up:
   changes:
     - 5.0.0
@@ -8126,6 +9846,7 @@ long-arrow-alt-up:
   styles:
     - solid
   unicode: f30c
+  voted: false
 low-vision:
   changes:
     - '4.6'
@@ -8136,6 +9857,7 @@ low-vision:
   styles:
     - solid
   unicode: f2a8
+  voted: false
 luggage-cart:
   changes:
     - 5.1.0
@@ -8145,6 +9867,7 @@ luggage-cart:
   styles:
     - solid
   unicode: f59d
+  voted: false
 lyft:
   changes:
     - 5.0.0
@@ -8154,6 +9877,7 @@ lyft:
   styles:
     - brands
   unicode: f3c3
+  voted: false
 magento:
   changes:
     - 5.0.0
@@ -8163,6 +9887,7 @@ magento:
   styles:
     - brands
   unicode: f3c4
+  voted: false
 magic:
   changes:
     - '2'
@@ -8181,6 +9906,7 @@ magic:
   styles:
     - solid
   unicode: f0d0
+  voted: false
 magnet:
   changes:
     - '1'
@@ -8191,6 +9917,7 @@ magnet:
   styles:
     - solid
   unicode: f076
+  voted: false
 mail-bulk:
   changes:
     - 5.3.0
@@ -8200,15 +9927,18 @@ mail-bulk:
   styles:
     - solid
   unicode: f674
+  voted: false
 mailchimp:
   changes:
     - 5.1.0
+    - 5.7.0
   label: Mailchimp
   search:
     terms: []
   styles:
     - brands
   unicode: f59e
+  voted: true
 male:
   changes:
     - '3.2'
@@ -8224,6 +9954,7 @@ male:
   styles:
     - solid
   unicode: f183
+  voted: false
 mandalorian:
   changes:
     - 5.0.12
@@ -8233,6 +9964,7 @@ mandalorian:
   styles:
     - brands
   unicode: f50f
+  voted: false
 map:
   changes:
     - '4.4'
@@ -8250,6 +9982,7 @@ map:
     - solid
     - regular
   unicode: f279
+  voted: false
 map-marked:
   changes:
     - 5.1.0
@@ -8274,6 +10007,7 @@ map-marked:
   styles:
     - solid
   unicode: f59f
+  voted: false
 map-marked-alt:
   changes:
     - 5.1.0
@@ -8298,6 +10032,7 @@ map-marked-alt:
   styles:
     - solid
   unicode: f5a0
+  voted: false
 map-marker:
   changes:
     - '1'
@@ -8319,6 +10054,7 @@ map-marker:
   styles:
     - solid
   unicode: f041
+  voted: false
 map-marker-alt:
   changes:
     - 5.0.0
@@ -8339,6 +10075,7 @@ map-marker-alt:
   styles:
     - solid
   unicode: f3c5
+  voted: false
 map-pin:
   changes:
     - '4.4'
@@ -8361,6 +10098,7 @@ map-pin:
   styles:
     - solid
   unicode: f276
+  voted: false
 map-signs:
   changes:
     - '4.4'
@@ -8372,15 +10110,18 @@ map-signs:
   styles:
     - solid
   unicode: f277
+  voted: false
 markdown:
   changes:
     - 5.2.0
+    - 5.7.0
   label: Markdown
   search:
     terms: []
   styles:
     - brands
   unicode: f60f
+  voted: true
 marker:
   changes:
     - 5.1.0
@@ -8394,6 +10135,7 @@ marker:
   styles:
     - solid
   unicode: f5a1
+  voted: true
 mars:
   changes:
     - '4.3'
@@ -8405,6 +10147,7 @@ mars:
   styles:
     - solid
   unicode: f222
+  voted: false
 mars-double:
   changes:
     - '4.3'
@@ -8415,6 +10158,7 @@ mars-double:
   styles:
     - solid
   unicode: f227
+  voted: false
 mars-stroke:
   changes:
     - '4.3'
@@ -8425,6 +10169,7 @@ mars-stroke:
   styles:
     - solid
   unicode: f229
+  voted: false
 mars-stroke-h:
   changes:
     - '4.3'
@@ -8435,6 +10180,7 @@ mars-stroke-h:
   styles:
     - solid
   unicode: f22b
+  voted: false
 mars-stroke-v:
   changes:
     - '4.3'
@@ -8445,6 +10191,7 @@ mars-stroke-v:
   styles:
     - solid
   unicode: f22a
+  voted: false
 mask:
   changes:
     - 5.4.0
@@ -8460,6 +10207,7 @@ mask:
   styles:
     - solid
   unicode: f6fa
+  voted: false
 mastodon:
   changes:
     - 5.0.11
@@ -8469,6 +10217,7 @@ mastodon:
   styles:
     - brands
   unicode: f4f6
+  voted: true
 maxcdn:
   changes:
     - '3.1'
@@ -8479,6 +10228,7 @@ maxcdn:
   styles:
     - brands
   unicode: f136
+  voted: false
 medal:
   changes:
     - 5.1.0
@@ -8488,6 +10238,7 @@ medal:
   styles:
     - solid
   unicode: f5a2
+  voted: true
 medapps:
   changes:
     - 5.0.0
@@ -8497,6 +10248,7 @@ medapps:
   styles:
     - brands
   unicode: f3c6
+  voted: false
 medium:
   changes:
     - '4.3'
@@ -8507,6 +10259,7 @@ medium:
   styles:
     - brands
   unicode: f23a
+  voted: false
 medium-m:
   changes:
     - 5.0.0
@@ -8516,6 +10269,7 @@ medium-m:
   styles:
     - brands
   unicode: f3c7
+  voted: false
 medkit:
   changes:
     - '3'
@@ -8531,6 +10285,7 @@ medkit:
   styles:
     - solid
   unicode: f0fa
+  voted: false
 medrt:
   changes:
     - 5.0.0
@@ -8540,6 +10295,7 @@ medrt:
   styles:
     - brands
   unicode: f3c8
+  voted: false
 meetup:
   changes:
     - '4.7'
@@ -8550,6 +10306,7 @@ meetup:
   styles:
     - brands
   unicode: f2e0
+  voted: false
 megaport:
   changes:
     - 5.1.0
@@ -8559,6 +10316,7 @@ megaport:
   styles:
     - brands
   unicode: f5a3
+  voted: false
 meh:
   changes:
     - '3.1'
@@ -8576,6 +10334,7 @@ meh:
     - solid
     - regular
   unicode: f11a
+  voted: false
 meh-blank:
   changes:
     - 5.1.0
@@ -8590,6 +10349,7 @@ meh-blank:
     - solid
     - regular
   unicode: f5a4
+  voted: false
 meh-rolling-eyes:
   changes:
     - 5.1.0
@@ -8604,6 +10364,7 @@ meh-rolling-eyes:
     - solid
     - regular
   unicode: f5a5
+  voted: false
 memory:
   changes:
     - 5.0.13
@@ -8612,9 +10373,22 @@ memory:
     terms:
       - DIMM
       - RAM
+      - hardware
+      - technology
   styles:
     - solid
   unicode: f538
+  voted: true
+mendeley:
+  changes:
+    - 5.6.0
+  label: Mendeley
+  search:
+    terms: []
+  styles:
+    - brands
+  unicode: f7b3
+  voted: true
 menorah:
   changes:
     - 5.3.0
@@ -8630,6 +10404,7 @@ menorah:
   styles:
     - solid
   unicode: f676
+  voted: false
 mercury:
   changes:
     - '4.3'
@@ -8641,6 +10416,17 @@ mercury:
   styles:
     - solid
   unicode: f223
+  voted: false
+meteor:
+  changes:
+    - 5.5.0
+  label: Meteor
+  search:
+    terms: []
+  styles:
+    - solid
+  unicode: f753
+  voted: false
 microchip:
   changes:
     - '4.7'
@@ -8653,6 +10439,7 @@ microchip:
   styles:
     - solid
   unicode: f2db
+  voted: false
 microphone:
   changes:
     - '3.1'
@@ -8667,6 +10454,7 @@ microphone:
   styles:
     - solid
   unicode: f130
+  voted: false
 microphone-alt:
   changes:
     - 5.0.0
@@ -8680,6 +10468,7 @@ microphone-alt:
   styles:
     - solid
   unicode: f3c9
+  voted: false
 microphone-alt-slash:
   changes:
     - 5.0.13
@@ -8694,6 +10483,7 @@ microphone-alt-slash:
   styles:
     - solid
   unicode: f539
+  voted: false
 microphone-slash:
   changes:
     - '3.1'
@@ -8710,6 +10500,7 @@ microphone-slash:
   styles:
     - solid
   unicode: f131
+  voted: false
 microscope:
   changes:
     - 5.2.0
@@ -8719,6 +10510,7 @@ microscope:
   styles:
     - solid
   unicode: f610
+  voted: false
 microsoft:
   changes:
     - 5.0.0
@@ -8728,6 +10520,7 @@ microsoft:
   styles:
     - brands
   unicode: f3ca
+  voted: true
 minus:
   changes:
     - '1'
@@ -8745,6 +10538,7 @@ minus:
   styles:
     - solid
   unicode: f068
+  voted: false
 minus-circle:
   changes:
     - '1'
@@ -8760,6 +10554,7 @@ minus-circle:
   styles:
     - solid
   unicode: f056
+  voted: false
 minus-square:
   changes:
     - '3.1'
@@ -8778,6 +10573,22 @@ minus-square:
     - solid
     - regular
   unicode: f146
+  voted: false
+mitten:
+  changes:
+    - 5.6.0
+  label: Mitten
+  search:
+    terms:
+      - clothing
+      - cold
+      - hands
+      - knitted
+      - seasonal
+      - warmth
+  styles:
+    - solid
+  unicode: f7b5
 mix:
   changes:
     - 5.0.0
@@ -8788,6 +10599,7 @@ mix:
   styles:
     - brands
   unicode: f3cb
+  voted: false
 mixcloud:
   changes:
     - '4.5'
@@ -8798,6 +10610,7 @@ mixcloud:
   styles:
     - brands
   unicode: f289
+  voted: false
 mizuni:
   changes:
     - 5.0.0
@@ -8807,6 +10620,7 @@ mizuni:
   styles:
     - brands
   unicode: f3cc
+  voted: false
 mobile:
   changes:
     - '3'
@@ -8827,6 +10641,7 @@ mobile:
   styles:
     - solid
   unicode: f10b
+  voted: false
 mobile-alt:
   changes:
     - 5.0.0
@@ -8846,6 +10661,7 @@ mobile-alt:
   styles:
     - solid
   unicode: f3cd
+  voted: false
 modx:
   changes:
     - '4.5'
@@ -8856,6 +10672,7 @@ modx:
   styles:
     - brands
   unicode: f285
+  voted: false
 monero:
   changes:
     - 5.0.0
@@ -8865,6 +10682,7 @@ monero:
   styles:
     - brands
   unicode: f3d0
+  voted: false
 money-bill:
   changes:
     - '2'
@@ -8883,6 +10701,7 @@ money-bill:
   styles:
     - solid
   unicode: f0d6
+  voted: false
 money-bill-alt:
   changes:
     - 5.0.0
@@ -8901,6 +10720,7 @@ money-bill-alt:
     - solid
     - regular
   unicode: f3d1
+  voted: false
 money-bill-wave:
   changes:
     - 5.0.13
@@ -8910,6 +10730,7 @@ money-bill-wave:
   styles:
     - solid
   unicode: f53a
+  voted: true
 money-bill-wave-alt:
   changes:
     - 5.0.13
@@ -8919,6 +10740,7 @@ money-bill-wave-alt:
   styles:
     - solid
   unicode: f53b
+  voted: true
 money-check:
   changes:
     - 5.0.13
@@ -8930,6 +10752,7 @@ money-check:
   styles:
     - solid
   unicode: f53c
+  voted: true
 money-check-alt:
   changes:
     - 5.0.13
@@ -8941,6 +10764,7 @@ money-check-alt:
   styles:
     - solid
   unicode: f53d
+  voted: true
 monument:
   changes:
     - 5.1.0
@@ -8953,6 +10777,7 @@ monument:
   styles:
     - solid
   unicode: f5a6
+  voted: false
 moon:
   changes:
     - '3.2'
@@ -8961,12 +10786,15 @@ moon:
   search:
     terms:
       - contrast
+      - crescent
       - darker
+      - lunar
       - night
   styles:
     - solid
     - regular
   unicode: f186
+  voted: false
 mortar-pestle:
   changes:
     - 5.1.0
@@ -8982,6 +10810,7 @@ mortar-pestle:
   styles:
     - solid
   unicode: f5a7
+  voted: false
 mosque:
   changes:
     - 5.3.0
@@ -8994,6 +10823,7 @@ mosque:
   styles:
     - solid
   unicode: f678
+  voted: false
 motorcycle:
   changes:
     - '4.3'
@@ -9008,6 +10838,7 @@ motorcycle:
   styles:
     - solid
   unicode: f21c
+  voted: false
 mountain:
   changes:
     - 5.4.0
@@ -9017,6 +10848,7 @@ mountain:
   styles:
     - solid
   unicode: f6fc
+  voted: false
 mouse-pointer:
   changes:
     - '4.4'
@@ -9029,6 +10861,25 @@ mouse-pointer:
   styles:
     - solid
   unicode: f245
+  voted: false
+mug-hot:
+  changes:
+    - 5.6.0
+  label: Mug Hot
+  search:
+    terms:
+      - caliente
+      - cocoa
+      - coffee
+      - cup
+      - drink
+      - holiday
+      - steam
+      - tea
+      - warmth
+  styles:
+    - solid
+  unicode: f7b6
 music:
   changes:
     - '1'
@@ -9042,6 +10893,7 @@ music:
   styles:
     - solid
   unicode: f001
+  voted: false
 napster:
   changes:
     - 5.0.0
@@ -9051,6 +10903,7 @@ napster:
   styles:
     - brands
   unicode: f3d2
+  voted: false
 neos:
   changes:
     - 5.2.0
@@ -9060,6 +10913,7 @@ neos:
   styles:
     - brands
   unicode: f612
+  voted: true
 network-wired:
   changes:
     - 5.4.0
@@ -9069,6 +10923,7 @@ network-wired:
   styles:
     - solid
   unicode: f6ff
+  voted: true
 neuter:
   changes:
     - '4.3'
@@ -9079,6 +10934,7 @@ neuter:
   styles:
     - solid
   unicode: f22c
+  voted: false
 newspaper:
   changes:
     - '4.2'
@@ -9092,6 +10948,7 @@ newspaper:
     - solid
     - regular
   unicode: f1ea
+  voted: false
 nimblr:
   changes:
     - 5.1.0
@@ -9101,6 +10958,7 @@ nimblr:
   styles:
     - brands
   unicode: f5a8
+  voted: false
 nintendo-switch:
   changes:
     - 5.0.0
@@ -9110,6 +10968,7 @@ nintendo-switch:
   styles:
     - brands
   unicode: f418
+  voted: false
 node:
   changes:
     - 5.0.0
@@ -9119,6 +10978,7 @@ node:
   styles:
     - brands
   unicode: f419
+  voted: true
 node-js:
   changes:
     - 5.0.0
@@ -9129,6 +10989,7 @@ node-js:
   styles:
     - brands
   unicode: f3d3
+  voted: false
 not-equal:
   changes:
     - 5.0.13
@@ -9138,6 +10999,7 @@ not-equal:
   styles:
     - solid
   unicode: f53e
+  voted: true
 notes-medical:
   changes:
     - 5.0.7
@@ -9147,6 +11009,7 @@ notes-medical:
   styles:
     - solid
   unicode: f481
+  voted: false
 npm:
   changes:
     - 5.0.0
@@ -9156,6 +11019,7 @@ npm:
   styles:
     - brands
   unicode: f3d4
+  voted: false
 ns8:
   changes:
     - 5.0.0
@@ -9165,6 +11029,7 @@ ns8:
   styles:
     - brands
   unicode: f3d5
+  voted: false
 nutritionix:
   changes:
     - 5.0.0
@@ -9174,6 +11039,7 @@ nutritionix:
   styles:
     - brands
   unicode: f3d6
+  voted: false
 object-group:
   changes:
     - '4.4'
@@ -9186,6 +11052,7 @@ object-group:
     - solid
     - regular
   unicode: f247
+  voted: false
 object-ungroup:
   changes:
     - '4.4'
@@ -9198,6 +11065,7 @@ object-ungroup:
     - solid
     - regular
   unicode: f248
+  voted: false
 odnoklassniki:
   changes:
     - '4.4'
@@ -9208,6 +11076,7 @@ odnoklassniki:
   styles:
     - brands
   unicode: f263
+  voted: false
 odnoklassniki-square:
   changes:
     - '4.4'
@@ -9218,6 +11087,7 @@ odnoklassniki-square:
   styles:
     - brands
   unicode: f264
+  voted: false
 oil-can:
   changes:
     - 5.2.0
@@ -9227,15 +11097,19 @@ oil-can:
   styles:
     - solid
   unicode: f613
+  voted: false
 old-republic:
   changes:
     - 5.0.12
   label: Old Republic
   search:
-    terms: []
+    terms:
+      - politics
+      - star wars
   styles:
     - brands
   unicode: f510
+  voted: false
 om:
   changes:
     - 5.3.0
@@ -9249,6 +11123,7 @@ om:
   styles:
     - solid
   unicode: f679
+  voted: false
 opencart:
   changes:
     - '4.4'
@@ -9259,6 +11134,7 @@ opencart:
   styles:
     - brands
   unicode: f23d
+  voted: false
 openid:
   changes:
     - '4.1'
@@ -9269,6 +11145,7 @@ openid:
   styles:
     - brands
   unicode: f19b
+  voted: false
 opera:
   changes:
     - '4.4'
@@ -9279,16 +11156,19 @@ opera:
   styles:
     - brands
   unicode: f26a
+  voted: false
 optin-monster:
   changes:
     - '4.4'
     - 5.0.0
+    - 5.7.0
   label: Optin Monster
   search:
     terms: []
   styles:
     - brands
   unicode: f23c
+  voted: false
 osi:
   changes:
     - 5.0.0
@@ -9298,6 +11178,7 @@ osi:
   styles:
     - brands
   unicode: f41a
+  voted: false
 otter:
   changes:
     - 5.4.0
@@ -9309,6 +11190,7 @@ otter:
   styles:
     - solid
   unicode: f700
+  voted: false
 outdent:
   changes:
     - '1'
@@ -9319,6 +11201,7 @@ outdent:
   styles:
     - solid
   unicode: f03b
+  voted: false
 page4:
   changes:
     - 5.0.0
@@ -9328,6 +11211,7 @@ page4:
   styles:
     - brands
   unicode: f3d7
+  voted: false
 pagelines:
   changes:
     - '4'
@@ -9345,6 +11229,20 @@ pagelines:
   styles:
     - brands
   unicode: f18c
+  voted: false
+pager:
+  changes:
+    - 5.7.0
+  label: Pager
+  search:
+    terms:
+      - beeper
+      - cellphone
+      - communication
+  styles:
+    - solid
+  unicode: f815
+  voted: false
 paint-brush:
   changes:
     - '4.2'
@@ -9356,6 +11254,7 @@ paint-brush:
   styles:
     - solid
   unicode: f1fc
+  voted: false
 paint-roller:
   changes:
     - 5.1.0
@@ -9368,6 +11267,7 @@ paint-roller:
   styles:
     - solid
   unicode: f5aa
+  voted: false
 palette:
   changes:
     - 5.0.13
@@ -9379,6 +11279,7 @@ palette:
   styles:
     - solid
   unicode: f53f
+  voted: true
 palfed:
   changes:
     - 5.0.0
@@ -9389,6 +11290,7 @@ palfed:
   styles:
     - brands
   unicode: f3d8
+  voted: false
 pallet:
   changes:
     - 5.0.7
@@ -9398,6 +11300,7 @@ pallet:
   styles:
     - solid
   unicode: f482
+  voted: false
 paper-plane:
   changes:
     - '4.1'
@@ -9409,6 +11312,7 @@ paper-plane:
     - solid
     - regular
   unicode: f1d8
+  voted: false
 paperclip:
   changes:
     - '2'
@@ -9420,6 +11324,7 @@ paperclip:
   styles:
     - solid
   unicode: f0c6
+  voted: false
 parachute-box:
   changes:
     - 5.0.9
@@ -9433,6 +11338,7 @@ parachute-box:
   styles:
     - solid
   unicode: f4cd
+  voted: false
 paragraph:
   changes:
     - '4.1'
@@ -9443,6 +11349,7 @@ paragraph:
   styles:
     - solid
   unicode: f1dd
+  voted: false
 parking:
   changes:
     - 5.0.13
@@ -9452,6 +11359,7 @@ parking:
   styles:
     - solid
   unicode: f540
+  voted: true
 passport:
   changes:
     - 5.1.0
@@ -9464,6 +11372,7 @@ passport:
   styles:
     - solid
   unicode: f5ab
+  voted: false
 pastafarianism:
   changes:
     - 5.3.0
@@ -9477,6 +11386,7 @@ pastafarianism:
   styles:
     - solid
   unicode: f67b
+  voted: false
 paste:
   changes:
     - '2'
@@ -9489,6 +11399,7 @@ paste:
   styles:
     - solid
   unicode: f0ea
+  voted: false
 patreon:
   changes:
     - 5.0.0
@@ -9499,6 +11410,7 @@ patreon:
   styles:
     - brands
   unicode: f3d9
+  voted: false
 pause:
   changes:
     - '1'
@@ -9510,6 +11422,7 @@ pause:
   styles:
     - solid
   unicode: f04c
+  voted: false
 pause-circle:
   changes:
     - '4.5'
@@ -9521,6 +11434,7 @@ pause-circle:
     - solid
     - regular
   unicode: f28b
+  voted: false
 paw:
   changes:
     - '4.1'
@@ -9533,6 +11447,7 @@ paw:
   styles:
     - solid
   unicode: f1b0
+  voted: false
 paypal:
   changes:
     - '4.2'
@@ -9543,6 +11458,7 @@ paypal:
   styles:
     - brands
   unicode: f1ed
+  voted: false
 peace:
   changes:
     - 5.3.0
@@ -9552,6 +11468,7 @@ peace:
   styles:
     - solid
   unicode: f67c
+  voted: false
 pen:
   changes:
     - 5.0.0
@@ -9566,6 +11483,7 @@ pen:
   styles:
     - solid
   unicode: f304
+  voted: false
 pen-alt:
   changes:
     - 5.0.0
@@ -9580,6 +11498,7 @@ pen-alt:
   styles:
     - solid
   unicode: f305
+  voted: false
 pen-fancy:
   changes:
     - 5.1.0
@@ -9594,6 +11513,7 @@ pen-fancy:
   styles:
     - solid
   unicode: f5ac
+  voted: false
 pen-nib:
   changes:
     - 5.1.0
@@ -9608,6 +11528,7 @@ pen-nib:
   styles:
     - solid
   unicode: f5ad
+  voted: true
 pen-square:
   changes:
     - '3.1'
@@ -9622,6 +11543,7 @@ pen-square:
   styles:
     - solid
   unicode: f14b
+  voted: false
 pencil-alt:
   changes:
     - 5.0.0
@@ -9636,6 +11558,7 @@ pencil-alt:
   styles:
     - solid
   unicode: f303
+  voted: false
 pencil-ruler:
   changes:
     - 5.1.0
@@ -9645,6 +11568,7 @@ pencil-ruler:
   styles:
     - solid
   unicode: f5ae
+  voted: false
 penny-arcade:
   changes:
     - 5.4.0
@@ -9662,6 +11586,7 @@ penny-arcade:
   styles:
     - brands
   unicode: f704
+  voted: false
 people-carry:
   changes:
     - 5.0.9
@@ -9672,6 +11597,26 @@ people-carry:
   styles:
     - solid
   unicode: f4ce
+  voted: false
+pepper-hot:
+  changes:
+    - 5.7.0
+  label: Hot Pepper
+  search:
+    terms:
+      - buffalo wings
+      - capsicum
+      - chili
+      - chilli
+      - habanero
+      - jalapeno
+      - mexican
+      - spicy
+      - tabasco
+  styles:
+    - solid
+  unicode: f816
+  voted: true
 percent:
   changes:
     - '4.5'
@@ -9682,6 +11627,7 @@ percent:
   styles:
     - solid
   unicode: f295
+  voted: false
 percentage:
   changes:
     - 5.0.13
@@ -9691,6 +11637,7 @@ percentage:
   styles:
     - solid
   unicode: f541
+  voted: true
 periscope:
   changes:
     - 5.0.0
@@ -9700,6 +11647,24 @@ periscope:
   styles:
     - brands
   unicode: f3da
+  voted: false
+person-booth:
+  changes:
+    - 5.5.0
+  label: Person Entering Booth
+  search:
+    terms:
+      - changing
+      - changing room
+      - election
+      - human
+      - person
+      - vote
+      - voting
+  styles:
+    - solid
+  unicode: f756
+  voted: false
 phabricator:
   changes:
     - 5.0.0
@@ -9709,6 +11674,7 @@ phabricator:
   styles:
     - brands
   unicode: f3db
+  voted: false
 phoenix-framework:
   changes:
     - 5.0.0
@@ -9719,6 +11685,7 @@ phoenix-framework:
   styles:
     - brands
   unicode: f3dc
+  voted: false
 phoenix-squadron:
   changes:
     - 5.0.12
@@ -9728,6 +11695,7 @@ phoenix-squadron:
   styles:
     - brands
   unicode: f511
+  voted: false
 phone:
   changes:
     - '2'
@@ -9744,6 +11712,7 @@ phone:
   styles:
     - solid
   unicode: f095
+  voted: false
 phone-slash:
   changes:
     - 5.0.0
@@ -9754,6 +11723,7 @@ phone-slash:
   styles:
     - solid
   unicode: f3dd
+  voted: false
 phone-square:
   changes:
     - '2'
@@ -9769,11 +11739,13 @@ phone-square:
   styles:
     - solid
   unicode: f098
+  voted: false
 phone-volume:
   changes:
     - '4.6'
     - 5.0.0
     - 5.0.3
+    - 5.7.0
   label: Phone Volume
   search:
     terms:
@@ -9782,6 +11754,7 @@ phone-volume:
   styles:
     - solid
   unicode: f2a0
+  voted: false
 php:
   changes:
     - 5.0.5
@@ -9791,6 +11764,7 @@ php:
   styles:
     - brands
   unicode: f457
+  voted: true
 pied-piper:
   changes:
     - '4.6'
@@ -9802,16 +11776,19 @@ pied-piper:
   styles:
     - brands
   unicode: f2ae
+  voted: false
 pied-piper-alt:
   changes:
     - '4.1'
     - 5.0.0
+    - 5.7.0
   label: Alternate Pied Piper Logo
   search:
     terms: []
   styles:
     - brands
   unicode: f1a8
+  voted: false
 pied-piper-hat:
   changes:
     - 5.0.10
@@ -9822,6 +11799,7 @@ pied-piper-hat:
   styles:
     - brands
   unicode: f4e5
+  voted: false
 pied-piper-pp:
   changes:
     - '4.1'
@@ -9832,6 +11810,7 @@ pied-piper-pp:
   styles:
     - brands
   unicode: f1a7
+  voted: false
 piggy-bank:
   changes:
     - 5.0.9
@@ -9843,6 +11822,7 @@ piggy-bank:
   styles:
     - solid
   unicode: f4d3
+  voted: false
 pills:
   changes:
     - 5.0.7
@@ -9854,6 +11834,7 @@ pills:
   styles:
     - solid
   unicode: f484
+  voted: false
 pinterest:
   changes:
     - '2'
@@ -9864,6 +11845,7 @@ pinterest:
   styles:
     - brands
   unicode: f0d2
+  voted: false
 pinterest-p:
   changes:
     - '4.3'
@@ -9874,6 +11856,7 @@ pinterest-p:
   styles:
     - brands
   unicode: f231
+  voted: false
 pinterest-square:
   changes:
     - '2'
@@ -9884,15 +11867,42 @@ pinterest-square:
   styles:
     - brands
   unicode: f0d3
+  voted: false
+pizza-slice:
+  changes:
+    - 5.7.0
+  label: Pizza Slice
+  search:
+    terms:
+      - cheese
+      - chicago
+      - italian
+      - mozzarella
+      - new york
+      - pepperoni
+      - pie
+      - slice
+      - teenage mutant ninja turtles
+      - tomato
+  styles:
+    - solid
+  unicode: f818
+  voted: true
 place-of-worship:
   changes:
     - 5.3.0
-  label: Place Of Worship
+  label: Place of Worship
   search:
-    terms: []
+    terms:
+      - building
+      - church
+      - holy
+      - mosque
+      - synagogue
   styles:
     - solid
   unicode: f67f
+  voted: false
 plane:
   changes:
     - '1'
@@ -9911,6 +11921,7 @@ plane:
   styles:
     - solid
   unicode: f072
+  voted: false
 plane-arrival:
   changes:
     - 5.1.0
@@ -9930,6 +11941,7 @@ plane-arrival:
   styles:
     - solid
   unicode: f5af
+  voted: false
 plane-departure:
   changes:
     - 5.1.0
@@ -9949,6 +11961,7 @@ plane-departure:
   styles:
     - solid
   unicode: f5b0
+  voted: false
 play:
   changes:
     - '1'
@@ -9963,6 +11976,7 @@ play:
   styles:
     - solid
   unicode: f04b
+  voted: false
 play-circle:
   changes:
     - '3.1'
@@ -9976,6 +11990,7 @@ play-circle:
     - solid
     - regular
   unicode: f144
+  voted: false
 playstation:
   changes:
     - 5.0.0
@@ -9985,6 +12000,7 @@ playstation:
   styles:
     - brands
   unicode: f3df
+  voted: false
 plug:
   changes:
     - '4.2'
@@ -9998,6 +12014,7 @@ plug:
   styles:
     - solid
   unicode: f1e6
+  voted: false
 plus:
   changes:
     - '1'
@@ -10014,6 +12031,7 @@ plus:
   styles:
     - solid
   unicode: f067
+  voted: false
 plus-circle:
   changes:
     - '1'
@@ -10029,6 +12047,7 @@ plus-circle:
   styles:
     - solid
   unicode: f055
+  voted: false
 plus-square:
   changes:
     - '3'
@@ -10045,6 +12064,7 @@ plus-square:
     - solid
     - regular
   unicode: f0fe
+  voted: false
 podcast:
   changes:
     - '4.7'
@@ -10055,24 +12075,35 @@ podcast:
   styles:
     - solid
   unicode: f2ce
+  voted: false
 poll:
   changes:
     - 5.3.0
   label: Poll
   search:
-    terms: []
+    terms:
+      - results
+      - survey
+      - vote
+      - voting
   styles:
     - solid
   unicode: f681
+  voted: false
 poll-h:
   changes:
     - 5.3.0
   label: Poll H
   search:
-    terms: []
+    terms:
+      - results
+      - survey
+      - vote
+      - voting
   styles:
     - solid
   unicode: f682
+  voted: false
 poo:
   changes:
     - 5.0.0
@@ -10083,6 +12114,24 @@ poo:
   styles:
     - solid
   unicode: f2fe
+  voted: false
+poo-storm:
+  changes:
+    - 5.5.0
+  label: Poo Storm
+  search:
+    terms:
+      - bolt
+      - cloud
+      - euphemism
+      - lightning
+      - mess
+      - poop
+      - shit
+  styles:
+    - solid
+  unicode: f75a
+  voted: false
 poop:
   changes:
     - 5.2.0
@@ -10092,6 +12141,7 @@ poop:
   styles:
     - solid
   unicode: f619
+  voted: false
 portrait:
   changes:
     - 5.0.0
@@ -10102,6 +12152,7 @@ portrait:
   styles:
     - solid
   unicode: f3e0
+  voted: false
 pound-sign:
   changes:
     - '3.2'
@@ -10113,6 +12164,7 @@ pound-sign:
   styles:
     - solid
   unicode: f154
+  voted: false
 power-off:
   changes:
     - '1'
@@ -10126,6 +12178,7 @@ power-off:
   styles:
     - solid
   unicode: f011
+  voted: false
 pray:
   changes:
     - 5.3.0
@@ -10135,6 +12188,7 @@ pray:
   styles:
     - solid
   unicode: f683
+  voted: false
 praying-hands:
   changes:
     - 5.3.0
@@ -10144,6 +12198,7 @@ praying-hands:
   styles:
     - solid
   unicode: f684
+  voted: false
 prescription:
   changes:
     - 5.1.0
@@ -10157,6 +12212,7 @@ prescription:
   styles:
     - solid
   unicode: f5b1
+  voted: false
 prescription-bottle:
   changes:
     - 5.0.7
@@ -10170,6 +12226,7 @@ prescription-bottle:
   styles:
     - solid
   unicode: f485
+  voted: false
 prescription-bottle-alt:
   changes:
     - 5.0.7
@@ -10183,6 +12240,7 @@ prescription-bottle-alt:
   styles:
     - solid
   unicode: f486
+  voted: false
 print:
   changes:
     - '1'
@@ -10194,6 +12252,7 @@ print:
   styles:
     - solid
   unicode: f02f
+  voted: false
 procedures:
   changes:
     - 5.0.7
@@ -10203,6 +12262,7 @@ procedures:
   styles:
     - solid
   unicode: f487
+  voted: false
 product-hunt:
   changes:
     - '4.5'
@@ -10213,6 +12273,7 @@ product-hunt:
   styles:
     - brands
   unicode: f288
+  voted: false
 project-diagram:
   changes:
     - 5.0.13
@@ -10222,6 +12283,7 @@ project-diagram:
   styles:
     - solid
   unicode: f542
+  voted: false
 pushed:
   changes:
     - 5.0.0
@@ -10231,6 +12293,7 @@ pushed:
   styles:
     - brands
   unicode: f3e1
+  voted: false
 puzzle-piece:
   changes:
     - '3.1'
@@ -10244,6 +12307,7 @@ puzzle-piece:
   styles:
     - solid
   unicode: f12e
+  voted: false
 python:
   changes:
     - 5.0.0
@@ -10253,6 +12317,7 @@ python:
   styles:
     - brands
   unicode: f3e2
+  voted: false
 qq:
   changes:
     - '4.1'
@@ -10263,6 +12328,7 @@ qq:
   styles:
     - brands
   unicode: f1d6
+  voted: false
 qrcode:
   changes:
     - '1'
@@ -10274,6 +12340,7 @@ qrcode:
   styles:
     - solid
   unicode: f029
+  voted: false
 question:
   changes:
     - '3.1'
@@ -10288,6 +12355,7 @@ question:
   styles:
     - solid
   unicode: f128
+  voted: false
 question-circle:
   changes:
     - '1'
@@ -10303,6 +12371,7 @@ question-circle:
     - solid
     - regular
   unicode: f059
+  voted: false
 quidditch:
   changes:
     - 5.0.5
@@ -10312,15 +12381,18 @@ quidditch:
   styles:
     - solid
   unicode: f458
+  voted: false
 quinscape:
   changes:
     - 5.0.5
+    - 5.7.0
   label: QuinScape
   search:
     terms: []
   styles:
     - brands
   unicode: f459
+  voted: false
 quora:
   changes:
     - '4.7'
@@ -10331,6 +12403,7 @@ quora:
   styles:
     - brands
   unicode: f2c4
+  voted: false
 quote-left:
   changes:
     - '3'
@@ -10342,6 +12415,7 @@ quote-left:
   styles:
     - solid
   unicode: f10d
+  voted: false
 quote-right:
   changes:
     - '3'
@@ -10353,6 +12427,7 @@ quote-right:
   styles:
     - solid
   unicode: f10e
+  voted: false
 quran:
   changes:
     - 5.3.0
@@ -10365,6 +12440,7 @@ quran:
   styles:
     - solid
   unicode: f687
+  voted: false
 r-project:
   changes:
     - 5.0.11
@@ -10375,6 +12451,51 @@ r-project:
   styles:
     - brands
   unicode: f4f7
+  voted: true
+radiation:
+  changes:
+    - 5.6.0
+  label: Radiation
+  search:
+    terms:
+      - danger
+      - dangerous
+      - deadly
+      - hazard
+      - nuclear
+      - radioactive
+      - warning
+  styles:
+    - solid
+  unicode: f7b9
+  voted: true
+radiation-alt:
+  changes:
+    - 5.6.0
+  label: Alternate Radiation
+  search:
+    terms:
+      - danger
+      - dangerous
+      - deadly
+      - hazard
+      - nuclear
+      - radioactive
+      - warning
+  styles:
+    - solid
+  unicode: f7ba
+  voted: true
+rainbow:
+  changes:
+    - 5.5.0
+  label: Rainbow
+  search:
+    terms: []
+  styles:
+    - solid
+  unicode: f75b
+  voted: false
 random:
   changes:
     - '1'
@@ -10387,6 +12508,17 @@ random:
   styles:
     - solid
   unicode: f074
+  voted: false
+raspberry-pi:
+  changes:
+    - 5.6.0
+  label: Raspberry Pi
+  search:
+    terms: []
+  styles:
+    - brands
+  unicode: f7bb
+  voted: true
 ravelry:
   changes:
     - '4.7'
@@ -10397,6 +12529,7 @@ ravelry:
   styles:
     - brands
   unicode: f2d9
+  voted: false
 react:
   changes:
     - 5.0.0
@@ -10406,6 +12539,17 @@ react:
   styles:
     - brands
   unicode: f41b
+  voted: false
+reacteurope:
+  changes:
+    - 5.5.0
+  label: ReactEurope
+  search:
+    terms: []
+  styles:
+    - brands
+  unicode: f75d
+  voted: false
 readme:
   changes:
     - 5.0.9
@@ -10416,6 +12560,7 @@ readme:
   styles:
     - brands
   unicode: f4d5
+  voted: false
 rebel:
   changes:
     - '4.1'
@@ -10426,6 +12571,7 @@ rebel:
   styles:
     - brands
   unicode: f1d0
+  voted: false
 receipt:
   changes:
     - 5.0.13
@@ -10438,6 +12584,7 @@ receipt:
   styles:
     - solid
   unicode: f543
+  voted: true
 recycle:
   changes:
     - '4.1'
@@ -10448,6 +12595,7 @@ recycle:
   styles:
     - solid
   unicode: f1b8
+  voted: false
 red-river:
   changes:
     - 5.0.0
@@ -10457,6 +12605,7 @@ red-river:
   styles:
     - brands
   unicode: f3e3
+  voted: false
 reddit:
   changes:
     - '4.1'
@@ -10467,6 +12616,7 @@ reddit:
   styles:
     - brands
   unicode: f1a1
+  voted: false
 reddit-alien:
   changes:
     - '4.5'
@@ -10477,6 +12627,7 @@ reddit-alien:
   styles:
     - brands
   unicode: f281
+  voted: false
 reddit-square:
   changes:
     - '4.1'
@@ -10487,6 +12638,20 @@ reddit-square:
   styles:
     - brands
   unicode: f1a2
+  voted: false
+redhat:
+  changes:
+    - 5.6.0
+  label: Redhat
+  search:
+    terms:
+      - linux
+      - operating system
+      - os
+  styles:
+    - brands
+  unicode: f7bc
+  voted: true
 redo:
   changes:
     - '1'
@@ -10501,6 +12666,7 @@ redo:
   styles:
     - solid
   unicode: f01e
+  voted: false
 redo-alt:
   changes:
     - 5.0.0
@@ -10514,6 +12680,7 @@ redo-alt:
   styles:
     - solid
   unicode: f2f9
+  voted: false
 registered:
   changes:
     - '4.4'
@@ -10525,15 +12692,7 @@ registered:
     - solid
     - regular
   unicode: f25d
-rendact:
-  changes:
-    - 5.0.0
-  label: Rendact
-  search:
-    terms: []
-  styles:
-    - brands
-  unicode: f3e4
+  voted: false
 renren:
   changes:
     - '3.2'
@@ -10544,6 +12703,7 @@ renren:
   styles:
     - brands
   unicode: f18b
+  voted: false
 reply:
   changes:
     - '3'
@@ -10554,6 +12714,7 @@ reply:
   styles:
     - solid
   unicode: f3e5
+  voted: false
 reply-all:
   changes:
     - '3.1'
@@ -10564,6 +12725,7 @@ reply-all:
   styles:
     - solid
   unicode: f122
+  voted: false
 replyd:
   changes:
     - 5.0.0
@@ -10573,6 +12735,26 @@ replyd:
   styles:
     - brands
   unicode: f3e6
+  voted: false
+republican:
+  changes:
+    - 5.5.0
+  label: Republican
+  search:
+    terms:
+      - american
+      - conservative
+      - election
+      - elephant
+      - politics
+      - republican party
+      - right
+      - right-wing
+      - usa
+  styles:
+    - solid
+  unicode: f75e
+  voted: false
 researchgate:
   changes:
     - 5.0.11
@@ -10582,6 +12764,7 @@ researchgate:
   styles:
     - brands
   unicode: f4f8
+  voted: true
 resolving:
   changes:
     - 5.0.0
@@ -10591,6 +12774,24 @@ resolving:
   styles:
     - brands
   unicode: f3e7
+  voted: false
+restroom:
+  changes:
+    - 5.6.0
+  label: Restroom
+  search:
+    terms:
+      - bathroom
+      - john
+      - loo
+      - potty
+      - washroom
+      - waste
+      - wc
+  styles:
+    - solid
+  unicode: f7bd
+  voted: true
 retweet:
   changes:
     - '1'
@@ -10605,6 +12806,7 @@ retweet:
   styles:
     - solid
   unicode: f079
+  voted: false
 rev:
   changes:
     - 5.1.0
@@ -10615,6 +12817,7 @@ rev:
   styles:
     - brands
   unicode: f5b2
+  voted: false
 ribbon:
   changes:
     - 5.0.9
@@ -10628,6 +12831,7 @@ ribbon:
   styles:
     - solid
   unicode: f4d6
+  voted: false
 ring:
   changes:
     - 5.4.0
@@ -10646,6 +12850,7 @@ ring:
   styles:
     - solid
   unicode: f70b
+  voted: false
 road:
   changes:
     - '1'
@@ -10658,6 +12863,7 @@ road:
   styles:
     - solid
   unicode: f018
+  voted: false
 robot:
   changes:
     - 5.0.13
@@ -10667,10 +12873,12 @@ robot:
   styles:
     - solid
   unicode: f544
+  voted: true
 rocket:
   changes:
     - '3.1'
     - 5.0.0
+    - 5.7.0
   label: rocket
   search:
     terms:
@@ -10678,15 +12886,18 @@ rocket:
   styles:
     - solid
   unicode: f135
+  voted: false
 rocketchat:
   changes:
     - 5.0.0
+    - 5.4.2
   label: Rocket.Chat
   search:
     terms: []
   styles:
     - brands
   unicode: f3e8
+  voted: false
 rockrms:
   changes:
     - 5.0.0
@@ -10696,6 +12907,7 @@ rockrms:
   styles:
     - brands
   unicode: f3e9
+  voted: false
 route:
   changes:
     - 5.0.9
@@ -10705,6 +12917,7 @@ route:
   styles:
     - solid
   unicode: f4d7
+  voted: false
 rss:
   changes:
     - '2'
@@ -10716,6 +12929,7 @@ rss:
   styles:
     - solid
   unicode: f09e
+  voted: false
 rss-square:
   changes:
     - '3.1'
@@ -10728,6 +12942,7 @@ rss-square:
   styles:
     - solid
   unicode: f143
+  voted: false
 ruble-sign:
   changes:
     - '4'
@@ -10739,6 +12954,7 @@ ruble-sign:
   styles:
     - solid
   unicode: f158
+  voted: false
 ruler:
   changes:
     - 5.0.13
@@ -10748,6 +12964,7 @@ ruler:
   styles:
     - solid
   unicode: f545
+  voted: true
 ruler-combined:
   changes:
     - 5.0.13
@@ -10757,6 +12974,7 @@ ruler-combined:
   styles:
     - solid
   unicode: f546
+  voted: true
 ruler-horizontal:
   changes:
     - 5.0.13
@@ -10766,6 +12984,7 @@ ruler-horizontal:
   styles:
     - solid
   unicode: f547
+  voted: true
 ruler-vertical:
   changes:
     - 5.0.13
@@ -10775,6 +12994,7 @@ ruler-vertical:
   styles:
     - solid
   unicode: f548
+  voted: true
 running:
   changes:
     - 5.4.0
@@ -10782,10 +13002,12 @@ running:
   search:
     terms:
       - jog
+      - person
       - sprint
   styles:
     - solid
   unicode: f70c
+  voted: true
 rupee-sign:
   changes:
     - '3.2'
@@ -10798,6 +13020,7 @@ rupee-sign:
   styles:
     - solid
   unicode: f156
+  voted: false
 sad-cry:
   changes:
     - 5.1.0
@@ -10812,6 +13035,7 @@ sad-cry:
     - solid
     - regular
   unicode: f5b3
+  voted: false
 sad-tear:
   changes:
     - 5.1.0
@@ -10826,6 +13050,7 @@ sad-tear:
     - solid
     - regular
   unicode: f5b4
+  voted: false
 safari:
   changes:
     - '4.4'
@@ -10837,6 +13062,7 @@ safari:
   styles:
     - brands
   unicode: f267
+  voted: false
 sass:
   changes:
     - 5.0.0
@@ -10846,6 +13072,37 @@ sass:
   styles:
     - brands
   unicode: f41e
+  voted: false
+satellite:
+  changes:
+    - 5.6.0
+  label: Satellite
+  search:
+    terms:
+      - communications
+      - hardware
+      - orbit
+      - space
+  styles:
+    - solid
+  unicode: f7bf
+  voted: true
+satellite-dish:
+  changes:
+    - 5.6.0
+  label: Satellite Dish
+  search:
+    terms:
+      - SETI
+      - communications
+      - hardware
+      - receiver
+      - saucer
+      - signal
+  styles:
+    - solid
+  unicode: f7c0
+  voted: true
 save:
   changes:
     - '2'
@@ -10859,6 +13116,7 @@ save:
     - solid
     - regular
   unicode: f0c7
+  voted: false
 schlix:
   changes:
     - 5.0.0
@@ -10868,15 +13126,18 @@ schlix:
   styles:
     - brands
   unicode: f3ea
+  voted: false
 school:
   changes:
     - 5.0.13
   label: School
   search:
-    terms: []
+    terms:
+      - building
   styles:
     - solid
   unicode: f549
+  voted: true
 screwdriver:
   changes:
     - 5.0.13
@@ -10891,6 +13152,7 @@ screwdriver:
   styles:
     - solid
   unicode: f54a
+  voted: true
 scribd:
   changes:
     - '4.5'
@@ -10901,6 +13163,7 @@ scribd:
   styles:
     - brands
   unicode: f28a
+  voted: false
 scroll:
   changes:
     - 5.4.0
@@ -10916,6 +13179,17 @@ scroll:
   styles:
     - solid
   unicode: f70e
+  voted: false
+sd-card:
+  changes:
+    - 5.6.0
+  label: Sd Card
+  search:
+    terms: []
+  styles:
+    - solid
+  unicode: f7c2
+  voted: true
 search:
   changes:
     - '1'
@@ -10931,6 +13205,7 @@ search:
   styles:
     - solid
   unicode: f002
+  voted: false
 search-dollar:
   changes:
     - 5.3.0
@@ -10940,6 +13215,7 @@ search-dollar:
   styles:
     - solid
   unicode: f688
+  voted: false
 search-location:
   changes:
     - 5.3.0
@@ -10949,6 +13225,7 @@ search-location:
   styles:
     - solid
   unicode: f689
+  voted: false
 search-minus:
   changes:
     - '1'
@@ -10965,6 +13242,7 @@ search-minus:
   styles:
     - solid
   unicode: f010
+  voted: false
 search-plus:
   changes:
     - '1'
@@ -10981,6 +13259,7 @@ search-plus:
   styles:
     - solid
   unicode: f00e
+  voted: false
 searchengin:
   changes:
     - 5.0.0
@@ -10990,6 +13269,7 @@ searchengin:
   styles:
     - brands
   unicode: f3eb
+  voted: false
 seedling:
   changes:
     - 5.0.9
@@ -10999,6 +13279,7 @@ seedling:
   styles:
     - solid
   unicode: f4d8
+  voted: false
 sellcast:
   changes:
     - 5.0.0
@@ -11009,6 +13290,7 @@ sellcast:
   styles:
     - brands
   unicode: f2da
+  voted: false
 sellsy:
   changes:
     - '4.3'
@@ -11019,6 +13301,7 @@ sellsy:
   styles:
     - brands
   unicode: f213
+  voted: false
 server:
   changes:
     - '4.3'
@@ -11030,6 +13313,7 @@ server:
   styles:
     - solid
   unicode: f233
+  voted: false
 servicestack:
   changes:
     - 5.0.0
@@ -11039,6 +13323,7 @@ servicestack:
   styles:
     - brands
   unicode: f3ec
+  voted: false
 shapes:
   changes:
     - 5.2.0
@@ -11051,6 +13336,7 @@ shapes:
   styles:
     - solid
   unicode: f61f
+  voted: false
 share:
   changes:
     - '1'
@@ -11061,6 +13347,7 @@ share:
   styles:
     - solid
   unicode: f064
+  voted: false
 share-alt:
   changes:
     - '4.1'
@@ -11071,6 +13358,7 @@ share-alt:
   styles:
     - solid
   unicode: f1e0
+  voted: false
 share-alt-square:
   changes:
     - '4.1'
@@ -11081,6 +13369,7 @@ share-alt-square:
   styles:
     - solid
   unicode: f1e1
+  voted: false
 share-square:
   changes:
     - '3.1'
@@ -11094,6 +13383,7 @@ share-square:
     - solid
     - regular
   unicode: f14d
+  voted: false
 shekel-sign:
   changes:
     - '4.2'
@@ -11105,6 +13395,7 @@ shekel-sign:
   styles:
     - solid
   unicode: f20b
+  voted: true
 shield-alt:
   changes:
     - 5.0.0
@@ -11120,6 +13411,7 @@ shield-alt:
   styles:
     - solid
   unicode: f3ed
+  voted: false
 ship:
   changes:
     - '4.3'
@@ -11132,6 +13424,7 @@ ship:
   styles:
     - solid
   unicode: f21a
+  voted: false
 shipping-fast:
   changes:
     - 5.0.7
@@ -11141,16 +13434,19 @@ shipping-fast:
   styles:
     - solid
   unicode: f48b
+  voted: false
 shirtsinbulk:
   changes:
     - '4.3'
     - 5.0.0
+    - 5.7.0
   label: Shirts in Bulk
   search:
     terms: []
   styles:
     - brands
   unicode: f214
+  voted: false
 shoe-prints:
   changes:
     - 5.0.13
@@ -11163,6 +13459,7 @@ shoe-prints:
   styles:
     - solid
   unicode: f54b
+  voted: true
 shopping-bag:
   changes:
     - '4.5'
@@ -11173,6 +13470,7 @@ shopping-bag:
   styles:
     - solid
   unicode: f290
+  voted: false
 shopping-basket:
   changes:
     - '4.5'
@@ -11183,6 +13481,7 @@ shopping-basket:
   styles:
     - solid
   unicode: f291
+  voted: false
 shopping-cart:
   changes:
     - '1'
@@ -11197,6 +13496,7 @@ shopping-cart:
   styles:
     - solid
   unicode: f07a
+  voted: false
 shopware:
   changes:
     - 5.1.0
@@ -11206,6 +13506,7 @@ shopware:
   styles:
     - brands
   unicode: f5b5
+  voted: false
 shower:
   changes:
     - '4.7'
@@ -11216,6 +13517,7 @@ shower:
   styles:
     - solid
   unicode: f2cc
+  voted: false
 shuttle-van:
   changes:
     - 5.1.0
@@ -11229,6 +13531,7 @@ shuttle-van:
   styles:
     - solid
   unicode: f5b6
+  voted: false
 sign:
   changes:
     - 5.0.9
@@ -11238,6 +13541,7 @@ sign:
   styles:
     - solid
   unicode: f4d9
+  voted: false
 sign-in-alt:
   changes:
     - 5.0.0
@@ -11257,6 +13561,7 @@ sign-in-alt:
   styles:
     - solid
   unicode: f2f6
+  voted: false
 sign-language:
   changes:
     - '4.6'
@@ -11267,6 +13572,7 @@ sign-language:
   styles:
     - solid
   unicode: f2a7
+  voted: false
 sign-out-alt:
   changes:
     - 5.0.0
@@ -11282,6 +13588,7 @@ sign-out-alt:
   styles:
     - solid
   unicode: f2f5
+  voted: false
 signal:
   changes:
     - '1'
@@ -11297,9 +13604,11 @@ signal:
   styles:
     - solid
   unicode: f012
+  voted: false
 signature:
   changes:
     - 5.1.0
+    - 5.6.0
   label: Signature
   search:
     terms:
@@ -11310,6 +13619,23 @@ signature:
   styles:
     - solid
   unicode: f5b7
+  voted: true
+sim-card:
+  changes:
+    - 5.6.0
+  label: SIM Card
+  search:
+    terms:
+      - hard drive
+      - hardware
+      - portable
+      - storage
+      - technology
+      - tiny
+  styles:
+    - solid
+  unicode: f7c4
+  voted: true
 simplybuilt:
   changes:
     - '4.3'
@@ -11320,6 +13646,7 @@ simplybuilt:
   styles:
     - brands
   unicode: f215
+  voted: false
 sistrix:
   changes:
     - 5.0.0
@@ -11329,6 +13656,7 @@ sistrix:
   styles:
     - brands
   unicode: f3ee
+  voted: false
 sitemap:
   changes:
     - '2'
@@ -11345,6 +13673,7 @@ sitemap:
   styles:
     - solid
   unicode: f0e8
+  voted: false
 sith:
   changes:
     - 5.0.12
@@ -11354,6 +13683,67 @@ sith:
   styles:
     - brands
   unicode: f512
+  voted: false
+skating:
+  changes:
+    - 5.6.0
+  label: Skating
+  search:
+    terms:
+      - activity
+      - figure skating
+      - fitness
+      - ice
+      - person
+      - seasonal
+  styles:
+    - solid
+  unicode: f7c5
+sketch:
+  changes:
+    - 5.6.0
+  label: Sketch
+  search:
+    terms:
+      - app
+      - design
+      - interface
+  styles:
+    - brands
+  unicode: f7c6
+  voted: false
+skiing:
+  changes:
+    - 5.6.0
+  label: Skiing
+  search:
+    terms:
+      - activity
+      - downhill
+      - fast
+      - fitness
+      - outdoors
+      - person
+      - seasonal
+      - slalom
+  styles:
+    - solid
+  unicode: f7c9
+skiing-nordic:
+  changes:
+    - 5.6.0
+  label: Skiing Nordic
+  search:
+    terms:
+      - activity
+      - cross country
+      - fitness
+      - outdoors
+      - person
+      - seasonal
+  styles:
+    - solid
+  unicode: f7ca
 skull:
   changes:
     - 5.0.13
@@ -11366,6 +13756,7 @@ skull:
   styles:
     - solid
   unicode: f54c
+  voted: true
 skull-crossbones:
   changes:
     - 5.4.0
@@ -11392,6 +13783,7 @@ skull-crossbones:
   styles:
     - solid
   unicode: f714
+  voted: false
 skyatlas:
   changes:
     - '4.3'
@@ -11403,6 +13795,7 @@ skyatlas:
   styles:
     - brands
   unicode: f216
+  voted: false
 skype:
   changes:
     - '3.2'
@@ -11413,10 +13806,12 @@ skype:
   styles:
     - brands
   unicode: f17e
+  voted: false
 slack:
   changes:
     - '4.1'
     - 5.0.0
+    - 5.7.0
   label: Slack Logo
   search:
     terms:
@@ -11426,6 +13821,7 @@ slack:
   styles:
     - brands
   unicode: f198
+  voted: false
 slack-hash:
   changes:
     - 5.0.0
@@ -11438,6 +13834,7 @@ slack-hash:
   styles:
     - brands
   unicode: f3ef
+  voted: false
 slash:
   changes:
     - 5.4.0
@@ -11447,6 +13844,23 @@ slash:
   styles:
     - solid
   unicode: f715
+  voted: true
+sleigh:
+  changes:
+    - 5.6.0
+  label: Sleigh
+  search:
+    terms:
+      - christmas
+      - claus
+      - fly
+      - holiday
+      - santa
+      - sled
+      - xmas
+  styles:
+    - solid
+  unicode: f7cc
 sliders-h:
   changes:
     - '4.1'
@@ -11460,6 +13874,7 @@ sliders-h:
   styles:
     - solid
   unicode: f1de
+  voted: false
 slideshare:
   changes:
     - '4.2'
@@ -11470,6 +13885,7 @@ slideshare:
   styles:
     - brands
   unicode: f1e7
+  voted: false
 smile:
   changes:
     - '3.1'
@@ -11489,6 +13905,7 @@ smile:
     - solid
     - regular
   unicode: f118
+  voted: false
 smile-beam:
   changes:
     - 5.1.0
@@ -11503,6 +13920,7 @@ smile-beam:
     - solid
     - regular
   unicode: f5b8
+  voted: false
 smile-wink:
   changes:
     - 5.1.0
@@ -11516,6 +13934,18 @@ smile-wink:
     - solid
     - regular
   unicode: f4da
+  voted: false
+smog:
+  changes:
+    - 5.5.0
+  label: Smog
+  search:
+    terms:
+      - dragon
+  styles:
+    - solid
+  unicode: f75f
+  voted: false
 smoking:
   changes:
     - 5.0.7
@@ -11528,6 +13958,7 @@ smoking:
   styles:
     - solid
   unicode: f48d
+  voted: true
 smoking-ban:
   changes:
     - 5.0.13
@@ -11539,6 +13970,25 @@ smoking-ban:
   styles:
     - solid
   unicode: f54d
+  voted: true
+sms:
+  changes:
+    - 5.6.0
+  label: SMS
+  search:
+    terms:
+      - chat
+      - conversation
+      - message
+      - mobile
+      - notification
+      - phone
+      - sms
+      - texting
+  styles:
+    - solid
+  unicode: f7cd
+  voted: true
 snapchat:
   changes:
     - '4.6'
@@ -11549,6 +13999,7 @@ snapchat:
   styles:
     - brands
   unicode: f2ab
+  voted: false
 snapchat-ghost:
   changes:
     - '4.6'
@@ -11559,6 +14010,7 @@ snapchat-ghost:
   styles:
     - brands
   unicode: f2ac
+  voted: false
 snapchat-square:
   changes:
     - '4.6'
@@ -11569,17 +14021,61 @@ snapchat-square:
   styles:
     - brands
   unicode: f2ad
+  voted: false
+snowboarding:
+  changes:
+    - 5.6.0
+  label: Snowboarding
+  search:
+    terms:
+      - activity
+      - fitness
+      - outdoors
+      - person
+      - seasonal
+  styles:
+    - solid
+  unicode: f7ce
 snowflake:
   changes:
     - '4.7'
     - 5.0.0
+    - 5.5.0
   label: Snowflake
   search:
-    terms: []
+    terms:
+      - precipitation
+      - seasonal
+      - winter
   styles:
     - solid
     - regular
   unicode: f2dc
+  voted: false
+snowman:
+  changes:
+    - 5.6.0
+  label: Snowman
+  search:
+    terms:
+      - decoration
+      - frost
+      - holiday
+  styles:
+    - solid
+  unicode: f7d0
+snowplow:
+  changes:
+    - 5.6.0
+  label: Snowplow
+  search:
+    terms:
+      - clean up
+      - cold
+      - seasonal
+  styles:
+    - solid
+  unicode: f7d2
 socks:
   changes:
     - 5.3.0
@@ -11588,11 +14084,13 @@ socks:
     terms:
       - business socks
       - business time
+      - clothing
       - flight of the conchords
       - wednesday
   styles:
     - solid
   unicode: f696
+  voted: false
 solar-panel:
   changes:
     - 5.1.0
@@ -11607,6 +14105,7 @@ solar-panel:
   styles:
     - solid
   unicode: f5ba
+  voted: false
 sort:
   changes:
     - '2'
@@ -11618,6 +14117,7 @@ sort:
   styles:
     - solid
   unicode: f0dc
+  voted: false
 sort-alpha-down:
   changes:
     - '3.2'
@@ -11629,6 +14129,7 @@ sort-alpha-down:
   styles:
     - solid
   unicode: f15d
+  voted: false
 sort-alpha-up:
   changes:
     - '3.2'
@@ -11640,6 +14141,7 @@ sort-alpha-up:
   styles:
     - solid
   unicode: f15e
+  voted: false
 sort-amount-down:
   changes:
     - '3.2'
@@ -11651,6 +14153,7 @@ sort-amount-down:
   styles:
     - solid
   unicode: f160
+  voted: false
 sort-amount-up:
   changes:
     - '3.2'
@@ -11662,6 +14165,7 @@ sort-amount-up:
   styles:
     - solid
   unicode: f161
+  voted: false
 sort-down:
   changes:
     - '2'
@@ -11675,6 +14179,7 @@ sort-down:
   styles:
     - solid
   unicode: f0dd
+  voted: false
 sort-numeric-down:
   changes:
     - '3.2'
@@ -11687,6 +14192,7 @@ sort-numeric-down:
   styles:
     - solid
   unicode: f162
+  voted: false
 sort-numeric-up:
   changes:
     - '3.2'
@@ -11699,6 +14205,7 @@ sort-numeric-up:
   styles:
     - solid
   unicode: f163
+  voted: false
 sort-up:
   changes:
     - '2'
@@ -11712,6 +14219,7 @@ sort-up:
   styles:
     - solid
   unicode: f0de
+  voted: false
 soundcloud:
   changes:
     - '4.1'
@@ -11722,6 +14230,17 @@ soundcloud:
   styles:
     - brands
   unicode: f1be
+  voted: false
+sourcetree:
+  changes:
+    - 5.6.0
+  label: Sourcetree
+  search:
+    terms: []
+  styles:
+    - brands
+  unicode: f7d3
+  voted: true
 spa:
   changes:
     - 5.1.0
@@ -11735,6 +14254,7 @@ spa:
   styles:
     - solid
   unicode: f5bb
+  voted: false
 space-shuttle:
   changes:
     - '4.1'
@@ -11750,6 +14270,7 @@ space-shuttle:
   styles:
     - solid
   unicode: f197
+  voted: false
 speakap:
   changes:
     - 5.0.0
@@ -11760,6 +14281,7 @@ speakap:
   styles:
     - brands
   unicode: f3f3
+  voted: false
 spider:
   changes:
     - 5.4.0
@@ -11776,6 +14298,7 @@ spider:
   styles:
     - solid
   unicode: f717
+  voted: true
 spinner:
   changes:
     - '3'
@@ -11788,6 +14311,7 @@ spinner:
   styles:
     - solid
   unicode: f110
+  voted: false
 splotch:
   changes:
     - 5.1.0
@@ -11797,6 +14321,7 @@ splotch:
   styles:
     - solid
   unicode: f5bc
+  voted: false
 spotify:
   changes:
     - '4.1'
@@ -11807,6 +14332,7 @@ spotify:
   styles:
     - brands
   unicode: f1bc
+  voted: false
 spray-can:
   changes:
     - 5.1.0
@@ -11816,6 +14342,7 @@ spray-can:
   styles:
     - solid
   unicode: f5bd
+  voted: false
 square:
   changes:
     - '2'
@@ -11829,6 +14356,7 @@ square:
     - solid
     - regular
   unicode: f0c8
+  voted: false
 square-full:
   changes:
     - 5.0.5
@@ -11838,15 +14366,17 @@ square-full:
   styles:
     - solid
   unicode: f45c
+  voted: false
 square-root-alt:
   changes:
     - 5.3.0
-  label: Square Root Alternate
+  label: Alternate Square Root
   search:
     terms: []
   styles:
     - solid
   unicode: f698
+  voted: false
 squarespace:
   changes:
     - 5.1.0
@@ -11856,6 +14386,7 @@ squarespace:
   styles:
     - brands
   unicode: f5be
+  voted: true
 stack-exchange:
   changes:
     - '4'
@@ -11867,6 +14398,7 @@ stack-exchange:
   styles:
     - brands
   unicode: f18d
+  voted: false
 stack-overflow:
   changes:
     - '3.2'
@@ -11877,6 +14409,7 @@ stack-overflow:
   styles:
     - brands
   unicode: f16c
+  voted: false
 stamp:
   changes:
     - 5.1.0
@@ -11886,6 +14419,7 @@ stamp:
   styles:
     - solid
   unicode: f5bf
+  voted: false
 star:
   changes:
     - '1'
@@ -11904,6 +14438,7 @@ star:
     - solid
     - regular
   unicode: f005
+  voted: false
 star-and-crescent:
   changes:
     - 5.3.0
@@ -11915,6 +14450,7 @@ star-and-crescent:
   styles:
     - solid
   unicode: f699
+  voted: false
 star-half:
   changes:
     - '1'
@@ -11932,6 +14468,7 @@ star-half:
     - solid
     - regular
   unicode: f089
+  voted: false
 star-half-alt:
   changes:
     - 5.1.0
@@ -11947,6 +14484,7 @@ star-half-alt:
   styles:
     - solid
   unicode: f5c0
+  voted: true
 star-of-david:
   changes:
     - 5.3.0
@@ -11958,6 +14496,7 @@ star-of-david:
   styles:
     - solid
   unicode: f69a
+  voted: false
 star-of-life:
   changes:
     - 5.2.0
@@ -11967,6 +14506,7 @@ star-of-life:
   styles:
     - solid
   unicode: f621
+  voted: false
 staylinked:
   changes:
     - 5.0.0
@@ -11976,6 +14516,7 @@ staylinked:
   styles:
     - brands
   unicode: f3f5
+  voted: false
 steam:
   changes:
     - '4.1'
@@ -11986,6 +14527,7 @@ steam:
   styles:
     - brands
   unicode: f1b6
+  voted: false
 steam-square:
   changes:
     - '4.1'
@@ -11996,6 +14538,7 @@ steam-square:
   styles:
     - brands
   unicode: f1b7
+  voted: false
 steam-symbol:
   changes:
     - 5.0.0
@@ -12005,6 +14548,7 @@ steam-symbol:
   styles:
     - brands
   unicode: f3f6
+  voted: false
 step-backward:
   changes:
     - '1'
@@ -12020,6 +14564,7 @@ step-backward:
   styles:
     - solid
   unicode: f048
+  voted: false
 step-forward:
   changes:
     - '1'
@@ -12033,6 +14578,7 @@ step-forward:
   styles:
     - solid
   unicode: f051
+  voted: false
 stethoscope:
   changes:
     - '3'
@@ -12044,15 +14590,18 @@ stethoscope:
   styles:
     - solid
   unicode: f0f1
+  voted: false
 sticker-mule:
   changes:
     - 5.0.0
+    - 5.7.0
   label: Sticker Mule
   search:
     terms: []
   styles:
     - brands
   unicode: f3f7
+  voted: false
 sticky-note:
   changes:
     - '4.4'
@@ -12064,6 +14613,7 @@ sticky-note:
     - solid
     - regular
   unicode: f249
+  voted: false
 stop:
   changes:
     - '1'
@@ -12077,6 +14627,7 @@ stop:
   styles:
     - solid
   unicode: f04d
+  voted: false
 stop-circle:
   changes:
     - '4.5'
@@ -12088,6 +14639,7 @@ stop-circle:
     - solid
     - regular
   unicode: f28d
+  voted: false
 stopwatch:
   changes:
     - 5.0.0
@@ -12098,6 +14650,7 @@ stopwatch:
   styles:
     - solid
   unicode: f2f2
+  voted: false
 store:
   changes:
     - 5.0.13
@@ -12107,6 +14660,7 @@ store:
   styles:
     - solid
   unicode: f54e
+  voted: true
 store-alt:
   changes:
     - 5.0.13
@@ -12116,16 +14670,19 @@ store-alt:
   styles:
     - solid
   unicode: f54f
+  voted: true
 strava:
   changes:
     - 5.0.0
     - 5.0.1
+    - 5.7.0
   label: Strava
   search:
     terms: []
   styles:
     - brands
   unicode: f428
+  voted: false
 stream:
   changes:
     - 5.0.13
@@ -12135,6 +14692,7 @@ stream:
   styles:
     - solid
   unicode: f550
+  voted: false
 street-view:
   changes:
     - '4.3'
@@ -12147,6 +14705,7 @@ street-view:
   styles:
     - solid
   unicode: f21d
+  voted: false
 strikethrough:
   changes:
     - '2'
@@ -12157,6 +14716,7 @@ strikethrough:
   styles:
     - solid
   unicode: f0cc
+  voted: false
 stripe:
   changes:
     - 5.0.0
@@ -12167,6 +14727,7 @@ stripe:
   styles:
     - brands
   unicode: f429
+  voted: false
 stripe-s:
   changes:
     - 5.0.1
@@ -12176,6 +14737,7 @@ stripe-s:
   styles:
     - brands
   unicode: f42a
+  voted: false
 stroopwafel:
   changes:
     - 5.0.13
@@ -12183,12 +14745,12 @@ stroopwafel:
   search:
     terms:
       - dessert
-      - food
       - sweets
       - waffle
   styles:
     - solid
   unicode: f551
+  voted: false
 studiovinari:
   changes:
     - 5.0.0
@@ -12198,6 +14760,7 @@ studiovinari:
   styles:
     - brands
   unicode: f3f8
+  voted: false
 stumbleupon:
   changes:
     - '4.1'
@@ -12208,6 +14771,7 @@ stumbleupon:
   styles:
     - brands
   unicode: f1a4
+  voted: false
 stumbleupon-circle:
   changes:
     - '4.1'
@@ -12218,6 +14782,7 @@ stumbleupon-circle:
   styles:
     - brands
   unicode: f1a3
+  voted: false
 subscript:
   changes:
     - '3.1'
@@ -12228,6 +14793,7 @@ subscript:
   styles:
     - solid
   unicode: f12c
+  voted: false
 subway:
   changes:
     - '4.3'
@@ -12243,6 +14809,7 @@ subway:
   styles:
     - solid
   unicode: f239
+  voted: false
 suitcase:
   changes:
     - '3'
@@ -12260,6 +14827,7 @@ suitcase:
   styles:
     - solid
   unicode: f0f2
+  voted: false
 suitcase-rolling:
   changes:
     - 5.1.0
@@ -12269,10 +14837,12 @@ suitcase-rolling:
   styles:
     - solid
   unicode: f5c1
+  voted: false
 sun:
   changes:
     - '3.2'
     - 5.0.0
+    - 5.5.0
   label: Sun
   search:
     terms:
@@ -12280,11 +14850,15 @@ sun:
       - contrast
       - day
       - lighter
+      - sol
+      - solar
+      - star
       - weather
   styles:
     - solid
     - regular
   unicode: f185
+  voted: false
 superpowers:
   changes:
     - '4.7'
@@ -12295,6 +14869,7 @@ superpowers:
   styles:
     - brands
   unicode: f2dd
+  voted: false
 superscript:
   changes:
     - '3.1'
@@ -12306,6 +14881,7 @@ superscript:
   styles:
     - solid
   unicode: f12b
+  voted: false
 supple:
   changes:
     - 5.0.0
@@ -12315,6 +14891,7 @@ supple:
   styles:
     - brands
   unicode: f3f9
+  voted: false
 surprise:
   changes:
     - 5.1.0
@@ -12328,6 +14905,20 @@ surprise:
     - solid
     - regular
   unicode: f5c2
+  voted: false
+suse:
+  changes:
+    - 5.6.0
+  label: Suse
+  search:
+    terms:
+      - linux
+      - operating system
+      - os
+  styles:
+    - brands
+  unicode: f7d6
+  voted: true
 swatchbook:
   changes:
     - 5.1.0
@@ -12337,6 +14928,7 @@ swatchbook:
   styles:
     - solid
   unicode: f5c3
+  voted: false
 swimmer:
   changes:
     - 5.1.0
@@ -12351,6 +14943,7 @@ swimmer:
   styles:
     - solid
   unicode: f5c4
+  voted: false
 swimming-pool:
   changes:
     - 5.1.0
@@ -12363,6 +14956,7 @@ swimming-pool:
   styles:
     - solid
   unicode: f5c5
+  voted: false
 synagogue:
   changes:
     - 5.3.0
@@ -12377,6 +14971,7 @@ synagogue:
   styles:
     - solid
   unicode: f69b
+  voted: false
 sync:
   changes:
     - '1'
@@ -12392,6 +14987,7 @@ sync:
   styles:
     - solid
   unicode: f021
+  voted: false
 sync-alt:
   changes:
     - 5.0.0
@@ -12404,6 +15000,7 @@ sync-alt:
   styles:
     - solid
   unicode: f2f1
+  voted: false
 syringe:
   changes:
     - 5.0.7
@@ -12415,6 +15012,7 @@ syringe:
   styles:
     - solid
   unicode: f48e
+  voted: false
 table:
   changes:
     - '2'
@@ -12428,6 +15026,7 @@ table:
   styles:
     - solid
   unicode: f0ce
+  voted: false
 table-tennis:
   changes:
     - 5.0.5
@@ -12437,6 +15036,7 @@ table-tennis:
   styles:
     - solid
   unicode: f45d
+  voted: false
 tablet:
   changes:
     - '3'
@@ -12452,6 +15052,7 @@ tablet:
   styles:
     - solid
   unicode: f10a
+  voted: false
 tablet-alt:
   changes:
     - 5.0.0
@@ -12466,6 +15067,7 @@ tablet-alt:
   styles:
     - solid
   unicode: f3fa
+  voted: false
 tablets:
   changes:
     - 5.0.7
@@ -12477,6 +15079,7 @@ tablets:
   styles:
     - solid
   unicode: f490
+  voted: false
 tachometer-alt:
   changes:
     - 5.0.0
@@ -12489,6 +15092,7 @@ tachometer-alt:
   styles:
     - solid
   unicode: f3fd
+  voted: false
 tag:
   changes:
     - '1'
@@ -12500,6 +15104,7 @@ tag:
   styles:
     - solid
   unicode: f02b
+  voted: false
 tags:
   changes:
     - '1'
@@ -12511,6 +15116,7 @@ tags:
   styles:
     - solid
   unicode: f02c
+  voted: false
 tape:
   changes:
     - 5.0.9
@@ -12520,6 +15126,7 @@ tape:
   styles:
     - solid
   unicode: f4db
+  voted: false
 tasks:
   changes:
     - '2'
@@ -12527,14 +15134,18 @@ tasks:
   label: Tasks
   search:
     terms:
+      - checklist
       - downloading
       - downloads
       - loading
       - progress
+      - project management
       - settings
+      - to do
   styles:
     - solid
   unicode: f0ae
+  voted: false
 taxi:
   changes:
     - '4.1'
@@ -12555,6 +15166,7 @@ taxi:
   styles:
     - solid
   unicode: f1ba
+  voted: false
 teamspeak:
   changes:
     - 5.0.11
@@ -12565,6 +15177,7 @@ teamspeak:
   styles:
     - brands
   unicode: f4f9
+  voted: true
 teeth:
   changes:
     - 5.2.0
@@ -12574,6 +15187,7 @@ teeth:
   styles:
     - solid
   unicode: f62e
+  voted: false
 teeth-open:
   changes:
     - 5.2.0
@@ -12583,6 +15197,7 @@ teeth-open:
   styles:
     - solid
   unicode: f62f
+  voted: false
 telegram:
   changes:
     - '4.7'
@@ -12593,6 +15208,7 @@ telegram:
   styles:
     - brands
   unicode: f2c6
+  voted: false
 telegram-plane:
   changes:
     - 5.0.0
@@ -12602,6 +15218,33 @@ telegram-plane:
   styles:
     - brands
   unicode: f3fe
+  voted: false
+temperature-high:
+  changes:
+    - 5.5.0
+  label: High Temperature
+  search:
+    terms:
+      - mercury
+      - thermometer
+      - warm
+  styles:
+    - solid
+  unicode: f769
+  voted: false
+temperature-low:
+  changes:
+    - 5.5.0
+  label: Low Temperature
+  search:
+    terms:
+      - cool
+      - mercury
+      - thermometer
+  styles:
+    - solid
+  unicode: f76b
+  voted: false
 tencent-weibo:
   changes:
     - '4.1'
@@ -12612,6 +15255,21 @@ tencent-weibo:
   styles:
     - brands
   unicode: f1d5
+  voted: false
+tenge:
+  changes:
+    - 5.6.0
+  label: Tenge
+  search:
+    terms:
+      - currency
+      - kazakhstan
+      - money
+      - price
+  styles:
+    - solid
+  unicode: f7d7
+  voted: true
 terminal:
   changes:
     - '3.1'
@@ -12626,6 +15284,7 @@ terminal:
   styles:
     - solid
   unicode: f120
+  voted: false
 text-height:
   changes:
     - '1'
@@ -12636,6 +15295,7 @@ text-height:
   styles:
     - solid
   unicode: f034
+  voted: false
 text-width:
   changes:
     - '1'
@@ -12646,10 +15306,12 @@ text-width:
   styles:
     - solid
   unicode: f035
+  voted: false
 th:
   changes:
     - '1'
     - 5.0.0
+    - 5.7.0
   label: th
   search:
     terms:
@@ -12660,6 +15322,7 @@ th:
   styles:
     - solid
   unicode: f00a
+  voted: false
 th-large:
   changes:
     - '1'
@@ -12674,6 +15337,7 @@ th-large:
   styles:
     - solid
   unicode: f009
+  voted: false
 th-list:
   changes:
     - '1'
@@ -12691,15 +15355,18 @@ th-list:
   styles:
     - solid
   unicode: f00b
+  voted: false
 the-red-yeti:
   changes:
     - 5.3.0
+    - 5.7.0
   label: The Red Yeti
   search:
     terms: []
   styles:
     - brands
   unicode: f69d
+  voted: false
 theater-masks:
   changes:
     - 5.2.0
@@ -12709,6 +15376,7 @@ theater-masks:
   styles:
     - solid
   unicode: f630
+  voted: false
 themeco:
   changes:
     - 5.1.0
@@ -12718,6 +15386,7 @@ themeco:
   styles:
     - brands
   unicode: f5c6
+  voted: false
 themeisle:
   changes:
     - '4.6'
@@ -12728,17 +15397,20 @@ themeisle:
   styles:
     - brands
   unicode: f2b2
+  voted: false
 thermometer:
   changes:
     - 5.0.7
   label: Thermometer
   search:
     terms:
-      - fever
+      - mercury
+      - status
       - temperature
   styles:
     - solid
   unicode: f491
+  voted: false
 thermometer-empty:
   changes:
     - '4.7'
@@ -12746,10 +15418,13 @@ thermometer-empty:
   label: Thermometer Empty
   search:
     terms:
+      - mercury
       - status
+      - temperature
   styles:
     - solid
   unicode: f2cb
+  voted: false
 thermometer-full:
   changes:
     - '4.7'
@@ -12757,10 +15432,14 @@ thermometer-full:
   label: Thermometer Full
   search:
     terms:
+      - fever
+      - mercury
       - status
+      - temperature
   styles:
     - solid
   unicode: f2c7
+  voted: false
 thermometer-half:
   changes:
     - '4.7'
@@ -12768,10 +15447,13 @@ thermometer-half:
   label: Thermometer 1/2 Full
   search:
     terms:
+      - mercury
       - status
+      - temperature
   styles:
     - solid
   unicode: f2c9
+  voted: false
 thermometer-quarter:
   changes:
     - '4.7'
@@ -12779,10 +15461,13 @@ thermometer-quarter:
   label: Thermometer 1/4 Full
   search:
     terms:
+      - mercury
       - status
+      - temperature
   styles:
     - solid
   unicode: f2ca
+  voted: false
 thermometer-three-quarters:
   changes:
     - '4.7'
@@ -12790,10 +15475,23 @@ thermometer-three-quarters:
   label: Thermometer 3/4 Full
   search:
     terms:
+      - mercury
       - status
+      - temperature
   styles:
     - solid
   unicode: f2c8
+  voted: false
+think-peaks:
+  changes:
+    - 5.4.2
+  label: Think Peaks
+  search:
+    terms: []
+  styles:
+    - brands
+  unicode: f731
+  voted: false
 thumbs-down:
   changes:
     - '3.2'
@@ -12810,6 +15508,7 @@ thumbs-down:
     - solid
     - regular
   unicode: f165
+  voted: false
 thumbs-up:
   changes:
     - '3.2'
@@ -12832,6 +15531,7 @@ thumbs-up:
     - solid
     - regular
   unicode: f164
+  voted: false
 thumbtack:
   changes:
     - '1'
@@ -12847,6 +15547,7 @@ thumbtack:
   styles:
     - solid
   unicode: f08d
+  voted: false
 ticket-alt:
   changes:
     - 5.0.0
@@ -12857,6 +15558,7 @@ ticket-alt:
   styles:
     - solid
   unicode: f3ff
+  voted: false
 times:
   changes:
     - '1'
@@ -12879,6 +15581,7 @@ times:
   styles:
     - solid
   unicode: f00d
+  voted: false
 times-circle:
   changes:
     - '1'
@@ -12900,6 +15603,7 @@ times-circle:
     - solid
     - regular
   unicode: f057
+  voted: false
 tint:
   changes:
     - '1'
@@ -12915,6 +15619,7 @@ tint:
   styles:
     - solid
   unicode: f043
+  voted: false
 tint-slash:
   changes:
     - 5.1.0
@@ -12924,6 +15629,7 @@ tint-slash:
   styles:
     - solid
   unicode: f5c7
+  voted: false
 tired:
   changes:
     - 5.1.0
@@ -12937,6 +15643,7 @@ tired:
     - solid
     - regular
   unicode: f5c8
+  voted: false
 toggle-off:
   changes:
     - '4.2'
@@ -12948,6 +15655,7 @@ toggle-off:
   styles:
     - solid
   unicode: f204
+  voted: false
 toggle-on:
   changes:
     - '4.2'
@@ -12959,6 +15667,31 @@ toggle-on:
   styles:
     - solid
   unicode: f205
+  voted: false
+toilet:
+  changes:
+    - 5.6.0
+  label: Toilet
+  search:
+    terms:
+      - bathroom
+      - flush
+      - john
+      - loo
+      - pee
+      - plumbing
+      - poop
+      - porcelain
+      - potty
+      - restroom
+      - throne
+      - washroom
+      - waste
+      - wc
+  styles:
+    - solid
+  unicode: f7d8
+  voted: true
 toilet-paper:
   changes:
     - 5.4.0
@@ -12975,6 +15708,7 @@ toilet-paper:
   styles:
     - solid
   unicode: f71e
+  voted: false
 toolbox:
   changes:
     - 5.0.13
@@ -12990,6 +15724,24 @@ toolbox:
   styles:
     - solid
   unicode: f552
+  voted: true
+tools:
+  changes:
+    - 5.6.0
+  label: Tools
+  search:
+    terms:
+      - admin
+      - fix
+      - repair
+      - screwdriver
+      - settings
+      - tools
+      - wrench
+  styles:
+    - solid
+  unicode: f7d9
+  voted: true
 tooth:
   changes:
     - 5.1.0
@@ -13004,9 +15756,11 @@ tooth:
   styles:
     - solid
   unicode: f5c9
+  voted: true
 torah:
   changes:
     - 5.3.0
+    - 5.7.0
   label: Torah
   search:
     terms:
@@ -13016,6 +15770,7 @@ torah:
   styles:
     - solid
   unicode: f6a0
+  voted: false
 torii-gate:
   changes:
     - 5.3.0
@@ -13027,6 +15782,7 @@ torii-gate:
   styles:
     - solid
   unicode: f6a1
+  voted: false
 tractor:
   changes:
     - 5.4.0
@@ -13036,6 +15792,7 @@ tractor:
   styles:
     - solid
   unicode: f722
+  voted: false
 trade-federation:
   changes:
     - 5.0.12
@@ -13045,6 +15802,7 @@ trade-federation:
   styles:
     - brands
   unicode: f513
+  voted: false
 trademark:
   changes:
     - '4.4'
@@ -13055,6 +15813,7 @@ trademark:
   styles:
     - solid
   unicode: f25c
+  voted: false
 traffic-light:
   changes:
     - 5.2.0
@@ -13064,6 +15823,7 @@ traffic-light:
   styles:
     - solid
   unicode: f637
+  voted: false
 train:
   changes:
     - '4.3'
@@ -13077,6 +15837,21 @@ train:
   styles:
     - solid
   unicode: f238
+  voted: false
+tram:
+  changes:
+    - 5.6.0
+  label: Tram
+  search:
+    terms:
+      - crossing
+      - machine
+      - mountains
+      - seasonal
+      - transportation
+  styles:
+    - solid
+  unicode: f7da
 transgender:
   changes:
     - '4.3'
@@ -13088,6 +15863,7 @@ transgender:
   styles:
     - solid
   unicode: f224
+  voted: false
 transgender-alt:
   changes:
     - '4.3'
@@ -13098,10 +15874,12 @@ transgender-alt:
   styles:
     - solid
   unicode: f225
+  voted: false
 trash:
   changes:
     - '4.2'
     - 5.0.0
+    - 5.7.0
   label: Trash
   search:
     terms:
@@ -13112,9 +15890,11 @@ trash:
   styles:
     - solid
   unicode: f1f8
+  voted: false
 trash-alt:
   changes:
     - 5.0.0
+    - 5.7.0
   label: Alternate Trash
   search:
     terms:
@@ -13128,6 +15908,35 @@ trash-alt:
     - solid
     - regular
   unicode: f2ed
+  voted: false
+trash-restore:
+  changes:
+    - 5.7.0
+  label: Trash Restore
+  search:
+    terms:
+      - back
+      - control z
+      - oops
+      - undo
+  styles:
+    - solid
+  unicode: f829
+  voted: true
+trash-restore-alt:
+  changes:
+    - 5.7.0
+  label: Alternative Trash Restore
+  search:
+    terms:
+      - back
+      - control z
+      - oops
+      - undo
+  styles:
+    - solid
+  unicode: f82a
+  voted: true
 tree:
   changes:
     - '4.1'
@@ -13145,16 +15954,20 @@ tree:
   styles:
     - solid
   unicode: f1bb
+  voted: false
 trello:
   changes:
     - '3.2'
     - 5.0.0
+    - 5.6.0
   label: Trello
   search:
-    terms: []
+    terms:
+      - atlassian
   styles:
     - brands
   unicode: f181
+  voted: false
 tripadvisor:
   changes:
     - '4.4'
@@ -13165,6 +15978,7 @@ tripadvisor:
   styles:
     - brands
   unicode: f262
+  voted: false
 trophy:
   changes:
     - '1'
@@ -13180,6 +15994,7 @@ trophy:
   styles:
     - solid
   unicode: f091
+  voted: false
 truck:
   changes:
     - '2'
@@ -13193,15 +16008,20 @@ truck:
   styles:
     - solid
   unicode: f0d1
+  voted: false
 truck-loading:
   changes:
     - 5.0.9
   label: Truck Loading
   search:
-    terms: []
+    terms:
+      - inventory
+      - moving
+      - rental
   styles:
     - solid
   unicode: f4de
+  voted: false
 truck-monster:
   changes:
     - 5.2.0
@@ -13211,15 +16031,19 @@ truck-monster:
   styles:
     - solid
   unicode: f63b
+  voted: false
 truck-moving:
   changes:
     - 5.0.9
   label: Truck Moving
   search:
-    terms: []
+    terms:
+      - inventory
+      - rental
   styles:
     - solid
   unicode: f4df
+  voted: false
 truck-pickup:
   changes:
     - 5.2.0
@@ -13229,27 +16053,30 @@ truck-pickup:
   styles:
     - solid
   unicode: f63c
+  voted: false
 tshirt:
   changes:
     - 5.0.13
   label: T-Shirt
   search:
     terms:
-      - cloth
       - clothing
   styles:
     - solid
   unicode: f553
+  voted: true
 tty:
   changes:
     - '4.2'
     - 5.0.0
+    - 5.7.0
   label: TTY
   search:
     terms: []
   styles:
     - solid
   unicode: f1e4
+  voted: false
 tumblr:
   changes:
     - '3.2'
@@ -13260,6 +16087,7 @@ tumblr:
   styles:
     - brands
   unicode: f173
+  voted: false
 tumblr-square:
   changes:
     - '3.2'
@@ -13270,6 +16098,7 @@ tumblr-square:
   styles:
     - brands
   unicode: f174
+  voted: false
 tv:
   changes:
     - '4.4'
@@ -13284,6 +16113,7 @@ tv:
   styles:
     - solid
   unicode: f26c
+  voted: false
 twitch:
   changes:
     - '4.2'
@@ -13294,6 +16124,7 @@ twitch:
   styles:
     - brands
   unicode: f1e8
+  voted: false
 twitter:
   changes:
     - '2'
@@ -13306,6 +16137,7 @@ twitter:
   styles:
     - brands
   unicode: f099
+  voted: false
 twitter-square:
   changes:
     - '1'
@@ -13318,6 +16150,7 @@ twitter-square:
   styles:
     - brands
   unicode: f081
+  voted: false
 typo3:
   changes:
     - 5.0.1
@@ -13327,6 +16160,7 @@ typo3:
   styles:
     - brands
   unicode: f42b
+  voted: false
 uber:
   changes:
     - 5.0.0
@@ -13336,6 +16170,20 @@ uber:
   styles:
     - brands
   unicode: f402
+  voted: false
+ubuntu:
+  changes:
+    - 5.6.0
+  label: Ubuntu
+  search:
+    terms:
+      - linux
+      - operating system
+      - os
+  styles:
+    - brands
+  unicode: f7df
+  voted: true
 uikit:
   changes:
     - 5.0.0
@@ -13345,6 +16193,7 @@ uikit:
   styles:
     - brands
   unicode: f403
+  voted: false
 umbrella:
   changes:
     - '2'
@@ -13357,6 +16206,7 @@ umbrella:
   styles:
     - solid
   unicode: f0e9
+  voted: false
 umbrella-beach:
   changes:
     - 5.1.0
@@ -13369,6 +16219,7 @@ umbrella-beach:
   styles:
     - solid
   unicode: f5ca
+  voted: false
 underline:
   changes:
     - '2'
@@ -13379,6 +16230,7 @@ underline:
   styles:
     - solid
   unicode: f0cd
+  voted: false
 undo:
   changes:
     - '2'
@@ -13396,6 +16248,7 @@ undo:
   styles:
     - solid
   unicode: f0e2
+  voted: false
 undo-alt:
   changes:
     - 5.0.0
@@ -13411,6 +16264,7 @@ undo-alt:
   styles:
     - solid
   unicode: f2ea
+  voted: false
 uniregistry:
   changes:
     - 5.0.0
@@ -13420,6 +16274,7 @@ uniregistry:
   styles:
     - brands
   unicode: f404
+  voted: false
 universal-access:
   changes:
     - '4.6'
@@ -13430,6 +16285,7 @@ universal-access:
   styles:
     - solid
   unicode: f29a
+  voted: false
 university:
   changes:
     - '4.1'
@@ -13439,10 +16295,14 @@ university:
   search:
     terms:
       - bank
+      - building
+      - college
+      - higher education - students
       - institution
   styles:
     - solid
   unicode: f19c
+  voted: false
 unlink:
   changes:
     - '3.1'
@@ -13456,6 +16316,7 @@ unlink:
   styles:
     - solid
   unicode: f127
+  voted: false
 unlock:
   changes:
     - '2'
@@ -13470,6 +16331,7 @@ unlock:
   styles:
     - solid
   unicode: f09c
+  voted: false
 unlock-alt:
   changes:
     - '3.1'
@@ -13484,6 +16346,7 @@ unlock-alt:
   styles:
     - solid
   unicode: f13e
+  voted: false
 untappd:
   changes:
     - 5.0.0
@@ -13493,6 +16356,7 @@ untappd:
   styles:
     - brands
   unicode: f405
+  voted: false
 upload:
   changes:
     - '1'
@@ -13500,11 +16364,24 @@ upload:
   label: Upload
   search:
     terms:
-      - export
+      - import
       - publish
   styles:
     - solid
   unicode: f093
+  voted: false
+ups:
+  changes:
+    - 5.6.0
+  label: UPS
+  search:
+    terms:
+      - United Parcel Service
+      - package
+      - shipping
+  styles:
+    - brands
+  unicode: f7e0
 usb:
   changes:
     - '4.5'
@@ -13515,6 +16392,7 @@ usb:
   styles:
     - brands
   unicode: f287
+  voted: false
 user:
   changes:
     - '1'
@@ -13527,6 +16405,7 @@ user:
       - account
       - avatar
       - head
+      - human
       - man
       - person
       - profile
@@ -13534,6 +16413,7 @@ user:
     - solid
     - regular
   unicode: f007
+  voted: false
 user-alt:
   changes:
     - 5.0.0
@@ -13545,12 +16425,14 @@ user-alt:
       - account
       - avatar
       - head
+      - human
       - man
       - person
       - profile
   styles:
     - solid
   unicode: f406
+  voted: false
 user-alt-slash:
   changes:
     - 5.0.11
@@ -13560,6 +16442,7 @@ user-alt-slash:
   styles:
     - solid
   unicode: f4fa
+  voted: false
 user-astronaut:
   changes:
     - 5.0.11
@@ -13574,6 +16457,7 @@ user-astronaut:
   styles:
     - solid
   unicode: f4fb
+  voted: false
 user-check:
   changes:
     - 5.0.11
@@ -13583,6 +16467,7 @@ user-check:
   styles:
     - solid
   unicode: f4fc
+  voted: false
 user-circle:
   changes:
     - '4.7'
@@ -13595,6 +16480,7 @@ user-circle:
       - account
       - avatar
       - head
+      - human
       - man
       - person
       - profile
@@ -13602,6 +16488,7 @@ user-circle:
     - solid
     - regular
   unicode: f2bd
+  voted: false
 user-clock:
   changes:
     - 5.0.11
@@ -13611,6 +16498,7 @@ user-clock:
   styles:
     - solid
   unicode: f4fd
+  voted: false
 user-cog:
   changes:
     - 5.0.11
@@ -13620,15 +16508,22 @@ user-cog:
   styles:
     - solid
   unicode: f4fe
+  voted: false
 user-edit:
   changes:
     - 5.0.11
   label: User Edit
   search:
-    terms: []
+    terms:
+      - edit
+      - pen
+      - pencil
+      - update
+      - write
   styles:
     - solid
   unicode: f4ff
+  voted: false
 user-friends:
   changes:
     - 5.0.11
@@ -13638,6 +16533,7 @@ user-friends:
   styles:
     - solid
   unicode: f500
+  voted: false
 user-graduate:
   changes:
     - 5.0.11
@@ -13653,6 +16549,7 @@ user-graduate:
   styles:
     - solid
   unicode: f501
+  voted: false
 user-injured:
   changes:
     - 5.4.0
@@ -13665,6 +16562,7 @@ user-injured:
   styles:
     - solid
   unicode: f728
+  voted: false
 user-lock:
   changes:
     - 5.0.11
@@ -13674,6 +16572,7 @@ user-lock:
   styles:
     - solid
   unicode: f502
+  voted: false
 user-md:
   changes:
     - '2'
@@ -13681,18 +16580,20 @@ user-md:
     - 5.0.3
     - 5.0.7
     - 5.0.11
-  label: user-md
+  label: Doctor
   search:
     terms:
-      - doctor
       - job
       - medical
       - nurse
       - occupation
+      - physician
       - profile
+      - surgeon
   styles:
     - solid
   unicode: f0f0
+  voted: false
 user-minus:
   changes:
     - 5.0.11
@@ -13705,6 +16606,7 @@ user-minus:
   styles:
     - solid
   unicode: f503
+  voted: false
 user-ninja:
   changes:
     - 5.0.11
@@ -13719,6 +16621,21 @@ user-ninja:
   styles:
     - solid
   unicode: f504
+  voted: false
+user-nurse:
+  changes:
+    - 5.7.0
+  label: Nurse
+  search:
+    terms:
+      - doctor
+      - midwife
+      - practitioner
+      - surgeon
+  styles:
+    - solid
+  unicode: f82f
+  voted: false
 user-plus:
   changes:
     - '4.3'
@@ -13734,6 +16651,7 @@ user-plus:
   styles:
     - solid
   unicode: f234
+  voted: false
 user-secret:
   changes:
     - '4.3'
@@ -13753,6 +16671,7 @@ user-secret:
   styles:
     - solid
   unicode: f21b
+  voted: false
 user-shield:
   changes:
     - 5.0.11
@@ -13762,6 +16681,7 @@ user-shield:
   styles:
     - solid
   unicode: f505
+  voted: false
 user-slash:
   changes:
     - 5.0.11
@@ -13773,6 +16693,7 @@ user-slash:
   styles:
     - solid
   unicode: f506
+  voted: false
 user-tag:
   changes:
     - 5.0.11
@@ -13782,6 +16703,7 @@ user-tag:
   styles:
     - solid
   unicode: f507
+  voted: false
 user-tie:
   changes:
     - 5.0.11
@@ -13795,6 +16717,7 @@ user-tie:
   styles:
     - solid
   unicode: f508
+  voted: false
 user-times:
   changes:
     - '4.3'
@@ -13811,6 +16734,7 @@ user-times:
   styles:
     - solid
   unicode: f235
+  voted: false
 users:
   changes:
     - '2'
@@ -13826,6 +16750,7 @@ users:
   styles:
     - solid
   unicode: f0c0
+  voted: false
 users-cog:
   changes:
     - 5.0.11
@@ -13835,6 +16760,20 @@ users-cog:
   styles:
     - solid
   unicode: f509
+  voted: false
+usps:
+  changes:
+    - 5.6.0
+  label: United States Postal Service
+  search:
+    terms:
+      - american
+      - package
+      - shipping
+      - usa
+  styles:
+    - brands
+  unicode: f7e1
 ussunnah:
   changes:
     - 5.0.0
@@ -13844,6 +16783,7 @@ ussunnah:
   styles:
     - brands
   unicode: f407
+  voted: false
 utensil-spoon:
   changes:
     - 5.0.0
@@ -13854,6 +16794,7 @@ utensil-spoon:
   styles:
     - solid
   unicode: f2e5
+  voted: false
 utensils:
   changes:
     - 5.0.0
@@ -13870,6 +16811,7 @@ utensils:
   styles:
     - solid
   unicode: f2e7
+  voted: false
 vaadin:
   changes:
     - 5.0.0
@@ -13879,6 +16821,7 @@ vaadin:
   styles:
     - brands
   unicode: f408
+  voted: false
 vector-square:
   changes:
     - 5.1.0
@@ -13891,6 +16834,7 @@ vector-square:
   styles:
     - solid
   unicode: f5cb
+  voted: false
 venus:
   changes:
     - '4.3'
@@ -13902,6 +16846,7 @@ venus:
   styles:
     - solid
   unicode: f221
+  voted: false
 venus-double:
   changes:
     - '4.3'
@@ -13912,6 +16857,7 @@ venus-double:
   styles:
     - solid
   unicode: f226
+  voted: false
 venus-mars:
   changes:
     - '4.3'
@@ -13922,6 +16868,7 @@ venus-mars:
   styles:
     - solid
   unicode: f228
+  voted: false
 viacoin:
   changes:
     - '4.3'
@@ -13932,6 +16879,7 @@ viacoin:
   styles:
     - brands
   unicode: f237
+  voted: false
 viadeo:
   changes:
     - '4.6'
@@ -13942,16 +16890,19 @@ viadeo:
   styles:
     - brands
   unicode: f2a9
+  voted: false
 viadeo-square:
   changes:
     - '4.6'
     - 5.0.0
+    - 5.7.0
   label: Video Square
   search:
     terms: []
   styles:
     - brands
   unicode: f2aa
+  voted: false
 vial:
   changes:
     - 5.0.7
@@ -13962,6 +16913,7 @@ vial:
   styles:
     - solid
   unicode: f492
+  voted: false
 vials:
   changes:
     - 5.0.7
@@ -13973,6 +16925,7 @@ vials:
   styles:
     - solid
   unicode: f493
+  voted: false
 viber:
   changes:
     - 5.0.0
@@ -13983,6 +16936,7 @@ viber:
   styles:
     - brands
   unicode: f409
+  voted: false
 video:
   changes:
     - '1'
@@ -13999,6 +16953,7 @@ video:
   styles:
     - solid
   unicode: f03d
+  voted: false
 video-slash:
   changes:
     - 5.0.9
@@ -14008,6 +16963,7 @@ video-slash:
   styles:
     - solid
   unicode: f4e2
+  voted: false
 vihara:
   changes:
     - 5.3.0
@@ -14021,6 +16977,7 @@ vihara:
   styles:
     - solid
   unicode: f6a7
+  voted: false
 vimeo:
   changes:
     - 5.0.0
@@ -14030,6 +16987,7 @@ vimeo:
   styles:
     - brands
   unicode: f40a
+  voted: false
 vimeo-square:
   changes:
     - '4'
@@ -14040,6 +16998,7 @@ vimeo-square:
   styles:
     - brands
   unicode: f194
+  voted: false
 vimeo-v:
   changes:
     - '4.4'
@@ -14051,6 +17010,7 @@ vimeo-v:
   styles:
     - brands
   unicode: f27d
+  voted: false
 vine:
   changes:
     - '4.1'
@@ -14061,6 +17021,7 @@ vine:
   styles:
     - brands
   unicode: f1ca
+  voted: false
 vk:
   changes:
     - '3.2'
@@ -14071,6 +17032,7 @@ vk:
   styles:
     - brands
   unicode: f189
+  voted: false
 vnv:
   changes:
     - 5.0.0
@@ -14080,6 +17042,7 @@ vnv:
   styles:
     - brands
   unicode: f40b
+  voted: false
 volleyball-ball:
   changes:
     - 5.0.5
@@ -14089,6 +17052,7 @@ volleyball-ball:
   styles:
     - solid
   unicode: f45f
+  voted: false
 volume-down:
   changes:
     - '1'
@@ -14106,6 +17070,7 @@ volume-down:
   styles:
     - solid
   unicode: f027
+  voted: false
 volume-mute:
   changes:
     - 5.3.0
@@ -14115,6 +17080,7 @@ volume-mute:
   styles:
     - solid
   unicode: f6a9
+  voted: true
 volume-off:
   changes:
     - '1'
@@ -14130,6 +17096,7 @@ volume-off:
   styles:
     - solid
   unicode: f026
+  voted: false
 volume-up:
   changes:
     - '1'
@@ -14147,6 +17114,36 @@ volume-up:
   styles:
     - solid
   unicode: f028
+  voted: false
+vote-yea:
+  changes:
+    - 5.5.0
+  label: Vote Yea
+  search:
+    terms:
+      - accept
+      - cast
+      - election
+      - politics
+      - positive
+      - 'yes'
+  styles:
+    - solid
+  unicode: f772
+  voted: false
+vr-cardboard:
+  changes:
+    - 5.4.0
+  label: Cardboard VR
+  search:
+    terms:
+      - google
+      - reality
+      - virtual
+  styles:
+    - solid
+  unicode: f729
+  voted: true
 vuejs:
   changes:
     - 5.0.0
@@ -14156,15 +17153,18 @@ vuejs:
   styles:
     - brands
   unicode: f41f
+  voted: false
 walking:
   changes:
     - 5.0.13
   label: Walking
   search:
-    terms: []
+    terms:
+      - person
   styles:
     - solid
   unicode: f554
+  voted: true
 wallet:
   changes:
     - 5.0.13
@@ -14174,15 +17174,32 @@ wallet:
   styles:
     - solid
   unicode: f555
+  voted: true
 warehouse:
   changes:
     - 5.0.7
   label: Warehouse
   search:
-    terms: []
+    terms:
+      - building
+      - capacity
+      - garage
+      - inventory
+      - storage
   styles:
     - solid
   unicode: f494
+  voted: false
+water:
+  changes:
+    - 5.5.0
+  label: Water
+  search:
+    terms: []
+  styles:
+    - solid
+  unicode: f773
+  voted: false
 weebly:
   changes:
     - 5.1.0
@@ -14192,6 +17209,7 @@ weebly:
   styles:
     - brands
   unicode: f5cc
+  voted: true
 weibo:
   changes:
     - '3.2'
@@ -14202,6 +17220,7 @@ weibo:
   styles:
     - brands
   unicode: f18a
+  voted: false
 weight:
   changes:
     - 5.0.7
@@ -14214,6 +17233,7 @@ weight:
   styles:
     - solid
   unicode: f496
+  voted: false
 weight-hanging:
   changes:
     - 5.1.0
@@ -14226,6 +17246,7 @@ weight-hanging:
   styles:
     - solid
   unicode: f5cd
+  voted: false
 weixin:
   changes:
     - '4.1'
@@ -14237,6 +17258,7 @@ weixin:
   styles:
     - brands
   unicode: f1d7
+  voted: false
 whatsapp:
   changes:
     - '4.3'
@@ -14247,6 +17269,7 @@ whatsapp:
   styles:
     - brands
   unicode: f232
+  voted: false
 whatsapp-square:
   changes:
     - 5.0.0
@@ -14256,6 +17279,7 @@ whatsapp-square:
   styles:
     - brands
   unicode: f40c
+  voted: false
 wheelchair:
   changes:
     - '4'
@@ -14268,6 +17292,7 @@ wheelchair:
   styles:
     - solid
   unicode: f193
+  voted: false
 whmcs:
   changes:
     - 5.0.0
@@ -14277,6 +17302,7 @@ whmcs:
   styles:
     - brands
   unicode: f40d
+  voted: false
 wifi:
   changes:
     - '4.2'
@@ -14284,10 +17310,16 @@ wifi:
     - 5.3.0
   label: WiFi
   search:
-    terms: []
+    terms:
+      - connection
+      - hotspot
+      - internet
+      - network
+      - wireless
   styles:
     - solid
   unicode: f1eb
+  voted: false
 wikipedia-w:
   changes:
     - '4.4'
@@ -14298,9 +17330,11 @@ wikipedia-w:
   styles:
     - brands
   unicode: f266
+  voted: false
 wind:
   changes:
     - 5.4.0
+    - 5.5.0
   label: Wind
   search:
     terms:
@@ -14312,6 +17346,7 @@ wind:
   styles:
     - solid
   unicode: f72e
+  voted: false
 window-close:
   changes:
     - '4.7'
@@ -14323,6 +17358,7 @@ window-close:
     - solid
     - regular
   unicode: f410
+  voted: false
 window-maximize:
   changes:
     - '4.7'
@@ -14334,6 +17370,7 @@ window-maximize:
     - solid
     - regular
   unicode: f2d0
+  voted: false
 window-minimize:
   changes:
     - '4.7'
@@ -14345,6 +17382,7 @@ window-minimize:
     - solid
     - regular
   unicode: f2d1
+  voted: false
 window-restore:
   changes:
     - '4.7'
@@ -14356,6 +17394,7 @@ window-restore:
     - solid
     - regular
   unicode: f2d2
+  voted: false
 windows:
   changes:
     - '3.2'
@@ -14364,9 +17403,12 @@ windows:
   search:
     terms:
       - microsoft
+      - operating system
+      - os
   styles:
     - brands
   unicode: f17a
+  voted: false
 wine-bottle:
   changes:
     - 5.4.0
@@ -14381,6 +17423,7 @@ wine-bottle:
   styles:
     - solid
   unicode: f72f
+  voted: false
 wine-glass:
   changes:
     - 5.0.9
@@ -14395,6 +17438,7 @@ wine-glass:
   styles:
     - solid
   unicode: f4e3
+  voted: false
 wine-glass-alt:
   changes:
     - 5.1.0
@@ -14408,6 +17452,7 @@ wine-glass-alt:
   styles:
     - solid
   unicode: f5ce
+  voted: false
 wix:
   changes:
     - 5.1.0
@@ -14417,6 +17462,7 @@ wix:
   styles:
     - brands
   unicode: f5cf
+  voted: true
 wizards-of-the-coast:
   changes:
     - 5.4.0
@@ -14433,6 +17479,7 @@ wizards-of-the-coast:
   styles:
     - brands
   unicode: f730
+  voted: false
 wolf-pack-battalion:
   changes:
     - 5.0.12
@@ -14442,6 +17489,7 @@ wolf-pack-battalion:
   styles:
     - brands
   unicode: f514
+  voted: false
 won-sign:
   changes:
     - '3.2'
@@ -14453,6 +17501,7 @@ won-sign:
   styles:
     - solid
   unicode: f159
+  voted: false
 wordpress:
   changes:
     - '4.1'
@@ -14463,6 +17512,7 @@ wordpress:
   styles:
     - brands
   unicode: f19a
+  voted: false
 wordpress-simple:
   changes:
     - 5.0.0
@@ -14472,6 +17522,7 @@ wordpress-simple:
   styles:
     - brands
   unicode: f411
+  voted: false
 wpbeginner:
   changes:
     - '4.6'
@@ -14482,6 +17533,7 @@ wpbeginner:
   styles:
     - brands
   unicode: f297
+  voted: false
 wpexplorer:
   changes:
     - '4.7'
@@ -14492,6 +17544,7 @@ wpexplorer:
   styles:
     - brands
   unicode: f2de
+  voted: false
 wpforms:
   changes:
     - '4.6'
@@ -14502,6 +17555,18 @@ wpforms:
   styles:
     - brands
   unicode: f298
+  voted: false
+wpressr:
+  changes:
+    - 5.4.2
+  label: wpressr
+  search:
+    terms:
+      - rendact
+  styles:
+    - brands
+  unicode: f3e4
+  voted: false
 wrench:
   changes:
     - '2'
@@ -14518,6 +17583,7 @@ wrench:
   styles:
     - solid
   unicode: f0ad
+  voted: false
 x-ray:
   changes:
     - 5.0.7
@@ -14529,6 +17595,7 @@ x-ray:
   styles:
     - solid
   unicode: f497
+  voted: false
 xbox:
   changes:
     - 5.0.0
@@ -14538,6 +17605,7 @@ xbox:
   styles:
     - brands
   unicode: f412
+  voted: false
 xing:
   changes:
     - '3.2'
@@ -14548,6 +17616,7 @@ xing:
   styles:
     - brands
   unicode: f168
+  voted: false
 xing-square:
   changes:
     - '3.2'
@@ -14558,6 +17627,7 @@ xing-square:
   styles:
     - brands
   unicode: f169
+  voted: false
 y-combinator:
   changes:
     - '4.4'
@@ -14568,6 +17638,7 @@ y-combinator:
   styles:
     - brands
   unicode: f23b
+  voted: false
 yahoo:
   changes:
     - '4.1'
@@ -14579,6 +17650,7 @@ yahoo:
   styles:
     - brands
   unicode: f19e
+  voted: false
 yandex:
   changes:
     - 5.0.0
@@ -14588,6 +17660,7 @@ yandex:
   styles:
     - brands
   unicode: f413
+  voted: false
 yandex-international:
   changes:
     - 5.0.0
@@ -14597,16 +17670,29 @@ yandex-international:
   styles:
     - brands
   unicode: f414
+  voted: false
+yarn:
+  changes:
+    - 5.6.0
+  label: Yarn
+  search:
+    terms: []
+  styles:
+    - brands
+  unicode: f7e3
+  voted: true
 yelp:
   changes:
     - '4.2'
     - 5.0.0
+    - 5.7.0
   label: Yelp
   search:
     terms: []
   styles:
     - brands
   unicode: f1e9
+  voted: false
 yen-sign:
   changes:
     - '3.2'
@@ -14614,11 +17700,13 @@ yen-sign:
   label: Yen Sign
   search:
     terms:
+      - currency
       - jpy
       - money
   styles:
     - solid
   unicode: f157
+  voted: false
 yin-yang:
   changes:
     - 5.3.0
@@ -14631,6 +17719,7 @@ yin-yang:
   styles:
     - solid
   unicode: f6ad
+  voted: false
 yoast:
   changes:
     - '4.6'
@@ -14642,6 +17731,7 @@ yoast:
   styles:
     - brands
   unicode: f2b1
+  voted: false
 youtube:
   changes:
     - '3.2'
@@ -14656,6 +17746,7 @@ youtube:
   styles:
     - brands
   unicode: f167
+  voted: false
 youtube-square:
   changes:
     - 5.0.3
@@ -14665,6 +17756,7 @@ youtube-square:
   styles:
     - brands
   unicode: f431
+  voted: false
 zhihu:
   changes:
     - 5.2.0
@@ -14674,3 +17766,4 @@ zhihu:
   styles:
     - brands
   unicode: f63f
+  voted: true

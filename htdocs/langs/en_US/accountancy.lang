@@ -98,7 +98,8 @@ MenuLoanAccounts=Loan accounts
 MenuProductsAccounts=Product accounts
 MenuClosureAccounts=Closure accounts
 ProductsBinding=Products accounts
-Ventilation=Binding to accounts
+TransferInAccounting=Transfer in accounting
+RegistrationInAccounting=Registration in accounting
 Binding=Binding to accounts
 CustomersVentilation=Customer invoice binding
 SuppliersVentilation=Vendor invoice binding
@@ -255,7 +256,7 @@ NotYetAccounted=Not yet accounted in ledger
 
 ## Admin
 ApplyMassCategories=Apply mass categories
-AddAccountFromBookKeepingWithNoCategories=Available account not yet in a personalized group
+AddAccountFromBookKeepingWithNoCategories=Available account not yet in the personalized group
 CategoryDeleted=Category for the accounting account has been removed
 AccountingJournals=Accounting journals
 AccountingJournal=Accounting journal
@@ -307,6 +308,7 @@ PredefinedGroups=Predefined groups
 WithoutValidAccount=Without valid dedicated account
 WithValidAccount=With valid dedicated account
 ValueNotIntoChartOfAccount=This value of accounting account does not exist into chart of account
+AccountRemovedFromGroup=Account removed from group
 
 ## Dictionary
 Range=Range of accounting account

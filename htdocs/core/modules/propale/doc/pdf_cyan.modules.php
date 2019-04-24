@@ -7,7 +7,7 @@
  * Copyright (C) 2012      Cedric Salvador      <csalvador@gpcsolutions.fr>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2017      Ferran Marcet        <fmarcet@2byte.es>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018      Frédéric France      <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,23 +45,79 @@ class pdf_cyan extends ModelePDFPropales
      * @var DoliDb Database handler
      */
     public $db;
-	public $name;
-	public $description;
-	public $update_main_doc_field;	// Save the name of generated file as the main doc when generating a doc with this template
-	public $type;
 
-	public $phpmin = array(5, 4); // Minimum version of PHP required by module
+	/**
+     * @var string model name
+     */
+    public $name;
+
+	/**
+     * @var string model description (short text)
+     */
+    public $description;
+
+    /**
+     * @var int     Save the name of generated file as the main doc when generating a doc with this template
+     */
+    public $update_main_doc_field;
+
+	/**
+     * @var string document type
+     */
+    public $type;
+
+	/**
+     * @var array Minimum version of PHP required by module.
+     * e.g.: PHP ≥ 5.5 = array(5, 5)
+     */
+	public $phpmin = array(5, 5);
+
+	/**
+     * Dolibarr version of the loaded document
+     * @var string
+     */
 	public $version = 'development';
 
-	public $page_largeur;
-	public $page_hauteur;
-	public $format;
+     /**
+     * @var int page_largeur
+     */
+    public $page_largeur;
+
+	/**
+     * @var int page_hauteur
+     */
+    public $page_hauteur;
+
+	/**
+     * @var array format
+     */
+    public $format;
+
+	/**
+     * @var int marge_gauche
+     */
 	public $marge_gauche;
+
+	/**
+     * @var int marge_droite
+     */
 	public $marge_droite;
+
+	/**
+     * @var int marge_haute
+     */
 	public $marge_haute;
+
+	/**
+     * @var int marge_basse
+     */
 	public $marge_basse;
 
-	public $emetteur;	// Objet societe qui emet
+    /**
+	* Issuer
+	* @var Societe
+	*/
+	public $emetteur;
 
 
 	/**
@@ -113,6 +169,7 @@ class pdf_cyan extends ModelePDFPropales
 		$this->posxdesc=$this->marge_gauche+1;
 
 
+		$this->tabTitleHeight = 5; // default height
 
 		$this->tva=array();
 		$this->localtax1=array();
@@ -150,6 +207,11 @@ class pdf_cyan extends ModelePDFPropales
 		$outputlangs->load("products");
 
 		$nblignes = count($object->lines);
+
+		$hidetop=0;
+		if(!empty($conf->global->MAIN_PDF_DISABLE_COL_HEAD_TITLE)){
+		    $hidetop=$conf->global->MAIN_PDF_DISABLE_COL_HEAD_TITLE;
+		}
 
 		// Loop on each lines to detect if there is at least one image to show
 		$realpatharray=array();
@@ -371,7 +433,7 @@ class pdf_cyan extends ModelePDFPropales
 					$substitutionarray=pdf_getSubstitutionArray($outputlangs, null, $object);
 					complete_substitutions_array($substitutionarray, $outputlangs, $object);
 					$notetoshow = make_substitutions($notetoshow, $substitutionarray, $outputlangs);
-
+					$notetoshow = convertBackOfficeMediasLinksToPublicLinks($notetoshow);
 
 					$pdf->startTransaction();
 
@@ -480,12 +542,17 @@ class pdf_cyan extends ModelePDFPropales
 					$height_note=0;
 				}
 
-				$iniY = $tab_top + 7;
-				$curY = $tab_top + 7;
-				$nexY = $tab_top + 7;
-
 				// Use new auto collum system
 				$this->prepareArrayColumnField($object, $outputlangs, $hidedetails, $hidedesc, $hideref);
+
+				// Simulation de tableau pour connaitre la hauteur de la ligne de titre
+				$pdf->startTransaction();
+				$this->pdfTabTitles($pdf, $tab_top, $tab_height, $outputlangs, $hidetop);
+				$pdf->rollbackTransaction(true);
+
+				$iniY = $tab_top + $this->tabTitleHeight + 2;
+				$curY = $tab_top + $this->tabTitleHeight + 2;
+				$nexY = $tab_top + $this->tabTitleHeight + 2;
 
 				// Loop on each lines
 				$pageposbeforeprintlines=$pdf->getPage();
@@ -705,7 +772,7 @@ class pdf_cyan extends ModelePDFPropales
 						$pdf->setPage($pagenb);
 						if ($pagenb == $pageposbeforeprintlines)
 						{
-							$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforfooter, 0, $outputlangs, 0, 1, $object->multicurrency_code);
+						    $this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforfooter, 0, $outputlangs, $hidetop, 1, $object->multicurrency_code);
 						}
 						else
 						{
@@ -721,7 +788,7 @@ class pdf_cyan extends ModelePDFPropales
 					{
 					    if ($pagenb == $pageposafter)
 						{
-							$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforfooter, 0, $outputlangs, 0, 1, $object->multicurrency_code);
+						    $this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforfooter, 0, $outputlangs, $hidetop, 1, $object->multicurrency_code);
 						}
 						else
 						{
@@ -739,7 +806,7 @@ class pdf_cyan extends ModelePDFPropales
 				// Show square
 				if ($pagenb == $pageposbeforeprintlines)
 				{
-					$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforinfotot - $heightforfreetext - $heightforsignature - $heightforfooter, 0, $outputlangs, 0, 0, $object->multicurrency_code);
+				    $this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforinfotot - $heightforfreetext - $heightforsignature - $heightforfooter, 0, $outputlangs, $hidetop, 0, $object->multicurrency_code);
 					$bottomlasttab=$this->page_hauteur - $heightforinfotot - $heightforfreetext - $heightforsignature - $heightforfooter + 1;
 				}
 				else
@@ -1392,29 +1459,10 @@ class pdf_cyan extends ModelePDFPropales
 		$this->printRect($pdf, $this->marge_gauche, $tab_top, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $tab_height, $hidetop, $hidebottom);	// Rect prend une longueur en 3eme param et 4eme param
 
 
-		foreach ($this->cols as $colKey => $colDef)
-		{
-		    if(!$this->getColumnStatus($colKey)) continue;
-
-		    // get title label
-		    $colDef['title']['label'] = !empty($colDef['title']['label'])?$colDef['title']['label']:$outputlangs->transnoentities($colDef['title']['textkey']);
-
-		    // Add column separator
-		    if(!empty($colDef['border-left'])){
-		        $pdf->line($colDef['xStartPos'], $tab_top, $colDef['xStartPos'], $tab_top + $tab_height);
-		    }
-
-		    if (empty($hidetop))
-		    {
-		      $pdf->SetXY($colDef['xStartPos'] + $colDef['title']['padding'][3], $tab_top + $colDef['title']['padding'][0]);
-
-		      $textWidth = $colDef['width'] - $colDef['title']['padding'][3] -$colDef['title']['padding'][1];
-		      $pdf->MultiCell($textWidth, 2, $colDef['title']['label'], '', $colDef['title']['align']);
-		    }
-		}
+		$this->pdfTabTitles($pdf, $tab_top, $tab_height, $outputlangs, $hidetop);
 
 		if (empty($hidetop)){
-			$pdf->line($this->marge_gauche, $tab_top+5, $this->page_largeur-$this->marge_droite, $tab_top+5);	// line prend une position y en 2eme param et 4eme param
+		    $pdf->line($this->marge_gauche, $tab_top+$this->tabTitleHeight, $this->page_largeur-$this->marge_droite, $tab_top+$this->tabTitleHeight);	// line prend une position y en 2eme param et 4eme param
 		}
 	}
 

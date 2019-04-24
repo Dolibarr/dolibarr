@@ -18,7 +18,7 @@
  */
 
 /**
- * \file    modulebuilder/template/core/boxes/mymodulewidget1.php
+ * \file    htdocs/modulebuilder/template/core/boxes/mymodulewidget1.php
  * \ingroup mymodule
  * \brief   Widget provided by MyModule
  *

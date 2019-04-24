@@ -108,7 +108,7 @@ class Propal extends CommonObject
 
 	/**
 	 * @deprecated
-	 * @see date_creation
+	 * @see $date_creation
 	 */
 	public $datec;
 
@@ -120,7 +120,7 @@ class Propal extends CommonObject
 
 	/**
 	 * @deprecated
-	 * @see date_validation
+	 * @see $date_validation
 	 */
 	public $datev;
 
@@ -138,7 +138,7 @@ class Propal extends CommonObject
 
 	/**
 	 * @deprecated
-	 * @see date
+	 * @see $date
 	 */
 	public $datep;
 	public $date_livraison;
@@ -150,17 +150,17 @@ class Propal extends CommonObject
 
 	/**
 	 * @deprecated
-	 * @see total_ht
+	 * @see $total_ht
 	 */
 	public $price;
 	/**
 	 * @deprecated
-	 * @see total_tva
+	 * @see $total_tva
 	 */
 	public $tva;
 	/**
 	 * @deprecated
-	 * @see total_ttc
+	 * @see $total_ttc
 	 */
 	public $total;
 
@@ -411,7 +411,7 @@ class Propal extends CommonObject
      * 		@param    	float		$txtva           	Force Vat rate, -1 for auto (Can contain the vat_src_code too with syntax '9.9 (CODE)')
      * 		@param		float		$txlocaltax1		Local tax 1 rate (deprecated, use instead txtva with code inside)
      *  	@param		float		$txlocaltax2		Local tax 2 rate (deprecated, use instead txtva with code inside)
-     *		@param    	int			$fk_product      	Id du produit/service predefini
+     *		@param    	int			$fk_product      	Product/Service ID predefined
      * 		@param    	float		$remise_percent  	Pourcentage de remise de la ligne
      * 		@param    	string		$price_base_type	HT or TTC
      * 		@param    	float		$pu_ttc             Prix unitaire TTC
@@ -432,13 +432,14 @@ class Propal extends CommonObject
      * 		@param		double		$pu_ht_devise		Unit price in currency
      * 		@param		int    		$fk_remise_except	Id discount if line is from a discount
      *    	@return    	int         	    			>0 if OK, <0 if KO
-     *    	@see       	add_product
+     *    	@see       	add_product()
      */
     public function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1 = 0.0, $txlocaltax2 = 0.0, $fk_product = 0, $remise_percent = 0.0, $price_base_type = 'HT', $pu_ttc = 0.0, $info_bits = 0, $type = 0, $rang = -1, $special_code = 0, $fk_parent_line = 0, $fk_fournprice = 0, $pa_ht = 0, $label = '', $date_start = '', $date_end = '', $array_options = 0, $fk_unit = null, $origin = '', $origin_id = 0, $pu_ht_devise = 0, $fk_remise_except = 0)
 	{
 		global $mysoc, $conf, $langs;
 
 		dol_syslog(get_class($this)."::addline propalid=$this->id, desc=$desc, pu_ht=$pu_ht, qty=$qty, txtva=$txtva, fk_product=$fk_product, remise_except=$remise_percent, price_base_type=$price_base_type, pu_ttc=$pu_ttc, info_bits=$info_bits, type=$type, fk_remise_except=".$fk_remise_except);
+
 		if ($this->statut == self::STATUS_DRAFT)
 		{
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
@@ -472,6 +473,12 @@ class Propal extends CommonObject
 
 			// Check parameters
 			if ($type < 0) return -1;
+			
+			if ($date_start && $date_end && $date_start > $date_end) {
+				$langs->load("errors");
+				$this->error=$langs->trans('ErrorStartDateGreaterEnd');
+				return -1;
+			}
 
 			$this->db->begin();
 
@@ -629,7 +636,7 @@ class Propal extends CommonObject
         }
 		else
 		{
-			dol_syslog(get_class($this)."::addline status of order must be Draft to allow use of ->addline()", LOG_ERR);
+			dol_syslog(get_class($this)."::addline status of proposal must be Draft to allow use of ->addline()", LOG_ERR);
 			return -3;
 		}
     }
@@ -665,7 +672,7 @@ class Propal extends CommonObject
 	 */
     public function updateline($rowid, $pu, $qty, $remise_percent, $txtva, $txlocaltax1 = 0.0, $txlocaltax2 = 0.0, $desc = '', $price_base_type = 'HT', $info_bits = 0, $special_code = 0, $fk_parent_line = 0, $skip_update_total = 0, $fk_fournprice = 0, $pa_ht = 0, $label = '', $type = 0, $date_start = '', $date_end = '', $array_options = 0, $fk_unit = null, $pu_ht_devise = 0, $notrigger = 0)
 	{
-		global $mysoc;
+		global $mysoc, $langs;
 
         dol_syslog(get_class($this)."::updateLine rowid=$rowid, pu=$pu, qty=$qty, remise_percent=$remise_percent,
         txtva=$txtva, desc=$desc, price_base_type=$price_base_type, info_bits=$info_bits, special_code=$special_code, fk_parent_line=$fk_parent_line, pa_ht=$pa_ht, type=$type, date_start=$date_start, date_end=$date_end");
@@ -683,6 +690,12 @@ class Propal extends CommonObject
 		if (empty($qty) && empty($special_code)) $special_code=3;    // Set option tag
 		if (! empty($qty) && $special_code == 3) $special_code=0;    // Remove option tag
 		if (empty($type)) $type=0;
+			
+        if ($date_start && $date_end && $date_start > $date_end) {
+            $langs->load("errors");
+            $this->error=$langs->trans('ErrorStartDateGreaterEnd');
+            return -1;
+        }
 
 		if ($this->statut == self::STATUS_DRAFT)
 		{
@@ -1199,7 +1212,7 @@ class Propal extends CommonObject
 	 *
 	 *	@param 		User	$user	User that create
 	 *	@return    	int				Id of the new object if ok, <0 if ko
-	 *	@see       	create
+	 *	@see       	create()
 	 */
     public function create_from($user)
 	{
@@ -2605,17 +2618,25 @@ class Propal extends CommonObject
 	 *  @param		int		$notrigger	1=Does not execute triggers, 0= execute triggers
 	 *	@return		int					<0 if KO, >0 if OK
 	 */
-    public function set_draft($user, $notrigger = 0)
+    public function setDraft($user, $notrigger = 0)
 	{
         // phpcs:enable
 		$error=0;
 
+		// Protection
+		if ($this->statut <= self::STATUS_DRAFT)
+		{
+		    return 0;
+		}
+
+		dol_syslog(get_class($this)."::setDraft", LOG_DEBUG);
+
 		$this->db->begin();
 
-		$sql = "UPDATE ".MAIN_DB_PREFIX."propal SET fk_statut = ".self::STATUS_DRAFT;
+		$sql = "UPDATE ".MAIN_DB_PREFIX."propal";
+		$sql.= " SET fk_statut = ".self::STATUS_DRAFT;
 		$sql.= " WHERE rowid = ".$this->id;
 
-		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if (!$resql)
 		{
@@ -2626,8 +2647,6 @@ class Propal extends CommonObject
 		if (! $error)
 		{
 			$this->oldcopy= clone $this;
-			$this->statut = self::STATUS_DRAFT;
-			$this->brouillon = 1;
 		}
 
 		if (! $notrigger && empty($error))
@@ -2640,7 +2659,10 @@ class Propal extends CommonObject
 
 		if (! $error)
 		{
-			$this->db->commit();
+		    $this->statut = self::STATUS_DRAFT;
+		    $this->brouillon = 1;
+
+		    $this->db->commit();
 			return 1;
 		}
 		else
@@ -3193,20 +3215,14 @@ class Propal extends CommonObject
 			$this->labelstatut_short[4]=$langs->trans("PropalStatusBilledShort");
 		}
 
-		$statuttrans='';
-		if ($statut==self::STATUS_DRAFT) $statuttrans='statut0';
-		elseif ($statut==self::STATUS_VALIDATED) $statuttrans='statut1';
-		elseif ($statut==self::STATUS_SIGNED) $statuttrans='statut3';
-		elseif ($statut==self::STATUS_NOTSIGNED) $statuttrans='statut5';
-		elseif ($statut==self::STATUS_BILLED) $statuttrans='statut6';
+		$statusType='';
+		if ($statut==self::STATUS_DRAFT) $statusType='status0';
+		elseif ($statut==self::STATUS_VALIDATED) $statusType='status1';
+		elseif ($statut==self::STATUS_SIGNED) $statusType='status3';
+		elseif ($statut==self::STATUS_NOTSIGNED) $statusType='status5';
+		elseif ($statut==self::STATUS_BILLED) $statusType='status6';
 
-		if ($mode == 0)	return $this->labelstatut[$statut];
-		elseif ($mode == 1)	return $this->labelstatut_short[$statut];
-		elseif ($mode == 2)	return img_picto($this->labelstatut_short[$statut], $statuttrans).' '.$this->labelstatut_short[$statut];
-		elseif ($mode == 3)	return img_picto($this->labelstatut[$statut], $statuttrans);
-		elseif ($mode == 4)	return img_picto($this->labelstatut[$statut], $statuttrans).' '.$this->labelstatut[$statut];
-		elseif ($mode == 5)	return '<span class="hideonsmartphone">'.$this->labelstatut_short[$statut].' </span>'.img_picto($this->labelstatut[$statut], $statuttrans);
-		elseif ($mode == 6)	return '<span class="hideonsmartphone">'.$this->labelstatut[$statut].' </span>'.img_picto($this->labelstatut[$statut], $statuttrans);
+		return dolGetStatus($this->labelstatut[$statut], $this->labelstatut_short[$statut], '', $statusType, $mode);
 	}
 
 
@@ -3655,7 +3671,7 @@ class PropaleLigne extends CommonObjectLine
     public $fk_product;		// Id produit predefini
 	/**
 	 * @deprecated
-	 * @see product_type
+	 * @see $product_type
 	 */
     public $fk_product_type;
 	/**
@@ -3683,7 +3699,7 @@ class PropaleLigne extends CommonObjectLine
 	// 2: ecotaxe
 	// 3: option line (when qty = 0)
 
-    public $info_bits = 0;	// Liste d'options cumulables:
+    public $info_bits = 0;	// Some other info:
 	// Bit 0: 	0 si TVA normal - 1 si TVA NPR
 	// Bit 1:	0 ligne normale - 1 si ligne de remise fixe
 
@@ -3698,14 +3714,14 @@ class PropaleLigne extends CommonObjectLine
     public $remise;
 	/**
 	 * @deprecated
-	 * @see subprice
+	 * @see $subprice
 	 */
     public $price;
 
 	// From llx_product
 	/**
 	 * @deprecated
-	 * @see product_ref
+	 * @see $product_ref
 	 */
     public $ref;
 	/**
@@ -3715,7 +3731,7 @@ class PropaleLigne extends CommonObjectLine
 	public $product_ref;
 	/**
 	 * @deprecated
-	 * @see product_label
+	 * @see $product_label
 	 */
     public $libelle;
 	/**
@@ -3731,8 +3747,8 @@ class PropaleLigne extends CommonObjectLine
 
     public $localtax1_tx;		// Local tax 1
     public $localtax2_tx;		// Local tax 2
-    public $localtax1_type;	// Local tax 1 type
-    public $localtax2_type;	// Local tax 2 type
+    public $localtax1_type;	    // Local tax 1 type
+    public $localtax2_type;	    // Local tax 2 type
     public $total_localtax1;  	// Line total local tax 1
     public $total_localtax2;	// Line total local tax 2
 

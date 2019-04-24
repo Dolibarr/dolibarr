@@ -162,6 +162,7 @@ if ($action == 'add') {
 	if ($object->socid > 0) {
 		$newinter->socid=$object->socid;
 		$newinter->fk_projet=$object->fk_projet;
+		$newinter->fk_project=$object->fk_projet;
 		$newinter->fk_contrat=$object->fk_contrat;
 	} else
 		$newinter->socid=GETPOST("socid");
@@ -772,8 +773,8 @@ $date_next_execution = (GETPOST('remonth') ? dol_mktime(
 		/*
 		 *  List mode
 		 */
-		$sql = "SELECT f.rowid as fich_rec, s.nom as name, s.rowid as socid, f.rowid as facid, f.titre, ";
-		$sql.= " f.duree, f.fk_contrat, f.fk_projet, f.frequency, f.nb_gen_done, f.nb_gen_max,";
+		$sql = "SELECT f.rowid as fich_rec, s.nom as name, s.rowid as socid, f.rowid as facid, f.titre,";
+		$sql.= " f.duree, f.fk_contrat, f.fk_projet as fk_project, f.frequency, f.nb_gen_done, f.nb_gen_max,";
 		$sql.= " f.date_last_gen, f.date_when, f.datec";
 
 		$sql.= " FROM ".MAIN_DB_PREFIX."fichinter_rec as f";
@@ -863,7 +864,7 @@ $date_next_execution = (GETPOST('remonth') ? dol_mktime(
 					if (! empty($conf->projet->enabled)) {
 						print '<td>';
 						if ($objp->fk_project > 0) {
-							$projectstatic->fetch($objp->fk_projet);
+							$projectstatic->fetch($objp->fk_project);
 							print $projectstatic->getNomUrl(1);
 						}
 						print '</td>';

@@ -56,6 +56,14 @@ $sqls=array(
         "DELETE FROM ".MAIN_DB_PREFIX."user_rights WHERE fk_user IN (SELECT rowid FROM ".MAIN_DB_PREFIX."user WHERE admin = 0 and login != 'admin') AND fk_user IN (select rowid FROM ".MAIN_DB_PREFIX."user where datec < '__DATE__')",
         "DELETE FROM ".MAIN_DB_PREFIX."user WHERE admin = 0 and login != 'admin' AND datec < '__DATE__'",
     ),
+    'event'=>array(
+        //"DELETE FROM ".MAIN_DB_PREFIX."actioncomm WHERE lineid IN (SELECT rowid FROM ".MAIN_DB_PREFIX."bank WHERE datec < '__DATE__')",
+        "DELETE FROM ".MAIN_DB_PREFIX."actioncomm WHERE datec < '__DATE__'",
+    ),
+    'payment'=>array(
+        "DELETE FROM ".MAIN_DB_PREFIX."paiement_facture where fk_facture IN (select rowid FROM ".MAIN_DB_PREFIX."facture where datec < '__DATE__')",
+        "DELETE FROM ".MAIN_DB_PREFIX."paiement where rowid NOT IN (SELECT fk_paiement FROM ".MAIN_DB_PREFIX."paiement_facture)",
+    ),
     'bank'=>array(
         "DELETE FROM ".MAIN_DB_PREFIX."bank_class WHERE lineid IN (SELECT rowid FROM ".MAIN_DB_PREFIX."bank WHERE datec < '__DATE__')",
         "DELETE FROM ".MAIN_DB_PREFIX."bank_url WHERE fk_bank IN (SELECT rowid FROM ".MAIN_DB_PREFIX."bank WHERE datec < '__DATE__')",
@@ -64,21 +72,18 @@ $sqls=array(
     'bankaccount'=>array(
         "DELETE FROM ".MAIN_DB_PREFIX."bank_account WHERE datec < '__DATE__'",
     ),
-    'contract'=>array(
-        "DELETE FROM ".MAIN_DB_PREFIX."contratdet_extrafields WHERE fk_object IN (select rowid FROM ".MAIN_DB_PREFIX."contratdet WHERE fk_contrat IN (select rowid FROM ".MAIN_DB_PREFIX."contrat where date < '__DATE__'))",
-        "DELETE FROM ".MAIN_DB_PREFIX."contratdet WHERE fk_contrat IN (select rowid FROM ".MAIN_DB_PREFIX."contrat where datec < '__DATE__')",
-        "DELETE FROM ".MAIN_DB_PREFIX."contrat_extrafields WHERE fk_object IN (select rowid FROM ".MAIN_DB_PREFIX."contrat where date < '__DATE__')",
-        "DELETE FROM ".MAIN_DB_PREFIX."contrat WHERE datec < '__DATE__'",
-    ),
     'invoice'=>array(
+        '@payment',
         "DELETE FROM ".MAIN_DB_PREFIX."societe_remise_except where fk_facture_source IN (select rowid FROM ".MAIN_DB_PREFIX."facture where datec < '__DATE__')",
         "DELETE FROM ".MAIN_DB_PREFIX."societe_remise_except where fk_facture IN (select rowid FROM ".MAIN_DB_PREFIX."facture where datec < '__DATE__')",
         "DELETE FROM ".MAIN_DB_PREFIX."societe_remise_except where fk_facture_line IN (select rowid FROM ".MAIN_DB_PREFIX."facturedet as fd WHERE fd.fk_facture IN (select rowid from ".MAIN_DB_PREFIX."facture where datec < '__DATE__'))",
-        "DELETE FROM ".MAIN_DB_PREFIX."paiement_facture where fk_facture IN (select rowid FROM ".MAIN_DB_PREFIX."facture where datec < '__DATE__')",
         "DELETE FROM ".MAIN_DB_PREFIX."facture_rec where datec < '__DATE__'",
         "DELETE FROM ".MAIN_DB_PREFIX."facturedet WHERE fk_facture IN (select rowid FROM ".MAIN_DB_PREFIX."facture where datec < '__DATE__')",
         "UPDATE ".MAIN_DB_PREFIX."facture SET fk_facture_source = NULL WHERE fk_facture_source IN (select f2.rowid FROM (select * from ".MAIN_DB_PREFIX."facture) as f2 where f2.datec < '__DATE__')",
         "DELETE FROM ".MAIN_DB_PREFIX."facture where datec < '__DATE__'",
+    ),
+    'accounting'=>array(
+        "DELETE FROM ".MAIN_DB_PREFIX."accounting_bookkeeping where doc_date < '__DATE__'",
     ),
     'proposal'=>array(
         "DELETE FROM ".MAIN_DB_PREFIX."propaldet WHERE fk_propal IN (select rowid FROM ".MAIN_DB_PREFIX."propal where datec < '__DATE__')",
@@ -88,17 +93,18 @@ $sqls=array(
         "DELETE FROM ".MAIN_DB_PREFIX."supplier_proposaldet WHERE fk_supplier_proposal IN (select rowid FROM ".MAIN_DB_PREFIX."propal where datec < '__DATE__')",
         "DELETE FROM ".MAIN_DB_PREFIX."supplier_proposal where datec < '__DATE__'",
     ),
-	'supplier_order'=>array(
+    'order'=>array(
+        '@shipment',
+        "DELETE FROM ".MAIN_DB_PREFIX."commandedet WHERE fk_commande IN (select rowid FROM ".MAIN_DB_PREFIX."commande where date_creation < '__DATE__')",
+        "DELETE FROM ".MAIN_DB_PREFIX."commande where date_creation < '__DATE__'",
+    ),
+    'supplier_order'=>array(
         "DELETE FROM ".MAIN_DB_PREFIX."commande_fournisseurdet WHERE fk_commande IN (select rowid FROM ".MAIN_DB_PREFIX."commande_fournisseur where date_creation < '__DATE__')",
         "DELETE FROM ".MAIN_DB_PREFIX."commande_fournisseur where date_creation < '__DATE__'",
     ),
 	'supplier_invoice'=>array(
         "DELETE FROM ".MAIN_DB_PREFIX."facture_fourn_det WHERE fk_facture_fourn IN (select rowid FROM ".MAIN_DB_PREFIX."facture_fourn where datec < '__DATE__')",
         "DELETE FROM ".MAIN_DB_PREFIX."facture_fourn where datec < '__DATE__'",
-    ),
-    'delivery'=>array(
-        "DELETE FROM ".MAIN_DB_PREFIX."livraisondet WHERE fk_livraison IN (select rowid FROM ".MAIN_DB_PREFIX."livraison where date_creation < '__DATE__')",
-        "DELETE FROM ".MAIN_DB_PREFIX."livraison where date_creation < '__DATE__'",
     ),
     'shipment'=>array(
         '@delivery',
@@ -108,14 +114,22 @@ $sqls=array(
         "DELETE FROM ".MAIN_DB_PREFIX."expedition_extrafields WHERE fk_object IN (select rowid FROM ".MAIN_DB_PREFIX."expedition where date_creation < '__DATE__')",
         "DELETE FROM ".MAIN_DB_PREFIX."expedition where date_creation < '__DATE__'",
     ),
-    'order'=>array(
-        '@shipment',
-        "DELETE FROM ".MAIN_DB_PREFIX."commandedet WHERE fk_commande IN (select rowid FROM ".MAIN_DB_PREFIX."commande where date_creation < '__DATE__')",
-        "DELETE FROM ".MAIN_DB_PREFIX."commande where date_creation < '__DATE__'",
+    'delivery'=>array(
+        "DELETE FROM ".MAIN_DB_PREFIX."livraisondet WHERE fk_livraison IN (select rowid FROM ".MAIN_DB_PREFIX."livraison where date_creation < '__DATE__')",
+        "DELETE FROM ".MAIN_DB_PREFIX."livraison where date_creation < '__DATE__'",
+    ),
+    'contract'=>array(
+        "DELETE FROM ".MAIN_DB_PREFIX."contratdet_extrafields WHERE fk_object IN (select rowid FROM ".MAIN_DB_PREFIX."contratdet WHERE fk_contrat IN (select rowid FROM ".MAIN_DB_PREFIX."contrat where datec < '__DATE__'))",
+        "DELETE FROM ".MAIN_DB_PREFIX."contratdet WHERE fk_contrat IN (select rowid FROM ".MAIN_DB_PREFIX."contrat where datec < '__DATE__')",
+        "DELETE FROM ".MAIN_DB_PREFIX."contrat_extrafields WHERE fk_object IN (select rowid FROM ".MAIN_DB_PREFIX."contrat where datec < '__DATE__')",
+        "DELETE FROM ".MAIN_DB_PREFIX."contrat WHERE datec < '__DATE__'",
     ),
     'intervention'=>array(
         "DELETE FROM ".MAIN_DB_PREFIX."fichinterdet WHERE fk_fichinter IN (select rowid FROM ".MAIN_DB_PREFIX."fichinter where datec < '__DATE__')",
         "DELETE FROM ".MAIN_DB_PREFIX."fichinter where datec < '__DATE__'",
+    ),
+    'stock'=>array(
+        "DELETE FROM ".MAIN_DB_PREFIX."stock_mouvement WHERE datem < '__DATE__'",
     ),
     'product'=>array(
         "DELETE FROM ".MAIN_DB_PREFIX."categorie_product WHERE fk_product IN (select rowid FROM ".MAIN_DB_PREFIX."product where datec < '__DATE__')",
@@ -169,12 +183,25 @@ if (empty($mode) || ! in_array($mode, array('test','confirm'))) {
     print "option can be ".implode(',', array_keys($sqls))."\n";
     exit(-1);
 }
-
-if (empty($option) || ! in_array($option, array_merge(array('all'), array_keys($sqls))) ) {
+if (empty($option))
+{
     print "Usage:  $script_file (test|confirm) (all|option) (all|YYYY-MM-DD) [dbtype dbhost dbuser dbpassword dbname dbport]\n";
     print "\n";
-    print "option can be ".implode(',', array_keys($sqls))."\n";
+    print "option must be defined with a value in list ".implode(',', array_keys($sqls))."\n";
     exit(-1);
+}
+if ($option != 'all')
+{
+    $listofoptions=explode(',', $option);
+    foreach($listofoptions as $cursoroption)
+    {
+        if (! in_array($cursoroption, array_keys($sqls))) {
+            print "Usage:  $script_file (test|confirm) (all|option) (all|YYYY-MM-DD) [dbtype dbhost dbuser dbpassword dbname dbport]\n";
+            print "\n";
+            print "option '".$cursoroption."' must be in list ".implode(',', array_keys($sqls))."\n";
+            exit(-1);
+        }
+    }
 }
 
 if (empty($date) || (! preg_match('/\d\d\d\d\-\d\d\-\d\d$/', $date) && $date != 'all')) {
@@ -269,19 +296,23 @@ function processfamily($family, $date)
 
 $db->begin();
 
-$oldfamily='';
-foreach($sqls as $family => $familysql)
+$listofoptions=explode(',', $option);
+foreach($listofoptions as $cursoroption)
 {
-    if ($option && $option != 'all' && $option != $family) continue;
-
-    if ($family != $oldfamily) print "Process action for family ".$family."\n";
-    $oldfamily = $family;
-
-    $result=processfamily($family, $date);
-    if ($result < 0)
+    $oldfamily='';
+    foreach($sqls as $family => $familysql)
     {
-        $error++;
-        break;
+        if ($cursoroption && $cursoroption != 'all' && $cursoroption != $family) continue;
+
+        if ($family != $oldfamily) print "Process action for family ".$family."\n";
+        $oldfamily = $family;
+
+        $result=processfamily($family, $date);
+        if ($result < 0)
+        {
+            $error++;
+            break;
+        }
     }
 }
 

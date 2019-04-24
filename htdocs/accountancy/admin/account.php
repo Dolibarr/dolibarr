@@ -247,7 +247,7 @@ if ($resql)
 	print '<input type="hidden" name="page" value="'.$page.'">';
 	print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
-	$newcardbutton = '<a class="butActionNew" href="./card.php?action=create"><span class="valignmiddle">' . $langs->trans("Addanaccount").'</span>';
+	$newcardbutton = '<a class="butActionNew" href="./card.php?action=create"><span class="valignmiddle text-plus-circle">' . $langs->trans("Addanaccount").'</span>';
 	$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
 	$newcardbutton.= '</a>';
 
@@ -258,7 +258,7 @@ if ($resql)
     print '<select class="flat" name="chartofaccounts" id="chartofaccounts">';
     $sql = "SELECT a.rowid, a.pcg_version, a.label, a.active, c.code as country_code";
     $sql .= " FROM " . MAIN_DB_PREFIX . "accounting_system as a";
-    $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "c_country as c ON a.fk_country = c.rowid";
+    $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "c_country as c ON a.fk_country = c.rowid AND c.active = 1";
     $sql .= " WHERE a.active = 1";
     dol_syslog('accountancy/admin/account.php $sql='.$sql);
     print $sql;

@@ -157,7 +157,7 @@ print '</td></tr>';
 print '<tr><td>'.$langs->trans("User").'</td><td>';
 print $form->select_dolusers($userid, 'userid', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
 print '</td></tr>';
-print '<tr><td align="center" colspan="2"><input type="submit" name="submit" class="button" value="'.$langs->trans("Refresh").'"></td></tr>';
+print '<tr><td class="center" colspan="2"><input type="submit" name="submit" class="button" value="'.$langs->trans("Refresh").'"></td></tr>';
 print '</table>';
 print '</form>';
 print '<br><br>';
@@ -170,7 +170,7 @@ $data = $stats->getAllByYear();
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder">';
 print '<tr class="liste_titre" height="24">';
-print '<td align="center">'.$langs->trans("Year").'</td>';
+print '<td class="center">'.$langs->trans("Year").'</td>';
 print '<td class="right">'.$langs->trans("NbOfSubscriptions").'</td>';
 print '<td class="right">'.$langs->trans("AmountTotal").'</td>';
 print '<td class="right">'.$langs->trans("AmountAverage").'</td>';
@@ -184,7 +184,7 @@ foreach ($data as $val)
     {	// If we have empty year
         $oldyear--;
         print '<tr class="oddeven" height="24">';
-        print '<td align="center">';
+        print '<td class="center">';
         print '<a href="month.php?year='.$oldyear.'&amp;mode='.$mode.'">';
         print $oldyear;
         print '</a>';
@@ -195,7 +195,7 @@ foreach ($data as $val)
         print '</tr>';
     }
     print '<tr class="oddeven" height="24">';
-    print '<td align="center">';
+    print '<td class="center">';
     //print '<a href="month.php?year='.$year.'">';
     print $year;
     //print '</a>';
@@ -215,7 +215,7 @@ print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 
 // Show graphs
-print '<table class="border" width="100%"><tr class="pair nohover"><td align="center">';
+print '<table class="border" width="100%"><tr class="pair nohover"><td class="center">';
 if ($mesg) { print $mesg; }
 else {
     print $px1->show();

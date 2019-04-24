@@ -539,7 +539,7 @@ if ($massaction == 'confirm_createbills')   // Create bills from orders
 {
     $orders = GETPOST('toselect', 'array');
     $createbills_onebythird = GETPOST('createbills_onebythird', 'int');
-    $validate_invoices = GETPOST('valdate_invoices', 'int');
+    $validate_invoices = GETPOST('validate_invoices', 'int');
 
     $TFact = array();
     $TFactThird = array();
@@ -616,6 +616,12 @@ if ($massaction == 'confirm_createbills')   // Create bills from orders
                 for ($i=0;$i<$num;$i++)
                 {
                     $desc=($lines[$i]->desc?$lines[$i]->desc:$lines[$i]->libelle);
+                    // If we build one invoice for several order, we must put the invoice of order on the line
+                    if (! empty($createbills_onebythird))
+                    {
+                        $desc=dol_concatdesc($desc, $langs->trans("Order").' '.$cmd->ref.' - '.dol_print_date($cmd->date, 'day', $langs));
+                    }
+
                     if ($lines[$i]->subprice < 0)
                     {
                         // Negative line, we create a discount line

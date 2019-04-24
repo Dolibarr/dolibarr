@@ -229,10 +229,10 @@ if ($resql)
 
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans('ExpenseReport').'</td>';
-	print '<td align="right">'.$langs->trans('ExpectedToPay').'</td>';
-	print '<td align="right">'.$langs->trans('PayedByThisPayment').'</td>';
-	print '<td align="right">'.$langs->trans('RemainderToPay').'</td>';
-	print '<td align="center">'.$langs->trans('Status').'</td>';
+	print '<td class="right">'.$langs->trans('ExpectedToPay').'</td>';
+	print '<td class="right">'.$langs->trans('PayedByThisPayment').'</td>';
+	print '<td class="right">'.$langs->trans('RemainderToPay').'</td>';
+	print '<td class="center">'.$langs->trans('Status').'</td>';
 	print "</tr>\n";
 
 	if ($num > 0)
@@ -252,16 +252,16 @@ if ($resql)
 			print "</td>\n";
 
 			// Expected to pay
-			print '<td align="right">'.price($objp->total_ttc).'</td>';
+			print '<td class="right">'.price($objp->total_ttc).'</td>';
 
 			// Amount paid
-			print '<td align="right">'.price($objp->amount).'</td>';
+			print '<td class="right">'.price($objp->amount).'</td>';
 
 			// Remain to pay
-            print '<td align="right">'.price($remaintopay).'</td>';
+            print '<td class="right">'.price($remaintopay).'</td>';
 
 			// Status
-			print '<td align="center">'.$expensereport->getLibStatut(4, $objp->amount).'</td>';
+			print '<td class="center">'.$expensereport->getLibStatut(4, $objp->amount).'</td>';
 
 			print "</tr>\n";
 

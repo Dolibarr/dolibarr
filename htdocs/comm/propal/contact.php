@@ -129,7 +129,7 @@ elseif ($action == 'deletecontact' && $user->rights->propale->creer)
 	}
 }
 /*
-else if ($action == 'setaddress' && $user->rights->propale->creer)
+elseif ($action == 'setaddress' && $user->rights->propale->creer)
 {
 	$result=$object->setDeliveryAddress($_POST['fk_address']);
 	if ($result < 0) dol_print_error($db,$object->error);

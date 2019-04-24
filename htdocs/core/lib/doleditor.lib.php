@@ -64,7 +64,7 @@ function show_skin($fuser, $edit = 0)
 
     // Title
    	print '<tr class="liste_titre"><th width="35%">'.$langs->trans("DefaultSkin").'</th>';
-   	print '<th align="right">';
+   	print '<th class="right">';
    	$url='http://ckeditor.com/addons/skins/all';
    	/*print '<a href="'.$url.'" target="_blank">';
    	print $langs->trans('DownloadMoreSkins');
@@ -84,7 +84,7 @@ function show_skin($fuser, $edit = 0)
     //
     print '<tr class="oddeven"><td colspan="'.$colspan.'">';
 
-    print '<table class="nobordernopadding" width="100%"><tr><td><div align="center">';
+    print '<table class="nobordernopadding" width="100%"><tr><td><div class="center">';
 
     $i=0;
     foreach($dirskins as $dir)

@@ -198,16 +198,16 @@ if ($user->rights->projet->all->creer || $user->rights->projet->creer)
 {
 	if ($object->public || $userWrite > 0)
 	{
-		$linktocreatetask = '<a class="butActionNew" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=create'.$param.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$object->id).'">'.$langs->trans('AddTask').'<span class="fa fa-plus-circle valignmiddle"></span></a>';
+		$linktocreatetask = '<a class="butActionNew" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=create'.$param.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$object->id).'"><span class="valignmiddle text-plus-circle">'.$langs->trans('AddTask').'</span><span class="fa fa-plus-circle valignmiddle"></span></a>';
 	}
 	else
 	{
-		$linktocreatetask = '<a class="butActionNewRefused" href="#" title="'.$langs->trans("NotOwnerOfProject").'">'.$langs->trans('AddTask').'<span class="fa fa-plus-circle valignmiddle"></span></a>';
+		$linktocreatetask = '<a class="butActionNewRefused" href="#" title="'.$langs->trans("NotOwnerOfProject").'"><span class="valignmiddle text-plus-circle">'.$langs->trans('AddTask').'</span><span class="fa fa-plus-circle valignmiddle"></span></a>';
 	}
 }
 else
 {
-	$linktocreatetask = '<a class="butActionNewRefused" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans('AddTask').'<span class="fa fa-plus-circle valignmiddle"></span></a>';
+	$linktocreatetask = '<a class="butActionNewRefused" href="#" title="'.$langs->trans("NotEnoughPermissions").'"><span class="valignmiddle text-plus-circle">'.$langs->trans('AddTask').'</span><span class="fa fa-plus-circle valignmiddle"></span></a>';
 }
 
 $linktolist='<a href="'.DOL_URL_ROOT.'/projet/tasks.php?id='.$object->id.'">'.$langs->trans("GoToListOfTasks").'<span class="paddingleft fa fa-list-ul valignmiddle"></span></a>';

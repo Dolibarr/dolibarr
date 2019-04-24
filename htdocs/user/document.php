@@ -149,7 +149,7 @@ if ($object->id)
 	}
 
 
-	print '<table class="border centpercent">';
+	print '<table class="border tableforfield centpercent">';
 
     // Login
     print '<tr><td class="titlefield">'.$langs->trans("Login").'</td><td class="valeur">'.$object->login.'&nbsp;</td></tr>';

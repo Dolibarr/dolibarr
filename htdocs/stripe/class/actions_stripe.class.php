@@ -169,7 +169,7 @@ class ActionsStripeconnect
 	/**
 	 * addMoreActionsButtons
 	 *
-	 * @param arra	 	$parameters	Parameters
+	 * @param array	 	$parameters	Parameters
 	 * @param Object	$object		Object
 	 * @param string	$action		action
 	 * @return int					0

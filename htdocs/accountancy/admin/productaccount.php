@@ -65,6 +65,8 @@ $accounting_product_mode = GETPOST('accounting_product_mode', 'alpha');
 $btn_changeaccount = GETPOST('changeaccount', 'alpha');
 $btn_changetype = GETPOST('changetype', 'alpha');
 
+if (empty($accounting_product_mode)) $accounting_product_mode='ACCOUNTANCY_SELL';
+
 $limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):(empty($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION)?$conf->liste_limit:$conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION);
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
@@ -111,8 +113,6 @@ if ($action == 'update') {
 				'ACCOUNTANCY_SELL',
 				'ACCOUNTANCY_BUY'
 		);
-
-		$accounting_product_mode = GETPOST('accounting_product_mode', 'alpha');
 
 		if (in_array($accounting_product_mode, $accounting_product_modes)) {
 
@@ -279,7 +279,8 @@ if ($result)
     if ($search_desc > 0) $param.="&search_desc=".urlencode($search_desc);
     if ($search_current_account > 0) $param.="&search_current_account=".urlencode($search_current_account);
     if ($search_current_account_valid && $search_current_account_valid != '-1') $param.="&search_current_account_valid=".urlencode($search_current_account_valid);
-
+    if ($accounting_product_mode) $param.='&accounting_product_mode='.urlencode($accounting_product_mode);
+    
     print '<form action="' . $_SERVER["PHP_SELF"] . '" method="post">';
     if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -317,8 +318,11 @@ if ($result)
 	$varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
 	$selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
 
+	$buttonsave = '<input type="submit" class="button" id="changeaccount" name="changeaccount" value="' . $langs->trans("Save") . '">';
+	//print '<br><div class="center">'.$buttonsave.'</div>';
+	
 	$texte=$langs->trans("ListOfProductsServices");
-	print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, '', 0, '', '', $limit);
+	print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $buttonsave, $num, $nbtotalofrecords, '', 0, '', '', $limit);
 
 	print '<div class="div-table-responsive">';
 	print '<table class="liste '.($moreforfilter?"listwithfilterbefore":"").'">';
@@ -333,7 +337,7 @@ if ($result)
 	if ($accounting_product_mode == 'ACCOUNTANCY_BUY') print '<td class="liste_titre"></td>';
 	// Current account
 	print '<td class="liste_titre">';
-	print '<input type="text" class="flat" size="6" name="search_current_account" value="' . dol_escape_htmltag($search_current_account) . '">';
+	print '<input type="text" class="flat" size="6" name="search_current_account" id="search_current_account" value="' . dol_escape_htmltag($search_current_account) . '">';
 	$listofvals=array('withoutvalidaccount'=>$langs->trans("WithoutValidAccount"), 'withvalidaccount'=>$langs->trans("WithValidAccount"));
 	print ' '.$langs->trans("or").' '.$form->selectarray('search_current_account_valid', $listofvals, $search_current_account_valid, 1);
 	print '</td>';
@@ -473,19 +477,24 @@ if ($result)
 
 	            if (atleastoneselected) jQuery("#changeaccount").removeAttr(\'disabled\');
 	            else jQuery("#changeaccount").attr(\'disabled\',\'disabled\');
-	            if (atleastoneselected) jQuery("#changeaccount").attr(\'class\',\'butAction\');
-	            else jQuery("#changeaccount").attr(\'class\',\'butActionRefused\');
+	            if (atleastoneselected) jQuery("#changeaccount").attr(\'class\',\'button\');
+	            else jQuery("#changeaccount").attr(\'class\',\'button\');
         	}
         	jQuery(".checkforselect, #checkallactions").click(function() {
         		init_savebutton();
         	});
 
         	init_savebutton();
+
+            jQuery("#search_current_account").keyup(function() {
+        		if (jQuery("#search_current_account").val() != \'\')
+                {
+                    console.log("We set a value of account to search "+jQuery("#search_current_account").val()+", so we disable the other search criteria on account");
+                    jQuery("#search_current_account_valid").val(-1);
+                }
+        	});
         });
         </script>';
-
-
-	print '<br><div class="center"><input type="submit" class="butAction" id="changeaccount" name="changeaccount" value="' . $langs->trans("Save") . '"></div>';
 
 	print '</form>';
 

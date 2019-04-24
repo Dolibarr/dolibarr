@@ -108,7 +108,7 @@ function length_accountg($account)
  */
 function length_accounta($accounta)
 {
-	global $conf, $langs;
+	global $conf;
 
 	if ($accounta < 0 || empty($accounta)) return '';
 
@@ -145,7 +145,7 @@ function length_accounta($accounta)
  *	@param 	string				$period         Period of report
  *	@param 	string				$periodlink     Link to switch period
  *	@param 	string				$description    Description
- *	@param 	timestamp|integer	$builddate      Date generation
+ *	@param 	integer	            $builddate      Date of generation
  *	@param 	string				$exportlink     Link for export or ''
  *	@param	array				$moreparam		Array with list of params to add into form
  *	@param	string				$calcmode		Calculation mode
@@ -156,12 +156,11 @@ function journalHead($nom, $variante, $period, $periodlink, $description, $build
 {
     global $langs;
 
-    if (empty($hselected)) $hselected='report';
-
     print "\n\n<!-- debut cartouche journal -->\n";
 
     if(! empty($varlink)) $varlink = '?'.$varlink;
 
+    $head=array();
     $h=0;
     $head[$h][0] = $_SERVER["PHP_SELF"].$varlink;
     $head[$h][1] = $langs->trans("Journalization");
@@ -180,10 +179,8 @@ function journalHead($nom, $variante, $period, $periodlink, $description, $build
     // Ligne de titre
     print '<tr>';
     print '<td width="110">'.$langs->trans("Name").'</td>';
-    if (! $variantexxx) print '<td colspan="3">';
-    else print '<td>';
+    print '<td colspan="3">';
     print $nom;
-    if ($variantexxx) print '</td><td colspan="2">'.$variantexxx;
     print '</td>';
     print '</tr>';
 

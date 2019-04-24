@@ -32,7 +32,7 @@
  *	@param   string		$chain		string to encode
  *	@param   string		$key		rule to use for delta ('0', '1' or 'myownkey')
  *	@return  string					encoded string
- *  @see dol_decode
+ *  @see dol_decode()
  */
 function dol_encode($chain, $key = '1')
 {
@@ -68,7 +68,7 @@ function dol_encode($chain, $key = '1')
  *	@param   string		$chain		string to decode
  *	@param   string		$key		rule to use for delta ('0', '1' or 'myownkey')
  *	@return  string					decoded string
- *  @see dol_encode
+ *  @see dol_encode()
  */
 function dol_decode($chain, $key = '1')
 {
@@ -109,7 +109,7 @@ function dol_decode($chain, $key = '1')
  * 	@param 		string		$chain		String to hash
  * 	@param		string		$type		Type of hash ('0':auto will use MAIN_SECURITY_HASH_ALGO else md5, '1':sha1, '2':sha1+md5, '3':md5, '4':md5 for OpenLdap, '5':sha256). Use '3' here, if hash is not needed for security purpose, for security need, prefer '0'.
  * 	@return		string					Hash of string
- *  @getRandomPassword
+ *  @see getRandomPassword()
  */
 function dol_hash($chain, $type = '0')
 {
@@ -176,7 +176,7 @@ function dol_verifyHash($chain, $hash, $type = '0')
  *  @param  string	$dbt_select     Field name for select if not rowid. Not used if objectid is null (optional)
  *  @param	int		$isdraft		1=The object with id=$objectid is a draft
  * 	@return	int						Always 1, die process if not allowed
- *  @see dol_check_secure_access_document
+ *  @see dol_check_secure_access_document()
  */
 function restrictedArea($user, $features, $objectid = 0, $tableandshare = '', $feature2 = '', $dbt_keyfield = 'fk_soc', $dbt_select = 'rowid', $isdraft = 0)
 {
@@ -431,7 +431,7 @@ function restrictedArea($user, $features, $objectid = 0, $tableandshare = '', $f
  * @param string		$dbt_keyfield	Field name for socid foreign key if not fk_soc. Not used if objectid is null (optional)
  * @param string		$dbt_select		Field name for select if not rowid. Not used if objectid is null (optional)
  * @return	bool						True if user has access, False otherwise
- * @see restrictedArea
+ * @see restrictedArea()
  */
 function checkUserAccessToObject($user, $featuresarray, $objectid = 0, $tableandshare = '', $feature2 = '', $dbt_keyfield = '', $dbt_select = 'rowid')
 {
@@ -451,13 +451,13 @@ function checkUserAccessToObject($user, $featuresarray, $objectid = 0, $tableand
 		if ($feature == 'project') $feature='projet';
 		if ($feature == 'task')    $feature='projet_task';
 
-		$check = array('adherent','banque','don','user','usergroup','product','produit','service','produit|service','categorie','resource'); // Test on entity only (Objects with no link to company)
+		$check = array('adherent','banque','don','user','usergroup','product','produit','service','produit|service','categorie','resource','expensereport','holiday'); // Test on entity only (Objects with no link to company)
 		$checksoc = array('societe');	 // Test for societe object
 		$checkother = array('contact','agenda');	 // Test on entity and link to third party. Allowed if link is empty (Ex: contacts...).
 		$checkproject = array('projet','project'); // Test for project object
 		$checktask = array('projet_task');
 		$nocheck = array('barcode','stock');	// No test
-		$checkdefault = 'all other not already defined'; // Test on entity and link to third party. Not allowed if link is empty (Ex: invoice, orders...).
+		//$checkdefault = 'all other not already defined'; // Test on entity and link to third party. Not allowed if link is empty (Ex: invoice, orders...).
 
 		// If dbtablename not defined, we use same name for table than module name
 		if (empty($dbtablename))

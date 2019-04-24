@@ -159,7 +159,7 @@ if (empty($reshook))
 
     	$receptions = GETPOST('toselect', 'array');
     	$createbills_onebythird = GETPOST('createbills_onebythird', 'int');
-    	$validate_invoices = GETPOST('valdate_invoices', 'int');
+    	$validate_invoices = GETPOST('validate_invoices', 'int');
 
     	$TFact = array();
     	$TFactThird = array();
@@ -584,12 +584,12 @@ if ($resql)
 		print '<td>';
 		if (! empty($conf->stock->enabled) && ! empty($conf->global->STOCK_CALCULATE_ON_BILL))
 		{
-		    print $form->selectyesno('valdate_invoices', 0, 1, 1);
+		    print $form->selectyesno('validate_invoices', 0, 1, 1);
 		    print ' ('.$langs->trans("AutoValidationNotPossibleWhenStockIsDecreasedOnInvoiceValidation").')';
 		}
 		else
 		{
-            print $form->selectyesno('valdate_invoices', 0, 1);
+            print $form->selectyesno('validate_invoices', 0, 1);
 		}
 		print '</td>';
 		print '</tr>';

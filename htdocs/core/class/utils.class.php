@@ -572,12 +572,13 @@ class Utils
 	 */
 	public function generateDoc($module)
 	{
-		global $conf, $langs;
+		global $conf, $langs, $user, $mysoc;
 		global $dirins;
 
 		$error = 0;
 
 		$modulelowercase=strtolower($module);
+		$now=dol_now();
 
 		// Dir for module
 		$dir = $dirins.'/'.$modulelowercase;
@@ -611,7 +612,8 @@ class Utils
 		if (count($arrayversion))
 		{
 			$FILENAMEASCII=strtolower($module).'.asciidoc';
-			$FILENAMEDOC=strtolower($module).'.html';			// TODO Use/text PDF
+			$FILENAMEDOC=strtolower($module).'.html';
+			$FILENAMEDOCPDF=strtolower($module).'.pdf';
 
 			$dirofmodule = dol_buildpath(strtolower($module), 0);
 			$dirofmoduledoc = dol_buildpath(strtolower($module), 0).'/doc';
@@ -627,12 +629,24 @@ class Utils
 					return -1;
 				}
 
-				$conf->global->MODULEBUILDER_ASCIIDOCTOR='asciidoctor';
-				if (empty($conf->global->MODULEBUILDER_ASCIIDOCTOR))
+				if (empty($conf->global->MODULEBUILDER_ASCIIDOCTOR) && empty($conf->global->MODULEBUILDER_ASCIIDOCTORPDF))
 				{
 				    $this->error = 'Setup of module ModuleBuilder not complete';
 				    return -1;
 				}
+
+				// Copy some files into temp directory, so instruction include::ChangeLog.md[] will works inside the asciidoc file.
+				dol_copy($dirofmodule.'/README.md', $dirofmoduletmp.'/README.md', 0, 1);
+				dol_copy($dirofmodule.'/ChangeLog.md', $dirofmoduletmp.'/ChangeLog.md', 0, 1);
+
+				// Replace into README.md and ChangeLog.md (in case they are included into documentation with tag __README__ or __CHANGELOG__)
+				$arrayreplacement=array();
+				$arrayreplacement['/^#\s.*/m']='';    // Remove first level of title into .md files
+				$arrayreplacement['/^#/m']='##';      // Add on # to increase level
+
+				dolReplaceInFile($dirofmoduletmp.'/README.md', $arrayreplacement, '', 0, 0, 1);
+				dolReplaceInFile($dirofmoduletmp.'/ChangeLog.md', $arrayreplacement, '', 0, 0, 1);
+
 
 				$destfile=$dirofmoduletmp.'/'.$FILENAMEASCII;
 
@@ -666,39 +680,62 @@ class Utils
 						$i++;
 					}
 
-					fwrite($fhandle, "\n\n\n== DATA SPECIFICATIONS...\n\n");
-
-					// TODO
-					fwrite($fhandle, "TODO...");
-
-
-					fwrite($fhandle, "\n\n\n== CHANGELOG...\n\n");
-
-					// TODO
-					fwrite($fhandle, "TODO...");
-
-
-
 					fclose($fhandle);
-				}
 
-				// Copy some files into temp directory
-				dol_copy($dirofmodule.'/README.md', $dirofmoduletmp.'/README.md', 0, 1);
-				dol_copy($dirofmodule.'/ChangeLog.md', $dirofmoduletmp.'/ChangeLog.md', 0, 1);
+					$contentreadme=file_get_contents($dirofmoduletmp.'/README.md');
+					$contentchangelog=file_get_contents($dirofmoduletmp.'/ChangeLog.md');
+
+					include DOL_DOCUMENT_ROOT.'/core/lib/parsemd.lib.php';
+
+					//var_dump($phpfileval['fullname']);
+					$arrayreplacement=array(
+					    'mymodule'=>strtolower($module),
+					    'MyModule'=>$module,
+					    'MYMODULE'=>strtoupper($module),
+					    'My module'=>$module,
+					    'my module'=>$module,
+					    'Mon module'=>$module,
+					    'mon module'=>$module,
+					    'htdocs/modulebuilder/template'=>strtolower($module),
+					    '__MYCOMPANY_NAME__'=>$mysoc->name,
+					    '__KEYWORDS__'=>$module,
+					    '__USER_FULLNAME__'=>$user->getFullName($langs),
+					    '__USER_EMAIL__'=>$user->email,
+					    '__YYYY-MM-DD__'=>dol_print_date($now, 'dayrfc'),
+					    '---Put here your own copyright and developer email---'=>dol_print_date($now, 'dayrfc').' '.$user->getFullName($langs).($user->email?' <'.$user->email.'>':''),
+					    '__DATA_SPECIFICATION__'=>'Not yet available',
+					    '__README__'=>dolMd2Asciidoc($contentreadme),
+					    '__CHANGELOG__'=>dolMd2Asciidoc($contentchangelog),
+					);
+
+					dolReplaceInFile($destfile, $arrayreplacement);
+				}
 
 				// Launch doc generation
                 $currentdir = getcwd();
                 chdir($dirofmodule);
 
+                require_once DOL_DOCUMENT_ROOT.'/core/class/utils.class.php';
+                $utils = new Utils($db);
+
+                // Build HTML doc
 				$command=$conf->global->MODULEBUILDER_ASCIIDOCTOR.' '.$destfile.' -n -o '.$dirofmoduledoc.'/'.$FILENAMEDOC;
 				$outfile=$dirofmoduletmp.'/out.tmp';
 
-				require_once DOL_DOCUMENT_ROOT.'/core/class/utils.class.php';
-				$utils = new Utils($db);
 				$resarray = $utils->executeCLI($command, $outfile);
 				if ($resarray['result'] != '0')
 				{
 					$this->error = $resarray['error'].' '.$resarray['output'];
+				}
+				$result = ($resarray['result'] == 0) ? 1 : 0;
+
+				// Build PDF doc
+				$command=$conf->global->MODULEBUILDER_ASCIIDOCTORPDF.' '.$destfile.' -n -o '.$dirofmoduledoc.'/'.$FILENAMEDOCPDF;
+				$outfile=$dirofmoduletmp.'/outpdf.tmp';
+				$resarray = $utils->executeCLI($command, $outfile);
+				if ($resarray['result'] != '0')
+				{
+				    $this->error = $resarray['error'].' '.$resarray['output'];
 				}
 				$result = ($resarray['result'] == 0) ? 1 : 0;
 

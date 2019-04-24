@@ -1,8 +1,8 @@
 # Dolibarr language file - Source file is en_US - loan
-ModuleBuilderDesc=Cet outil ne doit être utilisé que par des utilisateurs expérimentés ou des développeurs. Il vous fournit des utilitaires pour construire ou éditer votre propre module. <br> La documentation relative au <a href="%s" target="_blank"> développement manuel alternatif est ici </a>.
+ModuleBuilderDesc=Cet outil ne doit être utilisé que par des utilisateurs expérimentés ou des développeurs. Il vous fournit des utilitaires pour construire ou éditer votre propre module. <br> La documentation relative au <a href="%s" target="_blank"> développement manuel est ici </a>.
 EnterNameOfModuleDesc=Saisissez le nom du module/application à créer, sans espaces. Utilisez les majuscules pour identifier les mots (par exemple : MonModule, BoutiqueECommerce,...)
 EnterNameOfObjectDesc=Entrez le nom de l'objet à créer sans espaces. Utilisez les majuscules pour séparer des mots (par exemple: MyObject, Student, Teacher ...). Le fichier de classe CRUD, mais aussi le fichier API, les pages à afficher / ajouter / éditer / supprimer des objets et des fichiers SQL seront générés.
-ModuleBuilderDesc2=Chemin ou les modules sont générés/modifiés (premier répertoire alternatif défini dans %s):<strong>%s</strong>
+ModuleBuilderDesc2=Chemin ou les modules sont générés/modifiés (premier répertoire pour les modules externes défini dans %s):<strong>%s</strong>
 ModuleBuilderDesc3=Modules générés/éditables trouvés : <strong>%s</strong> 
 ModuleBuilderDesc4=Un module est détecté comme 'modifiable' quand le fichier <strong> %s </strong> existe à la racine du répertoire du module
 NewModule=Nouveau module
@@ -24,7 +24,7 @@ ModuleBuilderDescbuildpackage=Vous pouvez générer ici un fichier de package "p
 EnterNameOfModuleToDeleteDesc=Vous pouvez supprimer votre module. ATTENTION: Tous fichiers relatifs a ce module ET toutes bases de donnes seront supprimés!
 EnterNameOfObjectToDeleteDesc=Vous pouvez effacer un objet. ATTENTION : Tous les fichiers reliés à cet objet seront définitivement perdus !
 DangerZone=Zone de danger
-BuildPackage=Générer package/documentation
+BuildPackage=Construire le package
 BuildDocumentation=Générez la documentation
 ModuleIsNotActive=Le module n'est pas encore activé. Aller à %s pour l'activer ou cliquer ici :
 ModuleIsLive=Ce module a été activé. Tout changement sur lui pourrait casser une fonctionnalité actuellement activée.
@@ -40,12 +40,12 @@ PageForAgendaTab=Page PHP pour l'onglet événement
 PageForDocumentTab=Page PHP pour l'onglet document
 PageForNoteTab=Page PHP pour l'onglet note
 PathToModulePackage=Chemin du zip du package du module/application
-PathToModuleDocumentation=Chemin d'accès au fichier de documentation du module
+PathToModuleDocumentation=Chemin d'accès au fichier de documentation du module (%s)
 SpaceOrSpecialCharAreNotAllowed=Les espaces et les caractères spéciaux ne sont pas autorisés.
 FileNotYetGenerated=Fichier non encore généré
 RegenerateClassAndSql=Effacer et générer à nouveau les fichiers de classe et SQL 
 RegenerateMissingFiles=Générer les fichiers manquant
-SpecificationFile=Fichier de description des règles métiers
+SpecificationFile=Fichier de documentation
 LanguageFile=Fichier langue
 ConfirmDeleteProperty=Voulez-vous vraiment supprimer la propriété <strong> %s </strong> ? Cela modifiera le code de la classe PHP, mais supprimera également la colonne de la définition de la table de l'objet.
 NotNull=Non NULL
@@ -76,7 +76,7 @@ ListOfMenusEntries=Liste des entrées du menu
 ListOfPermissionsDefined=Liste des permissions
 SeeExamples=Voir des exemples ici
 EnabledDesc=Condition pour que ce champ soit actif (Exemples: 1 ou $conf->global->MYMODULE_MYOPTION)
-VisibleDesc=Le champ est-il visible ? (Exemples: 0 = Jamais visible, 1 = Visible sur les listes et formulaires de création/mise à jour/visualisation, 2 = Visible uniquement sur la liste, 3 = Visible uniquement sur le formulaire de création/mise à jour/affichage. Utiliser une valeur négative signifie que le champ n'est pas affiché par défaut sur la liste mais peut être sélectionné pour l'affichage)
+VisibleDesc=Le champ est-il visible ? (Exemples: 0 = Jamais visible, 1 = Visible sur les listes et formulaires de création/mise à jour/visualisation, 2 = Visible uniquement sur la liste, 3 = Visible uniquement sur le formulaire de création/mise à jour/affichage (pas les listes), 4=Visible sur les liste et formulaire de de mise à jour et affichage uniquement (pas en création). Utiliser une valeur négative signifie que le champ n'est pas affiché par défaut sur la liste mais peut être sélectionné pour l'affichage). Il peut s'agir d'une expression, par exemple : preg_match('/public/', $_SERVER['PHP_SELF'])?0:1
 IsAMeasureDesc=Peut-on cumuler la valeur du champ pour obtenir un total dans les listes ? (Exemples: 1 ou 0)
 SearchAllDesc=Le champ doit-il être utilisé pour effectuer une recherche à partir de l'outil de recherche rapide ? (Exemples: 1 ou 0)
 SpecDefDesc=Entrez ici toute la documentation que vous souhaitez joindre au module et qui n'a pas encore été définis dans d'autres onglets. Vous pouvez utiliser .md ou, mieux, la syntaxe enrichie .asciidoc.
@@ -100,3 +100,13 @@ UseAboutPage=Désactiver la page "à propos de"
 UseDocFolder=Désactiver le dossier de la documentation
 UseSpecificReadme=Utiliser un fichier ReadMe spécifique
 RealPathOfModule=Chemin réel du dossier du module
+ContentCantBeEmpty=Le contenu du fichier ne peut pas être vide
+WidgetDesc=Vous pouvez générer et éditer ici les widgets qui seront intégrés à votre module.
+CLIDesc=Vous pouvez générer ici certains scripts de ligne de commande que vous souhaitez fournir avec votre module.
+CLIFile=Fichier CLI
+NoCLIFile=Aucun fichier CLI
+UseSpecificEditorName = Utiliser un nom d'éditeur spécifique
+UseSpecificEditorURL = Utiliser une URL d'éditeur spécifique
+UseSpecificFamily = Utiliser une famille spécifique
+UseSpecificAuthor = Utiliser un auteur spécifique
+UseSpecificVersion = Utiliser une version initiale spécifique

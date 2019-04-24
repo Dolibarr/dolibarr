@@ -161,7 +161,7 @@ $helptext.='__COMPANY__, __ADDRESS__, __ZIP__, __TOWN__, __COUNTRY__, __EMAIL__,
 
 form_constantes($constantes, 0, $helptext);
 
-//print '<div align="center"><input type="submit" class="button" value="'.$langs->trans("Update").'" name="update"></div>';
+//print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Update").'" name="update"></div>';
 //print '</form>';
 
 dol_fiche_end();

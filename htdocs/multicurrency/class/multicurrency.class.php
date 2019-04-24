@@ -492,10 +492,10 @@ class MultiCurrency extends CommonObject
 	 /**
 	 * Get id of currency from code
 	 *
-	 * @param DoliDB	$db		object db
-	 * @param string	$code	code value search
+	 * @param  DoliDB	$db		    object db
+	 * @param  string	$code	   code value search
 	 *
-	 * @return 0 if not found, >0 if OK
+	 * @return int                 0 if not found, >0 if OK
 	 */
     public static function getIdFromCode(&$db, $code)
     {
@@ -512,9 +512,9 @@ class MultiCurrency extends CommonObject
 	 /**
 	 * Get id and rate of currency from code
 	 *
-	 * @param DoliDB	$db		object db
-	 * @param string	$code	code value search
-	 * @param date		$date_document	date from document (propal, order, invoice, ...)
+	 * @param DoliDB	$db		        Object db
+	 * @param string	$code	        Code value search
+	 * @param integer	$date_document	Date from document (propal, order, invoice, ...)
 	 *
 	 * @return 	array	[0] => id currency
 	 *					[1] => rate
@@ -709,7 +709,7 @@ class CurrencyRate extends CommonObjectLine
 	public $rate;
 
 	/**
-	 * @var date Date synchronisation
+	 * @var integer    Date synchronisation
 	 */
 	public $date_sync;
 

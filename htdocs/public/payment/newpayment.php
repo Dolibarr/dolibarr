@@ -263,7 +263,7 @@ elseif (! empty($conf->global->$paramcreditor)) $creditor=$conf->global->$paramc
  * Actions
  */
 
-// Action dopayment is called after choosing the payment mode
+// Action dopayment is called after clicking/choosing the payment mode
 if ($action == 'dopayment')
 {
 	if ($paymentmethod == 'paypal')
@@ -395,7 +395,7 @@ if ($action == 'dopayment')
 }
 
 
-// Called when choosing Stripe mode, after the 'dopayment'
+// Called when choosing Stripe mode, after clicking the 'dopayment'
 if ($action == 'charge' && ! empty($conf->stripe->enabled))
 {
 	$amountstripe = $amount;
@@ -422,6 +422,7 @@ if ($action == 'charge' && ! empty($conf->stripe->enabled))
 	dol_syslog("POST vatnumber = ".$vatnumber, LOG_DEBUG, 0, '_stripe');
 
 	$error = 0;
+    $errormessage = '';
 
 	try {
 		$metadata = array(
@@ -483,7 +484,7 @@ if ($action == 'charge' && ! empty($conf->stripe->enabled))
 					'metadata' => $metadata,
 					'customer' => $customer->id,
 					'source' => $card,
-					'statement_descriptor' => dol_trunc(dol_trunc(dol_string_unaccent($mysoc->name), 6, 'right', 'UTF-8', 1).' '.$FULLTAG, 22, 'right', 'UTF-8', 1)     // 22 chars that appears on bank receipt
+				    'statement_descriptor' => dol_trunc($FULLTAG, 10, 'right', 'UTF-8', 1),     // 22 chars that appears on bank receipt (company + description)
 				), array("idempotency_key" => "$ref", "stripe_account" => "$stripeacc"));
 				// Return $charge = array('id'=>'ch_XXXX', 'status'=>'succeeded|pending|failed', 'failure_code'=>, 'failure_message'=>...)
 				if (empty($charge))
@@ -508,7 +509,7 @@ if ($action == 'charge' && ! empty($conf->stripe->enabled))
 			if (empty($vatcleaned)) $taxinfo=null;
 
 			dol_syslog("Create anonymous customer card profile", LOG_DEBUG, 0, '_stripe');
-$customer = \Stripe\Customer::create(array(
+            $customer = \Stripe\Customer::create(array(
 				'email' => $email,
 				'description' => ($email?'Anonymous customer for '.$email:'Anonymous customer'),
 				'metadata' => $metadata,
@@ -524,14 +525,14 @@ $customer = \Stripe\Customer::create(array(
 			// The customer was just created with a source, so we can make a charge
 			// with no card defined, the source just used for customer creation will be used.
 			dol_syslog("Create charge", LOG_DEBUG, 0, '_stripe');
-$charge = \Stripe\Charge::create(array(
+            $charge = \Stripe\Charge::create(array(
 				'customer' => $customer->id,
 				'amount'   => price2num($amountstripe, 'MU'),
 				'currency' => $currency,
 				'capture'  => true,							// Charge immediatly
 				'description' => 'Stripe payment: '.$FULLTAG.' ref='.$ref,
 				'metadata' => $metadata,
-				'statement_descriptor' => dol_trunc(dol_trunc(dol_string_unaccent($mysoc->name), 6, 'right', 'UTF-8', 1).' '.$FULLTAG, 22, 'right', 'UTF-8', 1)     // 22 chars that appears on bank receipt
+                'statement_descriptor' => dol_trunc($FULLTAG, 10, 'right', 'UTF-8', 1),     // 22 chars that appears on bank receipt (company + description)
 			), array("idempotency_key" => "$ref", "stripe_account" => "$stripeacc"));
 			// Return $charge = array('id'=>'ch_XXXX', 'status'=>'succeeded|pending|failed', 'failure_code'=>, 'failure_message'=>...)
 			if (empty($charge))
@@ -555,60 +556,71 @@ $charge = \Stripe\Charge::create(array(
 		print('Message is:' . $err['message'] . "\n");
 
 		$error++;
-		dol_syslog($e->getMessage(), LOG_WARNING, 0, '_stripe');
+		$errormessage="ErrorCard ".$e->getMessage()." err=".var_export($err, true);
+		dol_syslog($errormessage, LOG_WARNING, 0, '_stripe');
 		setEventMessages($e->getMessage(), null, 'errors');
 		$action='';
 	} catch (\Stripe\Error\RateLimit $e) {
 		// Too many requests made to the API too quickly
 		$error++;
-		dol_syslog($e->getMessage(), LOG_WARNING, 0, '_stripe');
+		$errormessage="ErrorRateLimit ".$e->getMessage();
+		dol_syslog($errormessage, LOG_WARNING, 0, '_stripe');
 		setEventMessages($e->getMessage(), null, 'errors');
 		$action='';
 	} catch (\Stripe\Error\InvalidRequest $e) {
 		// Invalid parameters were supplied to Stripe's API
 		$error++;
-		dol_syslog($e->getMessage(), LOG_WARNING, 0, '_stripe');
+		$errormessage="ErrorInvalidRequest ".$e->getMessage();
+		dol_syslog($errormessage, LOG_WARNING, 0, '_stripe');
 		setEventMessages($e->getMessage(), null, 'errors');
 		$action='';
 	} catch (\Stripe\Error\Authentication $e) {
 		// Authentication with Stripe's API failed
 		// (maybe you changed API keys recently)
 		$error++;
-		dol_syslog($e->getMessage(), LOG_WARNING, 0, '_stripe');
+		$errormessage="ErrorAuthentication ".$e->getMessage();
+		dol_syslog($errormessage, LOG_WARNING, 0, '_stripe');
 		setEventMessages($e->getMessage(), null, 'errors');
 		$action='';
 	} catch (\Stripe\Error\ApiConnection $e) {
 		// Network communication with Stripe failed
 		$error++;
-		dol_syslog($e->getMessage(), LOG_WARNING, 0, '_stripe');
+		$errormessage="ErrorApiConnection ".$e->getMessage();
+		dol_syslog($errormessage, LOG_WARNING, 0, '_stripe');
 		setEventMessages($e->getMessage(), null, 'errors');
 		$action='';
 	} catch (\Stripe\Error\Base $e) {
 		// Display a very generic error to the user, and maybe send
 		// yourself an email
 		$error++;
-		dol_syslog($e->getMessage(), LOG_WARNING, 0, '_stripe');
+		$errormessage="ErrorBase ".$e->getMessage();
+		dol_syslog($errormessage, LOG_WARNING, 0, '_stripe');
 		setEventMessages($e->getMessage(), null, 'errors');
 		$action='';
 	} catch (Exception $e) {
 		// Something else happened, completely unrelated to Stripe
 		$error++;
-		dol_syslog($e->getMessage(), LOG_WARNING, 0, '_stripe');
+		$errormessage="ErrorException ".$e->getMessage();
+		dol_syslog($errormessage, LOG_WARNING, 0, '_stripe');
 		setEventMessages($e->getMessage(), null, 'errors');
 		$action='';
 	}
+
+	$remoteip = getUserRemoteIP();
 
 	$_SESSION["onlinetoken"] = $stripeToken;
 	$_SESSION["FinalPaymentAmt"] = $amount;
 	$_SESSION["currencyCodeType"] = $currency;
 	$_SESSION["paymentType"] = '';
-	$_SESSION['ipaddress'] = getUserRemoteIP();  // Payer ip
+	$_SESSION['ipaddress'] = ($remoteip?$remoteip:'unknown');  // Payer ip
 	$_SESSION['payerID'] = is_object($customer)?$customer->id:'';
 	$_SESSION['TRANSACTIONID'] = is_object($charge)?$charge->id:'';
+	$_SESSION['errormessage'] = $errormessage;
 
-	dol_syslog("Action charge stripe result=".$error." ip=".$_SESSION['ipaddress'], LOG_DEBUG, 0, '_stripe');
+	dol_syslog("Action charge stripe ip=".$remoteip, LOG_DEBUG, 0, '_stripe');
 	dol_syslog("onlinetoken=".$_SESSION["onlinetoken"]." FinalPaymentAmt=".$_SESSION["FinalPaymentAmt"]." currencyCodeType=".$_SESSION["currencyCodeType"]." payerID=".$_SESSION['payerID']." TRANSACTIONID=".$_SESSION['TRANSACTIONID'], LOG_DEBUG, 0, '_stripe');
 	dol_syslog("FULLTAG=".$FULLTAG, LOG_DEBUG, 0, '_stripe');
+	dol_syslog("error=".$error." errormessage=".$errormessage, LOG_DEBUG, 0, '_stripe');
 	dol_syslog("Now call the redirect to paymentok or paymentko", LOG_DEBUG, 0, '_stripe');
 
 	if ($error)
@@ -1646,7 +1658,7 @@ print '<br>';
 if (preg_match('/^dopayment/', $action))
 {
 
-	// Strip
+	// Stripe
 	if (GETPOST('dopayment_stripe', 'alpha'))
 	{
 		// Simple checkout
@@ -1715,26 +1727,28 @@ if (preg_match('/^dopayment/', $action))
 	    <tbody><tr><td class="textpublicpayment">
 
 	    <div class="form-row left">
-	    <label for="card-element">
-	    '.$langs->trans("CreditOrDebitCard").'
-	    </label>
+
+	    <label for="card-element">'.$langs->trans("CreditOrDebitCard").'</label>
 	    <div id="card-element">
 	    <!-- a Stripe Element will be inserted here. -->
 	    </div>
+
 	    <!-- Used to display form errors -->
 	    <div id="card-errors" role="alert"></div>
+
 	    </div>
+
 	    <br>
 	    <button class="butAction" id="buttontopay">'.$langs->trans("ValidatePayment").'</button>
 	    <img id="hourglasstopay" class="hidden" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/working.gif'.'">
 	    </td></tr></tbody></table>
 
-	    </form>
+	    </form>'."\n";
 
-	    <script src="https://js.stripe.com/v3/"></script>
+		print '<script src="https://js.stripe.com/v3/"></script>'."\n";
 
-	    <script type="text/javascript" language="javascript">';
-
+	    // Code to ask the credit card. This use the default "API version". No way to force API version when using JS code.
+		print '<script type="text/javascript" language="javascript">'."\n";
 		?>
 
 	    // Create a Stripe client.

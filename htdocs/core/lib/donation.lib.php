@@ -43,7 +43,7 @@ function donation_admin_prepare_head()
 	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__'); to add new tab
 	// $this->tabs = array('entity:-tabname); to remove a tab
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'donation_admin');
-	
+
 	$head[$h][0] = DOL_URL_ROOT . '/don/admin/donation_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFields");
     $head[$h][2] = 'attributes';
@@ -57,7 +57,7 @@ function donation_admin_prepare_head()
 /**
  *	Prepare array with list of tabs
  *
- *	@param	Donation	$object		Donation
+ *	@param	Don       	$object		Donation
  *	@return	array					Array of tabs to show
  */
 function donation_prepare_head($object)
@@ -97,7 +97,7 @@ function donation_prepare_head($object)
 	if ($nbNote > 0) $head[$h][1].= ' <span class="badge">'.$nbNote.'</span>';
 	$head[$h][2] = 'note';
 	$h++;
-	
+
 	$head[$h][0] = DOL_URL_ROOT . '/don/info.php?id=' . $object->id;
 	$head[$h][1] = $langs->trans("Info");
 	$head[$h][2] = 'info';

@@ -161,7 +161,7 @@ class Commande extends CommonOrder
 
 	/**
 	 * @deprecated
-	 * @see date
+	 * @see $date
 	 */
 	public $date_commande;
 
@@ -479,7 +479,7 @@ class Commande extends CommonOrder
 	 *	@param	int		$idwarehouse	Warehouse ID to use for stock change (Used only if option STOCK_CALCULATE_ON_VALIDATE_ORDER is on)
 	 *	@return	int						<0 if KO, >0 if OK
 	 */
-    public function set_draft($user, $idwarehouse = -1)
+    public function setDraft($user, $idwarehouse = -1)
     {
         //phpcs:enable
 		global $conf,$langs;
@@ -499,16 +499,22 @@ class Commande extends CommonOrder
 			return -1;
 		}
 
+		dol_syslog(get_class($this)."::set_draft", LOG_DEBUG);
+
 		$this->db->begin();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."commande";
 		$sql.= " SET fk_statut = ".self::STATUS_DRAFT;
 		$sql.= " WHERE rowid = ".$this->id;
 
-		dol_syslog(get_class($this)."::set_draft", LOG_DEBUG);
 		if ($this->db->query($sql))
 		{
-			// If stock is decremented on validate order, we must reincrement it
+		    if (! $error)
+		    {
+		        $this->oldcopy= clone $this;
+		    }
+
+		    // If stock is decremented on validate order, we must reincrement it
 			if (! empty($conf->stock->enabled) && $conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER == 1)
 			{
 				$result = 0;
@@ -1069,7 +1075,7 @@ class Commande extends CommonOrder
 	 */
 	public function createFromClone($socid = 0)
 	{
-		global $user,$hookmanager;
+		global $conf, $user,$hookmanager;
 
 		$error=0;
 
@@ -1079,69 +1085,88 @@ class Commande extends CommonOrder
 		foreach($this->lines as $line)
 			$line->fetch_optionals();
 
-			// Load source object
-			$objFrom = clone $this;
+		// Load source object
+		$objFrom = clone $this;
 
-			// Change socid if needed
-			if (! empty($socid) && $socid != $this->socid)
+		// Change socid if needed
+		if (! empty($socid) && $socid != $this->socid)
+		{
+			$objsoc = new Societe($this->db);
+
+			if ($objsoc->fetch($socid)>0)
 			{
-				$objsoc = new Societe($this->db);
-
-				if ($objsoc->fetch($socid)>0)
-				{
-					$this->socid 				= $objsoc->id;
-					$this->cond_reglement_id	= (! empty($objsoc->cond_reglement_id) ? $objsoc->cond_reglement_id : 0);
-					$this->mode_reglement_id	= (! empty($objsoc->mode_reglement_id) ? $objsoc->mode_reglement_id : 0);
-					$this->fk_project			= 0;
-					$this->fk_delivery_address	= 0;
-				}
-
-				// TODO Change product price if multi-prices
+				$this->socid 				= $objsoc->id;
+				$this->cond_reglement_id	= (! empty($objsoc->cond_reglement_id) ? $objsoc->cond_reglement_id : 0);
+				$this->mode_reglement_id	= (! empty($objsoc->mode_reglement_id) ? $objsoc->mode_reglement_id : 0);
+				$this->fk_project			= 0;
+				$this->fk_delivery_address	= 0;
 			}
 
-			$this->id=0;
-			$this->ref = '';
-			$this->statut=self::STATUS_DRAFT;
+			// TODO Change product price if multi-prices
+		}
 
-			// Clear fields
-			$this->user_author_id     = $user->id;
-			$this->user_valid         = '';
-			$this->date				  = dol_now();
-			$this->date_commande	  = dol_now();
-			$this->date_creation      = '';
-			$this->date_validation    = '';
-			$this->ref_client         = '';
+		$this->id=0;
+		$this->ref = '';
+		$this->statut=self::STATUS_DRAFT;
 
-			// Create clone
-			$this->context['createfromclone'] = 'createfromclone';
-			$result=$this->create($user);
-			if ($result < 0) $error++;
+		// Clear fields
+		$this->user_author_id     = $user->id;
+		$this->user_valid         = '';
+		$this->date				  = dol_now();
+		$this->date_commande	  = dol_now();
+		$this->date_creation      = '';
+		$this->date_validation    = '';
+		if (empty($conf->global->MAIN_KEEP_REF_CUSTOMER_ON_CLONING)) $this->ref_client = '';
 
-			if (! $error)
+		// Create clone
+		$this->context['createfromclone'] = 'createfromclone';
+		$result=$this->create($user);
+		if ($result < 0) $error++;
+
+		if (! $error)
+		{
+			// copy internal contacts
+			if ($this->copy_linked_contact($objFrom, 'internal') < 0)
 			{
-				// Hook of thirdparty module
-				if (is_object($hookmanager))
-				{
-					$parameters=array('objFrom'=>$objFrom);
-					$action='';
-					$reshook=$hookmanager->executeHooks('createFrom', $parameters, $this, $action);    // Note that $action and $object may have been modified by some hooks
-					if ($reshook < 0) $error++;
-				}
+				$error++;
 			}
+		}
 
-			unset($this->context['createfromclone']);
+		if (! $error)
+		{
+			// copy external contacts if same company
+			if ($this->socid == $objFrom->socid)
+			{
+				if ($this->copy_linked_contact($objFrom, 'external') < 0)
+					$error++;
+			}
+		}
 
-			// End
-			if (! $error)
+		if (! $error)
+		{
+			// Hook of thirdparty module
+			if (is_object($hookmanager))
 			{
-				$this->db->commit();
-				return $this->id;
+				$parameters=array('objFrom'=>$objFrom);
+				$action='';
+				$reshook=$hookmanager->executeHooks('createFrom', $parameters, $this, $action);    // Note that $action and $object may have been modified by some hooks
+				if ($reshook < 0) $error++;
 			}
-			else
-			{
-				$this->db->rollback();
-				return -1;
-			}
+		}
+
+		unset($this->context['createfromclone']);
+
+		// End
+		if (! $error)
+		{
+			$this->db->commit();
+			return $this->id;
+		}
+		else
+		{
+			$this->db->rollback();
+			return -1;
+		}
 	}
 
 
@@ -1219,8 +1244,12 @@ class Commande extends CommonOrder
 		$this->fk_delivery_address  = $object->fk_delivery_address;
 		$this->contact_id           = $object->contactid;
 		$this->ref_client           = $object->ref_client;
-		$this->note_private         = $object->note_private;
-		$this->note_public          = $object->note_public;
+
+		if (empty($conf->global->MAIN_DISABLE_PROPAGATE_NOTES_FROM_ORIGIN))
+		{
+            $this->note_private         = $object->note_private;
+            $this->note_public          = $object->note_public;
+		}
 
 		$this->origin				= $object->element;
 		$this->origin_id			= $object->id;
@@ -1281,7 +1310,7 @@ class Commande extends CommonOrder
 	 * 	@param		float			$txlocaltax1		Local tax 1 rate (deprecated, use instead txtva with code inside)
 	 * 	@param		float			$txlocaltax2		Local tax 2 rate (deprecated, use instead txtva with code inside)
 	 *	@param      int				$fk_product      	Id of product
-	 *	@param      float			$remise_percent  	Pourcentage de remise de la ligne
+	 *	@param      float			$remise_percent  	Percentage discount of the line
 	 *	@param      int				$info_bits			Bits de type de lignes
 	 *	@param      int				$fk_remise_except	Id remise
 	 *	@param      string			$price_base_type	HT or TTC
@@ -1302,7 +1331,7 @@ class Commande extends CommonOrder
 	 * 	@param		double			$pu_ht_devise		Unit price in currency
 	 *	@return     int             					>0 if OK, <0 if KO
 	 *
-	 *	@see        add_product
+	 *	@see        add_product()
 	 *
 	 *	Les parametres sont deja cense etre juste et avec valeurs finales a l'appel
 	 *	de cette methode. Aussi, pour le taux tva, il doit deja avoir ete defini
@@ -1357,6 +1386,12 @@ class Commande extends CommonOrder
 
 			// Check parameters
 			if ($type < 0) return -1;
+
+			if ($date_start && $date_end && $date_start > $date_end) {
+				$langs->load("errors");
+				$this->error=$langs->trans('ErrorStartDateGreaterEnd');
+				return -1;
+			}
 
             $this->db->begin();
 
@@ -1635,7 +1670,7 @@ class Commande extends CommonOrder
 		$sql.= ', c.date_livraison';
 		$sql.= ', c.fk_shipping_method';
 		$sql.= ', c.fk_warehouse';
-		$sql.= ', c.fk_projet, c.remise_percent, c.remise, c.remise_absolue, c.source, c.facture as billed';
+		$sql.= ', c.fk_projet as fk_project, c.remise_percent, c.remise, c.remise_absolue, c.source, c.facture as billed';
 		$sql.= ', c.note_private, c.note_public, c.ref_client, c.ref_ext, c.ref_int, c.model_pdf, c.last_main_doc, c.fk_delivery_address, c.extraparams';
 		$sql.= ', c.fk_incoterms, c.location_incoterms';
 		$sql.= ", c.fk_multicurrency, c.multicurrency_code, c.multicurrency_tx, c.multicurrency_total_ht, c.multicurrency_total_tva, c.multicurrency_total_ttc";
@@ -1696,7 +1731,7 @@ class Commande extends CommonOrder
 				$this->note					= $obj->note_private;	// deprecated
 				$this->note_private			= $obj->note_private;
 				$this->note_public			= $obj->note_public;
-				$this->fk_project			= $obj->fk_projet;
+				$this->fk_project			= $obj->fk_project;
 				$this->modelpdf				= $obj->model_pdf;
 				$this->last_main_doc		= $obj->last_main_doc;
 				$this->mode_reglement_id	= $obj->fk_mode_reglement;
@@ -2920,9 +2955,8 @@ class Commande extends CommonOrder
 		dol_syslog(get_class($this)."::updateline id=$rowid, desc=$desc, pu=$pu, qty=$qty, remise_percent=$remise_percent, txtva=$txtva, txlocaltax1=$txlocaltax1, txlocaltax2=$txlocaltax2, price_base_type=$price_base_type, info_bits=$info_bits, date_start=$date_start, date_end=$date_end, type=$type, fk_parent_line=$fk_parent_line, pa_ht=$pa_ht, special_code=$special_code");
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 
-		if (! empty($this->brouillon))
+		if ($this->statut == Commande::STATUS_DRAFT)
 		{
-			$this->db->begin();
 
 			// Clean parameters
 			if (empty($qty)) $qty=0;
@@ -2933,6 +2967,12 @@ class Commande extends CommonOrder
 			if (empty($remise_percent)) $remise_percent=0;
 			if (empty($special_code) || $special_code == 3) $special_code=0;
 
+			if ($date_start && $date_end && $date_start > $date_end) {
+				$langs->load("errors");
+				$this->error=$langs->trans('ErrorStartDateGreaterEnd');
+				return -1;
+			}
+
 			$remise_percent=price2num($remise_percent);
 			$qty=price2num($qty);
 			$pu = price2num($pu);
@@ -2941,6 +2981,8 @@ class Commande extends CommonOrder
 			$txtva=price2num($txtva);
 			$txlocaltax1=price2num($txlocaltax1);
 			$txlocaltax2=price2num($txlocaltax2);
+
+			$this->db->begin();
 
 			// Calcul du total TTC et de la TVA pour la ligne a partir de
 			// qty, pu, remise_percent et txtva
@@ -3425,77 +3467,49 @@ class Commande extends CommonOrder
 		$billedtext = '';
 		if (empty($donotshowbilled)) $billedtext .= ($billed?' - '.$langs->trans("Billed"):'');
 
-		//print 'x'.$statut.'-'.$billed;
-		if ($mode == 0)
-		{
-			if ($statut==self::STATUS_CANCELED) return $langs->trans('StatusOrderCanceled');
-			elseif ($statut==self::STATUS_DRAFT) return $langs->trans('StatusOrderDraft');
-			elseif ($statut==self::STATUS_VALIDATED) return $langs->trans('StatusOrderValidated').$billedtext;
-			elseif ($statut==self::STATUS_SHIPMENTONPROCESS) return $langs->trans('StatusOrderSentShort').$billedtext;
-			elseif ($statut==self::STATUS_CLOSED && (! $billed && empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))) return $langs->trans('StatusOrderToBill');
-			elseif ($statut==self::STATUS_CLOSED && ($billed && empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))) return $langs->trans('StatusOrderProcessed').$billedtext;
-			elseif ($statut==self::STATUS_CLOSED && (! empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))) return $langs->trans('StatusOrderDelivered');
+		if ($statut==self::STATUS_CANCELED){
+		    $labelstatut = $langs->trans('StatusOrderCanceled');
+		    $labelstatutShort = $langs->trans('StatusOrderCanceledShort');
+		    $statusType='status5';
 		}
-		elseif ($mode == 1)
-		{
-			if ($statut==self::STATUS_CANCELED) return $langs->trans('StatusOrderCanceledShort');
-			elseif ($statut==self::STATUS_DRAFT) return $langs->trans('StatusOrderDraftShort');
-			elseif ($statut==self::STATUS_VALIDATED) return $langs->trans('StatusOrderValidatedShort').$billedtext;
-			elseif ($statut==self::STATUS_SHIPMENTONPROCESS) return $langs->trans('StatusOrderSentShort').$billedtext;
-			elseif ($statut==self::STATUS_CLOSED && (! $billed && empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))) return $langs->trans('StatusOrderToBillShort');
-			elseif ($statut==self::STATUS_CLOSED && ($billed && empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))) return $langs->trans('StatusOrderProcessed').$billedtext;
-			elseif ($statut==self::STATUS_CLOSED && (! empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))) return $langs->trans('StatusOrderDelivered');
+		elseif ($statut==self::STATUS_DRAFT){
+		    $labelstatut = $langs->trans('StatusOrderDraft');
+		    $labelstatutShort = $langs->trans('StatusOrderDraftShort');
+		    $statusType='status0';
 		}
-		elseif ($mode == 2)
-		{
-			if ($statut==self::STATUS_CANCELED) return img_picto($langs->trans('StatusOrderCanceled'), 'statut5').' '.$langs->trans('StatusOrderCanceledShort');
-			elseif ($statut==self::STATUS_DRAFT) return img_picto($langs->trans('StatusOrderDraft'), 'statut0').' '.$langs->trans('StatusOrderDraftShort');
-			elseif ($statut==self::STATUS_VALIDATED) return img_picto($langs->trans('StatusOrderValidated'), 'statut1').' '.$langs->trans('StatusOrderValidatedShort').$billedtext;
-			elseif ($statut==self::STATUS_SHIPMENTONPROCESS) return img_picto($langs->trans('StatusOrderSent'), 'statut3').' '.$langs->trans('StatusOrderSentShort').$billedtext;
-			elseif ($statut==self::STATUS_CLOSED && (! $billed && empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))) return img_picto($langs->trans('StatusOrderToBill'), 'statut4').' '.$langs->trans('StatusOrderToBillShort');
-			elseif ($statut==self::STATUS_CLOSED && ($billed && empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))) return img_picto($langs->trans('StatusOrderProcessed').$billedtext, 'statut6').' '.$langs->trans('StatusOrderProcessed').$billedtext;
-			elseif ($statut==self::STATUS_CLOSED && (! empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))) return img_picto($langs->trans('StatusOrderDelivered'), 'statut6').' '.$langs->trans('StatusOrderDeliveredShort');
+		elseif ($statut==self::STATUS_VALIDATED){
+		    $labelstatut = $langs->trans('StatusOrderValidated').$billedtext;
+		    $labelstatutShort = $langs->trans('StatusOrderValidatedShort').$billedtext;
+		    $statusType='status1';
 		}
-		elseif ($mode == 3)
-		{
-			if ($statut==self::STATUS_CANCELED) return img_picto($langs->trans('StatusOrderCanceled'), 'statut5');
-			elseif ($statut==self::STATUS_DRAFT) return img_picto($langs->trans('StatusOrderDraft'), 'statut0');
-			elseif ($statut==self::STATUS_VALIDATED) return img_picto($langs->trans('StatusOrderValidated').$billedtext, 'statut1');
-			elseif ($statut==self::STATUS_SHIPMENTONPROCESS) return img_picto($langs->trans('StatusOrderSentShort').$billedtext, 'statut3');
-			elseif ($statut==self::STATUS_CLOSED && (! $billed && empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))) return img_picto($langs->trans('StatusOrderToBill'), 'statut4');
-			elseif ($statut==self::STATUS_CLOSED && ($billed && empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))) return img_picto($langs->trans('StatusOrderProcessed').$billedtext, 'statut6');
-			elseif ($statut==self::STATUS_CLOSED && (! empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))) return img_picto($langs->trans('StatusOrderDelivered'), 'statut6');
+		elseif ($statut==self::STATUS_SHIPMENTONPROCESS){
+		    $labelstatut = $langs->trans('StatusOrderSentShort').$billedtext;
+		    $labelstatutShort = $langs->trans('StatusOrderSentShort').$billedtext;
+		    $statusType='status3';
 		}
-		elseif ($mode == 4)
-		{
-			if ($statut==self::STATUS_CANCELED) return img_picto($langs->trans('StatusOrderCanceled'), 'statut5').' '.$langs->trans('StatusOrderCanceled');
-			elseif ($statut==self::STATUS_DRAFT) return img_picto($langs->trans('StatusOrderDraft'), 'statut0').' '.$langs->trans('StatusOrderDraft');
-			elseif ($statut==self::STATUS_VALIDATED) return img_picto($langs->trans('StatusOrderValidated').$billedtext, 'statut1').' '.$langs->trans('StatusOrderValidated').$billedtext;
-			elseif ($statut==self::STATUS_SHIPMENTONPROCESS) return img_picto($langs->trans('StatusOrderSentShort').$billedtext, 'statut3').' '.$langs->trans('StatusOrderSent').$billedtext;
-			elseif ($statut==self::STATUS_CLOSED && (! $billed && empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))) return img_picto($langs->trans('StatusOrderToBill'), 'statut4').' '.$langs->trans('StatusOrderToBill');
-			elseif ($statut==self::STATUS_CLOSED && ($billed && empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))) return img_picto($langs->trans('StatusOrderProcessedShort').$billedtext, 'statut6').' '.$langs->trans('StatusOrderProcessed').$billedtext;
-			elseif ($statut==self::STATUS_CLOSED && (! empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))) return img_picto($langs->trans('StatusOrderDelivered'), 'statut6').' '.$langs->trans('StatusOrderDelivered');
+		elseif ($statut==self::STATUS_CLOSED && (! $billed && empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))){
+		    $labelstatut = $langs->trans('StatusOrderToBill');
+		    $labelstatutShort = $langs->trans('StatusOrderToBillShort');
+		    $statusType='status4';
 		}
-		elseif ($mode == 5)
-		{
-			if ($statut==self::STATUS_CANCELED) return '<span class="hideonsmartphone">'.$langs->trans('StatusOrderCanceledShort').' </span>'.img_picto($langs->trans('StatusOrderCanceled'), 'statut5');
-			elseif ($statut==self::STATUS_DRAFT) return '<span class="hideonsmartphone">'.$langs->trans('StatusOrderDraftShort').' </span>'.img_picto($langs->trans('StatusOrderDraft'), 'statut0');
-			elseif ($statut==self::STATUS_VALIDATED) return '<span class="hideonsmartphone">'.$langs->trans('StatusOrderValidatedShort').$billedtext.' </span>'.img_picto($langs->trans('StatusOrderValidated').$billedtext, 'statut1');
-			elseif ($statut==self::STATUS_SHIPMENTONPROCESS) return '<span class="hideonsmartphone">'.$langs->trans('StatusOrderSentShort').$billedtext.' </span>'.img_picto($langs->trans('StatusOrderSent').$billedtext, 'statut3');
-			elseif ($statut==self::STATUS_CLOSED && (! $billed && empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))) return '<span class="hideonsmartphone">'.$langs->trans('StatusOrderToBillShort').' </span>'.img_picto($langs->trans('StatusOrderToBill'), 'statut4');
-			elseif ($statut==self::STATUS_CLOSED && ($billed && empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))) return '<span class="hideonsmartphone">'.$langs->trans('StatusOrderProcessedShort').$billedtext.' </span>'.img_picto($langs->trans('StatusOrderProcessed').$billedtext, 'statut6');
-			elseif ($statut==self::STATUS_CLOSED && (! empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))) return '<span class="hideonsmartphone">'.$langs->trans('StatusOrderDeliveredShort').' </span>'.img_picto($langs->trans('StatusOrderDelivered'), 'statut6');
+		elseif ($statut==self::STATUS_CLOSED && ($billed && empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))){
+		    $labelstatut = $langs->trans('StatusOrderProcessed').$billedtext;
+		    $labelstatutShort = $langs->trans('StatusOrderProcessed').$billedtext;
+		    $statusType='status6';
 		}
-		elseif ($mode == 6)
-		{
-			if ($statut==self::STATUS_CANCELED) return '<span class="hideonsmartphone">'.$langs->trans('StatusOrderCanceled').' </span>'.img_picto($langs->trans('StatusOrderCanceled'), 'statut5');
-			elseif ($statut==self::STATUS_DRAFT) return '<span class="hideonsmartphone">'.$langs->trans('StatusOrderDraft').' </span>'.img_picto($langs->trans('StatusOrderDraft'), 'statut0');
-			elseif ($statut==self::STATUS_VALIDATED) return '<span class="hideonsmartphone">'.$langs->trans('StatusOrderValidated').$billedtext.' </span>'.img_picto($langs->trans('StatusOrderValidated').$billedtext, 'statut1');
-			elseif ($statut==self::STATUS_SHIPMENTONPROCESS) return '<span class="hideonsmartphone">'.$langs->trans('StatusOrderSent').$billedtext.' </span>'.img_picto($langs->trans('StatusOrderSent').$billedtext, 'statut3');
-			elseif ($statut==self::STATUS_CLOSED && (! $billed && empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))) return '<span class="hideonsmartphone">'.$langs->trans('StatusOrderToBill').' </span>'.img_picto($langs->trans('StatusOrderToBill'), 'statut4');
-			elseif ($statut==self::STATUS_CLOSED && ($billed && empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))) return '<span class="hideonsmartphone">'.$langs->trans('StatusOrderProcessed').$billedtext.' </span>'.img_picto($langs->trans('StatusOrderProcessed').$billedtext, 'statut6');
-			elseif ($statut==self::STATUS_CLOSED && (! empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))) return '<span class="hideonsmartphone">'.$langs->trans('StatusOrderDelivered').' </span>'.img_picto($langs->trans('StatusOrderDelivered'), 'statut6');
+		elseif ($statut==self::STATUS_CLOSED && (! empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))){
+		    $labelstatut = $langs->trans('StatusOrderDelivered');
+		    $labelstatutShort = $langs->trans('StatusOrderDelivered');
+		    $statusType='status6';
 		}
+		else{
+		    $labelstatut = $langs->trans('Unknown');
+		    $labelstatutShort = '';
+		    $statusType='';
+		    $mode = 0;
+		}
+
+		return dolGetStatus($labelstatut, $labelstatutShort, '', $statusType, $mode);
 	}
 
 
@@ -3891,7 +3905,7 @@ class OrderLine extends CommonOrderLine
 	 * Id of parent order
 	 * @var int
 	 * @deprecated Use fk_commande
-	 * @see fk_commande
+	 * @see $fk_commande
 	 */
 	public $commande_id;
 
@@ -3918,7 +3932,7 @@ class OrderLine extends CommonOrderLine
 
 	/**
 	 * @deprecated
-	 * @see remise_percent, fk_remise_except
+	 * @see $remise_percent, $fk_remise_except
 	 */
 	public $remise;
 

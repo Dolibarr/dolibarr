@@ -399,9 +399,24 @@ abstract class CommonObject
 	 */
 	public $location_incoterms;
 
+	/**
+	 * @var string The name
+	 */
 	public $name;
+
+    /**
+     * @var string The lastname
+     */
 	public $lastname;
+
+    /**
+     * @var string The firstname
+     */
 	public $firstname;
+
+    /**
+     * @var string The civility code, not an integer
+     */
 	public $civility_id;
 
 	// Dates
@@ -3271,7 +3286,7 @@ abstract class CommonObject
 	 *	@param  string	$targettype		Object target type
 	 *  @param	int		$rowid			Row id of line to delete. If defined, other parameters are not used.
 	 *	@return     					int	>0 if OK, <0 if KO
-	 *	@see	add_object_linked, updateObjectLinked, fetchObjectLinked
+	 *	@see	add_object_linked(), updateObjectLinked(), fetchObjectLinked()
 	 */
 	public function deleteObjectLinked($sourceid = null, $sourcetype = '', $targetid = null, $targettype = '', $rowid = '')
 	{
@@ -4024,7 +4039,7 @@ abstract class CommonObject
 
 			$i++;
 		}
-		print "</tbody>\n";
+		print "</tbody><!-- end printObjectLines() -->\n";
 	}
 
 	/**
@@ -5154,8 +5169,9 @@ abstract class CommonObject
 			$table_element = $this->table_element;
 			if ($table_element == 'categorie') $table_element = 'categories'; // For compatibility
 
+			dol_syslog(get_class($this)."::insertExtraFields delete then insert", LOG_DEBUG);
+
 			$sql_del = "DELETE FROM ".MAIN_DB_PREFIX.$table_element."_extrafields WHERE fk_object = ".$this->id;
-			dol_syslog(get_class($this)."::insertExtraFields delete", LOG_DEBUG);
 			$this->db->query($sql_del);
 
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX.$table_element."_extrafields (fk_object";
@@ -5165,6 +5181,17 @@ abstract class CommonObject
 				// Add field of attribut
 				if ($extrafields->attributes[$this->table_element]['type'][$attributeKey] != 'separate') // Only for other type than separator
 					$sql.=",".$attributeKey;
+			}
+			// We must insert a default value for fields for other entities that are mandatory to avoid not null error
+			if (is_array($extrafields->attributes[$this->table_element]['mandatoryfieldsofotherentities']))
+			{
+    			foreach($extrafields->attributes[$this->table_element]['mandatoryfieldsofotherentities'] as  $tmpkey => $tmpval)
+    			{
+    			    if (! isset($extrafields->attributes[$this->table_element]['type'][$tmpkey]))    // If field not already added previously
+    			    {
+    			        $sql.=",".$tmpkey;
+    			    }
+    			}
 			}
 			$sql .= ") VALUES (".$this->id;
 
@@ -5184,10 +5211,23 @@ abstract class CommonObject
 					}
 				}
 			}
+			// We must insert a default value for fields for other entities that are mandatory to avoid not null error
+			if (is_array($extrafields->attributes[$this->table_element]['mandatoryfieldsofotherentities']))
+			{
+			    foreach($extrafields->attributes[$this->table_element]['mandatoryfieldsofotherentities'] as  $tmpkey => $tmpval)
+    			{
+    			    if (! isset($extrafields->attributes[$this->table_element]['type'][$tmpkey]))    // If field not already added previously
+    			    {
+                        if (in_array($tmpval, array('int', 'double'))) $sql.=", 0";
+                        else $sql.=", ''";
+    			    }
+    			}
+			}
+
 			$sql.=")";
 
-			dol_syslog(get_class($this)."::insertExtraFields insert", LOG_DEBUG);
 			$resql = $this->db->query($sql);
+
 			if (! $resql)
 			{
 				$this->error=$this->db->lasterror();
@@ -5358,7 +5398,7 @@ abstract class CommonObject
 	 * @param  string  		$moreparam     To add more parameters on html input tag
 	 * @param  string  		$keysuffix     Prefix string to add into name and id of field (can be used to avoid duplicate names)
 	 * @param  string  		$keyprefix     Suffix string to add into name and id of field (can be used to avoid duplicate names)
-	 * @param  string|int		$morecss       Value for css to define style/length of field. May also be a numeric.
+	 * @param  string|int	$morecss       Value for css to define style/length of field. May also be a numeric.
 	 * @return string
 	 */
 	public function showInputField($val, $key, $value, $moreparam = '', $keysuffix = '', $keyprefix = '', $morecss = 0)
@@ -5412,7 +5452,7 @@ abstract class CommonObject
 
 		$langfile=$this->fields[$key]['langfile'];
 		$list=$this->fields[$key]['list'];
-		$hidden=abs($this->fields[$key]['visible'])!=1?1:0;
+		$hidden=(in_array(abs($this->fields[$key]['visible']), array(0,2)) ? 1 : 0);
 
 		$objectid = $this->id;
 
@@ -5424,12 +5464,12 @@ abstract class CommonObject
 		}
 
 
-		// Use in priority showsize from parameters, then $val['css'] then autodefine
+		// Set value of $morecss. For this, we use in priority showsize from parameters, then $val['css'] then autodefine
 		if (empty($morecss) && ! empty($val['css']))
 		{
-			$showsize = $val['css'];
+		    $morecss = $val['css'];
 		}
-		if (empty($morecss))
+		elseif (empty($morecss))
 		{
 			if ($type == 'date')
 			{
@@ -5484,6 +5524,10 @@ abstract class CommonObject
 			$tmp=explode(',', $size);
 			$newsize=$tmp[0];
 			$out='<input type="text" class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" maxlength="'.$newsize.'" value="'.dol_escape_htmltag($value).'"'.($moreparam?$moreparam:'').'>';
+		}
+		elseif (in_array($type, array('real')))
+		{
+		    $out='<input type="text" class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.dol_escape_htmltag($value).'"'.($moreparam?$moreparam:'').'>';
 		}
 		elseif (preg_match('/varchar/', $type))
 		{
@@ -5924,14 +5968,14 @@ abstract class CommonObject
 			if(! empty($value)) {
 				foreach($value as $option) {
 					$out.= '<span><a class="'.dol_escape_htmltag($keyprefix.$key.$keysuffix).'_del" href="javascript:;"><span class="fa fa-minus-circle valignmiddle"></span></a> ';
-					$out.= $this->showInputField($newval, $keyprefix.$key.$keysuffix.'[]', $option, $moreparam, '', '', $showsize).'<br></span>';
+					$out.= $this->showInputField($newval, $keyprefix.$key.$keysuffix.'[]', $option, $moreparam, '', '', $morecss).'<br></span>';
 				}
 			}
 
 			$out.= '<a id="'.dol_escape_htmltag($keyprefix.$key.$keysuffix).'_add" href="javascript:;"><span class="fa fa-plus-circle valignmiddle"></span></a>';
 
 			$newInput = '<span><a class="'.dol_escape_htmltag($keyprefix.$key.$keysuffix).'_del" href="javascript:;"><span class="fa fa-minus-circle valignmiddle"></span></a> ';
-			$newInput.= $this->showInputField($newval, $keyprefix.$key.$keysuffix.'[]', '', $moreparam, '', '', $showsize).'<br></span>';
+			$newInput.= $this->showInputField($newval, $keyprefix.$key.$keysuffix.'[]', '', $moreparam, '', '', $morecss).'<br></span>';
 
 			if(! empty($conf->use_javascript_ajax)) {
 				$out.= '
@@ -5968,10 +6012,10 @@ abstract class CommonObject
 	 * @param  string  $moreparam      To add more parametes on html input tag
 	 * @param  string  $keysuffix      Prefix string to add into name and id of field (can be used to avoid duplicate names)
 	 * @param  string  $keyprefix      Suffix string to add into name and id of field (can be used to avoid duplicate names)
-	 * @param  mixed   $showsize       Value for css to define size. May also be a numeric.
+	 * @param  mixed   $morecss        Value for css to define size. May also be a numeric.
 	 * @return string
 	 */
-	public function showOutputField($val, $key, $value, $moreparam = '', $keysuffix = '', $keyprefix = '', $showsize = 0)
+	public function showOutputField($val, $key, $value, $moreparam = '', $keysuffix = '', $keyprefix = '', $morecss = '')
 	{
 		global $conf,$langs,$form;
 
@@ -6022,45 +6066,41 @@ abstract class CommonObject
 			$value = dol_eval($computed, 1, 0);
 		}
 
-		if (empty($showsize))
+		if (empty($morecss))
 		{
 			if ($type == 'date')
 			{
-				//$showsize=10;
-				$showsize = 'minwidth100imp';
+				$morecss = 'minwidth100imp';
 			}
 			elseif ($type == 'datetime')
 			{
-				//$showsize=19;
-				$showsize = 'minwidth200imp';
+				$morecss = 'minwidth200imp';
 			}
 			elseif (in_array($type, array('int','double','price')))
 			{
-				//$showsize=10;
-				$showsize = 'maxwidth75';
+				$morecss = 'maxwidth75';
 			}
 			elseif ($type == 'url')
 			{
-				$showsize='minwidth400';
+				$morecss='minwidth400';
 			}
 			elseif ($type == 'boolean')
 			{
-				$showsize='';
+				$morecss='';
 			}
 			else
 			{
 				if (round($size) < 12)
 				{
-					$showsize = 'minwidth100';
+					$morecss = 'minwidth100';
 				}
 				elseif (round($size) <= 48)
 				{
-					$showsize = 'minwidth200';
+					$morecss = 'minwidth200';
 				}
 				else
 				{
-					//$showsize=48;
-					$showsize = 'minwidth400';
+					$morecss = 'minwidth400';
 				}
 			}
 		}
@@ -6089,6 +6129,12 @@ abstract class CommonObject
 			if (!empty($value)) {
 				$value=price($value);
 			}
+		}
+		elseif ($type == 'real')
+		{
+		    if (!empty($value)) {
+		        $value=price($value);
+		    }
 		}
 		elseif ($type == 'boolean')
 		{
@@ -7205,6 +7251,21 @@ abstract class CommonObject
 		if (! $error)
 		{
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX . $this->table_element);
+		}
+
+		// If we have a field ref with a default value of (PROV)
+		if (! $error)
+		{
+		    if (key_exists('ref', $this->fields) && $this->fields['ref']['notnull'] > 0 && ! is_null($this->fields['ref']['default']) && $this->fields['ref']['default'] == '(PROV)')
+		    {
+		        $sql="UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET ref = '(PROV".$this->id.")' WHERE ref = '(PROV)' AND rowid = ".$this->id;
+		        $resqlupdate = $this->db->query($sql);
+		        if ($resqlupdate===false)
+		        {
+		            $error++;
+		            $this->errors[] = $this->db->lasterror();
+		        }
+		    }
 		}
 
 		// Create extrafields

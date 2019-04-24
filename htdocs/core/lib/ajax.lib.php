@@ -369,14 +369,13 @@ function ajax_dialog($title, $message, $w = 350, $h = 150)
  * @param	int		$forcefocus					Force focus on field
  * @param	string	$widthTypeOfAutocomplete	'resolve' or 'off'
  * @return	string								Return html string to convert a select field into a combo, or '' if feature has been disabled for some reason.
- * @see selectArrayAjax of html.form.class
+ * @see selectArrayAjax() of html.form.class
  */
 function ajax_combobox($htmlname, $events = array(), $minLengthToAutocomplete = 0, $forcefocus = 0, $widthTypeOfAutocomplete = 'resolve')
 {
 	global $conf;
 
-	// select2 disabled for smartphones with standard browser.
-	// TODO With select2 v4, it seems ok, except that responsive style on table become crazy when scrolling at end of array)
+	// select2 can be disabled for smartphones
 	if (! empty($conf->browser->layout) && $conf->browser->layout == 'phone' && ! empty($conf->global->MAIN_DISALLOW_SELECT2_WITH_SMARTPHONE)) return '';
 
 	if (! empty($conf->global->MAIN_DISABLE_AJAX_COMBOX)) return '';

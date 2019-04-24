@@ -31,7 +31,7 @@ if (!$user->admin)
 accessforbidden();
 
 // Load translation files required by the page
-$langs->load("categories");
+$langs->loadLangs(array("categories","admin"));
 
 $action=GETPOST('action', 'aZ09');
 

@@ -67,7 +67,13 @@ class Cronjob extends CommonObject
 	public $md5params;
 	public $module_name;
 	public $priority;
+	/**
+	 * @var string|int     Date for last job execution
+	 */
 	public $datelastrun='';
+	/**
+	 * @var string|int     Date for next job execution
+	 */
 	public $datenextrun='';
 	public $dateend='';
 	public $datestart='';
@@ -845,7 +851,6 @@ class Cronjob extends CommonObject
 		if (! empty($conf->dol_no_mouse_hover)) $notooltip=1;   // Force disable tooltips
 
 		$result = '';
-		$companylink = '';
 
 		$label = '<u>' . $langs->trans("CronJob") . '</u>';
 		$label.= '<br>';
@@ -1207,7 +1212,7 @@ class Cronjob extends CommonObject
 	 * Reprogram a job
 	 *
 	 * @param  string		$userlogin      User login
-	 * @param  timestamp    $now            Date returned by dol_now()
+	 * @param  integer      $now            Date returned by dol_now()
 	 * @return int					        <0 if KO, >0 if OK
 	 */
 	public function reprogram_jobs($userlogin, $now)
@@ -1220,7 +1225,7 @@ class Cronjob extends CommonObject
 		$result=$user->fetch('', $userlogin);
 		if ($result<0)
 		{
-			$this->error="User Error:".$user->error;
+			$this->error="User Error : ".$user->error;
 			dol_syslog(get_class($this)."::reprogram_jobs ".$this->error, LOG_ERR);
 			return -1;
 		}

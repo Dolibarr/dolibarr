@@ -110,7 +110,6 @@ OrderMode=Order method
 AuthorRequest=Request author
 UserWithApproveOrderGrant=Users granted with "approve orders" permission.
 PaymentOrderRef=Payment of order %s
-CloneOrder=Clone order
 ConfirmCloneOrder=Are you sure you want to clone this order <b>%s</b>?
 DispatchSupplierOrder=Receiving purchase order %s
 FirstApprovalAlreadyDone=First approval already done

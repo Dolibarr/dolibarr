@@ -68,7 +68,7 @@ function commande_prepare_head(Commande $object)
 		if ($conf->expedition_bon->enabled && $conf->livraison_bon->enabled) $text.='/';
 		if ($conf->livraison_bon->enabled)  $text.=$langs->trans("Receivings");
 		if ($nbShipments > 0 || $nbReceiption > 0) $text.= ' <span class="badge">'.($nbShipments?$nbShipments:0);
-		if ($conf->expedition_bon->enabled && $conf->livraison_bon->enabled) $text.='/';
+		if ($conf->expedition_bon->enabled && $conf->livraison_bon->enabled && ($nbShipments > 0 || $nbReceiption > 0)) $text.='/';
 		if ($conf->expedition_bon->enabled && $conf->livraison_bon->enabled && ($nbShipments > 0 || $nbReceiption > 0)) $text.= ($nbReceiption?$nbReceiption:0);
 		if ($nbShipments > 0 || $nbReceiption > 0) $text.= '</span>';
 		$head[$h][1] = $text;

@@ -43,7 +43,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
  */
 class pdf_sponge extends ModelePDFFactures
 {
-     /**
+    /**
      * @var DoliDb Database handler
      */
     public $db;
@@ -70,9 +70,9 @@ class pdf_sponge extends ModelePDFFactures
 
 	/**
      * @var array Minimum version of PHP required by module.
-	 * e.g.: PHP ≥ 5.3 = array(5, 3)
+     * e.g.: PHP ≥ 5.5 = array(5, 5)
      */
-	public $phpmin = array(5, 2);
+	public $phpmin = array(5, 5);
 
 	/**
      * Dolibarr version of the loaded document
@@ -80,15 +80,46 @@ class pdf_sponge extends ModelePDFFactures
      */
 	public $version = 'development';
 
+     /**
+     * @var int page_largeur
+     */
     public $page_largeur;
+
+	/**
+     * @var int page_hauteur
+     */
     public $page_hauteur;
+
+	/**
+     * @var array format
+     */
     public $format;
+
+	/**
+     * @var int marge_gauche
+     */
 	public $marge_gauche;
+
+	/**
+     * @var int marge_droite
+     */
 	public $marge_droite;
+
+	/**
+     * @var int marge_haute
+     */
 	public $marge_haute;
+
+	/**
+     * @var int marge_basse
+     */
 	public $marge_basse;
 
-	public $emetteur;	// Objet societe qui emet
+    /**
+	* Issuer
+	* @var Societe
+	*/
+	public $emetteur;
 
 	/**
 	 * @var bool Situation invoice type
@@ -149,6 +180,9 @@ class pdf_sponge extends ModelePDFFactures
 		// Define position of columns
 		$this->posxdesc=$this->marge_gauche+1; // used for notes ans other stuff
 
+
+		$this->tabTitleHeight = 5; // default height
+
 		//  Use new system for position of columns, view  $this->defineColumnField()
 
 		$this->tva=array();
@@ -185,6 +219,11 @@ class pdf_sponge extends ModelePDFFactures
 	    $outputlangs->loadLangs(array("main", "bills", "products", "dict", "companies"));
 
 	    $nblignes = count($object->lines);
+
+	    $hidetop=0;
+	    if(!empty($conf->global->MAIN_PDF_DISABLE_COL_HEAD_TITLE)){
+	        $hidetop=$conf->global->MAIN_PDF_DISABLE_COL_HEAD_TITLE;
+	    }
 
 	    // Loop on each lines to detect if there is at least one image to show
 	    $realpatharray=array();
@@ -409,8 +448,8 @@ class pdf_sponge extends ModelePDFFactures
 	                $substitutionarray=pdf_getSubstitutionArray($outputlangs, null, $object);
 	                complete_substitutions_array($substitutionarray, $outputlangs, $object);
 	                $notetoshow = make_substitutions($notetoshow, $substitutionarray, $outputlangs);
-
-
+	                $notetoshow = convertBackOfficeMediasLinksToPublicLinks($notetoshow);
+	                
 	                $pdf->startTransaction();
 
 	                $pdf->SetFont('', '', $default_font_size - 1);
@@ -518,12 +557,17 @@ class pdf_sponge extends ModelePDFFactures
 	                $height_note=0;
 	            }
 
-	            $iniY = $tab_top + 7;
-	            $curY = $tab_top + 7;
-	            $nexY = $tab_top + 7;
-
 	            // Use new auto collum system
 	            $this->prepareArrayColumnField($object, $outputlangs, $hidedetails, $hidedesc, $hideref);
+
+			// Simulation de tableau pour connaitre la hauteur de la ligne de titre
+			$pdf->startTransaction();
+			$this->pdfTabTitles($pdf, $tab_top, $tab_height, $outputlangs, $hidetop);
+			$pdf->rollbackTransaction(true);
+
+			$iniY = $tab_top + $this->tabTitleHeight + 2;
+			$curY = $tab_top + $this->tabTitleHeight + 2;
+			$nexY = $tab_top + $this->tabTitleHeight + 2;
 
 	            // Loop on each lines
 	            $pageposbeforeprintlines=$pdf->getPage();
@@ -755,7 +799,7 @@ class pdf_sponge extends ModelePDFFactures
 	                            $pdf->setPage($pagenb);
 	                            if ($pagenb == $pageposbeforeprintlines)
 	                            {
-	                                $this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforfooter, 0, $outputlangs, 0, 1, $object->multicurrency_code);
+	                                $this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforfooter, 0, $outputlangs, $hidetop, 1, $object->multicurrency_code);
 	                            }
 	                            else
 	                            {
@@ -772,7 +816,7 @@ class pdf_sponge extends ModelePDFFactures
 	                        {
 	                            if ($pagenb == $pageposafter)
 	                            {
-	                                $this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforfooter, 0, $outputlangs, 0, 1, $object->multicurrency_code);
+	                                $this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforfooter, 0, $outputlangs, $hidetop, 1, $object->multicurrency_code);
 	                            }
 	                            else
 	                            {
@@ -790,7 +834,7 @@ class pdf_sponge extends ModelePDFFactures
 	            // Show square
 	            if ($pagenb == $pageposbeforeprintlines)
 	            {
-	                $this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforinfotot - $heightforfreetext - $heightforfooter, 0, $outputlangs, 0, 0, $object->multicurrency_code);
+	                $this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforinfotot - $heightforfreetext - $heightforfooter, 0, $outputlangs, $hidetop, 0, $object->multicurrency_code);
 	                $bottomlasttab=$this->page_hauteur - $heightforinfotot - $heightforfreetext - $heightforfooter + 1;
 	            }
 	            else
@@ -928,7 +972,7 @@ class pdf_sponge extends ModelePDFFactures
 				$invoice->fetch($obj->fk_facture_source);
 
 				$pdf->SetXY($tab3_posx, $tab3_top+$y);
-				$pdf->MultiCell(20, 3, dol_print_date($obj->datef, 'day', false, $outputlangs, true), 0, 'L', 0);
+				$pdf->MultiCell(20, 3, dol_print_date($this->db->jdate($obj->datef), 'day', false, $outputlangs, true), 0, 'L', 0);
 				$pdf->SetXY($tab3_posx+21, $tab3_top+$y);
 				$pdf->MultiCell(20, 3, price(($conf->multicurrency->enabled && $object->multicurrency_tx != 1) ? $obj->multicurrency_amount_ttc : $obj->amount_ttc, 0, $outputlangs), 0, 'L', 0);
 				$pdf->SetXY($tab3_posx+40, $tab3_top+$y);
@@ -1510,29 +1554,10 @@ class pdf_sponge extends ModelePDFFactures
 		$this->printRect($pdf, $this->marge_gauche, $tab_top, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $tab_height, $hidetop, $hidebottom);	// Rect prend une longueur en 3eme param et 4eme param
 
 
-		foreach ($this->cols as $colKey => $colDef)
-		{
-		    if(!$this->getColumnStatus($colKey)) continue;
-
-		    // get title label
-		    $colDef['title']['label'] = !empty($colDef['title']['label'])?$colDef['title']['label']:$outputlangs->transnoentities($colDef['title']['textkey']);
-
-		    // Add column separator
-		    if(!empty($colDef['border-left'])){
-		        $pdf->line($colDef['xStartPos'], $tab_top, $colDef['xStartPos'], $tab_top + $tab_height);
-		    }
-
-		    if (empty($hidetop))
-		    {
-		      $pdf->SetXY($colDef['xStartPos'] + $colDef['title']['padding'][3], $tab_top + $colDef['title']['padding'][0]);
-
-		      $textWidth = $colDef['width'] - $colDef['title']['padding'][3] -$colDef['title']['padding'][1];
-		      $pdf->MultiCell($textWidth, 2, $colDef['title']['label'], '', $colDef['title']['align']);
-		    }
-		}
+		$this->pdfTabTitles($pdf, $tab_top, $tab_height, $outputlangs, $hidetop);
 
 		if (empty($hidetop)){
-			$pdf->line($this->marge_gauche, $tab_top+5, $this->page_largeur-$this->marge_droite, $tab_top+5);	// line prend une position y en 2eme param et 4eme param
+		    $pdf->line($this->marge_gauche, $tab_top+$this->tabTitleHeight, $this->page_largeur-$this->marge_droite, $tab_top+$this->tabTitleHeight);	// line prend une position y en 2eme param et 4eme param
 		}
 	}
 
@@ -1829,7 +1854,7 @@ class pdf_sponge extends ModelePDFFactures
 	 *  Define Array Column Field
 	 *
 	 *  @param	object			$object    		common object
-	 *  @param	outputlangs		$outputlangs    langs
+	 *  @param	Translate		$outputlangs    langs
      *  @param	int			   $hidedetails		Do not show line details
      *  @param	int			   $hidedesc		Do not show desc
      *  @param	int			   $hideref			Do not show ref

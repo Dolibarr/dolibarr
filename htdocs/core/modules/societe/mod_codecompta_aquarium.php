@@ -45,7 +45,7 @@ class mod_codecompta_aquarium extends ModeleAccountancyCode
 
 	/**
      * Dolibarr version of the loaded document
-     * @public string
+     * @var string
      */
 	public $version = 'dolibarr';        // 'development', 'experimental', 'dolibarr'
 

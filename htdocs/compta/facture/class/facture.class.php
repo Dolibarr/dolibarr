@@ -286,7 +286,7 @@ class Facture extends CommonInvoice
 	 *
 	 *	@param	User	$user      		Object user that create
 	 *	@param  int		$notrigger		1=Does not execute triggers, 0 otherwise
-	 * 	@param	int		$forceduedate	1=Do not recalculate due date from payment condition but force it with value
+	 * 	@param	int		$forceduedate	If set, do not recalculate due date from payment condition but force it with value
 	 *	@return	int						<0 if KO, >0 if OK
 	 */
     public function create(User $user, $notrigger = 0, $forceduedate = 0)
@@ -675,7 +675,7 @@ class Facture extends CommonInvoice
 						$vatrate = $line->tva_tx;
 						if ($line->vat_src_code && ! preg_match('/\(.*\)/', $vatrate)) $vatrate.=' ('.$line->vat_src_code.')';
 
-    $result = $this->addline(
+                        $result = $this->addline(
 							$line->desc,
 							$line->subprice,
 							$line->qty,
@@ -965,82 +965,80 @@ class Facture extends CommonInvoice
 
 
 	/**
-	 *		Load an object from its id and create a new one in database
+	 *	Load an object from its id and create a new one in database
 	 *
-	 *		@param		int				$socid			Id of thirdparty
-	 * 	 	@return		int								New id of clone
+     *	@param      User	$user        	User that clone
+	 *  @param  	int 	$fromid         Id of object to clone
+	 * 	@return		int					    New id of clone
 	 */
-    public function createFromClone($socid = 0)
+	public function createFromClone(User $user, $fromid = 0)
 	{
-		global $user,$hookmanager, $conf;
+		global $hookmanager;
 
 		$error=0;
 
+		$object=new Facture($this->db);
+
 		$this->db->begin();
 
-		// get extrafields so they will be clone
-		foreach($this->lines as $line)
-			$line->fetch_optionals($line->rowid);
-
-		// Load source object
-		$objFrom = clone $this;
+		$object->fetch($fromid);
 
 		// Change socid if needed
-		if (! empty($socid) && $socid != $this->socid)
+		if (! empty($this->socid) && $this->socid != $object->socid)
 		{
 			$objsoc = new Societe($this->db);
 
-			if ($objsoc->fetch($socid)>0)
+			if ($objsoc->fetch($this->socid)>0)
 			{
-				$this->socid 				= $objsoc->id;
-				$this->cond_reglement_id	= (! empty($objsoc->cond_reglement_id) ? $objsoc->cond_reglement_id : 0);
-				$this->mode_reglement_id	= (! empty($objsoc->mode_reglement_id) ? $objsoc->mode_reglement_id : 0);
-				$this->fk_project			= '';
-				$this->fk_delivery_address	= '';
+			    $object->socid 				= $objsoc->id;
+			    $object->cond_reglement_id	= (! empty($objsoc->cond_reglement_id) ? $objsoc->cond_reglement_id : 0);
+			    $object->mode_reglement_id	= (! empty($objsoc->mode_reglement_id) ? $objsoc->mode_reglement_id : 0);
+			    $object->fk_project			= '';
+			    $object->fk_delivery_address	= '';
 			}
 
 			// TODO Change product price if multi-prices
 		}
 
-		$this->id=0;
-		$this->statut= self::STATUS_DRAFT;
+		$object->id=0;
+		$object->statut= self::STATUS_DRAFT;
 
 		// Clear fields
-		$this->date               = dol_now();	// Date of invoice is set to current date when cloning. // TODO Best is to ask date into confirm box
-		$this->user_author        = $user->id;
-		$this->user_valid         = '';
-		$this->fk_facture_source  = 0;
-		$this->date_creation      = '';
-		$this->date_modification = '';
-		$this->date_validation    = '';
-		$this->ref_client         = '';
-		$this->close_code         = '';
-		$this->close_note         = '';
-		$this->products = $this->lines;	// Tant que products encore utilise
+		$object->date               = (empty($this->date) ? dol_now() : $this->date);
+		$object->user_author        = $user->id;
+		$object->user_valid         = '';
+		$object->fk_facture_source  = 0;
+		$object->date_creation      = '';
+		$object->date_modification = '';
+		$object->date_validation    = '';
+		$object->ref_client         = '';
+		$object->close_code         = '';
+		$object->close_note         = '';
+		$object->products = $object->lines;	        // For backward compatibility
 
 		// Loop on each line of new invoice
-		foreach($this->lines as $i => $line)
+		foreach($object->lines as $i => $line)
 		{
-			if (($this->lines[$i]->info_bits & 0x02) == 0x02)	// We do not clone line of discounts
+		    if (($object->lines[$i]->info_bits & 0x02) == 0x02)	// We do not clone line of discounts
 			{
-				unset($this->lines[$i]);
-				unset($this->products[$i]);	// Tant que products encore utilise
+			    unset($object->lines[$i]);
+			    unset($object->products[$i]);	// Tant que products encore utilise
 			}
 		}
 
 		// Create clone
-		$this->context['createfromclone'] = 'createfromclone';
-		$result=$this->create($user);
+		$object->context['createfromclone'] = 'createfromclone';
+		$result=$object->create($user);
 		if ($result < 0) $error++;
 		else {
 			// copy internal contacts
-			if ($this->copy_linked_contact($objFrom, 'internal') < 0)
+		    if ($object->copy_linked_contact($this, 'internal') < 0)
 				$error++;
 
 			// copy external contacts if same company
-			elseif ($objFrom->socid == $this->socid)
+			elseif ($this->socid == $object->socid)
 			{
-				if ($this->copy_linked_contact($objFrom, 'external') < 0)
+			    if ($object->copy_linked_contact($this, 'external') < 0)
 					$error++;
 			}
 		}
@@ -1050,20 +1048,20 @@ class Facture extends CommonInvoice
 			// Hook of thirdparty module
 			if (is_object($hookmanager))
 			{
-				$parameters=array('objFrom'=>$objFrom);
+				$parameters=array('objFrom'=>$this);
 				$action='';
-				$reshook=$hookmanager->executeHooks('createFrom', $parameters, $this, $action);    // Note that $action and $object may have been modified by some hooks
+				$reshook=$hookmanager->executeHooks('createFrom', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
 				if ($reshook < 0) $error++;
 			}
 		}
 
-		unset($this->context['createfromclone']);
+		unset($object->context['createfromclone']);
 
 		// End
 		if (! $error)
 		{
 			$this->db->commit();
-			return $this->id;
+			return $object->id;
 		}
 		else
 		{
@@ -1081,7 +1079,7 @@ class Facture extends CommonInvoice
 	 */
     public function createFromOrder($object, User $user)
 	{
-		global $hookmanager;
+		global $conf, $hookmanager;
 
 		$error=0;
 
@@ -1142,8 +1140,12 @@ class Facture extends CommonInvoice
 		$this->fk_delivery_address  = $object->fk_delivery_address;
 		$this->contact_id           = $object->contactid;
 		$this->ref_client           = $object->ref_client;
-		$this->note_private         = $object->note_private;
-		$this->note_public          = $object->note_public;
+
+		if (empty($conf->global->MAIN_DISABLE_PROPAGATE_NOTES_FROM_ORIGIN))
+		{
+		    $this->note_private         = $object->note_private;
+            $this->note_public          = $object->note_public;
+		}
 
         $this->module_source		= $object->module_source;
 		$this->pos_source			= $object->pos_source;
@@ -1195,9 +1197,10 @@ class Facture extends CommonInvoice
      *  @param	int  	$notooltip		 			1=Disable tooltip
      *  @param  int     $addlinktonotes  			1=Add link to notes
      *  @param  int     $save_lastsearch_value		-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+     *  @param  string  $target                     Target of link ('', '_self', '_blank', '_parent', '_backoffice', ...)
 	 *  @return string 			         			String with URL
 	 */
-    public function getNomUrl($withpicto = 0, $option = '', $max = 0, $short = 0, $moretitle = '', $notooltip = 0, $addlinktonotes = 0, $save_lastsearch_value = -1)
+    public function getNomUrl($withpicto = 0, $option = '', $max = 0, $short = 0, $moretitle = '', $notooltip = 0, $addlinktonotes = 0, $save_lastsearch_value = -1, $target = '')
 	{
 		global $langs, $conf, $user, $form;
 
@@ -1250,7 +1253,7 @@ class Facture extends CommonInvoice
     		if ($moretitle) $label.=' - '.$moretitle;
         }
 
-		$linkclose='';
+		$linkclose=($target?' target="'.$target.'"':'');
 		if (empty($notooltip) && $user->rights->facture->lire)
 		{
 		    if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
@@ -1321,7 +1324,7 @@ class Facture extends CommonInvoice
 		$sql.= ', f.tms as datem';
 		$sql.= ', f.note_private, f.note_public, f.fk_statut, f.paye, f.close_code, f.close_note, f.fk_user_author, f.fk_user_valid, f.model_pdf, f.last_main_doc';
 		$sql.= ', f.fk_facture_source';
-		$sql.= ', f.fk_mode_reglement, f.fk_cond_reglement, f.fk_projet, f.extraparams';
+		$sql.= ', f.fk_mode_reglement, f.fk_cond_reglement, f.fk_projet as fk_project, f.extraparams';
 		$sql.= ', f.situation_cycle_ref, f.situation_counter, f.situation_final';
 		$sql.= ', f.fk_account';
 		$sql.= ", f.fk_multicurrency, f.multicurrency_code, f.multicurrency_tx, f.multicurrency_total_ht, f.multicurrency_total_tva, f.multicurrency_total_ttc";
@@ -1386,7 +1389,7 @@ class Facture extends CommonInvoice
 				$this->cond_reglement		= $obj->cond_reglement_libelle;
 				$this->cond_reglement_doc	= $obj->cond_reglement_libelle_doc;
 				$this->fk_account           = ($obj->fk_account>0)?$obj->fk_account:null;
-				$this->fk_project			= $obj->fk_projet;
+				$this->fk_project			= $obj->fk_project;
 				$this->fk_facture_source	= $obj->fk_facture_source;
 				$this->note					= $obj->note_private;	// deprecated
 				$this->note_private			= $obj->note_private;
@@ -1551,7 +1554,7 @@ class Facture extends CommonInvoice
 				$line->multicurrency_total_tva 	= $objp->multicurrency_total_tva;
 				$line->multicurrency_total_ttc 	= $objp->multicurrency_total_ttc;
 
-                                $line->fetch_optionals();
+                $line->fetch_optionals();
 
 				$this->lines[$i] = $line;
 
@@ -1670,7 +1673,7 @@ class Facture extends CommonInvoice
 		$sql.= " import_key=".(isset($this->import_key)?"'".$this->db->escape($this->import_key)."'":"null").",";
 		$sql.= " situation_cycle_ref=".(empty($this->situation_cycle_ref)?"null":$this->db->escape($this->situation_cycle_ref)).",";
 		$sql.= " situation_counter=".(empty($this->situation_counter)?"null":$this->db->escape($this->situation_counter)).",";
-		$sql.= " situation_final=".(empty($this->situation_counter)?"0":$this->db->escape($this->situation_counter));
+		$sql.= " situation_final=".(empty($this->situation_final)?"0":$this->db->escape($this->situation_final));
 		$sql.= " WHERE rowid=".$this->id;
 
 		$this->db->begin();
@@ -2502,7 +2505,7 @@ class Facture extends CommonInvoice
 		{
 			$is_last = $next_invoice->is_last_in_cycle();
 
-			if ($next_invoice->brouillon && $is_last != 1)
+			if ($next_invoice->statut == self::STATUS_DRAFT && $is_last != 1)
 			{
 				$this->error = $langs->trans('updatePriceNextInvoiceErrorUpdateline', $next_invoice->ref);
 				return false;
@@ -2537,7 +2540,7 @@ class Facture extends CommonInvoice
 	 *	@param	int		$idwarehouse	Id warehouse to use for stock change.
 	 *	@return	int						<0 if KO, >0 if OK
 	 */
-    public function set_draft($user, $idwarehouse = -1)
+    public function setDraft($user, $idwarehouse = -1)
 	{
         // phpcs:enable
 		global $conf,$langs;
@@ -2550,16 +2553,22 @@ class Facture extends CommonInvoice
 			return 0;
 		}
 
+		dol_syslog(get_class($this)."::set_draft", LOG_DEBUG);
+
 		$this->db->begin();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."facture";
 		$sql.= " SET fk_statut = ".self::STATUS_DRAFT;
 		$sql.= " WHERE rowid = ".$this->id;
 
-		dol_syslog(get_class($this)."::set_draft", LOG_DEBUG);
 		$result=$this->db->query($sql);
 		if ($result)
 		{
+		    if (! $error)
+		    {
+		        $this->oldcopy= clone $this;
+		    }
+
 			// Si on decremente le produit principal et ses composants a la validation de facture, on réincrement
 			if ($this->type != self::TYPE_DEPOSIT && $result >= 0 && ! empty($conf->stock->enabled) && ! empty($conf->global->STOCK_CALCULATE_ON_BILL))
 			{
@@ -2585,6 +2594,7 @@ class Facture extends CommonInvoice
 				$old_statut=$this->statut;
 				$this->brouillon = 1;
 				$this->statut = self::STATUS_DRAFT;
+
 	            // Call trigger
 	            $result=$this->call_trigger('BILL_UNVALIDATE', $user);
 	            if ($result < 0)
@@ -2668,7 +2678,8 @@ class Facture extends CommonInvoice
 		global $mysoc, $conf, $langs;
 
 		dol_syslog(get_class($this)."::addline id=$this->id,desc=$desc,pu_ht=$pu_ht,qty=$qty,txtva=$txtva, txlocaltax1=$txlocaltax1, txlocaltax2=$txlocaltax2, fk_product=$fk_product,remise_percent=$remise_percent,date_start=$date_start,date_end=$date_end,ventil=$ventil,info_bits=$info_bits,fk_remise_except=$fk_remise_except,price_base_type=$price_base_type,pu_ttc=$pu_ttc,type=$type, fk_unit=$fk_unit", LOG_DEBUG);
-		if (! empty($this->brouillon))
+
+		if ($this->statut == self::STATUS_DRAFT)
 		{
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 
@@ -2708,6 +2719,12 @@ class Facture extends CommonInvoice
 
 			// Check parameters
 			if ($type < 0) return -1;
+
+			if ($date_start && $date_end && $date_start > $date_end) {
+				$langs->load("errors");
+				$this->error=$langs->trans('ErrorStartDateGreaterEnd');
+				return -1;
+			}
 
 			$this->db->begin();
 
@@ -2865,9 +2882,9 @@ class Facture extends CommonInvoice
 	 *  @param     	string		$desc            	Description of line
 	 *  @param     	double		$pu              	Prix unitaire (HT ou TTC selon price_base_type) (> 0 even for credit note lines)
 	 *  @param     	double		$qty             	Quantity
-	 *  @param     	double		$remise_percent  	Pourcentage de remise de la ligne
-	 *  @param     	int		$date_start      	Date de debut de validite du service
-	 *  @param     	int		$date_end        	Date de fin de validite du service
+	 *  @param     	double		$remise_percent  	Percentage discount of the line
+	 *  @param     	int		    $date_start      	Date de debut de validite du service
+	 *  @param     	int		    $date_end        	Date de fin de validite du service
 	 *  @param     	double		$txtva          	VAT Rate (Can be '8.5', '8.5 (ABC)')
 	 * 	@param		double		$txlocaltax1		Local tax 1 rate
 	 *  @param		double		$txlocaltax2		Local tax 2 rate
@@ -2910,6 +2927,12 @@ class Facture extends CommonInvoice
 					if (!$this->error) $this->error=$langs->trans('invoiceLineProgressError');
 					return -3;
 				}
+			}
+
+			if ($date_start && $date_end && $date_start > $date_end) {
+				$langs->load("errors");
+				$this->error=$langs->trans('ErrorStartDateGreaterEnd');
+				return -1;
 			}
 
 			$this->db->begin();
@@ -4269,7 +4292,6 @@ class Facture extends CommonInvoice
 	 * Checks if the invoice is the last in its cycle
 	 *
 	 * @return bool Last of the cycle status
-	 *
 	 */
     public function is_last_in_cycle()
 	{
@@ -4299,8 +4321,8 @@ class Facture extends CommonInvoice
 	 * Function used to replace a thirdparty id with another one.
 	 *
 	 * @param  DoliDB  $db             Database handler
-	 * @param  int     $origin_id      Old thirdparty id
-	 * @param  int     $dest_id        New thirdparty id
+	 * @param  int     $origin_id      Old third-party id
+	 * @param  int     $dest_id        New third-party id
 	 * @return bool
 	 */
 	public static function replaceThirdparty(DoliDB $db, $origin_id, $dest_id)
@@ -4383,20 +4405,16 @@ class FactureLigne extends CommonInvoiceLine
 	public $date_start;
 	public $date_end;
 
-	// Ne plus utiliser
-	//var $price;         	// P.U. HT apres remise % de ligne (exemple 80)
-	//var $remise;			// Montant calcule de la remise % sur PU HT (exemple 20)
-
 	// From llx_product
 	/**
 	 * @deprecated
-	 * @see product_ref
+	 * @see $product_ref
 	 */
 	public $ref;				// Product ref (deprecated)
 	public $product_ref;       // Product ref
 	/**
 	 * @deprecated
-	 * @see product_label
+	 * @see $product_label
 	 */
 	public $libelle;      		// Product label (deprecated)
 	public $product_label;     // Product label

@@ -85,7 +85,7 @@ if (! $sortorder) $sortorder="DESC";
 if (GETPOST('search_fk_status', 'alpha') == 'non_closed') $_GET['search_fk_statut'][]='openall';     // For backward compatibility
 
 // Initialize array of search criterias
-$search_all=trim(GETPOST("search_all", 'alpha'));
+$search_all=trim(GETPOSTISSET("search_all")?GETPOSTISSET("search_all", 'alpha'):GETPOST('sall'));
 $search=array();
 foreach($object->fields as $key => $val)
 {
@@ -190,9 +190,6 @@ $socstatic = new Societe($db);
 $help_url = '';
 $title = $langs->trans('TicketList');
 
-llxHeader('', $title, $help_url);
-
-
 
 // Build and execute select
 // --------------------------------------------------------------------
@@ -216,7 +213,7 @@ else $sql.=" WHERE 1 = 1";
 
 foreach($search as $key => $val)
 {
-	if ($key == 'fk_statut')
+    if ($key == 'fk_statut')
 	{
 	    $tmpstatus='';
 	    if ($search['fk_statut'] == 'openall' || in_array('openall', $search['fk_statut'])) $tmpstatus.=($tmpstatus?',':'')."'0', '1', '3', '4', '5', '6'";
@@ -225,8 +222,13 @@ foreach($search as $key => $val)
 	    elseif (is_array($search[$key]) && count($search[$key])) $sql.=natural_search($key, join(',', $search[$key]), 2);
 	    continue;
 	}
+	if ($key == 'fk_user_assign')
+	{
+	    if ($search[$key] > 0) $sql.=natural_search($key, $search[$key], 2);
+	    continue;
+	}
 	$mode_search=(($object->isInt($object->fields[$key]) || $object->isFloat($object->fields[$key]))?1:0);
-    if ($search[$key] != '') $sql.=natural_search($key, $search[$key], (($key == 'fk_statut')?2:$mode_search));
+    if ($search[$key] != '') $sql.=natural_search($key, $search[$key], $mode_search);
 }
 if ($search_all) $sql.= natural_search(array_keys($fieldstosearchall), $search_all);
 if ($search_fk_soc)     $sql.= natural_search('fk_soc', $search_fk_soc, 2);
@@ -243,22 +245,6 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListWhere', $parameters, $object);    // Note that $action and $object may have been modified by hook
 $sql.=$hookmanager->resPrint;
-
-/* If a group by is required
-$sql.= " GROUP BY "
-foreach($object->fields as $key => $val)
-{
-	$sql.='t.'.$key.', ';
-}
-// Add fields from extrafields
-if (! empty($extrafields->attributes[$object->table_element]['label'])) {
-	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) $sql.=($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? "ef.".$key.', ' : '');
-// Add where from hooks
-$parameters=array();
-$reshook=$hookmanager->executeHooks('printFieldListGroupBy',$parameters);    // Note that $action and $object may have been modified by hook
-$sql.=$hookmanager->resPrint;
-$sql=preg_replace('/, $/','', $sql);
-*/
 
 $sql.=$db->order($sortfield, $sortorder);
 
@@ -305,6 +291,9 @@ if ($num == 1 && ! empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && 
 
 // Output page
 // --------------------------------------------------------------------
+
+llxHeader('', $title, $help_url);
+
 
 if ($socid && !$projectid && $user->rights->societe->lire) {
     $socstat = new Societe($db);
@@ -399,7 +388,7 @@ if ($projectid > 0) {
         print '<div class="fichecenter">';
         print '<div class="underbanner clearboth"></div>';
 
-        print '<table class="border" width="100%">';
+        print '<table class="border tableforfield" width="100%">';
 
         // Visibility
         print '<tr><td class="titlefield">' . $langs->trans("Visibility") . '</td><td>';
@@ -442,7 +431,7 @@ $arrayofmassactions =  array(
 	//'presend'=>$langs->trans("SendByMail"),
 	//'builddoc'=>$langs->trans("PDFMerge"),
 );
-if ($user->rights->ticket->delete) $arrayofmassactions['predelete']=$langs->trans("Delete");
+if ($user->rights->ticket->delete) $arrayofmassactions['predelete']='<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
 if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
 $massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 
@@ -462,7 +451,7 @@ if ($projectid) print '<input type="hidden" name="projectid" value="' . $project
 $newcardbutton='';
 if ($user->rights->ticket->write)
 {
-	$newcardbutton = '<a class="butActionNew" href="'.DOL_URL_ROOT.'/ticket/card.php?action=create' . ($socid ? '&socid=' . $socid : '') . ($projectid ? '&origin=projet_project&originid=' . $projectid : '') . '"><span class="valignmiddle">' . $langs->trans('NewTicket').'</span>';
+	$newcardbutton = '<a class="butActionNew" href="'.DOL_URL_ROOT.'/ticket/card.php?action=create' . ($socid ? '&socid=' . $socid : '') . ($projectid ? '&origin=projet_project&originid=' . $projectid : '') . '"><span class="valignmiddle text-plus-circle">' . $langs->trans('NewTicket').'</span>';
 	$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
 	$newcardbutton.= '</a>';
 }
@@ -479,10 +468,10 @@ $objecttmp=new Ticket($db);
 $trackid='tick'.$object->id;
 include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
-if ($sall)
+if ($search_all)
 {
 	foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
-	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $sall) . join(', ', $fieldstosearchall).'</div>';
+	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all) . join(', ', $fieldstosearchall).'</div>';
 }
 
 $moreforfilter = '';
@@ -640,6 +629,7 @@ while ($i < min($num, $limit))
 			if ($cssforfield || $val['css']) print '"';
 			print '>';
 			if ($key == 'fk_statut') print $object->getLibStatut(5);
+			elseif (in_array($val['type'], array('date','datetime','timestamp'))) print $object->showOutputField($val, $key, $db->jdate($obj->$key), '');
 			else print $object->showOutputField($val, $key, $obj->$key, '');
 			print '</td>';
 			if (! $i) $totalarray['nbfield']++;

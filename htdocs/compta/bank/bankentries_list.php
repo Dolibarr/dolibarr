@@ -44,6 +44,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php'
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/salaries/class/paymentsalary.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/paymentvarious.class.php';
 require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/paymentexpensereport.class.php';
 require_once DOL_DOCUMENT_ROOT.'/loan/class/loan.class.php';
@@ -374,6 +375,7 @@ $paymentstatic=new Paiement($db);
 $paymentsupplierstatic=new PaiementFourn($db);
 $paymentvatstatic=new TVA($db);
 $paymentsalstatic=new PaymentSalary($db);
+$paymentvariousstatic=new PaymentVarious($db);
 $donstatic=new Don($db);
 $paymentexpensereportstatic=new PaymentExpenseReport($db);
 $bankstatic=new Account($db);
@@ -562,7 +564,7 @@ if ($resql)
         //'presend'=>$langs->trans("SendByMail"),
         //'builddoc'=>$langs->trans("PDFMerge"),
     );
-    //if ($user->rights->bank->supprimer) $arrayofmassactions['predelete']=$langs->trans("Delete");
+    //if ($user->rights->bank->supprimer) $arrayofmassactions['predelete']='<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
     if (in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
     $massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 
@@ -755,11 +757,11 @@ if ($resql)
 			if (empty($conf->global->BANK_USE_OLD_VARIOUS_PAYMENT))	// If direct entries is done using miscellaneous payments
 			{
 				if ($user->rights->banque->modifier) {
-					$newcardbutton = '<a class="butActionNew" href="'.DOL_URL_ROOT.'/compta/bank/various_payment/card.php?action=create&accountid='.$search_account.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.urlencode($search_account)).'"><span class="valignmiddle">'.$langs->trans("AddBankRecord").'</span>';
+					$newcardbutton = '<a class="butActionNew" href="'.DOL_URL_ROOT.'/compta/bank/various_payment/card.php?action=create&accountid='.$search_account.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.urlencode($search_account)).'"><span class="valignmiddle text-plus-circle">'.$langs->trans("AddBankRecord").'</span>';
 					$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
 					$newcardbutton.= '</a>';
 				} else {
-					$newcardbutton = '<a class="butActionNewRefused" title="'.$langs->trans("NotEnoughPermissions").'" href="#">'.$langs->trans("AddBankRecord");
+					$newcardbutton = '<a class="butActionNewRefused" title="'.$langs->trans("NotEnoughPermissions").'" href="#"><span class="valignmiddle text-plus-circle">'.$langs->trans("AddBankRecord").'</span>';
 					$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
 					$newcardbutton.= '</a>';
 				}
@@ -767,11 +769,11 @@ if ($resql)
 			else													// If direct entries is not done using miscellaneous payments
 			{
 				if ($user->rights->banque->modifier) {
-					$newcardbutton = '<a class="butActionNew" href="'.$_SERVER["PHP_SELF"].'?action=addline&page='.$page.$param.'">'.$langs->trans("AddBankRecord");
+					$newcardbutton = '<a class="butActionNew" href="'.$_SERVER["PHP_SELF"].'?action=addline&page='.$page.$param.'"><span class="valignmiddle text-plus-circle">'.$langs->trans("AddBankRecord").'</span>';
 					$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
 					$newcardbutton.= '</a>';
 				} else {
-					$newcardbutton = '<a class="butActionNewRefused" title="'.$langs->trans("NotEnoughPermissions").'" href="#">'.$langs->trans("AddBankRecord");
+					$newcardbutton = '<a class="butActionNewRefused" title="'.$langs->trans("NotEnoughPermissions").'" href="#"><span class="valignmiddle text-plus-circle">'.$langs->trans("AddBankRecord").'</span>';
 					$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
 					$newcardbutton.= '</a>';
 				}
@@ -779,7 +781,7 @@ if ($resql)
 		}
 		else
 		{
-			$newcardbutton = '<a class="butActionNewRefused" title="'.$langs->trans("FeatureDisabled").'" href="#">'.$langs->trans("AddBankRecord");
+			$newcardbutton = '<a class="butActionNewRefused" title="'.$langs->trans("FeatureDisabled").'" href="#"><span class="valignmiddle text-plus-circle">'.$langs->trans("AddBankRecord").'</span>';
 			$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
 			$newcardbutton.= '</a>';
 		}
@@ -1153,13 +1155,13 @@ if ($resql)
     	        if ($links[$key]['type']=='payment')
     	        {
     	            $paymentstatic->id=$links[$key]['url_id'];
-    	            $paymentstatic->ref=$links[$key]['url_id'];
+    	            $paymentstatic->ref=$links[$key]['url_id'];    // FIXME This is id, not ref of payment
     	            print ' '.$paymentstatic->getNomUrl(2);
     	        }
     	        elseif ($links[$key]['type']=='payment_supplier')
     	        {
     	            $paymentsupplierstatic->id=$links[$key]['url_id'];
-    	            $paymentsupplierstatic->ref=$links[$key]['url_id'];
+    	            $paymentsupplierstatic->ref=$links[$key]['url_id'];    // FIXME This is id, not ref of payment
     	            print ' '.$paymentsupplierstatic->getNomUrl(2);
     	        }
     	        elseif ($links[$key]['type']=='payment_sc')
@@ -1198,6 +1200,12 @@ if ($resql)
     	            $paymentexpensereportstatic->id=$links[$key]['url_id'];
     	            $paymentexpensereportstatic->ref=$links[$key]['url_id'];
     	            print ' '.$paymentexpensereportstatic->getNomUrl(2);
+    	        }
+    	        elseif ($links[$key]['type']=='payment_various')
+    	        {
+    	            $paymentvariousstatic->id=$links[$key]['url_id'];
+    	            $paymentvariousstatic->ref=$links[$key]['url_id'];
+    	            print ' '.$paymentvariousstatic->getNomUrl(2);
     	        }
     	        elseif ($links[$key]['type']=='banktransfert')
     	        {

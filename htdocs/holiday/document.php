@@ -118,7 +118,7 @@ if ($object->id)
 	//print '<div class="fichehalfleft">';
 	print '<div class="underbanner clearboth"></div>';
 
-	print '<table class="border centpercent">';
+	print '<table class="border tableforfield centpercent">';
 
     print '<tr>';
     print '<td class="titlefield">'.$langs->trans("User").'</td>';
@@ -144,7 +144,7 @@ if ($object->id)
         print '<td>'.$langs->trans('DateDebCP').' ('.$langs->trans("FirstDayOfHoliday").')</td>';
         print '<td>'.dol_print_date($object->date_debut, 'day');
         print ' &nbsp; &nbsp; ';
-        print $langs->trans($listhalfday[$starthalfday]);
+        print '<span class="opacitymedium">'.$langs->trans($listhalfday[$starthalfday]).'</span>';
         print '</td>';
         print '</tr>';
     }
@@ -166,7 +166,7 @@ if ($object->id)
         print '<td>'.$langs->trans('DateFinCP').' ('.$langs->trans("LastDayOfHoliday").')</td>';
         print '<td>'.dol_print_date($object->date_fin, 'day');
         print ' &nbsp; &nbsp; ';
-        print $langs->trans($listhalfday[$endhalfday]);
+        print '<span class="opacitymedium">'.$langs->trans($listhalfday[$endhalfday]).'</span>';
         print '</td>';
         print '</tr>';
     }
@@ -223,7 +223,7 @@ if ($object->id)
     print '<div class="underbanner clearboth"></div>';
 
 	// Info workflow
-    print '<table class="border centpercent">'."\n";
+    print '<table class="border tableforfield centpercent">'."\n";
     print '<tbody>';
 
     if (! empty($object->fk_user_create))

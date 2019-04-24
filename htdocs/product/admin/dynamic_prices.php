@@ -176,7 +176,7 @@ if ($action != 'create_updater' && $action != 'edit_updater') {
 	        print '<td>'.$entry->code.'</td>';
 	        print '<td>'.$entry->description.'</td>';
 	        print '<td>'.price($entry->value).'</td>';
-	        print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=edit_variable&selection='.$entry->id.'">'.img_edit().'</a> &nbsp;';
+	        print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=edit_variable&selection='.$entry->id.'">'.img_edit().'</a> &nbsp;';
 	        print '<a href="'.$_SERVER["PHP_SELF"].'?action=delete_variable&selection='.$entry->id.'">'.img_delete().'</a></td>';
 	        print '</tr>';
 	    }
@@ -228,7 +228,7 @@ if ($action == 'create_variable' || $action == 'edit_variable') {
     print '</table>';
 
     //Form Buttons
-    print '<br><div align="center">';
+    print '<br><div class="center">';
     print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'"> &nbsp;';
     print '<input type="submit" class="button" name="cancel" id="cancel" value="'.$langs->trans("Cancel").'">';
     print '</div>';
@@ -267,7 +267,7 @@ if ($action != 'create_variable' && $action != 'edit_variable') {
 	        print '<td style="max-width: 250px; word-wrap: break-word; white-space: pre-wrap;">'.$entry->parameters.'</td>';
 	        print '<td>'.$entry->update_interval.'</td>';
 	        print '<td>'.$entry->getLastUpdated().'</td>';
-	        print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=edit_updater&selection='.$entry->id.'">'.img_edit().'</a> &nbsp;';
+	        print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=edit_updater&selection='.$entry->id.'">'.img_edit().'</a> &nbsp;';
 	        print '<a href="'.$_SERVER["PHP_SELF"].'?action=delete_updater&selection='.$entry->id.'">'.img_delete().'</a></td>';
 	        print '</tr>';
 	    }
@@ -350,7 +350,7 @@ if ($action == 'create_updater' || $action == 'edit_updater') {
     print '</table>';
 
     //Form Buttons
-    print '<br><div align="center">';
+    print '<br><div class="center">';
     print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'"> &nbsp;';
     print '<input type="submit" class="button" name="cancel" id="cancel" value="'.$langs->trans("Cancel").'">';
     print '</div>';

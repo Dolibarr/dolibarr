@@ -193,7 +193,7 @@ print '<td class="liste_titre"></td>';
 print '<td class="liste_titre"></td>';
 print '<td class="liste_titre"></td>';
 // Action column
-print '<td class="liste_titre" align="right">';
+print '<td class="liste_titre right">';
 $searchpicto=$form->showFilterButtons();
 print $searchpicto;
 print '</td>';
@@ -201,15 +201,15 @@ print '</tr>';
 
 print '<tr class="liste_titre">';
 print_liste_field_titre('ID');
-print_liste_field_titre('Date', $_SERVER["PHP_SELF"], '', '', '', 'align="center"');
+print_liste_field_titre('Date', $_SERVER["PHP_SELF"], '', '', '', '', '', '', 'center ');
 print_liste_field_titre('ActionByCP');
 print_liste_field_titre('UserUpdateCP');
 print_liste_field_titre('Description');
 print_liste_field_titre('Type');
-print_liste_field_titre('PrevSoldeCP', $_SERVER["PHP_SELF"], '', '', '', 'align="right"');
-print_liste_field_titre('Variation', $_SERVER["PHP_SELF"], '', '', '', 'align="right"');
-print_liste_field_titre('NewSoldeCP', $_SERVER["PHP_SELF"], '', '', '', 'align="right"');
-print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', 'align="center"', $sortfield, $sortorder, 'maxwidthsearch ')."\n";
+print_liste_field_titre('PrevSoldeCP', $_SERVER["PHP_SELF"], '', '', '', '', '', '', 'right ');
+print_liste_field_titre('Variation', $_SERVER["PHP_SELF"], '', '', '', '', '', '', 'right ');
+print_liste_field_titre('NewSoldeCP', $_SERVER["PHP_SELF"], '', '', '', '', '', '', 'right ');
+print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
 print '</tr>';
 
 

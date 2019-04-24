@@ -28,9 +28,6 @@ fk_product integer DEFAULT 0,
 batch varchar(30) DEFAULT NULL,	 -- Lot or serial number
 qty_view double DEFAULT NULL, 	     -- must be filled once regulation is done
 qty_stock double DEFAULT NULL,   -- can be filled during draft edition
-qty_regulated double DEFAULT NULL,  -- must be filled once regulation is done
-pmp double DEFAULT 0, 
-pa double DEFAULT 0, 
-new_pmp double DEFAULT 0
+qty_regulated double DEFAULT NULL  -- must be filled once regulation is done
 ) 
 ENGINE=InnoDB;
