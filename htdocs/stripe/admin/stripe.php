@@ -215,7 +215,7 @@ if ( empty(GETPOST('status', 'alpha')) ) {
 } else {
     $endpoint->disabled = false;
 }}
-$endpoint->url = dol_buildpath('/public/stripe/ipn.php?test', 2);
+$endpoint->url = dol_buildpath('/public/stripe/ipn.php?test', 3);
 $endpoint->save();
 if ($endpoint->status == 'enabled')
 {
@@ -256,8 +256,8 @@ if (empty($conf->stripeconnect->enabled))
 	print '</td><td></td></tr>';
 
 	print '<tr class="oddeven"><td>';
-  print '<input class="minwidth300" type="text" name="STRIPE_LIVE_WEBHOOK_ID" value="'.$conf->global->STRIPE_LIVE_WEBHOOK_ID.'">';
-  print ' &nbsp; '.$langs->trans("Example").': we_xxxxxxxxxxxxxxxxxxxxxxxx<br>';
+    print '<input class="minwidth300" type="text" name="STRIPE_LIVE_WEBHOOK_ID" value="'.$conf->global->STRIPE_LIVE_WEBHOOK_ID.'">';
+    print ' &nbsp; '.$langs->trans("Example").': we_xxxxxxxxxxxxxxxxxxxxxxxx<br>';
 	print '<span class="titlefield fieldrequired">'.$langs->trans("STRIPE_LIVE_WEBHOOK_KEY").'</span></td><td>';
 	print '<input class="minwidth300" type="text" name="STRIPE_LIVE_WEBHOOK_KEY" value="'.$conf->global->STRIPE_LIVE_WEBHOOK_KEY.'">';
 	print ' &nbsp; '.$langs->trans("Example").': whsec_xxxxxxxxxxxxxxxxxxxxxxxx';
@@ -267,31 +267,31 @@ if (empty($conf->stripeconnect->enabled))
 	$out.= ajax_autoselect("onlinelivewebhookurl", 0);
 	print '<br />'.$out;
 	print '</td><td>';
-if ( !empty($conf->global->STRIPE_LIVE_WEBHOOK_KEY) && !empty($conf->global->STRIPE_LIVE_SECRET_KEY) && !empty($conf->global->STRIPE_LIVE_WEBHOOK_ID) ) {
-\Stripe\Stripe::setApiKey($conf->global->STRIPE_LIVE_SECRET_KEY);
-$endpoint = \Stripe\WebhookEndpoint::retrieve($conf->global->STRIPE_LIVE_WEBHOOK_ID);
-$endpoint->enabled_events = $stripearrayofwebhookevents;
-if ( GETPOST('webhook', 'alpha') == $conf->global->STRIPE_LIVE_WEBHOOK_ID ) {
-if ( empty(GETPOST('status', 'alpha')) ) {
-    $endpoint->disabled = true;
-} else {
-    $endpoint->disabled = false;
-}}
-$endpoint->url = dol_buildpath('/public/stripe/ipn.php', 2);
-$endpoint->save();
-if ($endpoint->status == 'enabled')
-{
-	print '<a href="'.$_SERVER['PHP_SELF'].'?action=ipn&webhook='.$endpoint->id.'&status=0">';
-	print img_picto($langs->trans("Activated"), 'switch_on');
-}
-else
-{
-	print '<a href="'.$_SERVER['PHP_SELF'].'?action=ipn&webhook='.$endpoint->id.'&status=1">';
-	print img_picto($langs->trans("Disabled"), 'switch_off');
-}
-//print $endpoint;
-} else print img_picto($langs->trans("inactive"), 'statut5');
-  print '</td></tr>';
+    if ( !empty($conf->global->STRIPE_LIVE_WEBHOOK_KEY) && !empty($conf->global->STRIPE_LIVE_SECRET_KEY) && !empty($conf->global->STRIPE_LIVE_WEBHOOK_ID) ) {
+    \Stripe\Stripe::setApiKey($conf->global->STRIPE_LIVE_SECRET_KEY);
+    $endpoint = \Stripe\WebhookEndpoint::retrieve($conf->global->STRIPE_LIVE_WEBHOOK_ID);
+    $endpoint->enabled_events = $stripearrayofwebhookevents;
+    if ( GETPOST('webhook', 'alpha') == $conf->global->STRIPE_LIVE_WEBHOOK_ID ) {
+    if ( empty(GETPOST('status', 'alpha')) ) {
+        $endpoint->disabled = true;
+    } else {
+        $endpoint->disabled = false;
+    }}
+    $endpoint->url = dol_buildpath('/public/stripe/ipn.php', 3);
+    $endpoint->save();
+    if ($endpoint->status == 'enabled')
+    {
+        print '<a href="'.$_SERVER['PHP_SELF'].'?action=ipn&webhook='.$endpoint->id.'&status=0">';
+        print img_picto($langs->trans("Activated"), 'switch_on');
+    }
+    else
+    {
+        print '<a href="'.$_SERVER['PHP_SELF'].'?action=ipn&webhook='.$endpoint->id.'&status=1">';
+        print img_picto($langs->trans("Disabled"), 'switch_off');
+    }
+    //print $endpoint;
+    } else print img_picto($langs->trans("inactive"), 'statut5');
+    print '</td></tr>';
 }
 else
 {
