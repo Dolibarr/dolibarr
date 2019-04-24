@@ -90,7 +90,7 @@ class Stripe extends CommonObject
 		$sql.= " WHERE entity = ".$conf->entity;
 		$sql.= " AND service = '".$mode."'";
         if ($fk_soc) {
- 		$sql.= " AND fk_soc = '".$fk_soc."'";  
+ 		$sql.= " AND fk_soc = '".$fk_soc."'";
         }
         else { $sql.= " AND ISNULL(fk_soc)"; }
         $sql.= " AND ISNULL(fk_user) AND ISNULL(fk_adherent)";
