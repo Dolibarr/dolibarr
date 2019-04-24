@@ -52,11 +52,11 @@ if (count($export->array_export_code))
 {
 	if ($user->rights->export->creer)
 	{
-		print '<a class="butActionNew" href="'.DOL_URL_ROOT.'/exports/export.php?leftmenu=export">'.$langs->trans("NewExport").'<span class="fa fa-plus-circle valignmiddle"></span></a>';
+		print '<a class="butActionNew" href="'.DOL_URL_ROOT.'/exports/export.php?leftmenu=export"><span class="valignmiddle text-plus-circle">'.$langs->trans("NewExport").'</span><span class="fa fa-plus-circle valignmiddle"></span></a>';
 	}
 	else
 	{
-		print '<a class="butActionNewRefused" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("NewExport").'<span class="fa fa-plus-circle valignmiddle"></span></a>';
+		print '<a class="butActionNewRefused" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'"><span class="valignmiddle text-plus-circle">'.$langs->trans("NewExport").'</span><span class="fa fa-plus-circle valignmiddle"></span></a>';
 	}
 }
 print '</div>';

@@ -444,7 +444,7 @@ class Reception extends CommonObject
 				$this->getUrlTrackingStatus($obj->tracking_number);
 
 				/*
-				 * Thirparty
+				 * Thirdparty
 				 */
 				$result=$this->fetch_thirdparty();
 
@@ -707,8 +707,8 @@ class Reception extends CommonObject
 	 * @param 	int			$qty				Quantity
 	 * @param	array		$array_options		extrafields array
 	 * @param	string		$comment				Comment for stock movement
-	 * @param	date		$eatby					eat-by date
-	 * @param	date		$sellby					sell-by date
+	 * @param	integer		$eatby					eat-by date
+	 * @param	integer		$sellby					sell-by date
 	 * @param	string		$batch					Lot number
 	 * @return	int							<0 if KO, >0 if OK
 	 */
@@ -1256,7 +1256,7 @@ class Reception extends CommonObject
 	 *	Set the planned delivery date
 	 *
 	 *	@param      User			$user        		Objet utilisateur qui modifie
-	 *	@param      timestamp		$date_livraison     Date de livraison
+	 *	@param      integer 		$date_livraison     Date de livraison
 	 *	@return     int         						<0 if KO, >0 if OK
 	 */
     public function set_date_livraison($user, $date_livraison)
@@ -1771,7 +1771,7 @@ class Reception extends CommonObject
      *	@param	User	$user			Object user that modify
      *	@return	int						<0 if KO, >0 if OK
      */
-    public function set_draft($user)
+    public function setDraft($user)
     {
 		// phpcs:enable
         global $conf,$langs;

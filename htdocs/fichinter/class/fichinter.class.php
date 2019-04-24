@@ -5,8 +5,8 @@
  * Copyright (C) 2011-2013 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2015      Charlie Benke        <charlie@patas-monkey.com>
- * Copyright (C) 2018      Nicolas ZABOURI	<info@inovea-conseil.com>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018      Nicolas ZABOURI	    <info@inovea-conseil.com>
+ * Copyright (C) 2018      Frédéric France      <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -69,12 +69,26 @@ class Fichinter extends CommonObject
 	public $socid;		// Id client
 
 	public $author;
-	public $datec;
+
+	/**
+     * Date creation record (datec)
+     *
+     * @var integer
+     */
+    public $datec;
+
 	public $datev;
 	public $dateo;
 	public $datee;
 	public $datet;
-	public $datem;
+
+	/**
+     * Date modification record (tms)
+     *
+     * @var integer
+     */
+    public $datem;
+
 	public $duration;
 	public $statut = 0;		// 0=draft, 1=validated, 2=invoiced, 3=Terminate
 
@@ -445,34 +459,55 @@ class Fichinter extends CommonObject
 	 *	Set status to draft
 	 *
 	 *	@param		User	$user	User that set draft
-	 *	@return		int			<0 if KO, >0 if OK
+	 *	@return		int			    <0 if KO, >0 if OK
 	 */
     public function setDraft($user)
 	{
 		global $langs, $conf;
 
-		if ($this->statut != 0)
+		$error=0;
+
+		// Protection
+		if ($this->statut <= self::STATUS_DRAFT)
 		{
-			$this->db->begin();
+		    return 0;
+		}
 
-			$sql = "UPDATE ".MAIN_DB_PREFIX."fichinter";
-			$sql.= " SET fk_statut = 0";
-			$sql.= " WHERE rowid = ".$this->id;
-			$sql.= " AND entity = ".$conf->entity;
+		dol_syslog(get_class($this)."::setDraft", LOG_DEBUG);
 
-			dol_syslog("Fichinter::setDraft", LOG_DEBUG);
-			$resql=$this->db->query($sql);
-			if ($resql)
-			{
-				$this->db->commit();
-				return 1;
+		$this->db->begin();
+
+		$sql = "UPDATE ".MAIN_DB_PREFIX."fichinter";
+		$sql.= " SET fk_statut = ".self::STATUS_DRAFT;
+		$sql.= " WHERE rowid = ".$this->id;
+
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+		    if (!$error) {
+		        $this->oldcopy = clone $this;
+		    }
+
+		    if (!$error) {
+		        // Call trigger
+		        $result=$this->call_trigger('FICHINTER_UNVALIDATE', $user);
+		        if ($result < 0) $error++;
+		    }
+
+			if (!$error) {
+			    $this->statut=self::STATUS_DRAFT;
+			    $this->db->commit();
+			    return 1;
+			} else {
+			    $this->db->rollback();
+			    return -1;
 			}
-			else
-			{
-				$this->db->rollback();
-				$this->error=$this->db->lasterror();
-				return -1;
-			}
+		}
+		else
+		{
+			$this->db->rollback();
+			$this->error=$this->db->lasterror();
+			return -1;
 		}
 	}
 
@@ -1007,7 +1042,7 @@ class Fichinter extends CommonObject
 	 *  Defines a delivery date of intervention
 	 *
 	 *  @param      User	$user				Object user who define
-	 *  @param      date	$date_delivery   	date of delivery
+	 *  @param      integer	$date_delivery   	date of delivery
 	 *  @return     int							<0 if ko, >0 if ok
      */
     public function set_date_delivery($user, $date_delivery)
@@ -1200,7 +1235,7 @@ class Fichinter extends CommonObject
 	 *  @param      user	$user					User that do the action
 	 *	@param    	int		$fichinterid			Id of intervention
 	 *	@param    	string	$desc					Line description
-	 *	@param      date	$date_intervention  	Intervention date
+	 *	@param      integer	$date_intervention  	Intervention date
 	 *	@param      int		$duration            	Intervention duration
 	 *  @param		array	$array_options			Array option
 	 *	@return    	int             				>0 if ok, <0 if ko

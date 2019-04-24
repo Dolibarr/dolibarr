@@ -63,13 +63,13 @@ class TicketStats extends Stats
 
         $this->where = " fk_statut > 0";
         $this->where .= " AND entity = " . $conf->entity;
-        if ($this->socid) {
+        if ($this->socid > 0) {
             $this->where .= " AND fk_soc = " . $this->socid;
         }
         if (is_array($this->userid) && count($this->userid) > 0) {
-            $this->where .= ' AND fk_user IN (' . join(',', $this->userid) . ')';
+            $this->where .= ' AND fk_user_create IN (' . join(',', $this->userid) . ')';
         } elseif ($this->userid > 0) {
-            $this->where .= ' AND fk_user = ' . $this->userid;
+            $this->where .= ' AND fk_user_create = ' . $this->userid;
         }
     }
 

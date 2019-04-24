@@ -260,16 +260,34 @@ $domData .= ' data-product_type="'.$line->product_type.'"';
   	?>
 
 	<?php if ($line->special_code == 3)	{ ?>
-	<td class="linecoloption nowrap right"><?php $coldisplay++; ?><?php echo $langs->trans('Option'); ?></td>
+		<td class="linecoloption nowrap right"><?php $coldisplay++; ?><?php echo $langs->trans('Option'); ?></td>
 	<?php } else { ?>
-	<td class="linecolht nowrap right"><?php $coldisplay++; ?><?php echo price($line->total_ht); ?></td>
+		<td class="linecolht nowrap right"><?php
+		  $coldisplay++;
+		  if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
+		  {
+    		  print '<span class="classfortooltip" title="';
+    		  print $langs->transcountry("TotalHT", $mysoc->country_code).'='.price($line->total_ht);
+    		  print '<br>'.$langs->transcountry("TotalVAT", ($senderissupplier?$object->thirdparty->country_code:$mysoc->country_code)).'='.price($line->total_tva);
+    		  if (price2num($line->total_localtax1)) print '<br>'.$langs->transcountry("TotalLT1", ($senderissupplier?$object->thirdparty->country_code:$mysoc->country_code)).'='.price($line->total_localtax1);
+    		  if (price2num($line->total_localtax2)) print '<br>'.$langs->transcountry("TotalLT2", ($senderissupplier?$object->thirdparty->country_code:$mysoc->country_code)).'='.price($line->total_localtax2);
+    		  print '<br>'.$langs->transcountry("TotalTTC", $mysoc->country_code).'='.price($line->total_ttc);
+    		  print '">';
+		  }
+		  print price($line->total_ht);
+		  if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
+		  {
+		      print '</span>';
+		  }
+		  ?>
+		</td>
 		<?php if (!empty($conf->multicurrency->enabled) && $this->multicurrency_code != $conf->currency) { ?>
-		<td class="linecolutotalht_currency nowrap right"><?php $coldisplay++; ?><?php echo price($line->multicurrency_total_ht); ?></td>
+			<td class="linecolutotalht_currency nowrap right"><?php $coldisplay++; ?><?php echo price($line->multicurrency_total_ht); ?></td>
 		<?php } ?>
 	<?php } ?>
-        <?php if ($outputalsopricetotalwithtax) { ?>
+    <?php if ($outputalsopricetotalwithtax) { ?>
         <td class="linecolht nowrap right"><?php $coldisplay++; ?><?php echo price($line->total_ttc); ?></td>
-        <?php } ?>
+    <?php } ?>
 
 
 	<?php

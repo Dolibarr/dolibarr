@@ -24,7 +24,6 @@ Disable=Inhabilitar
 Close=Cerrado
 AmountVAT=Importe IGV
 TotalVAT=Total IGV
-HT=Sin IGV
 TTC=IGV incluido
 VAT=IGV
 VATRate=Tasa IGV

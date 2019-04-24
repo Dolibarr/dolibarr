@@ -84,7 +84,7 @@ $head=agenda_prepare_head();
 
 dol_fiche_head($head, 'xcal', $langs->trans("Agenda"), -1, 'action');
 
-print $langs->trans("AgendaSetupOtherDesc")."<br>\n";
+print '<span class="opacitymedium">'.$langs->trans("AgendaSetupOtherDesc")."</span><br>\n";
 print "<br>\n";
 
 print '<table class="noborder" width="100%">';

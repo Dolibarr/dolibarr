@@ -62,7 +62,7 @@ if (!empty($conf->multicurrency->enabled) && $this->multicurrency_code != $conf-
 <?php
 $coldisplay=-1; // We remove first td
 ?>
-<tr <?php echo $bc[$var]; ?>>
+<tr class="oddeven tredited">
 	<?php if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) { ?>
 		<td class="linecolnum center"><?php $coldisplay++; ?><?php echo ($i+1); ?></td>
 	<?php } ?>
@@ -260,7 +260,7 @@ if (!empty($extrafieldsline))
 ?>
 
 <?php if (! empty($conf->service->enabled) && $line->product_type == 1 && $dateSelector)	 { ?>
-<tr id="service_duration_area" <?php echo $bc[$var]; ?>>
+<tr id="service_duration_area" class="treditedlinefordate">
 	<?php if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) { ?>
 		<td class="linecolnum center"><?php $coldisplay++; ?></td>
 	<?php } ?>

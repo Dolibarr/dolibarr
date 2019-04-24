@@ -162,7 +162,7 @@ if ($conf->use_javascript_ajax)
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder nohover" width="100%">';
     print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").'</th></tr>';
-    print '<tr><td align="center" colspan="2">';
+    print '<tr><td class="center" colspan="2">';
 
     $SommeA=0;
     $SommeB=0;

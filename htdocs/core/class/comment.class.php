@@ -1,5 +1,5 @@
 <?php
-/*
+/* Copyright (C) 2019 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,9 +43,19 @@ class Comment extends CommonObject
 	 */
 	public $description;
 
+	/**
+     * Date modification record (tms)
+     *
+     * @var integer
+     */
 	public $tms;
 
-	public $datec;
+	/**
+     * Date creation record (datec)
+     *
+     * @var integer
+     */
+    public $datec;
 
 	/**
      * @var int ID

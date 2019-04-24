@@ -57,7 +57,8 @@ input.select2-input {
 .liste_titre input[name=search_day_lim], .liste_titre input[name=search_day_start], .liste_titre input[name=search_day_end], .liste_titre input[name=search_day_create],
 .liste_titre input[name=search_day_create], .liste_titre input[name=search_day_start], .liste_titre input[name=search_day_end],
 .liste_titre input[name=search_day_date_when], .liste_titre input[name=search_month_date_when], .liste_titre input[name=search_year_date_when],
-.liste_titre input[name=search_dtstartday], .liste_titre input[name=search_dtendday], .liste_titre input[name=search_dtstartmonth], .liste_titre input[name=search_dtendmonth]
+.liste_titre input[name=search_dtstartday], .liste_titre input[name=search_dtendday], .liste_titre input[name=search_dtstartmonth], .liste_titre input[name=search_dtendmonth],
+select#date_startday, select#date_startmonth, select#date_endday, select#date_endmonth, select#reday, select#remonth
 {
 	margin-right: 4px;
 }
@@ -89,6 +90,9 @@ input, select {
 	margin-left:0px;
 	margin-bottom:1px;
 	margin-top:1px;
+}
+input.button.massactionconfirmed {
+    margin: 4px;
 }
 
 /* Focus definitions must be after standard definition */
@@ -262,7 +266,7 @@ hr { border: 0; border-top: 1px solid #ccc; }
 	margin-top: 0;
 	margin-left: 5px;
 	margin-right: 5px;
-    font-family: <?php print $fontlist ?>;
+    	font-family: <?php print $fontlist ?>;
 	display: inline-block;
 	padding: 4px 14px;
 	text-align: center;
@@ -305,6 +309,13 @@ hr { border: 0; border-top: 1px solid #ccc; }
 	opacity: 0.4;
     box-shadow: none;
     -webkit-box-shadow: none;
+}
+.button_search, .button_removefilter {
+    border: unset;
+    background-color: unset;
+}
+.button_search:hover, .button_removefilter:hover {
+    cursor: pointer;
 }
 form {
     padding:0px;
@@ -362,6 +373,9 @@ th .button {
 textarea.centpercent {
 	width: 96%;
 }
+.small, small {
+    font-size: 85%;
+}
 .center {
     text-align: center;
     margin: 0px auto;
@@ -374,6 +388,12 @@ textarea.centpercent {
 }
 .justify {
 	text-align: justify;
+}
+.pull-left {
+    float: left!important;
+}
+.pull-right {
+    float: right!important;
 }
 .nowrap {
 	white-space: <?php print ($dol_optimize_smallscreen?'normal':'nowrap'); ?>;
@@ -426,7 +446,15 @@ textarea.centpercent {
 .cursornotallowed {
 	cursor: not-allowed;
 }
+.backgroundblank {
+    background-color: #fff;
+}
+.checkboxattachfilelabel {
+    font-size: 0.85em;
+    opacity: 0.7;
+}
 
+/* Themes for badges */
 <?php include dol_buildpath($path.'/theme/'.$theme.'/badges.inc.php', 0); ?>
 
 .borderrightlight
@@ -510,6 +538,9 @@ select.flat.selectlimit {
 }
 .nomarginleft {
 	margin-left: 0px !important;
+}
+.margintoponly {
+	margin-top: 10px !important;
 }
 .marginbottomonly {
 	margin-bottom: 10px !important;
@@ -895,7 +926,7 @@ select.selectarrowonleft option {
 }
 .linkobject { cursor: pointer; }
 
-table.tableforfield tr>td:first-of-type {
+table.tableforfield tr>td:first-of-type, div.tableforfield div.tagtr>div.tagtd:first-of-type {
 	color: #666;
 }
 
@@ -959,7 +990,13 @@ td.showDragHandle {
 	border-right: 1px solid #d0d0d0;
 	box-shadow: 3px 0 6px -2px #eee;
 	background: rgb(<?php echo $colorbackvmenu1; ?>);
+	transition: left 0.5s ease;
 }
+
+.side-nav, .login_block {
+	transition: left 0.5s ease;
+}
+
 div.blockvmenulogo
 {
 	border-bottom: 0 !important;
@@ -992,8 +1029,22 @@ div.vmenu, td.vmenu {
 }
 */
 
-/* For smartphone (testmenuhider is on) */
-<?php if ($conf->browser->layout == 'phone' && ((GETPOST('testmenuhider', 'int') || ! empty($conf->global->MAIN_TESTMENUHIDER)) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))) { ?>
+
+.menuhider { display: none !important; }
+
+/* rule to reduce top menu - 3rd reduction: The menu for user is on left */
+@media only screen and (max-width: <?php echo round($nbtopmenuentries * 50, 0) + 12; ?>px)	/* reduction 3 */
+{
+body.sidebar-collapse .side-nav {
+	display: none;
+}
+
+body.sidebar-collapse .login_block {
+	display: none;
+}
+
+.menuhider { display: block !important; }
+
 #id-container {
 	width: 100%;
 }
@@ -1002,20 +1053,17 @@ div.vmenu, td.vmenu {
 	background: #FFF;
 	padding-left: 20px;
 	padding-right: 20px;
-}
-.side-nav {
 	position: absolute;
-    z-index: 90;
-    display: none;
+    	z-index: 90;
 }
 div.blockvmenulogo
 {
 	border-bottom: 0 !important;
 }
-div.blockvmenusearch {
+/*div.blockvmenusearch {
 	padding-bottom: 12px !important;
 	border-bottom: 1px solid #e0e0e0;
-}
+}*/
 div.blockvmenupair, div.blockvmenuimpair, div.blockvmenubookmarks, div.blockvmenuend {
 	border-top: none !important;
 	border-left: none !important;
@@ -1030,8 +1078,8 @@ div.fiche {
 	margin-<?php print $left; ?>: 9px !important;
 	margin-<?php print $right; ?>: 10px !important;
 }
-<?php } ?>
-
+<?php //} ?>
+}
 
 
 div.fiche {
@@ -1301,6 +1349,16 @@ div#tmenu_tooltip {
 <?php } else { ?>
 	padding-<?php echo $right; ?>: <?php echo ($maxwidthloginblock - 10); ?>px;
 <?php } ?>
+
+  -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+     -khtml-user-select: none; /* Konqueror HTML */
+       -moz-user-select: none; /* Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome and Opera */
+
+
 }
 
 div.topmenuimage {
@@ -1798,14 +1856,15 @@ div.login_block {
 	text-align: <?php print $right; ?>;
 	<?php print $right; ?>: 0;
 	top: <?php print $disableimages?'4px':'0'; ?>;
-	font-weight: bold;
-	<?php echo (empty($disableimages) && $maxwidthloginblock)?'max-width: '.$maxwidthloginblock.'px;':''; ?>
+	line-height: 10px;
+	<?php // echo (empty($disableimages) && $maxwidthloginblock)?'max-width: '.$maxwidthloginblock.'px;':''; ?>
 	<?php if (GETPOST('optioncss', 'aZ09') == 'print') { ?>
 	display: none;
 	<?php } ?>
 }
 div.login_block a {
-	color: #<?php echo $colortextbackvmenu; ?>;
+	color: #<?php echo $colortextbackhmenu; ?>;
+	display: inline-block;
 }
 div.login_block table {
 	display: inline;
@@ -1822,23 +1881,24 @@ div.login a:hover {
 	color: #<?php echo $colortextbackvmenu; ?>;
 	text-decoration:underline;
 }
+.login_block_elem a span.atoplogin, .login_block_elem span.atoplogin {
+    vertical-align: middle;
+}
 div.login_block_user {
 	display: inline-block;
-	padding-top: 3px;
-	<?php if (empty($conf->global->THEME_TOPMENU_DISABLE_IMAGE)) { ?>
-	min-width: 120px;
-	<?php } ?>
 }
 div.login_block_other {
 	display: inline-block;
 	clear: <?php echo $disableimages?'none':'both'; ?>;
 }
-div.login_block_other { padding-top: 3px; text-align: right; }
+div.login_block_other { padding-top: 0; text-align: right; margin-right: 8px; }
+
 .login_block_elem {
 	float: right;
 	vertical-align: top;
 	padding: 0px 3px 0px 4px !important;
-	height: 16px;
+	line-height: 50px;
+	height: 50px;
 }
 .atoplogin, .atoplogin:hover {
 	color: #<?php echo $colortextbackhmenu; ?> !important;
@@ -1851,6 +1911,7 @@ div.login_block_other { padding-top: 3px; text-align: right; }
 }
 .login_block_getinfo .atoplogin, .login_block_getinfo .atoplogin:hover {
 	color: #333 !important;
+	font-weight: normal !important;
 }
 .alogin, .alogin:hover {
 	font-weight: normal !important;
@@ -1863,6 +1924,9 @@ span.fa.atoplogin, span.fa.atoplogin:hover {
     font-size: 16px;
     text-decoration: none !important;
 }
+.atoplogin #dropdown-icon-down, .atoplogin #dropdown-icon-up {
+    font-size: 0.7em;
+}
 img.login, img.printer, img.entity {
 	/* padding: 0px 0px 0px 4px; */
 	/* margin: 0px 0px 0px 8px; */
@@ -1871,9 +1935,10 @@ img.login, img.printer, img.entity {
 	font-weight: bold;
 }
 .userimg.atoplogin img.userphoto, .userimgatoplogin img.userphoto {		/* size for user photo in login bar */
-	width: 16px;
-    height: 16px;
-    border-radius: 8px;
+	width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background-size: contain;
     background-size: contain;
 }
 img.userphoto {			/* size for user photo in lists */
@@ -1943,7 +2008,7 @@ input.vmenusearchselectcombo[type=text] {
 .searchform input { font-size: 16px; }
 
 
-a.vmenu:link, a.vmenu:visited, a.vmenu:hover, a.vmenu:active, span.vmenu { white-space: nowrap; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: bold; }	/* bold = 600, 500 is ko with Edge on 1200x960 */
+a.vmenu:link, a.vmenu:visited, a.vmenu:hover, a.vmenu:active, span.vmenu, span.vsmenu { white-space: nowrap; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: bold; }	/* bold = 600, 500 is ko with Edge on 1200x960 */
 font.vmenudisabled  { font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: bold; color: #aaa; margin-left: 4px; }												/* bold = 600, 500 is ko with Edge on 1200x960 */
 a.vmenu:link, a.vmenu:visited { color: #<?php echo $colortextbackvmenu; ?>; }
 
@@ -2167,6 +2232,10 @@ div.tabBar table.tableforservicepart2:last-child {
 .tableforservicepart1 .tdhrthin {
 	height: unset;
     padding-top: 0 !important;
+}
+/* Payment Screen : Pointer cursor in the autofill image */
+table.noborder .AutoFillAmout {
+	cursor:pointer;
 }
 
 div.popuptabset {
@@ -2534,13 +2603,23 @@ table.liste, table.noborder, table.formdoc, div.noborder {
 	border-top-color: rgb(<?php echo $colorbackhmenu1 ?>);
 	border-top-style: solid; */
 
-	border-bottom-width: 1px;
+	/*border-bottom-width: 1px;
 	border-bottom-color: rgb(<?php echo $colortopbordertitle1 ?>);
-	border-bottom-style: solid;
+	border-bottom-style: solid;*/
 
 	margin: 0px 0px 5px 0px;
 }
-div.tabBar div.ficheaddleft table.noborder:last-of-type {
+#tablelines {
+	border-bottom-width: 1px;
+	border-bottom-color: rgb(<?php echo $colortopbordertitle1 ?>);
+	border-bottom-style: solid;
+}
+table.liste tr:last-of-type td, table.noborder:not(#tablelines) tr:last-of-type td, table.formdoc tr:last-of-type td, div.noborder tr:last-of-type td {
+	border-bottom-width: 1px;
+	border-bottom-color: rgb(<?php echo $colortopbordertitle1 ?>);
+	border-bottom-style: solid;
+}
+div.tabBar div.ficheaddleft table.noborder:not(.margintable):not(.paymenttable):last-of-type {
     border-bottom: 1px solid rgb(<?php echo $colortopbordertitle1 ?>);
 }
 div.tabBar table.border>tbody>tr:last-of-type>td {
@@ -2566,13 +2645,11 @@ tr.liste_titre_filter td.liste_titre {
 }
 .liste_titre_create td, .liste_titre_create th, .liste_titre_create .tagtd
 {
+    border-bottom-width: 0 !important;
     border-top-width: 1px;
     border-top-color: rgb(<?php echo $colortopbordertitle1 ?>);
     border-top-style: solid;
 }
-/*.liste_titre_create td.nobottom, tr#trlinefordates td {
-    background-color: rgb(<?php echo $colorbacktitle1; ?>) !important;
-}*/
 tr#trlinefordates td {
     border-bottom: 0px !important;
 }
@@ -2794,13 +2871,19 @@ div.pagination li.paginationafterarrows {
 /* Set the color for hover lines */
 .oddeven:hover, .evenodd:hover, .impair:hover, .pair:hover
 {
-<?php if ($colorbacklinepairhover) { ?>
 	background: rgb(<?php echo $colorbacklinepairhover; ?>) !important;		/* Must be background to be stronger than background of odd or even */
-<?php } ?>
+}
+.tredited, .tredited td {
+	background: rgb(<?php echo $colorbacklinepairchecked; ?>) !important;   /* Must be background to be stronger than background of odd or even */
+	border-bottom: 0 !important;
+}
+.treditedlinefordate {
+	background: rgb(<?php echo $colorbacklinepairchecked; ?>) !important;   /* Must be background to be stronger than background of odd or even */
+    border-bottom: 0px;
 }
 <?php if ($colorbacklinepairchecked) { ?>
 .highlight {
-	background: rgb(<?php echo $colorbacklinepairchecked; ?>) !important; /* Must be background to be stronger than background of odd or even */
+	background: rgb(<?php echo $colorbacklinepairchecked; ?>) !important;   /* Must be background to be stronger than background of odd or even */
 }
 <?php } ?>
 
@@ -2865,11 +2948,18 @@ form.pair, form.impair {
 form.tagtr:last-of-type div.tagtd, tr.pair:last-of-type td, tr.impair:last-of-type td {
     border-bottom: 0px !important;
 }
+div.tableforcontact form.tagtr:last-of-type div.tagtd {
+    border-bottom: 1px solid #ddd !important;
+}
 tr.pair td .nobordernopadding tr td, tr.impair td .nobordernopadding tr td {
     border-bottom: 0px !important;
 }
-tr.nobottom td, tr.nobottom , td.nobottom {
-    border-bottom: 0px !important;
+table.nobottomiftotal tr.liste_total td {
+	background-color: #fff;
+	border-bottom: 0px !important;
+}
+table.nobottom {
+	border-bottom: 0px !important;
 }
 div.liste_titre .tagtd {
 	vertical-align: middle;
@@ -3001,6 +3091,9 @@ table.tableforservicepart1 tr td {
 	border-top-style: solid !important;*/
 	border-top: none !important;
 	margin: 0px 0px 0px 0px !important;
+}
+table.noborder.paymenttable {
+    border-bottom: none !important;
 }
 .paymenttable tr td:first-child, .margintable tr td:first-child
 {
@@ -3311,7 +3404,7 @@ img.boxhandle, img.boxclose {
  */
 
 .ok      { color: #114466; }
-.warning { color: #887711; }
+.warning { color: #887711 !important; }
 .error   { color: #550000 !important; font-weight: bold; }
 
 div.ok {
@@ -3695,7 +3788,7 @@ div.visible {
     display: block;
 }
 
-div.hidden, td.hidden, img.hidden {
+div.hidden, td.hidden, img.hidden, span.hidden {
     display: none;
 }
 
@@ -4059,6 +4152,10 @@ A.none, A.none:active, A.none:visited, A.none:hover {
 /* ============================================================================== */
 /*  CKEditor                                                                      */
 /* ============================================================================== */
+
+body.cke_show_borders {
+    margin: 5px !important;
+}
 
 .cke_dialog {
     border: 1px #bbb solid ! important;
@@ -5542,8 +5639,8 @@ div.tabsElem a.tab {
 }
 
 /* nboftopmenuentries = <?php echo $nbtopmenuentries ?>, fontsize=<?php echo is_numeric($fontsize)?$fontsize.'px':$fontsize ?> */
-/* rule to reduce top menu - 1st reduction */
-@media only screen and (max-width: <?php echo round($nbtopmenuentries * 91, 0) + 24; ?>px)	/* reduction 1 */
+/* rule to reduce top menu - 1st reduction: Reduce width of top menu icons */
+@media only screen and (max-width: <?php echo round($nbtopmenuentries * 91, 0) + 124; ?>px)	/* reduction 1 */
 {
 	div.tmenucenter {
 	    width: <?php echo round(52); ?>px;	/* size of viewport */
@@ -5575,8 +5672,8 @@ div.tabsElem a.tab {
 		max-width: 300px;
 	}
 }
-/* rule to reduce top menu - 2nd reduction */
-@media only screen and (max-width: <?php echo round($nbtopmenuentries * 75, 0) + 24; ?>px)	/* reduction 2 */
+/* rule to reduce top menu - 2nd reduction: Reduce width of top menu icons again */
+@media only screen and (max-width: <?php echo round($nbtopmenuentries * 74, 0); ?>px)	/* reduction 2 */
 {
 	div.mainmenu {
 		height: 23px;
@@ -5599,8 +5696,8 @@ div.tabsElem a.tab {
     	left: 4px;
 	}
 }
-/* rule to reduce top menu - 3rd reduction */
-@media only screen and (max-width: <?php echo round($nbtopmenuentries * 49, 0) + 12; ?>px)	/* reduction 3 */
+/* rule to reduce top menu - 3rd reduction: The menu for user is on left */
+@media only screen and (max-width: <?php echo round($nbtopmenuentries * 50, 0) + 12; ?>px)	/* reduction 3 */
 {
 	.side-nav {
 		z-index: 200;
@@ -5634,20 +5731,15 @@ div.tabsElem a.tab {
 		min-width: 0;
 		width: 100%;
 	}
+	div.login_block a {
+        color: unset;
+    }
 	div.login_block {
-		<?php if ($conf->browser->layout == 'phone' && ((GETPOST('testmenuhider', 'int') || ! empty($conf->global->MAIN_TESTMENUHIDER)) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))) { ?>
 		/* Style when phone layout or when using the menuhider */
-		display: none;
-		padding-top: 20px;
+		padding-top: 10px;
 		padding-left: 20px;
     	padding-right: 20px;
     	padding-bottom: 16px;
-		<?php } else { ?>
-		padding-top: 5px;
-		padding-left: 5px;
-    	padding-right: 5px;
-    	padding-bottom: 5px;
-    	<?php } ?>
 		top: inherit !important;
 		left: 0 !important;
 		text-align: center;
@@ -5658,9 +5750,15 @@ div.tabsElem a.tab {
         height: 50px;
 
     	z-index: 202;
-    	min-width: 190px;
-    	max-width: 190px;
-    	width: 190px;
+    	min-width: 200px;      /* must be width of menu + padding + padding of sidenav */
+    	max-width: 200px;      /* must be width of menu + padding + padding of sidenav */
+    	width: 200px;          /* must be width of menu + padding + padding of sidenav */
+    }
+    .side-nav-vert .user-menu .dropdown-menu {
+        width: 234px !important;
+    }
+    div.login_block_other {
+        margin-right: unset;
     }
 	div.login_block_user, div.login_block_other { clear: both; }
 	.atoplogin, .atoplogin:hover
@@ -5669,6 +5767,7 @@ div.tabsElem a.tab {
 	}
 	.login_block_elem {
 		padding: 0 !important;
+		height: 38px;
 	}
     li.tmenu, li.tmenusel {
         min-width: 32px;
@@ -5699,4 +5798,11 @@ div.tabsElem a.tab {
 		min-width: auto;
 		font-size: 12px;
 	}
+
+	.text-plus-circle {
+	   display: none;
+	}
 }
+
+<?php
+include dol_buildpath($path.'/theme/'.$theme.'/dropdown.inc.php', 0);

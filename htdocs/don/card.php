@@ -372,7 +372,7 @@ if ($action == 'create')
 				});
 				</script>';
 			}
-			print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&client=3&fournisseur=0&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'">'.$langs->trans("AddThirdParty").' <span class="fa fa-plus-circle valignmiddle"></span></a>';
+			print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&client=3&fournisseur=0&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'"><span class="valignmiddle text-plus-circle">'.$langs->trans("AddThirdParty").'</span><span class="fa fa-plus-circle valignmiddle paddingleft"></span></a>';
 			print '</td>';
 		}
 		print '</tr>' . "\n";
@@ -397,7 +397,7 @@ if ($action == 'create')
 		print "<tr>".'<td>'.$langs->trans("Lastname").'</td><td><input type="text" name="lastname" value="'.dol_escape_htmltag(GETPOST("lastname")).'" class="maxwidth200"></td></tr>';
 		print "<tr>".'<td>'.$langs->trans("Firstname").'</td><td><input type="text" name="firstname" value="'.dol_escape_htmltag(GETPOST("firstname")).'" class="maxwidth200"></td></tr>';
 		print "<tr>".'<td>'.$langs->trans("Address").'</td><td>';
-		print '<textarea name="address" wrap="soft" class="quatrevingtpercent" rows="3">'.dol_escape_htmltag(GETPOST("address")).'</textarea></td></tr>';
+		print '<textarea name="address" wrap="soft" class="quatrevingtpercent" rows="3">'.dol_escape_htmltag(GETPOST("address", "none"), 0, 1).'</textarea></td></tr>';
 
 		// Zip / Town
 		print '<tr><td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td>';
@@ -544,7 +544,7 @@ if ( $object->socid && ! empty($conf->societe->enabled) && ! empty($conf->global
 	print '<tr><td>'.$langs->trans("Lastname").'</td><td><input type="text" name="lastname" class="maxwidth200" value="'.dol_escape_htmltag($object->lastname).'"></td></tr>';
 	print '<tr><td>'.$langs->trans("Firstname").'</td><td><input type="text" name="firstname" class="maxwidth200" value="'.dol_escape_htmltag($object->firstname).'"></td></tr>';
 	print '<tr><td>'.$langs->trans("Address").'</td><td>';
-	print '<textarea name="address" wrap="soft" class="quatrevingtpercent" rows="'.ROWS_3.'">'.dol_escape_htmltag($object->address).'</textarea></td></tr>';
+	print '<textarea name="address" wrap="soft" class="quatrevingtpercent" rows="'.ROWS_3.'">'.dol_escape_htmltag($object->address, 0, 1).'</textarea></td></tr>';
 
     // Zip / Town
     print '<tr><td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td>';
@@ -772,7 +772,7 @@ if ($object->socid) {
 			$remaintopay = $object->amount - $totalpaid;
 
 			print "<tr><td colspan=\"3\" class=\"right\">".$langs->trans("RemainderToPay")." :</td>";
-			print '<td class="right"'.($resteapayeraffiche?' class="amountremaintopay"':'').'><b>'.price($remaintopay)."</b></td></tr>\n";
+			print '<td class="right'.($resteapayeraffiche?' amountremaintopay':'').'">'.price($remaintopay)."</td></tr>\n";
 		}
 		print "</table>";
 		$db->free($resql);

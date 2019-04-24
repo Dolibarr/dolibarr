@@ -585,7 +585,7 @@ class PaiementFourn extends Paiement
 
 		$label = '<u>'.$langs->trans("ShowPayment").'</u><br>';
 		$label.= '<strong>'.$langs->trans("Ref").':</strong> '.$text;
-		$label.= '<br><strong>'.$langs->trans("Date").':</strong> '.dol_print_date($this->datepaye ? $this->datepaye : $this->date, 'dayhour');
+		if ($this->datepaye ? $this->datepaye : $this->date) $label.= '<br><strong>'.$langs->trans("Date").':</strong> '.dol_print_date($this->datepaye ? $this->datepaye : $this->date, 'dayhour');
 
 		$linkstart = '<a href="'.DOL_URL_ROOT.'/fourn/paiement/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 		$linkend = '</a>';

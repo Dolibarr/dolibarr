@@ -290,6 +290,7 @@ CurrencyXOF=Франков КФА ЦБЗАГ
 CurrencySingXOF=Франк КФА ЦБЗАГ
 CurrencyXPF=CFP франков
 CurrencySingXPF=Франк КФП
+CurrencyCentEUR=cents
 CurrencyCentSingEUR=цент
 CurrencyCentINR=paisa
 CurrencyCentSingINR=paise

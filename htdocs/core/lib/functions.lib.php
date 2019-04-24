@@ -14,6 +14,7 @@
  * Copyright (C) 2014-2015	Marcos García				<marcosgdf@gmail.com>
  * Copyright (C) 2015		Jean-François Ferry			<jfefe@aternatik.fr>
  * Copyright (C) 2018-2019  Frédéric France             <frederic.france@netlogic.fr>
+ * Copyright (C) 2019       Thibault Foucart            <support@ptibogxiv.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -225,7 +226,7 @@ function GETPOSTISSET($paramname)
  *                               'san_alpha'=Use filter_var with FILTER_SANITIZE_STRING (do not use this for free text string)
  *                               'nohtml', 'alphanohtml'=check there is no html content
  *                               'custom'= custom filter specify $filter and $options)
- *  @param	int		$method	     Type of method (0 = get then post, 1 = only get, 2 = only post, 3 = post then get, 4 = post then get then cookie)
+ *  @param	int		$method	     Type of method (0 = get then post, 1 = only get, 2 = only post, 3 = post then get)
  *  @param  int     $filter      Filter to apply when $check is set to 'custom'. (See http://php.net/manual/en/filter.filters.php for détails)
  *  @param  mixed   $options     Options to pass to filter_var when $check is set to 'custom'
  *  @param	string	$noreplace	 Force disable of replacement of __xxx__ strings.
@@ -247,7 +248,6 @@ function GETPOST($paramname, $check = 'none', $method = 0, $filter = null, $opti
 	elseif ($method==1) $out = isset($_GET[$paramname])?$_GET[$paramname]:'';
 	elseif ($method==2) $out = isset($_POST[$paramname])?$_POST[$paramname]:'';
 	elseif ($method==3) $out = isset($_POST[$paramname])?$_POST[$paramname]:(isset($_GET[$paramname])?$_GET[$paramname]:'');
-	elseif ($method==4) $out = isset($_POST[$paramname])?$_POST[$paramname]:(isset($_GET[$paramname])?$_GET[$paramname]:(isset($_COOKIE[$paramname])?$_COOKIE[$paramname]:''));
 	else return 'BadThirdParameterForGETPOST';
 
 	if (empty($method) || $method == 3 || $method == 4)
@@ -437,7 +437,7 @@ function GETPOST($paramname, $check = 'none', $method = 0, $filter = null, $opti
 		}
 	}
 
-	// Substitution variables for GETPOST (used to get final url with variable parameters or final default value with variable paramaters)
+	// Substitution variables for GETPOST (used to get final url with variable parameters or final default value with variable parameters)
 	// Example of variables: __DAY__, __MONTH__, __YEAR__, __MYCOMPANY_COUNTRY_ID__, __USER_ID__, ...
 	// We do this only if var is a GET. If it is a POST, may be we want to post the text with vars as the setup text.
 	if (! is_array($out) && empty($_POST[$paramname]) && empty($noreplace))
@@ -573,34 +573,41 @@ if (! function_exists('dol_getprefix'))
 {
     /**
      *  Return a prefix to use for this Dolibarr instance, for session/cookie names or email id.
-     *  The prefix for session is unique in a web context only and is unique for instance and avoid conflict
-     *  between multi-instances, even when having two instances with same root dir or two instances in same virtual servers.
-     *  The prefix for email is unique if MAIL_PREFIX_FOR_EMAIL_ID is set to a value, otherwise value may be same than other instance.
+     *  The prefix is unique for instance and avoid conflict between multi-instances, even when having two instances with same root dir
+     *  or two instances in same virtual servers.
      *
      *  @param  string  $mode                   '' (prefix for session name) or 'email' (prefix for email id)
      *  @return	string                          A calculated prefix
      */
     function dol_getprefix($mode = '')
     {
-		global $conf;
+        global $conf;
 
 		// If prefix is for email
 		if ($mode == 'email')
 		{
-			if (! empty($conf->global->MAIL_PREFIX_FOR_EMAIL_ID))	// If MAIL_PREFIX_FOR_EMAIL_ID is set (a value initialized with a random value is recommended)
+		    if (! empty($conf->global->MAIL_PREFIX_FOR_EMAIL_ID))	// If MAIL_PREFIX_FOR_EMAIL_ID is set (a value initialized with a random value is recommended)
 			{
 				if ($conf->global->MAIL_PREFIX_FOR_EMAIL_ID != 'SERVER_NAME') return $conf->global->MAIL_PREFIX_FOR_EMAIL_ID;
 				elseif (isset($_SERVER["SERVER_NAME"])) return $_SERVER["SERVER_NAME"];
 			}
+
+			// The recommended value (may be not defined for old versions)
+			if (! empty($conf->file->instance_unique_id)) return $conf->file->instance_unique_id;
+
+			// For backward compatibility
 			return dol_hash(DOL_DOCUMENT_ROOT.DOL_URL_ROOT, '3');
 		}
 
+		// The recommended value (may be not defined for old versions)
+		if (! empty($conf->file->instance_unique_id)) return $conf->file->instance_unique_id;
+
+		// For backward compatibility
 		if (isset($_SERVER["SERVER_NAME"]) && isset($_SERVER["DOCUMENT_ROOT"]))
 		{
 			return dol_hash($_SERVER["SERVER_NAME"].$_SERVER["DOCUMENT_ROOT"].DOL_DOCUMENT_ROOT.DOL_URL_ROOT, '3');
-			// Use this for a "readable" key
-			//return dol_sanitizeFileName($_SERVER["SERVER_NAME"].$_SERVER["DOCUMENT_ROOT"].DOL_DOCUMENT_ROOT.DOL_URL_ROOT);
 		}
+
 		return dol_hash(DOL_DOCUMENT_ROOT.DOL_URL_ROOT, '3');
 	}
 }
@@ -734,18 +741,16 @@ function dol_buildpath($path, $type = 0, $returnemptyifnotfound = 0)
 
 /**
  *	Create a clone of instance of object (new instance with same value for properties)
- *  With native = 0: Property that are reference are also new object (true clone). This means $this->db is not valid.
- *  With native = 1: Use PHP clone. Property that are reference are same pointer. This means $this->db is still valid.
+ *  With native = 0: Property that are reference are also new object (full isolation clone). This means $this->db of new object is not valid.
+ *  With native = 1: Use PHP clone. Property that are reference are same pointer. This means $this->db of new object is still valid but point to same this->db than original object.
  *
  * 	@param	object	$object		Object to clone
- *  @param	int		$native		Native method or true method
- *	@return object				Object clone
+ *  @param	int		$native		Native method or full isolation method
+ *	@return object				Clone object
  *  @see https://php.net/manual/language.oop5.cloning.php
  */
 function dol_clone($object, $native = 0)
 {
-	//dol_syslog(__FUNCTION__ . " is deprecated", LOG_WARNING);
-
 	if (empty($native))
 	{
 		$myclone=unserialize(serialize($object));
@@ -886,17 +891,6 @@ function dol_string_nospecial($str, $newstr = '_', $badcharstoreplace = '')
 
 
 /**
- * Encode string for xml usage
- *
- * @param 	string	$string		String to encode
- * @return	string				String encoded
- */
-function dolEscapeXML($string)
-{
-	return strtr($string, array('\''=>'&apos;','"'=>'&quot;','&'=>'&amp;','<'=>'&lt;','>'=>'&gt;'));
-}
-
-/**
  *  Returns text escaped for inclusion into javascript code
  *
  *  @param      string		$stringtoescape		String to escape
@@ -923,7 +917,7 @@ function dol_escape_js($stringtoescape, $mode = 0, $noescapebackslashn = 0)
  *
  *  @param      string		$stringtoescape		String to escape
  *  @param		int			$keepb				1=Preserve b tags (otherwise, remove them)
- *  @param      int         $keepn              1=Preserve \r\n strings (otherwise, replace them with escaped value)
+ *  @param      int         $keepn              1=Preserve \r\n strings (otherwise, replace them with escaped value). Set to 1 when escaping for a <textarea>.
  *  @return     string     				 		Escaped string
  *  @see		dol_string_nohtmltag(), dol_string_nospecial(), dol_string_unaccent()
  */
@@ -982,7 +976,7 @@ function dol_strtoupper($utf8_string)
  */
 function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename = '', $restricttologhandler = '')
 {
-	global $conf, $user;
+    global $conf, $user, $debugbar;
 
 	// If syslog module enabled
 	if (empty($conf->syslog->enabled)) return;
@@ -998,8 +992,8 @@ function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename =
 	if (! empty($message))
 	{
 		// Test log level
-		$logLevels = array(LOG_EMERG, LOG_ALERT, LOG_CRIT, LOG_ERR, LOG_WARNING, LOG_NOTICE, LOG_INFO, LOG_DEBUG);
-		if (!in_array($level, $logLevels, true))
+		$logLevels = array(LOG_EMERG=>'EMERG', LOG_ALERT=>'ALERT', LOG_CRIT=>'CRITICAL', LOG_ERR=>'ERR', LOG_WARNING=>'WARN', LOG_NOTICE=>'NOTICE', LOG_INFO=>'INFO', LOG_DEBUG=>'DEBUG');
+		if (! array_key_exists($level, $logLevels))
 		{
 			throw new Exception('Incorrect log level');
 		}
@@ -1008,9 +1002,10 @@ function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename =
 		$message = preg_replace('/password=\'[^\']*\'/', 'password=\'hidden\'', $message);	// protection to avoid to have value of password in log
 
 		// If adding log inside HTML page is required
-		if (! empty($_REQUEST['logtohtml']) && (! empty($conf->global->MAIN_ENABLE_LOG_TO_HTML) || ! empty($conf->global->MAIN_LOGTOHTML)))   // MAIN_LOGTOHTML kept for backward compatibility
+		if ((! empty($_REQUEST['logtohtml']) && ! empty($conf->global->MAIN_ENABLE_LOG_TO_HTML))
+		    || (! empty($user->rights->debugbar->read) && is_object($debugbar)))
 		{
-			$conf->logbuffer[] = dol_print_date(time(), "%Y-%m-%d %H:%M:%S")." ".$message;
+		    $conf->logbuffer[] = dol_print_date(time(), "%Y-%m-%d %H:%M:%S")." ".$logLevels[$level]." ".$message;
 		}
 
 		//TODO: Remove this. MAIN_ENABLE_LOG_INLINE_HTML should be deprecated and use a log handler dedicated to HTML output
@@ -1381,53 +1376,46 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 
 					$filepath = $dir_output . $subdir . "/";
 
-					$file = $filepath . $objectref . ".pdf";
+					$filepdf = $filepath . $objectref . ".pdf";
 					$relativepath = $subdir.'/'.$objectref.'.pdf';
 
 					// Define path to preview pdf file (preview precompiled "file.ext" are "file.ext_preview.png")
-					$fileimage = $file.'_preview.png';              // If PDF has 1 page
-					$fileimagebis = $file.'_preview-0.png';         // If PDF has more than one page
+					$fileimage = $filepdf.'_preview.png';
 					$relativepathimage = $relativepath.'_preview.png';
 
-					// Si fichier PDF existe
-					if (file_exists($file))
+					$pdfexists = file_exists($filepdf);
+
+					// If PDF file exists
+					if ($pdfexists)
 					{
-						$encfile = urlencode($file);
 						// Conversion du PDF en image png si fichier png non existant
-						if ( (! file_exists($fileimage) || (filemtime($fileimage) < filemtime($file)))
-						  && (! file_exists($fileimagebis) || (filemtime($fileimagebis) < filemtime($file)))
-						   )
+						if (! file_exists($fileimage) || (filemtime($fileimage) < filemtime($filepdf)))
 						{
-							if (empty($conf->global->MAIN_DISABLE_PDF_THUMBS))		// If you experienc trouble with pdf thumb generation and imagick, you can disable here.
+							if (empty($conf->global->MAIN_DISABLE_PDF_THUMBS))		// If you experience trouble with pdf thumb generation and imagick, you can disable here.
 							{
 								include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-								$ret = dol_convert_file($file, 'png', $fileimage);
+								$ret = dol_convert_file($filepdf, 'png', $fileimage, '0');     // Convert first page of PDF into a file _preview.png
 								if ($ret < 0) $error++;
 							}
 						}
+					}
 
+					if ($pdfexists && ! $error)
+					{
 						$heightforphotref=70;
 						if (! empty($conf->dol_optimize_smallscreen)) $heightforphotref=60;
-						// Si fichier png PDF d'1 page trouve
+						// If the preview file is found
 						if (file_exists($fileimage))
 						{
 							$phototoshow = '<div class="floatleft inline-block valignmiddle divphotoref"><div class="photoref">';
 							$phototoshow.= '<img height="'.$heightforphotref.'" class="photo photowithmargin photowithborder" src="'.DOL_URL_ROOT . '/viewimage.php?modulepart=apercu'.$modulepart.'&amp;file='.urlencode($relativepathimage).'">';
 							$phototoshow.= '</div></div>';
 						}
-						// Si fichier png PDF de plus d'1 page trouve
-						elseif (file_exists($fileimagebis))
-						{
-							$preview = preg_replace('/\.png/', '', $relativepathimage) . "-0.png";
-							$phototoshow = '<div class="floatleft inline-block valignmiddle divphotoref"><div class="photoref">';
-							$phototoshow.= '<img height="'.$heightforphotref.'" class="photo photowithmargin photowithborder" src="'.DOL_URL_ROOT . '/viewimage.php?modulepart=apercu'.$modulepart.'&amp;file='.urlencode($preview).'"><p>';
-							$phototoshow.= '</div></div>';
-						}
 					}
 				}
 				elseif (! $phototoshow)
 				{
-					$phototoshow = $form->showphoto($modulepart, $object, 0, 0, 0, 'photoref', 'small', 1, 0, $maxvisiblephotos);
+					$phototoshow.= $form->showphoto($modulepart, $object, 0, 0, 0, 'photoref', 'small', 1, 0, $maxvisiblephotos);
 				}
 
 				if ($phototoshow)
@@ -1440,7 +1428,7 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 
 			if (! $phototoshow)      // Show No photo link (picto of pbject)
 			{
-				$morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref">';
+			    $morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref">';
 				if ($object->element == 'action')
 				{
 					$width=80;
@@ -1480,20 +1468,20 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 		if (! empty($conf->use_javascript_ajax) && $user->rights->produit->creer && ! empty($conf->global->MAIN_DIRECT_STATUS_UPDATE)) {
 			$morehtmlstatus.=ajax_object_onoff($object, 'status', 'tosell', 'ProductStatusOnSell', 'ProductStatusNotOnSell');
 		} else {
-			$morehtmlstatus.='<span class="statusrefsell">'.$object->getLibStatut(5, 0).'</span>';
+			$morehtmlstatus.='<span class="statusrefsell">'.$object->getLibStatut(6, 0).'</span>';
 		}
 		$morehtmlstatus.=' &nbsp; ';
 		//$morehtmlstatus.=$langs->trans("Status").' ('.$langs->trans("Buy").') ';
 		if (! empty($conf->use_javascript_ajax) && $user->rights->produit->creer && ! empty($conf->global->MAIN_DIRECT_STATUS_UPDATE)) {
 			$morehtmlstatus.=ajax_object_onoff($object, 'status_buy', 'tobuy', 'ProductStatusOnBuy', 'ProductStatusNotOnBuy');
 		} else {
-			$morehtmlstatus.='<span class="statusrefbuy">'.$object->getLibStatut(5, 1).'</span>';
+			$morehtmlstatus.='<span class="statusrefbuy">'.$object->getLibStatut(6, 1).'</span>';
 		}
 	}
 	elseif (in_array($object->element, array('facture', 'invoice', 'invoice_supplier', 'chargesociales', 'loan')))
 	{
 		$tmptxt=$object->getLibStatut(6, $object->totalpaye);
-		if (empty($tmptxt) || $tmptxt == $object->getLibStatut(3) || $conf->browser->layout=='phone') $tmptxt=$object->getLibStatut(5, $object->totalpaye);
+		if (empty($tmptxt) || $tmptxt == $object->getLibStatut(3)) $tmptxt=$object->getLibStatut(5, $object->totalpaye);
 		$morehtmlstatus.=$tmptxt;
 	}
 	elseif ($object->element == 'contrat' || $object->element == 'contract')
@@ -1516,7 +1504,7 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 	}
 	else { // Generic case
 		$tmptxt=$object->getLibStatut(6);
-		if (empty($tmptxt) || $tmptxt == $object->getLibStatut(3) || $conf->browser->layout=='phone') $tmptxt=$object->getLibStatut(5);
+		if (empty($tmptxt) || $tmptxt == $object->getLibStatut(3)) $tmptxt=$object->getLibStatut(5);
 		$morehtmlstatus.=$tmptxt;
 	}
 
@@ -1649,7 +1637,7 @@ function dol_format_address($object, $withcountry = 0, $sep = "\n", $outputlangs
 	{
 		$ret .= ($ret ? $sep : '' ).$object->zip;
 		$ret .= ($object->town?(($object->zip?' ':'').$object->town):'');
-		$ret .= ($object->departement_id?(' ('.($object->departement_id).')'):'');
+		$ret .= ($object->state_id?(' ('.($object->state_id).')'):'');
 	}
 	else                                        		// Other: title firstname name \n address lines \n zip town \n country
 	{
@@ -1787,22 +1775,27 @@ function dol_print_date($time, $format = '', $tzoutput = 'tzserver', $outputlang
 	}
 
 	// Analyze date
-	if (preg_match('/^([0-9]+)\-([0-9]+)\-([0-9]+) ?([0-9]+)?:?([0-9]+)?:?([0-9]+)?/i', $time, $reg)
-	|| preg_match('/^([0-9][0-9][0-9][0-9])([0-9][0-9])([0-9][0-9])([0-9][0-9])([0-9][0-9])([0-9][0-9])$/i', $time, $reg))	// Deprecated. Ex: 1970-01-01, 1970-01-01 01:00:00, 19700101010000
+	$reg=array();
+	if (preg_match('/^([0-9][0-9][0-9][0-9])([0-9][0-9])([0-9][0-9])([0-9][0-9])([0-9][0-9])([0-9][0-9])$/i', $time, $reg))	// Deprecated. Ex: 1970-01-01, 1970-01-01 01:00:00, 19700101010000
 	{
-		// TODO Remove this. This part of code should not be used.
-		dol_syslog("Functions.lib::dol_print_date function call with deprecated value of time in page ".$_SERVER["PHP_SELF"], LOG_ERR);
-		//if (function_exists('debug_print_backtrace')) debug_print_backtrace();
-		// Date has format 'YYYY-MM-DD' or 'YYYY-MM-DD HH:MM:SS' or 'YYYYMMDDHHMMSS'
-		$syear	= (! empty($reg[1]) ? $reg[1] : '');
-		$smonth	= (! empty($reg[2]) ? $reg[2] : '');
-		$sday	= (! empty($reg[3]) ? $reg[3] : '');
-		$shour	= (! empty($reg[4]) ? $reg[4] : '');
-		$smin	= (! empty($reg[5]) ? $reg[5] : '');
-		$ssec	= (! empty($reg[6]) ? $reg[6] : '');
+	    dol_print_error("Functions.lib::dol_print_date function called with a bad value from page ".$_SERVER["PHP_SELF"]);
+	    return '';
+	}
+	elseif (preg_match('/^([0-9]+)\-([0-9]+)\-([0-9]+) ?([0-9]+)?:?([0-9]+)?:?([0-9]+)?/i', $time, $reg))    // Still available to solve problems in extrafields of type date
+	{
+	    // This part of code should not be used.
+	    dol_syslog("Functions.lib::dol_print_date function called with a bad value from page ".$_SERVER["PHP_SELF"], LOG_WARNING);
+	    //if (function_exists('debug_print_backtrace')) debug_print_backtrace();
+	    // Date has format 'YYYY-MM-DD' or 'YYYY-MM-DD HH:MM:SS'
+	    $syear	= (! empty($reg[1]) ? $reg[1] : '');
+	    $smonth	= (! empty($reg[2]) ? $reg[2] : '');
+	    $sday	= (! empty($reg[3]) ? $reg[3] : '');
+	    $shour	= (! empty($reg[4]) ? $reg[4] : '');
+	    $smin	= (! empty($reg[5]) ? $reg[5] : '');
+	    $ssec	= (! empty($reg[6]) ? $reg[6] : '');
 
-		$time=dol_mktime($shour, $smin, $ssec, $smonth, $sday, $syear, true);
-		$ret=adodb_strftime($format, $time+$offsettz+$offsetdst, $to_gmt);
+	    $time=dol_mktime($shour, $smin, $ssec, $smonth, $sday, $syear, true);
+	    $ret=adodb_strftime($format, $time+$offsettz+$offsetdst, $to_gmt);
 	}
 	else
 	{
@@ -2951,7 +2944,7 @@ function dol_trunc($string, $size = 40, $trunc = 'right', $stringencoding = 'UTF
  *  @param		string		$alt				Force alt for bind people
  *  @param		string		$morecss			Add more class css on img tag (For example 'myclascss'). Work only if $moreatt is empty.
  *  @return     string       				    Return img tag
- *  @see        #img_object, #img_picto_common
+ *  @see        img_object(), img_picto_common()
  */
 function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $srconly = 0, $notitle = 0, $alt = '', $morecss = '')
 {
@@ -2981,7 +2974,8 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
         if (empty($srconly) && in_array($pictowithoutext, array(
 				'bank', 'close_title', 'delete', 'edit', 'ellipsis-h', 'filter', 'grip', 'grip_title', 'list', 'listlight', 'note', 'off', 'on', 'play', 'playdisabled', 'printer', 'resize',
                 'note', 'setup', 'sign-out', 'split', 'switch_off', 'switch_on', 'unlink', 'uparrow', '1downarrow', '1uparrow', '1leftarrow', '1rightarrow',
-				'jabber','skype','twitter','facebook','linkedin'
+				'jabber','skype','twitter','facebook','linkedin',
+                'chevron-left','chevron-right','chevron-down','chevron-top'
 			)
 		)) {
 		    $fa='fa';
@@ -3680,7 +3674,7 @@ function img_searchclear($titlealt = 'default', $other = '')
  *	@param	string	$text			Text info
  *	@param  integer	$infoonimgalt	Info is shown only on alt of star picto, otherwise it is show on output after the star picto
  *	@param	int		$nodiv			No div
- *  @param  string  $admin          '1'=Info for admin users. '0'=Info for standard users (change only the look), 'xxx'=Other
+ *  @param  string  $admin          '1'=Info for admin users. '0'=Info for standard users (change only the look), 'error','xxx'=Other
  *  @param	string	$morecss		More CSS
  *	@return	string					String with info text
  */
@@ -3758,6 +3752,11 @@ function dol_print_error($db = '', $error = '', $errors = null)
 	{
 		$out.='> '.$langs->transnoentities("ErrorInternalErrorDetected").":\n".$argv[0]."\n";
 		$syslog.="pid=".dol_getmypid();
+	}
+
+	if (! empty($conf->modules))
+	{
+	   $out.="<b>".$langs->trans("Modules").":</b> ".join(', ', $conf->modules)."<br>\n";
 	}
 
 	if (is_object($db))
@@ -4193,7 +4192,7 @@ function print_barre_liste($titre, $page, $file, $options = '', $sortfield = '',
  *
  *	@param	int				$page				Number of page
  *	@param	string			$file				Page URL (in most cases provided with $_SERVER["PHP_SELF"])
- *	@param	string			$options         	Other url paramaters to propagate ("" by default, may include sortfield and sortorder)
+ *	@param	string			$options         	Other url parameters to propagate ("" by default, may include sortfield and sortorder)
  *	@param	integer			$nextpage	    	Do we show a next page button
  *	@param	string			$betweenarrows		HTML content to show between arrows. MUST contains '<li> </li>' tags or '<li><span> </span></li>'.
  *  @param	string			$afterarrows		HTML content to show after arrows. Must NOT contains '<li> </li>' tags.
@@ -5216,7 +5215,6 @@ function yn($yesno, $case = 1, $color = 0)
 	return $result;
 }
 
-
 /**
  *	Return a path to have a the directory according to object where files are stored.
  *  New usage:       $conf->module->multidir_output[$object->entity].'/'.get_exdir(0, 0, 0, 1, $object, $modulepart)
@@ -5759,7 +5757,7 @@ function dol_textishtml($msg, $option = 0)
  *  @param  string  $text1          Text 1
  *  @param  string  $text2          Text 2
  *  @param  bool    $forxml         false=Use <br>instead of \n if html content detected, true=Use <br /> instead of \n if html content detected
- *  @param  bool    $invert         invert order of description lines if CONF CHANGE_ORDER_CONCAT_DESCRIPTION is active
+ *  @param  bool    $invert         invert order of description lines (we often use config MAIN_CHANGE_ORDER_CONCAT_DESCRIPTION in this parameter)
  *  @return string                  Text 1 + new line + Text2
  *  @see    dol_textishtml()
  */
@@ -6699,7 +6697,7 @@ function dol_getIdFromCode($db, $key, $tablename, $fieldkey = 'code', $fieldid =
 		return $cache_codes[$tablename][$key][$fieldid];   // Found in cache
 	}
 
-	dol_syslog('dol_getIdFromCode (value not found into cache)', LOG_DEBUG);
+	dol_syslog('dol_getIdFromCode (value for field '.$fieldid.' from key '.$key.' not found into cache)', LOG_DEBUG);
 
 	$sql = "SELECT ".$fieldid." as valuetoget";
 	$sql.= " FROM ".MAIN_DB_PREFIX.$tablename;
@@ -7023,15 +7021,22 @@ function getLanguageCodeFromCountryCode($countrycode)
 	$buildprimarykeytotest = strtolower($countrycode).'-'.strtoupper($countrycode);
 	if (in_array($buildprimarykeytotest, $locales)) return strtolower($countrycode).'_'.strtoupper($countrycode);
 
-	foreach ($locales as $locale)
+	if (function_exists('locale_get_primary_language'))    // Need extension php-intl
 	{
-		$locale_language = locale_get_primary_language($locale);
-		$locale_region = locale_get_region($locale);
-		if (strtoupper($countrycode) == $locale_region)
-		{
-			//var_dump($locale.'-'.$locale_language.'-'.$locale_region);
-			return strtolower($locale_language).'_'.strtoupper($locale_region);
-		}
+	    foreach ($locales as $locale)
+    	{
+    		$locale_language = locale_get_primary_language($locale);
+    		$locale_region = locale_get_region($locale);
+    		if (strtoupper($countrycode) == $locale_region)
+    		{
+    			//var_dump($locale.'-'.$locale_language.'-'.$locale_region);
+    			return strtolower($locale_language).'_'.strtoupper($locale_region);
+    		}
+    	}
+	}
+	else
+	{
+        dol_syslog("Warning Exention php-intl is not available", LOG_WARNING);
 	}
 
 	return null;
@@ -7163,7 +7168,7 @@ function complete_head_from_modules($conf, $langs, $object, &$head, &$h, $type, 
  */
 function printCommonFooter($zone = 'private')
 {
-	global $conf, $hookmanager, $user;
+	global $conf, $hookmanager, $user, $debugbar;
 	global $action;
 	global $micro_start_time;
 
@@ -7171,7 +7176,7 @@ function printCommonFooter($zone = 'private')
 	else print "\n".'<!-- Common footer for public page -->'."\n";
 
 	// A div to store page_y POST parameter so we can read it using javascript
-	print "\n<!-- A div to store page_y POST paramater -->\n";
+	print "\n<!-- A div to store page_y POST parameter -->\n";
 	print '<div id="page_y" style="display: none;">'.$_POST['page_y'].'</div>'."\n";
 
 	$parameters=array();
@@ -7190,11 +7195,10 @@ function printCommonFooter($zone = 'private')
 			{
 				print "\n";
 				print '/* JS CODE TO ENABLE to manage handler to switch left menu page (menuhider) */'."\n";
-				print 'jQuery(".menuhider").click(function() {';
+				print 'jQuery(".menuhider").click(function(event) {';
+				print '  if (!$( "body" ).hasClass( "sidebar-collapse" )){ event.preventDefault(); }'."\n";
 				print '  console.log("We click on .menuhider");'."\n";
-				//print "  $('.side-nav').animate({width:'toggle'},200);\n";     // OK with eldy theme but not with md
-				print "  $('.side-nav').toggle()\n";
-				print "  $('.login_block').toggle()\n";
+				print '  $("body").toggleClass("sidebar-collapse")'."\n";
 				print '});'."\n";
 			}
 
@@ -7328,11 +7332,17 @@ function printCommonFooter($zone = 'private')
 		// Add Xdebug coverage of code
 		if (defined('XDEBUGCOVERAGE'))
 		{
-			print_r(xdebug_get_code_coverage());
+		    print_r(xdebug_get_code_coverage());
 		}
 
-		// If there is some logs in buffer to show
-		if (count($conf->logbuffer))
+		// Add DebugBar data
+	    if (! empty($user->rights->debugbar->read) && is_object($debugbar))
+	    {
+	        $debugbar['time']->stopMeasure('pageaftermaster');
+	        print '<!-- Output debugbar data -->'."\n";
+		    print $debugbar->getRenderer()->render();
+		}
+		elseif (count($conf->logbuffer))    // If there is some logs in buffer to show
 		{
 			print "\n";
 			print "<!-- Start of log output\n";
@@ -8017,8 +8027,8 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
     // use status with images
     elseif (empty($conf->global->MAIN_STATUS_USES_CSS)){
         $return = '';
-        $htmlLabel      = '<span class="hideonsmartphone">'.(!empty($html)?$html:$statusLabel).'</span>';
-        $htmlLabelShort = '<span class="hideonsmartphone">'.(!empty($html)?$html:(!empty($statusLabelShort)?$statusLabelShort:$statusLabel)).'</span>';
+        $htmlLabel      = (in_array($displayMode, array(1,2,5))?'<span class="hideonsmartphone">':'').(!empty($html)?$html:$statusLabel).(in_array($displayMode, array(1,2,5))?'</span>':'');
+        $htmlLabelShort = (in_array($displayMode, array(1,2,5))?'<span class="hideonsmartphone">':'').(!empty($html)?$html:(!empty($statusLabelShort)?$statusLabelShort:$statusLabel)).(in_array($displayMode, array(1,2,5))?'</span>':'');
 
         if(!empty($statusImg[$statusType])){
             $htmlImg = img_picto($statusLabel, $statusImg[$statusType]);
@@ -8027,7 +8037,7 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
         }
 
         if ($displayMode === 2) {
-            $return =  $htmlImg .' '. $htmlLabel;
+            $return =  $htmlImg .' '. $htmlLabelShort;
         }
         elseif ($displayMode === 3) {
             $return = $htmlImg;
@@ -8046,13 +8056,13 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
     elseif (!empty($conf->global->MAIN_STATUS_USES_CSS) && !empty($displayMode)) {
         $statusLabelShort = !empty($statusLabelShort)?$statusLabelShort:$statusLabel;
 
-        if($displayMode == 3){
+        if ($displayMode == 3) {
             $return = dolGetBadge($statusLabel, '', $statusType, 'dot');
         }
-        elseif($displayMode === 5){
+        elseif ($displayMode === 5) {
             $return = dolGetBadge($statusLabelShort, $html, $statusType);
         }
-        else{
+        else {
             $return = dolGetBadge($statusLabel, $html, $statusType);
         }
     }

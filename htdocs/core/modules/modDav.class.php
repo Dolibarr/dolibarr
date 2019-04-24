@@ -19,7 +19,7 @@
  * 	\defgroup   dav     Module dav
  *  \brief      dav module descriptor.
  *
- *  \file       htdocs/dav/core/modules/modDav.class.php
+ *  \file       htdocs/core/modules/modDav.class.php
  *  \ingroup    dav
  *  \brief      Description and activation file for module dav
  */

@@ -142,16 +142,16 @@ if ($savehandler == 'files')
 		print '<td>'.$sessionentry['login'].'</td>';
 
 		// ID
-		print '<td align="left" class="nowrap">';
+		print '<td class="nowrap left">';
 		if ("$key" == session_id()) print $form->textwithpicto($key, $langs->trans("YourSession"));
 		else print $key;
 		print '</td>';
 
 		// Date creation
-		print '<td align="left" class="nowrap">'.dol_print_date($sessionentry['creation'], '%Y-%m-%d %H:%M:%S').'</td>';
+		print '<td class="nowrap left">'.dol_print_date($sessionentry['creation'], '%Y-%m-%d %H:%M:%S').'</td>';
 
 		// Date modification
-		print '<td align="left" class="nowrap">'.dol_print_date($sessionentry['modification'], '%Y-%m-%d %H:%M:%S').'</td>';
+		print '<td class="nowrap left">'.dol_print_date($sessionentry['modification'], '%Y-%m-%d %H:%M:%S').'</td>';
 
 		// Age
 		print '<td>'.$sessionentry['age'].'</td>';

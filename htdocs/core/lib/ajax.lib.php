@@ -375,8 +375,7 @@ function ajax_combobox($htmlname, $events = array(), $minLengthToAutocomplete = 
 {
 	global $conf;
 
-	// select2 disabled for smartphones with standard browser.
-	// TODO With select2 v4, it seems ok, except that responsive style on table become crazy when scrolling at end of array)
+	// select2 can be disabled for smartphones
 	if (! empty($conf->browser->layout) && $conf->browser->layout == 'phone' && ! empty($conf->global->MAIN_DISALLOW_SELECT2_WITH_SMARTPHONE)) return '';
 
 	if (! empty($conf->global->MAIN_DISABLE_AJAX_COMBOX)) return '';

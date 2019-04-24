@@ -692,9 +692,9 @@ if ($rowid > 0)
 
             print '<tr class="liste_titre">';
             print_liste_field_titre('Ref', $_SERVER["PHP_SELF"], 'c.rowid', '', $param, '', $sortfield, $sortorder);
-            print '<td align="center">'.$langs->trans("DateCreation").'</td>';
-            print '<td align="center">'.$langs->trans("DateStart").'</td>';
-            print '<td align="center">'.$langs->trans("DateEnd").'</td>';
+            print '<td class="center">'.$langs->trans("DateCreation").'</td>';
+            print '<td class="center">'.$langs->trans("DateStart").'</td>';
+            print '<td class="center">'.$langs->trans("DateEnd").'</td>';
             print '<td class="right">'.$langs->trans("Amount").'</td>';
             if (! empty($conf->banque->enabled))
             {
@@ -713,9 +713,9 @@ if ($rowid > 0)
 
                 print '<tr class="oddeven">';
                 print '<td>'.$subscriptionstatic->getNomUrl(1).'</td>';
-                print '<td align="center">'.dol_print_date($db->jdate($objp->datec), 'dayhour')."</td>\n";
-                print '<td align="center">'.dol_print_date($db->jdate($objp->dateh), 'day')."</td>\n";
-                print '<td align="center">'.dol_print_date($db->jdate($objp->datef), 'day')."</td>\n";
+                print '<td class="center">'.dol_print_date($db->jdate($objp->datec), 'dayhour')."</td>\n";
+                print '<td class="center">'.dol_print_date($db->jdate($objp->dateh), 'day')."</td>\n";
+                print '<td class="center">'.dol_print_date($db->jdate($objp->datef), 'day')."</td>\n";
                 print '<td class="right">'.price($objp->subscription).'</td>';
 				if (! empty($conf->banque->enabled))
 				{

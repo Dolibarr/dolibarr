@@ -325,7 +325,7 @@ $arrayofmassactions =  array(
 	'enable'=>$langs->trans("CronStatusActiveBtn"),
 	'disable'=>$langs->trans("CronStatusInactiveBtn"),
 );
-if ($user->rights->mymodule->delete) $arrayofmassactions['predelete']=$langs->trans("Delete");
+if ($user->rights->mymodule->delete) $arrayofmassactions['predelete']='<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
 if (in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
 $massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 
@@ -346,13 +346,13 @@ print '<input type="hidden" name="viewstatut" value="'.$viewstatut.'">';
 $newcardbutton='';
 if ($user->rights->cron->create)
 {
-	$newcardbutton.='<a class="butActionNew" style="margin-right: 0px;margin-left: 0px;" href="'.DOL_URL_ROOT.'/cron/card.php?action=create"><span class="valignmiddle">'.$langs->trans("CronCreateJob").'</span>';
+	$newcardbutton.='<a class="butActionNew" style="margin-right: 0px;margin-left: 0px;" href="'.DOL_URL_ROOT.'/cron/card.php?action=create"><span class="valignmiddle text-plus-circle">'.$langs->trans("CronCreateJob").'</span>';
 	$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
 	$newcardbutton.= '</a>';
 }
 else
 {
-	$newcardbutton.='<a class="butActionNewRefused" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'"><span class="valignmiddle">'.$langs->trans("CronCreateJob").'</span>';
+	$newcardbutton.='<a class="butActionNewRefused" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'"><span class="valignmiddle text-plus-circle">'.$langs->trans("CronCreateJob").'</span>';
 	$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
 	$newcardbutton.= '</a>';
 }
@@ -394,7 +394,7 @@ print '<td class="liste_titre">&nbsp;</td>';
 print '<td class="liste_titre">&nbsp;</td>';
 print '<td class="liste_titre" align="center">';
 print $form->selectarray('search_status', array('0'=>$langs->trans("Disabled"), '1'=>$langs->trans("Enabled"), '-2'=>$langs->trans("EnabledAndDisabled"), '2'=>$langs->trans("Archived")), $search_status, 1);
-print '</td><td class="liste_titre" align="right">';
+print '</td><td class="liste_titre right">';
 $searchpicto=$form->showFilterButtons();
 print $searchpicto;
 print '</td>';
@@ -505,11 +505,11 @@ if ($num > 0)
 		if(!empty($obj->dateend)) {print dol_print_date($db->jdate($obj->dateend), 'dayhour');}
 		print '</td>';
 
-		print '<td align="right">';
+		print '<td class="right">';
 		if (!empty($obj->maxrun)) {print $obj->maxrun;}
 		print '</td>';
 
-		print '<td align="right">';
+		print '<td class="right">';
 		if (!empty($obj->nbrun)) {print $obj->nbrun;} else {print '0';}
 		print '</td>';
 
@@ -554,11 +554,11 @@ if ($num > 0)
 		print '</td>';
 
 		// Status
-		print '<td align="center">';
+		print '<td class="center">';
 		print $object->getLibStatut(3);
 		print '</td>';
 
-		print '<td align="right" class="nowraponall">';
+		print '<td class="nowraponall right">';
 
 		$backtourl = urlencode($_SERVER["PHP_SELF"].'?'.$param.($sortfield?'&sortfield='.$sortfield:'').($sortorder?'&sortorder='.$sortorder:''));
 		if ($user->rights->cron->create)

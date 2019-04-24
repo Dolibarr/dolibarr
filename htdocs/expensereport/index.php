@@ -122,7 +122,7 @@ foreach ($listoftype as $code => $label)
 
 if ($conf->use_javascript_ajax)
 {
-    print '<tr><td align="center" colspan="4">';
+    print '<tr><td class="center" colspan="4">';
 
     include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
     $dolgraph = new DolGraph();
@@ -139,7 +139,7 @@ if ($conf->use_javascript_ajax)
 
 print '<tr class="liste_total">';
 print '<td>'.$langs->trans("Total").'</td>';
-print '<td align="right" colspan="3">'.price($totalsum, 1, $langs, 0, 0, 0, $conf->currency).'</td>';
+print '<td class="right" colspan="3">'.price($totalsum, 1, $langs, 0, 0, 0, $conf->currency).'</td>';
 print '</tr>';
 
 print '</table>';
@@ -183,9 +183,9 @@ if ($result)
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre">';
     print '<th colspan="2">'.$langs->trans("BoxTitleLastModifiedExpenses", min($max, $num)).'</th>';
-    print '<th align="right">'.$langs->trans("AmountHT").'</th>';
-    print '<th align="right">'.$langs->trans("AmountTTC").'</th>';
-    print '<th align="right">'.$langs->trans("DateModificationShort").'</th>';
+    print '<th class="right">'.$langs->trans("AmountHT").'</th>';
+    print '<th class="right">'.$langs->trans("AmountTTC").'</th>';
+    print '<th class="right">'.$langs->trans("DateModificationShort").'</th>';
     print '<th>&nbsp;</th>';
     print '</tr>';
     if ($num)
@@ -208,10 +208,10 @@ if ($result)
             print '<tr class="oddeven">';
             print '<td>'.$expensereportstatic->getNomUrl(1).'</td>';
             print '<td>'.$userstatic->getNomUrl(-1).'</td>';
-            print '<td align="right">'.price($obj->total_ht).'</td>';
-            print '<td align="right">'.price($obj->total_ttc).'</td>';
-            print '<td align="right">'.dol_print_date($db->jdate($obj->dm), 'day').'</td>';
-            print '<td align="right">';
+            print '<td class="right">'.price($obj->total_ht).'</td>';
+            print '<td class="right">'.price($obj->total_ttc).'</td>';
+            print '<td class="right">'.dol_print_date($db->jdate($obj->dm), 'day').'</td>';
+            print '<td class="right">';
             //print $obj->libelle;
 			print $expensereportstatic->LibStatut($obj->fk_status, 3);
             print '</td>';

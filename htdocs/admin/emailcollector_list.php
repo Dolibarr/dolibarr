@@ -304,7 +304,7 @@ $arrayofmassactions =  array(
 	//'presend'=>$langs->trans("SendByMail"),
 	//'builddoc'=>$langs->trans("PDFMerge"),
 );
-if ($user->rights->emailcollector->delete) $arrayofmassactions['predelete']=$langs->trans("Delete");
+if ($user->rights->emailcollector->delete) $arrayofmassactions['predelete']='<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
 if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
 $massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 
@@ -321,7 +321,7 @@ print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 $newcardbutton='';
 //if ($user->rights->emailcollector->creer)
 //{
-$newcardbutton='<a class="butActionNew" href="emailcollector_card.php?action=create&backtopage='.urlencode($_SERVER['PHP_SELF']).'"><span class="valignmiddle">'.$langs->trans('New').'</span>';
+$newcardbutton='<a class="butActionNew" href="emailcollector_card.php?action=create&backtopage='.urlencode($_SERVER['PHP_SELF']).'"><span class="valignmiddle text-plus-circle">'.$langs->trans('New').'</span>';
 $newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
 $newcardbutton.= '</a>';
 //}

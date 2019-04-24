@@ -152,7 +152,7 @@ class FormFile
 			$out .= (!empty($accept)?' accept="'.$accept.'"':' accept=""');
 			$out .= '>';
 			$out .= ' ';
-			$out .= '<input type="submit" class="button" name="sendit" value="'.$langs->trans("Upload").'"';
+			$out .= '<input type="submit" class="button reposition" name="sendit" value="'.$langs->trans("Upload").'"';
 			$out .= (empty($conf->global->MAIN_UPLOAD_DOC) || empty($perm)?' disabled':'');
 			$out .= '>';
 
@@ -1044,7 +1044,7 @@ class FormFile
 	 *  @param   int    $disablemove        1=Disable move button, 0=Position move is possible.
 	 *  @param	 int	$addfilterfields	Add line with filters
 	 * 	@return	 int						<0 if KO, nb of files shown if OK
-	 *  @see list_of_autoecmfiles
+	 *  @see list_of_autoecmfiles()
 	 */
 	public function list_of_documents($filearray, $object, $modulepart, $param = '', $forcedownload = 0, $relativepath = '', $permonobject = 1, $useinecm = 0, $textifempty = '', $maxlength = 0, $title = '', $url = '', $showrelpart = 0, $permtoeditline = -1, $upload_dir = '', $sortfield = '', $sortorder = 'ASC', $disablemove = 1, $addfilterfields = 0)
 	{
@@ -1139,7 +1139,7 @@ class FormFile
 			}
 
 			print '<div class="div-table-responsive-no-min">';
-			print '<table width="100%" id="tablelines" class="'.(($useinecm && $useinecm != 6)?'liste noborder':'liste').'">'."\n";
+			print '<table width="100%" id="tablelines" class="liste noborder nobottom">'."\n";
 
 			if (! empty($addfilterfields))
 			{
@@ -1156,10 +1156,10 @@ class FormFile
 
 			print '<tr class="liste_titre nodrag nodrop">';
 			//print $url.' sortfield='.$sortfield.' sortorder='.$sortorder;
-			print_liste_field_titre('Documents2', $url, "name", "", $param, '', $sortfield, $sortorder, ' left');
-			print_liste_field_titre('Size', $url, "size", "", $param, '', $sortfield, $sortorder, ' right');
-			print_liste_field_titre('Date', $url, "date", "", $param, '', $sortfield, $sortorder, ' center');
-			if (empty($useinecm) || $useinecm == 4 || $useinecm == 5 || $useinecm == 6) print_liste_field_titre('', $url, "", "", $param, '', $sortfield, $sortorder, ' center');	// Preview
+			print_liste_field_titre('Documents2', $url, "name", "", $param, '', $sortfield, $sortorder, 'left ');
+			print_liste_field_titre('Size', $url, "size", "", $param, '', $sortfield, $sortorder, 'right ');
+			print_liste_field_titre('Date', $url, "date", "", $param, '', $sortfield, $sortorder, 'center ');
+			if (empty($useinecm) || $useinecm == 4 || $useinecm == 5 || $useinecm == 6) print_liste_field_titre('', $url, "", "", $param, '', $sortfield, $sortorder, 'center ');	// Preview
 			print_liste_field_titre('');
 			print_liste_field_titre('');
 			if (! $disablemove) print_liste_field_titre('');
@@ -1432,7 +1432,7 @@ class FormFile
 	 *  @param	string 	$url				Full url to use for click links ('' = autodetect)
 	 *  @param	int		$addfilterfields	Add line with filters
 	 *  @return int                 		<0 if KO, nb of files shown if OK
-	 *  @see list_of_documents
+	 *  @see list_of_documents()
 	 */
 	public function list_of_autoecmfiles($upload_dir, $filearray, $modulepart, $param, $forcedownload = 0, $relativepath = '', $permtodelete = 1, $useinecm = 0, $textifempty = '', $maxlength = 0, $url = '', $addfilterfields = 0)
 	{
@@ -1464,7 +1464,7 @@ class FormFile
 			print '<td></td>';
 			print '<td></td>';
 			// Action column
-			print '<td class="liste_titre" align="middle">';
+			print '<td class="liste_titre center">';
 			$searchpicto=$form->showFilterButtons();
 			print $searchpicto;
 			print '</td>';
@@ -1474,10 +1474,10 @@ class FormFile
 		print '<tr class="liste_titre">';
 		$sortref="fullname";
 		if ($modulepart == 'invoice_supplier') $sortref='level1name';
-		print_liste_field_titre("Ref", $url, $sortref, "", $param, 'class="left"', $sortfield, $sortorder);
-		print_liste_field_titre("Documents2", $url, "name", "", $param, 'class="left"', $sortfield, $sortorder);
-		print_liste_field_titre("Size", $url, "size", "", $param, 'class="right"', $sortfield, $sortorder);
-		print_liste_field_titre("Date", $url, "date", "", $param, 'class="center"', $sortfield, $sortorder);
+		print_liste_field_titre("Ref", $url, $sortref, "", $param, '', $sortfield, $sortorder);
+		print_liste_field_titre("Documents2", $url, "name", "", $param, '', $sortfield, $sortorder);
+		print_liste_field_titre("Size", $url, "size", "", $param, '', $sortfield, $sortorder, 'right ');
+		print_liste_field_titre("Date", $url, "date", "", $param, '', $sortfield, $sortorder, 'center ');
 		print_liste_field_titre('', '', '');
 		print '</tr>'."\n";
 
@@ -1557,6 +1557,11 @@ class FormFile
 			include_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
 			$object_instance=new Holiday($this->db);
 		}
+		elseif ($modulepart == 'banque')
+		{
+		    include_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+		    $object_instance=new Account($this->db);
+		}
 
 		foreach($filearray as $key => $file)
 		{
@@ -1569,16 +1574,19 @@ class FormFile
 				// Define relative path used to store the file
 				$relativefile=preg_replace('/'.preg_quote($upload_dir.'/', '/').'/', '', $file['fullname']);
 
-				//var_dump($file);
 				$id=0; $ref=''; $label='';
 
 				// To show ref or specific information according to view to show (defined by $module)
 				if ($modulepart == 'company' || $modulepart == 'tax')		{ preg_match('/(\d+)\/[^\/]+$/', $relativefile, $reg); $id=(isset($reg[1])?$reg[1]:''); }
 				elseif ($modulepart == 'invoice_supplier')					{ preg_match('/([^\/]+)\/[^\/]+$/', $relativefile, $reg); $ref=(isset($reg[1])?$reg[1]:''); if (is_numeric($ref)) { $id=$ref; $ref=''; } }	// $ref may be also id with old supplier invoices
 				elseif ($modulepart == 'user' || $modulepart == 'holiday')	{ preg_match('/(.*)\/[^\/]+$/', $relativefile, $reg); $id=(isset($reg[1])?$reg[1]:''); }
-                elseif (in_array($modulepart, array('invoice', 'propal', 'supplier_proposal', 'order', 'order_supplier', 'contract', 'product', 'project', 'fichinter', 'expensereport')))
+                elseif (in_array($modulepart, array('invoice', 'propal', 'supplier_proposal', 'order', 'order_supplier', 'contract', 'product', 'project', 'fichinter', 'expensereport', 'banque')))
 				{
 					preg_match('/(.*)\/[^\/]+$/', $relativefile, $reg); $ref=(isset($reg[1])?$reg[1]:'');
+				}
+				else
+				{
+				    //print 'Error: Value for modulepart = '.$modulepart.' is not yet implemented in function list_of_autoecmfiles'."\n";
 				}
 
 				if (! $id && ! $ref) continue;
@@ -1597,13 +1605,13 @@ class FormFile
 						//fetchOneLike looks for objects with wildcards in its reference.
 						//It is useful for those masks who get underscores instead of their actual symbols
 						//fetchOneLike requires some info in the object. If it doesn't have it, then 0 is returned
-						//that's why we look only look fetchOneLike when fetch returns 0
+						//that's why we look only into fetchOneLike when fetch returns 0
 						if (!$result = $object_instance->fetch('', $ref)) {
 							$result = $object_instance->fetchOneLike($ref);
 						}
 					}
 
-					if ($result > 0) {  // Save object into a cache
+					if ($result > 0) {  // Save object loaded into a cache
 						$found=1; $this->cache_objects[$modulepart.'_'.$id.'_'.$ref] = clone $object_instance;
 					}
 					if ($result == 0) { $found=1; $this->cache_objects[$modulepart.'_'.$id.'_'.$ref]='notfound'; unset($filearray[$key]); }
@@ -1734,7 +1742,7 @@ class FormFile
 
 		print '<form action="' . $_SERVER['PHP_SELF'] . ($param?'?'.$param:'') . '" method="POST">';
 
-		print '<table width="100%" class="liste">';
+		print '<table width="100%" class="liste noborder nobottom">';
 		print '<tr class="liste_titre">';
         print_liste_field_titre(
 			$langs->trans("Links"),
@@ -1742,9 +1750,10 @@ class FormFile
 			"name",
 			"",
 			$param,
-			'class="left"',
+			'',
 			$sortfield,
-			$sortorder
+			$sortorder,
+            ''
 		);
         print_liste_field_titre(
 			"",
@@ -1752,7 +1761,10 @@ class FormFile
 			"",
 			"",
 			"",
-			'class="right"'
+			'',
+            '',
+            '',
+            'right '
 		);
         print_liste_field_titre(
 			$langs->trans("Date"),
@@ -1760,9 +1772,10 @@ class FormFile
 			"date",
 			"",
 			$param,
-			'class="center"',
+			'',
 			$sortfield,
-			$sortorder
+			$sortorder,
+            'center '
 		);
         print_liste_field_titre(
 			'',
@@ -1770,7 +1783,10 @@ class FormFile
 			"",
 			"",
 			$param,
-			'class="center"'
+			'',
+            '',
+            '',
+            'center '
 		);
 		print_liste_field_titre('', '', '');
 		print '</tr>';

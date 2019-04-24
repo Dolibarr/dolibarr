@@ -51,6 +51,7 @@ if (! $sortfield) $sortfield="ref";
 
 // Category
 $selected_cat = (int) GETPOST('search_categ', 'int');
+$selected_soc = (int) GETPOST('search_soc', 'int');
 $subcat = false;
 if (GETPOST('subcat', 'alpha') === 'yes') {
 	$subcat = true;
@@ -137,6 +138,7 @@ $headerparams['q'] = $q;
 
 $tableparams = array();
 $tableparams['search_categ'] = $selected_cat;
+$tableparams['search_soc'] = $selected_soc;
 $tableparams['search_type'] = $selected_type;
 $tableparams['subcat'] = ($subcat === true)?'yes':'';
 
@@ -225,7 +227,9 @@ if ($modecompta == 'CREANCES-DETTES')
 	$sql = "SELECT DISTINCT p.rowid as rowid, p.ref as ref, p.label as label, p.fk_product_type as product_type,";
 	$sql.= " SUM(l.total_ht) as amount, SUM(l.total_ttc) as amount_ttc,";
 	$sql.= " SUM(CASE WHEN f.type = 2 THEN -l.qty ELSE l.qty END) as qty";
-	$sql.= " FROM ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."facturedet as l";
+	$sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
+    if($selected_soc > 0) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as soc ON (soc.rowid = f.fk_soc)";
+    $sql.= ",".MAIN_DB_PREFIX."facturedet as l";
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON l.fk_product = p.rowid";
 	if ($selected_cat === -2)	// Without any category
 	{
@@ -259,6 +263,7 @@ if ($modecompta == 'CREANCES-DETTES')
 		$sql.= ")";
 		$sql.= " AND cp.fk_categorie = c.rowid AND cp.fk_product = p.rowid";
 	}
+    if($selected_soc > 0) $sql .= " AND soc.rowid=".$selected_soc;
 	$sql.= " AND f.entity IN (".getEntity('invoice').")";
 	$sql.= " GROUP BY p.rowid, p.ref, p.label, p.fk_product_type";
 	$sql.= $db->order($sortfield, $sortorder);
@@ -313,6 +318,10 @@ if ($modecompta == 'CREANCES-DETTES')
     print ' ';
     print $langs->trans("Type"). ': ';
     $form->select_type_of_lines(isset($selected_type)?$selected_type:-1, 'search_type', 1, 1, 1);
+
+    //select thirdparty
+    print '</br>';
+    print $langs->trans("ThirdParty") . ': ' . $form->select_thirdparty_list($selected_soc, 'search_soc', '', 1);
     print '</td>';
 
     print '<td colspan="5" class="right">';

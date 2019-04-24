@@ -32,7 +32,7 @@ class mod_ticket_simple extends ModeleNumRefTicket
 {
     /**
      * Dolibarr version of the loaded document
-     * @public string
+     * @var string
      */
 	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 

@@ -373,7 +373,7 @@ if ($result > 0)
 		print '<td>';
 		print $langs->trans("Email");
 		print '</td>';
-		print '<td align="right">'.$langs->trans("SeeModuleSetup", $langs->transnoentitiesnoconv("Module600Name")).'</td>';
+		print '<td class="right">'.$langs->trans("SeeModuleSetup", $langs->transnoentitiesnoconv("Module600Name")).'</td>';
 		print '</tr>';
     }*/
     /*if ($user->admin)

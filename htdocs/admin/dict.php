@@ -4,7 +4,7 @@
  * Copyright (C) 2004		Benoit Mortier			<benoit.mortier@opensides.be>
  * Copyright (C) 2005-2017	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2010-2016	Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2011-2015	Philippe Grand			<philippe.grand@atoo-net.com>
+ * Copyright (C) 2011-2019	Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2011		Remy Younes				<ryounes@gmail.com>
  * Copyright (C) 2012-2015	Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2012		Christophe Battarel		<christophe.battarel@ltairis.fr>
@@ -370,7 +370,7 @@ $tabfieldinsert[35]= "label";
 $tabfieldinsert[36]= "range_ik,fk_c_exp_tax_cat";
 $tabfieldinsert[37]= "code,label,short_label,unit_type,scale";
 
-// Nom du rowid si le champ n'est pas de type autoincrement
+// Rowid name if the field is not autoincrement type
 // Example: "" if id field is "rowid" and has autoincrement on
 //          "nameoffield" if id field is not "rowid" or has not autoincrement on
 $tabrowid=array();
@@ -703,12 +703,12 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
         $_POST["code"]=preg_replace('/\s/', '', $_POST["code"]);
     }
 
-    // Si verif ok et action add, on ajoute la ligne
+    // If check ok and action add, add the line
     if ($ok && GETPOST('actionadd'))
     {
         if ($tabrowid[$id])
         {
-            // Recupere id libre pour insertion
+            // Get free id for insert
             $newid=0;
             $sql = "SELECT max(".$tabrowid[$id].") newid from ".$tabname[$id];
             $result = $db->query($sql);
@@ -771,7 +771,7 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
         }
     }
 
-    // Si verif ok et action modify, on modifie la ligne
+    // If verif ok and action modify, modify the line
     if ($ok && GETPOST('actionmodify'))
     {
         if ($tabrowid[$id]) { $rowidcol=$tabrowid[$id]; }
@@ -1382,7 +1382,7 @@ if ($id)
                     	$withentity = fieldList($fieldlist, $obj, $tabname[$id], 'edit');
                     }
 
-                    print '<td colspan="3" align="center">';
+                    print '<td colspan="3" class="center">';
                     print '<div name="'.(! empty($obj->rowid)?$obj->rowid:$obj->code).'"></div>';
                     print '<input type="hidden" name="page" value="'.dol_escape_htmltag($page).'">';
                     print '<input type="hidden" name="rowid" value="'.dol_escape_htmltag($rowid).'">';
@@ -1549,7 +1549,7 @@ if ($id)
                                 $valuetoshow = ($obj->code && $key != 'SizeUnit'.strtolower($obj->unit) ? $key : $obj->{$fieldlist[$field]});
                             }
 							elseif ($fieldlist[$field]=='localtax1' || $fieldlist[$field]=='localtax2') {
-							    $align="center";
+							    $class="center";
 							}
 							elseif ($fieldlist[$field]=='localtax1_type') {
                               if ($obj->localtax1 != 0)
@@ -1644,14 +1644,14 @@ if ($id)
 					// Only activated on country dictionary
                     if ($id == 4)
 					{
-						print '<td align="center" class="nowrap">';
+						print '<td class="nowrap center">';
 						if ($iserasable) print '<a class="reposition" href="'.$url.'action='.$acts[$obj->favorite].'_favorite">'.$actl[$obj->favorite].'</a>';
 						else print $langs->trans("AlwaysActive");
 						print '</td>';
 					}
 
                     // Active
-                    print '<td align="center" class="nowrap">';
+                    print '<td class="nowrap center">';
                     if ($canbedisabled) print '<a class="reposition" href="'.$url.'action='.$acts[$obj->active].'">'.$actl[$obj->active].'</a>';
                     else
                  	{
@@ -1669,7 +1669,7 @@ if ($id)
                     // Delete link
                     if ($iserasable)
                     {
-                        print '<td align="center">';
+                        print '<td class="center">';
                         if ($user->admin) print '<a href="'.$url.'action=delete">'.img_delete().'</a>';
                         //else print '<a href="#">'.img_delete().'</a>';    // Some dictionary can be edited by other profile than admin
                         print '</td>';
@@ -1872,7 +1872,7 @@ function fieldList($fieldlist, $obj = '', $tabname = '', $context = '')
 			print '</td>';
 		}
 		elseif ($fieldlist[$field] == 'recuperableonly' || $fieldlist[$field] == 'type_cdr' || $fieldlist[$field] == 'deductible' || $fieldlist[$field] == 'category_type') {
-		    if ($fieldlist[$field] == 'type_cdr') print '<td align="center">';
+		    if ($fieldlist[$field] == 'type_cdr') print '<td class="center">';
 		    else print '<td>';
 			if ($fieldlist[$field] == 'type_cdr') {
 				print $form->selectarray($fieldlist[$field], array(0=>$langs->trans('None'), 1=>$langs->trans('AtEndOfMonth'), 2=>$langs->trans('CurrentNext')), (! empty($obj->{$fieldlist[$field]})?$obj->{$fieldlist[$field]}:''));
@@ -1884,7 +1884,7 @@ function fieldList($fieldlist, $obj = '', $tabname = '', $context = '')
 		elseif (in_array($fieldlist[$field], array('nbjour','decalage','taux','localtax1','localtax2'))) {
 			$align="left";
 			if (in_array($fieldlist[$field], array('taux','localtax1','localtax2'))) $align="center";	// Fields aligned on right
-			print '<td align="'.$align.'">';
+			print '<td class="'.$align.'">';
 			print '<input type="text" class="flat" value="'.(isset($obj->{$fieldlist[$field]}) ? $obj->{$fieldlist[$field]} : '').'" size="3" name="'.$fieldlist[$field].'">';
 			print '</td>';
 		}
@@ -1928,7 +1928,7 @@ function fieldList($fieldlist, $obj = '', $tabname = '', $context = '')
 		// Le type de taxe locale
 		elseif ($fieldlist[$field] == 'localtax1_type' || $fieldlist[$field] == 'localtax2_type')
 		{
-			print '<td align="center">';
+			print '<td class="center">';
 			print $form->selectarray($fieldlist[$field], $localtax_typeList, (! empty($obj->{$fieldlist[$field]})?$obj->{$fieldlist[$field]}:''));
 			print '</td>';
 		}

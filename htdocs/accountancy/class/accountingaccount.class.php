@@ -74,9 +74,11 @@ class AccountingAccount extends CommonObject
 	public $rowid;
 
 	/**
-     * @var string Creation date
+     * Date creation record (datec)
+     *
+     * @var integer
      */
-	public $datec;
+    public $datec;
 
 	/**
      * @var string pcg version
@@ -231,16 +233,8 @@ class AccountingAccount extends CommonObject
 			$this->pcg_subtype = trim($this->pcg_subtype);
 		if (isset($this->account_number))
 			$this->account_number = trim($this->account_number);
-		if (isset($this->account_parent))
-			$this->account_parent = trim($this->account_parent);
 		if (isset($this->label))
 			$this->label = trim($this->label);
-		if (isset($this->account_category))
-			$this->account_category = trim($this->account_category);
-		if (isset($this->fk_user_author))
-			$this->fk_user_author = trim($this->fk_user_author);
-		if (isset($this->active))
-			$this->active = trim($this->active);
 
 		if (empty($this->pcg_type) || $this->pcg_type == '-1')
 		{

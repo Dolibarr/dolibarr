@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - supplier_proposal
 SupplierProposal=Vendor commercial proposals
-supplier_proposalDESC=Manage price requests to vendors
+supplier_proposalDESC=Διαχειριστείτε τα αιτήματα των τιμών προς τους προμηθευτές
 SupplierProposalNew=Νέα αίτηση τιμής
 CommRequest=Αίτηση τιμής
 CommRequests=Αιτήματα τιμών
@@ -34,7 +34,6 @@ SupplierProposalStatusSignedShort=Αποδεκτή
 SupplierProposalStatusNotSignedShort=Αρνήθηκε
 CopyAskFrom=Δημιουργία αίτησης τιμής με αντιγραφή υφιστάμενης αίτησης τιμής
 CreateEmptyAsk=Δημιουργία κενής αίτησης τιμής
-CloneAsk=Κλωνοποίηση αίτησης τιμής
 ConfirmCloneAsk=Είστε σίγουροι πως θέλετε να κλωνοποιήσετε την αίτηση τιμής <b>%s</b>;
 ConfirmReOpenAsk=Είστε σίγουροι πως θέλετε να ξαναανοίξετε την αίτηση τιμής <b>%s</b>;
 SendAskByMail=Αποστολή αίτησης τιμής με email

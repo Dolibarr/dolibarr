@@ -220,14 +220,14 @@ $arrayofmassactions =  array(
 //    'presend'=>$langs->trans("SendByMail"),
 //    'builddoc'=>$langs->trans("PDFMerge"),
 );
-if ($user->rights->banque->supprimer) $arrayofmassactions['predelete']=$langs->trans("Delete");
+if ($user->rights->banque->supprimer) $arrayofmassactions['predelete']='<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
 if (in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
 $massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 
 $newcardbutton='';
 if ($user->rights->banque->configurer)
 {
-	$newcardbutton.='<a class="butActionNew" href="card.php?action=create"><span class="valignmiddle">'.$langs->trans("NewFinancialAccount").'</span>';
+	$newcardbutton.='<a class="butActionNew" href="card.php?action=create"><span class="valignmiddle text-plus-circle">'.$langs->trans("NewFinancialAccount").'</span>';
 	$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
 	$newcardbutton.= '</a>';
 }
@@ -407,18 +407,17 @@ foreach ($accounts as $key=>$type)
 
     $found++;
 
-	$obj = new Account($db);
-	$obj->fetch($key);
+	$result = $objecttmp->fetch($key);
 
-	$solde = $obj->solde(1);
+	$solde = $objecttmp->solde(1);
 
-	if (! empty($lastcurrencycode) && $lastcurrencycode != $obj->currency_code)
+	if (! empty($lastcurrencycode) && $lastcurrencycode != $objecttmp->currency_code)
 	{
 		$lastcurrencycode='various';	// We found several different currencies
 	}
 	if ($lastcurrencycode != 'various')
 	{
-		$lastcurrencycode=$obj->currency_code;
+		$lastcurrencycode=$objecttmp->currency_code;
 	}
 
 	print '<tr class="oddeven">';
@@ -426,14 +425,14 @@ foreach ($accounts as $key=>$type)
     // Ref
     if (! empty($arrayfields['b.ref']['checked']))
     {
-        print '<td class="nowrap">'.$obj->getNomUrl(1).'</td>';
+        print '<td class="nowrap">'.$objecttmp->getNomUrl(1).'</td>';
 	    if (! $i) $totalarray['nbfield']++;
     }
 
     // Label
     if (! empty($arrayfields['b.label']['checked']))
     {
-		print '<td>'.$obj->label.'</td>';
+		print '<td>'.$objecttmp->label.'</td>';
         if (! $i) $totalarray['nbfield']++;
     }
 
@@ -441,7 +440,7 @@ foreach ($accounts as $key=>$type)
     if (! empty($arrayfields['accountype']['checked']))
     {
         print '<td>';
-		print $obj->type_lib[$obj->type];
+		print $objecttmp->type_lib[$objecttmp->type];
 		print '</td>';
         if (! $i) $totalarray['nbfield']++;
     }
@@ -449,7 +448,7 @@ foreach ($accounts as $key=>$type)
     // Number
     if (! empty($arrayfields['b.number']['checked']))
     {
-        print '<td>'.$obj->number.'</td>';
+        print '<td>'.$objecttmp->number.'</td>';
 	    if (! $i) $totalarray['nbfield']++;
     }
 
@@ -460,12 +459,12 @@ foreach ($accounts as $key=>$type)
     	if (! empty($conf->accounting->enabled))
     	{
     		$accountingaccount = new AccountingAccount($db);
-    		$accountingaccount->fetch('', $obj->account_number, 1);
+    		$accountingaccount->fetch('', $objecttmp->account_number, 1);
     		print $accountingaccount->getNomUrl(0, 1, 1, '', 1);
     	}
     	else
     	{
-    		print $obj->account_number;
+    		print $objecttmp->account_number;
     	}
     	print '</td>';
 	    if (! $i) $totalarray['nbfield']++;
@@ -478,7 +477,7 @@ foreach ($accounts as $key=>$type)
     	if (! empty($conf->accounting->enabled))
     	{
     		$accountingjournal = new AccountingJournal($db);
-    		$accountingjournal->fetch($obj->fk_accountancy_journal);
+    		$accountingjournal->fetch($objecttmp->fk_accountancy_journal);
     		print $accountingjournal->getNomUrl(0, 1, 1, '', 1);
     	}
     	else
@@ -493,7 +492,7 @@ foreach ($accounts as $key=>$type)
     if (! empty($arrayfields['b.currency_code']['checked']))
     {
     	print '<td class="center">';
-   		print $obj->currency_code;
+   		print $objecttmp->currency_code;
     	print '</td>';
     	if (! $i) $totalarray['nbfield']++;
     }
@@ -502,11 +501,11 @@ foreach ($accounts as $key=>$type)
     if (! empty($arrayfields['toreconcile']['checked']))
     {
         print '<td class="center">';
-		if ($obj->rappro)
+		if ($objecttmp->rappro)
 		{
-			$result=$obj->load_board($user, $obj->id);
+			$result=$objecttmp->load_board($user, $objecttmp->id);
             if ($result<0) {
-                setEventMessages($obj->error, $obj->errors, 'errors');
+                setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
             } else {
                 print $result->nbtodo;
                 if ($result->nbtodolate) print ' &nbsp; ('.$result->nbtodolate.img_warning($langs->trans("Late")).')';
@@ -520,14 +519,14 @@ foreach ($accounts as $key=>$type)
     // Extra fields
     include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
     // Fields from hook
-    $parameters=array('arrayfields'=>$arrayfields, 'obj'=>$obj);
-	$reshook=$hookmanager->executeHooks('printFieldListValue', $parameters);    // Note that $action and $object may have been modified by hook
+    $parameters=array('arrayfields'=>$arrayfields);
+    $reshook=$hookmanager->executeHooks('printFieldListValue', $parameters, $objecttmp);    // Note that $action and $objecttmpect may have been modified by hook
     print $hookmanager->resPrint;
 	// Date creation
     if (! empty($arrayfields['b.datec']['checked']))
     {
         print '<td class="center">';
-        print dol_print_date($obj->date_creation, 'dayhour');
+        print dol_print_date($objecttmp->date_creation, 'dayhour');
         print '</td>';
 	    if (! $i) $totalarray['nbfield']++;
     }
@@ -535,7 +534,7 @@ foreach ($accounts as $key=>$type)
     if (! empty($arrayfields['b.tms']['checked']))
     {
         print '<td class="center">';
-        print dol_print_date($obj->date_update, 'dayhour');
+        print dol_print_date($objecttmp->date_update, 'dayhour');
         print '</td>';
 	    if (! $i) $totalarray['nbfield']++;
     }
@@ -543,7 +542,7 @@ foreach ($accounts as $key=>$type)
     // Status
     if (! empty($arrayfields['b.clos']['checked']))
     {
-		print '<td class="center">'.$obj->getLibStatut(5).'</td>';
+		print '<td class="center">'.$objecttmp->getLibStatut(5).'</td>';
 	    if (! $i) $totalarray['nbfield']++;
     }
 
@@ -551,7 +550,7 @@ foreach ($accounts as $key=>$type)
     if (! empty($arrayfields['balance']['checked']))
     {
 		print '<td class="nowraponall right">';
-		print '<a href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?id='.$obj->id.'">'.price($solde, 0, $langs, 0, -1, -1, $obj->currency_code).'</a>';
+		print '<a href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?id='.$objecttmp->id.'">'.price($solde, 0, $langs, 0, -1, -1, $objecttmp->currency_code).'</a>';
 		print '</td>';
 		if (! $i) $totalarray['nbfield']++;
 		if (! $i) $totalarray['totalbalancefield']=$totalarray['nbfield'];
@@ -563,20 +562,26 @@ foreach ($accounts as $key=>$type)
 	if ($massactionbutton || $massaction)   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 	{
 	    $selected=0;
-	    if (in_array($obj->rowid, $arrayofselected)) $selected=1;
-	    print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected?' checked="checked"':'').'>';
+	    if (in_array($objecttmp->id, $arrayofselected)) $selected=1;
+	    print '<input id="cb'.$objecttmp->id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$objecttmp->id.'"'.($selected?' checked="checked"':'').'>';
 	}
 	print '</td>';
 	if (! $i) $totalarray['nbfield']++;
 
 	print '</tr>';
 
-	$total[$obj->currency_code] += $solde;
+	$total[$objecttmp->currency_code] += $solde;
 
 	$i++;
 }
 
-if (! $found) print '<tr class="oddeven"><td colspan="'.$totalarray['nbfield'].'" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+// If no record found
+if (! $found)
+{
+    $colspan=1;
+    foreach($arrayfields as $key => $val) { if (! empty($val['checked'])) $colspan++; }
+    print '<tr><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoRecordFound").'</td></tr>';
+}
 
 // Show total line
 if (isset($totalarray['totalbalancefield']) && $lastcurrencycode != 'various')	// If there is several currency, $lastcurrencycode is set to 'various' before
