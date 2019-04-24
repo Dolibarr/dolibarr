@@ -4039,7 +4039,7 @@ abstract class CommonObject
 
 			$i++;
 		}
-		print "</tbody>\n";
+		print "</tbody><!-- end printObjectLines() -->\n";
 	}
 
 	/**
@@ -6129,6 +6129,12 @@ abstract class CommonObject
 			if (!empty($value)) {
 				$value=price($value);
 			}
+		}
+		elseif ($type == 'real')
+		{
+		    if (!empty($value)) {
+		        $value=price($value);
+		    }
 		}
 		elseif ($type == 'boolean')
 		{

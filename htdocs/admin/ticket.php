@@ -66,7 +66,7 @@ if ($action == 'updateMask') {
     // TODO Verifier si module numerotation choisi peut etre active
     // par appel methode canBeActivated
 
-    dolibarr_set_const($db, "TICKETSUP_ADDON", $value, 'chaine', 0, '', $conf->entity);
+    dolibarr_set_const($db, "TICKET_ADDON", $value, 'chaine', 0, '', $conf->entity);
 } elseif ($action == 'setvar') {
     include_once DOL_DOCUMENT_ROOT . "/core/lib/files.lib.php";
 
@@ -181,7 +181,7 @@ $page_name = "TicketSetup";
 llxHeader('', $langs->trans($page_name), $help_url);
 
 // Subheader
-$linkback = '<a href="' . DOL_URL_ROOT . '/admin/modules.php">' . $langs->trans("BackToModuleList") . '</a>';
+$linkback = '<a href="' . DOL_URL_ROOT . '/admin/modules.php?restore_lastsearch_values=1">' . $langs->trans("BackToModuleList") . '</a>';
 
 print load_fiche_titre($langs->trans($page_name), $linkback, 'title_setup');
 
@@ -256,7 +256,7 @@ foreach ($dirmodels as $reldir) {
                         print '</td>' . "\n";
 
                         print '<td align="center">';
-                        if ($conf->global->TICKETSUP_ADDON == 'mod_' . $classname) {
+                        if ($conf->global->TICKET_ADDON == 'mod_' . $classname) {
                             print img_picto($langs->trans("Activated"), 'switch_on');
                         } else {
                             print '<a href="' . $_SERVER["PHP_SELF"] . '?action=setmod&amp;value=mod_' . $classname . '" alt="' . $langs->trans("Default") . '">' . img_picto($langs->trans("Disabled"), 'switch_off') . '</a>';

@@ -87,20 +87,17 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 	);
 
 	// Members
+	$tmpentry = array(
+	    'enabled' => (! empty($conf->adherent->enabled) ) ,
+	    'perms' => (! empty($user->rights->adherent->lire) ),
+	    'module' => 'adherent'
+	);
 	$menu_arr[] = array(
 		'name' => 'Members',
 		'link' => '/adherents/index.php?mainmenu=members&amp;leftmenu=',
 		'title' => "MenuMembers",
 		'level' => 0,
-		'enabled' => $showmode = isVisibleToUserType(
-							$type_user,
-							$tmpentry = array(
-								'enabled' => (! empty($conf->adherent->enabled) ) ,
-								'perms' => (! empty($user->rights->adherent->lire) ),
-								'module' => 'adherent',
-							),
-							$listofmodulesforexternal
-						),
+		'enabled' => $showmode = isVisibleToUserType($type_user, $tmpentry, $listofmodulesforexternal),
 		'target' => $atarget,
 		'mainmenu' => "members",
 		'leftmenu' => '',
@@ -115,24 +112,21 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 	);
 
 	// Third parties
+	$tmpentry = array(
+	    'enabled'=> (	( ! empty($conf->societe->enabled) &&
+	        ( empty($conf->global->SOCIETE_DISABLE_PROSPECTS) || empty($conf->global->SOCIETE_DISABLE_CUSTOMERS) )
+	        )
+	        || ! empty($conf->fournisseur->enabled)
+	        ),
+	    'perms'=> (! empty($user->rights->societe->lire) || ! empty($user->rights->fournisseur->lire)),
+	    'module'=>'societe|fournisseur'
+	);
 	$menu_arr[] = array(
 		'name' => 'Companies',
 		'link' => '/societe/index.php?mainmenu=companies&amp;leftmenu=',
 		'title' => "ThirdParties",
 		'level' => 0,
-		'enabled' => $showmode = isVisibleToUserType(
-							$type_user,
-							$tmpentry = array(
-								'enabled'=> (	( ! empty($conf->societe->enabled) &&
-													( empty($conf->global->SOCIETE_DISABLE_PROSPECTS) || empty($conf->global->SOCIETE_DISABLE_CUSTOMERS) )
-												)
-												|| ! empty($conf->fournisseur->enabled)
-											),
-								'perms'=> (! empty($user->rights->societe->lire) || ! empty($user->rights->fournisseur->lire)),
-								'module'=>'societe|fournisseur',
-							),
-							$listofmodulesforexternal
-						),
+		'enabled' => $showmode = isVisibleToUserType($type_user, $tmpentry, $listofmodulesforexternal),
 		'target' => $atarget,
 		'mainmenu' => "companies",
 		'leftmenu' => '',
@@ -147,6 +141,15 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 	);
 
 	// Products-Services
+	$tmpentry = array(
+	    'enabled'=> (( ! empty($conf->societe->enabled) &&
+	        ( empty($conf->global->SOCIETE_DISABLE_PROSPECTS) || empty($conf->global->SOCIETE_DISABLE_CUSTOMERS) )
+	        )
+	        || ! empty($conf->fournisseur->enabled)
+	        ),
+	    'perms'=> (! empty($user->rights->societe->lire) || ! empty($user->rights->fournisseur->lire)),
+	    'module'=>'product|service'
+	);
 	$menu_arr[] = array(
 		'name' => 'Products',
 		'link' => '/product/index.php?mainmenu=products&amp;leftmenu=',
@@ -154,19 +157,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 					? ( array("TMenuProducts" , " | " ,"TMenuServices") )
 					: (! empty($conf->product->enabled)? "TMenuProducts" : "TMenuServices" ),
 		'level' => 0,
-		'enabled' => $showmode = isVisibleToUserType(
-							$type_user,
-							$tmpentry = array(
-								'enabled'=> (( ! empty($conf->societe->enabled) &&
-													( empty($conf->global->SOCIETE_DISABLE_PROSPECTS) || empty($conf->global->SOCIETE_DISABLE_CUSTOMERS) )
-												)
-												|| ! empty($conf->fournisseur->enabled)
-											),
-								'perms'=> (! empty($user->rights->societe->lire) || ! empty($user->rights->fournisseur->lire)),
-								'module'=>'product|service',
-							),
-							$listofmodulesforexternal
-						),
+	    'enabled' => $showmode = isVisibleToUserType($type_user, $tmpentry, $listofmodulesforexternal),
 		'target' => $atarget,
 		'mainmenu' => "products",
 		'leftmenu' => '',
@@ -181,20 +172,17 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 	);
 
 	// MRP
+	$tmpentry = array(
+	    'enabled'=>(! empty($conf->bom->enabled) || ! empty($conf->mrp->enabled)),
+	    'perms'=>(! empty($user->rights->bom->read) || ! empty($user->rights->mrp->read)),
+	    'module'=>'bom|mrp'
+	);
 	$menu_arr[] = array(
 	    'name' => 'TMenuMRP',
 	    'link' => '/mrp/index.php?mainmenu=mrp&amp;leftmenu=',
 	    'title' => $langs->trans("TMenuMRP"),
 	    'level' => 0,
-	    'enabled' => $showmode = isVisibleToUserType(
-    	        $type_user,
-    	        $tmpentry = array(
-    	            'enabled'=>(! empty($conf->bom->enabled) || ! empty($conf->mrp->enabled)),
-    	            'perms'=>(! empty($user->rights->bom->read) || ! empty($user->rights->mrp->read)),
-    	            'module'=>'bom|mrp',
-    	        ),
-    	        $listofmodulesforexternal
-	        ),
+	    'enabled' => $showmode = isVisibleToUserType($type_user, $tmpentry, $listofmodulesforexternal),
 	    'target' => $atarget,
 	    'mainmenu' => "mrp",
 	    'leftmenu' => '',
@@ -209,6 +197,11 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 	);
 
 	// Projects
+	$tmpentry = array(
+	    'enabled'=> ( ! empty($conf->projet->enabled) ? 1 : 0),
+	    'perms'=> (! empty($user->rights->projet->lire) ? 1 : 0),
+	    'module'=>'projet'
+	);
 	$menu_arr[] = array(
 		'name' => 'Projet',
 		'link' => '/projet/index.php?mainmenu=project&amp;leftmenu=',
@@ -216,15 +209,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 					? (($conf->global->PROJECT_USE_OPPORTUNITIES == 2)?"Leads":"Projects")
 					: "LeadsOrProjects",
 		'level' => 0,
-		'enabled' => $showmode = isVisibleToUserType(
-							$type_user,
-							$tmpentry = array(
-								'enabled'=> ( ! empty($conf->projet->enabled) ? 1 : 0),
-								'perms'=> (! empty($user->rights->projet->lire) ? 1 : 0),
-								'module'=>'projet',
-							),
-							$listofmodulesforexternal
-						),
+	    'enabled' => $showmode = isVisibleToUserType($type_user, $tmpentry, $listofmodulesforexternal),
 		'target' => $atarget,
 		'mainmenu' => "project",
 		'leftmenu' => '',
@@ -239,26 +224,23 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 	);
 
 	// Commercial
+	$tmpentry = array(
+	    'enabled'=>(! empty($conf->propal->enabled) ||
+	        ! empty($conf->commande->enabled) ||
+	        ! empty($conf->supplier_order->enabled) ||
+	        ! empty($conf->supplier_proposal->enabled) ||
+	        ! empty($conf->contrat->enabled) ||
+	        ! empty($conf->ficheinter->enabled)
+	        )?1:0,
+	    'perms'=>(! empty($user->rights->societe->lire) || ! empty($user->rights->societe->contact->lire)),
+	    'module'=>'propal|commande|supplier_order|contrat|ficheinter'
+	);
 	$menu_arr[] = array(
 		'name' => 'Commercial',
 		'link' => '/comm/index.php?mainmenu=commercial&amp;leftmenu=',
 		'title' => "Commercial",
 		'level' => 0,
-		'enabled' => $showmode = isVisibleToUserType(
-							$type_user,
-							$tmpentry = array(
-								'enabled'=>(! empty($conf->propal->enabled) ||
-										! empty($conf->commande->enabled) ||
-										! empty($conf->supplier_order->enabled) ||
-										! empty($conf->supplier_proposal->enabled) ||
-										! empty($conf->contrat->enabled) ||
-										! empty($conf->ficheinter->enabled)
-										)?1:0,
-								'perms'=>(! empty($user->rights->societe->lire) || ! empty($user->rights->societe->contact->lire)),
-								'module'=>'propal|commande|supplier_order|contrat|ficheinter',
-							),
-							$listofmodulesforexternal
-						),
+	    'enabled' => $showmode = isVisibleToUserType($type_user, $tmpentry, $listofmodulesforexternal),
 		'target' => $atarget,
 		'mainmenu' => "commercial",
 		'leftmenu' => '',
@@ -273,28 +255,25 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 	);
 
 	// Billing - Financial
+	$tmpentry = array(
+	    'enabled'=>(! empty($conf->facture->enabled) ||
+	        ! empty($conf->don->enabled) ||
+	        ! empty($conf->tax->enabled) ||
+	        ! empty($conf->salaries->enabled) ||
+	        ! empty($conf->supplier_invoice->enabled) ||
+	        ! empty($conf->loan->enabled)
+	        )?1:0,
+	    'perms'=>(! empty($user->rights->facture->lire) || ! empty($user->rights->don->contact->lire)
+	        || ! empty($user->rights->tax->charges->lire) || ! empty($user->rights->salaries->read)
+	        || ! empty($user->rights->fournisseur->facture->lire) || ! empty($user->rights->loan->read)),
+	    'module'=>'facture|supplier_invoice|don|tax|salaries|loan'
+	);
 	$menu_arr[] = array(
 		'name' => 'Compta',
 		'link' => '/compta/index.php?mainmenu=billing&amp;leftmenu=',
 		'title' =>  "MenuFinancial",
 		'level' => 0,
-		'enabled' => $showmode = isVisibleToUserType(
-							$type_user,
-							$tmpentry = array(
-								'enabled'=>(! empty($conf->facture->enabled) ||
-										! empty($conf->don->enabled) ||
-										! empty($conf->tax->enabled) ||
-										! empty($conf->salaries->enabled) ||
-										! empty($conf->supplier_invoice->enabled) ||
-										! empty($conf->loan->enabled)
-										)?1:0,
-								'perms'=>(! empty($user->rights->facture->lire) || ! empty($user->rights->don->contact->lire)
-											|| ! empty($user->rights->tax->charges->lire) || ! empty($user->rights->salaries->read)
-											|| ! empty($user->rights->fournisseur->facture->lire) || ! empty($user->rights->loan->read)),
-								'module'=>'facture|supplier_invoice|don|tax|salaries|loan',
-							),
-							$listofmodulesforexternal
-						),
+	    'enabled' => $showmode = isVisibleToUserType($type_user, $tmpentry, $listofmodulesforexternal),
 		'target' => $atarget,
 		'mainmenu' => "billing",
 		'leftmenu' => '',
@@ -309,20 +288,17 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 	);
 
 	// Bank
+	$tmpentry = array(
+	    'enabled'=>(! empty($conf->banque->enabled) || ! empty($conf->prelevement->enabled)),
+	    'perms'=>(! empty($user->rights->banque->lire) || ! empty($user->rights->prelevement->lire)),
+	    'module'=>'banque|prelevement'
+	);
 	$menu_arr[] = array(
 		'name' => 'Bank',
 		'link' => '/compta/bank/list.php?mainmenu=bank&amp;leftmenu=',
 		'title' =>  "MenuBankCash",
 		'level' => 0,
-		'enabled' => $showmode = isVisibleToUserType(
-							$type_user,
-							$tmpentry = array(
-								'enabled'=>(! empty($conf->banque->enabled) || ! empty($conf->prelevement->enabled)),
-								'perms'=>(! empty($user->rights->banque->lire) || ! empty($user->rights->prelevement->lire)),
-								'module'=>'banque|prelevement',
-							),
-							$listofmodulesforexternal
-						),
+	    'enabled' => $showmode = isVisibleToUserType($type_user, $tmpentry, $listofmodulesforexternal),
 		'target' => $atarget,
 		'mainmenu' => "bank",
 		'leftmenu' => '',
@@ -339,20 +315,17 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 	);
 
 	// Accounting
+	$tmpentry = array(
+	    'enabled'=>(! empty($conf->comptabilite->enabled) || ! empty($conf->accounting->enabled) || ! empty($conf->asset->enabled)),
+	    'perms'=>(! empty($user->rights->compta->resultat->lire) || ! empty($user->rights->accounting->mouvements->lire) || ! empty($user->rights->asset->read)),
+	    'comptabilite|accounting|asset'
+	);
 	$menu_arr[] = array(
 		'name' => 'Accounting',
 		'link' => '/accountancy/index.php?mainmenu=accountancy&amp;leftmenu=',
 		'title' =>  "MenuAccountancy",
 		'level' => 0,
-		'enabled' => $showmode = isVisibleToUserType(
-							$type_user,
-							$tmpentry = array(
-								'enabled'=>(! empty($conf->comptabilite->enabled) || ! empty($conf->accounting->enabled) || ! empty($conf->asset->enabled)),
-								'perms'=>(! empty($user->rights->compta->resultat->lire) || ! empty($user->rights->accounting->mouvements->lire) || ! empty($user->rights->asset->read)),
-								'comptabilite|accounting',
-							),
-							$listofmodulesforexternal
-						),
+	    'enabled' => $showmode = isVisibleToUserType($type_user, $tmpentry, $listofmodulesforexternal),
 		'target' => $atarget,
 		'mainmenu' => "accountancy",
 		'leftmenu' => '',
@@ -369,20 +342,17 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 	);
 
 	// HRM
+	$tmpentry = array(
+	    'enabled'=>(! empty($conf->hrm->enabled) || ! empty($conf->holiday->enabled) || ! empty($conf->deplacement->enabled) || ! empty($conf->expensereport->enabled)),
+	    'perms'=>(! empty($user->rights->hrm->employee->read) || ! empty($user->rights->holiday->write) || ! empty($user->rights->deplacement->lire) || ! empty($user->rights->expensereport->lire)),
+	    'module'=>'hrm|holiday|deplacement|expensereport'
+	);
 	$menu_arr[] = array(
 		'name' => 'HRM',
 		'link' => '/hrm/index.php?mainmenu=hrm&amp;leftmenu=',
 		'title' =>  "HRM",
 		'level' => 0,
-		'enabled' => $showmode = isVisibleToUserType(
-							$type_user,
-							$tmpentry = array(
-								'enabled'=>(! empty($conf->hrm->enabled) || ! empty($conf->holiday->enabled) || ! empty($conf->deplacement->enabled) || ! empty($conf->expensereport->enabled)),
-								'perms'=>(! empty($user->rights->hrm->employee->read) || ! empty($user->rights->holiday->write) || ! empty($user->rights->deplacement->lire) || ! empty($user->rights->expensereport->lire)),
-								'module'=>'hrm|holiday|deplacement|expensereport',
-							),
-							$listofmodulesforexternal
-						),
+	    'enabled' => $showmode = isVisibleToUserType($type_user, $tmpentry, $listofmodulesforexternal),
 		'target' => $atarget,
 		'mainmenu' => "hrm",
 		'leftmenu' => '',
@@ -399,20 +369,17 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 	);
 
 	// Tools
+	$tmpentry = array(
+	    'enabled'=>1,
+	    'perms'=>1,
+	    'module'=>''
+	);
 	$menu_arr[] = array(
 		'name' => 'Tools',
 		'link' => '/core/tools.php?mainmenu=tools&amp;leftmenu=',
 		'title' =>  "Tools",
 		'level' => 0,
-		'enabled' => $showmode = isVisibleToUserType(
-							$type_user,
-							$tmpentry = array(
-								'enabled'=>1,
-								'perms'=>1,
-								'module'=>'',
-							),
-							$listofmodulesforexternal
-						),
+	    'enabled' => $showmode = isVisibleToUserType($type_user, $tmpentry, $listofmodulesforexternal),
 		'target' => $atarget,
 		'mainmenu' => "tools",
 		'leftmenu' => '',
@@ -641,7 +608,7 @@ function print_end_menu_array()
  */
 function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabMenu, &$menu, $noout = 0, $forcemainmenu = '', $forceleftmenu = '', $moredata = null)
 {
-	global $user,$conf,$langs,$dolibarr_main_db_name,$mysoc;
+	global $user, $conf, $langs, $dolibarr_main_db_name, $mysoc;
 
 	//var_dump($tabMenu);
 
@@ -1184,7 +1151,7 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 		{
 			$langs->load("companies");
 
-			// Accounting Expert
+			// Accounting (Double entries)
 			if (! empty($conf->accounting->enabled))
 			{
 				$langs->load("accountancy");
@@ -1418,11 +1385,11 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 			{
 				$langs->load("assets");
 				$newmenu->add("/asset/list.php?leftmenu=asset&amp;mainmenu=accountancy", $langs->trans("MenuAssets"), 0, $user->rights->asset->read, '', $mainmenu, 'asset');
-				$newmenu->add("/asset/card.php?action=create", $langs->trans("MenuNewAsset"), 1, $user->rights->asset->write);
+				$newmenu->add("/asset/card.php?leftmenu=asset&amp;action=create", $langs->trans("MenuNewAsset"), 1, $user->rights->asset->write);
 				$newmenu->add("/asset/list.php?leftmenu=asset&amp;mainmenu=accountancy", $langs->trans("MenuListAssets"), 1, $user->rights->asset->read);
 				$newmenu->add("/asset/type.php?leftmenu=asset_type", $langs->trans("MenuTypeAssets"), 1, $user->rights->asset->read, '', $mainmenu, 'asset_type');
 				if ($usemenuhider || empty($leftmenu) || preg_match('/asset_type/', $leftmenu)) {
-                    $newmenu->add("/asset/type.php?leftmenu=asset_type&amp;action=create", $langs->trans("MenuNewTypeAssets"), 2, $user->rights->asset->write);
+                    $newmenu->add("/asset/type.php?leftmenu=asset_type&amp;action=create", $langs->trans("MenuNewTypeAssets"), 2, $user->rights->asset->configurer);
                     $newmenu->add("/asset/type.php?leftmenu=asset_type", $langs->trans("MenuListTypeAssets"), 2, $user->rights->asset->read);
                 }
 			}
@@ -1647,7 +1614,7 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 				$tmpentry = array(
                     'enabled'=>(! empty($conf->projet->enabled)),
 				    'perms'=>(! empty($user->rights->projet->lire)),
-                    'module'=>'projet',
+                    'module'=>'projet'
                 );
 				$showmode=isVisibleToUserType($type_user, $tmpentry, $listofmodulesforexternal);
 

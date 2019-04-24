@@ -994,7 +994,7 @@ class Livraison extends CommonObject
 	 *	Set the planned delivery date
 	 *
 	 *	@param      User			$user        		Objet utilisateur qui modifie
-	 *	@param      timestamp		$date_livraison     Date de livraison
+	 *	@param      integer 		$date_livraison     Date de livraison
 	 *	@return     int         						<0 if KO, >0 if OK
 	 */
     public function set_date_livraison($user, $date_livraison)
@@ -1107,7 +1107,7 @@ class LivraisonLigne extends CommonObjectLine
 
 	/**
 	 * @deprecated
-	 * @see product_ref
+	 * @see $product_ref
 	 */
 	public $ref;
 	/**

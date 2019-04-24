@@ -29,6 +29,8 @@
 
 -- Missing in 9.0
 
+ALTER TABLE llx_actioncomm MODIFY COLUMN code varchar(50);
+
 DROP TABLE llx_ticket_logs;
 
 CREATE TABLE llx_pos_cash_fence(
@@ -271,7 +273,25 @@ ALTER TABLE llx_expensereport_det ADD COLUMN subprice double(24,8) DEFAULT 0 NOT
 ALTER TABLE llx_product_attribute_combination ADD INDEX idx_product_att_com_product_parent (fk_product_parent);
 ALTER TABLE llx_product_attribute_combination ADD INDEX idx_product_att_com_product_child (fk_product_child);
 
+ALTER TABLE llx_user ADD COLUMN fk_user_expense_validator integer after fk_user;
+ALTER TABLE llx_user ADD COLUMN fk_user_holiday_validator integer after fk_user_expense_validator;
+ALTER TABLE llx_user ADD COLUMN personal_email varchar(255) after email;
+ALTER TABLE llx_user ADD COLUMN personal_mobile varchar(20) after user_mobile;
+
 ALTER TABLE llx_product ADD COLUMN fk_project integer DEFAULT NULL;
 ALTER TABLE llx_product ADD INDEX idx_product_fk_project (fk_project);
 
 ALTER TABLE llx_actioncomm ADD COLUMN calling_duration integer;
+
+ALTER TABLE llx_emailcollector_emailcollector ADD COLUMN datelastok datetime;
+
+DELETE FROM llx_const WHERE name = 'THEME_ELDY_USE_HOVER' AND value = '0';
+DELETE FROM llx_const WHERE name = 'THEME_ELDY_USE_CHECKED' AND value = '0';
+
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('TICKET_CLOSE','Ticket closed','Executed when a ticket is closed','ticket',164);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('TICKET_SENTBYMAIL','Ticket message sent by email','Executed when a message is sent from the ticket record','ticket',166);
+
+ALTER TABLE llx_inventorydet DROP COLUMN pmp; 
+ALTER TABLE llx_inventorydet DROP COLUMN pa; 
+ALTER TABLE llx_inventorydet DROP COLUMN new_pmp;
+

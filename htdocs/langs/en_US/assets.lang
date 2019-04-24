@@ -55,5 +55,11 @@ MenuAssets = Assets
 MenuNewAsset = New asset
 MenuTypeAssets = Type assets
 MenuListAssets = List
-MenuNewTypeAssets = New type
+MenuNewTypeAssets = New
 MenuListTypeAssets = List
+
+#
+# Module
+#
+NewAssetType=New asset type
+NewAsset=New asset

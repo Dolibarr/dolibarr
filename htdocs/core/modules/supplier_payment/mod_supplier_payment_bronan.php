@@ -31,7 +31,7 @@ class mod_supplier_payment_bronan extends ModeleNumRefSupplierPayments
 {
 	/**
      * Dolibarr version of the loaded document
-     * @public string
+     * @var string
      */
 	public $version = 'dolibarr';		// 'development', 'experimental', 'dolibarr'
 

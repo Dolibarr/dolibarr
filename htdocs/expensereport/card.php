@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2019  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2015-2017  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2017       Ferran Marcet           <fmarcet@2byte.es>
@@ -145,7 +145,11 @@ if (empty($reshook))
 
 	include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 
-	if (GETPOST('sendit', 'alpha')) $action='';
+	if (GETPOSTISSET('sendit'))    // If we just submit a file
+	{
+	    if ($action == 'updateline') $action='editline';   // To avoid to make the updateline now
+	    else $action='';                                   // To avoid to make the addline now
+	}
 
     include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; 	// Must be include, not include_once
 
@@ -1243,6 +1247,21 @@ if (empty($reshook))
     	$object = new ExpenseReport($db);
     	$object->fetch($id);
 
+    	// First save uploaded file
+    	$fk_ecm_files = 0;
+    	if (GETPOSTISSET('attachfile'))
+    	{
+    	    $arrayoffiles=GETPOST('attachfile', 'array');
+    	    if (is_array($arrayoffiles) && ! empty($arrayoffiles[0]))
+    	    {
+    	        include_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
+    	        $relativepath='expensereport/'.$object->ref.'/'.$arrayoffiles[0];
+    	        $ecmfiles=new EcmFiles($db);
+    	        $ecmfiles->fetch(0, '', $relativepath);
+    	        $fk_ecm_files = $ecmfiles->id;
+    	    }
+    	}
+
     	$rowid = $_POST['rowid'];
     	$type_fees_id = GETPOST('fk_c_type_fees', 'int');
 		$fk_c_exp_tax_cat = GETPOST('fk_c_exp_tax_cat', 'int');
@@ -1284,7 +1303,7 @@ if (empty($reshook))
     	if (! $error)
     	{
     	    // TODO Use update method of ExpenseReportLine
-    		$result = $object->updateline($rowid, $type_fees_id, $projet_id, $vatrate, $comments, $qty, $value_unit, $date, $id, $fk_c_exp_tax_cat);
+    	    $result = $object->updateline($rowid, $type_fees_id, $projet_id, $vatrate, $comments, $qty, $value_unit, $date, $id, $fk_c_exp_tax_cat, $fk_ecm_files);
     		if ($result >= 0)
     		{
     			if ($result > 0)
@@ -1989,7 +2008,7 @@ else
 			        print '<tr><td colspan="' . $nbcols . '" class="right">'.$langs->trans("AmountExpected").':</td><td class="right">'.price($object->total_ttc).'</td><td></td></tr>';
 
 			        print '<tr><td colspan="' . $nbcols . '" class="right">'.$langs->trans("RemainderToPay").':</td>';
-			        print '<td align="right'.($resteapayeraffiche?' amountremaintopay':(' '.$cssforamountpaymentcomplete)).'">'.price($resteapayeraffiche).'</td><td></td></tr>';
+			        print '<td class="right'.($resteapayeraffiche?' amountremaintopay':(' '.$cssforamountpaymentcomplete)).'">'.price($resteapayeraffiche).'</td><td></td></tr>';
 
 				    $db->free($resql);
 				}
@@ -2194,7 +2213,7 @@ else
 							{
 								print '<td class="nowrap right">';
 
-								print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=editline&amp;rowid='.$line->rowid.'#'.$line->rowid.'">';
+								print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=editline&amp;rowid='.$line->rowid.'">';
 								print img_edit();
 								print '</a> &nbsp; ';
 								print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete_line&amp;rowid='.$line->rowid.'">';
@@ -2209,7 +2228,65 @@ else
 
 						if ($action == 'editline' && $line->rowid == GETPOST('rowid', 'int'))
 						{
-							print '<tr class="oddeven">';
+						    // Add line with link to add new file or attach line to an existing file
+						    $colspan = 10;
+						    if (! empty($conf->projet->enabled)) $colspan++;
+						    if (!empty($conf->global->MAIN_USE_EXPENSE_IK)) $colspan++;
+
+						    print '<tr class="tredited">';
+
+						    print '<td class="center">';
+						    print $numline;
+						    print '</td>';
+
+						    print '<td colspan="'.($colspan-1).'" class="liste_titre">';
+						    print '<a href="" class="commonlink auploadnewfilenow reposition">'.$langs->trans("UploadANewFileNow");
+						    print img_picto($langs->trans("UploadANewFileNow"), 'chevron-down', '', false, 0, 0, '', 'marginleftonly');
+						    print '</a>';
+						    if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
+						    {
+						        print ' &nbsp; - &nbsp; '.'<a href="" class="commonlink aattachtodoc reposition">'.$langs->trans("AttachTheNewLineToTheDocument");
+						        print img_picto($langs->trans("AttachTheNewLineToTheDocument"), 'chevron-down', '', false, 0, 0, '', 'marginleftonly');
+						        print '</a>';
+						    }
+
+						    print '<script language="javascript">'."\n";
+						    print '$(document).ready(function() {
+        				        $( ".auploadnewfilenow" ).click(function() {
+        				            jQuery(".truploadnewfilenow").toggle();
+                                    jQuery(".trattachnewfilenow").hide();
+                                    return false;
+                                });
+        				        $( ".aattachtodoc" ).click(function() {
+        				            jQuery(".trattachnewfilenow").toggle();
+                                    jQuery(".truploadnewfilenow").hide();
+                                    return false;
+                                });';
+						    if (is_array(GETPOST('attachfile', 'array')) && count(GETPOST('attachfile', 'array')))
+						    {
+						        print 'jQuery(".trattachnewfilenow").toggle();'."\n";
+						    }
+						    print '
+                            });
+        				    ';
+						    print '</script>'."\n";
+						    print '</td></tr>';
+
+						    $filenamelinked='';
+						    if ($line->fk_ecm_files > 0)
+						    {
+						        $result = $ecmfilesstatic->fetch($line->fk_ecm_files);
+						        if ($result > 0)
+						        {
+						            $filenamelinked = $ecmfilesstatic->filename;
+						        }
+						    }
+
+						    $tredited='tredited';
+						    include DOL_DOCUMENT_ROOT.'/expensereport/tpl/expensereport_addfile.tpl.php';
+						    include DOL_DOCUMENT_ROOT.'/expensereport/tpl/expensereport_linktofile.tpl.php';
+
+							print '<tr class="oddeven tredited">';
 
 							print '<td></td>';
 
@@ -2264,11 +2341,8 @@ else
 							print '<input type="number" min="0" class="right maxwidth50" name="qty" value="'.dol_escape_htmltag($line->qty).'" />';
 							print '</td>';
 
-							if ($action != 'editline')
-							{
-								print '<td class="right">'.$langs->trans('AmountHT').'</td>';
-								print '<td class="right">'.$langs->trans('AmountTTC').'</td>';
-							}
+							//print '<td class="right">'.$langs->trans('AmountHT').'</td>';
+							//print '<td class="right">'.$langs->trans('AmountTTC').'</td>';
 
 							// Picture
 							print '<td class="center">';
@@ -2280,6 +2354,8 @@ else
 							print '<input type="submit" class="button" name="save" value="'.$langs->trans('Save').'">';
 							print '<br><input type="submit" class="button" name="cancel" value="'.$langs->trans('Cancel').'">';
 							print '</td>';
+
+							print '</tr>';
 						}
 
 						$i++;
@@ -2287,7 +2363,9 @@ else
 				}
 
 				// Add a line
-				if (($object->fk_statut == ExpenseReport::STATUS_DRAFT || $object->fk_statut == ExpenseReport::STATUS_REFUSED) && $action != 'editline' && $user->rights->expensereport->creer)
+				if (($object->fk_statut == ExpenseReport::STATUS_DRAFT || $object->fk_statut == ExpenseReport::STATUS_REFUSED)
+				    && $action != 'editline'
+				    && $user->rights->expensereport->creer)
 				{
 				    $colspan = 11;
 				    if (! empty($conf->global->MAIN_USE_EXPENSE_IK)) $colspan++;
@@ -2331,10 +2409,10 @@ else
 				            jQuery(".trattachnewfilenow").toggle();
                             jQuery(".truploadnewfilenow").hide();
                             return false;
-                        });';
-				    if (is_array(GETPOST('attachfile', 'array')) && count(GETPOST('attachfile', 'array')))
+                        });'."\n";
+				    if (is_array(GETPOST('attachfile', 'array')) && count(GETPOST('attachfile', 'array')) && $action != 'updateline')
 				    {
-				        print 'jQuery(".trattachnewfilenow").toggle();'."\n";
+				        print 'jQuery(".trattachnewfilenow").show();'."\n";
 				    }
 				    print '
                     });
@@ -2342,149 +2420,8 @@ else
 				    print '</script>'."\n";
 				    print '</td></tr>';
 
-				    // Add line to upload new file
-				    print '<tr class="oddeven nohover truploadnewfilenow"'.(empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)?' style="display: none"':'').'>';
-				    print '<td colspan="'.$colspan.'">';
-
-				    $modulepart = 'expensereport';
-				    $permission = $user->rights->expensereport->creer;
-
-				    // We define var to enable the feature to add prefix of uploaded files
-				    $savingdocmask='';
-				    if (empty($conf->global->MAIN_DISABLE_SUGGEST_REF_AS_PREFIX))
-				    {
-				        //var_dump($modulepart);
-				        if (in_array($modulepart, array('facture_fournisseur','commande_fournisseur','facture','commande','propal','supplier_proposal','ficheinter','contract','expedition','project','project_task','expensereport','tax', 'produit', 'product_batch')))
-				        {
-				            $savingdocmask=dol_sanitizeFileName($object->ref).'-__file__';
-				        }
-				    }
-
-				    // Show upload form (document and links)
-				    $formfile->form_attach_new_file(
-				        $_SERVER["PHP_SELF"].'?id='.$object->id,
-				        'none',
-				        0,
-				        0,
-				        $permission,
-				        $conf->browser->layout == 'phone' ? 40 : 60,
-				        $object,
-				        '',
-				        1,
-				        $savingdocmask,
-				        0,
-				        'formuserfile',
-				        'accept',
-				        '',
-				        1
-				        );
-
-				    print '</td></tr>';
-
-                    // Add line to select existing file
-				    if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
-				    {
-				        require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-				        require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
-				        require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
-				        $upload_dir = $conf->expensereport->dir_output . "/" . dol_sanitizeFileName($object->ref);
-				        $arrayoffiles=dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png|'.preg_quote(dol_sanitizeFileName($object->ref.'.pdf'), '/').')$');
-				        $nbFiles = count($arrayoffiles);
-				        $nbLinks=Link::count($db, $object->element, $object->id);
-				        if ($nbFiles >= 0)
-				        {
-				            print '<tr class="oddeven nohover trattachnewfilenow"'.(! GETPOSTISSET('sendit') && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)?' style="display: none"':'').'>';
-				            print '<td colspan="'.$colspan.'">';
-				            //print '<span class="opacitymedium">'.$langs->trans("AttachTheNewLineToTheDocument").'</span><br>';
-				            $modulepart='expensereport';$maxheightmini=48;
-				            $relativepath=(! empty($object->ref)?dol_sanitizeFileName($object->ref):'').'/';
-				            foreach($arrayoffiles as $file)
-				            {
-				                print '<div class="inline-block margintoponly marginleftonly marginrightonly center">';
-				                $fileinfo = pathinfo($file['name']);
-				                if (image_format_supported($file['name']) > 0)
-				                {
-				                    $minifile=getImageFileNameForSize($file['name'], '_mini'); // For new thumbs using same ext (in lower case however) than original
-				                    //print $file['path'].'/'.$minifile.'<br>';
-				                    $urlforhref=getAdvancedPreviewUrl($modulepart, $fileinfo['relativename'].'.'.strtolower($fileinfo['extension']), 1, '&entity='.(!empty($object->entity)?$object->entity:$conf->entity));
-				                    if (empty($urlforhref)) {
-				                        $urlforhref=DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.(!empty($object->entity)?$object->entity:$conf->entity).'&file='.urlencode($fileinfo['relativename'].'.'.strtolower($fileinfo['extension']));
-				                        print '<a href="'.$urlforhref.'" class="aphoto" target="_blank">';
-				                    } else {
-				                        print '<a href="'.$urlforhref['url'].'" class="'.$urlforhref['css'].'" target="'.$urlforhref['target'].'" mime="'.$urlforhref['mime'].'">';
-				                    }
-				                    print '<div class="photoref">';
-				                    print '<img class="photoexpensereport photorefcenter" height="'.$maxheightmini.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.(!empty($object->entity)?$object->entity:$conf->entity).'&file='.urlencode($relativepath.$minifile).'" title="">';
-				                    print '</div>';
-				                    print '</a>';
-				                }
-				                else
-				                {
-				                    $modulepart='expensereport';
-				                    print '<a href=""><div class="photoref">';
-				                    $thumbshown=0;
-				                    if (preg_match('/\.pdf$/i', $file['name']))
-				                    {
-    				                    $filepdf = $conf->expensereport->dir_output.'/'.$relativepath.$file['name'];
-    				                    $fileimage = $conf->expensereport->dir_output.'/'.$relativepath.$file['name'].'_preview.png';
-    				                    $relativepathimage = $relativepath.$file['name'].'_preview.png';
-
-    				                    $pdfexists = file_exists($filepdf);
-
-    				                    if ($pdfexists)
-    				                    {
-    				                        // Conversion du PDF en image png si fichier png non existant
-    				                        if (! file_exists($fileimage) || (filemtime($fileimage) < filemtime($filepdf)))
-    				                        {
-    				                            if (empty($conf->global->MAIN_DISABLE_PDF_THUMBS))		// If you experience trouble with pdf thumb generation and imagick, you can disable here.
-    				                            {
-    				                                include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-    				                                $ret = dol_convert_file($filepdf, 'png', $fileimage, '0');     // Convert first page of PDF into a file _preview.png
-    				                                if ($ret < 0) $error++;
-    				                            }
-    				                        }
-    				                    }
-
-    				                    if ($pdfexists && ! $error)
-    				                    {
-    				                        $heightforphotref=70;
-    				                        if (! empty($conf->dol_optimize_smallscreen)) $heightforphotref=60;
-    				                        // If the preview file is found
-    				                        if (file_exists($fileimage))
-    				                        {
-    				                            $thumbshown=1;
-    				                            print '<img height="'.$heightforphotref.'" class="photo photowithmargin photowithborder" src="'.DOL_URL_ROOT . '/viewimage.php?modulepart=apercu'.$modulepart.'&amp;file='.urlencode($relativepathimage).'">';
-    				                        }
-    				                    }
-				                    }
-
-				                    if (! $thumbshown)
-				                    {
-				                        print img_mime($minifile);
-				                    }
-				                    print '</div></a>';
-				                }
-				                print '<br>';
-				                $checked='';
-				                //var_dump(GETPOST($file['relativename'])); var_dump($file['relativename']); var_dump($_FILES['userfile']['name']);
-				                foreach($_FILES['userfile']['name'] as $tmpfile)
-				                {
-				                    if ($file['relativename'] == (GETPOST('savingdocmask', 'alpha') ? dol_sanitizeFileName($object->ref.'-') : '').$tmpfile)
-				                    {
-				                        $checked=' checked';
-				                        break;
-				                    }
-				                    elseif ($file['relativename'] && in_array($file['relativename'], GETPOST('attachfile', 'array'))) {
-				                        $checked=' checked';
-				                        break;
-				                    }
-				                }
-				                print '<div class="margintoponly"><input type="radio"'.$checked.' name="attachfile[]" value="'.$file['relativename'].'"> '.$file['relativename'].'</div>';
-				                print '</div>';
-				            }
-				            print '</td></tr>';
-				        }
-				    }
+				    include DOL_DOCUMENT_ROOT.'/expensereport/tpl/expensereport_addfile.tpl.php';
+				    include DOL_DOCUMENT_ROOT.'/expensereport/tpl/expensereport_linktofile.tpl.php';
 
 					print '<tr class="liste_titre">';
 					print '<td></td>';
@@ -2503,7 +2440,7 @@ else
 					print '<td></td>';
 					print '</tr>';
 
-					print '<tr class="oddeven">';
+					print '<tr class="oddeven nohover">';
 
 					// Line number
 					print '<td></td>';

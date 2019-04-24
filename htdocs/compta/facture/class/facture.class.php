@@ -965,82 +965,80 @@ class Facture extends CommonInvoice
 
 
 	/**
-	 *		Load an object from its id and create a new one in database
+	 *	Load an object from its id and create a new one in database
 	 *
-	 *		@param		int				$socid			Id of thirdparty
-	 * 	 	@return		int								New id of clone
+     *	@param      User	$user        	User that clone
+	 *  @param  	int 	$fromid         Id of object to clone
+	 * 	@return		int					    New id of clone
 	 */
-    public function createFromClone($socid = 0)
+	public function createFromClone(User $user, $fromid = 0)
 	{
-		global $user,$hookmanager, $conf;
+		global $hookmanager;
 
 		$error=0;
 
+		$object=new Facture($this->db);
+
 		$this->db->begin();
 
-		// get extrafields so they will be clone
-		foreach($this->lines as $line)
-			$line->fetch_optionals($line->rowid);
-
-		// Load source object
-		$objFrom = clone $this;
+		$object->fetch($fromid);
 
 		// Change socid if needed
-		if (! empty($socid) && $socid != $this->socid)
+		if (! empty($this->socid) && $this->socid != $object->socid)
 		{
 			$objsoc = new Societe($this->db);
 
-			if ($objsoc->fetch($socid)>0)
+			if ($objsoc->fetch($this->socid)>0)
 			{
-				$this->socid 				= $objsoc->id;
-				$this->cond_reglement_id	= (! empty($objsoc->cond_reglement_id) ? $objsoc->cond_reglement_id : 0);
-				$this->mode_reglement_id	= (! empty($objsoc->mode_reglement_id) ? $objsoc->mode_reglement_id : 0);
-				$this->fk_project			= '';
-				$this->fk_delivery_address	= '';
+			    $object->socid 				= $objsoc->id;
+			    $object->cond_reglement_id	= (! empty($objsoc->cond_reglement_id) ? $objsoc->cond_reglement_id : 0);
+			    $object->mode_reglement_id	= (! empty($objsoc->mode_reglement_id) ? $objsoc->mode_reglement_id : 0);
+			    $object->fk_project			= '';
+			    $object->fk_delivery_address	= '';
 			}
 
 			// TODO Change product price if multi-prices
 		}
 
-		$this->id=0;
-		$this->statut= self::STATUS_DRAFT;
+		$object->id=0;
+		$object->statut= self::STATUS_DRAFT;
 
 		// Clear fields
-		$this->date               = dol_now();	// Date of invoice is set to current date when cloning. // TODO Best is to ask date into confirm box
-		$this->user_author        = $user->id;
-		$this->user_valid         = '';
-		$this->fk_facture_source  = 0;
-		$this->date_creation      = '';
-		$this->date_modification = '';
-		$this->date_validation    = '';
-		$this->ref_client         = '';
-		$this->close_code         = '';
-		$this->close_note         = '';
-		$this->products = $this->lines;	// Tant que products encore utilise
+		$object->date               = (empty($this->date) ? dol_now() : $this->date);
+		$object->user_author        = $user->id;
+		$object->user_valid         = '';
+		$object->fk_facture_source  = 0;
+		$object->date_creation      = '';
+		$object->date_modification = '';
+		$object->date_validation    = '';
+		$object->ref_client         = '';
+		$object->close_code         = '';
+		$object->close_note         = '';
+		$object->products = $object->lines;	        // For backward compatibility
 
 		// Loop on each line of new invoice
-		foreach($this->lines as $i => $line)
+		foreach($object->lines as $i => $line)
 		{
-			if (($this->lines[$i]->info_bits & 0x02) == 0x02)	// We do not clone line of discounts
+		    if (($object->lines[$i]->info_bits & 0x02) == 0x02)	// We do not clone line of discounts
 			{
-				unset($this->lines[$i]);
-				unset($this->products[$i]);	// Tant que products encore utilise
+			    unset($object->lines[$i]);
+			    unset($object->products[$i]);	// Tant que products encore utilise
 			}
 		}
 
 		// Create clone
-		$this->context['createfromclone'] = 'createfromclone';
-		$result=$this->create($user);
+		$object->context['createfromclone'] = 'createfromclone';
+		$result=$object->create($user);
 		if ($result < 0) $error++;
 		else {
 			// copy internal contacts
-			if ($this->copy_linked_contact($objFrom, 'internal') < 0)
+		    if ($object->copy_linked_contact($this, 'internal') < 0)
 				$error++;
 
 			// copy external contacts if same company
-			elseif ($objFrom->socid == $this->socid)
+			elseif ($this->socid == $object->socid)
 			{
-				if ($this->copy_linked_contact($objFrom, 'external') < 0)
+			    if ($object->copy_linked_contact($this, 'external') < 0)
 					$error++;
 			}
 		}
@@ -1050,20 +1048,20 @@ class Facture extends CommonInvoice
 			// Hook of thirdparty module
 			if (is_object($hookmanager))
 			{
-				$parameters=array('objFrom'=>$objFrom);
+				$parameters=array('objFrom'=>$this);
 				$action='';
-				$reshook=$hookmanager->executeHooks('createFrom', $parameters, $this, $action);    // Note that $action and $object may have been modified by some hooks
+				$reshook=$hookmanager->executeHooks('createFrom', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
 				if ($reshook < 0) $error++;
 			}
 		}
 
-		unset($this->context['createfromclone']);
+		unset($object->context['createfromclone']);
 
 		// End
 		if (! $error)
 		{
 			$this->db->commit();
-			return $this->id;
+			return $object->id;
 		}
 		else
 		{
@@ -1556,7 +1554,7 @@ class Facture extends CommonInvoice
 				$line->multicurrency_total_tva 	= $objp->multicurrency_total_tva;
 				$line->multicurrency_total_ttc 	= $objp->multicurrency_total_ttc;
 
-                                $line->fetch_optionals();
+                $line->fetch_optionals();
 
 				$this->lines[$i] = $line;
 

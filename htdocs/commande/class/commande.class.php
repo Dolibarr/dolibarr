@@ -161,7 +161,7 @@ class Commande extends CommonOrder
 
 	/**
 	 * @deprecated
-	 * @see date
+	 * @see $date
 	 */
 	public $date_commande;
 
@@ -1331,7 +1331,7 @@ class Commande extends CommonOrder
 	 * 	@param		double			$pu_ht_devise		Unit price in currency
 	 *	@return     int             					>0 if OK, <0 if KO
 	 *
-	 *	@see        add_product
+	 *	@see        add_product()
 	 *
 	 *	Les parametres sont deja cense etre juste et avec valeurs finales a l'appel
 	 *	de cette methode. Aussi, pour le taux tva, il doit deja avoir ete defini
@@ -2955,7 +2955,7 @@ class Commande extends CommonOrder
 		dol_syslog(get_class($this)."::updateline id=$rowid, desc=$desc, pu=$pu, qty=$qty, remise_percent=$remise_percent, txtva=$txtva, txlocaltax1=$txlocaltax1, txlocaltax2=$txlocaltax2, price_base_type=$price_base_type, info_bits=$info_bits, date_start=$date_start, date_end=$date_end, type=$type, fk_parent_line=$fk_parent_line, pa_ht=$pa_ht, special_code=$special_code");
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 
-		if ($this->statut == Propal::STATUS_DRAFT)
+		if ($this->statut == Commande::STATUS_DRAFT)
 		{
 
 			// Clean parameters
@@ -3905,7 +3905,7 @@ class OrderLine extends CommonOrderLine
 	 * Id of parent order
 	 * @var int
 	 * @deprecated Use fk_commande
-	 * @see fk_commande
+	 * @see $fk_commande
 	 */
 	public $commande_id;
 
@@ -3932,7 +3932,7 @@ class OrderLine extends CommonOrderLine
 
 	/**
 	 * @deprecated
-	 * @see remise_percent, fk_remise_except
+	 * @see $remise_percent, $fk_remise_except
 	 */
 	public $remise;
 

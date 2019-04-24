@@ -341,7 +341,7 @@ if ($result) {
 	    //'presend'=>$langs->trans("SendByMail"),
 	    //'builddoc'=>$langs->trans("PDFMerge"),
 	);
-	//if ($user->rights->mymodule->supprimer) $arrayofmassactions['predelete']=$langs->trans("Delete");
+	//if ($user->rights->mymodule->supprimer) $arrayofmassactions['predelete']='<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
 	//if (in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
 	$massactionbutton=$form->selectMassAction('ventil', $arrayofmassactions, 1);
 
@@ -421,6 +421,8 @@ if ($result) {
 	$facture_static = new Facture($db);
 	$product_static = new Product($db);
 
+    $isSellerInEEC = isInEEC($mysoc);
+
 	while ( $i < min($num_lines, $limit) ) {
 		$objp = $db->fetch_object($result);
 
@@ -440,7 +442,7 @@ if ($result) {
 		$code_sell_p_notset = '';
 		$objp->aarowid_suggest = $objp->aarowid;
 
-        $isinEEC = isInEEC($objp->country_code);
+        $isBuyerInEEC = isInEEC($objp);
 
     	if ($objp->type_l == 1) {
 			$objp->code_sell_l = (! empty($conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT) ? $conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT : '');
@@ -455,15 +457,17 @@ if ($result) {
 		}
 		if ($objp->code_sell_l == -1) $objp->code_sell_l='';
 
-        if ($objp->country_sell == '1') {
+		if ($objp->country_code == $mysoc->country_code || empty($objp->country_code)) {  // If buyer in same country than seller (if not defined, we assume it is same country)
             $objp->code_sell_p = $objp->code_sell;
             $objp->aarowid_suggest = $objp->aarowid;
-        } elseif ($isinEEC === true) {
-            $objp->code_sell_p = $objp->code_sell_intra;
-            $objp->aarowid_suggest = $objp->aarowid_intra;
         } else {
-            $objp->code_sell_p = $objp->code_sell_export;
-            $objp->aarowid_suggest = $objp->aarowid_export;
+            if ($isSellerInEEC && $isBuyerInEEC) {          // European intravat sale
+                $objp->code_sell_p = $objp->code_sell_intra;
+                $objp->aarowid_suggest = $objp->aarowid_intra;
+            } else {                                        // Foreign sale
+                $objp->code_sell_p = $objp->code_sell_export;
+                $objp->aarowid_suggest = $objp->aarowid_export;
+            }
         }
 
 		if (! empty($objp->code_sell)) {

@@ -165,7 +165,7 @@ class Contrat extends CommonObject
 
 	/**
 	 * @deprecated Use fk_project instead
-	 * @see fk_project
+	 * @see $fk_project
 	 */
 	public $fk_projet;
 
@@ -305,7 +305,7 @@ class Contrat extends CommonObject
      *  @param	int			$notrigger		1=Does not execute triggers, 0=Execute triggers
      *  @param	string		$comment		Comment
 	 *	@return	int							<0 if KO, >0 if OK
-	 *  @see closeAll
+	 *  @see ()
 	 */
 	public function activateAll($user, $date_start = '', $notrigger = 0, $comment = '')
 	{
@@ -361,7 +361,7 @@ class Contrat extends CommonObject
      * @param	int			$notrigger		1=Does not execute triggers, 0=Execute triggers
      * @param	string		$comment		Comment
 	 * @return	int							<0 if KO, >0 if OK
-	 * @see activateAll
+	 * @see activateAll()
 	 */
 	public function closeAll(User $user, $notrigger = 0, $comment = '')
 	{

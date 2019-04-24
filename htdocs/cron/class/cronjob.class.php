@@ -851,7 +851,6 @@ class Cronjob extends CommonObject
 		if (! empty($conf->dol_no_mouse_hover)) $notooltip=1;   // Force disable tooltips
 
 		$result = '';
-		$companylink = '';
 
 		$label = '<u>' . $langs->trans("CronJob") . '</u>';
 		$label.= '<br>';

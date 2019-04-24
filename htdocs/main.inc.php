@@ -398,7 +398,7 @@ if ((! defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && ! empty($conf->
 }
 
 // Disable modules (this must be after session_start and after conf has been loaded)
-if (GETPOST('disablemodules', 'alpha'))  $_SESSION["disablemodules"]=GETPOST('disablemodules', 'alpha');
+if (GETPOSTISSET('disablemodules'))  $_SESSION["disablemodules"]=GETPOST('disablemodules', 'alpha');
 if (! empty($_SESSION["disablemodules"]))
 {
 	$disabled_modules=explode(',', $_SESSION["disablemodules"]);
@@ -426,7 +426,7 @@ if(is_array($modulepart) && count($modulepart)>0)
 		if(in_array($module, $modulepart))
 		{
 			$conf->modulepart = $module;
-                        break;
+            break;
 		}
 	}
 }
@@ -437,7 +437,7 @@ if(is_array($modulepart) && count($modulepart)>0)
 $login='';
 if (! defined('NOLOGIN'))
 {
-	// $authmode lists the different means of identification to be tested in order of preference.
+	// $authmode lists the different method of identification to be tested in order of preference.
 	// Example: 'http', 'dolibarr', 'ldap', 'http,forceuser', '...'
 
 	if (defined('MAIN_AUTHENTICATION_MODE'))
@@ -1735,8 +1735,16 @@ function top_menu_user(User $user, Translate $langs)
     $userImage = $userDropDownImage = '';
     if (! empty($user->photo))
     {
-        $userImage = Form::showphoto('userphoto', $user, 0, 0, 0, 'photouserphoto userphoto', 'small', 0, 1);
-        $userDropDownImage = Form::showphoto('userphoto', $user, 0, 0, 0, 'dropdown-user-image', 'small', 0, 1);
+        $userImage          = Form::showphoto('userphoto', $user, 0, 0, 0, 'photouserphoto userphoto', 'small', 0, 1);
+        $userDropDownImage  = Form::showphoto('userphoto', $user, 0, 0, 0, 'dropdown-user-image', 'small', 0, 1);
+    }
+    else{
+        $nophoto='/public/theme/common/user_anonymous.png';
+        if ($object->gender == 'man') $nophoto='/public/theme/common/user_man.png';
+        if ($object->gender == 'woman') $nophoto='/public/theme/common/user_woman.png';
+
+        $userImage = '<img class="photo photouserphoto userphoto" alt="No photo" src="'.DOL_URL_ROOT.$nophoto.'">';
+        $userDropDownImage = '<img class="photo dropdown-user-image" alt="No photo" src="'.DOL_URL_ROOT.$nophoto.'">';
     }
 
     $dropdownBody = '';
@@ -1903,19 +1911,22 @@ function left_menu($menu_array_before, $helppagename = '', $notused = '', $menu_
 		if (! is_object($form)) $form=new Form($db);
 		$selected=-1;
 		$usedbyinclude=1;
+		$arrayresult=null;
 		include_once DOL_DOCUMENT_ROOT.'/core/ajax/selectsearchbox.php';	// This set $arrayresult
 
 		if ($conf->use_javascript_ajax && empty($conf->global->MAIN_USE_OLD_SEARCH_FORM))
 		{
-			//$searchform.=$form->selectArrayAjax('searchselectcombo', DOL_URL_ROOT.'/core/ajax/selectsearchbox.php', $selected, '', '', 0, 1, 'vmenusearchselectcombo', 1, $langs->trans("Search"), 1);
 			$searchform.=$form->selectArrayFilter('searchselectcombo', $arrayresult, $selected, '', 1, 0, (empty($conf->global->MAIN_SEARCHBOX_CONTENT_LOADED_BEFORE_KEY)?1:0), 'vmenusearchselectcombo', 1, $langs->trans("Search"), 1);
 		}
 		else
 		{
-			foreach($arrayresult as $key => $val)
-			{
-				$searchform.=printSearchForm($val['url'], $val['url'], $val['label'], 'maxwidth125', 'sall', $val['shortcut'], 'searchleft'.$key, img_picto('', $val['img'], '', false, 1, 1));
-			}
+		    if (is_array(arrayresult))
+		    {
+    			foreach($arrayresult as $key => $val)
+    			{
+    				$searchform.=printSearchForm($val['url'], $val['url'], $val['label'], 'maxwidth125', 'sall', $val['shortcut'], 'searchleft'.$key, img_picto('', $val['img'], '', false, 1, 1));
+    			}
+		    }
 		}
 
 		// Execute hook printSearchForm

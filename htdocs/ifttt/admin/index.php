@@ -64,7 +64,7 @@ llxHeader();
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("IFTTTSetup"), $linkback, 'title_setup');
 
-print $langs->trans("IFTTTDesc")."<br>\n";
+print '<span class="opacitymedium">'.$langs->trans("IFTTTDesc")."</span><br>\n";
 print "<br>\n";
 
 print '<form name="apisetupform" action="'.$_SERVER["PHP_SELF"].'" method="post">';
@@ -91,7 +91,7 @@ print '<td>'.$langs->trans("IFTTT_DOLIBARR_ENDPOINT_SECUREKEY").'</td>';
 print '<td>';
 print '<input type="text" name="IFTTT_DOLIBARR_ENDPOINT_SECUREKEY" value="'.$conf->global->IFTTT_DOLIBARR_ENDPOINT_SECUREKEY.'">';
 print '</td>';
-print '<td>'.$langs->trans("DefineAValueOfYourChoice").'</td>';
+print '<td></td>';
 print '</tr>';
 
 print '</table>';
@@ -113,10 +113,11 @@ $urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain
 
 // Show message
 $message='';
-$url=$urlwithroot.'/ifttt/index.php?securekey='.$conf->global->IFTTT_DOLIBARR_ENDPOINT_SECUREKEY;
+$url=$urlwithroot.'/public/ifttt/index.php?securekey='.$conf->global->IFTTT_DOLIBARR_ENDPOINT_SECUREKEY;
 $message.=$langs->trans("UrlForIFTTT").':<br>';
-$message.=img_picto('', 'object_globe.png').' '.$url;
+$message.=img_picto('', 'object_globe.png').' <input type="text" class="quatrevingtpercent" id="endpointforifttt" name="endpointforifttt" value="'.$url.'">';
 print $message;
+print ajax_autoselect("endpointforifttt");
 print '<br>';
 print '<br>';
 
