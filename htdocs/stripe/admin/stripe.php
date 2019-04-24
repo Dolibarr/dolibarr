@@ -41,6 +41,10 @@ if (! $user->admin) accessforbidden();
 $action = GETPOST('action', 'alpha');
 
 
+/*
+ * Actions
+ */
+
 if ($action == 'setvalue' && $user->admin)
 {
 	$db->begin();
@@ -190,7 +194,7 @@ if (empty($conf->stripeconnect->enabled))
 	print '<input class="minwidth300" type="text" name="STRIPE_TEST_WEBHOOK_KEY" value="'.$conf->global->STRIPE_TEST_WEBHOOK_KEY.'">';
 	print ' &nbsp; '.$langs->trans("Example").': whsec_xxxxxxxxxxxxxxxxxxxxxxxx';
 	$out = img_picto('', 'object_globe.png').' '.$langs->trans("ToOfferALinkForTestWebhook").' ';
-  $url = dol_buildpath('/public/stripe/ipn.php?test', 2);
+    $url = dol_buildpath('/public/stripe/ipn.php?test', 3);
 	$out.= '<input type="text" id="onlinetestwebhookurl" class="minwidth500" value="'.$url.'">';
 	$out.= ajax_autoselect("onlinetestwebhookurl", 0);
 	print '<br>'.$out;
@@ -225,7 +229,7 @@ if (empty($conf->stripeconnect->enabled))
 	print '<input class="minwidth300" type="text" name="STRIPE_LIVE_WEBHOOK_KEY" value="'.$conf->global->STRIPE_LIVE_WEBHOOK_KEY.'">';
 	print ' &nbsp; '.$langs->trans("Example").': whsec_xxxxxxxxxxxxxxxxxxxxxxxx';
     $out = img_picto('', 'object_globe.png').' '.$langs->trans("ToOfferALinkForLiveWebhook").' ';
-    $url = dol_buildpath('/public/stripe/ipn.php', 2);
+    $url = dol_buildpath('/public/stripe/ipn.php', 3);
 	$out.= '<input type="text" id="onlinelivewebhookurl" class="minwidth500" value="'.$url.'">';
 	$out.= ajax_autoselect("onlinelivewebhookurl", 0);
 	print '<br>'.$out;
