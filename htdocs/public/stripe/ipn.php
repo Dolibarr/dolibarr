@@ -144,7 +144,7 @@ $societeName = $conf->global->MAIN_INFO_SOCIETE_NOM;
 if (! empty($conf->global->MAIN_APPLICATION_TITLE)) $societeName = $conf->global->MAIN_APPLICATION_TITLE;
 
 
-dol_syslog("Stripe IPN was calle with event->type = ".$event->type);
+dol_syslog("Stripe IPN was called with event->type = ".$event->type);
 
 
 if ($event->type == 'payout.created') {
