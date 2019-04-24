@@ -3211,7 +3211,7 @@ class User extends CommonObject
 	 */
 	function fetchAll($sortorder='', $sortfield='', $limit=0, $offset=0, $filter=array(), $filtermode='AND', $entityfilter=false)
 	{
-		global $conf;
+		global $conf, $user;
 
 		$sql="SELECT t.rowid";
 		$sql.= ' FROM '.MAIN_DB_PREFIX .$this->table_element.' as t ';
