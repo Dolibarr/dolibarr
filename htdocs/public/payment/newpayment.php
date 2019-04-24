@@ -1814,9 +1814,9 @@ if (preg_match('/^dopayment/', $action))
         }
         else
         {
-	        print '<script src="https://js.stripe.com/v3/"></script>
+	        print '<script src="https://js.stripe.com/v3/"></script>';
         }
-	    <script type="text/javascript" language="javascript">';
+	    print '<script type="text/javascript" language="javascript">';
 
 		?>
 
