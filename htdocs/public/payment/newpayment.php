@@ -1727,26 +1727,28 @@ if (preg_match('/^dopayment/', $action))
 	    <tbody><tr><td class="textpublicpayment">
 
 	    <div class="form-row left">
-	    <label for="card-element">
-	    '.$langs->trans("CreditOrDebitCard").'
-	    </label>
+
+	    <label for="card-element">'.$langs->trans("CreditOrDebitCard").'</label>
 	    <div id="card-element">
 	    <!-- a Stripe Element will be inserted here. -->
 	    </div>
+
 	    <!-- Used to display form errors -->
 	    <div id="card-errors" role="alert"></div>
+
 	    </div>
+
 	    <br>
 	    <button class="butAction" id="buttontopay">'.$langs->trans("ValidatePayment").'</button>
 	    <img id="hourglasstopay" class="hidden" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/working.gif'.'">
 	    </td></tr></tbody></table>
 
-	    </form>
+	    </form>'."\n";
 
-	    <script src="https://js.stripe.com/v3/"></script>
+		print '<script src="https://js.stripe.com/v3/"></script>'."\n";
 
-	    <script type="text/javascript" language="javascript">';
-
+	    // Code to ask the credit card. This use the default "API version". No way to force API version when using JS code.
+		print '<script type="text/javascript" language="javascript">'."\n";
 		?>
 
 	    // Create a Stripe client.
