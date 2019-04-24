@@ -206,7 +206,7 @@ if ( !empty($conf->global->STRIPE_TEST_WEBHOOK_KEY) && !empty($conf->global->STR
 $endpoint = \Stripe\WebhookEndpoint::retrieve($conf->global->STRIPE_TEST_WEBHOOK_ID);
 $endpoint->enabled_events = $stripearrayofwebhookevents;
 if ( GETPOST('webhook', 'alpha') == $conf->global->STRIPE_TEST_WEBHOOK_ID ) {
-if ( empty( GETPOST('status', 'alpha') )) {
+if ( empty(GETPOST('status', 'alpha')) ) {
     $endpoint->disabled = true;
 } else {
     $endpoint->disabled = false;
@@ -261,14 +261,14 @@ if (empty($conf->stripeconnect->enabled))
   $url = dol_buildpath('/public/stripe/ipn.php', 2);
 	$out.= '<input type="text" id="onlinelivewebhookurl" class="quatrevingtpercent" value="'.$url.'">';
 	$out.= ajax_autoselect("onlinelivewebhookurl", 0);
-	print '<br />'.$out; 
+	print '<br />'.$out;
 	print '</td><td>';
 if ( !empty($conf->global->STRIPE_LIVE_WEBHOOK_KEY) && !empty($conf->global->STRIPE_LIVE_SECRET_KEY) && !empty($conf->global->STRIPE_LIVE_WEBHOOK_ID) ) {
 \Stripe\Stripe::setApiKey($conf->global->STRIPE_LIVE_SECRET_KEY);
 $endpoint = \Stripe\WebhookEndpoint::retrieve($conf->global->STRIPE_LIVE_WEBHOOK_ID);
 $endpoint->enabled_events = $stripearrayofwebhookevents;
 if ( GETPOST('webhook', 'alpha') == $conf->global->STRIPE_LIVE_WEBHOOK_ID ) {
-if ( empty( GETPOST('status', 'alpha') )) {
+if ( empty(GETPOST('status', 'alpha')) ) {
     $endpoint->disabled = true;
 } else {
     $endpoint->disabled = false;
