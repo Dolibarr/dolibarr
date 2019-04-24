@@ -209,7 +209,7 @@ if ( GETPOST('webhook', 'alpha') == $conf->global->STRIPE_TEST_WEBHOOK_ID ) {
 if ( empty( GETPOST('status', 'alpha') )) {
     $endpoint->disabled = true;
 } else {
-$endpoint->disabled = false;
+    $endpoint->disabled = false;
 }}
 $endpoint->url = dol_buildpath('/public/stripe/ipn.php?test', 2);
 $endpoint->save();
@@ -269,9 +269,9 @@ $endpoint = \Stripe\WebhookEndpoint::retrieve($conf->global->STRIPE_LIVE_WEBHOOK
 $endpoint->enabled_events = $stripearrayofwebhookevents;
 if ( GETPOST('webhook', 'alpha') == $conf->global->STRIPE_LIVE_WEBHOOK_ID ) {
 if ( empty( GETPOST('status', 'alpha') )) {
-$endpoint->disabled = true;
+    $endpoint->disabled = true;
 } else {
-$endpoint->disabled = false;
+    $endpoint->disabled = false;
 }}
 $endpoint->url = dol_buildpath('/public/stripe/ipn.php', 2);
 $endpoint->save();
