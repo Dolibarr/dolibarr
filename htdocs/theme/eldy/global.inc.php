@@ -2234,7 +2234,7 @@ div.tabBar table.tableforservicepart2:last-child {
     padding-top: 0 !important;
 }
 /* Payment Screen : Pointer cursor in the autofill image */
-table.noborder .AutoFillAmout {
+.AutoFillAmount {
 	cursor:pointer;
 }
 
