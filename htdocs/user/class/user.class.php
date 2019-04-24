@@ -3206,15 +3206,38 @@ class User extends CommonObject
 	 *  @param	int			$offset			page
 	 *  @param	array		$filter			Filter array. Example array('field'=>'valueforlike', 'customurl'=>...)
 	 *  @param  string      $filtermode		Filter mode (AND or OR)
+	 *  @param  bool        $entityfilter	Activate entity filter
 	 *  @return int							<0 if KO, >0 if OK
 	 */
-	function fetchAll($sortorder='', $sortfield='', $limit=0, $offset=0, $filter=array(), $filtermode='AND')
+	function fetchAll($sortorder='', $sortfield='', $limit=0, $offset=0, $filter=array(), $filtermode='AND', $entityfilter=false)
 	{
-		global $conf;
+		global $conf, $user;
 
 		$sql="SELECT t.rowid";
 		$sql.= ' FROM '.MAIN_DB_PREFIX .$this->table_element.' as t ';
-		$sql.= " WHERE 1";
+
+		if ($entityfilter)
+		{
+			if (! empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE))
+			{
+				if (! empty($user->admin) && empty($user->entity) && $conf->entity == 1) {
+					$sql.= " WHERE t.entity IS NOT NULL"; // Show all users
+				} else {
+					$sql.= ",".MAIN_DB_PREFIX."usergroup_user as ug";
+					$sql.= " WHERE ((ug.fk_user = t.rowid";
+					$sql.= " AND ug.entity IN (".getEntity('user')."))";
+					$sql.= " OR t.entity = 0)"; // Show always superadmin
+				}
+			}
+			else
+			{
+				$sql.= " WHERE t.entity IN (".getEntity('user').")";
+			}
+		}
+		else
+		{
+			$sql.= " WHERE 1";
+		}
 
 		// Manage filter
 		$sqlwhere = array();
