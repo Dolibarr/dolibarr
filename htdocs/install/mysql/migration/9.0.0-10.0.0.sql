@@ -29,6 +29,8 @@
 
 -- Missing in 9.0
 
+ALTER TABLE llx_actioncomm MODIFY COLUMN code varchar(50);
+
 DROP TABLE llx_ticket_logs;
 
 CREATE TABLE llx_pos_cash_fence(
