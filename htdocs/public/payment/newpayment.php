@@ -263,7 +263,7 @@ elseif (! empty($conf->global->$paramcreditor)) $creditor=$conf->global->$paramc
  * Actions
  */
 
-// Action dopayment is called after choosing the payment mode
+// Action dopayment is called after clicking/choosing the payment mode
 if ($action == 'dopayment')
 {
 	if ($paymentmethod == 'paypal')
@@ -395,7 +395,7 @@ if ($action == 'dopayment')
 }
 
 
-// Called when choosing Stripe mode, after the 'dopayment'
+// Called when choosing Stripe mode, after clicking the 'dopayment'
 if ($action == 'charge' && ! empty($conf->stripe->enabled))
 {
 	$amountstripe = $amount;
@@ -509,7 +509,7 @@ if ($action == 'charge' && ! empty($conf->stripe->enabled))
 			if (empty($vatcleaned)) $taxinfo=null;
 
 			dol_syslog("Create anonymous customer card profile", LOG_DEBUG, 0, '_stripe');
-$customer = \Stripe\Customer::create(array(
+            $customer = \Stripe\Customer::create(array(
 				'email' => $email,
 				'description' => ($email?'Anonymous customer for '.$email:'Anonymous customer'),
 				'metadata' => $metadata,
@@ -525,7 +525,7 @@ $customer = \Stripe\Customer::create(array(
 			// The customer was just created with a source, so we can make a charge
 			// with no card defined, the source just used for customer creation will be used.
 			dol_syslog("Create charge", LOG_DEBUG, 0, '_stripe');
-$charge = \Stripe\Charge::create(array(
+            $charge = \Stripe\Charge::create(array(
 				'customer' => $customer->id,
 				'amount'   => price2num($amountstripe, 'MU'),
 				'currency' => $currency,
@@ -1658,7 +1658,7 @@ print '<br>';
 if (preg_match('/^dopayment/', $action))
 {
 
-	// Strip
+	// Stripe
 	if (GETPOST('dopayment_stripe', 'alpha'))
 	{
 		// Simple checkout
