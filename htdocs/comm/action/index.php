@@ -614,18 +614,9 @@ if ($resql)
 
         // Defined date_start_in_calendar and date_end_in_calendar property
         // They are date start and end of action but modified to not be outside calendar view.
-        if ($event->percentage <= 0)
-        {
-            $event->date_start_in_calendar=$event->datep;
-            if ($event->datef != '' && $event->datef >= $event->datep) $event->date_end_in_calendar=$event->datef;
-            else $event->date_end_in_calendar=$event->datep;
-        }
-        else
-        {
-            $event->date_start_in_calendar=$event->datep;
-            if ($event->datef != '' && $event->datef >= $event->datep) $event->date_end_in_calendar=$event->datef;
-            else $event->date_end_in_calendar=$event->datep;
-        }
+        $event->date_start_in_calendar=$event->datep;
+        if ($event->datef != '' && $event->datef >= $event->datep) $event->date_end_in_calendar=$event->datef;
+        else $event->date_end_in_calendar=$event->datep;
         // Define ponctual property
         if ($event->date_start_in_calendar == $event->date_end_in_calendar)
         {
