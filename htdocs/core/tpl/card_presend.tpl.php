@@ -171,7 +171,7 @@ if ($action == 'presend')
 		$listeuser=array();
 		$fuserdest = new User($db);
 
-		$result= $fuserdest->fetchAll('ASC', 't.lastname', 0, 0, array('customsql'=>'t.statut=1 AND t.employee=1 AND t.email IS NOT NULL AND t.email<>\'\''));
+		$result= $fuserdest->fetchAll('ASC', 't.lastname', 0, 0, array('customsql'=>'t.statut=1 AND t.employee=1 AND t.email IS NOT NULL AND t.email<>\'\''), 'AND', true);
 		if ($result>0 && is_array($fuserdest->users) && count($fuserdest->users)>0) {
 			foreach($fuserdest->users as $uuserdest) {
 				$listeuser[$uuserdest->id] = $uuserdest->user_get_property($uuserdest->id,'email');
