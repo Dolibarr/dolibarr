@@ -897,7 +897,7 @@ if ($source == 'order')
 	print '</td></tr>'."\n";
   
     if (! empty($conf->stripe->enabled) && empty($order->billed) && ($paymentmethod == 'stripe') ) {
-    require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';	
+    require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
     
     $service = 'StripeLive';
 	$servicestatus = 1;
@@ -917,7 +917,7 @@ if ($source == 'order')
     $paymentintent=$stripe->getPaymentIntent($object, $stripecu, $stripeacc, $servicestatus);
     print '<b>'.$paymentintent->id.'</b>';
 	print '</td></tr>'."\n";
-}
+    }
 
 	// Shipping address
 	$shipToName=$order->thirdparty->name;
@@ -1046,9 +1046,9 @@ if ($source == 'invoice')
 	print '<input type="hidden" name="fulltag" value="'.$fulltag.'">';
 	print '</td></tr>'."\n";
   
-  if (! empty($conf->stripe->enabled) && empty($object->paye) && ($paymentmethod == 'stripe') ) 
+  if (! empty($conf->stripe->enabled) && empty($object->paye) && ($paymentmethod == 'stripe') )
   {
-    require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';	
+    require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
     
     $service = 'StripeLive';
     $servicestatus = 1;
@@ -1587,7 +1587,7 @@ if ($source == 'donation')
 	print '</td></tr>'."\n";
     
     if (! empty($conf->stripe->enabled) && empty($object->paid) && ($paymentmethod == 'stripe') ) {
-    require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';	
+    require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
     
     $service = 'StripeLive';
 	$servicestatus = 1;
