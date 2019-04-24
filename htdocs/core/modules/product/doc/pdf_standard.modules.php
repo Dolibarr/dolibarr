@@ -319,7 +319,8 @@ class pdf_standard extends ModelePDFProduct
 					$substitutionarray=pdf_getSubstitutionArray($outputlangs, null, $object);
 					complete_substitutions_array($substitutionarray, $outputlangs, $object);
 					$notetoshow = make_substitutions($notetoshow, $substitutionarray, $outputlangs);
-
+					$notetoshow = convertBackOfficeMediasLinksToPublicLinks($notetoshow);
+					
 					$tab_top = 88;
 
 					$pdf->SetFont('', '', $default_font_size - 1);

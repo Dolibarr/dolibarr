@@ -2922,11 +2922,12 @@ if ($action == 'preview' || $action == 'createfromclone' || $action == 'createpa
 		// Change the contenteditable to "true" or "false" when mode Edit Inline is on or off
 		if (empty($conf->global->WEBSITE_EDITINLINE))
 		{
+		    // Remove the contenteditable="true"
 			$newcontent = preg_replace('/(div|section)(\s[^\>]*)contenteditable="true"/', '\1\2', $newcontent);
 		}
 		else
 		{
-			// TODO Add the contenteditable="true" when mode Edit Inline is on
+			// Keep the contenteditable="true" when mode Edit Inline is on
 		}
 		$out.=dolWebsiteReplacementOfLinks($object, $newcontent)."\n";
 		//$out.=$newcontent;

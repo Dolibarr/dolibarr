@@ -71,7 +71,7 @@ UseSearchToSelectCompanyTooltip=Also if you have a large number of third parties
 UseSearchToSelectContactTooltip=Also if you have a large number of third parties (> 100 000), you can increase speed by setting constant CONTACT_DONOTSEARCH_ANYWHERE to 1 in Setup->Other. Search will then be limited to start of string.
 DelaiedFullListToSelectCompany=Wait until a key is pressed before loading content of Third Parties combo list.<br>This may increase performance if you have a large number of third parties, but it is less convenient.
 DelaiedFullListToSelectContact=Wait until a key is pressed before loading content of Contact combo list.<br>This may increase performance if you have a large number of contacts, but it is less convenient)
-NumberOfKeyToSearch=Nbr of characters to trigger search: %s
+NumberOfKeyToSearch=Number of characters to trigger search: %s
 NotAvailableWhenAjaxDisabled=Not available when Ajax disabled
 AllowToSelectProjectFromOtherCompany=On document of a third party, can choose a project linked to another third party
 JavascriptDisabled=JavaScript disabled
@@ -1819,7 +1819,7 @@ ChartLoaded=Chart of account loaded
 SocialNetworkSetup=Setup of module Social Networks
 EnableFeatureFor=Enable features for <strong>%s</strong>
 VATIsUsedIsOff=Note: The option to use Sales Tax or VAT has been set to <strong>Off</strong> in the menu %s - %s, so Sales tax or Vat used will always be 0 for sales.
-SwapSenderAndRecipientOnPDF=Swap sender and recipient address on PDF
+SwapSenderAndRecipientOnPDF=Swap sender and recipient address position on PDF documents
 FeatureSupportedOnTextFieldsOnly=Warning, feature supported on text fields only. Also an URL parameter action=create or action=edit must be set OR page name must end with 'new.php' to trigger this feature.
 EmailCollector=Email collector
 EmailCollectorDescription=Add a scheduled job and a setup page to scan regularly email boxes (using IMAP protocol) and record emails received into your application, at the right place and/or create some records automatically (like leads).

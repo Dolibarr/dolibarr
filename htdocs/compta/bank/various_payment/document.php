@@ -57,7 +57,7 @@ if (! $sortfield) $sortfield="name";
 $object = new PaymentVarious($db);
 $object->fetch($id, $ref);
 
-$upload_dir = $conf->banque->dir_output.'/'.dol_sanitizeFileName($object->id);
+$upload_dir = $conf->bank->dir_output.'/'.dol_sanitizeFileName($object->id);
 $modulepart='banque';
 
 

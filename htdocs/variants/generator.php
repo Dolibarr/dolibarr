@@ -41,6 +41,13 @@ $product = new Product($db);
 
 $product->fetch($id);
 
+$error = 0;
+
+
+/*
+ * Actions
+ */
+
 if (!$product->isProduct()) {
 	header('Location: '.dol_buildpath('/product/card.php?id='.$product->id, 2));
 	exit();
@@ -59,8 +66,8 @@ $combinations = GETPOST('combinations', 'array');
 $price_var_percent = (bool) GETPOST('price_var_percent');
 $donotremove = true;
 
-if ($_POST) {
-
+if ($_POST)
+{
 	$donotremove = (bool) GETPOST('donotremove');
 
 	//We must check if all those given combinations actually exist
@@ -102,7 +109,8 @@ if ($_POST) {
 
 			$res = 1;
 
-			foreach (cartesianArray($adapted_values) as $currcomb)
+			$cartesianarray = cartesianArray($adapted_values);
+			foreach ($cartesianarray as $currcomb)
 			{
 				$res = $combination->createProductCombination($product, $currcomb, $sanitized_values, $price_var_percent);
 				if ($res < 0) {

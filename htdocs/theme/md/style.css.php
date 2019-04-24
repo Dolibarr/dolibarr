@@ -323,7 +323,9 @@ input, select {
 	margin-bottom:1px;
 	margin-top:1px;
 }
-
+input.button.massactionconfirmed {
+    margin: 4px;
+}
 
 textarea {
 	border-radius: 0;
@@ -657,6 +659,15 @@ textarea.centpercent {
 .cursornotallowed {
 	cursor: not-allowed;
 }
+.backgroundblank {
+    background-color: #fff;
+}
+.checkboxattachfilelabel {
+    font-size: 0.85em;
+    opacity: 0.7;
+}
+
+/* Themes for badges */
 .badge {
 	display: inline-block;
 	min-width: 10px;
@@ -2152,7 +2163,7 @@ div.vmenu, td.vmenu {
 .companylogo { padding-top: 4px; }
 .searchform { padding-top: 10px; }
 
-a.vmenu:link, a.vmenu:visited, a.vmenu:hover, a.vmenu:active, span.vmenu { white-space: nowrap; font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: bold; }
+a.vmenu:link, a.vmenu:visited, a.vmenu:hover, a.vmenu:active, span.vmenu, span.vsmenu { white-space: nowrap; font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: bold; }
 font.vmenudisabled  { font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: bold; color: #aaa; margin-left: 4px; }
 a.vmenu:link, a.vmenu:visited { color: #<?php echo $colortextbackvmenu; ?>; }
 

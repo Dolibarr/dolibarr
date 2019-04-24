@@ -33,7 +33,7 @@ set_time_limit(0);
 class ExportCsv extends ModeleExports
 {
 	/**
-	 * @var int ID
+	 * @var string ID ex: csv, tsv, excel...
 	 */
 	public $id;
 
@@ -46,7 +46,7 @@ class ExportCsv extends ModeleExports
 
 	/**
      * Dolibarr version of the loaded document
-     * @public string
+     * @var string
      */
 	public $version = 'dolibarr';
 

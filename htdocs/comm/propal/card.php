@@ -839,6 +839,7 @@ if (empty($reshook))
 
 		$qty = GETPOST('qty' . $predef);
 		$remise_percent = GETPOST('remise_percent' . $predef);
+		if (empty($remise_percent)) $remise_percent=0;
 
 		// Extrafields
 		$extrafieldsline = new ExtraFields($db);
@@ -1591,7 +1592,7 @@ if ($action == 'create')
 			});
 			</script>';
 		}
-		print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&client=3&fournisseur=0&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'"><span class="valignmiddle text-plus-circle">'.$langs->trans("AddThirdParty").'</span><span class="fa fa-plus-circle valignmiddle"></span></a>';
+		print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&client=3&fournisseur=0&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'"><span class="valignmiddle text-plus-circle">'.$langs->trans("AddThirdParty").'</span><span class="fa fa-plus-circle valignmiddle paddingleft"></span></a>';
 		print '</td>';
 	}
 	print '</tr>' . "\n";
@@ -1624,7 +1625,7 @@ if ($action == 'create')
 	print '<tr><td class="fieldrequired">' . $langs->trans("ValidityDuration") . '</td><td><input name="duree_validite" size="5" value="' . $conf->global->PROPALE_VALIDITY_DURATION . '"> ' . $langs->trans("days") . '</td></tr>';
 
 	// Terms of payment
-	print '<tr><td class="nowrap fieldrequired">' . $langs->trans('PaymentConditionsShort') . '</td><td>';
+	print '<tr><td class="nowrap">' . $langs->trans('PaymentConditionsShort') . '</td><td>';
 	$form->select_conditions_paiements($soc->cond_reglement_id, 'cond_reglement_id', -1, 1);
 	print '</td></tr>';
 

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2019  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2015-2017  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2017       Ferran Marcet           <fmarcet@2byte.es>
@@ -145,7 +145,11 @@ if (empty($reshook))
 
 	include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 
-	if (GETPOST('sendit', 'alpha')) $action='';
+	if (GETPOSTISSET('sendit'))    // If we just submit a file
+	{
+	    if ($action == 'updateline') $action='editline';   // To avoid to make the updateline now
+	    else $action='';                                   // To avoid to make the addline now
+	}
 
     include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; 	// Must be include, not include_once
 
@@ -1243,6 +1247,21 @@ if (empty($reshook))
     	$object = new ExpenseReport($db);
     	$object->fetch($id);
 
+    	// First save uploaded file
+    	$fk_ecm_files = 0;
+    	if (GETPOSTISSET('attachfile'))
+    	{
+    	    $arrayoffiles=GETPOST('attachfile', 'array');
+    	    if (is_array($arrayoffiles) && ! empty($arrayoffiles[0]))
+    	    {
+    	        include_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
+    	        $relativepath='expensereport/'.$object->ref.'/'.$arrayoffiles[0];
+    	        $ecmfiles=new EcmFiles($db);
+    	        $ecmfiles->fetch(0, '', $relativepath);
+    	        $fk_ecm_files = $ecmfiles->id;
+    	    }
+    	}
+
     	$rowid = $_POST['rowid'];
     	$type_fees_id = GETPOST('fk_c_type_fees', 'int');
 		$fk_c_exp_tax_cat = GETPOST('fk_c_exp_tax_cat', 'int');
@@ -1284,7 +1303,7 @@ if (empty($reshook))
     	if (! $error)
     	{
     	    // TODO Use update method of ExpenseReportLine
-    		$result = $object->updateline($rowid, $type_fees_id, $projet_id, $vatrate, $comments, $qty, $value_unit, $date, $id, $fk_c_exp_tax_cat);
+    	    $result = $object->updateline($rowid, $type_fees_id, $projet_id, $vatrate, $comments, $qty, $value_unit, $date, $id, $fk_c_exp_tax_cat, $fk_ecm_files);
     		if ($result >= 0)
     		{
     			if ($result > 0)
@@ -1989,7 +2008,7 @@ else
 			        print '<tr><td colspan="' . $nbcols . '" class="right">'.$langs->trans("AmountExpected").':</td><td class="right">'.price($object->total_ttc).'</td><td></td></tr>';
 
 			        print '<tr><td colspan="' . $nbcols . '" class="right">'.$langs->trans("RemainderToPay").':</td>';
-			        print '<td align="right'.($resteapayeraffiche?' amountremaintopay':(' '.$cssforamountpaymentcomplete)).'">'.price($resteapayeraffiche).'</td><td></td></tr>';
+			        print '<td class="right'.($resteapayeraffiche?' amountremaintopay':(' '.$cssforamountpaymentcomplete)).'">'.price($resteapayeraffiche).'</td><td></td></tr>';
 
 				    $db->free($resql);
 				}
@@ -2194,7 +2213,7 @@ else
 							{
 								print '<td class="nowrap right">';
 
-								print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=editline&amp;rowid='.$line->rowid.'#'.$line->rowid.'">';
+								print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=editline&amp;rowid='.$line->rowid.'">';
 								print img_edit();
 								print '</a> &nbsp; ';
 								print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete_line&amp;rowid='.$line->rowid.'">';
@@ -2209,14 +2228,18 @@ else
 
 						if ($action == 'editline' && $line->rowid == GETPOST('rowid', 'int'))
 						{
-
-						    // Add line with link to add new file or attach to an existing file
-						    $colspan = 12;
+						    // Add line with link to add new file or attach line to an existing file
+						    $colspan = 10;
 						    if (! empty($conf->projet->enabled)) $colspan++;
 						    if (!empty($conf->global->MAIN_USE_EXPENSE_IK)) $colspan++;
 
 						    print '<tr class="tredited">';
-						    print '<td colspan="'.$colspan.'" class="liste_titre">';
+
+						    print '<td class="center">';
+						    print $numline;
+						    print '</td>';
+
+						    print '<td colspan="'.($colspan-1).'" class="liste_titre">';
 						    print '<a href="" class="commonlink auploadnewfilenow reposition">'.$langs->trans("UploadANewFileNow");
 						    print img_picto($langs->trans("UploadANewFileNow"), 'chevron-down', '', false, 0, 0, '', 'marginleftonly');
 						    print '</a>';
@@ -2248,6 +2271,16 @@ else
         				    ';
 						    print '</script>'."\n";
 						    print '</td></tr>';
+
+						    $filenamelinked='';
+						    if ($line->fk_ecm_files > 0)
+						    {
+						        $result = $ecmfilesstatic->fetch($line->fk_ecm_files);
+						        if ($result > 0)
+						        {
+						            $filenamelinked = $ecmfilesstatic->filename;
+						        }
+						    }
 
 						    $tredited='tredited';
 						    include DOL_DOCUMENT_ROOT.'/expensereport/tpl/expensereport_addfile.tpl.php';
@@ -2330,7 +2363,9 @@ else
 				}
 
 				// Add a line
-				if (($object->fk_statut == ExpenseReport::STATUS_DRAFT || $object->fk_statut == ExpenseReport::STATUS_REFUSED) && $action != 'editline' && $user->rights->expensereport->creer)
+				if (($object->fk_statut == ExpenseReport::STATUS_DRAFT || $object->fk_statut == ExpenseReport::STATUS_REFUSED)
+				    && $action != 'editline'
+				    && $user->rights->expensereport->creer)
 				{
 				    $colspan = 11;
 				    if (! empty($conf->global->MAIN_USE_EXPENSE_IK)) $colspan++;
@@ -2374,10 +2409,10 @@ else
 				            jQuery(".trattachnewfilenow").toggle();
                             jQuery(".truploadnewfilenow").hide();
                             return false;
-                        });';
-				    if (is_array(GETPOST('attachfile', 'array')) && count(GETPOST('attachfile', 'array')))
+                        });'."\n";
+				    if (is_array(GETPOST('attachfile', 'array')) && count(GETPOST('attachfile', 'array')) && $action != 'updateline')
 				    {
-				        print 'jQuery(".trattachnewfilenow").toggle();'."\n";
+				        print 'jQuery(".trattachnewfilenow").show();'."\n";
 				    }
 				    print '
                     });

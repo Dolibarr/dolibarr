@@ -202,7 +202,7 @@ class MyObject extends CommonObject
 	 */
 	public function __construct(DoliDB $db)
 	{
-		global $conf, $langs, $user;
+		global $conf, $langs;
 
 		$this->db = $db;
 
@@ -252,7 +252,7 @@ class MyObject extends CommonObject
 	 */
 	public function createFromClone(User $user, $fromid)
 	{
-		global $langs, $hookmanager, $extrafields;
+		global $langs, $extrafields;
 	    $error = 0;
 
 	    dol_syslog(__METHOD__, LOG_DEBUG);
@@ -392,9 +392,11 @@ class MyObject extends CommonObject
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
-
-			while ($obj = $this->db->fetch_object($resql))
+            $i = 0;
+			while ($i < min($limit, $num))
 			{
+			    $obj = $this->db->fetch_object($resql);
+
 				$record = new self($this->db);
 
 				$record->id = $obj->rowid;
@@ -402,6 +404,8 @@ class MyObject extends CommonObject
 
 				//var_dump($record->id);
 				$records[$record->id] = $record;
+
+				$i++;
 			}
 			$this->db->free($resql);
 
@@ -451,9 +455,7 @@ class MyObject extends CommonObject
      */
     public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
     {
-        global $db, $conf, $langs, $hookmanager;
-        global $dolibarr_main_authentication, $dolibarr_main_demo;
-        global $menumanager;
+        global $conf, $langs, $hookmanager;
 
         if (! empty($conf->dol_no_mouse_hover)) $notooltip=1;   // Force disable tooltips
 

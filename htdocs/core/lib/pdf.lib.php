@@ -341,14 +341,14 @@ function pdfBuildThirdpartyName($thirdparty, Translate $outputlangs, $includeali
 /**
  *   	Return a string with full address formated for output on documents
  *
- * 		@param	Translate	      $outputlangs		    Output langs object
- *   	@param  Societe		      $sourcecompany		Source company object
- *   	@param  Societe|string    $targetcompany		Target company object
- *      @param  Contact|string	  $targetcontact	    Target contact object
- * 		@param	int			      $usecontact		    Use contact instead of company
- * 		@param	string  	      $mode				    Address type ('source', 'target', 'targetwithdetails', 'targetwithdetails_xxx': target but include also phone/fax/email/url)
- *      @param  Object            $object               Object we want to build document for
- * 		@return	string							        String with full address
+ * 		@param	Translate	          $outputlangs		    Output langs object
+ *   	@param  Societe		          $sourcecompany		Source company object
+ *   	@param  Societe|string|null   $targetcompany		Target company object
+ *      @param  Contact|string|null	  $targetcontact	    Target contact object
+ * 		@param	int			          $usecontact		    Use contact instead of company
+ * 		@param	string  	          $mode				    Address type ('source', 'target', 'targetwithdetails', 'targetwithdetails_xxx': target but include also phone/fax/email/url)
+ *      @param  Object                $object               Object we want to build document for
+ * 		@return	string					    		        String with full address
  */
 function pdf_build_address($outputlangs, $sourcecompany, $targetcompany = '', $targetcontact = '', $usecontact = 0, $mode = 'source', $object = null)
 {
@@ -364,7 +364,7 @@ function pdf_build_address($outputlangs, $sourcecompany, $targetcompany = '', $t
 	$stringaddress = '';
 	if (is_object($hookmanager))
 	{
-		$parameters = array('sourcecompany'=>&$sourcecompany,'targetcompany'=>&$targetcompany,'targetcontact'=>$targetcontact,'outputlangs'=>$outputlangs,'mode'=>$mode,'usecontact'=>$usecontact);
+		$parameters = array('sourcecompany'=>&$sourcecompany, 'targetcompany'=>&$targetcompany, 'targetcontact'=>&$targetcontact, 'outputlangs'=>$outputlangs, 'mode'=>$mode, 'usecontact'=>$usecontact);
 		$action='';
 		$reshook = $hookmanager->executeHooks('pdf_build_address', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
 		$stringaddress.=$hookmanager->resPrint;

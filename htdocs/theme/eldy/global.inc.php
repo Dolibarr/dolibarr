@@ -91,6 +91,9 @@ input, select {
 	margin-bottom:1px;
 	margin-top:1px;
 }
+input.button.massactionconfirmed {
+    margin: 4px;
+}
 
 /* Focus definitions must be after standard definition */
 textarea:focus {
@@ -443,7 +446,15 @@ textarea.centpercent {
 .cursornotallowed {
 	cursor: not-allowed;
 }
+.backgroundblank {
+    background-color: #fff;
+}
+.checkboxattachfilelabel {
+    font-size: 0.85em;
+    opacity: 0.7;
+}
 
+/* Themes for badges */
 <?php include dol_buildpath($path.'/theme/'.$theme.'/badges.inc.php', 0); ?>
 
 .borderrightlight
@@ -1997,7 +2008,7 @@ input.vmenusearchselectcombo[type=text] {
 .searchform input { font-size: 16px; }
 
 
-a.vmenu:link, a.vmenu:visited, a.vmenu:hover, a.vmenu:active, span.vmenu { white-space: nowrap; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: bold; }	/* bold = 600, 500 is ko with Edge on 1200x960 */
+a.vmenu:link, a.vmenu:visited, a.vmenu:hover, a.vmenu:active, span.vmenu, span.vsmenu { white-space: nowrap; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: bold; }	/* bold = 600, 500 is ko with Edge on 1200x960 */
 font.vmenudisabled  { font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: bold; color: #aaa; margin-left: 4px; }												/* bold = 600, 500 is ko with Edge on 1200x960 */
 a.vmenu:link, a.vmenu:visited { color: #<?php echo $colortextbackvmenu; ?>; }
 
@@ -2221,6 +2232,10 @@ div.tabBar table.tableforservicepart2:last-child {
 .tableforservicepart1 .tdhrthin {
 	height: unset;
     padding-top: 0 !important;
+}
+/* Payment Screen : Pointer cursor in the autofill image */
+table.noborder .AutoFillAmout {
+	cursor:pointer;
 }
 
 div.popuptabset {
@@ -4137,6 +4152,10 @@ A.none, A.none:active, A.none:visited, A.none:hover {
 /* ============================================================================== */
 /*  CKEditor                                                                      */
 /* ============================================================================== */
+
+body.cke_show_borders {
+    margin: 5px !important;
+}
 
 .cke_dialog {
     border: 1px #bbb solid ! important;

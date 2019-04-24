@@ -74,7 +74,7 @@ class pdf_cyan extends ModelePDFPropales
 
 	/**
      * Dolibarr version of the loaded document
-     * @public string
+     * @var string
      */
 	public $version = 'development';
 
@@ -433,7 +433,7 @@ class pdf_cyan extends ModelePDFPropales
 					$substitutionarray=pdf_getSubstitutionArray($outputlangs, null, $object);
 					complete_substitutions_array($substitutionarray, $outputlangs, $object);
 					$notetoshow = make_substitutions($notetoshow, $substitutionarray, $outputlangs);
-
+					$notetoshow = convertBackOfficeMediasLinksToPublicLinks($notetoshow);
 
 					$pdf->startTransaction();
 
@@ -549,11 +549,11 @@ class pdf_cyan extends ModelePDFPropales
 				$pdf->startTransaction();
 				$this->pdfTabTitles($pdf, $tab_top, $tab_height, $outputlangs, $hidetop);
 				$pdf->rollbackTransaction(true);
-				
+
 				$iniY = $tab_top + $this->tabTitleHeight + 2;
 				$curY = $tab_top + $this->tabTitleHeight + 2;
 				$nexY = $tab_top + $this->tabTitleHeight + 2;
-				
+
 				// Loop on each lines
 				$pageposbeforeprintlines=$pdf->getPage();
 				$pagenb = $pageposbeforeprintlines;
@@ -1460,7 +1460,7 @@ class pdf_cyan extends ModelePDFPropales
 
 
 		$this->pdfTabTitles($pdf, $tab_top, $tab_height, $outputlangs, $hidetop);
-		
+
 		if (empty($hidetop)){
 		    $pdf->line($this->marge_gauche, $tab_top+$this->tabTitleHeight, $this->page_largeur-$this->marge_droite, $tab_top+$this->tabTitleHeight);	// line prend une position y en 2eme param et 4eme param
 		}

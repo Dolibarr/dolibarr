@@ -1940,7 +1940,7 @@ class ExpenseReport extends CommonObject
 	}
 
     /**
-     * updateline
+     * Update an expense report line
      *
      * @param   int         $rowid                  Line to edit
      * @param   int         $type_fees_id           Type payment
@@ -1951,10 +1951,11 @@ class ExpenseReport extends CommonObject
      * @param   double      $value_unit             Value init
      * @param   int         $date                   Date
      * @param   int         $expensereport_id       Expense report id
-     * @param   int         $fk_c_exp_tax_cat       id of category of car
+     * @param   int         $fk_c_exp_tax_cat       Id of category of car
+	 * @param   int         $fk_ecm_files           Id of ECM file to link to this expensereport line
      * @return  int                                 <0 if KO, >0 if OK
      */
-    public function updateline($rowid, $type_fees_id, $projet_id, $vatrate, $comments, $qty, $value_unit, $date, $expensereport_id, $fk_c_exp_tax_cat = 0)
+    public function updateline($rowid, $type_fees_id, $projet_id, $vatrate, $comments, $qty, $value_unit, $date, $expensereport_id, $fk_c_exp_tax_cat = 0, $fk_ecm_files = 0)
     {
         global $user, $mysoc;
 
@@ -2013,6 +2014,8 @@ class ExpenseReport extends CommonObject
             $this->line->localtax1_type = $localtaxes_type[0];
             $this->line->localtax2_type = $localtaxes_type[2];
 
+            $this->line->fk_ecm_files = $fk_ecm_files;
+
             $this->line->rowid           = $rowid;
             $this->line->id              = $rowid;
 
@@ -2020,21 +2023,26 @@ class ExpenseReport extends CommonObject
             $sql = "SELECT c.code as code_type_fees, c.label as libelle_type_fees";
             $sql.= " FROM ".MAIN_DB_PREFIX."c_type_fees as c";
             $sql.= " WHERE c.id = ".$type_fees_id;
-            $result = $this->db->query($sql);
-            $objp_fees = $this->db->fetch_object($result);
-            $this->line->type_fees_code      = $objp_fees->code_type_fees;
-            $this->line->type_fees_libelle   = $objp_fees->libelle_type_fees;
+            $resql = $this->db->query($sql);
+            if ($resql)
+            {
+                $objp_fees = $this->db->fetch_object($resql);
+                $this->line->type_fees_code      = $objp_fees->code_type_fees;
+                $this->line->type_fees_libelle   = $objp_fees->libelle_type_fees;
+                $this->db->free($resql);
+            }
 
             // Select des informations du projet
             $sql = "SELECT p.ref as ref_projet, p.title as title_projet";
             $sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
             $sql.= " WHERE p.rowid = ".$projet_id;
-            $result = $this->db->query($sql);
-            if ($result) {
-            	$objp_projet = $this->db->fetch_object($result);
+            $resql = $this->db->query($sql);
+            if ($resql) {
+            	$objp_projet = $this->db->fetch_object($resql);
+            	$this->line->projet_ref          = $objp_projet->ref_projet;
+            	$this->line->projet_title        = $objp_projet->title_projet;
+            	$this->db->free($resql);
             }
-            $this->line->projet_ref          = $objp_projet->ref_projet;
-            $this->line->projet_title        = $objp_projet->title_projet;
 
 			$this->applyOffset();
 			$this->checkRules();
@@ -2727,7 +2735,8 @@ class ExpenseReportLine
 		$sql.= ",vat_src_code='".$this->db->escape($this->vat_src_code)."'";
         $sql.= ",rule_warning_message='".$this->db->escape($this->rule_warning_message)."'";
 		$sql.= ",fk_c_exp_tax_cat=".$this->db->escape($this->fk_c_exp_tax_cat);
-        if ($this->fk_c_type_fees) $sql.= ",fk_c_type_fees=".$this->db->escape($this->fk_c_type_fees);
+		$sql.= ",fk_ecm_files=".($this->fk_ecm_files > 0 ? $this->fk_ecm_files : 'null');
+		if ($this->fk_c_type_fees) $sql.= ",fk_c_type_fees=".$this->db->escape($this->fk_c_type_fees);
         else $sql.= ",fk_c_type_fees=null";
         if ($this->fk_project > 0) $sql.= ",fk_projet=".$this->db->escape($this->fk_project);
         else $sql.= ",fk_projet=null";

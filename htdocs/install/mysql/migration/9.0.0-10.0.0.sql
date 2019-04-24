@@ -29,6 +29,8 @@
 
 -- Missing in 9.0
 
+ALTER TABLE llx_actioncomm MODIFY COLUMN code varchar(50);
+
 DROP TABLE llx_ticket_logs;
 
 CREATE TABLE llx_pos_cash_fence(
@@ -290,3 +292,7 @@ insert into llx_c_action_trigger (code,label,description,elementtype,rang) value
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('TICKET_SENTBYMAIL','Ticket message sent by email','Executed when a message is sent from the ticket record','ticket',166);
 
 ALTER TABLE llx_oauth_token ADD COLUMN fk_soc integer;
+
+ALTER TABLE llx_inventorydet DROP COLUMN pmp; 
+ALTER TABLE llx_inventorydet DROP COLUMN pa; 
+ALTER TABLE llx_inventorydet DROP COLUMN new_pmp;
