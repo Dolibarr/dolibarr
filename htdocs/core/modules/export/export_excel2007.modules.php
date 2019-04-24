@@ -34,7 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 class ExportExcel2007 extends ExportExcel
 {
 	/**
-	 * @var int ID
+	 * @var string ID
 	 */
 	public $id;
 
