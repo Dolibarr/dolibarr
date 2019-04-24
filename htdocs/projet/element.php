@@ -713,6 +713,164 @@ print '<br>';
 
 
 
+// Show balance for whole project Order
+
+$langs->loadLangs(array("suppliers", "bills", "orders", "proposals", "margins"));
+
+if (!empty($conf->stock->enabled)) $langs->load('stocks');
+
+print load_fiche_titre($langs->trans("ProfitsOrder"), '', 'title_accountancy');
+
+print '<table class="noborder" width="100%">';
+print '<tr class="liste_titre">';
+print '<td align="left" width="200">'.$langs->trans("Element").'</td>';
+print '<td align="right" width="100">'.$langs->trans("Number").'</td>';
+print '<td align="right" width="100">'.$langs->trans("AmountHT").'</td>';
+print '<td align="right" width="100">'.$langs->trans("AmountTTC").'</td>';
+print '</tr>';
+
+foreach ($listofreferent as $key => $value)
+{
+	$name=$langs->trans($value['name']);
+	$title=$value['title'];
+	$classname=$value['class'];
+	$tablename=$value['table'];
+	$datefieldname=$value['datefieldname'];
+	$qualified=$value['test'];
+	$margin = $value['margin'];
+	$project_field = $value['project_field'];
+	if ($tablename == "commande" || $tablename == "commande_fournisseur")		// If this element must be included into profit calculation ($margin is 'minus' or 'plus' or 'auto')
+	{
+		$element = new $classname($db);
+
+		$elementarray = $object->get_element_list($key, $tablename, $datefieldname, $dates, $datee, !empty($project_field)?$project_field:'fk_projet');
+
+		if (count($elementarray)>0 && is_array($elementarray))
+		{
+			$total_ht_order = 0;
+			$total_ttc_order = 0;
+
+			$num=count($elementarray);
+			for ($i = 0; $i < $num; $i++)
+			{
+				$tmp=explode('_',$elementarray[$i]);
+				$idofelement=$tmp[0];
+				$idofelementuser=$tmp[1];
+
+				$element->fetch($idofelement);
+				if ($idofelementuser) $elementuser->fetch($idofelementuser);
+
+				// Define if record must be used for total or not
+				$qualifiedfortotal=true;
+
+				if ($tablename != 'expensereport_det' && method_exists($element, 'fetch_thirdparty')) $element->fetch_thirdparty();
+
+				// Define $total_ht_by_line
+				if ($tablename == 'don' || $tablename == 'chargesociales' || $tablename == 'payment_various' || $tablename == 'payment_salary') $total_ht_by_line_order=$element->amount;
+				elseif ($tablename == 'fichinter') $total_ht_by_line_order=$element->getAmount();
+				elseif ($tablename == 'stock_mouvement') $total_ht_by_line_order=$element->price*abs($element->qty);
+				elseif ($tablename == 'projet_task')
+				{
+					if ($idofelementuser)
+					{
+						$tmp = $element->getSumOfAmount($elementuser, $dates, $datee);
+						$total_ht_by_line_order = price2num($tmp['amount'],'MT');
+					}
+					else
+					{
+						$tmp = $element->getSumOfAmount('', $dates, $datee);
+						$total_ht_by_line_order = price2num($tmp['amount'],'MT');
+					}
+				}
+				else $total_ht_by_line_order=$element->total_ht;
+
+				// Define $total_ttc_by_line
+				if ($tablename == 'don' || $tablename == 'chargesociales' || $tablename == 'payment_various' || $tablename == 'payment_salary') $total_ttc_by_line_order=$element->amount;
+				elseif ($tablename == 'fichinter') $total_ttc_by_line_order=$element->getAmount();
+				elseif ($tablename == 'stock_mouvement') $total_ttc_by_line_order=$element->price*abs($element->qty);
+				elseif ($tablename == 'projet_task')
+				{
+					$defaultvat = get_default_tva($mysoc, $mysoc);
+					$total_ttc_by_line_order = price2num($total_ht_by_line_order * (1 + ($defaultvat / 100)),'MT');
+				}
+				else $total_ttc_by_line_order=$element->total_ttc;
+
+				// Change sign of $total_ht_by_line and $total_ttc_by_line for some cases
+				if ($tablename == 'payment_various')
+				{
+			        if ($element->sens == 1)
+			        {
+			            $total_ht_by_line_order = -$total_ht_by_line_order;
+			            $total_ttc_by_line_order = -$total_ttc_by_line_order;
+			        }
+				}
+
+				if ($tablename == 'commande')
+				{
+			        
+			            $total_ht_by_line_order = -$total_ht_by_line_order;
+			            $total_ttc_by_line_order = -$total_ttc_by_line_order;
+			        
+				}
+
+				// Add total if we have to
+				if ($qualifiedfortotal)
+				{
+				    $total_ht_order = $total_ht_order + $total_ht_by_line_order;
+				    $total_ttc_order = $total_ttc_order + $total_ttc_by_line_order;
+				}
+			}
+
+			// Each element with at least one line is output
+			$qualifiedforfinalprofit=true;
+			if ($key == 'intervention' && empty($conf->global->PROJECT_INCLUDE_INTERVENTION_AMOUNT_IN_PROFIT)) $qualifiedforfinalprofit=false;
+			//var_dump($key);
+
+			// Calculate margin
+			if ($qualifiedforfinalprofit)
+			{
+			    if ($margin != "add")
+				{
+					$total_ht_order = -$total_ht_order;
+					$total_ttc_order = -$total_ttc_order;
+				}
+
+				$balance_order_ht += $total_ht_order;
+				$balance_order_ttc += $total_ttc_order;
+			}
+
+			print '<tr class="oddeven">';
+			// Module
+			print '<td align="left">'.$name.'</td>';
+			// Nb
+			print '<td align="right">'.$i.'</td>';
+			// Amount HT
+			print '<td align="right">';
+			if (! $qualifiedforfinalprofit) print '<span class="opacitymedium">'.$form->textwithpicto($langs->trans("NA"), $langs->trans("AmountOfInteventionNotIncludedByDefault")).'</span>';
+			else print price($total_ht_order);
+			print '</td>';
+			// Amount TTC
+			print '<td align="right">';
+			if (! $qualifiedforfinalprofit) print '<span class="opacitymedium">'.$form->textwithpicto($langs->trans("NA"), $langs->trans("AmountOfInteventionNotIncludedByDefault")).'</span>';
+			else print price($total_ttc_order);
+			print '</td>';
+			print '</tr>';
+		}
+	}
+}
+// and the final balance
+print '<tr class="liste_total">';
+print '<td align="right" colspan=2 >'.$langs->trans("Profit").'</td>';
+print '<td align="right" >'.price(price2num($balance_order_ht, 'MT')).'</td>';
+print '<td align="right" >'.price(price2num($balance_order_ttc, 'MT')).'</td>';
+print '</tr>';
+
+print "</table>";
+
+
+print '<br><br>';
+print '<br>';
+
 // Detail
 foreach ($listofreferent as $key => $value)
 {
