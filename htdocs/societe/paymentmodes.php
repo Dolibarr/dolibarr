@@ -840,7 +840,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 		}
 		print '</td></tr>';
 	}
-    }    
+    }
 
 	print '</table>';
 	print '</div>';
