@@ -74,8 +74,8 @@ $action=(GETPOST('action', 'alpha') ? GETPOST('action', 'alpha') : 'view');
 $cancel=GETPOST('cancel', 'alpha');
 $confirm=GETPOST('confirm', 'alpha');
 $socid=GETPOST('socid', 'int');
-$duration_value = GETPOST('duration_value');
-$duration_unit = GETPOST('duration_unit');
+$duration_value = GETPOST('duration_value', 'int');
+$duration_unit = GETPOST('duration_unit', 'alpha');
 if (! empty($user->societe_id)) $socid=$user->societe_id;
 
 $object = new Product($db);
@@ -399,8 +399,8 @@ if (empty($reshook))
                 $object->seuil_stock_alerte     = GETPOST('seuil_stock_alerte');
                 $object->desiredstock           = GETPOST('desiredstock');
                 */
-                $object->duration_value         = GETPOST('duration_value');
-                $object->duration_unit          = GETPOST('duration_unit');
+                $object->duration_value         = GETPOST('duration_value', 'int');
+                $object->duration_unit          = GETPOST('duration_unit', 'alpha');
 
                 $object->canvas                 = GETPOST('canvas');
                 $object->weight                 = GETPOST('weight');
@@ -1025,7 +1025,7 @@ else
         if ($type == 1)
         {
             print '<tr><td>'.$langs->trans("Duration").'</td><td colspan="3">';
-            print '<input name="surface" size="4" value="'.GETPOST('duration_value', 'alpha').'">';
+            print '<input name="surface" size="4" value="'.GETPOST('duration_value', 'int').'">';
             print $formproduct->selectMeasuringUnits("duration_unit", "time", GETPOST('duration_value', 'alpha'), 0, 1);
             print '</td></tr>';
         }
@@ -1401,7 +1401,7 @@ else
             {
                 // Duration
                 print '<tr><td>'.$langs->trans("Duration").'</td><td colspan="3">';
-                print '<input name="surface" size="5" value="'.$object->duration_value.'"> ';
+                print '<input name="duration_value" size="5" value="'.$object->duration_value.'"> ';
                 print $formproduct->selectMeasuringUnits("duration_unit", "time", $object->duration_unit, 0, 1);
                 print '</td></tr>';
             }
