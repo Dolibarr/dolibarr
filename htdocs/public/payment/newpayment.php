@@ -1798,10 +1798,12 @@ if (preg_match('/^dopayment/', $action))
 	    </td></tr></tbody></table>';
         if ($paymentmethod != 'stripe')
         {
-	    print '</form>';
+	        print '</form>';
         }
-	    print '<script src="https://js.stripe.com/v3/"></script>
-
+        else
+        {
+	        print '<script src="https://js.stripe.com/v3/"></script>
+        }
 	    <script type="text/javascript" language="javascript">';
 
 		?>
