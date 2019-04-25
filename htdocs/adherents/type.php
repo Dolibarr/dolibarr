@@ -431,7 +431,7 @@ if ($rowid > 0)
 		print '</tr>';
         
         // Morphy
-		print '<tr><td>'.$langs->trans("Nature").'</td><td class="valeur" >'.$object->getmorphylib().'</td>';
+		print '<tr><td>'.$langs->trans("Nature").'</td><td class="valeur" >'.$object->getmorphylib($object->morphy).'</td>';
 		print '</tr>';
 
 		print '<tr><td class="titlefield">'.$langs->trans("SubscriptionRequired").'</td><td>';
