@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2006      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2007-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2009      Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2009      Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2016      Juanjo Menent	    <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -24,7 +24,7 @@
  *		\brief      Home page for cheque receipts
  */
 
-require('../../../main.inc.php');
+require '../../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/cheque/class/remisecheque.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
@@ -33,7 +33,7 @@ $langs->loadLangs(array('banks', 'categories', 'compta', 'bills'));
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'banque', '','');
+$result = restrictedArea($user, 'banque', '', '');
 
 
 $checkdepositstatic=new RemiseCheque($db);
@@ -44,7 +44,7 @@ $accountstatic=new Account($db);
  * View
  */
 
-llxHeader('',$langs->trans("ChequesArea"));
+llxHeader('', $langs->trans("ChequesArea"));
 
 print load_fiche_titre($langs->trans("ChequesArea"));
 
@@ -66,22 +66,20 @@ print '<tr class="liste_titre">';
 print '<th colspan="2">'.$langs->trans("BankChecks")."</th>\n";
 print "</tr>\n";
 
-if ($resql)
-{
-  if ($row = $db->fetch_row($resql) )
-    {
-      $num = $row[0];
+if ($resql) {
+    if ($row = $db->fetch_row($resql) ) {
+        $num = $row[0];
     }
-  print '<tr class="oddeven">';
-  print '<td>'.$langs->trans("BankChecksToReceipt").'</td>';
-  print '<td align="right">';
-  print '<a href="'.DOL_URL_ROOT.'/compta/paiement/cheque/card.php?leftmenu=customers_bills_checks&action=new">'.$num.'</a>';
-  print '</td></tr>';
-  print "</table>\n";
+    print '<tr class="oddeven">';
+    print '<td>'.$langs->trans("BankChecksToReceipt").'</td>';
+    print '<td class="right">';
+    print '<a href="'.DOL_URL_ROOT.'/compta/paiement/cheque/card.php?leftmenu=customers_bills_checks&action=new">'.$num.'</a>';
+    print '</td></tr>';
+    print "</table>\n";
 }
 else
 {
-  dol_print_error($db);
+    dol_print_error($db);
 }
 
 
@@ -91,7 +89,7 @@ $max=10;
 
 $sql = "SELECT bc.rowid, bc.date_bordereau as db, bc.amount, bc.ref as ref,";
 $sql.= " bc.statut, bc.nbcheque,";
-$sql.= " ba.ref, ba.label, ba.rowid as bid, ba.number, ba.currency_code, ba.account_number, ba.fk_accountancy_journal,";
+$sql.= " ba.ref as bref, ba.label, ba.rowid as bid, ba.number, ba.currency_code, ba.account_number, ba.fk_accountancy_journal,";
 $sql.= " aj.code";
 $sql.= " FROM ".MAIN_DB_PREFIX."bordereau_cheque as bc, ".MAIN_DB_PREFIX."bank_account as ba";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_journal as aj ON aj.rowid = ba.fk_accountancy_journal";
@@ -105,12 +103,12 @@ if ($resql)
 {
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
-	print '<th>'.$langs->trans("LastCheckReceiptShort",$max).'</th>';
+	print '<th>'.$langs->trans("LastCheckReceiptShort", $max).'</th>';
 	print '<th>'.$langs->trans("Date")."</th>";
 	print '<th>'.$langs->trans("Account").'</th>';
-	print '<th align="right">'.$langs->trans("NbOfCheques").'</th>';
-	print '<th align="right">'.$langs->trans("Amount").'</th>';
-	print '<th align="right">'.$langs->trans("Status").'</th>';
+	print '<th class="right">'.$langs->trans("NbOfCheques").'</th>';
+	print '<th class="right">'.$langs->trans("Amount").'</th>';
+	print '<th class="right">'.$langs->trans("Status").'</th>';
 	print "</tr>\n";
 
 	while ( $objp = $db->fetch_object($resql) )
@@ -120,7 +118,7 @@ if ($resql)
 	    $checkdepositstatic->statut=$objp->statut;
 
 		$accountstatic->id=$objp->bid;
-		$accountstatic->ref=$objp->ref;
+		$accountstatic->ref=$objp->bref;
 		$accountstatic->label=$objp->label;
 		$accountstatic->number=$objp->number;
 		$accountstatic->currency_code=$objp->currency_code;
@@ -131,11 +129,11 @@ if ($resql)
 		print '<tr class="oddeven">'."\n";
 
 		print '<td>'.$checkdepositstatic->getNomUrl(1).'</td>';
-		print '<td>'.dol_print_date($db->jdate($objp->db),'day').'</td>';
+		print '<td>'.dol_print_date($db->jdate($objp->db), 'day').'</td>';
 		print '<td>'.$accountstatic->getNomUrl(1).'</td>';
-		print '<td align="right">'.$objp->nbcheque.'</td>';
-		print '<td align="right">'.price($objp->amount).'</td>';
-		print '<td align="right">'.$checkdepositstatic->LibStatut($objp->statut,3).'</td>';
+		print '<td class="right">'.$objp->nbcheque.'</td>';
+		print '<td class="right">'.price($objp->amount).'</td>';
+		print '<td class="right">'.$checkdepositstatic->LibStatut($objp->statut, 3).'</td>';
 
 		print '</tr>';
 	}
@@ -151,6 +149,6 @@ else
 
 print '</div></div></div>';
 
+// End of page
 llxFooter();
-
 $db->close();

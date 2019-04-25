@@ -1,9 +1,9 @@
 <?php
-/* Copyright (C) 2013-2014 Olivier Geffroy		<jeff@jeffinfo.com>
- * Copyright (C) 2013-2018 Alexandre Spangaro	<aspangaro@zendsi.com>
- * Copyright (C) 2014      Ari Elbaz (elarifr)	<github@accedinfo.com>
- * Copyright (C) 2014 	   Florian Henry        <florian.henry@open-concept.pro>
- * Copyright (C) 2016-2017 Laurent Destailleur 	<eldy@users.sourceforge.net>
+/* Copyright (C) 2013-2014 Olivier Geffroy		 <jeff@jeffinfo.com>
+ * Copyright (C) 2013-2019 Alexandre Spangaro	 <aspangaro@open-dsi.fr>
+ * Copyright (C) 2014      Ari Elbaz (elarifr)  <github@accedinfo.com>
+ * Copyright (C) 2014 	    Florian Henry        <florian.henry@open-concept.pro>
+ * Copyright (C) 2016-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2017      Open-DSI             <support@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -22,8 +22,8 @@
 
 /**
  * \file		htdocs/core/modules/modAccounting.class.php
- * \ingroup		Advanced accountancy
- * \brief		Module to activate Accounting Expert module
+ * \ingroup		Double entry accounting
+ * \brief		Module to activate the double entry accounting module
  */
 include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 
@@ -37,7 +37,7 @@ class modAccounting extends DolibarrModules
 	 *
 	 *   @param      DoliDB		$db      Database handler
 	 */
-	function __construct($db)
+	public function __construct($db)
 	{
 		global $conf;
 
@@ -45,10 +45,10 @@ class modAccounting extends DolibarrModules
 		$this->numero = 50400;
 
 		$this->family = "financial";
-		$this->module_position = 610;
+		$this->module_position = '61';
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i', '', get_class($this));
-		$this->description = "Advanced accounting management";
+		$this->description = "Double entry accounting management";
 
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or 'dolibarr_deprecated' or version
 		$this->version = 'dolibarr';
@@ -66,7 +66,7 @@ class modAccounting extends DolibarrModules
 		$this->depends = array("modFacture","modBanque","modTax"); // List of modules id that must be enabled if this module is enabled
 		$this->requiredby = array(); // List of modules id to disable if this one is disabled
 		$this->conflictwith = array("modComptabilite"); // List of modules are in conflict with this module
-		$this->phpmin = array(5, 3); // Minimum version of PHP required by module
+		$this->phpmin = array(5, 4); // Minimum version of PHP required by module
 		$this->need_dolibarr_version = array(3, 9); // Minimum version of Dolibarr required by module
 		$this->langfiles = array("accountancy","compta");
 
@@ -80,7 +80,7 @@ class modAccounting extends DolibarrModules
 				"MAIN_COMPANY_CODE_ALWAYS_REQUIRED",
 				"chaine",
 				"1",
-				"With this constants on, third party code is always required whatever is numbering module behaviour", 0, 'current', 0
+				"With this constants on, third party code is always required whatever is numbering module behaviour", 0, 'current', 1
 		);
 		$this->const[2] = array(
 				"MAIN_BANK_ACCOUNTANCY_CODE_ALWAYS_REQUIRED",
@@ -262,15 +262,34 @@ class modAccounting extends DolibarrModules
 		$this->import_icon[$r]=$this->picto;
 		$this->import_entities_array[$r]=array();	// We define here only fields that use another icon that the one defined into import_icon
 		$this->import_tables_array[$r]=array('b'=>MAIN_DB_PREFIX.'accounting_bookkeeping');	// List of tables to insert into (insert done in same order)
-		$this->import_fields_array[$r]=array('b.doc_date'=>"Docdate",'b.code_journal'=>'Codejournal','b.numero_compte'=>'AccountAccountingShort','b.label_operation'=>'LabelOperation','b.debit'=>"Debit",'b.credit'=>"Credit",'b.date_creation'=>"DateCreation");
-		$this->import_fieldshidden_array[$r]=array('b.fk_user'=>'user->id');    // aliastable.field => ('user->id' or 'lastrowid-'.tableparent)
-		$this->import_convertvalue_array[$r]=array(
-				't.fk_projet'=>array('rule'=>'fetchidfromref','classfile'=>'/projet/class/project.class.php','class'=>'Project','method'=>'fetch','element'=>'Project'),
-				't.ref'=>array('rule'=>'getrefifauto')
-		);
-		//$this->import_convertvalue_array[$r]=array('s.fk_soc'=>array('rule'=>'lastrowid',table='t');
+		$this->import_fields_array[$r]=array(
+		    'b.doc_date'=>"Docdate",
+            'b.piece_num'=>"TransactionNumShort",
+            'b.code_journal'=>'Codejournal',
+            'b.journal_label'=>'JournalLabel',
+            'b.numero_compte'=>'AccountAccounting',
+            'b.label_compte'=>'LabelAccount',
+            'b.subledger_account'=>'SubledgerAccount',
+            'b.subledger_label'=>'SubledgerAccountLabel',
+            'b.label_operation'=>'LabelOperation',
+            'b.debit'=>"Debit",
+            'b.credit'=>"Credit"
+        );
+		$this->import_fieldshidden_array[$r]=array('b.fk_user_author'=>'user->id');    // aliastable.field => ('user->id' or 'lastrowid-'.tableparent)
 		$this->import_regex_array[$r]=array('b.doc_date'=>'^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$');
-		//$this->import_examplevalues_array[$r]=array('t.fk_projet'=>'MyProjectRef','t.ref'=>"auto or TK2010-1234",'t.label'=>"My task",'t.progress'=>"0 (not started) to 100 (finished)",'t.datec'=>'1972-10-10','t.note_private'=>"My private note",'t.note_public'=>"My public note");
+		$this->import_examplevalues_array[$r]=array(
+		    'b.doc_date'=>'formatted as \'.dol_print_date(dol_now(),\'%Y-%m-%d\')',
+            'b.piece_num'=>'1',
+            'b.code_journal'=>"VTE",
+            'b.journal_label'=>"Journal des ventes",
+            'b.numero_compte'=>"707",
+            'b.label_compte'=>'Ventes',
+            'b.subledger_account'=>'',
+            'b.subledger_label'=>'',
+            'b.label_operation'=>"Ventes services",
+            'b.debit'=>"0,00",
+            'b.credit'=>"100,00"
+        );
 
 		// Chart of accounts
 		$r++;
@@ -287,6 +306,5 @@ class modAccounting extends DolibarrModules
 			'aa.account_parent'=>array('rule'=>'zeroifnull'),
 		);
 		$this->import_examplevalues_array[$r]=array('aa.fk_pcg_version'=>"PCG99-ABREGE",'aa.account_number'=>"707",'aa.label'=>"Product sales",'aa.account_parent'=>"1407","aa.fk_accounting_category"=>"","aa.pcg_type"=>"PROD",'aa.pcg_subtype'=>'PRODUCT','aa.active'=>'1','aa.datec'=>"2017-04-28");
-
 	}
 }

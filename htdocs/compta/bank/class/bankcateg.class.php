@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2008 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2009 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2016 Marcos García        <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -30,11 +30,21 @@ class BankCateg // extends CommonObject
 {
 	//public $element='bank_categ';			//!< Id that identify managed objects
 	//public $table_element='bank_categ';	//!< Name of table without prefix where object is stored
-    public $picto='generic';
-    
-	public $id;
-	public $label;
-   
+    /**
+	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+	 */
+	public $picto='generic';
+
+	/**
+     * @var int ID
+     */
+    public $id;
+
+	/**
+     * @var string bank categories label
+     */
+    public $label;
+
 
 	/**
 	 * Constructor
@@ -205,7 +215,7 @@ class BankCateg // extends CommonObject
 		{
 		    $sql = "DELETE FROM ".MAIN_DB_PREFIX."categorie_account";
     		$sql.= " WHERE fk_categorie = ".$this->id;
-    		
+
     		$resql = $this->db->query($sql);
     		if (!$resql)
     		{
@@ -213,13 +223,13 @@ class BankCateg // extends CommonObject
     		    $this->errors[] = "Error ".$this->db->lasterror();
     		}
 		}
-		
+
 		// Delete link between tag and bank lines
 		if (! $error)
 		{
 		    $sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_class";
 		    $sql.= " WHERE fk_categ = ".$this->id;
-		
+
 		    $resql = $this->db->query($sql);
 		    if (!$resql)
 		    {
@@ -227,21 +237,21 @@ class BankCateg // extends CommonObject
 		        $this->errors[] = "Error ".$this->db->lasterror();
 		    }
 		}
-		
+
 		// Delete bank categ
 		if (! $error)
 		{
     		$sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_categ";
     		$sql .= " WHERE rowid=".$this->id;
-    
+
     		$resql = $this->db->query($sql);
-    		if (!$resql) 
+    		if (!$resql)
     		{
     			$error++;
     			$this->errors[] = "Error ".$this->db->lasterror();
     		}
 		}
-		
+
     	// Commit or rollback
 		if ($error) {
 			foreach ($this->errors as $errmsg) {
@@ -270,8 +280,6 @@ class BankCateg // extends CommonObject
 
 		$object = new BankCateg($this->db);
 
-		$object->context['createfromclone'] = 'createfromclone';
-
 		$this->db->begin();
 
 		// Load source object
@@ -280,6 +288,7 @@ class BankCateg // extends CommonObject
 		$object->statut = 0;
 
 		// Create clone
+		$object->context['createfromclone'] = 'createfromclone';
 		$result = $object->create($user);
 
 		// Other options
@@ -339,5 +348,4 @@ class BankCateg // extends CommonObject
 		$this->id = 0;
 		$this->label = '';
 	}
-
 }

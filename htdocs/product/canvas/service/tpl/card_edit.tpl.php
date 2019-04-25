@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2010 Regis Houssin <regis.houssin@capnetworks.com>
+/* Copyright (C) 2010-2018 Regis Houssin <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,9 +31,11 @@ $statutarray=array('1' => $langs->trans("OnSell"), '0' => $langs->trans("NotOnSe
 <!-- BEGIN PHP TEMPLATE EDIT.TPL -->
 
 <?php
-print load_fiche_titre($langs->trans("Service"));
+$head=product_prepare_head($object);
+$titre=$langs->trans("CardProduct".$object->type);
+dol_fiche_head($head, 'card', $titre, 0, 'service');
 
-dol_htmloutput_errors($object->error,$object->errors);
+dol_htmloutput_errors($object->error, $object->errors);
 ?>
 
 <form action="<?php echo $_SERVER["PHP_SELF"]; ?>" method="post">
@@ -57,12 +59,12 @@ dol_htmloutput_errors($object->error,$object->errors);
 
 <tr>
 <td class="fieldrequired"><?php echo $langs->trans("Status").' ('.$langs->trans("Sell").')'; ?></td>
-<td><?php echo $form->selectarray('statut',$statutarray,$object->status); ?></td>
+<td><?php echo $form->selectarray('statut', $statutarray, $object->status); ?></td>
 </tr>
 
 <tr>
 <td class="fieldrequired"><?php echo $langs->trans("Status").' ('.$langs->trans("Buy").')'; ?></td>
-<td><?php echo $form->selectarray('statut_buy',$statutarray,$object->status_tobuy); ?></td>
+<td><?php echo $form->selectarray('statut_buy', $statutarray, $object->status_buy); ?></td>
 </tr>
 
 <tr><td><?php echo $langs->trans("Duration"); ?></td>

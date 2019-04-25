@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2012      Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2014      Marcos García        <marcosgdf@gmail.com>
  *
@@ -36,9 +36,13 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';   // Requ
  */
 abstract class ModelePDFPropales extends CommonDocGenerator
 {
-	var $error='';
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Return list of active generation modules
 	 *
@@ -46,15 +50,16 @@ abstract class ModelePDFPropales extends CommonDocGenerator
      *  @param  integer	$maxfilenamelength  Max length of value to show
      *  @return	array						List of templates
 	 */
-	static function liste_modeles($db,$maxfilenamelength=0)
+	public static function liste_modeles($db, $maxfilenamelength = 0)
 	{
+        // phpcs:enable
 		global $conf;
 
 		$type='propal';
 		$liste=array();
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-		$liste=getListOfModels($db,$type,$maxfilenamelength);
+		$liste=getListOfModels($db, $type, $maxfilenamelength);
 
 		return $liste;
 	}
@@ -66,14 +71,17 @@ abstract class ModelePDFPropales extends CommonDocGenerator
  */
 abstract class ModeleNumRefPropales
 {
-	var $error='';
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 
 	/**
 	 * Return if a module can be used or not
 	 *
 	 * @return	boolean     true if module can be used
 	 */
-	function isEnabled()
+	public function isEnabled()
 	{
 		return true;
 	}
@@ -83,7 +91,7 @@ abstract class ModeleNumRefPropales
 	 *
 	 * 	@return     string      Texte descripif
 	 */
-	function info()
+	public function info()
 	{
 		global $langs;
 		$langs->load("propale");
@@ -95,7 +103,7 @@ abstract class ModeleNumRefPropales
 	 *
 	 *  @return     string      Example
 	 */
-	function getExample()
+	public function getExample()
 	{
 		global $langs;
 		$langs->load("propale");
@@ -108,7 +116,7 @@ abstract class ModeleNumRefPropales
 	 *
 	 *  @return     boolean     false si conflit, true si ok
 	 */
-	function canBeActivated()
+	public function canBeActivated()
 	{
 		return true;
 	}
@@ -120,7 +128,7 @@ abstract class ModeleNumRefPropales
 	 *	@param		Propal		$propal		Object commercial proposal
 	 *	@return     string      Valeur
 	 */
-	function getNextValue($objsoc,$propal)
+	public function getNextValue($objsoc, $propal)
 	{
 		global $langs;
 		return $langs->trans("NotAvailable");
@@ -131,7 +139,7 @@ abstract class ModeleNumRefPropales
 	 *
 	 *  @return     string      Valeur
 	 */
-	function getVersion()
+	public function getVersion()
 	{
 		global $langs;
 		$langs->load("admin");

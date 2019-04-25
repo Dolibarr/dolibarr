@@ -46,14 +46,14 @@ class PrestaShopWebservice
 
 	/** @var array compatible versions of PrestaShop Webservice */
 	const PSCOMPATIBLEVERSIONMIN = '1.4.0.0';
-	const PSCOMPATIBLEVERSIONMAX = '1.6.99.99';
+	const PSCOMPATIBLEVERSIONMAX = '1.7.99.99';
 
 
 	/**
 	 * PrestaShopWebservice constructor. Throw an exception when CURL is not installed/activated
 	 * <code>
 	 * <?php
-	 * require_once('./PrestaShopWebservice.php');
+	 * require_once './PrestaShopWebservice.php';
 	 * try
 	 * {
 	 * 	$ws = new PrestaShopWebservice('http://mystore.com/', 'ZQ88PRJX5VWQHCWE4EE7SQ7HPNX00RAJ', false);
@@ -69,19 +69,21 @@ class PrestaShopWebservice
 	 * @param string $key Authentification key
 	 * @param mixed $debug Debug mode Activated (true) or deactivated (false)
 	*/
-	function __construct($url, $key, $debug = true) {
+    public function __construct($url, $key, $debug = true)
+    {
 		if (!extension_loaded('curl'))
 		  throw new PrestaShopWebserviceException('Please activate the PHP extension \'curl\' to allow use of PrestaShop webservice library');
 		$this->url = $url;
 		$this->key = $key;
 		$this->debug = $debug;
 		$this->version = 'unknown';
-	}
+    }
 
 	/**
 	 * Take the status code and throw an exception if the server didn't return 200 or 201 code
 	 *
 	 * @param int $status_code Status code of an HTTP return
+     * @return void
 	 */
 	protected function checkStatusCode($status_code)
 	{
@@ -126,6 +128,7 @@ class PrestaShopWebservice
 			CURLOPT_HTTPHEADER => array( 'Expect:' )
 		);
 
+		dol_syslog("curl_init url=".$url);
 		$session = curl_init($url);
 
 		$curl_options = array();
@@ -140,6 +143,7 @@ class PrestaShopWebservice
 			if (!isset($curl_options[$defkey]))
 				$curl_options[$defkey] = $curl_params[$defkey];
 
+		dol_syslog("curl curl_options = ".var_export($curl_options, true));
 		curl_setopt_array($session, $curl_options);
 		$response = curl_exec($session);
 
@@ -175,7 +179,6 @@ class PrestaShopWebservice
 		{
 			$this->printDebug('HTTP REQUEST HEADER', curl_getinfo($session, CURLINFO_HEADER_OUT));
 			$this->printDebug('HTTP RESPONSE HEADER', $header);
-
 		}
 		$status_code = curl_getinfo($session, CURLINFO_HTTP_CODE);
 		if ($status_code === 0)
@@ -225,7 +228,7 @@ class PrestaShopWebservice
 		{
 			libxml_clear_errors();
 			libxml_use_internal_errors(true);
-			$xml = simplexml_load_string($response,'SimpleXMLElement', LIBXML_NOCDATA);
+			$xml = simplexml_load_string($response, 'SimpleXMLElement', LIBXML_NOCDATA);
 			if (libxml_get_errors())
 			{
 				$msg = var_export(libxml_get_errors(), true);
@@ -279,7 +282,7 @@ class PrestaShopWebservice
 	 * </p>
 	 * <code>
 	 * <?php
-	 * require_once('./PrestaShopWebservice.php');
+	 * require_once './PrestaShopWebservice.php';
 	 * try
 	 * {
 	 * $ws = new PrestaShopWebservice('http://mystore.com/', 'ZQ88PRJX5VWQHCWE4EE7SQ7HPNX00RAJ', false);
@@ -308,7 +311,9 @@ class PrestaShopWebservice
 			if (isset($options['id']))
 				$url .= '/'.$options['id'];
 
-			$params = array('filter', 'display', 'sort', 'limit', 'id_shop', 'id_group_shop');
+			// @CHANGE LDR
+			//$params = array('filter', 'display', 'sort', 'limit', 'id_shop', 'id_group_shop');
+			$params = array('filter', 'display', 'sort', 'limit', 'id_shop', 'id_group_shop', 'date');
 			foreach ($params as $p)
 				foreach ($options as $k => $o)
 					if (strpos($k, $p) !== false)
@@ -383,9 +388,52 @@ class PrestaShopWebservice
 		else
 			throw new PrestaShopWebserviceException('Bad parameters given');
 
-		$request = self::executeRequest($url,  array(CURLOPT_CUSTOMREQUEST => 'PUT', CURLOPT_POSTFIELDS => $xml));
+		$request = self::executeRequest($url, array(CURLOPT_CUSTOMREQUEST => 'PUT', CURLOPT_POSTFIELDS => $xml));
 		self::checkStatusCode($request['status_code']);// check the response validity
 		return self::parseXML($request['response']);
+	}
+
+	/**
+	 * Delete (DELETE) a resource.
+	 * Unique parameter must take : <br><br>
+	 * 'resource' => Resource name<br>
+	 * 'id' => ID or array which contains IDs of a resource(s) you want to delete<br><br>
+	 * <code>
+	 * <?php
+	 * require_once('./PrestaShopWebservice.php');
+	 * try
+	 * {
+	 * $ws = new PrestaShopWebservice('http://mystore.com/', 'ZQ88PRJX5VWQHCWE4EE7SQ7HPNX00RAJ', false);
+	 * $xml = $ws->delete(array('resource' => 'orders', 'id' => 1));
+	 *	// Following code will not be executed if an exception is thrown.
+	 * 	echo 'Successfully deleted.';
+	 * }
+	 * catch (PrestaShopWebserviceException $ex)
+	 * {
+	 * 	echo 'Error : '.$ex->getMessage();
+	 * }
+	 * ?>
+	 * </code>
+	 *
+	 * @param  array       $options        Array representing resource to delete.
+	 * @return boolean                     True
+	 */
+	public function delete($options)
+	{
+	    if (isset($options['url']))
+	        $url = $options['url'];
+	    elseif (isset($options['resource']) && isset($options['id']))
+    	    if (is_array($options['id']))
+    	        $url = $this->url.'/api/'.$options['resource'].'/?id=['.implode(',', $options['id']).']';
+    	    else
+    	        $url = $this->url.'/api/'.$options['resource'].'/'.$options['id'];
+	    if (isset($options['id_shop']))
+	        $url .= '&id_shop='.$options['id_shop'];
+	    if (isset($options['id_group_shop']))
+	        $url .= '&id_group_shop='.$options['id_group_shop'];
+	    $request = self::executeRequest($url, array(CURLOPT_CUSTOMREQUEST => 'DELETE'));
+	    self::checkStatusCode($request['status_code']);// check the response validity
+	    return true;
 	}
 }
 

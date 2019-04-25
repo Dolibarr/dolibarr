@@ -3,7 +3,7 @@ PayBoxSetup=PayBox mooduli seadistamine
 PayBoxDesc=See moodul võimaldab klientidel makseid sooritada <a href="http://www.paybox.com" target="_blank">Payboxi</a> lehel. Seda võib kasutada tavalise maksena või maksena teatud Dolibarri objektidel (arved, tellimused jne)
 FollowingUrlAreAvailableToMakePayments=Dolibarri objektide põhjal maksete sooritamiseks on klientidele pakkuda järgnevate lehtede URLid:
 PaymentForm=Maksmise vorm
-WelcomeOnPaymentPage=Tere tulemast meie online makseteenusesse
+WelcomeOnPaymentPage=Welcome to our online payment service
 ThisScreenAllowsYouToPay=See ekraan võimaldab teil teha online-makseid üksusele %s.
 ThisIsInformationOnPayment=See on makse sooritamise info
 ToComplete=Lõpuni viia
@@ -20,10 +20,11 @@ ToOfferALinkForOnlinePaymentOnInvoice=Müügiarve eest maksmiseks kasutatava %s 
 ToOfferALinkForOnlinePaymentOnContractLine=Lepingu rea eest maksmiseks kasutatava %s online makseteenuse URL
 ToOfferALinkForOnlinePaymentOnFreeAmount=Vaba rea eest maksmiseks kasutatava %s online makseteenuse URL
 ToOfferALinkForOnlinePaymentOnMemberSubscription=Liikmemaksu eest maksmiseks kasutatava %s online makseteenuse URL
+ToOfferALinkForOnlinePaymentOnDonation=URL to offer a %s online payment user interface for payment of donation
 YouCanAddTagOnUrl=Samuti võid lisa URL parameetri <b>&tag=<i>value</i></b> igale nendest URLidest (nõutud vaid vaba makse jaoks) oma loodud makse kommentaari sildi jaoks.
-SetupPayBoxToHavePaymentCreatedAutomatically=Seadista oma PayBox URLiga <b>%s</b> makse automaatseks loomiseks, kui PayBox on selle kinnitanud.
+SetupPayBoxToHavePaymentCreatedAutomatically=Setup your Paybox with url <b>%s</b> to have payment created automatically when validated by Paybox.
 YourPaymentHasBeenRecorded=See lehekülg kinnitab, et makse on registreeritud. Täname!
-YourPaymentHasNotBeenRecorded=Makset ei ole registreeritud ja tehing on tühistatud. Täname!
+YourPaymentHasNotBeenRecorded=Your payment has NOT been recorded and the transaction has been canceled. Thank you.
 AccountParameter=Konto parameetrid
 UsageParameter=Kasutamise parameetrid
 InformationToFindParameters=Abi %s konto info leidmiseks

@@ -32,15 +32,33 @@ require_once DOL_DOCUMENT_ROOT .'/core/modules/contract/modules_contract.php';
  */
 class mod_contract_olive extends ModelNumRefContracts
 {
+    /**
+	 * @var string Nom du modele
+	 * @deprecated
+	 * @see $name
+	 */
+	public $nom='Olive';
 
+	/**
+	 * @var string model name
+	 */
+	public $name='Olive';
 
-	var $nom='Olive';					// Nom du modele
-	var $code_modifiable = 1;				// Code modifiable
-	var $code_modifiable_invalide = 1;		// Code modifiable si il est invalide
-	var $code_modifiable_null = 1;			// Code modifiables si il est null
-	var $code_null = 1;						// Code facultatif
-	var $version='dolibarr';    		// 'development', 'experimental', 'dolibarr'
-	var $code_auto = 0; 	                // Numerotation automatique
+	public $code_modifiable = 1;				// Code modifiable
+
+	public $code_modifiable_invalide = 1;		// Code modifiable si il est invalide
+
+	public $code_modifiable_null = 1;			// Code modifiables si il est null
+
+	public $code_null = 1;						// Code facultatif
+
+	/**
+     * Dolibarr version of the loaded document
+     * @var string
+     */
+	public $version = 'dolibarr';    		// 'development', 'experimental', 'dolibarr'
+
+	public $code_auto = 0; 	                // Numerotation automatique
 
 
 	/**
@@ -48,7 +66,7 @@ class mod_contract_olive extends ModelNumRefContracts
 	 *
 	 *	@return string      		Description of module
 	 */
-	function info()
+	public function info()
 	{
 		global $langs;
 
@@ -63,7 +81,7 @@ class mod_contract_olive extends ModelNumRefContracts
 	 * @param	Contrat		$contract	Object contract
 	 * @return	string					Return next value
 	 */
-	function getNextValue($objsoc,$contract)
+	public function getNextValue($objsoc, $contract)
 	{
 		global $langs;
 		return '';
@@ -83,7 +101,7 @@ class mod_contract_olive extends ModelNumRefContracts
 	 * 								-3 ErrorProductCodeAlreadyUsed
 	 * 								-4 ErrorPrefixRequired
 	 */
-	function verif($db, &$code, $product, $type)
+	public function verif($db, &$code, $product, $type)
 	{
 		global $conf;
 
@@ -94,7 +112,7 @@ class mod_contract_olive extends ModelNumRefContracts
 		{
 			$result=0;
 		}
-		else if (empty($code) && (! $this->code_null || ! empty($conf->global->MAIN_CONTARCT_CODE_ALWAYS_REQUIRED)) )
+		elseif (empty($code) && (! $this->code_null || ! empty($conf->global->MAIN_CONTARCT_CODE_ALWAYS_REQUIRED)) )
 		{
 			$result=-2;
 		}
@@ -103,4 +121,3 @@ class mod_contract_olive extends ModelNumRefContracts
 		return $result;
 	}
 }
-

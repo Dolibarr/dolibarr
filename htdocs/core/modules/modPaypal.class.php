@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2011      Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2011      Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,7 +37,7 @@ class modPaypal extends DolibarrModules
      *
      *   @param      DoliDB		$db      Database handler
      */
-    function __construct($db)
+    public function __construct($db)
     {
         $this->db = $db;
 
@@ -51,7 +51,7 @@ class modPaypal extends DolibarrModules
         // It is used to group modules in module setup page
         $this->family = "interface";
         // Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
-        $this->name = preg_replace('/^mod/i','',get_class($this));
+        $this->name = preg_replace('/^mod/i', '', get_class($this));
         // Module description, used if translation string 'ModuleXXXDesc' not found (where XXX is value of numeric property 'numero' of module)
         $this->description = "Module to offer an online payment page with PayPal";
         // Possible values for version are: 'development', 'experimental', 'dolibarr' or version
@@ -70,9 +70,11 @@ class modPaypal extends DolibarrModules
         $this->config_page_url = array("paypal.php@paypal");
 
         // Dependencies
-        $this->depends = array();						// List of modules id that must be enabled if this module is enabled
-        $this->requiredby = array('modPaypalPlus');		// List of modules id to disable if this one is disabled
-        $this->phpmin = array(5,2);						// Minimum version of PHP required by module
+        $this->hidden = false;			// A condition to hide module
+		$this->depends = array();		// List of module class names as string that must be enabled if this module is enabled
+		$this->requiredby = array('modPaypalPlus');	// List of module ids to disable if this one is disabled
+		$this->conflictwith = array();	// List of module class names as string this module is in conflict with
+		$this->phpmin = array(5,4);		// Minimum version of PHP required by module
         $this->need_dolibarr_version = array(3,0);		// Minimum version of Dolibarr required by module
         $this->langfiles = array("paypal");
 
@@ -105,21 +107,21 @@ class modPaypal extends DolibarrModules
         // Main menu entries
         $this->menus = array();			// List of menus to add
         $r=0;
-        $this->menu[$r]=array(
-        'fk_menu'=>'fk_mainmenu=billing,fk_leftmenu=customers_bills_payment',		    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
-        'mainmenu'=>'billing',
-        'leftmenu'=>'customers_bills_payment_paypal',
-        'type'=>'left',			                // This is a Left menu entry
-        'titre'=>'PaypalImportPayment',
-        'url'=>'/paypal/importpayments.php',
-        'langs'=>'paypal',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-        'position'=>501,
-        'enabled'=>'$conf->paypal->enabled && $conf->banque->enabled && $conf->global->MAIN_FEATURES_LEVEL >= 2',  // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-        'perms'=>'$user->rights->banque->consolidate',	// Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
-        'target'=>'',
-        'user'=>2
+        /*$this->menu[$r]=array(
+	        'fk_menu'=>'fk_mainmenu=billing,fk_leftmenu=customers_bills_payment',		    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+	        'mainmenu'=>'billing',
+	        'leftmenu'=>'customers_bills_payment_paypal',
+	        'type'=>'left',			                // This is a Left menu entry
+	        'titre'=>'PaypalImportPayment',
+	        'url'=>'/paypal/importpayments.php',
+	        'langs'=>'paypal',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+	        'position'=>501,
+	        'enabled'=>'$conf->paypal->enabled && $conf->banque->enabled && $conf->global->MAIN_FEATURES_LEVEL >= 2',  // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
+	        'perms'=>'$user->rights->banque->consolidate',	// Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
+	        'target'=>'',
+	        'user'=>2
         );				                // 0=Menu for internal users, 1=external users, 2=both
-        $r++;
+        $r++;*/
 
         // Add here entries to declare new menus
         // Example to declare the Top Menu entry:
@@ -172,7 +174,7 @@ class modPaypal extends DolibarrModules
         // $this->export_fields_array[$r]=array(
         //    's.rowid'=>"IdCompany",'s.nom'=>'CompanyName','s.address'=>'Address','s.zip'=>'Zip','s.town'=>'Town','s.fk_pays'=>'Country','s.phone'=>'Phone',
         //    's.siren'=>'ProfId1','s.siret'=>'ProfId2','s.ape'=>'ProfId3','s.idprof4'=>'ProfId4','s.code_compta'=>'CustomerAccountancyCode',
-        //    's.code_compta_fournisseur'=>'SupplierAccountancyCode','f.rowid'=>"InvoiceId",'f.facnumber'=>"InvoiceRef",'f.datec'=>"InvoiceDateCreation",
+        //    's.code_compta_fournisseur'=>'SupplierAccountancyCode','f.rowid'=>"InvoiceId",'f.ref'=>"InvoiceRef",'f.datec'=>"InvoiceDateCreation",
         //    'f.datef'=>"DateInvoice",'f.total'=>"TotalHT",'f.total_ttc'=>"TotalTTC",'f.tva'=>"TotalVAT",'f.paye'=>"InvoicePaid",'f.fk_statut'=>'InvoiceStatus',
         //    'f.note'=>"InvoiceNote",'fd.rowid'=>'LineId','fd.description'=>"LineDescription",'fd.price'=>"LineUnitPrice",'fd.tva_tx'=>"LineVATRate",
         //    'fd.qty'=>"LineQty",'fd.total_ht'=>"LineTotalHT",'fd.total_tva'=>"LineTotalTVA",'fd.total_ttc'=>"LineTotalTTC",'fd.date_start'=>"DateStart",
@@ -181,7 +183,7 @@ class modPaypal extends DolibarrModules
         // $this->export_entities_array[$r]=array(
         //    's.rowid'=>"company",'s.nom'=>'company','s.address'=>'company','s.zip'=>'company','s.town'=>'company','s.fk_pays'=>'company','s.phone'=>'company',
         //    's.siren'=>'company','s.siret'=>'company','s.ape'=>'company','s.idprof4'=>'company','s.code_compta'=>'company','s.code_compta_fournisseur'=>'company',
-        //    'f.rowid'=>"invoice",'f.facnumber'=>"invoice",'f.datec'=>"invoice",'f.datef'=>"invoice",'f.total'=>"invoice",'f.total_ttc'=>"invoice",
+        //    'f.rowid'=>"invoice",'f.ref'=>"invoice",'f.datec'=>"invoice",'f.datef'=>"invoice",'f.total'=>"invoice",'f.total_ttc'=>"invoice",
         //    'f.tva'=>"invoice",'f.paye'=>"invoice",'f.fk_statut'=>'invoice','f.note'=>"invoice",'fd.rowid'=>'invoice_line','fd.description'=>"invoice_line",
         //    'fd.price'=>"invoice_line",'fd.total_ht'=>"invoice_line",'fd.total_tva'=>"invoice_line",'fd.total_ttc'=>"invoice_line",'fd.tva_tx'=>"invoice_line",
         //    'fd.qty'=>"invoice_line",'fd.date_start'=>"invoice_line",'fd.date_end'=>"invoice_line",'fd.fk_product'=>'product','p.ref'=>'product'
@@ -193,4 +195,3 @@ class modPaypal extends DolibarrModules
         // $r++;
     }
 }
-

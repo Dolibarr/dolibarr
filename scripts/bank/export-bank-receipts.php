@@ -33,7 +33,7 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
 	exit(-1);
 }
 
-require_once($path."../../htdocs/master.inc.php");
+require_once $path."../../htdocs/master.inc.php";
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
@@ -60,7 +60,7 @@ $error=0;
 
 @set_time_limit(0);
 print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." *****\n";
-dol_syslog($script_file." launched with arg ".join(',',$argv));
+dol_syslog($script_file." launched with arg ".join(',', $argv));
 
 if (! isset($argv[3]) || ! $argv[3]) {
 	print "Usage: ".$script_file." bank_ref [bank_receipt_number|all] (csv|tsv|excel|excel2007) [lang=xx_XX]\n";
@@ -91,10 +91,10 @@ foreach ($argv as $key => $value)
 	$found=false;
 
 	// Define options
-	if (preg_match('/^lang=/i',$value))
+	if (preg_match('/^lang=/i', $value))
 	{
 		$found=true;
-		$valarray=explode('=',$value);
+		$valarray=explode('=', $value);
 		$newlangid=$valarray[1];
 		print 'Use language '.$newlangid.".\n";
 	}
@@ -104,20 +104,16 @@ if (! empty($newlangid))
 {
 	if ($outputlangs->defaultlang != $newlangid)
 	{
-		$outputlangs = new Translate("",$conf);
+		$outputlangs = new Translate("", $conf);
 		$outputlangs->setDefaultLang($newlangid);
 	}
 }
-$outputlangs->load("main");
-$outputlangs->load("bills");
-$outputlangs->load("companies");
-$outputlangs->load("banks");
-$outputlangs->load("members");
-$outputlangs->load("compta");
 
+// Load translation files required by the page
+$outputlangs->loadLangs(array("main", "companies", "bills", "banks", "members", "compta"));
 
 $acct=new Account($db);
-$result=$acct->fetch('',$bankref);
+$result=$acct->fetch('', $bankref);
 if ($result <= 0)
 {
 	print "Failed to find bank account with ref ".$bankref.".\n";
@@ -178,7 +174,7 @@ $listofnum="";
 if (! empty($num) && $num != "all")
 {
 	$listofnum.="'";
-	$arraynum=explode(',',$num);
+	$arraynum=explode(',', $num);
 	foreach($arraynum as $val)
 	{
 		if ($listofnum != "'") $listofnum.="','";
@@ -222,7 +218,7 @@ if ($resql)
 		$objmodel->write_header($outputlangs);
 
 		// Genere ligne de titre
-		$objmodel->write_title($array_fields,$array_selected,$outputlangs,$array_export_TypeFields);
+		$objmodel->write_title($array_fields, $array_selected, $outputlangs, $array_export_TypeFields);
 	}
 
 	$i=0;
@@ -275,7 +271,7 @@ if ($resql)
 
 		// Libelle
 		$reg=array();
-		preg_match('/\((.+)\)/i',$objp->label,$reg);	// Si texte entoure de parenthese on tente recherche de traduction
+		preg_match('/\((.+)\)/i', $objp->label, $reg);	// Si texte entoure de parenthese on tente recherche de traduction
 		if ($reg[1] && $langs->transnoentitiesnoconv($reg[1])!=$reg[1]) $description=$langs->transnoentitiesnoconv($reg[1]);
 		else $description=$objp->label;
 
@@ -335,11 +331,11 @@ if ($resql)
 					$bankstatic->id=$banklinestatic->fk_account;
 					$bankstatic->label=$banklinestatic->bank_account_label;
 					$comment.= ' ('.$langs->transnoentitiesnoconv("from").' ';
-					$comment.= $bankstatic->getNomUrl(1,'transactions');
+					$comment.= $bankstatic->getNomUrl(1, 'transactions');
 					$comment.= ' '.$langs->transnoentitiesnoconv("toward").' ';
 					$bankstatic->id=$objp->bankid;
 					$bankstatic->label=$objp->bankref;
-					$comment.= $bankstatic->getNomUrl(1,'');
+					$comment.= $bankstatic->getNomUrl(1, '');
 					$comment.= ')';
 				}
 				else
@@ -348,19 +344,19 @@ if ($resql)
 					$bankstatic->id=$objp->bankid;
 					$bankstatic->label=$objp->bankref;
 					$comment.= ' ('.$langs->transnoentitiesnoconv("from").' ';
-					$comment.= $bankstatic->getNomUrl(1,'');
+					$comment.= $bankstatic->getNomUrl(1, '');
 					$comment.= ' '.$langs->transnoentitiesnoconv("toward").' ';
 					$banklinestatic->fetch($links[$key]['url_id']);
 					$bankstatic->id=$banklinestatic->fk_account;
 					$bankstatic->label=$banklinestatic->bank_account_label;
-					$comment.= $bankstatic->getNomUrl(1,'transactions');
+					$comment.= $bankstatic->getNomUrl(1, 'transactions');
 					$comment.= ')';
 				}
 			}
 			elseif ($links[$key]['type']=='company')
 			{
 				if ($thirdparty) $thirdparty.= ', ';
-				$thirdparty.= dol_trunc($links[$key]['label'],24);
+				$thirdparty.= dol_trunc($links[$key]['label'], 24);
 				$newline=0;
 			}
 			elseif ($links[$key]['type']=='member')
@@ -405,8 +401,8 @@ if ($resql)
 		$rec=new stdClass();
 		$rec->bankreceipt=$objp->num_releve;
 		$rec->bankaccount=$objp->banklabel;
-		$rec->dateop=dol_print_date($dateop,'dayrfc');
-		$rec->dateval=dol_print_date($datevalue,'dayrfc');
+		$rec->dateop=dol_print_date($dateop, 'dayrfc');
+		$rec->dateval=dol_print_date($datevalue, 'dayrfc');
 		$rec->type=$objp->fk_type.' '.($objp->num_chq?$objp->num_chq:'');
 		$rec->description=$description;
 		$rec->thirdparty=$thirdparty;
@@ -418,7 +414,7 @@ if ($resql)
 		$rec->soldafter=price2num($total);
 
 		// end of special operation processing
-		$objmodel->write_record($array_selected,$rec,$outputlangs,$array_export_TypeFields);
+		$objmodel->write_record($array_selected, $rec, $outputlangs, $array_export_TypeFields);
 	}
 
 	if ($numrows > 0)

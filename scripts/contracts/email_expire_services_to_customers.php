@@ -36,7 +36,7 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
 	exit(-1);
 }
 
-if (! isset($argv[1]) || ! $argv[1] || ! in_array($argv[1],array('test','confirm')) || ! in_array($argv[2],array('thirdparties','contacts')))
+if (! isset($argv[1]) || ! $argv[1] || ! in_array($argv[1], array('test','confirm')) || ! in_array($argv[2], array('thirdparties','contacts')))
 {
 	print "Usage: $script_file (test|confirm) (thirdparties|contacts) [delay] [after]\n";
 	print "\n";
@@ -50,12 +50,10 @@ $mode=$argv[1];
 $targettype=$argv[2];
 
 
-require($path."../../htdocs/master.inc.php");
-require_once (DOL_DOCUMENT_ROOT."/core/class/CMailFile.class.php");
+require $path."../../htdocs/master.inc.php";
+require_once DOL_DOCUMENT_ROOT."/core/class/CMailFile.class.php";
 
-$langs->load('main');
-$langs->load('contracts');
-
+$langs->loadLangs(array('main', 'contracts'));
 
 // Global variables
 $version=DOL_VERSION;
@@ -68,7 +66,7 @@ $error=0;
 
 @set_time_limit(0);
 print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." *****\n";
-dol_syslog($script_file." launched with arg ".join(',',$argv));
+dol_syslog($script_file." launched with arg ".join(',', $argv));
 
 $now=dol_now('tzserver');
 $duration_value=isset($argv[3])?$argv[3]:'none';
@@ -128,7 +126,7 @@ if ($resql)
                 // Break onto sales representative (new email or cid)
                 if (dol_strlen($oldemail) && $oldemail != 'none' && empty($trackthirdpartiessent[$oldsid.'|'.$oldemail]))
                 {
-                   	envoi_mail($mode,$oldemail,$message,$total,$oldlang,$oldtarget,$duration_value);
+                   	envoi_mail($mode, $oldemail, $message, $total, $oldlang, $oldtarget, $duration_value);
                    	$trackthirdpartiessent[$oldsid.'|'.$oldemail]='contact id '.$oldcid;
                 }
                 else
@@ -152,20 +150,19 @@ if ($resql)
             }
 
             // Define line content
-            $outputlangs=new Translate('',$conf);
+            $outputlangs=new Translate('', $conf);
             $outputlangs->setDefaultLang(empty($obj->default_lang)?$langs->defaultlang:$obj->default_lang);	// By default language of customer
-            $outputlangs->load("bills");
-            $outputlangs->load("main");
-            $outputlangs->load("contracts");
-    		$outputlangs->load("products");
+
+            // Load translation files required by the page
+            $outputlangs->loadLangs(array("main", "contracts", "bills", "products"));
 
             if (dol_strlen($newemail))
             {
-            	$message .= $outputlangs->trans("Contract")." ".$obj->ref.": ".$outputlangs->trans("Service")." ".dol_concatdesc($obj->plabel,$obj->description)." (".price($obj->total_ttc,0,$outputlangs,0,0,-1,$conf->currency)."), ".$outputlangs->trans("DateEndPlannedShort")." ".dol_print_date($db->jdate($obj->date_fin_validite),'day')."\n\n";
+            	$message .= $outputlangs->trans("Contract")." ".$obj->ref.": ".$outputlangs->trans("Service")." ".dol_concatdesc($obj->plabel, $obj->description)." (".price($obj->total_ttc, 0, $outputlangs, 0, 0, -1, $conf->currency)."), ".$outputlangs->trans("DateEndPlannedShort")." ".dol_print_date($db->jdate($obj->date_fin_validite), 'day')."\n\n";
             	dol_syslog("email_expire_services_to_customers.php: ".$newemail." ".$message);
             	$foundtoprocess++;
             }
-            print "Service to expire ".$obj->ref.", label ".dol_concatdesc($obj->plabel,$obj->description).", due date ".dol_print_date($db->jdate($obj->date_fin_validite),'day').", customer id ".$obj->sid." ".$obj->name.", ".($obj->cid?"contact id ".$obj->cid." ".$obj->clastname." ".$obj->cfirstname.", ":"")."email ".$newemail.", lang ".$outputlangs->defaultlang.": ";
+            print "Service to expire ".$obj->ref.", label ".dol_concatdesc($obj->plabel, $obj->description).", due date ".dol_print_date($db->jdate($obj->date_fin_validite), 'day').", customer id ".$obj->sid." ".$obj->name.", ".($obj->cid?"contact id ".$obj->cid." ".$obj->clastname." ".$obj->cfirstname.", ":"")."email ".$newemail.", lang ".$outputlangs->defaultlang.": ";
             if (dol_strlen($newemail)) print "qualified.";
             else print "disqualified (no email).";
 			print "\n";
@@ -182,7 +179,7 @@ if ($resql)
         {
             if (dol_strlen($oldemail) && $oldemail != 'none' && empty($trackthirdpartiessent[$oldsid.'|'.$oldemail]))	// Break onto email (new email)
             {
-       			envoi_mail($mode,$oldemail,$message,$total,$oldlang,$oldtarget,$duration_value);
+       			envoi_mail($mode, $oldemail, $message, $total, $oldlang, $oldtarget, $duration_value);
        			$trackthirdpartiessent[$oldsid.'|'.$oldemail]='contact id '.$oldcid;
             }
             else
@@ -223,21 +220,21 @@ else
  *  @param  int		$duration_value	duration value
  * 	@return	int						<0 if KO, >0 if OK
  */
-function envoi_mail($mode,$oldemail,$message,$total,$userlang,$oldtarget,$duration_value)
+function envoi_mail($mode, $oldemail, $message, $total, $userlang, $oldtarget, $duration_value)
 {
     global $conf,$langs;
 
     if (getenv('DOL_FORCE_EMAIL_TO')) $oldemail=getenv('DOL_FORCE_EMAIL_TO');
 
-    $newlangs=new Translate('',$conf);
+    $newlangs=new Translate('', $conf);
     $newlangs->setDefaultLang(empty($userlang)?(empty($conf->global->MAIN_LANG_DEFAULT)?'auto':$conf->global->MAIN_LANG_DEFAULT):$userlang);
     $newlangs->load("main");
     $newlangs->load("contracts");
 
     if ($duration_value)
     {
-    	if ($duration_value > 0) $title=$newlangs->transnoentities("ListOfServicesToExpireWithDuration",$duration_value);
-    	else $title=$newlangs->transnoentities("ListOfServicesToExpireWithDurationNeg",$duration_value);
+    	if ($duration_value > 0) $title=$newlangs->transnoentities("ListOfServicesToExpireWithDuration", $duration_value);
+    	else $title=$newlangs->transnoentities("ListOfServicesToExpireWithDurationNeg", $duration_value);
     }
     else
     	$title= $newlangs->transnoentities("ListOfServicesToExpire");
@@ -317,4 +314,3 @@ function envoi_mail($mode,$oldemail,$message,$total,$userlang,$oldtarget,$durati
         return -1;
     }
 }
-

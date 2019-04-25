@@ -30,16 +30,20 @@ include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
 class box_services_expired extends ModeleBoxes
 {
 
-    var $boxcode="expiredservices";     // id of box
-    var $boximg="object_contract";
-    var $boxlabel="BoxOldestExpiredServices";
-    var $depends = array("contrat");	// conf->propal->enabled
+    public $boxcode="expiredservices";     // id of box
+    public $boximg="object_contract";
+    public $boxlabel="BoxOldestExpiredServices";
+    public $depends = array("contrat");	// conf->propal->enabled
 
-    var $db;
-    var $param;
+    /**
+     * @var DoliDB Database handler.
+     */
+    public $db;
 
-    var $info_box_head = array();
-    var $info_box_contents = array();
+    public $param;
+
+    public $info_box_head = array();
+    public $info_box_contents = array();
 
 
     /**
@@ -48,7 +52,7 @@ class box_services_expired extends ModeleBoxes
      *  @param  DoliDB  $db         Database handler
      *  @param  string  $param      More parameters
      */
-    function __construct($db,$param)
+    public function __construct($db, $param)
     {
         global $user;
 
@@ -63,7 +67,7 @@ class box_services_expired extends ModeleBoxes
      *  @param	int		$max        Maximum number of records to load
      *  @return	void
      */
-    function loadBox($max=5)
+    public function loadBox($max = 5)
     {
     	global $user, $langs, $db, $conf;
 
@@ -73,14 +77,14 @@ class box_services_expired extends ModeleBoxes
 
     	$now=dol_now();
 
-    	$this->info_box_head = array('text' => $langs->trans("BoxLastExpiredServices",$max));
+    	$this->info_box_head = array('text' => $langs->trans("BoxLastExpiredServices", $max));
 
     	if ($user->rights->contrat->lire)
     	{
     	    // Select contracts with at least one expired service
 			$sql = "SELECT ";
     		$sql.= " c.rowid, c.ref, c.statut as fk_statut, c.date_contrat, c.ref_customer, c.ref_supplier,";
-			$sql.= " s.nom as name, s.rowid as socid,";
+			$sql.= " s.nom as name, s.rowid as socid, s.email, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur,";
 			$sql.= " MIN(cd.date_fin_validite) as date_line, COUNT(cd.rowid) as nb_services";
     		$sql.= " FROM ".MAIN_DB_PREFIX."contrat as c, ".MAIN_DB_PREFIX."societe s, ".MAIN_DB_PREFIX."contratdet as cd";
             if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -109,8 +113,15 @@ class box_services_expired extends ModeleBoxes
 
     				$objp = $db->fetch_object($resql);
 
-    				$thirdpartytmp->id = $objp->socid;
     				$thirdpartytmp->name = $objp->name;
+    				$thirdpartytmp->id = $objp->socid;
+    				$thirdpartytmp->email = $objp->email;
+    				$thirdpartytmp->client = $objp->client;
+    				$thirdpartytmp->fournisseur = $objp->fournisseur;
+    				$thirdpartytmp->code_client = $objp->code_client;
+    				$thirdpartytmp->code_fournisseur = $objp->code_fournisseur;
+    				$thirdpartytmp->code_compta = $objp->code_compta;
+    				$thirdpartytmp->code_compta_fournisseur = $objp->code_compta_fournisseur;
 
     				$contract->id = $objp->rowid;
     				$contract->ref = $objp->ref;
@@ -121,22 +132,28 @@ class box_services_expired extends ModeleBoxes
 					$dateline=$db->jdate($objp->date_line);
 					if (($dateline + $conf->contrat->services->expires->warning_delay) < $now) $late=img_warning($langs->trans("Late"));
 
-    				$this->info_box_contents[$i][] = array('td' => '',
-    				'text' => $contract->getNomUrl(1),
-    				'asis' => 1
+    				$this->info_box_contents[$i][] = array(
+                        'td' => '',
+                        'text' => $contract->getNomUrl(1),
+                        'asis' => 1
     				);
 
-    				$this->info_box_contents[$i][] = array('td' => 'class="tdoverflowmax150 maxwidth150onsmartphone" align="left"',
-    				'text' => $thirdpartytmp->getNomUrl(1, 'customer'),
-    				'asis' => 1
+    				$this->info_box_contents[$i][] = array(
+                        'td' => 'class="tdoverflowmax150 maxwidth150onsmartphone left"',
+                        'text' => $thirdpartytmp->getNomUrl(1, 'customer'),
+                        'asis' => 1
     				);
 
-    				$this->info_box_contents[$i][] = array('td' => 'align="center"',
-    				'text' => dol_print_date($dateline,'day'),
-    				'text2'=> $late);
+    				$this->info_box_contents[$i][] = array(
+                        'td' => 'class="center"',
+                        'text' => dol_print_date($dateline, 'day'),
+                        'text2'=> $late,
+                    );
 
-    				$this->info_box_contents[$i][] = array('td' => 'class="right"',
-    				'text' => $objp->nb_services);
+    				$this->info_box_contents[$i][] = array(
+                        'td' => 'class="right"',
+                        'text' => $objp->nb_services,
+                    );
 
 
     				$i++;
@@ -145,41 +162,42 @@ class box_services_expired extends ModeleBoxes
     			if ($num==0)
     			{
     			    $langs->load("contracts");
-    			    $this->info_box_contents[$i][] = array('td' => 'align="center" class="nohover opacitymedium"','text'=>$langs->trans("NoExpiredServices"));
+    			    $this->info_box_contents[$i][] = array(
+                        'td' => 'class="nohover opacitymedium center"',
+                        'text' => $langs->trans("NoExpiredServices"),
+                    );
     			}
 
 				$db->free($resql);
     		}
     		else
     		{
-    			$this->info_box_contents[0][] = array(  'td' => '',
-                                                        'maxlength'=>500,
-                                                        'text' => ($db->error().' sql='.$sql));
+    			$this->info_box_contents[0][] = array(
+                    'td' => '',
+                    'maxlength'=>500,
+                    'text' => ($db->error().' sql='.$sql),
+                );
     		}
-
-
     	}
     	else
     	{
     		$this->info_box_contents[0][0] = array(
-    		    'td' => 'align="left" class="nohover opacitymedium"',
+    		    'td' => 'class="nohover opacitymedium left"',
     		    'text' => $langs->trans("ReadPermissionNotAllowed")
     		);
     	}
     }
 
 	/**
-	 *	Method to show box
+	 *  Method to show box
 	 *
-	 *	@param	array	$head       Array with properties of box title
-	 *	@param  array	$contents   Array with properties of box lines
+	 *  @param	array	$head       Array with properties of box title
+	 *  @param  array	$contents   Array with properties of box lines
 	 *  @param	int		$nooutput	No print, only return string
-	 *	@return	string
+	 *  @return	string
 	 */
-    function showBox($head = null, $contents = null, $nooutput=0)
+    public function showBox($head = null, $contents = null, $nooutput = 0)
     {
         return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
     }
-
- }
-
+}

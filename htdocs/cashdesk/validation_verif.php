@@ -33,7 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 $obj_facturation = unserialize($_SESSION['serObjFacturation']);
 
-$action =GETPOST('action','aZ09');
+$action =GETPOST('action', 'aZ09');
 $bankaccountid=GETPOST('cashdeskbank');
 
 switch ($action)
@@ -100,8 +100,8 @@ switch ($action)
 		else
 		{
 		    //$txtDatePaiement=$_POST['txtDatePaiement'];
-		    $datePaiement=dol_mktime(0,0,0,$_POST['txtDatePaiementmonth'],$_POST['txtDatePaiementday'],$_POST['txtDatePaiementyear']);
-		    $txtDatePaiement=dol_print_date($datePaiement,'dayrfc');
+		    $datePaiement=dol_mktime(0, 0, 0, $_POST['txtDatePaiementmonth'], $_POST['txtDatePaiementday'], $_POST['txtDatePaiementyear']);
+		    $txtDatePaiement=dol_print_date($datePaiement, 'dayrfc');
 			$obj_facturation->paiementLe($txtDatePaiement);
 		}
 
@@ -118,13 +118,13 @@ switch ($action)
 		$now=dol_now();
 
 		// Recuperation de la date et de l'heure
-		$date = dol_print_date($now,'day');
-		$heure = dol_print_date($now,'hour');
+		$date = dol_print_date($now, 'day');
+		$heure = dol_print_date($now, 'hour');
 
 		$note = '';
 		if (! is_object($obj_facturation))
 		{
-			dol_print_error('','Empty context');
+			dol_print_error('', 'Empty context');
 			exit;
 		}
 
@@ -136,7 +136,7 @@ switch ($action)
 				$cond_reglement_id = 0;
 				break;
 			case 'ESP':
-				$mode_reglement_id = dol_getIdFromCode($db,'LIQ','c_paiement','code','id',1);
+				$mode_reglement_id = dol_getIdFromCode($db, 'LIQ', 'c_paiement', 'code', 'id', 1);
 				$cond_reglement_id = 0;
 				$note .= $langs->trans("Cash")."\n";
 				$note .= $langs->trans("Received").' : '.$obj_facturation->montantEncaisse()." ".$conf->currency."\n";
@@ -145,11 +145,11 @@ switch ($action)
 				$note .= '--------------------------------------'."\n\n";
 				break;
 			case 'CB':
-				$mode_reglement_id = dol_getIdFromCode($db,'CB','c_paiement','code','id',1);
+				$mode_reglement_id = dol_getIdFromCode($db, 'CB', 'c_paiement', 'code', 'id', 1);
 				$cond_reglement_id = 0;
 				break;
 			case 'CHQ':
-				$mode_reglement_id = dol_getIdFromCode($db,'CHQ','c_paiement','code','id',1);
+				$mode_reglement_id = dol_getIdFromCode($db, 'CHQ', 'c_paiement', 'code', 'id', 1);
 				$cond_reglement_id = 0;
 				break;
 		}
@@ -215,12 +215,14 @@ switch ($action)
 		$invoice->note_private=$note;
 		$invoice->cond_reglement_id=$cond_reglement_id;
 		$invoice->mode_reglement_id=$mode_reglement_id;
+		$invoice->module_source = 'cashdesk';
+		$invoice->pos_source = '0';
 		//print "c=".$invoice->cond_reglement_id." m=".$invoice->mode_reglement_id; exit;
 
 		// Si paiement differe ...
 		if ( $obj_facturation->getSetPaymentMode() == 'DIF' )
 		{
-			$resultcreate=$invoice->create($user,0,dol_stringtotime($obj_facturation->paiementLe()));
+			$resultcreate=$invoice->create($user, 0, dol_stringtotime($obj_facturation->paiementLe()));
 			if ($resultcreate > 0)
 			{
 				$warehouseidtodecrease=(isset($_SESSION["CASHDESK_ID_WAREHOUSE"])?$_SESSION["CASHDESK_ID_WAREHOUSE"]:0);
@@ -242,8 +244,8 @@ switch ($action)
 							$mouvP = new MouvementStock($db);
 							$mouvP->origin = &$invoice;
 							// We decrease stock for product
-							if ($invoice->type == $invoice::TYPE_CREDIT_NOTE) $result=$mouvP->reception($user, $invoice->lines[$i]->fk_product, $warehouseidtodecrease, $invoice->lines[$i]->qty, $invoice->lines[$i]->subprice, $langs->trans("InvoiceValidatedInDolibarrFromPos",$invoice->newref));
-							else $result=$mouvP->livraison($user, $invoice->lines[$i]->fk_product, $warehouseidtodecrease, $invoice->lines[$i]->qty, $invoice->lines[$i]->subprice, $langs->trans("InvoiceValidatedInDolibarrFromPos",$invoice->newref));
+							if ($invoice->type == $invoice::TYPE_CREDIT_NOTE) $result=$mouvP->reception($user, $invoice->lines[$i]->fk_product, $warehouseidtodecrease, $invoice->lines[$i]->qty, $invoice->lines[$i]->subprice, $langs->trans("InvoiceValidatedInDolibarrFromPos", $invoice->newref));
+							else $result=$mouvP->livraison($user, $invoice->lines[$i]->fk_product, $warehouseidtodecrease, $invoice->lines[$i]->qty, $invoice->lines[$i]->subprice, $langs->trans("InvoiceValidatedInDolibarrFromPos", $invoice->newref));
 							if ($result < 0) {
 								$error++;
 							}
@@ -253,7 +255,7 @@ switch ($action)
 			}
 			else
 			{
-				setEventMessage($invoice->error, $invoice->errors, 'errors');
+				setEventMessages($invoice->error, $invoice->errors, 'errors');
 			    $error++;
 			}
 
@@ -261,7 +263,7 @@ switch ($action)
 		}
 		else
 		{
-		    $resultcreate=$invoice->create($user,0,0);
+		    $resultcreate=$invoice->create($user, 0, 0);
 			if ($resultcreate > 0)
 			{
 				$warehouseidtodecrease=(isset($_SESSION["CASHDESK_ID_WAREHOUSE"])?$_SESSION["CASHDESK_ID_WAREHOUSE"]:0);
@@ -283,8 +285,8 @@ switch ($action)
 							$mouvP = new MouvementStock($db);
 							$mouvP->origin = &$invoice;
 							// We decrease stock for product
-							if ($invoice->type == $invoice::TYPE_CREDIT_NOTE) $result=$mouvP->reception($user, $invoice->lines[$i]->fk_product, $warehouseidtodecrease, $invoice->lines[$i]->qty, $invoice->lines[$i]->subprice, $langs->trans("InvoiceValidatedInDolibarrFromPos",$invoice->newref));
-							else $result=$mouvP->livraison($user, $invoice->lines[$i]->fk_product, $warehouseidtodecrease, $invoice->lines[$i]->qty, $invoice->lines[$i]->subprice, $langs->trans("InvoiceValidatedInDolibarrFromPos",$invoice->newref));
+							if ($invoice->type == $invoice::TYPE_CREDIT_NOTE) $result=$mouvP->reception($user, $invoice->lines[$i]->fk_product, $warehouseidtodecrease, $invoice->lines[$i]->qty, $invoice->lines[$i]->subprice, $langs->trans("InvoiceValidatedInDolibarrFromPos", $invoice->newref));
+							else $result=$mouvP->livraison($user, $invoice->lines[$i]->fk_product, $warehouseidtodecrease, $invoice->lines[$i]->qty, $invoice->lines[$i]->subprice, $langs->trans("InvoiceValidatedInDolibarrFromPos", $invoice->newref));
 							if ($result < 0) {
 							    setEventMessages($mouvP->error, $mouvP->errors, 'errors');
 							    $error++;
@@ -326,7 +328,6 @@ switch ($action)
                     		$result=$invoice->set_paid($user);
                   			//print 'set paid';exit;
                     	}
-
                     }
 				}
 				else
@@ -358,7 +359,7 @@ switch ($action)
 		// End of case: valide_facture
 }
 
-unset ($_SESSION['serObjFacturation']);
+unset($_SESSION['serObjFacturation']);
 
 $_SESSION['serObjFacturation'] = serialize($obj_facturation);
 

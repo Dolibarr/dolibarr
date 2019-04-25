@@ -1,20 +1,20 @@
 # Dolibarr language file - Source file is en_US - workflow
 WorkflowSetup=Arbetsflöde modul konfiguration
-WorkflowDesc=This module is designed to modify the behaviour of automatic actions into application. By default, workflow is open (you can do things in the order you want). You can activate the automatic actions you are interested in.
-ThereIsNoWorkflowToModify=There is no workflow modifications available with the activated modules.
+WorkflowDesc=Denna modul ger några automatiska åtgärder. Som standard är arbetsflödet öppet (du kan göra saker i den ordning du vill) men här kan du aktivera några automatiska åtgärder.
+ThereIsNoWorkflowToModify=Det finns inga arbetsflödesändringar tillgängliga med de aktiverade modulerna.
 # Autocreate
-descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Automatically create a customer order after a commercial proposal is signed (new order will have same amount than proposal)
-descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Automatically create a customer invoice after a commercial proposal is signed (new invoice will have same amount than proposal)
-descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Automatically create a customer invoice after a contract is validated
-descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Automatically create a customer invoice after a customer order is closed (new invoice will have same amount than order)
+descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Skapa automatiskt en försäljningsorder när ett kommersiellt förslag är undertecknat (den nya ordern kommer att ha samma belopp som förslaget)
+descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Skapa automatiskt en kundfaktura efter att ett kommersiellt förslag har skrivits (den nya fakturan kommer att ha samma belopp som förslaget)
+descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Skapa automatiskt en kundfaktura efter att ett kontrakt är validerat
+descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Skapa en kundfaktura automatiskt efter att en order har stängts (den nya fakturan kommer att ha samma belopp som beställningen)
 # Autoclassify customer proposal or order
-descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Classify linked source proposal(s) to billed when customer order is set to billed (and if amount of the order is same than total amount of signed linked proposals)
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Classify linked source proposal(s) to billed when customer invoice is validated (and if amount of the invoice is same than total amount of signed linked proposals)
-descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Classify linked source customer order(s) to billed when customer invoice is validated (and if amount of the invoice is same than total amount of linked orders)
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Classify linked source customer order(s) to billed when customer invoice is set to paid (and if amount of the invoice is same than total amount of linked orders)
-descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Classify linked source customer order to shipped when a shipment is validated (and if quantity shipped by all shipments is the same as in the order to update)
-# Autoclassify supplier order
-descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Classify linked source vendor proposal(s) to billed when vendor invoice is validated (and if amount of the invoice is same than total amount of linked proposals)
-descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Classify linked source purchase order(s) to billed when vendor invoice is validated (and if amount of the invoice is same than total amount of linked orders)
-AutomaticCreation=Automatic creation
-AutomaticClassification=Automatic classification
+descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Klassificera länkad källans förslag som fakturerad när försäljningsordern är inställd att faktureras (och om orderens storlek är densamma som det totala beloppet för det signerade länkade förslaget)
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Klassificera länkad källans förslag som fakturerad när kundfakturan är validerad (och om fakturans belopp är samma som det totala beloppet för det signerade länkade förslaget)
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Klassificera länkad källsäljorder som fakturerad när kundfaktura är validerad (och om fakturans storlek är densamma som totalbeloppet för den länkade ordern)
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Klassificera länkad källsäljorder som fakturerad när kundfaktura är inställd att betala (och om fakturans storlek är densamma som totalbeloppet för den länkade ordern)
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Klassificera länkad källsäljningsorder som skickas när en försändelse är validerad (och om den mängd som skickas av alla leveranser är densamma som i den ordning som ska uppdateras)
+# Autoclassify purchase order
+descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Klassificera länkad källleverantörsförslag som fakturerat när leverantörsfaktura är validerad (och om fakturans storlek är densamma som det totala beloppet för det länkade förslaget)
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Klassificera kopplad inköpsorder som fakturerad när leverantörsfaktura är validerad (och om fakturans storlek är densamma som totalbeloppet för den länkade ordern)
+AutomaticCreation=Automatisk skapande
+AutomaticClassification=Automatisk klassificering

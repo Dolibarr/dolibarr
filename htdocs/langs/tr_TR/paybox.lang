@@ -3,7 +3,7 @@ PayBoxSetup=PayBox modülü kurulumu
 PayBoxDesc=Bu modül <a href="http://www.paybox.com" target="_blank">Paybox</a> üzerinden müşteriler tarafından ödeme yapılmasını sağlar. Bu bir ücretsiz ödeme veya belirli bir Dolibarr nesnesine (fatura, siparş,…) bir ödeme yapmak için kullanılabilir
 FollowingUrlAreAvailableToMakePayments=Aşağıdaki URL'ler bir müşteriye Dolibarr nesnelerine bir ödeme yapmak için bir sayfa sunmak için kullanılabilir
 PaymentForm=Ödeme Formu
-WelcomeOnPaymentPage=Çevrimiçi ödeme hizmetimize hoşgeldiniz
+WelcomeOnPaymentPage=Çevrimiçi ödeme hizmetimize hoş geldiniz
 ThisScreenAllowsYouToPay=Bu ekran %s için çevrimiçi bir ödeme yapmanızı sağlar
 ThisIsInformationOnPayment=Bu yapılacak ödeme hakkında bilgidir
 ToComplete=Tamamlanacak
@@ -20,10 +20,11 @@ ToOfferALinkForOnlinePaymentOnInvoice=Bir müşteri faturası için çevrimiçi 
 ToOfferALinkForOnlinePaymentOnContractLine=Bir sözleşme satırı için çevrimiçi %s ödemesi kullanıcı arayüzü sunan URL
 ToOfferALinkForOnlinePaymentOnFreeAmount=Bir serbest ödeme için çevrimiçi %s ödemesi kullanıcı arayüzü sunan URL
 ToOfferALinkForOnlinePaymentOnMemberSubscription=Bir müşteri üye aboneliği çevrimiçi %s ödemesi kullanıcı arayüzü sunan URL
+ToOfferALinkForOnlinePaymentOnDonation=URL to offer a %s online payment user interface for payment of donation
 YouCanAddTagOnUrl=Ayrıca; o URL'lerden herhangi birine <b>&tag=<i>value</i></b> url parametresini ekleyerek kendi ödeme açıklamanızın etiketini girebilirsiniz.
-SetupPayBoxToHavePaymentCreatedAutomatically=Paybox tarafından doğrulandığında ödemenin otomatik olarak oluşturulması için PayBox'ı <b>%s</b> url'si ile ayarlayın.
+SetupPayBoxToHavePaymentCreatedAutomatically=Setup your Paybox with url <b>%s</b> to have payment created automatically when validated by Paybox.
 YourPaymentHasBeenRecorded=Bu sayfa ödeme kaydedilmiş olduğunu onaylar. Teşekkür ederim.
-YourPaymentHasNotBeenRecorded=Ödemeniz kaydedimelmiştir  ve işlem iptal edilmiştir. Teşekkür ederiz.
+YourPaymentHasNotBeenRecorded=Ödemeniz kaydedilmedi ve işlem iptal edildi. Teşekkür ederiz.
 AccountParameter=Hesap parametreleri
 UsageParameter=Kullanım parametreleri
 InformationToFindParameters=%s Hesap bilgilerinizi bulmanız için yardım

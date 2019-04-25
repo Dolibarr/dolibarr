@@ -49,32 +49,52 @@ $id        = GETPOST('id', 'int');
 $track_id  = GETPOST('track_id', 'alpha', 3);
 $ref       = GETPOST('ref', 'alpha');
 $projectid = GETPOST('projectid', 'int');
-$action    = GETPOST('action', 'alpha', 3);
+$cancel    = GETPOST('cancel', 'alpha');
+$action    = GETPOST('action', 'aZ09');
+
+$notifyTiers = GETPOST("notify_tiers_at_create", 'alpha');
 
 // Initialize technical object to manage hooks of ticket. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('ticketcard','globalcard'));
 
 $object = new Ticket($db);
-
 $extrafields = new ExtraFields($db);
+// Fetch optionals attributes and labels
 $extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
+$search_array_options=$extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
-if (!$action) {
-    $action = 'view';
+// Initialize array of search criterias
+$search_all=trim(GETPOST("search_all", 'alpha'));
+$search=array();
+foreach($object->fields as $key => $val)
+{
+	if (GETPOST('search_'.$key, 'alpha')) $search[$key]=GETPOST('search_'.$key, 'alpha');
 }
+
+if (empty($action) && empty($id) && empty($ref)) $action='view';
+
 //Select mail models is same action as add_message
-if (GETPOST('modelselected','alpha')) {
+if (GETPOST('modelselected', 'alpha')) {
     $action = 'add_message';
+}
+
+// Load object
+//include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be include, not include_once  // Must be include, not include_once. Include fetch and fetch_thirdparty but not fetch_optionals
+if ($id || $track_id || $ref) {
+	$res = $object->fetch($id, $ref, $track_id);
+	if ($res >= 0)
+	{
+		$id = $object->id;
+		$track_id = $object->track_id;
+	}
 }
 
 // Store current page url
 $url_page_current = DOL_URL_ROOT.'/ticket/card.php';
 
-if ($id || $track_id || $ref) {
-	$res = $object->fetch($id, $ref, $track_id);
-}
-
-// Security check
+// Security check - Protection if external user
+//if ($user->societe_id > 0) access_forbidden();
+//if ($user->societe_id > 0) $socid = $user->societe_id;
 $result = restrictedArea($user, 'ticket', $object->id);
 
 $triggermodname = 'TICKETSUP_MODIFY';
@@ -89,7 +109,9 @@ $now = dol_now();
  * Actions
  */
 
-// TODO Replace actions with common includes actions_addupdatedelete.inc.php
+$parameters=array();
+$reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 if ($cancel)
 {
@@ -98,19 +120,441 @@ if ($cancel)
 		header("Location: ".$backtopage);
 		exit;
 	}
-	$action='';
+	$action='view';
 }
 
-// Do action
-$actionobject->doActions($action, $object);
+if (GETPOST('add', 'alpha') && $user->rights->ticket->write) {
+    $error = 0;
+
+    if (!GETPOST("subject", 'alpha')) {
+        $error++;
+        setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Subject")), null, 'errors');
+        $action = 'create';
+    } elseif (!GETPOST("message", 'alpha')) {
+        $error++;
+        setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Message")), null, 'errors');
+        $action = 'create';
+    }
+
+    if (!$error) {
+        $db->begin();
+
+        $object->ref = GETPOST("ref", 'alpha');
+        $object->fk_soc = GETPOST("socid", 'int') > 0 ? GETPOST("socid", 'int') : 0;
+        $object->subject = GETPOST("subject", 'alpha');
+        $object->message = GETPOST("message", 'none');
+
+        $object->type_code = GETPOST("type_code", 'alpha');
+        $object->category_code = GETPOST("category_code", 'alpha');
+        $object->severity_code = GETPOST("severity_code", 'alpha');
+        $notifyTiers = GETPOST("notify_tiers_at_create", 'alpha');
+        $object->notify_tiers_at_create = empty($notifyTiers) ? 0 : 1;
+
+        $object->fk_project = GETPOST('projectid', 'int');
+
+        $extrafields = new ExtraFields($db);
+        $extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
+        $ret = $extrafields->setOptionalsFromPost($extralabels, $object);
+
+        $id = $object->create($user);
+        if ($id <= 0) {
+            $error++;
+            setEventMessage($object->error, $object->errors, 'errors');
+            $action = 'create';
+        }
+
+        if (! $error)
+        {
+            // Add contact
+            $contactid = GETPOST('contactid', 'int');
+            $type_contact = GETPOST("type", 'alpha');
+
+            if ($contactid > 0 && $type_contact) {
+                $result = $object->add_contact($contactid, GETPOST("type"), 'external');
+            }
+
+            // altairis: link ticket to project
+            if (GETPOST('projectid') > 0) {
+                $object->setProject(GETPOST('projectid'));
+            }
+
+            // Auto assign user
+            if ($conf->global->TICKET_AUTO_ASSIGN_USER_CREATE) {
+                $result = $object->assignUser($user, $user->id, 1);
+                $object->add_contact($user->id, "SUPPORTTEC", 'internal');
+            }
+
+            // Auto assign contrat
+            $contractid = 0;
+            if ($conf->global->TICKET_AUTO_ASSIGN_CONTRACT_CREATE) {
+                $contrat = new Contrat($db);
+                $contrat->socid = $object->fk_soc;
+                $list = $contrat->getListOfContracts();
+
+                if (is_array($list) && !empty($list)) {
+                    if (count($list) == 1) {
+                        $contractid = $list[0]->id;
+                        $object->setContract($contractid);
+                    } else {
+                    }
+                }
+            }
+
+            // Auto create fiche intervention
+            if ($conf->global->TICKET_AUTO_CREATE_FICHINTER_CREATE)
+            {
+                $fichinter = new Fichinter($db);
+                $fichinter->socid = $object->fk_soc;
+                $fichinter->fk_project = GETPOST('projectid', 'int');
+                $fichinter->fk_contrat = $contractid;
+                $fichinter->author = $user->id;
+                $fichinter->modelpdf = 'soleil';
+                $fichinter->origin = $object->element;
+                $fichinter->origin_id = $object->id;
+
+                // Extrafields
+                $extrafields = new ExtraFields($db);
+                $extralabels = $extrafields->fetch_name_optionals_label($fichinter->table_element);
+                $array_options = $extrafields->getOptionalsFromPost($fichinter->table_element);
+                $fichinter->array_options = $array_options;
+
+                $id = $fichinter->create($user);
+                if ($id <= 0) {
+                    setEventMessages($fichinter->error, null, 'errors');
+                }
+            }
+        }
+
+        if (! $error)
+        {
+            // File transfer
+            $object->copyFilesForTicket();
+        }
+
+        if (! $error)
+        {
+            $db->commit();
+
+            if (!empty($backtopage)) {
+                $url = $backtopage;
+            } else {
+                $url = 'card.php?track_id=' . $object->track_id;
+            }
+
+            header("Location: " . $url);
+            exit;
+        } else {
+            $db->rollback();
+            setEventMessages($object->error, $object->errors, 'errors');
+        }
+    } else {
+        setEventMessages($object->error, $object->errors, 'errors');
+    }
+}
+
+if ($action == 'edit' && $user->rights->ticket->write) {
+    $error = 0;
+
+    if ($object->fetch(GETPOST('id')) < 0) {
+        $error++;
+        array_push($object->errors, $langs->trans("ErrorTicketIsNotValid"));
+        $_GET["action"] = $_POST["action"] = '';
+    }
+}
+
+if (GETPOST('update') && GETPOST('id') && $user->rights->ticket->write) {
+    $error = 0;
+
+    $ret = $object->fetch(GETPOST('id'));
+    if ($ret < 0) {
+        $error++;
+        array_push($object->errors, $langs->trans("ErrorTicketIsNotValid"));
+        $action = '';
+    } elseif (!GETPOST("label")) {
+        $error++;
+        array_push($object->errors, $langs->trans("ErrorFieldRequired", $langs->transnoentities("Label")));
+        $action = 'edit';
+    } elseif (!GETPOST("subject")) {
+        $error++;
+        array_push($object->errors, $langs->trans("ErrorFieldRequired", $langs->transnoentities("Subject")));
+        $action = 'edit';
+    }
+
+    if (!$error) {
+        $db->begin();
+
+        $object->label = GETPOST("label");
+        $object->description = GETPOST("description");
+
+        //...
+        $ret = $object->update($user);
+        if ($ret <= 0) {
+            $error++;
+            setEventMessage($object->error, $object->errors, 'errors');
+            $action = 'edit';
+        }
+
+        if (!$error && $ret > 0) {
+            $db->commit();
+        } else {
+            $db->rollback();
+        }
+    }
+}
+
+if ($action == "mark_ticket_read" && $user->rights->ticket->write) {
+    $object->fetch('', '', GETPOST("track_id", 'alpha'));
+
+    if ($object->markAsRead($user) > 0)
+    {
+        setEventMessages($langs->trans('TicketMarkedAsRead'), null, 'mesgs');
+
+        header("Location: card.php?track_id=" . $object->track_id . "&action=view");
+        exit;
+    } else {
+        setEventMessages($object->error, $object->errors, 'errors');
+    }
+    $action = 'view';
+}
+
+if ($action == "assign_user" && GETPOST('btn_assign_user', 'aplha') && $user->rights->ticket->write) {
+    $object->fetch('', '', GETPOST("track_id", 'alpha'));
+    $useroriginassign = $object->fk_user_assign;
+    $usertoassign = GETPOST('fk_user_assign', 'int');
+
+    /*if (! ($usertoassign > 0)) {
+     $error++;
+     array_push($object->errors, $langs->trans("ErrorFieldRequired", $langs->transnoentities("AssignedTo")));
+     $action = 'view';
+     }*/
+
+    if (!$error)
+    {
+        $ret = $object->assignUser($user, $usertoassign);
+        if ($ret < 0) $error++;
+    }
+
+    if (! $error)	// Update list of contacts
+    {
+        // Si déjà un user assigné on le supprime des contacts
+        if ($useroriginassign > 0) {
+            $internal_contacts = $object->listeContact(-1, 'internal');
+
+            foreach ($internal_contacts as $key => $contact) {
+                if ($contact['code'] == "SUPPORTTEC" && $contact['id'] == $useroriginassign) {
+                }
+                {
+                    //print "user à effacer : ".$useroriginassign;
+                    $object->delete_contact($contact['rowid']);
+                }
+            }
+        }
+
+        if ($usertoassign > 0) $object->add_contact($usertoassign, "SUPPORTTEC", 'internal', $notrigger = 0);
+    }
+
+    if (! $error)
+    {
+        // Log action in ticket logs table
+        $object->fetch_user($usertoassign);
+        $log_action = $langs->trans('TicketLogAssignedTo', $object->user->getFullName($langs));
+
+        setEventMessages($langs->trans('TicketAssigned'), null, 'mesgs');
+
+        header("Location: card.php?track_id=" . $object->track_id . "&action=view");
+        exit;
+    } else {
+        array_push($object->errors, $object->error);
+    }
+    $action = 'view';
+}
+
+if ($action == "new_message" && GETPOST('btn_add_message') && $user->rights->ticket->read) {
+    $ret = $object->newMessage($user, $action);
+    if ($ret) {
+        if (!empty($backtopage)) {
+            $url = $backtopage;
+        } else {
+            $url = 'card.php?action=view&track_id=' . $object->track_id;
+        }
+
+        header("Location: " . $url);
+        exit;
+    } else {
+        setEventMessages($object->error, null, 'errors');
+        $action = 'add_message';
+    }
+}
+
+if ($action == "new_public_message" && GETPOST('btn_add_message')) {
+    $object->newMessagePublic($user, $action);
+}
+
+if ($action == "confirm_close" && GETPOST('confirm', 'alpha') == 'yes' && $user->rights->ticket->write)
+{
+    $object->fetch(GETPOST('id', 'int'), '', GETPOST('track_id', 'alpha'));
+
+    if ($object->close($user)) {
+        // Log action in ticket logs table
+        $log_action = $langs->trans('TicketLogClosedBy', $user->getFullName($langs));
+
+        setEventMessages($langs->trans('TicketMarkedAsClosed'), null, 'mesgs');
+
+        $url = 'card.php?action=view&track_id=' . GETPOST('track_id', 'alpha');
+        header("Location: " . $url);
+    } else {
+        $action = '';
+        setEventMessages($object->error, $object->errors, 'errors');
+    }
+}
+
+if ($action == "confirm_public_close" && GETPOST('confirm', 'alpha') == 'yes') {
+    $object->fetch(GETPOST('id', 'int'), '', GETPOST('track_id', 'alpha'));
+    if (($_SESSION['email_customer'] == $object->origin_email || $_SESSION['email_customer'] == $object->thirdparty->email) && $object->close()) {
+        // Log action in ticket logs table
+        $log_action = $langs->trans('TicketLogClosedBy', $_SESSION['email_customer']);
+
+        setEventMessages('<div class="confirm">' . $langs->trans('TicketMarkedAsClosed') . '</div>', null, 'mesgs');
+
+        $url = 'view.php?action=view_ticket&track_id=' . GETPOST('track_id', 'alpha');
+        header("Location: " . $url);
+    } else {
+        setEventMessages($object->error, $object->errors, 'errors');
+        $action = '';
+    }
+}
+
+if ($action == 'confirm_delete_ticket' && GETPOST('confirm', 'alpha') == "yes" && $user->rights->ticket->delete) {
+    if ($object->fetch(GETPOST('id', 'int'), '', GETPOST('track_id', 'alpha')) >= 0) {
+        if ($object->delete($user) > 0) {
+            setEventMessages('<div class="confirm">' . $langs->trans('TicketDeletedSuccess') . '</div>', null, 'mesgs');
+            Header("Location: ".DOL_URL_ROOT."/ticket/list.php");
+            exit;
+        } else {
+            $langs->load("errors");
+            $mesg = '<div class="error">' . $langs->trans($object->error) . '</div>';
+            $action = '';
+        }
+    }
+}
+
+// Set parent company
+if ($action == 'set_thirdparty' && $user->rights->societe->creer) {
+    if ($object->fetch(GETPOST('id', 'int'), '', GETPOST('track_id', 'alpha')) >= 0) {
+        $result = $object->setCustomer(GETPOST('editcustomer', 'int'));
+        $url = 'card.php?action=view&track_id=' . GETPOST('track_id', 'alpha');
+        header("Location: " . $url);
+        exit();
+    }
+}
+
+if ($action == 'set_progression' && $user->rights->ticket->write) {
+    if ($object->fetch(GETPOST('id', 'int'), '', GETPOST('track_id', 'alpha')) >= 0) {
+        $result = $object->setProgression(GETPOST('progress', 'alpha'));
+
+        $url = 'card.php?action=view&track_id=' . $object->track_id;
+        header("Location: " . $url);
+        exit();
+    }
+}
+
+if ($action == 'setsubject') {
+    if ($object->fetch(GETPOST('id', 'int'))) {
+        if ($action == 'setsubject') {
+            $object->subject = trim(GETPOST('subject', 'alpha'));
+        }
+
+        if ($action == 'setsubject' && empty($object->subject)) {
+            $mesg .= ($mesg ? '<br>' : '') . $langs->trans("ErrorFieldRequired", $langs->transnoentities("Subject"));
+        }
+
+        if (!$mesg) {
+            if ($object->update($user) >= 0) {
+                header("Location: " . $_SERVER['PHP_SELF'] . "?track_id=" . $object->track_id);
+                exit;
+            }
+            $mesg = $object->error;
+        }
+    }
+}
+
+
+if ($action == 'confirm_reopen' && $user->rights->ticket->manage && !GETPOST('cancel')) {
+    if ($object->fetch(GETPOST('id', 'int'), '', GETPOST('track_id', 'alpha')) >= 0) {
+        // prevent browser refresh from reopening ticket several times
+        if ($object->fk_statut == Ticket::STATUS_CLOSED) {
+            $res = $object->setStatut(Ticket::STATUS_ASSIGNED);
+            if ($res) {
+                // Log action in ticket logs table
+                $log_action = $langs->trans('TicketLogReopen');
+
+                $url = 'card.php?action=view&track_id=' . $object->track_id;
+                header("Location: " . $url);
+                exit();
+            }
+        }
+    }
+} // Categorisation dans projet
+elseif ($action == 'classin' && $user->rights->ticket->write) {
+    if ($object->fetch(GETPOST('id', 'int'), '', GETPOST('track_id', 'alpha')) >= 0) {
+        $object->setProject(GETPOST('projectid', 'int'));
+        $url = 'card.php?action=view&track_id=' . $object->track_id;
+        header("Location: " . $url);
+        exit();
+    }
+} // Categorisation dans contrat
+elseif ($action == 'setcontract' && $user->rights->ticket->write) {
+    if ($object->fetch(GETPOST('id', 'int'), '', GETPOST('track_id', 'alpha')) >= 0) {
+        $object->setContract(GETPOST('contractid', 'int'));
+        $url = 'card.php?action=view&track_id=' . $object->track_id;
+        header("Location: " . $url);
+        exit();
+    }
+} elseif ($action == "set_message" && $user->rights->ticket->manage) {
+    // altairis: manage cancel button
+    if (!GETPOST('cancel')) {
+        $object->fetch('', '', GETPOST('track_id', 'alpha'));
+        $oldvalue_message = $object->message;
+        $fieldtomodify = GETPOST('message_initial');
+
+        $object->message = $fieldtomodify;
+        $ret = $object->update($user);
+        if ($ret > 0) {
+            $log_action = $langs->trans('TicketInitialMessageModified') . " \n";
+            // include the Diff class
+            dol_include_once('/ticket/class/utils_diff.class.php');
+            // output the result of comparing two files as plain text
+            $log_action .= Diff::toString(Diff::compare(strip_tags($oldvalue_message), strip_tags($object->message)));
+
+            setEventMessages($langs->trans('TicketMessageSuccesfullyUpdated'), null, 'mesgs');
+        }
+    }
+
+    $action = 'view';
+} // Reopen ticket
+elseif ($action == 'confirm_set_status' && $user->rights->ticket->write && !GETPOST('cancel')) {
+    if ($object->fetch(GETPOST('id', 'int'), GETPOST('track_id', 'alpha')) >= 0) {
+        $new_status = GETPOST('new_status', 'int');
+        $old_status = $object->fk_statut;
+        $res = $object->setStatut($new_status);
+        if ($res) {
+            // Log action in ticket logs table
+            $log_action = $langs->trans('TicketLogStatusChanged', $langs->transnoentities($object->statuts_short[$old_status]), $langs->transnoentities($object->statuts_short[$new_status]));
+
+            $url = 'card.php?action=view&track_id=' . $object->track_id;
+            header("Location: " . $url);
+            exit();
+        }
+    }
+}
 
 // Action to update one extrafield
 if ($action == "update_extras" && ! empty($permissiontoadd))
 {
-	$object->fetch(GETPOST('id','int'), '', GETPOST('track_id','alpha'));
-	$attributekey = GETPOST('attribute','alpha');
+	$object->fetch(GETPOST('id', 'int'), '', GETPOST('track_id', 'alpha'));
+	$attributekey = GETPOST('attribute', 'alpha');
 	$attributekeylong = 'options_'.$attributekey;
-	$object->array_options['options_'.$attributekey] = GETPOST($attributekeylong,' alpha');
+	$object->array_options['options_'.$attributekey] = GETPOST($attributekeylong, ' alpha');
 
 	$result = $object->insertExtraFields(empty($triggermodname)?'':$triggermodname, $user);
 	if ($result > 0)
@@ -125,28 +569,38 @@ if ($action == "update_extras" && ! empty($permissiontoadd))
 	}
 }
 
-if ($action == "change_property" && GETPOST('btn_update_ticket_prop','alpha') && $user->rights->ticket->write)
+if ($action == "change_property" && GETPOST('btn_update_ticket_prop', 'alpha') && $user->rights->ticket->write)
 {
-	$object->fetch(GETPOST('id','int'), '', GETPOST('track_id','alpha'));
+	$object->fetch(GETPOST('id', 'int'), '', GETPOST('track_id', 'alpha'));
 
-	$object->type_code = GETPOST('update_value_type','az09');
-	$object->category_code = GETPOST('update_value_category','az09');
-	$object->severity_code = GETPOST('update_value_severity','az09');
+	$object->type_code = GETPOST('update_value_type', 'az09');
+	$object->severity_code = GETPOST('update_value_severity', 'az09');
+	$object->category_code = GETPOST('update_value_category', 'az09');
 
 	$ret = $object->update($user);
 	if ($ret > 0) {
 		$log_action = $langs->trans('TicketLogPropertyChanged', $oldvalue_label, $newvalue_label);
-		$ret = $object->createTicketLog($user, $log_action);
-		if ($ret > 0) {
-			setEventMessages($langs->trans('TicketUpdated'), null, 'mesgs');
-		}
+
+		setEventMessages($langs->trans('TicketUpdated'), null, 'mesgs');
 	}
 	$action = 'view';
 }
 
+
 $permissiondellink = $user->rights->ticket->write;
 include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php';        // Must be include, not include_once
 
+// Actions to build doc
+$upload_dir = $conf->ticket->dir_output;
+$permissioncreate = $user->rights->ticket->write;
+include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
+
+// Actions to send emails
+$trigger_name='TICKET_SENTBYMAIL';
+$paramname='id';
+$autocopy='MAIN_MAIL_AUTOCOPY_TICKET_TO';		// used to know the automatic BCC to add
+$trackid='tic'.$object->id;
+include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 
 
 
@@ -157,25 +611,45 @@ include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php';        // Must be inc
 $userstat = new User($db);
 $form = new Form($db);
 $formticket = new FormTicket($db);
+if (! empty($conf->projet->enabled)) $formproject = new FormProjets($db);
 
-if (! empty($conf->projet->enabled)) {
-	$formproject = new FormProjets($db);
+$help_url = 'FR:DocumentationModuleTicket';
+$page_title = $actionobject->getTitle($action);
+
+llxHeader('', $page_title, $help_url);
+
+if ($action == 'create' || $action == 'presend')
+{
+    $formticket = new FormTicket($db);
+
+    print load_fiche_titre($langs->trans('NewTicket'), '', 'title_ticket');
+
+    $formticket->withfromsocid = $socid ? $socid : $user->societe_id;
+    $formticket->withfromcontactid = $contactid ? $contactid : '';
+    $formticket->withtitletopic = 1;
+    $formticket->withnotifytiersatcreate = ($notifyTiers?1:0);
+    $formticket->withusercreate = 1;
+    $formticket->withref = 1;
+    $formticket->fk_user_create = $user->id;
+    $formticket->withfile = 2;
+    $formticket->withextrafields = 1;
+    $formticket->param = array('origin' => GETPOST('origin'), 'originid' => GETPOST('originid'));
+    if (empty($defaultref)) {
+        $defaultref = '';
+    }
+
+    $formticket->showForm(1);
 }
 
-if ($action == 'view' || $action == 'add_message' || $action == 'close' || $action == 'delete' || $action == 'editcustomer' || $action == 'progression' || $action == 'reopen'
+if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'dellink' || $action == 'add_message' || $action == 'close' || $action == 'delete' || $action == 'editcustomer' || $action == 'progression' || $action == 'reopen'
 	|| $action == 'editsubject' || $action == 'edit_extras' || $action == 'update_extras' || $action == 'edit_extrafields' || $action == 'set_extrafields' || $action == 'classify' || $action == 'sel_contract' || $action == 'edit_message_init' || $action == 'set_status' || $action == 'dellink')
 {
-
-    if ($res > 0) {
+    if ($res > 0)
+    {
         // or for unauthorized internals users
         if (!$user->societe_id && ($conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY && $object->fk_user_assign != $user->id) && !$user->rights->ticket->manage) {
             accessforbidden('', 0);
         }
-
-        $help_url = 'FR:DocumentationModuleTicket';
-        $page_title = $actionobject->getTitle($action);
-
-        llxHeader('', $page_title, $help_url);
 
         // Confirmation close
         if ($action == 'close') {
@@ -287,7 +761,7 @@ if ($action == 'view' || $action == 'add_message' || $action == 'close' || $acti
         $morehtmlref.= $object->subject;
         // Author
         if ($object->fk_user_create > 0) {
-        	$morehtmlref .= '<br>' . $langs->trans("CreatedBy") . '  ';
+        	$morehtmlref .= '<br>' . $langs->trans("CreatedBy") . ' : ';
 
             $langs->load("users");
             $fuser = new User($db);
@@ -295,19 +769,34 @@ if ($action == 'view' || $action == 'add_message' || $action == 'close' || $acti
             $morehtmlref .= $fuser->getNomUrl(0);
         }
         if (!empty($object->origin_email)) {
-        	$morehtmlref .= '<br>' . $langs->trans("CreatedBy") . ' ';
+        	$morehtmlref .= '<br>' . $langs->trans("CreatedBy") . ' : ';
         	$morehtmlref .= $object->origin_email . ' <small>(' . $langs->trans("TicketEmailOriginIssuer") . ')</small>';
+        }
+
+        // Thirdparty
+        if (! empty($conf->societe->enabled))
+        {
+	        $morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' ';
+	        if ($action != 'editcustomer' && $object->fk_statut < 8 && !$user->societe_id && $user->rights->ticket->write) {
+	        	$morehtmlref.='<a href="' . $url_page_current . '?action=editcustomer&track_id=' . $object->track_id . '">' . img_edit($langs->transnoentitiesnoconv('Edit'), 0) . '</a> : ';
+	        }
+	        if ($action == 'editcustomer') {
+	        	$morehtmlref.=$form->form_thirdparty($url_page_current . '?track_id=' . $object->track_id, $object->socid, 'editcustomer', '', 1, 0, 0, array(), 1);
+	        } else {
+	            $morehtmlref.=$form->form_thirdparty($url_page_current . '?track_id=' . $object->track_id, $object->socid, 'none', '', 1, 0, 0, array(), 1);
+	        }
         }
 
         // Project
         if (! empty($conf->projet->enabled))
         {
         	$langs->load("projects");
-        	$morehtmlref.='<br>'.$langs->trans('Project') . ' ';
+        	$morehtmlref.='<br>'.$langs->trans('Project');
         	if ($user->rights->ticket->write)
         	{
         		if ($action != 'classify')
-        			$morehtmlref.='<a href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+        			$morehtmlref.='<a href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a>';
+       			$morehtmlref.=' : ';
        			if ($action == 'classify') {
        				//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
        				$morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
@@ -323,9 +812,7 @@ if ($action == 'view' || $action == 'add_message' || $action == 'close' || $acti
         		if (! empty($object->fk_project)) {
         			$proj = new Project($db);
         			$proj->fetch($object->fk_project);
-        			$morehtmlref.='<a href="'.DOL_URL_ROOT.'/projet/card.php?id=' . $object->fk_project . '" title="' . $langs->trans('ShowProject') . '">';
-        			$morehtmlref.=$proj->ref;
-        			$morehtmlref.='</a>';
+        			$morehtmlref.=$proj->getNomUrl(1);
         		} else {
         			$morehtmlref.='';
         		}
@@ -385,24 +872,6 @@ if ($action == 'view' || $action == 'add_message' || $action == 'close' || $acti
         }
         print '</td></tr>';
 
-        // Thirdparty
-        print '<tr><td>';
-        print '<table class="nobordernopadding" width="100%"><tr><td>';
-        print $langs->trans('ThirdParty');
-        print '</td>';
-        if ($action != 'editcustomer' && $object->fk_statut < 8 && !$user->societe_id && $user->rights->ticket->write) {
-            print '<td align="right"><a href="' . $url_page_current . '?action=editcustomer&amp;track_id=' . $object->track_id . '">' . img_edit($langs->transnoentitiesnoconv('Edit'), 1) . '</a></td>';
-        }
-        print '</tr></table>';
-        print '</td><td colspan="3">';
-
-        if ($action == 'editcustomer') {
-            $form->form_thirdparty($url_page_current . '?track_id=' . $object->track_id, $object->fk_soc, 'editcustomer', ($object->fk_soc ? 's.rowid <> ' . $object->fk_soc : ''), 1);
-        } else {
-            $form->form_thirdparty($url_page_current . '?track_id=' . $object->track_id, $object->fk_soc, 'none', 's.rowid <> ' . $object->fk_soc, 1);
-        }
-        print '</td></tr>';
-
         // User assigned
         print '<tr><td>' . $langs->trans("AssignedTo") . '</td><td>';
         if ($object->fk_user_assign > 0) {
@@ -413,7 +882,7 @@ if ($action == 'view' || $action == 'add_message' || $action == 'close' || $acti
         }
 
         // Show user list to assignate one if status is "read"
-        if (GETPOST('set','alpha') == "assign_ticket" && $object->fk_statut < 8 && !$user->societe_id && $user->rights->ticket->write) {
+        if (GETPOST('set', 'alpha') == "assign_ticket" && $object->fk_statut < 8 && !$user->societe_id && $user->rights->ticket->write) {
             print '<form method="post" name="ticket" enctype="multipart/form-data" action="' . $url_page_current . '">';
             print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
             print '<input type="hidden" name="action" value="assign_user">';
@@ -423,7 +892,7 @@ if ($action == 'view' || $action == 'add_message' || $action == 'close' || $acti
             print ' <input class="button" type="submit" name="btn_assign_user" value="' . $langs->trans("Validate") . '" />';
             print '</form>';
         }
-        if ($object->fk_statut < 8 && GETPOST('set','alpha') != "assign_ticket" && $user->rights->ticket->manage) {
+        if ($object->fk_statut < 8 && GETPOST('set', 'alpha') != "assign_ticket" && $user->rights->ticket->manage) {
             print '<a href="' . $url_page_current . '?track_id=' . $object->track_id . '&action=view&set=assign_ticket">' . img_picto('', 'edit') . ' ' . $langs->trans('Modify') . '</a>';
         }
         print '</td></tr>';
@@ -431,10 +900,10 @@ if ($action == 'view' || $action == 'add_message' || $action == 'close' || $acti
         // Progression
         print '<tr><td>';
         print '<table class="nobordernopadding" width="100%"><tr><td class="nowrap">';
-        print $langs->trans('Progression') . '</td><td align="left">';
+        print $langs->trans('Progression') . '</td><td class="left">';
         print '</td>';
         if ($action != 'progression' && $object->fk_statut < 8 && !$user->societe_id) {
-            print '<td align="right"><a href="' . $url_page_current . '?action=progression&amp;track_id=' . $object->track_id . '">' . img_edit($langs->trans('Modify')) . '</a></td>';
+            print '<td class="right"><a href="' . $url_page_current . '?action=progression&amp;track_id=' . $object->track_id . '">' . img_edit($langs->trans('Modify')) . '</a></td>';
         }
         print '</tr></table>';
         print '</td><td colspan="5">';
@@ -489,12 +958,7 @@ if ($action == 'view' || $action == 'add_message' || $action == 'close' || $acti
         $actionobject->viewTicketOriginalMessage($user, $action, $object);
 
 
-        /***************************************************
-         *
-         *      Classification and actions on ticket
-         *
-         ***************************************************/
-
+        // Classification of ticket
         print '<form method="post" name="formticketproperties" action="' . $url_page_current . '">';
         print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
         print '<input type="hidden" name="action" value="change_property">';
@@ -508,7 +972,7 @@ if ($action == 'view' || $action == 'add_message' || $action == 'close' || $acti
         print $langs->trans('Properties');
         print '</td>';
         print '<td>';
-        if (GETPOST('set','alpha') == 'properties' && $user->rights->ticket->write) {
+        if (GETPOST('set', 'alpha') == 'properties' && $user->rights->ticket->write) {
         	print '<input class="button" type="submit" name="btn_update_ticket_prop" value="' . $langs->trans("Modify") . '" />';
         }
         else {
@@ -519,21 +983,24 @@ if ($action == 'view' || $action == 'add_message' || $action == 'close' || $acti
         }
         print '</td>';
         print '</tr>';
-        if (GETPOST('set','alpha') == 'properties' && $user->rights->ticket->write) {
+        if (GETPOST('set', 'alpha') == 'properties' && $user->rights->ticket->write) {
             print '<tr>';
+            // Type
             print '<td class="titlefield">';
             print $langs->trans('TicketChangeType');
             print '</td><td>';
             print $formticket->selectTypesTickets($object->type_code, 'update_value_type', '', 2);
             print '</td>';
             print '</tr>';
+            // Group
             print '<tr>';
             print '<td>';
             print $langs->trans('TicketChangeCategory');
             print '</td><td>';
-            print $formticket->selectCategoriesTickets($object->category_code, 'update_value_category', '', 2);
+            print $formticket->selectGroupTickets($object->category_code, 'update_value_category', '', 2);
             print '</td>';
             print '</tr>';
+            // Severity
             print '<tr>';
             print '<td>';
             print $langs->trans('TicketChangeSeverity');
@@ -549,21 +1016,19 @@ if ($action == 'view' || $action == 'add_message' || $action == 'close' || $acti
                 print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
             }*/
             print '</td></tr>';
-
-            // Category
-            print '<tr><td>' . $langs->trans("Category") . '</td><td>';
+            // Group
+            print '<tr><td>' . $langs->trans("TicketGroup") . '</td><td>';
             print $langs->getLabelFromKey($db, $object->category_code, 'c_ticket_category', 'code', 'label');
             /*if ($user->admin && !$noadmininfo) {
-                print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
-            }*/
+             print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
+             }*/
             print '</td></tr>';
-
             // Severity
             print '<tr><td>' . $langs->trans("TicketSeverity") . '</td><td>';
             print $langs->getLabelFromKey($db, $object->severity_code, 'c_ticket_severity', 'code', 'label');
             /*if ($user->admin && !$noadmininfo) {
-                print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
-            }*/
+             print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
+             }*/
             print '</td></tr>';
         }
         print '</table>'; // End table actions
@@ -591,7 +1056,7 @@ if ($action == 'view' || $action == 'add_message' || $action == 'close' || $acti
 			<div class="tagtd">' . $langs->trans("Contacts") . '</div>
 			<div class="tagtd">' . $langs->trans("ContactType") . '</div>
 			<div class="tagtd">' . $langs->trans("Phone") . '</div>
-			<div class="tagtd" align="center">' . $langs->trans("Status") . '</div>';
+			<div class="tagtd center">' . $langs->trans("Status") . '</div>';
 	        print '</div><!-- tagtr -->';
 
 	        // Contact list
@@ -607,7 +1072,7 @@ if ($action == 'view' || $action == 'add_message' || $action == 'close' || $acti
 	                $var = !$var;
 	                print '<div class="tagtr ' . ($var ? 'pair' : 'impair') . '">';
 
-	                print '<div class="tagtd" align="left">';
+	                print '<div class="tagtd left">';
 	                if ($tab[$i]['source'] == 'internal') {
 	                    echo $langs->trans("User");
 	                }
@@ -617,7 +1082,7 @@ if ($action == 'view' || $action == 'add_message' || $action == 'close' || $acti
 	                }
 
 	                print '</div>';
-	                print '<div class="tagtd" align="left">';
+	                print '<div class="tagtd left">';
 
 	                if ($tab[$i]['socid'] > 0) {
 	                    $companystatic->fetch($tab[$i]['socid']);
@@ -659,7 +1124,7 @@ if ($action == 'view' || $action == 'add_message' || $action == 'close' || $acti
 	                }
 	                print '</div>';
 
-	                print '<div class="tagtd" align="center">';
+	                print '<div class="tagtd center">';
 	                if ($object->statut >= 0) {
 	                    echo '<a href="contact.php?track_id=' . $object->track_id . '&amp;action=swapstatut&amp;ligne=' . $tab[$i]['rowid'] . '">';
 	                }
@@ -692,151 +1157,149 @@ if ($action == 'view' || $action == 'add_message' || $action == 'close' || $acti
 			print '</div>';
         }
 
-        // Contract
-        if ($action == 'sel_contract') {
-            if (!empty($conf->contrat->enabled)) {
-                $langs->load('contrats');
-                print load_fiche_titre($langs->trans('LinkToAContract'), '', 'title_commercial.png');
-
-                $form_contract = new FormContract($db);
-                $form_contract->formSelectContract(
-                    $url_page_current.'?track_id='.$object->track_id,
-                    $object->fk_soc,
-                    GETPOST('contractid'),
-                    'contractid'
-                );
-            }
-        }
-
         print '</div></div></div>';
         print '<div style="clear:both"></div>';
 
-        print dol_fiche_end();
+		dol_fiche_end();
 
 
-        /* ActionBar */
-        print '<div class="tabsAction">';
+		// Buttons for actions
+		if ($action != 'presend' && $action != 'editline') {
+			print '<div class="tabsAction">'."\n";
+			$parameters=array();
+			$reshook=$hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action);    // Note that $action and $object may have been modified by hook
+			if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
-        // Show link to add a message (if read and not closed)
-        if ($object->fk_statut < 8 && $action != "add_message") {
-            print '<div class="inline-block divButAction"><a class="butAction" href="card.php?track_id=' . $object->track_id . '&action=add_message">' . $langs->trans('TicketAddMessage') . '</a></div>';
-        }
+			if (empty($reshook))
+			{
+				// Show link to add a message (if read and not closed)
+			    if ($object->fk_statut < Ticket::STATUS_CLOSED && $action != "add_message") {
+		            print '<div class="inline-block divButAction"><a class="butAction" href="card.php?track_id=' . $object->track_id . '&action=add_message">' . $langs->trans('TicketAddMessage') . '</a></div>';
+		        }
 
-        // Link to create an intervention
-        // socid is needed otherwise fichinter ask it and forgot origin after form submit :\
-        if (!$object->fk_soc && $user->rights->ficheinter->creer) {
-            print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="' . $langs->trans('UnableToCreateInterIfNoSocid') . '">' . $langs->trans('TicketAddIntervention') . '</a></div>';
-        }
-        if ($object->fk_soc > 0 && $object->fk_statut < 8 && $user->rights->ficheinter->creer) {
-            print '<div class="inline-block divButAction"><a class="butAction" href="' . dol_buildpath('/fichinter/card.php', 1) . '?action=create&socid=' . $object->fk_soc . '&origin=ticket_ticket&originid=' . $object->id . '">' . $langs->trans('TicketAddIntervention') . '</a></div>';
-        }
+		        // Link to create an intervention
+		        // socid is needed otherwise fichinter ask it and forgot origin after form submit :\
+		        if (!$object->fk_soc && $user->rights->ficheinter->creer) {
+		            print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="' . $langs->trans('UnableToCreateInterIfNoSocid') . '">' . $langs->trans('TicketAddIntervention') . '</a></div>';
+		        }
+		        if ($object->fk_soc > 0 && $object->fk_statut < Ticket::STATUS_CLOSED && $user->rights->ficheinter->creer) {
+		            print '<div class="inline-block divButAction"><a class="butAction" href="' . dol_buildpath('/fichinter/card.php', 1) . '?action=create&socid=' . $object->fk_soc . '&origin=ticket_ticket&originid=' . $object->id . '">' . $langs->trans('TicketAddIntervention') . '</a></div>';
+		        }
 
-        //    Button to link to a contract
-        if ($user->rights->ticket->write && $object->fk_statut < 5 && $user->rights->contrat->creer) {
-            print '<div class="inline-block divButAction"><a class="butAction" href="card.php?track_id=' . $object->track_id . '&action=sel_contract">' . $langs->trans('LinkToAContract') . '</a></div>';
-        }
+		        // Close ticket if statut is read
+		        if ($object->fk_statut > 0 && $object->fk_statut < Ticket::STATUS_CLOSED && $user->rights->ticket->write) {
+		            print '<div class="inline-block divButAction"><a class="butAction" href="card.php?track_id=' . $object->track_id . '&action=close">' . $langs->trans('CloseTicket') . '</a></div>';
+		        }
 
-        // Close ticket if statut is read
-        if ($object->fk_statut > 0 && $object->fk_statut < 8 && $user->rights->ticket->write) {
-            print '<div class="inline-block divButAction"><a class="butAction" href="card.php?track_id=' . $object->track_id . '&action=close">' . $langs->trans('CloseTicket') . '</a></div>';
-        }
+		        // Re-open ticket
+		        if (!$user->socid && $object->fk_statut == Ticket::STATUS_CLOSED && !$user->societe_id) {
+		            print '<div class="inline-block divButAction"><a class="butAction" href="card.php?track_id=' . $object->track_id . '&action=reopen">' . $langs->trans('ReOpen') . '</a></div>';
+		        }
 
-        // Re-open ticket
-        if (!$user->socid && $object->fk_statut == 8 && !$user->societe_id) {
-            print '<div class="inline-block divButAction"><a class="butAction" href="card.php?track_id=' . $object->track_id . '&action=reopen">' . $langs->trans('ReOpen') . '</a></div>';
-        }
-
-        // Delete ticket
-        if ($user->rights->ticket->delete && !$user->societe_id) {
-            print '<div class="inline-block divButAction"><a class="butActionDelete" href="card.php?track_id=' . $object->track_id . '&action=delete">' . $langs->trans('Delete') . '</a></div>';
-        }
-        print '</div>';
-
-        if ($action == 'view' || $action == 'edit_message_init') {
-            print '<div class="fichecenter"><div class="">';
-
-            //print '<div style="float: left; width:49%; margin-right: 1%;">';
-            // Message list
-            print load_fiche_titre($langs->trans('TicketMessagesList'), '', 'messages@ticket');
-            $show_private_message = ($user->societe_id ? 0 : 1);
-            $actionobject->viewTicketTimelineMessages($show_private_message, true, $object);
-
-            print '</div><!-- fichehalfleft --> ';
-            print '</div><!-- fichecenter -->';
-            print '<br style="clear: both">';
-        } elseif ($action == 'add_message') {
-            $action='new_message';
-            $modelmail='ticket_send';
-
-            print '<div>';
-            print load_fiche_titre($langs->trans('TicketAddMessage'), '', 'messages@ticket');
-
-            // Define output language
-            $outputlangs = $langs;
-            $newlang = '';
-            if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id'])) {
-                $newlang = $_REQUEST['lang_id'];
-            }
-            if ($conf->global->MAIN_MULTILANGS && empty($newlang)) {
-                $newlang = $object->default_lang;
-            }
-
-            $formticket = new FormTicket($db);
-
-            $formticket->action = $action;
-            $formticket->track_id = $object->track_id;
-            $formticket->id = $object->id;
-
-            $formticket->withfile = 2;
-            $formticket->param = array('fk_user_create' => $user->id);
-            $formticket->param['langsmodels']=(empty($newlang)?$langs->defaultlang:$newlang);
-
-            // Tableau des parametres complementaires du post
-            $formticket->param['models']=$modelmail;
-            $formticket->param['models_id']=GETPOST('modelmailselected', 'int');
-            //$formticket->param['socid']=$object->fk_soc;
-            $formticket->param['returnurl']=$_SERVER["PHP_SELF"].'?track_id='.$object->track_id;
+		        // Delete ticket
+		        if ($user->rights->ticket->delete && ! $user->societe_id) {
+		            print '<div class="inline-block divButAction"><a class="butActionDelete" href="card.php?track_id=' . $object->track_id . '&action=delete">' . $langs->trans('Delete') . '</a></div>';
+		        }
+			}
+	        print '</div>'."\n";
+		}
 
 
-            $formticket->withsubstit = 1;
+		// Select mail models is same action as presend
+		if (GETPOST('modelselected')) {
+			$action = 'presend';
+		}
 
-            if ($object->fk_soc > 0) {
-                $object->fetch_thirdparty();
-                $formticket->substit['__THIRDPARTY_NAME__'] = $object->thirdparty->name;
-            }
-            $formticket->substit['__SIGNATURE__'] = $user->signature;
-            $formticket->substit['__TICKETSUP_TRACKID__'] = $object->track_id;
-            $formticket->substit['__TICKETSUP_REF__'] = $object->ref;
-            $formticket->substit['__TICKETSUP_SUBJECT__'] = $object->subject;
-            $formticket->substit['__TICKETSUP_TYPE__'] = $object->type_code;
-            $formticket->substit['__TICKETSUP_CATEGORY__'] = $object->category_code;
-            $formticket->substit['__TICKETSUP_SEVERITY__'] = $object->severity_code;
-            $formticket->substit['__TICKETSUP_MESSAGE__'] = $object->message;
-            $formticket->substit['__TICKETSUP_PROGRESSION__'] = $object->progress;
-            if ($object->fk_user_assign > 0) {
-                $userstat->fetch($object->fk_user_assign);
-                $formticket->substit['__TICKETSUP_USER_ASSIGN__'] = dolGetFirstLastname($userstat->firstname, $userstat->lastname);
-            }
+		if ($action != 'add_message')
+		{
+			print '<div class="fichecenter"><div class="fichehalfleft">';
+			print '<a name="builddoc"></a>'; // ancre
 
-            if ($object->fk_user_create > 0) {
-                $userstat->fetch($object->fk_user_create);
-                $formticket->substit['__TICKETSUP_USER_CREATE__'] = dolGetFirstLastname($userstat->firstname, $userstat->lastname);
-            }
+			// Show links to link elements
+			$linktoelem = $form->showLinkToObjectBlock($object, null, array('ticket'));
+			$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
+
+			print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+
+			// Message list
+			print load_fiche_titre($langs->trans('TicketMessagesList'), '', 'messages@ticket');
+			$show_private_message = ($user->societe_id ? 0 : 1);
+			$actionobject->viewTicketTimelineMessages($show_private_message, true, $object);
+
+			print '</div></div>';
+			print '</div><!-- fichecenter -->';
+			print '<br style="clear: both">';
+		}
+		else
+		{
+			$action='new_message';
+			$modelmail='ticket_send';
+
+			print '<div>';
+			print load_fiche_titre($langs->trans('TicketAddMessage'), '', 'messages@ticket');
+
+			print '<hr>';
+
+			// Define output language
+			$outputlangs = $langs;
+			$newlang = '';
+			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id'])) {
+				$newlang = $_REQUEST['lang_id'];
+			}
+			if ($conf->global->MAIN_MULTILANGS && empty($newlang)) {
+				$newlang = $object->default_lang;
+			}
+
+			$formticket = new FormTicket($db);
+
+			$formticket->action = $action;
+			$formticket->track_id = $object->track_id;
+			$formticket->id = $object->id;
+
+			$formticket->withfile = 2;
+			$formticket->withcancel = 1;
+			$formticket->param = array('fk_user_create' => $user->id);
+			$formticket->param['langsmodels']=(empty($newlang)?$langs->defaultlang:$newlang);
+
+			// Tableau des parametres complementaires du post
+			$formticket->param['models']=$modelmail;
+			$formticket->param['models_id']=GETPOST('modelmailselected', 'int');
+			//$formticket->param['socid']=$object->fk_soc;
+			$formticket->param['returnurl']=$_SERVER["PHP_SELF"].'?track_id='.$object->track_id;
 
 
-            $formticket->showMessageForm('100%');
-            print '</div>';
-        }
-    }
-} // End action view
+			$formticket->withsubstit = 1;
 
-/***************************************************
- * LINKED OBJECT BLOCK
- *
- * Put here code to view linked object
- ****************************************************/
-$somethingshown = $form->showLinkedObjectBlock($object);
+			if ($object->fk_soc > 0) {
+				$object->fetch_thirdparty();
+				$formticket->substit['__THIRDPARTY_NAME__'] = $object->thirdparty->name;
+			}
+			$formticket->substit['__SIGNATURE__'] = $user->signature;
+			$formticket->substit['__TICKETSUP_TRACKID__'] = $object->track_id;
+			$formticket->substit['__TICKETSUP_REF__'] = $object->ref;
+			$formticket->substit['__TICKETSUP_SUBJECT__'] = $object->subject;
+			$formticket->substit['__TICKETSUP_TYPE__'] = $object->type_code;
+			$formticket->substit['__TICKETSUP_SEVERITY__'] = $object->severity_code;
+			$formticket->substit['__TICKETSUP_CATEGORY__'] = $object->category_code;         // For backward compatibility
+			$formticket->substit['__TICKETSUP_ANALYTIC_CODE__'] = $object->category_code;
+			$formticket->substit['__TICKETSUP_MESSAGE__'] = $object->message;
+			$formticket->substit['__TICKETSUP_PROGRESSION__'] = $object->progress;
+			if ($object->fk_user_assign > 0) {
+				$userstat->fetch($object->fk_user_assign);
+				$formticket->substit['__TICKETSUP_USER_ASSIGN__'] = dolGetFirstLastname($userstat->firstname, $userstat->lastname);
+			}
+
+			if ($object->fk_user_create > 0) {
+				$userstat->fetch($object->fk_user_create);
+				$formticket->substit['__TICKETSUP_USER_CREATE__'] = dolGetFirstLastname($userstat->firstname, $userstat->lastname);
+			}
+
+			$formticket->showMessageForm('100%');
+			print '</div>';
+	    }
+	}
+}
 
 // End of page
-llxFooter('');
+llxFooter();
 $db->close();

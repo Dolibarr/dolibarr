@@ -3,7 +3,7 @@ PayBoxSetup=Podešavanja modula PayBox
 PayBoxDesc=Ovaj modul nudi strane za uplatu na <a href="http://www.paybox.com" target="_blank">Paybox-u</a>. Može biti korišćen za slobodne uplate, ili za uplate vezane za određeni Dolibarr objekat (faktura, narudžbenica, ...)
 FollowingUrlAreAvailableToMakePayments=Sledeći URL-ovi mogu omogućiti klijentu da izvrši uplatu na Dolibarr objekte
 PaymentForm=Forma za uplatu
-WelcomeOnPaymentPage=Dobrodošli na naš servis online plaćanja
+WelcomeOnPaymentPage=Welcome to our online payment service
 ThisScreenAllowsYouToPay=Ovaj ekran vam omogućava da izvršite online uplatu u korist %s
 ThisIsInformationOnPayment=Ovo su informacije o uplati
 ToComplete=Popuniti
@@ -20,10 +20,11 @@ ToOfferALinkForOnlinePaymentOnInvoice=URL za korisnički interfejs %s online upl
 ToOfferALinkForOnlinePaymentOnContractLine=URL za korisnički interfejs %s online uplate za liniju ugovora
 ToOfferALinkForOnlinePaymentOnFreeAmount=URL za korisnički interfejs %s online uplate za slobodan iznos
 ToOfferALinkForOnlinePaymentOnMemberSubscription=URL za korisnički interfejs %s online uplate za korisničku pretplatu
+ToOfferALinkForOnlinePaymentOnDonation=URL to offer a %s online payment user interface for payment of donation
 YouCanAddTagOnUrl=Takođe možete dodati url parametar <b>&tag=<i>value</i></b> na bilo koji od ovih URL-ova (samo za slobodne uplate) kako biste uneli svoj sopstveni komentar za uplatu.
-SetupPayBoxToHavePaymentCreatedAutomatically=Podesite svoj PayBox sa url-om <b>%s</b> kako bi se uplata kreirala automatski kada je potvrđena u paybox-u.
+SetupPayBoxToHavePaymentCreatedAutomatically=Setup your Paybox with url <b>%s</b> to have payment created automatically when validated by Paybox.
 YourPaymentHasBeenRecorded=Ova strana potvrđuje da je Vaša uplata registrovana. Hvala.
-YourPaymentHasNotBeenRecorded=Vaša uplata nije registrovana i transakcija je otkazana. Hvala.
+YourPaymentHasNotBeenRecorded=Your payment has NOT been recorded and the transaction has been canceled. Thank you.
 AccountParameter=Parametri naloga
 UsageParameter=Parametri korišćenja
 InformationToFindParameters=Pomoć za pronalaženje informacije o Vašem %s nalogu

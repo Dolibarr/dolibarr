@@ -41,13 +41,13 @@ if (! isset($argv[1]) || ! $argv[1]) {
 $now=$argv[1];
 
 
-require_once($path."../../htdocs/master.inc.php");
-//require_once(PHP_WRITEEXCEL_PATH."/class.writeexcel_workbook.inc.php");
-//require_once(PHP_WRITEEXCEL_PATH."/class.writeexcel_worksheet.inc.php");
+require_once $path."../../htdocs/master.inc.php";
+//require_once PHP_WRITEEXCEL_PATH."/class.writeexcel_workbook.inc.php";
+//require_once PHP_WRITEEXCEL_PATH."/class.writeexcel_worksheet.inc.php";
 
-require_once(PHPEXCEL_PATH."/PHPExcel.php");
-//require_once(PHPEXCEL_PATH."/PHPExcel/Writer/Excel2007.php");
-require_once(PHPEXCEL_PATH."/PHPExcel/Writer/Excel5.php");
+require_once PHPEXCEL_PATH."/PHPExcel.php";
+//require_once PHPEXCEL_PATH."/PHPExcel/Writer/Excel2007.php";
+require_once PHPEXCEL_PATH."/PHPExcel/Writer/Excel5.php";
 
 // Global variables
 $version=DOL_VERSION;
@@ -60,7 +60,7 @@ $error=0;
 
 @set_time_limit(0);
 print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." *****\n";
-dol_syslog($script_file." launched with arg ".join(',',$argv));
+dol_syslog($script_file." launched with arg ".join(',', $argv));
 
 $fname = DOL_DATA_ROOT.'/export-contacts.xls';
 

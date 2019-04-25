@@ -5,9 +5,9 @@ RemoteControlSupport=Online Valós idejü / távoli támogatás
 OtherSupport=Más jellegü támogatás
 ToSeeListOfAvailableRessources=Kapcsolatba lépni / látni az elérhető erőforrásokat:
 HelpCenter=Segítség központ
-DolibarrHelpCenter=Dolibarr Segítség és Támogatási központ
-ToGoBackToDolibarr=Különben, kattintson <a href="%s">ide</a> a Dolibarr használatához
-TypeOfSupport=Támogatás forrása
+DolibarrHelpCenter=Dolibarr Help and Support Center
+ToGoBackToDolibarr=Otherwise, <a href="%s">click here to continue to use Dolibarr</a>.
+TypeOfSupport=Type of support
 TypeSupportCommunauty=Közösség (ingyenes)
 TypeSupportCommercial=Üzleti
 TypeOfHelp=Típus
@@ -15,12 +15,9 @@ NeedHelpCenter=Segítségre vagy támogatásra van szüksége?
 Efficiency=Hatékonyság
 TypeHelpOnly=Csak segítség
 TypeHelpDev=Segítség és fejlesztés
-TypeHelpDevForm=Segítség, fejlesztés és formálás
-ToGetHelpGoOnSparkAngels1=Egyes cégek gyors (időnként azonnali) segítséget tudnak nyújtani, azzal, hogy a gépe fölött átveszik az irányítást. Ilyen cégek listája a <b>%s</b> weboldalon található:
-ToGetHelpGoOnSparkAngels3=Ugyanakkor megtekintheti a Dolibarr oktatók listáját erre a gomra kattintva
-ToGetHelpGoOnSparkAngels2=Bizonyos esetekben nincs elérhető cég, változtassa meg a keresését "minden elérhető"-re. Több kérést tud így elküldeni.
-BackToHelpCenter=Más esetben, kattintson ide, hogy visszatérjen a <a href="%s">Segítség központ nyitólap</a>jára.
-LinkToGoldMember=Hívhatja az egyik előre kiválasztott az ön nyelvén (%s) tudó Dolibarr oktatót ha erre a Widget-re kattint (álltapot és maximális ár autómatikusan frissül):
+TypeHelpDevForm=Help+Development+Training
+BackToHelpCenter=Otherwise, <a href="%s">go back to Help center home page</a>.
+LinkToGoldMember=You can call one of the trainers preselected by Dolibarr for your language (%s) by clicking their Widget (status and maximum price are automatically updated):
 PossibleLanguages=Támogatott nyelvek
-SubscribeToFoundation=Segítse a Dolibarr projektet, iratkozzon fel az alapítványhoz
+SubscribeToFoundation=Help the Dolibarr project, subscribe to the foundation
 SeeOfficalSupport=Hivatalos Dolibarr támogatás a saját nyelvén: <br><b><a href="%s" target="_blank">%s</a></b>

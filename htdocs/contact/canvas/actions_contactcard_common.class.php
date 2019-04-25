@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2010-2012 Regis Houssin  <regis.houssin@capnetworks.com>
+/* Copyright (C) 2010-2012 Regis Houssin  <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,20 +27,31 @@
  */
 abstract class ActionsContactCardCommon
 {
-    var $db;
-    var $dirmodule;
-    var $targetmodule;
-    var $canvas;
-    var $card;
+    /**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+
+    public $dirmodule;
+    public $targetmodule;
+    public $canvas;
+    public $card;
 
 	//! Template container
-	var $tpl = array();
+	public $tpl = array();
 	//! Object container
-	var $object;
-	//! Error string
-	var $error;
-	//! Error array
-	var $errors=array();
+	public $object;
+
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
+
+
+	/**
+	 * @var string[] Error codes (or messages)
+	 */
+	public $errors = array();
 
 
 	/**
@@ -49,7 +60,7 @@ abstract class ActionsContactCardCommon
      *  @param	int		$id		Object id
      *  @return	object			Object loaded
      */
-    function getObject($id)
+    public function getObject($id)
     {
     	/*$ret = $this->getInstanceDao();
 
@@ -65,15 +76,17 @@ abstract class ActionsContactCardCommon
     	//}
     }
 
-	/**
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+    /**
      *  Set content of ->tpl array, to use into template
      *
      *  @param	string		$action    Type of action
      *  @param	int			$id			Id
      *  @return	string					HTML output
      */
-    function assign_values(&$action, $id)
+    public function assign_values(&$action, $id)
     {
+        // phpcs:enable
         global $conf, $langs, $user, $canvas;
         global $form, $formcompany, $objsoc;
 
@@ -109,7 +122,7 @@ abstract class ActionsContactCardCommon
         	}
         	else
         	{
-        		$this->tpl['company'] = $form->select_company($this->object->socid,'socid','',1);
+        		$this->tpl['company'] = $form->select_company($this->object->socid, 'socid', '', 1);
         	}
 
         	// Civility
@@ -127,26 +140,26 @@ abstract class ActionsContactCardCommon
         	}
 
             // Zip
-            $this->tpl['select_zip'] = $formcompany->select_ziptown($this->object->zip,'zipcode',array('town','selectcountry_id','state_id'),6);
+            $this->tpl['select_zip'] = $formcompany->select_ziptown($this->object->zip, 'zipcode', array('town','selectcountry_id','state_id'), 6);
 
             // Town
-            $this->tpl['select_town'] = $formcompany->select_ziptown($this->object->town,'town',array('zipcode','selectcountry_id','state_id'));
+            $this->tpl['select_town'] = $formcompany->select_ziptown($this->object->town, 'town', array('zipcode','selectcountry_id','state_id'));
 
             if (dol_strlen(trim($this->object->country_id)) == 0) $this->object->country_id = $objsoc->country_id;
 
             // Country
-            $this->tpl['select_country'] = $form->select_country($this->object->country_id,'country_id');
+            $this->tpl['select_country'] = $form->select_country($this->object->country_id, 'country_id');
             $countrynotdefined = $langs->trans("ErrorSetACountryFirst").' ('.$langs->trans("SeeAbove").')';
 
-            if ($user->admin) $this->tpl['info_admin'] = info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
+            if ($user->admin) $this->tpl['info_admin'] = info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 
             // State
-            if ($this->object->country_id) $this->tpl['select_state'] = $formcompany->select_state($this->object->fk_departement,$this->object->country_code);
+            if ($this->object->country_id) $this->tpl['select_state'] = $formcompany->select_state($this->object->state_id, $this->object->country_code);
             else $this->tpl['select_state'] = $countrynotdefined;
 
             // Public or private
             $selectarray=array('0'=>$langs->trans("ContactPublic"),'1'=>$langs->trans("ContactPrivate"));
-            $this->tpl['select_visibility'] = $form->selectarray('priv',$selectarray,$this->object->priv,0);
+            $this->tpl['select_visibility'] = $form->selectarray('priv', $selectarray, $this->object->priv, 0);
         }
 
         if ($action == 'view' || $action == 'edit' || $action == 'delete')
@@ -201,7 +214,7 @@ abstract class ActionsContactCardCommon
 
         if ($action == 'view' || $action == 'delete')
         {
-        	$this->tpl['showrefnav'] = $form->showrefnav($this->object,'id');
+        	$this->tpl['showrefnav'] = $form->showrefnav($this->object, 'id');
 
         	if ($this->object->socid > 0)
         	{
@@ -224,11 +237,11 @@ abstract class ActionsContactCardCommon
             $img=picto_from_langcode($this->object->country_code);
             $this->tpl['country'] = ($img?$img.' ':'').$this->object->country;
 
-            $this->tpl['phone_pro'] 	= dol_print_phone($this->object->phone_pro,$this->object->country_code,0,$this->object->id,'AC_TEL');
-            $this->tpl['phone_perso'] 	= dol_print_phone($this->object->phone_perso,$this->object->country_code,0,$this->object->id,'AC_TEL');
-            $this->tpl['phone_mobile'] 	= dol_print_phone($this->object->phone_mobile,$this->object->country_code,0,$this->object->id,'AC_TEL');
-            $this->tpl['fax'] 			= dol_print_phone($this->object->fax,$this->object->country_code,0,$this->object->id,'AC_FAX');
-            $this->tpl['email'] 		= dol_print_email($this->object->email,0,$this->object->id,'AC_EMAIL');
+            $this->tpl['phone_pro'] 	= dol_print_phone($this->object->phone_pro, $this->object->country_code, 0, $this->object->id, 'AC_TEL');
+            $this->tpl['phone_perso'] 	= dol_print_phone($this->object->phone_perso, $this->object->country_code, 0, $this->object->id, 'AC_TEL');
+            $this->tpl['phone_mobile'] 	= dol_print_phone($this->object->phone_mobile, $this->object->country_code, 0, $this->object->id, 'AC_TEL');
+            $this->tpl['fax'] 			= dol_print_phone($this->object->fax, $this->object->country_code, 0, $this->object->id, 'AC_FAX');
+            $this->tpl['email'] 		= dol_print_email($this->object->email, 0, $this->object->id, 'AC_EMAIL');
 
             $this->tpl['visibility'] = $this->object->LibPubPriv($this->object->priv);
 
@@ -250,10 +263,11 @@ abstract class ActionsContactCardCommon
         	array('label' => $langs->trans("LoginToCreate"), 'type' => 'text', 'name' => 'login', 'value' => $login),
         	array('label' => $langs->trans("Password"), 'type' => 'text', 'name' => 'password', 'value' => $password));
 
-        	$this->tpl['action_create_user'] = $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$this->object->id,$langs->trans("CreateDolibarrLogin"),$langs->trans("ConfirmCreateContact"),"confirm_create_user",$formquestion,'no');
+        	$this->tpl['action_create_user'] = $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$this->object->id, $langs->trans("CreateDolibarrLogin"), $langs->trans("ConfirmCreateContact"), "confirm_create_user", $formquestion, 'no');
         }
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *  Assign POST values into object
      *
@@ -261,31 +275,31 @@ abstract class ActionsContactCardCommon
      */
     private function assign_post()
     {
+        // phpcs:enable
         global $langs, $mysoc;
 
-        $this->object->old_name 			= 	$_POST["old_name"];
-        $this->object->old_firstname 		= 	$_POST["old_firstname"];
+        $this->object->old_name 		= $_POST["old_name"];
+        $this->object->old_firstname 	= $_POST["old_firstname"];
 
-        $this->object->socid				=	$_POST["socid"];
-        $this->object->lastname				=	$_POST["name"];
-        $this->object->firstname			= 	$_POST["firstname"];
-        $this->object->civility_id			= 	$_POST["civility_id"];
-        $this->object->poste				= 	$_POST["poste"];
-        $this->object->address				=	$_POST["address"];
-        $this->object->zip					=	$_POST["zipcode"];
-        $this->object->town					=	$_POST["town"];
-        $this->object->fk_departement		=	$_POST["state_id"];
-        $this->object->country_id			=	$_POST["country_id"]?$_POST["country_id"]:$mysoc->country_id;
-        $this->object->state_id        		=	$_POST["state_id"];
-        $this->object->phone_pro			= 	$_POST["phone_pro"];
-        $this->object->phone_perso			= 	$_POST["phone_perso"];
-        $this->object->phone_mobile			= 	$_POST["phone_mobile"];
-        $this->object->fax					=	$_POST["fax"];
-        $this->object->email				=	$_POST["email"];
-        $this->object->jabberid				= 	$_POST["jabberid"];
-        $this->object->priv					= 	$_POST["priv"];
-        $this->object->note					=	$_POST["note"];
-        $this->object->canvas				=	$_POST["canvas"];
+        $this->object->socid			= $_POST["socid"];
+        $this->object->lastname			= $_POST["name"];
+        $this->object->firstname		= $_POST["firstname"];
+        $this->object->civility_id		= $_POST["civility_id"];
+        $this->object->poste			= $_POST["poste"];
+        $this->object->address			= $_POST["address"];
+        $this->object->zip				= $_POST["zipcode"];
+        $this->object->town				= $_POST["town"];
+        $this->object->country_id		= $_POST["country_id"]?$_POST["country_id"]:$mysoc->country_id;
+        $this->object->state_id        	= $_POST["state_id"];
+        $this->object->phone_pro		= $_POST["phone_pro"];
+        $this->object->phone_perso		= $_POST["phone_perso"];
+        $this->object->phone_mobile		= $_POST["phone_mobile"];
+        $this->object->fax				= $_POST["fax"];
+        $this->object->email			= $_POST["email"];
+        $this->object->jabberid			= $_POST["jabberid"];
+        $this->object->priv				= $_POST["priv"];
+        $this->object->note				= $_POST["note"];
+        $this->object->canvas			= $_POST["canvas"];
 
         // We set country_id, and country_code label of the chosen country
         if ($this->object->country_id)
@@ -300,11 +314,9 @@ abstract class ActionsContactCardCommon
             {
                 dol_print_error($this->db);
             }
-            $this->object->country_id	=	$langs->trans("Country".$obj->code)?$langs->trans("Country".$obj->code):$obj->label;
-            $this->object->country_code	=	$obj->code;
-            $this->object->country		=	$langs->trans("Country".$obj->code)?$langs->trans("Country".$obj->code):$obj->label;
+            $this->object->country_id = $langs->trans("Country".$obj->code)?$langs->trans("Country".$obj->code):$obj->label;
+            $this->object->country_code = $obj->code;
+            $this->object->country = $langs->trans("Country".$obj->code)?$langs->trans("Country".$obj->code):$obj->label;
         }
     }
-
 }
-

@@ -109,11 +109,11 @@ if ($action == 'create_ticket' && GETPOST('add_ticket')) {
         }
     }
 
-    if (!GETPOST("subject","none")) {
+    if (!GETPOST("subject", "none")) {
         $error++;
         array_push($object->errors, $langs->trans("ErrorFieldRequired", $langs->transnoentities("Subject")));
         $action = '';
-    } elseif (!GETPOST("message","none")) {
+    } elseif (!GETPOST("message", "none")) {
         $error++;
         array_push($object->errors, $langs->trans("ErrorFieldRequired", $langs->transnoentities("message")));
         $action = '';
@@ -131,8 +131,8 @@ if ($action == 'create_ticket' && GETPOST('add_ticket')) {
 
         $object->track_id = generate_random_id(16);
 
-        $object->subject = GETPOST("subject","none");
-        $object->message = GETPOST("message","none");
+        $object->subject = GETPOST("subject", "none");
+        $object->message = GETPOST("message", "none");
         $object->origin_email = $origin_email;
 
         $object->type_code = GETPOST("type_code", 'az09');
@@ -177,7 +177,7 @@ if ($action == 'create_ticket' && GETPOST('add_ticket')) {
         	$action = "infos_success";
         } else {
 	    	$object->db->rollback();
-	    	setEventMessage($object->errors, 'errors');
+	    	setEventMessages($object->error, $object->errors, 'errors');
 	    	$action = 'create_ticket';
 	    }
 
@@ -213,7 +213,7 @@ if ($action == 'create_ticket' && GETPOST('add_ticket')) {
                 $message .= dol_nl2br($infos_new_ticket);
                 $message .= $conf->global->TICKET_MESSAGE_MAIL_SIGNATURE ? $conf->global->TICKET_MESSAGE_MAIL_SIGNATURE : $langs->transnoentities('TicketMessageMailSignatureText');
 
-                $sendto = GETPOST('email','alpha');
+                $sendto = GETPOST('email', 'alpha');
 
                 $from = $conf->global->MAIN_INFO_SOCIETE_NOM . '<' . $conf->global->TICKET_NOTIFICATION_EMAIL_FROM . '>';
                 $replyto = $from;
@@ -226,8 +226,8 @@ if ($action == 'create_ticket' && GETPOST('add_ticket')) {
                 }
                 include_once DOL_DOCUMENT_ROOT . '/core/class/CMailFile.class.php';
                 $mailfile = new CMailFile($subject, $sendto, $from, $message, $filepath, $mimetype, $filename, $sendtocc, '', $deliveryreceipt, -1);
-                if ($mailfile->error) {
-                    setEventMessage($mailfile->error, 'errors');
+                if ($mailfile->error || $mailfile->errors) {
+                    setEventMessages($mailfile->error, $mailfile->errors, 'errors');
                 } else {
                     $result = $mailfile->sendfile();
                 }
@@ -287,9 +287,9 @@ if ($action == 'create_ticket' && GETPOST('add_ticket')) {
 	                }
 	                include_once DOL_DOCUMENT_ROOT . '/core/class/CMailFile.class.php';
 	                $mailfile = new CMailFile($subject, $sendto, $from, $message_admin, $filepath, $mimetype, $filename, $sendtocc, '', $deliveryreceipt, -1);
-	                if ($mailfile->error) {
-	                    setEventMessage($mailfile->error, 'errors');
-	                } else {
+	                if ($mailfile->error || $mailfile->errors) {
+                        setEventMessages($mailfile->error, $mailfile->errors, 'errors');
+                    } else {
 	                    $result = $mailfile->sendfile();
 	                }
 	                if (!empty($conf->global->TICKET_DISABLE_MAIL_AUTOCOPY_TO)) {
@@ -308,10 +308,10 @@ if ($action == 'create_ticket' && GETPOST('add_ticket')) {
             	$formmail->remove_attached_files($i);
             }
 
-            setEventMessage($langs->trans('YourTicketSuccessfullySaved'));
+            setEventMessages($langs->trans('YourTicketSuccessfullySaved'), null, 'mesgs');
         }
     } else {
-        setEventMessage($object->errors, 'errors');
+        setEventMessages($object->error, $object->errors, 'errors');
     }
 }
 

@@ -37,7 +37,7 @@ class modCategorie extends DolibarrModules
 	 *
 	 *   @param      DoliDB		$db      Database handler
 	 */
-	function __construct($db)
+	public function __construct($db)
 	{
 	    global $conf;
 
@@ -45,9 +45,9 @@ class modCategorie extends DolibarrModules
 		$this->numero = 1780;
 
 		$this->family = "technic";
-		$this->module_position = 20;
+		$this->module_position = '20';
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
-		$this->name = preg_replace('/^mod/i','',get_class($this));
+		$this->name = preg_replace('/^mod/i', '', get_class($this));
 		$this->description = "Gestion des categories (produits, clients, fournisseurs...)";
 
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
@@ -284,6 +284,7 @@ class modCategorie extends DolibarrModules
 			'p.email' => 'Email',
 			'p.note_private' => 'NotePrivate',
 			'p.note_public' => 'NotePublic',
+            'p.statut' => 'Status',
 			's.nom'=>"Name",
 			's.client'=>"Customer",
 			's.fournisseur'=>"Supplier",
@@ -301,6 +302,7 @@ class modCategorie extends DolibarrModules
 			'u.description' => "Text",
 			'p.lastname' => 'Text',
 			'p.firstname' => 'Text',
+            'p.statut'=>"Numeric",
 			's.nom'=>"Text",
 			's.status'=>"Text",
 			's.address'=>"Text",
@@ -333,6 +335,7 @@ class modCategorie extends DolibarrModules
 			'p.email' => 'contact',
 			'p.note_private' => 'contact',
 			'p.note_public' => 'contact',
+            'p.statut' => 'contact',
 			's.nom'=>"company",
 			's.client'=>"company",
 			's.fournisseur'=>"company",
@@ -480,13 +483,13 @@ class modCategorie extends DolibarrModules
      *      @param      string	$options    Options when enabling module ('', 'noboxes')
 	 *      @return     int             	1 if OK, 0 if KO
      */
-	function init($options='')
+	public function init($options = '')
 	{
 		// Permissions
 		$this->remove($options);
 
 		$sql = array();
 
-		return $this->_init($sql,$options);
+		return $this->_init($sql, $options);
 	}
 }

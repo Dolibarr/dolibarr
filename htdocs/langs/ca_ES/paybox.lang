@@ -20,10 +20,11 @@ ToOfferALinkForOnlinePaymentOnInvoice=URL que ofereix una interfície de cobrame
 ToOfferALinkForOnlinePaymentOnContractLine=URL que ofereix una interfície de pagament en línia %s basada en l'import d'una línia de contracte
 ToOfferALinkForOnlinePaymentOnFreeAmount=URL que ofereix una interfície de pagament en línia %s basada en un impport llíure
 ToOfferALinkForOnlinePaymentOnMemberSubscription=URL que ofereix una interfície de pagament en línia %s per una quota de soci
+ToOfferALinkForOnlinePaymentOnDonation=URL to offer a %s online payment user interface for payment of donation
 YouCanAddTagOnUrl=També pot afegir el paràmetre url <b>&tag=<i>value</i></b> per a qualsevol d'aquestes adreces (obligatori només per al pagament lliure) per veure el seu propi codi de comentari de pagament.
-SetupPayBoxToHavePaymentCreatedAutomatically=Configureu la vostra url Paybox <b>%s</b> per tal que el pagament es creu automàticament al validar.
+SetupPayBoxToHavePaymentCreatedAutomatically=Setup your Paybox with url <b>%s</b> to have payment created automatically when validated by Paybox.
 YourPaymentHasBeenRecorded=Aquesta pàgina confirma que el pagament s'ha registrat correctament. Gràcies.
-YourPaymentHasNotBeenRecorded=El pagament no ha estat registrat i la transacció ha estat anul·lada. Gràcies.
+YourPaymentHasNotBeenRecorded=Your payment has NOT been recorded and the transaction has been canceled. Thank you.
 AccountParameter=Paràmetres del compte
 UsageParameter=Paràmetres d'ús
 InformationToFindParameters=Informació per trobar la seva configuració de compte %s

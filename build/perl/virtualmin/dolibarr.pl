@@ -30,7 +30,7 @@ return "Regis Houssin";
 # script_dolibarr_versions()
 sub script_dolibarr_versions
 {
-return ( "7.0.0", "6.0.5", "5.0.7" );
+return ( "9.0.0", "8.0.3", "7.0.4", "6.0.8", "5.0.7" );
 }
 
 sub script_dolibarr_release
@@ -263,15 +263,16 @@ if ($upgrade) {
 	local @params = ( [ "action", "upgrade" ],
 			  [ "versionfrom", $upgrade->{'version'} ],
 			  [ "versionto", $ver ],
+			  [ "installlock", "444" ],
 			 );
 	local $p = $ver >= 3.8 ? "step5" : "etape5";
 	local $err = &call_dolibarr_wizard_page(\@params, $p, $d, $opts);
 	return (-1, "Dolibarr wizard failed : $err") if ($err);
 	
-	# Remove the installation directory.
-	local $dinstall = "$opts->{'dir'}/install";
-	$dinstall  =~ s/\/$//;
-	$out = &run_as_domain_user($d, "rm -rf ".quotemeta($dinstall));
+	# Remove the installation directory. (deprecated)
+	# local $dinstall = "$opts->{'dir'}/install";
+	# $dinstall  =~ s/\/$//;
+	# $out = &run_as_domain_user($d, "rm -rf ".quotemeta($dinstall));
 	
 	}
 else {
@@ -306,15 +307,18 @@ else {
 			  [ "login", "admin" ],
 			  [ "pass", $dompass ],
 			  [ "pass_verif", $dompass ],
+			  [ "installlock", "444" ],
 	 		 );
 	local $p = $ver >= 3.8 ? "step5" : "etape5";
 	local $err = &call_dolibarr_wizard_page(\@params, $p, $d, $opts);
 	return (-1, "Dolibarr wizard failed : $err") if ($err);
 	
-	# Remove the installation directory and protect config file.
-	local $dinstall = "$opts->{'dir'}/install";
-	$dinstall  =~ s/\/$//;
-	$out = &run_as_domain_user($d, "rm -rf ".quotemeta($dinstall));
+	# Remove the installation directory (deprecated)
+	# local $dinstall = "$opts->{'dir'}/install";
+	# $dinstall  =~ s/\/$//;
+	# $out = &run_as_domain_user($d, "rm -rf ".quotemeta($dinstall));
+	
+	# Protect config file
 	&set_permissions_as_domain_user($d, 0644, $cfile);
 	&set_permissions_as_domain_user($d, 0755, $cfiledir);
 	}
@@ -386,6 +390,8 @@ sub script_dolibarr_check_latest
 {
 local ($ver) = @_;
 local @vers = &osdn_package_versions("dolibarr",
+				$ver >= 9.0 ? "dolibarr\\-(9\\.0\\.[0-9\\.]+)\\.tgz" :
+				$ver >= 8.0 ? "dolibarr\\-(8\\.0\\.[0-9\\.]+)\\.tgz" :
 				$ver >= 7.0 ? "dolibarr\\-(7\\.0\\.[0-9\\.]+)\\.tgz" :
 				$ver >= 6.0 ? "dolibarr\\-(6\\.0\\.[0-9\\.]+)\\.tgz" :
 				$ver >= 5.0 ? "dolibarr\\-(5\\.0\\.[0-9\\.]+)\\.tgz" :

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (c) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,22 +22,25 @@
  *       \ingroup    expensereport
  *       \brief      Fichier de la classe de gestion des stats des expensereport et notes de frais
  */
-include_once DOL_DOCUMENT_ROOT . '/core/class/stats.class.php';
-include_once DOL_DOCUMENT_ROOT . '/expensereport/class/expensereport.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/class/stats.class.php';
+require_once DOL_DOCUMENT_ROOT . '/expensereport/class/expensereport.class.php';
 
 /**
  *  Classe permettant la gestion des stats des expensereports et notes de frais
  */
 class ExpenseReportStats extends Stats
 {
-    public $table_element;
+    /**
+	 * @var string Name of table without prefix where object is stored
+	 */
+	public $table_element;
 
-    var $socid;
-    var $userid;
+    public $socid;
+    public $userid;
 
-    var $from;
-    var $field;
-    var $where;
+    public $from;
+    public $field;
+    public $where;
 
 	/**
 	 * Constructor
@@ -47,7 +50,7 @@ class ExpenseReportStats extends Stats
      * @param   int			$userid    Id user for filter
 	 * @return 	void
 	 */
-	function __construct($db, $socid=0, $userid=0)
+	public function __construct($db, $socid = 0, $userid = 0)
 	{
 		global $conf, $user;
 
@@ -74,7 +77,7 @@ class ExpenseReportStats extends Stats
 		{
 			$childids = $user->getAllChildIds();
 			$childids[]=$user->id;
-			$this->where.=" AND e.fk_user_author IN (".(join(',',$childids)).")";
+			$this->where.=" AND e.fk_user_author IN (".(join(',', $childids)).")";
 		}
 
 		if ($this->userid > 0) $this->where.=' AND e.fk_user_author = '.$this->userid;
@@ -86,9 +89,9 @@ class ExpenseReportStats extends Stats
 	 *
 	 *	@return		array	Array of values
 	 */
-	function getNbByYear()
+	public function getNbByYear()
 	{
-		$sql = "SELECT YEAR(".$this->db->ifsql('e.date_valid IS NULL','e.date_create','e.date_valid').") as dm, count(*)";
+		$sql = "SELECT YEAR(".$this->db->ifsql('e.date_valid IS NULL', 'e.date_create', 'e.date_valid').") as dm, count(*)";
 		$sql.= " FROM ".$this->from;
 		$sql.= " GROUP BY dm DESC";
 		$sql.= " WHERE ".$this->where;
@@ -104,14 +107,14 @@ class ExpenseReportStats extends Stats
      *	@param	int		$format		0=Label of absiss is a translated text, 1=Label of absiss is month number, 2=Label of absiss is first letter of month
 	 *	@return	array				Array of values
 	 */
-	function getNbByMonth($year, $format=0)
+	public function getNbByMonth($year, $format = 0)
 	{
-		$sql = "SELECT MONTH(".$this->db->ifsql('e.date_valid IS NULL','e.date_create','e.date_valid').") as dm, count(*)";
+		$sql = "SELECT MONTH(".$this->db->ifsql('e.date_valid IS NULL', 'e.date_create', 'e.date_valid').") as dm, count(*)";
 		$sql.= " FROM ".$this->from;
 		$sql.= " WHERE YEAR(e.date_valid) = ".$year;
 		$sql.= " AND ".$this->where;
 		$sql.= " GROUP BY dm";
-        $sql.= $this->db->order('dm','DESC');
+        $sql.= $this->db->order('dm', 'DESC');
 
 		$res=$this->_getNbByMonth($year, $sql, $format);
 		//var_dump($res);print '<br>';
@@ -126,14 +129,14 @@ class ExpenseReportStats extends Stats
      *	@param	int		$format		0=Label of absiss is a translated text, 1=Label of absiss is month number, 2=Label of absiss is first letter of month
 	 *	@return	array				Array of values
 	 */
-	function getAmountByMonth($year, $format=0)
+	public function getAmountByMonth($year, $format = 0)
 	{
-		$sql = "SELECT date_format(".$this->db->ifsql('e.date_valid IS NULL','e.date_create','e.date_valid').",'%m') as dm, sum(".$this->field.")";
+		$sql = "SELECT date_format(".$this->db->ifsql('e.date_valid IS NULL', 'e.date_create', 'e.date_valid').",'%m') as dm, sum(".$this->field.")";
 		$sql.= " FROM ".$this->from;
-		$sql.= " WHERE date_format(".$this->db->ifsql('e.date_valid IS NULL','e.date_create','e.date_valid').",'%Y') = '".$year."'";
+		$sql.= " WHERE date_format(".$this->db->ifsql('e.date_valid IS NULL', 'e.date_create', 'e.date_valid').",'%Y') = '".$year."'";
 		$sql.= " AND ".$this->where;
 		$sql.= " GROUP BY dm";
-		$sql.= $this->db->order('dm','DESC');
+		$sql.= $this->db->order('dm', 'DESC');
 
 		$res=$this->_getAmountByMonth($year, $sql, $format);
 		//var_dump($res);print '<br>';
@@ -146,14 +149,14 @@ class ExpenseReportStats extends Stats
 	 *	@param	int		$year		Year to scan
 	 *	@return	array				Array of values
 	 */
-	function getAverageByMonth($year)
+	public function getAverageByMonth($year)
 	{
-		$sql = "SELECT date_format(".$this->db->ifsql('e.date_valid IS NULL','e.date_create','e.date_valid').",'%m') as dm, avg(".$this->field.")";
+		$sql = "SELECT date_format(".$this->db->ifsql('e.date_valid IS NULL', 'e.date_create', 'e.date_valid').",'%m') as dm, avg(".$this->field.")";
 		$sql.= " FROM ".$this->from;
-		$sql.= " WHERE date_format(".$this->db->ifsql('e.date_valid IS NULL','e.date_create','e.date_valid').",'%Y') = '".$year."'";
+		$sql.= " WHERE date_format(".$this->db->ifsql('e.date_valid IS NULL', 'e.date_create', 'e.date_valid').",'%Y') = '".$year."'";
 		$sql.= " AND ".$this->where;
 		$sql.= " GROUP BY dm";
-        $sql.= $this->db->order('dm','DESC');
+        $sql.= $this->db->order('dm', 'DESC');
 
 		return $this->_getAverageByMonth($year, $sql);
 	}
@@ -163,15 +166,14 @@ class ExpenseReportStats extends Stats
 	 *
 	 *	@return	array				Array of values
 	 */
-	function getAllByYear()
+	public function getAllByYear()
 	{
-		$sql = "SELECT date_format(".$this->db->ifsql('e.date_valid IS NULL','e.date_create','e.date_valid').",'%Y') as year, count(*) as nb, sum(".$this->field.") as total, avg(".$this->field.") as avg";
+		$sql = "SELECT date_format(".$this->db->ifsql('e.date_valid IS NULL', 'e.date_create', 'e.date_valid').",'%Y') as year, count(*) as nb, sum(".$this->field.") as total, avg(".$this->field.") as avg";
 		$sql.= " FROM ".$this->from;
 		$sql.= " WHERE ".$this->where;
 		$sql.= " GROUP BY year";
-        $sql.= $this->db->order('year','DESC');
+        $sql.= $this->db->order('year', 'DESC');
 
-		return $this->_getAllByYear($sql);
-	}
+        return $this->_getAllByYear($sql);
+    }
 }
-

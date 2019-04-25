@@ -1,18 +1,19 @@
 # Dolibarr language file - Source file is en_US - salaries
 SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Accounting account used for user third parties
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=The dedicated accounting account defined on user card will be used for Subledger accouting only. This one will be used for General Ledger and as default value of Subledger accounting if dedicated user accouting account on user is not defined.
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=Lietotāja kartē norādītais grāmatvedības konts tiks izmantots tikai pakārtotajam grāmatvedim. Šis viens tiks izmantots General Ledger un noklusējuma vērtība Subledged grāmatvedībai, ja lietotāja definēts lietotāju grāmatvedības konts nav definēts.
 SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Accounting account by default for wage payments
 Salary=Alga
 Salaries=Algas
 NewSalaryPayment=Jauna algas izmaksa
+AddSalaryPayment=Pievienot algas maksājumu
 SalaryPayment=Algas maksājums
 SalariesPayments=Algu maksājumi
 ShowSalaryPayment=Rādīt algu maksājumus
 THM=Vidējā stundas cena
 TJM=Vidējā dienas likme
-CurrentSalary=Current salary
+CurrentSalary=Pašreizējā alga
 THMDescription=This value may be used to calculate cost of time consumed on a project entered by users if module project is used
 TJMDescription=This value is currently as information only and is not used for any calculation
-LastSalaries=Latest %s salary payments
-AllSalaries=All salary payments
-SalariesStatistics=Statistiques salaires
+LastSalaries=Jaunākie %s algu maksājumi
+AllSalaries=Visi algu maksājumi
+SalariesStatistics=Algas statistika

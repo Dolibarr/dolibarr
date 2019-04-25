@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005      Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2010-2012 Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -24,7 +24,7 @@
  *		\brief      Withdraw reject
  */
 
-require('../../main.inc.php');
+require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/prelevement.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/rejetprelevement.class.php';
@@ -38,20 +38,20 @@ $langs->loadLangs(array("banks","categories",'withdrawals','bills'));
 if ($user->societe_id > 0) accessforbidden();
 
 // Get supervariables
-$prev_id = GETPOST('id','int');
+$prev_id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
 
 // Load variable for pagination
-$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
-$sortfield = GETPOST('sortfield','alpha');
-$sortorder = GETPOST('sortorder','alpha');
-$page = GETPOST('page','int');
+$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
+$sortfield = GETPOST('sortfield', 'alpha');
+$sortorder = GETPOST('sortorder', 'alpha');
+$page = GETPOST('page', 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-$object = new BonPrelevement($db,"");
+$object = new BonPrelevement($db, "");
 
 
 
@@ -60,7 +60,7 @@ $object = new BonPrelevement($db,"");
  * View
  */
 
-llxHeader('',$langs->trans("WithdrawalsReceipts"));
+llxHeader('', $langs->trans("WithdrawalsReceipts"));
 
 if ($prev_id > 0 || $ref)
 {
@@ -78,7 +78,7 @@ if ($prev_id > 0 || $ref)
 		print '<table class="border centpercent">'."\n";
 
 		//print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td><td>'.$object->getNomUrl(1).'</td></tr>';
-		print '<tr><td class="titlefield">'.$langs->trans("Date").'</td><td>'.dol_print_date($object->datec,'day').'</td></tr>';
+		print '<tr><td class="titlefield">'.$langs->trans("Date").'</td><td>'.dol_print_date($object->datec, 'day').'</td></tr>';
 		print '<tr><td>'.$langs->trans("Amount").'</td><td>'.price($object->amount).'</td></tr>';
 
 		// Status
@@ -94,7 +94,7 @@ if ($prev_id > 0 || $ref)
 			$muser->fetch($object->user_trans);
 
 			print '<tr><td>'.$langs->trans("TransData").'</td><td>';
-			print dol_print_date($object->date_trans,'day');
+			print dol_print_date($object->date_trans, 'day');
 			print ' '.$langs->trans("By").' '.$muser->getFullName($langs).'</td></tr>';
 			print '<tr><td>'.$langs->trans("TransMetod").'</td><td>';
 			print $object->methodes_trans[$object->method_trans];
@@ -103,7 +103,7 @@ if ($prev_id > 0 || $ref)
 		if($object->date_credit <> 0)
 		{
 			print '<tr><td>'.$langs->trans('CreditDate').'</td><td>';
-			print dol_print_date($object->date_credit,'day');
+			print dol_print_date($object->date_credit, 'day');
 			print '</td></tr>';
 		}
 
@@ -135,7 +135,6 @@ if ($prev_id > 0 || $ref)
 		print '</div>';
 
 		dol_fiche_end();
-
     }
   	else
     {
@@ -190,8 +189,8 @@ if ($resql)
   	print '<div class="div-table-responsive-no-min">';		// You can use div-table-responsive-no-min if you dont need reserved height for your table
   	print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
   	print '<tr class="liste_titre">';
-  	print '<td>'.$langs->trans("Line").'</td><td>'.$langs->trans("ThirdParty").'</td><td align="right">'.$langs->trans("Amount").'</td>';
-  	print '<td>'.$langs->trans("Reason").'</td><td align="center">'.$langs->trans("ToBill").'</td><td align="center">'.$langs->trans("Invoice").'</td></tr>';
+  	print '<td>'.$langs->trans("Line").'</td><td>'.$langs->trans("ThirdParty").'</td><td class="right">'.$langs->trans("Amount").'</td>';
+  	print '<td>'.$langs->trans("Reason").'</td><td align="center">'.$langs->trans("ToBill").'</td><td class="center">'.$langs->trans("Invoice").'</td></tr>';
 
 	$total = 0;
 
@@ -210,7 +209,7 @@ if ($resql)
     		print '</a></td>';
     		print '<td><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$obj->socid.'">'.$obj->name."</a></td>\n";
 
-    		print '<td align="right">'.price($obj->amount)."</td>\n";
+    		print '<td class="right">'.price($obj->amount)."</td>\n";
     		print '<td>'.$rej->motifs[$obj->motif].'</td>';
 
     		print '<td align="center">'.yn($obj->afacturer).'</td>';
@@ -231,7 +230,7 @@ if ($resql)
     {
     	print '<tr class="liste_total"><td>&nbsp;</td>';
     	print '<td class="liste_total">'.$langs->trans("Total").'</td>';
-    	print '<td align="right">'.price($total)."</td>\n";
+    	print '<td class="right">'.price($total)."</td>\n";
     	print '<td colspan="3">&nbsp;</td>';
     	print "</tr>\n";
     }
@@ -245,5 +244,6 @@ else
 	dol_print_error($db);
 }
 
+// End of page
 llxFooter();
 $db->close();

@@ -3,7 +3,7 @@
 -- Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
 -- Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
 -- Copyright (C) 2004      Guillaume Delecourt  <guillaume.delecourt@opensides.be>
--- Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+-- Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
 -- Copyright (C) 2007 	   Patrick Raguin       <patrick.raguin@gmail.com>
 -- Copyright (C) 2011 	   Juanjo Menent        <jmenent@2byte.es>
 --
@@ -80,7 +80,7 @@ INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'HNL'
 INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'HKD', '[36]', 1,				'Hong Kong Dollar');
 INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'HUF', '[70,116]', 1,			'Hungary Forint');
 INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'ISK', '[107,114]', 1,			'Iceland Krona');
-INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'INR', NULL, 1,					'India Rupee'); 
+INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'INR', '[8377]', 1,				'India Rupee'); 
 INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'IDR', '[82,112]', 1,			'Indonesia Rupiah');
 INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'IRR', '[65020]', 1,				'Iran Rial');
 INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'IMP', '[163]', 1,				'Isle of Man Pound');

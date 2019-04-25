@@ -22,5 +22,4 @@
  */
 
 // Affichage des templates
-require ('tpl/validation2.tpl.php');
-
+require 'tpl/validation2.tpl.php';

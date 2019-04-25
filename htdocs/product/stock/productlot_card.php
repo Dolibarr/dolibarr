@@ -1,7 +1,6 @@
 <?php
-/* Copyright (C) 2007-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2007-2018 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2018      All-3kcis       		 <contact@all-3kcis.fr>
- * Copyright (C) ---Put here your own copyright and developer email---
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,19 +35,19 @@ require_once DOL_DOCUMENT_ROOT.'/product/stock/class/productlot.class.php';
 $langs->loadLangs(array('stock', 'other', 'productbatch'));
 
 // Get parameters
-$id			= GETPOST('id','int');
-$action		= GETPOST('action','alpha');
-$backtopage = GETPOST('backtopage','alpha');
-$batch  	= GETPOST('batch','alpha');
-$productid  = GETPOST('productid','int');
-$ref        = GETPOST('ref','alpha');       // ref is productid_batch
+$id			= GETPOST('id', 'int');
+$action		= GETPOST('action', 'alpha');
+$backtopage = GETPOST('backtopage', 'alpha');
+$batch  	= GETPOST('batch', 'alpha');
+$productid  = GETPOST('productid', 'int');
+$ref        = GETPOST('ref', 'alpha');       // ref is productid_batch
 
-$search_entity=GETPOST('search_entity','int');
-$search_fk_product=GETPOST('search_fk_product','int');
-$search_batch=GETPOST('search_batch','alpha');
-$search_fk_user_creat=GETPOST('search_fk_user_creat','int');
-$search_fk_user_modif=GETPOST('search_fk_user_modif','int');
-$search_import_key=GETPOST('search_import_key','int');
+$search_entity=GETPOST('search_entity', 'int');
+$search_fk_product=GETPOST('search_fk_product', 'int');
+$search_batch=GETPOST('search_batch', 'alpha');
+$search_fk_user_creat=GETPOST('search_fk_user_creat', 'int');
+$search_fk_user_modif=GETPOST('search_fk_user_modif', 'int');
+$search_import_key=GETPOST('search_import_key', 'int');
 
 if (empty($action) && empty($id) && empty($ref)) $action='list';
 
@@ -74,7 +73,7 @@ if ($id || $ref)
 {
     if ($ref)
     {
-        $tmp=explode('_',$ref);
+        $tmp=explode('_', $ref);
         $productid=$tmp[0];
         $batch=$tmp[1];
     }
@@ -99,7 +98,7 @@ $usercandelete = $user->rights->produit->supprimer;
  */
 
 $parameters=array();
-$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+$reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 if (empty($reshook))
@@ -124,7 +123,7 @@ if (empty($reshook))
 
     	// Fill array 'array_options' with data from update form
         $extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
-        $ret = $extrafields->setOptionalsFromPost($extralabels, $object, GETPOST('attribute','none'));
+        $ret = $extrafields->setOptionalsFromPost($extralabels, $object, GETPOST('attribute', 'none'));
         if ($ret < 0) $error++;
 
         if (! $error)
@@ -145,9 +144,9 @@ if (empty($reshook))
 	// Action to add record
 	if ($action == 'add')
 	{
-		if (GETPOST('cancel','alpha'))
+		if (GETPOST('cancel', 'alpha'))
 		{
-			$urltogo=$backtopage?$backtopage:dol_buildpath('/stock/list.php',1);
+			$urltogo=$backtopage?$backtopage:dol_buildpath('/stock/list.php', 1);
 			header("Location: ".$urltogo);
 			exit;
 		}
@@ -156,17 +155,17 @@ if (empty($reshook))
 
 		/* object_prop_getpost_prop */
 
-    	$object->entity=GETPOST('entity','int');
-    	$object->fk_product=GETPOST('fk_product','int');
-    	$object->batch=GETPOST('batch','alpha');
-    	$object->fk_user_creat=GETPOST('fk_user_creat','int');
-    	$object->fk_user_modif=GETPOST('fk_user_modif','int');
-    	$object->import_key=GETPOST('import_key','int');
+    	$object->entity=GETPOST('entity', 'int');
+    	$object->fk_product=GETPOST('fk_product', 'int');
+    	$object->batch=GETPOST('batch', 'alpha');
+    	$object->fk_user_creat=GETPOST('fk_user_creat', 'int');
+    	$object->fk_user_modif=GETPOST('fk_user_modif', 'int');
+    	$object->import_key=GETPOST('import_key', 'int');
 
 		if (empty($object->ref))
 		{
 			$error++;
-			setEventMessages($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Ref")), null, 'errors');
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Ref")), null, 'errors');
 		}
 
 		if (! $error)
@@ -175,7 +174,7 @@ if (empty($reshook))
 			if ($result > 0)
 			{
 				// Creation OK
-				$urltogo=$backtopage?$backtopage:dol_buildpath('/stock/list.php',1);
+				$urltogo=$backtopage?$backtopage:dol_buildpath('/stock/list.php', 1);
 				header("Location: ".$urltogo);
 				exit;
 			}
@@ -193,24 +192,24 @@ if (empty($reshook))
 	}
 
 	// Cancel
-	if ($action == 'update' && GETPOST('cancel','alpha')) $action='view';
+	if ($action == 'update' && GETPOST('cancel', 'alpha')) $action='view';
 
 	// Action to update record
-	if ($action == 'update' && ! GETPOST('cancel','alpha'))
+	if ($action == 'update' && ! GETPOST('cancel', 'alpha'))
 	{
 		$error=0;
 
-    	$object->entity=GETPOST('entity','int');
-    	$object->fk_product=GETPOST('fk_product','int');
-    	$object->batch=GETPOST('batch','alpha');
-    	$object->fk_user_creat=GETPOST('fk_user_creat','int');
-    	$object->fk_user_modif=GETPOST('fk_user_modif','int');
-    	$object->import_key=GETPOST('import_key','int');
+    	$object->entity=GETPOST('entity', 'int');
+    	$object->fk_product=GETPOST('fk_product', 'int');
+    	$object->batch=GETPOST('batch', 'alpha');
+    	$object->fk_user_creat=GETPOST('fk_user_creat', 'int');
+    	$object->fk_user_modif=GETPOST('fk_user_modif', 'int');
+    	$object->import_key=GETPOST('import_key', 'int');
 
 		if (empty($object->ref))
 		{
 			$error++;
-			setEventMessages($langs->transnoentitiesnoconv("ErrorFieldRequired",$langs->transnoentitiesnoconv("Ref")), null, 'errors');
+			setEventMessages($langs->transnoentitiesnoconv("ErrorFieldRequired", $langs->transnoentitiesnoconv("Ref")), null, 'errors');
 		}
 
 		if (! $error)
@@ -242,7 +241,7 @@ if (empty($reshook))
 		{
 			// Delete OK
 			setEventMessages("RecordDeleted", null, 'mesgs');
-			header("Location: ".dol_buildpath('/stock/list.php',1));
+			header("Location: ".dol_buildpath('/stock/list.php', 1));
 			exit;
 		}
 		else
@@ -256,7 +255,6 @@ if (empty($reshook))
     $upload_dir = $conf->productbatch->multidir_output[$conf->entity];
     $permissioncreate = $usercancreate;
     include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
-
 }
 
 
@@ -266,7 +264,7 @@ if (empty($reshook))
  * View
  */
 
-llxHeader('','ProductLot','');
+llxHeader('', 'ProductLot', '');
 
 $form=new Form($db);
 
@@ -318,10 +316,10 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	}
 
 
-	$linkback = '<a href="' . DOL_URL_ROOT . '/product/stock/productlot_list.php' . '">' . $langs->trans("BackToList") . '</a>';
+	$linkback = '<a href="' . DOL_URL_ROOT . '/product/stock/productlot_list.php?restore_lastsearch_values=1">' . $langs->trans("BackToList") . '</a>';
 
     $shownav = 1;
-    if ($user->societe_id && ! in_array('batch', explode(',',$conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
+    if ($user->societe_id && ! in_array('batch', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
 
 	dol_banner_tab($object, 'id', $linkback, $shownav, 'rowid', 'batch');
 
@@ -367,7 +365,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	// Buttons
 	print '<div class="tabsAction">'."\n";
 	$parameters=array();
-	$reshook=$hookmanager->executeHooks('addMoreActionsButtons',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+	$reshook=$hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action);    // Note that $action and $object may have been modified by hook
 	if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 	if (empty($reshook))
@@ -388,8 +386,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	print '<a href="'.DOL_URL_ROOT.'/product/reassortlot.php?sref='.urlencode($producttmp->ref).'&search_batch='.urlencode($object->batch).'">'.$langs->trans("ShowCurrentStockOfLot").'</a><br>';
 	print '<br>';
-	print '<a href="'.DOL_URL_ROOT.'/product/stock/mouvement.php?search_product_ref='.urlencode($producttmp->ref).'&search_batch='.urlencode($object->batch).'">'.$langs->trans("ShowLogOfMovementIfLot").'</a><br>';
+	print '<a href="'.DOL_URL_ROOT.'/product/stock/movement_list.php?search_product_ref='.urlencode($producttmp->ref).'&search_batch='.urlencode($object->batch).'">'.$langs->trans("ShowLogOfMovementIfLot").'</a><br>';
 
+	print '<br>';
 }
 
 
@@ -409,13 +408,11 @@ if (empty($action))
     $genallowed=$usercanread;
     $delallowed=$usercancreate;
 
-    print $formfile->showdocuments('product_batch',dol_sanitizeFileName($object->ref),$filedir,$urlsource,$genallowed,$delallowed,'',0,0,0,28,0,'',0,'',$object->default_lang, '', $object);
+    print $formfile->showdocuments('product_batch', dol_sanitizeFileName($object->ref), $filedir, $urlsource, $genallowed, $delallowed, '', 0, 0, 0, 28, 0, '', 0, '', $object->default_lang, '', $object);
     $somethingshown=$formfile->numoffiles;
 
     print '</div>';
-
 }
-
 
 // End of page
 llxFooter();

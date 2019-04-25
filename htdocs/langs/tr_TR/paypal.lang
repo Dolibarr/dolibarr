@@ -1,20 +1,19 @@
 # Dolibarr language file - Source file is en_US - paypal
 PaypalSetup=PayPal modülü kurulumu
-PaypalDesc=Bu modül  <a href="http://www.paypal.com" target="_blank">PayPal</a> üzerinden müşteriler tarafından ödeme yapılmasını sağlar. Bu bir ücretsiz ödeme veya belirli bir Dolibarr nesnesine (fatura, siparş,…) bir ödeme yapmak için kullanılabilir
-PaypalOrCBDoPayment=PayPal ile öde (Kredi Kartı veya Paypal)
-PaypalDoPayment=Paypal ile ödeme
+PaypalDesc=This module allows payment on <a href="http://www.paypal.com" target="_blank">PayPal</a> by customers. This can be used for a free payment or for a payment on a particular Dolibarr object (invoice, order, ...)
+PaypalOrCBDoPayment=PayPal ile öde (Kredi Kartı veya PayPal)
+PaypalDoPayment=PayPal ile öde
 PAYPAL_API_SANDBOX=Test/sandbox modu
 PAYPAL_API_USER=API kullanıcı adı
 PAYPAL_API_PASSWORD=API parolası
 PAYPAL_API_SIGNATURE=API imzası
 PAYPAL_SSLVERSION=Curl SSL Sürümü
-PAYPAL_API_INTEGRAL_OR_PAYPALONLY="Dahili" (kredi kartı+paypal) ya da sadece "Paypal" ödemesi sunar
+PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Offer payment "integral" (Credit card+PayPal) or "PayPal" only
 PaypalModeIntegral=Tümlev
 PaypalModeOnlyPaypal=Yalnızca PayPal
-ONLINE_PAYMENT_CSS_URL=Online ödeme sayfasındaki CSS stil sayfasının isteğe bağlı URL'si
+ONLINE_PAYMENT_CSS_URL=Optional URL of CSS stylesheet on online payment page
 ThisIsTransactionId=Bu işlem kimliğidir: <b>%s</b>
-PAYPAL_ADD_PAYMENT_URL=Posta yoluyla bir belge gönderdiğinizde, Paypal ödeme url'sini ekleyin
-YouAreCurrentlyInSandboxMode=Şu anda %s "sandbox" modundasınız
+PAYPAL_ADD_PAYMENT_URL=Add the url of PayPal payment when you send a document by mail
 NewOnlinePaymentReceived=Yeni online ödeme alındı
 NewOnlinePaymentFailed=Yeni online ödeme denendi ancak başarısız oldu
 ONLINE_PAYMENT_SENDEMAIL=Bir ödemeden sonra uyarı Epostası (başarılı ya da değil)
@@ -28,7 +27,8 @@ ShortErrorMessage=Kısa Hata Mesajı
 ErrorCode=Hata Kodu
 ErrorSeverityCode=Hata Önem Kodu
 OnlinePaymentSystem=Online ödeme sistemi
-PaypalLiveEnabled=Paypal canlı etkin (aksi takdirde test/sanal alan modu)
-PaypalImportPayment=Import Paypal payments
+PaypalLiveEnabled=PayPal live enabled (otherwise test/sandbox mode)
+PaypalImportPayment=Import PayPal payments
 PostActionAfterPayment=Post actions after payments
 ARollbackWasPerformedOnPostActions=A rollback was performed on all Post actions. You must complete post actions manually if they are necessary.
+ValidationOfPaymentFailed=Validation of payment has failed

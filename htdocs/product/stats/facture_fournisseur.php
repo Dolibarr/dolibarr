@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2018 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2013	   Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2014	   Florian Henry		<florian.henry@open-concept.pro>
  *
@@ -50,7 +50,7 @@ $hookmanager->initHooks(array('productstatssupplyinvoice'));
 $mesg = '';
 
 // Load variable for pagination
-$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
+$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
 $page = GETPOST("page", 'int');
@@ -63,7 +63,7 @@ if (! $sortfield) $sortfield = "f.datef";
 $search_month = GETPOST('search_month', 'aplha');
 $search_year = GETPOST('search_year', 'int');
 
-if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter','alpha')) {
+if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
 	$search_month = '';
 	$search_year = '';
 }
@@ -105,7 +105,7 @@ if ($id > 0 || ! empty($ref))
         $linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
         $shownav = 1;
-        if ($user->societe_id && ! in_array('product', explode(',',$conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
+        if ($user->societe_id && ! in_array('product', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
 
         dol_banner_tab($object, 'ref', $linkback, $shownav, 'ref');
 
@@ -126,7 +126,7 @@ if ($id > 0 || ! empty($ref))
 
 		if ($user->rights->fournisseur->facture->lire)
 		{
-			$sql = "SELECT DISTINCT s.nom as name, s.rowid as socid, s.code_client, d.rowid, d.total_ht as total_ht,";
+			$sql = "SELECT DISTINCT s.nom as name, s.rowid as socid, s.code_client, d.rowid, d.total_ht as line_total_ht,";
 			$sql .= " f.rowid as facid, f.ref, f.ref_supplier, f.datef, f.libelle, f.total_ht, f.total_ttc, f.total_tva, f.paye, f.fk_statut as statut, d.qty";
 			if (! $user->rights->societe->client->voir && ! $socid)
 				$sql .= ", sc.fk_soc, sc.fk_user ";
@@ -205,7 +205,7 @@ if ($id > 0 || ! empty($ref))
 				print_liste_field_titre("SupplierCode", $_SERVER["PHP_SELF"], "s.code_client", "", $option, '', $sortfield, $sortorder);
 				print_liste_field_titre("DateInvoice", $_SERVER["PHP_SELF"], "f.datef", "", $option, 'align="center"', $sortfield, $sortorder);
 				print_liste_field_titre("Qty", $_SERVER["PHP_SELF"], "d.qty", "", $option, 'align="center"', $sortfield, $sortorder);
-				print_liste_field_titre("AmountHT", $_SERVER["PHP_SELF"], "f.total_ht", "", $option, 'align="right"', $sortfield, $sortorder);
+				print_liste_field_titre("AmountHT", $_SERVER["PHP_SELF"], "d.total_ht", "", $option, 'align="right"', $sortfield, $sortorder);
 				print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "f.paye,f.fk_statut", "", $option, 'align="right"', $sortfield, $sortorder);
 				print "</tr>\n";
 
@@ -215,7 +215,7 @@ if ($id > 0 || ! empty($ref))
 					{
 						$objp = $db->fetch_object($result);
 
-						$total_ht+=$objp->total_ht;
+						$total_ht+=$objp->line_total_ht;
 						$total_qty+=$objp->qty;
 
 						$supplierinvoicestatic->id = $objp->facid;
@@ -237,15 +237,15 @@ if ($id > 0 || ! empty($ref))
                    		print '<td align="center">';
 						print dol_print_date($db->jdate($objp->datef), 'dayhour') . "</td>";
 						print '<td align="center">' . $objp->qty . "</td>\n";
-						print '<td align="right">' . price($objp->total_ht) . "</td>\n";
+						print '<td align="right">' . price($objp->line_total_ht) . "</td>\n";
 						print '<td align="right">' . $supplierinvoicestatic->LibStatut($objp->paye, $objp->statut, 5) . '</td>';
 						print "</tr>\n";
 						$i++;
 					}
 				}
 				print '<tr class="liste_total">';
-				if ($num < $limit) print '<td align="left">'.$langs->trans("Total").'</td>';
-				else print '<td align="left">'.$langs->trans("Totalforthispage").'</td>';
+				if ($num < $limit) print '<td class="left">'.$langs->trans("Total").'</td>';
+				else print '<td class="left">'.$langs->trans("Totalforthispage").'</td>';
 				print '<td colspan="3"></td>';
 				print '<td align="center">' . $total_qty . '</td>';
 				print '<td align="right">' . price($total_ht) . '</td>';
@@ -263,5 +263,6 @@ if ($id > 0 || ! empty($ref))
 	dol_print_error();
 }
 
+// End of page
 llxFooter();
 $db->close();

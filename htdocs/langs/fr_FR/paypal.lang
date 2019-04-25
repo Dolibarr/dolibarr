@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - paypal
 PaypalSetup=Configuration module PayPal
-PaypalDesc=Ce module permet d'offrir une page de paiement via le prestataire <a href="http://www.paypal.com" target="_blank">Paypal</a> pour réaliser un paiement quelconque ou un paiement par rapport à un objet Dolibarr (facture, commande…)
+PaypalDesc=Ce module permet d'offrir aux clients une page de paiement via le prestataire <a href="http://www.paypal.com" target="_blank">Paypal</a>. Ceci peut être utiliser pour réaliser un paiement quelconque ou un paiement par rapport à un objet Dolibarr particulier (facture, commande…)
 PaypalOrCBDoPayment=Payer avec Paypal (Carte de crédit ou Paypal)
 PaypalDoPayment=Payer par PayPal
 PAYPAL_API_SANDBOX=Mode test/bac à sable (sandbox)
@@ -14,7 +14,6 @@ PaypalModeOnlyPaypal=PayPal seul
 ONLINE_PAYMENT_CSS_URL=URL optionnelle de la feuille de style CSS sur la page de paiement en ligne
 ThisIsTransactionId=Voici l'identifiant de la transaction: <b>%s</b>
 PAYPAL_ADD_PAYMENT_URL=Ajouter l'URL de paiement Paypal lors de l'envoi d'un document par email
-YouAreCurrentlyInSandboxMode=Vous travaillez actuellement dans le mode "bac à sable" de %s
 NewOnlinePaymentReceived=Nouveau paiement en ligne reçu
 NewOnlinePaymentFailed=Nouvelle tentative de paiement en ligne échouée
 ONLINE_PAYMENT_SENDEMAIL=Email à prévenir en cas de paiement (succès ou non)
@@ -29,6 +28,7 @@ ErrorCode=Code erreur
 ErrorSeverityCode=Code d'erreur sévérité
 OnlinePaymentSystem=Système de paiement en ligne
 PaypalLiveEnabled=Paypal live activé (sinon mode test/bac à sable)
-PaypalImportPayment=Importer paiements Paypal
+PaypalImportPayment=Importer des paiements Paypal
 PostActionAfterPayment=Actions complémentaires après paiement
 ARollbackWasPerformedOnPostActions=Une annulation a été effectuée sur toutes les actions Post paiement. Vous devez compléter les actions complémentaires manuellement si elles sont nécessaires.
+ValidationOfPaymentFailed=La validation du paiement a échoué

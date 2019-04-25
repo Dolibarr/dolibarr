@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2013      Florian Henry	  	<florian.henry@open-concept.pro>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
@@ -29,12 +29,12 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
-$action = GETPOST('action','aZ09');
+$action = GETPOST('action', 'aZ09');
 
 $langs->load("companies");
 
 // Security check
-$id = GETPOST('id')?GETPOST('id','int'):GETPOST('socid','int');
+$id = GETPOST('id')?GETPOST('id', 'int'):GETPOST('socid', 'int');
 if ($user->societe_id) $id=$user->societe_id;
 $result = restrictedArea($user, 'societe', $id, '&societe');
 
@@ -61,9 +61,9 @@ include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php';	// Must be include, 
 $form = new Form($db);
 
 $title=$langs->trans("ThirdParty").' - '.$langs->trans("Notes");
-if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/',$conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->name.' - '.$langs->trans("Notes");
+if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->name.' - '.$langs->trans("Notes");
 $help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
-llxHeader('',$title,$help_url);
+llxHeader('', $title, $help_url);
 
 if ($object->id > 0)
 {
@@ -87,7 +87,7 @@ if ($object->id > 0)
     print '<div class="fichecenter">';
 
     print '<div class="underbanner clearboth"></div>';
-    print '<table class="border centpercent">';
+    print '<table class="border centpercent tableforfield">';
 
     if (! empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
     {
@@ -129,6 +129,6 @@ else
 	print $langs->trans("ErrorRecordNotFound");
 }
 
+// End of page
 llxFooter();
 $db->close();
-

@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2012	Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004		Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004		Benoit Mortier       <benoit.mortier@opensides.be>
- * Copyright (C) 2005-2012	Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012	Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,7 +41,7 @@ class modTax extends DolibarrModules
 	 *
 	 *   @param      DoliDB		$db      Database handler
 	 */
-	function __construct($db)
+	public function __construct($db)
 	{
 		global $conf;
 
@@ -50,7 +50,7 @@ class modTax extends DolibarrModules
 
 		$this->family = "financial";
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
-		$this->name = preg_replace('/^mod/i','',get_class($this));
+		$this->name = preg_replace('/^mod/i', '', get_class($this));
 		// Module description used if translation string 'ModuleXXXDesc' not found (where XXX is value of numeric property 'numero' of module)
 		$this->description = "Gestion des taxes, charges sociales et dividendes";
 
@@ -67,9 +67,11 @@ class modTax extends DolibarrModules
 		$this->config_page_url = array("taxes.php");
 
 		// Dependencies
-		$this->depends = array();
-		$this->requiredby = array();
-		$this->conflictwith = array();
+		$this->hidden = false;			// A condition to hide module
+		$this->depends = array();		// List of module class names as string that must be enabled if this module is enabled
+		$this->requiredby = array();	// List of module ids to disable if this one is disabled
+		$this->conflictwith = array();	// List of module class names as string this module is in conflict with
+		$this->phpmin = array(5,4);		// Minimum version of PHP required by module
 		$this->langfiles = array("compta","bills");
 
 		// Constants
@@ -117,13 +119,10 @@ class modTax extends DolibarrModules
 
 
 		// Menus
-		//-------
-
 		$this->menu = 1;        // This module add menu entries. They are coded into menu manager.
 
 
 		// Exports
-		//--------
 		$r=0;
 
 		$r++;
@@ -175,7 +174,6 @@ class modTax extends DolibarrModules
 		$this->import_examplevalues_array[$r]=array('t.label'=>"VAT Payment 1st quarter 2016",'t.fk_typepayment'=>"CHQ (must be id or code found into dictionary)",
 		    't.datep'=>"2016-04-02", 't.datev'=>"2016-03-31", 't.amount'=>1000, 't.num_payment'=>'123456'
 		);
-
 	}
 
 
@@ -187,7 +185,7 @@ class modTax extends DolibarrModules
      *      @param      string	$options    Options when enabling module ('', 'noboxes')
 	 *      @return     int             	1 if OK, 0 if KO
 	 */
-	function init($options='')
+	public function init($options = '')
 	{
 		global $conf;
 
@@ -196,6 +194,6 @@ class modTax extends DolibarrModules
 
 		$sql = array();
 
-		return $this->_init($sql,$options);
+		return $this->_init($sql, $options);
 	}
 }

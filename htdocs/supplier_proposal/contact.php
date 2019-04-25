@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2005      Patrick Rouillon     <patrick@rouillon.net>
  * Copyright (C) 2005-2018 Destailleur Laurent  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2017      Ferran Marcet       	 <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -81,7 +81,7 @@ if ($action == 'addcontact' && $permissiontoedit)
 }
 
 // Toggle the status of a contact
-else if ($action == 'swapstatut' && $permissiontoedit)
+elseif ($action == 'swapstatut' && $permissiontoedit)
 {
 	if ($object->fetch($id))
 	{
@@ -94,10 +94,10 @@ else if ($action == 'swapstatut' && $permissiontoedit)
 }
 
 // Deleting a contact
-else if ($action == 'deletecontact' && $permissiontoedit)
+elseif ($action == 'deletecontact' && $permissiontoedit)
 {
 	$object->fetch($id);
-	$result = $object->delete_contact(GETPOST("lineid",'int'));
+	$result = $object->delete_contact(GETPOST("lineid", 'int'));
 
 	if ($result >= 0)
 	{
@@ -116,7 +116,7 @@ else if ($action == 'deletecontact' && $permissiontoedit)
  */
 
 $help_url='';
-llxHeader('',$langs->trans("SupplierProposals"),$help_url);
+llxHeader('', $langs->trans("SupplierProposals"), $help_url);
 
 $form = new Form($db);
 $formcompany = new FormCompany($db);
@@ -193,7 +193,6 @@ if ($id > 0 || ! empty($ref))
 
 		// Contacts lines
 		include DOL_DOCUMENT_ROOT.'/core/tpl/contacts.tpl.php';
-
 	}
 	else
 	{
@@ -202,6 +201,6 @@ if ($id > 0 || ! empty($ref))
 	}
 }
 
-
+// End of page
 llxFooter();
 $db->close();

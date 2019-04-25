@@ -675,7 +675,7 @@ ALTER TABLE llx_blockedlog MODIFY COLUMN ref_object varchar(255);
 
 -- SPEC : use database type 'double' to store monetary values
 ALTER TABLE llx_blockedlog MODIFY COLUMN amounts double(24,8) NOT NULL;
-ALTER TABLE llx_chargessociales MODIFY COLUMN amount double(24,8);
+ALTER TABLE llx_chargesociales MODIFY COLUMN amount double(24,8);
 ALTER TABLE llx_commande MODIFY COLUMN amount_ht double(24,8) default 0;
 ALTER TABLE llx_commande_fournisseur MODIFY COLUMN amount_ht double(24,8);
 ALTER TABLE llx_don MODIFY COLUMN amount double(24,8);
@@ -725,3 +725,8 @@ DROP TABLE llx_c_accountancy_category;
 
 UPDATE llx_cronjob set entity = 1 where entity = 0 and label in ('RecurringInvoices', 'SendEmailsReminders');
 UPDATE llx_cronjob set entity = 0 where entity = 1 and label in ('PurgeDeleteTemporaryFilesShort', 'MakeLocalDatabaseDumpShort');
+
+-- VMYSQL4.3 ALTER TABLE llx_c_shipment_mode MODIFY COLUMN tracking varchar(255) NULL;
+-- VPGSQL8.2 ALTER TABLE llx_c_shipment_mode ALTER COLUMN tracking DROP NOT NULL;
+
+ALTER TABLE llx_paiementfourn ADD COLUMN fk_user_modif integer AFTER fk_user_author;

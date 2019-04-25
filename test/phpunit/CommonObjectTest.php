@@ -58,9 +58,11 @@ class CommonObjectTest extends PHPUnit_Framework_TestCase
      *
      * @return CommonObjectTest
      */
-    function __construct()
+    public function __construct()
     {
-        //$this->sharedFixture
+    	parent::__construct();
+
+    	//$this->sharedFixture
         global $conf,$user,$langs,$db;
         $this->savconf=$conf;
         $this->savuser=$user;
@@ -157,7 +159,7 @@ class CommonObjectTest extends PHPUnit_Framework_TestCase
         $result=$localobject->fetch_projet();
 
         print __METHOD__." result=".$result."\n";
-        $this->assertLessThanOrEqual($result,0);
+        $this->assertLessThanOrEqual($result, 0);
         return $result;
     }
 
@@ -180,7 +182,7 @@ class CommonObjectTest extends PHPUnit_Framework_TestCase
         $result=$localobject->fetch_thirdparty();
 
         print __METHOD__." result=".$result."\n";
-        $this->assertLessThanOrEqual($result,0);
+        $this->assertLessThanOrEqual($result, 0);
         return $result;
     }
 }

@@ -58,8 +58,10 @@ class FactureTestRounding extends PHPUnit_Framework_TestCase
 	 *
 	 * @return FactureTest
 	 */
-	function __construct()
+	public function __construct()
 	{
+		parent::__construct();
+
 		//$this->sharedFixture
 		global $conf,$user,$langs,$db;
 		$this->savconf=$conf;
@@ -73,7 +75,7 @@ class FactureTestRounding extends PHPUnit_Framework_TestCase
 	}
 
 	// Static methods
-  	public static function setUpBeforeClass()
+    public static function setUpBeforeClass()
     {
     	global $conf,$user,$langs,$db;
 		$db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
@@ -95,7 +97,7 @@ class FactureTestRounding extends PHPUnit_Framework_TestCase
 	 *
 	 * @return	void
 	 */
-	protected function setUp()
+    protected function setUp()
     {
     	global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -111,7 +113,7 @@ class FactureTestRounding extends PHPUnit_Framework_TestCase
 	 *
 	 * @return	void
 	 */
-	protected function tearDown()
+    protected function tearDown()
     {
     	print __METHOD__."\n";
     }
@@ -333,5 +335,4 @@ class FactureTestRounding extends PHPUnit_Framework_TestCase
     	$this->assertEquals(20.03, $localobject3->total_tva);
     	$this->assertEquals(115.43, $localobject3->total_ttc);
     }
-
 }

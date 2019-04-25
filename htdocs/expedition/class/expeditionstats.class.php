@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (c) 2005-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011      Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -34,14 +34,17 @@ include_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
  */
 class ExpeditionStats extends Stats
 {
-	public $table_element;
+    /**
+     * @var string Name of table without prefix where object is stored
+     */
+    public $table_element;
 
-	var $socid;
-    var $userid;
+    public $socid;
+    public $userid;
 
-    var $from;
-	var $field;
-    var $where;
+    public $from;
+    public $field;
+    public $where;
 
 
     /**
@@ -52,7 +55,7 @@ class ExpeditionStats extends Stats
 	 * @param 	string	$mode	   	Option (not used)
 	 * @param   int		$userid    	Id user for filter (creation user)
      */
-    function __construct($db, $socid, $mode, $userid=0)
+    public function __construct($db, $socid, $mode, $userid = 0)
     {
 		global $user, $conf;
 
@@ -85,7 +88,7 @@ class ExpeditionStats extends Stats
      *	@param	int		$format		0=Label of absiss is a translated text, 1=Label of absiss is month number, 2=Label of absiss is first letter of month
 	 * @return	array				Array with number by month
      */
-    function getNbByMonth($year, $format=0)
+    public function getNbByMonth($year, $format = 0)
     {
         global $user;
 
@@ -95,7 +98,7 @@ class ExpeditionStats extends Stats
 		$sql.= " WHERE c.date_valid BETWEEN '".$this->db->idate(dol_get_first_day($year))."' AND '".$this->db->idate(dol_get_last_day($year))."'";
 		$sql.= " AND ".$this->where;
 		$sql.= " GROUP BY dm";
-        $sql.= $this->db->order('dm','DESC');
+        $sql.= $this->db->order('dm', 'DESC');
 
 		$res=$this->_getNbByMonth($year, $sql, $format);
 		return $res;
@@ -107,7 +110,7 @@ class ExpeditionStats extends Stats
 	 * @return	array	Array with number by year
 	 *
 	 */
-	function getNbByYear()
+	public function getNbByYear()
 	{
 		global $user;
 
@@ -116,7 +119,7 @@ class ExpeditionStats extends Stats
 		if (!$user->rights->societe->client->voir && !$this->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql.= " WHERE ".$this->where;
 		$sql.= " GROUP BY dm";
-        $sql.= $this->db->order('dm','DESC');
+        $sql.= $this->db->order('dm', 'DESC');
 
 		return $this->_getNbByYear($sql);
 	}
@@ -126,7 +129,7 @@ class ExpeditionStats extends Stats
 	 *
 	 *	@return	array	Array of values
 	 */
-	function getAllByYear()
+	public function getAllByYear()
 	{
 		global $user;
 
@@ -135,9 +138,8 @@ class ExpeditionStats extends Stats
 		if (!$user->rights->societe->client->voir && !$this->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql.= " WHERE ".$this->where;
 		$sql.= " GROUP BY year";
-        $sql.= $this->db->order('year','DESC');
+        $sql.= $this->db->order('year', 'DESC');
 
 		return $this->_getAllByYear($sql);
 	}
 }
-

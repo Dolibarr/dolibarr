@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2002	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2016       Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -84,11 +84,11 @@ foreach($phparray as $key => $value)
 			print '<tr class="oddeven">';
 			print '<td>'.$keyparam.'</td>';
 			$valtoshow=$keyvalue;
-			if ($keyparam == 'X-ChromePhp-Data') $valtoshow=dol_trunc($keyvalue,80);
+			if ($keyparam == 'X-ChromePhp-Data') $valtoshow=dol_trunc($keyvalue, 80);
 			print '<td colspan="2">';
-			if ($keyparam == 'Path') $valtoshow=implode('; ',explode(';',trim($valtoshow)));
-			if ($keyparam == 'PATH') $valtoshow=implode('; ',explode(';',trim($valtoshow)));
-			if ($keyparam == '_SERVER["PATH"]') $valtoshow=implode('; ',explode(';',trim($valtoshow)));
+			if ($keyparam == 'Path') $valtoshow=implode('; ', explode(';', trim($valtoshow)));
+			if ($keyparam == 'PATH') $valtoshow=implode('; ', explode(';', trim($valtoshow)));
+			if ($keyparam == '_SERVER["PATH"]') $valtoshow=implode('; ', explode(';', trim($valtoshow)));
 			print $valtoshow;
 			print '</td>';
 			print '</tr>';
@@ -102,7 +102,7 @@ foreach($phparray as $key => $value)
 			{
 				print '<td>';
 				$valtoshow=$keyvalue2;
-				if ($keyparam == 'disable_functions') $valtoshow=implode(', ',explode(',',trim($valtoshow)));
+				if ($keyparam == 'disable_functions') $valtoshow=implode(', ', explode(',', trim($valtoshow)));
 				//print $keyparam;
 				print $valtoshow;
 				$i++;
@@ -116,7 +116,6 @@ foreach($phparray as $key => $value)
 	print '<br>';
 }
 
-
+// End of page
 llxFooter();
-
 $db->close();

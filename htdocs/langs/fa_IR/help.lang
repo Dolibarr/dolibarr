@@ -5,9 +5,9 @@ RemoteControlSupport=زمان واقعی آنلاین / پشتیبانی از ر
 OtherSupport=پشتیبانی دیگر
 ToSeeListOfAvailableRessources=برای تماس / نگاه کنید به منابع در دسترس:
 HelpCenter=مرکز راهنما
-DolibarrHelpCenter=کمک Dolibarr و پشتیبانی مرکز
-ToGoBackToDolibarr=در غیر این صورت، با کلیک <a href="%s">در اینجا به استفاده از Dolibarr</a>
-TypeOfSupport=منبع پشتیبانی
+DolibarrHelpCenter=Dolibarr Help and Support Center
+ToGoBackToDolibarr=Otherwise, <a href="%s">click here to continue to use Dolibarr</a>.
+TypeOfSupport=Type of support
 TypeSupportCommunauty=ارتباطات (رایگان)
 TypeSupportCommercial=تجاری
 TypeOfHelp=نوع
@@ -15,12 +15,9 @@ NeedHelpCenter=Need help or support?
 Efficiency=بهره وری
 TypeHelpOnly=راهنما تنها
 TypeHelpDev=راهنما + توسعه
-TypeHelpDevForm=سازند راهنما + توسعه +
-ToGetHelpGoOnSparkAngels1=برخی از شرکت ها می توانند پشتیبانی آنلاین سریع (گاهی اوقات فوری) و کارآمد تر با در نظر گرفتن کنترل کامپیوتر شما را فراهم کنند. این کمک کننده ها را می توان <b>در٪ بازدید کنندگان</b> وب سایت یافت:
-ToGetHelpGoOnSparkAngels3=شما همچنین می توانید به لیستی از تمام مربیان برای Dolibarr بروید، برای این کار با کلیک بر روی دکمه
-ToGetHelpGoOnSparkAngels2=گاهی اوقات، هیچ شرکت های موجود در حال حاضر شما می توانید جستجوی خود را وجود دارد، بنابراین فکر می کنم برای تغییر فیلتر برای "همه در دسترس بودن" است. شما قادر به ارسال درخواست بیشتر خواهد شد.
-BackToHelpCenter=در غیر این صورت، در اینجا کلیک کنید برای رفتن <a href="%s">به عقب برای کمک به صفحه اصلی مرکز</a> .
-LinkToGoldMember=شما می توانید یکی از مربی های Dolibarr برای زبان خود را (از٪ s) با کلیک کردن ویجت خود (وضعیت و حداکثر قیمت ها به طور خودکار به روز رسانی) از پیش انتخاب شده تماس بگیرید:
+TypeHelpDevForm=Help+Development+Training
+BackToHelpCenter=Otherwise, <a href="%s">go back to Help center home page</a>.
+LinkToGoldMember=You can call one of the trainers preselected by Dolibarr for your language (%s) by clicking their Widget (status and maximum price are automatically updated):
 PossibleLanguages=زبانهای پشتیبانی شده
-SubscribeToFoundation=کمک به پروژه Dolibarr، مشترک به پایه و اساس
+SubscribeToFoundation=Help the Dolibarr project, subscribe to the foundation
 SeeOfficalSupport=برای حمایت Dolibarr رسمی در زبان شما: <br> <a href="%s" target="_blank"><b>از٪ s</b></a>

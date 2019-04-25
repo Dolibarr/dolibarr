@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013-2014 Olivier Geffroy		<jeff@jeffinfo.com>
  * Copyright (C) 2013-2014 Florian Henry		<florian.henry@open-concept.pro>
- * Copyright (C) 2013-2015 Alexandre Spangaro	<aspangaro@zendsi.com>
+ * Copyright (C) 2013-2015 Alexandre Spangaro	<aspangaro@open-dsi.fr>
  * Copyright (C) 2014	   Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -43,7 +43,7 @@ if (! $user->rights->accounting->bind->write)
 
 
 $month_start= ($conf->global->SOCIETE_FISCAL_MONTH_START?($conf->global->SOCIETE_FISCAL_MONTH_START):1);
-if (GETPOST("year",'int')) $year_start = GETPOST("year",'int');
+if (GETPOST("year", 'int')) $year_start = GETPOST("year", 'int');
 else
 {
 	$year_start = dol_print_date(dol_now(), '%Y');
@@ -61,7 +61,7 @@ $search_date_end = dol_get_last_day($year_end, $month_end);
 $year_current = $year_start;
 
 // Validate History
-$action = GETPOST('action','aZ09');
+$action = GETPOST('action', 'aZ09');
 
 
 
@@ -87,7 +87,7 @@ if ($action == 'clean' || $action == 'validatehistory')
 	if (! $resql1) {
 		$error ++;
 		$db->rollback();
-		setEventMessage($db->lasterror(), 'errors');
+		setEventMessages($db->lasterror(), null, 'errors');
 	} else {
 		$db->commit();
 	}
@@ -150,18 +150,18 @@ $buttonbind = '<a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?year=' . 
 
 
 print_barre_liste($langs->trans("OverviewOfAmountOfLinesNotBound"), '', '', '', '', '', '', -1, '', '', 0, $buttonbind, '', 0, 1, 1);
-//print_fiche_titre($langs->trans("OverviewOfAmountOfLinesNotBound"), $buttonbind, '');
+//print load_fiche_titre($langs->trans("OverviewOfAmountOfLinesNotBound"), $buttonbind, '');
 
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td width="200">' . $langs->trans("Account") . '</td>';
-print '<td width="200" align="left">' . $langs->trans("Label") . '</td>';
+print '<td width="200" class="left">' . $langs->trans("Label") . '</td>';
 for($i = 1; $i <= 12; $i ++) {
 	$j = $i + ($conf->global->SOCIETE_FISCAL_MONTH_START?$conf->global->SOCIETE_FISCAL_MONTH_START:1) - 1;
 	if ($j > 12) $j-=12;
-	print '<td width="60" align="right">' . $langs->trans('MonthShort' . str_pad($j, 2, '0', STR_PAD_LEFT)) . '</td>';
+	print '<td width="60" class="right">' . $langs->trans('MonthShort' . str_pad($j, 2, '0', STR_PAD_LEFT)) . '</td>';
 }
-print '<td width="60" align="right"><b>' . $langs->trans("Total") . '</b></td></tr>';
+print '<td width="60" class="right"><b>' . $langs->trans("Total") . '</b></td></tr>';
 
 $sql = "SELECT  ".$db->ifsql('aa.account_number IS NULL', "'tobind'", 'aa.account_number') ." AS codecomptable,";
 $sql .= "  " . $db->ifsql('aa.label IS NULL', "'tobind'", 'aa.label') . " AS intitule,";
@@ -195,7 +195,7 @@ if ($resql) {
 		}
 		else print length_accountg($row[0]);
 		print '</td>';
-		print '<td align="left">';
+		print '<td class="left">';
 		if ($row[0] == 'tobind')
 		{
 			print $langs->trans("UseMenuToSetBindindManualy", DOL_URL_ROOT.'/accountancy/supplier/list.php?search_year='.$y, $langs->transnoentitiesnoconv("ToBind"));
@@ -203,10 +203,10 @@ if ($resql) {
 		else print $row[1];
 		print '</td>';
 		for($i = 2; $i <= 12; $i ++) {
-			print '<td align="right">' . price($row[$i]) . '</td>';
+			print '<td class="right">' . price($row[$i]) . '</td>';
 		}
-		print '<td align="right">' . price($row[13]) . '</td>';
-		print '<td align="right"><b>' . price($row[14]) . '</b></td>';
+		print '<td class="right">' . price($row[13]) . '</td>';
+		print '<td class="right"><b>' . price($row[14]) . '</b></td>';
 		print '</tr>';
 	}
 	$db->free($resql);
@@ -221,18 +221,18 @@ print '<br>';
 
 
 print_barre_liste($langs->trans("OverviewOfAmountOfLinesBound"), '', '', '', '', '', '', -1, '', '', 0, '', '', 0, 1, 1);
-//print_fiche_titre($langs->trans("OverviewOfAmountOfLinesBound"), '', '');
+//print load_fiche_titre($langs->trans("OverviewOfAmountOfLinesBound"), '', '');
 
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td width="200">' . $langs->trans("Account") . '</td>';
-print '<td width="200" align="left">' . $langs->trans("Label") . '</td>';
+print '<td width="200" class="left">' . $langs->trans("Label") . '</td>';
 for($i = 1; $i <= 12; $i ++) {
 	$j = $i + ($conf->global->SOCIETE_FISCAL_MONTH_START?$conf->global->SOCIETE_FISCAL_MONTH_START:1) - 1;
 	if ($j > 12) $j-=12;
-	print '<td width="60" align="right">' . $langs->trans('MonthShort' . str_pad($j, 2, '0', STR_PAD_LEFT)) . '</td>';
+	print '<td width="60" class="right">' . $langs->trans('MonthShort' . str_pad($j, 2, '0', STR_PAD_LEFT)) . '</td>';
 }
-print '<td width="60" align="right"><b>' . $langs->trans("Total") . '</b></td></tr>';
+print '<td width="60" class="right"><b>' . $langs->trans("Total") . '</b></td></tr>';
 
 $sql = "SELECT  ".$db->ifsql('aa.account_number IS NULL', "'tobind'", 'aa.account_number') ." AS codecomptable,";
 $sql .= "  " . $db->ifsql('aa.label IS NULL', "'tobind'", 'aa.label') . " AS intitule,";
@@ -266,7 +266,7 @@ if ($resql) {
 		}
 		else print length_accountg($row[0]);
 		print '</td>';
-		print '<td align="left">';
+		print '<td class="left">';
 		if ($row[0] == 'tobind')
 		{
 			print $langs->trans("UseMenuToSetBindindManualy", DOL_URL_ROOT.'/accountancy/supplier/list.php?search_year='.$y, $langs->transnoentitiesnoconv("ToBind"));
@@ -274,10 +274,10 @@ if ($resql) {
 		else print $row[1];
 		print '</td>';
     	for($i = 2; $i <= 12; $i++) {
-            print '<td align="right">' . price($row[$i]) . '</td>';
+            print '<td class="right">' . price($row[$i]) . '</td>';
         }
-        print '<td align="right">' . price($row[13]) . '</td>';
-        print '<td align="right"><b>' . price($row[14]) . '</b></td>';
+        print '<td class="right">' . price($row[13]) . '</td>';
+        print '<td class="right"><b>' . price($row[14]) . '</b></td>';
         print '</tr>';
     }
     $db->free($resql);
@@ -295,17 +295,17 @@ if ($conf->global->MAIN_FEATURES_LEVEL > 0) // This part of code looks strange. 
     print '<br>';
 
     print_barre_liste($langs->trans("OtherInfo"), '', '', '', '', '', '', -1, '', '', 0, '', '', 0, 1, 1);
-    //print_fiche_titre($langs->trans("OtherInfo"), '', '');
+    //print load_fiche_titre($langs->trans("OtherInfo"), '', '');
 
 	print '<div class="div-table-responsive-no-min">';
     print '<table class="noborder" width="100%">';
-    print '<tr class="liste_titre"><td width="400" align="left">' . $langs->trans("Total") . '</td>';
+    print '<tr class="liste_titre"><td width="400" class="left">' . $langs->trans("Total") . '</td>';
     for($i = 1; $i <= 12; $i ++) {
     	$j = $i + ($conf->global->SOCIETE_FISCAL_MONTH_START?$conf->global->SOCIETE_FISCAL_MONTH_START:1) - 1;
     	if ($j > 12) $j-=12;
-    	print '<td width="60" align="right">' . $langs->trans('MonthShort' . str_pad($j, 2, '0', STR_PAD_LEFT)) . '</td>';
+    	print '<td width="60" class="right">' . $langs->trans('MonthShort' . str_pad($j, 2, '0', STR_PAD_LEFT)) . '</td>';
     }
-    print '<td width="60" align="right"><b>' . $langs->trans("Total") . '</b></td></tr>';
+    print '<td width="60" class="right"><b>' . $langs->trans("Total") . '</b></td></tr>';
 
     $sql = "SELECT '" . $langs->trans("CAHTF") . "' AS label,";
     for($i = 1; $i <= 12; $i ++) {
@@ -328,20 +328,20 @@ if ($conf->global->MAIN_FEATURES_LEVEL > 0) // This part of code looks strange. 
 
     	while ($row = $db->fetch_row($resql)) {
     		print '<tr><td>' . $row[0] . '</td>';
-    			for($i = 1; $i <= 12; $i ++) {
-    			print '<td align="right">' . price($row[$i]) . '</td>';
+            for($i = 1; $i <= 12; $i ++) {
+    			print '<td class="right">' . price($row[$i]) . '</td>';
     		}
-    		print '<td align="right"><b>' . price($row[13]) . '</b></td>';
+    		print '<td class="right"><b>' . price($row[13]) . '</b></td>';
     		print '</tr>';
     	}
-    	$db->free($resql);
+        $db->free($resql);
     } else {
-    	print $db->lasterror(); // Show last sql error
+        print $db->lasterror(); // Show last sql error
     }
     print "</table>\n";
     print '</div>';
 }
 
-
+// End of page
 llxFooter();
 $db->close();

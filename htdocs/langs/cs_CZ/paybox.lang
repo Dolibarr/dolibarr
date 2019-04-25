@@ -3,7 +3,7 @@ PayBoxSetup=Nastavení modulu PayBox
 PayBoxDesc=Tento modul nabízejí stránky, které umožní platby na <a href="http://www.paybox.com" target="_blank">Paybox</a> zákazníky. Toho lze využít pro volnou platbu nebo platbu na určitý objekt Dolibarr (faktury, objednávky, ...)
 FollowingUrlAreAvailableToMakePayments=Přes URL jsou k dispozici nabízené stránky, které zákazníkovi umožní provést platbu na Dolibarr objektech
 PaymentForm=Formulář platby
-WelcomeOnPaymentPage=Vítáme Vás na naší on-line platební službě
+WelcomeOnPaymentPage=Welcome to our online payment service
 ThisScreenAllowsYouToPay=Tato obrazovka vám umožní provést on-line platbu %s.
 ThisIsInformationOnPayment=Jsou zde informace o provedené platbě
 ToComplete=Chcete-li dokončit
@@ -20,10 +20,11 @@ ToOfferALinkForOnlinePaymentOnInvoice=URL nabízí %s on-line platební uživate
 ToOfferALinkForOnlinePaymentOnContractLine=URL nabízí %s on-line platební uživatelské rozhraní pro řádky smluv
 ToOfferALinkForOnlinePaymentOnFreeAmount=URL nabízí %s on-line platební uživatelské rozhraní pro volnou částku
 ToOfferALinkForOnlinePaymentOnMemberSubscription=URL nabízí %s on-line platební uživatelské rozhraní pro členské předplatné
+ToOfferALinkForOnlinePaymentOnDonation=URL to offer a %s online payment user interface for payment of donation
 YouCanAddTagOnUrl=Můžete také přidat parametr URL <b>&tag = <i>hodnota</i></b> na některou z těchto URL (nutné pouze pro volné platby) a přidat vlastní komentář platby.
-SetupPayBoxToHavePaymentCreatedAutomatically=Nastavte si PayBox s url <b>%s</b> pro možnost vytvoření automaticky při ověřeí Payboxu.
+SetupPayBoxToHavePaymentCreatedAutomatically=Setup your Paybox with url <b>%s</b> to have payment created automatically when validated by Paybox.
 YourPaymentHasBeenRecorded=Tato stránka potvrzuje, že platba byla zaznamenána. Děkuju.
-YourPaymentHasNotBeenRecorded=Vaše platba nebyla zaznamenána a transakce byla zrušena. Děkuju.
+YourPaymentHasNotBeenRecorded=Your payment has NOT been recorded and the transaction has been canceled. Thank you.
 AccountParameter=Parametry účtu
 UsageParameter=Použité parametry
 InformationToFindParameters=Pomozte najít %s informace o účtu

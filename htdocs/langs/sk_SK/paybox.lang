@@ -3,7 +3,7 @@ PayBoxSetup=Paybox modul nastavenia
 PayBoxDesc=Tento modul ponúkajú stránky, ktoré umožnia platby na <a href="http://www.paybox.com" target="_blank">Paybox</a> zákazníkov. Toho možno využiť pre voľný platbu alebo platbu na určitý objekt Dolibarr (faktúry, objednávky, ...)
 FollowingUrlAreAvailableToMakePayments=Nasledovné adresy URL sú k dispozícii ponúknuť stránky na zákazníka, aby platbu na Dolibarr objektov
 PaymentForm=Platba formulár
-WelcomeOnPaymentPage=Vítame Vás na našej on-line platobné služby
+WelcomeOnPaymentPage=Welcome to our online payment service
 ThisScreenAllowsYouToPay=Táto obrazovka vám umožní vykonať on-line platbu %s.
 ThisIsInformationOnPayment=Sú to informácie o platbe robiť
 ToComplete=Ak chcete dokončiť
@@ -20,10 +20,11 @@ ToOfferALinkForOnlinePaymentOnInvoice=URL ponúknuť %s on-line platobný užív
 ToOfferALinkForOnlinePaymentOnContractLine=URL ponúknuť %s on-line platobný užívateľské rozhranie pre zmluvy linky
 ToOfferALinkForOnlinePaymentOnFreeAmount=URL ponúknuť %s on-line platobný užívateľské rozhranie pre voľný čiastku
 ToOfferALinkForOnlinePaymentOnMemberSubscription=URL ponúknuť %s on-line platobný užívateľské rozhranie pre členské predplatné
+ToOfferALinkForOnlinePaymentOnDonation=URL to offer a %s online payment user interface for payment of donation
 YouCanAddTagOnUrl=Môžete tiež pridať parameter URL <b>&amp; tag = <i>hodnota</i></b> na niektorú z týchto URL (nutné iba pre voľný platby) pridať vlastný komentár platobnej tag.
-SetupPayBoxToHavePaymentCreatedAutomatically=Nastavte si Paybox s url <b>%s</b> mať platba vytvorená automaticky pri overená Paybox.
+SetupPayBoxToHavePaymentCreatedAutomatically=Setup your Paybox with url <b>%s</b> to have payment created automatically when validated by Paybox.
 YourPaymentHasBeenRecorded=Táto stránka potvrdzuje, že platba bola zaznamenaná. Ďakujem.
-YourPaymentHasNotBeenRecorded=Vaša platba nebola zaznamenaná a transakcia bola zrušená. Ďakujem.
+YourPaymentHasNotBeenRecorded=Your payment has NOT been recorded and the transaction has been canceled. Thank you.
 AccountParameter=Parametre účtu
 UsageParameter=Používanie parametrov
 InformationToFindParameters=Pomôžte nájsť %s informácie o účte

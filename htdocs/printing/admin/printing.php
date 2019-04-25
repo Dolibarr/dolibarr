@@ -35,9 +35,9 @@ $langs->loadLangs(array('admin', 'printing', 'oauth'));
 
 if (! $user->admin) accessforbidden();
 
-$action = GETPOST('action','alpha');
-$mode = GETPOST('mode','alpha');
-$value = GETPOST('value','alpha',0,null,null,1);			// The value may be __google__docs so we force disable of replace
+$action = GETPOST('action', 'alpha');
+$mode = GETPOST('mode', 'alpha');
+$value = GETPOST('value', 'alpha', 0, null, null, 1);			// The value may be __google__docs so we force disable of replace
 $varname = GETPOST('varname', 'alpha');
 $driver = GETPOST('driver', 'alpha');
 
@@ -65,7 +65,7 @@ if ($action == 'setconst' && $user->admin)
     $db->begin();
     foreach ($_POST['setupdriver'] as $setupconst) {
         //print '<pre>'.print_r($setupconst, true).'</pre>';
-        $result=dolibarr_set_const($db, $setupconst['varname'],$setupconst['value'],'chaine',0,'',$conf->entity);
+        $result=dolibarr_set_const($db, $setupconst['varname'], $setupconst['value'], 'chaine', 0, '', $conf->entity);
         if (! $result > 0) $error++;
     }
 
@@ -86,7 +86,7 @@ if ($action == 'setvalue' && $user->admin)
 {
     $db->begin();
 
-    $result=dolibarr_set_const($db, $varname, $value,'chaine',0,'',$conf->entity);
+    $result=dolibarr_set_const($db, $varname, $value, 'chaine', 0, '', $conf->entity);
     if (! $result > 0) $error++;
 
     if (! $error)
@@ -109,12 +109,12 @@ if ($action == 'setvalue' && $user->admin)
 
 $form = new Form($db);
 
-llxHeader('',$langs->trans("PrintingSetup"));
+llxHeader('', $langs->trans("PrintingSetup"));
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
-print load_fiche_titre($langs->trans("PrintingSetup"),$linkback,'title_setup');
+print load_fiche_titre($langs->trans("PrintingSetup"), $linkback, 'title_setup');
 
-$head=printingadmin_prepare_head($mode);
+$head = printingAdminPrepareHead($mode);
 
 if ($mode == 'setup' && $user->admin)
 {
@@ -127,7 +127,6 @@ if ($mode == 'setup' && $user->admin)
     print $langs->trans("PrintingDriverDesc".$driver)."<br><br>\n";
 
     print '<table class="noborder" width="100%">'."\n";
-    $var=true;
     print '<tr class="liste_titre">';
     print '<th>'.$langs->trans("Parameters").'</th>';
     print '<th>'.$langs->trans("Value").'</th>';
@@ -135,8 +134,7 @@ if ($mode == 'setup' && $user->admin)
     print "</tr>\n";
     $submit_enabled=0;
 
-    if (! empty($driver))
-    {
+    if (! empty($driver)) {
         require_once DOL_DOCUMENT_ROOT.'/core/modules/printing/'.$driver.'.modules.php';
         $classname = 'printing_'.$driver;
         $langs->load($driver);
@@ -146,7 +144,6 @@ if ($mode == 'setup' && $user->admin)
         $submit_enabled=0;
         foreach ($printer->conf as $key)
         {
-
             switch ($key['type']) {
                 case "text":
                 case "password":
@@ -248,7 +245,6 @@ if ($mode == 'config' && $user->admin)
 
     print '<table class="noborder" width="100%">'."\n";
 
-    $var=true;
     print '<tr class="liste_titre">';
     print '<th>'.$langs->trans("Description").'</th>';
     print '<th class="center">'.$langs->trans("Active").'</th>';
@@ -276,11 +272,11 @@ if ($mode == 'config' && $user->admin)
         {
             if (empty($conf->global->{$printer->conf}))
             {
-                print '<a href="'.$_SERVER['PHP_SELF'].'?action=setvalue&amp;varname='.$printer->active.'&amp;value=1">'.img_picto($langs->trans("Disabled"),'off').'</a>';
+                print '<a href="'.$_SERVER['PHP_SELF'].'?action=setvalue&amp;varname='.$printer->active.'&amp;value=1">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
             }
             else
             {
-                print '<a href="'.$_SERVER['PHP_SELF'].'?action=setvalue&amp;varname='.$printer->active.'&amp;value=0">'.img_picto($langs->trans("Enabled"),'on').'</a>';
+                print '<a href="'.$_SERVER['PHP_SELF'].'?action=setvalue&amp;varname='.$printer->active.'&amp;value=0">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
             }
         }
         print '<td class="center"><a href="'.$_SERVER['PHP_SELF'].'?mode=setup&amp;driver='.$printer->name.'">'.img_picto('', 'setup').'</a></td>';
@@ -307,7 +303,7 @@ if ($mode == 'test' && $user->admin)
         $langs->load($driver);
         $printer = new $classname($db);
         //print '<pre>'.print_r($printer, true).'</pre>';
-        if (count($printer->getlist_available_printers())) {
+        if (count($printer->getlistAvailablePrinters())) {
             if ($printer->listAvailablePrinters()==0) {
                 print $printer->resprint;
             } else {
@@ -317,7 +313,6 @@ if ($mode == 'test' && $user->admin)
         else {
             print $langs->trans('PleaseConfigureDriverfromList');
         }
-
     } else {
         print $langs->trans('PleaseSelectaDriverfromList');
     }
@@ -333,7 +328,6 @@ if ($mode == 'userconf' && $user->admin)
     print $langs->trans('PrintUserConfDesc'.$driver)."<br><br>\n";
 
     print '<table class="noborder" width="100%">';
-    $var=true;
     print '<tr class="liste_titre">';
     print '<th>'.$langs->trans("User").'</th>';
     print '<th>'.$langs->trans("PrintModule").'</th>';
@@ -362,9 +356,8 @@ if ($mode == 'userconf' && $user->admin)
     print '</table>';
 
     dol_fiche_end();
-
 }
 
+// End of page
 llxFooter();
-
 $db->close();

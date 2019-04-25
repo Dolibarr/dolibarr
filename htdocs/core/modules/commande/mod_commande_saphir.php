@@ -1,8 +1,9 @@
 <?php
-/* Copyright (C) 2003-2007 Rodolphe Quiedeville        <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2007 Laurent Destailleur         <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin               <regis.houssin@capnetworks.com>
- * Copyright (C) 2008      Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
+/* Copyright (C) 2003-2007  Rodolphe Quiedeville        <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2007  Laurent Destailleur         <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009  Regis Houssin               <regis.houssin@inodbox.com>
+ * Copyright (C) 2008       Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
+ * Copyright (C) 2019       Frédéric France             <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,9 +34,21 @@ require_once DOL_DOCUMENT_ROOT .'/core/modules/commande/modules_commande.php';
  */
 class mod_commande_saphir extends ModeleNumRefCommandes
 {
-	var $version='dolibarr';		// 'development', 'experimental', 'dolibarr'
-	var $error = '';
-	var $nom = 'Saphir';
+	/**
+     * Dolibarr version of the loaded document
+     * @var string
+     */
+	public $version = 'dolibarr';		// 'development', 'experimental', 'dolibarr'
+
+	/**
+	 * @var string Error message
+	 */
+	public $error = '';
+
+	/**
+	 * @var string name
+	 */
+	public $name='Saphir';
 
 
     /**
@@ -43,13 +56,13 @@ class mod_commande_saphir extends ModeleNumRefCommandes
      *
      *  @return     string      Texte descripif
      */
-	function info()
+    public function info()
     {
-    	global $conf,$langs;
+    	global $conf, $langs, $db;
 
 		$langs->load("bills");
 
-		$form = new Form($this->db);
+		$form = new Form($db);
 
 		$texte = $langs->trans('GenericNumRefModelDesc')."<br>\n";
 		$texte.= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
@@ -58,17 +71,17 @@ class mod_commande_saphir extends ModeleNumRefCommandes
 		$texte.= '<input type="hidden" name="maskconstorder" value="COMMANDE_SAPHIR_MASK">';
 		$texte.= '<table class="nobordernopadding" width="100%">';
 
-		$tooltip=$langs->trans("GenericMaskCodes",$langs->transnoentities("Order"),$langs->transnoentities("Order"));
+		$tooltip=$langs->trans("GenericMaskCodes", $langs->transnoentities("Order"), $langs->transnoentities("Order"));
 		$tooltip.=$langs->trans("GenericMaskCodes2");
 		$tooltip.=$langs->trans("GenericMaskCodes3");
-		$tooltip.=$langs->trans("GenericMaskCodes4a",$langs->transnoentities("Order"),$langs->transnoentities("Order"));
+		$tooltip.=$langs->trans("GenericMaskCodes4a", $langs->transnoentities("Order"), $langs->transnoentities("Order"));
 		$tooltip.=$langs->trans("GenericMaskCodes5");
 
 		// Parametrage du prefix
 		$texte.= '<tr><td>'.$langs->trans("Mask").':</td>';
-		$texte.= '<td align="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskorder" value="'.$conf->global->COMMANDE_SAPHIR_MASK.'">',$tooltip,1,1).'</td>';
+		$texte.= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskorder" value="'.$conf->global->COMMANDE_SAPHIR_MASK.'">', $tooltip, 1, 1).'</td>';
 
-		$texte.= '<td align="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
+		$texte.= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
 
 		$texte.= '</tr>';
 
@@ -83,7 +96,7 @@ class mod_commande_saphir extends ModeleNumRefCommandes
      *
      *  @return     string      Example
      */
-    function getExample()
+    public function getExample()
     {
      	global $conf,$langs,$mysoc;
 
@@ -91,7 +104,7 @@ class mod_commande_saphir extends ModeleNumRefCommandes
     	$old_code_type=$mysoc->typent_code;
     	$mysoc->code_client='CCCCCCCCCC';
     	$mysoc->typent_code='TTTTTTTTTT';
-     	$numExample = $this->getNextValue($mysoc,'');
+     	$numExample = $this->getNextValue($mysoc, '');
 		$mysoc->code_client=$old_code_client;
 		$mysoc->typent_code=$old_code_type;
 
@@ -109,7 +122,7 @@ class mod_commande_saphir extends ModeleNumRefCommandes
 	 *  @param  Object		$object		Object we need next value for
 	 *  @return string      			Value if KO, <0 if KO
 	 */
-    function getNextValue($objsoc,$object)
+    public function getNextValue($objsoc, $object)
     {
 		global $db,$conf;
 
@@ -126,23 +139,23 @@ class mod_commande_saphir extends ModeleNumRefCommandes
 
 		$date = ($object->date_commande ? $object->date_commande : $object->date);
 
-		$numFinal=get_next_value($db,$mask,'commande','ref','',$objsoc,$date);
+		$numFinal=get_next_value($db, $mask, 'commande', 'ref', '', $objsoc, $date);
 
 		return  $numFinal;
 	}
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Return next free value
 	 *
 	 *  @param	Societe		$objsoc     Object third party
-	 * 	@param	string		$objforref	Object for number to search
+	 *  @param	string		$objforref	Object for number to search
 	 *  @return string      			Next free value
      */
-    function commande_get_num($objsoc,$objforref)
+    public function commande_get_num($objsoc, $objforref)
     {
-        return $this->getNextValue($objsoc,$objforref);
+        // phpcs:enable
+        return $this->getNextValue($objsoc, $objforref);
     }
-
 }
-
