@@ -285,6 +285,7 @@ ALTER TABLE llx_product ADD INDEX idx_product_fk_project (fk_project);
 ALTER TABLE llx_actioncomm ADD COLUMN calling_duration integer;
 
 ALTER TABLE llx_emailcollector_emailcollector ADD COLUMN datelastok datetime;
+ALTER TABLE llx_emailcollector_emailcollector ADD COLUMN maxemailpercollect integer DEFAULT 100;
 
 DELETE FROM llx_const WHERE name = 'THEME_ELDY_USE_HOVER' AND value = '0';
 DELETE FROM llx_const WHERE name = 'THEME_ELDY_USE_CHECKED' AND value = '0';
