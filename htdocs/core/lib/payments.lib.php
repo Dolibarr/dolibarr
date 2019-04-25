@@ -150,7 +150,7 @@ function showOnlinePaymentUrl($type, $ref)
  * @param   string  $localorexternal  0=Url for browser, 1=Url for external access
  * @return	string				      Url string
  */
-function getOnlinePaymentUrl($mode, $type, $ref = '', $amount = '9.99', $freetag = 'your_free_tag', $localorexternal=0)
+function getOnlinePaymentUrl($mode, $type, $ref = '', $amount = '9.99', $freetag = 'your_free_tag', $localorexternal = 0)
 {
     global $conf, $dolibarr_main_url_root;
 
