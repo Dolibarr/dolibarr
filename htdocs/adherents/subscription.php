@@ -705,6 +705,7 @@ if ($rowid > 0)
             print "</tr>\n";
 
             $accountstatic=new Account($db);
+            $adht = new AdherentType($db);
 
             while ($i < $num)
             {
@@ -713,14 +714,19 @@ if ($rowid > 0)
                 $subscriptionstatic->ref=$objp->crowid;
                 $subscriptionstatic->id=$objp->crowid;
 
-                $adht = new AdherentType($db);
-                $adht->fetch($objp->cfk_type);
+                if ($objp->cfk_type > 0) 
+                {
+                    $adht->fetch($objp->cfk_type);
+                }
 
                 print '<tr class="oddeven">';
                 print '<td>'.$subscriptionstatic->getNomUrl(1).'</td>';
                 print '<td class="center">'.dol_print_date($db->jdate($objp->datec), 'dayhour')."</td>\n";
                 print '<td class="center">';
-                if ( ! empty($objp->cfk_type) ) print $adht->getNomUrl(1);
+                if ($objp->cfk_type > 0) 
+                {
+                    print $adht->getNomUrl(1);
+                }
                 print '</td>';
                 print '<td class="center">'.dol_print_date($db->jdate($objp->dateh), 'day')."</td>\n";
                 print '<td class="center">'.dol_print_date($db->jdate($objp->datef), 'day')."</td>\n";
