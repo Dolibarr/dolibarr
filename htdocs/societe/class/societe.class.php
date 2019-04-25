@@ -1136,12 +1136,16 @@ class Societe extends CommonObject
 							//$lmember->firstname=$this->firstname?$this->firstname:$lmember->firstname;	// We keep firstname and lastname of member unchanged
 							//$lmember->lastname=$this->lastname?$this->lastname:$lmember->lastname;		// We keep firstname and lastname of member unchanged
 							$lmember->address=$this->address;
+							$lmember->zip=$this->zip;
+							$lmember->town=$this->town;
 							$lmember->email=$this->email;
 							$lmember->skype=$this->skype;
 							$lmember->twitter=$this->twitter;
 							$lmember->facebook=$this->facebook;
 							$lmember->linkedin=$this->linkedin;
 							$lmember->phone=$this->phone;
+							$lmember->state_id=$this->state_id;
+							$lmember->country_id=$this->country_id;
 
 							$result=$lmember->update($user, 0, 1, 1, 1);	// Use nosync to 1 to avoid cyclic updates
 							if ($result < 0)
