@@ -410,6 +410,21 @@ class AdherentType extends CommonObject
 			return -1;
 		}
 	}
+  
+  /**
+	 *	Return translated label by the nature of a adherent (physical or moral)
+	 *
+	 *	@param	string		$morphy		Nature of the adherent (physical or moral)
+	 *	@return	string					Label
+	 */
+	public function getmorphylib($morphy = '')
+	{
+		global $langs;
+		if ($morphy == 'phy') { return $langs->trans("Physical"); }
+		elseif ($morphy == 'mor') { return $langs->trans("Moral"); }
+    else return $langs->trans("Physical & Morale");
+		//return $morphy;
+	}
 
     /**
      *  Return clicable name (with picto eventually)
