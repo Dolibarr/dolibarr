@@ -714,7 +714,7 @@ if ($rowid > 0)
                 $subscriptionstatic->ref=$objp->crowid;
                 $subscriptionstatic->id=$objp->crowid;
 
-                if ($objp->cfk_type > 0) 
+                if ($objp->cfk_type > 0)
                 {
                     $adht->fetch($objp->cfk_type);
                 }
@@ -723,7 +723,7 @@ if ($rowid > 0)
                 print '<td>'.$subscriptionstatic->getNomUrl(1).'</td>';
                 print '<td class="center">'.dol_print_date($db->jdate($objp->datec), 'dayhour')."</td>\n";
                 print '<td class="center">';
-                if ($objp->cfk_type > 0) 
+                if ($objp->cfk_type > 0)
                 {
                     print $adht->getNomUrl(1);
                 }

@@ -1820,7 +1820,8 @@ class EmailCollector extends CommonObject
      * @param 	string $mid		    prefix
      * @return 	array				Array with number and object
      */
-    function getmsg($mbox, $mid) {
+    private function getmsg($mbox, $mid)
+    {
         // input $mbox = IMAP stream, $mid = message id
         // output all the following:
         global $charset,$htmlmsg,$plainmsg,$attachments;
@@ -1832,10 +1833,10 @@ class EmailCollector extends CommonObject
         // add code here to get date, from, to, cc, subject...
 
         // BODY
-        $s = imap_fetchstructure($mbox,$mid);
+        $s = imap_fetchstructure($mbox, $mid);
 
         if (!$s->parts)  // simple
-            $this->getpart($mbox,$mid,$s,0);  // pass 0 as part-number
+            $this->getpart($mbox, $mid, $s, 0);  // pass 0 as part-number
         else {  // multipart: cycle through each part
             foreach ($s->parts as $partno0=>$p)
             {
@@ -1868,14 +1869,15 @@ class EmailCollector extends CommonObject
      * @param   string      $partno         Partno
      * @return	void
      */
-    private function getpart($mbox, $mid, $p, $partno) {
+    private function getpart($mbox, $mid, $p, $partno)
+    {
         // $partno = '1', '2', '2.1', '2.1.3', etc for multipart, 0 if simple
         global $htmlmsg,$plainmsg,$charset,$attachments;
 
         // DECODE DATA
         $data = ($partno)?
-        imap_fetchbody($mbox,$mid,$partno):  // multipart
-        imap_body($mbox,$mid);  // simple
+        imap_fetchbody($mbox, $mid, $partno):  // multipart
+        imap_body($mbox, $mid);  // simple
         // Any part may be encoded, even plain text messages, so check everything.
         if ($p->encoding==4)
             $data = quoted_printable_decode($data);
@@ -1934,7 +1936,7 @@ class EmailCollector extends CommonObject
         if ($p->parts) {
             foreach ($p->parts as $partno0=>$p2)
             {
-                $this->getpart($mbox,$mid,$p2,$partno.'.'.($partno0+1));  // 1.2, 1.2.1, etc.
+                $this->getpart($mbox, $mid, $p2, $partno.'.'.($partno0+1));  // 1.2, 1.2.1, etc.
             }
         }
     }
