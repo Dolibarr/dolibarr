@@ -50,7 +50,7 @@ if (! $user->admin)
 
 if ($action == 'delete')
 {
-	$file=$conf->admin->dir_output.'/'.GETPOST('urlfile');
+	$file=$conf->admin->dir_output.'/backup/'.basename(GETPOST('urlfile', 'alpha'));
     $ret=dol_delete_file($file, 1);
     if ($ret) setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
     else setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), null, 'errors');
