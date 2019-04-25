@@ -1542,6 +1542,10 @@ img.photorefnoborder {
 	margin: 0;
 	padding-bottom: 0 !important;
 }
+/* Payment Screen : Pointer cursor in the autofill image */
+.AutoFillAmount {
+	cursor:pointer;
+}
 
 
 /* ============================================================================== */

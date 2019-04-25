@@ -6107,6 +6107,7 @@ $substitutionarray=array_merge($substitutionarray, array(
 	{
 		$substitutionarray['__DOL_MAIN_URL_ROOT__']=DOL_MAIN_URL_ROOT;
 		$substitutionarray['__(AnyTranslationKey)__']=$outputlangs->trans('TranslationOfKey');
+		$substitutionarray['__(AnyTranslationKey|langfile)__']=$outputlangs->trans('TranslationOfKey').' (load also language file before)';
 		$substitutionarray['__[AnyConstantKey]__']=$outputlangs->trans('ValueOfConstantKey');
 	}
 
@@ -6135,7 +6136,7 @@ function make_substitutions($text, $substitutionarray, $outputlangs = null)
 
 	if (empty($outputlangs)) $outputlangs=$langs;
 
-	// Make substitution for language keys
+	// Make substitution for language keys: __(AnyTranslationKey)__ or __(AnyTranslationKey|langfile)__
 	if (is_object($outputlangs))
 	{
 		while (preg_match('/__\(([^\)]+)\)__/', $text, $reg))
@@ -6151,8 +6152,8 @@ function make_substitutions($text, $substitutionarray, $outputlangs = null)
 		}
 	}
 
-	// Make substitution for constant keys. Must be after the substitution of translation, so if text of translation contains a constant,
-	// it is also converted.
+	// Make substitution for constant keys.
+	// Must be after the substitution of translation, so if the text of translation contains a string __[xxx]__, it is also converted.
 	while (preg_match('/__\[([^\]]+)\]__/', $text, $reg))
 	{
 		$msgishtml = 0;

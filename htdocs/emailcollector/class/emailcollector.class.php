@@ -92,8 +92,8 @@ class EmailCollector extends CommonObject
      */
     public $fields=array(
         'rowid'         => array('type'=>'integer', 'label'=>'TechnicalID','visible'=>2, 'enabled'=>1, 'position'=>1, 'notnull'=>1, 'index'=>1),
-        'entity'        =>array('type'=>'integer',      'label'=>'Entity',           'enabled'=>1, 'visible'=>0,  'default'=>1, 'notnull'=>1,  'index'=>1, 'position'=>20),
-        'ref'           =>array('type'=>'varchar(128)', 'label'=>'Ref',              'enabled'=>1, 'visible'=>1,  'notnull'=>1,  'showoncombobox'=>1, 'index'=>1, 'position'=>10, 'searchall'=>1, 'help'=>'Example: MyCollector1'),
+        'entity'        => array('type'=>'integer',      'label'=>'Entity',           'enabled'=>1, 'visible'=>0,  'default'=>1, 'notnull'=>1,  'index'=>1, 'position'=>20),
+        'ref'           => array('type'=>'varchar(128)', 'label'=>'Ref',              'enabled'=>1, 'visible'=>1,  'notnull'=>1,  'showoncombobox'=>1, 'index'=>1, 'position'=>10, 'searchall'=>1, 'help'=>'Example: MyCollector1'),
         'label'         => array('type'=>'varchar(255)', 'label'=>'Label', 'visible'=>1, 'enabled'=>1, 'position'=>30, 'notnull'=>-1, 'searchall'=>1, 'help'=>'Example: My Email collector'),
         'description'   => array('type'=>'text', 'label'=>'Description', 'visible'=>-1, 'enabled'=>1, 'position'=>60, 'notnull'=>-1),
         'host'          => array('type'=>'varchar(255)', 'label'=>'EMailHost', 'visible'=>1, 'enabled'=>1, 'position'=>100, 'notnull'=>1, 'searchall'=>1, 'comment'=>"IMAP server", 'help'=>'Example: imap.gmail.com'),
@@ -103,6 +103,7 @@ class EmailCollector extends CommonObject
         //'filter' => array('type'=>'text', 'label'=>'Filter', 'visible'=>1, 'enabled'=>1, 'position'=>105),
         //'actiontodo' => array('type'=>'varchar(255)', 'label'=>'ActionToDo', 'visible'=>1, 'enabled'=>1, 'position'=>106),
         'target_directory' => array('type'=>'varchar(255)', 'label'=>'MailboxTargetDirectory', 'visible'=>1, 'enabled'=>1, 'position'=>110, 'notnull'=>0, 'comment'=>"Where to store messages once processed"),
+        'maxemailpercollect' => array('type'=>'integer', 'label'=>'MaxEmailCollectPerCollect','visible'=>-1, 'enabled'=>1, 'position'=>111, 'default'=>100),
         'datelastresult' => array('type'=>'datetime', 'label'=>'DateLastCollectResult', 'visible'=>1, 'enabled'=>'$action != "create" && $action != "edit"', 'position'=>121, 'notnull'=>-1,),
         'codelastresult' => array('type'=>'varchar(16)', 'label'=>'CodeLastResult', 'visible'=>1, 'enabled'=>'$action != "create" && $action != "edit"', 'position'=>122, 'notnull'=>-1,),
         'lastresult' => array('type'=>'varchar(255)', 'label'=>'LastResult', 'visible'=>1, 'enabled'=>'$action != "create" && $action != "edit"', 'position'=>123, 'notnull'=>-1,),
@@ -167,6 +168,7 @@ class EmailCollector extends CommonObject
     public $password;
     public $source_directory;
     public $target_directory;
+    public $maxemailpercollect;
     public $datelastresult;
     public $lastresult;
     // END MODULEBUILDER PROPERTIES
@@ -720,12 +722,6 @@ class EmailCollector extends CommonObject
     /**
      * overwitePropertiesOfObject
      *
-     * @return	int		0=OK, Nb of error if error
-     */
-
-    /**
-     * overwitePropertiesOfObject
-     *
      * @param	object	$object			Current object
      * @param	string	$actionparam	Action parameters
      * @param	string	$messagetext	Body
@@ -755,7 +751,8 @@ class EmailCollector extends CommonObject
             }
             if ($tmpclass && ($tmpclass != $object->element)) continue;	// Property is for another type of object
 
-            if (property_exists($object, $tmpproperty) || preg_match('/^options_/', $tmpproperty))
+            //if (property_exists($object, $tmpproperty) || preg_match('/^options_/', $tmpproperty))
+            if ($tmpproperty)
             {
                 $sourcestring='';
                 $sourcefield='';
@@ -782,8 +779,12 @@ class EmailCollector extends CommonObject
                     if ($sourcestring)
                     {
                         $regforval=array();
-                        //var_dump($regexstring);var_dump($sourcestring);
-                        if (preg_match('/'.$regexstring.'/ms', $sourcestring, $regforval))
+                        $regexoptions='';
+                        if (strtolower($sourcefield) == 'body') $regexoptions='ms';     // The m means ^ and $ char is valid at each new line. The s means the char '.' is valid for new lines char too
+                        if (strtolower($sourcefield) == 'header') $regexoptions='m';    // The m means ^ and $ char is valid at each new line.
+
+                        //var_dump($tmpproperty.' - '.$regexstring.' - '.$regexoptions.' - '.$sourcestring);
+                        if (preg_match('/'.$regexstring.'/'.$regexoptions, $sourcestring, $regforval))
                         {
                             //var_dump($regforval[1]);exit;
                             // Overwrite param $tmpproperty
@@ -794,7 +795,6 @@ class EmailCollector extends CommonObject
                             // Regex not found
                             $object->$tmpproperty = null;
                         }
-                        //var_dump($object->$tmpproperty);exit;
                     }
                     else
                     {
@@ -806,8 +806,27 @@ class EmailCollector extends CommonObject
                 }
                 elseif (preg_match('/^SET:(.*)$/', $valueforproperty, $reg))
                 {
-                    if (preg_match('/^options_/', $tmpproperty)) $object->array_options[preg_replace('/^options_/', '', $tmpproperty)] = $reg[1];
-                    else $object->$tmpproperty = $reg[1];
+                    $valuetouse = $reg[1];
+                    $substitutionarray=array();
+                    $matcharray=array();
+                    preg_match_all('/__([a-z0-9]+(?:_[a-z0-9]+)?)__/i', $valuetouse, $matcharray);
+                    //var_dump($tmpproperty.' - '.$object->$tmpproperty.' - '.$valuetouse); var_dump($matcharray);
+                    if (is_array($matcharray[1]))    // $matcharray[1] is array with list of substitution key found without the __
+                    {
+                        foreach($matcharray[1] as $keytoreplace)
+                        {
+                            if ($keytoreplace && isset($object->$keytoreplace))
+                            {
+                                $substitutionarray['__'.$keytoreplace.'__']=$object->$keytoreplace;
+                            }
+                        }
+                    }
+                    //var_dump($substitutionarray);
+                    dol_syslog(var_export($substitutionarray, true));
+                    //var_dump($substitutionarray);
+                    $valuetouse = make_substitutions($valuetouse, $substitutionarray);
+                    if (preg_match('/^options_/', $tmpproperty)) $object->array_options[preg_replace('/^options_/', '', $tmpproperty)] = $valuetouse;
+                    else $object->$tmpproperty = $valuetouse;
                 }
                 else
                 {
@@ -887,7 +906,8 @@ class EmailCollector extends CommonObject
         $host=dol_getprefix('email');
 
         // Define the IMAP search string
-        // See https://tools.ietf.org/html/rfc3501#section-6.4.4
+        // See https://tools.ietf.org/html/rfc3501#section-6.4.4 for IMAPv4 (PHP not yet compatible)
+        // See https://tools.ietf.org/html/rfc1064 page 13 for IMAPv2
         //$search='ALL';
         $search='UNDELETED';  // Seems not supported by some servers
         $searchhead='';
@@ -905,8 +925,13 @@ class EmailCollector extends CommonObject
             if ($rule['type'] == 'body')    $search.=($search?' ':'').'BODY "'.str_replace('"', '', $rule['rulevalue']).'"';
             if ($rule['type'] == 'header')  $search.=($search?' ':'').'HEADER '.$rule['rulevalue'];
 
+            if ($rule['type'] == 'notinsubject') $search.=($search?' ':'').'SUBJECT NOT "'.str_replace('"', '', $rule['rulevalue']).'"';
+            if ($rule['type'] == 'notinbody') $search.=($search?' ':'').'BODY NOT "'.str_replace('"', '', $rule['rulevalue']).'"';
+
             if ($rule['type'] == 'seen')    $search.=($search?' ':'').'SEEN';
             if ($rule['type'] == 'unseen')  $search.=($search?' ':'').'UNSEEN';
+            if ($rule['type'] == 'unanswered') $search.=($search?' ':'').'UNANSWERED';
+            if ($rule['type'] == 'answered')   $search.=($search?' ':'').'ANSWERED';
             if ($rule['type'] == 'smaller') $search.=($search?' ':'').'SMALLER "'.str_replace('"', '', $rule['rulevalue']).'"';
             if ($rule['type'] == 'larger')  $search.=($search?' ':'').'LARGER "'.str_replace('"', '', $rule['rulevalue']).'"';
 
@@ -945,9 +970,87 @@ class EmailCollector extends CommonObject
         // Loop on each email found
         if (! $error && ! empty($arrayofemail) && count($arrayofemail) > 0)
         {
+            // Loop to get part html and plain
+            /*
+             0 multipart/mixed
+             1 multipart/alternative
+             1.1 text/plain
+             1.2 text/html
+             2 message/rfc822
+             2 multipart/mixed
+             2.1 multipart/alternative
+             2.1.1 text/plain
+             2.1.2 text/html
+             2.2 message/rfc822
+             2.2 multipart/alternative
+             2.2.1 text/plain
+             2.2.2 text/html
+             */
+            /**
+             * create_part_array
+             *
+             * @param 	Object $structure	Structure
+             * @param 	string $prefix		prefix
+             * @return 	array				Array with number and object
+             */
+            /*function createPartArray($structure, $prefix = "")
+            {
+                //print_r($structure);
+                $part_array=array();
+                if (count($structure->parts) > 0) {    // There some sub parts
+                    foreach ($structure->parts as $count => $part) {
+                        addPartToArray($part, $prefix.($count+1), $part_array);
+                    }
+                }else{    // Email does not have a seperate mime attachment for text
+                    $part_array[] = array('part_number' => $prefix.'1', 'part_object' => $structure);
+                }
+                return $part_array;
+            }*/
+
+            /**
+             * Sub function for createPartArray(). Only called by createPartArray() and itself.
+             *
+             * @param 	Object		$obj			Structure
+             * @param 	string		$partno			Part no
+             * @param 	array		$part_array		array
+             * @return	void
+             */
+            /*function addPartToArray($obj, $partno, &$part_array)
+            {
+                $part_array[] = array('part_number' => $partno, 'part_object' => $obj);
+                if ($obj->type == 2) { // Check to see if the part is an attached email message, as in the RFC-822 type
+                    //print_r($obj);
+                    if (array_key_exists('parts', $obj)) {    // Check to see if the email has parts
+                        foreach ($obj->parts as $count => $part) {
+                            // Iterate here again to compensate for the broken way that imap_fetchbody() handles attachments
+                            if (count($part->parts) > 0) {
+                                foreach ($part->parts as $count2 => $part2) {
+                                    addPartToArray($part2, $partno.".".($count2+1), $part_array);
+                                }
+                            }else{    // Attached email does not have a seperate mime attachment for text
+                                $part_array[] = array('part_number' => $partno.'.'.($count+1), 'part_object' => $obj);
+                            }
+                        }
+                    }else{    // Not sure if this is possible
+                        $part_array[] = array('part_number' => $partno.'.1', 'part_object' => $obj);
+                    }
+                }else{    // If there are more sub-parts, expand them out.
+                    if (array_key_exists('parts', $obj)) {
+                        foreach ($obj->parts as $count => $p) {
+                            addPartToArray($p, $partno.".".($count+1), $part_array);
+                        }
+                    }
+                }
+            }*/
+
+            dol_syslog("Start of loop on email", LOG_INFO, 1);
+
             foreach($arrayofemail as $imapemail)
             {
-                if ($nbemailprocessed > 100) break;			// Do not process more than 100 email per launch
+                if ($nbemailprocessed > 1000)
+                {
+                    break;			// Do not process more than 1000 email per launch (this is a different protection than maxnbcollectedpercollect
+                }
 
                 $header = imap_fetchheader($connection, $imapemail, 0);
                 $matches=array();
@@ -988,125 +1091,63 @@ class EmailCollector extends CommonObject
 
                 $this->db->begin();
 
-                //$message = imap_body($connection, $imapemail, 0);
+                // GET Email meta datas
                 $overview = imap_fetch_overview($connection, $imapemail, 0);
+
+                dol_syslog("** Process email - msgid=".$overview[0]->message_id." date=".dol_print_date($overview[0]->udate, 'dayrfc', 'gmt')." subject=".$overview[0]->subject);
+
+                // Parse IMAP email structure
+                global $htmlmsg, $plainmsg, $charset, $attachments;
+                $this->getmsg($connection, $imapemail);
+
+                //$htmlmsg,$plainmsg,$charset,$attachments
+                $messagetext = $plainmsg ? $plainmsg : dol_string_nohtmltag($htmlmsg, 0);
+                /*var_dump($plainmsg);
+                var_dump($htmlmsg);
+                var_dump($messagetext);*/
+                /*var_dump($charset);
+                var_dump($attachments);
+                exit;*/
+
+                // Parse IMAP email structure
+                /*
                 $structure = imap_fetchstructure($connection, $imapemail, 0);
 
                 $partplain = $parthtml = -1;
-                // Loop to get part html and plain
-                /*
-                 0 multipart/mixed
-                 1 multipart/alternative
-                 1.1 text/plain
-                 1.2 text/html
-                 2 message/rfc822
-                 2 multipart/mixed
-                 2.1 multipart/alternative
-                 2.1.1 text/plain
-                 2.1.2 text/html
-                 2.2 message/rfc822
-                 2.2 multipart/alternative
-                 2.2.1 text/plain
-                 2.2.2 text/html
-                 */
-                /**
-                 * create_part_array
-                 *
-                 * @param 	Object $structure	Structure
-                 * @param 	string $prefix		prefix
-                 * @return 	array				Array with number and object
-                 */
-                function createPartArray($structure, $prefix = "")
-                {
-                    //print_r($structure);
-                    $part_array=array();
-                    if (count($structure->parts) > 0) {    // There some sub parts
-                        foreach ($structure->parts as $count => $part) {
-                            add_part_to_array($part, $prefix.($count+1), $part_array);
-                        }
-                    }else{    // Email does not have a seperate mime attachment for text
-                        $part_array[] = array('part_number' => $prefix.'1', 'part_object' => $obj);
-                    }
-                    return $part_array;
-                }
-
-                /**
-                 * Sub function for createPartArray(). Only called by createPartArray() and itself.
-                 *
-                 * @param 	Object		$obj			Structure
-                 * @param 	string		$partno			Part no
-                 * @param 	array		$part_array		array
-                 * @return	void
-                 */
-                function addPartToArray($obj, $partno, &$part_array)
-                {
-                    $part_array[] = array('part_number' => $partno, 'part_object' => $obj);
-                    if ($obj->type == 2) { // Check to see if the part is an attached email message, as in the RFC-822 type
-                        //print_r($obj);
-                        if (array_key_exists('parts', $obj)) {    // Check to see if the email has parts
-                            foreach ($obj->parts as $count => $part) {
-                                // Iterate here again to compensate for the broken way that imap_fetchbody() handles attachments
-                                if (count($part->parts) > 0) {
-                                    foreach ($part->parts as $count2 => $part2) {
-                                        addPartToArray($part2, $partno.".".($count2+1), $part_array);
-                                    }
-                                }else{    // Attached email does not have a seperate mime attachment for text
-                                    $part_array[] = array('part_number' => $partno.'.'.($count+1), 'part_object' => $obj);
-                                }
-                            }
-                        }else{    // Not sure if this is possible
-                            $part_array[] = array('part_number' => $partno.'.1', 'part_object' => $obj);
-                        }
-                    }else{    // If there are more sub-parts, expand them out.
-                        if (array_key_exists('parts', $obj)) {
-                            foreach ($obj->parts as $count => $p) {
-                                addPartToArray($p, $partno.".".($count+1), $part_array);
-                            }
-                        }
-                    }
-                }
+                $encodingplain = $encodinghtml = '';
 
                 $result = createPartArray($structure, '');
-                //var_dump($result);exit;
+
                 foreach($result as $part)
                 {
-                    if ($part['part_object']->subtype == 'HTML')  $parthtml=$part['part_number'];
-                    if ($part['part_object']->subtype == 'PLAIN') $partplain=$part['part_number'];
+                    // $part['part_object']->type seems 0 for content
+                    // $part['part_object']->type seems 5 for attachment
+                    if (empty($part['part_object'])) continue;
+                    if ($part['part_object']->subtype == 'HTML')
+                    {
+                        $parthtml=$part['part_number'];
+                        if ($part['part_object']->encoding == 4)
+                        {
+                            $encodinghtml = 'aaa';
+                        }
+                    }
+                    if ($part['part_object']->subtype == 'PLAIN')
+                    {
+                        $partplain=$part['part_number'];
+                        if ($part['part_object']->encoding == 4)
+                        {
+                            $encodingplain = 'rr';
+                        }
+                    }
                 }
+                //var_dump($result); var_dump($partplain); var_dump($parthtml);
 
-                /* OLD CODE to get parthtml and partplain
-                 if (count($structure->parts) > 0) {    // There some sub parts
-                 foreach($structure->parts as $key => $part)
-                 {
-                 if ($part->subtype == 'HTML') $parthtml=($key+1);									// For example: $parthtml = 1 or 2
-                 if ($part->subtype == 'PLAIN') $partplain=($key+1);
-                 if ($part->subtype == 'ALTERNATIVE')
-                 {
-                 if (count($part->parts) > 0)
-                 {
-                 foreach($part->parts as $key2 => $part2)
-                 {
-                 if ($part2->subtype == 'HTML') $parthtml=($key+1).'.'.($key2+1);		// For example: $parthtml = 1.1 or 1.2
-                 if ($part2->subtype == 'PLAIN') $partplain=($key+1).'.'.($key2+1);
-                 }
-                 }
-                 else
-                 {
-                 $partplain=($key+1).'.1';
-                 }
-                 }
-                 }
-                 }
-                 else
-                 {
-                 $partplain=1;
-                 }*/
-
-                /*var_dump($structure);
+                var_dump($structure);
                 var_dump($parthtml);
-                var_dump($partplain);*/
+                var_dump($partplain);
 
                 $messagetext = imap_fetchbody($connection, $imapemail, ($parthtml != '-1' ? $parthtml : ($partplain != '-1' ? $partplain : 1)), FT_PEEK);
+                */
 
                 //var_dump($messagetext);
                 //var_dump($structure->parts[0]->parts);
@@ -1282,12 +1323,12 @@ class EmailCollector extends CommonObject
                         elseif ($operation['type'] == 'ticket') $descriptiontitle = $langs->trans("TicketCreatedByEmailCollector", $msgid);
                         else $descriptiontitle = $langs->trans("ActionAC_".$actioncode).' - '.$langs->trans("MailFrom").' '.$from;
 
-                        $descriptionmeta = dol_concatdesc($descriptionmeta, $langs->trans("Topic").' : '.$subject);
-                        $descriptionmeta = dol_concatdesc($descriptionmeta, $langs->trans("From").' : '.$fromstring);
-                        if ($sender) $descriptionmeta = dol_concatdesc($descriptionmeta, $langs->trans("Sender").' : '.$sender);
-                        $descriptionmeta = dol_concatdesc($descriptionmeta, $langs->trans("To").' : '.$to);
-                        //if ($cc) $descriptionmeta = dol_concatdesc($descriptionmeta, $langs->trans("Cc").' : '.$cc);
-                        //if ($bcc) $descriptionmeta = dol_concatdesc($descriptionmeta, $langs->trans("Bcc").' : '.$bcc);
+                        $descriptionmeta = dol_concatdesc($descriptionmeta, $langs->trans("MailTopic").' : '.dol_escape_htmltag($subject));
+                        $descriptionmeta = dol_concatdesc($descriptionmeta, $langs->trans("MailFrom").($langs->trans("MailFrom") != 'From' ? ' (From)':'').' : '.dol_escape_htmltag($fromstring));
+                        if ($sender) $descriptionmeta = dol_concatdesc($descriptionmeta, $langs->trans("Sender").($langs->trans("Sender") != 'Sender' ? ' (Sender)':'').' : '.dol_escape_htmltag($sender));
+                        $descriptionmeta = dol_concatdesc($descriptionmeta, $langs->trans("MailTo").($langs->trans("MailTo") != 'To' ? ' (To)':'').' : '.dol_escape_htmltag($to));
+                        if ($sendtocc) $descriptionmeta = dol_concatdesc($descriptionmeta, $langs->trans("MailCC").($langs->trans("MailCC") != 'CC' ? ' (CC)':'').' : '.dol_escape_htmltag($sendtocc));
+                        //if ($bcc) $descriptionmeta = dol_concatdesc($descriptionmeta, $langs->trans("Bcc").' : '.dol_escape_htmltag($bcc));
                     }
 
                     // Search and create thirdparty
@@ -1421,15 +1462,15 @@ class EmailCollector extends CommonObject
                     {
                         if ($projectstatic->id > 0)
                         {
-                            if ($projectfoundby) $descriptionmeta .= dol_concatdesc($descriptionmeta, 'Project found from '.$projectfoundby);
+                            if ($projectfoundby) $descriptionmeta = dol_concatdesc($descriptionmeta, 'Project found from '.$projectfoundby);
                         }
                         if ($thirdpartystatic->id > 0)
                         {
-                            if ($thirdpartyfoundby) $descriptionmeta .= dol_concatdesc($descriptionmeta, 'Third party found from '.$thirdpartyfoundby);
+                            if ($thirdpartyfoundby) $descriptionmeta = dol_concatdesc($descriptionmeta, 'Third party found from '.$thirdpartyfoundby);
                         }
                         if ($contactstatic->id > 0)
                         {
-                            if ($contactfoundby) $descriptionmeta .= dol_concatdesc($descriptionmeta, 'Contact/address found from '.$contactfoundby);
+                            if ($contactfoundby) $descriptionmeta = dol_concatdesc($descriptionmeta, 'Contact/address found from '.$contactfoundby);
                         }
 
                         $description = $descriptiontitle;
@@ -1499,12 +1540,12 @@ class EmailCollector extends CommonObject
                         if ($thirdpartystatic->id > 0)
                         {
                             $projecttocreate->socid = $thirdpartystatic->id;
-                            if ($thirdpartyfoundby) $descriptionmeta .= dol_concatdesc($descriptionmeta, 'Third party found from '.$thirdpartyfoundby);
+                            if ($thirdpartyfoundby) $descriptionmeta = dol_concatdesc($descriptionmeta, 'Third party found from '.$thirdpartyfoundby);
                         }
                         if ($contactstatic->id > 0)
                         {
                             $projecttocreate->contact_id = $contactstatic->id;
-                            if ($contactfoundby) $descriptionmeta .= dol_concatdesc($descriptionmeta, 'Contact/address found from '.$contactfoundby);
+                            if ($contactfoundby) $descriptionmeta = dol_concatdesc($descriptionmeta, 'Contact/address found from '.$contactfoundby);
                         }
 
                         $description = $descriptiontitle;
@@ -1521,12 +1562,12 @@ class EmailCollector extends CommonObject
                         $percent_opp_status = dol_getIdFromCode($this->db, 'PROSP', 'c_lead_status', 'code', 'percent');
 
                         $projecttocreate->title = $subject;
-                        $projecttocreate->date_start = $now;
+                        $projecttocreate->date_start = $date;
                         $projecttocreate->date_end = '';
                         $projecttocreate->opp_status = $id_opp_status;
                         $projecttocreate->opp_percent = $percent_opp_status;
                         $projecttocreate->description = dol_concatdesc(dolGetFirstLineOfText(dol_string_nohtmltag($description, 2), 10), '...'.$langs->transnoentities("SeePrivateNote").'...');
-                        $projecttocreate->note_private = dol_concatdesc($descriptionfull, dol_string_nohtmltag($descriptionfull, 2));
+                        $projecttocreate->note_private = $descriptionfull;
                         $projecttocreate->entity = $conf->entity;
 
                         // Get next project Ref
@@ -1591,12 +1632,12 @@ class EmailCollector extends CommonObject
                         if ($thirdpartystatic->id > 0)
                         {
                             $tickettocreate->socid = $thirdpartystatic->id;
-                            if ($thirdpartyfoundby) $descriptionmeta .= dol_concatdesc($descriptionmeta, 'Third party found from '.$thirdpartyfoundby);
+                            if ($thirdpartyfoundby) $descriptionmeta = dol_concatdesc($descriptionmeta, 'Third party found from '.$thirdpartyfoundby);
                         }
                         if ($contactstatic->id > 0)
                         {
                             $tickettocreate->contact_id = $contactstatic->id;
-                            if ($contactfoundby) $descriptionmeta .= dol_concatdesc($descriptionmeta, 'Contact/address found from '.$contactfoundby);
+                            if ($contactfoundby) $descriptionmeta = dol_concatdesc($descriptionmeta, 'Contact/address found from '.$contactfoundby);
                         }
 
                         $description = $descriptiontitle;
@@ -1616,11 +1657,12 @@ class EmailCollector extends CommonObject
                         $tickettocreate->severity_code = 0;
                         $tickettocreate->origin_email = $from;
                         $tickettocreate->fk_user_create = $user->id;
-                        $tickettocreate->entity = $conf->entity;
                         $tickettocreate->datec = $date;
                         $tickettocreate->fk_project = $projectstatic->id;
                         $tickettocreate->fk_soc = $thirdpartystatic->id;
                         $tickettocreate->notify_tiers_at_create = 0;
+                        $tickettocreate->note_private = $descriptionfull;
+                        $tickettocreate->entity = $conf->entity;
                         //$tickettocreate->fk_contact = $contactstatic->id;
 
                         // Get next project Ref
@@ -1709,12 +1751,26 @@ class EmailCollector extends CommonObject
                     $errorforemail++;
                 }
 
+                unset($objectemail);
+                unset($projectstatic);
+                unset($thirdpartystatic);
+                unset($contactstatic);
+
+                $nbemailprocessed++;
+
                 if (! $errorforemail)
                 {
                     $nbactiondone += $nbactiondoneforemail;
                     $nbemailok++;
 
                     $this->db->commit();
+
+                    // Stop the loop to process email if we reach maximum collected per collect
+                    if ($this->maxemailpercollect > 0 && $nbemailok >= $this->maxemailpercollect)
+                    {
+                        dol_syslog("EmailCollect::doCollectOneCollector We reach maximum of ".$nbemailok." collected with success, so we stop this collector now.");
+                        break;
+                    }
                 }
                 else
                 {
@@ -1722,16 +1778,11 @@ class EmailCollector extends CommonObject
 
                     $this->db->rollback();
                 }
-
-                $nbemailprocessed++;
-
-                unset($objectemail);
-                unset($projectstatic);
-                unset($thirdpartystatic);
-                unset($contactstatic);
             }
 
             $output=$langs->trans('XEmailsDoneYActionsDone', $nbemailprocessed, $nbemailok, $nbactiondone);
+
+            dol_syslog("End of loop on emails", LOG_INFO, -1);
         }
         else
         {
@@ -1756,5 +1807,137 @@ class EmailCollector extends CommonObject
         dol_syslog("EmailCollector::doCollectOneCollector end", LOG_DEBUG);
 
         return $error?-1:1;
+    }
+
+
+
+    // Loop to get part html and plain. Code found on PHP imap_fetchstructure documentation
+
+    /**
+     * getmsg
+     *
+     * @param 	Object $mbox     	Structure
+     * @param 	string $mid		    prefix
+     * @return 	array				Array with number and object
+     */
+    private function getmsg($mbox, $mid)
+    {
+        // input $mbox = IMAP stream, $mid = message id
+        // output all the following:
+        global $charset,$htmlmsg,$plainmsg,$attachments;
+        $htmlmsg = $plainmsg = $charset = '';
+        $attachments = array();
+
+        // HEADER
+        //$h = imap_header($mbox,$mid);
+        // add code here to get date, from, to, cc, subject...
+
+        // BODY
+        $s = imap_fetchstructure($mbox, $mid);
+
+        if (!$s->parts)  // simple
+            $this->getpart($mbox, $mid, $s, 0);  // pass 0 as part-number
+        else {  // multipart: cycle through each part
+            foreach ($s->parts as $partno0=>$p)
+            {
+               $this->getpart($mbox, $mid, $p, $partno0+1);
+            }
+        }
+    }
+
+    /* partno string
+     0 multipart/mixed
+     1 multipart/alternative
+     1.1 text/plain
+     1.2 text/html
+     2 message/rfc822
+     2 multipart/mixed
+     2.1 multipart/alternative
+     2.1.1 text/plain
+     2.1.2 text/html
+     2.2 message/rfc822
+     2.2 multipart/alternative
+     2.2.1 text/plain
+     2.2.2 text/html
+     */
+    /**
+     * Sub function for getpart(). Only called by createPartArray() and itself.
+     *
+     * @param 	Object		$mbox			Structure
+     * @param 	string		$mid			Part no
+     * @param 	Object		$p              Object p
+     * @param   string      $partno         Partno
+     * @return	void
+     */
+    private function getpart($mbox, $mid, $p, $partno)
+    {
+        // $partno = '1', '2', '2.1', '2.1.3', etc for multipart, 0 if simple
+        global $htmlmsg,$plainmsg,$charset,$attachments;
+
+        // DECODE DATA
+        $data = ($partno)?
+        imap_fetchbody($mbox, $mid, $partno):  // multipart
+        imap_body($mbox, $mid);  // simple
+        // Any part may be encoded, even plain text messages, so check everything.
+        if ($p->encoding==4)
+            $data = quoted_printable_decode($data);
+        elseif ($p->encoding==3)
+            $data = base64_decode($data);
+
+        // PARAMETERS
+        // get all parameters, like charset, filenames of attachments, etc.
+        $params = array();
+        if ($p->parameters)
+        {
+            foreach ($p->parameters as $x)
+            {
+                $params[strtolower($x->attribute)] = $x->value;
+            }
+        }
+        if ($p->dparameters)
+        {
+            foreach ($p->dparameters as $x)
+            {
+               $params[strtolower($x->attribute)] = $x->value;
+            }
+        }
+
+        // ATTACHMENT
+        // Any part with a filename is an attachment,
+        // so an attached text file (type 0) is not mistaken as the message.
+        if ($params['filename'] || $params['name']) {
+            // filename may be given as 'Filename' or 'Name' or both
+            $filename = ($params['filename'])? $params['filename'] : $params['name'];
+            // filename may be encoded, so see imap_mime_header_decode()
+            $attachments[$filename] = $data;  // this is a problem if two files have same name
+        }
+
+        // TEXT
+        if ($p->type==0 && $data) {
+            // Messages may be split in different parts because of inline attachments,
+            // so append parts together with blank row.
+            if (strtolower($p->subtype)=='plain')
+                $plainmsg .= trim($data) ."\n\n";
+            else
+                $htmlmsg .= $data ."<br><br>";
+            $charset = $params['charset'];  // assume all parts are same charset
+        }
+
+        // EMBEDDED MESSAGE
+        // Many bounce notifications embed the original message as type 2,
+        // but AOL uses type 1 (multipart), which is not handled here.
+        // There are no PHP functions to parse embedded messages,
+        // so this just appends the raw source to the main message.
+        elseif ($p->type==2 && $data) {
+            $plainmsg .= $data."\n\n";
+        }
+
+        // SUBPART RECURSION
+        if ($p->parts) {
+            foreach ($p->parts as $partno0=>$p2)
+            {
+                $this->getpart($mbox, $mid, $p2, $partno.'.'.($partno0+1));  // 1.2, 1.2.1, etc.
+            }
+        }
     }
 }

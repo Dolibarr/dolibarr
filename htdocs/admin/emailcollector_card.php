@@ -452,19 +452,25 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '<tr class="oddeven">';
 	print '<td>';
 	$arrayoftypes=array(
-	    'from'=>array('label'=>'MailFrom', 'data-placeholder'=>'SearchString'),
-	    'to'=>array('label'=>'MailTo', 'data-placeholder'=>'SearchString'),
-	    'cc'=>array('label'=>'Cc', 'data-placeholder'=>'SearchString'),
-	    'bcc'=>array('label'=>'Bcc', 'data-placeholder'=>'SearchString'),
-	    'subject'=>array('label'=>'Subject', 'data-placeholder'=>'SearchString'),
-	    'body'=>array('label'=>'Body', 'data-placeholder'=>'SearchString'),
-	    'header'=>array('label'=>'Header', 'data-placeholder'=>'HeaderKey SearchString'),                // HEADER key value
-	    'X1'=>'---',
+	    'from'=>array('label'=>'MailFrom', 'data-placeholder'=>$langs->trans('SearchString')),
+	    'to'=>array('label'=>'MailTo', 'data-placeholder'=>$langs->trans('SearchString')),
+	    'cc'=>array('label'=>'Cc', 'data-placeholder'=>$langs->trans('SearchString')),
+	    'bcc'=>array('label'=>'Bcc', 'data-placeholder'=>$langs->trans('SearchString')),
+	    'subject'=>array('label'=>'Subject', 'data-placeholder'=>$langs->trans('SearchString')),
+	    'body'=>array('label'=>'Body', 'data-placeholder'=>$langs->trans('SearchString')),
+	    // disabled because PHP imap_search is not compatible IMAPv4, only IMAPv2
+	    //'header'=>array('label'=>'Header', 'data-placeholder'=>'HeaderKey SearchString'),                // HEADER key value
+	    //'X1'=>'---',
+	    //'notinsubject'=>array('label'=>'SubjectNotIn', 'data-placeholder'=>'SearchString'),
+	    //'notinbody'=>array('label'=>'BodyNotIn', 'data-placeholder'=>'SearchString'),
+	    'X2'=>'---',
 	    'seen'=>array('label'=>'AlreadyRead', 'data-noparam'=>1),
 	    'unseen'=>array('label'=>'NotRead', 'data-noparam'=>1),
-	    'smaller'=>array('label'=>'SmallerThan', 'data-placeholder'=>'NumberOfBytes'),
-	    'larger'=>array('label'=>'LargerThan', 'data-placeholder'=>'NumberOfBytes'),
-	    'X2'=>'---',
+	    'unanswered'=>array('label'=>'Unanswered', 'data-noparam'=>1),
+	    'answered'=>array('label'=>'Answered', 'data-noparam'=>1),
+	    'smaller'=>array('label'=>'SmallerThan', 'data-placeholder'=>$langs->trans('NumberOfBytes')),
+	    'larger'=>array('label'=>'LargerThan', 'data-placeholder'=>$langs->trans('NumberOfBytes')),
+	    'X3'=>'---',
 	    'withtrackingid'=>array('label'=>'WithDolTrackingID', 'data-noparam'=>1),
 	    'withouttrackingid'=>array('label'=>'WithoutDolTrackingID', 'data-noparam'=>1)
 	);
@@ -530,7 +536,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	    'recordevent'=>'RecordEvent');
 	if ($conf->projet->enabled) $arrayoftypes['project']='CreateLeadAndThirdParty';
 	if ($conf->ticket->enabled) $arrayoftypes['ticket']='CreateTicketAndThirdParty';
-	print $form->selectarray('operationtype', $arrayoftypes, '', 1, 0, 0, '', 1);
+	print $form->selectarray('operationtype', $arrayoftypes, '', 1, 0, 0, '', 1, 0, 0, '', 'maxwidth300');
 	print '</td><td>';
 	print '<input type="text" name="operationparam">';
 	$htmltext=$langs->transnoentitiesnoconv("OperationParamDesc");
@@ -604,11 +610,14 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 		if (empty($reshook))
 		{
-			print '<a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&amp;action=edit">' . $langs->trans("Edit") . '</a>' . "\n";
+			print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&amp;action=edit">' . $langs->trans("Edit") . '</a></div>';
 
-			print '<a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&amp;action=collect">' . $langs->trans("CollectNow") . '</a>' . "\n";
+			// Clone
+		    print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&amp;socid=' . $object->socid . '&amp;action=clone&amp;object=order">' . $langs->trans("ToClone") . '</a></div>';
 
-			print '<a class="butActionDelete" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&amp;action=delete">' . $langs->trans('Delete') . '</a>' . "\n";
+			print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&amp;action=collect">' . $langs->trans("CollectNow") . '</a></div>';
+
+			print '<div class="inline-block divButAction"><a class="butActionDelete" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&amp;action=delete">' . $langs->trans('Delete') . '</a></div>';
 		}
 		print '</div>' . "\n";
 	}

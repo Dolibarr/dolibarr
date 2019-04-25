@@ -37,6 +37,7 @@ require_once DOL_DOCUMENT_ROOT .'/core/class/CMailFile.class.php';
 
 if (empty($conf->stripe->enabled)) accessforbidden('', 0, 0, 1);
 
+
 // You can find your endpoint's secret in your webhook settings
 if (isset($_GET['connect']))
 {
@@ -50,7 +51,7 @@ if (isset($_GET['connect']))
 	{
 		$endpoint_secret =  $conf->global->STRIPE_LIVE_WEBHOOK_CONNECT_KEY;
 		$service = 'StripeLive';
-    $servicestatus = 1;
+        $servicestatus = 1;
 	}
 }
 else {
@@ -67,6 +68,18 @@ else {
 		$servicestatus = 1;
 	}
 }
+
+if (empty($endpoint_secret))
+{
+    print 'Error: Setup of module Stripe not complete for mode '.$service.'. The WEBHOOK_KEY is not defined.';
+    http_response_code(400); // PHP 5.4 or greater
+    exit();
+}
+
+
+/*
+ * Actions
+ */
 
 $payload = @file_get_contents("php://input");
 $sig_header = $_SERVER["HTTP_STRIPE_SIGNATURE"];
@@ -89,8 +102,6 @@ catch(\UnexpectedValueException $e) {
 
 // Do something with $event
 
-http_response_code(200); // PHP 5.4 or greater
-
 $langs->load("main");
 
 // TODO Do we really need a user in setup just to have an name to fill an email topic when it is a technical system notification email
@@ -98,7 +109,8 @@ $user = new User($db);
 $user->fetch($conf->global->STRIPE_USER_ACCOUNT_FOR_ACTIONS);
 $user->getrights();
 
-if (! empty($conf->multicompany->enabled) && ! empty($conf->stripeconnect->enabled) && is_object($mc)) {
+if (! empty($conf->multicompany->enabled) && ! empty($conf->stripeconnect->enabled) && is_object($mc))
+{
 	$sql = "SELECT entity";
 	$sql.= " FROM ".MAIN_DB_PREFIX."oauth_token";
 	$sql.= " WHERE service = '".$db->escape($service)."' and tokenstring = '%".$db->escape($event->account)."%'";
@@ -126,6 +138,15 @@ if (! empty($conf->multicompany->enabled) && ! empty($conf->stripeconnect->enabl
 
 // list of  action
 $stripe=new Stripe($db);
+
+// Subject
+$societeName = $conf->global->MAIN_INFO_SOCIETE_NOM;
+if (! empty($conf->global->MAIN_APPLICATION_TITLE)) $societeName = $conf->global->MAIN_APPLICATION_TITLE;
+
+
+dol_syslog("Stripe IPN was called with event->type = ".$event->type);
+
+
 if ($event->type == 'payout.created') {
 	$error=0;
 
@@ -133,7 +154,8 @@ if ($event->type == 'payout.created') {
 
 	if ($result > 0)
 	{
-        $subject = '[NOTIFICATION] Stripe payout scheduled';
+
+	    $subject = $societeName.' - [NOTIFICATION] Stripe payout scheduled';
         if (!empty($user->email)) {
             $sendto = dolGetFirstLastname($user->firstname, $user->lastname) . " <".$user->email.">";
         } else {
@@ -163,11 +185,13 @@ if ($event->type == 'payout.created') {
 
         $ret = $mailfile->sendfile();
 
+        http_response_code(200); // PHP 5.4 or greater
         return 1;
 	}
 	else
 	{
 		$error++;
+		http_response_code(500); // PHP 5.4 or greater
 		return -1;
 	}
 }
@@ -212,7 +236,7 @@ elseif ($event->type == 'payout.paid') {
 			if (! ($result > 0)) $error++;
 		}
 
-		$subject = '[NOTIFICATION] Stripe payout done';
+		$subject = $societeName.' - [NOTIFICATION] Stripe payout done';
 		if (!empty($user->email)) {
 			$sendto = dolGetFirstLastname($user->firstname, $user->lastname) . " <".$user->email.">";
 		} else {
@@ -226,7 +250,7 @@ elseif ($event->type == 'payout.paid') {
 
 		$message = "A bank transfer of ".price2num($event->data->object->amount/100)." ".$event->data->object->currency." has been done to your account the ".dol_print_date($event->data->object->arrival_date, 'dayhour');
 
-$mailfile = new CMailFile(
+        $mailfile = new CMailFile(
 			$subject,
 			$sendto,
 			$replyto,
@@ -242,17 +266,15 @@ $mailfile = new CMailFile(
 
 		$ret = $mailfile->sendfile();
 
+		http_response_code(200); // PHP 5.4 or greater
 		return 1;
 	}
 	else
 	{
 		$error++;
+		http_response_code(500); // PHP 5.4 or greater
 		return -1;
 	}
-}
-elseif ($event->type == 'charge.succeeded') {
-
-	//TODO: create fees
 }
 elseif ($event->type == 'customer.source.created') {
 
@@ -266,130 +288,34 @@ elseif ($event->type == 'customer.source.delete') {
 
 	//TODO: delete customer's source
 }
+elseif ($event->type == 'customer.deleted') {
+    $db->begin();
+    $sql = "DELETE FROM ".MAIN_DB_PREFIX."societe_account WHERE key_account = '".$db->escape($event->data->object->id)."' and site='stripe'";
+    dol_syslog(get_class($this) . "::delete sql=" . $sql, LOG_DEBUG);
+    $db->query($sql);
+    $db->commit();
+}
+elseif ($event->type == 'charge.succeeded') {
+    // TODO: create fees
+    // TODO: Redirect to paymentok.php
+}
 elseif ($event->type == 'charge.failed') {
-
-	$subject = 'Your payment has been received: '.$event->data->object->id.'';
-	$headers = 'From: "'.$conf->global->MAIN_INFO_SOCIETE_MAIL.'" <'.$conf->global->MAIN_INFO_SOCIETE_MAIL.'>';
+    // TODO: Redirect to paymentko.php
 }
 elseif (($event->type == 'source.chargeable') && ($event->data->object->type == 'three_d_secure') && ($event->data->object->three_d_secure->authenticated==true)) {
 
     $fulltag=$event->data->object->metadata->FULLTAG;
-	// Save into $tmptag all metadata
+    dol_syslog("fulltag=".$fulltag);
+    // Save into $tmptag all metadata
 	$tmptag=dolExplodeIntoArray($fulltag, '.', '=');
 
-    if (! empty($tmptag['ORD'])) {
-        $order=new Commande($db);
-	    $order->fetch('', $tmptag['ORD']);
-        $origin='order';
-        $item=$order->id;
-    } elseif (! empty($tmptag['INV'])) {
-        $invoice = new Facture($db);
-	    $invoice->fetch('', $tmptag['INV']);
-        $origin='invoice';
-        $item=$invoice->id;
-    }
-
+	// TODO: Set $_POST var from $event->data and call newpayment.php with $action = 'charge'
     $stripe=new Stripe($db);
+    /*
     $stripeacc = $stripe->getStripeAccount($service);								// Stripe OAuth connect account of dolibarr user (no network access here)
     $stripecu = $stripe->getStripeCustomerAccount($tmptag['CUS'], $servicestatus);		// Get thirdparty cu_...
 	$charge=$stripe->createPaymentStripe($event->data->object->amount/100, $event->data->object->currency, $origin, $item, $event->data->object->id, $stripecu, $stripeacc, $servicestatus);
-
-	if (isset($charge->id) && $charge->statut=='error') {
-		$msg=$charge->message;
-		$code=$charge->code;
-		$error++;
-	}
-	elseif (isset($charge->id) && $charge->statut=='success' && (! empty($tmptag['ORD']))) {
-        //$order=new Commande($db);
-	    //$order->fetch('',$tmptag['ORD']);
-		$invoice = new Facture($db);
-		$idinv=$invoice->createFromOrder($order, $user);
-
-		if ($idinv > 0)
-		{
-			$result=$invoice->validate($user);
-			if ($result > 0) {
-				$invoice->fetch($idinv);
-				$paiement = $invoice->getSommePaiement();
-				$creditnotes=$invoice->getSumCreditNotesUsed();
-				$deposits=$invoice->getSumDepositsUsed();
-				$ref=$invoice->ref;
-				$ifverif=$invoice->socid;
-				$currency=$invoice->multicurrency_code;
-				$total=price2num($invoice->total_ttc - $paiement - $creditnotes - $deposits, 'MT');
-			} else {
-				$msg=$invoice->error;
-				$error++;
-			}
-		} else {
-			$msg=$invoice->error;
-			$error++;
-		}
-	}
-
-	if (!$error) {
-		$datepaye = dol_now();
-		$paymentType ="CB";
-		$amounts=array();
-		$amounts[$invoice->id] = $total;
-		$multicurrency_amounts=array();
-		//$multicurrency_amounts[$item] = $total;
-		$paiement = new Paiement($db);
-		$paiement->datepaye     = $datepaye;
-		$paiement->amounts      = $amounts;   // Array with all payments dispatching
-		$paiement->multicurrency_amounts = $multicurrency_amounts;   // Array with all payments dispatching
-		$paiement->paiementid   = dol_getIdFromCode($db, $paymentType, 'c_paiement', 'code', 'id', 1);
-		$paiement->num_paiement = $charge->message;
-		$paiement->note         = '';
-	}
-
-	if (! $error) {
-		$paiement_id=$paiement->create($user, 0);
-
-		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE) && count($invoice->lines)) {
-			$outputlangs = $langs;
-			$newlang = '';
-			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) $newlang = GETPOST('lang_id', 'aZ09');
-			if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $invoice->thirdparty->default_lang;
-			if (! empty($newlang)) {
-				$outputlangs = new Translate("", $conf);
-				$outputlangs->setDefaultLang($newlang);
-			}
-			$model=$invoice->modelpdf;
-			$ret = $invoice->fetch($invoice->id); // Reload to get new records
-
-			$invoice->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
-		}
-		if ($paiement_id < 0) {
-			$msg=$paiement->errors;
-			$error++;
-		} else {
-			if ($event->data->object->metadata->source=='order') {
-				$order->classifyBilled($user);
-			}
-		}
-	}
-
-	if (! $error) {
-		$label='(CustomerInvoicePayment)';
-		if (GETPOST('type') == 2) $label='(CustomerInvoicePaymentBack)';
-		$paiement->addPaymentToBank($user, 'payment', $label, $conf->global->STRIPE_BANK_ACCOUNT_FOR_PAYMENTS, '', '');
-		if ($result < 0)
-		{
-			$msg=$paiement->errors;
-			$error++;
-		}
-		$invoice->set_paid($user);
-	}
-
-	$body = "";
-	$subject = 'Facture '.$invoice->ref;
-	$headers = 'From: "'.$conf->global->MAIN_INFO_SOCIETE_MAIL.'" <'.$conf->global->MAIN_INFO_SOCIETE_MAIL.'>';
+    */
 }
-elseif ($event->type == 'customer.deleted') {
-	$db->begin();
-	$sql  = "DELETE FROM ".MAIN_DB_PREFIX."societe_account WHERE key_account = '".$event->data->object->id."' and site='stripe' ";
-	dol_syslog(get_class($this) . "::delete sql=" . $sql, LOG_DEBUG);
-	$db->query($sql);
-	$db->commit();
-}
+
+http_response_code(200); // PHP 5.4 or greater

@@ -26,6 +26,7 @@ CREATE TABLE llx_emailcollector_emailcollector(
         password varchar(128),
         source_directory varchar(255) NOT NULL,
         target_directory varchar(255),
+        maxemailpercollect integer DEFAULT 100,
         datelastresult datetime, 
         codelastresult varchar(16), 
         lastresult varchar(255),
