@@ -1462,15 +1462,15 @@ class EmailCollector extends CommonObject
                     {
                         if ($projectstatic->id > 0)
                         {
-                            if ($projectfoundby) $descriptionmeta .= dol_concatdesc($descriptionmeta, 'Project found from '.$projectfoundby);
+                            if ($projectfoundby) $descriptionmeta = dol_concatdesc($descriptionmeta, 'Project found from '.$projectfoundby);
                         }
                         if ($thirdpartystatic->id > 0)
                         {
-                            if ($thirdpartyfoundby) $descriptionmeta .= dol_concatdesc($descriptionmeta, 'Third party found from '.$thirdpartyfoundby);
+                            if ($thirdpartyfoundby) $descriptionmeta = dol_concatdesc($descriptionmeta, 'Third party found from '.$thirdpartyfoundby);
                         }
                         if ($contactstatic->id > 0)
                         {
-                            if ($contactfoundby) $descriptionmeta .= dol_concatdesc($descriptionmeta, 'Contact/address found from '.$contactfoundby);
+                            if ($contactfoundby) $descriptionmeta = dol_concatdesc($descriptionmeta, 'Contact/address found from '.$contactfoundby);
                         }
 
                         $description = $descriptiontitle;
@@ -1540,12 +1540,12 @@ class EmailCollector extends CommonObject
                         if ($thirdpartystatic->id > 0)
                         {
                             $projecttocreate->socid = $thirdpartystatic->id;
-                            if ($thirdpartyfoundby) $descriptionmeta .= dol_concatdesc($descriptionmeta, 'Third party found from '.$thirdpartyfoundby);
+                            if ($thirdpartyfoundby) $descriptionmeta = dol_concatdesc($descriptionmeta, 'Third party found from '.$thirdpartyfoundby);
                         }
                         if ($contactstatic->id > 0)
                         {
                             $projecttocreate->contact_id = $contactstatic->id;
-                            if ($contactfoundby) $descriptionmeta .= dol_concatdesc($descriptionmeta, 'Contact/address found from '.$contactfoundby);
+                            if ($contactfoundby) $descriptionmeta = dol_concatdesc($descriptionmeta, 'Contact/address found from '.$contactfoundby);
                         }
 
                         $description = $descriptiontitle;
@@ -1632,12 +1632,12 @@ class EmailCollector extends CommonObject
                         if ($thirdpartystatic->id > 0)
                         {
                             $tickettocreate->socid = $thirdpartystatic->id;
-                            if ($thirdpartyfoundby) $descriptionmeta .= dol_concatdesc($descriptionmeta, 'Third party found from '.$thirdpartyfoundby);
+                            if ($thirdpartyfoundby) $descriptionmeta = dol_concatdesc($descriptionmeta, 'Third party found from '.$thirdpartyfoundby);
                         }
                         if ($contactstatic->id > 0)
                         {
                             $tickettocreate->contact_id = $contactstatic->id;
-                            if ($contactfoundby) $descriptionmeta .= dol_concatdesc($descriptionmeta, 'Contact/address found from '.$contactfoundby);
+                            if ($contactfoundby) $descriptionmeta = dol_concatdesc($descriptionmeta, 'Contact/address found from '.$contactfoundby);
                         }
 
                         $description = $descriptiontitle;
