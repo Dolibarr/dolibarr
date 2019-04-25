@@ -1453,6 +1453,26 @@ if (($action == 'updatesource' || $action == 'updatecontent' || $action == 'conf
 
 			$objectpage->content = GETPOST('PAGE_CONTENT','none');
 
+            // Security analysis
+			$phpfullcodestring = dolKeepOnlyPhpCode($objectpage->content);
+			//print dol_escape_htmltag($phpfullcodestring);exit;
+            $forbiddenphpcommands=array("exec", "passthru", "system", "shell_exec", "proc_open");
+            if (empty($conf->global->WEBSITE_PHP_ALLOW_WRITE))    // If option is not on, we disallow functions to write files
+            {
+                $forbiddenphpcommands=array_merge($forbiddenphpcommands, array("fopen", "file_put_contents", "fputs", "fputscsv", "fwrite", "fpassthru", "unlink", "mkdir", "rmdir", "symlink", "touch", "umask"));
+            }
+            foreach($forbiddenphpcommands as $forbiddenphpcommand)
+            {
+                if (preg_match('/'.$forbiddenphpcommand.'\s*\(/ms', $phpfullcodestring))
+                {
+                    $error++;
+                    setEventMessages($langs->trans("DynamicPHPCodeContainsAForbiddenInstruction", $forbiddenphpcommand), null, 'errors');
+                    if ($action == 'updatesource') $action = 'editsource';
+                    if ($action == 'updatecontent') $action = 'editcontent';
+                }
+            }
+
+
 			// Clean data. We remove all the head section.
 			$objectpage->content = preg_replace('/<head>.*<\/head>/ims', '', $objectpage->content);
 			/* $objectpage->content = preg_replace('/<base\s+href=[\'"][^\'"]+[\'"]\s/?>/s', '', $objectpage->content); */
@@ -1463,6 +1483,8 @@ if (($action == 'updatesource' || $action == 'updatecontent' || $action == 'conf
 			{
 				$error++;
 				setEventMessages($objectpage->error, $objectpage->errors, 'errors');
+				if ($action == 'updatesource') $action = 'editsource';
+				if ($action == 'updatecontent') $action = 'editcontent';
 			}
 
 			if (! $error)
