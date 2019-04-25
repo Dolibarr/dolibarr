@@ -1144,12 +1144,13 @@ class Fichinter extends CommonObject
 	/**
 	 *	Load an object from its id and create a new one in database
 	 *
-	 *	@param		int			$socid			Id of thirdparty
-	 *	@return		int							New id of clone
+	 *  @param	    User	$user		    User making the clone
+	 *	@param		int		$socid			Id of thirdparty
+	 *	@return		int						New id of clone
 	 */
-	public function createFromClone($socid = 0)
+	public function createFromClone(User $user, $socid = 0)
 	{
-		global $user,$hookmanager;
+		global $hookmanager;
 
 		$error=0;
 

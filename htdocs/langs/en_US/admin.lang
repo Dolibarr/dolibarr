@@ -1829,6 +1829,7 @@ MailboxSourceDirectory=Mailbox source directory
 MailboxTargetDirectory=Mailbox target directory
 EmailcollectorOperations=Operations to do by collector
 CollectNow=Collect now
+ConfirmCloneEmailCollector=Are you sure you want to clone the Email collector %s ?
 DateLastCollectResult=Date latest collect tried
 DateLastcollectResultOk=Date latest collect successfull
 LastResult=Latest result

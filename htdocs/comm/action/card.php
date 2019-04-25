@@ -164,7 +164,7 @@ if ($action == 'confirm_clone' && $confirm == 'yes')
                 reset($object->socpeopleassigned);
                 $object->contactid = key($object->socpeopleassigned);
             }
-			$result = $object->createFromClone(GETPOST('fk_userowner'), GETPOST('socid'));
+			$result = $object->createFromClone($user, GETPOST('fk_userowner'), GETPOST('socid'));
 			if ($result > 0) {
 				header("Location: " . $_SERVER['PHP_SELF'] . '?id=' . $result);
 				exit();

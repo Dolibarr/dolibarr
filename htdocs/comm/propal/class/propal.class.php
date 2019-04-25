@@ -473,7 +473,7 @@ class Propal extends CommonObject
 
 			// Check parameters
 			if ($type < 0) return -1;
-			
+
 			if ($date_start && $date_end && $date_start > $date_end) {
 				$langs->load("errors");
 				$this->error=$langs->trans('ErrorStartDateGreaterEnd');
@@ -690,7 +690,7 @@ class Propal extends CommonObject
 		if (empty($qty) && empty($special_code)) $special_code=3;    // Set option tag
 		if (! empty($qty) && $special_code == 3) $special_code=0;    // Remove option tag
 		if (empty($type)) $type=0;
-			
+
         if ($date_start && $date_end && $date_start > $date_end) {
             $langs->load("errors");
             $this->error=$langs->trans('ErrorStartDateGreaterEnd');
@@ -1226,12 +1226,13 @@ class Propal extends CommonObject
 	/**
 	 *		Load an object from its id and create a new one in database
 	 *
-	 *		@param		int				$socid			Id of thirdparty
-	 * 	 	@return		int								New id of clone
+	 *      @param	    User	$user		    User making the clone
+	 *		@param		int		$socid			Id of thirdparty
+	 * 	 	@return		int						New id of clone
 	 */
-    public function createFromClone($socid = 0)
+    public function createFromClone(User $user, $socid = 0)
 	{
-		global $user,$conf,$hookmanager;
+		global $conf,$hookmanager;
 
 		dol_include_once('/projet/class/project.class.php');
 

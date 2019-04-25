@@ -2388,13 +2388,14 @@ class Contrat extends CommonObject
 	/**
 	 * Load an object from its id and create a new one in database
 	 *
-	 * @param int $socid Id of thirdparty
-	 * @param int $notrigger	1=Does not execute triggers, 0= execute triggers
-	 * @return int New id of clone
+	 * @param	User	$user		  User making the clone
+	 * @param   int     $socid        Id of thirdparty
+	 * @param   int     $notrigger	  1=Does not execute triggers, 0= execute triggers
+	 * @return  int                   New id of clone
 	 */
-    public function createFromClone($socid = 0, $notrigger = 0)
+    public function createFromClone(User $user, $socid = 0, $notrigger = 0)
     {
-		global $db, $user, $langs, $conf, $hookmanager, $extrafields;
+		global $db, $langs, $conf, $hookmanager, $extrafields;
 
 		dol_include_once('/projet/class/project.class.php');
 

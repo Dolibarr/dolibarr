@@ -955,7 +955,7 @@ $result	= $object->updateline(
 		{
 			if ($object->id > 0)
 			{
-				$result=$object->createFromClone();
+				$result=$object->createFromClone($user);
 				if ($result > 0)
 				{
 					header("Location: ".$_SERVER['PHP_SELF'].'?id='.$result);

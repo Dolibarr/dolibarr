@@ -171,7 +171,7 @@ if (empty($reshook))
                 // Because createFromClone modifies the object, we must clone it so that we can restore it later if it fails
                 $orig = clone $object;
 
-                $result=$object->createFromClone(GETPOST('fk_user_author', 'int'));
+                $result=$object->createFromClone($user, GETPOST('fk_user_author', 'int'));
                 if ($result > 0)
                 {
                     header("Location: ".$_SERVER['PHP_SELF'].'?id='.$result);
