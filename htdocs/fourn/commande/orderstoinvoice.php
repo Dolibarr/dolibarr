@@ -298,10 +298,22 @@ if ($action == 'create' && !$error) {
 	if ($socid)
 		$res = $soc->fetch($socid);
 	if ($res) {
-		$cond_reglement_id = $soc->cond_reglement_id;
-		$mode_reglement_id = $soc->mode_reglement_id;
+        $cond_reglement_id = $soc->cond_reglement_supplier_id;
+        $mode_reglement_id = $soc->mode_reglement_supplier_id;
 	}
 	$dateinvoice = empty($conf->global->MAIN_AUTOFILL_DATE) ? - 1 : '';
+
+    $objectsrc = new CommandeFournisseur($db);
+    $listoforders = array();
+    foreach ($selected as $sel) {
+        $result = $objectsrc->fetch($sel);
+        if ($result > 0) {
+            $listoforders[] = $objectsrc->ref;
+        }
+
+        if (empty($cond_reglement_id))  $cond_reglement_id = $objectsrc->cond_reglement_id;
+        if (empty($mode_reglement_id))  $mode_reglement_id = $objectsrc->mode_reglement_id;
+    }
 
 	print '<form name="add" action="' . $_SERVER["PHP_SELF"] . '" method="POST">';
 	print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
@@ -348,15 +360,6 @@ if ($action == 'create' && !$error) {
 		print '<tr><td>' . $langs->trans('Project') . '</td><td colspan="2">';
 		$formproject->select_projects($soc->id, $projectid, 'projectid');
 		print '</td></tr>';
-	}
-
-	$objectsrc = new CommandeFournisseur($db);
-	$listoforders = array ();
-	foreach ($selected as $sel) {
-		$result = $objectsrc->fetch($sel);
-		if ($result > 0) {
-			$listoforders[] = $objectsrc->ref;
-		}
 	}
 
 	// Other attributes
