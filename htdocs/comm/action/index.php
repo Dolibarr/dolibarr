@@ -1001,6 +1001,11 @@ if (! empty($hookmanager->resArray['eventarray'])) {
     }
 }
 
+// Sort events
+foreach($eventarray as $keyDate => &$dateeventarray)
+{
+	usort($dateeventarray, 'sort_events_by_date');
+}
 
 
 $maxnbofchar=0;
@@ -1629,4 +1634,23 @@ function dol_color_minus($color, $minus, $minusunit = 16)
 	    // Not yet implemented
 	}
 	return $newcolor;
+}
+
+
+/**
+ * Sort events by date
+ *
+ * @param   object  $a      Event A
+ * @param   object  $b      Event B
+ * @return  int             < 0 if event A should be before event B, > 0 otherwise, 0 if they have the exact same time slot
+ */
+function sort_events_by_date($a, $b)
+{
+	if($a->datep != $b->datep)
+	{
+		return $a->datep - $b->datep;
+	}
+
+	// If both events have the same start time, longest first
+	return $b->datef - $a->datef;
 }
