@@ -10,6 +10,7 @@
  * Copyright (C) 2015-2018  Frédéric France			<frederic.france@netlogic.fr>
  * Copyright (C) 2015		Raphaël Doursenaud		<rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2016		Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2018-2019  Thibault FOUCART		<support@ptibogxiv.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -86,7 +87,6 @@ class Adherent extends CommonObject
 	 * @var int Thirdparty ID
 	 */
     public $fk_soc;
-    public $socid;
 
 	/**
 	 * @var string Address
@@ -558,7 +558,7 @@ class Adherent extends CommonObject
 		$sql.= ", gender = ".($this->gender != -1 ? "'".$this->db->escape($this->gender)."'" : "null");	// 'man' or 'woman'
 		$sql.= ", login = ".($this->login?"'".$this->db->escape($this->login)."'":"null");
 		$sql.= ", societe = ".($this->societe?"'".$this->db->escape($this->societe)."'":"null");
-		$sql.= ", fk_soc = ".($this->fk_soc > 0?$this->db->escape($this->fk_soc):"null");
+		$sql.= ", fk_soc = ".($this->socid > 0?$this->db->escape($this->socid):"null");
 		$sql.= ", address = ".($this->address?"'".$this->db->escape($this->address)."'":"null");
 		$sql.= ", zip = ".($this->zip?"'".$this->db->escape($this->zip)."'":"null");
 		$sql.= ", town = ".($this->town?"'".$this->db->escape($this->town)."'":"null");
@@ -1276,7 +1276,6 @@ class Adherent extends CommonObject
 				$this->societe			= $obj->company;
 				$this->company			= $obj->company;
 				$this->fk_soc			= $obj->fk_soc;
-                $this->socid			= $obj->fk_soc;
 				$this->address			= $obj->address;
 				$this->zip				= $obj->zip;
 				$this->town				= $obj->town;
