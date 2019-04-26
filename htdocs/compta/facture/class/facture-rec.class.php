@@ -77,6 +77,7 @@ class FactureRec extends CommonInvoice
 	public $total;
 	public $db_table;
 	public $propalid;
+	public $ref_client;
 
 	public $date_last_gen;
 	public $date_when;
@@ -166,6 +167,7 @@ class FactureRec extends CommonInvoice
 			$sql.= ", fk_account";
 			$sql.= ", fk_cond_reglement";
 			$sql.= ", fk_mode_reglement";
+			$sql.= ", ref_client";
 			$sql.= ", usenewprice";
 			$sql.= ", frequency";
 			$sql.= ", unit_frequency";
@@ -194,6 +196,7 @@ class FactureRec extends CommonInvoice
 			$sql.= ", ".(! empty($facsrc->fk_account)?"'".$facsrc->fk_account."'":"null");
 			$sql.= ", ".($facsrc->cond_reglement_id > 0 ? $this->db->escape($facsrc->cond_reglement_id) : "null");
 			$sql.= ", ".($facsrc->mode_reglement_id > 0 ? $this->db->escape($facsrc->mode_reglement_id) : "null");
+			$sql.= ",'".$this->db->escape($this->ref_client)."'";
 			$sql.= ", ".$this->usenewprice;
 			$sql.= ", ".$this->frequency;
 			$sql.= ", '".$this->db->escape($this->unit_frequency)."'";
@@ -382,7 +385,7 @@ class FactureRec extends CommonInvoice
 		$sql.= ', f.note_private, f.note_public, f.fk_user_author';
         $sql.= ', f.modelpdf';
 		$sql.= ', f.fk_mode_reglement, f.fk_cond_reglement, f.fk_projet as fk_project';
-		$sql.= ', f.fk_account';
+		$sql.= ', f.fk_account, f.ref_client';
 		$sql.= ', f.frequency, f.unit_frequency, f.date_when, f.date_last_gen, f.nb_gen_done, f.nb_gen_max, f.usenewprice, f.auto_validate';
         $sql.= ', f.generate_pdf';
         $sql.= ", f.fk_multicurrency, f.multicurrency_code, f.multicurrency_tx, f.multicurrency_total_ht, f.multicurrency_total_tva, f.multicurrency_total_ttc";
@@ -1127,6 +1130,7 @@ class FactureRec extends CommonInvoice
 					$facture->brouillon = 1;
 					$facture->date = (empty($facturerec->date_when)?$now:$facturerec->date_when);	// We could also use dol_now here but we prefer date_when so invoice has real date when we would like even if we generate later.
 					$facture->socid = $facturerec->socid;
+					$facture->ref_client  = $facturerec->ref_client;
 
 					$invoiceidgenerated = $facture->create($user);
 					if ($invoiceidgenerated <= 0)

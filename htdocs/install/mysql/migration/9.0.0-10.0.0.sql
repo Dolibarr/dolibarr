@@ -297,3 +297,4 @@ ALTER TABLE llx_inventorydet DROP COLUMN pmp;
 ALTER TABLE llx_inventorydet DROP COLUMN pa; 
 ALTER TABLE llx_inventorydet DROP COLUMN new_pmp;
 
+ALTER TABLE llx_facture_rec ADD COLUMN ref_client varchar(255) after suspended;

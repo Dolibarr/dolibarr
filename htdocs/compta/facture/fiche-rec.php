@@ -174,6 +174,7 @@ if (empty($reshook))
 		if (! $error)
 		{
 			$object->titre = GETPOST('titre', 'alpha');
+			$object->ref_client = GETPOST('ref_client', 'alpha');
 			$object->note_private = GETPOST('note_private', 'none');
             $object->note_public  = GETPOST('note_public', 'none');
             $object->modelpdf = GETPOST('modelpdf', 'alpha');
@@ -274,7 +275,7 @@ if (empty($reshook))
 	{
 		$object->setProject(GETPOST('projectid', 'int'));
 	}
-	// Set bank account
+	// Set titre
 	elseif ($action == 'setref' && $user->rights->facture->creer)
 	{
 		//var_dump(GETPOST('ref', 'alpha'));exit;
@@ -283,6 +284,15 @@ if (empty($reshook))
 		{
 			$object->titre = GETPOST('ref', 'alpha');
 			$object->ref = $object->titre;
+		}
+		else dol_print_error($db, $object->error, $object->errors);
+	}
+	elseif ($action == 'setref_client' && $user->rights->facture->creer)
+	{
+		$result=$object->setValueFrom('ref_client', GETPOST('ref_client', 'alpha'), '', null, 'text', '', $user, 'BILLREC_MODIFY');
+		if ($result > 0)
+		{
+			$object->ref_client = GETPOST('ref_client', 'alpha');
 		}
 		else dol_print_error($db, $object->error, $object->errors);
 	}
@@ -997,6 +1007,11 @@ if ($action == 'create')
 		print '<input class="flat quatrevingtpercent" type="text" name="titre" value="'.$_POST["titre"].'">';
 		print '</td></tr>';
 
+		// Ref Client
+		print '<tr><td class="titlefieldcreate">'.$langs->trans("RefCustomer").'</td><td>';
+		print '<input class="flat quatrevingtpercent" type="text" name="ref_client" value="'.GETPOST('ref_client','alpha').'">';
+		print '</td></tr>';
+
 		// Third party
 		print '<tr><td class="titlefieldcreate">'.$langs->trans("Customer").'</td><td>'.$object->thirdparty->getNomUrl(1, 'customer').'</td>';
 		print '</tr>';
@@ -1229,8 +1244,9 @@ else
 
 		$morehtmlref.='<div class="refidno">';
 		// Ref customer
-		//$morehtmlref.=$form->editfieldkey("RefCustomer", 'ref_client', $object->ref_client, $object, $user->rights->facture->creer, 'string', '', 0, 1);
-		//$morehtmlref.=$form->editfieldval("RefCustomer", 'ref_client', $object->ref_client, $object, $user->rights->facture->creer, 'string', '', null, null, '', 1);
+		$morehtmlref.=$form->editfieldkey("RefCustomer", 'ref_client', $object->ref_client, $object, $user->rights->facture->creer, 'string', '', 0, 1);
+		$morehtmlref.=$form->editfieldval("RefCustomer", 'ref_client', $object->ref_client, $object, $user->rights->facture->creer, 'string', '', null, null, '', 1);
+		$morehtmlref.='<br>';
 		// Thirdparty
 		$morehtmlref.=$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1);
 		// Project
