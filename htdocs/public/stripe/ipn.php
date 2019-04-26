@@ -295,6 +295,12 @@ elseif ($event->type == 'customer.deleted') {
     $db->query($sql);
     $db->commit();
 }
+elseif ($event->type == 'payment_intent.succeeded') {
+    // TODO: Redirect to paymentok.php
+}
+elseif ($event->type == 'payment_intent.payment_failed') {
+    // TODO: Redirect to paymentko.php
+}
 elseif ($event->type == 'charge.succeeded') {
     // TODO: create fees
     // TODO: Redirect to paymentok.php
