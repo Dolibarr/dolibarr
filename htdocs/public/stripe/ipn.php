@@ -309,7 +309,6 @@ elseif (($event->type == 'source.chargeable') && ($event->data->object->type == 
     // Save into $tmptag all metadata
 	$tmptag=dolExplodeIntoArray($fulltag, '.', '=');
 
-	// TODO: Set $_POST var from $event->data and call newpayment.php with $action = 'charge'
     $stripe=new Stripe($db);
     /*
     $stripeacc = $stripe->getStripeAccount($service);								// Stripe OAuth connect account of dolibarr user (no network access here)

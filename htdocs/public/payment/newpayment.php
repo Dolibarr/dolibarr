@@ -395,7 +395,8 @@ if ($action == 'dopayment')
 }
 
 
-// Called when choosing Stripe mode, after clicking the 'dopayment'
+// Called when choosing Stripe mode, after clicking the 'dopayment' with the Charge API architecture.
+// When using the PaymentItent architecture, we dont need this, the Stripe customer is created when creating PaymentItent when showing payment page.
 if ($action == 'charge' && ! empty($conf->stripe->enabled))
 {
 	$amountstripe = $amount;

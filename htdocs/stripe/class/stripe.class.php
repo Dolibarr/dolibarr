@@ -238,7 +238,7 @@ class Stripe extends CommonObject
 	}
 
     /**
-	 * Get the Stripe payment intent
+	 * Get the Stripe payment intent. Create it with confirm=false 
 	 *
 	 * @param	Societe	$object							    Object to pay with Stripe
 	 * @param	string 	$customer							Stripe customer ref 'cus_xxxxxxxxxxxxx' via customerStripe()
@@ -318,7 +318,9 @@ class Stripe extends CommonObject
 				$description=$object->element.$object->id;
 
 				$dataforintent = array(
-					"amount" => $stripeamount,
+				    "confirm" => false,	// Do not confirm immediatly during creation of intent
+				    "confirmation_method" => $mode,
+				    "amount" => $stripeamount,
 					"currency" => $object->multicurrency_code,
                     "customer"  => $customer,
                     "allowed_source_types" => ["card"],
