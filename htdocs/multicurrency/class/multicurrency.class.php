@@ -629,7 +629,7 @@ class MultiCurrency extends CommonObject
 	 * @param 	array 	$response 	array of reponse from api to sync dolibarr rates
      * @return  void
 	 */
-	public static function syncRates($response)
+	public static function syncRates($key)
 	{
 		global $conf, $db, $langs;
 
