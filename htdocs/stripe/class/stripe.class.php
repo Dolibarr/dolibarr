@@ -238,17 +238,18 @@ class Stripe extends CommonObject
 	}
 
     /**
-	 * Get the Stripe payment intent. Create it with confirm=false 
+	 * Get the Stripe payment intent. Create it with confirm=false
 	 *
 	 * @param	Societe	$object							    Object to pay with Stripe
 	 * @param	string 	$customer							Stripe customer ref 'cus_xxxxxxxxxxxxx' via customerStripe()
 	 * @param	string	$key							    ''=Use common API. If not '', it is the Stripe connect account 'acc_....' to use Stripe connect
 	 * @param	int		$status							    Status (0=test, 1=live)
 	 * @param	int		$usethirdpartyemailforreceiptemail	1=use thirdparty email for receipt
-	 * @param	int		$mode		                        automatic=automatic payment, manual=need confirmation
+	 * @param	int		$mode		                        automatic=automatic confirmation/payment when conditions are ok, manual=need to call confirm() on intent
+	 * @param   boolean $confirmnow                         false=default, true=try to confirm immediatly after create (if conditions are ok)
 	 * @return 	\Stripe\PaymentIntent|null 			        Stripe PaymentIntent or null if not found
 	 */
-	public function getPaymentIntent($object, $customer, $key = null, $status = 0, $usethirdpartyemailforreceiptemail = 0, $mode = 'automatic')
+	public function getPaymentIntent($object, $customer, $key = null, $status = 0, $usethirdpartyemailforreceiptemail = 0, $mode = 'automatic', $confirmnow = false)
 	{
 		global $conf, $user, $mysoc;
 
@@ -318,7 +319,7 @@ class Stripe extends CommonObject
 				$description=$object->element.$object->id;
 
 				$dataforintent = array(
-				    "confirm" => false,	// Do not confirm immediatly during creation of intent
+				    "confirm" => $confirmnow,	// Do not confirm immediatly during creation of intent
 				    "confirmation_method" => $mode,
 				    "amount" => $stripeamount,
 					"currency" => $object->multicurrency_code,
