@@ -86,6 +86,7 @@ class Adherent extends CommonObject
 	 * @var int Thirdparty ID
 	 */
     public $fk_soc;
+    public $socid;
 
 	/**
 	 * @var string Address
@@ -1275,6 +1276,7 @@ class Adherent extends CommonObject
 				$this->societe			= $obj->company;
 				$this->company			= $obj->company;
 				$this->fk_soc			= $obj->fk_soc;
+                $this->socid			= $obj->fk_soc;
 				$this->address			= $obj->address;
 				$this->zip				= $obj->zip;
 				$this->town				= $obj->town;
