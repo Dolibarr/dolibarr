@@ -25,15 +25,17 @@ if (is_numeric($entity)) define("DOLENTITY", $entity);
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
-require_once DOL_DOCUMENT_ROOT.'/includes/stripe/init.php';
-require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/ccountry.class.php';
 require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
-require_once DOL_DOCUMENT_ROOT .'/core/class/CMailFile.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
+
+require_once DOL_DOCUMENT_ROOT.'/includes/stripe/init.php';
+require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
+
 
 if (empty($conf->stripe->enabled)) accessforbidden('', 0, 0, 1);
 

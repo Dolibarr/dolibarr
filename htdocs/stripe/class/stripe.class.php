@@ -328,6 +328,9 @@ class Stripe extends CommonObject
 				    "statement_descriptor" => dol_trunc($description, 10, 'right', 'UTF-8', 1),     // 22 chars that appears on bank receipt (company + description)
 					"metadata" => array('dol_type'=>$object->element, 'dol_id'=>$object->id, 'dol_version'=>DOL_VERSION, 'dol_entity'=>$conf->entity, 'ipaddress'=>$ipaddress)
 				);
+				// save_payment_method = true,
+				// payment_method_types =
+				// payment_method =
 
 				if ($conf->entity!=$conf->global->STRIPECONNECT_PRINCIPAL && $fee>0)
 				{
