@@ -523,7 +523,7 @@ if (! empty($arrayfields['t.label']['checked']))
 // Start date
 if (! empty($arrayfields['t.dateo']['checked']))
 {
-	print '<td class="liste_titre center">';
+	print '<td class="liste_titre center minwidth150">';
 	if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat" type="text" size="1" maxlength="2" name="search_sday" value="'.$search_sday.'">';
 	print '<input class="flat" type="text" size="1" maxlength="2" name="search_smonth" value="'.$search_smonth.'">';
 	$formother->select_year($search_syear?$search_syear:-1, 'search_syear', 1, 20, 5);
@@ -532,7 +532,7 @@ if (! empty($arrayfields['t.dateo']['checked']))
 // End date
 if (! empty($arrayfields['t.datee']['checked']))
 {
-	print '<td class="liste_titre center">';
+	print '<td class="liste_titre center minwidth150">';
 	if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat" type="text" size="1" maxlength="2" name="search_eday" value="'.$search_eday.'">';
 	print '<input class="flat" type="text" size="1" maxlength="2" name="search_emonth" value="'.$search_emonth.'">';
 	$formother->select_year($search_eyear?$search_eyear:-1, 'search_eyear', 1, 20, 5);
@@ -657,7 +657,7 @@ while ($i < min($num, $limit))
 		// Ref
 		if (! empty($arrayfields['t.ref']['checked']))
 		{
-			print '<td>';
+			print '<td class="nowraponall">';
 			print $object->getNomUrl(1, 'withproject');
 			if ($object->hasDelay()) print img_warning("Late");
 			print '</td>';
