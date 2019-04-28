@@ -6121,7 +6121,7 @@ abstract class CommonObject
 			if(! empty($value)) {
 				$value=dol_print_date($value, 'dayhour');
 			} else {
-				$value='';
+				$value='00:00';
 			}
 		}
 		elseif ($type == 'double')
