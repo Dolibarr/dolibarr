@@ -14,9 +14,11 @@ if (! empty($extrafieldsobjectkey))	// $extrafieldsobject is the $object->table_
 {
 	if (is_array($extrafields->attributes[$extrafieldsobjectkey]['label']) && count($extrafields->attributes[$extrafieldsobjectkey]['label']))
 	{
-		foreach($extrafields->attributes[$extrafieldsobjectkey]['label'] as $key => $val)
+        if (empty($extrafieldsobjectprefix)) $extrafieldsobjectprefix = 'ef.';
+
+        foreach($extrafields->attributes[$extrafieldsobjectkey]['label'] as $key => $val)
 		{
-			if (! empty($arrayfields["ef.".$key]['checked']))
+			if (! empty($arrayfields[$extrafieldsobjectprefix.$key]['checked']))
 			{
 				$align=$extrafields->getAlignFlag($key, $extrafieldsobjectkey);
 				print '<td';
@@ -24,6 +26,7 @@ if (! empty($extrafieldsobjectkey))	// $extrafieldsobject is the $object->table_
                 print ' data-key="'.$key.'"';
                 print '>';
                 $tmpkey='options_'.$key;
+
 				if (in_array($extrafields->attributes[$extrafieldsobjectkey]['type'][$key], array('date', 'datetime', 'timestamp')) && !is_numeric($obj->$tmpkey))
 				{
 					$datenotinstring = $obj->$tmpkey;
@@ -51,8 +54,8 @@ if (! empty($extrafieldsobjectkey))	// $extrafieldsobject is the $object->table_
                 }
 				if (! empty($val['isameasure']))
 				{
-					if (! $i) $totalarray['pos'][$totalarray['nbfield']]='ef.'.$tmpkey;
-					$totalarray['val']['ef.'.$tmpkey] += $obj->$tmpkey;
+					if (! $i) $totalarray['pos'][$totalarray['nbfield']]=$extrafieldsobjectprefix.$tmpkey;
+					$totalarray['val'][$extrafieldsobjectprefix.$tmpkey] += $obj->$tmpkey;
 				}
 			}
 		}

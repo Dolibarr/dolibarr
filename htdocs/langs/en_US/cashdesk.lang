@@ -61,3 +61,4 @@ NoPaimementModesDefined=No paiment mode defined in TakePOS configuration
 TicketVatGrouped=Group VAT by rate in tickets
 AutoPrintTickets=Automatically print tickets
 EnableBarOrRestaurantFeatures=Enable features for Bar or Restaurant
+ConfirmDeletionOfThisPOSSale=Do your confirm the deletion of this current sale ? 

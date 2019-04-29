@@ -128,15 +128,7 @@ table.postablelines tr td {
 .posinvoiceline td {
     height: 40px !important;
 }
-.poscolordelete {
-	color: #600;
-}
-.poscolorgreen {
-	color: #060;
-}
-.poscolorblue {
-	color: #006;
-}
+
 @media only screen and (max-aspect-ratio: 6/4) {
 	div.description{
 	min-height:20%;
@@ -224,8 +216,9 @@ table.postablelines tr td {
 	padding-left: 5px;
 }
 
-.selected {
-    font-weight: bold;
+tr.selected, tr.selected td {
+    /* font-weight: bold; */
+	background-color: rgb(240,230,210) !important;
 }
 .order {
     color: limegreen;
@@ -239,6 +232,15 @@ table.postablelines tr td {
 }
 .colorgreen {
 	color: green;
+}
+.poscolordelete {
+	color: #844;
+}
+.poscolorgreen {
+	color: #060;
+}
+.poscolorblue {
+	color: #006;
 }
 
 .centerinmiddle {

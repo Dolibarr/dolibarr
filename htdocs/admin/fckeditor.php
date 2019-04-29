@@ -109,7 +109,7 @@ if (GETPOST('save', 'alpha'))
 	} else {
 		$error ++;
 	}
-	
+
 	$fckeditor_test = GETPOST('formtestfield');
     if (! empty($fckeditor_test)) {
 		if (! dolibarr_set_const($db, 'FCKEDITOR_TEST', $fckeditor_test, 'chaine', 0, '', $conf->entity)) {
@@ -156,7 +156,7 @@ else
     {
         // Si condition non remplie, on ne propose pas l'option
         if (! $conditions[$const]) continue;
-        
+
         print '<tr class="oddeven">';
         print '<td width="16">'.img_object("", $picto[$const]).'</td>';
         print '<td>'.$langs->trans($desc).'</td>';
@@ -181,12 +181,12 @@ else
 	print '<br>'."\n";
 
 	print '<form name="formtest" method="POST" action="'.$_SERVER["PHP_SELF"].'">'."\n";
-    
+
 	// Skins
     show_skin(null, 1);
     print '<br>'."\n";
-    
-    $listofmodes=array('dolibarr_mailings','dolibarr_notes','dolibarr_details','dolibarr_readonly','Full');
+
+    $listofmodes=array('dolibarr_mailings', 'dolibarr_notes', 'dolibarr_details', 'dolibarr_readonly', 'Full', 'Full_inline');
     $linkstomode='';
     foreach($listofmodes as $newmode)
     {
@@ -200,10 +200,19 @@ else
     $linkstomode.='';
 	print load_fiche_titre($langs->trans("TestSubmitForm"), $linkstomode, '');
     print '<input type="hidden" name="mode" value="'.dol_escape_htmltag($mode).'">';
-    $uselocalbrowser=true;
-    $readonly=($mode=='dolibarr_readonly'?1:0);
-    $editor=new DolEditor('formtestfield', isset($conf->global->FCKEDITOR_TEST)?$conf->global->FCKEDITOR_TEST:'Test', '', 200, $mode, 'In', true, $uselocalbrowser, 1, 120, 8, $readonly);
-    $editor->Create();
+    if ($mode != 'Full_inline')
+    {
+        $uselocalbrowser=true;
+        $readonly=($mode=='dolibarr_readonly'?1:0);
+        $editor=new DolEditor('formtestfield', isset($conf->global->FCKEDITOR_TEST)?$conf->global->FCKEDITOR_TEST:'Test', '', 200, $mode, 'In', true, $uselocalbrowser, 1, 120, 8, $readonly);
+        $editor->Create();
+    }
+    else
+    {
+        print '<div style="border: 1px solid #888;" contenteditable="true">';
+        print $conf->global->FCKEDITOR_TEST;
+        print '</div>';
+    }
     print '<br><div class="center"><input class="button" type="submit" name="save" value="'.$langs->trans("Save").'"></div>'."\n";
     print '<div id="divforlog"></div>';
     print '</form>'."\n";

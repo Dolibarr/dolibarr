@@ -87,14 +87,14 @@ class ActionComm extends CommonObject
      * @var string Agenda event label
      */
     public $label;
-    
+
     /**
      * Date creation record (datec)
      *
      * @var integer
      */
     public $datec;
-    
+
     /**
      * Date modification record (tms)
      *
@@ -129,14 +129,14 @@ class ActionComm extends CommonObject
      * @var int
      */
     public $usermodid;
-    
+
     /**
      * Date action start (datep)
      *
      * @var integer
      */
     public $datep;
-    
+
     /**
      * Date action end (datep2)
      *
@@ -504,13 +504,13 @@ class ActionComm extends CommonObject
     /**
      *  Load an object from its id and create a new one in database
      *
-     *  @param	    user	        $fuser      	Object user making action
+     *  @param	    User	        $fuser      	Object user making action
 	 *  @param		int				$socid			Id of thirdparty
      *  @return		int								New id of clone
      */
-    public function createFromClone($fuser, $socid)
+    public function createFromClone(User $fuser, $socid)
     {
-        global $db, $user, $langs, $conf, $hookmanager;
+        global $db, $conf, $hookmanager;
 
         $error=0;
         $now=dol_now();
@@ -528,20 +528,6 @@ class ActionComm extends CommonObject
 		$this->fetchResources();
 
         $this->id=0;
-
-		if (!is_object($fuser))
-		{
-			if ($fuser > 0)
-			{
-				$u = new User($db);
-				$u->fetch($fuser);
-				$fuser = $u;
-			}
-			else
-			{
-				$fuser = $user;
-			}
-		}
 
         // Create clone
 		$this->context['createfromclone']='createfromclone';

@@ -429,7 +429,7 @@ if (empty($reshook))
 		$move_date=GETPOST('move_date')?1:0;
 		$clone_thirdparty=GETPOST('socid', 'int')?GETPOST('socid', 'int'):0;
 
-		$result=$object->createFromClone($object->id, $clone_contacts, $clone_tasks, $clone_project_files, $clone_task_files, $clone_notes, $move_date, 0, $clone_thirdparty);
+		$result=$object->createFromClone($user, $object->id, $clone_contacts, $clone_tasks, $clone_project_files, $clone_task_files, $clone_notes, $move_date, 0, $clone_thirdparty);
 		if ($result <= 0)
 		{
 			setEventMessages($object->error, $object->errors, 'errors');
@@ -556,7 +556,7 @@ if ($action == 'create' && $user->rights->projet->creer)
 			print $form->textwithtooltip($text.' '.img_help(), $texthelp, 1);
 		}
 		else print $text;
-		print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'"><span class="valignmiddle text-plus-circle">'.$langs->trans("AddThirdParty").'</span><span class="fa fa-plus-circle valignmiddle"></span></a>';
+		print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'"><span class="valignmiddle text-plus-circle">'.$langs->trans("AddThirdParty").'</span><span class="fa fa-plus-circle valignmiddle paddingleft"></span></a>';
 		print '</td></tr>';
 	}
 

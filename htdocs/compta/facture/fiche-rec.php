@@ -1305,7 +1305,7 @@ else
 		print '<table class="nobordernopadding" width="100%"><tr><td>';
 		print $langs->trans('PaymentConditionsShort');
 		print '</td>';
-		if ($object->type != Facture::TYPE_CREDIT_NOTE && $action != 'editconditions' && $object->statut == self::STATUS_DRAFT && $user->rights->facture->creer)
+		if ($action != 'editconditions' && $user->rights->facture->creer)
 			print '<td class="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editconditions&amp;facid=' . $object->id . '">' . img_edit($langs->trans('SetConditions'), 1) . '</a></td>';
 		print '</tr></table>';
 		print '</td><td>';
@@ -1329,7 +1329,7 @@ else
 		print '<table class="nobordernopadding" width="100%"><tr><td>';
 		print $langs->trans('PaymentMode');
 		print '</td>';
-		if ($action != 'editmode' && $object->statut == self::STATUS_DRAFT && $user->rights->facture->creer)
+		if ($action != 'editmode' && $user->rights->facture->creer)
 			print '<td class="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editmode&amp;facid=' . $object->id . '">' . img_edit($langs->trans('SetMode'), 1) . '</a></td>';
 		print '</tr></table>';
 		print '</td><td>';
@@ -1463,7 +1463,7 @@ else
 		print '<table class="nobordernopadding" width="100%"><tr><td>';
 		print $langs->trans('Frequency');
 		print '</td>';
-		if ($action != 'editfrequency' && $object->statut == self::STATUS_DRAFT && $user->rights->facture->creer)
+		if ($action != 'editfrequency' && $user->rights->facture->creer)
 			print '<td class="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editfrequency&amp;facid=' . $object->id . '">' . img_edit($langs->trans('Edit'), 1) . '</a></td>';
 		print '</tr></table>';
 		print '</td><td>';

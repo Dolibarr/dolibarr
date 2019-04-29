@@ -45,7 +45,7 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 
 	/**
      * Dolibarr version of the loaded document
-     * @public string
+     * @var string
      */
 	public $version = 'dolibarr';    		// 'development', 'experimental', 'dolibarr'
 

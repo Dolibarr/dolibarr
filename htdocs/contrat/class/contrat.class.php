@@ -165,7 +165,7 @@ class Contrat extends CommonObject
 
 	/**
 	 * @deprecated Use fk_project instead
-	 * @see fk_project
+	 * @see $fk_project
 	 */
 	public $fk_projet;
 
@@ -305,7 +305,7 @@ class Contrat extends CommonObject
      *  @param	int			$notrigger		1=Does not execute triggers, 0=Execute triggers
      *  @param	string		$comment		Comment
 	 *	@return	int							<0 if KO, >0 if OK
-	 *  @see closeAll
+	 *  @see ()
 	 */
 	public function activateAll($user, $date_start = '', $notrigger = 0, $comment = '')
 	{
@@ -361,7 +361,7 @@ class Contrat extends CommonObject
      * @param	int			$notrigger		1=Does not execute triggers, 0=Execute triggers
      * @param	string		$comment		Comment
 	 * @return	int							<0 if KO, >0 if OK
-	 * @see activateAll
+	 * @see activateAll()
 	 */
 	public function closeAll(User $user, $notrigger = 0, $comment = '')
 	{
@@ -1393,7 +1393,7 @@ class Contrat extends CommonObject
 			if (empty($txtva) || ! is_numeric($txtva)) $txtva=0;
 			if (empty($txlocaltax1) || ! is_numeric($txlocaltax1)) $txlocaltax1=0;
             if (empty($txlocaltax2) || ! is_numeric($txlocaltax2)) $txlocaltax2=0;
-			
+
 			if ($price_base_type=='HT')
 			{
 				$pu=$pu_ht;
@@ -1405,13 +1405,13 @@ class Contrat extends CommonObject
 
 			// Check parameters
 			if (empty($remise_percent)) $remise_percent=0;
-			
+
 			if ($date_start && $date_end && $date_start > $date_end) {
 				$langs->load("errors");
 				$this->error=$langs->trans('ErrorStartDateGreaterEnd');
 				return -1;
 			}
-			
+
 			$this->db->begin();
 
 			$localtaxes_type=getLocalTaxesFromRate($txtva, 0, $this->societe, $mysoc);
@@ -1603,7 +1603,7 @@ class Contrat extends CommonObject
 		{
 			$remise_percent=0;
 		}
-		
+
 		if ($date_start && $date_end && $date_start > $date_end) {
 			$langs->load("errors");
 			$this->error=$langs->trans('ErrorStartDateGreaterEnd');
@@ -2388,13 +2388,14 @@ class Contrat extends CommonObject
 	/**
 	 * Load an object from its id and create a new one in database
 	 *
-	 * @param int $socid Id of thirdparty
-	 * @param int $notrigger	1=Does not execute triggers, 0= execute triggers
-	 * @return int New id of clone
+	 * @param	User	$user		  User making the clone
+	 * @param   int     $socid        Id of thirdparty
+	 * @param   int     $notrigger	  1=Does not execute triggers, 0= execute triggers
+	 * @return  int                   New id of clone
 	 */
-    public function createFromClone($socid = 0, $notrigger = 0)
+    public function createFromClone(User $user, $socid = 0, $notrigger = 0)
     {
-		global $db, $user, $langs, $conf, $hookmanager, $extrafields;
+		global $db, $langs, $conf, $hookmanager, $extrafields;
 
 		dol_include_once('/projet/class/project.class.php');
 

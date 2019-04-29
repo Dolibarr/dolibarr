@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - supplier_proposal
 SupplierProposal=Pārdevēja komerciālie priekšlikumi
-supplier_proposalDESC=Pārvaldīt cenu pieprasījumus pārdevējiem
+supplier_proposalDESC=Manage price requests to suppliers
 SupplierProposalNew=Jauns cenas pieprasījums
 CommRequest=Cenas pieprasījums
 CommRequests=Cenas pieprasījumi
@@ -34,7 +34,6 @@ SupplierProposalStatusSignedShort=Pieņemts
 SupplierProposalStatusNotSignedShort=Atteikts
 CopyAskFrom=Izveidot cenas pieprasījumu kopējot jau esošo pieprasījumu
 CreateEmptyAsk=Izveidot jaunu tukšu pieprasījumu
-CloneAsk=Klonēt cenas pieprasījumu
 ConfirmCloneAsk=Vai tiešām vēlaties klonēt cenu pieprasījumu <b> %s </b>?
 ConfirmReOpenAsk=Vai tiešām vēlaties atvērt cenu pieprasījumu <b> %s</b>?
 SendAskByMail=Sūtīt cenas pieprasījumu pa pastu

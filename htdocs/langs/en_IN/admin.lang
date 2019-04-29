@@ -14,3 +14,4 @@ ProposalsPDFModules=Quotation documents models
 FreeLegalTextOnProposal=Free text on quotations
 WatermarkOnDraftProposal=Watermark on draft quotations (none if empty)
 MailToSendProposal=Customer quotations
+OperationParamDesc=Define values to use for action, or how to extract values. For example:<br>objproperty1=SET:abc<br>objproperty2=EXTRACT:HEADER:X-Myheaderkey.*[^\\s]+(.*)<br>options_myextrafield=EXTRACT:SUBJECT:([^\\s]*)<br>object.objproperty4=EXTRACT:BODY:My company name is\\s([^\\s]*)<br><br>Use a ; char as separator to extract or set several properties.

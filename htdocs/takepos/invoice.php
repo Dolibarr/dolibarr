@@ -35,15 +35,31 @@ if (!defined('NOREQUIREAJAX'))  { define('NOREQUIREAJAX', '1'); }
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT . '/compta/paiement/class/paiement.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/class/html.form.class.php';
 
 $langs->loadLangs(array("bills", "cashdesk"));
 
 $id = GETPOST('id', 'int');
 $action = GETPOST('action', 'alpha');
 $idproduct = GETPOST('idproduct', 'int');
-
 $place = (GETPOST('place', 'int') > 0 ? GETPOST('place', 'int') : 0);   // $place is id of table for Ba or Restaurant
 $posnb = (GETPOST('posnb', 'int') > 0 ? GETPOST('posnb', 'int') : 0);   // $posnb is id of POS
+
+/**
+ * Abort invoice creationg with a given error message
+ *
+ * @param   string  $message        Message explaining the error to the user
+ * @return	void
+ */
+function fail($message)
+{
+	header($_SERVER['SERVER_PROTOCOL'] . ' 500 Internal Server Error', true, 500);
+	die($message);
+}
+
+
+
+$placeid = 0;	// $placeid is id of invoice
 
 $number = GETPOST('number', 'alpha');
 $idline = GETPOST('idline', 'int');
@@ -100,6 +116,26 @@ if ($action == 'valid' && $user->rights->facture->creer)
 
 	$invoice = new Facture($db);
 	$invoice->fetch($placeid);
+	if($invoice->total_ttc<0){
+		$invoice->type= $invoice::TYPE_CREDIT_NOTE;
+		$sql="SELECT rowid FROM ".MAIN_DB_PREFIX."facture WHERE ";
+		$sql.="fk_soc = '".$invoice->socid."' ";
+		$sql.="AND type <> ".Facture::TYPE_CREDIT_NOTE." ";
+		$sql.="AND fk_statut >= ".$invoice::STATUS_VALIDATED." ";
+		$sql.="ORDER BY rowid DESC";
+		$resql = $db->query($sql);
+		if($resql){
+			$obj = $db->fetch_object($resql);
+			$fk_source=$obj->rowid;
+			if($fk_source == null){
+				fail($langs->transnoentitiesnoconv("NoPreviousBillForCustomer"));
+			}
+		}else{
+			fail($langs->transnoentitiesnoconv("NoPreviousBillForCustomer"));
+		}
+		$invoice->fk_facture_source=$fk_source;
+		$invoice->update($user);
+	}
 
 	if (! empty($conf->stock->enabled) && $conf->global->CASHDESK_NO_DECREASE_STOCK != "1")
 	{
@@ -190,17 +226,30 @@ if ($action == "addnote") {
 }
 
 if ($action == "deleteline") {
-    if ($idline > 0 and $placeid > 0) { //If exist invoice and line, to avoid errors if deleted from other device or no line selected
+    if ($idline > 0 and $placeid > 0) { // If invoice exists and line selected. To avoid errors if deleted from another device or no line selected.
         $invoice->deleteline($idline);
         $invoice->fetch($placeid);
     }
-    elseif ($placeid > 0) { //If exist invoice, but no line selected, proceed to delete last line
+    elseif ($placeid > 0) {             // If invoice exists but no line selected, proceed to delete last line.
         $sql = "SELECT rowid FROM " . MAIN_DB_PREFIX . "facturedet where fk_facture='".$placeid."' order by rowid DESC";
         $resql = $db->query($sql);
         $row = $db->fetch_array($resql);
         $deletelineid = $row[0];
         $invoice->deleteline($deletelineid);
         $invoice->fetch($placeid);
+    }
+}
+
+if ($action == "delete") {
+    if ($placeid > 0) { //If invoice exists
+        $result = $invoice->fetch($placeid);
+        if ($result > 0)
+        {
+            $sql = "DELETE FROM " . MAIN_DB_PREFIX . "facturedet where fk_facture='".$placeid."'";
+            $resql = $db->query($sql);
+
+            $invoice->fetch($placeid);
+        }
     }
 }
 
@@ -291,19 +340,20 @@ if ($action=="valid")
 {
     $sectionwithinvoicelink.='<!-- Section with invoice link -->'."\n";
     $sectionwithinvoicelink.='<input type="hidden" name="invoiceid" id="invoiceid" value="'.$invoice->id.'">';
-    $sectionwithinvoicelink.='<span style="font-size:120%;" class="center"><b>';
+    $sectionwithinvoicelink.='<span style="font-size:120%;" class="center">';
     $sectionwithinvoicelink.=$invoice->getNomUrl(1, '', 0, 0, '', 0, 0, -1, '_backoffice')." - ";
-    if ($invoice->getRemainToPay() > 0)
+    $remaintopay = $invoice->getRemainToPay();
+    if ($remaintopay > 0)
     {
-        $sectionwithinvoicelink.=$langs->trans('Generated');
+        $sectionwithinvoicelink.=$langs->trans('RemainToPay').': <span class="amountremaintopay" style="font-size: unset">'.price($remaintopay, 1, $langs, 1, -1, -1, $conf->currency).'</span>';
     }
     else
     {
-        if ($invoice->paye) $sectionwithinvoicelink.=$langs->trans("Payed");
+        if ($invoice->paye) $sectionwithinvoicelink.='<span class="amountpaymentcomplete" style="font-size: unset">'.$langs->trans("Payed").'</span>';
         else $sectionwithinvoicelink.=$langs->trans('BillShortStatusValidated');
     }
-    $sectionwithinvoicelink.='</b></span>';
-    if ($conf->global->TAKEPOSCONNECTOR) $sectionwithinvoicelink.=' <button type="button" onclick="TakeposPrinting('.$placeid.');">'.$langs->trans('PrintTicket').'</button>';
+    $sectionwithinvoicelink.='</span>';
+    if ($conf->global->TAKEPOSCONNECTOR) $sectionwithinvoicelink.=' <button id="buttonprint" type="button" onclick="TakeposPrinting('.$placeid.');">'.$langs->trans('PrintTicket').'</button>';
     else $sectionwithinvoicelink.=' <button id="buttonprint" type="button" onclick="Print('.$placeid.');">'.$langs->trans('PrintTicket').'</button>';
     if ($conf->global->TAKEPOS_AUTO_PRINT_TICKETS) $sectionwithinvoicelink.='<script language="javascript">$("#buttonprint").click();</script>';
 }

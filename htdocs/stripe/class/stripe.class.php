@@ -238,17 +238,18 @@ class Stripe extends CommonObject
 	}
 
     /**
-	 * Get the Stripe payment intent
+	 * Get the Stripe payment intent. Create it with confirm=false
 	 *
 	 * @param	Societe	$object							    Object to pay with Stripe
 	 * @param	string 	$customer							Stripe customer ref 'cus_xxxxxxxxxxxxx' via customerStripe()
 	 * @param	string	$key							    ''=Use common API. If not '', it is the Stripe connect account 'acc_....' to use Stripe connect
 	 * @param	int		$status							    Status (0=test, 1=live)
 	 * @param	int		$usethirdpartyemailforreceiptemail	1=use thirdparty email for receipt
-	 * @param	int		$mode		                        automatic=automatic payment, manual=need confirmation
+	 * @param	int		$mode		                        automatic=automatic confirmation/payment when conditions are ok, manual=need to call confirm() on intent
+	 * @param   boolean $confirmnow                         false=default, true=try to confirm immediatly after create (if conditions are ok)
 	 * @return 	\Stripe\PaymentIntent|null 			        Stripe PaymentIntent or null if not found
 	 */
-	public function getPaymentIntent($object, $customer, $key = null, $status = 0, $usethirdpartyemailforreceiptemail = 0, $mode = 'automatic')
+	public function getPaymentIntent($object, $customer, $key = null, $status = 0, $usethirdpartyemailforreceiptemail = 0, $mode = 'automatic', $confirmnow = false)
 	{
 		global $conf, $user, $mysoc;
 
@@ -265,14 +266,14 @@ class Stripe extends CommonObject
 
 		$paymentintent = null;
 
-		$sql = "SELECT pi.ext_payment_id, pi.entity, pi.fk_facture, pi.sourcetype, pi.ext_payment_site";			// key_account is cus_....
+		$sql = "SELECT pi.ext_payment_id, pi.entity, pi.fk_facture, pi.sourcetype, pi.ext_payment_site";
 		$sql.= " FROM " . MAIN_DB_PREFIX . "prelevement_facture_demande as pi";
 		$sql.= " WHERE pi.fk_facture = " . $object->id;
 		$sql.= " AND pi.sourcetype = '" . $object->element . "'";
 		$sql.= " AND pi.entity IN (".getEntity('societe').")";
 		$sql.= " AND pi.ext_payment_site = '" . $service . "'";
 
-		dol_syslog(get_class($this) . "::customerStripe search stripe customer id for thirdparty id=".$object->id, LOG_DEBUG);
+		dol_syslog(get_class($this) . "::getPaymentIntent search stripe customer id for thirdparty id=".$object->id, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
@@ -281,7 +282,7 @@ class Stripe extends CommonObject
 				$obj = $this->db->fetch_object($resql);
 				$intent = $obj->ext_payment_id;
 
-				dol_syslog(get_class($this) . "::customerStripe found record");
+				dol_syslog(get_class($this) . "::getPaymentIntent found existing payment intent record");
 
 				// Force to use the correct API key
 				global $stripearrayofkeysbyenv;
@@ -312,16 +313,24 @@ class Stripe extends CommonObject
 					$fee = round($conf->global->STRIPE_APPLICATION_FEE_MINIMAL * 100);
 				}
 
-                $description=$object->element.$object->ref;
+				$ipaddress=getUserRemoteIP();
+				// Not enough space for a ref so we store id. Also with multicompany we can have same ref for 2 different
+				// object and we need a unique (this is used later as idempotency_key)
+				$description=$object->element.$object->id;
 
 				$dataforintent = array(
-					"amount" => $stripeamount,
+				    "confirm" => $confirmnow,	// Do not confirm immediatly during creation of intent
+				    "confirmation_method" => $mode,
+				    "amount" => $stripeamount,
 					"currency" => $object->multicurrency_code,
                     "customer"  => $customer,
                     "allowed_source_types" => ["card"],
-                    "statement_descriptor" => dol_trunc(dol_trunc(dol_string_unaccent($mysoc->name), 8, 'right', 'UTF-8', 1).' '.$description, 22, 'right', 'UTF-8', 1),     // 22 chars that appears on bank receipt
-					"metadata" => array('dol_type'=>$object->element, 'dol_id'=>$object->id, 'dol_version'=>DOL_VERSION, 'dol_entity'=>$conf->entity, 'ipaddress'=>(empty($_SERVER['REMOTE_ADDR'])?'':$_SERVER['REMOTE_ADDR']))
+				    "statement_descriptor" => dol_trunc($description, 10, 'right', 'UTF-8', 1),     // 22 chars that appears on bank receipt (company + description)
+					"metadata" => array('dol_type'=>$object->element, 'dol_id'=>$object->id, 'dol_version'=>DOL_VERSION, 'dol_entity'=>$conf->entity, 'ipaddress'=>$ipaddress)
 				);
+				// save_payment_method = true,
+				// payment_method_types =
+				// payment_method =
 
 				if ($conf->entity!=$conf->global->STRIPECONNECT_PRINCIPAL && $fee>0)
 				{
@@ -344,12 +353,12 @@ class Stripe extends CommonObject
 					}
                     $now=dol_now();
 					$sql = "INSERT INTO " . MAIN_DB_PREFIX . "prelevement_facture_demande (fk_soc, date_demande, fk_user_demande, ext_payment_id, fk_facture, sourcetype, entity, ext_payment_site)";
-					$sql .= " VALUES ('".$object->socid."','".$this->db->idate($now)."', '0', '".$this->db->escape($paymentintent->id)."', ".$object->id.", '".$object->element."', " . $conf->entity . ", '" . $service . "')";
+					$sql .= " VALUES ('".$object->socid."','".$this->db->idate($now)."', '0', '".$this->db->escape($paymentintent->id)."', ".$object->id.", '".$this->db->escape($object->element)."', " . $conf->entity . ", '" . $service . "')";
 					$resql = $this->db->query($sql);
 					if (! $resql)
 					{
 						$this->error = $this->db->lasterror();
-                        dol_syslog(get_class($this) . "::PaymentIntent not insert with id=".$paymentintent->id);
+                        dol_syslog(get_class($this) . "::PaymentIntent failed to insert paymentintent with id=".$paymentintent->id." into database.");
 					}
 				}
 				catch(Exception $e)
@@ -557,7 +566,7 @@ class Stripe extends CommonObject
                     $charge = \Stripe\Charge::create(array(
 						"amount" => "$stripeamount",
 						"currency" => "$currency",
-						"statement_descriptor" => dol_trunc(dol_trunc(dol_string_unaccent($mysoc->name), 8, 'right', 'UTF-8', 1).' '.$description, 22, 'right', 'UTF-8', 1),     // 22 chars that appears on bank receipt
+                        "statement_descriptor" => dol_trunc($description, 10, 'right', 'UTF-8', 1),     // 22 chars that appears on bank receipt (company + description)
 						"description" => "Stripe payment: ".$description,
 						"capture"  => $capture,
 						"metadata" => $metadata,
@@ -567,7 +576,7 @@ class Stripe extends CommonObject
 					$paymentarray = array(
 						"amount" => "$stripeamount",
 						"currency" => "$currency",
-						"statement_descriptor" => dol_trunc(dol_trunc(dol_string_unaccent($mysoc->name), 8, 'right', 'UTF-8', 1).' '.$description, 22, 'right', 'UTF-8', 1),     // 22 chars that appears on bank receipt
+					    "statement_descriptor" => dol_trunc($description, 10, 'right', 'UTF-8', 1),     // 22 chars that appears on bank receipt (company + description)
 						"description" => "Stripe payment: ".$description,
 						"capture"  => $capture,
 						"metadata" => $metadata,
@@ -594,7 +603,7 @@ class Stripe extends CommonObject
         		$paymentarray = array(
 					"amount" => "$stripeamount",
 					"currency" => "$currency",
-					"statement_descriptor" => dol_trunc(dol_trunc(dol_string_unaccent($mysoc->name), 8, 'right', 'UTF-8', 1).' '.$description, 22, 'right', 'UTF-8', 1),     // 22 chars that appears on bank receipt
+        		    "statement_descriptor" => dol_trunc($description, 10, 'right', 'UTF-8', 1),     // 22 chars that appears on bank receipt (company + description)
 					"description" => "Stripe payment: ".$description,
 					"capture"  => $capture,
 					"metadata" => $metadata,

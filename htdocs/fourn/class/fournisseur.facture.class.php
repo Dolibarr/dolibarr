@@ -155,7 +155,7 @@ class FactureFournisseur extends CommonInvoice
 
 	/**
 	 * @deprecated
-	 * @see note_private, note_public
+	 * @see $note_private, $note_public
 	 */
     public $note;
 
@@ -1573,8 +1573,8 @@ class FactureFournisseur extends CommonInvoice
      *	@param    	double	$qty             	Quantite
      *	@param    	int		$fk_product      	Product/Service ID predefined
      *	@param    	double	$remise_percent  	Percentage discount of the line
-     *	@param    	date	$date_start      	Date de debut de validite du service
-     * 	@param    	date	$date_end        	Date de fin de validite du service
+     *	@param    	integer	$date_start      	Date de debut de validite du service
+     * 	@param    	integer	$date_end        	Date de fin de validite du service
      * 	@param    	string	$ventil          	Code de ventilation comptable
      *	@param    	int		$info_bits			Bits de type de lines
      *	@param    	string	$price_base_type 	HT ou TTC
@@ -1616,7 +1616,7 @@ class FactureFournisseur extends CommonInvoice
 			if (!preg_match('/\((.*)\)/', $txtva)) {
 				$txtva = price2num($txtva);               // $txtva can have format '5,1' or '5.1' or '5.1(XXX)', we must clean only if '5,1'
 			}
-			
+
 			if ($date_start && $date_end && $date_start > $date_end) {
 				$langs->load("errors");
 				$this->error=$langs->trans('ErrorStartDateGreaterEnd');
@@ -1833,8 +1833,8 @@ class FactureFournisseur extends CommonInvoice
      * @param		int			$type				Type of line (0=product, 1=service)
      * @param     	double		$remise_percent  	Percentage discount of the line
      * @param		int			$notrigger			Disable triggers
-     * @param      	timestamp	$date_start     	Date start of service
-     * @param      	timestamp   $date_end       	Date end of service
+     * @param      	integer 	$date_start     	Date start of service
+     * @param      	integer     $date_end       	Date end of service
 	 * @param		array		$array_options		extrafields array
      * @param 		string		$fk_unit 			Code of the unit to use. Null to use the default one
 	 * @param		double		$pu_ht_devise		Amount in currency
@@ -1855,7 +1855,7 @@ class FactureFournisseur extends CommonInvoice
         // Check parameters
         //if (! is_numeric($pu) || ! is_numeric($qty)) return -1;
         if ($type < 0) return -1;
-        
+
         if ($date_start && $date_end && $date_start > $date_end) {
             $langs->load("errors");
             $this->error=$langs->trans('ErrorStartDateGreaterEnd');
@@ -2525,13 +2525,14 @@ class FactureFournisseur extends CommonInvoice
     /**
      *	Load an object from its id and create a new one in database
      *
+     *	@param      User	$user        	User that clone
      *	@param      int		$fromid     	Id of object to clone
      *	@param		int		$invertdetail	Reverse sign of amounts for lines
      * 	@return		int						New id of clone
      */
-    public function createFromClone($fromid, $invertdetail = 0)
+    public function createFromClone(User $user, $fromid, $invertdetail = 0)
     {
-        global $user,$langs;
+        global $langs;
 
         $error=0;
 
@@ -2545,13 +2546,13 @@ class FactureFournisseur extends CommonInvoice
         $object->statut=self::STATUS_DRAFT;
 
         // Clear fields
-        $object->ref_supplier=$langs->trans("CopyOf").' '.$object->ref_supplier;
+        $object->ref_supplier       = (empty($this->ref_supplier) ? $langs->trans("CopyOf").' '.$object->ref_supplier : $this->ref_supplier);
         $object->author             = $user->id;
         $object->user_valid         = '';
         $object->fk_facture_source  = 0;
         $object->date_creation      = '';
         $object->date_validation    = '';
-        $object->date               = '';
+        $object->date               = (empty($this->date) ? '' : $this->date);
         $object->date_echeance      = '';
         $object->ref_client         = '';
         $object->close_code         = '';
@@ -2707,7 +2708,7 @@ class SupplierInvoiceLine extends CommonObjectLine
 
 	/**
 	 * @deprecated
-	 * @see product_ref
+	 * @see $product_ref
 	 */
 	public $ref;
 
@@ -2726,7 +2727,7 @@ class SupplierInvoiceLine extends CommonObjectLine
 
 	/**
 	 * @deprecated
-	 * @see label
+	 * @see $label
 	 */
 	public $libelle;
 
@@ -2740,7 +2741,7 @@ class SupplierInvoiceLine extends CommonObjectLine
 	 * Unit price before taxes
 	 * @var float
 	 * @deprecated Use $subprice
-	 * @see subprice
+	 * @see $subprice
 	 */
 	public $pu_ht;
 
@@ -2756,7 +2757,7 @@ class SupplierInvoiceLine extends CommonObjectLine
 	 * Total VAT amount
 	 * @var float
 	 * @deprecated Use $total_tva instead
-	 * @see total_tva
+	 * @see $total_tva
 	 */
 	public $tva;
 

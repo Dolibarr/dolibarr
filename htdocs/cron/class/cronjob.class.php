@@ -736,13 +736,12 @@ class Cronjob extends CommonObject
 	/**
 	 *	Load an object from its id and create a new one in database
 	 *
+	 *  @param	User	$user		User making the clone
 	 *	@param	int		$fromid     Id of object to clone
 	 * 	@return	int					New id of clone
 	 */
-	public function createFromClone($fromid)
+	public function createFromClone(User $user, $fromid)
 	{
-		global $user,$langs;
-
 		$error=0;
 
 		$object=new Cronjob($this->db);
@@ -851,7 +850,6 @@ class Cronjob extends CommonObject
 		if (! empty($conf->dol_no_mouse_hover)) $notooltip=1;   // Force disable tooltips
 
 		$result = '';
-		$companylink = '';
 
 		$label = '<u>' . $langs->trans("CronJob") . '</u>';
 		$label.= '<br>';

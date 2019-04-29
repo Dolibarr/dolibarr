@@ -145,7 +145,7 @@ if ($action == 'presend')
 	{
 		$fuser = new User($db);
 		$fuser->fetch($object->fk_user_author);
-		$liste['thirdparty'] = $fuser->getFullName($langs)." <".$fuser->email.">";
+		$liste['thirdparty'] = $fuser->getFullName($outputlangs)." <".$fuser->email.">";
 	}
 	elseif ($object->element == 'societe')
 	{
@@ -155,11 +155,11 @@ if ($action == 'presend')
 	}
 	elseif ($object->element == 'contact')
 	{
-		$liste['contact'] = $object->getFullName($langs)." <".$object->email.">";
+		$liste['contact'] = $object->getFullName($outputlangs)." <".$object->email.">";
 	}
 	elseif ($object->element == 'user' || $object->element == 'member')
 	{
-		$liste['thirdparty'] = $object->getFullName($langs)." <".$object->email.">";
+		$liste['thirdparty'] = $object->getFullName($outputlangs)." <".$object->email.">";
 	}
 	else
 	{
@@ -174,7 +174,7 @@ if ($action == 'presend')
 		$listeuser=array();
 		$fuserdest = new User($db);
 
-		$result= $fuserdest->fetchAll('ASC', 't.lastname', 0, 0, array('customsql'=>'t.statut=1 AND t.employee=1 AND t.email IS NOT NULL AND t.email<>\'\''));
+		$result= $fuserdest->fetchAll('ASC', 't.lastname', 0, 0, array('customsql'=>'t.statut=1 AND t.employee=1 AND t.email IS NOT NULL AND t.email<>\'\''), 'AND', true);
 		if ($result>0 && is_array($fuserdest->users) && count($fuserdest->users)>0) {
 			foreach($fuserdest->users as $uuserdest) {
 				$listeuser[$uuserdest->id] = $uuserdest->user_get_property($uuserdest->id, 'email');
@@ -221,7 +221,7 @@ if ($action == 'presend')
 
 		foreach ($contactarr as $contact) {
             $contactstatic->fetch($contact['id']);
-            $substitutionarray['__CONTACT_NAME_'.$contact['code'].'__'] = $contactstatic->getFullName($langs, 1);
+            $substitutionarray['__CONTACT_NAME_'.$contact['code'].'__'] = $contactstatic->getFullName($outputlangs, 1);
 		}
 	}
 

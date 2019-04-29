@@ -18,13 +18,14 @@ StatusDeliveryCanceled=لغو شد
 StatusDeliveryDraft=پیش نویس
 StatusDeliveryValidated=رسیده
 # merou PDF model
-NameAndSignature=نام و امضا:
+NameAndSignature=Name and Signature:
 ToAndDate=To___________________________________ در ____ / ____ / __________
 GoodStatusDeclaration=محصولات فوق در شرایط خوبی دریافت کرده اند،
-Deliverer=منجی:
+Deliverer=Deliverer:
 Sender=فرستنده
 Recipient=دریافت کننده
 ErrorStockIsNotEnough=این سهام به اندازه کافی وجود ندارد
 Shippable=حمل و نقلی
 NonShippable=حمل و نقلی نیست
 ShowReceiving=Show delivery receipt
+NonExistentOrder=Nonexistent order

@@ -750,7 +750,6 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 		if ($conf->commande->enabled && $user->rights->commande->lire) $elementTypeArray['order']=$langs->transnoentitiesnoconv('Orders');
 		if ($conf->facture->enabled && $user->rights->facture->lire) $elementTypeArray['invoice']=$langs->transnoentitiesnoconv('Invoices');
 		if ($conf->contrat->enabled && $user->rights->contrat->lire) $elementTypeArray['contract']=$langs->transnoentitiesnoconv('Contracts');
-	}
 
 	if (! empty($conf->stripe->enabled))
 	{
@@ -786,6 +785,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 		}
 		print '</td></tr>';
 	}
+    }
 
 	print '</table>';
 	print '</div>';

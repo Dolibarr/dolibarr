@@ -5,7 +5,7 @@
  * Copyright (C) 2005-2012 Regis Houssin               <regis.houssin@inodbox.com>
  * Copyright (C) 2007      Franky Van Liedekerke       <franky.van.liedekerker@telenet.be>
  * Copyright (C) 2008      Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
- * Copyright (C) 2013      Florian Henry		  	       <florian.henry@open-concept.pro>
+ * Copyright (C) 2013      Florian Henry		  	   <florian.henry@open-concept.pro>
  * Copyright (C) 2013      Alexandre Spangaro 	       <aspangaro@open-dsi.fr>
  * Copyright (C) 2013      Juanjo Menent	 	       <jmenent@2byte.es>
  * Copyright (C) 2015      Marcos García               <marcosgdf@gmail.com>
@@ -81,6 +81,7 @@ class Contact extends CommonObject
 
 	public $civility_id;      // In fact we store civility_code
 	public $civility_code;
+  public $civility;
 	public $address;
 	public $zip;
 	public $town;
@@ -337,7 +338,6 @@ class Contact extends CommonObject
 		$this->zip=(empty($this->zip)?'':$this->zip);
 		$this->town=(empty($this->town)?'':$this->town);
 		$this->country_id=($this->country_id > 0?$this->country_id:$this->country_id);
-		$this->state_id=($this->state_id > 0?$this->state_id:$this->fk_departement);
 		if (empty($this->statut)) $this->statut = 0;
 
 		$this->db->begin();
@@ -696,6 +696,8 @@ class Contact extends CommonObject
 	{
 		global $langs;
 
+        $langs->load("dict");
+
 		dol_syslog(get_class($this)."::fetch id=".$id, LOG_DEBUG);
 
 		if (empty($id) && empty($ref_ext))
@@ -706,10 +708,10 @@ class Contact extends CommonObject
 
 		$langs->load("companies");
 
-		$sql = "SELECT c.rowid, c.entity, c.fk_soc, c.ref_ext, c.civility as civility_id, c.lastname, c.firstname,";
+		$sql = "SELECT c.rowid, c.entity, c.fk_soc, c.ref_ext, c.civility as civility_code, c.lastname, c.firstname,";
 		$sql.= " c.address, c.statut, c.zip, c.town,";
 		$sql.= " c.fk_pays as country_id,";
-		$sql.= " c.fk_departement,";
+		$sql.= " c.fk_departement as state_id,";
 		$sql.= " c.birthday,";
 		$sql.= " c.poste, c.phone, c.phone_perso, c.phone_mobile, c.fax, c.email, c.jabberid, c.skype, c.twitter, c.facebook, c.linkedin,";
         $sql.= " c.photo,";
@@ -748,10 +750,12 @@ class Contact extends CommonObject
 				$this->entity			= $obj->entity;
 				$this->ref				= $obj->rowid;
 				$this->ref_ext			= $obj->ref_ext;
-				$this->civility_id		= $obj->civility_id;
-				$this->civility_code		= $obj->civility_id;
-				$this->lastname			= $obj->lastname;
-				$this->firstname			= $obj->firstname;
+
+				$this->civility_code    = $obj->civility_code;
+				$this->civility	        = $obj->civility_code?($langs->trans("Civility".$obj->civility_code) != ("Civility".$obj->civility_code) ? $langs->trans("Civility".$obj->civility_code) : $obj->civility_code):'';
+
+                $this->lastname			= $obj->lastname;
+				$this->firstname		= $obj->firstname;
 				$this->address			= $obj->address;
 				$this->zip				= $obj->zip;
 				$this->town				= $obj->town;
@@ -759,34 +763,31 @@ class Contact extends CommonObject
 				$this->date_creation     = $this->db->jdate($obj->date_creation);
 				$this->date_modification = $this->db->jdate($obj->date_modification);
 
-				$this->fk_departement	= $obj->fk_departement;    // deprecated
-				$this->state_id			= $obj->fk_departement;
-				$this->departement_code	= $obj->state_code;	       // deprecated
+				$this->state_id			= $obj->state_id;
 				$this->state_code		= $obj->state_code;
-				$this->departement		= $obj->state;	           // deprecated
-				$this->state				= $obj->state;
+				$this->state			= $obj->state;
 
 				$this->country_id 		= $obj->country_id;
 				$this->country_code		= $obj->country_id?$obj->country_code:'';
 				$this->country			= $obj->country_id?($langs->trans('Country'.$obj->country_code)!='Country'.$obj->country_code?$langs->transnoentities('Country'.$obj->country_code):$obj->country):'';
 
-				$this->socid				= $obj->fk_soc;
+				$this->socid			= $obj->fk_soc;
 				$this->socname			= $obj->socname;
-				$this->poste				= $obj->poste;
+				$this->poste			= $obj->poste;
 				$this->statut			= $obj->statut;
 
-				$this->phone_pro			= trim($obj->phone);
+				$this->phone_pro		= trim($obj->phone);
 				$this->fax				= trim($obj->fax);
 				$this->phone_perso		= trim($obj->phone_perso);
 				$this->phone_mobile		= trim($obj->phone_mobile);
 
-				$this->email				= $obj->email;
+				$this->email			= $obj->email;
 				$this->jabberid			= $obj->jabberid;
-				$this->skype				= $obj->skype;
-				$this->twitter				= $obj->twitter;
-				$this->facebook				= $obj->facebook;
-				$this->linkedin				= $obj->linkedin;
-				$this->photo				= $obj->photo;
+				$this->skype			= $obj->skype;
+				$this->twitter			= $obj->twitter;
+				$this->facebook			= $obj->facebook;
+				$this->linkedin			= $obj->linkedin;
+				$this->photo			= $obj->photo;
 				$this->priv				= $obj->priv;
 				$this->mail				= $obj->email;
 

@@ -154,7 +154,7 @@ if ($result)
 			$i++;
 		}
 	} else {
-		print '<tr class="oddeven"><td colspan="5" class="opacitymedium">' . $langs->trans("None") . '</td></tr>';
+		print '<tr class="oddeven"><td colspan="7" class="opacitymedium">' . $langs->trans("None") . '</td></tr>';
 	}
 	print '</table>';
 	print '</div>';

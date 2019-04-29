@@ -113,7 +113,7 @@ if ($id > 0)
         print '<div class="fichecenter">';
 
         print '<div class="underbanner clearboth"></div>';
-		print '<table class="border centpercent">';
+		print '<table class="border tableforfield centpercent">';
 
 		$linkback = '<a href="'.DOL_URL_ROOT.'/adherents/list.php">'.$langs->trans("BackToList").'</a>';
 

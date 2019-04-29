@@ -1,6 +1,5 @@
 # Dolibarr language file - Source file is en_US - other
 NumberingShort=Nr
-MessageKO=Nachrichtenseite für abgebrochene Zahlung
 Notify_COMPANY_SENTBYMAIL=Von Geschäftspartner-Karte gesendete Mails
 Notify_FICHEINTER_VALIDATE=Eingriff freigegeben
 Notify_FICHINTER_ADD_CONTACT=Kontakt zu Einsatz hinzugefügt

@@ -124,7 +124,7 @@ if ($object->id)
     print '<div class="fichecenter">';
 
     print '<div class="underbanner clearboth"></div>';
-    print '<table class="border centpercent">';
+    print '<table class="border tableforfield centpercent">';
 
     // Company
     /*
