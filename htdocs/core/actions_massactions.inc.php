@@ -70,6 +70,7 @@ if (! $error && $massaction == 'confirm_presend')
 
     $listofobjectid=array();
     $listofobjectthirdparties=array();
+    $listofobjectcontacts = array();
     $listofobjectref=array();
 
     if (! $error)
@@ -93,6 +94,16 @@ if (! $error && $massaction == 'confirm_presend')
                 if ($objecttmp->element == 'expensereport') $thirdpartyid=$objecttmp->fk_user_author;
                 if ($objecttmp->element == 'holiday')       $thirdpartyid=$objecttmp->fk_user;
                 if (empty($thirdpartyid)) $thirdpartyid=0;
+
+                if ($objectclass == 'Facture') {
+                    $tmparraycontact = array();
+                    $tmparraycontact = $objecttmp->liste_contact(-1, 'external', 0, 'BILLING');
+                    if (is_array($tmparraycontact) && count($tmparraycontact) > 0) {
+                        foreach ($tmparraycontact as $data_email) {
+                            $listofobjectcontacts[$toselectid][$data_email['id']] = $data_email['email'];
+                        }
+                    }
+                }
 
                 $listofobjectthirdparties[$thirdpartyid]=$thirdpartyid;
                 $listofobjectref[$thirdpartyid][$toselectid]=$objecttmp;
@@ -216,7 +227,7 @@ if (! $error && $massaction == 'confirm_presend')
                     $resaction.='<div class="error">'.$langs->trans('ErrorOnlyProposalNotDraftCanBeSentInMassAction', $objectobj->ref).'</div><br>';
                     continue; // Payment done or started or canceled
                 }
-                if ($objectclass == 'Commande' && $objectoj->statut == Commande::STATUS_DRAFT)
+                if ($objectclass == 'Commande' && $objectobj->statut == Commande::STATUS_DRAFT)
                 {
                     $langs->load("errors");
                     $nbignored++;
@@ -245,6 +256,16 @@ if (! $error && $massaction == 'confirm_presend')
                         $fuser = new User($db);
                         $fuser->fetch($objectobj->fk_user);
                         $sendto = $fuser->email;
+                    } elseif ($objectobj->element == 'facture' && !empty($listofobjectcontacts[$objectid])) {
+                        $emails_to_sends = array();
+                        $objectobj->fetch_thirdparty();
+                        foreach ($listofobjectcontacts[$objectid] as $contactemailid => $contactemailemail) {
+
+                            $emails_to_sends[] = $objectobj->thirdparty->contact_get_property((int)$contactemailid, 'email');
+                        }
+                        if (count($emails_to_sends) > 0) {
+                            $sendto = implode(',', $emails_to_sends);
+                        }
                     }
                     else
                     {
