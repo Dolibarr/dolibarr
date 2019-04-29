@@ -362,7 +362,7 @@ class modProduct extends DolibarrModules
 					'sp.fk_soc'=>array('rule'=>'fetchidfromref','classfile'=>'/societe/class/societe.class.php','class'=>'Societe','method'=>'fetch','element'=>'ThirdParty'),
 					'sp.fk_product'=>array('rule'=>'fetchidfromref','classfile'=>'/product/class/product.class.php','class'=>'Product','method'=>'fetch','element'=>'Product')
 			);
-			$this->import_examplevalues_array[$r]=array('sp.fk_product'=>"PREF123456",
+			$this->import_examplevalues_array[$r]=array('sp.fk_product'=>"PROD_REF or id:123456",
 					'sp.fk_soc'=>"My Supplier",'sp.ref_fourn'=>"SupplierRef", 'sp.quantity'=>"1", 'sp.tva_tx'=>'21',
 					'sp.price'=>"50",
 					'sp.unitprice'=>'50',
@@ -381,7 +381,7 @@ class modProduct extends DolibarrModules
 			$this->import_entities_array[$r]=array();		// We define here only fields that use another icon that the one defined into import_icon
 			$this->import_tables_array[$r]=array('pr'=>MAIN_DB_PREFIX.'product_price');
 			$this->import_tables_creator_array[$r]=array('pr'=>'fk_user_author');	// Fields to store import user id
-			$this->import_fields_array[$r]=array('pr.fk_product'=>"ProductRowid*",
+			$this->import_fields_array[$r]=array('pr.fk_product'=>"ProductOrService*",
 				'pr.price_base_type'=>"PriceLevelPriceBase",'pr.price_level'=>"PriceLevel",
 				'pr.price'=>"PriceLevelUnitPriceHT",'pr.price_ttc'=>"PriceLevelUnitPriceTTC",
 				'pr.price_min'=>"MinPriceLevelUnitPriceHT",'pr.price_min_ttc'=>"MinPriceLevelUnitPriceTTC",
@@ -389,7 +389,10 @@ class modProduct extends DolibarrModules
 				'pr.date_price'=>'DateCreation*');
 			if (is_object($mysoc) && $mysoc->useNPR()) $this->import_fields_array[$r]=array_merge($this->import_fields_array[$r],array('pr.recuperableonly'=>'NPR'));
 			$this->import_regex_array[$r]=array('pr.datec'=>'^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$','pr.recuperableonly'=>'^[0|1]$');
-			$this->import_examplevalues_array[$r]=array('pr.fk_product'=>"1",
+			$this->import_convertvalue_array[$r]=array(
+			    'pr.fk_product'=>array('rule'=>'fetchidfromref','classfile'=>'/product/class/product.class.php','class'=>'Product','method'=>'fetch','element'=>'Product')
+			);
+			$this->import_examplevalues_array[$r]=array('pr.fk_product'=>"PROD_REF or id:123456",
 				'pr.price_base_type'=>"HT",'pr.price_level'=>"1",
 				'pr.price'=>"100",'pr.price_ttc'=>"110",
 				'pr.price_min'=>"100",'pr.price_min_ttc'=>"110",
@@ -407,13 +410,13 @@ class modProduct extends DolibarrModules
 			$this->import_entities_array[$r]=array();		// We define here only fields that use another icon that the one defined into import_icon
 		    $this->import_tables_array[$r]=array('l'=>MAIN_DB_PREFIX.'product_lang');
 			// multiline translation, one line per translation
-			$this->import_fields_array[$r]=array('l.fk_product'=>'Ref', 'l.lang'=>'Language', 'l.label'=>'TranslatedLabel', 'l.description'=>'TranslatedDescription');
+			$this->import_fields_array[$r]=array('l.fk_product'=>'ProductOrService*', 'l.lang'=>'Language', 'l.label'=>'TranslatedLabel', 'l.description'=>'TranslatedDescription');
 			//$this->import_fields_array[$r]['l.note']='TranslatedNote';
 			$this->import_convertvalue_array[$r]=array(
 					'l.fk_product'=>array('rule'=>'fetchidfromref','classfile'=>'/product/class/product.class.php','class'=>'Product','method'=>'fetch','element'=>'Product')
 			);
-			$this->import_examplevalues_array[$r]=array('l.fk_product'=>'MyProductRef','l.lang'=>'en_US','l.label'=>'Label in en_US','l.description'=>'Desc in en_US');
-			$this->import_updatekeys_array[$r]=array('l.fk_product'=>'Ref','l.lang'=>'Language');
+			$this->import_examplevalues_array[$r]=array('l.fk_product'=>'PROD_REF or id:123456','l.lang'=>'en_US','l.label'=>'Label in en_US','l.description'=>'Desc in en_US');
+			$this->import_updatekeys_array[$r]=array('l.fk_product'=>'ProductOrService','l.lang'=>'Language');
 		}
 	}
 
