@@ -807,10 +807,8 @@ foreach ($listofreferent as $key => $value)
 
 				if ($tablename == 'commande')
 				{
-			        
 			            $total_ht_by_line_order = -$total_ht_by_line_order;
 			            $total_ttc_by_line_order = -$total_ttc_by_line_order;
-			        
 				}
 
 				// Add total if we have to
