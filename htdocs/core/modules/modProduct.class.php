@@ -245,7 +245,39 @@ class modProduct extends DolibarrModules
 			$this->export_sql_start[$r]='SELECT DISTINCT ';
 			$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'product as p';
 			$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'product_price as pr ON p.rowid = pr.fk_product AND pr.entity = '.$conf->entity; // export prices only for the current entity
-			$this->export_sql_end[$r] .=' WHERE p.fk_product_type = 0 AND p.entity IN ('.getEntity('product').')';
+			$this->export_sql_end[$r] .=' WHERE p.entity IN ('.getEntity('product').')';     // For product and service profile
+		}
+
+		if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
+		{
+		    // Exports product multiprice
+		    $r++;
+		    $this->export_code[$r]=$this->rights_class.'_'.$r;
+		    $this->export_label[$r]="ProductsPricePerCustomer";	// Translation key (used only if key ExportDataset_xxx_z not found)
+		    $this->export_permission[$r]=array(array("produit","export"));
+		    $this->export_fields_array[$r]=array('p.rowid'=>"Id",'p.ref'=>"Ref",
+		        's.nom'=>'ThirdParty',
+		        'pr.price_base_type'=>"PriceBase",
+		        'pr.price'=>"PriceUnitPriceHT",'pr.price_ttc'=>"PriceUnitPriceTTC",
+		        'pr.price_min'=>"MinPriceUnitPriceHT",'pr.price_min_ttc'=>"MinPriceUnitPriceTTC",
+		        'pr.tva_tx'=>'PriceVATRate',
+		        'pr.default_vat_code'=>'PriceVATCode',
+		        'pr.datec'=>'DateCreation');
+		    if (is_object($mysoc) && $mysoc->useNPR()) $this->export_fields_array[$r]['pr.recuperableonly']='NPR';
+		    $this->export_entities_array[$r]=array('p.rowid'=>"product",'p.ref'=>"product",
+		        's.nom'=>'company',
+		        'pr.price_base_type'=>"product",'pr.price'=>"product",
+		        'pr.price_ttc'=>"product",
+		        'pr.price_min'=>"product",'pr.price_min_ttc'=>"product",
+		        'pr.tva_tx'=>'product',
+		        'pr.default_vat_code'=>'product',
+		        'pr.recuperableonly'=>'product',
+		        'pr.datec'=>"product");
+		    $this->export_sql_start[$r]='SELECT DISTINCT ';
+		    $this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'product as p';
+		    $this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'product_customer_price as pr ON p.rowid = pr.fk_product AND pr.entity = '.$conf->entity; // export prices only for the current entity
+		    $this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'societe as s ON pr.fk_soc = s.rowid';
+		    $this->export_sql_end[$r] .=' WHERE p.entity IN ('.getEntity('product').')';      // For product and service profile
 		}
 
 		if (! empty($conf->global->PRODUIT_SOUSPRODUITS))
@@ -292,7 +324,7 @@ class modProduct extends DolibarrModules
     		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'product as p';
     		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'product_extrafields as extra ON p.rowid = extra.fk_object,';
     		$this->export_sql_end[$r] .=' '.MAIN_DB_PREFIX.'product_association as pa, '.MAIN_DB_PREFIX.'product as p2';
-    		$this->export_sql_end[$r] .=' WHERE p.fk_product_type = 0 AND p.entity IN ('.getEntity('product').')';
+    		$this->export_sql_end[$r] .=' WHERE p.entity IN ('.getEntity('product').')';      // For product and service profile
     		$this->export_sql_end[$r] .=' AND p.rowid = pa.fk_product_pere AND p2.rowid = pa.fk_product_fils';
 		}
 
