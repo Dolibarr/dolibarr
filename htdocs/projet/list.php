@@ -279,7 +279,7 @@ if (count($listofprojectcontacttype) == 0) $listofprojectcontacttype[0]='0';    
 $distinct='DISTINCT';   // We add distinct until we are added a protection to be sure a contact of a project and task is only once.
 $sql = "SELECT ".$distinct." p.rowid as id, p.ref, p.title, p.fk_statut, p.fk_opp_status, p.public, p.fk_user_creat";
 $sql.= ", p.datec as date_creation, p.dateo as date_start, p.datee as date_end, p.opp_amount, p.opp_percent, p.tms as date_update, p.budget_amount, p.bill_time";
-$sql.= ", s.nom as name, s.rowid as socid";
+$sql.= ", s.rowid as socid, s.nom as name, s.email";
 $sql.= ", cls.code as opp_status_code";
 // We'll need these fields in order to filter by categ
 if ($search_categ) $sql .= ", cs.fk_categorie, cs.fk_project";
@@ -706,6 +706,10 @@ while ($i < min($num, $limit))
 	$userAccess = $object->restrictedProjectArea($user);    // why this ?
 	if ($userAccess >= 0)
 	{
+	    $socstatic->id=$obj->socid;
+	    $socstatic->name=$obj->name;
+	    $socstatic->email=$obj->email;
+
 		print '<tr class="oddeven">';
 
 		// Project url
@@ -731,8 +735,6 @@ while ($i < min($num, $limit))
 			print '<td class="tdoverflowmax100">';
 			if ($obj->socid)
 			{
-				$socstatic->id=$obj->socid;
-				$socstatic->name=$obj->name;
 				print $socstatic->getNomUrl(1);
 			}
 			else
