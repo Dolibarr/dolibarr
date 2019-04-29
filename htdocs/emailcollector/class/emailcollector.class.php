@@ -1570,36 +1570,56 @@ class EmailCollector extends CommonObject
                         $projecttocreate->note_private = $descriptionfull;
                         $projecttocreate->entity = $conf->entity;
 
-                        // Get next project Ref
-                        $defaultref='';
-                        $modele = empty($conf->global->PROJECT_ADDON)?'mod_project_simple':$conf->global->PROJECT_ADDON;
-
-                        // Search template files
-                        $file=''; $classname=''; $filefound=0; $reldir='';
-                        $dirmodels=array_merge(array('/'), (array) $conf->modules_parts['models']);
-                        foreach($dirmodels as $reldir)
-                        {
-                            $file=dol_buildpath($reldir."core/modules/project/".$modele.'.php', 0);
-                            if (file_exists($file))
-                            {
-                                $filefound=1;
-                                $classname = $modele;
-                                break;
-                            }
-                        }
-
-                        if ($filefound)
-                        {
-                            $result=dol_include_once($reldir."core/modules/project/".$modele.'.php');
-                            $modProject = new $classname;
-
-                            $defaultref = $modProject->getNextValue(($thirdpartystatic->id > 0 ? $thirdpartystatic : null), $projecttocreate);
-                        }
-
-                        $projecttocreate->ref = $defaultref;
-
-                        // Overwrite values with values extracted from source email
+                        // Overwrite values with values extracted from source email.
+                        // This may overwrite any $projecttocreate->xxx properties.
+                        $savesocid = $projecttocreate->socid;
                         $errorforthisaction = $this->overwritePropertiesOfObject($projecttocreate, $operation['actionparam'], $messagetext, $subject, $header);
+
+                        // Set project ref if not yet defined
+                        if (empty($projecttocreate->ref))
+                        {
+                            // Get next project Ref
+                            $defaultref='';
+                            $modele = empty($conf->global->PROJECT_ADDON)?'mod_project_simple':$conf->global->PROJECT_ADDON;
+
+                            // Search template files
+                            $file=''; $classname=''; $filefound=0; $reldir='';
+                            $dirmodels=array_merge(array('/'), (array) $conf->modules_parts['models']);
+                            foreach($dirmodels as $reldir)
+                            {
+                                $file=dol_buildpath($reldir."core/modules/project/".$modele.'.php', 0);
+                                if (file_exists($file))
+                                {
+                                    $filefound=1;
+                                    $classname = $modele;
+                                    break;
+                                }
+                            }
+
+                            if ($filefound)
+                            {
+                                $result=dol_include_once($reldir."core/modules/project/".$modele.'.php');
+                                $modProject = new $classname;
+
+                                if ($savesocid > 0)
+                                {
+                                    if ($savesocid != $projecttocreate->socid)
+                                    {
+                                        $errorforactions++;
+                                        setEventMessages('You loaded a thirdparty (id='.$savesocid.') and you force another thirdparty id (id='.$projecttocreate->socid.') by setting socid in operation with a different value');
+                                    }
+                                }
+                                else {
+                                    if ($projecttocreate->socid > 0)
+                                    {
+                                        $thirdpartystatic->fetch($projecttocreate->socid);
+                                    }
+                                }
+
+                                $defaultref = $modProject->getNextValue(($thirdpartystatic->id > 0 ? $thirdpartystatic : null), $projecttocreate);
+                            }
+                            $projecttocreate->ref = $defaultref;
+                        }
 
                         if ($errorforthisaction)
                         {
@@ -1610,7 +1630,7 @@ class EmailCollector extends CommonObject
                             if (empty($projecttocreate->ref) || (is_numeric($projecttocreate->ref) && $projecttocreate->ref <= 0))
                             {
                                 $errorforactions++;
-                                $this->error = 'Failed to create project: Can\'t get a valid value for project Ref with numbering template '.$modele;
+                                $this->error = 'Failed to create project: Can\'t get a valid value for project Ref with numbering template '.$modele.' thirdpartyid';
                             }
                             else
                             {
