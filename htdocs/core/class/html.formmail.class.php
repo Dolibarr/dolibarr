@@ -779,9 +779,12 @@ class FormMail extends Form
 
 				$showinfobcc='';
 				if (! empty($conf->global->MAIN_MAIL_AUTOCOPY_PROPOSAL_TO) && ! empty($this->param['models']) && $this->param['models'] == 'propal_send') $showinfobcc=$conf->global->MAIN_MAIL_AUTOCOPY_PROPOSAL_TO;
-				if (! empty($conf->global->MAIN_MAIL_AUTOCOPY_SUPPLIER_PROPOSAL_TO) && ! empty($this->param['models']) && $this->param['models'] == 'supplier_proposal_send') $showinfobcc=$conf->global->MAIN_MAIL_AUTOCOPY_SUPPLIER_PROPOSAL_TO;
 				if (! empty($conf->global->MAIN_MAIL_AUTOCOPY_ORDER_TO) && ! empty($this->param['models']) && $this->param['models'] == 'order_send') $showinfobcc=$conf->global->MAIN_MAIL_AUTOCOPY_ORDER_TO;
 				if (! empty($conf->global->MAIN_MAIL_AUTOCOPY_INVOICE_TO) && ! empty($this->param['models']) && $this->param['models'] == 'facture_send') $showinfobcc=$conf->global->MAIN_MAIL_AUTOCOPY_INVOICE_TO;
+				if (! empty($conf->global->MAIN_MAIL_AUTOCOPY_SUPPLIER_PROPOSAL_TO) && ! empty($this->param['models']) && $this->param['models'] == 'supplier_proposal_send') $showinfobcc=$conf->global->MAIN_MAIL_AUTOCOPY_SUPPLIER_PROPOSAL_TO;
+				if (! empty($conf->global->MAIN_MAIL_AUTOCOPY_SUPPLIER_ORDER_TO) && ! empty($this->param['models']) && $this->param['models'] == 'order_supplier_send') $showinfobcc=$conf->global->MAIN_MAIL_AUTOCOPY_SUPPLIER_ORDER_TO;
+				if (! empty($conf->global->MAIN_MAIL_AUTOCOPY_SUPPLIER_INVOICE_TO) && ! empty($this->param['models']) && $this->param['models'] == 'invoice_supplier_send') $showinfobcc=$conf->global->MAIN_MAIL_AUTOCOPY_SUPPLIER_INVOICE_TO;
+				if (! empty($conf->global->MAIN_MAIL_AUTOCOPY_PROJECT_TO) && ! empty($this->param['models']) && $this->param['models'] == 'project') $showinfobcc=$conf->global->MAIN_MAIL_AUTOCOPY_PROJECT_TO;
 				if ($showinfobcc) $out.=' + '.$showinfobcc;
 				$out.= "</td></tr>\n";
 			}
