@@ -804,29 +804,36 @@ class EmailCollector extends CommonObject
                         $this->errors[] = $this->error;
                     }
                 }
-                elseif (preg_match('/^SET:(.*)$/', $valueforproperty, $reg))
+                elseif (preg_match('/^(SET|SETIFEMPTY):(.*)$/', $valueforproperty, $regforregex))
                 {
-                    $valuetouse = $reg[1];
-                    $substitutionarray=array();
-                    $matcharray=array();
-                    preg_match_all('/__([a-z0-9]+(?:_[a-z0-9]+)?)__/i', $valuetouse, $matcharray);
-                    //var_dump($tmpproperty.' - '.$object->$tmpproperty.' - '.$valuetouse); var_dump($matcharray);
-                    if (is_array($matcharray[1]))    // $matcharray[1] is array with list of substitution key found without the __
+                    $valuecurrent='';
+                    if (preg_match('/^options_/', $tmpproperty)) $valuecurrent = $object->array_options[preg_replace('/^options_/', '', $tmpproperty)];
+                    else $valuecurrent = $object->$tmpproperty;
+
+                    if ($regforregex[1] == 'SET' || empty($valuecurrent))
                     {
-                        foreach($matcharray[1] as $keytoreplace)
+                        $valuetouse = $regforregex[2];
+                        $substitutionarray=array();
+                        $matcharray=array();
+                        preg_match_all('/__([a-z0-9]+(?:_[a-z0-9]+)?)__/i', $valuetouse, $matcharray);
+                        //var_dump($tmpproperty.' - '.$object->$tmpproperty.' - '.$valuetouse); var_dump($matcharray);
+                        if (is_array($matcharray[1]))    // $matcharray[1] is array with list of substitution key found without the __
                         {
-                            if ($keytoreplace && isset($object->$keytoreplace))
+                            foreach($matcharray[1] as $keytoreplace)
                             {
-                                $substitutionarray['__'.$keytoreplace.'__']=$object->$keytoreplace;
+                                if ($keytoreplace && isset($object->$keytoreplace))
+                                {
+                                    $substitutionarray['__'.$keytoreplace.'__']=$object->$keytoreplace;
+                                }
                             }
                         }
+                        //var_dump($substitutionarray);
+                        dol_syslog(var_export($substitutionarray, true));
+                        //var_dump($substitutionarray);
+                        $valuetouse = make_substitutions($valuetouse, $substitutionarray);
+                        if (preg_match('/^options_/', $tmpproperty)) $object->array_options[preg_replace('/^options_/', '', $tmpproperty)] = $valuetouse;
+                        else $object->$tmpproperty = $valuetouse;
                     }
-                    //var_dump($substitutionarray);
-                    dol_syslog(var_export($substitutionarray, true));
-                    //var_dump($substitutionarray);
-                    $valuetouse = make_substitutions($valuetouse, $substitutionarray);
-                    if (preg_match('/^options_/', $tmpproperty)) $object->array_options[preg_replace('/^options_/', '', $tmpproperty)] = $valuetouse;
-                    else $object->$tmpproperty = $valuetouse;
                 }
                 else
                 {
@@ -1391,11 +1398,11 @@ class EmailCollector extends CommonObject
                                         $this->errors[] = $this->error;
                                     }
                                 }
-                                elseif (preg_match('/^SET:(.*)$/', $valueforproperty, $reg))
+                                elseif (preg_match('/^(SET|SETIFEMPTY):(.*)$/', $valueforproperty, $reg))
                                 {
                                     //if (preg_match('/^options_/', $tmpproperty)) $object->array_options[preg_replace('/^options_/', '', $tmpproperty)] = $reg[1];
                                     //else $object->$tmpproperty = $reg[1];
-                                    $nametouseforthirdparty = $reg[1];
+                                    $nametouseforthirdparty = $reg[2];
                                 }
                                 else
                                 {
