@@ -1685,36 +1685,56 @@ class EmailCollector extends CommonObject
                         $tickettocreate->entity = $conf->entity;
                         //$tickettocreate->fk_contact = $contactstatic->id;
 
-                        // Get next project Ref
-                        $defaultref='';
-                        $modele = empty($conf->global->TICKET_ADDON)?'mod_ticket_simple':$conf->global->TICKET_ADDON;
-
-                        // Search template files
-                        $file=''; $classname=''; $filefound=0; $reldir='';
-                        $dirmodels=array_merge(array('/'), (array) $conf->modules_parts['models']);
-                        foreach($dirmodels as $reldir)
-                        {
-                            $file=dol_buildpath($reldir."core/modules/ticket/".$modele.'.php', 0);
-                            if (file_exists($file))
-                            {
-                                $filefound=1;
-                                $classname = $modele;
-                                break;
-                            }
-                        }
-
-                        if ($filefound)
-                        {
-                            $result=dol_include_once($reldir."core/modules/ticket/".$modele.'.php');
-                            $modTicket = new $classname;
-
-                            $defaultref = $modTicket->getNextValue(($thirdpartystatic->id > 0 ? $thirdpartystatic : null), $tickettocreate);
-                        }
-
-                        $tickettocreate->ref = $defaultref;
-
-                        // Overwrite values with values extracted from source email
+                        // Overwrite values with values extracted from source email.
+                        // This may overwrite any $projecttocreate->xxx properties.
+                        $savesocid = $tickettocreate->socid;
                         $errorforthisaction = $this->overwritePropertiesOfObject($tickettocreate, $operation['actionparam'], $messagetext, $subject, $header);
+
+                        // Set ticket ref if not yet defined
+                        if (empty($tickettocreate->ref))
+                        {
+                            // Get next project Ref
+                            $defaultref='';
+                            $modele = empty($conf->global->TICKET_ADDON)?'mod_ticket_simple':$conf->global->TICKET_ADDON;
+
+                            // Search template files
+                            $file=''; $classname=''; $filefound=0; $reldir='';
+                            $dirmodels=array_merge(array('/'), (array) $conf->modules_parts['models']);
+                            foreach($dirmodels as $reldir)
+                            {
+                                $file=dol_buildpath($reldir."core/modules/ticket/".$modele.'.php', 0);
+                                if (file_exists($file))
+                                {
+                                    $filefound=1;
+                                    $classname = $modele;
+                                    break;
+                                }
+                            }
+
+                            if ($filefound)
+                            {
+                                $result=dol_include_once($reldir."core/modules/ticket/".$modele.'.php');
+                                $modProject = new $classname;
+
+                                if ($savesocid > 0)
+                                {
+                                    if ($savesocid != $tickettocreate->socid)
+                                    {
+                                        $errorforactions++;
+                                        setEventMessages('You loaded a thirdparty (id='.$savesocid.') and you force another thirdparty id (id='.$tickettocreate->socid.') by setting socid in operation with a different value');
+                                    }
+                                }
+                                else {
+                                    if ($tickettocreate->socid > 0)
+                                    {
+                                        $thirdpartystatic->fetch($tickettocreate->socid);
+                                    }
+                                }
+
+                                $defaultref = $modTicket->getNextValue(($thirdpartystatic->id > 0 ? $thirdpartystatic : null), $projecttocreate);
+                            }
+                            $tickettocreate->ref = $defaultref;
+                        }
 
                         if ($errorforthisaction)
                         {
