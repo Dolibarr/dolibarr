@@ -1630,7 +1630,7 @@ class EmailCollector extends CommonObject
                             if (empty($projecttocreate->ref) || (is_numeric($projecttocreate->ref) && $projecttocreate->ref <= 0))
                             {
                                 $errorforactions++;
-                                $this->error = 'Failed to create project: Can\'t get a valid value for project Ref with numbering template '.$modele.' thirdpartyid';
+                                $this->error = 'Failed to create project: Can\'t get a valid value for the field ref with numbering template = '.$modele.', thirdparty id = '.$thirdpartystatic->id;
                             }
                             else
                             {
@@ -1745,7 +1745,7 @@ class EmailCollector extends CommonObject
                             if (is_numeric($tickettocreate->ref) && $tickettocreate->ref <= 0)
                             {
                                 $errorforactions++;
-                                $this->error = "Failed to create ticket: Can't get a valid value for ticket Ref. Check the numbering module used to generate the reference in setup of module Ticket.";
+                                $this->error = 'Failed to create ticket: Can\'t get a valid value for the field ref with numbering template = '.$modele.', thirdparty id = '.$thirdpartystatic->id;
                             }
                             else
                             {
