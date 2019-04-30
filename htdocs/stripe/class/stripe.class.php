@@ -452,7 +452,7 @@ class Stripe extends CommonObject
 						$paymentarray["receipt_email"] = $societe->email;
 					}
 
-					$charge = \Stripe\Charge::create($paymentarray, array("idempotency_key" => "$ref"));
+					$charge = \Stripe\Charge::create($paymentarray, array("idempotency_key" => "$description"));
 				}
 			} else {
 
@@ -480,7 +480,7 @@ class Stripe extends CommonObject
 						$paymentarray["receipt_email"] = $societe->email;
 					}
 
-					$charge = \Stripe\Charge::create($paymentarray, array("idempotency_key" => "$ref","stripe_account" => "$account"));
+					$charge = \Stripe\Charge::create($paymentarray, array("idempotency_key" => "$description", "stripe_account" => "$account"));
 			}
 			if (isset($charge->id)) {}
 
