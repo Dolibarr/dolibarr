@@ -1448,6 +1448,8 @@ if (($action == 'updatesource' || $action == 'updatecontent' || $action == 'conf
 		{
 			$db->begin();
 
+			$phpfullcodestringold = dolKeepOnlyPhpCode($objectpage->content);
+
 			$objectpage->content = GETPOST('PAGE_CONTENT', 'none');
 
             // Security analysis
@@ -1469,6 +1471,16 @@ if (($action == 'updatesource' || $action == 'updatecontent' || $action == 'conf
                 }
             }
 
+            if (empty($user->rights->website->writephp))
+            {
+                if ($phpfullcodestringold != $phpfullcodestring)
+                {
+                    $error++;
+                    setEventMessages($langs->trans("NotAllowedToAddDynamicContent"), null, 'errors');
+                    if ($action == 'updatesource') $action = 'editsource';
+                    if ($action == 'updatecontent') $action = 'editcontent';
+                }
+            }
 
 			// Clean data. We remove all the head section.
 			$objectpage->content = preg_replace('/<head>.*<\/head>/ims', '', $objectpage->content);
