@@ -48,6 +48,7 @@ if (! is_object($websitepage))
 {
     $websitepage=new WebsitePage($db);
 }
+
 if ($pageid > 0)
 {
 	$websitepage->fetch($pageid);
