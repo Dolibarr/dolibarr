@@ -237,9 +237,12 @@ $domData .= ' data-product_type="'.$line->product_type.'"';
 	<td class="linecoldiscount"><?php $coldisplay++; ?>&nbsp;</td>
 	<?php }
 
-	if ($this->situation_cycle_ref) {
+	// Fields for situation invoices
+	if ($this->situation_cycle_ref)
+	{
 		$coldisplay++;
 		print '<td class="linecolcycleref nowrap right">' . $line->situation_percent . '%</td>';
+		//print '<td align="right" class="linecolcycleref2 nowrap">' . $line->situation_percent . '</td>';
 	}
 
   	if ($usemargins && ! empty($conf->margin->enabled) && empty($user->societe_id))

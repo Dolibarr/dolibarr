@@ -2958,7 +2958,7 @@ table.nobottomiftotal tr.liste_total td {
 	background-color: #fff;
 	border-bottom: 0px !important;
 }
-table.nobottom {
+table.nobottom, td.nobottom {
 	border-bottom: 0px !important;
 }
 div.liste_titre .tagtd {

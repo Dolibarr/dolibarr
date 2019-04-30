@@ -131,8 +131,10 @@ if ($nolinesbefore) {
 	?>
 	<td class="linecoldiscount right"><?php echo $langs->trans('ReductionShort'); ?></td>
 	<?php
+	// Fields for situation invoice
 	if ($this->situation_cycle_ref) {
 		print '<td class="linecolcycleref right">' . $langs->trans('Progress') . '</td>';
+		//print '<td class="linecolcycleref2 right"></td>';
 	}
 	if (! empty($usemargins))
 	{
