@@ -25,6 +25,8 @@
 
 // Load website class
 include_once DOL_DOCUMENT_ROOT.'/website/class/website.class.php';
+include_once DOL_DOCUMENT_ROOT.'/website/class/websitepage.class.php';
+
 // Define $website
 if (! is_object($website))
 {
@@ -40,11 +42,14 @@ if (! is_object($weblangs))
 if (! $pageid && ! empty($websitepagefile))
 {
 	$pageid = str_replace(array('.tpl.php', 'page'), array('', ''), basename($websitepagefile));
+	if ($pageid == 'index.php') $pageid = $website->fk_default_home;
+}
+if (! is_object($websitepage))
+{
+    $websitepage=new WebsitePage($db);
 }
 if ($pageid > 0)
 {
-	include_once DOL_DOCUMENT_ROOT.'/website/class/websitepage.class.php';
-	$websitepage=new WebsitePage($db);
 	$websitepage->fetch($pageid);
 }
 
