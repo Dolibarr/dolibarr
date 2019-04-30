@@ -92,12 +92,18 @@ class modWebsite extends DolibarrModules
 		$r++;
 
 		$this->rights[$r][0] = 10002;
-		$this->rights[$r][1] = 'Create/modify website content';
+		$this->rights[$r][1] = 'Create/modify website content (html and javascript content)';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'write';
 		$r++;
 
 		$this->rights[$r][0] = 10003;
+		$this->rights[$r][1] = 'Create/modify website content (dynamic php code). Dangerous, must be reserved to restricted developers.';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'writephp';
+		$r++;
+
+		$this->rights[$r][0] = 10005;
 		$this->rights[$r][1] = 'Delete website content';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'delete';

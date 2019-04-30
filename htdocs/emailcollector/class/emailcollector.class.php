@@ -804,29 +804,36 @@ class EmailCollector extends CommonObject
                         $this->errors[] = $this->error;
                     }
                 }
-                elseif (preg_match('/^SET:(.*)$/', $valueforproperty, $reg))
+                elseif (preg_match('/^(SET|SETIFEMPTY):(.*)$/', $valueforproperty, $regforregex))
                 {
-                    $valuetouse = $reg[1];
-                    $substitutionarray=array();
-                    $matcharray=array();
-                    preg_match_all('/__([a-z0-9]+(?:_[a-z0-9]+)?)__/i', $valuetouse, $matcharray);
-                    //var_dump($tmpproperty.' - '.$object->$tmpproperty.' - '.$valuetouse); var_dump($matcharray);
-                    if (is_array($matcharray[1]))    // $matcharray[1] is array with list of substitution key found without the __
+                    $valuecurrent='';
+                    if (preg_match('/^options_/', $tmpproperty)) $valuecurrent = $object->array_options[preg_replace('/^options_/', '', $tmpproperty)];
+                    else $valuecurrent = $object->$tmpproperty;
+
+                    if ($regforregex[1] == 'SET' || empty($valuecurrent))
                     {
-                        foreach($matcharray[1] as $keytoreplace)
+                        $valuetouse = $regforregex[2];
+                        $substitutionarray=array();
+                        $matcharray=array();
+                        preg_match_all('/__([a-z0-9]+(?:_[a-z0-9]+)?)__/i', $valuetouse, $matcharray);
+                        //var_dump($tmpproperty.' - '.$object->$tmpproperty.' - '.$valuetouse); var_dump($matcharray);
+                        if (is_array($matcharray[1]))    // $matcharray[1] is array with list of substitution key found without the __
                         {
-                            if ($keytoreplace && isset($object->$keytoreplace))
+                            foreach($matcharray[1] as $keytoreplace)
                             {
-                                $substitutionarray['__'.$keytoreplace.'__']=$object->$keytoreplace;
+                                if ($keytoreplace && isset($object->$keytoreplace))
+                                {
+                                    $substitutionarray['__'.$keytoreplace.'__']=$object->$keytoreplace;
+                                }
                             }
                         }
+                        //var_dump($substitutionarray);
+                        dol_syslog(var_export($substitutionarray, true));
+                        //var_dump($substitutionarray);
+                        $valuetouse = make_substitutions($valuetouse, $substitutionarray);
+                        if (preg_match('/^options_/', $tmpproperty)) $object->array_options[preg_replace('/^options_/', '', $tmpproperty)] = $valuetouse;
+                        else $object->$tmpproperty = $valuetouse;
                     }
-                    //var_dump($substitutionarray);
-                    dol_syslog(var_export($substitutionarray, true));
-                    //var_dump($substitutionarray);
-                    $valuetouse = make_substitutions($valuetouse, $substitutionarray);
-                    if (preg_match('/^options_/', $tmpproperty)) $object->array_options[preg_replace('/^options_/', '', $tmpproperty)] = $valuetouse;
-                    else $object->$tmpproperty = $valuetouse;
                 }
                 else
                 {
@@ -1391,11 +1398,11 @@ class EmailCollector extends CommonObject
                                         $this->errors[] = $this->error;
                                     }
                                 }
-                                elseif (preg_match('/^SET:(.*)$/', $valueforproperty, $reg))
+                                elseif (preg_match('/^(SET|SETIFEMPTY):(.*)$/', $valueforproperty, $reg))
                                 {
                                     //if (preg_match('/^options_/', $tmpproperty)) $object->array_options[preg_replace('/^options_/', '', $tmpproperty)] = $reg[1];
                                     //else $object->$tmpproperty = $reg[1];
-                                    $nametouseforthirdparty = $reg[1];
+                                    $nametouseforthirdparty = $reg[2];
                                 }
                                 else
                                 {
@@ -1570,36 +1577,56 @@ class EmailCollector extends CommonObject
                         $projecttocreate->note_private = $descriptionfull;
                         $projecttocreate->entity = $conf->entity;
 
-                        // Get next project Ref
-                        $defaultref='';
-                        $modele = empty($conf->global->PROJECT_ADDON)?'mod_project_simple':$conf->global->PROJECT_ADDON;
-
-                        // Search template files
-                        $file=''; $classname=''; $filefound=0; $reldir='';
-                        $dirmodels=array_merge(array('/'), (array) $conf->modules_parts['models']);
-                        foreach($dirmodels as $reldir)
-                        {
-                            $file=dol_buildpath($reldir."core/modules/project/".$modele.'.php', 0);
-                            if (file_exists($file))
-                            {
-                                $filefound=1;
-                                $classname = $modele;
-                                break;
-                            }
-                        }
-
-                        if ($filefound)
-                        {
-                            $result=dol_include_once($reldir."core/modules/project/".$modele.'.php');
-                            $modProject = new $classname;
-
-                            $defaultref = $modProject->getNextValue(($thirdpartystatic->id > 0 ? $thirdpartystatic : null), $projecttocreate);
-                        }
-
-                        $projecttocreate->ref = $defaultref;
-
-                        // Overwrite values with values extracted from source email
+                        // Overwrite values with values extracted from source email.
+                        // This may overwrite any $projecttocreate->xxx properties.
+                        $savesocid = $projecttocreate->socid;
                         $errorforthisaction = $this->overwritePropertiesOfObject($projecttocreate, $operation['actionparam'], $messagetext, $subject, $header);
+
+                        // Set project ref if not yet defined
+                        if (empty($projecttocreate->ref))
+                        {
+                            // Get next project Ref
+                            $defaultref='';
+                            $modele = empty($conf->global->PROJECT_ADDON)?'mod_project_simple':$conf->global->PROJECT_ADDON;
+
+                            // Search template files
+                            $file=''; $classname=''; $filefound=0; $reldir='';
+                            $dirmodels=array_merge(array('/'), (array) $conf->modules_parts['models']);
+                            foreach($dirmodels as $reldir)
+                            {
+                                $file=dol_buildpath($reldir."core/modules/project/".$modele.'.php', 0);
+                                if (file_exists($file))
+                                {
+                                    $filefound=1;
+                                    $classname = $modele;
+                                    break;
+                                }
+                            }
+
+                            if ($filefound)
+                            {
+                                $result=dol_include_once($reldir."core/modules/project/".$modele.'.php');
+                                $modProject = new $classname;
+
+                                if ($savesocid > 0)
+                                {
+                                    if ($savesocid != $projecttocreate->socid)
+                                    {
+                                        $errorforactions++;
+                                        setEventMessages('You loaded a thirdparty (id='.$savesocid.') and you force another thirdparty id (id='.$projecttocreate->socid.') by setting socid in operation with a different value');
+                                    }
+                                }
+                                else {
+                                    if ($projecttocreate->socid > 0)
+                                    {
+                                        $thirdpartystatic->fetch($projecttocreate->socid);
+                                    }
+                                }
+
+                                $defaultref = $modProject->getNextValue(($thirdpartystatic->id > 0 ? $thirdpartystatic : null), $projecttocreate);
+                            }
+                            $projecttocreate->ref = $defaultref;
+                        }
 
                         if ($errorforthisaction)
                         {
@@ -1610,7 +1637,7 @@ class EmailCollector extends CommonObject
                             if (empty($projecttocreate->ref) || (is_numeric($projecttocreate->ref) && $projecttocreate->ref <= 0))
                             {
                                 $errorforactions++;
-                                $this->error = 'Failed to create project: Can\'t get a valid value for project Ref with numbering template '.$modele;
+                                $this->error = 'Failed to create project: Can\'t get a valid value for the field ref with numbering template = '.$modele.', thirdparty id = '.$thirdpartystatic->id;
                             }
                             else
                             {
@@ -1665,36 +1692,56 @@ class EmailCollector extends CommonObject
                         $tickettocreate->entity = $conf->entity;
                         //$tickettocreate->fk_contact = $contactstatic->id;
 
-                        // Get next project Ref
-                        $defaultref='';
-                        $modele = empty($conf->global->TICKET_ADDON)?'mod_ticket_simple':$conf->global->TICKET_ADDON;
-
-                        // Search template files
-                        $file=''; $classname=''; $filefound=0; $reldir='';
-                        $dirmodels=array_merge(array('/'), (array) $conf->modules_parts['models']);
-                        foreach($dirmodels as $reldir)
-                        {
-                            $file=dol_buildpath($reldir."core/modules/ticket/".$modele.'.php', 0);
-                            if (file_exists($file))
-                            {
-                                $filefound=1;
-                                $classname = $modele;
-                                break;
-                            }
-                        }
-
-                        if ($filefound)
-                        {
-                            $result=dol_include_once($reldir."core/modules/ticket/".$modele.'.php');
-                            $modTicket = new $classname;
-
-                            $defaultref = $modTicket->getNextValue(($thirdpartystatic->id > 0 ? $thirdpartystatic : null), $tickettocreate);
-                        }
-
-                        $tickettocreate->ref = $defaultref;
-
-                        // Overwrite values with values extracted from source email
+                        // Overwrite values with values extracted from source email.
+                        // This may overwrite any $projecttocreate->xxx properties.
+                        $savesocid = $tickettocreate->socid;
                         $errorforthisaction = $this->overwritePropertiesOfObject($tickettocreate, $operation['actionparam'], $messagetext, $subject, $header);
+
+                        // Set ticket ref if not yet defined
+                        if (empty($tickettocreate->ref))
+                        {
+                            // Get next project Ref
+                            $defaultref='';
+                            $modele = empty($conf->global->TICKET_ADDON)?'mod_ticket_simple':$conf->global->TICKET_ADDON;
+
+                            // Search template files
+                            $file=''; $classname=''; $filefound=0; $reldir='';
+                            $dirmodels=array_merge(array('/'), (array) $conf->modules_parts['models']);
+                            foreach($dirmodels as $reldir)
+                            {
+                                $file=dol_buildpath($reldir."core/modules/ticket/".$modele.'.php', 0);
+                                if (file_exists($file))
+                                {
+                                    $filefound=1;
+                                    $classname = $modele;
+                                    break;
+                                }
+                            }
+
+                            if ($filefound)
+                            {
+                                $result=dol_include_once($reldir."core/modules/ticket/".$modele.'.php');
+                                $modProject = new $classname;
+
+                                if ($savesocid > 0)
+                                {
+                                    if ($savesocid != $tickettocreate->socid)
+                                    {
+                                        $errorforactions++;
+                                        setEventMessages('You loaded a thirdparty (id='.$savesocid.') and you force another thirdparty id (id='.$tickettocreate->socid.') by setting socid in operation with a different value');
+                                    }
+                                }
+                                else {
+                                    if ($tickettocreate->socid > 0)
+                                    {
+                                        $thirdpartystatic->fetch($tickettocreate->socid);
+                                    }
+                                }
+
+                                $defaultref = $modTicket->getNextValue(($thirdpartystatic->id > 0 ? $thirdpartystatic : null), $projecttocreate);
+                            }
+                            $tickettocreate->ref = $defaultref;
+                        }
 
                         if ($errorforthisaction)
                         {
@@ -1705,7 +1752,7 @@ class EmailCollector extends CommonObject
                             if (is_numeric($tickettocreate->ref) && $tickettocreate->ref <= 0)
                             {
                                 $errorforactions++;
-                                $this->error = "Failed to create ticket: Can't get a valid value for ticket Ref. Check the numbering module used to generate the reference in setup of module Ticket.";
+                                $this->error = 'Failed to create ticket: Can\'t get a valid value for the field ref with numbering template = '.$modele.', thirdparty id = '.$thirdpartystatic->id;
                             }
                             else
                             {

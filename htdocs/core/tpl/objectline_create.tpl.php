@@ -131,8 +131,10 @@ if ($nolinesbefore) {
 	?>
 	<td class="linecoldiscount right"><?php echo $langs->trans('ReductionShort'); ?></td>
 	<?php
+	// Fields for situation invoice
 	if ($this->situation_cycle_ref) {
 		print '<td class="linecolcycleref right">' . $langs->trans('Progress') . '</td>';
+		print '<td class="linecolcycleref2 right"></td>';
 	}
 	if (! empty($usemargins))
 	{
@@ -161,18 +163,18 @@ if ($nolinesbefore) {
 ?>
 <tr class="pair nodrag nodrop nohoverpair<?php echo ($nolinesbefore || $object->element=='contrat')?'':' liste_titre_create'; ?>">
 <?php
+$coldisplay=0;
+
 // Adds a line numbering column
 if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
-	$coldisplay=2;
+	$coldisplay++;
 	?>
 	<td class="nobottom linecolnum center"></td>
 	<?php
-}
-else {
-	$coldisplay=0;
-}
-?>
+    }
 
+    $coldisplay++;
+    ?>
 	<td class="nobottom linecoldescription minwidth500imp">
 
 	<?php
@@ -332,7 +334,7 @@ else {
 	if (! empty($conf->global->MAIN_INPUT_DESC_HEIGHT)) $nbrows=$conf->global->MAIN_INPUT_DESC_HEIGHT;
 	$toolbarname='dolibarr_details';
 	if (! empty($conf->global->FCKEDITOR_ENABLE_DETAILS_FULL)) $toolbarname='dolibarr_notes';
-	$doleditor=new DolEditor('dp_desc', GETPOST('dp_desc'), '', 100, $toolbarname, '', false, true, $enabled, $nbrows, '98%');
+	$doleditor=new DolEditor('dp_desc', GETPOST('dp_desc', 'none'), '', (empty($conf->global->MAIN_DOLEDITOR_HEIGHT)?100:$conf->global->MAIN_DOLEDITOR_HEIGHT), $toolbarname, '', false, true, $enabled, $nbrows, '98%');
 	$doleditor->Create();
 
 	// Show autofill date for recurring invoices
@@ -353,52 +355,71 @@ else {
 	if ($object->element == 'supplier_proposal' || $object->element == 'order_supplier' || $object->element == 'invoice_supplier')	// We must have same test in printObjectLines
 	{
 	?>
+		$coldisplay++;
 		<td class="nobottom linecolresupplier"><input id="fourn_ref" name="fourn_ref" class="flat maxwidth75" value="<?php echo (isset($_POST["fourn_ref"])?GETPOST("fourn_ref", 'alpha', 2):''); ?>"></td>
 	<?php } ?>
 
 	<td class="nobottom linecolvat right"><?php
+	$coldisplay++;
 	if ($seller->tva_assuj == "0") echo '<input type="hidden" name="tva_tx" id="tva_tx" value="0">'.vatrate(0, true);
 	else echo $form->load_tva('tva_tx', (isset($_POST["tva_tx"])?GETPOST("tva_tx", 'alpha', 2):-1), $seller, $buyer, 0, 0, '', false, 1);
 	?>
 	</td>
-	<td class="nobottom linecoluht right">
+
+	<td class="nobottom linecoluht right"><?php $coldisplay++; ?>
 	<input type="text" size="5" name="price_ht" id="price_ht" class="flat right" value="<?php echo (isset($_POST["price_ht"])?GETPOST("price_ht", 'alpha', 2):''); ?>">
 	</td>
 
-	<?php if (!empty($conf->multicurrency->enabled) && $this->multicurrency_code != $conf->currency) { ?>
+	<?php if (!empty($conf->multicurrency->enabled) && $this->multicurrency_code != $conf->currency) {
+	    $coldisplay++;
+	?>
 	<td class="nobottom linecoluht_currency right">
 	<input type="text" size="5" name="multicurrency_price_ht" id="multicurrency_price_ht" class="flat right" value="<?php echo (isset($_POST["multicurrency_price_ht"])?GETPOST("multicurrency_price_ht", 'alpha', 2):''); ?>">
 	</td>
 	<?php } ?>
 
-	<?php if (! empty($inputalsopricewithtax)) { ?>
+	<?php if (! empty($inputalsopricewithtax)) {
+	   $coldisplay++;
+	?>
 	<td class="nobottom linecoluttc right">
 	<input type="text" size="5" name="price_ttc" id="price_ttc" class="flat" value="<?php echo (isset($_POST["price_ttc"])?GETPOST("price_ttc", 'alpha', 2):''); ?>">
 	</td>
-	<?php } ?>
+	<?php }
+
+	$coldisplay++;
+	?>
 	<td class="nobottom linecolqty right"><input type="text" size="2" name="qty" id="qty" class="flat right" value="<?php echo (isset($_POST["qty"])?GETPOST("qty", 'alpha', 2):1); ?>">
 	</td>
 	<?php
 	if($conf->global->PRODUCT_USE_UNITS)
 	{
+	    $coldisplay++;
 		print '<td class="nobottom linecoluseunit left">';
 		print $form->selectUnits($line->fk_unit, "units");
 		print '</td>';
 	}
 	$remise_percent = $buyer->remise_percent;
-	if($object->element == 'supplier_proposal' || $object->element == 'order_supplier' || $object->element == 'invoice_supplier') {
+	if($object->element == 'supplier_proposal' || $object->element == 'order_supplier' || $object->element == 'invoice_supplier')
+	{
 		$remise_percent = $seller->remise_supplier_percent;
 	}
+
+	$coldisplay++;
 	?>
 	<td class="nobottom nowrap linecoldiscount right"><input type="text" size="1" name="remise_percent" id="remise_percent" class="flat right" value="<?php echo (isset($_POST["remise_percent"])?GETPOST("remise_percent", 'alpha', 2):$remise_percent); ?>"><span class="hideonsmartphone">%</span></td>
 	<?php
+
 	if ($this->situation_cycle_ref) {
 		$coldisplay++;
 		print '<td class="nobottom nowrap right"><input class="falt right" type="text" size="1" value="0" name="progress">%</td>';
+		$coldisplay++;
+		print '<td></td>';
 	}
+
 	if (! empty($usemargins))
 	{
 		if (!empty($user->rights->margins->creer)) {
+		    $coldisplay++;
 		?>
 		<td class="nobottom margininfos linecolmargin right">
 			<!-- For predef product -->
@@ -409,7 +430,6 @@ else {
 			<input type="text" size="5" id="buying_price" name="buying_price" class="flat right" value="<?php echo (isset($_POST["buying_price"])?GETPOST("buying_price", 'alpha', 2):''); ?>">
 		</td>
 		<?php
-		$coldisplay++;
 		}
 
 		if ($user->rights->margins->creer)
@@ -425,12 +445,9 @@ else {
 				$coldisplay++;
 			}
 		}
-		else
-		{
-			if (! empty($conf->global->DISPLAY_MARGIN_RATES)) $coldisplay++;
-			if (! empty($conf->global->DISPLAY_MARK_RATES)) $coldisplay++;
-		}
 	}
+
+	$coldisplay+=$colspan;
 	?>
 	<td class="nobottom linecoledit center valignmiddle" colspan="<?php echo $colspan; ?>">
 		<input type="submit" class="button" value="<?php echo $langs->trans('Add'); ?>" name="addline" id="addline">
@@ -439,62 +456,18 @@ else {
 
 <?php
 if (is_object($objectline)) {
-	print $objectline->showOptionals($extrafieldsline, 'edit', array('style'=>$bcnd[$var], 'colspan'=>$coldisplay+8), '', '', empty($conf->global->MAIN_EXTRAFIELDS_IN_ONE_TD)?0:1);
+	print $objectline->showOptionals($extrafieldsline, 'edit', array('style'=>$bcnd[$var], 'colspan'=>$coldisplay), '', '', empty($conf->global->MAIN_EXTRAFIELDS_IN_ONE_TD)?0:1);
 }
 ?>
 
 <?php
 if ((! empty($conf->service->enabled) || ($object->element == 'contrat')) && $dateSelector && GETPOST('type') != '0')	// We show date field if required
 {
-	$colspan = 6;
-
-	if ($object->element == 'supplier_proposal' || $object->element == 'order_supplier' || $object->element == 'invoice_supplier')	// We must have same test in printObjectLines
-	{
-		$colspan++;
-	}
-	if ($this->situation_cycle_ref) {
-		$colspan++;
-	}
-	// We add 1 if col total ttc
-	if (!empty($inputalsopricewithtax)) {
-		$colspan++;
-	}
-	if ($conf->global->PRODUCT_USE_UNITS) {
-		$colspan++;
-	}
-	if (count($object->lines)) {
-		//There will be an edit and a delete button
-		$colspan += 2;
-
-        // With this, there is a column move button ONLY if lines > 1
-        if (in_array($object->element, array(
-			'propal',
-			'supplier_proposal',
-			'facture',
-		    'facturerec',
-			'invoice',
-			'commande',
-			'order',
-			'order_supplier',
-			'invoice_supplier'
-        ))) {
-            $colspan++;
-		}
-	}
-
-	if (!empty($conf->multicurrency->enabled) && $this->multicurrency_code != $conf->currency) $colspan+=2;
-
-	if (! empty($usemargins))
-	{
-		if (!empty($user->rights->margins->creer)) $colspan++; // For the buying price
-		if (! empty($conf->global->DISPLAY_MARGIN_RATES)) $colspan++;
-		if (! empty($conf->global->DISPLAY_MARK_RATES))   $colspan++;
-	}
 	?>
 
 	<tr id="trlinefordates" <?php echo $bcnd[$var]; ?>>
 	<?php if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) { print '<td></td>'; } ?>
-	<td colspan="<?php echo $colspan; ?>">
+	<td colspan="<?php echo $coldisplay - (empty($conf->global->MAIN_VIEW_LINE_NUMBER)?0:1); ?>">
 	<?php
 	$date_start=dol_mktime(GETPOST('date_starthour'), GETPOST('date_startmin'), 0, GETPOST('date_startmonth'), GETPOST('date_startday'), GETPOST('date_startyear'));
 	$date_end=dol_mktime(GETPOST('date_starthour'), GETPOST('date_startmin'), 0, GETPOST('date_endmonth'), GETPOST('date_endday'), GETPOST('date_endyear'));

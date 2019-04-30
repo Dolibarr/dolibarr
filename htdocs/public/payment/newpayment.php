@@ -486,7 +486,7 @@ if ($action == 'charge' && ! empty($conf->stripe->enabled))
 					'customer' => $customer->id,
 					'source' => $card,
 				    'statement_descriptor' => dol_trunc($FULLTAG, 10, 'right', 'UTF-8', 1),     // 22 chars that appears on bank receipt (company + description)
-				), array("idempotency_key" => "$ref", "stripe_account" => "$stripeacc"));
+				), array("idempotency_key" => "$FULLTAG", "stripe_account" => "$stripeacc"));
 				// Return $charge = array('id'=>'ch_XXXX', 'status'=>'succeeded|pending|failed', 'failure_code'=>, 'failure_message'=>...)
 				if (empty($charge))
 				{
@@ -534,7 +534,7 @@ if ($action == 'charge' && ! empty($conf->stripe->enabled))
 				'description' => 'Stripe payment: '.$FULLTAG.' ref='.$ref,
 				'metadata' => $metadata,
                 'statement_descriptor' => dol_trunc($FULLTAG, 10, 'right', 'UTF-8', 1),     // 22 chars that appears on bank receipt (company + description)
-			), array("idempotency_key" => "$ref", "stripe_account" => "$stripeacc"));
+			), array("idempotency_key" => "$FULLTAG", "stripe_account" => "$stripeacc"));
 			// Return $charge = array('id'=>'ch_XXXX', 'status'=>'succeeded|pending|failed', 'failure_code'=>, 'failure_message'=>...)
 			if (empty($charge))
 			{

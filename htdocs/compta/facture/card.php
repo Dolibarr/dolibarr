@@ -4457,7 +4457,9 @@ elseif ($id > 0 || ! empty($ref))
 	// Show global modifiers
 	if (! empty($conf->global->INVOICE_USE_SITUATION))
 	{
-		if ($object->situation_cycle_ref && $object->statut == 0) {
+		if ($object->situation_cycle_ref && $object->statut == 0)
+		{
+		    print '<!-- Area to change globally the situation percent -->'."\n";
 			print '<div class="div-table-responsive">';
 
 			print '<form name="updatealllines" id="updatealllines" action="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '#updatealllines" method="POST">';
@@ -4473,38 +4475,19 @@ elseif ($id > 0 || ! empty($ref))
 			if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
 				print '<td align="center" width="5">&nbsp;</td>';
 			}
-			print '<td>' . $langs->trans('ModifyAllLines') . '</td>';
-			print '<td class="right" width="50">&nbsp;</td>';
-			print '<td class="right" width="80">&nbsp;</td>';
-			if ($inputalsopricewithtax) print '<td class="right" width="80">&nbsp;</td>';
-			print '<td class="right" width="50">&nbsp</td>';
-			print '<td class="right" width="50">&nbsp</td>';
-			print '<td class="right" width="50">' . $langs->trans('Progress') . '</td>';
-			if (! empty($conf->margin->enabled) && empty($user->societe_id))
-			{
-				print '<td class="margininfos right" width="80">&nbsp;</td>';
-				if ((! empty($conf->global->DISPLAY_MARGIN_RATES) || ! empty($conf->global->DISPLAY_MARK_RATES)) && $usercanreadallmargin) {
-					print '<td class="margininfos right" width="50">&nbsp;</td>';
-				}
-			}
-			print '<td class="right" width="50">&nbsp;</td>';
+			print '<td class="minwidth500imp">' . $langs->trans('ModifyAllLines') . '</td>';
+			print '<td class="right">' . $langs->trans('Progress') . '</td>';
 			print '<td>&nbsp;</td>';
-			print '<td width="10">&nbsp;</td>';
-			print '<td width="10">&nbsp;</td>';
 			print "</tr>\n";
 
+			print '<tr class="nodrag nodrop">';
 			// Adds a line numbering column
 			if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
-				print '<td align="center" width="5">&nbsp;</td>';
+			    print '<td align="center" width="5">&nbsp;</td>';
 			}
-			print '<tr width="100%" class="nodrag nodrop">';
 			print '<td>&nbsp;</td>';
-			print '<td width="50">&nbsp;</td>';
-			print '<td width="80">&nbsp;</td>';
-			print '<td width="50">&nbsp;</td>';
-			print '<td width="50">&nbsp;</td>';
 			print '<td class="nowrap right"><input type="text" size="1" value="" name="all_progress">%</td>';
-			print '<td colspan="4" class="right"><input class="button" type="submit" name="all_percent" value="Modifier" /></td>';
+			print '<td class="right"><input class="button" type="submit" name="all_percent" value="Modifier" /></td>';
 			print '</tr>';
 
 			print '</table>';
