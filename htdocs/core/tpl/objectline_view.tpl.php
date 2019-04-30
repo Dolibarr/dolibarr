@@ -237,17 +237,22 @@ $domData .= ' data-product_type="'.$line->product_type.'"';
 	<td class="linecoldiscount"><?php $coldisplay++; ?>&nbsp;</td>
 	<?php }
 
+	$rounding = min($conf->global->MAIN_MAX_DECIMALS_UNIT, $conf->global->MAIN_MAX_DECIMALS_TOT);
+
 	// Fields for situation invoices
 	if ($this->situation_cycle_ref)
 	{
+	    include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 		$coldisplay++;
 		print '<td class="linecolcycleref nowrap right">' . $line->situation_percent . '%</td>';
-		//print '<td align="right" class="linecolcycleref2 nowrap">' . $line->situation_percent . '</td>';
+		$coldisplay++;
+		$locataxes_array = getLocalTaxesFromRate($line->tva.($line->vat_src_code ? ' ('.$line->vat_src_code.')' : ''), 0, ($senderissupplier?$mysoc:$object->thirdparty), ($senderissupplier?$object->thirdparty:$mysoc));
+		$tmp = calcul_price_total($line->qty, $line->pu, $line->remise_percent, $line->txtva, -1, -1, 0, 'HT', $line->info_bits, $line->type, ($senderissupplier?$object->thirdparty:$mysoc), $locataxes_array, 100, $object->multicurrency_tx, $line->multicurrency_subprice);
+		print '<td align="right" class="linecolcycleref2 nowrap">' . price($tmp[0]) . '</td>';
 	}
 
   	if ($usemargins && ! empty($conf->margin->enabled) && empty($user->societe_id))
   	{
-		$rounding = min($conf->global->MAIN_MAX_DECIMALS_UNIT, $conf->global->MAIN_MAX_DECIMALS_TOT);
   		?>
 
   	<?php if (!empty($user->rights->margins->creer)) { ?>

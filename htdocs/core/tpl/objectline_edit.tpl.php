@@ -207,7 +207,9 @@ $coldisplay=0;
 <?php
 	if ($this->situation_cycle_ref) {
 		$coldisplay++;
-		print '<td class="nowrap right"><input class="right" type="text" size="1" value="' . $line->situation_percent . '" name="progress">%</td>';
+		print '<td class="nowrap right linecolcycleref"><input class="right" type="text" size="1" value="' . $line->situation_percent . '" name="progress">%</td>';
+		$coldisplay++;
+		print '<td></td>';
 	}
 	if (! empty($usemargins))
 	{
@@ -270,7 +272,7 @@ if (!empty($extrafieldsline))
 	<?php if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) { ?>
 		<td class="linecolnum center"></td>
 	<?php } ?>
-	<td colspan="<?php echo $coldisplay-1 ?>"><?php echo $langs->trans('ServiceLimitedDuration').' '.$langs->trans('From').' '; ?>
+	<td colspan="<?php echo $coldisplay-(empty($conf->global->MAIN_VIEW_LINE_NUMBER)?0:1) ?>"><?php echo $langs->trans('ServiceLimitedDuration').' '.$langs->trans('From').' '; ?>
 	<?php
 	$hourmin=(isset($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE)?$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE:'');
 	print $form->selectDate($line->date_start, 'date_start', $hourmin, $hourmin, $line->date_start?0:1, "updateline", 1, 0);
