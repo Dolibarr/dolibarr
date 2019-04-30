@@ -1877,6 +1877,7 @@ if ($action == 'create')
 	$modelmail='supplier_proposal_send';
 	$defaulttopic='SendAskRef';
 	$diroutput = $conf->supplier_proposal->dir_output;
+	$autocopy='MAIN_MAIL_AUTOCOPY_SUPPLIER_PROPOSAL_TO';
 	$trackid = 'spr'.$object->id;
 
 	include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';

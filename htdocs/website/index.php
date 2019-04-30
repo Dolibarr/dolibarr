@@ -1872,7 +1872,7 @@ if (! GETPOST('hide_websitemenu'))
 		}
 		if (! empty($conf->global->WEBSITE_REPLACE_INFO_ABOUT_USAGE_WITH_WEBSERVER))
 		{
-		    $htmltext.= '<br>'.$conf->global->WEBSITE_REPLACE_INFO_ABOUT_USAGE_WITH_WEBSERVER;
+		    $htmltext.= '<br>'.$langs->trans($conf->global->WEBSITE_REPLACE_INFO_ABOUT_USAGE_WITH_WEBSERVER);
 		}
 		else
 		{
