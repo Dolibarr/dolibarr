@@ -8,6 +8,7 @@
  * Copyright (C) 2016      Florian Henry        <florian.henry@atm-consulting.fr>
  * Copyright (C) 2017      Ferran Marcet        <fmarcet@2byte.es>
  * Copyright (C) 2018      Frédéric France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2019      Christophe Battarel	<christophe@altairis.fr>
  *
  * This	program	is free	software; you can redistribute it and/or modify
  * it under the	terms of the GNU General Public	License	as published by
@@ -51,6 +52,8 @@ $id = GETPOST("id", 'int');
 $ref = GETPOST('ref');
 $lineid = GETPOST('lineid', 'int');
 $action = GETPOST('action', 'aZ09');
+$fk_entrepot_default = GETPOST('fk_entrepot_default','int');
+
 if ($user->societe_id)
 	$socid = $user->societe_id;
 $result = restrictedArea($user, 'fournisseur', $id, 'commande_fournisseur', 'commande');
@@ -236,6 +239,7 @@ if ($action == 'dispatch' && $user->rights->fournisseur->commande->receptionner)
 			$prod = "product_" . $reg[1] . '_' . $reg[2];
 			$qty = "qty_" . $reg[1] . '_' . $reg[2];
 			$ent = "entrepot_" . $reg[1] . '_' . $reg[2];
+			if(empty($ent)) $ent = $fk_entrepot_default;
 			$pu = "pu_" . $reg[1] . '_' . $reg[2]; // This is unit price including discount
 			$fk_commandefourndet = "fk_commandefourndet_" . $reg[1] . '_' . $reg[2];
 
@@ -456,8 +460,10 @@ if ($id > 0 || ! empty($ref)) {
 	if ($object->statut == CommandeFournisseur::STATUS_ORDERSENT
 		|| $object->statut == CommandeFournisseur::STATUS_RECEIVED_PARTIALLY
 		|| $object->statut == CommandeFournisseur::STATUS_RECEIVED_COMPLETELY) {
-		$entrepot = new Entrepot($db);
-		$listwarehouses = $entrepot->list_array(1);
+
+		require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
+		$formproduct = new FormProduct($db);
+		$formproduct->loadWarehouses();
 
 		if(empty($conf->reception->enabled))print '<form method="POST" action="dispatch.php?id=' . $object->id . '">';
         else print '<form method="post" action="'.dol_buildpath('/reception/card.php', 1).'?originid='.$object->id.'&origin=supplierorder">';
@@ -508,6 +514,23 @@ if ($id > 0 || ! empty($ref)) {
 			$i = 0;
 
 			if ($num) {
+					$entrepot = new Entrepot($db);
+					$listwarehouses=$entrepot->list_array(1);
+
+					// entrepot par défaut
+					print $langs->trans("Warehouse").' : ';
+					if (count($listwarehouses)>1)
+					{
+						print $form->selectarray('fk_entrepot_default', $listwarehouses, $fk_entrepot_default, 1, 0, 0, '', 0, 0, $disabled);
+					}
+					elseif  (count($listwarehouses)==1)
+					{
+						print $form->selectarray('fk_entrepot_default', $listwarehouses, $fk_entrepot_default, 0, 0, 0, '', 0, 0, $disabled);
+					}
+					else
+					{
+						print $langs->trans("NoWarehouseDefined");
+					}
 				print '<tr class="liste_titre">';
 
 				print '<td>' . $langs->trans("Description") . '</td>';
@@ -758,6 +781,15 @@ if ($id > 0 || ! empty($ref)) {
 
 	dol_fiche_end();
 
+	// traitement entrepot par défaut
+	print '<script type="text/javascript">
+			$(document).ready(function () {
+				$("select[name=fk_entrepot_default]").change(function() {
+					var fk_entrepot_default = $("option:selected", this).val();
+					$("select[name^=entrepot_]").val(fk_entrepot_default).change();
+				});
+			});
+		</script>';
 
 	// List of lines already dispatched
 	$sql = "SELECT p.ref, p.label,";
