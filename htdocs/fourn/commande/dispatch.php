@@ -52,7 +52,7 @@ $id = GETPOST("id", 'int');
 $ref = GETPOST('ref');
 $lineid = GETPOST('lineid', 'int');
 $action = GETPOST('action', 'aZ09');
-$fk_entrepot_default = GETPOST('fk_entrepot_default','int');
+$fk_default_warehouse = GETPOST('fk_default_warehouse','int');
 
 if ($user->societe_id)
 	$socid = $user->societe_id;
@@ -239,7 +239,7 @@ if ($action == 'dispatch' && $user->rights->fournisseur->commande->receptionner)
 			$prod = "product_" . $reg[1] . '_' . $reg[2];
 			$qty = "qty_" . $reg[1] . '_' . $reg[2];
 			$ent = "entrepot_" . $reg[1] . '_' . $reg[2];
-			if(empty($ent)) $ent = $fk_entrepot_default;
+			if(empty($ent)) $ent = $fk_default_warehouse;
 			$pu = "pu_" . $reg[1] . '_' . $reg[2]; // This is unit price including discount
 			$fk_commandefourndet = "fk_commandefourndet_" . $reg[1] . '_' . $reg[2];
 
@@ -521,11 +521,11 @@ if ($id > 0 || ! empty($ref)) {
 					print $langs->trans("Warehouse").' : ';
 					if (count($listwarehouses)>1)
 					{
-						print $form->selectarray('fk_entrepot_default', $listwarehouses, $fk_entrepot_default, 1, 0, 0, '', 0, 0, $disabled);
+						print $form->selectarray('fk_default_warehouse', $listwarehouses, $fk_default_warehouse, 1, 0, 0, '', 0, 0, $disabled);
 					}
 					elseif  (count($listwarehouses)==1)
 					{
-						print $form->selectarray('fk_entrepot_default', $listwarehouses, $fk_entrepot_default, 0, 0, 0, '', 0, 0, $disabled);
+						print $form->selectarray('fk_default_warehouse', $listwarehouses, $fk_default_warehouse, 0, 0, 0, '', 0, 0, $disabled);
 					}
 					else
 					{
@@ -784,9 +784,9 @@ if ($id > 0 || ! empty($ref)) {
 	// traitement entrepot par défaut
 	print '<script type="text/javascript">
 			$(document).ready(function () {
-				$("select[name=fk_entrepot_default]").change(function() {
-					var fk_entrepot_default = $("option:selected", this).val();
-					$("select[name^=entrepot_]").val(fk_entrepot_default).change();
+				$("select[name=fk_default_warehouse]").change(function() {
+					var fk_default_warehouse = $("option:selected", this).val();
+					$("select[name^=entrepot_]").val(fk_default_warehouse).change();
 				});
 			});
 		</script>';
