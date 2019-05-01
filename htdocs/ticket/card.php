@@ -75,7 +75,7 @@ if (empty($action) && empty($id) && empty($ref)) $action='view';
 
 //Select mail models is same action as add_message
 if (GETPOST('modelselected', 'alpha')) {
-    $action = 'add_message';
+    $action = 'create_message';
 }
 
 // Load object
@@ -369,9 +369,9 @@ if ($action == "assign_user" && GETPOST('btn_assign_user', 'aplha') && $user->ri
     $action = 'view';
 }
 
-if ($action == "new_message" && GETPOST('btn_add_message') && $user->rights->ticket->read) {
-    $ret = $object->newMessage($user, $action);
-    if ($ret) {
+if ($action == "add_message" && GETPOST('btn_create_message') && $user->rights->ticket->read) {
+    $ret = $object->newMessage($user, $action, (GETPOST('private_message', 'alpha') == "on" ? 1 : 0));
+    if ($ret > 0) {
         if (!empty($backtopage)) {
             $url = $backtopage;
         } else {
@@ -382,12 +382,8 @@ if ($action == "new_message" && GETPOST('btn_add_message') && $user->rights->tic
         exit;
     } else {
         setEventMessages($object->error, null, 'errors');
-        $action = 'add_message';
+        $action = 'create_message';
     }
-}
-
-if ($action == "new_public_message" && GETPOST('btn_add_message')) {
-    $object->newMessagePublic($user, $action);
 }
 
 if ($action == "confirm_close" && GETPOST('confirm', 'alpha') == 'yes' && $user->rights->ticket->write)
@@ -641,7 +637,7 @@ if ($action == 'create' || $action == 'presend')
     $formticket->showForm(1);
 }
 
-if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'dellink' || $action == 'add_message' || $action == 'close' || $action == 'delete' || $action == 'editcustomer' || $action == 'progression' || $action == 'reopen'
+if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'dellink' || $action == 'create_message' || $action == 'close' || $action == 'delete' || $action == 'editcustomer' || $action == 'progression' || $action == 'reopen'
 	|| $action == 'editsubject' || $action == 'edit_extras' || $action == 'update_extras' || $action == 'edit_extrafields' || $action == 'set_extrafields' || $action == 'classify' || $action == 'sel_contract' || $action == 'edit_message_init' || $action == 'set_status' || $action == 'dellink')
 {
     if ($res > 0)
@@ -1173,8 +1169,8 @@ if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'd
 			if (empty($reshook))
 			{
 				// Show link to add a message (if read and not closed)
-			    if ($object->fk_statut < Ticket::STATUS_CLOSED && $action != "add_message") {
-		            print '<div class="inline-block divButAction"><a class="butAction" href="card.php?track_id=' . $object->track_id . '&action=add_message">' . $langs->trans('TicketAddMessage') . '</a></div>';
+			    if ($object->fk_statut < Ticket::STATUS_CLOSED && $action != "create_message") {
+		            print '<div class="inline-block divButAction"><a class="butAction" href="card.php?track_id=' . $object->track_id . '&action=create_message">' . $langs->trans('TicketAddMessage') . '</a></div>';
 		        }
 
 		        // Link to create an intervention
@@ -1210,7 +1206,7 @@ if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'd
 			$action = 'presend';
 		}
 
-		if ($action != 'add_message')
+		if ($action != 'create_message')
 		{
 			print '<div class="fichecenter"><div class="fichehalfleft">';
 			print '<a name="builddoc"></a>'; // ancre
@@ -1232,7 +1228,7 @@ if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'd
 		}
 		else
 		{
-			$action='new_message';
+			$action='add_message';
 			$modelmail='ticket_send';
 
 			print '<div>';

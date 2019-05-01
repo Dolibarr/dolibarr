@@ -2486,11 +2486,12 @@ class Ticket extends CommonObject
     /**
      * Add new message on a ticket (private area)
      *
-     * @param User $user        User for action
-     * @param string $action    Action string
-     * @return int
+     * @param   User    $user       User for action
+     * @param   string  $action     Action string
+     * @param   int     $private    1=Message is private. TODO Implement this. What does this means ?
+     * @return  int
      */
-    public function newMessage($user, &$action)
+    public function newMessage($user, &$action, $private = 1)
     {
         global $mysoc, $conf, $langs;
 
@@ -2775,152 +2776,6 @@ class Ticket extends CommonObject
         } else {
             $langs->load("other");
             setEventMessages($langs->trans('ErrorMailRecipientIsEmptyForSendTicketMessage'), null, 'warnings');
-        }
-    }
-
-    /**
-     * Add new message on a ticket (public area)
-     *
-     * @param User $user        User for action
-     * @param string $action    Action string
-     * @return void
-     */
-    public function newMessagePublic($user, &$action)
-    {
-        global $mysoc, $conf, $langs;
-
-        $object = new Ticket($this->db);
-
-        $error = 0;
-        $ret = $object->fetch('', '', GETPOST('track_id', 'alpha'));
-        $object->socid = $object->fk_soc;
-        $object->fetch_thirdparty();
-        if ($ret < 0) {
-            $error++;
-            array_push($this->errors, $langs->trans("ErrorTicketIsNotValid"));
-            $action = '';
-        }
-
-        if (!GETPOST("message")) {
-            $error++;
-            array_push($this->errors, $langs->trans("ErrorFieldRequired", $langs->transnoentities("message")));
-            $action = 'add_message';
-        }
-
-        if (!$error) {
-            $object->message = (string) GETPOST("message");
-            $id = $object->createTicketMessage($user);
-            if ($id <= 0) {
-                $error++;
-                $this->error = $object->error;
-                $this->errors = $object->errors;
-                $action = 'add_message';
-            }
-
-            if (!$error && $id > 0) {
-                setEventMessages($langs->trans('TicketMessageSuccessfullyAdded'), null, 'mesgs');
-
-                // Retrieve internal contact datas
-                $internal_contacts = $object->getInfosTicketInternalContact();
-                $sendto = array();
-                if (is_array($internal_contacts) && count($internal_contacts) > 0) {
-                    $subject = '[' . $mysoc->name . '- ticket #' . $object->track_id . '] ' . $langs->trans('TicketNewMessage');
-
-                    $message = $langs->trans('TicketMessageMailIntroAutoNewPublicMessage', $object->subject);
-                    $message .= "\n";
-                    $message .= GETPOST('message');
-                    $message .= "\n";
-
-                    //  Coordonnées client
-                    if ($object->thirdparty->id > 0) {
-                        $message .= "\n\n";
-                        $message .= "==============================================\n";
-                        $message .= $langs->trans('Thirparty') . " : " . $object->thirdparty->name;
-                        $message .= !empty($object->thirdparty->town) ? $langs->trans('Town') . " : " . $object->thirdparty->town : '';
-                        $message .= "\n";
-                        $message .= !empty($object->thirdparty->phone) ? $langs->trans('Phone') . " : " . $object->thirdparty->phone : '';
-                        $message .= "\n";
-                    }
-
-                    // Build array to display recipient list
-                    foreach ($internal_contacts as $key => $info_sendto) {
-                        if ($info_sendto['email'] != '') {
-                            $sendto[] = trim($info_sendto['firstname'] . " " . $info_sendto['lastname']) . " <" . $info_sendto['email'] . ">";
-                        }
-
-                        // Contact type
-                        $recipient = dolGetFirstLastname($info_sendto['firstname'], $info_sendto['lastname'], '-1') . ' (' . strtolower($info_sendto['libelle']) . ')';
-                        $message .= (!empty($recipient) ? $langs->trans('TicketNotificationRecipient') . ' : ' . $recipient . "\n" : '');
-                        $message .= "\n";
-                    }
-
-                    // URL ticket
-                    $url_internal_ticket = dol_buildpath('/ticket/card.php', 2) . '?track_id=' . $object->track_id;
-                    $message .= "\n" . $langs->trans('TicketNotificationEmailBodyInfosTrackUrlinternal') . ' : ' . $url_internal_ticket . "\n";
-
-                    $message .= "\n\n";
-
-                    $message_signature = GETPOST('mail_signature') ? GETPOST('mail_signature') : $conf->global->TICKET_MESSAGE_MAIL_SIGNATURE;
-
-                    // Add global email address reciepient
-                    if ($conf->global->TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS && !in_array($conf->global->TICKET_NOTIFICATION_EMAIL_FROM, $sendto)) {
-                        $sendto[] = $conf->global->TICKET_NOTIFICATION_EMAIL_FROM;
-                    }
-
-                    $this->sendTicketMessageByEmail($subject, $message, '', $sendto);
-                }
-
-                /*
-                 * Email for externals users if not private
-                 */
-
-                // Retrieve email of all contacts external
-                $external_contacts = $object->getInfosTicketExternalContact();
-                $sendto = array();
-                if (is_array($external_contacts) && count($external_contacts) > 0) {
-                    $subject = '[' . $mysoc->name . '- ticket #' . $object->track_id . '] ' . $langs->trans('TicketNewMessage');
-
-                    $message = $langs->trans('TicketMessageMailIntroAutoNewPublicMessage', $object->subject);
-                    $message .= "\n";
-
-                    $message .= GETPOST('message');
-                    $message .= "\n\n";
-
-                    $message_signature = GETPOST('mail_signature') ? GETPOST('mail_signature') : $conf->global->TICKET_MESSAGE_MAIL_SIGNATURE;
-                    foreach ($external_contacts as $key => $info_sendto) {
-                        if ($info_sendto['email'] != '') {
-                            $sendto[] = trim($info_sendto['firstname'] . " " . $info_sendto['lastname']) . " <" . $info_sendto['email'] . ">";
-                        }
-                        $recipient = '';
-                        $recipient = dolGetFirstLastname($info_sendto['firstname'], $info_sendto['lastname'], '-1') . ' (' . strtolower($info_sendto['libelle']) . ')';
-                        $message .= (!empty($recipient) ? $langs->trans('TicketNotificationRecipient') . ' : ' . $recipient . "\n" : '');
-                    }
-
-                    $url_public_ticket = ($conf->global->TICKET_URL_PUBLIC_INTERFACE ? $conf->global->TICKET_URL_PUBLIC_INTERFACE . '/view.php' : dol_buildpath('/public/ticket/view.php', 2)) . '?track_id=' . $object->track_id;
-                    $message .= "\n\n" . $langs->trans('TicketNewEmailBodyInfosTrackUrlCustomer') . ' : ' . $url_public_ticket . "\n";
-
-                    // Add signature
-                    $message .= '\n\n' . $message_signature;
-
-                    if (!empty($object->origin_email) && !in_array($object->origin_email, $sendto)) {
-                        $sendto[] = $object->origin_email;
-                    }
-                    if ($object->fk_soc > 0 && !in_array($object->origin_email, $sendto)) {
-                        $sendto[] = $object->thirdparty->email;
-                    }
-                    $this->sendTicketMessageByEmail($subject, $message, '', $sendto);
-                }
-
-                $object->copyFilesForTicket();
-
-                $url = 'view.php?action=view_ticket&track_id=' . $object->track_id;
-                header("Location: " . $url);
-                exit;
-            } else {
-                setEventMessages($object->error, $object->errors, 'errors');
-            }
-        } else {
-            setEventMessages($this->error, $this->errors, 'errors');
         }
     }
 }
