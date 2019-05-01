@@ -1543,14 +1543,16 @@ if (empty($reshook))
 			$datefacture = dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
 			if (empty($datefacture)) {
 				$error++;
-				$mesg = '<div class="error">' . $langs->trans("ErrorFieldRequired", $langs->trans("Date")) . '</div>';
+				$mesg = $langs->trans("ErrorFieldRequired", $langs->trans("Date"));
+                setEventMessages($mesg, null, 'errors');
 			}
 
 			$date_pointoftax = dol_mktime(12, 0, 0, $_POST['date_pointoftaxmonth'], $_POST['date_pointoftaxday'], $_POST['date_pointoftaxyear']);
 
 			if (!($_POST['situations'] > 0)) {
 				$error++;
-				$mesg = '<div class="error">' . $langs->trans("ErrorFieldRequired", $langs->trans("InvoiceSituation")) . '</div>';
+				$mesg = $langs->trans("ErrorFieldRequired", $langs->trans("InvoiceSituation"));
+                setEventMessages($mesg, null, 'errors');
 			}
 
 			if (!$error) {
@@ -2192,11 +2194,13 @@ $result = $object->updateline(GETPOST('lineid'), $description, $pu_ht, $qty, GET
 		if (!$object->fetch($id) > 0) dol_print_error($db);
 		if (!is_null(GETPOST('all_progress')) && GETPOST('all_progress') != "")
 		{
+            $all_progress = GETPOST('all_progress', 'int');
 			foreach ($object->lines as $line)
 			{
 				$percent = $line->get_prev_progress($object->id);
-				if (GETPOST('all_progress') < $percent) {
-					$mesg = '<div class="warning">' . $langs->trans("CantBeLessThanMinPercent") . '</div>';
+				if (floatval($all_progress) < floatval($percent)) {
+                    $mesg = $langs->trans("Line") . ' ' . $i . ' '. $line->ref .' : ' . $langs->trans("CantBeLessThanMinPercent");
+                    setEventMessages($mesg, null, 'warnings');
 					$result = -1;
 				} else
 					$object->update_percent($line, $_POST['all_progress']);
@@ -4453,7 +4457,9 @@ elseif ($id > 0 || ! empty($ref))
 	// Show global modifiers
 	if (! empty($conf->global->INVOICE_USE_SITUATION))
 	{
-		if ($object->situation_cycle_ref && $object->statut == 0) {
+		if ($object->situation_cycle_ref && $object->statut == 0)
+		{
+		    print '<!-- Area to change globally the situation percent -->'."\n";
 			print '<div class="div-table-responsive">';
 
 			print '<form name="updatealllines" id="updatealllines" action="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '#updatealllines" method="POST">';
@@ -4469,38 +4475,19 @@ elseif ($id > 0 || ! empty($ref))
 			if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
 				print '<td align="center" width="5">&nbsp;</td>';
 			}
-			print '<td>' . $langs->trans('ModifyAllLines') . '</td>';
-			print '<td class="right" width="50">&nbsp;</td>';
-			print '<td class="right" width="80">&nbsp;</td>';
-			if ($inputalsopricewithtax) print '<td class="right" width="80">&nbsp;</td>';
-			print '<td class="right" width="50">&nbsp</td>';
-			print '<td class="right" width="50">&nbsp</td>';
-			print '<td class="right" width="50">' . $langs->trans('Progress') . '</td>';
-			if (! empty($conf->margin->enabled) && empty($user->societe_id))
-			{
-				print '<td class="margininfos right" width="80">&nbsp;</td>';
-				if ((! empty($conf->global->DISPLAY_MARGIN_RATES) || ! empty($conf->global->DISPLAY_MARK_RATES)) && $usercanreadallmargin) {
-					print '<td class="margininfos right" width="50">&nbsp;</td>';
-				}
-			}
-			print '<td class="right" width="50">&nbsp;</td>';
+			print '<td class="minwidth500imp">' . $langs->trans('ModifyAllLines') . '</td>';
+			print '<td class="right">' . $langs->trans('Progress') . '</td>';
 			print '<td>&nbsp;</td>';
-			print '<td width="10">&nbsp;</td>';
-			print '<td width="10">&nbsp;</td>';
 			print "</tr>\n";
 
+			print '<tr class="nodrag nodrop">';
 			// Adds a line numbering column
 			if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
-				print '<td align="center" width="5">&nbsp;</td>';
+			    print '<td align="center" width="5">&nbsp;</td>';
 			}
-			print '<tr width="100%" class="nodrag nodrop">';
 			print '<td>&nbsp;</td>';
-			print '<td width="50">&nbsp;</td>';
-			print '<td width="80">&nbsp;</td>';
-			print '<td width="50">&nbsp;</td>';
-			print '<td width="50">&nbsp;</td>';
 			print '<td class="nowrap right"><input type="text" size="1" value="" name="all_progress">%</td>';
-			print '<td colspan="4" class="right"><input class="button" type="submit" name="all_percent" value="Modifier" /></td>';
+			print '<td class="right"><input class="button" type="submit" name="all_percent" value="Modifier" /></td>';
 			print '</tr>';
 
 			print '</table>';

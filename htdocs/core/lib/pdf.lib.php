@@ -341,14 +341,14 @@ function pdfBuildThirdpartyName($thirdparty, Translate $outputlangs, $includeali
 /**
  *   	Return a string with full address formated for output on documents
  *
- * 		@param	Translate	      $outputlangs		    Output langs object
- *   	@param  Societe		      $sourcecompany		Source company object
- *   	@param  Societe|string    $targetcompany		Target company object
- *      @param  Contact|string	  $targetcontact	    Target contact object
- * 		@param	int			      $usecontact		    Use contact instead of company
- * 		@param	string  	      $mode				    Address type ('source', 'target', 'targetwithdetails', 'targetwithdetails_xxx': target but include also phone/fax/email/url)
- *      @param  Object            $object               Object we want to build document for
- * 		@return	string							        String with full address
+ * 		@param	Translate	          $outputlangs		    Output langs object
+ *   	@param  Societe		          $sourcecompany		Source company object
+ *   	@param  Societe|string|null   $targetcompany		Target company object
+ *      @param  Contact|string|null	  $targetcontact	    Target contact object
+ * 		@param	int			          $usecontact		    Use contact instead of company
+ * 		@param	string  	          $mode				    Address type ('source', 'target', 'targetwithdetails', 'targetwithdetails_xxx': target but include also phone/fax/email/url)
+ *      @param  Object                $object               Object we want to build document for
+ * 		@return	string					    		        String with full address
  */
 function pdf_build_address($outputlangs, $sourcecompany, $targetcompany = '', $targetcontact = '', $usecontact = 0, $mode = 'source', $object = null)
 {
@@ -364,7 +364,7 @@ function pdf_build_address($outputlangs, $sourcecompany, $targetcompany = '', $t
 	$stringaddress = '';
 	if (is_object($hookmanager))
 	{
-		$parameters = array('sourcecompany'=>&$sourcecompany,'targetcompany'=>&$targetcompany,'targetcontact'=>$targetcontact,'outputlangs'=>$outputlangs,'mode'=>$mode,'usecontact'=>$usecontact);
+		$parameters = array('sourcecompany'=>&$sourcecompany, 'targetcompany'=>&$targetcompany, 'targetcontact'=>&$targetcontact, 'outputlangs'=>$outputlangs, 'mode'=>$mode, 'usecontact'=>$usecontact);
 		$action='';
 		$reshook = $hookmanager->executeHooks('pdf_build_address', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
 		$stringaddress.=$hookmanager->resPrint;
@@ -1954,6 +1954,7 @@ function pdf_getlinetotalexcltax($object, $i, $outputlangs, $hidedetails = 0)
         	$total_ht = ($conf->multicurrency->enabled && $object->multicurrency_tx != 1 ? $object->lines[$i]->multicurrency_total_ht : $object->lines[$i]->total_ht);
         	if ($object->lines[$i]->situation_percent > 0)
         	{
+        	    // TODO Remove this. The total should be saved correctly in database instead of being modified here.
         		$prev_progress = 0;
         		$progress = 1;
         		if (method_exists($object->lines[$i], 'get_prev_progress'))
@@ -1964,7 +1965,9 @@ function pdf_getlinetotalexcltax($object, $i, $outputlangs, $hidedetails = 0)
 				$result.=price($sign * ($total_ht/($object->lines[$i]->situation_percent/100)) * $progress, 0, $outputlangs);
         	}
         	else
-			$result.=price($sign * $total_ht, 0, $outputlangs);
+        	{
+                $result.=price($sign * $total_ht, 0, $outputlangs);
+        	}
         }
     }
     return $result;

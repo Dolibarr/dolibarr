@@ -100,6 +100,7 @@ function dolWebsiteReplacementOfLinks($website, $content, $removephppart = 0)
  * @param 	string	$str			String to clean
  * @param	string	$replacewith	String to use as replacement
  * @return 	string					Result string without php code
+ * @see dolKeepOnlyPhpCode()
  */
 function dolStripPhpCode($str, $replacewith = '')
 {
@@ -132,6 +133,44 @@ function dolStripPhpCode($str, $replacewith = '')
 	return $newstr;
 }
 
+/**
+ * Keep only PHP code part from a HTML string page.
+ *
+ * @param 	string	$str			String to clean
+ * @return 	string					Result string with php code only
+ * @see dolStripPhpCode()
+ */
+function dolKeepOnlyPhpCode($str)
+{
+    $newstr = '';
+
+    //split on each opening tag
+    $parts = explode('<?php',$str);
+    if (!empty($parts))
+    {
+        $i=0;
+        foreach($parts as $part)
+        {
+            if ($i == 0) 	// The first part is never php code
+            {
+                $i++;
+                continue;
+            }
+            $newstr.='<?php';
+            //split on closing tag
+            $partlings = explode('?>', $part, 2);
+            if (!empty($partlings))
+            {
+                $newstr .= $partlings[0].'?>';
+            }
+            else
+            {
+                $newstr .= $part.'?>';
+            }
+        }
+    }
+    return $newstr;
+}
 
 /**
  * Render a string of an HTML content and output it.

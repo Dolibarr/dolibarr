@@ -2701,7 +2701,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 	}
 
 	// Wrapping pour les remises de cheques
-	elseif ($modulepart == 'remisecheque' && !empty($conf->banque->dir_output))
+	elseif ($modulepart == 'remisecheque' && !empty($conf->bank->dir_output))
 	{
 		if ($fuser->rights->banque->{$lire} || preg_match('/^specimen/i', $original_file))
 		{
@@ -2712,7 +2712,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 	}
 
 	// Wrapping for bank
-	elseif ($modulepart == 'bank' && !empty($conf->bank->dir_output))
+	elseif (($modulepart == 'banque' || $modulepart == 'bank') && !empty($conf->bank->dir_output))
 	{
 		if ($fuser->rights->banque->{$lire})
 		{

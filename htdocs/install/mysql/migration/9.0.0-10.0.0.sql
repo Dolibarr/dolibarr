@@ -29,6 +29,8 @@
 
 -- Missing in 9.0
 
+ALTER TABLE llx_actioncomm MODIFY COLUMN code varchar(50);
+
 DROP TABLE llx_ticket_logs;
 
 CREATE TABLE llx_pos_cash_fence(
@@ -84,6 +86,7 @@ create table llx_mailing_unsubscribe
 ALTER TABLE llx_mailing_unsubscribe ADD UNIQUE uk_mailing_unsubscribe(email, entity, unsubscribegroup);
 
 ALTER TABLE llx_adherent ADD gender VARCHAR(10);
+ALTER TABLE llx_adherent_type ADD morphy VARCHAR(3);
 ALTER TABLE llx_subscription ADD fk_type integer;
 
 -- Add url_id into unique index of bank_url
@@ -282,10 +285,15 @@ ALTER TABLE llx_product ADD INDEX idx_product_fk_project (fk_project);
 ALTER TABLE llx_actioncomm ADD COLUMN calling_duration integer;
 
 ALTER TABLE llx_emailcollector_emailcollector ADD COLUMN datelastok datetime;
+ALTER TABLE llx_emailcollector_emailcollector ADD COLUMN maxemailpercollect integer DEFAULT 100;
 
 DELETE FROM llx_const WHERE name = 'THEME_ELDY_USE_HOVER' AND value = '0';
 DELETE FROM llx_const WHERE name = 'THEME_ELDY_USE_CHECKED' AND value = '0';
 
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('TICKET_CLOSE','Ticket closed','Executed when a ticket is closed','ticket',164);
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('TICKET_SENTBYMAIL','Ticket message sent by email','Executed when a message is sent from the ticket record','ticket',166);
+
+ALTER TABLE llx_inventorydet DROP COLUMN pmp; 
+ALTER TABLE llx_inventorydet DROP COLUMN pa; 
+ALTER TABLE llx_inventorydet DROP COLUMN new_pmp;
 

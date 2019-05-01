@@ -43,7 +43,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 
 	/**
      * Dolibarr version of the loaded document
-     * @public string
+     * @var string
      */
 	public $version = 'dolibarr';
 

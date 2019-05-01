@@ -263,7 +263,7 @@ elseif (! empty($conf->global->$paramcreditor)) $creditor=$conf->global->$paramc
  * Actions
  */
 
-// Action dopayment is called after choosing the payment mode
+// Action dopayment is called after clicking/choosing the payment mode
 if ($action == 'dopayment')
 {
 	if ($paymentmethod == 'paypal')
@@ -395,7 +395,8 @@ if ($action == 'dopayment')
 }
 
 
-// Called when choosing Stripe mode, after the 'dopayment'
+// Called when choosing Stripe mode, after clicking the 'dopayment' with the Charge API architecture.
+// When using the PaymentItent architecture, we dont need this, the Stripe customer is created when creating PaymentItent when showing payment page.
 if ($action == 'charge' && ! empty($conf->stripe->enabled))
 {
 	$amountstripe = $amount;
@@ -484,8 +485,8 @@ if ($action == 'charge' && ! empty($conf->stripe->enabled))
 					'metadata' => $metadata,
 					'customer' => $customer->id,
 					'source' => $card,
-					'statement_descriptor' => dol_trunc(dol_trunc(dol_string_unaccent($mysoc->name), 6, 'right', 'UTF-8', 1).' '.$FULLTAG, 22, 'right', 'UTF-8', 1)     // 22 chars that appears on bank receipt
-				), array("idempotency_key" => "$ref", "stripe_account" => "$stripeacc"));
+				    'statement_descriptor' => dol_trunc($FULLTAG, 10, 'right', 'UTF-8', 1),     // 22 chars that appears on bank receipt (company + description)
+				), array("idempotency_key" => "$FULLTAG", "stripe_account" => "$stripeacc"));
 				// Return $charge = array('id'=>'ch_XXXX', 'status'=>'succeeded|pending|failed', 'failure_code'=>, 'failure_message'=>...)
 				if (empty($charge))
 				{
@@ -509,7 +510,7 @@ if ($action == 'charge' && ! empty($conf->stripe->enabled))
 			if (empty($vatcleaned)) $taxinfo=null;
 
 			dol_syslog("Create anonymous customer card profile", LOG_DEBUG, 0, '_stripe');
-$customer = \Stripe\Customer::create(array(
+            $customer = \Stripe\Customer::create(array(
 				'email' => $email,
 				'description' => ($email?'Anonymous customer for '.$email:'Anonymous customer'),
 				'metadata' => $metadata,
@@ -525,15 +526,15 @@ $customer = \Stripe\Customer::create(array(
 			// The customer was just created with a source, so we can make a charge
 			// with no card defined, the source just used for customer creation will be used.
 			dol_syslog("Create charge", LOG_DEBUG, 0, '_stripe');
-$charge = \Stripe\Charge::create(array(
+            $charge = \Stripe\Charge::create(array(
 				'customer' => $customer->id,
 				'amount'   => price2num($amountstripe, 'MU'),
 				'currency' => $currency,
 				'capture'  => true,							// Charge immediatly
 				'description' => 'Stripe payment: '.$FULLTAG.' ref='.$ref,
 				'metadata' => $metadata,
-				'statement_descriptor' => dol_trunc(dol_trunc(dol_string_unaccent($mysoc->name), 6, 'right', 'UTF-8', 1).' '.$FULLTAG, 22, 'right', 'UTF-8', 1)     // 22 chars that appears on bank receipt
-			), array("idempotency_key" => "$ref", "stripe_account" => "$stripeacc"));
+                'statement_descriptor' => dol_trunc($FULLTAG, 10, 'right', 'UTF-8', 1),     // 22 chars that appears on bank receipt (company + description)
+			), array("idempotency_key" => "$FULLTAG", "stripe_account" => "$stripeacc"));
 			// Return $charge = array('id'=>'ch_XXXX', 'status'=>'succeeded|pending|failed', 'failure_code'=>, 'failure_message'=>...)
 			if (empty($charge))
 			{
@@ -1658,7 +1659,7 @@ print '<br>';
 if (preg_match('/^dopayment/', $action))
 {
 
-	// Strip
+	// Stripe
 	if (GETPOST('dopayment_stripe', 'alpha'))
 	{
 		// Simple checkout
@@ -1727,26 +1728,28 @@ if (preg_match('/^dopayment/', $action))
 	    <tbody><tr><td class="textpublicpayment">
 
 	    <div class="form-row left">
-	    <label for="card-element">
-	    '.$langs->trans("CreditOrDebitCard").'
-	    </label>
+
+	    <label for="card-element">'.$langs->trans("CreditOrDebitCard").'</label>
 	    <div id="card-element">
 	    <!-- a Stripe Element will be inserted here. -->
 	    </div>
+
 	    <!-- Used to display form errors -->
 	    <div id="card-errors" role="alert"></div>
+
 	    </div>
+
 	    <br>
 	    <button class="butAction" id="buttontopay">'.$langs->trans("ValidatePayment").'</button>
 	    <img id="hourglasstopay" class="hidden" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/working.gif'.'">
 	    </td></tr></tbody></table>
 
-	    </form>
+	    </form>'."\n";
 
-	    <script src="https://js.stripe.com/v3/"></script>
+		print '<script src="https://js.stripe.com/v3/"></script>'."\n";
 
-	    <script type="text/javascript" language="javascript">';
-
+	    // Code to ask the credit card. This use the default "API version". No way to force API version when using JS code.
+		print '<script type="text/javascript" language="javascript">'."\n";
 		?>
 
 	    // Create a Stripe client.

@@ -659,6 +659,15 @@ textarea.centpercent {
 .cursornotallowed {
 	cursor: not-allowed;
 }
+.backgroundblank {
+    background-color: #fff;
+}
+.checkboxattachfilelabel {
+    font-size: 0.85em;
+    opacity: 0.7;
+}
+
+/* Themes for badges */
 .badge {
 	display: inline-block;
 	min-width: 10px;
@@ -1532,6 +1541,10 @@ img.photorefnoborder {
 .tdhrthin {
 	margin: 0;
 	padding-bottom: 0 !important;
+}
+/* Payment Screen : Pointer cursor in the autofill image */
+.AutoFillAmount {
+	cursor:pointer;
 }
 
 

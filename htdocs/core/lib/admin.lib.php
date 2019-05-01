@@ -160,6 +160,7 @@ function run_sql($sqlfile, $silent = 1, $entity = '', $usesavepoint = 1, $handle
         	else $buf = fgets($fp);
 
             // Test if request must be ran only for particular database or version (if yes, we must remove the -- comment)
+            $reg=array();
             if (preg_match('/^--\sV(MYSQL|PGSQL)([^\s]*)/i', $buf, $reg))
             {
             	$qualified=1;
@@ -794,8 +795,9 @@ function listOfSessions()
                     {
                         $tmp=explode('_', $file);
                         $idsess=$tmp[1];
-                        $login = preg_match('/dol_login\|s:[0-9]+:"([A-Za-z0-9]+)"/i', $sessValues, $regs);
-                        $arrayofSessions[$idsess]["login"] = $regs[1];
+                        $regs=array();
+                        $loginfound = preg_match('/dol_login\|s:[0-9]+:"([A-Za-z0-9]+)"/i', $sessValues, $regs);
+                        if ($loginfound) $arrayofSessions[$idsess]["login"] = $regs[1];
                         $arrayofSessions[$idsess]["age"] = time()-filectime($fullpath);
                         $arrayofSessions[$idsess]["creation"] = filectime($fullpath);
                         $arrayofSessions[$idsess]["modification"] = filemtime($fullpath);
@@ -820,7 +822,6 @@ function purgeSessions($mysessionid)
 {
     global $conf;
 
-    $arrayofSessions = array();
     $sessPath = ini_get("session.save_path")."/";
     dol_syslog('admin.lib:purgeSessions mysessionid='.$mysessionid.' sessPath='.$sessPath);
 
@@ -868,7 +869,9 @@ function purgeSessions($mysessionid)
  */
 function activateModule($value, $withdeps = 1)
 {
-    global $db, $modules, $langs, $conf, $mysoc;
+    global $db, $langs, $conf, $mysoc;
+
+    $ret=array();
 
 	// Check parameters
 	if (empty($value)) {
@@ -1689,8 +1692,10 @@ function phpinfo_array()
 	foreach($info_lines as $line)
 	{
 		// new cat?
+		$title = array();
 		preg_match("~<h2>(.*)</h2>~", $line, $title) ? $cat = $title[1] : null;
-		if(preg_match("~<tr><td[^>]+>([^<]*)</td><td[^>]+>([^<]*)</td></tr>~", $line, $val))
+		$val = array();
+		if (preg_match("~<tr><td[^>]+>([^<]*)</td><td[^>]+>([^<]*)</td></tr>~", $line, $val))
 		{
 			$info_arr[trim($cat)][trim($val[1])] = $val[2];
 		}
@@ -1709,7 +1714,7 @@ function phpinfo_array()
  */
 function company_admin_prepare_head()
 {
-	global $langs, $conf, $user;
+	global $langs, $conf;
 
 	$h = 0;
 	$head = array();

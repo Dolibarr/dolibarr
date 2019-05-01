@@ -33,7 +33,7 @@ class modTcpdfbarcode extends ModeleBarCode
 {
 	/**
      * Dolibarr version of the loaded document
-     * @public string
+     * @var string
      */
 	public $version = 'dolibarr';		// 'development', 'experimental', 'dolibarr'
 

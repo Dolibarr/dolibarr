@@ -1448,7 +1448,39 @@ if (($action == 'updatesource' || $action == 'updatecontent' || $action == 'conf
 		{
 			$db->begin();
 
+			$phpfullcodestringold = dolKeepOnlyPhpCode($objectpage->content);
+
 			$objectpage->content = GETPOST('PAGE_CONTENT', 'none');
+
+            // Security analysis
+			$phpfullcodestring = dolKeepOnlyPhpCode($objectpage->content);
+			//print dol_escape_htmltag($phpfullcodestring);exit;
+            $forbiddenphpcommands=array("exec", "passthru", "system", "shell_exec", "proc_open");
+            if (empty($conf->global->WEBSITE_PHP_ALLOW_WRITE))    // If option is not on, we disallow functions to write files
+            {
+                $forbiddenphpcommands=array_merge($forbiddenphpcommands, array("fopen", "file_put_contents", "fputs", "fputscsv", "fwrite", "fpassthru", "unlink", "mkdir", "rmdir", "symlink", "touch", "umask"));
+            }
+            foreach($forbiddenphpcommands as $forbiddenphpcommand)
+            {
+                if (preg_match('/'.$forbiddenphpcommand.'\s*\(/ms', $phpfullcodestring))
+                {
+                    $error++;
+                    setEventMessages($langs->trans("DynamicPHPCodeContainsAForbiddenInstruction", $forbiddenphpcommand), null, 'errors');
+                    if ($action == 'updatesource') $action = 'editsource';
+                    if ($action == 'updatecontent') $action = 'editcontent';
+                }
+            }
+
+            if (empty($user->rights->website->writephp))
+            {
+                if ($phpfullcodestringold != $phpfullcodestring)
+                {
+                    $error++;
+                    setEventMessages($langs->trans("NotAllowedToAddDynamicContent"), null, 'errors');
+                    if ($action == 'updatesource') $action = 'editsource';
+                    if ($action == 'updatecontent') $action = 'editcontent';
+                }
+            }
 
 			// Clean data. We remove all the head section.
 			$objectpage->content = preg_replace('/<head>.*<\/head>/ims', '', $objectpage->content);
@@ -1460,6 +1492,8 @@ if (($action == 'updatesource' || $action == 'updatecontent' || $action == 'conf
 			{
 				$error++;
 				setEventMessages($objectpage->error, $objectpage->errors, 'errors');
+				if ($action == 'updatesource') $action = 'editsource';
+				if ($action == 'updatecontent') $action = 'editcontent';
 			}
 
 			if (! $error)
@@ -1850,7 +1884,7 @@ if (! GETPOST('hide_websitemenu'))
 		}
 		if (! empty($conf->global->WEBSITE_REPLACE_INFO_ABOUT_USAGE_WITH_WEBSERVER))
 		{
-		    $htmltext.= '<br>'.$conf->global->WEBSITE_REPLACE_INFO_ABOUT_USAGE_WITH_WEBSERVER;
+		    $htmltext.= '<br>'.$langs->trans($conf->global->WEBSITE_REPLACE_INFO_ABOUT_USAGE_WITH_WEBSERVER);
 		}
 		else
 		{

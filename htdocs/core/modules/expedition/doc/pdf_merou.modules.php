@@ -65,7 +65,7 @@ class pdf_merou extends ModelePdfExpedition
 
 	/**
      * Dolibarr version of the loaded document
-     * @public string
+     * @var string
      */
 	public $version = 'dolibarr';
 

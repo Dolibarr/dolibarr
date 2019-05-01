@@ -36,7 +36,6 @@ $action=GETPOST('action', 'aZ09');
 $hookmanager->initHooks(array('index'));
 
 
-
 /*
  * Actions
  */

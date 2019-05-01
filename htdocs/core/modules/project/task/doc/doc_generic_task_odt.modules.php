@@ -69,7 +69,7 @@ class doc_generic_task_odt extends ModelePDFTask
 
 	/**
      * Dolibarr version of the loaded document
-     * @public string
+     * @var string
      */
 	public $version = 'dolibarr';
 

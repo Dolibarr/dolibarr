@@ -32,7 +32,7 @@ class mod_holiday_immaculate extends ModelNumRefHolidays
 {
 	/**
      * Dolibarr version of the loaded document
-     * @public string
+     * @var string
      */
 	public $version = 'dolibarr';
 
