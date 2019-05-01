@@ -852,19 +852,7 @@ class FormTicket
                 print '</div></td>';
             }
 
-            // Substitution array
-            if ($this->withsubstit) {
-                print '<tr class="email_line"><td></td><td colspan="2">';
-                $help="";
-                foreach ($this->substit as $key => $val) {
-                    $help.=$key.' -> '.$langs->trans($val).'<br>';
-                }
-                print $form->textwithpicto($langs->trans("TicketMessageSubstitutionReplacedByGenericValues"), $help);
-                print "</td></tr>";
-            }
-
-            // Private message or not. TODO What does this means ?
-            /*
+            // Private message (not visible by customer/external user)
             if (! $user->socid) {
                 print '<tr><td width="30%"></td><td>';
                 $checkbox_selected = (GETPOST('private_message', 'alpha') == "1" ? ' checked' : '');
@@ -873,7 +861,7 @@ class FormTicket
                 print '</td><td align="center">';
                 print $form->textwithpicto('', $langs->trans("TicketMessagePrivateHelp"), 1, 'help');
                 print '</td></tr>';
-            }*/
+            }
 
             print '<tr class="email_line"><td class="titlefieldcreate">' . $langs->trans('Subject') . '</td>';
             $label_title = empty($conf->global->MAIN_APPLICATION_TITLE) ? $mysoc->name : $conf->global->MAIN_APPLICATION_TITLE;

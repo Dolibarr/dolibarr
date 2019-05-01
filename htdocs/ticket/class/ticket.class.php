@@ -1654,21 +1654,9 @@ class Ticket extends CommonObject
             $this->message = trim($this->message);
         }
 
-        // Insert request
-        $sql = "INSERT INTO " . MAIN_DB_PREFIX . "ticket_msg(";
+        // Insert entry into agenda with code 'TICKET_MSG'
+        $sql.='...';
 
-        $sql .= "fk_track_id,";
-        $sql .= "fk_user_action,";
-        $sql .= "datec,";
-        $sql .= "message,";
-        $sql .= "private";
-        $sql .= ") VALUES (";
-        $sql .= " " . (!isset($this->fk_track_id) ? "'" . $this->db->escape($this->track_id) . "'" : "'" . $this->db->escape($this->fk_track_id) . "'") . ",";
-        $sql .= " " . ($this->fk_user_action > 0 ? $this->fk_user_action : $user->id) . ",";
-        $sql .= " '" . $this->db->idate(dol_now()) . "',";
-        $sql .= " " . (!isset($this->message) ? 'NULL' : "'" . $this->db->escape($this->message) . "'") . ",";
-        $sql .= " " . (empty($this->private) ? '0' : "'" . $this->db->escape($this->private) . "'") . "";
-        $sql .= ")";
 
         $this->db->begin();
 
@@ -2520,8 +2508,8 @@ class Ticket extends CommonObject
         }
 
         if (!$error) {
-            $object->message = GETPOST("message");
-            $object->private = GETPOST("private_message");
+            $object->message = GETPOST("message", "none");
+            $object->private = GETPOST("private_message", "alpha");
             $send_email = GETPOST('send_email', 'int');
 
             $id = $object->createTicketMessage($user);
