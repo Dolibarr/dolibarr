@@ -379,7 +379,7 @@ if ($id > 0 || ! empty($ref))
 						$total+=$totalline;
 
 						print '<td class="right">';
-						print ($notdefined?'':($value['nb']> 1 ? $value['nb'].'x' : '').price($fourn_unitprice, '', '', 0, 0, -1, $conf->currency));
+						print ($notdefined?'':($value['nb']> 1 ? $value['nb'].'x' : '').price($fourn_unitprice * (1 - $fourn_remise_percent/100) - $fourn_remise, '', '', 0, 0, -1, $conf->currency));
 						print '</td>';
 
 						// Best selling price
