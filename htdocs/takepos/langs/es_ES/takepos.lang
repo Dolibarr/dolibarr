@@ -1,0 +1,89 @@
+# Copyright (C) 2018 SuperAdmin
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+CloseBill=Cerrar venta
+Floors=Salones
+Floor=Salón
+AddTable=Añadir mesa
+#Place=Puesto
+Place=Mesa
+TakeboxNecesary=Aplicación 'TakeBOX' requerida
+OrderPrinters=Impresoras de pedido
+TerminalMissing=Sin terminal: No puede cobrar
+
+Floor0=Sin terminal: Solo consulta
+Floor1=Restaurante (Sala 1)
+Floor2=Bar-Tienda (Sala 2)
+Floor3=VACIO
+Floor4=VACIO
+table=Mesa
+table2=Mesa Pequeña
+tableB=Mesa Grande
+chair=Silla
+grass=Maceta
+wall=Pared
+barh=Barra Horizontal
+barv=Barra Vertical
+
+TicketList=Listado Tickets
+FreeTicket=Tienda
+Site=Lugar
+POSCategory=Categoria base a usar en TPV. (Solo muestra las categorias hijo por debajo de ella)
+NoteCategory=Categoria de anotaciones predefinidas
+POSLevelPrice=Nivel de precios a usar en %s
+POSGroup= Grupo de usuarios de TPV
+RefPosInvoices= Usar contador de facturas propio
+NextRefPosInvoices= Proximo valor: %s
+
+SearchBarcode=Codigo de Barras
+SearchProduct=Buscar producto
+SearchCustomer=Buscar cliente
+SearchTicket=Buscar ticket
+Profid1=DNI
+Phone=Telefono
+Barcode=Codigo Barras
+
+TicketVatGrouped=Group VAT by rate in tickets
+AutoPrintTickets=Automatically print tickets
+CashDeskBankAccountFor=Account used for payments in
+NoPaimementModesDefined=No paiment mode defined in TakePOS configuration
+
+OrderNotes=Nota Libre
+ValidateBill=Cobrar
+NewCustomer=Nuevo Cliente
+Receipt=Imprimir Ticket
+MoveTable=Mover mesa
+Booking=Reservas
+Terminal1=Terminal 1 (Rest)
+Terminal2=Terminal 2 (Bar)
+IPOrder=Impresora Cocina
+Shop=Tienda
+
+OpeningAmount=Cantidad Teorica
+ActualAmount=Cantidad ingresada
+CashAmount=Efectivo saliente
+CashLeft=Efectivo remanente
+CashFault=Efectivo descuadrado
+CashFence=Arqueo
+Closing=Cierre
+LabelOfClosing=Cierre de %s
+LabelOfOpening=Apertura de %s
+CashDeskBankAccountForClosing=Cuenta para cierres de caja
+
+InvoiceSimple=Factura Simpl.
+Invoice=Factura
+DOL_OPEN_DRAWER=Abrir cajon
+Diners=Comensal(es)
+Diner=Silla %s
