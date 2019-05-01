@@ -906,12 +906,6 @@ class Ticket extends CommonObject
             if ($res < 0) $error++;
         }
 
-        if (!$error) {
-            $sql = "DELETE FROM " . MAIN_DB_PREFIX . "ticket_msg";
-            $sql .= " WHERE fk_track_id = '" . $this->db->escape($this->track_id) . "'";
-            $resql = $this->db->query($sql);
-        }
-
         // Removed extrafields
         if (!$error) {
             $result = $this->deleteExtraFields();
@@ -1677,12 +1671,13 @@ class Ticket extends CommonObject
         }
         // Cache deja charge
 
-        $sql = "SELECT rowid, fk_user_action, datec, message, private";
-        $sql .= " FROM " . MAIN_DB_PREFIX . "ticket_msg";
-        $sql .= " WHERE fk_track_id ='" . $this->db->escape($this->track_id) . "'";
+        $sql = "SELECT rowid, fk_user_author, datec, label, message, visibility";
+        $sql .= " FROM " . MAIN_DB_PREFIX . "actioncomm";
+        $sql .= " WHERE fk_element = " . (int) $this->id;
+        $sql .= " AND elementtype = 'ticket'";
         $sql .= " ORDER BY datec DESC";
-        dol_syslog(get_class($this) . "::load_cache_actions_ticket sql=" . $sql, LOG_DEBUG);
 
+        dol_syslog(get_class($this) . "::load_cache_actions_ticket sql=" . $sql, LOG_DEBUG);
         $resql = $this->db->query($sql);
         if ($resql) {
             $num = $this->db->num_rows($resql);
@@ -1692,8 +1687,9 @@ class Ticket extends CommonObject
                 $this->cache_msgs_ticket[$i]['id'] = $obj->rowid;
                 $this->cache_msgs_ticket[$i]['fk_user_action'] = $obj->fk_user_action;
                 $this->cache_msgs_ticket[$i]['datec'] = $this->db->jdate($obj->datec);
+                $this->cache_msgs_ticket[$i]['subject'] = $obj->label;
                 $this->cache_msgs_ticket[$i]['message'] = $obj->message;
-                $this->cache_msgs_ticket[$i]['private'] = $obj->private;
+                $this->cache_msgs_ticket[$i]['private'] = ($obj->visibility == 'private' ? 1 : 0);
                 $i++;
             }
             return $num;
