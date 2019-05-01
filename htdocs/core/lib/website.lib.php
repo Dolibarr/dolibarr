@@ -145,7 +145,7 @@ function dolKeepOnlyPhpCode($str)
     $newstr = '';
 
     //split on each opening tag
-    $parts = explode('<?php',$str);
+    $parts = explode('<?php', $str);
     if (!empty($parts))
     {
         $i=0;
@@ -670,8 +670,8 @@ function dolSavePageAlias($filealias, $object, $objectpage)
 	$aliascontent.= '?>'."\n";
 	$result = file_put_contents($filealias, $aliascontent);
 	if (! empty($conf->global->MAIN_UMASK)) {
-        @chmod($filealias, octdec($conf->global->MAIN_UMASK));
-    }
+		@chmod($filealias, octdec($conf->global->MAIN_UMASK));
+	}
 
 	return ($result?true:false);
 }

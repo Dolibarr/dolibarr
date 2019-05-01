@@ -162,16 +162,16 @@ if ($nolinesbefore) {
 }
 ?>
 <tr class="pair nodrag nodrop nohoverpair<?php echo ($nolinesbefore || $object->element=='contrat')?'':' liste_titre_create'; ?>">
-<?php
-$coldisplay=0;
-
-// Adds a line numbering column
-if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
-	$coldisplay++;
-	?>
-	<td class="nobottom linecolnum center"></td>
 	<?php
-    }
+	$coldisplay=0;
+
+	// Adds a line numbering column
+	if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
+		$coldisplay++;
+		?>
+		<td class="nobottom linecolnum center"></td>
+		<?php
+	}
 
     $coldisplay++;
     ?>
