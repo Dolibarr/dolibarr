@@ -207,10 +207,10 @@ class Ticket extends CommonObject
      */
     const STATUS_NOT_READ = 0;
     const STATUS_READ = 1;
-    const STATUS_ANSWERED = 3;
-    const STATUS_ASSIGNED = 4;
-    const STATUS_IN_PROGRESS = 5;
-    const STATUS_WAITING = 6;
+    const STATUS_ASSIGNED = 2;
+    const STATUS_IN_PROGRESS = 3;
+    const STATUS_NEED_MORE_INFO = 5;
+    const STATUS_WAITING = 7;
     const STATUS_CLOSED = 8;
     const STATUS_CANCELED = 9;
 
@@ -224,8 +224,8 @@ class Ticket extends CommonObject
     {
         $this->db = $db;
 
-        $this->statuts_short = array(0 => 'Unread', 1 => 'Read', 3 => 'Answered', 4 => 'Assigned', 5 => 'InProgress', 6 => 'Waiting', 8 => 'Closed', 9 => 'Deleted');
-        $this->statuts = array(0 => 'Unread', 1 => 'Read', 3 => 'Answered', 4 => 'Assigned', 5 => 'InProgress', 6 => 'Waiting', 8 => 'Closed', 9 => 'Deleted');
+        $this->statuts_short = array(self::STATUS_NOT_READ => 'Unread', self::STATUS_READ => 'Read', self::STATUS_ASSIGNED => 'Assigned', self::STATUS_IN_PROGRESS => 'InProgress', self::STATUS_NEED_MORE_INFO => 'NeedMoreInformation', self::STATUS_WAITING => 'Waiting', self::STATUS_CLOSED => 'Closed', self::STATUS_CANCELED => 'Canceled');
+        $this->statuts       = array(self::STATUS_NOT_READ => 'Unread', self::STATUS_READ => 'Read', self::STATUS_ASSIGNED => 'Assigned', self::STATUS_IN_PROGRESS => 'InProgress', self::STATUS_NEED_MORE_INFO => 'NeedMoreInformation', self::STATUS_WAITING => 'Waiting', self::STATUS_CLOSED => 'Closed', self::STATUS_CANCELED => 'Canceled');
     }
 
     /**
@@ -1176,7 +1176,7 @@ class Ticket extends CommonObject
      *    Return status label of object
      *
      *    @param      string 	$statut      id statut
-     *    @param      int		$mode        0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
+     *    @param      int		$mode        0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
      *    @return     string     			 Label
      */
     public function LibStatut($statut, $mode = 0)
@@ -1191,134 +1191,106 @@ class Ticket extends CommonObject
             return $langs->trans($this->statuts_short[$statut]);
         }
         elseif ($mode == 2) {
-            if ($statut == 0) {
+            if ($statut == self::STATUS_NOT_READ) {
                 return img_picto($langs->trans($this->statuts_short[$statut]), 'statut0.png@ticket') . ' ' . $langs->trans($this->statuts_short[$statut]);
             }
-
-            elseif ($statut == 1) {
+            elseif ($statut == self::STATUS_READ) {
                 return img_picto($langs->trans($this->statuts_short[$statut]), 'statut1.png@ticket') . ' ' . $langs->trans($this->statuts_short[$statut]);
             }
-
-            elseif ($statut == 3) {
+            elseif ($statut == self::STATUS_ASSIGNED) {
+                return img_picto($langs->trans($this->statuts_short[$statut]), 'statut2.png@ticket') . ' ' . $langs->trans($this->statuts_short[$statut]);
+            }
+            elseif ($statut == self::STATUS_IN_PROGRESS) {
                 return img_picto($langs->trans($this->statuts_short[$statut]), 'statut3.png@ticket') . ' ' . $langs->trans($this->statuts_short[$statut]);
             }
-
-            elseif ($statut == 4) {
-                return img_picto($langs->trans($this->statuts_short[$statut]), 'statut4.png@ticket') . ' ' . $langs->trans($this->statuts_short[$statut]);
-            }
-
-            elseif ($statut == 5) {
+            elseif ($statut == self::STATUS_NEED_MORE_INFO) {
                 return img_picto($langs->trans($this->statuts_short[$statut]), 'statut5.png@ticket') . ' ' . $langs->trans($this->statuts_short[$statut]);
             }
-
-            elseif ($statut == 6) {
+            elseif ($statut == self::STATUS_WAITING) {
                 return img_picto($langs->trans($this->statuts_short[$statut]), 'statut6.png@ticket') . ' ' . $langs->trans($this->statuts_short[$statut]);
             }
-
-            elseif ($statut == 8) {
+            elseif ($statut == self::STATUS_CLOSED) {
                 return img_picto($langs->trans($this->statuts_short[$statut]), 'statut8.png@ticket') . ' ' . $langs->trans($this->statuts_short[$statut]);
             }
-
-            elseif ($statut == 9) {
+            elseif ($statut == self::STATUS_CANCELED) {
                 return img_picto($langs->trans($this->statuts_short[$statut]), 'statut9.png@ticket') . ' ' . $langs->trans($this->statuts_short[$statut]);
             }
         }
         elseif ($mode == 3) {
-            if ($statut == 0) {
+            if ($statut == self::STATUS_NOT_READ) {
                 return img_picto($langs->trans($this->statuts_short[$statut]), 'statut0.png@ticket');
             }
-
-            elseif ($statut == 1) {
+            elseif ($statut == self::STATUS_READ) {
                 return img_picto($langs->trans($this->statuts_short[$statut]), 'statut1.png@ticket');
             }
-
-            elseif ($statut == 3) {
+            elseif ($statut == self::STATUS_ASSIGNED) {
+                return img_picto($langs->trans($this->statuts_short[$statut]), 'statut2.png@ticket');
+            }
+            elseif ($statut == self::STATUS_IN_PROGRESS) {
                 return img_picto($langs->trans($this->statuts_short[$statut]), 'statut3.png@ticket');
             }
-
-            elseif ($statut == 4) {
-                return img_picto($langs->trans($this->statuts_short[$statut]), 'statut4.png@ticket');
-            }
-
-            elseif ($statut == 5) {
+            elseif ($statut == self::STATUS_NEED_MORE_INFO) {
                 return img_picto($langs->trans($this->statuts_short[$statut]), 'statut5.png@ticket');
             }
-
-            elseif ($statut == 6) {
+            elseif ($statut == self::STATUS_WAITING) {
                 return img_picto($langs->trans($this->statuts_short[$statut]), 'statut6.png@ticket');
             }
-
-            elseif ($statut == 8) {
+            elseif ($statut == self::STATUS_CLOSED) {
                 return img_picto($langs->trans($this->statuts_short[$statut]), 'statut8.png@ticket');
             }
-
-            elseif ($statut == 9) {
+            elseif ($statut == self::STATUS_CANCELED) {
                 return img_picto($langs->trans($this->statuts_short[$statut]), 'statut9.png@ticket');
             }
         }
         elseif ($mode == 4) {
-            if ($statut == 0) {
+            if ($statut == self::STATUS_NOT_READ) {
                 return img_picto($langs->trans($this->statuts_short[$statut]), 'statut0.png@ticket') . ' ' . $langs->trans($this->statuts_short[$statut]);
             }
-
-            elseif ($statut == 1) {
+            elseif ($statut == self::STATUS_READ) {
                 return img_picto($langs->trans($this->statuts_short[$statut]), 'statut1.png@ticket') . ' ' . $langs->trans($this->statuts_short[$statut]);
             }
-
-            elseif ($statut == 3) {
+            elseif ($statut == self::STATUS_ASSIGNED) {
+                return img_picto($langs->trans($this->statuts_short[$statut]), 'statut2.png@ticket') . ' ' . $langs->trans($this->statuts_short[$statut]);
+            }
+            elseif ($statut == self::STATUS_IN_PROGRESS) {
                 return img_picto($langs->trans($this->statuts_short[$statut]), 'statut3.png@ticket') . ' ' . $langs->trans($this->statuts_short[$statut]);
             }
-
-            elseif ($statut == 4) {
-                return img_picto($langs->trans($this->statuts_short[$statut]), 'statut4.png@ticket') . ' ' . $langs->trans($this->statuts_short[$statut]);
-            }
-
-            elseif ($statut == 5) {
+            elseif ($statut == self::STATUS_NEED_MORE_INFO) {
                 return img_picto($langs->trans($this->statuts_short[$statut]), 'statut5.png@ticket') . ' ' . $langs->trans($this->statuts_short[$statut]);
             }
-
-            elseif ($statut == 6) {
+            elseif ($statut == self::STATUS_WAITING) {
                 return img_picto($langs->trans($this->statuts_short[$statut]), 'statut6.png@ticket') . ' ' . $langs->trans($this->statuts_short[$statut]);
             }
-
-            elseif ($statut == 8) {
+            elseif ($statut == self::STATUS_CLOSED) {
                 return img_picto($langs->trans($this->statuts_short[$statut]), 'statut8.png@ticket') . ' ' . $langs->trans($this->statuts_short[$statut]);
             }
-
-            elseif ($statut == 9) {
+            elseif ($statut == self::STATUS_CANCELED) {
                 return img_picto($langs->trans($this->statuts_short[$statut]), 'statut9.png@ticket') . ' ' . $langs->trans($this->statuts_short[$statut]);
             }
         }
-        elseif ($mode == 5) {
-            if ($statut == 0) {
+        elseif ($mode == 5 || $mode == 6) {
+            if ($statut == self::STATUS_NOT_READ) {
                 return $langs->trans($this->statuts_short[$statut]) . ' ' . img_picto($langs->trans($this->statuts_short[$statut]), 'statut0.png@ticket');
             }
-
-            elseif ($statut == 1) {
+            elseif ($statut == self::STATUS_READ) {
                 return $langs->trans($this->statuts_short[$statut]) . ' ' . img_picto($langs->trans($this->statuts_short[$statut]), 'statut1.png@ticket');
             }
-
-            elseif ($statut == 3) {
+            elseif ($statut == self::STATUS_ASSIGNED) {
+                return $langs->trans($this->statuts_short[$statut]) . ' ' . img_picto($langs->trans($this->statuts_short[$statut]), 'statut2.png@ticket');
+            }
+            elseif ($statut == self::STATUS_IN_PROGRESS) {
                 return $langs->trans($this->statuts_short[$statut]) . ' ' . img_picto($langs->trans($this->statuts_short[$statut]), 'statut3.png@ticket');
             }
-
-            elseif ($statut == 4) {
-                return $langs->trans($this->statuts_short[$statut]) . ' ' . img_picto($langs->trans($this->statuts_short[$statut]), 'statut4.png@ticket');
-            }
-
-            elseif ($statut == 5) {
+            elseif ($statut == self::STATUS_NEED_MORE_INFO) {
                 return $langs->trans($this->statuts_short[$statut]) . ' ' . img_picto($langs->trans($this->statuts_short[$statut]), 'statut5.png@ticket');
             }
-
-            elseif ($statut == 6) {
+            elseif ($statut == self::STATUS_WAITING) {
                 return $langs->trans($this->statuts_short[$statut]) . ' ' . img_picto($langs->trans($this->statuts_short[$statut]), 'statut6.png@ticket');
             }
-
-            elseif ($statut == 8) {
+            elseif ($statut == self::STATUS_CLOSED) {
                 return $langs->trans($this->statuts_short[$statut]) . ' ' . img_picto($langs->trans($this->statuts_short[$statut]), 'statut8.png@ticket');
             }
-
-            elseif ($statut == 9) {
+            elseif ($statut == self::STATUS_CANCELED) {
                 return $langs->trans($this->statuts_short[$statut]) . ' ' . img_picto($langs->trans($this->statuts_short[$statut]), 'statut9.png@ticket');
             }
         }
@@ -1645,6 +1617,8 @@ class Ticket extends CommonObject
         global $conf, $langs;
         $error = 0;
 
+        $now = dol_now();
+
         // Clean parameters
         if (isset($this->fk_track_id)) {
             $this->fk_track_id = trim($this->fk_track_id);
@@ -1654,38 +1628,33 @@ class Ticket extends CommonObject
             $this->message = trim($this->message);
         }
 
-        // Insert entry into agenda with code 'TICKET_MSG'
-        $sql.='...';
-
-
         $this->db->begin();
 
-        dol_syslog(get_class($this) . "::create_ticket_message sql=" . $sql, LOG_DEBUG);
-        $resql = $this->db->query($sql);
-        if (!$resql) {
-            $error++;
-            $this->errors[] = "Error " . $this->db->lasterror();
-        }
+        // Insert entry into agenda with code 'TICKET_MSG'
+        include_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
+        $actioncomm=new ActionComm($this->db);
+        $actioncomm->type_code = 'AC_OTH_AUTO';
+        $actioncomm->code = 'TICKET_MSG';
+        $actioncomm->socid = $this->socid;
+        $actioncomm->label = $this->subject;
+        $actioncomm->note = $this->message;
+        $actioncomm->userassigned = array($user->id);
+        $actioncomm->userownerid = $user->id;
+        $actioncomm->datep = $now;
+        $actioncomm->percentage = 100;
+        $actioncomm->elementtype = 'ticket';
+        $actioncomm->fk_element = $this->id;
 
-        if (!$error) {
-            if (!$notrigger) {
-                // Uncomment this and change MYOBJECT to your own tag if you
-                // want this action calls a trigger.
-                //// Call triggers
-                //include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-                //$interface=new Interfaces($this->db);
-                //$result=$interface->run_triggers('MYOBJECT_CREATE',$this,$user,$langs,$conf);
-                //if ($result < 0) { $error++; $this->errors=$interface->errors; }
-                //// End call triggers
-            }
+        $actionid = $actioncomm->create($user);
+        if ($actionid <= 0)
+        {
+            $error++;
+            $this->error = $actioncomm->error;
+            $this->errors = $actioncomm->errors;
         }
 
         // Commit or rollback
         if ($error) {
-            foreach ($this->errors as $errmsg) {
-                dol_syslog(get_class($this) . "::create_ticket_message " . $errmsg, LOG_ERR);
-                $this->error .= ($this->error ? ', ' . $errmsg : $errmsg);
-            }
             $this->db->rollback();
             return -1 * $error;
         } else {
@@ -2493,6 +2462,7 @@ class Ticket extends CommonObject
         $error = 0;
 
         $ret = $object->fetch('', '', GETPOST('track_id', 'alpha'));
+
         $object->socid = $object->fk_soc;
         $object->fetch_thirdparty();
         if ($ret < 0) {
@@ -2508,6 +2478,7 @@ class Ticket extends CommonObject
         }
 
         if (!$error) {
+            $object->subject = GETPOST('subject', 'alphanohtml');
             $object->message = GETPOST("message", "none");
             $object->private = GETPOST("private_message", "alpha");
             $send_email = GETPOST('send_email', 'int');

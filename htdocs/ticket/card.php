@@ -818,7 +818,7 @@ if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'd
 
         $morehtmlref.='</div>';
 
-        $linkback = '<a href="' . dol_buildpath('/ticket/list.php', 1) . '"><strong>' . $langs->trans("BackToList") . '</strong></a> ';
+        $linkback = '<a href="' . DOL_URL_ROOT. '/ticket/list.php"><strong>' . $langs->trans("BackToList") . '</strong></a> ';
 
         dol_banner_tab($object, 'ref', $linkback, ($user->societe_id ? 0 : 1), 'ref', 'ref', $morehtmlref);
 
@@ -1218,10 +1218,10 @@ if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'd
 
 			print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 
-			// Message list
-			print load_fiche_titre($langs->trans('TicketMessagesList'), '', 'messages@ticket');
-			$show_private_message = ($user->societe_id ? 0 : 1);
-			$actionobject->viewTicketTimelineMessages($show_private_message, true, $object);
+			// List of actions on element
+			include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
+			$formactions = new FormActions($db);
+			$somethingshown = $formactions->showactions($object, 'ticket', $socid, 1);
 
 			print '</div></div>';
 			print '</div><!-- fichecenter -->';
