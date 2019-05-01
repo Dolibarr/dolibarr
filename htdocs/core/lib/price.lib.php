@@ -190,7 +190,7 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocalt
     {
     	$tot_sans_remise_wt = price2num($tot_sans_remise * (1 + ($txtva / 100)), 'MU');
     	$tot_avec_remise_wt = price2num($tot_avec_remise * (1 + ($txtva / 100)), 'MU');
-    	$pu_wt = price2num($pu * (1 + ($txtva / 100)),'MU');
+    	$pu_wt = price2num($pu * (1 + ($txtva / 100)), 'MU');
     }
     else
     {
