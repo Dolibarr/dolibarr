@@ -2140,7 +2140,6 @@ class Contrat extends CommonObject
 		if ($user->societe_id) $sql.=" AND c.fk_soc = ".$user->societe_id;
 		if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND c.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
 
-		var_dump($sql);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
