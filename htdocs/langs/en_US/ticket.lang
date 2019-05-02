@@ -58,9 +58,10 @@ Notify_TICKET_SENTBYMAIL=Send ticket message by email
 # Status
 NotRead=Not read
 Read=Read
-Answered=Answered
 Assigned=Assigned
 InProgress=In progress
+NeedMoreInformation=Waiting more information
+Answered=Answered
 Waiting=Waiting
 Closed=Closed
 Deleted=Deleted
