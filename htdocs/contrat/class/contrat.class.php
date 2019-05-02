@@ -2149,15 +2149,15 @@ class Contrat extends CommonObject
 			if ($mode == 'inactive') {
 				$warning_delay = $conf->contrat->services->inactifs->warning_delay;
 				$label = $langs->trans("BoardNotActivatedServices");
-				$url = DOL_URL_ROOT.'/contrat/services_list.php?mainmenu=commercial&amp;leftmenu=contracts&amp;mode=0';
+				$url = DOL_URL_ROOT.'/contrat/services_list.php?mainmenu=commercial&leftmenu=contracts&mode=0&sortfield=cd.date_fin_validite&sortorder=asc';
 			}
 			elseif ($mode == 'expired') {
 			    $warning_delay = $conf->contrat->services->expires->warning_delay;
-			    $url = DOL_URL_ROOT.'/contrat/services_list.php?mainmenu=commercial&leftmenu=contracts&mode=4&filter=expired';
+			    $url = DOL_URL_ROOT.'/contrat/services_list.php?mainmenu=commercial&leftmenu=contracts&mode=4&filter=expired&sortfield=cd.date_fin_validite&sortorder=asc';
 			    $label = $langs->trans("BoardExpiredServices");
 			} else {
 				$warning_delay = $conf->contrat->services->expires->warning_delay;
-				$url = DOL_URL_ROOT.'/contrat/services_list.php?mainmenu=commercial&leftmenu=contracts&mode=4';
+				$url = DOL_URL_ROOT.'/contrat/services_list.php?mainmenu=commercial&leftmenu=contracts&mode=4&sortfield=cd.date_fin_validite&sortorder=asc';
 				//$url.= '&op2day='.$arraydatetouse['mday'].'&op2month='.$arraydatetouse['mon'].'&op2year='.$arraydatetouse['year'];
 				//if ($warning_delay >= 0) $url.='&amp;filter=expired';
 				$label = $langs->trans("BoardRunningServices");
