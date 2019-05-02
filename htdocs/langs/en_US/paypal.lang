@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - paypal
 PaypalSetup=PayPal module setup
 PaypalDesc=This module allows payment by customers via <a href="http://www.paypal.com" target="_blank">PayPal</a>. This can be used for a ad-hoc payment or for a payment related to a Dolibarr object (invoice, order, ...)
-PaypalOrCBDoPayment=Pay with PayPal (Credit Card or PayPal)
+PaypalOrCBDoPayment=Pay with PayPal (Card or PayPal)
 PaypalDoPayment=Pay with PayPal
 PAYPAL_API_SANDBOX=Mode test/sandbox
 PAYPAL_API_USER=API username
@@ -33,3 +33,4 @@ PaypalImportPayment=Import PayPal payments
 PostActionAfterPayment=Post actions after payments
 ARollbackWasPerformedOnPostActions=A rollback was performed on all Post actions. You must complete post actions manually if they are necessary.
 ValidationOfPaymentFailed=Validation of payment has failed
+CardOwner=Card owner
