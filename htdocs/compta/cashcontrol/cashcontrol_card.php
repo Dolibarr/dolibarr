@@ -200,7 +200,7 @@ if ($action == 'confirm_delete' && ! empty($permissiontodelete))
     }
 
     $result=$object->delete($user);
-    var_dump($result);
+    //var_dump($result);
     if ($result > 0)
     {
         // Delete OK
