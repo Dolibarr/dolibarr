@@ -1224,7 +1224,7 @@ class Adherent extends CommonObject
 	{
 		global $langs;
 
-		$sql = "SELECT d.rowid, d.ref_ext, d.civility as civility_id, d.gender, d.firstname, d.lastname, d.societe as company, d.fk_soc, d.statut, d.public, d.address, d.zip, d.town, d.note_private,";
+		$sql = "SELECT d.rowid, d.ref_ext, d.civility as civility_code, d.gender, d.firstname, d.lastname, d.societe as company, d.fk_soc, d.statut, d.public, d.address, d.zip, d.town, d.note_private,";
 		$sql.= " d.note_public,";
 		$sql.= " d.email, d.skype, d.twitter, d.facebook, d.linkedin, d.phone, d.phone_perso, d.phone_mobile, d.login, d.pass, d.pass_crypted,";
 		$sql.= " d.photo, d.fk_adherent_type, d.morphy, d.entity,";
@@ -1268,7 +1268,11 @@ class Adherent extends CommonObject
 				$this->ref				= $obj->rowid;
 				$this->id				= $obj->rowid;
 				$this->ref_ext			= $obj->ref_ext;
-				$this->civility_id		= $obj->civility_id;
+        
+				$this->civility_id      = $obj->civility_code;  // Bad. Kept for backard compatibility
+				$this->civility_code    = $obj->civility_code;
+				$this->civility	        = $obj->civility_code?($langs->trans("Civility".$obj->civility_code) != ("Civility".$obj->civility_code) ? $langs->trans("Civility".$obj->civility_code) : $obj->civility_code):'';
+
 				$this->firstname		= $obj->firstname;
 				$this->lastname			= $obj->lastname;
 				$this->gender			= $obj->gender;
