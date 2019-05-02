@@ -2,7 +2,7 @@
 /* Copyright (C) 2017		Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2017		Olivier Geffroy			<jeff@jeffinfo.com>
  * Copyright (C) 2017		Saasprov				<saasprov@gmail.com>
- * Copyright (C) 2018-2019	Thibault FOUCART		<support@ptibogxiv.net>
+ * Copyright (C) 2018-2019  Thibault FOUCART		<support@ptibogxiv.net>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -202,7 +202,7 @@ if (empty($conf->stripeconnect->enabled))
 	print '<input class="minwidth300" type="text" name="STRIPE_TEST_WEBHOOK_KEY" value="'.$conf->global->STRIPE_TEST_WEBHOOK_KEY.'">';
 	print ' &nbsp; '.$langs->trans("Example").': whsec_xxxxxxxxxxxxxxxxxxxxxxxx';
 	  $out = img_picto('', 'object_globe.png').' '.$langs->trans("ToOfferALinkForTestWebhook").' ';
-    $url = dol_buildpath('/public/stripe/ipn.php?test', 2);
+    $url = dol_buildpath('/public/stripe/ipn.php?test', 3);
 	$out.= '<input type="text" id="onlinetestwebhookurl" class="minwidth500" value="'.$url.'">';
 	$out.= ajax_autoselect("onlinetestwebhookurl", 0);
 	print '<br>'.$out;
@@ -221,7 +221,7 @@ if (empty($conf->stripeconnect->enabled))
                     $endpoint->disabled = false;
                 }
             }
-            $endpoint->url = dol_buildpath('/public/stripe/ipn.php?test', 2);
+            $endpoint->url = dol_buildpath('/public/stripe/ipn.php?test', 3);
             $endpoint->save();
             if ($endpoint->status == 'enabled')
             {
@@ -275,7 +275,7 @@ if (empty($conf->stripeconnect->enabled))
 	print '<input class="minwidth300" type="text" name="STRIPE_LIVE_WEBHOOK_KEY" value="'.$conf->global->STRIPE_LIVE_WEBHOOK_KEY.'">';
 	print ' &nbsp; '.$langs->trans("Example").': whsec_xxxxxxxxxxxxxxxxxxxxxxxx';
     $out = img_picto('', 'object_globe.png').' '.$langs->trans("ToOfferALinkForLiveWebhook").' ';
-    $url = dol_buildpath('/public/stripe/ipn.php', 2);
+    $url = dol_buildpath('/public/stripe/ipn.php', 3);
 	$out.= '<input type="text" id="onlinelivewebhookurl" class="minwidth500" value="'.$url.'">';
 	$out.= ajax_autoselect("onlinelivewebhookurl", 0);
 	print '<br>'.$out;
@@ -294,7 +294,7 @@ if (empty($conf->stripeconnect->enabled))
                     $endpoint->disabled = false;
                 }
             }
-            $endpoint->url = dol_buildpath('/public/stripe/ipn.php', 2);
+            $endpoint->url = dol_buildpath('/public/stripe/ipn.php', 3);
             $endpoint->save();
             if ($endpoint->status == 'enabled')
             {
