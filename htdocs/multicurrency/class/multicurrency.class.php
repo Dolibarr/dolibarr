@@ -633,7 +633,11 @@ class MultiCurrency extends CommonObject
 	{
 		global $conf, $db, $langs;
 
-        $ch = curl_init('http://apilayer.net/api/live?access_key='.$key.'');
+		$urlendpoint = 'http://apilayer.net/api/live?access_key='.$key;
+		dol_syslog("Call url endpoint ".$urlendpoint);
+
+		// TODO Use getURLContent() function instead.
+        $ch = curl_init($urlendpoint);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         $response = curl_exec($ch);
         curl_close($ch);
@@ -663,6 +667,7 @@ class MultiCurrency extends CommonObject
 		}
 		else
 		{
+		    dol_syslog("Failed to call endpoint ".$response->error->info, LOG_WARNING);
 			setEventMessages($langs->trans('multicurrency_syncronize_error', $response->error->info), null, 'errors');
 		}
 	}
