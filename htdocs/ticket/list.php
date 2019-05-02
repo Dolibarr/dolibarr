@@ -52,7 +52,7 @@ $id			= GETPOST('id', 'int');
 $msg_id     = GETPOST('msg_id', 'int');
 $socid      = GETPOST('socid', 'int');
 $projectid  = GETPOST('projectid', 'int');
-$search_fk_soc=GETPOST('$search_fk_soc', 'int')?GETPOST('$search_fk_soc', 'int'):GETPOST('socid', 'int');
+$search_societe = GETPOST('search_societe', 'alpha');
 $search_fk_project=GETPOST('search_fk_project', 'int')?GETPOST('search_fk_project', 'int'):GETPOST('projectid', 'int');
 $search_fk_status = GETPOST('search_fk_statut', 'array');
 $mode       = GETPOST('mode', 'alpha');
@@ -208,8 +208,10 @@ $sql.=$hookmanager->resPrint;
 $sql=preg_replace('/, $/', '', $sql);
 $sql.= " FROM ".MAIN_DB_PREFIX.$object->table_element." as t";
 if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (t.rowid = ef.fk_object)";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON (t.fk_soc = s.rowid)";
 if ($object->ismultientitymanaged == 1) $sql.= " WHERE t.entity IN (".getEntity($object->element).")";
 else $sql.=" WHERE 1 = 1";
+
 
 foreach($search as $key => $val)
 {
@@ -231,7 +233,7 @@ foreach($search as $key => $val)
     if ($search[$key] != '') $sql.=natural_search($key, $search[$key], $mode_search);
 }
 if ($search_all) $sql.= natural_search(array_keys($fieldstosearchall), $search_all);
-if ($search_fk_soc)     $sql.= natural_search('fk_soc', $search_fk_soc, 2);
+if ($search_societe)     $sql .= natural_search('s.nom', $search_societe);
 if ($search_fk_project) $sql.= natural_search('fk_project', $search_fk_project, 2);
 if (! $user->societe_id && ($mode == "mine" || (!$user->admin && $conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY))) {
     $sql.= " AND (t.fk_user_assign = ".$user->id;
@@ -538,6 +540,10 @@ foreach($object->fields as $key => $val)
 			print Form::multiselectarray('search_fk_statut', $arrayofstatus, array_values($search[$key]), 0, 0, 'minwidth150', 1, 0, '', '', '');
 			print '</td>';
 		}
+		elseif ($key == "fk_soc")
+		{
+			print '<td class="liste_titre'.($cssforfield?' '.$cssforfield:'').'"><input type="text" class="flat maxwidth75" name="search_societe" value="'.dol_escape_htmltag($search_societe).'"></td>';
+		}
 		else {
 			print '<td class="liste_titre'.($cssforfield?' '.$cssforfield:'').'"><input type="text" class="flat maxwidth75" name="search_'.$key.'" value="'.dol_escape_htmltag($search[$key]).'"></td>';
 		}
@@ -629,6 +635,10 @@ while ($i < min($num, $limit))
 			if ($cssforfield || $val['css']) print '"';
 			print '>';
 			if ($key == 'fk_statut') print $object->getLibStatut(5);
+			elseif ($key == 'category_code') print $langs->getLabelFromKey($db, $object->category_code, 'c_ticket_category', 'code', 'label');
+			elseif ($key == 'severity_code') print $langs->getLabelFromKey($db, $object->severity_code, 'c_ticket_severity', 'code', 'label');
+			elseif ($key == 'type_code') print $langs->getLabelFromKey($db, $object->type_code, 'c_ticket_type', 'code', 'label');
+			elseif ($key == 'tms') print dol_print_date($db->jdate($obj->$key), 'dayhour', 'tzuser');
 			elseif (in_array($val['type'], array('date','datetime','timestamp'))) print $object->showOutputField($val, $key, $db->jdate($obj->$key), '');
 			else print $object->showOutputField($val, $key, $obj->$key, '');
 			print '</td>';
