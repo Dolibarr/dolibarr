@@ -67,16 +67,16 @@ class MyModuleApi extends DolibarrApi
      */
     public function get($id)
     {
-        if(! DolibarrApiAccess::$user->rights->mymodule->read) {
+        if (! DolibarrApiAccess::$user->rights->mymodule->read) {
             throw new RestException(401);
         }
 
         $result = $this->myobject->fetch($id);
-        if( ! $result ) {
+        if (! $result) {
             throw new RestException(404, 'MyObject not found');
         }
 
-        if( ! DolibarrApi::_checkAccessToResource('myobject', $this->myobject->id, 'mymodule_myobject')) {
+        if (! DolibarrApi::_checkAccessToResource('myobject', $this->myobject->id, 'mymodule_myobject')) {
             throw new RestException(401, 'Access to instance id='.$this->myobject->id.' of object not allowed for login '.DolibarrApiAccess::$user->login);
         }
 
