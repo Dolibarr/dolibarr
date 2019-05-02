@@ -433,9 +433,9 @@ if (! empty($conf->contrat->enabled) && $user->rights->contrat->lire)
 {
 	include_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 	$board=new Contrat($db);
-	$dashboardlines[] = $board->load_board($user, "inactives");
+	$dashboardlines[] = $board->load_board($user, "inactive");
 	// Number of active services (expired)
-	$dashboardlines[] = $board->load_board($user, "expired");
+	$dashboardlines[] = $board->load_board($user, "active");
 }
 // Number of invoices customers (has paid)
 if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
