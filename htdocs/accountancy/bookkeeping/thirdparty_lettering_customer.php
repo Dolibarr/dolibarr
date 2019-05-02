@@ -245,8 +245,7 @@ if ($resql) {
 	$solde = 0;
 	$tmp = '';
 
-    if (empty($obj->lettering_code)) $rowaction++;
-	while ( $obj = $db->fetch_object($resql) ) {
+    while ( $obj = $db->fetch_object($resql) ) {
 
 		if ($tmp != $obj->lettering_code || empty($tmp))						$tmp = $obj->lettering_code;
 		/*if ($tmp != $obj->lettering_code || empty($obj->lettering_code))*/	$solde += ($obj->credit - $obj->debit);
