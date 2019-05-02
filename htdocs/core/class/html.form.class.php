@@ -4781,9 +4781,10 @@ class Form
 	 *
 	 *  @param	string	$selected    preselected currency code
 	 *  @param  string	$htmlname    name of HTML select list
+	 *  @param  string  $mode        0 = Add currency symbol into label, 1 = Add 3 letter iso code
 	 * 	@return	string
 	 */
-    public function selectCurrency($selected = '', $htmlname = 'currency_id')
+    public function selectCurrency($selected = '', $htmlname = 'currency_id', $mode = 0)
 	{
 		global $conf,$langs,$user;
 
@@ -4805,7 +4806,14 @@ class Form
 				$out.= '<option value="'.$code_iso.'">';
 			}
 			$out.= $currency['label'];
-			$out.= ' ('.$langs->getCurrencySymbol($code_iso).')';
+			if ($mode == 1)
+			{
+			    $out.= ' ('.$code_iso.')';
+			}
+			else
+			{
+                $out.= ' ('.$langs->getCurrencySymbol($code_iso).')';
+			}
 			$out.= '</option>';
 		}
 		$out.= '</select>';
