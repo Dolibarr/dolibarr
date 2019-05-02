@@ -194,7 +194,7 @@ class Ticket extends CommonObject
         'datec' => array('type'=>'datetime', 'label'=>'DateCreation', 'visible'=>1, 'enabled'=>1, 'position'=>500, 'notnull'=>1),
         'date_read' => array('type'=>'datetime', 'label'=>'TicketReadOn', 'visible'=>1, 'enabled'=>1, 'position'=>500, 'notnull'=>1),
         'fk_user_assign' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'AssignedTo', 'visible'=>1, 'enabled'=>1, 'position'=>505, 'notnull'=>1),
-        'date_close' => array('type'=>'datetime', 'label'=>'TicketCloseOn', 'visible'=>1, 'enabled'=>1, 'position'=>510, 'notnull'=>1),
+        'date_close' => array('type'=>'datetime', 'label'=>'TicketCloseOn', 'visible'=>-1, 'enabled'=>1, 'position'=>510, 'notnull'=>1),
         'tms' => array('type'=>'timestamp', 'label'=>'DateModification', 'visible'=>-1, 'enabled'=>1, 'position'=>520, 'notnull'=>1),
         'message' => array('type'=>'text', 'label'=>'Message', 'visible'=>-2, 'enabled'=>1, 'position'=>540, 'notnull'=>-1,),
         'progress' => array('type'=>'varchar(100)', 'label'=>'Progression', 'visible'=>-1, 'enabled'=>1, 'position'=>540, 'notnull'=>-1, 'css'=>'right', 'help'=>""),
