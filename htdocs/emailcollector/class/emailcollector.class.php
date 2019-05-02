@@ -1613,7 +1613,7 @@ class EmailCollector extends CommonObject
                                     if ($savesocid != $projecttocreate->socid)
                                     {
                                         $errorforactions++;
-                                        setEventMessages('You loaded a thirdparty (id='.$savesocid.') and you force another thirdparty id (id='.$projecttocreate->socid.') by setting socid in operation with a different value');
+                                        setEventMessages('You loaded a thirdparty (id='.$savesocid.') and you force another thirdparty id (id='.$projecttocreate->socid.') by setting socid in operation with a different value', null, 'errors');
                                     }
                                 }
                                 else {
@@ -1721,14 +1721,14 @@ class EmailCollector extends CommonObject
                             if ($filefound)
                             {
                                 $result=dol_include_once($reldir."core/modules/ticket/".$modele.'.php');
-                                $modProject = new $classname;
+                                $modTicket = new $classname;
 
                                 if ($savesocid > 0)
                                 {
                                     if ($savesocid != $tickettocreate->socid)
                                     {
                                         $errorforactions++;
-                                        setEventMessages('You loaded a thirdparty (id='.$savesocid.') and you force another thirdparty id (id='.$tickettocreate->socid.') by setting socid in operation with a different value');
+                                        setEventMessages('You loaded a thirdparty (id='.$savesocid.') and you force another thirdparty id (id='.$tickettocreate->socid.') by setting socid in operation with a different value', null, 'errors');
                                     }
                                 }
                                 else {
@@ -1738,7 +1738,7 @@ class EmailCollector extends CommonObject
                                     }
                                 }
 
-                                $defaultref = $modTicket->getNextValue(($thirdpartystatic->id > 0 ? $thirdpartystatic : null), $projecttocreate);
+                                $defaultref = $modTicket->getNextValue(($thirdpartystatic->id > 0 ? $thirdpartystatic : null), $tickettocreate);
                             }
                             $tickettocreate->ref = $defaultref;
                         }
