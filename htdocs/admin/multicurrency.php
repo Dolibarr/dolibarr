@@ -249,7 +249,7 @@ if (!empty($conf->global->MAIN_MULTICURRENCY_ALLOW_SYNCHRONIZATION))
 	print '<td>'.$form->textwithpicto($langs->trans("CurrencyLayerAccount"), $langs->trans("CurrencyLayerAccount_help_to_synchronize", $urlforapilayer)).'</td>'."\n";
 	print '<td class="right">';
 	print '<textarea id="response" class="hideobject" name="response"></textarea>';
-	print $langs->trans("Value").'&nbsp;<input type="button" id="bt_sync" name="bt_sync_apilayer" class="button" value="'.$langs->trans('Synchronize').'" />';
+	print $langs->trans("Value").'&nbsp;<input type="submit" id="bt_sync" name="bt_sync_apilayer" class="button" value="'.$langs->trans('Synchronize').'" />';
 	print '<input type="submit" name="modify_apilayer" class="button" value="'.$langs->trans("Modify").'">';
 	print '</td></tr>';
 
@@ -328,6 +328,15 @@ foreach ($TCurrency as &$currency)
 print '</table>';
 print '</div>';
 
+print '
+	<script type="text/javascript">
+ 		function getRates()
+		{
+			$("#bt_sync").attr("disabled", true);
+            return true;
+		}
+	</script>
+';
 
 // End of page
 llxFooter();

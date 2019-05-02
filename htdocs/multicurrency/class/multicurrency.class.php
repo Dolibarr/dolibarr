@@ -626,14 +626,18 @@ class MultiCurrency extends CommonObject
 	/**
 	 * Sync rates from api
 	 *
-	 * @param 	string  $key    Key to use. Come from $conf->global->MULTICURRENCY_APP_ID.
+	 * @param 	string  $key                Key to use. Come from $conf->global->MULTICURRENCY_APP_ID.
+	 * @param   int     $addifnotfound      Add if not found
      * @return  void
 	 */
-	public static function syncRates($key)
+	public static function syncRates($key, $addifnotfound = 0)
 	{
 		global $conf, $db, $langs;
 
 		$urlendpoint = 'http://apilayer.net/api/live?access_key='.$key;
+		//$urlendpoint.='&format=1';
+		$urlendpoint.=(empty($conf->global->MULTICURRENCY_APP_SOURCE) ? '' : '&source='.$conf->global->MULTICURRENCY_APP_SOURCE);
+
 		dol_syslog("Call url endpoint ".$urlendpoint);
 
 		// TODO Use getURLContent() function instead.
@@ -658,7 +662,7 @@ class MultiCurrency extends CommonObject
 					{
 						$obj->updateRate($rate);
 					}
-					else
+					elseif ($addifnotfound)
 					{
 						self::addRateFromDolibarr($code, $rate);
 					}
