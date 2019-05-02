@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2001-2004 Rodolphe Quiedeville        <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2012 Laurent Destailleur         <eldy@users.sourceforge.net>
- * Copyright (C) 2008      Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
+/* Copyright (C) 2001-2004  Rodolphe Quiedeville        <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2012  Laurent Destailleur         <eldy@users.sourceforge.net>
+ * Copyright (C) 2008       Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
+ * Copyright (C) 2019       Frédéric France             <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -127,6 +128,8 @@ if ($action == 'confirm_split' && GETPOST("confirm") == 'yes')
 
 		$db->begin();
 		$discount->fk_facture_source=0;	// This is to delete only the require record (that we will recreate with two records) and not all family with same fk_facture_source
+        // This is to delete only the require record (that we will recreate with two records) and not all family with same fk_invoice_supplier_source
+        $discount->fk_invoice_supplier_source=0;
 		$res=$discount->delete($user);
 		$newid1=$newdiscount1->create($user);
 		$newid2=$newdiscount2->create($user);
