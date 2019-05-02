@@ -127,33 +127,33 @@ try {
     ]);
 }
 
-/**
- * generatePaymentResponse
+/*
+ * generate payment response
  *
- * @param object    $intent         Intent
+ * @param \Stripe\PaymentIntent $intent PaymentIntent
  * @return void
  */
-function generatePaymentResponse($intent) {
+function generatePaymentResponse($intent)
+{
     if ($intent->status == 'requires_source_action' &&
-        $intent->next_action->type == 'use_stripe_sdk')
-    {
-            // Tell the client to handle the action
-            echo json_encode([
-                'requires_action' => true,
-                'payment_intent_client_secret' => $intent->client_secret
-            ]);
+        $intent->next_action->type == 'use_stripe_sdk') {
+        // Tell the client to handle the action
+        echo json_encode([
+            'requires_action' => true,
+            'payment_intent_client_secret' => $intent->client_secret
+        ]);
     } elseif ($intent->status == 'succeeded') {
-            // The payment didn’t need any additional actions and completed!
-            // Handle post-payment fulfillment
+        // The payment didn’t need any additional actions and completed!
+        // Handle post-payment fulfillment
 
-            // TODO
+        // TODO
 
-            echo json_encode([
-                "success" => true
-            ]);
+        echo json_encode([
+            "success" => true
+        ]);
     } else {
-            // Invalid status
-            http_response_code(500);
-            echo json_encode(['error' => 'Invalid PaymentIntent status']);
+        // Invalid status
+        http_response_code(500);
+        echo json_encode(['error' => 'Invalid PaymentIntent status']);
     }
 }

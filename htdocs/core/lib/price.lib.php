@@ -203,7 +203,7 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocalt
 
     $localtaxes = array(0,0,0);
     $apply_tax = false;
-  	switch($localtax1_type) {
+    switch($localtax1_type) {
       case '2':     // localtax on product or service
         $apply_tax = true;
         break;
@@ -227,16 +227,16 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocalt
     }
 
     $apply_tax = false;
-  	switch($localtax2_type) {
-      case '2':     // localtax on product or service
-        $apply_tax = true;
-        break;
-      case '4':     // localtax on product
-        if ($type == 0) $apply_tax = true;
-        break;
-      case '6':     // localtax on service
-        if ($type == 1) $apply_tax = true;
-        break;
+    switch($localtax2_type) {
+        case '2':     // localtax on product or service
+            $apply_tax = true;
+            break;
+        case '4':     // localtax on product
+            if ($type == 0) $apply_tax = true;
+            break;
+        case '6':     // localtax on service
+            if ($type == 1) $apply_tax = true;
+            break;
     }
     if ($uselocaltax2_rate && $apply_tax) {
   		$result[15] = price2num(($tot_sans_remise_wt * (1 + ( $localtax2_rate / 100))) - $tot_sans_remise_wt, 'MT');
@@ -321,16 +321,16 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocalt
     }
 
     $apply_tax = false;
-  	switch($localtax2_type) {
-      case '1':     // localtax on product or service
-        $apply_tax = true;
-        break;
-      case '3':     // localtax on product
-        if ($type == 0) $apply_tax = true;
-        break;
-      case '5':     // localtax on service
-        if ($type == 1) $apply_tax = true;
-        break;
+    switch($localtax2_type) {
+        case '1':     // localtax on product or service
+            $apply_tax = true;
+            break;
+        case '3':     // localtax on product
+            if ($type == 0) $apply_tax = true;
+            break;
+        case '5':     // localtax on service
+            if ($type == 1) $apply_tax = true;
+            break;
     }
     if ($uselocaltax2_rate && $apply_tax) {
   		$result[15] = price2num(($tot_sans_remise * (1 + ( $localtax2_rate / 100))) - $tot_sans_remise, 'MT');	// amount tax2 for total_ht_without_discount
