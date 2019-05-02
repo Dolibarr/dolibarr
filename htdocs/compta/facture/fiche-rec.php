@@ -1009,7 +1009,7 @@ if ($action == 'create')
 
 		// Ref Client
 		print '<tr><td class="titlefieldcreate">'.$langs->trans("RefCustomer").'</td><td>';
-		print '<input class="flat quatrevingtpercent" type="text" name="ref_client" value="'.GETPOST('ref_client','alpha').'">';
+		print '<input class="flat quatrevingtpercent" type="text" name="ref_client" value="'.GETPOST('ref_client', 'alpha').'">';
 		print '</td></tr>';
 
 		// Third party
