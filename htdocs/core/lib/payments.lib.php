@@ -172,7 +172,7 @@ function getOnlinePaymentUrl($mode, $type, $ref = '', $amount = '9.99', $freetag
 			else $out.='&securekey='.dol_hash($conf->global->PAYMENT_SECURITY_TOKEN, 2);
 		}
 	}
-	elseif ($type == 'order')
+	elseif ($type == 'order' || $type == 'commande')
 	{
 	    $out=$urltouse.'/public/payment/newpayment.php?source=order&ref='.($mode?'<font color="#666666">':'');
 		if ($mode == 1) $out.='order_ref';
@@ -190,7 +190,7 @@ function getOnlinePaymentUrl($mode, $type, $ref = '', $amount = '9.99', $freetag
 			}
 		}
 	}
-	elseif ($type == 'invoice')
+	elseif ($type == 'invoice' || $type == 'facture')
 	{
 	    $out=$urltouse.'/public/payment/newpayment.php?source=invoice&ref='.($mode?'<font color="#666666">':'');
 		if ($mode == 1) $out.='invoice_ref';
@@ -244,7 +244,7 @@ function getOnlinePaymentUrl($mode, $type, $ref = '', $amount = '9.99', $freetag
 			}
 		}
 	}
-	if ($type == 'donation')
+	if ($type == 'donation' || $type == 'don')
 	{
 	    $out=$urltouse.'/public/payment/newpayment.php?source=donation&ref='.($mode?'<font color="#666666">':'');
 		if ($mode == 1) $out.='donation_ref';
