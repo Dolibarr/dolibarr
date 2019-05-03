@@ -1737,7 +1737,6 @@ class Commande extends CommonOrder
 				$this->fk_project			= $obj->fk_project;
 				$this->modelpdf				= $obj->model_pdf;
 				$this->last_main_doc		= $obj->last_main_doc;
-
 				$this->mode_reglement_id	= $obj->fk_mode_reglement;
 				$this->mode_reglement_code	= $obj->mode_reglement_code;
 				$this->mode_reglement		= $obj->mode_reglement_libelle;
@@ -1746,7 +1745,6 @@ class Commande extends CommonOrder
 				$this->cond_reglement_code	= $obj->cond_reglement_code;
 				$this->cond_reglement		= $obj->cond_reglement_libelle;
 				$this->cond_reglement_doc	= $obj->cond_reglement_libelle_doc;
-
 				$this->fk_account           = $obj->fk_account;
 				$this->availability_id		= $obj->fk_availability;
 				$this->availability_code	= $obj->availability_code;
