@@ -6404,6 +6404,7 @@ abstract class CommonObject
 			$out .= '<!-- showOptionalsInput --> ';
 			$out .= "\n";
 
+            $extrafields_collapse_num = '';
 			$e = 0;
 			foreach($extrafields->attributes[$this->table_element]['label'] as $key=>$label)
 			{
@@ -6463,6 +6464,20 @@ abstract class CommonObject
 
 				if ($extrafields->attributes[$this->table_element]['type'][$key] == 'separate')
 				{
+                    $extrafields_collapse_num = '';
+                    $extrafield_param = $extrafields->attributes[$this->table_element]['param'][$key];
+                    if (!empty($extrafield_param) && is_array($extrafield_param)) {
+                        $extrafield_param_list = array_keys($extrafield_param['options']);
+
+                        if (count($extrafield_param_list)>0) {
+                            $extrafield_collapse_display_value = intval($extrafield_param_list[0]);
+
+                            if ($extrafield_collapse_display_value==1 || $extrafield_collapse_display_value==2) {
+                                $extrafields_collapse_num = $extrafields->attributes[$this->table_element]['pos'][$key];
+                            }
+                        }
+                    }
+
 					$out .= $extrafields->showSeparator($key, $this);
 				}
 				else
@@ -6482,7 +6497,7 @@ abstract class CommonObject
 
 					$html_id = !empty($this->id) ? 'extrarow-'.$this->element.'_'.$key.'_'.$this->id : '';
 
-					$out .= '<tr id="'.$html_id.'" '.$csstyle.' class="'.$class.$this->element.'_extras_'.$key.'" '.$domData.' >';
+					$out .= '<tr id="'.$html_id.'" '.$csstyle.' class="'.$class.$this->element.'_extras_'.$key.' trextrafields_collapse'.$extrafields_collapse_num.'" '.$domData.' >';
 
 					if (! empty($conf->global->MAIN_EXTRAFIELDS_USE_TWO_COLUMS) && ($e % 2) == 0)
 					{
