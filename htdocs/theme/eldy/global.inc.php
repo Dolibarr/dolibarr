@@ -132,19 +132,27 @@ input.smallpadd {	/* Used for timesheet input */
 input.buttongen {
 	vertical-align: middle;
 }
-input.buttonpayment {
+input.buttonpayment, button.buttonpayment, div.buttonpayment {
 	min-width: 320px;
 	margin-bottom: 15px;
 	background-image: none;
 	line-height: 24px;
 	padding: 8px;
 	background: none;
-	padding-left: 38px;
-	text-align: <?php echo $left; ?>;
-	border: 1px solid #ddd;
-	background-color: #eee;
+	text-align: center;
+	border: 0;
+	background-color: #9999bb;
 	white-space: normal;
-	box-shadow: 1px 1px 8px #bbb;
+	box-shadow: 1px 1px 4px #bbb;
+	color: #fff;
+	border-radius: 4px;
+}
+div.buttonpayment input {
+    background-color: unset;
+    color: #fff;
+    border-bottom: unset;
+    font-weight: bold;
+    text-transform: uppercase;
 }
 input.buttonpaymentcb {
 	background-image: url(<?php echo dol_buildpath($path.'/theme/common/credit_card.png', 1) ?>);
@@ -3569,6 +3577,7 @@ div#card-errors {
 	color: #fa755a;
     text-align: center;
     padding-top: 3px;
+    max-width: 320px;
 }
 
 

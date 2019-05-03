@@ -243,6 +243,7 @@ class Stripe extends CommonObject
 	 * @param   double  $amount                             Amount
 	 * @param   string  $currency_code                      Currency code
 	 * @param   string  $tag                                Tag
+	 * @param   string  $description                        Description
 	 * @param	Societe	$object							    Object to pay with Stripe
 	 * @param	string 	$customer							Stripe customer ref 'cus_xxxxxxxxxxxxx' via customerStripe()
 	 * @param	string	$key							    ''=Use common API. If not '', it is the Stripe connect account 'acc_....' to use Stripe connect
@@ -252,9 +253,13 @@ class Stripe extends CommonObject
 	 * @param   boolean $confirmnow                         false=default, true=try to confirm immediatly after create (if conditions are ok)
 	 * @return 	\Stripe\PaymentIntent|null 			        Stripe PaymentIntent or null if not found
 	 */
-	public function getPaymentIntent($amount, $currency_code, $tag, $object = null, $customer = null, $key = null, $status = 0, $usethirdpartyemailforreceiptemail = 0, $mode = 'automatic', $confirmnow = false)
+	public function getPaymentIntent($amount, $currency_code, $tag, $description = '', $object = null, $customer = null, $key = null, $status = 0, $usethirdpartyemailforreceiptemail = 0, $mode = 'automatic', $confirmnow = false)
 	{
 		global $conf, $user, $mysoc;
+
+		dol_syslog("getPaymentIntent");
+
+		$error = 0;
 
 		if (empty($status)) $service = 'StripeTest';
 		else $service = 'StripeLive';
@@ -305,6 +310,7 @@ class Stripe extends CommonObject
     				}
     				catch(Exception $e)
     				{
+    				    $error++;
     					$this->error = $e->getMessage();
     				}
     			}
@@ -314,9 +320,6 @@ class Stripe extends CommonObject
 		if (empty($paymentintent))
 		{
     		$ipaddress=getUserRemoteIP();
-    		// Not enough space for a ref so we store id. Also with multicompany we can have same ref for 2 different
-    		// object and we need a unique (this is used later as idempotency_key)
-    		$description=$tag;
     		$metadata = array('dol_version'=>DOL_VERSION, 'dol_entity'=>$conf->entity, 'ipaddress'=>$ipaddress);
             if (is_object($object))
             {
@@ -330,12 +333,14 @@ class Stripe extends CommonObject
     		    "amount" => $stripeamount,
     			"currency" => $currency_code,
     		    "payment_method_types" => ["card"],
-    		    "statement_descriptor" => dol_trunc($description, 10, 'right', 'UTF-8', 1),     // 22 chars that appears on bank receipt (company + description)
+    		    "description" => $description,
+    		    "statement_descriptor" => dol_trunc($tag, 10, 'right', 'UTF-8', 1),     // 22 chars that appears on bank receipt (company + description)
     			"metadata" => $metadata
     		);
     		if (! is_null($customer)) $dataforintent["customer"]=$customer;
     		// save_payment_method = true,
     		// payment_method =
+            //var_dump($dataforintent);
 
     		if ($conf->entity!=$conf->global->STRIPECONNECT_PRINCIPAL && $fee>0)
     		{
@@ -353,9 +358,12 @@ class Stripe extends CommonObject
 
     			if (empty($key)) {				// If the Stripe connect account not set, we use common API usage
     				$paymentintent = \Stripe\PaymentIntent::create($dataforintent, array("idempotency_key" => "$description"));
+    			    //$paymentintent = \Stripe\PaymentIntent::create($dataforintent, array());
     			} else {
     				$paymentintent = \Stripe\PaymentIntent::create($dataforintent, array("idempotency_key" => "$description", "stripe_account" => $key));
+    			    //$paymentintent = \Stripe\PaymentIntent::create($dataforintent, array("stripe_account" => $key));
     			}
+    			//var_dump($paymentintent);
 
     			// Store the payment intent
     			if (is_object($object))
@@ -366,6 +374,7 @@ class Stripe extends CommonObject
     				$resql = $this->db->query($sql);
     				if (! $resql)
     				{
+    				    $error++;
     					$this->error = $this->db->lasterror();
                         dol_syslog(get_class($this) . "::PaymentIntent failed to insert paymentintent with id=".$paymentintent->id." into database.");
     				}
@@ -377,9 +386,17 @@ class Stripe extends CommonObject
     		}
     		catch(Exception $e)
     		{
+    		    /*var_dump($dataforintent);
+    		    var_dump($description);
+    		    var_dump($key);
+    		    var_dump($paymentintent);
+    		    var_dump($e->getMessage());*/
+                $error++;
     			$this->error = $e->getMessage();
     		}
 		}
+
+		dol_syslog("getPaymentIntent return error=".$error);
 
 		return $paymentintent;
 	}
