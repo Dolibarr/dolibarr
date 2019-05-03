@@ -35,6 +35,7 @@ include_once DOL_DOCUMENT_ROOT .'/core/class/commonorder.class.php';
 require_once DOL_DOCUMENT_ROOT .'/core/class/commonobjectline.class.php';
 require_once DOL_DOCUMENT_ROOT .'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT .'/margin/lib/margins.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 require_once DOL_DOCUMENT_ROOT .'/multicurrency/class/multicurrency.class.php';
 
 /**
@@ -136,7 +137,8 @@ class Commande extends CommonOrder
 	 * @var string
 	 */
 	public $mode_reglement_code;
-
+  
+  public $public_payment_url;
 	/**
 	 * Availability delivery time id
 	 * @var int
@@ -1742,6 +1744,7 @@ class Commande extends CommonOrder
 				$this->cond_reglement_code	= $obj->cond_reglement_code;
 				$this->cond_reglement		= $obj->cond_reglement_libelle;
 				$this->cond_reglement_doc	= $obj->cond_reglement_libelle_doc;
+        $this->public_payment_url	= getOnlinePaymentUrl(0,'order', $obj->ref);
 				$this->fk_account           = $obj->fk_account;
 				$this->availability_id		= $obj->fk_availability;
 				$this->availability_code	= $obj->availability_code;
