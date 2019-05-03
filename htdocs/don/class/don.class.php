@@ -6,7 +6,7 @@
  * Copyright (C) 2015-2017 Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2016      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2019      Thibault FOUCART     <support@ptibogxiv.net>
- * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019      Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,7 +29,8 @@
  */
 
 require_once DOL_DOCUMENT_ROOT .'/core/class/commonobject.class.php';
-
+require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/multicurrency/class/multicurrency.class.php';
 
 /**
  *		Class to manage donations
@@ -89,7 +90,7 @@ class Don extends CommonObject
 	public $num_payment;
 	public $date_valid;
 	public $modepaymentid = 0;
-
+	public $public_payment_url;
 	public $labelstatut;
 	public $labelstatutshort;
 
@@ -704,6 +705,7 @@ class Don extends CommonObject
                 $this->mode_reglement_id  = $obj->fk_payment;
                 $this->mode_reglement_code= $obj->payment_code;
                 $this->mode_reglement     = $obj->payment_label;
+                $this->public_payment_url	= getOnlinePaymentUrl(0, 'donation', $obj->rowid);
                 $this->paid			      = $obj->paid;
                 $this->amount             = $obj->amount;
                 $this->note_private	      = $obj->note_private;
