@@ -9,7 +9,7 @@
  * Copyright (C) 2012      Cedric Salvador      <csalvador@gpcsolutions.fr>
  * Copyright (C) 2013      Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2014-2015 Marcos García        <marcosgdf@gmail.com>
- * Copyright (C) 2018      Nicolas ZABOURI	<info@inovea-conseil.com>
+ * Copyright (C) 2018      Nicolas ZABOURI	    <info@inovea-conseil.com>
  * Copyright (C) 2016-2018 Ferran Marcet        <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -35,7 +35,6 @@ include_once DOL_DOCUMENT_ROOT .'/core/class/commonorder.class.php';
 require_once DOL_DOCUMENT_ROOT .'/core/class/commonobjectline.class.php';
 require_once DOL_DOCUMENT_ROOT .'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT .'/margin/lib/margins.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 require_once DOL_DOCUMENT_ROOT .'/multicurrency/class/multicurrency.class.php';
 
 /**
@@ -46,7 +45,7 @@ class Commande extends CommonOrder
 	/**
 	 * @var string ID to identify managed object
 	 */
-	public $element='commande';
+	public ='commande';
 
 	/**
 	 * @var string Name of table without prefix where object is stored
@@ -1740,7 +1739,13 @@ class Commande extends CommonOrder
 				$this->mode_reglement_id	= $obj->fk_mode_reglement;
 				$this->mode_reglement_code	= $obj->mode_reglement_code;
 				$this->mode_reglement		= $obj->mode_reglement_libelle;
-                $this->public_payment_url	= getOnlinePaymentUrl(0,'order', $obj->ref);
+
+			if (! empty($conf->paypal->enabled) || ! empty($conf->stripe->enabled) || ! empty($conf->paybox->enabled)) 
+			{
+				require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
+                $this->public_payment_url	= getOnlinePaymentUrl(0, $element, $obj->ref);
+			}        
+
 				$this->cond_reglement_id	= $obj->fk_cond_reglement;
 				$this->cond_reglement_code	= $obj->cond_reglement_code;
 				$this->cond_reglement		= $obj->cond_reglement_libelle;
