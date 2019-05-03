@@ -145,7 +145,7 @@ function dolKeepOnlyPhpCode($str)
     $newstr = '';
 
     //split on each opening tag
-    $parts = explode('<?php',$str);
+    $parts = explode('<?php', $str);
     if (!empty($parts))
     {
         $i=0;

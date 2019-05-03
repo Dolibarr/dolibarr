@@ -136,7 +136,8 @@ if ($nolinesbefore) {
 		print '<td class="linecolcycleref right">' . $langs->trans('Progress') . '</td>';
 		print '<td class="linecolcycleref2 right"></td>';
 	}
-	if (! empty($usemargins))
+    if (! empty($usemargins))
+
 	{
 		if (!empty($user->rights->margins->creer)) {
 		?>
@@ -149,9 +150,7 @@ if ($nolinesbefore) {
 			echo $langs->trans('BuyingPrice');
 		else
 			echo $langs->trans('CostPrice');
-		?>
-		</td>
-		<?php
+		echo '</td>';
 		if ($user->rights->margins->creer && ! empty($conf->global->DISPLAY_MARGIN_RATES)) echo '<td class="margininfos linecolmargin2 right"><span class="np_marginRate">'.$langs->trans('MarginRate').'</span></td>';
 		if ($user->rights->margins->creer && ! empty($conf->global->DISPLAY_MARK_RATES)) echo '<td class="margininfos linecolmargin2 right"><span class="np_markRate">'.$langs->trans('MarkRate').'</span></td>';
 	}
@@ -163,14 +162,12 @@ if ($nolinesbefore) {
 ?>
 <tr class="pair nodrag nodrop nohoverpair<?php echo ($nolinesbefore || $object->element=='contrat')?'':' liste_titre_create'; ?>">
 <?php
-$coldisplay=0;
+    $coldisplay=0;
 
-// Adds a line numbering column
-if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
-	$coldisplay++;
-	?>
-	<td class="nobottom linecolnum center"></td>
-	<?php
+    // Adds a line numbering column
+    if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
+      $coldisplay++;
+      echo '<td class="nobottom linecolnum center"></td>';
     }
 
     $coldisplay++;
@@ -348,14 +345,12 @@ if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
 		echo $form->selectyesno('date_end_fill', $line->date_end_fill, 1);
 		echo '</div>';
 	}
-	?>
-	</td>
+	echo '</td>';
 
-	<?php
 	if ($object->element == 'supplier_proposal' || $object->element == 'order_supplier' || $object->element == 'invoice_supplier')	// We must have same test in printObjectLines
 	{
-	?>
 		$coldisplay++;
+        ?>
 		<td class="nobottom linecolresupplier"><input id="fourn_ref" name="fourn_ref" class="flat maxwidth75" value="<?php echo (isset($_POST["fourn_ref"])?GETPOST("fourn_ref", 'alpha', 2):''); ?>"></td>
 	<?php } ?>
 
@@ -458,9 +453,7 @@ if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
 if (is_object($objectline)) {
 	print $objectline->showOptionals($extrafieldsline, 'edit', array('style'=>$bcnd[$var], 'colspan'=>$coldisplay), '', '', empty($conf->global->MAIN_EXTRAFIELDS_IN_ONE_TD)?0:1);
 }
-?>
 
-<?php
 if ((! empty($conf->service->enabled) || ($object->element == 'contrat')) && $dateSelector && GETPOST('type') != '0')	// We show date field if required
 {
 	?>
