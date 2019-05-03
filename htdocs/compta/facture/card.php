@@ -4887,7 +4887,7 @@ elseif ($id > 0 || ! empty($ref))
 		{
 			print '<br><!-- Link to pay -->'."\n";
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
-			print showOnlinePaymentUrl('invoice', $object->ref).'<br>';
+			print showOnlinePaymentUrl($object).'<br>';
 		}
 
 		// Show direct download link
