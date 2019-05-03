@@ -45,7 +45,7 @@ class Commande extends CommonOrder
 	/**
 	 * @var string ID to identify managed object
 	 */
-	public ='commande';
+	public $element='commande';
 
 	/**
 	 * @var string Name of table without prefix where object is stored
