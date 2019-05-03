@@ -1392,7 +1392,7 @@ class Facture extends CommonInvoice
 			if (! empty($conf->paypal->enabled) || ! empty($conf->stripe->enabled) || ! empty($conf->paybox->enabled)) 
 			{
 				require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
-        $this->public_payment_url	= getOnlinePaymentUrl(0,'invoice', $obj->ref);
+                $this->public_payment_url	= getOnlinePaymentUrl(0, $element, $obj->ref);
 			}        
 
 				$this->fk_account           = ($obj->fk_account>0)?$obj->fk_account:null;
