@@ -72,6 +72,7 @@ if (! $error && $massaction == 'confirm_presend')
     $listofobjectthirdparties=array();
     $listofobjectcontacts = array();
     $listofobjectref=array();
+    $contactidtosend=array();
 
     if (! $error)
     {
@@ -259,9 +260,13 @@ if (! $error && $massaction == 'confirm_presend')
                     } elseif ($objectobj->element == 'facture' && !empty($listofobjectcontacts[$objectid])) {
                         $emails_to_sends = array();
                         $objectobj->fetch_thirdparty();
+                        $contactidtosend=array();
                         foreach ($listofobjectcontacts[$objectid] as $contactemailid => $contactemailemail) {
 
-                            $emails_to_sends[] = $objectobj->thirdparty->contact_get_property((int) $contactemailid, 'email');
+                            $emails_to_sends[] = $objectobj->thirdparty->contact_get_property($contactemailid, 'email');
+                            if (!in_array($contactemailid, $contactidtosend)) {
+                                $contactidtosend[] = $contactemailid;
+                            }
                         }
                         if (count($emails_to_sends) > 0) {
                             $sendto = implode(',', $emails_to_sends);
@@ -480,7 +485,7 @@ if (! $error && $massaction == 'confirm_presend')
                                 $actionmsg2='';
 
                                 // Initialisation donnees
-                                $objectobj2->sendtoid		= 0;
+                                $objectobj2->sendtoid		= (empty($contactidtosend)?0:$contactidtosend);
                                 $objectobj2->actionmsg		= $actionmsg;  // Long text
                                 $objectobj2->actionmsg2		= $actionmsg2; // Short text
                                 $objectobj2->fk_element		= $objid2;
