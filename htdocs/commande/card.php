@@ -2684,7 +2684,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 			{
 				print '<br><!-- Link to pay -->';
 				require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
-				print showOnlinePaymentUrl('order', $object->ref).'<br>';
+				print showOnlinePaymentUrl($object).'<br>';
 			}
 
 			// Show direct download link
