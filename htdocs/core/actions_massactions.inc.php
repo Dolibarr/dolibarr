@@ -261,7 +261,7 @@ if (! $error && $massaction == 'confirm_presend')
                         $objectobj->fetch_thirdparty();
                         foreach ($listofobjectcontacts[$objectid] as $contactemailid => $contactemailemail) {
 
-                            $emails_to_sends[] = $objectobj->thirdparty->contact_get_property((int)$contactemailid, 'email');
+                            $emails_to_sends[] = $objectobj->thirdparty->contact_get_property((int) $contactemailid, 'email');
                         }
                         if (count($emails_to_sends) > 0) {
                             $sendto = implode(',', $emails_to_sends);
