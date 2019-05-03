@@ -708,7 +708,7 @@ class Don extends CommonObject
 			if (! empty($conf->paypal->enabled) || ! empty($conf->stripe->enabled) || ! empty($conf->paybox->enabled)) 
 			{
 				require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
-                $this->public_payment_url	= getOnlinePaymentUrl(0, $element', $obj->ref);
+                $this->public_payment_url	= getOnlinePaymentUrl(0, $element', $obj->rowid);
 			}        
 
                 $this->paid			      = $obj->paid;
