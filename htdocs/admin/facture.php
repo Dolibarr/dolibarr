@@ -51,6 +51,32 @@ $type='invoice';
 
 include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
+// Action mise a jour ou ajout d'une constante
+if ($action == 'update' || $action == 'add')
+{
+	$constlineid = GETPOST('rowid', 'int');
+	$constname=GETPOST('constname', 'alpha');
+
+	$constvalue=(GETPOSTISSET('constvalue_'.$constname) ? GETPOST('constvalue_'.$constname, 'alpha') : GETPOST('constvalue'));
+	$consttype=(GETPOSTISSET('consttype_'.$constname) ? GETPOST('consttype_'.$constname, 'alphanohtml') : GETPOST('consttype'));
+	$constnote=(GETPOSTISSET('constnote_'.$constname) ? GETPOST('constnote_'.$constname, 'none') : GETPOST('constnote'));
+
+	$typetouse = empty($oldtypetonewone[$consttype]) ? $consttype : $oldtypetonewone[$consttype];
+
+	$res=dolibarr_set_const($db, $constname, $constvalue, $typetouse, 0, $constnote, $conf->entity);
+
+	if (! $res > 0) $error++;
+
+	if (! $error)
+	{
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	}
+	else
+	{
+		setEventMessages($langs->trans("Error"), null, 'errors');
+	}
+}
+
 if ($action == 'updateMask')
 {
     $maskconstinvoice=GETPOST('maskconstinvoice', 'alpha');
@@ -739,6 +765,28 @@ print "</form>";
 print "<br>";
 print load_fiche_titre($langs->trans("OtherOptions"), '', '');
 
+if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
+
+// Editing global variables not related to a specific theme
+$constantes=array(
+    'FAC_FORCE_DATE_VALIDATION'=>array('type'=>'yesno', 'label'=>$langs->trans('FAC_FORCE_DATE_VALIDATION')),
+    'INVOICE_EMAIL_TEMPLATE_INVOICE_VALIDATION'=>'emailtemplate:facture_send',
+    'INVOICE_EMAIL_TEMPLATE_INVOICE_PAID'=>'emailtemplate:member',
+    'INVOICE_EMAIL_TEMPLATE_INVOICE_DISPUTE'=>'emailtemplate:member', //dispute on online payment
+    'INVOICE_EMAIL_TEMPLATE_INVOICE_CANCELATION'=>'emailtemplate:member',
+    'INVOICE_FREE_TEXT'=>'html',
+    'FACTURE_DRAFT_WATERMARK'=>'string'
+);
+
+$substitutionarray=pdf_getSubstitutionArray($langs, null, null, 2);
+$substitutionarray['__(AnyTranslationKey)__']=$langs->trans("Translation");
+$helptext = '<i>'.$langs->trans("AvailableVariables").':<br>';
+foreach($substitutionarray as $key => $val)	$helptext.=$key.'<br>';
+$helptext.='</i>';
+
+form_constantes($constantes, 0, $helptext);
+
+} else {  
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td>';
@@ -800,7 +848,7 @@ print "</td></tr>\n";
 print '</form>';
 
 print '</table>';
-
+}
 
 /*
  *  Repertoire
