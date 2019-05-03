@@ -119,11 +119,10 @@ function getValidOnlinePaymentMethods($paymentmethod = '')
 /**
  * Return string with full Url
  *
- * @param   string	$type		Type of URL ('free', 'order', 'invoice', 'contractline', 'membersubscription' ...)
- * @param	string	$ref		Ref of object
+ * @param	string	$object		Object
  * @return	string				Url string
  */
-function showOnlinePaymentUrl($type, $ref)
+function showOnlinePaymentUrl($object)
 {
 	global $conf, $langs;
 
@@ -133,8 +132,7 @@ function showOnlinePaymentUrl($type, $ref)
 	$servicename='Online';
 
 	$out = img_picto('', 'object_globe.png').' '.$langs->trans("ToOfferALinkForOnlinePayment", $servicename).'<br>';
-	$url = getOnlinePaymentUrl(0, $type, $ref);
-	$out.= '<input type="text" id="onlinepaymenturl" class="quatrevingtpercent" value="'.$url.'">';
+	$out.= '<input type="text" id="onlinepaymenturl" class="quatrevingtpercent" value="'.$object->public_payment_url.'">';
 	$out.= ajax_autoselect("onlinepaymenturl", 0);
 	return $out;
 }
