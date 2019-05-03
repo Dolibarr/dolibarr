@@ -35,7 +35,6 @@
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 
 /**
  *		Class to manage members of a foundation
@@ -1314,9 +1313,13 @@ class Adherent extends CommonObject
 				$this->photo			= $obj->photo;
 				$this->statut			= $obj->statut;
 				$this->public			= $obj->public;
-        
-        $this->public_payment_url	= getOnlinePaymentUrl(0, $element, $obj->ref);
-        
+
+			if (! empty($conf->paypal->enabled) || ! empty($conf->stripe->enabled) || ! empty($conf->paybox->enabled)) 
+			{
+				require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
+                $this->public_payment_url	= getOnlinePaymentUrl(0, $element, $obj->ref);
+			}        
+
 				$this->datec			= $this->db->jdate($obj->datec);
                 $this->date_creation    = $this->db->jdate($obj->datec);
 				$this->datem			= $this->db->jdate($obj->datem);
