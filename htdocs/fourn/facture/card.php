@@ -2789,7 +2789,7 @@ else
 			}
 			else
 			{
-				print '<tr class="oddeven"><td colspan="'.$nbcols.'" class="opacitymedium">'.$langs->trans("None").'</td><td></td><td></td></tr>';
+				print '<tr class="oddeven"><td colspan="'.$nbcols.'"><span class="opacitymedium">'.$langs->trans("None").'</span></td><td></td><td></td></tr>';
 			}
 
 			/*
