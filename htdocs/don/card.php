@@ -871,7 +871,7 @@ if ($object->socid) {
 		{
 			print '<br><!-- Link to pay -->'."\n";
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
-			print showOnlinePaymentUrl('donation', $object->ref).'<br>';
+			print showOnlinePaymentUrl($object).'<br>';
 		}
 
 	print '</div><div class="fichehalfright"><div class="ficheaddleft">';
