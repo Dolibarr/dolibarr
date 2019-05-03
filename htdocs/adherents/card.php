@@ -1059,6 +1059,13 @@ else
 
 		// Other attributes
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_add.tpl.php';
+		//Hooks here
+	   $reshook=$hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action);    // Note that $action and $object may have been modified by hook
+      //print $hookmanager->resPrint; //it double prints?
+      if (empty($reshook))
+      {
+      	print $object->showOptionals($extrafields, 'edit');
+      }	
 
         print '<tbody>';
 		print "</table>\n";
@@ -1357,9 +1364,15 @@ else
 
 		// Other attributes
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_add.tpl.php';
-
+		//Hooks here
+	   $reshook=$hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action);    // Note that $action and $object may have been modified by hook
+      //print $hookmanager->resPrint; //it double prints?
+      if (empty($reshook))
+      {
+      	print $object->showOptionals($extrafields, 'edit');
+      }
+      
 		print '</table>';
-
 		dol_fiche_end();
 
 		print '<div class="center">';
