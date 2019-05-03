@@ -307,7 +307,7 @@ function GETPOST($paramname, $check = 'none', $method = 0, $filter = null, $opti
 			}
 			if (! empty($conf->global->MAIN_ENABLE_DEFAULT_VALUES))
 			{
-				if (! empty($_GET['action']) && $_GET['action'] == 'create' && ! isset($_GET[$paramname]) && ! isset($_POST[$paramname]))
+			    if (! empty($_GET['action']) && (preg_match('/^create/', $_GET['action']) || preg_match('/^presend/', $_GET['action'])) && ! isset($_GET[$paramname]) && ! isset($_POST[$paramname]))
 				{
 					// Now search in setup to overwrite default values
 					if (! empty($user->default_values))		// $user->default_values defined from menu 'Setup - Default values'
@@ -1299,6 +1299,7 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 	if ($object->element == 'member')          $modulepart='memberphoto';
 	if ($object->element == 'user')            $modulepart='userphoto';
 	if ($object->element == 'product')         $modulepart='product';
+	if ($object->element == 'ticket')          $modulepart='ticket';
 
 	if (class_exists("Imagick"))
 	{

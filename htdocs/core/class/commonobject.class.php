@@ -3963,8 +3963,10 @@ abstract class CommonObject
 			// Reduction short
 			print '<td class="linecoldiscount right">'.$langs->trans('ReductionShort').'</td>';
 
+			// Fields for situation invoice
 			if ($this->situation_cycle_ref) {
 				print '<td class="linecolcycleref right">' . $langs->trans('Progress') . '</td>';
+				print '<td class="linecolcycleref2 right">' . $langs->trans('TotalHT100Short') . '</td>';
 			}
 
 			if ($usemargins && ! empty($conf->margin->enabled) && empty($user->societe_id))
@@ -6523,7 +6525,7 @@ abstract class CommonObject
 							$out .= $extrafields->showOutputField($key, $value);
 							break;
 						case "edit":
-							$out .= $extrafields->showInputField($key, $value, '', $keysuffix, '', 0, $this->id);
+							$out .= $extrafields->showInputField($key, $value, '', $keysuffix, '', 0, $this->id, $this->table_element);
 							break;
 					}
 
