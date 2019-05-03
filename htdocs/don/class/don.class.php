@@ -29,7 +29,6 @@
  */
 
 require_once DOL_DOCUMENT_ROOT .'/core/class/commonobject.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/multicurrency/class/multicurrency.class.php';
 
 /**
@@ -705,7 +704,13 @@ class Don extends CommonObject
                 $this->mode_reglement_id  = $obj->fk_payment;
                 $this->mode_reglement_code= $obj->payment_code;
                 $this->mode_reglement     = $obj->payment_label;
-                $this->public_payment_url	= getOnlinePaymentUrl(0, 'donation', $obj->rowid);
+
+			if (! empty($conf->paypal->enabled) || ! empty($conf->stripe->enabled) || ! empty($conf->paybox->enabled)) 
+			{
+				require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
+                $this->public_payment_url	= getOnlinePaymentUrl(0, $element', $obj->ref);
+			}        
+
                 $this->paid			      = $obj->paid;
                 $this->amount             = $obj->amount;
                 $this->note_private	      = $obj->note_private;
