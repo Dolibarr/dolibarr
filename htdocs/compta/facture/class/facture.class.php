@@ -43,6 +43,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonobjectline.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/client.class.php';
 require_once DOL_DOCUMENT_ROOT.'/margin/lib/margins.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/multicurrency/class/multicurrency.class.php';
 
 if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
@@ -145,7 +146,7 @@ class Facture extends CommonInvoice
 	public $date_lim_reglement;
 	public $cond_reglement_code;		// Code in llx_c_paiement
 	public $mode_reglement_code;		// Code in llx_c_paiement
-
+	public $public_payment_url;
 	/**
      * @var int ID Field to store bank id to use when payment mode is withdraw
      */
@@ -1388,6 +1389,7 @@ class Facture extends CommonInvoice
 				$this->cond_reglement_code	= $obj->cond_reglement_code;
 				$this->cond_reglement		= $obj->cond_reglement_libelle;
 				$this->cond_reglement_doc	= $obj->cond_reglement_libelle_doc;
+        $this->public_payment_url	= getOnlinePaymentUrl(0,'invoice', $obj->ref);
 				$this->fk_account           = ($obj->fk_account>0)?$obj->fk_account:null;
 				$this->fk_project			= $obj->fk_project;
 				$this->fk_facture_source	= $obj->fk_facture_source;
