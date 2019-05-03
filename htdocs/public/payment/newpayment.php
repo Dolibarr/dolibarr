@@ -2013,9 +2013,7 @@ if (preg_match('/^dopayment/', $action))
     			        	    city: '<?php echo $object->thirdparty->town; ?>',
     			        	    country: '<?php echo $object->thirdparty->country_code; ?>',
     			        	    line1: '<?php echo $object->thirdparty->address; ?>',
-    			        	    postal_code: '<?php echo $object->thirdparty->zip; ?>'
-                    }
-                    <?php } ?>
+    			        	    postal_code: '<?php echo $object->thirdparty->zip; ?>'}<?php } ?>
     			        }	/* TODO Add all other known data like emails, ... to be SCA compliant */
           			},
           			save_payment_method: false
