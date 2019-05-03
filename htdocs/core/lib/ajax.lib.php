@@ -562,7 +562,7 @@ function ajax_object_onoff($object, $code, $field, $text_on, $text_off, $input =
                     action: \'set\',
                     field: \''.$field.'\',
                     value: \'1\',
-                    element: \''.$object->element.'\',
+                    element: \''.(!empty($object->table_element)?$object->table_element:$object->element).'\',
                     id: \''.$object->id.'\'
                 },
                 function() {
@@ -592,7 +592,7 @@ function ajax_object_onoff($object, $code, $field, $text_on, $text_off, $input =
                     action: \'set\',
                     field: \''.$field.'\',
                     value: \'0\',
-                    element: \''.$object->element.'\',
+                    element: \''.(!empty($object->table_element)?$object->table_element:$object->element).'\',
                     id: \''.$object->id.'\'
                 },
                 function() {

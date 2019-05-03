@@ -100,6 +100,8 @@ $maincategories = array();
 $subcategories = array();
 foreach($categories as $key => $categorycursor)
 {
+	if (! empty($conf->global->CATEGORIE_USE_VISIBLE_STATUS) && empty($categorycursor['visible'])) continue;	// Hide not visible categories
+
     if ($categorycursor['level'] == $levelofmaincategories)
     {
         $maincategories[$key] = $categorycursor;

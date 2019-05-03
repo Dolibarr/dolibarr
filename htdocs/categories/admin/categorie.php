@@ -53,7 +53,7 @@ if (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg))
     }
 }
 
-if (preg_match('/del_([a-z0-9_\-]+)/i', $action, $reg))
+elseif (preg_match('/del_([a-z0-9_\-]+)/i', $action, $reg))
 {
     $code=$reg[1];
     if (dolibarr_del_const($db, $code, $conf->entity) > 0)
@@ -119,6 +119,33 @@ else
 	}
 }
 print '</td></tr>';
+
+// Possibility to define the visible status
+
+if ($conf->global->MAIN_FEATURES_LEVEL >= 2) // WIP
+{
+	print '<tr class="oddeven">';
+	print '<td>'.$langs->trans("CategorieVisibleStatus").'</td>';
+	print '<td align="center" width="20">'. $form->textwithpicto('', $langs->trans("CategorieVisibleStatusHelp"), 1, 'help').'</td>';
+
+	print '<td align="center" width="100">';
+	if ($conf->use_javascript_ajax)
+	{
+		print ajax_constantonoff('CATEGORIE_USE_VISIBLE_STATUS');
+	}
+	else
+	{
+		if (empty($conf->global->CATEGORIE_USE_VISIBLE_STATUS))
+		{
+			print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_CATEGORIE_USE_VISIBLE_STATUS">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+		}
+		else
+		{
+			print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_CATEGORIE_USE_VISIBLE_STATUS">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
+		}
+	}
+	print '</td></tr>';
+}
 
 print '</table>';
 

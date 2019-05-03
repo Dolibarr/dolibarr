@@ -300,3 +300,10 @@ ALTER TABLE llx_inventorydet DROP COLUMN pmp;
 ALTER TABLE llx_inventorydet DROP COLUMN pa; 
 ALTER TABLE llx_inventorydet DROP COLUMN new_pmp;
 
+-- Update visible field (disabled by default to not overwrite existing values !)
+-- UPDATE llx_categorie SET visible = 1;
+
+-- default 1 for avoid error with constraint
+ALTER TABLE llx_categorie ADD COLUMN fk_user_creat integer NOT NULL DEFAULT 1;
+ALTER TABLE llx_categorie ADD CONSTRAINT llx_category_fk_user_creat FOREIGN KEY (fk_user_creat) REFERENCES llx_user(rowid);
+ALTER TABLE llx_categorie ADD COLUMN fk_user_modif integer;

@@ -242,7 +242,7 @@ class Categorie extends CommonObject
 		if (empty($id) && empty($label)) return -1;
 		if (! is_numeric($type)) $type=$this->MAP_ID[$type];
 
-		$sql = "SELECT rowid, fk_parent, entity, label, description, color, fk_soc, visible, type";
+		$sql = "SELECT rowid, fk_parent, entity, label, description, color, fk_soc, visible, type, fk_user_creat, fk_user_modif";
 		$sql.= " FROM ".MAIN_DB_PREFIX."categorie";
 		if ($id > 0)
 		{
@@ -262,16 +262,18 @@ class Categorie extends CommonObject
 			{
 				$res = $this->db->fetch_array($resql);
 
-				$this->id			= $res['rowid'];
-				//$this->ref			= $res['rowid'];
-				$this->fk_parent	= $res['fk_parent'];
-				$this->label		= $res['label'];
-				$this->description	= $res['description'];
-				$this->color    	= $res['color'];
-				$this->socid		= $res['fk_soc'];
-				$this->visible		= $res['visible'];
-				$this->type			= $res['type'];
-				$this->entity		= $res['entity'];
+				$this->id					= $res['rowid'];
+				//$this->ref				= $res['rowid'];
+				$this->fk_parent			= $res['fk_parent'];
+				$this->label				= $res['label'];
+				$this->description			= $res['description'];
+				$this->color    			= $res['color'];
+				$this->socid				= $res['fk_soc'];
+				$this->visible				= $res['visible'];
+				$this->type					= $res['type'];
+				$this->entity				= $res['entity'];
+				$this->user_creation		= $res['fk_user_creat'];
+				$this->user_modification	= $res['fk_user_modif'];
 
 				// Retreive all extrafield
 				// fetch optionals attributes and labels
@@ -305,7 +307,7 @@ class Categorie extends CommonObject
 	 *          					-3 : Invalid category
 	 * 								-4 : category already exists
 	 */
-	public function create($user)
+	public function create(User $user)
 	{
 		global $conf,$langs,$hookmanager;
 		$langs->load('categories');
@@ -323,7 +325,7 @@ class Categorie extends CommonObject
 		$this->description = trim($this->description);
 		$this->color = trim($this->color);
 		$this->import_key = trim($this->import_key);
-		if (empty($this->visible)) $this->visible=0;
+		$this->visible = ($this->visible != "" ? intval($this->visible) : 1);	// Visible by default
 		$this->fk_parent = ($this->fk_parent != "" ? intval($this->fk_parent) : 0);
 
 		if ($this->already_exists())
@@ -348,6 +350,7 @@ class Categorie extends CommonObject
 		$sql.= " visible,";
 		$sql.= " type,";
 		$sql.= " import_key,";
+		$sql.= " fk_user_creat,";
 		$sql.= " entity";
 		$sql.= ") VALUES (";
 		$sql.= $this->db->escape($this->fk_parent).",";
@@ -361,6 +364,7 @@ class Categorie extends CommonObject
 		$sql.= "'".$this->db->escape($this->visible)."',";
 		$sql.= $this->db->escape($type).",";
 		$sql.= (! empty($this->import_key)?"'".$this->db->escape($this->import_key)."'":'null').",";
+		$sql.= (! empty($user->id) ? $user->id :"null").",";
 		$sql.= $this->db->escape($conf->entity);
 		$sql.= ")";
 
@@ -436,7 +440,7 @@ class Categorie extends CommonObject
 		$this->label=trim($this->label);
 		$this->description=trim($this->description);
 		$this->fk_parent = ($this->fk_parent != "" ? intval($this->fk_parent) : 0);
-		$this->visible = ($this->visible != "" ? intval($this->visible) : 0);
+		$this->visible = ($this->visible != "" ? intval($this->visible) : 1);	// Visible by default
 
 		if ($this->already_exists())
 		{
@@ -457,6 +461,7 @@ class Categorie extends CommonObject
 		}
 		$sql .= ", visible = '".$this->db->escape($this->visible)."'";
 		$sql .= ", fk_parent = ".$this->fk_parent;
+		$sql .= ", fk_user_modif = ".($user->id > 0 ? $user->id : "null");
 		$sql .= " WHERE rowid = ".$this->id;
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
@@ -1851,16 +1856,77 @@ class Categorie extends CommonObject
 	}
 
 	/**
-	 *	Return label of contact status
+	 *	Return label of category status
 	 *
-	 *	@param      int			$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
-	 * 	@return 	string					Label of contact status
+	 *	@param      int			$mode       0=Long label, 1=Short label, 2=Picto + Short label, 3=Picto, 4=Picto + Long label, 5=Short label + Picto, 6=Long label + Picto
+	 * 	@return 	string					Label of category status
 	 */
 	public function getLibStatut($mode)
 	{
-	    return '';
+		return '';
 	}
 
+	/**
+	 *	Return label of category visibility
+	 *
+	 *	@param      int			$mode       0=Long label, 1=Short label, 2=Picto + Short label, 3=Picto, 4=Picto + Long label, 5=Short label + Picto, 6=Long label + Picto
+	 * 	@return 	string					Label of category visibility
+	 */
+	public function getLibVisible($mode)
+	{
+		return $this->LibVisible($this->visible, $mode);
+	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *  Return the label of visbility status
+	 *
+	 *  @param	int		$visible        Id visible
+	 *  @param	int		$mode           0=Long label, 1=Short label, 2=Picto + Short label, 3=Picto, 4=Picto + Long label, 5=Short label + Picto, 6=Long label + Picto
+	 *  @return	string          		Label of category visibility
+	 */
+	public function LibVisible($visible, $mode = 0)
+	{
+		// phpcs:enable
+		global $langs;
+		$langs->load('categories');
+
+		if ($mode == 0)
+		{
+			if ($visible==0) return $langs->trans("ContentsNotVisibleByAllShort");
+			elseif ($visible==1) return $langs->trans("ContentsVisibleByAllShort");
+		}
+		elseif ($mode == 1)
+		{
+			if ($visible==0) return $langs->trans("ContentsNotVisibleByAllShort");
+			elseif ($visible==1) return $langs->trans("ContentsVisibleByAllShort");
+		}
+		elseif ($mode == 2)
+		{
+			if ($visible==0) return img_picto($langs->trans("ContentsNotVisibleByAllShort"), 'statut5', 'class="pictostatus"').' '.$langs->trans("ContentsNotVisibleByAllShort");
+			elseif ($visible==1) return img_picto($langs->trans("ContentsVisibleByAllShort"), 'statut4', 'class="pictostatus"').' '.$langs->trans("ContentsVisibleByAllShort");
+		}
+		elseif ($mode == 3)
+		{
+			if ($visible==0) return img_picto($langs->trans("ContentsNotVisibleByAllShort"), 'statut8', 'class="pictostatus"');
+			elseif ($visible==1) return img_picto($langs->trans("ContentsVisibleByAllShort"), 'statut4', 'class="pictostatus"');
+		}
+		elseif ($mode == 4)
+		{
+			if ($visible==0) return img_picto($langs->trans("ContentsNotVisibleByAllShort"), 'statut8', 'class="pictostatus"').' '.$langs->trans("ContentsNotVisibleByAllShort");
+			elseif ($visible==1) return img_picto($langs->trans("ContentsVisibleByAllShort"), 'statut4', 'class="pictostatus"').' '.$langs->trans("ContentsVisibleByAllShort");
+		}
+		elseif ($mode == 5)
+		{
+			if ($visible==0) return '<span class="hideonsmartphone">'.$langs->trans("ContentsNotVisibleByAllShort").'</span> '.img_picto($langs->trans("ContentsNotVisibleByAllShort"), 'statut8', 'class="pictostatus"');
+			elseif ($visible==1) return '<span class="hideonsmartphone">'.$langs->trans("ContentsVisibleByAllShort").'</span> '.img_picto($langs->trans("ContentsVisibleByAllShort"), 'statut4', 'class="pictostatus"');
+		}
+		elseif ($mode == 6)
+		{
+			if ($visible==0) return $langs->trans("ContentsNotVisibleByAllShort").' '.img_picto($langs->trans("ContentsNotVisibleByAllShort"), 'statut8', 'class="pictostatus"');
+			elseif ($visible==1) return $langs->trans("ContentsVisibleByAllShort").' '.img_picto($langs->trans("ContentsVisibleByAllShort"), 'statut4', 'class="pictostatus"');
+		}
+	}
 
     /**
      *  Initialise an instance with random values.
