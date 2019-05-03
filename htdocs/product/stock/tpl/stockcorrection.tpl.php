@@ -100,7 +100,7 @@ if (empty($conf) || ! is_object($conf))
 		{
 			print '<td>'.$langs->trans('Project').'</td>';
 			print '<td>';
-			$formproject->select_projects(0, '', 'projectid', 0, 0, 1, 0, 0, 0, 0, '', 0, 0, 'maxwidth300');
+			$formproject->select_projects(-1, '', 'projectid', 0, 0, 1, 0, 0, 0, 0, '', 0, 0, 'maxwidth300');
 			print '</td>';
 		}
 		print '</tr>';
