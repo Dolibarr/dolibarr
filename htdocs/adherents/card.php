@@ -1948,7 +1948,7 @@ else
 				print '<br>';
 
 				require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
-				print showOnlinePaymentUrl('membersubscription', $object->ref);
+				print showOnlinePaymentUrl($object);
 			}
 
 			print '</div><div class="fichehalfright"><div class="ficheaddleft">';
