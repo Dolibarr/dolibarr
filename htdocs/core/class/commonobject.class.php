@@ -1060,8 +1060,8 @@ abstract class CommonObject
 	{
         // phpcs:enable
 		global $langs;
-
-    $langs->load("dict");
+        
+        $langs->load("dict");
 
 		$tab=array();
 
@@ -1071,13 +1071,13 @@ abstract class CommonObject
 		$sql.= ", t.civility as civility, t.lastname as lastname, t.firstname, t.address, t.zip, t.town, t.fk_pays as country_id, t.fk_departement as state_id";
 		$sql.= ", t.phone, t.phone_perso, t.phone_mobile, t.fax, t.email";
 		$sql.= ", tc.source, tc.element, tc.code, tc.libelle";
-    $sql.= ", co.label as country, co.code as country_code";
+        $sql.= ", co.label as country, co.code as country_code";
 		$sql.= ", d.nom as state, d.code_departement as state_code";
 		$sql.= " FROM ".MAIN_DB_PREFIX."c_type_contact tc";
 		$sql.= ", ".MAIN_DB_PREFIX."element_contact ec";
 		if ($source == 'internal') $sql.=" LEFT JOIN ".MAIN_DB_PREFIX."user t on ec.fk_socpeople = t.rowid";
 		if ($source == 'external'|| $source == 'thirdparty') $sql.=" LEFT JOIN ".MAIN_DB_PREFIX."socpeople t on ec.fk_socpeople = t.rowid";
-    $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as co ON t.fk_pays = co.rowid";
+        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as co ON t.fk_pays = co.rowid";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as d ON t.fk_departement = d.rowid";
 		$sql.= " WHERE ec.element_id =".$this->id;
 		$sql.= " AND ec.fk_c_type_contact=tc.rowid";
