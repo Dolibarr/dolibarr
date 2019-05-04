@@ -563,7 +563,7 @@ $boxwork.='</tr>'."\n";
 $nbworkboardempty=0;
 if (! empty($valid_dashboardlines))
 {
-    $boxwork.='<tr class="nohover"><td class="tdboxstats nohover flexcontainer centpercent"><div style="display: flex: flex-wrap: wrap">';
+    $boxwork.='<tr class="nobottom nohover"><td class="tdboxstats nohover flexcontainer centpercent"><div style="display: flex: flex-wrap: wrap">';
 
     foreach($valid_dashboardlines as $board)
     {

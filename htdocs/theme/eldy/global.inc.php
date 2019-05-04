@@ -2959,6 +2959,9 @@ form.pair, form.impair {
 form.tagtr:last-of-type div.tagtd, tr.pair:last-of-type td, tr.impair:last-of-type td {
     border-bottom: 0px !important;
 }
+tr.nobottom td {
+    border-bottom: 0px !important;
+}
 div.tableforcontact form.tagtr:last-of-type div.tagtd {
     border-bottom: 1px solid #ddd !important;
 }
