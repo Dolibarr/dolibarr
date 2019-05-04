@@ -234,12 +234,13 @@ if (! empty($reg[1]) && ($reg[1] != 'explorer' || ($reg[2] != '/swagger.json' &&
 
 	$classname = ucwords($module);
 
-	dol_syslog('Search /' . $moduledirforclass . '/class/api_' . $classfile . '.class.php => dir_part_file=' . $dir_part_file . ' classname=' . $classname);
+	dol_syslog('Search api file /' . $moduledirforclass . '/class/api_' . $classfile . '.class.php => dir_part_file=' . $dir_part_file . ' classname=' . $classname);
 
 	$res = false;
 	if ($dir_part_file)
 		$res = include_once $dir_part_file;
 	if (! $res) {
+	    dol_syslog('Failed to make include_once '.$dir_part_file, LOG_WARNING);
 		print 'API not found (failed to include API file)';
 		header('HTTP/1.1 501 API not found (failed to include API file)');
 		exit(0);

@@ -1409,11 +1409,12 @@ class CommandeFournisseur extends CommonOrder
     /**
      *	Load an object from its id and create a new one in database
      *
-     *	@return		int							New id of clone
+	 *  @param	    User	$user		User making the clone
+     *	@return		int					New id of clone
      */
-    public function createFromClone()
+    public function createFromClone(User $user)
     {
-        global $conf,$user,$langs,$hookmanager;
+        global $hookmanager;
 
         $error=0;
 

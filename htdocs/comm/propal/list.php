@@ -968,6 +968,7 @@ if ($resql)
 				print '&nbsp';
 			}
 			print '</td>';
+			if (! $i) $totalarray['nbfield']++;
 		}
 
 		// Extra fields

@@ -12,6 +12,9 @@ namespace Stripe;
  */
 class AlipayAccount extends ApiResource
 {
+
+    const OBJECT_NAME = "alipay_account";
+
     use ApiOperations\Delete;
     use ApiOperations\Update;
 

@@ -1567,6 +1567,9 @@ class ExtraFields
 		 if ($type == 'date') $out.=' (YYYY-MM-DD)';
 		 elseif ($type == 'datetime') $out.=' (YYYY-MM-DD HH:MM:SS)';
 		 */
+		 if (! empty($help)) {
+			$out .= $form->textwithpicto("", $help);
+		 }
 		return $out;
 	}
 
@@ -1837,7 +1840,7 @@ class ExtraFields
 			$out='';
 
 			// Only if something to display (perf)
-			if ($value)		// If we have -1 here, pb is into sert, not into ouptu
+			if ($value)		// If we have -1 here, pb is into insert, not into ouptut (fix insert instead of changing code here to compensate)
 			{
 				$param_list=array_keys($param['options']);				// $param_list='ObjectName:classPath'
 

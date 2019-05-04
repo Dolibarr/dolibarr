@@ -2436,6 +2436,9 @@ function getModuleDirForApiClass($module)
     elseif ($module == 'tickets') {
     	$moduledirforclass = 'ticket';
     }
+    elseif ($module == 'boms') {
+        $moduledirforclass = 'bom';
+    }
 
     return $moduledirforclass;
 }

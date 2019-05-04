@@ -86,6 +86,7 @@ create table llx_mailing_unsubscribe
 ALTER TABLE llx_mailing_unsubscribe ADD UNIQUE uk_mailing_unsubscribe(email, entity, unsubscribegroup);
 
 ALTER TABLE llx_adherent ADD gender VARCHAR(10);
+ALTER TABLE llx_adherent_type ADD morphy VARCHAR(3);
 ALTER TABLE llx_subscription ADD fk_type integer;
 
 -- Add url_id into unique index of bank_url
@@ -93,6 +94,9 @@ ALTER TABLE llx_bank_url DROP INDEX uk_bank_url;
 ALTER TABLE llx_bank_url ADD UNIQUE INDEX uk_bank_url (fk_bank, url_id, type);
 
 ALTER TABLE llx_actioncomm ADD COLUMN calling_duration integer;
+ALTER TABLE llx_actioncomm ADD COLUMN visibility varchar(12) DEFAULT 'default';
+
+DROP TABLE llx_ticket_msg;
 
 ALTER TABLE llx_don ADD COLUMN fk_soc integer NULL;
 
@@ -284,6 +288,7 @@ ALTER TABLE llx_product ADD INDEX idx_product_fk_project (fk_project);
 ALTER TABLE llx_actioncomm ADD COLUMN calling_duration integer;
 
 ALTER TABLE llx_emailcollector_emailcollector ADD COLUMN datelastok datetime;
+ALTER TABLE llx_emailcollector_emailcollector ADD COLUMN maxemailpercollect integer DEFAULT 100;
 
 DELETE FROM llx_const WHERE name = 'THEME_ELDY_USE_HOVER' AND value = '0';
 DELETE FROM llx_const WHERE name = 'THEME_ELDY_USE_CHECKED' AND value = '0';

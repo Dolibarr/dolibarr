@@ -25,15 +25,17 @@ if (is_numeric($entity)) define("DOLENTITY", $entity);
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
-require_once DOL_DOCUMENT_ROOT.'/includes/stripe/init.php';
-require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/ccountry.class.php';
 require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
-require_once DOL_DOCUMENT_ROOT .'/core/class/CMailFile.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
+
+require_once DOL_DOCUMENT_ROOT.'/includes/stripe/init.php';
+require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
+
 
 if (empty($conf->stripe->enabled)) accessforbidden('', 0, 0, 1);
 
@@ -144,7 +146,7 @@ $societeName = $conf->global->MAIN_INFO_SOCIETE_NOM;
 if (! empty($conf->global->MAIN_APPLICATION_TITLE)) $societeName = $conf->global->MAIN_APPLICATION_TITLE;
 
 
-dol_syslog("Stripe IPN was calle with event->type = ".$event->type);
+dol_syslog("Stripe IPN was called with event->type = ".$event->type);
 
 
 if ($event->type == 'payout.created') {
@@ -295,6 +297,12 @@ elseif ($event->type == 'customer.deleted') {
     $db->query($sql);
     $db->commit();
 }
+elseif ($event->type == 'payment_intent.succeeded') {
+    // TODO: Redirect to paymentok.php
+}
+elseif ($event->type == 'payment_intent.payment_failed') {
+    // TODO: Redirect to paymentko.php
+}
 elseif ($event->type == 'charge.succeeded') {
     // TODO: create fees
     // TODO: Redirect to paymentok.php
@@ -309,7 +317,6 @@ elseif (($event->type == 'source.chargeable') && ($event->data->object->type == 
     // Save into $tmptag all metadata
 	$tmptag=dolExplodeIntoArray($fulltag, '.', '=');
 
-	// TODO: Set $_POST var from $event->data and call newpayment.php with $action = 'charge'
     $stripe=new Stripe($db);
     /*
     $stripeacc = $stripe->getStripeAccount($service);								// Stripe OAuth connect account of dolibarr user (no network access here)

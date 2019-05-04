@@ -35,6 +35,7 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 if (! empty($conf->categorie->enabled))
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
@@ -62,6 +63,8 @@ $fourn_id = GETPOST("fourn_id", 'int');
 $catid = GETPOST('catid', 'int');
 $search_tobatch = GETPOST("search_tobatch", 'int');
 $search_accountancy_code_sell = GETPOST("search_accountancy_code_sell", 'alpha');
+$search_accountancy_code_sell_intra = GETPOST("search_accountancy_code_sell_intra", 'alpha');
+$search_accountancy_code_sell_export = GETPOST("search_accountancy_code_sell_export", 'alpha');
 $search_accountancy_code_buy = GETPOST("search_accountancy_code_buy", 'alpha');
 $optioncss = GETPOST('optioncss', 'alpha');
 $type=GETPOST("type", "int");
@@ -154,6 +157,8 @@ if (empty($conf->global->PRODUIT_MULTIPRICES))
 	}
 }
 
+$isInEEC=isInEEC($mysoc);
+
 // Definition of fields for lists
 $arrayfields=array(
 	'p.ref'=>array('label'=>$langs->trans("Ref"), 'checked'=>1),
@@ -175,8 +180,10 @@ $arrayfields=array(
 	'p.stock'=>array('label'=>$langs->trans("PhysicalStock"), 'checked'=>1, 'enabled'=>(! empty($conf->stock->enabled) && $user->rights->stock->lire && $contextpage != 'service')),
 	'stock_virtual'=>array('label'=>$langs->trans("VirtualStock"), 'checked'=>1, 'enabled'=>(! empty($conf->stock->enabled) && $user->rights->stock->lire && $contextpage != 'service' && $virtualdiffersfromphysical)),
 	'p.tobatch'=>array('label'=>$langs->trans("ManageLotSerial"), 'checked'=>0, 'enabled'=>(! empty($conf->productbatch->enabled))),
-	'p.accountancy_code_sell'=>array('label'=>$langs->trans("ProductAccountancySellCode"), 'checked'=>0),
-	'p.accountancy_code_buy'=>array('label'=>$langs->trans("ProductAccountancyBuyCode"), 'checked'=>0),
+	'p.accountancy_code_sell'=>array('label'=>$langs->trans("ProductAccountancySellCode"), 'checked'=>0, 'position'=>400),
+    'p.accountancy_code_sell_intra'=>array('label'=>$langs->trans("ProductAccountancySellIntraCode"), 'checked'=>0, 'enabled'=>$isInEEC, 'position'=>401),
+    'p.accountancy_code_sell_export'=>array('label'=>$langs->trans("ProductAccountancySellExportCode"), 'checked'=>0, 'position'=>402),
+    'p.accountancy_code_buy'=>array('label'=>$langs->trans("ProductAccountancyBuyCode"), 'checked'=>0, 'position'=>403),
 	'p.datec'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0, 'position'=>500),
 	'p.tms'=>array('label'=>$langs->trans("DateModificationShort"), 'checked'=>0, 'position'=>500),
 	'p.tosell'=>array('label'=>$langs->trans("Status").' ('.$langs->trans("Sell").')', 'checked'=>1, 'position'=>1000),
@@ -227,6 +234,8 @@ if (empty($reshook))
 
 		$show_childproducts = '';
 		$search_accountancy_code_sell='';
+		$search_accountancy_code_sell_intra='';
+		$search_accountancy_code_sell_export='';
 		$search_accountancy_code_buy='';
 		$search_array_options=array();
 	}
@@ -321,8 +330,10 @@ if ($search_categ > 0)   $sql.= " AND cp.fk_categorie = ".$db->escape($search_ca
 if ($search_categ == -2) $sql.= " AND cp.fk_categorie IS NULL";
 if ($fourn_id > 0)  $sql.= " AND pfp.fk_soc = ".$fourn_id;
 if ($search_tobatch != '' && $search_tobatch >= 0)   $sql.= " AND p.tobatch = ".$db->escape($search_tobatch);
-if ($search_accountancy_code_sell) $sql.= natural_search('p.accountancy_code_sell', $search_accountancy_code_sell);
-if ($search_accountancy_code_buy)  $sql.= natural_search('p.accountancy_code_buy', $search_accountancy_code_buy);
+if ($search_accountancy_code_sell)        $sql.= natural_search('p.accountancy_code_sell', $search_accountancy_code_sell);
+if ($search_accountancy_code_sell_intra)  $sql.= natural_search('p.accountancy_code_sell_intra', $search_accountancy_code_sell_intra);
+if ($search_accountancy_code_sell_export) $sql.= natural_search('p.accountancy_code_sell_export', $search_accountancy_code_sell_export);
+if ($search_accountancy_code_buy)         $sql.= natural_search('p.accountancy_code_buy', $search_accountancy_code_buy);
 
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
@@ -418,6 +429,8 @@ if ($resql)
 	if ($optioncss != '') $param.='&optioncss='.urlencode($optioncss);
 	if ($search_tobatch) $param="&search_ref_supplier=".urlencode($search_ref_supplier);
 	if ($search_accountancy_code_sell) $param="&search_accountancy_code_sell=".urlencode($search_accountancy_code_sell);
+	if ($search_accountancy_code_sell_intra) $param="&search_accountancy_code_sell_intra=".urlencode($search_accountancy_code_sell_intra);
+	if ($search_accountancy_code_sell_export) $param="&search_accountancy_code_sell_export=".urlencode($search_accountancy_code_sell_export);
 	if ($search_accountancy_code_buy) $param="&search_accountancy_code_buy=".urlencode($search_accountancy_code_buy);
 	// Add $param from extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
@@ -630,8 +643,10 @@ if ($resql)
 	// To batch
 	if (! empty($arrayfields['p.tobatch']['checked'])) print '<td class="liste_titre center">'.$form->selectyesno($search_tobatch, '', '', '', 1).'</td>';
 	// Accountancy code sell
-	if (! empty($arrayfields['p.accountancy_code_sell']['checked'])) print '<td class="liste_titre"><input class="flat" type="text" name="search_accountancy_code_sell" size="6" value="'.dol_escape_htmltag($search_accountancy_code_sell).'"></td>';
-	// Accountancy code sell
+	if (! empty($arrayfields['p.accountancy_code_sell']['checked']))        print '<td class="liste_titre"><input class="flat maxwidth75" type="text" name="search_accountancy_code_sell" value="'.dol_escape_htmltag($search_accountancy_code_sell).'"></td>';
+	if (! empty($arrayfields['p.accountancy_code_sell_intra']['checked']))  print '<td class="liste_titre"><input class="flat maxwidth75" type="text" name="search_accountancy_code_sell_intra" value="'.dol_escape_htmltag($search_accountancy_code_sell_intra).'"></td>';
+	if (! empty($arrayfields['p.accountancy_code_sell_export']['checked'])) print '<td class="liste_titre"><input class="flat maxwidth75" type="text" name="search_accountancy_code_sell_export" value="'.dol_escape_htmltag($search_accountancy_code_sell_export).'"></td>';
+	// Accountancy code buy
 	if (! empty($arrayfields['p.accountancy_code_buy']['checked'])) print '<td class="liste_titre"><input class="flat" type="text" name="search_accountancy_code_buy" size="6" value="'.dol_escape_htmltag($search_accountancy_code_buy).'"></td>';
 	// Extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
@@ -723,7 +738,13 @@ if ($resql)
 	if (! empty($arrayfields['p.accountancy_code_sell']['checked'])) {
         print_liste_field_titre($arrayfields['p.accountancy_code_sell']['label'], $_SERVER["PHP_SELF"], "p.accountancy_code_sell", "", $param, '', $sortfield, $sortorder);
     }
-	if (! empty($arrayfields['p.accountancy_code_buy']['checked'])) {
+    if (! empty($arrayfields['p.accountancy_code_sell_intra']['checked'])) {
+        print_liste_field_titre($arrayfields['p.accountancy_code_sell_intra']['label'], $_SERVER["PHP_SELF"], "p.accountancy_code_sell_intra", "", $param, '', $sortfield, $sortorder);
+    }
+    if (! empty($arrayfields['p.accountancy_code_sell_export']['checked'])) {
+        print_liste_field_titre($arrayfields['p.accountancy_code_sell_export']['label'], $_SERVER["PHP_SELF"], "p.accountancy_code_sell_export", "", $param, '', $sortfield, $sortorder);
+    }
+    if (! empty($arrayfields['p.accountancy_code_buy']['checked'])) {
         print_liste_field_titre($arrayfields['p.accountancy_code_buy']['label'], $_SERVER["PHP_SELF"], "p.accountancy_code_buy", "", $param, '', $sortfield, $sortorder);
     }
 	// Extra fields
@@ -1032,7 +1053,17 @@ if ($resql)
 			print '<td>'.$obj->accountancy_code_sell.'</td>';
 			if (! $i) $totalarray['nbfield']++;
 		}
-		// Accountancy code sell
+		if (! empty($arrayfields['p.accountancy_code_sell_intra']['checked']))
+		{
+		    print '<td>'.$obj->accountancy_code_sell_intra.'</td>';
+		    if (! $i) $totalarray['nbfield']++;
+		}
+		if (! empty($arrayfields['p.accountancy_code_sell_export']['checked']))
+		{
+		    print '<td>'.$obj->accountancy_code_sell_export.'</td>';
+		    if (! $i) $totalarray['nbfield']++;
+		}
+		// Accountancy code buy
 		if (! empty($arrayfields['p.accountancy_code_buy']['checked']))
 		{
 			print '<td>'.$obj->accountancy_code_buy.'</td>';
