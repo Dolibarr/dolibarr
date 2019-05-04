@@ -1104,12 +1104,12 @@ abstract class CommonObject
 					$transkey="TypeContact_".$obj->element."_".$obj->source."_".$obj->code;
 					$libelle_type=($langs->trans($transkey)!=$transkey ? $langs->trans($transkey) : $obj->libelle);
 					$tab[$i]=array('source'=>$obj->source,'socid'=>$obj->socid,'id'=>$obj->id,
-								   'nom'=>$obj->lastname,      // For backward compatibility
-								   'civility'=>$obj->civility, 'lastname'=>$obj->lastname, 'firstname'=>$obj->firstname, 'address'=>$obj->address, 'zip'=>$obj->zip, 'town'=>$obj->town,
-                   'state_id'=>$obj->state_id, 'state_code'=>$obj->state_code, 'state'=>$obj->state,
-                   'country_id'=>$obj->country_id, 'country_code'=>$obj->country_id?$obj->country_code:'', 'country'=>$obj->country_id?($langs->trans('Country'.$obj->country_code)!='Country'.$obj->country_code?$langs->transnoentities('Country'.$obj->country_code):$obj->country):'', 
-                   'phone'=>$obj->phone, 'phone_perso'=>$obj->phone_perso, 'phone_mobile'=>$obj->phone_mobile, 'fax'=>$obj->fax, 'email'=>$obj->email,
-                   'login'=>$obj->login, 'photo'=>$obj->photo, 'statuscontact'=>$obj->statuscontact,
+                                   'nom'=>$obj->lastname,      // For backward compatibility
+                                   'civility'=>$obj->civility, 'lastname'=>$obj->lastname, 'firstname'=>$obj->firstname, 'address'=>$obj->address, 'zip'=>$obj->zip, 'town'=>$obj->town,
+                                   'state_id'=>$obj->state_id, 'state_code'=>$obj->state_code, 'state'=>$obj->state,
+                                   'country_id'=>$obj->country_id, 'country_code'=>$obj->country_id?$obj->country_code:'', 'country'=>$obj->country_id?($langs->trans('Country'.$obj->country_code)!='Country'.$obj->country_code?$langs->transnoentities('Country'.$obj->country_code):$obj->country):'',
+                                   'phone'=>$obj->phone, 'phone_perso'=>$obj->phone_perso, 'phone_mobile'=>$obj->phone_mobile, 'fax'=>$obj->fax, 'email'=>$obj->email,
+                                   'login'=>$obj->login, 'photo'=>$obj->photo, 'statuscontact'=>$obj->statuscontact,
 								   'rowid'=>$obj->rowid, 'code'=>$obj->code, 'libelle'=>$libelle_type, 'status'=>$obj->statuslink, 'fk_c_type_contact'=>$obj->fk_c_type_contact);
 				}
 				else
